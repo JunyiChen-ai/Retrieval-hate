@@ -1,0 +1,414 @@
+[train] DATASET=HateMM EPOCHS=30
+Running RGCL video training: DATASET=HateMM MODEL=openai_clip-vit-large-patch14-336_HF FAISS_GPU=False
+Namespace(path='./data/', output_path='./logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/', model='openai_clip-vit-large-patch14-336_HF', dataset='HateMM', similarity_threshold=-1.0, fusion_mode='align', topk=20, majority_voting='arithmetic', metric='cos', loss='triplet', triplet_margin=0.1, norm_feats_loss=False, l2_sqrt=False, hybrid_loss=True, ce_weight=0.5, pos_weight_value=None, num_layers=3, proj_dim=1024, map_dim=1024, dropout=[0.2, 0.4, 0.1], batch_norm=False, last_layer='none', epochs=30, batch_size=64, lr=0.0001, weight_decay=0.0001, lr_scheduler=False, num_workers=24, grad_clip=0.1, no_pseudo_gold_positives=1, in_batch_loss=True, hard_negatives_loss=True, no_hard_negatives=1, no_hard_positives=0, hard_negatives_multiple=12, Faiss_GPU=False, reindex_every_step=False, sparse_dictionary=None, use_attribute=True, sparse_topk=None, eval_retrieval=True, log_interval=10, final_eval=False, exp_comment='', group_name='RAC_video', seed=0, device='cuda', visualise_embed=False, force=True, save_embed=False)
+Image feature dimension:  1024
+Text feature dimension:  768
+Unknown dataset: {} using binary classification by default
+classifier_hateClipper(
+  (img_proj): Sequential(
+    (0): Linear(in_features=1024, out_features=1024, bias=True)
+    (1): Dropout(p=0.2, inplace=False)
+  )
+  (text_proj): Sequential(
+    (0): Linear(in_features=768, out_features=1024, bias=True)
+    (1): Dropout(p=0.2, inplace=False)
+  )
+  (mlp): Sequential(
+    (0): Dropout(p=0.4, inplace=False)
+    (1): Linear(in_features=1024, out_features=1024, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.1, inplace=False)
+    (4): Linear(in_features=1024, out_features=1024, bias=True)
+    (5): ReLU()
+    (6): Dropout(p=0.1, inplace=False)
+    (7): Linear(in_features=1024, out_features=1024, bias=True)
+    (8): ReLU()
+    (9): Dropout(p=0.1, inplace=False)
+  )
+  (output_layer): Linear(in_features=1024, out_features=1, bias=True)
+)
+  0%|          | 0/30 [00:00<?, ?it/s]  3%|▎         | 1/30 [00:01<00:37,  1.30s/it]  7%|▋         | 2/30 [00:02<00:28,  1.00s/it] 10%|█         | 3/30 [00:02<00:24,  1.10it/s] 13%|█▎        | 4/30 [00:03<00:21,  1.19it/s] 17%|█▋        | 5/30 [00:04<00:19,  1.25it/s] 20%|██        | 6/30 [00:05<00:18,  1.29it/s] 23%|██▎       | 7/30 [00:05<00:17,  1.32it/s] 27%|██▋       | 8/30 [00:06<00:16,  1.32it/s] 30%|███       | 9/30 [00:07<00:15,  1.33it/s] 33%|███▎      | 10/30 [00:08<00:15,  1.32it/s] 37%|███▋      | 11/30 [00:08<00:14,  1.30it/s] 40%|████      | 12/30 [00:09<00:14,  1.28it/s] 43%|████▎     | 13/30 [00:10<00:13,  1.25it/s] 47%|████▋     | 14/30 [00:11<00:13,  1.22it/s] 50%|█████     | 15/30 [00:12<00:12,  1.20it/s] 53%|█████▎    | 16/30 [00:13<00:11,  1.18it/s] 57%|█████▋    | 17/30 [00:14<00:11,  1.14it/s] 60%|██████    | 18/30 [00:14<00:10,  1.14it/s] 63%|██████▎   | 19/30 [00:15<00:09,  1.14it/s]Train Epoch: 0 [0/12 (0%)]	Loss: 0.894342
+Train Epoch: 0 [10/12 (83%)]	Loss: 0.846330
+dev  Epoch 0 acc: 0.5981 roc: 0.4595 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6914 
+test Epoch 0 acc: 0.6000 roc: 0.5175 pre: 0.0000 recall: 0.0000 f1: 0.0000
+Val_Retrieval Epoch  0 acc: 0.7477 roc: 0.8681 pre: 0.7105 recall: 0.6279 f1: 0.6667
+Test_Retrieval Epoch 0 acc: 0.8093 roc: 0.8617 pre: 0.8169 recall: 0.6744 f1: 0.7389
+ 
+Current Epoch Acc:  tensor(0.5981) Best model so far, saving...
+Train Epoch: 1 [0/12 (0%)]	Loss: 0.813331
+Train Epoch: 1 [10/12 (83%)]	Loss: 0.551018
+dev  Epoch 1 acc: 0.4019 roc: 0.6372 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6955 
+test Epoch 1 acc: 0.4000 roc: 0.6912 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  1 acc: 0.7757 roc: 0.8695 pre: 0.7714 recall: 0.6279 f1: 0.6923
+Test_Retrieval Epoch 1 acc: 0.8093 roc: 0.8691 pre: 0.8462 recall: 0.6395 f1: 0.7285
+ 
+Train Epoch: 2 [0/12 (0%)]	Loss: 0.527086
+Train Epoch: 2 [10/12 (83%)]	Loss: 0.450613
+dev  Epoch 2 acc: 0.4019 roc: 0.6822 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6952 
+test Epoch 2 acc: 0.4000 roc: 0.7177 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  2 acc: 0.7757 roc: 0.8666 pre: 0.7714 recall: 0.6279 f1: 0.6923
+Test_Retrieval Epoch 2 acc: 0.7907 roc: 0.8678 pre: 0.8361 recall: 0.5930 f1: 0.6939
+ 
+Train Epoch: 3 [0/12 (0%)]	Loss: 0.435522
+Train Epoch: 3 [10/12 (83%)]	Loss: 0.422569
+dev  Epoch 3 acc: 0.4019 roc: 0.5618 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6953 
+test Epoch 3 acc: 0.4000 roc: 0.5575 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  3 acc: 0.7944 roc: 0.8659 pre: 0.7838 recall: 0.6744 f1: 0.7250
+Test_Retrieval Epoch 3 acc: 0.8047 roc: 0.8680 pre: 0.8548 recall: 0.6163 f1: 0.7162
+ 
+Train Epoch: 4 [0/12 (0%)]	Loss: 0.416409
+Train Epoch: 4 [10/12 (83%)]	Loss: 0.410526
+dev  Epoch 4 acc: 0.4019 roc: 0.7011 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6952 
+test Epoch 4 acc: 0.4000 roc: 0.7276 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  4 acc: 0.8037 roc: 0.8721 pre: 0.8056 recall: 0.6744 f1: 0.7342
+Test_Retrieval Epoch 4 acc: 0.8093 roc: 0.8699 pre: 0.8689 recall: 0.6163 f1: 0.7211
+ 
+Train Epoch: 5 [0/12 (0%)]	Loss: 0.419007
+Train Epoch: 5 [10/12 (83%)]	Loss: 0.408174
+dev  Epoch 5 acc: 0.4019 roc: 0.6641 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6953 
+test Epoch 5 acc: 0.4000 roc: 0.6111 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  5 acc: 0.7757 roc: 0.8681 pre: 0.7714 recall: 0.6279 f1: 0.6923
+Test_Retrieval Epoch 5 acc: 0.8047 roc: 0.8704 pre: 0.8667 recall: 0.6047 f1: 0.7123
+ 
+Train Epoch: 6 [0/12 (0%)]	Loss: 0.412281
+Train Epoch: 6 [10/12 (83%)]	Loss: 0.406440
+dev  Epoch 6 acc: 0.4019 roc: 0.7369 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6952 
+test Epoch 6 acc: 0.4000 roc: 0.7075 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  6 acc: 0.8037 roc: 0.8612 pre: 0.7895 recall: 0.6977 f1: 0.7407
+Test_Retrieval Epoch 6 acc: 0.8047 roc: 0.8673 pre: 0.8333 recall: 0.6395 f1: 0.7237
+ 
+Train Epoch: 7 [0/12 (0%)]	Loss: 0.406854
+Train Epoch: 7 [10/12 (83%)]	Loss: 0.410238
+dev  Epoch 7 acc: 0.4019 roc: 0.6630 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6952 
+test Epoch 7 acc: 0.4000 roc: 0.6895 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  7 acc: 0.8037 roc: 0.8674 pre: 0.7895 recall: 0.6977 f1: 0.7407
+Test_Retrieval Epoch 7 acc: 0.8000 roc: 0.8606 pre: 0.8209 recall: 0.6395 f1: 0.7190
+ 
+Train Epoch: 8 [0/12 (0%)]	Loss: 0.404763
+Train Epoch: 8 [10/12 (83%)]	Loss: 0.404396
+dev  Epoch 8 acc: 0.4019 roc: 0.7049 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6951 
+test Epoch 8 acc: 0.4000 roc: 0.7323 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  8 acc: 0.7944 roc: 0.8779 pre: 0.7692 recall: 0.6977 f1: 0.7317
+Test_Retrieval Epoch 8 acc: 0.7907 roc: 0.8549 pre: 0.7971 recall: 0.6395 f1: 0.7097
+ 
+Train Epoch: 9 [0/12 (0%)]	Loss: 0.415350
+Train Epoch: 9 [10/12 (83%)]	Loss: 0.408139
+dev  Epoch 9 acc: 0.4019 roc: 0.7883 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6950 
+test Epoch 9 acc: 0.4000 roc: 0.8099 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  9 acc: 0.8131 roc: 0.8732 pre: 0.8108 recall: 0.6977 f1: 0.7500
+Test_Retrieval Epoch 9 acc: 0.7953 roc: 0.8490 pre: 0.8088 recall: 0.6395 f1: 0.7143
+ 
+Train Epoch: 10 [0/12 (0%)]	Loss: 0.402081
+Train Epoch: 10 [10/12 (83%)]	Loss: 0.404498
+dev  Epoch 10 acc: 0.4019 roc: 0.7480 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6950 
+test Epoch 10 acc: 0.4000 roc: 0.7665 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  10 acc: 0.7944 roc: 0.8710 pre: 0.7692 recall: 0.6977 f1: 0.7317
+Test_Retrieval Epoch 10 acc: 0.8000 roc: 0.8453 pre: 0.7945 recall: 0.6744 f1: 0.7296
+ 
+Train Epoch: 11 [0/12 (0%)]	Loss: 0.414565
+Train Epoch: 11 [10/12 (83%)]	Loss: 0.406027
+dev  Epoch 11 acc: 0.4019 roc: 0.7738 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6949 
+test Epoch 11 acc: 0.4000 roc: 0.7961 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  11 acc: 0.7757 roc: 0.8623 pre: 0.7568 recall: 0.6512 f1: 0.7000
+Test_Retrieval Epoch 11 acc: 0.7953 roc: 0.8495 pre: 0.7763 recall: 0.6860 f1: 0.7284
+ 
+Train Epoch: 12 [0/12 (0%)]	Loss: 0.408165
+Train Epoch: 12 [10/12 (83%)]	Loss: 0.385958
+dev  Epoch 12 acc: 0.4019 roc: 0.8100 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6948 
+test Epoch 12 acc: 0.4000 roc: 0.8203 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  12 acc: 0.7850 roc: 0.8438 pre: 0.7778 recall: 0.6512 f1: 0.7089
+Test_Retrieval Epoch 12 acc: 0.7674 roc: 0.8567 pre: 0.7500 recall: 0.6279 f1: 0.6835
+ 
+Train Epoch: 13 [0/12 (0%)]	Loss: 0.411590
+Train Epoch: 13 [10/12 (83%)]	Loss: 0.382242
+dev  Epoch 13 acc: 0.4019 roc: 0.8132 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6945 
+test Epoch 13 acc: 0.4000 roc: 0.8150 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  13 acc: 0.7944 roc: 0.8532 pre: 0.7442 recall: 0.7442 f1: 0.7442
+Test_Retrieval Epoch 13 acc: 0.7721 roc: 0.8546 pre: 0.7467 recall: 0.6512 f1: 0.6957
+ 
+Train Epoch: 14 [0/12 (0%)]	Loss: 0.397235
+Train Epoch: 14 [10/12 (83%)]	Loss: 0.377447
+dev  Epoch 14 acc: 0.4019 roc: 0.8169 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6941 
+test Epoch 14 acc: 0.4000 roc: 0.8137 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  14 acc: 0.7757 roc: 0.8499 pre: 0.7436 recall: 0.6744 f1: 0.7073
+Test_Retrieval Epoch 14 acc: 0.7674 roc: 0.8422 pre: 0.7368 recall: 0.6512 f1: 0.6914
+ 
+Train Epoch: 15 [0/12 (0%)]	Loss: 0.387948
+Train Epoch: 15 [10/12 (83%)]	Loss: 0.382765
+dev  Epoch 15 acc: 0.4019 roc: 0.8176 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6937 
+test Epoch 15 acc: 0.4000 roc: 0.8090 pre: 0.4000 recall: 1.0000 f1: 0.5714
+Val_Retrieval Epoch  15 acc: 0.7850 roc: 0.8492 pre: 0.7500 recall: 0.6977 f1: 0.7229
+Test_Retrieval Epoch 15 acc: 0.8000 roc: 0.8705 pre: 0.7722 recall: 0.7093 f1: 0.7394
+ 
+Train Epoch: 16 [0/12 (0%)]	Loss: 0.385548
+Train Epoch: 16 [10/12 (83%)]	Loss: 0.373839
+dev  Epoch 16 acc: 0.4019 roc: 0.8336 pre: 0.4019 recall: 1.0000 f1: 0.5733 loss: 0.6930 
+test Epoch 16 acc: 0.4047 roc: 0.8360 pre: 0.4019 recall: 1.0000 f1: 0.5733
+Val_Retrieval Epoch  16 acc: 0.7944 roc: 0.8463 pre: 0.7561 recall: 0.7209 f1: 0.7381
+Test_Retrieval Epoch 16 acc: 0.8047 roc: 0.8848 pre: 0.7683 recall: 0.7326 f1: 0.7500
+ 
+Train Epoch: 17 [0/12 (0%)]	Loss: 0.377432
+Train Epoch: 17 [10/12 (83%)]	Loss: 0.371088
+dev  Epoch 17 acc: 0.5327 roc: 0.8692 pre: 0.4624 recall: 1.0000 f1: 0.6324 loss: 0.6921 
+test Epoch 17 acc: 0.5070 roc: 0.8811 pre: 0.4474 recall: 0.9884 f1: 0.6159
+Val_Retrieval Epoch  17 acc: 0.7944 roc: 0.8503 pre: 0.7442 recall: 0.7442 f1: 0.7442
+Test_Retrieval Epoch 17 acc: 0.7907 roc: 0.8895 pre: 0.7733 recall: 0.6744 f1: 0.7205
+ 
+Train Epoch: 18 [0/12 (0%)]	Loss: 0.373685
+Train Epoch: 18 [10/12 (83%)]	Loss: 0.361492
+dev  Epoch 18 acc: 0.5047 roc: 0.8312 pre: 0.4479 recall: 1.0000 f1: 0.6187 loss: 0.6926 
+test Epoch 18 acc: 0.4791 roc: 0.8031 pre: 0.4337 recall: 0.9884 f1: 0.6028
+Val_Retrieval Epoch  18 acc: 0.8037 roc: 0.8579 pre: 0.7619 recall: 0.7442 f1: 0.7529
+Test_Retrieval Epoch 18 acc: 0.8093 roc: 0.8854 pre: 0.8082 recall: 0.6860 f1: 0.7421
+ 
+Train Epoch: 19 [0/12 (0%)]	Loss: 0.380626
+ 67%|██████▋   | 20/30 [00:16<00:08,  1.12it/s] 70%|███████   | 21/30 [00:17<00:08,  1.10it/s] 73%|███████▎  | 22/30 [00:18<00:07,  1.10it/s] 77%|███████▋  | 23/30 [00:19<00:06,  1.10it/s] 80%|████████  | 24/30 [00:20<00:05,  1.08it/s] 83%|████████▎ | 25/30 [00:21<00:04,  1.09it/s] 87%|████████▋ | 26/30 [00:22<00:03,  1.10it/s] 90%|█████████ | 27/30 [00:23<00:02,  1.09it/s] 93%|█████████▎| 28/30 [00:24<00:01,  1.07it/s] 97%|█████████▋| 29/30 [00:25<00:00,  1.05it/s]100%|██████████| 30/30 [00:26<00:00,  1.04it/s]100%|██████████| 30/30 [00:26<00:00,  1.15it/s]
+Train Epoch: 19 [10/12 (83%)]	Loss: 0.362788
+dev  Epoch 19 acc: 0.5794 roc: 0.8287 pre: 0.4886 recall: 1.0000 f1: 0.6565 loss: 0.6919 
+test Epoch 19 acc: 0.5721 roc: 0.8551 pre: 0.4830 recall: 0.9884 f1: 0.6489
+Val_Retrieval Epoch  19 acc: 0.7944 roc: 0.8521 pre: 0.7442 recall: 0.7442 f1: 0.7442
+Test_Retrieval Epoch 19 acc: 0.7953 roc: 0.8896 pre: 0.7763 recall: 0.6860 f1: 0.7284
+ 
+Train Epoch: 20 [0/12 (0%)]	Loss: 0.377191
+Train Epoch: 20 [10/12 (83%)]	Loss: 0.359056
+dev  Epoch 20 acc: 0.6542 roc: 0.8543 pre: 0.5385 recall: 0.9767 f1: 0.6942 loss: 0.6909 
+test Epoch 20 acc: 0.6698 roc: 0.8724 pre: 0.5497 recall: 0.9651 f1: 0.7004
+Val_Retrieval Epoch  20 acc: 0.8131 roc: 0.8732 pre: 0.7674 recall: 0.7674 f1: 0.7674
+Test_Retrieval Epoch 20 acc: 0.7953 roc: 0.8955 pre: 0.7625 recall: 0.7093 f1: 0.7349
+ 
+Current Epoch Acc:  tensor(0.6542) Best model so far, saving...
+Train Epoch: 21 [0/12 (0%)]	Loss: 0.350534
+Train Epoch: 21 [10/12 (83%)]	Loss: 0.355644
+dev  Epoch 21 acc: 0.6729 roc: 0.8735 pre: 0.5556 recall: 0.9302 f1: 0.6957 loss: 0.6902 
+test Epoch 21 acc: 0.6930 roc: 0.8847 pre: 0.5714 recall: 0.9302 f1: 0.7080
+Val_Retrieval Epoch  21 acc: 0.8318 roc: 0.8721 pre: 0.7778 recall: 0.8140 f1: 0.7955
+Test_Retrieval Epoch 21 acc: 0.8140 roc: 0.8887 pre: 0.7674 recall: 0.7674 f1: 0.7674
+ 
+Current Epoch Acc:  tensor(0.6729) Best model so far, saving...
+Train Epoch: 22 [0/12 (0%)]	Loss: 0.357763
+Train Epoch: 22 [10/12 (83%)]	Loss: 0.351418
+dev  Epoch 22 acc: 0.7383 roc: 0.8750 pre: 0.6190 recall: 0.9070 f1: 0.7358 loss: 0.6879 
+test Epoch 22 acc: 0.7488 roc: 0.8848 pre: 0.6290 recall: 0.9070 f1: 0.7429
+Val_Retrieval Epoch  22 acc: 0.8318 roc: 0.8746 pre: 0.7907 recall: 0.7907 f1: 0.7907
+Test_Retrieval Epoch 22 acc: 0.8093 roc: 0.8863 pre: 0.7711 recall: 0.7442 f1: 0.7574
+ 
+Current Epoch Acc:  tensor(0.7383) Best model so far, saving...
+Train Epoch: 23 [0/12 (0%)]	Loss: 0.349334
+Train Epoch: 23 [10/12 (83%)]	Loss: 0.355725
+dev  Epoch 23 acc: 0.8318 roc: 0.8834 pre: 0.7778 recall: 0.8140 f1: 0.7955 loss: 0.6830 
+test Epoch 23 acc: 0.8047 roc: 0.8855 pre: 0.7500 recall: 0.7674 f1: 0.7586
+Val_Retrieval Epoch  23 acc: 0.8318 roc: 0.8728 pre: 0.8049 recall: 0.7674 f1: 0.7857
+Test_Retrieval Epoch 23 acc: 0.7953 roc: 0.8829 pre: 0.7692 recall: 0.6977 f1: 0.7317
+ 
+Current Epoch Acc:  tensor(0.8318) Best model so far, saving...
+Train Epoch: 24 [0/12 (0%)]	Loss: 0.339900
+Train Epoch: 24 [10/12 (83%)]	Loss: 0.348445
+dev  Epoch 24 acc: 0.8131 roc: 0.8964 pre: 0.7949 recall: 0.7209 f1: 0.7561 loss: 0.6754 
+test Epoch 24 acc: 0.8186 roc: 0.8902 pre: 0.8310 recall: 0.6860 f1: 0.7516
+Val_Retrieval Epoch  24 acc: 0.8411 roc: 0.8928 pre: 0.7955 recall: 0.8140 f1: 0.8046
+Test_Retrieval Epoch 24 acc: 0.8279 roc: 0.8903 pre: 0.8182 recall: 0.7326 f1: 0.7730
+ 
+Train Epoch: 25 [0/12 (0%)]	Loss: 0.340036
+Train Epoch: 25 [10/12 (83%)]	Loss: 0.348210
+dev  Epoch 25 acc: 0.8131 roc: 0.8928 pre: 0.8108 recall: 0.6977 f1: 0.7500 loss: 0.6627 
+test Epoch 25 acc: 0.8233 roc: 0.8908 pre: 0.8429 recall: 0.6860 f1: 0.7564
+Val_Retrieval Epoch  25 acc: 0.7944 roc: 0.8917 pre: 0.7692 recall: 0.6977 f1: 0.7317
+Test_Retrieval Epoch 25 acc: 0.8233 roc: 0.8899 pre: 0.8333 recall: 0.6977 f1: 0.7595
+ 
+Train Epoch: 26 [0/12 (0%)]	Loss: 0.339068
+Train Epoch: 26 [10/12 (83%)]	Loss: 0.314196
+dev  Epoch 26 acc: 0.7850 roc: 0.8957 pre: 0.8125 recall: 0.6047 f1: 0.6933 loss: 0.6352 
+test Epoch 26 acc: 0.8000 roc: 0.8858 pre: 0.8909 recall: 0.5698 f1: 0.6950
+Val_Retrieval Epoch  26 acc: 0.8131 roc: 0.8943 pre: 0.8108 recall: 0.6977 f1: 0.7500
+Test_Retrieval Epoch 26 acc: 0.8186 roc: 0.8869 pre: 0.8310 recall: 0.6860 f1: 0.7516
+ 
+Train Epoch: 27 [0/12 (0%)]	Loss: 0.303941
+Train Epoch: 27 [10/12 (83%)]	Loss: 0.289252
+dev  Epoch 27 acc: 0.7944 roc: 0.8968 pre: 0.8182 recall: 0.6279 f1: 0.7105 loss: 0.5991 
+test Epoch 27 acc: 0.8000 roc: 0.8807 pre: 0.8772 recall: 0.5814 f1: 0.6993
+Val_Retrieval Epoch  27 acc: 0.8037 roc: 0.8903 pre: 0.8056 recall: 0.6744 f1: 0.7342
+Test_Retrieval Epoch 27 acc: 0.8186 roc: 0.8811 pre: 0.8406 recall: 0.6744 f1: 0.7484
+ 
+Train Epoch: 28 [0/12 (0%)]	Loss: 0.292382
+Train Epoch: 28 [10/12 (83%)]	Loss: 0.242486
+dev  Epoch 28 acc: 0.8037 roc: 0.9004 pre: 0.8235 recall: 0.6512 f1: 0.7273 loss: 0.5525 
+test Epoch 28 acc: 0.8186 roc: 0.8888 pre: 0.8852 recall: 0.6279 f1: 0.7347
+Val_Retrieval Epoch  28 acc: 0.8037 roc: 0.8924 pre: 0.8056 recall: 0.6744 f1: 0.7342
+Test_Retrieval Epoch 28 acc: 0.8140 roc: 0.8881 pre: 0.8382 recall: 0.6628 f1: 0.7403
+ 
+Train Epoch: 29 [0/12 (0%)]	Loss: 0.266482
+Train Epoch: 29 [10/12 (83%)]	Loss: 0.220534
+dev  Epoch 29 acc: 0.7944 roc: 0.9004 pre: 0.8182 recall: 0.6279 f1: 0.7105 loss: 0.5063 
+test Epoch 29 acc: 0.8093 roc: 0.8871 pre: 0.8814 recall: 0.6047 f1: 0.7172
+Val_Retrieval Epoch  29 acc: 0.7944 roc: 0.8961 pre: 0.8182 recall: 0.6279 f1: 0.7105
+Test_Retrieval Epoch 29 acc: 0.8186 roc: 0.8857 pre: 0.8730 recall: 0.6395 f1: 0.7383
+ 
+Last Epoch, saving...
+[b2_push] copy: logging -> b2:junyi-data/RGCL_video/logs/HateMM
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 1
+Elapsed time:         0.5sTransferred:   	          0 B / 228.339 MiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         0.9s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt:  0% /19.028Mi, 0/s, -Transferred:   	          0 B / 228.339 MiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         1.5s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt:  0% /19.028Mi, 0/s, -Transferred:   	    2.086 MiB / 228.339 MiB, 1%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         1.9s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt:  7% /19.028Mi, 1.027Mi/s, 17
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:  3% /19.028Mi, 731.845Ki/s, 
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt:  0% /19.028Mi, 0/s, -Transferred:   	    8.512 MiB / 228.339 MiB, 4%, 1.137 MiB/s, ETA 3m13s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         2.4s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt: 13% /19.028Mi, 1.027Mi/s, 16
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 10% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  3% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:  2% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt: 13% /19.028Mi, 731.845Ki/s, 
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt:  0% /19.028Mi, 0/s, -Transferred:   	   24.441 MiB / 228.339 MiB, 11%, 1.137 MiB/s, ETA 2m59s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         3.0s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt: 33% /19.028Mi, 2.764Mi/s, 4s
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt:  3% /19.028Mi, 365.998Ki/s, 
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 22% /19.028Mi, 1.904Mi/s, 7s
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt:  5% /19.028Mi, 462Ki/s, 39s
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 18% /19.028Mi, 1.639Mi/s, 9s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt: 10% /19.028Mi, 941.998Ki/s, 
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt: 32% /19.028Mi, 2.607Mi/s, 4s
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt:  0% /19.028Mi, 0/s, -Transferred:   	   41.531 MiB / 228.339 MiB, 18%, 8.147 MiB/s, ETA 22s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         3.5s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt: 46% /19.028Mi, 2.764Mi/s, 3s
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt:  8% /19.028Mi, 365.998Ki/s, 
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 40% /19.028Mi, 1.904Mi/s, 5s
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt: 11% /19.028Mi, 462Ki/s, 37s
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 31% /19.028Mi, 1.639Mi/s, 8s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt: 24% /19.028Mi, 941.998Ki/s, 
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt: 47% /19.028Mi, 2.607Mi/s, 3s
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt:  8% /19.028Mi, 0/s, -Transferred:   	   71.781 MiB / 228.339 MiB, 31%, 8.147 MiB/s, ETA 19s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         3.9s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt: 86% /19.028Mi, 5.134Mi/s, 0s
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt: 10% /19.028Mi, 670.668Ki/s, 
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 69% /19.028Mi, 4.092Mi/s, 1s
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt: 28% /19.028Mi, 1.624Mi/s, 8s
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 51% /19.028Mi, 2.967Mi/s, 3s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt: 40% /19.028Mi, 2.415Mi/s, 4s
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt: 81% /19.028Mi, 4.978Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt:  9% /19.028Mi, 585.333Ki/s, Transferred:   	  109.784 MiB / 228.339 MiB, 48%, 17.945 MiB/s, ETA 6s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         4.4s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt:100% /19.028Mi, 5.134Mi/s, 0s
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt: 35% /19.028Mi, 670.668Ki/s, 
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:100% /19.028Mi, 4.092Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt: 52% /19.028Mi, 1.624Mi/s, 5s
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 86% /19.028Mi, 2.967Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt: 73% /19.028Mi, 2.415Mi/s, 2s
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:100% /19.028Mi, 4.978Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt: 29% /19.028Mi, 585.333Ki/s, Transferred:   	  131.880 MiB / 228.339 MiB, 58%, 17.945 MiB/s, ETA 5s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            0 / 12, 0%
+Elapsed time:         4.9s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…el_0_tensor(0.6410).pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt: 58% /19.028Mi, 2.741Mi/s, 2s
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt: 88% /19.028Mi, 3.843Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt: 46% /19.028Mi, 1.968Mi/s, 5sTransferred:   	  158.091 MiB / 228.339 MiB, 69%, 26.376 MiB/s, ETA 2s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            2 / 12, 17%
+Elapsed time:         5.5s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt: 82% /19.028Mi, 2.741Mi/s, 1s
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt:100% /19.028Mi, 3.843Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt: 78% /19.028Mi, 1.968Mi/s, 2s
+ * Retrieval/HateMM/RAC_v…l_21_tensor(0.6729).pt: 41% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…l_22_tensor(0.7383).pt: 28% /19.028Mi, 0/s, -Transferred:   	  195.615 MiB / 228.339 MiB, 86%, 26.376 MiB/s, ETA 1s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            4 / 12, 33%
+Elapsed time:         5.9s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt: 89% /19.028Mi, 3.380Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…/last_model_29_0.75.pt:100% /19.028Mi, 3.806Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:100% /19.028Mi, 3.806Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt: 93% /19.028Mi, 3.493Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_21_tensor(0.6729).pt: 78% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…l_22_tensor(0.7383).pt: 62% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…l_23_tensor(0.8318).pt: 54% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…9_0.794392523364486.pt: 48% /19.028Mi, 0/s, -Transferred:   	  219.054 MiB / 228.339 MiB, 96%, 32.602 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            5 / 12, 42%
+Elapsed time:         6.5s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt: 94% /19.028Mi, 3.380Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:100% /19.028Mi, 3.806Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_20_tensor(0.6542).pt:100% /19.028Mi, 3.493Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_21_tensor(0.6729).pt:100% /19.028Mi, 17.276Mi/s, 0
+ * Retrieval/HateMM/RAC_v…l_22_tensor(0.7383).pt: 92% /19.028Mi, 15.089Mi/s, 0
+ * Retrieval/HateMM/RAC_v…l_23_tensor(0.8318).pt: 84% /19.028Mi, 0/s, -
+ * Retrieval/HateMM/RAC_v…9_0.794392523364486.pt: 79% /19.028Mi, 0/s, -Transferred:   	  228.339 MiB / 228.339 MiB, 100%, 32.620 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            7 / 12, 58%
+Elapsed time:         7.0s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt:100% /19.028Mi, 3.171Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…el_0_tensor(0.5981).pt:100% /19.028Mi, 3.171Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_22_tensor(0.7383).pt:100% /19.028Mi, 15.089Mi/s, 0
+ * Retrieval/HateMM/RAC_v…l_23_tensor(0.8318).pt:100% /19.028Mi, 16.089Mi/s, 0
+ * Retrieval/HateMM/RAC_v…9_0.794392523364486.pt:100% /19.028Mi, 15.245Mi/s, 0Transferred:   	  228.339 MiB / 228.339 MiB, 100%, 32.620 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 27
+Transferred:            9 / 12, 75%
+Elapsed time:         7.5s
+Transferring:
+ * Retrieval/MHC_zh/RAC_v…l_28_tensor(0.7436).pt:100% /19.028Mi, 3.171Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_22_tensor(0.7383).pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/HateMM/RAC_v…l_23_tensor(0.8318).pt:100% /19.028Mi, 16.089Mi/s, 0Transferred:   	  228.339 MiB / 228.339 MiB, 100%, 32.620 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 27
+Transferred:           12 / 12, 100%
+Elapsed time:         7.5s
+[b2_push] done -> b2:junyi-data/RGCL_video/logs/HateMM
+[train] done for DATASET=HateMM

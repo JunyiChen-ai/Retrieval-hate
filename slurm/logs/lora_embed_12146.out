@@ -1,0 +1,337 @@
+[2026-07-02 11:13:10] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-02 11:13:10] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-02 11:13:10] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-02 11:13:10] [disk_guard] current /data usage: 244G (threshold 250G, target 250G).
+[2026-07-02 11:13:10] [disk_guard] usage 244G <= threshold 250G: nothing to reclaim. No-op.
+[2026-07-02 11:13:10] [disk_guard] ==== disk_guard end (under threshold) ====
+[lora_embed] DATASET=MHC LORA_DIR=logging/lora/MHC OUT_MODEL_TAG=Qwen2.5-VL-7B-Instruct-LoRA_HF NUM_FRAMES=8
+NVIDIA A100-SXM4-80GB, 81920 MiB
+Namespace(dataset='MHC', EXP_FOLDER='./data/CLIP_Embedding', gt_dir='./data/gt', video_dir='./data/video', model='Qwen/Qwen2.5-VL-7B-Instruct', lora_dir='logging/lora/MHC', out_model_tag='Qwen2.5-VL-7B-Instruct-LoRA_HF', num_frames=8, max_pixels=151200, device='cuda', splits='train,val,test', limit=0)
+Loading Qwen2.5-VL base model: Qwen/Qwen2.5-VL-7B-Instruct
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.53it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.75it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  6.30it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  6.26it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.69it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.29it/s]
+Attaching LoRA adapter from: logging/lora/MHC
+Merging LoRA adapter into base weights (merge_and_unload) ...
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+Processing split 'train' (549 items) -> outname 'train'
+[WARN] decord failed for ./data/video/MHC/All/LgPnUK567xg.mp4 (DECORDError('[11:13:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/4JUFqX-okGc.mp4 (DECORDError('[11:14:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/zK2fH9ZKCas.mp4 (DECORDError('[11:14:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/IbHu0XGqH6M.mp4 (DECORDError('[11:14:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/5lx44-lko-U.mp4 (DECORDError('[11:14:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 20/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/uqnqHKANAqc.mp4 (DECORDError('[11:14:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/e-XqcRbBVi4.mp4 (DECORDError('[11:14:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 40/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/hdwHZQck-a8.mp4 (DECORDError('[11:15:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/p1TRuS3zDa0.mp4 (DECORDError('[11:15:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/KkVOBnyy0v8.mp4 (DECORDError('[11:15:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/UZNQGQviDYI.mp4 (DECORDError('[11:15:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/EuGF6X7Jsb8.mp4 (DECORDError('[11:15:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/4BkwQWsVgGg.mp4 (DECORDError('[11:15:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/g-MEsUQ8CI4.mp4 (DECORDError('[11:15:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/XeROfeXGs_E.mp4 (DECORDError('[11:15:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/j-cUTF18bEg.mp4 (DECORDError('[11:15:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 60/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/tuaHPvzQmgM.mp4 (DECORDError('[11:16:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/oPDUomtm2Zk.mp4 (DECORDError('[11:16:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/92uVzchnUSE.mp4 (DECORDError('[11:16:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/BvTG2iZplew.mp4 (DECORDError('[11:16:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/BvJmlxx4Tlc.mp4 (DECORDError('[11:16:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/9b1WF9eFPR8.mp4 (DECORDError('[11:16:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/7iWKZEvbwL8.mp4 (DECORDError('[11:16:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 80/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/MnLng0Sop2M.mp4 (DECORDError('[11:16:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 100/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/BrtS_6vHPz4.mp4 (DECORDError('[11:17:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/7Gqgbj9mIH4.mp4 (DECORDError('[11:17:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/FpONjY0jWE0.mp4 (DECORDError('[11:17:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/1oEQlFqed8I.mp4 (DECORDError('[11:17:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/ISBGfgYfinI.mp4 (DECORDError('[11:17:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/11dBwxuAA_A.mp4 (DECORDError('[11:17:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/x5lljednNDU.mp4 (DECORDError('[11:17:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/1Dpv_CJsa-g.mp4 (DECORDError('[11:18:00] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 120/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/5zmsggoz9SU.mp4 (DECORDError('[11:18:30] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/k3z2jLnSaOo.mp4 (DECORDError('[11:18:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/THSCStmcjLE.mp4 (DECORDError('[11:18:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/NQV9x-Z92tQ.mp4 (DECORDError('[11:18:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Hd9ebI66Quw.mp4 (DECORDError('[11:18:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 140/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/CWqz1PooWi4.mp4 (DECORDError('[11:19:08] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/w8F9Nma-gpg.mp4 (DECORDError('[11:19:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/PbAnl5hzhVw.mp4 (DECORDError('[11:19:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/hcT_icMFNDo.mp4 (DECORDError('[11:19:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/N7Lh2YB5Qk8.mp4 (DECORDError('[11:19:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 160/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/UWoGy468-m4.mp4 (DECORDError('[11:19:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/My5PVJLP6Bg.mp4 (DECORDError('[11:19:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/cdTnicui088.mp4 (DECORDError('[11:19:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/gU1kdxnJKdw.mp4 (DECORDError('[11:20:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/K7BfqS8_yAc.mp4 (DECORDError('[11:20:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/QvPp8Q7QhWE.mp4 (DECORDError('[11:20:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/JqFZcFDCZyQ.mp4 (DECORDError('[11:20:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/HWG0MQsBjIg.mp4 (DECORDError('[11:20:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 180/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/qtsXdG0wPyY.mp4 (DECORDError('[11:20:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/g3sjNzCJO74.mp4 (DECORDError('[11:20:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/de4NWDu3GeY.mp4 (DECORDError('[11:20:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/-wrkLbbsh3Y.mp4 (DECORDError('[11:21:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 200/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/PaPyby_xXFQ.mp4 (DECORDError('[11:21:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/M1keacZWdEo.mp4 (DECORDError('[11:21:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/b71aLLcyO-E.mp4 (DECORDError('[11:21:54] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/gnJ9_iricSo.mp4 (DECORDError('[11:22:01] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 220/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/uP_UT10_WHM.mp4 (DECORDError('[11:22:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/J16NDM-YPk4.mp4 (DECORDError('[11:22:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/uvgb_MVPmF4.mp4 (DECORDError('[11:22:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/6mZzB--pat4.mp4 (DECORDError('[11:22:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 240/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/rWcNhEpJRag.mp4 (DECORDError('[11:22:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/MyrsHPvrBBY.mp4 (DECORDError('[11:23:01] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/NNeWDl7qxoQ.mp4 (DECORDError('[11:23:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/GF8FUKNuPLo.mp4 (DECORDError('[11:23:19] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/scJdG086bgg.mp4 (DECORDError('[11:23:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 260/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/IC03a8kvPhU.mp4 (DECORDError('[11:23:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/UBKG4daNAaQ.mp4 (DECORDError('[11:23:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/aeOm9oT0_qk.mp4 (DECORDError('[11:23:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/b7WbQg-4LCY.mp4 (DECORDError('[11:23:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Z7i6M38h3dU.mp4 (DECORDError('[11:23:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/qwa1Q4Qdyko.mp4 (DECORDError('[11:23:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/tCI-xwrr_gQ.mp4 (DECORDError('[11:24:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 280/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/VUybGxIoxMM.mp4 (DECORDError('[11:24:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/ICw0Y6FSDVI.mp4 (DECORDError('[11:24:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/dUuRZuf5KFg.mp4 (DECORDError('[11:24:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/D0PmPDQpY1E.mp4 (DECORDError('[11:24:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/VBSUf12Wnog.mp4 (DECORDError('[11:24:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/TLpsP8pJehI.mp4 (DECORDError('[11:24:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 300/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/zrKWJc4elOQ.mp4 (DECORDError('[11:24:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/4ncG92uEVy4.mp4 (DECORDError('[11:24:57] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/vmomA2iKSIs.mp4 (DECORDError('[11:25:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/GddMPWUznpk.mp4 (DECORDError('[11:25:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/C46T6IWiFwo.mp4 (DECORDError('[11:25:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/T5RZVNRhUBo.mp4 (DECORDError('[11:25:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/ZvQHy3L7Ff4.mp4 (DECORDError('[11:25:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/ePAI0sI5Z-M.mp4 (DECORDError('[11:25:30] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 320/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/22_Ke43yIgU.mp4 (DECORDError('[11:25:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/zX1fn56DJHw.mp4 (DECORDError('[11:25:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Ri-ds6VKJg4.mp4 (DECORDError('[11:26:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/9op067bRp9A.mp4 (DECORDError('[11:26:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/dzpYgBJk_0s.mp4 (DECORDError('[11:26:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/wlzEd1F0S4Y.mp4 (DECORDError('[11:26:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 340/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/FrMkNOgVm-0.mp4 (DECORDError('[11:26:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/gLDz7IvH4HU.mp4 (DECORDError('[11:26:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/dF6ntZKChz4.mp4 (DECORDError('[11:26:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/KhKRln1vs9A.mp4 (DECORDError('[11:26:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/7w5xCkEiO6A.mp4 (DECORDError('[11:26:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/sPPxWVGU2Ro.mp4 (DECORDError('[11:26:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/lNCfDw80YSQ.mp4 (DECORDError('[11:26:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/SskF-2mpGCI.mp4 (DECORDError('[11:26:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/IM90prUQlqY.mp4 (DECORDError('[11:26:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/rwP8t2lQXI0.mp4 (DECORDError('[11:27:00] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 360/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/MfU-Eh52VFg.mp4 (DECORDError('[11:27:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/8S1OVYwoGBQ.mp4 (DECORDError('[11:27:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/-MkO3AEHK4Y.mp4 (DECORDError('[11:27:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/sbNdkr9KuIQ.mp4 (DECORDError('[11:27:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/ytkxeYhjup8.mp4 (DECORDError('[11:27:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/fG5oeqbh7_c.mp4 (DECORDError('[11:28:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/4rOegNB6CXg.mp4 (DECORDError('[11:28:10] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 380/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/otf-f7km56U.mp4 (DECORDError('[11:28:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Xa0MscJaPTM.mp4 (DECORDError('[11:28:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Mx5TMVcZnzU.mp4 (DECORDError('[11:28:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 400/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/fYqGqmoy8qI.mp4 (DECORDError('[11:29:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/givOqgEF8Xw.mp4 (DECORDError('[11:29:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/IQhlEYCXDA4.mp4 (DECORDError('[11:29:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 420/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/Npu3G0MWuSo.mp4 (DECORDError('[11:29:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/uvvZvLafwQ8.mp4 (DECORDError('[11:29:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/GSvTsPjX2D4.mp4 (DECORDError('[11:30:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 440/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/7_-y8KAjfWs.mp4 (DECORDError('[11:30:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/mR5Z2DsedwA.mp4 (DECORDError('[11:30:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/pStxFSBkFDQ.mp4 (DECORDError('[11:30:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/O_i2jeFqsCQ.mp4 (DECORDError('[11:30:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/m_aR033m3kI.mp4 (DECORDError('[11:30:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 460/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/HAplQvSs_hQ.mp4 (DECORDError('[11:31:05] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/pmlRRVUhRHM.mp4 (DECORDError('[11:31:29] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/CJs0SPOnRmg.mp4 (DECORDError('[11:31:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Kz3M_kw6oGQ.mp4 (DECORDError('[11:31:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 480/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/lv8elRv03u0.mp4 (DECORDError('[11:32:00] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/gTpQcw2IXtw.mp4 (DECORDError('[11:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 500/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/GIbu4VTCQF8.mp4 (DECORDError('[11:32:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/IET_tUu8u0Y.mp4 (DECORDError('[11:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/QUNmycJNpIE.mp4 (DECORDError('[11:32:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/TVw55EP9LYY.mp4 (DECORDError('[11:32:57] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/I0gPws4B-_4.mp4 (DECORDError('[11:33:03] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 520/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/iKcETp5BbAo.mp4 (DECORDError('[11:33:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/iIXubV-fD5k.mp4 (DECORDError('[11:33:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Kg8GW7DhKeI.mp4 (DECORDError('[11:33:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/hUrk26CM-uc.mp4 (DECORDError('[11:33:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/fOzWzzN7sBQ.mp4 (DECORDError('[11:33:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 540/549 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/Y05AKSPwElU.mp4 (DECORDError('[11:34:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/2OrFHiDWxZ4.mp4 (DECORDError('[11:34:19] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+Saved 'train': N=549, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/MHC/train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt
+Processing split 'val' (80 items) -> outname 'dev_seen'
+[WARN] decord failed for ./data/video/MHC/All/ZZOSLjm0LqE.mp4 (DECORDError('[11:34:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/0BqXuLbTxks.mp4 (DECORDError('[11:34:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/VFGkut1nqF0.mp4 (DECORDError('[11:34:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/RPf2D-N7sSs.mp4 (DECORDError('[11:34:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/T1fp3aNf93g.mp4 (DECORDError('[11:35:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [val] processed 20/80 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/vJ_kVd__NBo.mp4 (DECORDError('[11:35:08] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/MmqgRbGKWrM.mp4 (DECORDError('[11:35:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/BjWYvE7TWok.mp4 (DECORDError('[11:35:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/6YJlcoEadZ0.mp4 (DECORDError('[11:35:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/XWrKWANI2ZU.mp4 (DECORDError('[11:35:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [val] processed 40/80 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/_0W4cgpQDbY.mp4 (DECORDError('[11:36:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/LJZOcfIX4kk.mp4 (DECORDError('[11:36:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/1fglv1fiibc.mp4 (DECORDError('[11:36:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/cclrUXh1IBo.mp4 (DECORDError('[11:36:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/cME9naxSvoc.mp4 (DECORDError('[11:36:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/kec4e6w697w.mp4 (DECORDError('[11:36:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/6WSRaKFyeYI.mp4 (DECORDError('[11:36:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/lpH2cbkr82M.mp4 (DECORDError('[11:36:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [val] processed 60/80 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/JRHKZYFHVJ0.mp4 (DECORDError('[11:36:57] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/cLF-B7u3kNE.mp4 (DECORDError('[11:37:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/uw_doUh2HHE.mp4 (DECORDError('[11:37:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/AIqIN75NS-0.mp4 (DECORDError('[11:37:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [val] processed 80/80 (zero-vector guards so far: 0)
+Saved 'dev_seen': N=80, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/MHC/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt
+Processing split 'test' (161 items) -> outname 'test_seen'
+[WARN] decord failed for ./data/video/MHC/All/WYJ3_pvq0aw.mp4 (DECORDError('[11:37:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/71zppfNBrMY.mp4 (DECORDError('[11:37:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/GM0X46DYdwU.mp4 (DECORDError('[11:38:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/klirgVzagPM.mp4 (DECORDError('[11:38:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] processed 20/161 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/YDEsYXYlB8o.mp4 (DECORDError('[11:38:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/dazAmRoS17Y.mp4 (DECORDError('[11:38:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/uye-VeVA3LY.mp4 (DECORDError('[11:38:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/1HYp_bfklBI.mp4 (DECORDError('[11:38:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/T9OlXnaLiTo.mp4 (DECORDError('[11:38:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/UeRqjzlI4jY.mp4 (DECORDError('[11:38:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] processed 40/161 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/-cgm2EZcLC8.mp4 (DECORDError('[11:39:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Jocr_4Py5-U.mp4 (DECORDError('[11:39:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/WETQcPxy7y0.mp4 (DECORDError('[11:39:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/sYpThqzEIVE.mp4 (DECORDError('[11:39:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/yjNHjAZPs9Y.mp4 (DECORDError('[11:39:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] processed 60/161 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/rlJYN0JNSJs.mp4 (DECORDError('[11:40:08] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/8G6jryooPXY.mp4 (DECORDError('[11:40:10] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/90eY2NKYmzM.mp4 (DECORDError('[11:40:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/suVF3Skd0bo.mp4 (DECORDError('[11:40:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/01ygFLVdj8s.mp4 (DECORDError('[11:40:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] processed 80/161 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/ltuGQ7RBmEU.mp4 (DECORDError('[11:40:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/IahCMMYyy4w.mp4 (DECORDError('[11:41:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/LMOHDiG5XQg.mp4 (DECORDError('[11:41:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/xqilG4oMvvI.mp4 (DECORDError('[11:41:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/zh8HoJ0IDUY.mp4 (DECORDError('[11:41:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/k9OtaMbK0Ac.mp4 (DECORDError('[11:41:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] processed 100/161 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/sVA-q76vNBo.mp4 (DECORDError('[11:41:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/j6tCb7d_py4.mp4 (DECORDError('[11:41:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/Kd_3R1H4YoU.mp4 (DECORDError('[11:42:00] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] processed 120/161 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/hYyxxngdwRY.mp4 (DECORDError('[11:42:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/HO8ndDCRe_A.mp4 (DECORDError('[11:42:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/gnDhz9NQP7s.mp4 (DECORDError('[11:42:54] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[h264 @ 0x2b9b8f80] mmco: unref short failure
+[h264 @ 0x2b9b8f80] mmco: unref short failure
+[h264 @ 0x2b9b8f80] mmco: unref short failure
+[h264 @ 0x2b9b8f80] mmco: unref short failure
+  [test] processed 140/161 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC/All/tjqpB_PPGPo.mp4 (DECORDError('[11:43:00] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/dK43yHIUMKA.mp4 (DECORDError('[11:43:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/pOV_1-vWVrE.mp4 (DECORDError('[11:43:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/msWtrZSVUis.mp4 (DECORDError('[11:43:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC/All/03qOelm_dK8.mp4 (DECORDError('[11:43:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] processed 160/161 (zero-vector guards so far: 0)
+Saved 'test_seen': N=161, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/MHC/test_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt
+[b2_push] copy: data/CLIP_Embedding/MHC -> b2:junyi-data/RGCL_video/embeddings/MHC
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 12
+Elapsed time:         0.5sTransferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 12
+Elapsed time:         1.0sTransferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 12
+Elapsed time:         1.5sTransferred:   	          0 B / 21.628 MiB, 0%, 0 B/s, ETA -
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            0 / 3, 0%
+Elapsed time:         2.0s
+Transferring:
+ *    dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:  0% /2.191Mi, 0/s, -
+ *   test_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:  0% /4.408Mi, 0/s, -
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:  0% /15.028Mi, 0/s, -Transferred:   	    1.027 MiB / 21.628 MiB, 5%, 0 B/s, ETA -
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            0 / 3, 0%
+Elapsed time:         2.5s
+Transferring:
+ *    dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt: 46% /2.191Mi, 0/s, -
+ *   test_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:  0% /4.408Mi, 0/s, -
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:  0% /15.028Mi, 0/s, -Transferred:   	    4.426 MiB / 21.628 MiB, 20%, 1.475 MiB/s, ETA 11s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            0 / 3, 0%
+Elapsed time:         3.0s
+Transferring:
+ *    dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt: 85% /2.191Mi, 1.027Mi/s, 0s
+ *   test_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt: 36% /4.408Mi, 987.963Ki/s, 2s
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:  6% /15.028Mi, 0/s, -Transferred:   	    7.965 MiB / 21.628 MiB, 37%, 1.475 MiB/s, ETA 9s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            0 / 3, 0%
+Elapsed time:         3.4s
+Transferring:
+ *    dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:100% /2.191Mi, 1.027Mi/s, 0s
+ *   test_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt: 73% /4.408Mi, 987.963Ki/s, 1s
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt: 16% /15.028Mi, 0/s, -Transferred:   	   12.033 MiB / 21.628 MiB, 56%, 3.008 MiB/s, ETA 3s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            1 / 3, 33%
+Elapsed time:         4.0s
+Transferring:
+ *   test_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:100% /4.408Mi, 2.204Mi/s, 0s
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt: 36% /15.028Mi, 1.732Mi/s, 5sTransferred:   	   16.408 MiB / 21.628 MiB, 76%, 3.008 MiB/s, ETA 1s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            2 / 3, 67%
+Elapsed time:         4.5s
+Transferring:
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt: 65% /15.028Mi, 1.732Mi/s, 3sTransferred:   	   21.628 MiB / 21.628 MiB, 100%, 3.008 MiB/s, ETA 0s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            2 / 3, 67%
+Elapsed time:         5.0s
+Transferring:
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:100% /15.028Mi, 4.020Mi/s, 0sTransferred:   	   21.628 MiB / 21.628 MiB, 100%, 4.326 MiB/s, ETA 0s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            2 / 3, 67%
+Elapsed time:         5.5s
+Transferring:
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:100% /15.028Mi, 4.020Mi/s, 0sTransferred:   	   21.628 MiB / 21.628 MiB, 100%, 3.605 MiB/s, ETA 0s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            2 / 3, 67%
+Elapsed time:         6.0s
+Transferring:
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:100% /15.028Mi, 3.757Mi/s, 0sTransferred:   	   21.628 MiB / 21.628 MiB, 100%, 3.605 MiB/s, ETA 0s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            2 / 3, 67%
+Elapsed time:         6.5s
+Transferring:
+ *       train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt:100% /15.028Mi, 3.757Mi/s, 0sTransferred:   	   21.628 MiB / 21.628 MiB, 100%, 3.605 MiB/s, ETA 0s
+Checks:                 9 / 9, 100%, Listed 21
+Transferred:            3 / 3, 100%
+Elapsed time:         6.8s
+[b2_push] done -> b2:junyi-data/RGCL_video/embeddings/MHC
+[lora_embed] done for DATASET=MHC (LORA_DIR=logging/lora/MHC)

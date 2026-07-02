@@ -1,0 +1,87 @@
+[gen_embed] DATASET=HateMM NUM_FRAMES=8 BATCH=32
+Token indices sequence length is longer than the specified maximum sequence length for this model (2039 > 77). Running this sequence through the model will result in indexing errors
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0x25a52380] stream 0, offset 0x23cc8c9: partial file
+Invalid NAL unit size (1472 > 1168).
+missing picture in access unit with size 1172
+Invalid NAL unit size (1472 > 1168).
+Error splitting the input into NAL units.
+Namespace(dataset='HateMM', EXP_FOLDER='./data/CLIP_Embedding', gt_dir='./data/gt', video_dir='./data/video', model='openai/clip-vit-large-patch14-336', num_frames=8, image_size=336, batch_size=32, device='cuda', splits='train,val,test')
+Loading CLIP model: openai/clip-vit-large-patch14-336
+Processing split 'train' (744 items) -> outname 'train'
+  [train] processed 50/744 (zero-vector guards so far: 0)
+  [train] processed 100/744 (zero-vector guards so far: 0)
+  [train] processed 150/744 (zero-vector guards so far: 0)
+  [train] processed 200/744 (zero-vector guards so far: 0)
+  [train] processed 250/744 (zero-vector guards so far: 0)
+  [train] processed 300/744 (zero-vector guards so far: 0)
+  [train] processed 350/744 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/HateMM/All/hate_video_95.mp4 (DECORDError('[17:58:51] /github/workspace/src/video/video_reader.cc:486: Error: av_read_frame failed with 1094995529')); trying PyAV.
+[WARN] PyAV failed for ./data/video/HateMM/All/hate_video_95.mp4 (InvalidDataError(1094995529, 'Invalid data found when processing input', 'avcodec_send_packet()', (16, 'h264', 'Error splitting the input into NAL units.\n'))).
+[WARN] no decodable frames for ./data/video/HateMM/All/hate_video_95.mp4.
+  [train] processed 400/744 (zero-vector guards so far: 1)
+  [train] processed 450/744 (zero-vector guards so far: 1)
+  [train] processed 500/744 (zero-vector guards so far: 1)
+  [train] processed 550/744 (zero-vector guards so far: 1)
+  [train] processed 600/744 (zero-vector guards so far: 1)
+  [train] processed 650/744 (zero-vector guards so far: 1)
+  [train] processed 700/744 (zero-vector guards so far: 1)
+Saved 'train': N=744, Dv=1024, Dt=768, zero-vector videos=1 -> ./data/CLIP_Embedding/HateMM/train_openai_clip-vit-large-patch14-336_HF.pt
+Processing split 'val' (107 items) -> outname 'dev_seen'
+  [val] processed 50/107 (zero-vector guards so far: 0)
+  [val] processed 100/107 (zero-vector guards so far: 0)
+Saved 'dev_seen': N=107, Dv=1024, Dt=768, zero-vector videos=0 -> ./data/CLIP_Embedding/HateMM/dev_seen_openai_clip-vit-large-patch14-336_HF.pt
+Processing split 'test' (215 items) -> outname 'test_seen'
+  [test] processed 50/215 (zero-vector guards so far: 0)
+  [test] processed 100/215 (zero-vector guards so far: 0)
+  [test] processed 150/215 (zero-vector guards so far: 0)
+  [test] processed 200/215 (zero-vector guards so far: 0)
+Saved 'test_seen': N=215, Dv=1024, Dt=768, zero-vector videos=0 -> ./data/CLIP_Embedding/HateMM/test_seen_openai_clip-vit-large-patch14-336_HF.pt
+[b2_push] copy: data/CLIP_Embedding/HateMM -> b2:junyi-data/RGCL_video/embeddings/HateMM
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 3
+Elapsed time:         0.5sTransferred:   	          0 B / 7.326 MiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 3
+Transferred:            0 / 3, 0%
+Elapsed time:         1.0s
+Transferring:
+ * dev_seen_openai_clip-v…arge-patch14-336_HF.pt:  0% /754.279Ki, 0/s, -
+ * train_openai_clip-vit-large-patch14-336_HF.pt:  0% /5.112Mi, 0/s, -
+ * test_seen_openai_clip-…arge-patch14-336_HF.pt:  0% /1.478Mi, 0/s, -Transferred:   	          0 B / 7.326 MiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 3
+Transferred:            0 / 3, 0%
+Elapsed time:         1.4s
+Transferring:
+ * dev_seen_openai_clip-v…arge-patch14-336_HF.pt:  0% /754.279Ki, 0/s, -
+ * train_openai_clip-vit-large-patch14-336_HF.pt:  0% /5.112Mi, 0/s, -
+ * test_seen_openai_clip-…arge-patch14-336_HF.pt:  0% /1.478Mi, 0/s, -Transferred:   	    2.229 MiB / 7.326 MiB, 30%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 3
+Transferred:            0 / 3, 0%
+Elapsed time:         2.0s
+Transferring:
+ * dev_seen_openai_clip-v…arge-patch14-336_HF.pt:100% /754.279Ki, 754.094Ki/s,
+ * train_openai_clip-vit-large-patch14-336_HF.pt: 13% /5.112Mi, 0/s, -
+ * test_seen_openai_clip-…arge-patch14-336_HF.pt: 54% /1.478Mi, 667.910Ki/s, 1Transferred:   	    3.555 MiB / 7.326 MiB, 49%, 1.114 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 3
+Transferred:            0 / 3, 0%
+Elapsed time:         2.5s
+Transferring:
+ * dev_seen_openai_clip-v…arge-patch14-336_HF.pt:100% /754.279Ki, 754.094Ki/s,
+ * train_openai_clip-vit-large-patch14-336_HF.pt: 26% /5.112Mi, 0/s, -
+ * test_seen_openai_clip-…arge-patch14-336_HF.pt:100% /1.478Mi, 667.910Ki/s, 0Transferred:   	    6.367 MiB / 7.326 MiB, 87%, 1.114 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 3
+Transferred:            1 / 3, 33%
+Elapsed time:         3.0s
+Transferring:
+ * train_openai_clip-vit-large-patch14-336_HF.pt: 81% /5.112Mi, 1.748Mi/s, 0s
+ * test_seen_openai_clip-…arge-patch14-336_HF.pt:100% /1.478Mi, 756.785Ki/s, 0Transferred:   	    7.326 MiB / 7.326 MiB, 100%, 2.122 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 3
+Transferred:            1 / 3, 33%
+Elapsed time:         3.5s
+Transferring:
+ * train_openai_clip-vit-large-patch14-336_HF.pt:100% /5.112Mi, 1.748Mi/s, 0s
+ * test_seen_openai_clip-…arge-patch14-336_HF.pt:100% /1.478Mi, 756.785Ki/s, 0Transferred:   	    7.326 MiB / 7.326 MiB, 100%, 2.122 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 3
+Transferred:            3 / 3, 100%
+Elapsed time:         3.9s
+[b2_push] done -> b2:junyi-data/RGCL_video/embeddings/HateMM
+[gen_embed] done for DATASET=HateMM

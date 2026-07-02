@@ -1,0 +1,221 @@
+[offload] start 2026-07-01T23:14:55+12:00 on foscsmlprd01.its.auckland.ac.nz
+[offload] SRC=/data/jehc223/AlphaSteer DST=b2:junyi-data/AlphaSteer
+Transferred:   	    7.415 GiB / 92.526 GiB, 8%, 174.058 MiB/s, ETA 8m20s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:          316 / 10326, 3%
+Elapsed time:       1m0.0s
+Transferring:
+ * data/embeddings_repro/…embeds_benign_train.pt: 48% /2.804Gi, 43.520Mi/s, 34
+ * data/embeddings_repro/…embeds_benign_train.pt: 50% /2.441Gi, 39.468Mi/s, 31
+ * data/embeddings_repro/…ds_coconot_original.pt: 24% /2.802Gi, 40.133Mi/s, 54
+ * data/embeddings_repro/…eds_jailbreak_train.pt: 35% /1.187Gi, 34.646Mi/s, 22
+ *       data/manifests_clean/spa_vl_train.jsonl:  5% /156.507Mi, 7.808Mi/s, 18s
+ *  data/manifests_clean/spa_vl_validation.jsonl: 63% /11.824Mi, 0/s, -
+ * data/manifests_clean/t…lib_draft_summary.json:100% /1.008Ki, 0/s, -
+ * data/manifests_clean/t…_contrast_subset.jsonl:100% /195.051Ki, 0/s, -Transferred:   	   19.995 GiB / 91.791 GiB, 22%, 206.640 MiB/s, ETA 5m55s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:          440 / 10447, 4%
+Elapsed time:      1m59.9s
+Transferring:
+ * data/embeddings_repro/…ds_coconot_original.pt: 68% /3.218Gi, 46.171Mi/s, 22
+ * data/embeddings_repro/…embeds_benign_train.pt: 36% /1.869Gi, 40.728Mi/s, 29
+ * data/embeddings_repro/…ds_coconot_original.pt:  9% /2.145Gi, 35.734Mi/s, 55
+ * data/embeddings_repro/…embeds_coconot_pref.pt: 57% /177.435Mi, 11.285Mi/s, 
+ * data/embeddings_repro/…_harmful_train_1000.pt:  8% /191.408Mi, 4.947Mi/s, 3
+ * data/embeddings_repro/…/embeds_harmful_val.pt:  2% /191.407Mi, 2.686Mi/s, 1
+ * data/instructions/trai…l/jailbreak_train.json: 68% /3.094Mi, 1.590Mi/s, 0s
+ * data/embeddings_repro/…eds_jailbreak_train.pt: transferringTransferred:   	   27.411 GiB / 92.700 GiB, 30%, 57.176 MiB/s, ETA 19m29s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:          809 / 10447, 8%
+Elapsed time:       3m0.0s
+Transferring:
+ * data/claim_c_counterfa…mbined_risk_judge.json:100% /5.567Mi, 5.566Mi/s, 0s
+ * data/claim_c_counterfa….5-1-2_risk_judge.json: 95% /11.259Mi, 8.558Mi/s, 0s
+ * data/claim_c_counterfa…e_eval_risk_judge.json: 56% /38.737Mi, 14.370Mi/s, 1
+ * data/claim_c_counterfa…mbined_risk_judge.json: 11% /80.709Mi, 8.121Mi/s, 8s
+ * data/claim_c_counterfa…b_eval_risk_judge.json: 18% /47.924Mi, 8.089Mi/s, 4s
+ * data/responses_repro/g…al_gemma2_results.json:100% /1.764Mi, 1.764Mi/s, 0s
+ * data/claim_c_counterfa…lot200_risk_judge.json:100% /5.952Mi, 0/s, -
+ * data/responses_repro/g…an_gemma2_results.json:100% /410.748Ki, 0/s, -Transferred:   	   32.916 GiB / 92.701 GiB, 36%, 55.315 MiB/s, ETA 18m26s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         1218 / 10447, 12%
+Elapsed time:       4m0.0s
+Transferring:
+ * data/stage1/kv_safety_…tion_check_report.json:100% /7.085Ki, 0/s, -
+ * data/stage1/kv_safety_…generator_dry_run.json:100% /3.368Ki, 0/s, -
+ * data/responses_strengt….5_strength_sweep.json:100% /1.281Mi, 0/s, -
+ * data/responses_strengt….5_strength_sweep.json:100% /1.808Mi, 0/s, -
+ * data/responses_strengt….5_strength_sweep.json:100% /1.726Mi, 0/s, -
+ * data/responses_repro/l…_llama3.1_results.json:100% /187.927Ki, 0/s, -
+ * data/responses_repro/l…_llama3.1_results.json: 28% /1.947Mi, 0/s, -
+ * data/responses_repro/l…_llama3.1_results.json:  0% /357.274Ki, 0/s, -Transferred:   	   36.544 GiB / 92.701 GiB, 39%, 75.813 MiB/s, ETA 12m38s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         1644 / 10447, 16%
+Elapsed time:       5m0.0s
+Transferring:
+ * data/stage1/risk_probe…14-20-26-29_llava15.pt: 85% /187.872Mi, 12.880Mi/s, 
+ * data/stage1/risk_probe…14-20-26-29_llava15.pt: 79% /187.833Mi, 11.830Mi/s, 
+ * baselines/astra_offici…beb9ba147b4ef1799.pack:100% /404.938Mi, 36.511Mi/s, 
+ * data/calibration/spa_v…files/prefer/easy.json: 23% /98.413Mi, 7.624Mi/s, 9s
+ * data/calibration/spa_v…iles/prefer/hardq.json: 21% /116.348Mi, 8.040Mi/s, 1
+ * data/calibration/spa_v…iles/prefer/hards.json: 26% /93.888Mi, 8.217Mi/s, 8s
+ *     baselines/ASTRA/.git/logs/refs/heads/main:100% /206, 0/s, -
+ * baselines/ASTRA/activa…l_jail_constrain_16.pt:100% /1.028Mi, 0/s, -Transferred:   	   38.788 GiB / 92.701 GiB, 42%, 30.503 MiB/s, ETA 30m9s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         2276 / 10447, 22%
+Elapsed time:       6m0.0s
+Transferring:
+ * baselines/astra_offici…pt_63_constrain_16.bmp:100% /330.803Ki, 330.789Ki/s,
+ * data/stage2_counterfac…on_command_render.json:100% /1Ki, 0/s, -
+ * data/stage2_counterfac…_report_l20-26-29.json:100% /3.048Ki, 0/s, -
+ * data/stage2_counterfac…_report_l20-26-29.json:100% /32.600Ki, 0/s, -
+ * data/stage2_counterfac…ly_invalid_export.json:100% /16.707Ki, 0/s, -
+ * data/stage2_counterfac…perator_preflight.json:100% /10.647Ki, 0/s, -
+ * data/stage2_counterfac…on_command_render.json:100% /1.435Ki, 0/s, -
+ * data/stage2_counterfac…on_command_render.json:100% /1.248Ki, 0/s, -Transferred:   	   42.256 GiB / 92.419 GiB, 46%, 115.107 MiB/s, ETA 7m26s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         2797 / 10447, 27%
+Elapsed time:      6m59.9s
+Transferring:
+ * data/eval_full/usb_saf…00008-of-00012.parquet: 95% /136.495Mi, 10.833Mi/s, 
+ * data/eval_full/usb_saf…00009-of-00012.parquet: 45% /198.056Mi, 9.765Mi/s, 1
+ * data/eval_full/usb_saf…00010-of-00012.parquet: 23% /1.020Gi, 38.562Mi/s, 20
+ * data/eval_full/usb_saf…00011-of-00012.parquet:  6% /1.232Gi, 16.586Mi/s, 1m
+ * data/eval_full/usb_saf…00000-of-00004.parquet: 62% /369.314Mi, 36.682Mi/s, 
+ * data/eval_full/usb_saf…00001-of-00004.parquet:100% /254.474Mi, 42.410Mi/s, 
+ * data/eval_full/usb_saf…00002-of-00004.parquet: 12% /296.632Mi, 9.500Mi/s, 2
+ * data/eval_full/usb_saf…00003-of-00004.parquet: transferringTransferred:   	   47.754 GiB / 92.701 GiB, 52%, 73.887 MiB/s, ETA 10m22s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         3269 / 10447, 31%
+Elapsed time:       8m0.0s
+Transferring:
+ *  data/eval_full/mssbench/hf_repo/chat/151.jpg:100% /100.710Ki, 0/s, -
+ *  data/eval_full/mssbench/hf_repo/chat/152.jpg:100% /99.724Ki, 0/s, -
+ *  data/eval_full/mssbench/hf_repo/chat/154.jpg:100% /229.879Ki, 0/s, -
+ *  data/eval_full/mssbench/hf_repo/chat/155.jpg:100% /48.118Ki, 0/s, -
+ *  data/eval_full/mssbench/hf_repo/chat/156.jpg:100% /30.404Ki, 0/s, -
+ *  data/eval_full/mssbench/hf_repo/chat/157.jpg:100% /921.816Ki, 0/s, -
+ *  data/eval_full/mssbench/hf_repo/chat/158.jpg:100% /105.111Ki, 0/s, -
+ *  data/eval_full/mssbench/hf_repo/chat/159.jpg:100% /63.093Ki, 0/s, -Transferred:   	   48.724 GiB / 92.701 GiB, 53%, 42.094 MiB/s, ETA 17m49s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         4355 / 10447, 42%
+Elapsed time:       9m0.0s
+Transferring:
+ * data/steering_matrix_a…ering_matrix_gemma2.pt:  8% /2.010Gi, 19.683Mi/s, 1m
+ * data/steering_matrix_a…ing_matrix_llama3.1.pt:  9% /2.000Gi, 21.857Mi/s, 1m
+ * data/steering_matrix_a…ring_matrix_qwen2.5.pt: 22% /1.340Gi, 34.391Mi/s, 30
+ *   data/eval_full/mssbench/hf_repo/chat/64.jpg:100% /102.597Ki, 102.593Ki/s, 0
+ * data/claim_c_counterfa…holisafe_test_1029.jpg:100% /22.490Ki, 22.489Ki/s, 0
+ * data/claim_c_counterfa…holisafe_test_1034.png:100% /1.166Mi, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_1037.jpg:100% /20.939Ki, 0/s, -
+ *   data/eval_full/mssbench/hf_repo/chat/68.jpg:100% /277.277Ki, 0/s, -Transferred:   	   56.846 GiB / 84.013 GiB, 68%, 170.131 MiB/s, ETA 2m43s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         4606 / 10447, 44%
+Elapsed time:      9m59.9s
+Transferring:
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 17% /4.006Gi, 45.179Mi/s, 1m
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 15% /4.007Gi, 45.571Mi/s, 1m
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 10% /4.006Gi, 37.253Mi/s, 1m
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt:  6% /4.006Gi, 37.021Mi/s, 1m
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 21% /1.031Gi, 35.823Mi/s, 23
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt:  5% /1.913Gi, 20.765Mi/s, 1m
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: transferring
+ * data/stage1_mean_diff/…r_matrix_llava15.jsonl:100% /358.961Ki, 358.937Ki/s,Transferred:   	   72.391 GiB / 92.701 GiB, 78%, 247.017 MiB/s, ETA 1m24s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         4702 / 10447, 45%
+Elapsed time:      11m0.0s
+Transferring:
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 92% /4.006Gi, 51.043Mi/s, 6s
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 88% /4.007Gi, 50.636Mi/s, 9s
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 66% /4.006Gi, 38.766Mi/s, 34
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 74% /4.006Gi, 45.236Mi/s, 23
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 23% /8.688Gi, 40.508Mi/s, 2m
+ * data/claim_c_counterfa…holisafe_test_1351.png:100% /1.392Mi, 0/s, -
+ * baselines/astra_offici…pt_14_constrain_32.bmp:100% /147.053Ki, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_1353.png:100% /1.483Mi, 0/s, -Transferred:   	   79.379 GiB / 92.701 GiB, 86%, 117.968 MiB/s, ETA 1m55s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         5340 / 10447, 51%
+Elapsed time:      12m0.0s
+Transferring:
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 50% /8.688Gi, 40.082Mi/s, 1m
+ * data/steering_matrix_r…ering_matrix_gemma2.pt: 22% /2.010Gi, 38.639Mi/s, 41
+ * data/steering_matrix_r…ing_matrix_llama3.1.pt: 19% /2.000Gi, 32.849Mi/s, 50
+ * data/steering_matrix_r…ring_matrix_qwen2.5.pt: 38% /1.340Gi, 42.531Mi/s, 19
+ * data/claim_c_counterfa…holisafe_test_1703.jpg:100% /18.683Ki, 18.681Ki/s, 0
+ * data/claim_c_counterfa…holisafe_test_1704.png:100% /1.808Mi, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_1712.png:100% /1.788Mi, 0/s, -
+ * data/claim_c_counterfa…olisafe_test_1715.jpeg:100% /11.025Ki, 0/s, -Transferred:   	   85.876 GiB / 92.701 GiB, 93%, 61.248 MiB/s, ETA 1m54s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         6044 / 10447, 58%
+Elapsed time:     12m59.9s
+Transferring:
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt: 77% /8.688Gi, 36.318Mi/s, 56
+ * data/eval_full/mssbenc…d/chat/27.jpg.metadata:100% /125, 0/s, -
+ * data/eval_full/mssbenc…/chat/271.jpg.metadata:100% /125, 0/s, -
+ * data/eval_full/mssbenc…/chat/272.jpg.metadata:100% /125, 0/s, -
+ * data/eval_full/mssbenc…/chat/274.jpg.metadata:100% /125, 0/s, -
+ * data/eval_full/mssbenc…/chat/275.jpg.metadata:100% /125, 0/s, -
+ * data/eval_full/mssbenc…/chat/276.jpg.metadata:100% /125, 0/s, -
+ * data/eval_full/mssbenc…/chat/277.jpg.metadata:100% /125, 0/s, -Transferred:   	   88.173 GiB / 92.701 GiB, 95%, 38.040 MiB/s, ETA 2m1s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         6946 / 10447, 66%
+Elapsed time:      14m0.0s
+Transferring:
+ * data/stage2_counterfac…8_llava15_l20-26-29.pt:100% /8.688Gi, 31.856Mi/s, 0s
+ * baselines/ASTRA/datase…pt_70_constrain_32.bmp:100% /147.053Ki, 0/s, -
+ * baselines/ASTRA/datase…pt_41_constrain_16.bmp:100% /147.053Ki, 0/s, -
+ * baselines/ASTRA/datase…mpt_8_constrain_32.bmp:100% /147.053Ki, 0/s, -
+ * data/eval_full/mssbenc…/chat/362.jpg.metadata:100% /124, 0/s, -
+ * baselines/ASTRA/datase…mpt_9_constrain_32.bmp:100% /147.053Ki, 0/s, -
+ * baselines/ASTRA/datase…mpt_0_constrain_64.bmp:100% /147.053Ki, 0/s, -
+ * baselines/ASTRA/datase…mpt_9_constrain_32.bmp:100% /147.053Ki, 0/s, -Transferred:   	   88.537 GiB / 92.701 GiB, 96%, 7.576 MiB/s, ETA 9m22s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         8120 / 10447, 78%
+Elapsed time:      15m0.0s
+Transferring:
+ * data/claim_c_counterfa…holisafe_test_4730.png:100% /1.745Mi, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_4740.png:100% /1.212Mi, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_4742.png:100% /789.244Ki, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_4750.jpg:100% /8.768Ki, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_4753.jpg:100% /16.522Ki, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_4754.jpg:100% /12.782Ki, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_4761.png:100% /1.229Mi, 0/s, -
+ * data/claim_c_counterfa…holisafe_test_4764.jpg:100% /22.012Ki, 0/s, -Transferred:   	   90.055 GiB / 92.701 GiB, 97%, 22.752 MiB/s, ETA 1m59s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         9062 / 10447, 87%
+Elapsed time:     15m59.9s
+Transferring:
+ * data/stage2_counterfac…llama31_riskjudge.json:100% /52.098Mi, 14.873Mi/s, 0
+ * data/eval_full/mm_safe…_Generation/SD.parquet:100% /5.843Mi, 0/s, -
+ * data/eval_full/mm_safe…ration/SD_TYPO.parquet:100% /6.551Mi, 0/s, -
+ * baselines/astra_offici…mpt_44_unconstrain.bmp:100% /147.053Ki, 0/s, -
+ * baselines/astra_offici…mpt_45_unconstrain.bmp:100% /147.053Ki, 0/s, -
+ * baselines/astra_offici…mpt_46_unconstrain.bmp:100% /147.053Ki, 0/s, -
+ * baselines/astra_offici…mpt_47_unconstrain.bmp:100% /147.053Ki, 0/s, -
+ * baselines/astra_offici…mpt_48_unconstrain.bmp:100% /147.053Ki, 0/s, -Transferred:   	   91.561 GiB / 92.701 GiB, 99%, 39.563 MiB/s, ETA 29s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:         9994 / 10447, 96%
+Elapsed time:     16m59.9s
+Transferring:
+ * data/stage2_full_eval/…ext_only_llava15.jsonl:100% /39.556Mi, 4.944Mi/s, 0s
+ * data/stage2_full_eval/…rd_valid_llava15.jsonl: 93% /82.818Mi, 10.240Mi/s, 0
+ * data/stage2_full_eval/…d_coarse_llava15.jsonl: 94% /63.611Mi, 13.725Mi/s, 0
+ * data/stage2_counterfac…usion_probe_hidden.npz:  1% /419.120Mi, 2.375Mi/s, 2
+ * data/stage2_counterfac…_chat_017_1_unsafe.png: 77% /40.722Mi, 17.183Mi/s, 0
+ * data/stage2_counterfac…_chat_036_1_unsafe.png:100% /3.923Mi, 0/s, -
+ * data/stage2_counterfac…_chat_040_0_unsafe.png:100% /1.748Mi, 0/s, -
+ * data/stage2_counterfac…_chat_041_0_unsafe.png:100% /1.429Mi, 0/s, -Transferred:   	   92.701 GiB / 92.701 GiB, 100%, 22.746 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 11094
+Transferred:        10447 / 10447, 100%
+Elapsed time:     17m38.2s
+[offload] rclone copy exit=0
+[offload] running rclone check 2026-07-01T23:32:34+12:00
+2026/07/01 23:33:25 NOTICE: B2 bucket junyi-data path AlphaSteer: 0 differences found
+2026/07/01 23:33:25 NOTICE: B2 bucket junyi-data path AlphaSteer: 10447 matching files
+[offload] rclone check exit=0
+Total objects: 10.447k (10447)
+Total size: 92.700 GiB (99535572675 Byte)
+Total objects: 10.447k (10447)
+Total size: 92.700 GiB (99535572675 Byte)
+[offload] VERIFY CLEAN — safe to delete local copy
+[offload] done 2026-07-01T23:33:31+12:00

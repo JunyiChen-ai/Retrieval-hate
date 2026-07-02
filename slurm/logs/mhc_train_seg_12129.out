@@ -1,0 +1,620 @@
+[2026-07-02 05:36:20] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-02 05:36:20] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-02 05:36:20] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-02 05:36:20] [disk_guard] current /data usage: 231G (threshold 250G, target 250G).
+[2026-07-02 05:36:20] [disk_guard] usage 231G <= threshold 250G: nothing to reclaim. No-op.
+[2026-07-02 05:36:20] [disk_guard] ==== disk_guard end (under threshold) ====
+[train_seg] DATASET=MHC MODEL=openai_clip-vit-large-patch14-336_HF EPOCHS=30 LAMBDA_SEG=0.5 K=4
+Running RGCL video training: DATASET=MHC MODEL=openai_clip-vit-large-patch14-336_HF FAISS_GPU=False LAMBDA_SEG=0.5 K=4
+Namespace(path='./data/', output_path='./logging/Retrieval/MHC/segMHC_l05/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss_seg0.5/', model='openai_clip-vit-large-patch14-336_HF', dataset='MHC', similarity_threshold=-1.0, fusion_mode='align', topk=20, majority_voting='arithmetic', metric='cos', loss='triplet', triplet_margin=0.1, norm_feats_loss=False, l2_sqrt=False, hybrid_loss=True, ce_weight=0.5, pos_weight_value=None, num_layers=3, proj_dim=1024, map_dim=1024, dropout=[0.2, 0.4, 0.1], batch_norm=False, last_layer='none', epochs=30, batch_size=64, lr=0.0001, weight_decay=0.0001, lr_scheduler=False, num_workers=24, grad_clip=0.1, no_pseudo_gold_positives=1, in_batch_loss=True, hard_negatives_loss=True, no_hard_negatives=1, no_hard_positives=0, hard_negatives_multiple=12, Faiss_GPU=False, reindex_every_step=False, sparse_dictionary=None, use_attribute=True, sparse_topk=None, eval_retrieval=True, log_interval=10, final_eval=False, exp_comment='_seg0.5', group_name='segMHC_l05', seed=0, device='cuda', visualise_embed=False, force=True, warmup=5, save_embed=False, lambda_seg=0.5, num_subclips=4, subclip_cache='auto')
+Loading sub-clip (segment) cache: ./data/CLIP_Embedding/MHC/train_subclipK4_openai_clip-vit-large-patch14-336_HF.pt
+Segment cache loaded: TotalSub=2196, K=4, parents=549
+Image feature dimension:  1024
+Text feature dimension:  768
+Unknown dataset: {} using binary classification by default
+classifier_hateClipper(
+  (img_proj): Sequential(
+    (0): Linear(in_features=1024, out_features=1024, bias=True)
+    (1): Dropout(p=0.2, inplace=False)
+  )
+  (text_proj): Sequential(
+    (0): Linear(in_features=768, out_features=1024, bias=True)
+    (1): Dropout(p=0.2, inplace=False)
+  )
+  (mlp): Sequential(
+    (0): Dropout(p=0.4, inplace=False)
+    (1): Linear(in_features=1024, out_features=1024, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.1, inplace=False)
+    (4): Linear(in_features=1024, out_features=1024, bias=True)
+    (5): ReLU()
+    (6): Dropout(p=0.1, inplace=False)
+    (7): Linear(in_features=1024, out_features=1024, bias=True)
+    (8): ReLU()
+    (9): Dropout(p=0.1, inplace=False)
+  )
+  (output_layer): Linear(in_features=1024, out_features=1, bias=True)
+)
+  0%|          | 0/30 [00:00<?, ?it/s]  3%|▎         | 1/30 [00:01<00:40,  1.41s/it]  7%|▋         | 2/30 [00:02<00:34,  1.23s/it] 10%|█         | 3/30 [00:03<00:33,  1.23s/it] 13%|█▎        | 4/30 [00:04<00:29,  1.15s/it] 17%|█▋        | 5/30 [00:05<00:28,  1.12s/it] 20%|██        | 6/30 [00:06<00:25,  1.07s/it] 23%|██▎       | 7/30 [00:07<00:25,  1.10s/it] 27%|██▋       | 8/30 [00:09<00:23,  1.09s/it] 30%|███       | 9/30 [00:10<00:22,  1.05s/it] 33%|███▎      | 10/30 [00:10<00:20,  1.02s/it] 37%|███▋      | 11/30 [00:11<00:19,  1.01s/it]Train Epoch: 0 [0/9 (0%)]	Loss: 0.930283
+dev  Epoch 0 acc: 0.6875 roc: 0.4135 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6847 | macroF1: 0.4074 macroP: 0.3438 macroR: 0.5000
+test Epoch 0 acc: 0.6957 roc: 0.4377 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4103 macroP: 0.3478 macroR: 0.5000
+Val_Retrieval Epoch  0 acc: 0.7125 roc: 0.7775 pre: 0.5833 recall: 0.2800 f1: 0.3784
+Test_Retrieval Epoch 0 acc: 0.7391 roc: 0.7416 pre: 0.6522 recall: 0.3061 f1: 0.4167
+Val_Retrieval Epoch  0 macroF1: 0.5957 macroP: 0.6593 macroR: 0.5945 acc: 0.7125 roc: 0.7775
+Test_Retrieval Epoch 0 macroF1: 0.6243 macroP: 0.7029 macroR: 0.6173 acc: 0.7391 roc: 0.7416
+ 
+Train Epoch: 1 [0/9 (0%)]	Loss: 0.920375
+dev  Epoch 1 acc: 0.6875 roc: 0.4491 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6870 | macroF1: 0.4074 macroP: 0.3438 macroR: 0.5000
+test Epoch 1 acc: 0.6957 roc: 0.4790 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4103 macroP: 0.3478 macroR: 0.5000
+Val_Retrieval Epoch  1 acc: 0.6750 roc: 0.6989 pre: 0.4615 recall: 0.2400 f1: 0.3158
+Test_Retrieval Epoch 1 acc: 0.7329 roc: 0.6640 pre: 0.6364 recall: 0.2857 f1: 0.3944
+Val_Retrieval Epoch  1 macroF1: 0.5513 macroP: 0.5890 macroR: 0.5564 acc: 0.6750 roc: 0.6989
+Test_Retrieval Epoch 1 macroF1: 0.6115 macroP: 0.6923 macroR: 0.6071 acc: 0.7329 roc: 0.6640
+ 
+Train Epoch: 2 [0/9 (0%)]	Loss: 0.803807
+dev  Epoch 2 acc: 0.3125 roc: 0.5931 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6972 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 2 acc: 0.3043 roc: 0.4340 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  2 acc: 0.6875 roc: 0.7105 pre: 0.5000 recall: 0.2400 f1: 0.3243
+Test_Retrieval Epoch 2 acc: 0.7453 roc: 0.6746 pre: 0.7000 recall: 0.2857 f1: 0.4058
+Val_Retrieval Epoch  2 macroF1: 0.5605 macroP: 0.6103 macroR: 0.5655 acc: 0.6875 roc: 0.7105
+Test_Retrieval Epoch 2 macroF1: 0.6219 macroP: 0.7259 macroR: 0.6161 acc: 0.7453 roc: 0.6746
+ 
+Train Epoch: 3 [0/9 (0%)]	Loss: 0.582821
+dev  Epoch 3 acc: 0.3125 roc: 0.6949 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6970 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 3 acc: 0.3043 roc: 0.6963 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  3 acc: 0.7000 roc: 0.7251 pre: 0.5385 recall: 0.2800 f1: 0.3684
+Test_Retrieval Epoch 3 acc: 0.7329 roc: 0.6999 pre: 0.6364 recall: 0.2857 f1: 0.3944
+Val_Retrieval Epoch  3 macroF1: 0.5858 macroP: 0.6349 macroR: 0.5855 acc: 0.7000 roc: 0.7251
+Test_Retrieval Epoch 3 macroF1: 0.6115 macroP: 0.6923 macroR: 0.6071 acc: 0.7329 roc: 0.6999
+ 
+Train Epoch: 4 [0/9 (0%)]	Loss: 0.526219
+dev  Epoch 4 acc: 0.3125 roc: 0.7465 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6967 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 4 acc: 0.3043 roc: 0.6337 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  4 acc: 0.7250 roc: 0.7135 pre: 0.6000 recall: 0.3600 f1: 0.4500
+Test_Retrieval Epoch 4 acc: 0.7329 roc: 0.7004 pre: 0.6667 recall: 0.2449 f1: 0.3582
+Val_Retrieval Epoch  4 macroF1: 0.6333 macroP: 0.6769 macroR: 0.6255 acc: 0.7250 roc: 0.7135
+Test_Retrieval Epoch 4 macroF1: 0.5948 macroP: 0.7040 macroR: 0.5957 acc: 0.7329 roc: 0.7004
+ 
+Train Epoch: 5 [0/9 (0%)]	Loss: 0.487015
+dev  Epoch 5 acc: 0.3125 roc: 0.6269 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6970 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 5 acc: 0.3043 roc: 0.6904 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  5 acc: 0.7375 roc: 0.7105 pre: 0.6667 recall: 0.3200 f1: 0.4324
+Test_Retrieval Epoch 5 acc: 0.7391 roc: 0.7057 pre: 0.6842 recall: 0.2653 f1: 0.3824
+Val_Retrieval Epoch  5 macroF1: 0.6309 macroP: 0.7083 macroR: 0.6236 acc: 0.7375 roc: 0.7105
+Test_Retrieval Epoch 5 macroF1: 0.6085 macroP: 0.7153 macroR: 0.6059 acc: 0.7391 roc: 0.7057
+ 
+Current Epoch Val_Retrieval acc:  0.7375 roc:  0.7105454545454546 Best model so far, saving...
+Train Epoch: 6 [0/9 (0%)]	Loss: 0.484783
+dev  Epoch 6 acc: 0.3125 roc: 0.7087 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6970 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 6 acc: 0.3043 roc: 0.6341 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  6 acc: 0.6875 roc: 0.7149 pre: 0.5000 recall: 0.2400 f1: 0.3243
+Test_Retrieval Epoch 6 acc: 0.7453 roc: 0.6990 pre: 0.7500 recall: 0.2449 f1: 0.3692
+Val_Retrieval Epoch  6 macroF1: 0.5605 macroP: 0.6103 macroR: 0.5655 acc: 0.6875 roc: 0.7149
+Test_Retrieval Epoch 6 macroF1: 0.6048 macroP: 0.7474 macroR: 0.6046 acc: 0.7453 roc: 0.6990
+ 
+Train Epoch: 7 [0/9 (0%)]	Loss: 0.469017
+dev  Epoch 7 acc: 0.3125 roc: 0.7509 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6970 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 7 acc: 0.3043 roc: 0.6261 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  7 acc: 0.7000 roc: 0.7084 pre: 0.5455 recall: 0.2400 f1: 0.3333
+Test_Retrieval Epoch 7 acc: 0.7453 roc: 0.7083 pre: 0.7857 recall: 0.2245 f1: 0.3492
+Val_Retrieval Epoch  7 macroF1: 0.5699 macroP: 0.6350 macroR: 0.5745 acc: 0.7000 roc: 0.7084
+Test_Retrieval Epoch 7 macroF1: 0.5955 macroP: 0.7636 macroR: 0.5989 acc: 0.7453 roc: 0.7083
+ 
+Train Epoch: 8 [0/9 (0%)]	Loss: 0.467263
+dev  Epoch 8 acc: 0.3125 roc: 0.7058 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6969 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 8 acc: 0.3043 roc: 0.6299 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  8 acc: 0.7375 roc: 0.7193 pre: 0.7000 recall: 0.2800 f1: 0.4000
+Test_Retrieval Epoch 8 acc: 0.7453 roc: 0.7003 pre: 0.8333 recall: 0.2041 f1: 0.3279
+Val_Retrieval Epoch  8 macroF1: 0.6160 macroP: 0.7214 macroR: 0.6127 acc: 0.7375 roc: 0.7193
+Test_Retrieval Epoch 8 macroF1: 0.5854 macroP: 0.7858 macroR: 0.5931 acc: 0.7453 roc: 0.7003
+ 
+Current Epoch Val_Retrieval acc:  0.7375 roc:  0.7192727272727273 Best model so far, saving...
+Train Epoch: 9 [0/9 (0%)]	Loss: 0.475985
+dev  Epoch 9 acc: 0.3125 roc: 0.8025 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6968 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 9 acc: 0.3043 roc: 0.6805 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  9 acc: 0.7250 roc: 0.7411 pre: 0.7143 recall: 0.2000 f1: 0.3125
+Test_Retrieval Epoch 9 acc: 0.7329 roc: 0.7192 pre: 0.7143 recall: 0.2041 f1: 0.3175
+Val_Retrieval Epoch  9 macroF1: 0.5703 macroP: 0.7202 macroR: 0.5818 acc: 0.7250 roc: 0.7411
+Test_Retrieval Epoch 9 macroF1: 0.5757 macroP: 0.7245 macroR: 0.5842 acc: 0.7329 roc: 0.7192
+ 
+Train Epoch: 10 [0/9 (0%)]	Loss: 0.471584
+dev  Epoch 10 acc: 0.3125 roc: 0.5047 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6968 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 10 acc: 0.3043 roc: 0.4665 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  10 acc: 0.7375 roc: 0.7556 pre: 0.7500 recall: 0.2400 f1: 0.3636
+Test_Retrieval Epoch 10 acc: 0.7205 roc: 0.7216 pre: 0.6250 recall: 0.2041 f1: 0.3077
+Val_Retrieval Epoch  10 macroF1: 0.5991 macroP: 0.7431 macroR: 0.6018 acc: 0.7375 roc: 0.7556
+Test_Retrieval Epoch 10 macroF1: 0.5663 macroP: 0.6780 macroR: 0.5753 acc: 0.7205 roc: 0.7216
+ 
+Current Epoch Val_Retrieval acc:  0.7375 roc:  0.7556363636363637 Best model so far, saving...
+Train Epoch: 11 [0/9 (0%)]	Loss: 0.467755
+dev  Epoch 11 acc: 0.3125 roc: 0.5818 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6967 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 11 acc: 0.3043 roc: 0.4930 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  11 acc: 0.7250 roc: 0.7484 pre: 0.7143 recall: 0.2000 f1: 0.3125
+Test_Retrieval Epoch 11 acc: 0.7391 roc: 0.7314 pre: 0.7059 recall: 0.2449 f1: 0.3636
+Val_Retrieval Epoch  11 macroF1: 0.5703 macroP: 0.7202 macroR: 0.5818 acc: 0.7250 roc: 0.7484
+Test_Retrieval Epoch 11 macroF1: 0.5998 macroP: 0.7245 macroR: 0.6001 acc: 0.7391 roc: 0.7314 40%|████      | 12/30 [00:13<00:18,  1.03s/it] 43%|████▎     | 13/30 [00:14<00:17,  1.03s/it] 47%|████▋     | 14/30 [00:15<00:16,  1.02s/it] 50%|█████     | 15/30 [00:16<00:15,  1.03s/it] 53%|█████▎    | 16/30 [00:17<00:14,  1.03s/it] 57%|█████▋    | 17/30 [00:18<00:13,  1.04s/it] 60%|██████    | 18/30 [00:19<00:12,  1.04s/it] 63%|██████▎   | 19/30 [00:20<00:11,  1.05s/it] 67%|██████▋   | 20/30 [00:21<00:10,  1.07s/it] 70%|███████   | 21/30 [00:22<00:10,  1.12s/it] 73%|███████▎  | 22/30 [00:23<00:08,  1.12s/it] 77%|███████▋  | 23/30 [00:24<00:07,  1.10s/it] 80%|████████  | 24/30 [00:25<00:06,  1.09s/it]
+ 
+Train Epoch: 12 [0/9 (0%)]	Loss: 0.466158
+dev  Epoch 12 acc: 0.3125 roc: 0.5811 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6967 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 12 acc: 0.3043 roc: 0.5245 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  12 acc: 0.7250 roc: 0.7418 pre: 0.6667 recall: 0.2400 f1: 0.3529
+Test_Retrieval Epoch 12 acc: 0.7391 roc: 0.7396 pre: 0.7692 recall: 0.2041 f1: 0.3226
+Val_Retrieval Epoch  12 macroF1: 0.5892 macroP: 0.6995 macroR: 0.5927 acc: 0.7250 roc: 0.7418
+Test_Retrieval Epoch 12 macroF1: 0.5805 macroP: 0.7529 macroR: 0.5886 acc: 0.7391 roc: 0.7396
+ 
+Train Epoch: 13 [0/9 (0%)]	Loss: 0.463943
+dev  Epoch 13 acc: 0.3125 roc: 0.7604 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6965 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 13 acc: 0.3043 roc: 0.7433 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  13 acc: 0.7125 roc: 0.7491 pre: 0.6250 recall: 0.2000 f1: 0.3030
+Test_Retrieval Epoch 13 acc: 0.7267 roc: 0.7673 pre: 0.7273 recall: 0.1633 f1: 0.2667
+Val_Retrieval Epoch  13 macroF1: 0.5610 macroP: 0.6736 macroR: 0.5727 acc: 0.7125 roc: 0.7491
+Test_Retrieval Epoch 13 macroF1: 0.5494 macroP: 0.7270 macroR: 0.5682 acc: 0.7267 roc: 0.7673
+ 
+Train Epoch: 14 [0/9 (0%)]	Loss: 0.476148
+dev  Epoch 14 acc: 0.3125 roc: 0.5778 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6965 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 14 acc: 0.3043 roc: 0.5629 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  14 acc: 0.7125 roc: 0.7469 pre: 0.6250 recall: 0.2000 f1: 0.3030
+Test_Retrieval Epoch 14 acc: 0.7143 roc: 0.7587 pre: 0.6154 recall: 0.1633 f1: 0.2581
+Val_Retrieval Epoch  14 macroF1: 0.5610 macroP: 0.6736 macroR: 0.5727 acc: 0.7125 roc: 0.7469
+Test_Retrieval Epoch 14 macroF1: 0.5406 macroP: 0.6692 macroR: 0.5593 acc: 0.7143 roc: 0.7587
+ 
+Train Epoch: 15 [0/9 (0%)]	Loss: 0.461463
+dev  Epoch 15 acc: 0.3125 roc: 0.7673 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6963 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 15 acc: 0.3043 roc: 0.7634 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  15 acc: 0.7125 roc: 0.7665 pre: 0.6000 recall: 0.2400 f1: 0.3429
+Test_Retrieval Epoch 15 acc: 0.7205 roc: 0.7578 pre: 0.6667 recall: 0.1633 f1: 0.2623
+Val_Retrieval Epoch  15 macroF1: 0.5794 macroP: 0.6643 macroR: 0.5836 acc: 0.7125 roc: 0.7665
+Test_Retrieval Epoch 15 macroF1: 0.5449 macroP: 0.6957 macroR: 0.5638 acc: 0.7205 roc: 0.7578
+ 
+Train Epoch: 16 [0/9 (0%)]	Loss: 0.478275
+dev  Epoch 16 acc: 0.3125 roc: 0.7651 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6962 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 16 acc: 0.3043 roc: 0.7722 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  16 acc: 0.7000 roc: 0.7542 pre: 0.5455 recall: 0.2400 f1: 0.3333
+Test_Retrieval Epoch 16 acc: 0.7329 roc: 0.7646 pre: 0.7500 recall: 0.1837 f1: 0.2951
+Val_Retrieval Epoch  16 macroF1: 0.5699 macroP: 0.6350 macroR: 0.5745 acc: 0.7000 roc: 0.7542
+Test_Retrieval Epoch 16 macroF1: 0.5652 macroP: 0.7408 macroR: 0.5784 acc: 0.7329 roc: 0.7646
+ 
+Train Epoch: 17 [0/9 (0%)]	Loss: 0.457043
+dev  Epoch 17 acc: 0.3125 roc: 0.4735 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6964 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 17 acc: 0.3043 roc: 0.4957 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  17 acc: 0.7250 roc: 0.7476 pre: 0.6154 recall: 0.3200 f1: 0.4211
+Test_Retrieval Epoch 17 acc: 0.7329 roc: 0.7668 pre: 0.6500 recall: 0.2653 f1: 0.3768
+Val_Retrieval Epoch  17 macroF1: 0.6204 macroP: 0.6808 macroR: 0.6145 acc: 0.7250 roc: 0.7476
+Test_Retrieval Epoch 17 macroF1: 0.6034 macroP: 0.6973 macroR: 0.6014 acc: 0.7329 roc: 0.7668
+ 
+Train Epoch: 18 [0/9 (0%)]	Loss: 0.451928
+dev  Epoch 18 acc: 0.3125 roc: 0.7331 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6960 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 18 acc: 0.3043 roc: 0.7613 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  18 acc: 0.7500 roc: 0.7767 pre: 0.6471 recall: 0.4400 f1: 0.5238
+Test_Retrieval Epoch 18 acc: 0.7329 roc: 0.7812 pre: 0.6364 recall: 0.2857 f1: 0.3944
+Val_Retrieval Epoch  18 macroF1: 0.6772 macroP: 0.7124 macroR: 0.6655 acc: 0.7500 roc: 0.7767
+Test_Retrieval Epoch 18 macroF1: 0.6115 macroP: 0.6923 macroR: 0.6071 acc: 0.7329 roc: 0.7812
+ 
+Current Epoch Val_Retrieval acc:  0.75 roc:  0.7767272727272728 Best model so far, saving...
+Train Epoch: 19 [0/9 (0%)]	Loss: 0.451016
+dev  Epoch 19 acc: 0.3125 roc: 0.7185 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6959 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 19 acc: 0.3043 roc: 0.7695 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  19 acc: 0.7125 roc: 0.7731 pre: 0.5556 recall: 0.4000 f1: 0.4651
+Test_Retrieval Epoch 19 acc: 0.7453 roc: 0.7983 pre: 0.6667 recall: 0.3265 f1: 0.4384
+Val_Retrieval Epoch  19 macroF1: 0.6343 macroP: 0.6568 macroR: 0.6273 acc: 0.7125 roc: 0.7731
+Test_Retrieval Epoch 19 macroF1: 0.6368 macroP: 0.7129 macroR: 0.6276 acc: 0.7453 roc: 0.7983
+ 
+Train Epoch: 20 [0/9 (0%)]	Loss: 0.448101
+dev  Epoch 20 acc: 0.3125 roc: 0.6313 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6958 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 20 acc: 0.3043 roc: 0.7169 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  20 acc: 0.7000 roc: 0.7709 pre: 0.5200 recall: 0.5200 f1: 0.5200
+Test_Retrieval Epoch 20 acc: 0.7640 roc: 0.8007 pre: 0.6897 recall: 0.4082 f1: 0.5128
+Val_Retrieval Epoch  20 macroF1: 0.6509 macroP: 0.6509 macroR: 0.6509 acc: 0.7000 roc: 0.7709
+Test_Retrieval Epoch 20 macroF1: 0.6785 macroP: 0.7350 macroR: 0.6639 acc: 0.7640 roc: 0.8007
+ 
+Train Epoch: 21 [0/9 (0%)]	Loss: 0.437759
+dev  Epoch 21 acc: 0.3125 roc: 0.5425 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6956 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 21 acc: 0.3043 roc: 0.6097 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  21 acc: 0.7125 roc: 0.7789 pre: 0.5417 recall: 0.5200 f1: 0.5306
+Test_Retrieval Epoch 21 acc: 0.7578 roc: 0.8061 pre: 0.6471 recall: 0.4490 f1: 0.5301
+Val_Retrieval Epoch  21 macroF1: 0.6617 macroP: 0.6637 macroR: 0.6600 acc: 0.7125 roc: 0.7789
+Test_Retrieval Epoch 21 macroF1: 0.6835 macroP: 0.7172 macroR: 0.6709 acc: 0.7578 roc: 0.8061
+ 
+Train Epoch: 22 [0/9 (0%)]	Loss: 0.427856
+dev  Epoch 22 acc: 0.3125 roc: 0.5876 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6953 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 22 acc: 0.3043 roc: 0.6418 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  22 acc: 0.7000 roc: 0.7585 pre: 0.5200 recall: 0.5200 f1: 0.5200
+Test_Retrieval Epoch 22 acc: 0.7578 roc: 0.8112 pre: 0.6190 recall: 0.5306 f1: 0.5714
+Val_Retrieval Epoch  22 macroF1: 0.6509 macroP: 0.6509 macroR: 0.6509 acc: 0.7000 roc: 0.7585
+Test_Retrieval Epoch 22 macroF1: 0.7013 macroP: 0.7129 macroR: 0.6939 acc: 0.7578 roc: 0.8112
+ 
+Train Epoch: 23 [0/9 (0%)]	Loss: 0.434653
+dev  Epoch 23 acc: 0.3125 roc: 0.5789 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6949 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 23 acc: 0.3043 roc: 0.6212 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  23 acc: 0.7125 roc: 0.7818 pre: 0.5385 recall: 0.5600 f1: 0.5490
+Test_Retrieval Epoch 23 acc: 0.7578 roc: 0.8109 pre: 0.6190 recall: 0.5306 f1: 0.5714
+Val_Retrieval Epoch  23 macroF1: 0.6690 macroP: 0.6674 macroR: 0.6709 acc: 0.7125 roc: 0.7818
+Test_Retrieval Epoch 23 macroF1: 0.7013 macroP: 0.7129 macroR: 0.6939 acc: 0.7578 roc: 0.8109
+ 
+Train Epoch: 24 [0/9 (0%)]	Loss: 0.423999
+ 83%|████████▎ | 25/30 [00:26<00:05,  1.07s/it] 87%|████████▋ | 26/30 [00:28<00:04,  1.07s/it] 90%|█████████ | 27/30 [00:29<00:03,  1.07s/it] 93%|█████████▎| 28/30 [00:30<00:02,  1.06s/it] 97%|█████████▋| 29/30 [00:31<00:01,  1.06s/it]100%|██████████| 30/30 [00:32<00:00,  1.10s/it]100%|██████████| 30/30 [00:32<00:00,  1.08s/it]
+dev  Epoch 24 acc: 0.3125 roc: 0.6349 pre: 0.3125 recall: 1.0000 f1: 0.4762 loss: 0.6944 | macroF1: 0.2381 macroP: 0.1562 macroR: 0.5000
+test Epoch 24 acc: 0.3043 roc: 0.6565 pre: 0.3043 recall: 1.0000 f1: 0.4667 | macroF1: 0.2333 macroP: 0.1522 macroR: 0.5000
+Val_Retrieval Epoch  24 acc: 0.7500 roc: 0.7753 pre: 0.6316 recall: 0.4800 f1: 0.5455
+Test_Retrieval Epoch 24 acc: 0.7888 roc: 0.8203 pre: 0.7143 recall: 0.5102 f1: 0.5952
+Val_Retrieval Epoch  24 macroF1: 0.6865 macroP: 0.7092 macroR: 0.6764 acc: 0.7500 roc: 0.7753
+Test_Retrieval Epoch 24 macroF1: 0.7262 macroP: 0.7619 macroR: 0.7105 acc: 0.7888 roc: 0.8203
+ 
+Train Epoch: 25 [0/9 (0%)]	Loss: 0.422847
+dev  Epoch 25 acc: 0.4625 roc: 0.6429 pre: 0.3594 recall: 0.9200 f1: 0.5169 loss: 0.6932 | macroF1: 0.4556 macroP: 0.6172 macroR: 0.5873
+test Epoch 25 acc: 0.4286 roc: 0.6733 pre: 0.3475 recall: 1.0000 f1: 0.5158 | macroF1: 0.4094 macroP: 0.6738 macroR: 0.5893
+Val_Retrieval Epoch  25 acc: 0.7500 roc: 0.7796 pre: 0.6190 recall: 0.5200 f1: 0.5652
+Test_Retrieval Epoch 25 acc: 0.7888 roc: 0.8274 pre: 0.7143 recall: 0.5102 f1: 0.5952
+Val_Retrieval Epoch  25 macroF1: 0.6949 macroP: 0.7078 macroR: 0.6873 acc: 0.7500 roc: 0.7796
+Test_Retrieval Epoch 25 macroF1: 0.7262 macroP: 0.7619 macroR: 0.7105 acc: 0.7888 roc: 0.8274
+ 
+Current Epoch Val_Retrieval acc:  0.75 roc:  0.7796363636363637 Best model so far, saving...
+Train Epoch: 26 [0/9 (0%)]	Loss: 0.429444
+dev  Epoch 26 acc: 0.6875 roc: 0.7411 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6910 | macroF1: 0.4074 macroP: 0.3438 macroR: 0.5000
+test Epoch 26 acc: 0.6957 roc: 0.7666 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4103 macroP: 0.3478 macroR: 0.5000
+Val_Retrieval Epoch  26 acc: 0.7500 roc: 0.7745 pre: 0.6190 recall: 0.5200 f1: 0.5652
+Test_Retrieval Epoch 26 acc: 0.7826 roc: 0.8389 pre: 0.6750 recall: 0.5510 f1: 0.6067
+Val_Retrieval Epoch  26 macroF1: 0.6949 macroP: 0.7078 macroR: 0.6873 acc: 0.7500 roc: 0.7745
+Test_Retrieval Epoch 26 macroF1: 0.7283 macroP: 0.7466 macroR: 0.7175 acc: 0.7826 roc: 0.8389
+ 
+Train Epoch: 27 [0/9 (0%)]	Loss: 0.422863
+dev  Epoch 27 acc: 0.6875 roc: 0.5644 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6864 | macroF1: 0.4074 macroP: 0.3438 macroR: 0.5000
+test Epoch 27 acc: 0.6957 roc: 0.5968 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4103 macroP: 0.3478 macroR: 0.5000
+Val_Retrieval Epoch  27 acc: 0.7500 roc: 0.7593 pre: 0.6000 recall: 0.6000 f1: 0.6000
+Test_Retrieval Epoch 27 acc: 0.7516 roc: 0.8309 pre: 0.5918 recall: 0.5918 f1: 0.5918
+Val_Retrieval Epoch  27 macroF1: 0.7091 macroP: 0.7091 macroR: 0.7091 acc: 0.7500 roc: 0.7593
+Test_Retrieval Epoch 27 macroF1: 0.7066 macroP: 0.7066 macroR: 0.7066 acc: 0.7516 roc: 0.8309
+ 
+Train Epoch: 28 [0/9 (0%)]	Loss: 0.388715
+dev  Epoch 28 acc: 0.6875 roc: 0.2880 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6796 | macroF1: 0.4074 macroP: 0.3438 macroR: 0.5000
+test Epoch 28 acc: 0.6957 roc: 0.2282 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4103 macroP: 0.3478 macroR: 0.5000
+Val_Retrieval Epoch  28 acc: 0.7500 roc: 0.7527 pre: 0.6000 recall: 0.6000 f1: 0.6000
+Test_Retrieval Epoch 28 acc: 0.7516 roc: 0.8285 pre: 0.5882 recall: 0.6122 f1: 0.6000
+Val_Retrieval Epoch  28 macroF1: 0.7091 macroP: 0.7091 macroR: 0.7091 acc: 0.7500 roc: 0.7527
+Test_Retrieval Epoch 28 macroF1: 0.7099 macroP: 0.7078 macroR: 0.7124 acc: 0.7516 roc: 0.8285
+ 
+Train Epoch: 29 [0/9 (0%)]	Loss: 0.387203
+dev  Epoch 29 acc: 0.6875 roc: 0.7745 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6709 | macroF1: 0.4074 macroP: 0.3438 macroR: 0.5000
+test Epoch 29 acc: 0.6957 roc: 0.8129 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4103 macroP: 0.3478 macroR: 0.5000
+Val_Retrieval Epoch  29 acc: 0.7375 roc: 0.7542 pre: 0.5769 recall: 0.6000 f1: 0.5882
+Test_Retrieval Epoch 29 acc: 0.7516 roc: 0.8280 pre: 0.5918 recall: 0.5918 f1: 0.5918
+Val_Retrieval Epoch  29 macroF1: 0.6978 macroP: 0.6959 macroR: 0.7000 acc: 0.7375 roc: 0.7542
+Test_Retrieval Epoch 29 macroF1: 0.7066 macroP: 0.7066 macroR: 0.7066 acc: 0.7516 roc: 0.8280
+ 
+Last Epoch, saving...
+[b2_push] copy: logging -> b2:junyi-data/RGCL_video/logs/MHC
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 1
+Elapsed time:         0.5sTransferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 6
+Elapsed time:         0.9sTransferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 18
+Elapsed time:         1.5sTransferred:   	          0 B / 685.013 MiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 69
+Transferred:            0 / 36, 0%
+Elapsed time:         2.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/best_model_25_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…best_model_5_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt:  0% /19.028Mi, 0/s, -Transferred:   	      860 KiB / 685.013 MiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 233
+Transferred:            0 / 36, 0%
+Elapsed time:         2.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/best_model_25_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…best_model_5_0.7375.pt:  4% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt:  0% /19.028Mi, 0/s, -Transferred:   	    2.895 MiB / 685.013 MiB, 0%, 0 B/s, ETA -
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            0 / 36, 0%
+Elapsed time:         2.9s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt:  5% /19.028Mi, 699.940Ki/s, 
+ * Retrieval/MHC/segMHC_l…/best_model_25_0.75.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…best_model_5_0.7375.pt:  6% /19.028Mi, 1019.860Ki/s,
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt:  4% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt:  0% /19.028Mi, 0/s, -Transferred:   	   12.043 MiB / 685.013 MiB, 2%, 988 KiB/s, ETA 11m37s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            0 / 36, 0%
+Elapsed time:         3.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt: 14% /19.028Mi, 699.940Ki/s, 
+ * Retrieval/MHC/segMHC_l…/best_model_25_0.75.pt:  7% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…best_model_5_0.7375.pt: 27% /19.028Mi, 1019.860Ki/s,
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt:  4% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt:  9% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt:  0% /19.028Mi, 0/s, -Transferred:   	   24.598 MiB / 685.013 MiB, 4%, 988 KiB/s, ETA 11m24s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            0 / 36, 0%
+Elapsed time:         4.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt:  4% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt: 27% /19.028Mi, 1.842Mi/s, 7s
+ * Retrieval/MHC/segMHC_l…/best_model_25_0.75.pt: 17% /19.028Mi, 941.994Ki/s, 
+ * Retrieval/MHC/segMHC_l…best_model_5_0.7375.pt: 42% /19.028Mi, 3.482Mi/s, 3s
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt:  5% /19.028Mi, 461.998Ki/s, 
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt:  5% /19.028Mi, 494Ki/s, 37s
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt: 27% /19.028Mi, 1.545Mi/s, 8s
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt:  0% /19.028Mi, 0/s, -Transferred:   	   46.719 MiB / 685.013 MiB, 7%, 6.149 MiB/s, ETA 1m43s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            0 / 36, 0%
+Elapsed time:         4.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt: 13% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt: 41% /19.028Mi, 1.842Mi/s, 6s
+ * Retrieval/MHC/segMHC_l…/best_model_25_0.75.pt: 32% /19.028Mi, 941.994Ki/s, 
+ * Retrieval/MHC/segMHC_l…best_model_5_0.7375.pt: 71% /19.028Mi, 3.482Mi/s, 1s
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt: 15% /19.028Mi, 461.998Ki/s, 
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt: 19% /19.028Mi, 494Ki/s, 31s
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt: 42% /19.028Mi, 1.545Mi/s, 7s
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt:  8% /19.028Mi, 0/s, -Transferred:   	   80.031 MiB / 685.013 MiB, 12%, 16.006 MiB/s, ETA 37s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            0 / 36, 0%
+Elapsed time:         5.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt: 23% /19.028Mi, 948Ki/s, 15s
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt: 82% /19.028Mi, 4.165Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…/best_model_25_0.75.pt: 58% /19.028Mi, 2.874Mi/s, 2s
+ * Retrieval/MHC/segMHC_l…best_model_5_0.7375.pt: 99% /19.028Mi, 5.165Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt: 37% /19.028Mi, 1.759Mi/s, 6s
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt: 35% /19.028Mi, 1.655Mi/s, 7s
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt: 72% /19.028Mi, 3.707Mi/s, 1s
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt: 10% /19.028Mi, 606.669Ki/s, Transferred:   	  111.127 MiB / 685.013 MiB, 16%, 16.006 MiB/s, ETA 35s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            0 / 36, 0%
+Elapsed time:         5.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt: 40% /19.028Mi, 948Ki/s, 12s
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt:100% /19.028Mi, 4.165Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…/best_model_25_0.75.pt: 90% /19.028Mi, 2.874Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…best_model_5_0.7375.pt:100% /19.028Mi, 5.165Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt: 59% /19.028Mi, 1.759Mi/s, 4s
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt: 59% /19.028Mi, 1.655Mi/s, 4s
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt:100% /19.028Mi, 3.707Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt: 33% /19.028Mi, 606.669Ki/s, Transferred:   	  137.343 MiB / 685.013 MiB, 20%, 22.890 MiB/s, ETA 23s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            2 / 36, 6%
+Elapsed time:         6.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt: 68% /19.028Mi, 2.491Mi/s, 2s
+ * Retrieval/MHC/segMHC_l…/best_model_18_0.75.pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt: 97% /19.028Mi, 3.851Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt: 92% /19.028Mi, 3.562Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…och_model_10_0.7375.pt:100% /19.028Mi, 4.757Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt: 51% /19.028Mi, 1.976Mi/s, 4s
+ * Retrieval/MHC/segMHC_l…poch_model_12_0.725.pt: 12% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_13_0.7125.pt:  0% /19.028Mi, 0/s, -Transferred:   	  184.021 MiB / 685.013 MiB, 27%, 22.890 MiB/s, ETA 21s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            4 / 36, 11%
+Elapsed time:         6.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…est_model_10_0.7375.pt:100% /19.028Mi, 2.491Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt:100% /19.028Mi, 3.851Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_0_0.7125.pt:100% /19.028Mi, 3.562Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt: 87% /19.028Mi, 1.976Mi/s, 1s
+ * Retrieval/MHC/segMHC_l…poch_model_12_0.725.pt: 60% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_13_0.7125.pt: 50% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_14_0.7125.pt: 43% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_15_0.7125.pt: 24% /19.028Mi, 0/s, -Transferred:   	  216.831 MiB / 685.013 MiB, 32%, 22.890 MiB/s, ETA 20s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            6 / 36, 17%
+Elapsed time:         6.9s
+Transferring:
+ * Retrieval/MHC/segMHC_l…best_model_8_0.7375.pt:100% /19.028Mi, 3.806Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt:100% /19.028Mi, 3.806Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_12_0.725.pt:100% /19.028Mi, 17.151Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_13_0.7125.pt: 80% /19.028Mi, 15.276Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_14_0.7125.pt: 73% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_15_0.7125.pt: 58% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/epoch_model_16_0.7.pt: 27% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_17_0.725.pt:  0% /19.028Mi, 0/s, -Transferred:   	  258.106 MiB / 685.013 MiB, 38%, 31.007 MiB/s, ETA 13s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:            7 / 36, 19%
+Elapsed time:         7.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…poch_model_11_0.725.pt:100% /19.028Mi, 3.806Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_12_0.725.pt:100% /19.028Mi, 17.151Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_13_0.7125.pt:100% /19.028Mi, 15.276Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_14_0.7125.pt: 98% /19.028Mi, 15.995Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_15_0.7125.pt: 88% /19.028Mi, 14.246Mi/s, 0
+ * Retrieval/MHC/segMHC_l…/epoch_model_16_0.7.pt: 69% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_17_0.725.pt: 60% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_18_0.75.pt: 40% /19.028Mi, 0/s, -Transferred:   	  298.439 MiB / 685.013 MiB, 44%, 31.007 MiB/s, ETA 12s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           10 / 36, 28%
+Elapsed time:         8.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…och_model_14_0.7125.pt:100% /19.028Mi, 15.995Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_15_0.7125.pt:100% /19.028Mi, 14.246Mi/s, 0
+ * Retrieval/MHC/segMHC_l…/epoch_model_16_0.7.pt: 99% /19.028Mi, 16.151Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_17_0.725.pt: 97% /19.028Mi, 17.777Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_18_0.75.pt: 72% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_19_0.7125.pt: 57% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_1_0.675.pt: 23% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/epoch_model_20_0.7.pt: 18% /19.028Mi, 0/s, -Transferred:   	  334.938 MiB / 685.013 MiB, 49%, 37.328 MiB/s, ETA 9s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           11 / 36, 31%
+Elapsed time:         8.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…och_model_14_0.7125.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…/epoch_model_16_0.7.pt:100% /19.028Mi, 16.151Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_17_0.725.pt:100% /19.028Mi, 17.777Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_18_0.75.pt:100% /19.028Mi, 14.558Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_19_0.7125.pt: 87% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_1_0.675.pt: 72% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/epoch_model_20_0.7.pt: 58% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_21_0.7125.pt: 41% /19.028Mi, 0/s, -Transferred:   	  372.053 MiB / 685.013 MiB, 54%, 37.328 MiB/s, ETA 8s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           14 / 36, 39%
+Elapsed time:         9.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_18_0.75.pt:100% /19.028Mi, 14.558Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_19_0.7125.pt:100% /19.028Mi, 16.652Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_1_0.675.pt:100% /19.028Mi, 17.496Mi/s, 0
+ * Retrieval/MHC/segMHC_l…/epoch_model_20_0.7.pt: 79% /19.028Mi, 14.996Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_21_0.7125.pt: 74% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…/epoch_model_22_0.7.pt: 44% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_23_0.7125.pt: 29% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_24_0.75.pt: 27% /19.028Mi, 0/s, -Transferred:   	  415.139 MiB / 685.013 MiB, 61%, 41.339 MiB/s, ETA 6s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           16 / 36, 44%
+Elapsed time:         9.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_1_0.675.pt:100% /19.028Mi, 17.496Mi/s, 0
+ * Retrieval/MHC/segMHC_l…/epoch_model_20_0.7.pt: 98% /19.028Mi, 14.996Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_21_0.7125.pt:100% /19.028Mi, 16.027Mi/s, 0
+ * Retrieval/MHC/segMHC_l…/epoch_model_22_0.7.pt: 71% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_23_0.7125.pt: 74% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_24_0.75.pt: 70% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_25_0.75.pt: 41% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_26_0.75.pt: 25% /19.028Mi, 0/s, -Transferred:   	  444.329 MiB / 685.013 MiB, 65%, 41.339 MiB/s, ETA 5s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           16 / 36, 44%
+Elapsed time:        10.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_1_0.675.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…/epoch_model_20_0.7.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…och_model_21_0.7125.pt:100% /19.028Mi, 16.027Mi/s, 0
+ * Retrieval/MHC/segMHC_l…/epoch_model_22_0.7.pt: 91% /19.028Mi, 14.777Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_23_0.7125.pt:100% /19.028Mi, 17.332Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_24_0.75.pt:100% /19.028Mi, 16.620Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_25_0.75.pt: 76% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_26_0.75.pt: 66% /19.028Mi, 0/s, -Transferred:   	  471.944 MiB / 685.013 MiB, 69%, 44.433 MiB/s, ETA 4s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           19 / 36, 53%
+Elapsed time:        10.4s
+Transferring:
+ * Retrieval/MHC/segMHC_l…/epoch_model_22_0.7.pt:100% /19.028Mi, 14.777Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_23_0.7125.pt:100% /19.028Mi, 17.332Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_24_0.75.pt:100% /19.028Mi, 16.620Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_25_0.75.pt:100% /19.028Mi, 17.590Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_26_0.75.pt: 98% /19.028Mi, 16.151Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_27_0.75.pt: 44% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_28_0.75.pt: 29% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_29_0.7375.pt:  7% /19.028Mi, 0/s, -Transferred:   	  494.535 MiB / 685.013 MiB, 72%, 44.433 MiB/s, ETA 4s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           20 / 36, 56%
+Elapsed time:        10.9s
+Transferring:
+ * Retrieval/MHC/segMHC_l…/epoch_model_22_0.7.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…och_model_23_0.7125.pt:100% /19.028Mi, 9.510Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…epoch_model_25_0.75.pt:100% /19.028Mi, 17.590Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_26_0.75.pt:100% /19.028Mi, 16.151Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_27_0.75.pt: 75% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_28_0.75.pt: 57% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…och_model_29_0.7375.pt: 51% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_2_0.6875.pt: 13% /19.028Mi, 0/s, -Transferred:   	  544.180 MiB / 685.013 MiB, 79%, 44.958 MiB/s, ETA 3s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           23 / 36, 64%
+Elapsed time:        11.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_26_0.75.pt:100% /19.028Mi, 9.513Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…epoch_model_27_0.75.pt:100% /19.028Mi, 15.089Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_28_0.75.pt: 81% /19.028Mi, 13.776Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_29_0.7375.pt: 88% /19.028Mi, 14.964Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_2_0.6875.pt: 58% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…t/epoch_model_3_0.7.pt: 50% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_4_0.725.pt: 44% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_5_0.7375.pt: 36% /19.028Mi, 0/s, -Transferred:   	  575.307 MiB / 685.013 MiB, 84%, 44.958 MiB/s, ETA 2s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           23 / 36, 64%
+Elapsed time:        12.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_26_0.75.pt:100% /19.028Mi, 9.513Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…epoch_model_27_0.75.pt:100% /19.028Mi, 15.089Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_28_0.75.pt:100% /19.028Mi, 13.776Mi/s, 0
+ * Retrieval/MHC/segMHC_l…och_model_29_0.7375.pt:100% /19.028Mi, 14.964Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_2_0.6875.pt:100% /19.028Mi, 17.214Mi/s, 0
+ * Retrieval/MHC/segMHC_l…t/epoch_model_3_0.7.pt: 74% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_4_0.725.pt: 84% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_5_0.7375.pt: 64% /19.028Mi, 0/s, -Transferred:   	  602.707 MiB / 685.013 MiB, 88%, 47.942 MiB/s, ETA 1s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           25 / 36, 69%
+Elapsed time:        12.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_28_0.75.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…och_model_29_0.7375.pt:100% /19.028Mi, 9.513Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_2_0.6875.pt:100% /19.028Mi, 17.214Mi/s, 0
+ * Retrieval/MHC/segMHC_l…t/epoch_model_3_0.7.pt:100% /19.028Mi, 14.589Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_4_0.725.pt:100% /19.028Mi, 16.620Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_5_0.7375.pt: 92% /19.028Mi, 14.339Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_6_0.6875.pt: 42% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…t/epoch_model_7_0.7.pt: 32% /19.028Mi, 0/s, -Transferred:   	  634.009 MiB / 685.013 MiB, 93%, 48.770 MiB/s, ETA 1s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           28 / 36, 78%
+Elapsed time:        13.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…poch_model_2_0.6875.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…t/epoch_model_3_0.7.pt:100% /19.028Mi, 14.589Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_5_0.7375.pt:100% /19.028Mi, 14.339Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_6_0.6875.pt: 72% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…t/epoch_model_7_0.7.pt: 49% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…poch_model_8_0.7375.pt: 39% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_9_0.725.pt: 39% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…ast_model_29_0.7375.pt: 31% /19.028Mi, 0/s, -Transferred:   	  660.259 MiB / 685.013 MiB, 96%, 48.770 MiB/s, ETA 0s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           30 / 36, 83%
+Elapsed time:        13.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…poch_model_2_0.6875.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_6_0.6875.pt: 85% /19.028Mi, 14.495Mi/s, 0
+ * Retrieval/MHC/segMHC_l…t/epoch_model_7_0.7.pt: 77% /19.028Mi, 11.870Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_8_0.7375.pt: 69% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…epoch_model_9_0.725.pt: 66% /19.028Mi, 0/s, -
+ * Retrieval/MHC/segMHC_l…ast_model_29_0.7375.pt: 71% /19.028Mi, 0/s, -Transferred:   	  681.824 MiB / 685.013 MiB, 100%, 48.770 MiB/s, ETA 0s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           31 / 36, 86%
+Elapsed time:        14.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…poch_model_6_0.6875.pt:100% /19.028Mi, 14.495Mi/s, 0
+ * Retrieval/MHC/segMHC_l…t/epoch_model_7_0.7.pt:100% /19.028Mi, 11.870Mi/s, 0
+ * Retrieval/MHC/segMHC_l…poch_model_8_0.7375.pt:100% /19.028Mi, 14.339Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_9_0.725.pt: 83% /19.028Mi, 14.996Mi/s, 0
+ * Retrieval/MHC/segMHC_l…ast_model_29_0.7375.pt:100% /19.028Mi, 16.558Mi/s, 0Transferred:   	  683.293 MiB / 685.013 MiB, 100%, 48.702 MiB/s, ETA 0s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           33 / 36, 92%
+Elapsed time:        14.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…t/epoch_model_7_0.7.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…poch_model_8_0.7375.pt:100% /19.028Mi, 14.339Mi/s, 0
+ * Retrieval/MHC/segMHC_l…epoch_model_9_0.725.pt: 90% /19.028Mi, 14.996Mi/s, 0Transferred:   	  683.481 MiB / 685.013 MiB, 100%, 48.702 MiB/s, ETA 0s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           34 / 36, 94%
+Elapsed time:        14.9s
+Transferring:
+ * Retrieval/MHC/segMHC_l…poch_model_8_0.7375.pt:100% /19.028Mi, 9.514Mi/s, 0s
+ * Retrieval/MHC/segMHC_l…epoch_model_9_0.725.pt: 91% /19.028Mi, 8.748Mi/s, 0sTransferred:   	  684.137 MiB / 685.013 MiB, 100%, 45.565 MiB/s, ETA 0s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           35 / 36, 97%
+Elapsed time:        15.4s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_9_0.725.pt: 95% /19.028Mi, 8.748Mi/s, 0sTransferred:   	  685.013 MiB / 685.013 MiB, 100%, 42.813 MiB/s, ETA 0s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           35 / 36, 97%
+Elapsed time:        16.0s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_9_0.725.pt:100% /19.028Mi, 6.343Mi/s, 0sTransferred:   	  685.013 MiB / 685.013 MiB, 100%, 42.813 MiB/s, ETA 0s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           35 / 36, 97%
+Elapsed time:        16.5s
+Transferring:
+ * Retrieval/MHC/segMHC_l…epoch_model_9_0.725.pt:100% /19.028Mi, 6.343Mi/s, 0sTransferred:   	  685.013 MiB / 685.013 MiB, 100%, 42.813 MiB/s, ETA 0s
+Checks:               150 / 150, 100%, Listed 404
+Transferred:           36 / 36, 100%
+Elapsed time:        16.7s
+[b2_push] done -> b2:junyi-data/RGCL_video/logs/MHC
+[train_seg] done for DATASET=MHC LAMBDA_SEG=0.5

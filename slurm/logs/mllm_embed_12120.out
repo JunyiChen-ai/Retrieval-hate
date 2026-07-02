@@ -1,0 +1,1044 @@
+[2026-07-02 01:27:45] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-02 01:27:45] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-02 01:27:45] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-02 01:27:45] [disk_guard] current /data usage: 256G (threshold 250G, target 250G).
+[2026-07-02 01:27:45] [disk_guard] usage 256G > threshold 250G: starting reclaim.
+[2026-07-02 01:27:45] [disk_guard] Step (a): rclone VFS cache purge.
+[2026-07-02 01:27:45] [disk_guard]   removed /data/jehc223/home/.cache/rclone/vfs (was 0)
+[2026-07-02 01:27:45] [disk_guard]   removed /data/jehc223/home/.cache/rclone/vfsMeta (was 0)
+[2026-07-02 01:27:45] [disk_guard]   usage now 256G still > target 250G: continuing.
+[2026-07-02 01:27:45] [disk_guard] Step (b): HuggingFace cache.
+[2026-07-02 01:27:45] [disk_guard]   HF cache purge skipped (conservative); needs manual review. Set DISK_GUARD_HF_PURGE=1 to allow datasets--*/.locks removal (never models--*).
+[2026-07-02 01:27:45] [disk_guard]   usage now 256G still > target 250G: continuing.
+[2026-07-02 01:27:45] [disk_guard] Step (c): push-verify-prune oldest logging/ checkpoints (mirrored to B2 under logs/).
+[2026-07-02 01:27:45] [disk_guard]   found 30 candidate checkpoint(s), oldest-first.
+[2026-07-02 01:27:45] [disk_guard]   need to free ~6.00GB to reach target 250G.
+[2026-07-02 01:27:45] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.775.pt
+[2026-07-02 01:27:45] [disk_guard]     mtime=2026-07-02 01:11:00 size=40.03MB
+[2026-07-02 01:27:45] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.775.pt
+[2026-07-02 01:27:45] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:27:55] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.775.pt
+[2026-07-02 01:27:55] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.775.pt
+[2026-07-02 01:27:55] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.8130841121495327.pt
+[2026-07-02 01:27:55] [disk_guard]     mtime=2026-07-02 01:11:00 size=40.03MB
+[2026-07-02 01:27:55] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.8130841121495327.pt
+[2026-07-02 01:27:55] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:28:05] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.8130841121495327.pt
+[2026-07-02 01:28:05] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.8130841121495327.pt
+[2026-07-02 01:28:05] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.8317757009345794.pt
+[2026-07-02 01:28:05] [disk_guard]     mtime=2026-07-02 01:11:01 size=40.03MB
+[2026-07-02 01:28:05] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.8317757009345794.pt
+[2026-07-02 01:28:05] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:28:16] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.8317757009345794.pt
+[2026-07-02 01:28:16] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.8317757009345794.pt
+[2026-07-02 01:28:16] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_17_0.775.pt
+[2026-07-02 01:28:16] [disk_guard]     mtime=2026-07-02 01:11:11 size=40.03MB
+[2026-07-02 01:28:16] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_17_0.775.pt
+[2026-07-02 01:28:16] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:28:27] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_17_0.775.pt
+[2026-07-02 01:28:27] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_17_0.775.pt
+[2026-07-02 01:28:27] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_13_0.8317757009345794.pt
+[2026-07-02 01:28:27] [disk_guard]     mtime=2026-07-02 01:11:12 size=40.03MB
+[2026-07-02 01:28:27] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_13_0.8317757009345794.pt
+[2026-07-02 01:28:27] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:28:36] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_13_0.8317757009345794.pt
+[2026-07-02 01:28:36] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_13_0.8317757009345794.pt
+[2026-07-02 01:28:36] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_17_0.8317757009345794.pt
+[2026-07-02 01:28:36] [disk_guard]     mtime=2026-07-02 01:11:15 size=40.03MB
+[2026-07-02 01:28:36] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_17_0.8317757009345794.pt
+[2026-07-02 01:28:36] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:28:47] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_17_0.8317757009345794.pt
+[2026-07-02 01:28:47] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_17_0.8317757009345794.pt
+[2026-07-02 01:28:47] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.8411214953271028.pt
+[2026-07-02 01:28:47] [disk_guard]     mtime=2026-07-02 01:11:16 size=40.03MB
+[2026-07-02 01:28:47] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.8411214953271028.pt
+[2026-07-02 01:28:47] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:28:56] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.8411214953271028.pt
+[2026-07-02 01:28:56] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.8411214953271028.pt
+[2026-07-02 01:28:56] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_28_0.8.pt
+[2026-07-02 01:28:56] [disk_guard]     mtime=2026-07-02 01:11:18 size=40.03MB
+[2026-07-02 01:28:56] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_28_0.8.pt
+[2026-07-02 01:28:56] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:29:06] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_28_0.8.pt
+[2026-07-02 01:29:06] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_28_0.8.pt
+[2026-07-02 01:29:06] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.7625.pt
+[2026-07-02 01:29:06] [disk_guard]     mtime=2026-07-02 01:11:19 size=40.03MB
+[2026-07-02 01:29:06] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.7625.pt
+[2026-07-02 01:29:06] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:29:16] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.7625.pt
+[2026-07-02 01:29:16] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.7625.pt
+[2026-07-02 01:29:16] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_28_0.8598130841121495.pt
+[2026-07-02 01:29:16] [disk_guard]     mtime=2026-07-02 01:11:25 size=40.03MB
+[2026-07-02 01:29:16] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_28_0.8598130841121495.pt
+[2026-07-02 01:29:16] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:29:25] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_28_0.8598130841121495.pt
+[2026-07-02 01:29:25] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_28_0.8598130841121495.pt
+[2026-07-02 01:29:26] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.8504672897196262.pt
+[2026-07-02 01:29:26] [disk_guard]     mtime=2026-07-02 01:11:26 size=40.03MB
+[2026-07-02 01:29:26] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.8504672897196262.pt
+[2026-07-02 01:29:26] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:29:35] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.8504672897196262.pt
+[2026-07-02 01:29:35] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.8504672897196262.pt
+[2026-07-02 01:29:35] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.725.pt
+[2026-07-02 01:29:35] [disk_guard]     mtime=2026-07-02 01:12:40 size=19.03MB
+[2026-07-02 01:29:35] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.725.pt
+[2026-07-02 01:29:35] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:29:43] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.725.pt
+[2026-07-02 01:29:43] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.725.pt
+[2026-07-02 01:29:43] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.7476635514018691.pt
+[2026-07-02 01:29:43] [disk_guard]     mtime=2026-07-02 01:12:40 size=19.03MB
+[2026-07-02 01:29:43] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.7476635514018691.pt
+[2026-07-02 01:29:43] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:29:52] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.7476635514018691.pt
+[2026-07-02 01:29:52] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.7476635514018691.pt
+[2026-07-02 01:29:52] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.7757009345794392.pt
+[2026-07-02 01:29:52] [disk_guard]     mtime=2026-07-02 01:12:41 size=19.03MB
+[2026-07-02 01:29:52] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.7757009345794392.pt
+[2026-07-02 01:29:52] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:30:01] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.7757009345794392.pt
+[2026-07-02 01:30:01] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.7757009345794392.pt
+[2026-07-02 01:30:01] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_3_0.794392523364486.pt
+[2026-07-02 01:30:01] [disk_guard]     mtime=2026-07-02 01:12:42 size=19.03MB
+[2026-07-02 01:30:01] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_3_0.794392523364486.pt
+[2026-07-02 01:30:01] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:30:09] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_3_0.794392523364486.pt
+[2026-07-02 01:30:09] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_3_0.794392523364486.pt
+[2026-07-02 01:30:09] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_4_0.8037383177570093.pt
+[2026-07-02 01:30:09] [disk_guard]     mtime=2026-07-02 01:12:43 size=19.03MB
+[2026-07-02 01:30:09] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_4_0.8037383177570093.pt
+[2026-07-02 01:30:09] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:30:17] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_4_0.8037383177570093.pt
+[2026-07-02 01:30:17] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_4_0.8037383177570093.pt
+[2026-07-02 01:30:17] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_8_0.75.pt
+[2026-07-02 01:30:17] [disk_guard]     mtime=2026-07-02 01:12:45 size=19.03MB
+[2026-07-02 01:30:17] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_8_0.75.pt
+[2026-07-02 01:30:17] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:30:26] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_8_0.75.pt
+[2026-07-02 01:30:26] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_8_0.75.pt
+[2026-07-02 01:30:26] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_9_0.8130841121495327.pt
+[2026-07-02 01:30:26] [disk_guard]     mtime=2026-07-02 01:12:47 size=19.03MB
+[2026-07-02 01:30:26] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_9_0.8130841121495327.pt
+[2026-07-02 01:30:26] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:30:35] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_9_0.8130841121495327.pt
+[2026-07-02 01:30:35] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_9_0.8130841121495327.pt
+[2026-07-02 01:30:35] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.75.pt
+[2026-07-02 01:30:35] [disk_guard]     mtime=2026-07-02 01:12:51 size=19.03MB
+[2026-07-02 01:30:35] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.75.pt
+[2026-07-02 01:30:35] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:30:43] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.75.pt
+[2026-07-02 01:30:43] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.75.pt
+[2026-07-02 01:30:43] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_19_0.75.pt
+[2026-07-02 01:30:43] [disk_guard]     mtime=2026-07-02 01:12:52 size=19.03MB
+[2026-07-02 01:30:43] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_19_0.75.pt
+[2026-07-02 01:30:43] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:30:52] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_19_0.75.pt
+[2026-07-02 01:30:52] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_19_0.75.pt
+[2026-07-02 01:30:52] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_22_0.75.pt
+[2026-07-02 01:30:52] [disk_guard]     mtime=2026-07-02 01:12:54 size=19.03MB
+[2026-07-02 01:30:52] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_22_0.75.pt
+[2026-07-02 01:30:52] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:31:00] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_22_0.75.pt
+[2026-07-02 01:31:00] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_22_0.75.pt
+[2026-07-02 01:31:00] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_20_0.8130841121495327.pt
+[2026-07-02 01:31:00] [disk_guard]     mtime=2026-07-02 01:12:56 size=19.03MB
+[2026-07-02 01:31:00] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_20_0.8130841121495327.pt
+[2026-07-02 01:31:00] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:31:09] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_20_0.8130841121495327.pt
+[2026-07-02 01:31:09] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_20_0.8130841121495327.pt
+[2026-07-02 01:31:09] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_26_0.75.pt
+[2026-07-02 01:31:09] [disk_guard]     mtime=2026-07-02 01:12:56 size=19.03MB
+[2026-07-02 01:31:09] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_26_0.75.pt
+[2026-07-02 01:31:09] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:31:18] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_26_0.75.pt
+[2026-07-02 01:31:18] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_26_0.75.pt
+[2026-07-02 01:31:18] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_21_0.8317757009345794.pt
+[2026-07-02 01:31:18] [disk_guard]     mtime=2026-07-02 01:12:57 size=19.03MB
+[2026-07-02 01:31:18] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_21_0.8317757009345794.pt
+[2026-07-02 01:31:18] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:31:26] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_21_0.8317757009345794.pt
+[2026-07-02 01:31:26] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_21_0.8317757009345794.pt
+[2026-07-02 01:31:26] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_22_0.8317757009345794.pt
+[2026-07-02 01:31:26] [disk_guard]     mtime=2026-07-02 01:12:58 size=19.03MB
+[2026-07-02 01:31:26] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_22_0.8317757009345794.pt
+[2026-07-02 01:31:26] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:31:35] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_22_0.8317757009345794.pt
+[2026-07-02 01:31:35] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_22_0.8317757009345794.pt
+[2026-07-02 01:31:35] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.7375.pt
+[2026-07-02 01:31:35] [disk_guard]     mtime=2026-07-02 01:12:59 size=19.03MB
+[2026-07-02 01:31:35] [disk_guard]     -> b2 subpath: logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.7375.pt
+[2026-07-02 01:31:35] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:31:43] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.7375.pt
+[2026-07-02 01:31:43] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.7375.pt
+[2026-07-02 01:31:43] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_24_0.8411214953271028.pt
+[2026-07-02 01:31:43] [disk_guard]     mtime=2026-07-02 01:13:00 size=19.03MB
+[2026-07-02 01:31:43] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_24_0.8411214953271028.pt
+[2026-07-02 01:31:43] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:31:53] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_24_0.8411214953271028.pt
+[2026-07-02 01:31:53] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_24_0.8411214953271028.pt
+[2026-07-02 01:31:53] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.794392523364486.pt
+[2026-07-02 01:31:53] [disk_guard]     mtime=2026-07-02 01:13:05 size=19.03MB
+[2026-07-02 01:31:53] [disk_guard]     -> b2 subpath: logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.794392523364486.pt
+[2026-07-02 01:31:53] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:32:02] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.794392523364486.pt
+[2026-07-02 01:32:02] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/HateMM/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/last_model_29_0.794392523364486.pt
+[2026-07-02 01:32:02] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/ImpliHateVid/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.48307692307692307.pt
+[2026-07-02 01:32:02] [disk_guard]     mtime=2026-07-02 01:16:05 size=40.03MB
+[2026-07-02 01:32:02] [disk_guard]     -> b2 subpath: logs/Retrieval/ImpliHateVid/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.48307692307692307.pt
+[2026-07-02 01:32:02] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:32:11] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/ImpliHateVid/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.48307692307692307.pt
+[2026-07-02 01:32:11] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/ImpliHateVid/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_0_0.48307692307692307.pt
+[2026-07-02 01:32:11] [disk_guard]   candidate: /data/jehc223/RGCL/logging/Retrieval/ImpliHateVid/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.5076923076923077.pt
+[2026-07-02 01:32:11] [disk_guard]     mtime=2026-07-02 01:16:07 size=40.03MB
+[2026-07-02 01:32:11] [disk_guard]     -> b2 subpath: logs/Retrieval/ImpliHateVid/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.5076923076923077.pt
+[2026-07-02 01:32:11] [disk_guard]     pushing to B2 ...
+[2026-07-02 01:32:21] [disk_guard] verify: file not found on B2 at exact dest: b2:junyi-data/RGCL_video/logs/Retrieval/ImpliHateVid/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.5076923076923077.pt
+[2026-07-02 01:32:21] [disk_guard]     ERROR: verify failed; local kept (safe): /data/jehc223/RGCL/logging/Retrieval/ImpliHateVid/RAC_video/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_1_0.5076923076923077.pt
+[2026-07-02 01:32:21] [disk_guard]   step (c) projected/actual freed: 0.00B.
+[2026-07-02 01:32:21] [disk_guard]   usage now 256G still > target 250G: continuing.
+[2026-07-02 01:32:21] [disk_guard] WARNING: still over target (usage=256G > target 250G) after all SAFE steps.
+[2026-07-02 01:32:21] [disk_guard] WARNING: MANUAL INTERVENTION required — an approved larger offload (e.g. raw datasets or another project) is needed.
+[2026-07-02 01:32:21] [disk_guard] WARNING: this guard will NOT touch raw datasets (Multihateclip/HateMM/ImpliHateVid) or non-project data. Stopping.
+[2026-07-02 01:32:21] [disk_guard] ==== disk_guard end ====
+[mllm_embed] DATASET=ImpliHateVid NUM_FRAMES=8
+NVIDIA A100-SXM4-80GB, 81920 MiB
+Namespace(dataset='ImpliHateVid', EXP_FOLDER='./data/CLIP_Embedding', gt_dir='./data/gt', video_dir='./data/video', model='Qwen/Qwen2.5-VL-7B-Instruct', out_model_tag='Qwen2.5-VL-7B-Instruct_HF', num_frames=8, max_pixels=151200, device='cuda', splits='train,val,test', limit=0)
+Loading Qwen2.5-VL model: Qwen/Qwen2.5-VL-7B-Instruct
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.76it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.65it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  5.86it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  6.25it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.72it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.25it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+Processing split 'train' (1283 items) -> outname 'train'
+  [train] processed 20/1283 (zero-vector guards so far: 0)
+  [train] processed 40/1283 (zero-vector guards so far: 0)
+  [train] processed 60/1283 (zero-vector guards so far: 0)
+  [train] processed 80/1283 (zero-vector guards so far: 0)
+  [train] processed 100/1283 (zero-vector guards so far: 0)
+  [train] processed 120/1283 (zero-vector guards so far: 0)
+  [train] processed 140/1283 (zero-vector guards so far: 0)
+  [train] processed 160/1283 (zero-vector guards so far: 0)
+  [train] processed 180/1283 (zero-vector guards so far: 0)
+  [train] processed 200/1283 (zero-vector guards so far: 0)
+  [train] processed 220/1283 (zero-vector guards so far: 0)
+  [train] processed 240/1283 (zero-vector guards so far: 0)
+  [train] processed 260/1283 (zero-vector guards so far: 0)
+  [train] processed 280/1283 (zero-vector guards so far: 0)
+  [train] processed 300/1283 (zero-vector guards so far: 0)
+  [train] processed 320/1283 (zero-vector guards so far: 0)
+  [train] processed 340/1283 (zero-vector guards so far: 0)
+  [train] processed 360/1283 (zero-vector guards so far: 0)
+  [train] processed 380/1283 (zero-vector guards so far: 0)
+  [train] processed 400/1283 (zero-vector guards so far: 0)
+  [train] processed 420/1283 (zero-vector guards so far: 0)
+  [train] processed 440/1283 (zero-vector guards so far: 0)
+  [train] processed 460/1283 (zero-vector guards so far: 0)
+  [train] processed 480/1283 (zero-vector guards so far: 0)
+  [train] processed 500/1283 (zero-vector guards so far: 0)
+  [train] processed 520/1283 (zero-vector guards so far: 0)
+  [train] processed 540/1283 (zero-vector guards so far: 0)
+  [train] processed 560/1283 (zero-vector guards so far: 0)
+  [train] processed 580/1283 (zero-vector guards so far: 0)
+  [train] processed 600/1283 (zero-vector guards so far: 0)
+  [train] processed 620/1283 (zero-vector guards so far: 0)
+  [train] processed 640/1283 (zero-vector guards so far: 0)
+  [train] processed 660/1283 (zero-vector guards so far: 0)
+  [train] processed 680/1283 (zero-vector guards so far: 0)
+  [train] processed 700/1283 (zero-vector guards so far: 0)
+  [train] processed 720/1283 (zero-vector guards so far: 0)
+  [train] processed 740/1283 (zero-vector guards so far: 0)
+  [train] processed 760/1283 (zero-vector guards so far: 0)
+  [train] processed 780/1283 (zero-vector guards so far: 0)
+  [train] processed 800/1283 (zero-vector guards so far: 0)
+  [train] processed 820/1283 (zero-vector guards so far: 0)
+  [train] processed 840/1283 (zero-vector guards so far: 0)
+  [train] processed 860/1283 (zero-vector guards so far: 0)
+  [train] processed 880/1283 (zero-vector guards so far: 0)
+  [train] processed 900/1283 (zero-vector guards so far: 0)
+  [train] processed 920/1283 (zero-vector guards so far: 0)
+  [train] processed 940/1283 (zero-vector guards so far: 0)
+  [train] processed 960/1283 (zero-vector guards so far: 0)
+  [train] processed 980/1283 (zero-vector guards so far: 0)
+  [train] processed 1000/1283 (zero-vector guards so far: 0)
+  [train] processed 1020/1283 (zero-vector guards so far: 0)
+  [train] processed 1040/1283 (zero-vector guards so far: 0)
+  [train] processed 1060/1283 (zero-vector guards so far: 0)
+  [train] processed 1080/1283 (zero-vector guards so far: 0)
+  [train] processed 1100/1283 (zero-vector guards so far: 0)
+  [train] processed 1120/1283 (zero-vector guards so far: 0)
+  [train] processed 1140/1283 (zero-vector guards so far: 0)
+  [train] processed 1160/1283 (zero-vector guards so far: 0)
+  [train] processed 1180/1283 (zero-vector guards so far: 0)
+  [train] processed 1200/1283 (zero-vector guards so far: 0)
+  [train] processed 1220/1283 (zero-vector guards so far: 0)
+  [train] processed 1240/1283 (zero-vector guards so far: 0)
+  [train] processed 1260/1283 (zero-vector guards so far: 0)
+  [train] processed 1280/1283 (zero-vector guards so far: 0)
+Saved 'train': N=1283, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/ImpliHateVid/train_Qwen2.5-VL-7B-Instruct_HF.pt
+Processing split 'val' (325 items) -> outname 'dev_seen'
+  [val] processed 20/325 (zero-vector guards so far: 0)
+  [val] processed 40/325 (zero-vector guards so far: 0)
+  [val] processed 60/325 (zero-vector guards so far: 0)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_465.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_957.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_1.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_246.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_823.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_295.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_423.mp4
+  [val] processed 80/325 (zero-vector guards so far: 7)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_484.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_68.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_134.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_618.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_960.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_273.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_444.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_144.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_470.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_422.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_896.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_428.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_43.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_343.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_82.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_649.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_138.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_18.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_173.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_339.mp4
+  [val] processed 100/325 (zero-vector guards so far: 27)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_321.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_1.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_176.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_174.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_82.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_79.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_119.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_27.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_837.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_447.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_255.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_705.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_100.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_773.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_926.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_198.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_53.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_70.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_592.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_744.mp4
+  [val] processed 120/325 (zero-vector guards so far: 47)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_452.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_800.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_858.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_711.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_821.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_249.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_274.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_549.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_29.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_509.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_32.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_319.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_587.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_216.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_50.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_781.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_341.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_353.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_456.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_264.mp4
+  [val] processed 140/325 (zero-vector guards so far: 67)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_446.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_683.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_529.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_120.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_591.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_430.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_890.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_137.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_290.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_493.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_296.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_462.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_445.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_451.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_433.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_668.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_304.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_304.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_252.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_790.mp4
+  [val] processed 160/325 (zero-vector guards so far: 87)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_441.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_391.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_619.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_142.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_360.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_209.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_197.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_28.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_425.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_208.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_363.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_264.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_418.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_534.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_563.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_75.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_974.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_255.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_685.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_158.mp4
+  [val] processed 180/325 (zero-vector guards so far: 107)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_374.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_967.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_972.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_817.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_492.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_333.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_453.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_483.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_11.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_159.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_381.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_116.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_640.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_458.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_720.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_468.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_797.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_337.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_65.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_555.mp4
+  [val] processed 200/325 (zero-vector guards so far: 127)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_628.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_525.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_367.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_564.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_40.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_38.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_125.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_104.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_499.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_801.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_368.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_69.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_12.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_62.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_376.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_506.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_419.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_219.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_234.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_883.mp4
+  [val] processed 220/325 (zero-vector guards so far: 147)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_29.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_297.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_292.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_34.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_10.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_410.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_62.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_258.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_156.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_335.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_340.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_300.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_401.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_403.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_307.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_425.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_37.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_681.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_246.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_281.mp4
+  [val] processed 240/325 (zero-vector guards so far: 167)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_491.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_191.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_123.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_331.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_193.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_176.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_78.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_238.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_354.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_188.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_694.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_134.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_392.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_499.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_342.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_436.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_161.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_161.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_633.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_64.mp4
+  [val] processed 260/325 (zero-vector guards so far: 187)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_65.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_149.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_97.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_54.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_477.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_373.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_94.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_505.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_41.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_338.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_507.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_43.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_376.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_620.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_84.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_195.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_68.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_115.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_389.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_518.mp4
+  [val] processed 280/325 (zero-vector guards so far: 207)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_390.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_391.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_434.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_486.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_18.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_313.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_368.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_497.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_944.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_454.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_387.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_343.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_97.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_23.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_614.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_825.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_498.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_35.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_24.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_326.mp4
+  [val] processed 300/325 (zero-vector guards so far: 227)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_359.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_405.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_271.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_154.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_84.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_127.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_261.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_193.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_702.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_90.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_53.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_385.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_878.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_58.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_761.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_42.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_252.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_263.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_863.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_500.mp4
+  [val] processed 320/325 (zero-vector guards so far: 247)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_662.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_190.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_523.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_303.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_708.mp4
+Saved 'dev_seen': N=325, Dv=3584, Dt=3584, zero-vector videos=252 -> ./data/CLIP_Embedding/ImpliHateVid/dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt
+Processing split 'test' (401 items) -> outname 'test_seen'
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_474.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_595.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_354.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_851.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_568.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_262.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_465.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_946.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_171.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_39.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_66.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_396.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_888.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_444.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_470.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_115.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_389.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_989.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_380.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_458.mp4
+  [test] processed 20/401 (zero-vector guards so far: 20)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_129.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_479.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_756.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_127.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_295.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_795.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_924.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_259.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_48.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_522.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_184.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_749.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_914.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_323.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_174.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_289.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_180.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_352.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_330.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_329.mp4
+  [test] processed 40/401 (zero-vector guards so far: 40)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_84.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_590.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_399.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_419.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_222.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_217.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_289.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_589.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_496.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_399.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_798.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_894.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_350.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_256.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_345.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_411.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_363.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_463.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_257.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_937.mp4
+  [test] processed 60/401 (zero-vector guards so far: 60)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_700.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_565.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_148.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_398.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_372.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_44.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_57.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_508.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_45.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_412.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_389.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_437.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_147.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_277.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_121.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_285.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_673.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_448.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_631.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_458.mp4
+  [test] processed 80/401 (zero-vector guards so far: 80)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_942.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_311.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_816.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_836.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_452.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_560.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_253.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_103.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_784.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_4.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_226.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_95.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_258.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_258.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_350.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_124.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_199.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_20.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_776.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_370.mp4
+  [test] processed 100/401 (zero-vector guards so far: 100)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_511.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_426.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_830.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_106.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_149.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_211.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_283.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_108.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_61.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_270.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_316.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_513.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_187.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_243.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_374.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_632.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_4.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_50.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_996.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_5.mp4
+  [test] processed 120/401 (zero-vector guards so far: 120)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_490.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_308.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_70.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_415.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_471.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_160.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_429.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_495.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_173.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_466.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_60.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_903.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_183.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_449.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_217.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_216.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_293.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_913.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_130.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_609.mp4
+  [test] processed 140/401 (zero-vector guards so far: 140)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_88.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_892.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_221.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_107.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_44.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_313.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_49.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_185.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_287.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_26.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_17.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_210.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_118.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_207.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_443.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_279.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_356.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_6.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_296.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_10.mp4
+  [test] processed 160/401 (zero-vector guards so far: 160)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_732.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_400.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_657.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_979.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_65.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_847.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_622.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_16.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_88.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_67.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_438.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_349.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_14.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_87.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_150.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_519.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_326.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_308.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_219.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_968.mp4
+  [test] processed 180/401 (zero-vector guards so far: 180)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_93.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_613.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_420.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_280.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_405.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_179.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_30.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_950.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_87.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_299.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_235.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_466.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_5.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_875.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_20.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_134.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_204.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_108.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_707.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_509.mp4
+  [test] processed 200/401 (zero-vector guards so far: 200)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_166.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_382.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_724.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_469.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_861.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_176.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_85.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_435.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_35.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_874.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_501.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_215.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_408.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_461.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_362.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_240.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_850.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_132.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_487.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_741.mp4
+  [test] processed 220/401 (zero-vector guards so far: 220)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_750.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_651.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_602.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_484.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_164.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_378.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_493.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_197.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_573.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_25.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_33.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_158.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_56.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_358.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_284.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_294.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_311.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_371.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_237.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_322.mp4
+  [test] processed 240/401 (zero-vector guards so far: 240)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_498.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_450.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_562.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_915.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_593.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_51.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_78.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_951.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_693.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_212.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_248.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_869.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_514.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_370.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_98.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_256.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_617.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_900.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_40.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_889.mp4
+  [test] processed 260/401 (zero-vector guards so far: 260)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_277.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_826.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_295.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_912.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_566.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_248.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_891.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_324.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_59.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_144.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_412.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_288.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_434.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_95.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_397.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_904.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_203.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_385.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_101.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_89.mp4
+  [test] processed 280/401 (zero-vector guards so far: 280)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_504.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_462.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_753.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_488.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_220.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_155.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_155.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_150.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_553.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_185.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_241.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_324.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_132.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_190.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_939.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_148.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_336.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_138.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_162.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_268.mp4
+  [test] processed 300/401 (zero-vector guards so far: 300)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_89.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_14.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_64.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_156.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_372.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_269.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_763.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_347.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_762.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_101.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_846.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_394.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_245.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_596.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_163.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_128.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_441.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_31.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_64.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_189.mp4
+  [test] processed 320/401 (zero-vector guards so far: 320)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_808.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_736.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_388.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_113.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_440.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_212.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_240.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_876.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_988.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_615.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_298.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_271.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_249.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_679.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_13.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_233.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_887.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_180.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_127.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_388.mp4
+  [test] processed 340/401 (zero-vector guards so far: 340)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_696.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_844.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_206.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_476.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_680.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_382.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_758.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_83.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_96.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_285.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_833.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_142.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_15.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_247.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_983.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_77.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_994.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_305.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_453.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_29.mp4
+  [test] processed 360/401 (zero-vector guards so far: 360)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_831.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_211.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_252.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_79.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_153.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_72.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_474.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_31.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_26.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_493.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_714.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_9.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_327.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_28.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_381.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_86.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_357.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_730.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_650.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_126.mp4
+  [test] processed 380/401 (zero-vector guards so far: 380)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_436.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_7.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_120.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_347.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_379.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_315.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_585.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_496.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/EX_220.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_208.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_788.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_247.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_4.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_2.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_36.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_329.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_278.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_645.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/NH_432.mp4
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_144.mp4
+  [test] processed 400/401 (zero-vector guards so far: 400)
+[WARN] missing video file: ./data/video/ImpliHateVid/All/IM_280.mp4
+Saved 'test_seen': N=401, Dv=3584, Dt=3584, zero-vector videos=401 -> ./data/CLIP_Embedding/ImpliHateVid/test_seen_Qwen2.5-VL-7B-Instruct_HF.pt
+[b2_push] copy: data/CLIP_Embedding/ImpliHateVid -> b2:junyi-data/RGCL_video/embeddings/ImpliHateVid
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 6
+Elapsed time:         0.5sTransferred:   	          0 B / 54.983 MiB, 0%, 0 B/s, ETA -
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         0.9s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /8.895Mi, 0/s, -
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /10.975Mi, 0/s, -
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /35.112Mi, 0/s, -Transferred:   	          0 B / 54.983 MiB, 0%, 0 B/s, ETA -
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         1.5s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /8.895Mi, 0/s, -
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /10.975Mi, 0/s, -
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /35.112Mi, 0/s, -Transferred:   	    3.613 MiB / 54.983 MiB, 7%, 1.807 MiB/s, ETA 28s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         2.0s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 20% /8.895Mi, 943.691Ki/s, 7s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 10% /10.975Mi, 692.448Ki/s, 14
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  1% /35.112Mi, 0/s, -Transferred:   	    6.676 MiB / 54.983 MiB, 12%, 1.807 MiB/s, ETA 26s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         2.4s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 36% /8.895Mi, 943.691Ki/s, 6s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 18% /10.975Mi, 692.448Ki/s, 13
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  3% /35.112Mi, 0/s, -Transferred:   	   13.926 MiB / 54.983 MiB, 25%, 1.807 MiB/s, ETA 22s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         2.9s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 57% /8.895Mi, 2.383Mi/s, 1s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 42% /10.975Mi, 1.979Mi/s, 3s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 11% /35.112Mi, 1.654Mi/s, 18sTransferred:   	   22.707 MiB / 54.983 MiB, 41%, 4.642 MiB/s, ETA 6s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         3.5s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 86% /8.895Mi, 2.383Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 67% /10.975Mi, 1.979Mi/s, 1s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 21% /35.112Mi, 1.654Mi/s, 16sTransferred:   	   33.679 MiB / 54.983 MiB, 61%, 8.420 MiB/s, ETA 2s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         4.0s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /8.895Mi, 2.961Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /10.975Mi, 3.656Mi/s, 0s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 39% /35.112Mi, 4.259Mi/s, 5sTransferred:   	   39.898 MiB / 54.983 MiB, 73%, 8.420 MiB/s, ETA 1s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            2 / 3, 67%
+Elapsed time:         4.5s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 57% /35.112Mi, 4.259Mi/s, 3sTransferred:   	   47.273 MiB / 54.983 MiB, 86%, 9.455 MiB/s, ETA 0s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            2 / 3, 67%
+Elapsed time:         5.0s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 78% /35.112Mi, 6.718Mi/s, 1sTransferred:   	   53.586 MiB / 54.983 MiB, 97%, 9.455 MiB/s, ETA 0s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            2 / 3, 67%
+Elapsed time:         5.4s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 96% /35.112Mi, 6.718Mi/s, 0sTransferred:   	   54.983 MiB / 54.983 MiB, 100%, 9.455 MiB/s, ETA 0s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            2 / 3, 67%
+Elapsed time:         5.9s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:100% /35.112Mi, 7.022Mi/s, 0sTransferred:   	   54.983 MiB / 54.983 MiB, 100%, 9.164 MiB/s, ETA 0s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            3 / 3, 100%
+Elapsed time:         6.0s
+[b2_push] done -> b2:junyi-data/RGCL_video/embeddings/ImpliHateVid
+[mllm_embed] done for DATASET=ImpliHateVid

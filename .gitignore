@@ -10,3 +10,4 @@ logging
 test
 artifacts
 *.out
+.aris/

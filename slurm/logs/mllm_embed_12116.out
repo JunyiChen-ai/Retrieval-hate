@@ -1,0 +1,166 @@
+[2026-07-02 01:13:44] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-02 01:13:44] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-02 01:13:44] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-02 01:13:44] [disk_guard] current /data usage: 205G (threshold 250G, target 250G).
+[2026-07-02 01:13:44] [disk_guard] usage 205G <= threshold 250G: nothing to reclaim. No-op.
+[2026-07-02 01:13:44] [disk_guard] ==== disk_guard end (under threshold) ====
+[mllm_embed] DATASET=MHC_zh NUM_FRAMES=8
+NVIDIA A100-SXM4-80GB, 81920 MiB
+Namespace(dataset='MHC_zh', EXP_FOLDER='./data/CLIP_Embedding', gt_dir='./data/gt', video_dir='./data/video', model='Qwen/Qwen2.5-VL-7B-Instruct', out_model_tag='Qwen2.5-VL-7B-Instruct_HF', num_frames=8, max_pixels=151200, device='cuda', splits='train,val,test', limit=0)
+Loading Qwen2.5-VL model: Qwen/Qwen2.5-VL-7B-Instruct
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.53it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.55it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  6.16it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  6.48it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.62it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.24it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+Processing split 'train' (579 items) -> outname 'train'
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1FN41167Ei.mp4 (DECORDError('[01:13:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1YA411r78E.mp4 (DECORDError('[01:14:10] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1fp4y1M7HW.mp4 (DECORDError('[01:14:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 20/579 (zero-vector guards so far: 0)
+  [train] processed 40/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1AT411y7ER.mp4 (DECORDError('[01:16:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 60/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV16M4y1c7eo.mp4 (DECORDError('[01:16:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1tP4y1b7NN.mp4 (DECORDError('[01:17:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 80/579 (zero-vector guards so far: 0)
+  [train] processed 100/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1C84y1J7LA.mp4 (DECORDError('[01:18:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 120/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1Fi42117Sj.mp4 (DECORDError('[01:19:13] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 140/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV12v411g72s.mp4 (DECORDError('[01:19:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 160/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1KS4y147N8.mp4 (DECORDError('[01:20:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 180/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV15X4y1N74H.mp4 (DECORDError('[01:21:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 200/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1Gk4y1p71q.mp4 (DECORDError('[01:22:01] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 220/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV18f421o7ne.mp4 (DECORDError('[01:23:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 240/579 (zero-vector guards so far: 0)
+  [train] processed 260/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1GN411y7fq.mp4 (DECORDError('[01:24:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV13z4y1x7CP.mp4 (DECORDError('[01:24:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 280/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1Yh411B7XD.mp4 (DECORDError('[01:25:05] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 300/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV15w411w7ZS.mp4 (DECORDError('[01:25:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1Me411J74o.mp4 (DECORDError('[01:26:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 320/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1xV4y1m723.mp4 (DECORDError('[01:26:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 340/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV18N4y1B7qA.mp4 (DECORDError('[01:27:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1QJ4m1P7xo.mp4 (DECORDError('[01:27:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 360/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV13j411R79M.mp4 (DECORDError('[01:28:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 380/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1q94y1L76j.mp4 (DECORDError('[01:29:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 400/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1fU4y1X7Gu.mp4 (DECORDError('[01:29:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1sa411U7wo.mp4 (DECORDError('[01:29:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1UK4y1j7N9.mp4 (DECORDError('[01:30:08] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 420/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1Uu411o7YR.mp4 (DECORDError('[01:30:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 440/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1GD4y1u7Yf.mp4 (DECORDError('[01:31:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 460/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1BL4y1j7iH.mp4 (DECORDError('[01:32:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1Te411m7PS.mp4 (DECORDError('[01:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1oS4y1c7v3.mp4 (DECORDError('[01:32:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1Pj411N7Mb.mp4 (DECORDError('[01:32:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 480/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1S84y1R7B4.mp4 (DECORDError('[01:33:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1tq4y1G74f.mp4 (DECORDError('[01:33:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 500/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1CN4y1h79K.mp4 (DECORDError('[01:34:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1jJ41147t5.mp4 (DECORDError('[01:34:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 520/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1Gb411o7Fr.mp4 (DECORDError('[01:35:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 540/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1iD4y1B7Sw.mp4 (DECORDError('[01:36:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] processed 560/579 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1EN4y1j7rN.mp4 (DECORDError('[01:36:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+Saved 'train': N=579, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/MHC_zh/train_Qwen2.5-VL-7B-Instruct_HF.pt
+Processing split 'val' (78 items) -> outname 'dev_seen'
+  [val] processed 20/78 (zero-vector guards so far: 0)
+  [val] processed 40/78 (zero-vector guards so far: 0)
+  [val] processed 60/78 (zero-vector guards so far: 0)
+[WARN] decord failed for ./data/video/MHC_zh/All/BV1zc411d7LH.mp4 (DECORDError('[01:39:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+Saved 'dev_seen': N=78, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt
+Processing split 'test' (149 items) -> outname 'test_seen'
+  [test] processed 20/149 (zero-vector guards so far: 0)
+  [test] processed 40/149 (zero-vector guards so far: 0)
+  [test] processed 60/149 (zero-vector guards so far: 0)
+  [test] processed 80/149 (zero-vector guards so far: 0)
+  [test] processed 100/149 (zero-vector guards so far: 0)
+  [test] processed 120/149 (zero-vector guards so far: 0)
+  [test] processed 140/149 (zero-vector guards so far: 0)
+Saved 'test_seen': N=149, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/MHC_zh/test_seen_Qwen2.5-VL-7B-Instruct_HF.pt
+[b2_push] copy: data/CLIP_Embedding/MHC_zh -> b2:junyi-data/RGCL_video/embeddings/MHC_zh
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 6
+Elapsed time:         0.5sTransferred:   	          0 B / 22.067 MiB, 0%, 0 B/s, ETA -
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         1.0s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /2.137Mi, 0/s, -
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /4.080Mi, 0/s, -
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /15.850Mi, 0/s, -Transferred:   	      732 KiB / 22.067 MiB, 3%, 0 B/s, ETA -
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         1.5s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 33% /2.137Mi, 0/s, -
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /4.080Mi, 0/s, -
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /15.850Mi, 0/s, -Transferred:   	    2.492 MiB / 22.067 MiB, 11%, 1.246 MiB/s, ETA 15s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         2.0s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 62% /2.137Mi, 1.026Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 28% /4.080Mi, 1.152Mi/s, 2s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /15.850Mi, 0/s, -Transferred:   	    4.977 MiB / 22.067 MiB, 23%, 1.246 MiB/s, ETA 13s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         2.5s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /2.137Mi, 1.026Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 69% /4.080Mi, 1.152Mi/s, 1s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /15.850Mi, 0/s, -Transferred:   	    7.400 MiB / 22.067 MiB, 34%, 2.467 MiB/s, ETA 5s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            0 / 3, 0%
+Elapsed time:         3.0s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /2.137Mi, 1.068Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /4.080Mi, 1.936Mi/s, 0s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  7% /15.850Mi, 493.998Ki/s, 30Transferred:   	    7.994 MiB / 22.067 MiB, 36%, 2.467 MiB/s, ETA 5s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            1 / 3, 33%
+Elapsed time:         3.5s
+Transferring:
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /4.080Mi, 1.936Mi/s, 0s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 11% /15.850Mi, 493.998Ki/s, 29Transferred:   	   11.213 MiB / 22.067 MiB, 51%, 2.803 MiB/s, ETA 3s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            2 / 3, 67%
+Elapsed time:         4.0s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 31% /15.850Mi, 1.103Mi/s, 9sTransferred:   	   14.807 MiB / 22.067 MiB, 67%, 2.803 MiB/s, ETA 2s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            2 / 3, 67%
+Elapsed time:         4.4s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 54% /15.850Mi, 1.103Mi/s, 6sTransferred:   	   20.463 MiB / 22.067 MiB, 93%, 2.803 MiB/s, ETA 0s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            2 / 3, 67%
+Elapsed time:         5.0s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 89% /15.850Mi, 3.062Mi/s, 0sTransferred:   	   22.067 MiB / 22.067 MiB, 100%, 4.093 MiB/s, ETA 0s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            2 / 3, 67%
+Elapsed time:         5.5s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:100% /15.850Mi, 3.062Mi/s, 0sTransferred:   	   22.067 MiB / 22.067 MiB, 100%, 4.093 MiB/s, ETA 0s
+Checks:                 3 / 3, 100%, Listed 9
+Transferred:            3 / 3, 100%
+Elapsed time:         5.5s
+[b2_push] done -> b2:junyi-data/RGCL_video/embeddings/MHC_zh
+[mllm_embed] done for DATASET=MHC_zh

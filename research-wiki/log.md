@@ -1,0 +1,39 @@
+# Research Wiki Log
+
+_Append-only timeline._
+- `2026-07-01T09:20:31Z` Wiki initialized
+- `2026-07-01T09:38:36Z` ingest_paper: ingested paper:das2023_hatemm_multimodal_dataset (arxiv:2305.03915)
+- `2026-07-01T09:39:43Z` ingest_paper: ingested paper:wang2024_multihateclip_multilingual_benchmark (arxiv:2408.03468)
+- `2026-07-01T09:39:44Z` ingest_paper: ingested paper:rehman2025_implihatevid_benchmark_dataset (arxiv:2508.06570)
+- `2026-07-01T09:39:44Z` ingest_paper: ingested paper:wang2025_hateclipseg_segmentlevel_annotated (arxiv:2508.01712)
+- `2026-07-01T09:39:45Z` ingest_paper: ingested paper:cspedessarrias2025_mmhsd_multimodal_hate (arxiv:2508.20546)
+- `2026-07-01T09:39:45Z` ingest_paper: ingested paper:yue2025_multimodal_hate_detection (arxiv:2509.13515)
+- `2026-07-01T09:39:46Z` ingest_paper: ingested paper:zhang2025_enhanced_multimodal_hate (arxiv:2505.12051)
+- `2026-07-01T09:39:46Z` ingest_paper: ingested paper:wang2025_crossmodal_transfer_from (arxiv:2501.15438)
+- `2026-07-01T09:39:47Z` ingest_paper: ingested paper:sun2025_multihateloc_towards_temporal (arxiv:2512.10408)
+- `2026-07-01T09:39:47Z` ingest_paper: ingested paper:koushik2026_tandem_temporalaware_neural (arxiv:2601.11178)
+- `2026-07-01T09:39:47Z` ingest_paper: ingested paper:yang2025_revealing_temporal_label (arxiv:2508.04900)
+- `2026-07-01T09:39:48Z` ingest_paper: ingested paper:koushik2025_towards_robust_framework (arxiv:2502.07138)
+- `2026-07-01T09:39:48Z` ingest_paper: ingested paper:sun2026_towards_trainingfree_multimodal (arxiv:2602.09637)
+- `2026-07-01T09:39:49Z` ingest_paper: ingested paper:li2026_shedding_facades_connecting (arxiv:2602.00132)
+- `2026-07-01T09:39:49Z` ingest_paper: ingested paper:yang2025_reasoningaware_multimodal_fusion (arxiv:2512.02743)
+- `2026-07-01T09:39:50Z` ingest_paper: ingested paper:wang2024_towards_patronizing_condescending (arxiv:2409.05005)
+- `2026-07-01T09:39:50Z` ingest_paper: ingested paper:yang2026_trainingfree_interpretable_hateful (arxiv:2601.15115)
+- `2026-07-01T09:39:51Z` ingest_paper: ingested paper:lu2026_decoding_multimodal_cues (arxiv:2606.11953)
+- `2026-07-01T09:39:51Z` ingest_paper: ingested paper:mei2025_robust_adaptation_large (arxiv:2502.13061)
+- `2026-07-01T09:39:52Z` ingest_paper: ingested paper:mei2023_improving_hateful_meme (arxiv:2311.08110)
+- `2026-07-01T09:39:52Z` ingest_paper: ingested paper:gupta2022_adima_abuse_detection (arxiv:2202.07991)
+- `2026-07-01T09:40:40Z` ingest_paper: ingested paper:zhang2025_dehate_holistic_hateful (arxiv:)
+- `2026-07-01T09:40:40Z` ingest_paper: ingested paper:lang2025_biting_off_more (arxiv:)
+- `2026-07-01T09:40:40Z` ingest_paper: ingested paper:jing2025_hvguard_utilizing_multimodal (arxiv:)
+- `2026-07-01T09:40:40Z` ingest_paper: ingested paper:maity2025_multimodal_approach_hate (arxiv:)
+- `2026-07-01T09:40:40Z` ingest_paper: ingested paper:rehman2025_detecting_hate_diversity (arxiv:)
+- `2026-07-01T10:39:30Z` upsert_idea: added idea:rgcl-mllm-video-iter1 [stage=proposed outcome=pending]
+- `2026-07-01T13:47:28Z` upsert_idea: updated idea:rgcl-mllm-video-iter1 [stage=proposed outcome=pending]
+- `2026-07-02T05:29:27Z` upsert_idea: added idea:multigranularity-temporal-retrieval [stage=archived outcome=negative]
+- `2026-07-02T05:29:38Z` upsert_idea: added idea:cross-dataset-knn-memory [stage=piloted outcome=positive]
+- `2026-07-02T05:29:44Z` upsert_idea: added idea:lora-mllm-encoder-lever [stage=piloted outcome=mixed]
+- `2026-07-02T05:30:38Z` add_experiment: added exp:exp-baseline-reproduction [verdict=yes confidence=high]
+- `2026-07-02T05:30:38Z` add_experiment: added exp:exp-seg-mode-ablation [verdict=no confidence=high]
+- `2026-07-02T05:30:53Z` add_experiment: added exp:exp-cross-dataset-transfer [verdict=yes confidence=high]
+- `2026-07-02T05:30:54Z` add_experiment: added exp:exp-lora-sft-encoder [verdict=partial confidence=high]

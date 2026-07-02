@@ -1,0 +1,196 @@
+[2026-07-02 02:19:09] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-02 02:19:09] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-02 02:19:09] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-02 02:19:09] [disk_guard] current /data usage: 206G (threshold 250G, target 250G).
+[2026-07-02 02:19:09] [disk_guard] usage 206G <= threshold 250G: nothing to reclaim. No-op.
+[2026-07-02 02:19:09] [disk_guard] ==== disk_guard end (under threshold) ====
+[mllm_embed_impli] GPU:
+NVIDIA A100-SXM4-80GB, 81920 MiB
+[mllm_embed_impli] mounting b2:junyi-data/ImpliHateVid at /data/jehc223/home/tmp/tmp.28In8lDvPs
+[mllm_embed_impli] mount ready:
+Explicit Hate Videos
+Implicit Hate Videos
+Non Hate Videos
+Test_videos.xlsx
+Train_videos.xlsx
+Val_videos.xlsx
+[mllm_embed_impli] created 2009 symlinks in data/video/ImpliHateVid/All/
+[mllm_embed_impli] DATASET=ImpliHateVid NUM_FRAMES=8
+Namespace(dataset='ImpliHateVid', EXP_FOLDER='./data/CLIP_Embedding', gt_dir='./data/gt', video_dir='./data/video', model='Qwen/Qwen2.5-VL-7B-Instruct', out_model_tag='Qwen2.5-VL-7B-Instruct_HF', num_frames=8, max_pixels=151200, device='cuda', splits='train,val,test', limit=0)
+Loading Qwen2.5-VL model: Qwen/Qwen2.5-VL-7B-Instruct
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.37it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.23it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  5.82it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  6.14it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.56it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.05it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+Processing split 'train' (1283 items) -> outname 'train'
+  [train] processed 20/1283 (zero-vector guards so far: 0)
+  [train] processed 40/1283 (zero-vector guards so far: 0)
+  [train] processed 60/1283 (zero-vector guards so far: 0)
+  [train] processed 80/1283 (zero-vector guards so far: 0)
+  [train] processed 100/1283 (zero-vector guards so far: 0)
+  [train] processed 120/1283 (zero-vector guards so far: 0)
+  [train] processed 140/1283 (zero-vector guards so far: 0)
+  [train] processed 160/1283 (zero-vector guards so far: 0)
+  [train] processed 180/1283 (zero-vector guards so far: 0)
+  [train] processed 200/1283 (zero-vector guards so far: 0)
+  [train] processed 220/1283 (zero-vector guards so far: 0)
+  [train] processed 240/1283 (zero-vector guards so far: 0)
+  [train] processed 260/1283 (zero-vector guards so far: 0)
+  [train] processed 280/1283 (zero-vector guards so far: 0)
+  [train] processed 300/1283 (zero-vector guards so far: 0)
+  [train] processed 320/1283 (zero-vector guards so far: 0)
+  [train] processed 340/1283 (zero-vector guards so far: 0)
+  [train] processed 360/1283 (zero-vector guards so far: 0)
+  [train] processed 380/1283 (zero-vector guards so far: 0)
+  [train] processed 400/1283 (zero-vector guards so far: 0)
+  [train] processed 420/1283 (zero-vector guards so far: 0)
+  [train] processed 440/1283 (zero-vector guards so far: 0)
+  [train] processed 460/1283 (zero-vector guards so far: 0)
+  [train] processed 480/1283 (zero-vector guards so far: 0)
+  [train] processed 500/1283 (zero-vector guards so far: 0)
+  [train] processed 520/1283 (zero-vector guards so far: 0)
+  [train] processed 540/1283 (zero-vector guards so far: 0)
+  [train] processed 560/1283 (zero-vector guards so far: 0)
+  [train] processed 580/1283 (zero-vector guards so far: 0)
+  [train] processed 600/1283 (zero-vector guards so far: 0)
+  [train] processed 620/1283 (zero-vector guards so far: 0)
+  [train] processed 640/1283 (zero-vector guards so far: 0)
+  [train] processed 660/1283 (zero-vector guards so far: 0)
+  [train] processed 680/1283 (zero-vector guards so far: 0)
+  [train] processed 700/1283 (zero-vector guards so far: 0)
+  [train] processed 720/1283 (zero-vector guards so far: 0)
+  [train] processed 740/1283 (zero-vector guards so far: 0)
+  [train] processed 760/1283 (zero-vector guards so far: 0)
+  [train] processed 780/1283 (zero-vector guards so far: 0)
+  [train] processed 800/1283 (zero-vector guards so far: 0)
+  [train] processed 820/1283 (zero-vector guards so far: 0)
+  [train] processed 840/1283 (zero-vector guards so far: 0)
+  [train] processed 860/1283 (zero-vector guards so far: 0)
+  [train] processed 880/1283 (zero-vector guards so far: 0)
+  [train] processed 900/1283 (zero-vector guards so far: 0)
+  [train] processed 920/1283 (zero-vector guards so far: 0)
+  [train] processed 940/1283 (zero-vector guards so far: 0)
+  [train] processed 960/1283 (zero-vector guards so far: 0)
+  [train] processed 980/1283 (zero-vector guards so far: 0)
+  [train] processed 1000/1283 (zero-vector guards so far: 0)
+  [train] processed 1020/1283 (zero-vector guards so far: 0)
+  [train] processed 1040/1283 (zero-vector guards so far: 0)
+  [train] processed 1060/1283 (zero-vector guards so far: 0)
+  [train] processed 1080/1283 (zero-vector guards so far: 0)
+  [train] processed 1100/1283 (zero-vector guards so far: 0)
+  [train] processed 1120/1283 (zero-vector guards so far: 0)
+  [train] processed 1140/1283 (zero-vector guards so far: 0)
+  [train] processed 1160/1283 (zero-vector guards so far: 0)
+  [train] processed 1180/1283 (zero-vector guards so far: 0)
+  [train] processed 1200/1283 (zero-vector guards so far: 0)
+  [train] processed 1220/1283 (zero-vector guards so far: 0)
+  [train] processed 1240/1283 (zero-vector guards so far: 0)
+  [train] processed 1260/1283 (zero-vector guards so far: 0)
+  [train] processed 1280/1283 (zero-vector guards so far: 0)
+Saved 'train': N=1283, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/ImpliHateVid/train_Qwen2.5-VL-7B-Instruct_HF.pt
+Processing split 'val' (325 items) -> outname 'dev_seen'
+  [val] processed 20/325 (zero-vector guards so far: 0)
+  [val] processed 40/325 (zero-vector guards so far: 0)
+  [val] processed 60/325 (zero-vector guards so far: 0)
+  [val] processed 80/325 (zero-vector guards so far: 0)
+  [val] processed 100/325 (zero-vector guards so far: 0)
+  [val] processed 120/325 (zero-vector guards so far: 0)
+  [val] processed 140/325 (zero-vector guards so far: 0)
+  [val] processed 160/325 (zero-vector guards so far: 0)
+  [val] processed 180/325 (zero-vector guards so far: 0)
+  [val] processed 200/325 (zero-vector guards so far: 0)
+  [val] processed 220/325 (zero-vector guards so far: 0)
+  [val] processed 240/325 (zero-vector guards so far: 0)
+  [val] processed 260/325 (zero-vector guards so far: 0)
+  [val] processed 280/325 (zero-vector guards so far: 0)
+  [val] processed 300/325 (zero-vector guards so far: 0)
+  [val] processed 320/325 (zero-vector guards so far: 0)
+Saved 'dev_seen': N=325, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/ImpliHateVid/dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt
+Processing split 'test' (401 items) -> outname 'test_seen'
+  [test] processed 20/401 (zero-vector guards so far: 0)
+  [test] processed 40/401 (zero-vector guards so far: 0)
+  [test] processed 60/401 (zero-vector guards so far: 0)
+  [test] processed 80/401 (zero-vector guards so far: 0)
+  [test] processed 100/401 (zero-vector guards so far: 0)
+  [test] processed 120/401 (zero-vector guards so far: 0)
+  [test] processed 140/401 (zero-vector guards so far: 0)
+  [test] processed 160/401 (zero-vector guards so far: 0)
+  [test] processed 180/401 (zero-vector guards so far: 0)
+  [test] processed 200/401 (zero-vector guards so far: 0)
+  [test] processed 220/401 (zero-vector guards so far: 0)
+  [test] processed 240/401 (zero-vector guards so far: 0)
+  [test] processed 260/401 (zero-vector guards so far: 0)
+  [test] processed 280/401 (zero-vector guards so far: 0)
+  [test] processed 300/401 (zero-vector guards so far: 0)
+  [test] processed 320/401 (zero-vector guards so far: 0)
+  [test] processed 340/401 (zero-vector guards so far: 0)
+  [test] processed 360/401 (zero-vector guards so far: 0)
+  [test] processed 380/401 (zero-vector guards so far: 0)
+  [test] processed 400/401 (zero-vector guards so far: 0)
+Saved 'test_seen': N=401, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/ImpliHateVid/test_seen_Qwen2.5-VL-7B-Instruct_HF.pt
+[verify] train: N=1283, shape=(1283, 3584), zero_rows=0 (0.0%)
+[verify] dev_seen: N=325, shape=(325, 3584), zero_rows=0 (0.0%)
+[verify] test_seen: N=401, shape=(401, 3584), zero_rows=0 (0.0%)
+[verify] All splits look clean (<=5% zero rows).
+[b2_push] copy: data/CLIP_Embedding/ImpliHateVid -> b2:junyi-data/RGCL_video/embeddings/ImpliHateVid
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 6
+Elapsed time:         0.5sTransferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 6
+Elapsed time:         1.0sTransferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 6
+Elapsed time:         1.4sTransferred:   	          0 B / 19.871 MiB, 0%, 0 B/s, ETA -
+Checks:                 5 / 6, 83%, Listed 12
+Transferred:            0 / 2, 0%
+Elapsed time:         1.9s
+Checking:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: checking
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /8.895Mi, 0/s, -
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /10.975Mi, 0/s, -Transferred:   	    2.148 MiB / 19.871 MiB, 11%, 0 B/s, ETA -
+Checks:                 5 / 6, 83%, Listed 12
+Transferred:            0 / 2, 0%
+Elapsed time:         2.5s
+Checking:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: checking
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 13% /8.895Mi, 0/s, -
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  8% /10.975Mi, 0/s, -Transferred:   	    4.430 MiB / 19.871 MiB, 22%, 0 B/s, ETA -
+Checks:                 5 / 6, 83%, Listed 12
+Transferred:            0 / 2, 0%
+Elapsed time:         3.0s
+Checking:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: checking
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 35% /8.895Mi, 1.215Mi/s, 4s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 11% /10.975Mi, 953.962Ki/s, 10Transferred:   	    8.492 MiB / 19.871 MiB, 43%, 1.477 MiB/s, ETA 7s
+Checks:                 5 / 6, 83%, Listed 12
+Transferred:            0 / 2, 0%
+Elapsed time:         3.4s
+Checking:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: checking
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 69% /8.895Mi, 1.215Mi/s, 2s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 21% /10.975Mi, 953.962Ki/s, 9sTransferred:   	   14.985 MiB / 19.871 MiB, 75%, 1.477 MiB/s, ETA 3s
+Checks:                 5 / 6, 83%, Listed 12
+Transferred:            0 / 2, 0%
+Elapsed time:         3.9s
+Checking:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: checking
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /8.895Mi, 3.482Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 55% /10.975Mi, 1.950Mi/s, 2sTransferred:   	   19.871 MiB / 19.871 MiB, 100%, 3.746 MiB/s, ETA 0s
+Checks:                 6 / 6, 100%, Listed 12
+Transferred:            0 / 2, 0%
+Elapsed time:         4.5s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /8.895Mi, 3.482Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /10.975Mi, 1.950Mi/s, 0sTransferred:   	   19.871 MiB / 19.871 MiB, 100%, 3.974 MiB/s, ETA 0s
+Checks:                 6 / 6, 100%, Listed 12
+Transferred:            1 / 2, 50%
+Elapsed time:         5.0s
+Transferring:
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /10.975Mi, 3.658Mi/s, 0sTransferred:   	   19.871 MiB / 19.871 MiB, 100%, 3.974 MiB/s, ETA 0s
+Checks:                 6 / 6, 100%, Listed 12
+Transferred:            2 / 2, 100%
+Elapsed time:         5.2s
+[b2_push] done -> b2:junyi-data/RGCL_video/embeddings/ImpliHateVid
+[mllm_embed_impli] done for DATASET=ImpliHateVid

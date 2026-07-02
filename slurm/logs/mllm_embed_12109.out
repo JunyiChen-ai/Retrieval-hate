@@ -1,0 +1,144 @@
+[2026-07-01 23:54:08] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-01 23:54:08] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-01 23:54:08] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-01 23:54:08] [disk_guard] current /data usage: 204G (threshold 250G, target 250G).
+[2026-07-01 23:54:08] [disk_guard] usage 204G <= threshold 250G: nothing to reclaim. No-op.
+[2026-07-01 23:54:08] [disk_guard] ==== disk_guard end (under threshold) ====
+[mllm_embed] DATASET=HateMM NUM_FRAMES=8
+NVIDIA A100-SXM4-80GB, 81920 MiB
+Namespace(dataset='HateMM', EXP_FOLDER='./data/CLIP_Embedding', gt_dir='./data/gt', video_dir='./data/video', model='Qwen/Qwen2.5-VL-7B-Instruct', out_model_tag='Qwen2.5-VL-7B-Instruct_HF', num_frames=8, max_pixels=151200, device='cuda', splits='train,val,test', limit=0)
+Loading Qwen2.5-VL model: Qwen/Qwen2.5-VL-7B-Instruct
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.54it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.77it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  6.31it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  6.60it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  7.01it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.50it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+Processing split 'train' (744 items) -> outname 'train'
+  [train] processed 20/744 (zero-vector guards so far: 0)
+  [train] processed 40/744 (zero-vector guards so far: 0)
+  [train] processed 60/744 (zero-vector guards so far: 0)
+  [train] processed 80/744 (zero-vector guards so far: 0)
+  [train] processed 100/744 (zero-vector guards so far: 0)
+  [train] processed 120/744 (zero-vector guards so far: 0)
+  [train] processed 140/744 (zero-vector guards so far: 0)
+  [train] processed 160/744 (zero-vector guards so far: 0)
+  [train] processed 180/744 (zero-vector guards so far: 0)
+  [train] processed 200/744 (zero-vector guards so far: 0)
+  [train] processed 220/744 (zero-vector guards so far: 0)
+  [train] processed 240/744 (zero-vector guards so far: 0)
+  [train] processed 260/744 (zero-vector guards so far: 0)
+  [train] processed 280/744 (zero-vector guards so far: 0)
+  [train] processed 300/744 (zero-vector guards so far: 0)
+  [train] processed 320/744 (zero-vector guards so far: 0)
+  [train] processed 340/744 (zero-vector guards so far: 0)
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0x3f12c400] stream 0, offset 0x23cc8c9: partial file
+[WARN] decord failed for ./data/video/HateMM/All/hate_video_95.mp4 (DECORDError('[00:02:24] /github/workspace/src/video/video_reader.cc:486: Error: av_read_frame failed with 1094995529')); trying PyAV.
+Invalid NAL unit size (1472 > 1168).
+missing picture in access unit with size 1172
+Invalid NAL unit size (1472 > 1168).
+Error splitting the input into NAL units.
+[WARN] PyAV failed for ./data/video/HateMM/All/hate_video_95.mp4 (InvalidDataError(1094995529, 'Invalid data found when processing input', 'avcodec_send_packet()', (16, 'h264', 'Error splitting the input into NAL units.\n'))).
+[WARN] no decodable frames for ./data/video/HateMM/All/hate_video_95.mp4.
+  [train] processed 360/744 (zero-vector guards so far: 1)
+  [train] processed 380/744 (zero-vector guards so far: 1)
+  [train] processed 400/744 (zero-vector guards so far: 1)
+  [train] processed 420/744 (zero-vector guards so far: 1)
+  [train] processed 440/744 (zero-vector guards so far: 1)
+  [train] processed 460/744 (zero-vector guards so far: 1)
+  [train] processed 480/744 (zero-vector guards so far: 1)
+  [train] processed 500/744 (zero-vector guards so far: 1)
+  [train] processed 520/744 (zero-vector guards so far: 1)
+  [train] processed 540/744 (zero-vector guards so far: 1)
+  [train] processed 560/744 (zero-vector guards so far: 1)
+  [train] processed 580/744 (zero-vector guards so far: 1)
+  [train] processed 600/744 (zero-vector guards so far: 1)
+  [train] processed 620/744 (zero-vector guards so far: 1)
+  [train] processed 640/744 (zero-vector guards so far: 1)
+  [train] processed 660/744 (zero-vector guards so far: 1)
+  [train] processed 680/744 (zero-vector guards so far: 1)
+  [train] processed 700/744 (zero-vector guards so far: 1)
+  [train] processed 720/744 (zero-vector guards so far: 1)
+  [train] processed 740/744 (zero-vector guards so far: 1)
+Saved 'train': N=744, Dv=3584, Dt=3584, zero-vector videos=1 -> ./data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct_HF.pt
+Processing split 'val' (107 items) -> outname 'dev_seen'
+  [val] processed 20/107 (zero-vector guards so far: 0)
+  [val] processed 40/107 (zero-vector guards so far: 0)
+  [val] processed 60/107 (zero-vector guards so far: 0)
+  [val] processed 80/107 (zero-vector guards so far: 0)
+  [val] processed 100/107 (zero-vector guards so far: 0)
+Saved 'dev_seen': N=107, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/HateMM/dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt
+Processing split 'test' (215 items) -> outname 'test_seen'
+  [test] processed 20/215 (zero-vector guards so far: 0)
+  [test] processed 40/215 (zero-vector guards so far: 0)
+  [test] processed 60/215 (zero-vector guards so far: 0)
+  [test] processed 80/215 (zero-vector guards so far: 0)
+  [test] processed 100/215 (zero-vector guards so far: 0)
+  [test] processed 120/215 (zero-vector guards so far: 0)
+  [test] processed 140/215 (zero-vector guards so far: 0)
+  [test] processed 160/215 (zero-vector guards so far: 0)
+  [test] processed 180/215 (zero-vector guards so far: 0)
+  [test] processed 200/215 (zero-vector guards so far: 0)
+Saved 'test_seen': N=215, Dv=3584, Dt=3584, zero-vector videos=0 -> ./data/CLIP_Embedding/HateMM/test_seen_Qwen2.5-VL-7B-Instruct_HF.pt
+[b2_push] copy: data/CLIP_Embedding/HateMM -> b2:junyi-data/RGCL_video/embeddings/HateMM
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 3
+Elapsed time:         0.5sTransferred:   	          0 B / 29.187 MiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 6
+Transferred:            0 / 3, 0%
+Elapsed time:         1.0s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /2.931Mi, 0/s, -
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /5.887Mi, 0/s, -
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /20.369Mi, 0/s, -Transferred:   	      828 KiB / 29.187 MiB, 3%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 6
+Transferred:            0 / 3, 0%
+Elapsed time:         1.5s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 27% /2.931Mi, 0/s, -
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /5.887Mi, 0/s, -
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  0% /20.369Mi, 0/s, -Transferred:   	    3.613 MiB / 29.187 MiB, 12%, 1.807 MiB/s, ETA 14s
+Checks:                 0 / 0, -, Listed 6
+Transferred:            0 / 3, 0%
+Elapsed time:         2.0s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 56% /2.931Mi, 1.433Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 16% /5.887Mi, 987.006Ki/s, 5s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  4% /20.369Mi, 0/s, -Transferred:   	    7.361 MiB / 29.187 MiB, 25%, 1.807 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 6
+Transferred:            0 / 3, 0%
+Elapsed time:         2.5s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /2.931Mi, 1.433Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 47% /5.887Mi, 987.006Ki/s, 3s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:  7% /20.369Mi, 0/s, -Transferred:   	   11.486 MiB / 29.187 MiB, 39%, 3.828 MiB/s, ETA 4s
+Checks:                 0 / 0, -, Listed 6
+Transferred:            0 / 3, 0%
+Elapsed time:         3.0s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /2.931Mi, 1.465Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt: 89% /5.887Mi, 2.185Mi/s, 0s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 16% /20.369Mi, 926.001Ki/s, 18Transferred:   	   14.970 MiB / 29.187 MiB, 51%, 3.828 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 6
+Transferred:            0 / 3, 0%
+Elapsed time:         3.5s
+Transferring:
+ *         dev_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /2.931Mi, 1.465Mi/s, 0s
+ *        test_seen_Qwen2.5-VL-7B-Instruct_HF.pt:100% /5.887Mi, 2.185Mi/s, 0s
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 30% /20.369Mi, 926.001Ki/s, 15Transferred:   	   19.283 MiB / 29.187 MiB, 66%, 4.821 MiB/s, ETA 2s
+Checks:                 0 / 0, -, Listed 6
+Transferred:            2 / 3, 67%
+Elapsed time:         4.0s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 51% /20.369Mi, 3.040Mi/s, 3sTransferred:   	   26.814 MiB / 29.187 MiB, 92%, 4.821 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 6
+Transferred:            2 / 3, 67%
+Elapsed time:         4.5s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt: 88% /20.369Mi, 3.040Mi/s, 0sTransferred:   	   29.187 MiB / 29.187 MiB, 100%, 5.837 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 6
+Transferred:            2 / 3, 67%
+Elapsed time:         5.0s
+Transferring:
+ *            train_Qwen2.5-VL-7B-Instruct_HF.pt:100% /20.369Mi, 5.092Mi/s, 0sTransferred:   	   29.187 MiB / 29.187 MiB, 100%, 5.837 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 6
+Transferred:            3 / 3, 100%
+Elapsed time:         5.0s
+[b2_push] done -> b2:junyi-data/RGCL_video/embeddings/HateMM
+[mllm_embed] done for DATASET=HateMM

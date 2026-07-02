@@ -1,0 +1,105 @@
+[train] DATASET=MHC EPOCHS=2
+Running RGCL video training: DATASET=MHC MODEL=openai_clip-vit-large-patch14-336_HF FAISS_GPU=False
+Namespace(path='./data/', output_path='./logging/Retrieval/MHC/RAC_video/RAC_lr0.0001_Bz64_Ep2_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/', model='openai_clip-vit-large-patch14-336_HF', dataset='MHC', similarity_threshold=-1.0, fusion_mode='align', topk=20, majority_voting='arithmetic', metric='cos', loss='triplet', triplet_margin=0.1, norm_feats_loss=False, l2_sqrt=False, hybrid_loss=True, ce_weight=0.5, pos_weight_value=None, num_layers=3, proj_dim=1024, map_dim=1024, dropout=[0.2, 0.4, 0.1], batch_norm=False, last_layer='none', epochs=2, batch_size=64, lr=0.0001, weight_decay=0.0001, lr_scheduler=False, num_workers=24, grad_clip=0.1, no_pseudo_gold_positives=1, in_batch_loss=True, hard_negatives_loss=True, no_hard_negatives=1, no_hard_positives=0, hard_negatives_multiple=12, Faiss_GPU=False, reindex_every_step=False, sparse_dictionary=None, use_attribute=True, sparse_topk=None, eval_retrieval=True, log_interval=10, final_eval=False, exp_comment='', group_name='RAC_video', seed=0, device='cuda', visualise_embed=False, force=True, save_embed=False)
+Image feature dimension:  1024
+Text feature dimension:  768
+Unknown dataset: {} using binary classification by default
+classifier_hateClipper(
+  (img_proj): Sequential(
+    (0): Linear(in_features=1024, out_features=1024, bias=True)
+    (1): Dropout(p=0.2, inplace=False)
+  )
+  (text_proj): Sequential(
+    (0): Linear(in_features=768, out_features=1024, bias=True)
+    (1): Dropout(p=0.2, inplace=False)
+  )
+  (mlp): Sequential(
+    (0): Dropout(p=0.4, inplace=False)
+    (1): Linear(in_features=1024, out_features=1024, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.1, inplace=False)
+    (4): Linear(in_features=1024, out_features=1024, bias=True)
+    (5): ReLU()
+    (6): Dropout(p=0.1, inplace=False)
+    (7): Linear(in_features=1024, out_features=1024, bias=True)
+    (8): ReLU()
+    (9): Dropout(p=0.1, inplace=False)
+  )
+  (output_layer): Linear(in_features=1024, out_features=1, bias=True)
+)
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:00<00:00,  1.00it/s]100%|██████████| 2/2 [00:01<00:00,  1.37it/s]100%|██████████| 2/2 [00:01<00:00,  1.30it/s]
+Train Epoch: 0 [0/9 (0%)]	Loss: 0.902203
+dev  Epoch 0 acc: 0.6875 roc: 0.4284 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6858 
+test Epoch 0 acc: 0.6957 roc: 0.4388 pre: 0.0000 recall: 0.0000 f1: 0.0000
+Val_Retrieval Epoch  0 acc: 0.7500 roc: 0.7658 pre: 0.6923 recall: 0.3600 f1: 0.4737
+Test_Retrieval Epoch 0 acc: 0.7702 roc: 0.7453 pre: 0.7500 recall: 0.3673 f1: 0.4932
+ 
+Current Epoch Acc:  tensor(0.6875) Best model so far, saving...
+Train Epoch: 1 [0/9 (0%)]	Loss: 0.843546
+dev  Epoch 1 acc: 0.6875 roc: 0.5273 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6894 
+test Epoch 1 acc: 0.6957 roc: 0.4778 pre: 0.0000 recall: 0.0000 f1: 0.0000
+Val_Retrieval Epoch  1 acc: 0.7125 roc: 0.7091 pre: 0.5714 recall: 0.3200 f1: 0.4103
+Test_Retrieval Epoch 1 acc: 0.7391 roc: 0.6808 pre: 0.7059 recall: 0.2449 f1: 0.3636
+ 
+Last Epoch, saving...
+[b2_push] copy: logging -> b2:junyi-data/RGCL_video/logs/MHC
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 1
+Elapsed time:         0.5sTransferred:   	          0 B / 38.056 MiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 9
+Transferred:            0 / 2, 0%
+Elapsed time:         1.0s
+Transferring:
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  0% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:  0% /19.028Mi, 0/s, -Transferred:   	      732 KiB / 38.056 MiB, 2%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 9
+Transferred:            0 / 2, 0%
+Elapsed time:         1.5s
+Transferring:
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  3% /19.028Mi, 0/s, -
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:  0% /19.028Mi, 0/s, -Transferred:   	    2.273 MiB / 38.056 MiB, 6%, 1.137 MiB/s, ETA 31s
+Checks:                 0 / 0, -, Listed 9
+Transferred:            0 / 2, 0%
+Elapsed time:         2.0s
+Transferring:
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:  8% /19.028Mi, 955.956Ki/s, 
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:  3% /19.028Mi, 571.961Ki/s, Transferred:   	    6.773 MiB / 38.056 MiB, 18%, 1.137 MiB/s, ETA 27s
+Checks:                 0 / 0, -, Listed 9
+Transferred:            0 / 2, 0%
+Elapsed time:         2.4s
+Transferring:
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 21% /19.028Mi, 955.956Ki/s, 
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt: 14% /19.028Mi, 571.961Ki/s, Transferred:   	   12.336 MiB / 38.056 MiB, 32%, 1.137 MiB/s, ETA 22s
+Checks:                 0 / 0, -, Listed 9
+Transferred:            0 / 2, 0%
+Elapsed time:         3.0s
+Transferring:
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 35% /19.028Mi, 3.139Mi/s, 3s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt: 29% /19.028Mi, 2.154Mi/s, 6sTransferred:   	   22.742 MiB / 38.056 MiB, 60%, 4.112 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 9
+Transferred:            0 / 2, 0%
+Elapsed time:         3.4s
+Transferring:
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt: 69% /19.028Mi, 3.139Mi/s, 1s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt: 50% /19.028Mi, 2.154Mi/s, 4sTransferred:   	   34.587 MiB / 38.056 MiB, 91%, 4.112 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 9
+Transferred:            0 / 2, 0%
+Elapsed time:         4.0s
+Transferring:
+ * Retrieval/MHC/RAC_vide…el_0_tensor(0.6875).pt:100% /19.028Mi, 5.853Mi/s, 0s
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt: 81% /19.028Mi, 4.686Mi/s, 0sTransferred:   	   38.056 MiB / 38.056 MiB, 100%, 8.647 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 9
+Transferred:            1 / 2, 50%
+Elapsed time:         4.5s
+Transferring:
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:100% /19.028Mi, 4.686Mi/s, 0sTransferred:   	   38.056 MiB / 38.056 MiB, 100%, 7.611 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 9
+Transferred:            1 / 2, 50%
+Elapsed time:         5.0s
+Transferring:
+ * Retrieval/MHC/RAC_vide…last_model_1_0.7125.pt:100% /19.028Mi, 4.757Mi/s, 0sTransferred:   	   38.056 MiB / 38.056 MiB, 100%, 7.611 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 9
+Transferred:            2 / 2, 100%
+Elapsed time:         5.0s
+[b2_push] done -> b2:junyi-data/RGCL_video/logs/MHC
+[train] done for DATASET=MHC

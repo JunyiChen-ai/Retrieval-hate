@@ -1,0 +1,153 @@
+[ckpt] HateMM -> logging/Retrieval/HateMM/RAC_video_CLIP/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_24_0.8411214953271028.pt
+[ckpt] MHC -> logging/Retrieval/MHC/RAC_video_CLIP/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_26_0.75.pt
+[ckpt] MHC_zh -> logging/Retrieval/MHC_zh/RAC_video_CLIP/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_29_0.8076923076923077.pt
+[ckpt] ImpliHateVid -> logging/Retrieval/ImpliHateVid/RAC_video_CLIP/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_18_0.9138461538461539.pt
+
+############## IN-DOMAIN DIAGONAL (use_sim=True; matches quoted baselines) ##############
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : HateMM
+  memory   M   : HateMM  (train+val  N=851)
+  eval/test T  : HateMM  (test  N=215)
+  macro-F1 : 0.8204
+  acc      : 0.8279
+  roc      : 0.8877
+  pos-F1   : 0.7836   (majority-class acc baseline: 0.6000)
+RESULT_JSON {'trained_on': 'HateMM', 'memory': 'HateMM', 'test': 'HateMM', 'macro_f1': 0.8204, 'macro_pre': 0.821, 'macro_recall': 0.8198, 'acc': 0.8279, 'roc': 0.8877, 'pos_f1': 0.7836, 'majority_acc': 0.6, 'mem_N': 851, 'test_N': 215}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : MHC
+  memory   M   : MHC  (train+val  N=629)
+  eval/test T  : MHC  (test  N=161)
+  macro-F1 : 0.7113
+  acc      : 0.7826
+  roc      : 0.8335
+  pos-F1   : 0.5679   (majority-class acc baseline: 0.6957)
+RESULT_JSON {'trained_on': 'MHC', 'memory': 'MHC', 'test': 'MHC', 'macro_f1': 0.7113, 'macro_pre': 0.7586, 'macro_recall': 0.6945, 'acc': 0.7826, 'roc': 0.8335, 'pos_f1': 0.5679, 'majority_acc': 0.6957, 'mem_N': 629, 'test_N': 161}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : MHC_zh
+  memory   M   : MHC_zh  (train+val  N=657)
+  eval/test T  : MHC_zh  (test  N=149)
+  macro-F1 : 0.7706
+  acc      : 0.8054
+  roc      : 0.8378
+  pos-F1   : 0.6813   (majority-class acc baseline: 0.6980)
+RESULT_JSON {'trained_on': 'MHC_zh', 'memory': 'MHC_zh', 'test': 'MHC_zh', 'macro_f1': 0.7706, 'macro_pre': 0.769, 'macro_recall': 0.7723, 'acc': 0.8054, 'roc': 0.8378, 'pos_f1': 0.6813, 'majority_acc': 0.698, 'mem_N': 657, 'test_N': 149}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : ImpliHateVid
+  memory   M   : ImpliHateVid  (train+val  N=1608)
+  eval/test T  : ImpliHateVid  (test  N=401)
+  macro-F1 : 0.9202
+  acc      : 0.9202
+  roc      : 0.9713
+  pos-F1   : 0.9196   (majority-class acc baseline: 0.5012)
+RESULT_JSON {'trained_on': 'ImpliHateVid', 'memory': 'ImpliHateVid', 'test': 'ImpliHateVid', 'macro_f1': 0.9202, 'macro_pre': 0.9202, 'macro_recall': 0.9202, 'acc': 0.9202, 'roc': 0.9713, 'pos_f1': 0.9196, 'majority_acc': 0.5012, 'mem_N': 1608, 'test_N': 401}
+
+############## FULL MATRIX (plain arithmetic vote, use_sim=False) ##############
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : HateMM
+  memory   M   : HateMM  (train+val  N=851)
+  eval/test T  : HateMM  (test  N=215)
+  macro-F1 : 0.8204
+  acc      : 0.8279
+  roc      : 0.8691
+  pos-F1   : 0.7836   (majority-class acc baseline: 0.6000)
+RESULT_JSON {'trained_on': 'HateMM', 'memory': 'HateMM', 'test': 'HateMM', 'macro_f1': 0.8204, 'macro_pre': 0.821, 'macro_recall': 0.8198, 'acc': 0.8279, 'roc': 0.8691, 'pos_f1': 0.7836, 'majority_acc': 0.6, 'mem_N': 851, 'test_N': 215}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : MHC
+  memory   M   : MHC  (train+val  N=629)
+  eval/test T  : MHC  (test  N=161)
+  macro-F1 : 0.7113
+  acc      : 0.7826
+  roc      : 0.8094
+  pos-F1   : 0.5679   (majority-class acc baseline: 0.6957)
+RESULT_JSON {'trained_on': 'MHC', 'memory': 'MHC', 'test': 'MHC', 'macro_f1': 0.7113, 'macro_pre': 0.7586, 'macro_recall': 0.6945, 'acc': 0.7826, 'roc': 0.8094, 'pos_f1': 0.5679, 'majority_acc': 0.6957, 'mem_N': 629, 'test_N': 161}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : MHC_zh
+  memory   M   : MHC_zh  (train+val  N=657)
+  eval/test T  : MHC_zh  (test  N=149)
+  macro-F1 : 0.7706
+  acc      : 0.8054
+  roc      : 0.8299
+  pos-F1   : 0.6813   (majority-class acc baseline: 0.6980)
+RESULT_JSON {'trained_on': 'MHC_zh', 'memory': 'MHC_zh', 'test': 'MHC_zh', 'macro_f1': 0.7706, 'macro_pre': 0.769, 'macro_recall': 0.7723, 'acc': 0.8054, 'roc': 0.8299, 'pos_f1': 0.6813, 'majority_acc': 0.698, 'mem_N': 657, 'test_N': 149}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : ImpliHateVid
+  memory   M   : ImpliHateVid  (train+val  N=1608)
+  eval/test T  : ImpliHateVid  (test  N=401)
+  macro-F1 : 0.9202
+  acc      : 0.9202
+  roc      : 0.9687
+  pos-F1   : 0.9196   (majority-class acc baseline: 0.5012)
+RESULT_JSON {'trained_on': 'ImpliHateVid', 'memory': 'ImpliHateVid', 'test': 'ImpliHateVid', 'macro_f1': 0.9202, 'macro_pre': 0.9202, 'macro_recall': 0.9202, 'acc': 0.9202, 'roc': 0.9687, 'pos_f1': 0.9196, 'majority_acc': 0.5012, 'mem_N': 1608, 'test_N': 401}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : HateMM
+  memory   M   : MHC  (train+val  N=629)
+  eval/test T  : MHC  (test  N=161)
+  macro-F1 : 0.5481
+  acc      : 0.6957
+  roc      : 0.5781
+  pos-F1   : 0.2899   (majority-class acc baseline: 0.6957)
+RESULT_JSON {'trained_on': 'HateMM', 'memory': 'MHC', 'test': 'MHC', 'macro_f1': 0.5481, 'macro_pre': 0.6117, 'macro_recall': 0.5574, 'acc': 0.6957, 'roc': 0.5781, 'pos_f1': 0.2899, 'majority_acc': 0.6957, 'mem_N': 629, 'test_N': 161}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : MHC
+  memory   M   : HateMM  (train+val  N=851)
+  eval/test T  : HateMM  (test  N=215)
+  macro-F1 : 0.7514
+  acc      : 0.7628
+  roc      : 0.8204
+  pos-F1   : 0.6982   (majority-class acc baseline: 0.6000)
+RESULT_JSON {'trained_on': 'MHC', 'memory': 'HateMM', 'test': 'HateMM', 'macro_f1': 0.7514, 'macro_pre': 0.7531, 'macro_recall': 0.75, 'acc': 0.7628, 'roc': 0.8204, 'pos_f1': 0.6982, 'majority_acc': 0.6, 'mem_N': 851, 'test_N': 215}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : HateMM
+  memory   M   : ImpliHateVid  (train+val  N=1608)
+  eval/test T  : ImpliHateVid  (test  N=401)
+  macro-F1 : 0.8553
+  acc      : 0.8554
+  roc      : 0.9270
+  pos-F1   : 0.8513   (majority-class acc baseline: 0.5012)
+RESULT_JSON {'trained_on': 'HateMM', 'memory': 'ImpliHateVid', 'test': 'ImpliHateVid', 'macro_f1': 0.8553, 'macro_pre': 0.8563, 'macro_recall': 0.8553, 'acc': 0.8554, 'roc': 0.927, 'pos_f1': 0.8513, 'majority_acc': 0.5012, 'mem_N': 1608, 'test_N': 401}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : ImpliHateVid
+  memory   M   : HateMM  (train+val  N=851)
+  eval/test T  : HateMM  (test  N=215)
+  macro-F1 : 0.6773
+  acc      : 0.6977
+  roc      : 0.7319
+  pos-F1   : 0.5963   (majority-class acc baseline: 0.6000)
+RESULT_JSON {'trained_on': 'ImpliHateVid', 'memory': 'HateMM', 'test': 'HateMM', 'macro_f1': 0.6773, 'macro_pre': 0.6843, 'macro_recall': 0.6744, 'acc': 0.6977, 'roc': 0.7319, 'pos_f1': 0.5963, 'majority_acc': 0.6, 'mem_N': 851, 'test_N': 215}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : MHC
+  memory   M   : MHC_zh  (train+val  N=657)
+  eval/test T  : MHC_zh  (test  N=149)
+  macro-F1 : 0.6334
+  acc      : 0.7584
+  roc      : 0.7957
+  pos-F1   : 0.4194   (majority-class acc baseline: 0.6980)
+RESULT_JSON {'trained_on': 'MHC', 'memory': 'MHC_zh', 'test': 'MHC_zh', 'macro_f1': 0.6334, 'macro_pre': 0.7611, 'macro_recall': 0.6252, 'acc': 0.7584, 'roc': 0.7957, 'pos_f1': 0.4194, 'majority_acc': 0.698, 'mem_N': 657, 'test_N': 149}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : MHC_zh
+  memory   M   : MHC  (train+val  N=629)
+  eval/test T  : MHC  (test  N=161)
+  macro-F1 : 0.6447
+  acc      : 0.7391
+  roc      : 0.6863
+  pos-F1   : 0.4615   (majority-class acc baseline: 0.6957)
+RESULT_JSON {'trained_on': 'MHC_zh', 'memory': 'MHC', 'test': 'MHC', 'macro_f1': 0.6447, 'macro_pre': 0.6929, 'macro_recall': 0.6346, 'acc': 0.7391, 'roc': 0.6863, 'pos_f1': 0.4615, 'majority_acc': 0.6957, 'mem_N': 629, 'test_N': 161}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : MHC
+  memory   M   : ImpliHateVid  (train+val  N=1608)
+  eval/test T  : ImpliHateVid  (test  N=401)
+  macro-F1 : 0.8353
+  acc      : 0.8354
+  roc      : 0.9122
+  pos-F1   : 0.8308   (majority-class acc baseline: 0.5012)
+RESULT_JSON {'trained_on': 'MHC', 'memory': 'ImpliHateVid', 'test': 'ImpliHateVid', 'macro_f1': 0.8353, 'macro_pre': 0.8363, 'macro_recall': 0.8353, 'acc': 0.8354, 'roc': 0.9122, 'pos_f1': 0.8308, 'majority_acc': 0.5012, 'mem_N': 1608, 'test_N': 401}
+CROSS-DATASET kNN MEMORY TRANSFER
+  trained-on A : ImpliHateVid
+  memory   M   : MHC  (train+val  N=629)
+  eval/test T  : MHC  (test  N=161)
+  macro-F1 : 0.6348
+  acc      : 0.7019
+  roc      : 0.6486
+  pos-F1   : 0.4783   (majority-class acc baseline: 0.6957)
+RESULT_JSON {'trained_on': 'ImpliHateVid', 'memory': 'MHC', 'test': 'MHC', 'macro_f1': 0.6348, 'macro_pre': 0.6414, 'macro_recall': 0.6307, 'acc': 0.7019, 'roc': 0.6486, 'pos_f1': 0.4783, 'majority_acc': 0.6957, 'mem_N': 629, 'test_N': 161}
+======== CROSS MATRIX DONE ========
