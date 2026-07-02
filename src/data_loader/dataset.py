@@ -496,6 +496,11 @@ def load_feats_from_CLIP(path, dataset, model, all=False):
     elif "Memotion" in dataset:
         train, dev, test_seen = load_feats_Memotion(path, model, dataset)
         return train, dev, test_seen
+    elif dataset in ("MHC", "MHCsmoke", "MHC_zh", "HateMM", "ImpliHateVid"):
+        # All video datasets share the standard 3-split pooled-embedding cache
+        # {ids, img_feats, text_feats, labels} at {path}/{dataset}/{split}_{model}.pt
+        train, dev, test_seen = load_feats_MHC(path, model, dataset)
+        return train, dev, test_seen
     else:
         raise NotImplementedError
 
@@ -595,6 +600,12 @@ def load_feats_HarMeme(path, model):
     test_seen = load_feats_split(
         "{}/{}/test_seen_{}.pt".format(path, dataset, model)
     )
+    return train, dev, test_seen
+
+def load_feats_MHC(path, model, dataset="MHC"):
+    train = load_feats_split("{}/{}/train_{}.pt".format(path, dataset, model))
+    dev = load_feats_split("{}/{}/dev_seen_{}.pt".format(path, dataset, model))
+    test_seen = load_feats_split("{}/{}/test_seen_{}.pt".format(path, dataset, model))
     return train, dev, test_seen
 
 def load_feats_HarmP(path, model):

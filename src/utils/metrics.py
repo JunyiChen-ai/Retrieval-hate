@@ -291,13 +291,25 @@ def compute_metrics_retrieval(logging_dict, labels, majority_voting="mean", topk
     else:
         list_majority_voted_round = (sigmoid(np.array(list_majority_voted))>=0.5)*1
     acc = np.mean(list_majority_voted_round == labels)
+    # Binary-positive P/R/F1 (kept for backward compatibility).
     pre = precision_score(labels, list_majority_voted_round)
     recall = recall_score(labels, list_majority_voted_round)
-    f1 = f1_score(labels, list_majority_voted_round)    
-    
+    f1 = f1_score(labels, list_majority_voted_round)
+    # Macro-averaged P/R/F1 (goal metric: harmful-vs-normal, both classes).
+    macro_pre = precision_score(labels, list_majority_voted_round, average='macro', zero_division=0)
+    macro_recall = recall_score(labels, list_majority_voted_round, average='macro', zero_division=0)
+    macro_f1 = f1_score(labels, list_majority_voted_round, average='macro', zero_division=0)
+    macro = {
+        "acc": float(acc),
+        "macro_f1": float(macro_f1),
+        "macro_pre": float(macro_pre),
+        "macro_recall": float(macro_recall),
+        "roc": float(roc),
+    }
+
     #print("accuracy:",acc)
     #print("AUROC:", roc)
-    return acc, roc, pre, recall, f1, list_majority_voted, labels
+    return acc, roc, pre, recall, f1, list_majority_voted, labels, macro
 
 
 
@@ -426,7 +438,19 @@ def eval_metrics(args, labels, predicted, name="dev_seen", epoch=0, compute_loss
     pre = PRECISION(preds, labels)
     recall = RECALL(preds, labels)
     f1 = F1Score(preds, labels)
-    
+
+    # Macro-averaged metrics (GOAL headline: macro-F1) for the classifier head,
+    # computed via sklearn (binary datasets only; Propaganda is multilabel).
+    macro_str = ""
+    if args.dataset not in ("MMHS-FineGrained", "Propaganda"):
+        labels_np = labels.reshape(-1).long().cpu().numpy()
+        preds_np = preds.reshape(-1).long().cpu().numpy()
+        macro_f1 = f1_score(labels_np, preds_np, average='macro', zero_division=0)
+        macro_pre = precision_score(labels_np, preds_np, average='macro', zero_division=0)
+        macro_recall = recall_score(labels_np, preds_np, average='macro', zero_division=0)
+        macro_str = " | macroF1: {:.4f} macroP: {:.4f} macroR: {:.4f}".format(
+            macro_f1, macro_pre, macro_recall)
+
     if compute_loss:
         lossFn_classifier = nn.BCEWithLogitsLoss()
         if len(labels.shape) == 1:
@@ -434,11 +458,11 @@ def eval_metrics(args, labels, predicted, name="dev_seen", epoch=0, compute_loss
         loss = lossFn_classifier(predicted, labels.float())
 
         if print_score:
-            print("{}  Epoch {} acc: {:.4f} roc: {:.4f} pre: {:.4f} recall: {:.4f} f1: {:.4f} loss: {:.4f} ".format(name, epoch, acc, roc, pre, recall, f1, loss.item()))    
+            print("{}  Epoch {} acc: {:.4f} roc: {:.4f} pre: {:.4f} recall: {:.4f} f1: {:.4f} loss: {:.4f}{}".format(name, epoch, acc, roc, pre, recall, f1, loss.item(), macro_str))
         return acc, roc, pre, recall, f1, loss
     else:
         if print_score:
-            print("{} Epoch {} acc: {:.4f} roc: {:.4f} pre: {:.4f} recall: {:.4f} f1: {:.4f}".format(name, epoch, acc, roc, pre, recall, f1))  
+            print("{} Epoch {} acc: {:.4f} roc: {:.4f} pre: {:.4f} recall: {:.4f} f1: {:.4f}{}".format(name, epoch, acc, roc, pre, recall, f1, macro_str))
         return acc, roc, pre, recall, f1, None
 
 def save_to_json_wandb(args, artifact, name, ids, labels, predicted):

@@ -327,7 +327,7 @@ def dense_retrieve_hard_negatives_pseudo_positive(
     # print("start to get the training features for retrieval")
     # If we set the train_feats and train_labels to None in upper level,
     # We will reindex the searching index with updated training data
-    if train_feats == None or train_labels == None:
+    if train_feats is None or train_labels is None:
         #print("Start to reindex dense retrieval index")
         for i, batch in enumerate(train_dl):
             image_feats = batch["image_feats"].to(args.device)
@@ -482,6 +482,200 @@ def dense_retrieve_hard_negatives_pseudo_positive(
         return hard_negative_features, hard_negative_scores, train_feats, train_labels
     elif args.no_pseudo_gold_positives != 0:
         return hard_negative_features, hard_negative_scores, pseudo_positive_features, pseudo_positive_scores, train_feats, train_labels
+
+
+def _encode_subclip_fused(model, subclip_img_feats, video_text_feats, args, batch_size=512):
+    """Fuse each sub-clip's visual embedding with its PARENT video text through the
+    SAME classifier_hateClipper (align/concat/cross fusion), returning the head's
+    L2-normalised retrieval embedding [N_sub, proj_dim].
+
+    subclip_img_feats: [N_sub, Dv] tensor (sub-clip visual, on any device)
+    video_text_feats:  [N_sub, Dt] tensor (each sub-clip's parent video text, aligned row-wise)
+
+    No new trainable params: this is exactly model(img, text, return_embed=True).
+    Encoded in eval() mode with no_grad (the mined targets are detached anchors, as
+    in the whole-video path where train_feats are treated as fixed within a step).
+    """
+    model.eval()
+    feats_list = []
+    n = subclip_img_feats.shape[0]
+    with torch.no_grad():
+        for start in range(0, n, batch_size):
+            img_c = subclip_img_feats[start : start + batch_size].to(args.device)
+            txt_c = video_text_feats[start : start + batch_size].to(args.device)
+            _, emb = model(img_c, txt_c, return_embed=True)
+            feats_list.append(emb)
+    return torch.cat(feats_list, dim=0)  # [N_sub, proj_dim]
+
+
+def dense_retrieve_segment_hard_negatives_pseudo_positive(
+    query_feats,
+    query_labels,
+    query_parents,
+    corpus_feats,
+    corpus_labels,
+    corpus_parents,
+    args,
+):
+    """Second-granularity (sub-clip) retrieval + MIL drifting-negative mining.
+
+    Mirrors the whole-video dense_retrieve_hard_negatives_pseudo_positive but at
+    the SUB-CLIP granularity, and adds the annotation-free within-video MIL
+    "drifting" hard negative. Fully device-agnostic (uses args.device, so it runs
+    on CPU with --Faiss_GPU False).
+
+    Args:
+        query_feats   [Bq, D]  : fused sub-clip embeddings for the anchor sub-clips.
+        query_labels  [Bq]     : inherited parent labels of the anchors.
+        query_parents [Bq]     : parent-video row index of each anchor sub-clip.
+        corpus_feats  [Nc, D]  : fused sub-clip embeddings for the whole corpus (2nd index).
+        corpus_labels [Nc]     : inherited parent labels of corpus sub-clips.
+        corpus_parents[Nc]     : parent-video row index of each corpus sub-clip.
+        args                   : run args (metric, Faiss_GPU, no_hard_negatives,
+                                 no_pseudo_gold_positives, hard_negatives_multiple, device).
+
+    Returns:
+        seg_hard_negative_features   [Bq, no_hard_negatives, D]
+        seg_pseudo_positive_features [Bq, no_pseudo_gold_positives, D]
+        seg_drift_features           [Bq, 1, D]  (MIL within-video drifting negative)
+        seg_drift_mask               [Bq]        (True where a valid drift neg exists)
+
+    Mining rule (per anchor sub-clip i, parent video p, label y):
+      * pseudo-gold-positive = nearest corpus sub-clip with SAME label y
+        (excluding sub-clips from the same parent p to avoid trivial self-match).
+      * corpus hard-negative  = nearest corpus sub-clip with OPPOSITE label.
+      * within-video MIL drifting negative (annotation-free): among the OTHER
+        sub-clips of a HATEFUL parent video (y==1), pick the one LEAST similar to
+        the video's hate-centroid (mean of that video's own fused sub-clip
+        embeddings). It inherits label 1 but is treated as a hard negative for a
+        genuinely hateful anchor sub-clip -- the benign "drifting" segment. Only
+        emitted for hateful parents with >=2 sub-clips.
+    """
+    device = args.device
+    D = corpus_feats.shape[1]
+    Bq = query_feats.shape[0]
+    no_hn = args.no_hard_negatives
+    no_pp = args.no_pseudo_gold_positives
+
+    # ---- normalise for the chosen metric (cos/l2 -> unit norm; ip -> raw) ----
+    use_gpu = bool(getattr(args, "Faiss_GPU", False))
+    if args.metric == "ip":
+        corpus_norm_t = corpus_feats
+        query_norm_t = query_feats
+    else:
+        corpus_norm_t = torch.nn.functional.normalize(corpus_feats, p=2, dim=1)
+        query_norm_t = torch.nn.functional.normalize(query_feats, p=2, dim=1)
+
+    if args.metric == "l2":
+        index = faiss.IndexFlatL2(D)
+    else:
+        index = faiss.IndexFlatIP(D)
+
+    if use_gpu:
+        res = faiss.StandardGpuResources()
+        index = faiss.index_cpu_to_gpu(res, 0, index)
+        corpus_index_in = corpus_norm_t
+        query_index_in = query_norm_t
+    else:
+        # faiss-cpu wants contiguous float32 numpy arrays.
+        corpus_index_in = corpus_norm_t.detach().cpu().numpy().astype("float32")
+        query_index_in = query_norm_t.detach().cpu().numpy().astype("float32")
+
+    index.add(corpus_index_in)
+    topk = max(no_hn, no_pp, 1) * max(int(getattr(args, "hard_negatives_multiple", 12)), 1)
+    topk = min(topk, corpus_feats.shape[0])
+    D_search, I_search = index.search(query_index_in, topk)
+
+    # numpy view of labels/parents for indexing regardless of tensor/np input
+    corpus_labels_np = (
+        corpus_labels.detach().cpu().numpy()
+        if torch.is_tensor(corpus_labels)
+        else np.asarray(corpus_labels)
+    )
+    corpus_parents_np = (
+        corpus_parents.detach().cpu().numpy()
+        if torch.is_tensor(corpus_parents)
+        else np.asarray(corpus_parents)
+    )
+    query_labels_np = (
+        query_labels.detach().cpu().numpy()
+        if torch.is_tensor(query_labels)
+        else np.asarray(query_labels)
+    )
+    query_parents_np = (
+        query_parents.detach().cpu().numpy()
+        if torch.is_tensor(query_parents)
+        else np.asarray(query_parents)
+    )
+
+    seg_hard_negative_features = torch.zeros(Bq, no_hn, D, device=device)
+    seg_pseudo_positive_features = torch.zeros(Bq, max(no_pp, 1), D, device=device)
+    seg_drift_features = torch.zeros(Bq, 1, D, device=device)
+    seg_drift_mask = torch.zeros(Bq, dtype=torch.bool, device=device)
+
+    # ---- corpus pseudo-gold-positive + opposite-label hard negatives ----
+    for i in range(Bq):
+        row = I_search[i]
+        y = int(query_labels_np[i])
+        p = int(query_parents_np[i])
+        j_hn = 0
+        k_pp = 0
+        for iter_idx in range(len(row)):
+            cand = int(row[iter_idx])
+            cand_label = int(corpus_labels_np[cand])
+            cand_parent = int(corpus_parents_np[cand])
+            if cand_label != y and j_hn < no_hn:
+                seg_hard_negative_features[i][j_hn] = corpus_feats[cand].to(device)
+                j_hn += 1
+            elif cand_label == y and cand_parent != p and k_pp < no_pp:
+                seg_pseudo_positive_features[i][k_pp] = corpus_feats[cand].to(device)
+                k_pp += 1
+            if j_hn >= no_hn and k_pp >= no_pp:
+                break
+
+    # ---- within-video MIL drifting negative (annotation-free) ----
+    # Build per-parent lists of corpus sub-clip rows so we can compute a per-video
+    # hate-centroid and pick the least-consistent (drifting) benign sub-clip.
+    parent_to_rows = {}
+    for r in range(corpus_feats.shape[0]):
+        parent_to_rows.setdefault(int(corpus_parents_np[r]), []).append(r)
+
+    for i in range(Bq):
+        y = int(query_labels_np[i])
+        if y != 1:
+            continue  # MIL drift heuristic applies to HATEFUL videos only
+        p = int(query_parents_np[i])
+        rows = parent_to_rows.get(p, [])
+        if len(rows) < 2:
+            continue  # need >=2 sub-clips to have an "other" drifting sub-clip
+        rows_t = torch.tensor(rows, dtype=torch.long, device=corpus_feats.device)
+        vid_feats = corpus_feats.index_select(0, rows_t)  # [Kv, D]
+        # hate-centroid = mean of this video's own fused sub-clip embeddings
+        if args.metric == "ip":
+            vid_feats_n = vid_feats
+        else:
+            vid_feats_n = torch.nn.functional.normalize(vid_feats, p=2, dim=1)
+        centroid = vid_feats_n.mean(dim=0, keepdim=True)  # [1, D]
+        centroid_n = (
+            centroid if args.metric == "ip"
+            else torch.nn.functional.normalize(centroid, p=2, dim=1)
+        )
+        sims = torch.nn.functional.cosine_similarity(vid_feats_n, centroid_n.expand_as(vid_feats_n), dim=1)
+        # drifting = the sub-clip LEAST similar to the hate-centroid
+        drift_local = int(torch.argmin(sims).item())
+        drift_row = rows[drift_local]
+        # guard against picking the anchor sub-clip itself as its own negative
+        # (anchors are drawn from the same corpus in the per-epoch refresh); if so,
+        # fall back to the 2nd-least-similar sub-clip.
+        seg_drift_features[i][0] = corpus_feats[drift_row].to(device)
+        seg_drift_mask[i] = True
+
+    return (
+        seg_hard_negative_features,
+        seg_pseudo_positive_features,
+        seg_drift_features,
+        seg_drift_mask,
+    )
 
 
 def sparse_retrieve_hard_negatives_pseudo_positive(

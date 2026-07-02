@@ -231,13 +231,15 @@ def final_evaluation(
         logging_dict, eval_labels = retrieve_evaluate_RAC(
             train_dl, eval_dl, model, largest_retrieval=args.topk, threshold=args.similarity_threshold,
             args=args, eval_name=eval_name)
-        acc, roc, pre, recall, f1, _, _ = compute_metrics_retrieval(
+        acc, roc, pre, recall, f1, _, _, macro = compute_metrics_retrieval(
             logging_dict, eval_labels, majority_voting=args.majority_voting, topk=args.topk
         )
         metrics_table.add_data(
             eval_name, acc, roc, pre, recall, f1)
         print("Final Evaluation {}: acc: {:.4f} roc: {:.4f} pre: {:.4f} recall: {:.4f} f1: {:.4f}".format(
             eval_name, acc, roc, pre, recall, f1))
+        print("Final Evaluation {}: macroF1: {:.4f} macroP: {:.4f} macroR: {:.4f} acc: {:.4f} roc: {:.4f}".format(
+            eval_name, macro["macro_f1"], macro["macro_pre"], macro["macro_recall"], macro["acc"], macro["roc"]))
 
         logging_table = wandb.Table(columns=logging_columns)
         os.makedirs("{}/{}/".format(args.output_path,
@@ -375,14 +377,23 @@ def retrieve_evaluate_RAC_(
     # For different loss functions, we need to change the index type
     index = faiss.IndexFlatIP(dim)
 
-    res = faiss.StandardGpuResources()
-    index = faiss.index_cpu_to_gpu(res, 0, index)
-    train_feats = torch.nn.functional.normalize(
-        train_feats, p=2, dim=1)
-    evaluate_feats = torch.nn.functional.normalize(
-        evaluate_feats, p=2, dim=1)
-    index.add(train_feats)
-    D, I = index.search(evaluate_feats, largest_retrieval)
+    if args.Faiss_GPU:
+        res = faiss.StandardGpuResources()
+        index = faiss.index_cpu_to_gpu(res, 0, index)
+        train_feats = torch.nn.functional.normalize(
+            train_feats, p=2, dim=1)
+        evaluate_feats = torch.nn.functional.normalize(
+            evaluate_feats, p=2, dim=1)
+        index.add(train_feats)
+        D, I = index.search(evaluate_feats, largest_retrieval)
+    else:
+        # CPU-only faiss: index over numpy float32, L2-normalize for cosine sim.
+        train_feats_np = train_feats.cpu().detach().numpy().astype("float32")
+        evaluate_feats_np = evaluate_feats.cpu().detach().numpy().astype("float32")
+        faiss.normalize_L2(train_feats_np)
+        faiss.normalize_L2(evaluate_feats_np)
+        index.add(train_feats_np)
+        D, I = index.search(evaluate_feats_np, largest_retrieval)
 
     # pickle_dict["train_feats_normalized"] = train_feats if not args.Faiss_GPU else train_feats.cpu().detach().numpy().astype("float32")
     # pickle_dict["evaluate_feats_normalized"] = evaluate_feats if not args.Faiss_GPU else evaluate_feats.cpu().detach().numpy().astype("float32")

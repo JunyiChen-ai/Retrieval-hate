@@ -207,12 +207,46 @@ def parse_args():
     arg_parser.add_argument("--force", type=lambda x: (str(x).lower() == "true"),
                             default=False, help="Whether to force the run or not")
     arg_parser.add_argument(
+        "--warmup", type=int, default=5,
+        help="Minimum epoch index (0-based) eligible for best-epoch selection. "
+             "Epochs 0..(warmup-1) are ignored when choosing the best checkpoint. "
+             "If no epoch >= warmup exists (run too short), falls back to all epochs."
+    )
+    arg_parser.add_argument(
         "--save_embed",
         type=lambda x: (str(x).lower() == "true"),
         default=False,
         help="Save the embedding or not",
     )
-    
+
+    # <----------------- Multi-granularity (segment-RGCL) Configs ----------------->
+    arg_parser.add_argument(
+        "--lambda_seg", type=float, default=0.0,
+        help="Weight of the sub-clip (segment) RGCL loss term. "
+             "0 == baseline (whole-video only), exact no-op. Paper default 0.5.")
+    arg_parser.add_argument(
+        "--num_subclips", type=int, default=4,
+        help="Number of sub-clips (K) per video for the segment cache lookup.")
+    arg_parser.add_argument(
+        "--subclip_cache", type=str, default="auto",
+        help="Path to the TRAIN sub-clip cache .pt, or 'auto' to derive it as "
+             "<path>/CLIP_Embedding/<dataset>/train_subclipK<K>_<model>.pt. "
+             "Only loaded when --lambda_seg > 0.")
+    arg_parser.add_argument(
+        "--seg_mode", type=str, default="full",
+        choices=["full", "driftneg", "milmax"],
+        help="Variant of the segment-RGCL loss (only active when --lambda_seg > 0):\n"
+             "  full     = pseudo-gold positive (nearest same-label sub-clip) + "
+             "within-video drifting hard-neg + opposite-label hard-neg (original).\n"
+             "  driftneg = DROP the label-inherited pseudo-gold positive; use the "
+             "anchor's OWN whole-video fused embedding as the (clean) positive and "
+             "push it away from BOTH the within-video drifting hard-neg and the "
+             "opposite-label hard-neg. Motivated by: inherited positives are noisy "
+             "(most sub-clips of a hateful video are benign) while the drifting "
+             "hard-neg is well-founded.\n"
+             "  milmax   = represent each video by its most-hateful sub-clip "
+             "(max hate logit) and contrast at that representative only.")
+
     args = arg_parser.parse_args()
 
     return args
@@ -229,6 +263,7 @@ def model_pass(
     artifacts=None,
     train_set=None,
     sparse_dict=None,
+    segment_cache=None,
 ):
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     num_training_steps = args.epochs * len(train_dl)
@@ -244,6 +279,9 @@ def model_pass(
     best_acc = 0.0
     best_roc = 0.0
     best_epoch_path = None
+    # Per-epoch record for warmup-floor fallback: list of (epoch, select_acc, select_roc, ckpt_path)
+    all_epoch_records = []
+    warmup = args.warmup  # only epochs >= warmup are eligible for best-epoch selection
     for epoch in tqdm(range(epochs)):
         # train_feats, train_labels is used for dense retrieval for
         # hard negatives and pseudo gold positives
@@ -278,14 +316,19 @@ def model_pass(
                 sparse_retrieval_dictionary=sparse_dict,
                 train_feats=train_feats,
                 train_labels=train_labels,
+                segment_cache=segment_cache,
             )
             """if args.sparse_dictionary is None and (args.no_hard_negatives != 0 and args.no_pseudo_gold_positives != 0):
                 # Only for dense retrieval
                 train_feats = train_feats.detach()
                 train_labels = train_labels.detach()"""
-            if not((args.no_hard_negatives == 0 and args.no_pseudo_gold_positives == 0) or args.sparse_dictionary is not None): 
-                train_feats = train_feats.detach()
-                train_labels = train_labels.detach()
+            if not((args.no_hard_negatives == 0 and args.no_pseudo_gold_positives == 0) or args.sparse_dictionary is not None):
+                # The CPU-FAISS retrieval path (Faiss_GPU=False) returns these as
+                # numpy arrays, which have no .detach(); only detach real tensors.
+                if torch.is_tensor(train_feats):
+                    train_feats = train_feats.detach()
+                if torch.is_tensor(train_labels):
+                    train_labels = train_labels.detach()
             optimizer.zero_grad()
             total_loss.backward()
             torch.nn.utils.clip_grad_norm_(
@@ -332,7 +375,7 @@ def model_pass(
                 epoch=epoch,
             )
 
-            acc, roc, pre, recall, f1, prediction, labels = compute_metrics_retrieval(
+            acc, roc, pre, recall, f1, prediction, labels, macro_val = compute_metrics_retrieval(
                 logging_dict, evaluate_labels, majority_voting=args.majority_voting, topk=args.topk, use_sim=True
             )
 
@@ -347,12 +390,14 @@ def model_pass(
                 epoch=epoch,
             )
 
-            acc_test, roc_test, pre_test, recall_test, f1_test, prediction, labels = compute_metrics_retrieval(
+            acc_test, roc_test, pre_test, recall_test, f1_test, prediction, labels, macro_test = compute_metrics_retrieval(
                 logging_dict_test, test_labels, majority_voting=args.majority_voting, topk=args.topk, use_sim=True
             )
         else:
             acc, roc, pre, recall, f1 = 0, 0, 0, 0, 0
             acc_test, roc_test, pre_test, recall_test, f1_test = 0, 0, 0, 0, 0
+            macro_val = {"acc": 0, "macro_f1": 0, "macro_pre": 0, "macro_recall": 0, "roc": 0}
+            macro_test = {"acc": 0, "macro_f1": 0, "macro_pre": 0, "macro_recall": 0, "roc": 0}
             
 
         if args.hybrid_loss:
@@ -362,7 +407,8 @@ def model_pass(
 
 
             
-        # Print out the summary of the epoch
+        # Print out the summary of the epoch.
+        # Binary-positive P/R/F1 (legacy) ...
         print(
             "Val_Retrieval Epoch  {} acc: {:.4f} roc: {:.4f} \
 pre: {:.4f} recall: {:.4f} f1: {:.4f}".format(
@@ -385,26 +431,66 @@ pre: {:.4f} recall: {:.4f} f1: {:.4f}".format(
                 f1_test,
             )
         )
+        # ... and macro-averaged metrics (GOAL headline: macro-F1).
+        print(
+            "Val_Retrieval Epoch  {} macroF1: {:.4f} macroP: {:.4f} macroR: {:.4f} acc: {:.4f} roc: {:.4f}".format(
+                epoch,
+                macro_val["macro_f1"],
+                macro_val["macro_pre"],
+                macro_val["macro_recall"],
+                macro_val["acc"],
+                macro_val["roc"],
+            )
+        )
+        print(
+            "Test_Retrieval Epoch {} macroF1: {:.4f} macroP: {:.4f} macroR: {:.4f} acc: {:.4f} roc: {:.4f}".format(
+                epoch,
+                macro_test["macro_f1"],
+                macro_test["macro_pre"],
+                macro_test["macro_recall"],
+                macro_test["acc"],
+                macro_test["roc"],
+            )
+        )
         # print new line
         print(" ")
-        # Save the model if the val criterion is the best so far
-        acc_ = acc_ if args.hybrid_loss else acc
-        if acc_ > best_acc:
-            print("Current Epoch Acc: ", acc_, "Best model so far, saving...")
-            best_acc = acc_
+        # Save the model if the val criterion is the best so far.
+        # Model selection is by the *retrieval* metric (Val_Retrieval acc,
+        # tie-broken by ROC), NOT the hybrid classifier-head dev accuracy.
+        # This guarantees the saved checkpoint == the genuinely best retrieval
+        # epoch (the kNN-vote head is the primary metric for this method).
+        select_acc = acc
+        select_roc = roc
 
-            # Delete the previous best model
-            #if best_epoch_path is not None:
-            #    if os.path.exists(best_epoch_path):
-            #        os.remove(best_epoch_path)
+        # Save a checkpoint for every epoch so the fallback path can load any epoch.
+        epoch_ckpt_path = args.output_path + \
+            "/ckpt/epoch_model_{}_{}.pt".format(epoch, str(select_acc))
+        torch.save(model.state_dict(), epoch_ckpt_path)
+        all_epoch_records.append((epoch, select_acc, select_roc, epoch_ckpt_path))
 
-            best_epoch_path = args.output_path + \
-                "/ckpt/best_model_{}_{}.pt".format(epoch, str(acc_))
+        # Warmup floor: only epochs >= warmup are eligible for best-epoch selection.
+        if epoch >= warmup:
+            is_best = (select_acc > best_acc) or (
+                select_acc == best_acc and select_roc > best_roc)
+            if is_best:
+                print("Current Epoch Val_Retrieval acc: ", select_acc,
+                      "roc: ", select_roc, "Best model so far, saving...")
+                best_acc = select_acc
+                best_roc = select_roc
 
-            torch.save(
-                model.state_dict(),
-                best_epoch_path
-            )
+                # Delete the previous best model
+                #if best_epoch_path is not None:
+                #    if os.path.exists(best_epoch_path):
+                #        os.remove(best_epoch_path)
+
+                best_epoch_path = args.output_path + \
+                    "/ckpt/best_model_{}_{}.pt".format(epoch, str(select_acc))
+
+                torch.save(
+                    model.state_dict(),
+                    best_epoch_path
+                )
+
         # If last epoch or early stop, save the model
         if epoch == args.epochs - 1:
             print("Last Epoch, saving...")
@@ -413,6 +499,21 @@ pre: {:.4f} recall: {:.4f} f1: {:.4f}".format(
                 args.output_path +
                 "/ckpt/last_model_{}_{}.pt".format(epoch, acc)
             )
+
+    # Warmup-floor fallback: if no epoch >= warmup was ever selected (run was too
+    # short, i.e. args.epochs <= warmup), fall back to the global best over ALL epochs.
+    if best_epoch_path is None and all_epoch_records:
+        print("WARNING: no epoch >= warmup ({}) reached; falling back to best epoch "
+              "over all {} epochs.".format(warmup, len(all_epoch_records)))
+        fb_epoch, fb_acc, fb_roc, fb_ckpt = max(
+            all_epoch_records, key=lambda r: (r[1], r[2]))
+        best_epoch_path = args.output_path + \
+            "/ckpt/best_model_{}_{}.pt".format(fb_epoch, str(fb_acc))
+        import shutil
+        shutil.copy(fb_ckpt, best_epoch_path)
+        print("Fallback selected epoch {} (Val_Retrieval acc: {}, roc: {})".format(
+            fb_epoch, fb_acc, fb_roc))
+
     return model, best_epoch_path
 
 
@@ -527,8 +628,35 @@ def main(args):
     else:
         sparse_dict = None
 
+    # <----------------- Load the sub-clip (segment) cache for multi-granularity ----------------->
+    # Only loaded when --lambda_seg > 0; lambda_seg == 0 keeps segment_cache=None
+    # so the whole-video path is an EXACT no-op (identical to baseline).
+    segment_cache = None
+    if args.lambda_seg > 0:
+        if args.subclip_cache == "auto":
+            subclip_path = os.path.join(
+                args.path, "CLIP_Embedding", args.dataset,
+                "train_subclipK{}_{}.pt".format(args.num_subclips, args.model))
+        else:
+            subclip_path = args.subclip_cache
+        print("Loading sub-clip (segment) cache: {}".format(subclip_path))
+        sc = torch.load(subclip_path, map_location="cpu")
+        # Map each parent video id -> its row in the whole-video TRAIN cache.
+        parent_id_to_row = {vid: r for r, vid in enumerate(train_set.ids)}
+        segment_cache = {
+            "subclip_img_feats": sc["subclip_img_feats"].float(),
+            "subclip_parent": sc["subclip_parent"].long(),
+            "labels": sc["labels"].long(),
+            "parent_id_to_row": parent_id_to_row,
+            "video_text_feats": train_set.text_feats.float(),
+        }
+        print("Segment cache loaded: TotalSub={}, K={}, parents={}".format(
+            segment_cache["subclip_img_feats"].shape[0],
+            sc.get("num_subclips", args.num_subclips),
+            len(parent_id_to_row)))
+
     # <----------------- Construct the model ----------------->
-   
+
     #list(enumerate(train_dl))
     image_feat_dim = list(enumerate(train_dl))[0][1]["image_feats"].shape[1]
     text_feat_dim = list(enumerate(train_dl))[0][1]["text_feats"].shape[1]
@@ -553,7 +681,8 @@ def main(args):
         args=args,
         artifacts=None,
         train_set=train_set,
-        sparse_dict=sparse_dict
+        sparse_dict=sparse_dict,
+        segment_cache=segment_cache,
     )
 
 if __name__ == "__main__":

@@ -1,17 +1,23 @@
 import torch
 # torch.autograd.set_detect_anomaly(True)
 import torch.nn as nn
-from utils.retrieval import dense_retrieve_hard_negatives_pseudo_positive, sparse_retrieve_hard_negatives_pseudo_positive
+from utils.retrieval import (
+    dense_retrieve_hard_negatives_pseudo_positive,
+    sparse_retrieve_hard_negatives_pseudo_positive,
+    dense_retrieve_segment_hard_negatives_pseudo_positive,
+    _encode_subclip_fused,
+)
 
 
-def compute_loss(batch, 
-                train_dl, 
-                model, 
-                args, 
-                train_set=None, 
+def compute_loss(batch,
+                train_dl,
+                model,
+                args,
+                train_set=None,
                 sparse_retrieval_dictionary=None,
                 train_feats=None,
-                train_labels=None
+                train_labels=None,
+                segment_cache=None,
                 ):
     ids = batch["ids"]
     batch_size = len(ids)
@@ -530,7 +536,289 @@ def compute_loss(batch,
     else:
         loss_classifier = 0
 
+    # ----------------- Segment-RGCL (multi-granularity) additive term -----------------
+    # L = L_whole_video + lambda_seg * L_segment.
+    # lambda_seg == 0 (or no segment cache) -> EXACT no-op, identical to baseline.
+    lambda_seg = float(getattr(args, "lambda_seg", 0.0))
+    if lambda_seg > 0 and segment_cache is not None:
+        # Pass the batch's whole-video fused embeddings so the segment loss can,
+        # in `driftneg` mode, use each sub-clip's OWN parent-video rep as a clean
+        # positive (see compute_segment_loss). `feats` is grad-tracked.
+        seg_loss = compute_segment_loss(
+            batch, model, args, segment_cache, whole_video_feats=feats)
+        total_loss = total_loss + lambda_seg * seg_loss
+
     return total_loss, torch.mean(in_batch_loss), torch.mean(hard_loss), torch.mean(pseudo_gold_loss), loss_classifier, train_feats, train_labels
+
+
+def _pair_similarity(anchor, other, args):
+    """Row-wise similarity between anchor [B, D] and other [B, D] under args.metric.
+    Returns [B]; larger == more similar (l2 is negated). Mirrors the whole-video path."""
+    if args.metric == "cos":
+        return nn.functional.cosine_similarity(anchor, other, dim=1, eps=1e-8)
+    elif args.metric == "ip":
+        return torch.sum(anchor * other, dim=1) / args.proj_dim
+    else:  # l2
+        l2 = compute_l2(anchor, other, normalise=args.norm_feats_loss, sum_dim=1, sqrt=args.l2_sqrt)
+        return - l2 / args.proj_dim
+
+
+def compute_segment_loss(batch, model, args, segment_cache, whole_video_feats=None):
+    """Sub-clip-granularity retrieval-guided contrastive loss (Delta 1).
+
+    For every sub-clip whose PARENT video is in this batch, we:
+      1. fuse (sub-clip visual, PARENT video text) through the SAME
+         classifier_hateClipper -> fused sub-clip embedding (no new params);
+      2. build/refresh the 2nd FAISS index over the batch's sub-clip corpus and
+         mine, per anchor sub-clip: pseudo-gold-positive (nearest same-label
+         sub-clip), opposite-label hard negative, and the within-video MIL
+         drifting hard negative (annotation-free);
+      3. apply the SAME contrastive/triplet objective form as the whole-video term.
+
+    seg_mode (args.seg_mode, default "full") selects the variant:
+      * "full"     -- original behaviour: pull each anchor sub-clip toward the
+        label-inherited pseudo-gold positive (nearest same-label sub-clip), push
+        it from the within-video drifting hard-neg and the opposite-label hard-neg.
+      * "driftneg" -- DROP the noisy label-inherited pseudo-gold positive.
+        Diagnosis: sub-clips inherit the whole-video label, but most sub-clips of
+        a hateful video are actually benign, so "nearest same-label sub-clip"
+        positives corrupt the space. Instead we use each sub-clip's OWN parent
+        whole-video fused embedding as a CLEAN positive (a real, uncontroversial
+        target) and push the sub-clip away from BOTH the within-video drifting
+        hard-neg and the opposite-label hard-neg. The within-video drifting
+        hard-neg (well-motivated MIL signal) is retained; only the poison
+        (inherited positive) is removed. Requires `whole_video_feats`.
+      * "milmax"   -- represent each parent video by its MOST-hateful sub-clip
+        (max predicted hate logit among its sub-clips) and contrast at that single
+        representative only (pull representative toward parent-video positive if
+        available, else its label-inherited pseudo-gold positive; push from
+        opposite-label hard-neg).
+
+    segment_cache is a dict:
+      {
+        "subclip_img_feats": [TotalSub, Dv]   (all splits' sub-clips for train corpus),
+        "subclip_parent"   : [TotalSub]       (row index into the whole-video train cache),
+        "labels"           : [TotalSub]       (inherited),
+        "parent_id_to_row" : {video_id -> whole-video train row index},
+        "video_text_feats" : [V_train, Dt]    (whole-video train text feats, indexed by parent row),
+      }
+    Only sub-clips whose parent is present in the current batch are used as anchors;
+    the corpus is the batch's own sub-clips (per-step 2nd index), matching the
+    whole-video path's per-epoch index over currently-seen embeddings.
+
+    whole_video_feats [B, proj_dim] : the batch's grad-tracked whole-video fused
+      embeddings (row-aligned with batch["ids"]). Used by "driftneg"/"milmax" as
+      the clean per-video positive.
+    """
+    device = args.device
+    seg_mode = str(getattr(args, "seg_mode", "full"))
+    batch_ids = batch["ids"]
+    parent_id_to_row = segment_cache["parent_id_to_row"]
+    subclip_img = segment_cache["subclip_img_feats"]
+    subclip_parent = segment_cache["subclip_parent"]
+    subclip_label = segment_cache["labels"]
+    video_text = segment_cache["video_text_feats"]
+
+    import numpy as _np
+    # numpy views for masking
+    sc_parent_np = (
+        subclip_parent.detach().cpu().numpy()
+        if torch.is_tensor(subclip_parent) else _np.asarray(subclip_parent)
+    )
+
+    # Rows of the sub-clip cache whose parent video is in this batch.
+    batch_parent_rows = set()
+    for vid in batch_ids:
+        row = parent_id_to_row.get(vid, None)
+        if row is not None:
+            batch_parent_rows.add(int(row))
+    if len(batch_parent_rows) == 0:
+        return torch.tensor(0.0, device=device)
+
+    keep = _np.isin(sc_parent_np, list(batch_parent_rows))
+    keep_idx = _np.nonzero(keep)[0]
+    if keep_idx.shape[0] == 0:
+        return torch.tensor(0.0, device=device)
+
+    keep_t = torch.as_tensor(keep_idx, dtype=torch.long)
+    sc_img = subclip_img.index_select(0, keep_t).to(device).float()   # [Ns, Dv]
+    sc_parent = subclip_parent.index_select(0, keep_t).to(device)      # [Ns]
+    sc_label = subclip_label.index_select(0, keep_t).to(device)        # [Ns]
+
+    # PARENT video text per sub-clip (video text is SHARED across sub-clips).
+    parent_text = video_text.index_select(0, sc_parent.cpu()).to(device).float()  # [Ns, Dt]
+
+    # Map each sub-clip's parent whole-video row -> that video's position in the
+    # current batch, so driftneg/milmax can use the grad-tracked whole-video fused
+    # embedding as a CLEAN per-video positive. Rows aligned with batch["ids"].
+    own_video_target = None      # [Ns, proj_dim] parent whole-video fused embed
+    own_video_valid = None       # [Ns] bool: parent present in this batch
+    if whole_video_feats is not None:
+        row_to_batchidx = {}
+        for bidx, vid in enumerate(batch_ids):
+            prow = parent_id_to_row.get(vid, None)
+            if prow is not None:
+                row_to_batchidx[int(prow)] = bidx
+        sc_parent_kept_np = subclip_parent.index_select(
+            0, keep_t).detach().cpu().numpy()
+        map_idx = _np.array(
+            [row_to_batchidx.get(int(p), -1) for p in sc_parent_kept_np],
+            dtype=_np.int64)
+        own_video_valid = torch.as_tensor(map_idx >= 0, device=device)
+        # Clamp -1 -> 0 for a safe gather; invalidated via own_video_valid.
+        gather_idx = torch.as_tensor(
+            _np.clip(map_idx, 0, None), dtype=torch.long, device=whole_video_feats.device)
+        own_video_target = whole_video_feats.index_select(
+            0, gather_idx).to(device)  # [Ns, proj_dim], grad-tracked
+
+    # Fuse through the SAME head -> fused sub-clip embeddings (retrieval space).
+    # No new trainable params: exactly model(img, text, return_embed=True).
+    model.train()
+    _, sc_feats = model(sc_img, parent_text, return_embed=True)  # [Ns, proj_dim], grad-tracked
+
+    # Non-zero (decodable) sub-clip mask: a zero-vector guard yields all-zero visual.
+    valid_mask = (torch.sum(sc_img, dim=1) != 0)
+
+    # Build the 2nd FAISS index over a DETACHED copy of the fused sub-clip corpus
+    # (targets are fixed anchors, as in the whole-video path). Mine per anchor.
+    corpus_feats = sc_feats.detach()
+    (
+        seg_hard,
+        seg_pos,
+        seg_drift,
+        seg_drift_mask,
+    ) = dense_retrieve_segment_hard_negatives_pseudo_positive(
+        query_feats=corpus_feats,
+        query_labels=sc_label,
+        query_parents=sc_parent,
+        corpus_feats=corpus_feats,
+        corpus_labels=sc_label,
+        corpus_parents=sc_parent,
+        args=args,
+    )
+
+    Ns = sc_feats.shape[0]
+
+    # ---- pseudo-gold-positive similarity (want HIGH) ----
+    # use first mined positive. seg_pos always has >=1 column (see mining fn),
+    # but the video config sets no_pseudo_gold_positives==1.
+    if seg_pos.shape[1] >= 1:
+        pos_target = seg_pos[:, 0, :]                   # [Ns, D]
+        pos_valid = (torch.sum(pos_target, dim=1) != 0)
+        pos_sim = _pair_similarity(sc_feats, pos_target, args)  # [Ns]
+    else:
+        pos_target = torch.zeros(Ns, sc_feats.shape[1], device=device)
+        pos_valid = torch.zeros(Ns, dtype=torch.bool, device=device)
+        pos_sim = torch.zeros(Ns, device=device)
+
+    # ---- opposite-label hard-negative similarity (want LOW) ----
+    if seg_hard.shape[1] >= 1:
+        hn_target = seg_hard[:, 0, :]                   # [Ns, D]
+        hn_valid = (torch.sum(hn_target, dim=1) != 0)
+        hn_sim = _pair_similarity(sc_feats, hn_target, args)
+    else:
+        hn_target = torch.zeros(Ns, sc_feats.shape[1], device=device)
+        hn_valid = torch.zeros(Ns, dtype=torch.bool, device=device)
+        hn_sim = torch.zeros(Ns, device=device)
+
+    # ---- within-video MIL drifting hard-negative similarity (want LOW) ----
+    drift_target = seg_drift[:, 0, :]                   # [Ns, D]
+    drift_valid = seg_drift_mask & (torch.sum(drift_target, dim=1) != 0)
+    drift_sim = _pair_similarity(sc_feats, drift_target, args)
+
+    # ---- own parent whole-video fused embedding as CLEAN positive (want HIGH) ----
+    # (driftneg/milmax). Detach the target so the sub-clip is pulled toward the
+    # video-level rep without dragging the (separately-optimised) whole-video
+    # embedding toward its own sub-clips; the whole-video term already anchors it.
+    if own_video_target is not None:
+        own_sim = _pair_similarity(sc_feats, own_video_target.detach(), args)  # [Ns]
+        own_valid = own_video_valid & (torch.sum(own_video_target, dim=1) != 0)
+    else:
+        own_sim = torch.zeros(Ns, device=device)
+        own_valid = torch.zeros(Ns, dtype=torch.bool, device=device)
+
+    margin = float(getattr(args, "triplet_margin", 0.1))
+    per_anchor = torch.zeros(Ns, device=device)
+    term_count = torch.zeros(Ns, device=device)
+
+    if seg_mode == "driftneg":
+        # DROP the noisy label-inherited pseudo-gold positive. Positive = anchor's
+        # OWN parent whole-video fused embedding (clean, real target). Push from
+        # BOTH the within-video drifting hard-neg and the opposite-label hard-neg.
+        if own_video_target is None:
+            # No whole-video positive available -> degrade to a pure push-only
+            # margin repulsion from the two negatives (still well-defined).
+            m1 = (valid_mask & hn_valid)
+            if m1.any():
+                t1 = torch.relu(hn_sim + margin)
+                per_anchor = per_anchor + torch.where(m1, t1, torch.zeros_like(t1))
+                term_count = term_count + m1.float()
+            m2 = (valid_mask & drift_valid)
+            if m2.any():
+                t2 = torch.relu(drift_sim + margin)
+                per_anchor = per_anchor + torch.where(m2, t2, torch.zeros_like(t2))
+                term_count = term_count + m2.float()
+        else:
+            # own-positive vs opposite-label hard-negative triplet
+            m1 = (valid_mask & own_valid & hn_valid)
+            if m1.any():
+                t1 = torch.relu(hn_sim - own_sim + margin)
+                per_anchor = per_anchor + torch.where(m1, t1, torch.zeros_like(t1))
+                term_count = term_count + m1.float()
+            # own-positive vs within-video drifting hard-negative triplet (MIL delta)
+            m2 = (valid_mask & own_valid & drift_valid)
+            if m2.any():
+                t2 = torch.relu(drift_sim - own_sim + margin)
+                per_anchor = per_anchor + torch.where(m2, t2, torch.zeros_like(t2))
+                term_count = term_count + m2.float()
+
+    elif seg_mode == "milmax":
+        # Represent each parent video by its MOST-hateful sub-clip (max predicted
+        # hate logit) and contrast at that single representative only.
+        # output_sc is the classifier logit per sub-clip.
+        output_sc, _ = model(sc_img, parent_text, return_embed=True)  # logits [Ns, 1]
+        hate_logit = output_sc.reshape(-1)  # [Ns]
+        # Positive per representative: own parent whole-video fused embed if
+        # available, else the label-inherited pseudo-gold positive.
+        rep_pos_sim = own_sim if own_video_target is not None else pos_sim
+        rep_pos_valid = own_valid if own_video_target is not None else pos_valid
+        # Select, per parent, the sub-clip with the max hate logit as representative.
+        sc_parent_np = sc_parent.detach().cpu().numpy()
+        rep_mask = torch.zeros(Ns, dtype=torch.bool, device=device)
+        for p in set(int(x) for x in sc_parent_np):
+            rows = _np.nonzero(sc_parent_np == p)[0]
+            if rows.shape[0] == 0:
+                continue
+            rows_t = torch.as_tensor(rows, dtype=torch.long, device=device)
+            local_max = int(torch.argmax(hate_logit.index_select(0, rows_t)).item())
+            rep_mask[int(rows[local_max])] = True
+        # rep-positive vs opposite-label hard-negative triplet, only at representatives
+        m1 = (rep_mask & valid_mask & rep_pos_valid & hn_valid)
+        if m1.any():
+            t1 = torch.relu(hn_sim - rep_pos_sim + margin)
+            per_anchor = per_anchor + torch.where(m1, t1, torch.zeros_like(t1))
+            term_count = term_count + m1.float()
+
+    else:
+        # seg_mode == "full": ORIGINAL behaviour. Pull to label-inherited
+        # pseudo-gold-positive, push from both hard negatives (corpus
+        # opposite-label + within-video drifting).
+        m1 = (valid_mask & pos_valid & hn_valid)
+        if m1.any():
+            t1 = torch.relu(hn_sim - pos_sim + margin)
+            per_anchor = per_anchor + torch.where(m1, t1, torch.zeros_like(t1))
+            term_count = term_count + m1.float()
+        m2 = (valid_mask & pos_valid & drift_valid)
+        if m2.any():
+            t2 = torch.relu(drift_sim - pos_sim + margin)
+            per_anchor = per_anchor + torch.where(m2, t2, torch.zeros_like(t2))
+            term_count = term_count + m2.float()
+
+    denom = term_count.sum()
+    if denom.item() == 0:
+        return torch.tensor(0.0, device=device)
+    seg_loss = per_anchor.sum() / denom
+    return seg_loss
 
 
 def compute_l2(feats_1, feats_2, normalise=False, sum_dim=1, sqrt=False, eps=1e-5):
