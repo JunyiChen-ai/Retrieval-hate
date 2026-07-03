@@ -660,6 +660,64 @@ def load_feats_Memotion(path, model, dataset):
     )
     return train, dev, test_seen
 
+# <----------------- MLLM structured-archive features (E0b) ----------------->
+# The archive cache is a per-split .pt of {ids, text_feats [N, Da], labels}
+# produced by src/utils/generate_video_archive_HF.py + CLIP text encoding of the
+# structured archive (target groups / mechanism / modality cues / explicitness /
+# neutral summary, English pivot). Each row is generated INDEPENDENTLY per video
+# (no cross-sample information), so using it for train AND eval splits carries
+# no leakage beyond the underlying video content itself.
+
+ARCHIVE_DEFAULT_TAG = "archive_openai_clip-vit-large-patch14-336_HF"
+
+
+def resolve_archive_path(archive_feats_arg, data_path, dataset, split):
+    """Resolve the --archive_feats argument to a concrete per-split .pt path.
+
+    archive_feats_arg:
+      * "auto"                 -> <data_path>/CLIP_Embedding/<dataset>/<split>_<ARCHIVE_DEFAULT_TAG>.pt
+      * a template w/ "{split}"-> template.format(split=split)
+      * anything else          -> treated as a directory containing <split>_<ARCHIVE_DEFAULT_TAG>.pt
+    """
+    import os as _os
+    if archive_feats_arg == "auto":
+        return _os.path.join(
+            data_path, "CLIP_Embedding", dataset,
+            "{}_{}.pt".format(split, ARCHIVE_DEFAULT_TAG))
+    if "{split}" in archive_feats_arg:
+        return archive_feats_arg.format(split=split)
+    # directory form
+    return _os.path.join(
+        archive_feats_arg, "{}_{}.pt".format(split, ARCHIVE_DEFAULT_TAG))
+
+
+def load_archive_feats_split(archive_pt_path, target_ids):
+    """Load archive embeddings for one split, re-ordered to `target_ids`.
+
+    STRICT alignment: every id in target_ids must exist in the archive cache
+    (raises otherwise) -- silent zero-filling could hide misalignment. Row
+    order is resolved by id lookup, never by positional assumption.
+
+    Returns: FloatTensor [len(target_ids), Da]
+    """
+    d = torch.load(archive_pt_path, map_location="cpu")
+    aids = d["ids"]
+    if len(aids) > 0 and isinstance(aids[0], (list, tuple)):
+        aids = [item for sub in aids for item in sub]
+    row_of = {vid: r for r, vid in enumerate(aids)}
+    missing = [vid for vid in target_ids if vid not in row_of]
+    if missing:
+        raise ValueError(
+            "Archive cache {} is missing {} ids required by the main feature "
+            "cache (first few: {}). Refusing to zero-fill; regenerate the "
+            "archive.".format(archive_pt_path, len(missing), missing[:5]))
+    rows = torch.tensor([row_of[vid] for vid in target_ids], dtype=torch.long)
+    feats = d["text_feats"].float().index_select(0, rows)
+    # Optional label sanity: if the archive cache carries labels, they were
+    # checked against the gt at generation time; alignment is by id above.
+    return feats
+
+
 def get_sparse_data_train_FB(
     img_feature_file,
     gt_train_file,

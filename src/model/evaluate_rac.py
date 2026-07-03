@@ -298,8 +298,29 @@ def final_evaluation(
 # A simple one layer logistic regression
 
 
+def _archive_augment_keys(fused_feats, ids, archive_bank):
+    """(a) kNN memory-key augmentation with the MLLM structured-archive
+    embedding: key = [normalize(fused) | alpha * normalize(archive)].
+
+    After faiss's downstream L2-normalisation of the concatenated key (a
+    constant factor sqrt(1+alpha^2) since both parts are unit-norm), the inner
+    product between two augmented keys equals
+        (cos_fused + alpha^2 * cos_archive) / (1 + alpha^2),
+    i.e. a fixed-weight combination of the two similarities, still in [-1, 1],
+    so the similarity-weighted kNN vote consumes it unchanged.
+
+    STRICT id lookup: a missing id raises (alignment guarantee, no zero-fill).
+    """
+    rows = [archive_bank["row"][i] for i in ids]
+    arc = archive_bank["feats"][rows].to(fused_feats.device)
+    fused_n = torch.nn.functional.normalize(fused_feats, p=2, dim=1)
+    arc_n = torch.nn.functional.normalize(arc, p=2, dim=1)
+    return torch.cat((fused_n, archive_bank["alpha"] * arc_n), dim=1)
+
+
 def retrieve_evaluate_RAC_(
     train_dl, evaluate_dl, model, largest_retrieval=100, threshold=0.5, args=None, eval_name=None, epoch=None,
+    archive_bank=None,
 ):
     model.eval()
     # Get the features and labels
@@ -322,7 +343,7 @@ def retrieve_evaluate_RAC_(
     for i, batch in enumerate(train_dl):
         train_ids.extend(batch["ids"])
         out, all_feats = model(batch["image_feats"].to(
-            'cuda'), batch["text_feats"].to('cuda'), return_embed=True)
+            args.device), batch["text_feats"].to(args.device), return_embed=True)
         if i == 0:
 
             train_feats = all_feats
@@ -341,7 +362,7 @@ def retrieve_evaluate_RAC_(
             for batch in train_dl_:
                 train_ids.extend(batch["ids"])
                 out, all_feats = model(batch["image_feats"].to(
-                    'cuda'), batch["text_feats"].to('cuda'), return_embed=True)
+                    args.device), batch["text_feats"].to(args.device), return_embed=True)
 
                 # For GPU implementation
                 train_feats = torch.cat((train_feats, all_feats), dim=0)
@@ -358,7 +379,7 @@ def retrieve_evaluate_RAC_(
     for i, batch in enumerate(evaluate_dl):
         evaluate_ids.extend(batch["ids"])
         out, all_feats = model(batch["image_feats"].to(
-            'cuda'), batch["text_feats"].to('cuda'), return_embed=True)
+            args.device), batch["text_feats"].to(args.device), return_embed=True)
         if i == 0:
 
             evaluate_feats = all_feats
@@ -371,8 +392,15 @@ def retrieve_evaluate_RAC_(
                 (evaluate_labels, batch["labels"]), dim=0)
             eval_out = torch.cat((eval_out, out), dim=0)
 
+    # (a) archive kNN memory-key augmentation (inert when archive_bank is None)
+    if archive_bank is not None:
+        train_feats = _archive_augment_keys(train_feats, train_ids, archive_bank)
+        evaluate_feats = _archive_augment_keys(
+            evaluate_feats, evaluate_ids, archive_bank)
+
     # Get the dimension of the features
-    dim = all_feats.shape[1]
+    # (train_feats.shape[1] == all_feats.shape[1] when archive_bank is None)
+    dim = train_feats.shape[1]
     # Initialize the index
     # For different loss functions, we need to change the index type
     index = faiss.IndexFlatIP(dim)

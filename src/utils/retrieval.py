@@ -408,19 +408,19 @@ def dense_retrieve_hard_negatives_pseudo_positive(
     # Each item in the batch has no_hard_negatives hard negatives
     # Thus, this is a 3D tensor of size batch_size x no_hard_negatives x dim
     hard_negative_features = torch.zeros(
-        batch_size, args.no_hard_negatives, dim, device="cuda"
+        batch_size, args.no_hard_negatives, dim, device=args.device
     )
     if args.no_pseudo_gold_positives != 0:
         pseudo_positive_features = torch.zeros(
-            batch_size, args.no_pseudo_gold_positives, dim, device="cuda")
+            batch_size, args.no_pseudo_gold_positives, dim, device=args.device)
     # hard_negative_features = query_feats.unsqueeze(1).expand(batch_size,largest_retrieval, -1)
 
     # Initialize the hard negative retrieved scores
     hard_negative_scores = torch.zeros(
-        batch_size, largest_retrieval, device="cuda")
+        batch_size, largest_retrieval, device=args.device)
     if args.no_pseudo_gold_positives != 0:
         pseudo_positive_scores = torch.zeros(
-            batch_size, args.no_pseudo_gold_positives, device="cuda")
+            batch_size, args.no_pseudo_gold_positives, device=args.device)
 
     # Fill the hard_negative_features with the original features multiplied by -1
     # so that in case, we did not find enough hard negatives, we can still use the original features
@@ -453,9 +453,9 @@ def dense_retrieve_hard_negatives_pseudo_positive(
 
                     # CPU implementation with numpy
                     hard_negative_features[i][j] = torch.from_numpy(
-                        train_feats[I[i, iter]]).float().to("cuda")
+                        train_feats[I[i, iter]]).float().to(args.device)
                     hard_negative_scores[i][j] = torch.from_numpy(
-                        np.asarray(value)).float().to("cuda")
+                        np.asarray(value)).float().to(args.device)
 
                 j += 1
 
@@ -468,9 +468,9 @@ def dense_retrieve_hard_negatives_pseudo_positive(
                 else:
                     # CPU implementation with numpy
                     pseudo_positive_features[i][k] = torch.from_numpy(
-                        train_feats[I[i, iter]]).float().to("cuda")
+                        train_feats[I[i, iter]]).float().to(args.device)
                     pseudo_positive_scores[i][k] = torch.from_numpy(
-                        np.asarray(value)).float().to("cuda")
+                        np.asarray(value)).float().to(args.device)
 
                 k += 1
             # Only if both the number of hard negatives and pseudo gold positives are found, then break

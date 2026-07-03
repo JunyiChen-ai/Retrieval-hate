@@ -6,7 +6,90 @@ from model.loss import compute_loss
 import argparse
 import wandb
 from data_loader.rac_dataloader import CLIP2Dataloader
-from data_loader.dataset import load_feats_from_CLIP
+from data_loader.dataset import (
+    load_feats_from_CLIP,
+    load_archive_feats_split,
+    resolve_archive_path,
+)
+
+
+class classifier_hateClipperArchive(nn.Module):
+    """(b) 'stream' variant of classifier_hateClipper: a third feature stream
+    for the MLLM structured-archive embedding.
+
+    The archive embedding travels concatenated at the END of text_feats
+    (text_feats = [original_text | archive]); the model splits it internally,
+    so the frozen loss.py / consensus.py call signature
+    model(img_feats, text_feats, return_embed=True) is untouched.
+
+    Architecture mirrors classifier_hateClipper exactly, plus an archive_proj
+    stream whose L2-normalised map_dim output is concatenated onto the fused
+    (img x text) representation before the MLP: fusion input dim = base + map_dim.
+    """
+
+    def __init__(self, image_dim, text_dim, archive_dim, num_layers, proj_dim,
+                 map_dim, fusion_mode, dropout=None, batch_norm=False, args=None):
+        super(classifier_hateClipperArchive, self).__init__()
+        self.fusion_mode = fusion_mode
+        self.text_dim = text_dim
+        self.archive_dim = archive_dim
+
+        self.img_proj = nn.Sequential(
+            nn.Linear(image_dim, map_dim), nn.Dropout(dropout[0]))
+        self.text_proj = nn.Sequential(
+            nn.Linear(text_dim, map_dim), nn.Dropout(dropout[0]))
+        self.archive_proj = nn.Sequential(
+            nn.Linear(archive_dim, map_dim), nn.Dropout(dropout[0]))
+
+        if fusion_mode == 'concat':
+            input_shape = map_dim * 2
+        elif fusion_mode == 'align':
+            input_shape = map_dim
+        elif fusion_mode == 'cross':
+            input_shape = map_dim ** 2
+        # third (archive) stream is concatenated after the img/text fusion
+        input_shape = input_shape + map_dim
+
+        layers = list()
+        layers.append(nn.Dropout(dropout[1]))
+        for _ in range(num_layers):
+            layers.append(nn.Linear(input_shape, proj_dim))
+            if batch_norm:
+                layers.append(nn.BatchNorm1d(proj_dim))
+            layers.append(nn.ReLU())
+            layers.append(nn.Dropout(dropout[2]))
+            input_shape = proj_dim
+        self.mlp = nn.Sequential(*layers)
+        # video datasets are binary (single logit), same as the parent default
+        self.output_layer = nn.Linear(proj_dim, 1)
+
+    def forward(self, img_feats, text_feats, return_embed=False):
+        text_part = text_feats[:, : self.text_dim]
+        archive_part = text_feats[:, self.text_dim:]
+
+        img_feats = self.img_proj(img_feats)
+        text_part = self.text_proj(text_part)
+        archive_part = self.archive_proj(archive_part)
+
+        img_feats = nn.functional.normalize(img_feats, p=2, dim=1)
+        text_part = nn.functional.normalize(text_part, p=2, dim=1)
+        archive_part = nn.functional.normalize(archive_part, p=2, dim=1)
+
+        if self.fusion_mode == 'concat':
+            x = torch.cat((img_feats, text_part), dim=1)
+        elif self.fusion_mode == 'align':
+            x = torch.mul(img_feats, text_part)
+        elif self.fusion_mode == 'cross':
+            x = torch.bmm(img_feats.unsqueeze(2),
+                          text_part.unsqueeze(1)).flatten(1, 2)
+        x = torch.cat((x, archive_part), dim=1)
+
+        # Same convention as the parent: embed = pre-activation of last Linear
+        embed = self.mlp[:-2](x)
+        output = self.output_layer(self.mlp(x))
+        if return_embed:
+            return output, embed
+        return output
 
 from utils.metrics import eval_and_save_epoch_end, compute_metrics_retrieval
 from tqdm import tqdm
@@ -234,7 +317,7 @@ def parse_args():
              "Only loaded when --lambda_seg > 0.")
     arg_parser.add_argument(
         "--seg_mode", type=str, default="full",
-        choices=["full", "driftneg", "milmax"],
+        choices=["full", "driftneg", "milmax", "consensus", "selfscore"],
         help="Variant of the segment-RGCL loss (only active when --lambda_seg > 0):\n"
              "  full     = pseudo-gold positive (nearest same-label sub-clip) + "
              "within-video drifting hard-neg + opposite-label hard-neg (original).\n"
@@ -245,7 +328,75 @@ def parse_args():
              "(most sub-clips of a hateful video are benign) while the drifting "
              "hard-neg is well-founded.\n"
              "  milmax   = represent each video by its most-hateful sub-clip "
-             "(max hate logit) and contrast at that representative only.")
+             "(max hate logit) and contrast at that representative only.\n"
+             "  consensus = retrieval-consensus segment denoising "
+             "(DESIGN_iter3 SS2): pseudo-label each sub-clip by the agreement "
+             "between its video label and a similarity-weighted kNN vote of "
+             "VIDEO-level labels from the labelled whole-video train memory; "
+             "only confident (margin>=tau) segments enter the contrastive "
+             "term; the (Y_v=hate, vote=benign) cell is never a positive and "
+             "supplies the within-video drifting hard negative. Trained with "
+             "an EM outer loop (--em_rounds).\n"
+             "  selfscore = MIST/C2FPL-style control: identical pipeline but "
+             "pseudo-labels come from the model's OWN sub-clip hate score "
+             "instead of retrieval neighbours (warm-started from inherited "
+             "labels in round 0).")
+
+    # <----------------- MLLM structured-archive (E0b) Configs ----------------->
+    arg_parser.add_argument(
+        "--archive_feats", type=str, default=None,
+        help="Enable archive integration. 'auto' -> "
+             "<path>/CLIP_Embedding/<dataset>/{split}_archive_openai_clip-vit-"
+             "large-patch14-336_HF.pt; or a template containing '{split}'; or "
+             "a directory holding the per-split archive .pt files. "
+             "None (default) = archive fully OFF, bit-for-bit baseline.")
+    arg_parser.add_argument(
+        "--archive_mode", type=str, default="knn",
+        choices=["knn", "stream", "replace"],
+        help="How to inject the archive embedding (only when --archive_feats "
+             "is set):\n"
+             "  knn     = (a) kNN memory-key augmentation: eval-time retrieval "
+             "keys become [normalize(fused) | alpha*normalize(archive)], so the "
+             "kNN-vote similarity is a weighted combination "
+             "(cos_fused + alpha^2*cos_archive)/(1+alpha^2). Training is "
+             "IDENTICAL to baseline; only the retrieval classifier (and hence "
+             "val selection) changes.\n"
+             "  stream  = (b) third feature stream: archive embedding gets its "
+             "own projection and is concatenated into the classifier-head "
+             "fusion input (transported inside text_feats; the model splits "
+             "internally so the frozen loss.py call signature is unchanged).\n"
+             "  replace = (c) control: archive embedding REPLACES text_feats.")
+    arg_parser.add_argument(
+        "--archive_alpha", type=float, default=1.0,
+        help="Weight of the archive channel in archive_mode=knn. Effective "
+             "similarity weight is alpha^2/(1+alpha^2) (alpha=1 -> equal).")
+
+    # <----------------- Consensus / selfscore (EM) Configs ----------------->
+    arg_parser.add_argument(
+        "--consensus_topk", type=int, default=10,
+        help="k for the whole-video kNN vote in seg_mode=consensus.")
+    arg_parser.add_argument(
+        "--consensus_margin", type=float, default=0.2,
+        help="Margin threshold tau on |2*vote-1| (consensus) or |2*p-1| "
+             "(selfscore): only sub-clips with margin >= tau get a confident "
+             "pseudo-label; the rest only join the whole-video term.")
+    arg_parser.add_argument(
+        "--em_rounds", type=int, default=2,
+        help="Number of EM rounds (M-steps) for seg_mode consensus/selfscore. "
+             "Each round retrains the head from the SAME seeded init with the "
+             "current pseudo-labels, then re-encodes + re-votes (E-step). "
+             "Pseudo-label flip rates are reported per round.")
+    arg_parser.add_argument(
+        "--consensus_use_drift", type=lambda x: (str(x).lower() == "true"),
+        default=True,
+        help="Keep the drifting hard-negative: push ROLE_POS anchors away from "
+             "their same-video (Y_v=hate, vote=benign) sub-clip.")
+    arg_parser.add_argument(
+        "--consensus_conflict", type=str, default="ignore",
+        choices=["ignore", "hardneg"],
+        help="Handling of the (Y_v=benign, vote=hate) cell: ignore (default) "
+             "or add those sub-clips to the mining corpus as label-0 "
+             "confusable hard negatives.")
 
     args = arg_parser.parse_args()
 
@@ -264,6 +415,7 @@ def model_pass(
     train_set=None,
     sparse_dict=None,
     segment_cache=None,
+    archive_bank=None,
 ):
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     num_training_steps = args.epochs * len(train_dl)
@@ -373,6 +525,7 @@ def model_pass(
                 args=args,
                 eval_name="dev",
                 epoch=epoch,
+                archive_bank=archive_bank,
             )
 
             acc, roc, pre, recall, f1, prediction, labels, macro_val = compute_metrics_retrieval(
@@ -388,6 +541,7 @@ def model_pass(
                 args=args,
                 eval_name="test",
                 epoch=epoch,
+                archive_bank=archive_bank,
             )
 
             acc_test, roc_test, pre_test, recall_test, f1_test, prediction, labels, macro_test = compute_metrics_retrieval(
@@ -568,6 +722,10 @@ def main(args):
         args.exp_comment,
         "_{}".format(args.sparse_dictionary) if args.sparse_dictionary is not None else "",
     )
+    if args.archive_feats is not None:
+        exp_name += "_arc-{}{}".format(
+            args.archive_mode,
+            "-a{}".format(args.archive_alpha) if args.archive_mode == "knn" else "")
     # Construct output path
     args.output_path = os.path.join(
         args.output_path, "Retrieval", args.dataset, args.group_name, exp_name, "")
@@ -592,6 +750,58 @@ def main(args):
         train, dev, test_seen = load_feats_from_CLIP(
             os.path.join(args.path, "CLIP_Embedding"), args.dataset, args.model
         )
+
+    # <----------------- MLLM structured-archive (E0b) injection ----------------->
+    # Fully inert when --archive_feats is None (bit-for-bit baseline).
+    archive_bank = None
+    archive_dim = 0
+    if args.archive_feats is not None:
+        if args.dataset == "FB":
+            raise NotImplementedError(
+                "--archive_feats is only wired for the 3-split video datasets")
+        arc_by_split = {}
+        for split, tup in (("train", train), ("dev_seen", dev),
+                           ("test_seen", test_seen)):
+            arc_path = resolve_archive_path(
+                args.archive_feats, args.path, args.dataset, split)
+            # tup = [ids, img_feats, text_feats, labels]; re-order archive rows
+            # to the main cache id order with STRICT id lookup (raises on any
+            # missing id -- no silent zero-fill).
+            arc_by_split[split] = load_archive_feats_split(arc_path, list(tup[0]))
+            print("[archive] {} <- {} ({} rows, dim {})".format(
+                split, arc_path, arc_by_split[split].shape[0],
+                arc_by_split[split].shape[1]))
+        archive_dim = arc_by_split["train"].shape[1]
+
+        if args.archive_mode == "replace":
+            # (c) control: archive embedding REPLACES the text stream.
+            for split, tup in (("train", train), ("dev_seen", dev),
+                               ("test_seen", test_seen)):
+                tup[2] = arc_by_split[split]
+        elif args.archive_mode == "stream":
+            # (b) third stream: transported inside text_feats; model splits.
+            for split, tup in (("train", train), ("dev_seen", dev),
+                               ("test_seen", test_seen)):
+                tup[2] = torch.cat(
+                    (tup[2].float(), arc_by_split[split]), dim=1)
+        elif args.archive_mode == "knn":
+            # (a) kNN memory-key augmentation: build an id -> archive-embedding
+            # bank over all splits; used ONLY inside eval-time retrieval
+            # (evaluate_rac.retrieve_evaluate_RAC_). Training is untouched.
+            all_ids = list(train[0]) + list(dev[0]) + list(test_seen[0])
+            all_feats = torch.cat(
+                (arc_by_split["train"], arc_by_split["dev_seen"],
+                 arc_by_split["test_seen"]), dim=0)
+            archive_bank = {
+                "row": {vid: r for r, vid in enumerate(all_ids)},
+                "feats": all_feats,
+                "alpha": args.archive_alpha,
+            }
+            # leak canary: video ids must be unique across splits
+            assert len(archive_bank["row"]) == len(all_ids), \
+                "Duplicate video ids across splits -- investigate before training"
+            print("[archive] kNN bank built: {} ids, alpha={}".format(
+                len(all_ids), args.archive_alpha))
 
     (train_dl, dev_dl, test_seen_dl), (
         train_set,
@@ -663,27 +873,106 @@ def main(args):
     print("Image feature dimension: ", image_feat_dim)
     print("Text feature dimension: ", text_feat_dim)
 
-    model = classifier_hateClipper(
-        image_feat_dim, text_feat_dim, args.num_layers, args.proj_dim,
-        args.map_dim, args.fusion_mode, dropout=args.dropout, batch_norm=args.batch_norm, args=args)
+    def build_model():
+        # archive_mode == 'stream' uses the third-stream variant; every other
+        # configuration (archive off / knn / replace) constructs the ORIGINAL
+        # classifier_hateClipper with identical arguments (same RNG draws).
+        if args.archive_feats is not None and args.archive_mode == "stream":
+            return classifier_hateClipperArchive(
+                image_feat_dim, text_feat_dim - archive_dim, archive_dim,
+                args.num_layers, args.proj_dim, args.map_dim, args.fusion_mode,
+                dropout=args.dropout, batch_norm=args.batch_norm, args=args)
+        return classifier_hateClipper(
+            image_feat_dim, text_feat_dim, args.num_layers, args.proj_dim,
+            args.map_dim, args.fusion_mode, dropout=args.dropout,
+            batch_norm=args.batch_norm, args=args)
+
+    model = build_model()
     model.to(args.device)
     print(model)
     # evaluate_split(train, dev, "dev")
 
     # <----------------- Train the model ----------------->
-    model, best_epoch_path = model_pass(
-        train_dl,
-        dev_dl,
-        test_seen_dl,
-        model,
-        epochs=args.epochs,
-        log_interval=args.log_interval,
-        args=args,
-        artifacts=None,
-        train_set=train_set,
-        sparse_dict=sparse_dict,
-        segment_cache=segment_cache,
-    )
+    if segment_cache is not None and args.seg_mode in ("consensus", "selfscore"):
+        # EM driver (DESIGN_iter3 SS2). Each round: M-step = retrain the head
+        # from the SAME seeded init with the current sub-clip pseudo-labels;
+        # E-step = re-encode memory/sub-clips with the round's best (val-
+        # selected) head, rebuild the FAISS index, re-assign pseudo-labels and
+        # report the flip rate. Round-0 labels: consensus -> kNN vote in the
+        # raw frozen-CLIP space; selfscore -> inherited labels (warm start).
+        # Only active when lambda_seg > 0; the lambda_seg == 0 baseline path
+        # below is untouched (exact no-op guarantee).
+        from utils.consensus import (
+            consensus_estep, selfscore_init, selfscore_estep, flip_rate)
+
+        base_output = args.output_path
+        em_rounds = max(1, int(args.em_rounds))
+        if args.seg_mode == "consensus":
+            roles, margins = consensus_estep(segment_cache, train_set, None, args)
+        else:
+            roles, margins = selfscore_init(segment_cache)
+        prev_roles = roles
+
+        for em_round in range(em_rounds):
+            segment_cache["pseudo_role"] = roles
+            segment_cache["pseudo_margin"] = margins
+            args.output_path = os.path.join(
+                base_output, "em_round{}".format(em_round), "")
+            os.makedirs(args.output_path + "/ckpt/", exist_ok=True)
+            # Same seeded init every round: isolates the pseudo-label effect.
+            np.random.seed(args.seed)
+            torch.manual_seed(args.seed)
+            model = build_model()
+            model.to(args.device)
+            print("[EM] ===== round {}/{} (seg_mode={}) =====".format(
+                em_round + 1, em_rounds, args.seg_mode))
+            model, best_epoch_path = model_pass(
+                train_dl,
+                dev_dl,
+                test_seen_dl,
+                model,
+                epochs=args.epochs,
+                log_interval=args.log_interval,
+                args=args,
+                artifacts=None,
+                train_set=train_set,
+                sparse_dict=sparse_dict,
+                segment_cache=segment_cache,
+                archive_bank=archive_bank,
+            )
+            # E-step with the round's best (val-selected) head. After the LAST
+            # round this is only used to report the final flip rate.
+            if best_epoch_path is not None and os.path.exists(best_epoch_path):
+                model.load_state_dict(torch.load(
+                    best_epoch_path, map_location=args.device))
+            if args.seg_mode == "consensus":
+                roles, margins = consensus_estep(
+                    segment_cache, train_set, model, args)
+            else:
+                roles, margins = selfscore_estep(
+                    segment_cache, train_set, model, args)
+            fr = flip_rate(prev_roles, roles)
+            print("[EM] pseudo-label flip rate after round {}: {:.4f}".format(
+                em_round + 1, fr))
+            prev_roles = roles
+        args.output_path = base_output
+        print("[EM] finished {} rounds; final round best ckpt: {}".format(
+            em_rounds, best_epoch_path))
+    else:
+        model, best_epoch_path = model_pass(
+            train_dl,
+            dev_dl,
+            test_seen_dl,
+            model,
+            epochs=args.epochs,
+            log_interval=args.log_interval,
+            args=args,
+            artifacts=None,
+            train_set=train_set,
+            sparse_dict=sparse_dict,
+            segment_cache=segment_cache,
+            archive_bank=archive_bank,
+        )
 
 if __name__ == "__main__":
     args = parse_args()

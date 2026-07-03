@@ -679,6 +679,16 @@ def compute_segment_loss(batch, model, args, segment_cache, whole_video_feats=No
     # Non-zero (decodable) sub-clip mask: a zero-vector guard yields all-zero visual.
     valid_mask = (torch.sum(sc_img, dim=1) != 0)
 
+    # ---- seg_mode in {consensus, selfscore}: pseudo-labelled segment loss ----
+    # Sub-clip pseudo-labels (ROLE_*) are assigned OUTSIDE the step (EM E-step in
+    # run_rac.py, per-round index rebuild) and stored in segment_cache. Only
+    # confident sub-clips (margin >= tau) enter the contrastive term; the
+    # noisy-MIL-positive cell (Y_v=hate, vote=benign) is NEVER a positive and
+    # instead supplies the within-video drifting hard negative.
+    if seg_mode in ("consensus", "selfscore"):
+        return _compute_pseudo_role_segment_loss(
+            sc_feats, sc_parent, segment_cache, keep_t, valid_mask, args)
+
     # Build the 2nd FAISS index over a DETACHED copy of the fused sub-clip corpus
     # (targets are fixed anchors, as in the whole-video path). Mine per anchor.
     corpus_feats = sc_feats.detach()
@@ -819,6 +829,137 @@ def compute_segment_loss(batch, model, args, segment_cache, whole_video_feats=No
         return torch.tensor(0.0, device=device)
     seg_loss = per_anchor.sum() / denom
     return seg_loss
+
+
+def _compute_pseudo_role_segment_loss(sc_feats, sc_parent, segment_cache, keep_t,
+                                      valid_mask, args):
+    """Segment loss for seg_mode in {consensus, selfscore} (DESIGN_iter3 SS2).
+
+    Uses the per-sub-clip pseudo-label ROLES precomputed by the EM E-step
+    (utils/consensus.py) and stored in segment_cache:
+      segment_cache["pseudo_role"]   LongTensor [TotalSub] in {-1,0,1,2,3}
+      segment_cache["pseudo_margin"] FloatTensor [TotalSub]
+
+    Loss structure (mirrors seg_mode=full, ONLY the label source changes):
+      * anchors  = confident sub-clips (ROLE_POS=1 / ROLE_NEG=0) of batch parents;
+      * pseudo-gold positive = nearest same-pseudo-label sub-clip from another
+        video (mined on the batch sub-clip corpus, as in full);
+      * hard negative = nearest opposite-pseudo-label sub-clip;
+      * drifting hard negative (consensus replacement of the MIL centroid
+        heuristic): for a ROLE_POS anchor, the same-video ROLE_DRIFT sub-clip
+        (Y_v=hate but vote=benign, i.e. the semantically drifting benign
+        segment). Enabled by --consensus_use_drift.
+      * ROLE_CONFLICT (Y_v=benign, vote=hate): ignored by default; with
+        --consensus_conflict hardneg those sub-clips join the mining corpus
+        with pseudo-label 0 (extra confusable hard negatives).
+    """
+    device = args.device
+    roles_all = segment_cache.get("pseudo_role", None)
+    margins_all = segment_cache.get("pseudo_margin", None)
+    if roles_all is None or margins_all is None:
+        # E-step has not populated pseudo-labels (should not happen in the EM
+        # driver); contribute nothing rather than train on inherited noise.
+        return torch.tensor(0.0, device=device)
+
+    sc_role = roles_all.index_select(0, keep_t).to(device)          # [Ns]
+    sc_pmargin = margins_all.index_select(0, keep_t).to(device)     # [Ns]
+
+    conf_mask = ((sc_role == 0) | (sc_role == 1)) & valid_mask
+    if int(conf_mask.sum().item()) == 0:
+        return torch.tensor(0.0, device=device)
+
+    conflict_mode = str(getattr(args, "consensus_conflict", "ignore"))
+    corpus_mask = conf_mask.clone()
+    if conflict_mode == "hardneg":
+        corpus_mask = corpus_mask | ((sc_role == 3) & valid_mask)
+
+    q_idx = torch.nonzero(conf_mask).reshape(-1)                    # anchors
+    c_idx = torch.nonzero(corpus_mask).reshape(-1)                  # mining corpus
+    # pseudo binary label: ROLE_POS -> 1, ROLE_NEG / ROLE_CONFLICT -> 0
+    pseudo_label = (sc_role == 1).long()
+
+    corpus_feats = sc_feats.detach()
+    (
+        seg_hard,
+        seg_pos,
+        _unused_drift,
+        _unused_drift_mask,
+    ) = dense_retrieve_segment_hard_negatives_pseudo_positive(
+        query_feats=corpus_feats.index_select(0, q_idx),
+        query_labels=pseudo_label.index_select(0, q_idx),
+        query_parents=sc_parent.index_select(0, q_idx),
+        corpus_feats=corpus_feats.index_select(0, c_idx),
+        corpus_labels=pseudo_label.index_select(0, c_idx),
+        corpus_parents=sc_parent.index_select(0, c_idx),
+        args=args,
+    )
+
+    anchor_feats = sc_feats.index_select(0, q_idx)                  # grad-tracked
+    Nq = anchor_feats.shape[0]
+
+    # pseudo-gold positive (want HIGH)
+    if seg_pos.shape[1] >= 1:
+        pos_target = seg_pos[:, 0, :]
+        pos_valid = (torch.sum(pos_target, dim=1) != 0)
+        pos_sim = _pair_similarity(anchor_feats, pos_target, args)
+    else:
+        pos_valid = torch.zeros(Nq, dtype=torch.bool, device=device)
+        pos_sim = torch.zeros(Nq, device=device)
+
+    # opposite-pseudo-label hard negative (want LOW)
+    if seg_hard.shape[1] >= 1:
+        hn_target = seg_hard[:, 0, :]
+        hn_valid = (torch.sum(hn_target, dim=1) != 0)
+        hn_sim = _pair_similarity(anchor_feats, hn_target, args)
+    else:
+        hn_valid = torch.zeros(Nq, dtype=torch.bool, device=device)
+        hn_sim = torch.zeros(Nq, device=device)
+
+    # consensus drifting hard negative: same-video ROLE_DRIFT sub-clip
+    use_drift = bool(getattr(args, "consensus_use_drift", True))
+    drift_target = torch.zeros(Nq, sc_feats.shape[1], device=device)
+    drift_ok = torch.zeros(Nq, dtype=torch.bool, device=device)
+    if use_drift:
+        drift_rows = torch.nonzero((sc_role == 2) & valid_mask).reshape(-1)
+        if drift_rows.numel() > 0:
+            # per parent, keep the highest-margin (most confidently benign) drift
+            best = {}
+            for r in drift_rows.tolist():
+                p = int(sc_parent[r].item())
+                m = float(sc_pmargin[r].item())
+                if p not in best or m > best[p][1]:
+                    best[p] = (r, m)
+            anchor_roles = sc_role.index_select(0, q_idx)
+            for j in range(Nq):
+                if int(anchor_roles[j].item()) != 1:
+                    continue  # drift repulsion only for hateful (POS) anchors
+                p = int(sc_parent[q_idx[j]].item())
+                if p in best:
+                    drift_target[j] = corpus_feats[best[p][0]]
+                    drift_ok[j] = True
+    drift_sim = _pair_similarity(anchor_feats, drift_target, args)
+
+    margin = float(getattr(args, "triplet_margin", 0.1))
+    per_anchor = torch.zeros(Nq, device=device)
+    term_count = torch.zeros(Nq, device=device)
+
+    # pseudo-positive vs opposite-pseudo-label hard-negative triplet
+    m1 = (pos_valid & hn_valid)
+    if m1.any():
+        t1 = torch.relu(hn_sim - pos_sim + margin)
+        per_anchor = per_anchor + torch.where(m1, t1, torch.zeros_like(t1))
+        term_count = term_count + m1.float()
+    # pseudo-positive vs within-video consensus-drift triplet (POS anchors only)
+    m2 = (pos_valid & drift_ok)
+    if m2.any():
+        t2 = torch.relu(drift_sim - pos_sim + margin)
+        per_anchor = per_anchor + torch.where(m2, t2, torch.zeros_like(t2))
+        term_count = term_count + m2.float()
+
+    denom = term_count.sum()
+    if denom.item() == 0:
+        return torch.tensor(0.0, device=device)
+    return per_anchor.sum() / denom
 
 
 def compute_l2(feats_1, feats_2, normalise=False, sum_dim=1, sqrt=False, eps=1e-5):
