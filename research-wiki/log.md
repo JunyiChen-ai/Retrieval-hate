@@ -37,3 +37,7 @@ _Append-only timeline._
 - `2026-07-02T05:30:38Z` add_experiment: added exp:exp-seg-mode-ablation [verdict=no confidence=high]
 - `2026-07-02T05:30:53Z` add_experiment: added exp:exp-cross-dataset-transfer [verdict=yes confidence=high]
 - `2026-07-02T05:30:54Z` add_experiment: added exp:exp-lora-sft-encoder [verdict=partial confidence=high]
+- `2026-07-02T21:19:52Z` upsert_idea: added idea:retrieval-consensus-denoising [stage=piloted outcome=mixed]
+- `2026-07-02T21:20:20Z` add_experiment: added exp:exp-temporal-split-infra [verdict=yes confidence=high]
+- `2026-07-02T21:20:20Z` add_experiment: added exp:exp-consensus-kill-ablation [verdict=partial confidence=high]
+- `2026-07-02T21:20:20Z` add_experiment: added exp:exp-mllm-archives [verdict=yes confidence=high]

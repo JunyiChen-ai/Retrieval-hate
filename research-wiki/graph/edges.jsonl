@@ -28,3 +28,8 @@
 {"from": "idea:multigranularity-temporal-retrieval", "to": "exp:exp-seg-mode-ablation", "type": "tested_by", "evidence": "exp exp-seg-mode-ablation tests idea", "added": "2026-07-02T05:30:38Z"}
 {"from": "idea:cross-dataset-knn-memory", "to": "exp:exp-cross-dataset-transfer", "type": "tested_by", "evidence": "exp exp-cross-dataset-transfer tests idea", "added": "2026-07-02T05:30:53Z"}
 {"from": "idea:lora-mllm-encoder-lever", "to": "exp:exp-lora-sft-encoder", "type": "tested_by", "evidence": "exp exp-lora-sft-encoder tests idea", "added": "2026-07-02T05:30:54Z"}
+{"from": "idea:retrieval-consensus-denoising", "to": "paper:mei2023_improving_hateful_meme", "type": "inspired_by", "evidence": "idea retrieval-consensus-denoising inspired by paper", "added": "2026-07-02T21:19:52Z"}
+{"from": "idea:retrieval-consensus-denoising", "to": "paper:yang2025_revealing_temporal_label", "type": "inspired_by", "evidence": "idea retrieval-consensus-denoising inspired by paper", "added": "2026-07-02T21:19:52Z"}
+{"from": "idea:retrieval-consensus-denoising", "to": "paper:wang2025_hateclipseg_segmentlevel_annotated", "type": "inspired_by", "evidence": "idea retrieval-consensus-denoising inspired by paper", "added": "2026-07-02T21:19:52Z"}
+{"from": "idea:cross-dataset-knn-memory", "to": "exp:exp-temporal-split-infra", "type": "tested_by", "evidence": "exp exp-temporal-split-infra tests idea", "added": "2026-07-02T21:20:20Z"}
+{"from": "idea:retrieval-consensus-denoising", "to": "exp:exp-consensus-kill-ablation", "type": "tested_by", "evidence": "exp exp-consensus-kill-ablation tests idea", "added": "2026-07-02T21:20:20Z"}

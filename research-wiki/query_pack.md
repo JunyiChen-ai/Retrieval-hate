@@ -43,6 +43,7 @@ _**LoRA lever vs the 0.85 ceiling (2026-07-02):** LoRA-adapted Qwen2.5-VL-7B RGC
 ## Failed Ideas (avoid repeating)
 - **LoRA-SFT of the Qwen2.5-VL encoder (prediction still via RGCL contrastive + kNN head)**: **Lesson:** LoRA-SFT of the Qwen2.5-VL encoder is a MIXED performance lever, not novelty — best-ever ZH (0.8322 acc / 0.8023 macroF1, +0.027 acc vs frozen-CLIP floor) but REGRESSES EN below both froze
 - **Multi-granularity / segment-level temporal retrieval (AUTO sub-clip FAISS + MIL drifting hard-negative)**: **Lesson:** Segment/multi-granularity retrieval is a tested NEGATIVE — language sign-flips (EN vs ZH) and noisy MIL pseudo-positives (no gold spans) mean no seg_mode beats the whole-video baseline on 
+- **Retrieval-consensus segment denoising (memory washes its own sub-clip labels)**: 
 - **Multi-granularity annotation-free temporal retrieval + updatable kNN memory for hateful video (MLLM-encoded)**: **Lesson:** This umbrella node over-bundled three mechanisms; resolved into split nodes with honest outcomes — multi-granularity temporal retrieval = NEGATIVE, cross-dataset kNN memory = POSITIVE head
 ## Key Papers (26 total)
 - [paper:cspedessarrias2025_mmhsd_multimodal_hate] MM-HSD: Multi-Modal Hate Speech Detection in Videos
@@ -57,8 +58,7 @@ _**LoRA lever vs the 0.85 ceiling (2026-07-02):** LoRA-adapted Qwen2.5-VL-7B RGC
 - [paper:maity2025_multimodal_approach_hate] A Multimodal Approach for Hate and Offensive Content Detection in Tamil: From Corpus Creation to Model Development
 - [paper:mei2023_improving_hateful_meme] Improving Hateful Meme Detection through Retrieval-Guided Contrastive Learning
 - [paper:mei2025_robust_adaptation_large] Robust Adaptation of Large Multimodal Models for Retrieval Augmented Hateful Meme Detection
-## Recent Relationships (30 total)
-  idea:rgcl-mllm-video-iter1 --addresses_gap--> gap:G2
-  idea:rgcl-mllm-video-iter1 --addresses_gap--> gap:G4
-  idea:multigranularity-temporal-retrieval --inspired_by--> paper:sun2025_multihateloc_towards_temporal
+## Recent Relationships (35 total)
+  idea:multigranularity-temporal-retrieval --addresses_gap--> gap:G1
+  idea:multigranularity-temporal-retrieval --addresses_gap--> gap:G4
 ...(truncated)

@@ -1,0 +1,214 @@
+{
+  "MHC": {
+    "coverage_universe": {
+      "universe": 790,
+      "datable": 771,
+      "coverage_pct": 97.6,
+      "undatable_to_train": 19
+    },
+    "annotation_crosstab_label_x_datable": {
+      "Hateful": {
+        "queried": 72,
+        "datable": 64,
+        "dead": 8
+      },
+      "Offensive": {
+        "queried": 217,
+        "datable": 171,
+        "dead": 46
+      },
+      "Normal": {
+        "queried": 601,
+        "datable": 546,
+        "dead": 55
+      }
+    },
+    "dead_link_rate_by_label_pct": {
+      "Hateful": 11.1,
+      "Offensive": 21.2,
+      "Normal": 9.2
+    },
+    "failure_reasons": {
+      "unavailable/deleted": 68,
+      "private (62012)": 21,
+      "age_gated": 10,
+      "other": 7,
+      "removed/tos": 3
+    },
+    "year_histogram_datable_universe": {
+      "2009": 1,
+      "2010": 1,
+      "2011": 4,
+      "2012": 2,
+      "2013": 3,
+      "2014": 3,
+      "2015": 7,
+      "2016": 2,
+      "2017": 5,
+      "2018": 6,
+      "2019": 5,
+      "2020": 8,
+      "2021": 51,
+      "2022": 208,
+      "2023": 298,
+      "2024": 167
+    },
+    "existing_random_split_sizes": {
+      "train": 549,
+      "val": 80,
+      "test": 161
+    },
+    "temporal_split": {
+      "train": {
+        "n": 549,
+        "labels": {
+          "0": {
+            "n": 363,
+            "pct": 66.1
+          },
+          "1": {
+            "n": 186,
+            "pct": 33.9
+          }
+        },
+        "date_min": "20091103",
+        "date_max": "20230618",
+        "n_undatable": 19
+      },
+      "val": {
+        "n": 80,
+        "labels": {
+          "0": {
+            "n": 63,
+            "pct": 78.8
+          },
+          "1": {
+            "n": 17,
+            "pct": 21.2
+          }
+        },
+        "date_min": "20230618",
+        "date_max": "20240116",
+        "n_undatable": 0
+      },
+      "test": {
+        "n": 161,
+        "labels": {
+          "0": {
+            "n": 122,
+            "pct": 75.8
+          },
+          "1": {
+            "n": 39,
+            "pct": 24.2
+          }
+        },
+        "date_min": "20240116",
+        "date_max": "20240512",
+        "n_undatable": 0
+      }
+    }
+  },
+  "MHC_zh": {
+    "coverage_universe": {
+      "universe": 806,
+      "datable": 796,
+      "coverage_pct": 98.8,
+      "undatable_to_train": 10
+    },
+    "annotation_crosstab_label_x_datable": {
+      "Hateful": {
+        "queried": 112,
+        "datable": 91,
+        "dead": 21
+      },
+      "Offensive": {
+        "queried": 180,
+        "datable": 160,
+        "dead": 20
+      },
+      "Normal": {
+        "queried": 605,
+        "datable": 553,
+        "dead": 52
+      }
+    },
+    "dead_link_rate_by_label_pct": {
+      "Hateful": 18.8,
+      "Offensive": 11.1,
+      "Normal": 8.6
+    },
+    "failure_reasons": {
+      "invisible (62002)": 46,
+      "private (62012)": 30,
+      "unavailable/deleted": 17
+    },
+    "year_histogram_datable_universe": {
+      "2013": 2,
+      "2016": 1,
+      "2017": 1,
+      "2018": 8,
+      "2019": 30,
+      "2020": 59,
+      "2021": 106,
+      "2022": 143,
+      "2023": 371,
+      "2024": 75
+    },
+    "existing_random_split_sizes": {
+      "train": 579,
+      "val": 78,
+      "test": 149
+    },
+    "temporal_split": {
+      "train": {
+        "n": 579,
+        "labels": {
+          "0": {
+            "n": 382,
+            "pct": 66.0
+          },
+          "1": {
+            "n": 197,
+            "pct": 34.0
+          }
+        },
+        "date_min": "20130610",
+        "date_max": "20230810",
+        "n_undatable": 10
+      },
+      "val": {
+        "n": 78,
+        "labels": {
+          "0": {
+            "n": 59,
+            "pct": 75.6
+          },
+          "1": {
+            "n": 19,
+            "pct": 24.4
+          }
+        },
+        "date_min": "20230811",
+        "date_max": "20231103",
+        "n_undatable": 0
+      },
+      "test": {
+        "n": 149,
+        "labels": {
+          "0": {
+            "n": 112,
+            "pct": 75.2
+          },
+          "1": {
+            "n": 37,
+            "pct": 24.8
+          }
+        },
+        "date_min": "20231103",
+        "date_max": "20240513",
+        "n_undatable": 0
+      }
+    }
+  }
+}

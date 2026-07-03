@@ -902,3 +902,123 @@ a language-inconsistent result echoing the earlier seg-mode finding that EN and 
 | 12149 | RGCL head train + eval | MHC_zh (ZH) | → trainlog 2794237 |
 
 Key paths: `logging/lora/MHC/checkpoint-138/`; `logging/lora/{MHC,MHC_zh}/trainer_log.jsonl`.
+
+---
+
+## Iteration 3 — 2026-07-02 — Design: self-maintaining (auditable) hate memory (DESIGN_iter3)
+
+**Goal.** 在 iter1 已验证骨架(retrieval-guided contrastive + updatable kNN memory = headline;
+multi-granularity = honest negative;MLLM/LoRA = lever)之上,基于三份侦察报告
+(`NOVELTY_CHECK_dirA.md`、`TEMPORAL_SPLIT_FEASIBILITY.md`、`MLLM_USAGE_LANDSCAPE.md`)起草
+Iteration-3 设计:一个统一故事 + 两个新方法 + MLLM 三角色。
+
+**Inputs(三报告一句话)。** 方向 A 查新:机制层面 SAFE(retrieval-as-annotator 领域内零重合,
+置信 ~75–80%),任务层面 THREATENED(MultiHateLoc/LELA/TANDEM 已分占任务话语,Exeter 组速度
+风险真实);时间戳可行性:MHClip EN/ZH HIGH(存活 ~83%/~77%,死链偏 Hateful——ZH 探针 ~60%),
+HateMM/ImpliHateVid LOW(官方匿名化,~0%);MLLM 用法对照:角色1(schema 条目入库作检索键)
+OPEN,角色2(片段级分歧裁决)PARTIAL-窄口径,角色3(kNN 置信门控唤醒)领域内 OPEN。
+
+**Decision(设计,非结果)。** 总故事 = **self-maintaining (auditable) hate memory**:检测由
+检索记忆的 kNN vote 完成;MLLM 为记忆打工(从不判案);记忆自己洗片段标签(**方法 A:
+retrieval-consensus segment denoising** —— sub-clip 伪标签 = agreement(自身 video 标签 ×
+kNN 邻居 video 标签投票),高置信片段训对比 embedding,EM 2–3 轮,保留 drifting hard-negative;
+定生死消融 = consensus vs 自打分(MIST/C2FPL 式)vs 继承标签(Phase-3 复现),gate = 双语同向
+≥ baseline;评测 = video-level 主表 + HateClipSeg 弱监督定位空赛道),自己随仇恨演化更新
+(**方法 B:evolving-memory 协议** —— MHClip EN/ZH temporal split(不可定年样本固定进 train,
+报告 survivor bias),阶段性增补 k 新期样本零重训,指标 = 适应速度/保持性/更新成本,维护策略
+消融 = 加什么(不确定性主动选择)/怎么权(时间加权)/删什么(预算+去重)vs 傻塞;HateMM/
+ImpliHateVid 保持静态 cross-dataset 矩阵)。MLLM 三角色:角色1 结构化档案(target/机制/载体/
+显隐性)离线入库作检索键(ZH 英文枢轴);角色2 仅共识分歧时裁决片段,调用率作指标;角色3
+缓办待拍板。**措辞红线**:A 只说 "span-free"(annotation-free=LELA 占,dense-supervision-free
+=TANDEM 占);不说任务第一(MultiHateLoc 占);B 说"首个形式化+系统评测 evolving-hate 协议"
+不说"首个拥有换库能力"(RA-HMD 潜在具备未主张;CRAVE=检索增强训练需划界);"auditable" 钉死
+审计对象=持久记忆而非即弃日志(vs SafeLens)。
+
+**Roadmap 起点。** 开工即并行两项:E0a 时间戳采集脚本([login],<1.5h)+ E0b MHClip 结构化
+档案生成([SLURM-gpu],单卡半天级);随后 E1 consensus 定生死消融(subclipK4 缓存已在
+MHC/MHC_zh,`loss.py`/`run_rac.py` 已有 seg_mode 钩子,新增 seg_mode=consensus)。
+
+**Open decisions(留给用户,DESIGN_iter3 §7)。**
+1. 打包范围:角色3 上不上(默认缓办)。
+2. 0.85 目标降级确认(故事重心转向去噪机制+演化协议+可审计记忆;MHClip 目标改述为
+   beat MoRE + 双语同向增益)。
+3. 目标 venue / 时间线(候选 ACM MM 2027 / WWW 2027 / ACL-EMNLP 2027;是否 "E1 gate 过即挂
+   arXiv 占位")。
+4. (次级)HateMM `hate_snippet` frame-level 定位评测是否纳入主文;共识邻居粒度等按消融跑。
+
+**写作中发现的与侦察报告冲突/存疑点(记录在案)。**
+(a) iter1/Phase-1 记录"本地 HateMM/MHClip 无金标 span",但 TEMPORAL_SPLIT §3 核实官方 Zenodo
+HateMM 标注 CSV(62KB,已拉取)含 `hate_snippet` 列 —— HateMM 定位评测可能可行,需核实覆盖;
+(b) 任务书称 drifting hard-negative "Phase-3 已验证健全",而 Phase-3 记录为 driftneg 在 EN
+近无作用、ZH 低于 baseline —— 设计中改述为"机制未被证伪(失败归因于噪声 MIL 正样本),共识
+来源能否救活它属待验证";(c) MultiHateLoc 的发表数字在 HateMM/MHC 而非 HateClipSeg,当
+HateClipSeg baseline 需移植复跑(代码可得性未核实,已列 §6 风险);(d) ZH-Hateful 死链 ~60%
+出自 30 样本探针中的 5 个 Hateful 样本,统计上脆弱,全量采集后需重估。
+
+**Artifacts.** `research-wiki/DESIGN_iter3.md`(7 节:故事与贡献/方法 A/方法 B/MLLM 三角色/
+实验矩阵/风险清单/[USER-DECISION] 汇总)。
+
+---
+
+## Iter-3 Wave-1 结果 — 2026-07-03 — E0a 时间切分基建(jobs 12170/12171)
+
+**结论:YES(基建目标达成)。** 详细节点:`experiments/exp-temporal-split-infra.md`。
+
+- **可定年率:** MHC-EN 87.8%(781/890,yt-dlp,59.3 min)、MHC_zh 89.6%(804/897,Bilibili
+  API,33.0 min);落到我们的 split universe 内为 EN 97.6%(771/790)/ ZH 98.8%(796/806),
+  不可定年样本按协议固定进 train(EN 19 / ZH 10)。
+- **Survivor bias 全量确数(取代侦察期 n=5 探针):** ZH-Hateful 死链 **18.8%**(21/112)、
+  EN-Offensive **21.2%**(46/217);Normal 仅 9.2%/8.6%。方向确认(有害类死得更快)、幅度中等
+  ——侦察时 "ZH-Hateful ~60%" 属 n=5 高估,已修正在案。
+- **temporal split 已产出:** `data/gt/{MHC,MHC_zh}_temporal/{train,val,test}.jsonl`(尺寸与随机
+  split 相同:EN 549/80/161、ZH 579/78/149);切点 EN train≤2023-06-18 / test≥2024-01-16,
+  ZH train≤2023-08-10 / test≥2023-11-03。统计:`data/gt/temporal_split_stats.json`。
+- **必须声明的偏差:** temporal test 正例率 ~24%(EN 24.2 / ZH 24.8)vs train ~34% —— 时间
+  切分自带 label-prior shift,W4 任何结果都要对照同 prior 的 floor 报告,不能直接对比随机 split。
+
+---
+
+## Iter-3 Wave-1 结果 — 2026-07-03 — E1 共识定生死消融(jobs 12176–12181)
+
+**结论:PARTIAL —— ZH 验证通过,EN 硬失败,gate 未过。** 详细节点:
+`experiments/exp-consensus-kill-ablation.md`;idea 节点 `ideas/retrieval-consensus-denoising.md`
+置为 stage=piloted / outcome=mixed。
+
+协议:warmup≥5 val-selected(max Val acc,roc tie-break),CLIP 背骨,λ_seg=0.5,K=4,
+consensus topk=10 / τ=0.2 / EM=2。日志 `slurm/logs/mhc_train_cons_*.out`,ckpt 组
+`RAC_video_consensus`。实现 `src/utils/consensus.py`(seg_mode=consensus/selfscore);
+λ=0 走共识代码路径已 **bit-for-bit** 复现 baseline;full 模式与 Phase-3 jobs 12129/12131
+逐位一致(harness 自校验通过)。
+
+| 数据集 | floor(λ=0) | full(继承标签) | selfscore | consensus |
+|---|---|---|---|---|
+| MHC_zh(M-F1/acc) | 0.7706/0.8054 | 0.7050/0.7383 | 0.7746/0.8188 | **0.7864/0.8188(本消融最优,修复 Phase-3 洞并反超 floor)** |
+| MHC-EN(M-F1/acc) | 0.7113/0.7826 | **0.7262/0.7888(最优)** | 0.6394/0.7329 | 0.5948/0.7329(硬失败,−0.117 F1) |
+
+- **gate(双语同向 ≥ floor)未通过。**
+- **诊断线索:** round-1 共识剔除(drift 降级)正样本视频子片段 ZH **300/720(41.7%)** vs
+  EN **161/672(24.0%)** —— ZH 大量剔"毒正样本"而赢,EN 剔得少反而输。
+- **假设(交 W2 归因):** EN 仇恨偏语音承载,视觉 sub-clip 键检索到的邻居语义无关,kNN 投票
+  即噪声;ZH(Bilibili)仇恨偏视觉/屏幕文字承载,视觉键投票有效。注意 EN 上 selfscore 也失败
+  (−0.072 F1),EN 问题可能部分出在"语音承载仇恨上的 sub-clip 监督"本身而非共识投票——
+  W2 三方消融要把这两者分开。
+
+---
+
+## Iter-3 Wave-1 结果 — 2026-07-03 — E0b MLLM 结构化档案(jobs 12172/12173/12174/12184,补齐 12186)
+
+**结论:YES(基建目标达成)。** 详细节点:`experiments/exp-mllm-archives.md`。
+
+- **生成:** 冻结 Qwen2.5-VL-7B-Instruct,8 帧 + title/transcript → 每视频一条结构化 JSON
+  (`target_groups / mechanism / modality_cues{visual,speech,on_screen_text} / explicitness /
+  neutral_summary`),**英文枢轴**(prompt 强制英文,ZH 视频亦出英文档案)。
+- **质量(按 id 去重、含重试):** parse_ok EN **788/790(99.7%)**、ZH **802/806(99.5%)**;
+  schema_ok 780/790、793/806;**1596 条零拒答**。残余 6 条 parse 失败(EN 2 / ZH 4,重试仍
+  不可解析)以 raw_output 文本回退编码,缓存无零向量。
+- **产物:** `data/Archive/{MHC,MHC_zh}/{train,dev_seen,test_seen}_Qwen2.5-VL-7B-Instruct_archive.jsonl`
+  + CLIP 文本编码缓存 `data/CLIP_Embedding/{MHC,MHC_zh}/*_archive_openai_clip-vit-large-patch14-336_HF.pt`
+  (N=549/80/161、579/78/149,Dt=768,zero-vector=0),已推 B2
+  (`b2:junyi-data/RGCL_video/embeddings/{MHC,MHC_zh}/`)。
+- **caveat:** CLIP 文本 77-token 截断会切掉长 summary;schema_ok<parse_ok 的 ~1–3% 条目字段
+  可能不全;档案忠实度尚无人工抽查(排入 W2);下游效用未测(W3 的事)。
+
