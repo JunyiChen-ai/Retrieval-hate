@@ -8,7 +8,7 @@ confidence: high
 date: "2026-07-04"
 hardware: "1x A100 per job (SLURM)"
 duration: "~25 min/run x 12 runs"
-provenance: "slurm/logs/arcSeed_zh_s{1..4}_{12215..12218}.out; slurm/logs/arcSeed_en_s{1..3}_{12219..12221}.out; slurm/logs/arcBase_zh_s{0..4}_{12223..12227}.out; seed-0 refs: arc_MHC_zh_knn0.25_12207.out, arc_MHC_knnB_0.25_12210.out, mllm_train_12149.out; EN-floor ref: mllm_train_12113.out; scripts/slurm/train_archive.sbatch; scripts/slurm/train_archive_baseline.sbatch; scripts/analysis/selection_rule_robustness.py"
+provenance: "slurm/logs/arcSeed_zh_s{1..4}_{12215..12218}.out; slurm/logs/arcSeed_en_s{1..3}_{12219..12221}.out; slurm/logs/arcBase_zh_s{0..4}_{12223..12227}.out; seed-0 refs: arc_MHC_zh_knn0.25_12207.out, arc_MHC_knnB_0.25_12210.out, mllm_train_12149.out; EN-floor refs: mllm_train_12113.out + slurm/logs/arcBase_en_s{1..3}_{12275..12277}.out; scripts/slurm/train_archive.sbatch; scripts/slurm/train_archive_baseline.sbatch; scripts/analysis/selection_rule_robustness.py"
 added: 2026-07-04T00:00:00Z
 tags: ["hateful-video", "MLLM-archive", "knn-memory", "multi-seed", "robustness", "MHC_zh", "MHC", "negative-result", "iteration-3"]
 ---
@@ -191,6 +191,43 @@ selection-epoch-dependent, not a property of the final model.
 - A 5-seed cross-seed ensemble line was briefly planned and then **withdrawn per user rule
   (no cross-seed ensembles in the method)**: no ensemble jobs were run, no ensemble script
   exists, no ensemble numbers were produced.
+
+### Addendum 3: EN main-table draft — floor vs archive, both protocols (2026-07-04)
+
+EN frozen-Qwen floor extended to 4 seeds (jobs 12275/12276/12277 = seeds 1/2/3 via
+`train_archive_baseline.sbatch`, GROUP=RAC_video_archive_seeds; seed 0 = job 12113,
+justified by the bit-for-bit archive-OFF reproduction shown in Addendum 2). Transcript arm
+is owned by another agent and will be merged into this table separately.
+
+**MHC (EN), frozen Qwen2.5-VL-7B embedding — Test acc / macroF1, mean±std over 4 seeds:**
+
+| arm | (a) val-acc 选点 acc | (a) F1 | (e) final-epoch acc | (e) F1 |
+|---|---|---|---|---|
+| floor (no keys) | 0.7702 ± 0.0221 | 0.7010 ± 0.0448 | 0.7888 ± 0.0152 | 0.7488 ± 0.0208 |
+| + archive-kNN α0.25 | **0.7935 ± 0.0205** | **0.7497 ± 0.0250** | 0.7826 ± 0.0134 | 0.7430 ± 0.0196 |
+| + transcript (other agent) | *tbd* | *tbd* | *tbd* | *tbd* |
+| **paired Δ (arc − floor)** | +0.0233 ± 0.0357 (+3/4, t=+1.31) | +0.0487 ± 0.0622 (+3/4) | **−0.0062 ± 0.0051 (0/4, t=−2.45)** | −0.0059 ± 0.0042 (0/4) |
+
+Per-seed val-acc acc (floor | archive): s0 0.7888@e28 | 0.8075@e24 · s1 0.7826@e25 |
+0.7640@e29 · s2 0.7702@e18 | 0.7950@e21 · s3 **0.7391@e6** | 0.8075@e27.
+Per-seed final-epoch acc: floor 0.8012/0.7702/0.7826/0.8012 · archive 0.7888/0.7640/0.7826/0.7950.
+
+**Reading (honest):**
+- EN mirrors the ZH lesson. Under the pre-registered val-acc rule the archive arm looks
+  +2.3 acc points better, but a large share of that gap comes from one floor seed's
+  pathological selection (s3 picked epoch 6 → 0.7391, while its final-epoch is 0.8012).
+  Under the selection-free final-epoch protocol — where same-seed weights are byte-identical
+  and only the retrieval keys differ — the archive keys flip 0-2 test votes per seed and
+  never upward: Δ = −0.0062 ± 0.0051, positive on 0/4 seeds (t=−2.45, p≈0.09 at n=4). Weak
+  but directionally consistent evidence that the α=0.25 keys are zero-to-slightly-negative
+  for EN final-model accuracy; the val-selected "gain" is a selection interaction, not
+  model quality.
+- No EN configuration separates from the pack: all cells sit in 0.77-0.79. The best cells
+  (archive@val-acc 0.7935 vs floor@final-epoch 0.7888) differ by half a std. The EN story
+  for the paper should be "≈0.79 regardless of key augmentation", not a ranking claim.
+- Floor val-acc variance (±0.0221 acc, ±0.0448 F1) is again dominated by selection noise:
+  its final-epoch variance is smaller and its mean higher — the same 1-2 point
+  val-selection tax as ZH.
 
 ### Paper appendix paragraph (selection robustness)
 

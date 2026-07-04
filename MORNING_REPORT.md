@@ -1,97 +1,126 @@
-# MORNING REPORT — 2026-07-03 夜 → 2026-07-04(两日实验收官总报告)
+# FINAL REPORT — 项目终局收卷(原 MORNING_REPORT,文件名保留)
 
-_面向项目负责人验收。每条结论后括号内为 research-wiki 内的出处文件;所有数字可追溯到 job id 与日志行。协议如未特别注明,均为预注册口径:warmup≥5、val-selected(max Val_Retrieval acc,roc tie-break),150 量级测试集,MHClip test EN n=161 / ZH n=149。_
+**FINAL - 2026-07-05**
+
+_面向项目负责人验收的终版报告:全部实验已收敛,无在飞作业,无未判读结果。每条结论后括号内为 research-wiki 内的出处文件;所有数字可追溯到 job id 与日志行。协议如未特别注明,均为预注册口径:warmup≥5、val-selected(max Val_Retrieval acc,roc tie-break),150 量级测试集,MHClip test EN n=161 / ZH n=149。本文件此前为 2026-07-03/04 晨报,本版为终局固化版;历史版本见 git。_
 
 ---
 
-## 1. 目标记分板(acc ≥ 0.85)
+## 1. 终版记分板(目标 acc ≥ 0.85)
 
-| 数据集 | 状态 | 当前数字 | 说明 |
+| 数据集 | 状态 | 终版数字 | 说明 |
 |---|---|---|---|
-| **HateMM** | **✓ 达标** | frozen-Qwen RGCL 0.870;frozen-CLIP RGCL 0.8732 | 早已达标,后续未动(`experiments/exp-baseline-reproduction.md`;`EVAL_localization_hatemm.md` §3 参考行) |
-| **ImpliHateVid** | **✓ 达标** | ~0.91(frozen-CLIP 0.910 / frozen-Qwen 0.900) | 早已达标(`experiments/exp-baseline-reproduction.md`、`DESIGN_iter1.md`) |
-| **MHClip-EN** | ✗ 未达,近天花板 | val-选点 floor 均值 **~0.78**(seeds 0–2:0.7888 / 0.7826 / 0.7702,n=3 均值 0.7805;s3 在跑,快照 0.7391,若确认则 n=4 均值降至 ~0.770) | **所有已测杠杆全部噪声级或有害**:LoRA-SFT 0.7516(有害)、consensus −0.117 F1(有害)、consensus 档案空间/blend(更差,见 §2③)、transcript 长上下文键(acc 噪声级)、archive-kNN α 网格 0.15–0.35 单 seed 0.7888–0.8137(噪声级,α=0.25 多 seed 0.7935±0.0205)、archive mode=both 0.7702(有害)、double key 0.7764(有害)。**唯一未决杠杆 = 角色 3 仲裁(kNN 低置信 → Qwen 裁决),job 12279 在飞**(`experiments/exp-archive-knn-seeds.md`、`ABLATION_transcript_vs_archive.md`、`experiments/exp-consensus-kill-ablation.md`) |
-| **MHClip-ZH** | ✗/△ 取决于口径 | val-选点 **~0.827**(archive 臂 0.8268±0.0266、LoRA-only 0.8282±0.0139,均值不过 0.85);**final-epoch 无选点口径 floor 0.8537±0.0120 —— 过 0.85**(5 seeds,seeds 3/4 达 0.8658;archive 臂与 floor 逐位相同) | **协议选择权留给用户**。final-epoch 是合法、标准、selection-free 的协议,但**因为它过线才采纳 = 事后 rule-shopping,风险必须写明**;推荐方案是两口径并排:主表沿用预注册 val-选点,附录给五规则 selection-robustness 全表(附录段落已成文)(`experiments/exp-archive-knn-seeds.md` Addendum 1/2) |
+| **HateMM** | **✓ 达标** | frozen-Qwen RGCL **0.870** / F1 0.861;frozen-CLIP 0.8732 | 早已达标,后续未动(`experiments/exp-baseline-reproduction.md`) |
+| **ImpliHateVid** | **✓ 达标** | **~0.91**(frozen-CLIP 0.910 / frozen-Qwen 0.900) | 早已达标(`experiments/exp-baseline-reproduction.md`、`DESIGN_iter1.md`) |
+| **MHClip-ZH** | △ 双口径,协议选择=用户拍板项 | **val-选点 ~0.827**(archive 臂 0.8268±0.0266 / LoRA-only floor 0.8282±0.0139,5 seeds,均不过 0.85);**final-epoch(selection-free)floor 0.8537±0.0120 —— 过 0.85**(seeds 3/4 达 0.8658;archive 臂与 floor 每 seed 逐位相同) | 预注册口径不过线、标准 selection-free 口径过线;因过线才换口径 = rule-shopping,风险与两口径并排方案见 §7.1(`experiments/exp-archive-knn-seeds.md` Addendum 1/2) |
+| **MHClip-EN** | ✗ 未达,**近天花板定位**(所有杠杆穷尽) | **≈0.78–0.80 双口径**:val-选点 floor 0.7702±0.0221 / archive 0.7935±0.0205(n=4);final-epoch floor 0.7888±0.0152 / archive 0.7826±0.0134;全配置挤在 0.77–0.79,无任何配置分离(`experiments/exp-archive-knn-seeds.md` Addendum 3) | **已测杠杆全部噪声级、有害或未过 val 门**(全名单见 §5):LoRA-SFT、consensus-clip/archive/blend/mm、transcript 键、archive-kNN α 网格、mode=both、double key、role-3 三代仲裁器。**同场定位**:MoRE 同场复跑 EN clean 仅 **0.69–0.72 acc**(as-released 0.6894 / bugfix 0.7019 / 5-seed 均值 0.722);**CRAVE 发表 M-F1 79.81 / ACC 82.50 为该 split 场上最高发表数字**(全量 split,与 clean 子集不可直接比,`HEADTOHEAD_FEASIBILITY.md` §3)。我们 0.79/0.74(acc/F1,frozen-Qwen)已在发表最强者的量级上、大幅高于同场可复跑者 —— 支持"近天花板"定位,叙事转归因分析(§4③) |
+
+参考点(非 headline):EN 记忆编辑(role-2,删 2 条人工标记噪声记忆)后 test acc 0.8199 —— 全项目 EN 最高单点,属能力演示不属主表(`DEMO_memory_editing.md`)。
 
 ---
 
-## 2. 四支柱终版故事
+## 2. 同场 MoRE 三库全胜表(论文主对比)
+
+MoRE(WWW 2025)官方代码全量复跑,同 split(逐行 diff 一致)、同 clean test 子集、双 variant(as-released / bugfix)+ 5-seed 敏感性;缺失件(caption/tsv/OCR)全部本地复原并脚注(`BASELINE_MoRE_rerun.md`)。
+
+| 数据集(clean test n) | MoRE as-released | MoRE bugfix | MoRE 5-seed 均值 | 我们最好配置 | **Δ(我们 − MoRE 较优 variant)** |
+|---|---|---|---|---|---|
+| HateMM(215) | 0.8140 / 0.7988 | 0.8047 / 0.7899 | 0.792±0.035 / 0.781±0.038 | frozen-Qwen **0.870 / 0.861** | **+5.6 acc / +6.2 F1** |
+| MHClip-EN(161) | 0.6894 / 0.4438 | 0.7019 / 0.5084 | 0.722±0.031 / 0.530±0.111 | frozen-Qwen **0.7888 / 0.7378** | **+8.7 acc / +22.9 F1** |
+| MHClip-ZH(149) | 0.7651 / 0.6882 | 0.7584 / 0.7058 | 0.717±0.035 / 0.661±0.023 | LoRA-SFT **0.8322 / 0.8023** | **+6.7 acc / +9.7 F1** |
+
+- **三库全部同场胜出,取 MoRE seed 均值上界或较优 variant 均不翻转**;名义训练标签量还是 MoRE 略占优(EN 618/ZH 633 vs 我们 clean 550/579)。
+- sanity:HateMM(唯一数据完备库)复跑落在其发表值 −2~3pt(单 seed 方差内)= 复现成功;MHClip 低于发表值的归因(数据缺失为主、EN val 早停塌缩)已按证据强度排序入档,发表值另列 "reported (full data)" 行不与 clean 数字直接比。
+- 引用口径:主表用 as-released(seed2024)+ 脚注(seed 均值±std、bugfix、caption/OCR 复原、EN 早停塌缩);CRAVE 列 in-dataset SOTA 发表数字行并划界(方法族不同、无同场轨道)。
+
+---
+
+## 3. 定位评测(第 5 章素材,能力演示口径)
+
+- **HateMM 金标定位台**:model-score full mAP 0.589/AUC 0.781,但 video-broadcast 对照 0.578/0.774 → 段内分辨贡献小,hateonly AUC 0.577;视觉-only 键对 speech-carried 仇恨是盲区,如实写(`EVAL_localization_hatemm.md`)。
+- **HateClipSeg 零训练跨库定位**(395 视频/10,572 段,90.8% 存活子集):最好配置(HateMM 子片段记忆,K=4)full AP 0.545/AUC 0.588,对 random +0.088/+0.100;**within-video 时序信号统计显著但幅度小(wv-AUC 0.526,仅 1/4 cell 过 Bonferroni)**;池化指标主体是"毒性密度"的视频间排序;K=30 密度匹配为负结果;**换记忆(HateMM↔MHC)零重训可预期地改变行为** = 可换记忆支柱的双向证据(`EVAL_localization_hateclipseg.md`)。
+- 措辞红线:只说 **span-free**,不说 first/annotation-free/dense-supervision-free(MultiHateLoc/LELA/TANDEM 占位,`DESIGN_iter3.md`)。
+
+---
+
+## 4. 四支柱终版(claim 措辞 + 证据文件)
 
 ### ① 检索对比学习 + kNN 记忆(核心骨架)
 
-- 4 数据集全部由同一 RGCL/RA-HMD 骨架(检索引导对比 + kNN 投票头)承载;HateMM/ImpliHateVid 达标,MHClip 见记分板(`experiments/exp-baseline-reproduction.md`)。
-- 跨数据集 kNN 记忆换库:5/6 有效跨格 above-majority、零重训 —— MoRE 的 trained-MoE 头结构上不具备该能力(`experiments/exp-cross-dataset-transfer.md`)。
-- 与 MoRE 的同场对比:同 split 已逐行核实一致,复跑管线特征/检索全产出,最终训练 G6 在飞(`HEADTOHEAD_FEASIBILITY.md`、`BASELINE_MoRE_rerun.md`)。
+**Claim**:同一 RGCL/RA-HMD 检索引导对比 + kNN 投票骨架承载 4 个 hateful-video 数据集,HateMM/ImpliHateVid 达标,并在严格同场(同 split、同 clean test、复跑而非引数)下三库全胜 MoRE(+5.6~+8.7 acc);跨数据集 kNN 记忆换库 5/6 有效跨格 above-majority、零重训 —— trained-MoE 头结构上不具备。
+**证据**:`experiments/exp-baseline-reproduction.md`、`BASELINE_MoRE_rerun.md`、`experiments/exp-cross-dataset-transfer.md`、`HEADTOHEAD_FEASIBILITY.md`。
 
-### ② 可更新记忆 + 时间演化协议(W4)
+### ② 可更新记忆 + 校准适应(时间演化协议)
 
-- MHClip temporal split 上:**EN 时间漂移真实存在**(macro-F1 0.7113→0.6273,−0.084);ZH 无漂移(+0.014,负对照)(`EVAL_temporal_memory_W4.md` §1)。
-- **关键发现:演化 = 校准漂移,不是可分性损失。** EN temporal ROC 0.8484 反高于随机 split 参考 0.7175;只有 8.7% 的 test 分数过 0.5 阈值 vs 真实正例率 24.2%(`EVAL_temporal_memory_W4.md` §1)。
-- 原始"往记忆里加新期样本"机制:**全曲线 flat-to-negative,不成立**(所有 k≤80、三种选样策略、双语言)(§2)。
-- 成立的替代主张:**k=20 个新期标注样本只做阈值再校准,零重训、O(1)、可逆,全额收复 EN 漂移**(0.7336 ≥ 随机 split floor 0.7113;阈值天花板 0.7646)。检索架构把 operating point 暴露为一等公民旋钮;**trained-MoE/分类头把它藏在权重里,适配必须微调 —— 结构性做不到**。ZH 负对照同时表明:无漂移信号时小样本再校准纯属噪声,应由漂移监测门控(§3、Honest verdict)。
+**Claim**:"hate evolves" 在 MHClip-EN 窗口内可测(temporal split −0.084 macro-F1),其主成分是**校准漂移而非可分性损失**(temporal ROC 0.8484 > 随机 split 参考 0.7175);正确的 k-shot 轻量适应是**阈值再校准:k=20 个新期标注样本零重训全额收复漂移**(0.7336 ≥ 随机 floor 0.7113),检索架构把 operating point 暴露为一等、O(1)、可逆旋钮,trained-MoE/分类头把它藏在权重里。原始"加样本进记忆"机制 flat-to-negative,如实报废;ZH 无漂移 = 负对照,无漂移信号时小 k 校准纯噪声,部署应由漂移监测门控。
+**证据**:`EVAL_temporal_memory_W4.md`、`ideas/evolving-memory-protocol.md`(validated-as-calibration)。
 
-### ③ 共识去噪(retrieval-consensus segment denoising)
+### ③ 共识去噪 = 修复机制(ZH-scoped)+ 完整 EN 归因链
 
-- **ZH 成立**:consensus 0.7864 F1 / 0.8188 acc,赢下 kill-ablation(修复 full-mode 洞 0.7050→0.7864 并反超 floor 0.7706/0.8054);机制诊断:ZH 大量剔除"毒正样本"子片段(41.7%)而获益(`experiments/exp-consensus-kill-ablation.md`)。
-- **EN 双重证伪**:(i) 视觉 CLIP 键空间硬失败(0.5948/0.7329,−0.117 F1,E1);(ii) **W5 把投票空间换成 MLLM 档案空间/混合空间仍然失败**——EN archive-space 0.5663/0.7205、blend 0.6453/0.7143,双双低于 consensus-visual 且远低于 floor;ZH 换空间同样变差(archive 0.7221/0.7718、blend 0.7232/0.7651 vs 0.7864/0.8188)(jobs 12243–12246 trainlog,本次收录进 `ITERATION_LOG.md`;实现开关 `--consensus_space` 见 `src/run_rac.py`,default=clip 时与 pre-W5 逐位一致)。
-- 终版定位:**完整归因链作为分析章节**——EN 仇恨偏语音承载 → 视觉子片段键投票是噪声 → 档案语义键也救不回(投票空间不是病灶)→ claim 严格 scoped 到 ZH/视觉承载仇恨;不作为双语方法主张。
+**Claim(修复,ZH)**:继承视频级标签的子片段监督毒化 ZH(−0.066 F1,单 seed 大效应);检索共识重标注**消除该毒化并落在 floor 之上或持平**(5 seeds、双口径,均值两口径皆最高:val-选点 0.7764±0.0406 / final 0.7841±0.0204),**但"反超 floor"不成立**(val-选点 +0.0115±0.0418,p≈0.57;final +0.0247±0.0272,p≈0.11)——论文措辞必须是 "consensus de-poisons sub-clip supervision (−0.066 → ≈ floor / weakly above)",不是 accuracy win(`experiments/exp-consensus-zh-seeds.md`)。
+**Claim(归因,EN,三段闭环)**:(i) 视觉 clip 键共识毒化训练(−0.117 F1),投票实为视频级(within-video vote std 0.048)、严重度反相关、正监督供给崩塌 56% all-pruned;(ii) 换投票空间(archive/blend)救不回(双语全灭)⇒ 投票空间不是病灶;(iii) **证据匹配的片段语音键(窗级 Whisper ASR + CLIP-text 双通道)把 annotator 全面修好**(供给 56%→19%、投票变片段级 wv-std 0.048→0.12、严重度反相关消除、灾难性 clip-consensus 被完全救回 +0.10~0.13 F1)**但训练端仍 ≤ floor**(final-ep 3/3 seeds −0.0116±0.0087)⇒ **病灶钉死在片段监督通道本身对语音承载仇恨无增益**。该链堵死"你们只是键选得差"的审稿质疑;附 ZH 反例(mm 探针死:窗文本率 48.5% + CLIP-zh 弱 → ASR 通道对 ZH 是噪声)⇒ 方法学副产品 = "evidence-matched segment keys" + probe-before-train。
+**证据**:`experiments/exp-consensus-kill-ablation.md`、`EXP_mm_segment_keys.md`、ITERATION_LOG W5 节(jobs 12243–12246)。
 
 ### ④ 可审计 / 可编辑的档案记忆
 
-- **忠实度 77%**:60 条分层抽审(EN/ZH 各 30),faithful 46/60;幻觉 15% 几乎全是"字段级虚报"(benign 内容被安 spurious mechanism,ZH-Normal 最重),仅 1 例内容级虚构;洗白 5% 全部是"毒性只在标题"模式;并反向发现 1 例疑似 gt 漏标(`AUDIT_archive_faithfulness.md`,模型初判、待人工终审的定位已写明)。
-- **定向删除 15×**:EN 删 91 条 LGBTQ+ 记忆,目标切片翻转率 12.5% ≈ 随机对照的 15 倍,扰动集中于目标切片;**删 2 条人工标记噪声条目即修复 EN**(0.8075→0.8199 acc,超全部 5 个随机 seed,零训练、秒级、纯 CPU);ZH v1 组级删除 0 翻转 —— 诚实负结果,归因 = v1 档案 target 字段召回过低(`DEMO_memory_editing.md`)。
-- **v2 档案闭环**:按审计缺陷改 prompt(target 必填规则 + mechanism 须有可引证据),ZH 有害类 target 召回 **1.6% → 49.4%**(3/182 → 89/180,train);v2 键复测:women 切片(63 条)删除产生切片效应(0.70→0.60,超随机包络),LGBTQ+ 字段切片仍 0 翻转,定向性改善有限且 v2 键下整体基线 0.8523→0.8255(`DEMO_memory_editing_v2_zh.md`、`scripts/slurm/gen_archive_v2.sbatch` 头注)。
-- 定位:**能力演示(记忆可语义寻址、外科手术式删除、零训练),不做切片级显著性主张**(n 太小,文中已声明)。
+**Claim**:MLLM 结构化档案记忆是**可审计**(60 条分层抽审 faithful 77%;失败模式三类定型:字段级虚报 15%、标题-only 洗白 5%、1 例内容级虚构)与**可编辑**(语义寻址 + 外科删除,纯 CPU、秒级、零训练)的:EN 定向删除切片翻转率 ≈ 随机对照 15×;**删 2 条人工标记噪声记忆即修复 EN 0.8075→0.8199**(超全部 5 随机 seed);审计驱动的 prompt v2 把 ZH 有害类 target 召回 1.6%→49.0%(EN 11.6%→54.5%),修复 ZH 可寻址性(0→20/63 条),EN 方向性效应在 target 字段切片下复现且更干净(2/14 翻转 vs 随机 5-seed 全 0,整体 acc 不掉)。**定位 = 能力演示,不做切片级显著性主张**(n 太小);v2 键无 accuracy 收益(ZH −2.7 acc)——档案的付费点在审计/编辑,不在检测。
+**证据**:`AUDIT_archive_faithfulness.md`、`DEMO_memory_editing.md`、`DEMO_memory_editing_v2_{zh,en}.md`、`ARCHIVE_V2_ITERATION.md`。
 
 ---
 
-## 3. 已撤回 / 被杀的主张清单
+## 5. 全部被杀 / 撤回主张清单(终版)
 
 | # | 被杀主张 | 撤回依据 | 出处 |
 |---|---|---|---|
-| 1 | **archive-kNN 键带来 accuracy 提升**(ZH +0.020 / EN +0.019,seed-0) | 多 seed 配对 dAcc = −0.0014±0.0313(t=−0.10);final-epoch 权重 sha1 逐位相同、α=0.25 键 0 票翻转 → 全部"增益"是 78 样本 dev 上的选点运气 | `experiments/exp-archive-knn-seeds.md`(含 Addendum 2 sha1 审计) |
-| 2 | **"archive > transcript = 结构化蒸馏"** 的排序主张 | seed-0 差距是 favorable draw;多 seed ΔF1 = +0.0001±0.0388(ZH)/ +0.0013±0.0141(EN);truncation-repair 假设在 ZH 也死(transcript ≤ floor 4-5/5 seeds)。仅存的可写信号:ZH val-选点 ROC 4/5 seeds +0.009,只作分析段 | `ABLATION_transcript_vs_archive.md` |
-| 3 | **机制统一**(把共识投票搬进档案空间,一套记忆空间统一检测+去噪) | W5 双语言、双配置(archive/blend)全部低于原空间与 floor | jobs 12243–12246(§2③;`ITERATION_LOG.md` 本次追加) |
-| 4 | **任务首次类措辞**("首个 hateful-video 时序定位"、"annotation-free"、"dense-supervision-free") | MultiHateLoc / LELA / TANDEM 分别占位;措辞红线定为只说 "span-free" | `DESIGN_iter3.md` 措辞红线、`NOVELTY_CHECK_dirA.md` |
-| 5 | **cross-seed ensemble** 线 | 用户政策明令禁止;计划即撤,零作业、零脚本、零数字 | `experiments/exp-archive-knn-seeds.md` Addendum 2 |
-| 6 | **"ZH best-ever 0.8322"** 单 seed 口径(MEMORY 记录) | LoRA-only floor 本身多 seed:val-选点 0.8282±0.0139;final-epoch seeds 3/4 达 0.8658 —— floor 比记录更强,0.8322 只是 seed-0 一个点 | `ABLATION_transcript_vs_archive.md` Paper wording 节 |
-| 7 | **MultiHateLoc 复现** | 官方仓库为空(仅 LICENSE),用户政策"无代码不复现";已起步代码标注 ABANDONED 留档 provenance,从未提交过 SLURM 作业 | `EVAL_localization_hatemm.md` §范围决定/§5;`baselines/multihateloc_reimpl/` |
-| 8 | (存量,列入以齐全)**multi-granularity 段级检索**作为 headline | 语言符号翻转、噪声 MIL 伪正样本;降级为诚实消融,最高价值 = anti-repeat | `experiments/exp-seg-mode-ablation.md`、`ideas/multigranularity-temporal-retrieval.md` |
+| 1 | **archive-kNN 键带来 accuracy 提升**(seed-0 ZH +0.020 / EN +0.019) | 5-seed 配对 dAcc −0.0014±0.0313;same-seed ckpt sha1 字节相同、α=0.25 键 ep29 0 票翻转 → 增益全是 78 样本 dev 选点运气 | `experiments/exp-archive-knn-seeds.md`(Addendum 2 sha1 审计) |
+| 2 | **"archive > transcript = 结构化蒸馏"** 排序 | 多 seed ΔF1 +0.0001±0.0388(ZH)/+0.0013±0.0141(EN);truncation-repair 假设 ZH 也死 | `ABLATION_transcript_vs_archive.md` |
+| 3 | **机制统一**(共识投票搬进档案/混合空间) | W5 双语言双配置全部低于原空间与 floor | ITERATION_LOG §W5(jobs 12243–12246) |
+| 4 | **任务首次类措辞**(first / annotation-free / dense-supervision-free) | MultiHateLoc / LELA / TANDEM 占位;红线=只说 span-free | `DESIGN_iter3.md`、`NOVELTY_CHECK_dirA.md` |
+| 5 | **cross-seed ensemble** | 用户政策明令禁止;零作业零脚本零数字 | `experiments/exp-archive-knn-seeds.md` Addendum 2 |
+| 6 | **"ZH best-ever 0.8322" 单 seed 口径** | floor 本身多 seed 0.8282±0.0139(val-选点)/ 0.8537±0.0120(final);0.8322 只是 seed-0 一个点 | `ABLATION_transcript_vs_archive.md` |
+| 7 | **MultiHateLoc 复现** | 官方仓库空(仅 LICENSE);用户政策"无代码不复现";起步代码标 ABANDONED 留档 | `EVAL_localization_hatemm.md`、`baselines/multihateloc_reimpl/` |
+| 8 | **multi-granularity 段级检索**作为 headline | 语言符号翻转、噪声 MIL 伪正样本;降级为诚实消融 | `experiments/exp-seg-mode-ablation.md` |
+| 9 | **mm 片段键主表主张**(EN consensus-mm ≥ floor,共识升级双语) | 预注册判定 FAIL:final-ep 3/3 seeds 低于 floor(−0.0116±0.0087,同向一致);val-选点 +0.0245 由单 seed 运气驱动(±0.0881);ZH mm 探针死未训练(预注册纪律)。**保留价值 = 归因链第三段 + probe-before-train 方法学**(annotator 修复层全部成立) | `EXP_mm_segment_keys.md` |
+| 10 | **role-3 选择性推理**(kNN margin 门控 → MLLM 仲裁)作为 EN 破 0.85 杠杆 | 三代仲裁器(v1 通用 prompt / v2 口径校准 / v3 任务 LoRA)全部未过 val 门(EN 最好 0.7750<0.7875;ZH 最好 0.8590<0.8718),val 选定配置=不仲裁;v3 EN deferred-acc 0.615 < 0.667 打平线 << 0.846 跨线。**门控本身有效**(EN 24% 样本拿住 42% 错误;oracle 0.857–0.888)= 复活条件已量化,留给 ≥72B/API 级仲裁器 | `EVAL_role3_selective_reasoning.md` |
+| 11 | **ZH 共识"反超 floor"**(seed-0 +0.0158) | 5-seed val-选点 +0.0115±0.0418(3/5 胜,p≈0.57)= 掷硬币;final +0.0247±0.0272(4/5,p≈0.11)仍不显著;**修复毒化主张幸存**(任何 seed/口径都不复现 −0.066 洞) | `experiments/exp-consensus-zh-seeds.md` |
+| 12 | **v2 档案键作为 accuracy 手段** | 冻结获胜头换键:ZH 0.8523→0.8255(−2.7 acc)、EN 0.8075→0.8012;v2 只在审计/编辑维度付费 | `ARCHIVE_V2_ITERATION.md` §4 |
+| 13 | **"定位能力强"类主张**(HateClipSeg/HateMM) | 池化指标主体=毒性密度的视频间排序(broadcast 对照几乎追平);within-video 信号仅 1/4 cell 显著(wv-AUC 0.526);K=30 密度匹配负结果 → 只作"span-free 能力演示 + 模态盲区归因" | `EVAL_localization_hateclipseg.md`、`EVAL_localization_hatemm.md` |
 
 ---
 
-## 4. 方法学发现(本身值一节论文附录)
+## 6. 方法学章素材(值一节附录)
 
-**150 量级测试集上,seed 噪声 + 选点噪声支配一切 ≤2 个点的"增益"。**
+**主命题:150 量级测试集 + 78 样本 dev 上,seed 噪声与选点噪声支配一切 ≤2 点的"增益";本项目的对策全部可复用。**
 
-- 78 样本 dev 上按 val-acc 选 epoch,相对 selection-free 协议(last5-mean / final-epoch)**自损约 2 个 acc 点**(ZH 两臂 val-选点 ~0.827-0.828 vs last5 ~0.846-0.848 vs final-epoch 0.8537)。
-- **五规则网格**(val-acc / val-ROC / top3-mean / last5-mean / final-epoch)重打分全部臂:ZH 配对档案效应在 −0.013 ~ +0.008 间摆动 —— **选点规则挪动估计值的幅度超过待测效应本身**;无任何规则跨臂一致占优 → 不改预注册规则,headline 数字不动。
-- **sha1 审计**:same-seed 的 archive 臂与 LoRA-only 臂 epoch-29 checkpoint 字节相同(`6d6551e4…`,与 disk_guard 推 B2 时记录的 sha1 吻合)——kNN 键通道确实不触训练,全部差异只在 eval-time 检索键;这也反向解锁了"换键无需重训"的 v2 复测设计。
-- 论文用 selection-robustness 附录段落已成文,可直接引用。
-- (出处全部:`experiments/exp-archive-knn-seeds.md` Addendum 1/2;分析脚本 `scripts/analysis/selection_rule_robustness.py`)
-
----
-
-## 5. 在飞未决(截至本报告写作时刻)
-
-| 事项 | job | 状态 | 判读点 |
-|---|---|---|---|
-| **W7 角色 3 仲裁**(kNN 低置信 margin 门控 → Qwen2.5-VL 裁决) | 12279 | PENDING | EN 最后一个未测杠杆;gate/margin 基线已产出(`scripts/role3/out/gate_*.json`,deferral 集已冻结) |
-| **EN floor seed-3** | 12277 | RUNNING(训练已至 ep29,收尾中) | 快照:val-选点 0.7391 / final-epoch 0.8012 —— 若确认,val-选点 floor n=4 均值降至 ~0.770,进一步坐实选点噪声结论(`ABLATION_transcript_vs_archive.md` 的 EN floor 行将由 n=2 升 n=4) |
-| **v2 档案 EN 全量生成** | 12280 | PENDING(smoke 12259 已过:30 条 target 非空率 30%) | 补齐 v2 双语;EN 侧 v2 键复测视结果决定 |
-| **MoRE 复跑 G6 最终训练** | 12273 | PENDING(阶段 1/2 全部完成:环境、缺件复原、特征、检索 ×2 variant) | 产出 (a) 官方 split sanity 数字 vs 发表值、(b) clean 子集严格同场数字(`BASELINE_MoRE_rerun.md`) |
-| **HateClipSeg 定位评测** | 12274 | RUNNING(K4/K30 窗口特征抽取) | 数据已落库(395/435=90.8% 存活,金标清洗完毕),评测脚本就绪,主表 TBD(`DATASET_hateclipseg.md`、`EVAL_localization_hateclipseg.md` §4) |
+1. **选点噪声定量**:val-acc 选 epoch 相对 selection-free 协议自损 ~2 acc 点(ZH 两臂 val-选点 ~0.827-0.828 vs last5 ~0.846-0.848 vs final-epoch 0.8537);五规则网格(val-acc/val-ROC/top3/last5/final)下 ZH 配对档案效应在 −0.013~+0.008 摆动 —— **选点规则挪动估计值的幅度超过待测效应**;无规则跨臂一致占优 → 预注册规则不改。n=5 配对 MDE ~0.04-0.05 F1,真 +0.01-0.02 效应按设计不可测。selection-robustness 论文段落已成文可直接引用(`experiments/exp-archive-knn-seeds.md` Addendum 1)。
+2. **probe-before-train**:零训练探针(与训练 E-step 共用同一键构造实现)+ 预注册双闸门(严重度相关性、正监督供给),先探针后训练;ZH mm 探针死 → 不硬跑(省 GPU 且免事后择臂);EN 探针过闸、臂间排序被训练端兑现(PRIMARY>SECONDARY),但探针过闸≠下游增益 —— 探针是必要非充分门(`EXP_mm_segment_keys.md` §3.2/3.4)。
+3. **sha1 / bit-for-bit 审计纪律**:harness 确定性(同代码两遍 12/12 ckpt sha1 同)→ 改动无侵入(flag 默认关时逐位同)→ same-seed 跨臂 ckpt 字节相同(证明 kNN 键不触训练)→ disk_guard B2 sha1 对账。一切"增益"主张先过身份审计再过统计(`EXP_mm_segment_keys.md` §1、`experiments/exp-archive-knn-seeds.md` Addendum 2)。
+4. **双口径并排报告**:val-选点(预注册)+ final-epoch(selection-free)全表并报,分歧本身入文(EN mm:val-选点假阳性 vs final 3/3 同向负;EN archive:val-选点 +2.3 假增益 vs final 0/4 正)。
+5. **复跑取证协议**(MoRE):释出代码 7 项缺陷全部文档化处置、bug 保留(as-released)+ bugfix 双轨、seed 敏感性、缺失件本地复原并脚注、每视频预测落盘可审计(`BASELINE_MoRE_rerun.md`)。
+6. **预注册纪律的负例价值**:role-3 的 val 门决策"不仲裁"(ZH v3 test 侧 +0.02 增益如实报告但按协议不选);mm PRIMARY/SECONDARY 提交前预注册,未做训练后挑臂。
 
 ---
 
-## 6. 用户待拍板
+## 7. 用户待拍板
 
-1. **Headline 口径:val-选点 vs final-epoch。**
-   - 事实:预注册 val-选点下 ZH 均值 0.827,不过 0.85;final-epoch(标准、selection-free)下 floor 0.8537±0.0120,过 0.85。
-   - 风险:因为过线才换口径 = 事后 rule-shopping,rebuttal 必死;且 final-epoch 口径下 archive-kNN 通道在 ZH 贡献恰好为零(逐位相同)、在 EN 低于单 seed floor。
-   - 建议案:**两口径并排**——主表沿用预注册口径,附录放五规则鲁棒性全表 + 已成文的说明段;若决定改用 final-epoch,须以"未来预注册"名义全线统一,并在文中自曝该决策时序。
-2. **EN 0.85 的处置。** 若 W7 角色 3 也不中(其余杠杆已全部证伪):接受 **"近天花板定位"** —— EN floor ~0.78(val-选点)/ ~0.80(final-epoch),叙事转为归因分析(语音承载仇恨 + 视觉/档案键盲区),0.85 作为该 split 上未被本方法族达到的公开目标如实报告。
+1. **Headline 口径:val-选点 vs final-epoch(ZH 0.827 vs 0.8537)。** 事实与风险不变:预注册口径不过 0.85,final-epoch 过线但因过线才换=rule-shopping,rebuttal 必死;且 final-epoch 下 archive 通道 ZH 贡献恰好为零、EN 为负。**建议案维持:两口径并排**——主表沿用预注册口径,附录放五规则鲁棒性全表+已成文说明段;若改用 final-epoch,须以"未来预注册"名义全线统一并自曝决策时序。
+2. **EN 近天花板定位确认。** 全部杠杆已穷尽(§1/§5),EN ≈0.78-0.80 双口径;同场 MoRE 仅 0.69-0.72,CRAVE 发表 79.81 F1 为场上最高(全量 split)。请确认接受"近天花板 + 归因分析"叙事:0.85 作为该 split 上未被本方法族达到的公开目标如实报告,EN 章节主体为 §4③ 归因链 + oracle 复活条件(role-3 门控留出 0.857-0.888 空间)。
+3. **投稿目标。** 素材形态:主表(同场 MoRE 三库全胜)+ 四支柱 + 归因章 + 方法学附录;请拍板目标 venue 与截稿,以便按其页数/附录政策裁剪(候选讨论中曾出现 WWW / ICWSM / ACL-ARR 线,未定)。
 
 ---
 
-_附:本报告与 `research-wiki/ITERATION_LOG.md`(07-03 夜 → 07-04 追加节)、各终报文档同步入库;ideas 节点状态已刷新(archive-as-key → refuted;consensus-denoising → ZH-validated / EN-refuted;evolving-memory → validated-as-calibration)。_
+## 8. 遗留 TODO 清单(收卷后未尽事项,均不阻塞定稿)
+
+| # | 事项 | 说明 / 现状 |
+|---|---|---|
+| 1 | **ZH transcript 多 seed 的 final-epoch 合并表** | `experiments/exp-archive-knn-seeds.md` Addendum 3 的 EN 主表已含 floor/archive 双口径;transcript 臂(12260-12266)的 final-epoch 口径尚未并入同一张表(val-选点口径已在 `ABLATION_transcript_vs_archive.md`)。纯日志重解析,零 GPU |
+| 2 | **HateClipSeg 用 mm 片段键重打定位** | 定位评测(`EVAL_localization_hateclipseg.md`)是视觉-only 键,结论明示改进方向=语音模态键;mm 片段 ASR 键基建(`generate_segment_asr_HF.py`/`generate_subclip_mm_embedding_HF.py`)已就绪,需对 HateClipSeg 抽 ASR 后重打 within-video 表。若做,先修 word-ts 降级(EN 41%,建议 whisperX) |
+| 3 | **v3 档案方向** | `ARCHIVE_V2_ITERATION.md` §6 已列:few-shot 对比示例(医疗科普 vs 攻击)、target 区分"话题涉及/被攻击"、标题-only 毒性单独字段;v2 残留缺陷(benign mechanism 幻觉 59%/51%、标题洗白未修)是靶点 |
+| 4 | **更强仲裁器** | role-3 复活条件已量化:EN deferred@30% ≥0.667 打平、≥0.846 跨 0.85;7B 线终结,留 ≥72B/API 级;ZH v3 test 侧未选中正增益提示"任务校准>prompt 工程"方向 |
+| 5 | ZH full-mode 毒化洞(−0.066)补 seed | 修复 claim 的洞本身仍是单 seed(`exp-consensus-zh-seeds.md` caveat);如审稿要求可补 λ=0.5 full 臂 seeds 1-4 |
+| 6 | 疑似 gt 漏标 `BV1MU4y1D7Ks` 人工终审 | 审计反向发现,模型初判、待人工确认(`AUDIT_archive_faithfulness.md`) |
+| 7 | ASR 资产复用前修 word-ts | transformers word-ts DTW bug 致 EN 41% 降级 sentence-level;复用 `data/ASR/` 前先修或换 whisperX(`EXP_mm_segment_keys.md` 偏离条款) |
+
+---
+
+_附:`research-wiki/ITERATION_LOG.md` 已追加终局记录(2026-07-05);ideas 节点收口:`mm-segment-keys` 新建(outcome=attribution-closed)、`role3-selective-reasoning` 新建(closed)、`retrieval-consensus-denoising` 终态刷新(repair-yes / beat-floor-no / attribution-closed);全部 open 问题已移入本报告 §8 TODO。三条用户政策(禁 cross-seed ensemble / 无代码不复现 / 不发邮件缺件自补)全程执行,记录在 ITERATION_LOG §10。_

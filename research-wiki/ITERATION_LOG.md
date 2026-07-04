@@ -1166,3 +1166,73 @@ consensus topk=10 / τ=0.2 / EM=2。日志 `slurm/logs/mhc_train_cons_*.out`,ckp
 **Ideas 节点状态同步:** `archive-as-retrieval-key` → refuted(新节点,负结果入档);
 `retrieval-consensus-denoising` → ZH-validated / EN-refuted(归因完结);
 `evolving-memory-protocol` → validated-as-calibration(新节点)。
+
+## 终局收卷 — 2026-07-05(FINAL;全部实验收敛,状态固化)
+
+**本节为项目终局记录。以下八份终报全部落地,无在飞作业,无未判读结果;
+MORNING_REPORT.md 已更新为终版(FINAL - 2026-07-05)。**
+
+### 1. mm 片段键终判(`EXP_mm_segment_keys.md`,jobs 12302/12303/12310–12317)
+
+**主表 FAIL,归因闭环。** 片段级 Whisper ASR 多模态键把 EN 共识 annotator 全面修好
+(正监督供给 56%→19%、投票视频级→片段级 wv-std 0.048→0.12、严重度反相关消除、
+灾难性 clip-consensus −0.117 F1 被完全救回 +0.10~0.13),但训练端仍不超 floor
+(预注册判定:final-ep 3/3 seed −0.0116±0.0087;val-选点 +0.0245 由单 seed 驱动 ±0.088)。
+ZH mm 探针死(窗文本率 48.5% + CLIP-zh 弱),按预注册纪律不训练。
+**EN 病灶钉死:片段监督通道本身对语音承载仇恨无增益** —— 三段归因链
+(视觉键投票=视频级噪声 → 档案/混合空间救不回 → 证据匹配语音键修好 annotator 仍无增益)闭环。
+共识去噪 claim 维持 ZH-scoped;方法学副产品 = evidence-matched segment keys + probe-before-train。
+
+### 2. 同场 MoRE 三库全胜(`BASELINE_MoRE_rerun.md`,jobs 12235–12318)
+
+复跑完成:sanity(HateMM 复跑落发表值 −2~3pt = 复现成功)+ clean 同场终表:
+HateMM +5.6 acc / EN +8.7 acc(+22.9 F1)/ ZH +6.7 acc,**三库全胜且 seed 均值上界、
+bugfix variant 均不翻转** —— 论文主对比表定稿。释出代码 7 缺陷、缺件复原、EN 早停塌缩
+归因全部留痕。
+
+### 3. role-3 选择性推理终结(`EVAL_role3_selective_reasoning.md`,jobs 12279/12288/12305)
+
+三代 7B 仲裁器(v1/v2/v3-LoRA)全部未过 val 门,两语言 val 选定配置=不仲裁;
+EN 维持 0.8075(memory-clean 0.8199)。**门控本身有效**(EN 24% 样本拿住 42% 错误;
+oracle 0.857–0.888);复活条件量化:deferred@30% ≥0.667 打平 / ≥0.846 跨线,留 ≥72B/API。
+ZH v3 test 侧 +0.02 未选中增益如实脚注、按协议不作 claim。
+
+### 4. ZH 共识多 seed 复检(`experiments/exp-consensus-zh-seeds.md`,jobs 12289–12300)
+
+**修复稳、反超不成立**:5-seed val-选点 +0.0115±0.0418(p≈0.57)、final +0.0247±0.0272
+(p≈0.11);任何 seed/口径都不复现 full-mode −0.066 毒化洞。论文措辞定稿:
+"consensus de-poisons sub-clip supervision (−0.066 → ≈ floor / weakly above)"。
+
+### 5. EN 主表定稿(`experiments/exp-archive-knn-seeds.md` Addendum 3,jobs 12275–12277)
+
+EN floor 4-seed 补齐:val-选点 floor 0.7702±0.0221 vs archive 0.7935±0.0205(假增益=
+选点交互),final-ep floor 0.7888±0.0152 vs archive 0.7826±0.0134(0/4 正,t=−2.45)。
+**EN 全配置 0.77–0.79 不分离 → "≈0.79 regardless of key augmentation" 定稿。**
+
+### 6. 档案 v2 闭环(`ARCHIVE_V2_ITERATION.md`,jobs 12234/12258/12259/12280)
+
+target 召回 harmful ZH 1.6%→49.0% / EN 11.6%→54.5%,结构违规 14.6%→1.0%;
+ZH 编辑可寻址性修复(0→20/63 条);EN 字段切片方向性更干净(2/14 翻转 vs 随机全 0,
+整体 acc 不掉);v2 键无 accuracy 收益(ZH −2.7)→ 档案付费点=审计/编辑。
+键增强对照重训按 post-mortem 取消,换键对比零训练完成。
+
+### 7. HateClipSeg 定位主表(`EVAL_localization_hateclipseg.md`,job 12274)
+
+零训练跨库共识票:最好配置 full AP 0.545/AUC 0.588(random +0.088/+0.100);
+within-video 信号显著但小(wv-AUC 0.526,仅 K=4+subclip cell 过 Bonferroni);
+K=30 密度匹配负结果;换记忆零重训改变行为模式(可换记忆支柱双向证据)。
+能力演示成立、定位强度诚实地弱。
+
+### 8. 终版固化与收口
+
+- **MORNING_REPORT.md → FINAL**:终版记分板(HateMM 0.870✓ / Impli ~0.91✓ /
+  ZH 0.827‖0.8537 双口径待拍板 / EN ≈0.78–0.80 近天花板)、MoRE 全胜表、四支柱终版、
+  被杀主张 13 条全清单、方法学章素材、用户待拍板 3 项、遗留 TODO 7 项。
+- **Ideas 节点收口**:`mm-segment-keys` 新建(outcome=attribution-closed);
+  `role3-selective-reasoning` 新建(closed:7B 线终结,门控+oracle 入 TODO);
+  `retrieval-consensus-denoising` 终态=repair-yes / beat-floor-no / attribution-closed。
+  所有节点内 open 问题移入 MORNING_REPORT §8 TODO(transcript final-ep 合并表、
+  HateClipSeg×mm 键重打、v3 档案、更强仲裁器、full-mode 洞补 seed、gt 漏标终审、
+  word-ts 修复)。
+- **全量 commit**(代码 / 文档 / 日志与小数据 三批,排除子模块与一切权重文件),
+  项目状态至此固化。

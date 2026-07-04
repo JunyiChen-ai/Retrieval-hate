@@ -107,3 +107,46 @@ _目标:复跑 [Jian-Lang/MoRE](https://github.com/Jian-Lang/MoRE) 官方代码,
 - 形状调和按计划执行(6 个主特征 → (1,d)),merge/检索不受影响。
 - 磁盘峰值受控,前后景帧与 wav 均已清理。
 - 剩余:G6=12273(6 组训练:3 数据集 × 2 检索 variant,官方 yaml,seed=2024)+ 双轨评测,等 GPU 槽位。
+
+---
+
+## 阶段 3 完成:训练与两套评测终表(2026-07-05)
+
+_全部 SLURM:G6=12309(6 组主跑:3 库 × {asreleased, bugfix},官方 yaml,seed=2024 其默认)+ G7=12318(seed 敏感性:asreleased × seeds 2020–2023,我方补充)。指标 = 其 torchmetrics 口径 ACC / Macro-F1(下表 acc/F1)。产物:`/data/jehc223/baselines/MoRE/rerun/runs/*_eval.json`(含每视频预测,可审计)。_
+
+### 3.0 训练期最后一个释出缺陷
+- G6 首跑 7 秒即崩:释出 yaml 把 `task: binary` 放在 `data:` 下,但 `main.py` 读顶层 `cfg.task` → **释出配置与训练入口脱节**(与形状问题同源)。修复:CLI `+task=binary`(零文件改动,命令行留痕)。
+
+### 3.1 表 A —— 复跑 vs 发表值(sanity;官方 split,full 口径)
+| 数据集 | 发表值 acc/M-F1 | 复跑 as-released(seed2024) | Δ | 复跑 5-seed 均值±std | full test 实际 n |
+|---|---|---|---|---|---|
+| HateMM | 0.8341 / 0.8235 | 0.8111 / 0.7954 | −2.3 / −2.8 pt | 0.789±0.035 / 0.777±0.037 | 217/217(完整) |
+| MHC-EN | 0.7750 / 0.7519 | 0.7033 / 0.5224 | −7.2 / −23.0 pt | 0.729±0.028 / 0.585±0.080 | 182/200(有标签者) |
+| MHC-ZH | — / 0.7475 | 0.7557 / 0.6858 | — / −6.2 pt | 0.701±0.037 / 0.648±0.030 | 176/200(有标签者) |
+
+**sanity 结论:HateMM(唯一数据完备的库)复跑落在发表值 −2~3pt,且 seed2024 恰为 5 seed 中较好值(seed2023 低至 0.713 F1)——单 seed ±3pt 方差下可视为复现成功。** MHClip 两库低于发表值,归因见 3.4(数据缺失为主因,不视为复现失败,但表 A 的 MHClip 行不能直接当其发表值替身引用)。
+
+### 3.2 表 B —— clean 子集(与我们主表严格同场;主交付)
+| 数据集(clean test n) | MoRE as-released | MoRE bugfix | MoRE 5-seed 均值(asrel) | 我们最好配置 | Δ(我们 − MoRE 两 variant 较优) |
+|---|---|---|---|---|---|
+| HateMM(215) | 0.8140 / 0.7988 | 0.8047 / 0.7899 | 0.792±0.035 / 0.781±0.038 | frozen-Qwen **0.870 / 0.861** | **+5.6 acc / +6.2 F1** |
+| MHC-EN(161) | 0.6894 / 0.4438 | 0.7019 / 0.5084 | 0.722±0.031 / 0.530±0.111 | frozen-Qwen **0.7888 / 0.7378** | **+8.7 acc / +22.9 F1** |
+| MHC-ZH(149) | 0.7651 / 0.6882 | 0.7584 / 0.7058 | 0.717±0.035 / 0.661±0.023 | LoRA-SFT **0.8322 / 0.8023** | **+6.7 acc / +9.7 F1** |
+
+_我方数字来源:ITERATION_LOG(warmup-consistent val-selected;HateMM/EN=frozen-Qwen,ZH=LoRA-SFT 最优)。同场条件说明:MoRE 按其官方协议在官方 split 有标签子集上训练(EN 618/ZH 633,缺视频者黑帧/零音频占位),我们在 clean train(EN 550/ZH 579)训练——名义标签量 MoRE 略占优;test 完全同集。**结论:三库全部同场胜出,即便对 MoRE 取 seed 均值上界或较优 variant 也不翻转。**_
+
+### 3.3 bugfix 敏感性(merge_feature audio 循环 bug)
+两 variant 差异 ±1–2pt(HateMM/EN/ZH F1:−0.9/+3.7(EN clean +6.5)/+1.8 pt),方向不一致、幅度小于 seed 方差 → **该释出 bug 不是复跑-发表差距的主因**;主表引 as-released(严格按其释出代码),bugfix 数字保留作脚注。
+
+### 3.4 与发表值差异的归因(按证据强度排序)
+1. **MHClip 数据缺失(最大因子)**:发表值基于全量 1000/库;我们只有 EN 标签 890/视频 792、ZH 897/814。退化幅度与覆盖率单调:HateMM(100%)−2.8 → ZH(86%)−6.2 → EN(79%)−23。缺视频的有标签训练行(EN 68/ZH 54)以黑帧+零音频占位,还注入了标签噪声。
+2. **EN 塌缩机制已定位**:其协议用 val-ACC 早停(patience 5),EN val 仅 91 样本(30 正);epoch 0–4 模型全负预测(acc=多数类 0.670),epoch 5 acc 微升即定格 checkpoint,M-F1 尚在爬升(epoch7 0.634)即被掐断。5-seed F1 0.41–0.68(std 0.11)——**EN 行必须带 seed 方差报告,单点数字不可靠**。
+3. **caption 为我方复原**(Qwen2.5-VL-7B,原文未文档化生成方式);**ZH OCR 为 easyocr 替换**(paddle GPU cudnn 不可装/CPU SIGILL,任务书预授权);均只进检索记忆库,HateMM 的正常复现说明影响有限。
+4. **单 seed**:HateMM seed2023 离群(0.713 F1)显示其协议本身 ±3pt 方差;发表的 p<0.01 多 seed 协议未随码释出。
+5. 释出代码缺陷(形状不配、config 键错位、merge bug、O(n²) 写盘)均已按文档化方式调和,处置全程留痕,不构成额外自由度。
+
+### 3.5 交付物与状态
+- 代码/数据/环境:`/data/jehc223/baselines/MoRE`(rerun/ 为我方全部脚本;MoRE_env + MoRE_paddle 两 conda env;RGCL 仓库零侵入,HateVideo env 未动)。
+- 每组 run:`rerun/runs/{DS}_{VAR}_eval.json`(full+clean 双轨 + 每视频预测)、`train_*.stdout.log`、6 个主 checkpoint;seed 敏感性 `rerun/runs/seedsens/*_eval.json`。
+- 磁盘:清理后 MoRE 目录 5.2G(重复/seed checkpoint 已删,eval json 全保留);wav/前后景帧过程产物早已即用即删。
+- **论文引用口径建议**:主表 MoRE 行用 表 B as-released(seed2024)+ 脚注(seed 均值±std、bugfix、caption/OCR 复原、EN 早停塌缩);MoRE 发表值另列"reported(full data)"行,附 §1.4 覆盖率表说明不可直接比。
