@@ -352,7 +352,7 @@ def parse_args():
              "None (default) = archive fully OFF, bit-for-bit baseline.")
     arg_parser.add_argument(
         "--archive_mode", type=str, default="knn",
-        choices=["knn", "stream", "replace"],
+        choices=["knn", "stream", "replace", "both"],
         help="How to inject the archive embedding (only when --archive_feats "
              "is set):\n"
              "  knn     = (a) kNN memory-key augmentation: eval-time retrieval "
@@ -365,7 +365,10 @@ def parse_args():
              "own projection and is concatenated into the classifier-head "
              "fusion input (transported inside text_feats; the model splits "
              "internally so the frozen loss.py call signature is unchanged).\n"
-             "  replace = (c) control: archive embedding REPLACES text_feats.")
+             "  replace = (c) control: archive embedding REPLACES text_feats.\n"
+             "  both    = (a)+(b) combined: third training stream AND eval-time "
+             "kNN memory-key augmentation (--archive_alpha applies to the kNN "
+             "part exactly as in knn).")
     arg_parser.add_argument(
         "--archive_alpha", type=float, default=1.0,
         help="Weight of the archive channel in archive_mode=knn. Effective "
@@ -397,6 +400,28 @@ def parse_args():
         help="Handling of the (Y_v=benign, vote=hate) cell: ignore (default) "
              "or add those sub-clips to the mining corpus as label-0 "
              "confusable hard negatives.")
+    arg_parser.add_argument(
+        "--consensus_space", type=str, default="clip",
+        choices=["clip", "archive", "blend"],
+        help="Embedding space for the consensus E-step kNN vote (seg_mode="
+             "consensus only). W5 prescription for the MHC-EN failure:\n"
+             "  clip    = current behaviour (default): round-0 raw frozen-CLIP "
+             "concat space, later EM rounds the trained head's fused space. "
+             "Bit-for-bit identical to pre-W5 code.\n"
+             "  archive = vote in the MLLM structured-archive CLIP-text space: "
+             "each TRAIN video contributes its archive embedding as the memory "
+             "key, and every sub-clip queries with its PARENT video's archive "
+             "embedding (the vote was already video-level de facto -- this "
+             "makes it explicit and gives it eyes on speech/on-screen-text "
+             "evidence). Round-invariant across EM rounds.\n"
+             "  blend   = concatenated key [l2n(base) | a*l2n(archive)] "
+             "(base = clip-space key of the current round), so the vote "
+             "similarity is (cos_base + a^2*cos_archive)/(1+a^2) with "
+             "a = --consensus_space_alpha.")
+    arg_parser.add_argument(
+        "--consensus_space_alpha", type=float, default=1.0,
+        help="Archive-channel weight a for --consensus_space blend "
+             "(effective similarity weight a^2/(1+a^2); a=1 -> equal).")
 
     args = arg_parser.parse_args()
 
@@ -725,7 +750,8 @@ def main(args):
     if args.archive_feats is not None:
         exp_name += "_arc-{}{}".format(
             args.archive_mode,
-            "-a{}".format(args.archive_alpha) if args.archive_mode == "knn" else "")
+            "-a{}".format(args.archive_alpha)
+            if args.archive_mode in ("knn", "both") else "")
     # Construct output path
     args.output_path = os.path.join(
         args.output_path, "Retrieval", args.dataset, args.group_name, exp_name, "")
@@ -778,13 +804,13 @@ def main(args):
             for split, tup in (("train", train), ("dev_seen", dev),
                                ("test_seen", test_seen)):
                 tup[2] = arc_by_split[split]
-        elif args.archive_mode == "stream":
+        if args.archive_mode in ("stream", "both"):
             # (b) third stream: transported inside text_feats; model splits.
             for split, tup in (("train", train), ("dev_seen", dev),
                                ("test_seen", test_seen)):
                 tup[2] = torch.cat(
                     (tup[2].float(), arc_by_split[split]), dim=1)
-        elif args.archive_mode == "knn":
+        if args.archive_mode in ("knn", "both"):
             # (a) kNN memory-key augmentation: build an id -> archive-embedding
             # bank over all splits; used ONLY inside eval-time retrieval
             # (evaluate_rac.retrieve_evaluate_RAC_). Training is untouched.
@@ -864,6 +890,25 @@ def main(args):
             segment_cache["subclip_img_feats"].shape[0],
             sc.get("num_subclips", args.num_subclips),
             len(parent_id_to_row)))
+        # W5: archive-space consensus voting. Load the per-video MLLM
+        # structured-archive embeddings aligned to the TRAIN cache order and
+        # stash them for the E-step. Only touched when the non-default voting
+        # space is requested; --consensus_space clip (default) leaves this
+        # block dead and the run bit-for-bit identical to pre-W5 code.
+        if (args.seg_mode == "consensus"
+                and getattr(args, "consensus_space", "clip") != "clip"):
+            arc_src = (args.archive_feats
+                       if args.archive_feats is not None else "auto")
+            arc_train_path = resolve_archive_path(
+                arc_src, args.path, args.dataset, "train")
+            segment_cache["archive_feats"] = load_archive_feats_split(
+                arc_train_path, list(train_set.ids))
+            print("[consensus] E-step voting space '{}' (alpha={}): train "
+                  "archive <- {} ({} rows, dim {})".format(
+                      args.consensus_space, args.consensus_space_alpha,
+                      arc_train_path,
+                      segment_cache["archive_feats"].shape[0],
+                      segment_cache["archive_feats"].shape[1]))
 
     # <----------------- Construct the model ----------------->
 
@@ -874,10 +919,11 @@ def main(args):
     print("Text feature dimension: ", text_feat_dim)
 
     def build_model():
-        # archive_mode == 'stream' uses the third-stream variant; every other
-        # configuration (archive off / knn / replace) constructs the ORIGINAL
-        # classifier_hateClipper with identical arguments (same RNG draws).
-        if args.archive_feats is not None and args.archive_mode == "stream":
+        # archive_mode 'stream'/'both' uses the third-stream variant; every
+        # other configuration (archive off / knn / replace) constructs the
+        # ORIGINAL classifier_hateClipper with identical arguments (same RNG
+        # draws).
+        if args.archive_feats is not None and args.archive_mode in ("stream", "both"):
             return classifier_hateClipperArchive(
                 image_feat_dim, text_feat_dim - archive_dim, archive_dim,
                 args.num_layers, args.proj_dim, args.map_dim, args.fusion_mode,

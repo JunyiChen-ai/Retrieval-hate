@@ -107,6 +107,87 @@ USER_PROMPT_TEMPLATE = (
     "transcript; do not speculate beyond what is shown."
 )
 
+# ----------------------------------------------------------------------------
+# Prompt v2 (AUDIT_archive_faithfulness.md fixes; same forensic style + JSON):
+#   defect 1 -- target_groups recall (v1 full-run non-empty rate: ZH 1.4%,
+#     EN 6.5%; audited attacks on 娘炮/泼妇/小日子/homosexuals all left target
+#     empty): v2 makes naming the attacked group MANDATORY, states that slurs
+#     identify their own target group, and counts title-only attacks.
+#   defect 2 -- spurious mechanism on benign content (9/60 audited
+#     hallucinations were benign medical/nursery/greeting videos given
+#     stereotyping/slur; v1 mechanism non-empty on gt-Normal: ZH 87.7%,
+#     EN 79.2%): v2 forbids filling mechanism without concrete quotable
+#     evidence and adds an explicitness/mechanism/target consistency rule.
+# v1 stays byte-identical (default); v2 writes to <dir>/<dataset>/v2/.
+# ----------------------------------------------------------------------------
+USER_PROMPT_TEMPLATE_V2 = (
+    "Analyse this social-media video for a content-moderation research archive. The "
+    "video may or may not contain hateful or offensive material; describe what is "
+    "present without endorsing it.\n"
+    "\n"
+    "Video title and transcript (may be auto-generated and noisy):\n"
+    "\"\"\"\n"
+    "{text}\n"
+    "\"\"\"\n"
+    "\n"
+    "Return ONE JSON object with exactly these fields:\n"
+    "- \"target_groups\": list of strings naming the specific group(s) of people "
+    "the video targets, disparages or mocks. If the content attacks, demeans or "
+    "mocks ANY group -- by race, ethnicity, nationality or region, religion, "
+    "gender, sexual orientation or gender expression, disability, occupation, or "
+    "any other group identity -- you MUST name that group here; never leave this "
+    "list empty when a group is attacked. A derogatory group label or slur "
+    "identifies its own target: name the group the term refers to (e.g. a slur "
+    "for effeminate men targets \"effeminate men\"; a derogatory word for women "
+    "targets \"women\"; a mocking nickname for a nationality targets that "
+    "nationality; a slur for gay people targets \"gay people\"). Attacks that "
+    "appear only in the title still count. Use the empty list [] ONLY if no group "
+    "of people is targeted (benign content, or an insult aimed at one specific "
+    "individual rather than at a group).\n"
+    "- \"mechanism\": list of strings describing how any attack or disparagement "
+    "is delivered; choose only from [\"slur\", \"insult\", \"dehumanization\", "
+    "\"stereotyping\", \"mockery\", \"coded_language\", \"incitement\", \"threat\", "
+    "\"misinformation\", \"sexual_harassment\", \"glorification_of_violence\", "
+    "\"other\"]; use an empty list [] if none. Include a mechanism ONLY when you "
+    "can point to concrete evidence of an actual attack or disparagement in the "
+    "title, transcript, speech, imagery or on-screen text -- evidence you could "
+    "quote. Benign content about sensitive topics (medical or sex education, "
+    "product reviews, greetings, children's songs, news reporting, neutral "
+    "discussion of a group) is NOT an attack: use [] for it. Never fill in a "
+    "mechanism without sufficient evidence.\n"
+    "- \"modality_cues\": object with keys \"visual\", \"speech\", \"on_screen_text\". "
+    "For each key give one factual sentence describing the concrete evidence in that "
+    "channel: symbols, gestures, people and imagery for \"visual\"; spoken words from "
+    "the transcript for \"speech\"; captions, overlaid text or signs for "
+    "\"on_screen_text\". Use an empty string \"\" if that channel carries no relevant "
+    "cue.\n"
+    "- \"explicitness\": exactly one of \"explicit\" (hostility is overt), "
+    "\"implicit\" (hostility is conveyed indirectly via sarcasm, coded references or "
+    "dog-whistles), or \"none\" (no hostility present).\n"
+    "- \"neutral_summary\": 2-3 sentences of neutral, factual description of what the "
+    "video shows and says, in plain English, without judgement words.\n"
+    "\n"
+    "Rules:\n"
+    "- Respond in English only, even if the video or transcript is in another "
+    "language.\n"
+    "- Output ONLY the JSON object: no markdown fences, no commentary before or "
+    "after.\n"
+    "- Ground every field in observable evidence from the frames, title or "
+    "transcript; do not speculate beyond what is shown.\n"
+    "- The title is part of the content: hostility or slurs appearing only in the "
+    "title must still be reflected in \"target_groups\", \"mechanism\" and "
+    "\"explicitness\".\n"
+    "- Consistency: if \"mechanism\" is non-empty and the hostility is aimed at "
+    "people as a group, \"target_groups\" must name that group; if you cannot name "
+    "any targeted group or individual, re-check whether a mechanism is really "
+    "present. If \"explicitness\" is \"none\", then \"mechanism\" and "
+    "\"target_groups\" must both be [].")
+
+PROMPT_TEMPLATES = {
+    "v1": USER_PROMPT_TEMPLATE,
+    "v2": USER_PROMPT_TEMPLATE_V2,
+}
+
 MAX_TEXT_CHARS = 6000  # cap the title+transcript blob fed into the prompt
 
 
@@ -174,6 +255,19 @@ def parse_args_sys(args_list=None):
         type=int,
         default=0,
         help="If >0, only process the first N items of each split (smoke test).",
+    )
+    arg_parser.add_argument(
+        "--prompt_version",
+        type=str,
+        default="v1",
+        choices=sorted(PROMPT_TEMPLATES.keys()),
+        help=(
+            "Prompt revision. v1 (default) = original prompt, original output "
+            "paths (bit-compatible with all existing runs). v2 = target-recall "
+            "+ mechanism-evidence revision; JSONL goes to "
+            "<archive_dir>/<dataset>/v2/ and the encoded .pt to "
+            "<EXP_FOLDER>/<dataset>/v2/ so v1 artefacts are never touched."
+        ),
     )
     arg_parser.add_argument(
         "--retry_failed",
@@ -303,13 +397,13 @@ def load_video_frames(video_path, num_frames):
 # ----------------------------------------------------------------------------
 # Prompt building / JSON parsing / schema validation
 # ----------------------------------------------------------------------------
-def build_user_prompt(text):
+def build_user_prompt(text, prompt_version="v1"):
     text = (text or "").strip()
     if not text:
         text = "(none)"
     if len(text) > MAX_TEXT_CHARS:
         text = text[:MAX_TEXT_CHARS] + " ...[truncated]"
-    return USER_PROMPT_TEMPLATE.format(text=text)
+    return PROMPT_TEMPLATES[prompt_version].format(text=text)
 
 
 def build_messages(frames, user_prompt):
@@ -552,10 +646,16 @@ def archive_to_text(record):
 # ----------------------------------------------------------------------------
 # Stage: generate (GPU)
 # ----------------------------------------------------------------------------
+def version_subdir(args):
+    """'' for v1 (legacy layout, untouched); '<version>' for v2+."""
+    return "" if args.prompt_version == "v1" else args.prompt_version
+
+
 def jsonl_path(args, outname):
     return os.path.join(
         args.archive_dir,
         args.dataset,
+        version_subdir(args),
         "{}_{}_archive.jsonl".format(outname, args.out_model_tag),
     )
 
@@ -669,7 +769,7 @@ def run_generate(args):
                     try:
                         raw = generate_archive(
                             frames,
-                            build_user_prompt(item["text"]),
+                            build_user_prompt(item["text"], args.prompt_version),
                             processor,
                             model,
                             device,
@@ -814,7 +914,7 @@ def run_encode(args):
     text_model.to(device).eval()
     dt = text_model.config.hidden_size
 
-    out_dir = os.path.join(args.EXP_FOLDER, args.dataset)
+    out_dir = os.path.join(args.EXP_FOLDER, args.dataset, version_subdir(args))
     os.makedirs(out_dir, exist_ok=True)
     clip_tag = args.clip_model.replace("/", "_")
 
@@ -961,12 +1061,14 @@ SELFTEST_OUTPUTS = [
 
 
 def run_selftest(args):
-    print("=== selftest: prompt rendering ===")
+    print("=== selftest: prompt rendering (version={}) ===".format(
+        args.prompt_version))
     for name, text in SELFTEST_SAMPLES:
-        prompt = build_user_prompt(text)
+        prompt = build_user_prompt(text, args.prompt_version)
         print("\n--- sample: {} ---".format(name))
         print(prompt[:900])
     print("\n(system prompt)\n" + SYSTEM_PROMPT)
+    print("\n(jsonl path for split 'train')\n" + jsonl_path(args, "train"))
 
     print("\n=== selftest: parser unit checks ===")
     n_fail = 0

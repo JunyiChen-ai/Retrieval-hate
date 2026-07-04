@@ -1,0 +1,99 @@
+> **STATUS: ABANDONED 2026-07-03 — 用户决定不复现无代码工作;MultiHateLoc 仅进 related work 讨论。**
+> 代码与已产出的中间文件原地保留,不再投入任何工作。SLURM 作业 12233(特征提取)已 scancel。
+
+# MultiHateLoc — Reimplementation & Deviation List
+
+Reimplementation of **MultiHateLoc** (Sun et al., "Towards Temporal Localisation of
+Multimodal Hate Content in Online Videos", WWW '26, arXiv **2512.10408v3**). The
+official repo (`Multimodal-Intelligence-Lab-MIL/MultiHateLoc`) is empty, so this is
+a **from-scratch reimplementation**; every reported number is *our reimplementation*
+and is expected to differ from the published figures.
+
+All paths absolute. Nothing here is git-committed.
+
+## What the paper specifies (and we follow)
+| Item | Paper | Ours |
+|---|---|---|
+| Video encoder | ViT-B/16, per-frame, 768-d | `google/vit-base-patch16-224`, CLS token, 768-d |
+| Audio encoder | VGGish, 128-d/1s, interp. to T | `torch.hub harritaylor/torchvggish`, 128-d, linear-interp to T |
+| Text encoder | sentence-wise: Whisper→split→BERT→expand | `openai/whisper-base` (seg. timestamps) → BERT `bert-base-uncased` CLS → expand to each segment's second range |
+| Temporal encoder (MA-TE) | per-modality Transformer self-attn + FFN (Eq 1) | 1 `TransformerEncoderLayer` per modality, 4 heads, ReLU FFN |
+| DMS | per-timestep sigmoid gate per modality (Eq 3-4) | `sigmoid(Linear(F'_m))` scalar gate, `F^w = gate·F'` |
+| CMA | Q/K/V from concat(3D)→D, softmax attn (Eq 5-7) | 4-head `MultiheadAttention` on concatenated weighted feats |
+| CM-Contrast | InfoNCE, matched (video,ts) positive (Eq 2) | symmetric InfoNCE over all valid tokens, τ=0.1, pairs {(v,a),(a,t),(v,t)} |
+| MA-MIL | per-modality + fused top-K heads (Eq 8-11) | 4 sigmoid frame heads; per-frame BCE over top-K set |
+| Adaptive K | K=3 ⇒ top 33% (Table 4) | `k = round(T_valid/3)`, ≥1 |
+| Loss weights | λ_smooth=0.1, λ_con=0.2 (Eq 13) | same |
+| Optimizer | Adam, lr 1e-4, batch 32, 100 epochs (Sec 4.1) | same |
+| Metrics | frame-level mAP + AUC (Sec 3.1) | frame AP (=mAP) + ROC-AUC, pooled over test frames |
+
+## Deviations (paper unspecified / infeasible → our choice → why)
+
+1. **Hidden dim D & #MA-TE layers.** Paper never states the model width or depth.
+   → D=256, one MA-TE Transformer layer per modality, FFN=4·D. → Common default;
+   keeps params modest for 1083 videos.
+
+2. **Shared-D projection before contrastive/fusion.** Paper writes F'_m∈R^{T×D_m}
+   (D_m=768/128/768) yet CM-Contrast and CMA need a common D (Eq 2 f_t^m∈R^D, Eq 5
+   R^{T×3D}). → We project each modality to D=256 at MA-TE input, so all downstream
+   ops share D. → Only way to make Eqs 2/5-7 dimensionally consistent.
+
+3. **MIL loss form (Eq 11).** Eq 11 = `-1/K Σ_{i∈S} log(ŷ_i)` shows only the y=1
+   term. → We apply full per-frame BCE against the *video* label over the top-K set:
+   `mean_{i∈topK}[-y·log p_i-(1-y)·log(1-p_i)]`. → Reduces to Eq 11 for hateful
+   videos and is the natural completion for non-hateful ones.
+
+4. **`S_final = S_fused ∪ ∪_m(w_m·S_m)` (Eq 10).** The set-union with a scalar
+   weight is ambiguous. → We compute L_MA-MIL = L_fused + Σ_m w_m·L_m, where L_m is
+   the top-K BCE of modality m's head and w_m = batch-mean DMS gate of modality m
+   (detached scalar). → Preserves "fused primary, weak modalities down-weighted".
+
+5. **Whisper timestamps.** Our gt jsonl text has no timestamps. → We run
+   `openai/whisper-base` with segment-level (`return_timestamps=True`) timestamps on
+   ffmpeg-extracted 16 kHz mono audio; each segment = one "sentence" unit. → Matches
+   the paper's Whisper-based sentence-wise pipeline; base size chosen for speed on
+   43.5 h of audio. Silent seconds → zero text vector.
+
+6. **1-fps temporal grid.** Pre-extracted `/data/jehc223/HateMM/frames` are a fixed
+   32-frame uniform sample (not 1 fps), unusable for localization. → We re-decode at
+   1 frame/sec via PyAV (first frame per integer second; gaps forward/back-filled).
+   T = round(duration). → Matches the paper's per-second granularity.
+
+7. **Training length cap.** CM-Contrast is O(N²) over all valid tokens (N=ΣT). →
+   Truncate training videos to `max_t=256` s (covers ~p85 of durations; max raw is
+   5808 s). Eval/localization runs **full length** (no contrastive at inference). →
+   Bounds memory; noted as the only train/eval granularity difference.
+
+8. **VGGish source.** No `torchvggish`/TF in env. → `torch.hub harritaylor/torchvggish`
+   (PyTorch port of the official AudioSet VGGish, same weights), `postprocess=False`
+   (raw 128-d embeddings, no PCA/quantization). → Equivalent features.
+
+9. **Frame-level AUC definition.** Paper says "AUC … precision-recall trade-offs",
+   ambiguous vs ROC. → Following WSVAD convention (UCF-Crime/XD-Violence) we report
+   **ROC-AUC** as AUC and **average precision** as mAP, both pooled over all test
+   frames. Also report a hateful-videos-only variant.
+
+10. **Frame-level GT.** Paper uses HateMM segment annotations. Our per-second GT
+    comes from `data/gt/HateMM/hate_spans.json` (generated by a separate workline;
+    `{vid:{duration,spans:[[s,e]]}}`). Default protocol: a second t is positive iff
+    its midpoint (t+0.5) lies in any span. Non-hateful videos → all-negative frames.
+
+11. **Val / epoch selection.** Paper trains a fixed 100 epochs (no val-selection
+    stated for a localization task). → We keep 100 epochs but select the checkpoint
+    by **video-level ROC-AUC on our val split** (frame GT may not cover val). → Gives
+    a principled, always-available selection signal.
+
+12. **Modality ablation rows (Table 1: V+T, V+A, T+A).** Implemented by zeroing the
+    absent modality's input features (architecture unchanged), not by removing
+    branches. → Simple, keeps one codebase; the absent branch's gate learns to
+    down-weight.
+
+## Files
+- `src/extract_features.py` — Phase-1 tri-modal 1-fps feature extraction.
+- `src/dataset.py` — feature+label loader, padding collate, train truncation.
+- `src/model.py` — MultiHateLoc model + all losses (MIL/smooth/contrastive).
+- `src/train.py` — training loop, val-AUC checkpoint selection.
+- `src/eval.py` — video-level + frame-level eval, per-second score export.
+- `slurm/extract_feats.sbatch`, `slurm/train_eval.sbatch` — SLURM launchers.
+- Features: `data/multihateloc_feats/HateMM/<vid>.npz` (+ `transcripts/<vid>.json`).
+- Results: `results/<mods>_seed<k>/` (best.pt, history.json, eval_test/metrics.json).

@@ -139,10 +139,22 @@ def flip_rate(prev_roles, new_roles):
 def consensus_estep(segment_cache, train_set, model, args):
     """E-step for seg_mode=consensus.
 
+    Base (consensus_space=clip, default -- pre-W5 behaviour, bit-for-bit):
     model=None -> round 0: vote in the raw frozen-CLIP space (per-modality
     L2-normalised concat, re-normalised). model!=None -> vote in the current
     head's fused space (per-EM-round index rebuild).
     Memory = whole-video TRAIN samples with their video-level labels.
+
+    W5 (consensus_space=archive|blend): the vote runs (partly) in the MLLM
+    structured-archive CLIP-text space (segment_cache["archive_feats"],
+    [N, Da], aligned to the train cache order). Every sub-clip queries with
+    its PARENT video's archive vector -- the W2 attribution showed the clip-
+    space vote was de facto video-level relabelling anyway, so this is the
+    honest explicit form, and the archive text CAN see speech / on-screen-
+    text evidence that the frame space is blind to.
+      archive: memory/query = archive vectors only (round-invariant E-step).
+      blend  : key = l2n([l2n(base) | a*l2n(archive)]) -> vote similarity
+               (cos_base + a^2*cos_archive)/(1+a^2), a=args.consensus_space_alpha.
     """
     sub_img = segment_cache["subclip_img_feats"].float()      # [S, Dv]
     parents = segment_cache["subclip_parent"].long()          # [S]
@@ -155,15 +167,40 @@ def consensus_estep(segment_cache, train_set, model, args):
     ).astype(np.int64)
     parent_txt = vid_txt.index_select(0, parents)             # [S, Dt]
 
-    if model is None:
-        memory = _l2n(torch.cat([_l2n(vid_img), _l2n(vid_txt)], dim=1))
-        query = _l2n(torch.cat([_l2n(sub_img), _l2n(parent_txt)], dim=1))
-        space = "raw-CLIP"
+    space_mode = str(getattr(args, "consensus_space", "clip"))
+    if space_mode != "clip":
+        arc = segment_cache.get("archive_feats", None)
+        if arc is None:
+            raise ValueError(
+                "consensus_space='{}' requires segment_cache['archive_feats'] "
+                "(loaded in run_rac.py from the train archive cache)".format(
+                    space_mode))
+        arc_vid = _l2n(arc.float())                            # [N, Da]
+        arc_sub = arc_vid.index_select(0, parents)             # [S, Da]
+
+    if space_mode == "archive":
+        # Pure archive space: no base-space encoding needed; identical vote
+        # every EM round (the archive is frozen), so flip rate after round 1
+        # is 0 by construction.
+        memory, query = arc_vid, arc_sub
+        space = "archive-text"
     else:
-        from utils.retrieval import _encode_subclip_fused
-        memory = _l2n(_encode_video_fused(model, vid_img, vid_txt, args).cpu())
-        query = _l2n(_encode_subclip_fused(model, sub_img, parent_txt, args).cpu())
-        space = "fused-head"
+        if model is None:
+            base_mem = _l2n(torch.cat([_l2n(vid_img), _l2n(vid_txt)], dim=1))
+            base_query = _l2n(torch.cat([_l2n(sub_img), _l2n(parent_txt)], dim=1))
+            base_name = "raw-CLIP"
+        else:
+            from utils.retrieval import _encode_subclip_fused
+            base_mem = _l2n(_encode_video_fused(model, vid_img, vid_txt, args).cpu())
+            base_query = _l2n(_encode_subclip_fused(model, sub_img, parent_txt, args).cpu())
+            base_name = "fused-head"
+        if space_mode == "clip":
+            memory, query, space = base_mem, base_query, base_name
+        else:  # blend
+            a = float(getattr(args, "consensus_space_alpha", 1.0))
+            memory = _l2n(torch.cat([base_mem, a * arc_vid], dim=1))
+            query = _l2n(torch.cat([base_query, a * arc_sub], dim=1))
+            space = "blend({}+archive,a={})".format(base_name, a)
 
     vote = _knn_vote(
         query, memory, vid_labels_np, parents.numpy(),
