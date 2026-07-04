@@ -1,0 +1,239 @@
+{
+  "dataset": "MHC_zh_temporal",
+  "ckpt": "logging/Retrieval/MHC_zh_temporal/RAC_video_temporal/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_27_0.8589743589743589.pt",
+  "topk": 20,
+  "mechanism": "threshold recalibration only (static train memory, no memory update, no retraining)",
+  "baseline_t0.5": {
+    "macro_f1": 0.7779,
+    "acc": 0.8255
+  },
+  "oracle_test": {
+    "t": 0.45,
+    "macro_f1": 0.7845,
+    "acc": 0.8255,
+    "note": "uses test labels; ceiling diagnostic only"
+  },
+  "curve": [
+    {
+      "k": 5,
+      "macro_f1_mean": 0.7114,
+      "macro_f1_std": 0.0393,
+      "acc_mean": 0.7799,
+      "acc_std": 0.0472,
+      "gain_per_sample_macro_f1": -0.0133,
+      "n_guarded": 1,
+      "per_seed": [
+        {
+          "seed": 1000,
+          "t": 0.5,
+          "single_class_guard": true,
+          "macro_f1": 0.7779,
+          "acc": 0.8255,
+          "cal_pos_n": 0
+        },
+        {
+          "seed": 1001,
+          "t": 0.83,
+          "single_class_guard": false,
+          "macro_f1": 0.6703,
+          "acc": 0.8188,
+          "cal_pos_n": 1
+        },
+        {
+          "seed": 1002,
+          "t": 0.12,
+          "single_class_guard": false,
+          "macro_f1": 0.6745,
+          "acc": 0.698,
+          "cal_pos_n": 3
+        },
+        {
+          "seed": 1003,
+          "t": 0.17,
+          "single_class_guard": false,
+          "macro_f1": 0.7263,
+          "acc": 0.7584,
+          "cal_pos_n": 2
+        },
+        {
+          "seed": 1004,
+          "t": 0.675,
+          "single_class_guard": false,
+          "macro_f1": 0.7081,
+          "acc": 0.7987,
+          "cal_pos_n": 1
+        }
+      ]
+    },
+    {
+      "k": 10,
+      "macro_f1_mean": 0.7378,
+      "macro_f1_std": 0.0357,
+      "acc_mean": 0.8134,
+      "acc_std": 0.0123,
+      "gain_per_sample_macro_f1": -0.00401,
+      "n_guarded": 2,
+      "per_seed": [
+        {
+          "seed": 1000,
+          "t": 0.52,
+          "single_class_guard": false,
+          "macro_f1": 0.7351,
+          "acc": 0.7987,
+          "cal_pos_n": 3
+        },
+        {
+          "seed": 1001,
+          "t": 0.5,
+          "single_class_guard": true,
+          "macro_f1": 0.7779,
+          "acc": 0.8255,
+          "cal_pos_n": 0
+        },
+        {
+          "seed": 1002,
+          "t": 0.76,
+          "single_class_guard": false,
+          "macro_f1": 0.6902,
+          "acc": 0.8188,
+          "cal_pos_n": 2
+        },
+        {
+          "seed": 1003,
+          "t": 0.5,
+          "single_class_guard": true,
+          "macro_f1": 0.7779,
+          "acc": 0.8255,
+          "cal_pos_n": 0
+        },
+        {
+          "seed": 1004,
+          "t": 0.675,
+          "single_class_guard": false,
+          "macro_f1": 0.7081,
+          "acc": 0.7987,
+          "cal_pos_n": 3
+        }
+      ]
+    },
+    {
+      "k": 20,
+      "macro_f1_mean": 0.7239,
+      "macro_f1_std": 0.0238,
+      "acc_mean": 0.8094,
+      "acc_std": 0.0033,
+      "gain_per_sample_macro_f1": -0.0027,
+      "n_guarded": 0,
+      "per_seed": [
+        {
+          "seed": 1000,
+          "t": 0.71,
+          "single_class_guard": false,
+          "macro_f1": 0.6936,
+          "acc": 0.8054,
+          "cal_pos_n": 5
+        },
+        {
+          "seed": 1001,
+          "t": 0.7,
+          "single_class_guard": false,
+          "macro_f1": 0.7078,
+          "acc": 0.8121,
+          "cal_pos_n": 5
+        },
+        {
+          "seed": 1002,
+          "t": 0.51,
+          "single_class_guard": false,
+          "macro_f1": 0.7569,
+          "acc": 0.8121,
+          "cal_pos_n": 4
+        },
+        {
+          "seed": 1003,
+          "t": 0.69,
+          "single_class_guard": false,
+          "macro_f1": 0.7149,
+          "acc": 0.8121,
+          "cal_pos_n": 2
+        },
+        {
+          "seed": 1004,
+          "t": 0.515,
+          "single_class_guard": false,
+          "macro_f1": 0.7461,
+          "acc": 0.8054,
+          "cal_pos_n": 3
+        }
+      ]
+    },
+    {
+      "k": 50,
+      "macro_f1_mean": 0.7161,
+      "macro_f1_std": 0.0162,
+      "acc_mean": 0.7946,
+      "acc_std": 0.0033,
+      "gain_per_sample_macro_f1": -0.00124,
+      "n_guarded": 0,
+      "per_seed": [
+        {
+          "seed": 1000,
+          "t": 0.52,
+          "single_class_guard": false,
+          "macro_f1": 0.7351,
+          "acc": 0.7987,
+          "cal_pos_n": 12
+        },
+        {
+          "seed": 1001,
+          "t": 0.615,
+          "single_class_guard": false,
+          "macro_f1": 0.7077,
+          "acc": 0.7919,
+          "cal_pos_n": 13
+        },
+        {
+          "seed": 1002,
+          "t": 0.68,
+          "single_class_guard": false,
+          "macro_f1": 0.695,
+          "acc": 0.7919,
+          "cal_pos_n": 12
+        },
+        {
+          "seed": 1003,
+          "t": 0.615,
+          "single_class_guard": false,
+          "macro_f1": 0.7077,
+          "acc": 0.7919,
+          "cal_pos_n": 10
+        },
+        {
+          "seed": 1004,
+          "t": 0.52,
+          "single_class_guard": false,
+          "macro_f1": 0.7351,
+          "acc": 0.7987,
+          "cal_pos_n": 12
+        }
+      ]
+    }
+  ],
+  "all_val": {
+    "k": 78,
+    "t": 0.52,
+    "single_class_guard": false,
+    "macro_f1": 0.7351,
+    "acc": 0.7987
+  },
+  "test_score_stats": {
+    "mean": 0.2715,
+    "frac_ge_0.5": 0.2886,
+    "test_pos_rate": 0.2483
+  },
+  "val_score_stats": {
+    "mean": 0.2891,
+    "frac_ge_0.5": 0.2308,
+    "val_pos_rate": 0.2436
+  }
+}

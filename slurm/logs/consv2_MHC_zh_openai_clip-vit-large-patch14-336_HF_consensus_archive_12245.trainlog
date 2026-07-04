@@ -1,0 +1,538 @@
+Namespace(path='./data/', output_path='./logging/Retrieval/MHC_zh/RAC_video_consensus_v2/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss_seg0.5_consensus_vs-archive/', model='openai_clip-vit-large-patch14-336_HF', dataset='MHC_zh', similarity_threshold=-1.0, fusion_mode='align', topk=20, majority_voting='arithmetic', metric='cos', loss='triplet', triplet_margin=0.1, norm_feats_loss=False, l2_sqrt=False, hybrid_loss=True, ce_weight=0.5, pos_weight_value=None, num_layers=3, proj_dim=1024, map_dim=1024, dropout=[0.2, 0.4, 0.1], batch_norm=False, last_layer='none', epochs=30, batch_size=64, lr=0.0001, weight_decay=0.0001, lr_scheduler=False, num_workers=24, grad_clip=0.1, no_pseudo_gold_positives=1, in_batch_loss=True, hard_negatives_loss=True, no_hard_negatives=1, no_hard_positives=0, hard_negatives_multiple=12, Faiss_GPU=False, reindex_every_step=False, sparse_dictionary=None, use_attribute=True, sparse_topk=None, eval_retrieval=True, log_interval=10, final_eval=False, exp_comment='_seg0.5_consensus_vs-archive', group_name='RAC_video_consensus_v2', seed=0, device='cuda', visualise_embed=False, force=False, warmup=5, save_embed=False, lambda_seg=0.5, num_subclips=4, subclip_cache='auto', seg_mode='consensus', archive_feats=None, archive_mode='knn', archive_alpha=1.0, consensus_topk=10, consensus_margin=0.2, em_rounds=2, consensus_use_drift=True, consensus_conflict='ignore', consensus_space='archive', consensus_space_alpha=1.0)
+Loading sub-clip (segment) cache: ./data/CLIP_Embedding/MHC_zh/train_subclipK4_openai_clip-vit-large-patch14-336_HF.pt
+Segment cache loaded: TotalSub=2316, K=4, parents=579
+[consensus] E-step voting space 'archive' (alpha=1.0): train archive <- ./data/CLIP_Embedding/MHC_zh/train_archive_openai_clip-vit-large-patch14-336_HF.pt (579 rows, dim 768)
+Image feature dimension:  1024
+Text feature dimension:  768
+Unknown dataset: {} using binary classification by default
+classifier_hateClipper(
+  (img_proj): Sequential(
+    (0): Linear(in_features=1024, out_features=1024, bias=True)
+    (1): Dropout(p=0.2, inplace=False)
+  )
+  (text_proj): Sequential(
+    (0): Linear(in_features=768, out_features=1024, bias=True)
+    (1): Dropout(p=0.2, inplace=False)
+  )
+  (mlp): Sequential(
+    (0): Dropout(p=0.4, inplace=False)
+    (1): Linear(in_features=1024, out_features=1024, bias=True)
+    (2): ReLU()
+    (3): Dropout(p=0.1, inplace=False)
+    (4): Linear(in_features=1024, out_features=1024, bias=True)
+    (5): ReLU()
+    (6): Dropout(p=0.1, inplace=False)
+    (7): Linear(in_features=1024, out_features=1024, bias=True)
+    (8): ReLU()
+    (9): Dropout(p=0.1, inplace=False)
+  )
+  (output_layer): Linear(in_features=1024, out_features=1, bias=True)
+)
+[consensus] (archive-text space, topk=10, tau=0.2) roles over 2316 sub-clips: ignore=572  neg=1144  pos=188  drift=300  conflict=112
+Unknown dataset: {} using binary classification by default
+[EM] ===== round 1/2 (seg_mode=consensus) =====
+  0%|          | 0/30 [00:00<?, ?it/s]Train Epoch: 0 [0/10 (0%)]	Loss: 0.927993
+dev  Epoch 0 acc: 0.6410 roc: 0.5979 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6859 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 0 acc: 0.6980 roc: 0.5497 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  0 acc: 0.7051 roc: 0.7929 pre: 0.7778 recall: 0.2500 f1: 0.3784
+Test_Retrieval Epoch 0 acc: 0.7047 roc: 0.7541 pre: 0.5217 recall: 0.2667 f1: 0.3529
+Val_Retrieval Epoch  0 macroF1: 0.5926 macroP: 0.7367 macroR: 0.6050 acc: 0.7051 roc: 0.7929
+Test_Retrieval Epoch 0 macroF1: 0.5808 macroP: 0.6299 macroR: 0.5804 acc: 0.7047 roc: 0.7541
+ 
+  3%|▎         | 1/30 [00:01<00:37,  1.29s/it]Train Epoch: 1 [0/10 (0%)]	Loss: 0.910329
+dev  Epoch 1 acc: 0.6410 roc: 0.5489 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6880 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 1 acc: 0.6980 roc: 0.6276 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  1 acc: 0.6923 roc: 0.7257 pre: 0.7500 recall: 0.2143 f1: 0.3333
+Test_Retrieval Epoch 1 acc: 0.7248 roc: 0.7688 pre: 0.6000 recall: 0.2667 f1: 0.3692
+Val_Retrieval Epoch  1 macroF1: 0.5667 macroP: 0.7179 macroR: 0.5871 acc: 0.6923 roc: 0.7257
+Test_Retrieval Epoch 1 macroF1: 0.5966 macroP: 0.6721 macroR: 0.5949 acc: 0.7248 roc: 0.7688
+ 
+  7%|▋         | 2/30 [00:02<00:28,  1.00s/it]Train Epoch: 2 [0/10 (0%)]	Loss: 0.767878
+dev  Epoch 2 acc: 0.3590 roc: 0.6221 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6940 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 2 acc: 0.3020 roc: 0.5657 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  2 acc: 0.7308 roc: 0.7243 pre: 0.8182 recall: 0.3214 f1: 0.4615
+Test_Retrieval Epoch 2 acc: 0.7248 roc: 0.7573 pre: 0.5909 recall: 0.2889 f1: 0.3881
+Val_Retrieval Epoch  2 macroF1: 0.6410 macroP: 0.7673 macroR: 0.6407 acc: 0.7308 roc: 0.7243
+Test_Retrieval Epoch 2 macroF1: 0.6053 macroP: 0.6695 macroR: 0.6012 acc: 0.7248 roc: 0.7573
+ 
+ 10%|█         | 3/30 [00:02<00:25,  1.07it/s]Train Epoch: 3 [0/10 (0%)]	Loss: 0.554761
+dev  Epoch 3 acc: 0.6410 roc: 0.5186 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6931 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 3 acc: 0.6980 roc: 0.6166 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  3 acc: 0.6923 roc: 0.7300 pre: 0.7000 recall: 0.2500 f1: 0.3684
+Test_Retrieval Epoch 3 acc: 0.7114 roc: 0.7427 pre: 0.5455 recall: 0.2667 f1: 0.3582
+Val_Retrieval Epoch  3 macroF1: 0.5825 macroP: 0.6956 macroR: 0.5950 acc: 0.6923 roc: 0.7300
+Test_Retrieval Epoch 3 macroF1: 0.5860 macroP: 0.6428 macroR: 0.5853 acc: 0.7114 roc: 0.7427
+ 
+ 13%|█▎        | 4/30 [00:03<00:23,  1.10it/s]Train Epoch: 4 [0/10 (0%)]	Loss: 0.488222
+dev  Epoch 4 acc: 0.3590 roc: 0.5957 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6932 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 4 acc: 0.3020 roc: 0.6839 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  4 acc: 0.7051 roc: 0.7464 pre: 0.6923 recall: 0.3214 f1: 0.4390
+Test_Retrieval Epoch 4 acc: 0.6980 roc: 0.7459 pre: 0.5000 recall: 0.2667 f1: 0.3478
+Val_Retrieval Epoch  4 macroF1: 0.6195 macroP: 0.7000 macroR: 0.6207 acc: 0.7051 roc: 0.7464
+Test_Retrieval Epoch 4 macroF1: 0.5757 macroP: 0.6180 macroR: 0.5756 acc: 0.6980 roc: 0.7459
+ 
+ 17%|█▋        | 5/30 [00:04<00:22,  1.11it/s]Train Epoch: 5 [0/10 (0%)]	Loss: 0.457787
+dev  Epoch 5 acc: 0.3590 roc: 0.6064 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6934 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 5 acc: 0.3020 roc: 0.6138 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  5 acc: 0.7179 roc: 0.7536 pre: 0.7143 recall: 0.3571 f1: 0.4762
+Test_Retrieval Epoch 5 acc: 0.6846 roc: 0.7218 pre: 0.4615 recall: 0.2667 f1: 0.3380
+Val_Retrieval Epoch  5 macroF1: 0.6416 macroP: 0.7165 macroR: 0.6386 acc: 0.7179 roc: 0.7536
+Test_Retrieval Epoch 5 macroF1: 0.5655 macroP: 0.5966 macroR: 0.5660 acc: 0.6846 roc: 0.7218
+ 
+Current Epoch Val_Retrieval acc:  0.717948717948718 roc:  0.7535714285714286 Best model so far, saving...
+ 20%|██        | 6/30 [00:05<00:21,  1.10it/s]Train Epoch: 6 [0/10 (0%)]	Loss: 0.465697
+dev  Epoch 6 acc: 0.3590 roc: 0.6521 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6933 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 6 acc: 0.3020 roc: 0.6682 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  6 acc: 0.6538 roc: 0.7150 pre: 0.5333 recall: 0.2857 f1: 0.3721
+Test_Retrieval Epoch 6 acc: 0.7047 roc: 0.7350 pre: 0.5152 recall: 0.3778 f1: 0.4359
+Val_Retrieval Epoch  6 macroF1: 0.5666 macroP: 0.6079 macroR: 0.5729 acc: 0.6538 roc: 0.7150
+Test_Retrieval Epoch 6 macroF1: 0.6179 macroP: 0.6369 macroR: 0.6120 acc: 0.7047 roc: 0.7350
+ 
+ 23%|██▎       | 7/30 [00:06<00:20,  1.11it/s]Train Epoch: 7 [0/10 (0%)]	Loss: 0.449235
+dev  Epoch 7 acc: 0.3590 roc: 0.6836 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6932 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 7 acc: 0.3020 roc: 0.6958 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  7 acc: 0.6923 roc: 0.7250 pre: 0.6000 recall: 0.4286 f1: 0.5000
+Test_Retrieval Epoch 7 acc: 0.6644 roc: 0.7013 pre: 0.4444 recall: 0.4444 f1: 0.4444
+Val_Retrieval Epoch  7 macroF1: 0.6389 macroP: 0.6621 macroR: 0.6343 acc: 0.6923 roc: 0.7250
+Test_Retrieval Epoch 7 macroF1: 0.6020 macroP: 0.6020 macroR: 0.6020 acc: 0.6644 roc: 0.7013
+ 
+ 27%|██▋       | 8/30 [00:07<00:19,  1.11it/s]Train Epoch: 8 [0/10 (0%)]	Loss: 0.450732
+dev  Epoch 8 acc: 0.6410 roc: 0.7100 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6930 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 8 acc: 0.6980 roc: 0.7158 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  8 acc: 0.7179 roc: 0.8114 pre: 0.6250 recall: 0.5357 f1: 0.5769
+Test_Retrieval Epoch 8 acc: 0.6779 roc: 0.7263 pre: 0.4651 recall: 0.4444 f1: 0.4545
+Val_Retrieval Epoch  8 macroF1: 0.6827 macroP: 0.6921 macroR: 0.6779 acc: 0.7179 roc: 0.8114
+Test_Retrieval Epoch 8 macroF1: 0.6130 macroP: 0.6146 macroR: 0.6116 acc: 0.6779 roc: 0.7263
+ 
+Current Epoch Val_Retrieval acc:  0.717948717948718 roc:  0.8114285714285715 Best model so far, saving...
+ 30%|███       | 9/30 [00:08<00:19,  1.09it/s]Train Epoch: 9 [0/10 (0%)]	Loss: 0.468405
+dev  Epoch 9 acc: 0.3590 roc: 0.4511 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6932 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 9 acc: 0.3020 roc: 0.5131 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  9 acc: 0.7692 roc: 0.8250 pre: 0.6786 recall: 0.6786 f1: 0.6786
+Test_Retrieval Epoch 9 acc: 0.6443 roc: 0.7286 pre: 0.4091 recall: 0.4000 f1: 0.4045
+Val_Retrieval Epoch  9 macroF1: 0.7493 macroP: 0.7493 macroR: 0.7493 acc: 0.7692 roc: 0.8250
+Test_Retrieval Epoch 9 macroF1: 0.5755 macroP: 0.5760 macroR: 0.5750 acc: 0.6443 roc: 0.7286
+ 
+Current Epoch Val_Retrieval acc:  0.7692307692307693 roc:  0.825 Best model so far, saving...
+ 33%|███▎      | 10/30 [00:09<00:18,  1.07it/s]Train Epoch: 10 [0/10 (0%)]	Loss: 0.453222
+dev  Epoch 10 acc: 0.6410 roc: 0.7379 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6928 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 10 acc: 0.6980 roc: 0.7562 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  10 acc: 0.7564 roc: 0.8250 pre: 0.6667 recall: 0.6429 f1: 0.6545
+Test_Retrieval Epoch 10 acc: 0.6980 roc: 0.7519 pre: 0.5000 recall: 0.5333 f1: 0.5161
+Val_Retrieval Epoch  10 macroF1: 0.7332 macroP: 0.7353 macroR: 0.7314 acc: 0.7564 roc: 0.8250
+Test_Retrieval Epoch 10 macroF1: 0.6483 macroP: 0.6460 macroR: 0.6513 acc: 0.6980 roc: 0.7519
+ 
+ 37%|███▋      | 11/30 [00:10<00:17,  1.08it/s]Train Epoch: 11 [0/10 (0%)]	Loss: 0.468869
+dev  Epoch 11 acc: 0.6410 roc: 0.7468 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6928 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 11 acc: 0.6980 roc: 0.7694 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  11 acc: 0.7692 roc: 0.8407 pre: 0.6923 recall: 0.6429 f1: 0.6667
+Test_Retrieval Epoch 11 acc: 0.7248 roc: 0.7660 pre: 0.5435 recall: 0.5556 f1: 0.5495
+Val_Retrieval Epoch  11 macroF1: 0.7451 macroP: 0.7500 macroR: 0.7414 acc: 0.7692 roc: 0.8407
+Test_Retrieval Epoch 11 macroF1: 0.6757 macroP: 0.6747 macroR: 0.6768 acc: 0.7248 roc: 0.7660
+ 
+Current Epoch Val_Retrieval acc:  0.7692307692307693 roc:  0.8407142857142857 Best model so far, saving...
+ 40%|████      | 12/30 [00:11<00:16,  1.08it/s]Train Epoch: 12 [0/10 (0%)]	Loss: 0.449201
+dev  Epoch 12 acc: 0.6410 roc: 0.7650 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6930 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 12 acc: 0.6980 roc: 0.7541 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  12 acc: 0.7436 roc: 0.8500 pre: 0.6538 recall: 0.6071 f1: 0.6296
+Test_Retrieval Epoch 12 acc: 0.7450 roc: 0.7835 pre: 0.5686 recall: 0.6444 f1: 0.6042
+Val_Retrieval Epoch  12 macroF1: 0.7168 macroP: 0.7212 macroR: 0.7136 acc: 0.7436 roc: 0.8500
+Test_Retrieval Epoch 12 macroF1: 0.7080 macroP: 0.7027 macroR: 0.7165 acc: 0.7450 roc: 0.7835
+ 
+ 43%|████▎     | 13/30 [00:12<00:16,  1.06it/s]Train Epoch: 13 [0/10 (0%)]	Loss: 0.424025
+dev  Epoch 13 acc: 0.6410 roc: 0.7964 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6926 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 13 acc: 0.6980 roc: 0.7929 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  13 acc: 0.7821 roc: 0.8457 pre: 0.7037 recall: 0.6786 f1: 0.6909
+Test_Retrieval Epoch 13 acc: 0.7718 roc: 0.8186 pre: 0.6038 recall: 0.7111 f1: 0.6531
+Val_Retrieval Epoch  13 macroF1: 0.7613 macroP: 0.7636 macroR: 0.7593 acc: 0.7821 roc: 0.8457
+Test_Retrieval Epoch 13 macroF1: 0.7415 macroP: 0.7342 macroR: 0.7546 acc: 0.7718 roc: 0.8186
+ 
+Current Epoch Val_Retrieval acc:  0.782051282051282 roc:  0.8457142857142858 Best model so far, saving...
+ 47%|████▋     | 14/30 [00:13<00:15,  1.03it/s]Train Epoch: 14 [0/10 (0%)]	Loss: 0.448028
+dev  Epoch 14 acc: 0.6410 roc: 0.8029 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6924 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 14 acc: 0.6980 roc: 0.7921 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  14 acc: 0.7821 roc: 0.8550 pre: 0.7391 recall: 0.6071 f1: 0.6667
+Test_Retrieval Epoch 14 acc: 0.7987 roc: 0.8058 pre: 0.6596 recall: 0.6889 f1: 0.6739
+Val_Retrieval Epoch  14 macroF1: 0.7524 macroP: 0.7696 macroR: 0.7436 acc: 0.7821 roc: 0.8550
+Test_Retrieval Epoch 14 macroF1: 0.7641 macroP: 0.7612 macroR: 0.7675 acc: 0.7987 roc: 0.8058
+ 
+Current Epoch Val_Retrieval acc:  0.782051282051282 roc:  0.855 Best model so far, saving...
+ 50%|█████     | 15/30 [00:14<00:14,  1.04it/s]Train Epoch: 15 [0/10 (0%)]	Loss: 0.433229
+dev  Epoch 15 acc: 0.6410 roc: 0.7943 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6923 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 15 acc: 0.6980 roc: 0.7799 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  15 acc: 0.7692 roc: 0.8286 pre: 0.6923 recall: 0.6429 f1: 0.6667
+Test_Retrieval Epoch 15 acc: 0.7919 roc: 0.8071 pre: 0.6667 recall: 0.6222 f1: 0.6437
+Val_Retrieval Epoch  15 macroF1: 0.7451 macroP: 0.7500 macroR: 0.7414 acc: 0.7692 roc: 0.8286
+Test_Retrieval Epoch 15 macroF1: 0.7484 macroP: 0.7539 macroR: 0.7438 acc: 0.7919 roc: 0.8071
+ 
+ 53%|█████▎    | 16/30 [00:15<00:13,  1.04it/s]Train Epoch: 16 [0/10 (0%)]	Loss: 0.460278
+dev  Epoch 16 acc: 0.6410 roc: 0.8036 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6917 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 16 acc: 0.6980 roc: 0.7778 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  16 acc: 0.7564 roc: 0.8121 pre: 0.6800 recall: 0.6071 f1: 0.6415
+Test_Retrieval Epoch 16 acc: 0.7517 roc: 0.8002 pre: 0.5952 recall: 0.5556 f1: 0.5747
+Val_Retrieval Epoch  16 macroF1: 0.7285 macroP: 0.7362 macroR: 0.7236 acc: 0.7564 roc: 0.8121
+Test_Retrieval Epoch 16 macroF1: 0.6997 macroP: 0.7042 macroR: 0.6960 acc: 0.7517 roc: 0.8002
+ 
+ 57%|█████▋    | 17/30 [00:16<00:12,  1.03it/s]Train Epoch: 17 [0/10 (0%)]	Loss: 0.442871
+dev  Epoch 17 acc: 0.6410 roc: 0.7464 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6921 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 17 acc: 0.6980 roc: 0.7822 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  17 acc: 0.6923 roc: 0.8036 pre: 0.5909 recall: 0.4643 f1: 0.5200
+Test_Retrieval Epoch 17 acc: 0.7584 roc: 0.7996 pre: 0.6047 recall: 0.5778 f1: 0.5909
+Val_Retrieval Epoch  17 macroF1: 0.6468 macroP: 0.6615 macroR: 0.6421 acc: 0.6923 roc: 0.8036
+Test_Retrieval Epoch 17 macroF1: 0.7097 macroP: 0.7127 macroR: 0.7072 acc: 0.7584 roc: 0.7996
+ 
+ 60%|██████    | 18/30 [00:17<00:11,  1.02it/s]Train Epoch: 18 [0/10 (0%)]	Loss: 0.437908
+dev  Epoch 18 acc: 0.6410 roc: 0.7936 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6913 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 18 acc: 0.6980 roc: 0.7810 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  18 acc: 0.7436 roc: 0.8457 pre: 0.7222 recall: 0.4643 f1: 0.5652
+Test_Retrieval Epoch 18 acc: 0.7651 roc: 0.8254 pre: 0.6190 recall: 0.5778 f1: 0.5977
+Val_Retrieval Epoch  18 macroF1: 0.6917 macroP: 0.7361 macroR: 0.6821 acc: 0.7436 roc: 0.8457
+Test_Retrieval Epoch 18 macroF1: 0.7159 macroP: 0.7207 macroR: 0.7120 acc: 0.7651 roc: 0.8254
+ 
+ 63%|██████▎   | 19/30 [00:18<00:10,  1.03it/s]Train Epoch: 19 [0/10 (0%)]	Loss: 0.454273
+dev  Epoch 19 acc: 0.6410 roc: 0.8021 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6911 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 19 acc: 0.6980 roc: 0.7769 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  19 acc: 0.7821 roc: 0.8329 pre: 0.7895 recall: 0.5357 f1: 0.6383
+Test_Retrieval Epoch 19 acc: 0.7852 roc: 0.8182 pre: 0.6512 recall: 0.6222 f1: 0.6364
+Val_Retrieval Epoch  19 macroF1: 0.7412 macroP: 0.7846 macroR: 0.7279 acc: 0.7821 roc: 0.8329
+Test_Retrieval Epoch 19 macroF1: 0.7420 macroP: 0.7454 macroR: 0.7390 acc: 0.7852 roc: 0.8182
+ 
+ 67%|██████▋   | 20/30 [00:18<00:09,  1.05it/s]Train Epoch: 20 [0/10 (0%)]	Loss: 0.453544
+dev  Epoch 20 acc: 0.6410 roc: 0.8079 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6907 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 20 acc: 0.6980 roc: 0.7806 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  20 acc: 0.7564 roc: 0.8093 pre: 0.6800 recall: 0.6071 f1: 0.6415
+Test_Retrieval Epoch 20 acc: 0.7651 roc: 0.8068 pre: 0.6190 recall: 0.5778 f1: 0.5977
+Val_Retrieval Epoch  20 macroF1: 0.7285 macroP: 0.7362 macroR: 0.7236 acc: 0.7564 roc: 0.8093
+Test_Retrieval Epoch 20 macroF1: 0.7159 macroP: 0.7207 macroR: 0.7120 acc: 0.7651 roc: 0.8068
+ 
+ 70%|███████   | 21/30 [00:19<00:08,  1.05it/s]Train Epoch: 21 [0/10 (0%)]	Loss: 0.448877
+dev  Epoch 21 acc: 0.6410 roc: 0.8114 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6910 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 21 acc: 0.6980 roc: 0.7827 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  21 acc: 0.7821 roc: 0.8571 pre: 0.7619 recall: 0.5714 f1: 0.6531
+Test_Retrieval Epoch 21 acc: 0.7718 roc: 0.8036 pre: 0.6341 recall: 0.5778 f1: 0.6047
+Val_Retrieval Epoch  21 macroF1: 0.7471 macroP: 0.7757 macroR: 0.7357 acc: 0.7821 roc: 0.8571
+Test_Retrieval Epoch 21 macroF1: 0.7221 macroP: 0.7291 macroR: 0.7168 acc: 0.7718 roc: 0.8036
+ 
+Current Epoch Val_Retrieval acc:  0.782051282051282 roc:  0.8571428571428571 Best model so far, saving...
+ 73%|███████▎  | 22/30 [00:20<00:07,  1.02it/s]Train Epoch: 22 [0/10 (0%)]	Loss: 0.441476
+dev  Epoch 22 acc: 0.6410 roc: 0.8300 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6905 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 22 acc: 0.6980 roc: 0.7782 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  22 acc: 0.7692 roc: 0.8207 pre: 0.7500 recall: 0.5357 f1: 0.6250
+Test_Retrieval Epoch 22 acc: 0.7517 roc: 0.8015 pre: 0.5870 recall: 0.6000 f1: 0.5934
+Val_Retrieval Epoch  22 macroF1: 0.7292 macroP: 0.7629 macroR: 0.7179 acc: 0.7692 roc: 0.8207
+Test_Retrieval Epoch 22 macroF1: 0.7073 macroP: 0.7061 macroR: 0.7087 acc: 0.7517 roc: 0.8015
+ 
+ 77%|███████▋  | 23/30 [00:21<00:06,  1.04it/s]Train Epoch: 23 [0/10 (0%)]	Loss: 0.438769
+dev  Epoch 23 acc: 0.6410 roc: 0.7771 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6912 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 23 acc: 0.6980 roc: 0.7688 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  23 acc: 0.7564 roc: 0.8079 pre: 0.7368 recall: 0.5000 f1: 0.5957
+Test_Retrieval Epoch 23 acc: 0.7785 roc: 0.8060 pre: 0.6364 recall: 0.6222 f1: 0.6292
+Val_Retrieval Epoch  23 macroF1: 0.7107 macroP: 0.7498 macroR: 0.7000 acc: 0.7564 roc: 0.8079
+Test_Retrieval Epoch 23 macroF1: 0.7357 macroP: 0.7372 macroR: 0.7342 acc: 0.7785 roc: 0.8060
+ 
+ 80%|████████  | 24/30 [00:22<00:05,  1.05it/s]Train Epoch: 24 [0/10 (0%)]	Loss: 0.430773
+dev  Epoch 24 acc: 0.6410 roc: 0.8314 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6888 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 24 acc: 0.6980 roc: 0.7897 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  24 acc: 0.7821 roc: 0.8464 pre: 0.7895 recall: 0.5357 f1: 0.6383
+Test_Retrieval Epoch 24 acc: 0.7718 roc: 0.7929 pre: 0.6170 recall: 0.6444 f1: 0.6304
+Val_Retrieval Epoch  24 macroF1: 0.7412 macroP: 0.7846 macroR: 0.7279 acc: 0.7821 roc: 0.8464
+Test_Retrieval Epoch 24 macroF1: 0.7327 macroP: 0.7301 macroR: 0.7357 acc: 0.7718 roc: 0.7929
+ 
+ 83%|████████▎ | 25/30 [00:23<00:04,  1.04it/s]Train Epoch: 25 [0/10 (0%)]	Loss: 0.461167
+dev  Epoch 25 acc: 0.6410 roc: 0.7764 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6905 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 25 acc: 0.6980 roc: 0.7686 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  25 acc: 0.7564 roc: 0.8536 pre: 0.7143 recall: 0.5357 f1: 0.6122
+Test_Retrieval Epoch 25 acc: 0.7852 roc: 0.7923 pre: 0.6444 recall: 0.6444 f1: 0.6444
+Val_Retrieval Epoch  25 macroF1: 0.7173 macroP: 0.7431 macroR: 0.7079 acc: 0.7564 roc: 0.8536
+Test_Retrieval Epoch 25 macroF1: 0.7453 macroP: 0.7453 macroR: 0.7453 acc: 0.7852 roc: 0.7923
+ 
+ 87%|████████▋ | 26/30 [00:24<00:03,  1.04it/s]Train Epoch: 26 [0/10 (0%)]	Loss: 0.381968
+dev  Epoch 26 acc: 0.6410 roc: 0.8314 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6885 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 26 acc: 0.6980 roc: 0.7671 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  26 acc: 0.7436 roc: 0.8307 pre: 0.7000 recall: 0.5000 f1: 0.5833
+Test_Retrieval Epoch 26 acc: 0.7584 roc: 0.7972 pre: 0.5957 recall: 0.6222 f1: 0.6087
+Val_Retrieval Epoch  26 macroF1: 0.6991 macroP: 0.7293 macroR: 0.6900 acc: 0.7436 roc: 0.8307
+Test_Retrieval Epoch 26 macroF1: 0.7170 macroP: 0.7145 macroR: 0.7198 acc: 0.7584 roc: 0.7972
+ 
+ 90%|█████████ | 27/30 [00:25<00:02,  1.05it/s]Train Epoch: 27 [0/10 (0%)]	Loss: 0.401012
+dev  Epoch 27 acc: 0.6410 roc: 0.8386 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6882 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 27 acc: 0.6980 roc: 0.7831 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  27 acc: 0.7308 roc: 0.8500 pre: 0.6842 recall: 0.4643 f1: 0.5532
+Test_Retrieval Epoch 27 acc: 0.7785 roc: 0.7848 pre: 0.6429 recall: 0.6000 f1: 0.6207
+Val_Retrieval Epoch  27 macroF1: 0.6803 macroP: 0.7150 macroR: 0.6721 acc: 0.7308 roc: 0.8500
+Test_Retrieval Epoch 27 macroF1: 0.7321 macroP: 0.7373 macroR: 0.7279 acc: 0.7785 roc: 0.7848
+ 
+ 93%|█████████▎| 28/30 [00:26<00:01,  1.03it/s]Train Epoch: 28 [0/10 (0%)]	Loss: 0.432926
+dev  Epoch 28 acc: 0.6410 roc: 0.8225 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6892 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 28 acc: 0.6980 roc: 0.7825 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  28 acc: 0.7564 roc: 0.8529 pre: 0.7647 recall: 0.4643 f1: 0.5778
+Test_Retrieval Epoch 28 acc: 0.7852 roc: 0.7932 pre: 0.6667 recall: 0.5778 f1: 0.6190
+Val_Retrieval Epoch  28 macroF1: 0.7033 macroP: 0.7594 macroR: 0.6921 acc: 0.7564 roc: 0.8529
+Test_Retrieval Epoch 28 macroF1: 0.7348 macroP: 0.7470 macroR: 0.7264 acc: 0.7852 roc: 0.7932
+ 
+ 97%|█████████▋| 29/30 [00:27<00:00,  1.04it/s]Train Epoch: 29 [0/10 (0%)]	Loss: 0.407169
+dev  Epoch 29 acc: 0.6410 roc: 0.8007 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6898 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 29 acc: 0.6980 roc: 0.7795 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  29 acc: 0.7821 roc: 0.8564 pre: 0.7895 recall: 0.5357 f1: 0.6383
+Test_Retrieval Epoch 29 acc: 0.7852 roc: 0.7868 pre: 0.6512 recall: 0.6222 f1: 0.6364
+Val_Retrieval Epoch  29 macroF1: 0.7412 macroP: 0.7846 macroR: 0.7279 acc: 0.7821 roc: 0.8564
+Test_Retrieval Epoch 29 macroF1: 0.7420 macroP: 0.7454 macroR: 0.7390 acc: 0.7852 roc: 0.7868
+ 
+Last Epoch, saving...
+100%|██████████| 30/30 [00:28<00:00,  1.05it/s]100%|██████████| 30/30 [00:28<00:00,  1.05it/s]
+[consensus] (archive-text space, topk=10, tau=0.2) roles over 2316 sub-clips: ignore=572  neg=1144  pos=188  drift=300  conflict=112
+[EM] pseudo-label flip rate after round 1: 0.0000
+Unknown dataset: {} using binary classification by default
+[EM] ===== round 2/2 (seg_mode=consensus) =====
+  0%|          | 0/30 [00:00<?, ?it/s]Train Epoch: 0 [0/10 (0%)]	Loss: 0.927993
+dev  Epoch 0 acc: 0.6410 roc: 0.5979 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6859 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 0 acc: 0.6980 roc: 0.5497 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  0 acc: 0.7051 roc: 0.7929 pre: 0.7778 recall: 0.2500 f1: 0.3784
+Test_Retrieval Epoch 0 acc: 0.7047 roc: 0.7541 pre: 0.5217 recall: 0.2667 f1: 0.3529
+Val_Retrieval Epoch  0 macroF1: 0.5926 macroP: 0.7367 macroR: 0.6050 acc: 0.7051 roc: 0.7929
+Test_Retrieval Epoch 0 macroF1: 0.5808 macroP: 0.6299 macroR: 0.5804 acc: 0.7047 roc: 0.7541
+ 
+  3%|▎         | 1/30 [00:00<00:24,  1.17it/s]Train Epoch: 1 [0/10 (0%)]	Loss: 0.910329
+dev  Epoch 1 acc: 0.6410 roc: 0.5489 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6880 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 1 acc: 0.6980 roc: 0.6276 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  1 acc: 0.6923 roc: 0.7257 pre: 0.7500 recall: 0.2143 f1: 0.3333
+Test_Retrieval Epoch 1 acc: 0.7248 roc: 0.7688 pre: 0.6000 recall: 0.2667 f1: 0.3692
+Val_Retrieval Epoch  1 macroF1: 0.5667 macroP: 0.7179 macroR: 0.5871 acc: 0.6923 roc: 0.7257
+Test_Retrieval Epoch 1 macroF1: 0.5966 macroP: 0.6721 macroR: 0.5949 acc: 0.7248 roc: 0.7688
+ 
+  7%|▋         | 2/30 [00:01<00:24,  1.14it/s]Train Epoch: 2 [0/10 (0%)]	Loss: 0.767878
+dev  Epoch 2 acc: 0.3590 roc: 0.6221 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6940 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 2 acc: 0.3020 roc: 0.5657 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  2 acc: 0.7308 roc: 0.7243 pre: 0.8182 recall: 0.3214 f1: 0.4615
+Test_Retrieval Epoch 2 acc: 0.7248 roc: 0.7573 pre: 0.5909 recall: 0.2889 f1: 0.3881
+Val_Retrieval Epoch  2 macroF1: 0.6410 macroP: 0.7673 macroR: 0.6407 acc: 0.7308 roc: 0.7243
+Test_Retrieval Epoch 2 macroF1: 0.6053 macroP: 0.6695 macroR: 0.6012 acc: 0.7248 roc: 0.7573
+ 
+ 10%|█         | 3/30 [00:02<00:23,  1.16it/s]Train Epoch: 3 [0/10 (0%)]	Loss: 0.554761
+dev  Epoch 3 acc: 0.6410 roc: 0.5186 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6931 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 3 acc: 0.6980 roc: 0.6166 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  3 acc: 0.6923 roc: 0.7300 pre: 0.7000 recall: 0.2500 f1: 0.3684
+Test_Retrieval Epoch 3 acc: 0.7114 roc: 0.7427 pre: 0.5455 recall: 0.2667 f1: 0.3582
+Val_Retrieval Epoch  3 macroF1: 0.5825 macroP: 0.6956 macroR: 0.5950 acc: 0.6923 roc: 0.7300
+Test_Retrieval Epoch 3 macroF1: 0.5860 macroP: 0.6428 macroR: 0.5853 acc: 0.7114 roc: 0.7427
+ 
+ 13%|█▎        | 4/30 [00:03<00:21,  1.19it/s]Train Epoch: 4 [0/10 (0%)]	Loss: 0.488222
+dev  Epoch 4 acc: 0.3590 roc: 0.5957 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6932 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 4 acc: 0.3020 roc: 0.6839 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  4 acc: 0.7051 roc: 0.7464 pre: 0.6923 recall: 0.3214 f1: 0.4390
+Test_Retrieval Epoch 4 acc: 0.6980 roc: 0.7459 pre: 0.5000 recall: 0.2667 f1: 0.3478
+Val_Retrieval Epoch  4 macroF1: 0.6195 macroP: 0.7000 macroR: 0.6207 acc: 0.7051 roc: 0.7464
+Test_Retrieval Epoch 4 macroF1: 0.5757 macroP: 0.6180 macroR: 0.5756 acc: 0.6980 roc: 0.7459
+ 
+ 17%|█▋        | 5/30 [00:04<00:20,  1.19it/s]Train Epoch: 5 [0/10 (0%)]	Loss: 0.457787
+dev  Epoch 5 acc: 0.3590 roc: 0.6064 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6934 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 5 acc: 0.3020 roc: 0.6138 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  5 acc: 0.7179 roc: 0.7536 pre: 0.7143 recall: 0.3571 f1: 0.4762
+Test_Retrieval Epoch 5 acc: 0.6846 roc: 0.7218 pre: 0.4615 recall: 0.2667 f1: 0.3380
+Val_Retrieval Epoch  5 macroF1: 0.6416 macroP: 0.7165 macroR: 0.6386 acc: 0.7179 roc: 0.7536
+Test_Retrieval Epoch 5 macroF1: 0.5655 macroP: 0.5966 macroR: 0.5660 acc: 0.6846 roc: 0.7218
+ 
+Current Epoch Val_Retrieval acc:  0.717948717948718 roc:  0.7535714285714286 Best model so far, saving...
+ 20%|██        | 6/30 [00:05<00:20,  1.16it/s]Train Epoch: 6 [0/10 (0%)]	Loss: 0.465697
+dev  Epoch 6 acc: 0.3590 roc: 0.6521 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6933 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 6 acc: 0.3020 roc: 0.6682 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  6 acc: 0.6538 roc: 0.7150 pre: 0.5333 recall: 0.2857 f1: 0.3721
+Test_Retrieval Epoch 6 acc: 0.7047 roc: 0.7350 pre: 0.5152 recall: 0.3778 f1: 0.4359
+Val_Retrieval Epoch  6 macroF1: 0.5666 macroP: 0.6079 macroR: 0.5729 acc: 0.6538 roc: 0.7150
+Test_Retrieval Epoch 6 macroF1: 0.6179 macroP: 0.6369 macroR: 0.6120 acc: 0.7047 roc: 0.7350
+ 
+ 23%|██▎       | 7/30 [00:06<00:20,  1.14it/s]Train Epoch: 7 [0/10 (0%)]	Loss: 0.449235
+dev  Epoch 7 acc: 0.3590 roc: 0.6836 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6932 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 7 acc: 0.3020 roc: 0.6958 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  7 acc: 0.6923 roc: 0.7250 pre: 0.6000 recall: 0.4286 f1: 0.5000
+Test_Retrieval Epoch 7 acc: 0.6644 roc: 0.7013 pre: 0.4444 recall: 0.4444 f1: 0.4444
+Val_Retrieval Epoch  7 macroF1: 0.6389 macroP: 0.6621 macroR: 0.6343 acc: 0.6923 roc: 0.7250
+Test_Retrieval Epoch 7 macroF1: 0.6020 macroP: 0.6020 macroR: 0.6020 acc: 0.6644 roc: 0.7013
+ 
+ 27%|██▋       | 8/30 [00:07<00:19,  1.10it/s]Train Epoch: 8 [0/10 (0%)]	Loss: 0.450732
+dev  Epoch 8 acc: 0.6410 roc: 0.7100 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6930 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 8 acc: 0.6980 roc: 0.7158 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  8 acc: 0.7179 roc: 0.8114 pre: 0.6250 recall: 0.5357 f1: 0.5769
+Test_Retrieval Epoch 8 acc: 0.6779 roc: 0.7263 pre: 0.4651 recall: 0.4444 f1: 0.4545
+Val_Retrieval Epoch  8 macroF1: 0.6827 macroP: 0.6921 macroR: 0.6779 acc: 0.7179 roc: 0.8114
+Test_Retrieval Epoch 8 macroF1: 0.6130 macroP: 0.6146 macroR: 0.6116 acc: 0.6779 roc: 0.7263
+ 
+Current Epoch Val_Retrieval acc:  0.717948717948718 roc:  0.8114285714285715 Best model so far, saving...
+ 30%|███       | 9/30 [00:07<00:19,  1.08it/s]Train Epoch: 9 [0/10 (0%)]	Loss: 0.468405
+dev  Epoch 9 acc: 0.3590 roc: 0.4511 pre: 0.3590 recall: 1.0000 f1: 0.5283 loss: 0.6932 | macroF1: 0.2642 macroP: 0.1795 macroR: 0.5000
+test Epoch 9 acc: 0.3020 roc: 0.5131 pre: 0.3020 recall: 1.0000 f1: 0.4639 | macroF1: 0.2320 macroP: 0.1510 macroR: 0.5000
+Val_Retrieval Epoch  9 acc: 0.7692 roc: 0.8250 pre: 0.6786 recall: 0.6786 f1: 0.6786
+Test_Retrieval Epoch 9 acc: 0.6443 roc: 0.7286 pre: 0.4091 recall: 0.4000 f1: 0.4045
+Val_Retrieval Epoch  9 macroF1: 0.7493 macroP: 0.7493 macroR: 0.7493 acc: 0.7692 roc: 0.8250
+Test_Retrieval Epoch 9 macroF1: 0.5755 macroP: 0.5760 macroR: 0.5750 acc: 0.6443 roc: 0.7286
+ 
+Current Epoch Val_Retrieval acc:  0.7692307692307693 roc:  0.825 Best model so far, saving...
+ 33%|███▎      | 10/30 [00:08<00:18,  1.08it/s]Train Epoch: 10 [0/10 (0%)]	Loss: 0.453222
+dev  Epoch 10 acc: 0.6410 roc: 0.7379 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6928 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 10 acc: 0.6980 roc: 0.7562 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  10 acc: 0.7564 roc: 0.8250 pre: 0.6667 recall: 0.6429 f1: 0.6545
+Test_Retrieval Epoch 10 acc: 0.6980 roc: 0.7519 pre: 0.5000 recall: 0.5333 f1: 0.5161
+Val_Retrieval Epoch  10 macroF1: 0.7332 macroP: 0.7353 macroR: 0.7314 acc: 0.7564 roc: 0.8250
+Test_Retrieval Epoch 10 macroF1: 0.6483 macroP: 0.6460 macroR: 0.6513 acc: 0.6980 roc: 0.7519
+ 
+ 37%|███▋      | 11/30 [00:09<00:17,  1.10it/s]Train Epoch: 11 [0/10 (0%)]	Loss: 0.468869
+dev  Epoch 11 acc: 0.6410 roc: 0.7468 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6928 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 11 acc: 0.6980 roc: 0.7694 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  11 acc: 0.7692 roc: 0.8407 pre: 0.6923 recall: 0.6429 f1: 0.6667
+Test_Retrieval Epoch 11 acc: 0.7248 roc: 0.7660 pre: 0.5435 recall: 0.5556 f1: 0.5495
+Val_Retrieval Epoch  11 macroF1: 0.7451 macroP: 0.7500 macroR: 0.7414 acc: 0.7692 roc: 0.8407
+Test_Retrieval Epoch 11 macroF1: 0.6757 macroP: 0.6747 macroR: 0.6768 acc: 0.7248 roc: 0.7660
+ 
+Current Epoch Val_Retrieval acc:  0.7692307692307693 roc:  0.8407142857142857 Best model so far, saving...
+ 40%|████      | 12/30 [00:10<00:16,  1.08it/s]Train Epoch: 12 [0/10 (0%)]	Loss: 0.449201
+dev  Epoch 12 acc: 0.6410 roc: 0.7650 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6930 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 12 acc: 0.6980 roc: 0.7541 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  12 acc: 0.7436 roc: 0.8500 pre: 0.6538 recall: 0.6071 f1: 0.6296
+Test_Retrieval Epoch 12 acc: 0.7450 roc: 0.7835 pre: 0.5686 recall: 0.6444 f1: 0.6042
+Val_Retrieval Epoch  12 macroF1: 0.7168 macroP: 0.7212 macroR: 0.7136 acc: 0.7436 roc: 0.8500
+Test_Retrieval Epoch 12 macroF1: 0.7080 macroP: 0.7027 macroR: 0.7165 acc: 0.7450 roc: 0.7835
+ 
+ 43%|████▎     | 13/30 [00:11<00:15,  1.07it/s]Train Epoch: 13 [0/10 (0%)]	Loss: 0.424025
+dev  Epoch 13 acc: 0.6410 roc: 0.7964 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6926 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 13 acc: 0.6980 roc: 0.7929 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  13 acc: 0.7821 roc: 0.8457 pre: 0.7037 recall: 0.6786 f1: 0.6909
+Test_Retrieval Epoch 13 acc: 0.7718 roc: 0.8186 pre: 0.6038 recall: 0.7111 f1: 0.6531
+Val_Retrieval Epoch  13 macroF1: 0.7613 macroP: 0.7636 macroR: 0.7593 acc: 0.7821 roc: 0.8457
+Test_Retrieval Epoch 13 macroF1: 0.7415 macroP: 0.7342 macroR: 0.7546 acc: 0.7718 roc: 0.8186
+ 
+Current Epoch Val_Retrieval acc:  0.782051282051282 roc:  0.8457142857142858 Best model so far, saving...
+ 47%|████▋     | 14/30 [00:12<00:15,  1.06it/s]Train Epoch: 14 [0/10 (0%)]	Loss: 0.448028
+dev  Epoch 14 acc: 0.6410 roc: 0.8029 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6924 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 14 acc: 0.6980 roc: 0.7921 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  14 acc: 0.7821 roc: 0.8550 pre: 0.7391 recall: 0.6071 f1: 0.6667
+Test_Retrieval Epoch 14 acc: 0.7987 roc: 0.8058 pre: 0.6596 recall: 0.6889 f1: 0.6739
+Val_Retrieval Epoch  14 macroF1: 0.7524 macroP: 0.7696 macroR: 0.7436 acc: 0.7821 roc: 0.8550
+Test_Retrieval Epoch 14 macroF1: 0.7641 macroP: 0.7612 macroR: 0.7675 acc: 0.7987 roc: 0.8058
+ 
+Current Epoch Val_Retrieval acc:  0.782051282051282 roc:  0.855 Best model so far, saving...
+ 50%|█████     | 15/30 [00:13<00:14,  1.07it/s]Train Epoch: 15 [0/10 (0%)]	Loss: 0.433229
+dev  Epoch 15 acc: 0.6410 roc: 0.7943 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6923 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 15 acc: 0.6980 roc: 0.7799 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  15 acc: 0.7692 roc: 0.8286 pre: 0.6923 recall: 0.6429 f1: 0.6667
+Test_Retrieval Epoch 15 acc: 0.7919 roc: 0.8071 pre: 0.6667 recall: 0.6222 f1: 0.6437
+Val_Retrieval Epoch  15 macroF1: 0.7451 macroP: 0.7500 macroR: 0.7414 acc: 0.7692 roc: 0.8286
+Test_Retrieval Epoch 15 macroF1: 0.7484 macroP: 0.7539 macroR: 0.7438 acc: 0.7919 roc: 0.8071
+ 
+ 53%|█████▎    | 16/30 [00:14<00:13,  1.07it/s]Train Epoch: 16 [0/10 (0%)]	Loss: 0.460278
+dev  Epoch 16 acc: 0.6410 roc: 0.8036 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6917 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 16 acc: 0.6980 roc: 0.7778 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  16 acc: 0.7564 roc: 0.8121 pre: 0.6800 recall: 0.6071 f1: 0.6415
+Test_Retrieval Epoch 16 acc: 0.7517 roc: 0.8002 pre: 0.5952 recall: 0.5556 f1: 0.5747
+Val_Retrieval Epoch  16 macroF1: 0.7285 macroP: 0.7362 macroR: 0.7236 acc: 0.7564 roc: 0.8121
+Test_Retrieval Epoch 16 macroF1: 0.6997 macroP: 0.7042 macroR: 0.6960 acc: 0.7517 roc: 0.8002
+ 
+ 57%|█████▋    | 17/30 [00:15<00:12,  1.08it/s]Train Epoch: 17 [0/10 (0%)]	Loss: 0.442871
+dev  Epoch 17 acc: 0.6410 roc: 0.7464 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6921 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 17 acc: 0.6980 roc: 0.7822 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  17 acc: 0.6923 roc: 0.8036 pre: 0.5909 recall: 0.4643 f1: 0.5200
+Test_Retrieval Epoch 17 acc: 0.7584 roc: 0.7996 pre: 0.6047 recall: 0.5778 f1: 0.5909
+Val_Retrieval Epoch  17 macroF1: 0.6468 macroP: 0.6615 macroR: 0.6421 acc: 0.6923 roc: 0.8036
+Test_Retrieval Epoch 17 macroF1: 0.7097 macroP: 0.7127 macroR: 0.7072 acc: 0.7584 roc: 0.7996
+ 
+ 60%|██████    | 18/30 [00:16<00:11,  1.06it/s]Train Epoch: 18 [0/10 (0%)]	Loss: 0.437908
+dev  Epoch 18 acc: 0.6410 roc: 0.7936 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6913 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 18 acc: 0.6980 roc: 0.7810 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  18 acc: 0.7436 roc: 0.8457 pre: 0.7222 recall: 0.4643 f1: 0.5652
+Test_Retrieval Epoch 18 acc: 0.7651 roc: 0.8254 pre: 0.6190 recall: 0.5778 f1: 0.5977
+Val_Retrieval Epoch  18 macroF1: 0.6917 macroP: 0.7361 macroR: 0.6821 acc: 0.7436 roc: 0.8457
+Test_Retrieval Epoch 18 macroF1: 0.7159 macroP: 0.7207 macroR: 0.7120 acc: 0.7651 roc: 0.8254
+ 
+ 63%|██████▎   | 19/30 [00:17<00:10,  1.06it/s]Train Epoch: 19 [0/10 (0%)]	Loss: 0.454273
+dev  Epoch 19 acc: 0.6410 roc: 0.8021 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6911 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 19 acc: 0.6980 roc: 0.7769 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  19 acc: 0.7821 roc: 0.8329 pre: 0.7895 recall: 0.5357 f1: 0.6383
+Test_Retrieval Epoch 19 acc: 0.7852 roc: 0.8182 pre: 0.6512 recall: 0.6222 f1: 0.6364
+Val_Retrieval Epoch  19 macroF1: 0.7412 macroP: 0.7846 macroR: 0.7279 acc: 0.7821 roc: 0.8329
+Test_Retrieval Epoch 19 macroF1: 0.7420 macroP: 0.7454 macroR: 0.7390 acc: 0.7852 roc: 0.8182
+ 
+ 67%|██████▋   | 20/30 [00:18<00:09,  1.06it/s]Train Epoch: 20 [0/10 (0%)]	Loss: 0.453544
+dev  Epoch 20 acc: 0.6410 roc: 0.8079 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6907 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 20 acc: 0.6980 roc: 0.7806 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  20 acc: 0.7564 roc: 0.8093 pre: 0.6800 recall: 0.6071 f1: 0.6415
+Test_Retrieval Epoch 20 acc: 0.7651 roc: 0.8068 pre: 0.6190 recall: 0.5778 f1: 0.5977
+Val_Retrieval Epoch  20 macroF1: 0.7285 macroP: 0.7362 macroR: 0.7236 acc: 0.7564 roc: 0.8093
+Test_Retrieval Epoch 20 macroF1: 0.7159 macroP: 0.7207 macroR: 0.7120 acc: 0.7651 roc: 0.8068
+ 
+ 70%|███████   | 21/30 [00:19<00:08,  1.06it/s]Train Epoch: 21 [0/10 (0%)]	Loss: 0.448877
+dev  Epoch 21 acc: 0.6410 roc: 0.8114 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6910 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 21 acc: 0.6980 roc: 0.7827 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  21 acc: 0.7821 roc: 0.8571 pre: 0.7619 recall: 0.5714 f1: 0.6531
+Test_Retrieval Epoch 21 acc: 0.7718 roc: 0.8036 pre: 0.6341 recall: 0.5778 f1: 0.6047
+Val_Retrieval Epoch  21 macroF1: 0.7471 macroP: 0.7757 macroR: 0.7357 acc: 0.7821 roc: 0.8571
+Test_Retrieval Epoch 21 macroF1: 0.7221 macroP: 0.7291 macroR: 0.7168 acc: 0.7718 roc: 0.8036
+ 
+Current Epoch Val_Retrieval acc:  0.782051282051282 roc:  0.8571428571428571 Best model so far, saving...
+ 73%|███████▎  | 22/30 [00:20<00:07,  1.06it/s]Train Epoch: 22 [0/10 (0%)]	Loss: 0.441476
+dev  Epoch 22 acc: 0.6410 roc: 0.8300 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6905 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 22 acc: 0.6980 roc: 0.7782 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  22 acc: 0.7692 roc: 0.8207 pre: 0.7500 recall: 0.5357 f1: 0.6250
+Test_Retrieval Epoch 22 acc: 0.7517 roc: 0.8015 pre: 0.5870 recall: 0.6000 f1: 0.5934
+Val_Retrieval Epoch  22 macroF1: 0.7292 macroP: 0.7629 macroR: 0.7179 acc: 0.7692 roc: 0.8207
+Test_Retrieval Epoch 22 macroF1: 0.7073 macroP: 0.7061 macroR: 0.7087 acc: 0.7517 roc: 0.8015
+ 
+ 77%|███████▋  | 23/30 [00:21<00:06,  1.06it/s]Train Epoch: 23 [0/10 (0%)]	Loss: 0.438769
+dev  Epoch 23 acc: 0.6410 roc: 0.7771 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6912 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 23 acc: 0.6980 roc: 0.7688 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  23 acc: 0.7564 roc: 0.8079 pre: 0.7368 recall: 0.5000 f1: 0.5957
+Test_Retrieval Epoch 23 acc: 0.7785 roc: 0.8060 pre: 0.6364 recall: 0.6222 f1: 0.6292
+Val_Retrieval Epoch  23 macroF1: 0.7107 macroP: 0.7498 macroR: 0.7000 acc: 0.7564 roc: 0.8079
+Test_Retrieval Epoch 23 macroF1: 0.7357 macroP: 0.7372 macroR: 0.7342 acc: 0.7785 roc: 0.8060
+ 
+ 80%|████████  | 24/30 [00:22<00:05,  1.03it/s]Train Epoch: 24 [0/10 (0%)]	Loss: 0.430773
+dev  Epoch 24 acc: 0.6410 roc: 0.8314 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6888 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 24 acc: 0.6980 roc: 0.7897 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  24 acc: 0.7821 roc: 0.8464 pre: 0.7895 recall: 0.5357 f1: 0.6383
+Test_Retrieval Epoch 24 acc: 0.7718 roc: 0.7929 pre: 0.6170 recall: 0.6444 f1: 0.6304
+Val_Retrieval Epoch  24 macroF1: 0.7412 macroP: 0.7846 macroR: 0.7279 acc: 0.7821 roc: 0.8464
+Test_Retrieval Epoch 24 macroF1: 0.7327 macroP: 0.7301 macroR: 0.7357 acc: 0.7718 roc: 0.7929
+ 
+ 83%|████████▎ | 25/30 [00:23<00:04,  1.05it/s]Train Epoch: 25 [0/10 (0%)]	Loss: 0.461167
+dev  Epoch 25 acc: 0.6410 roc: 0.7764 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6905 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 25 acc: 0.6980 roc: 0.7686 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  25 acc: 0.7564 roc: 0.8536 pre: 0.7143 recall: 0.5357 f1: 0.6122
+Test_Retrieval Epoch 25 acc: 0.7852 roc: 0.7923 pre: 0.6444 recall: 0.6444 f1: 0.6444
+Val_Retrieval Epoch  25 macroF1: 0.7173 macroP: 0.7431 macroR: 0.7079 acc: 0.7564 roc: 0.8536
+Test_Retrieval Epoch 25 macroF1: 0.7453 macroP: 0.7453 macroR: 0.7453 acc: 0.7852 roc: 0.7923
+ 
+ 87%|████████▋ | 26/30 [00:24<00:03,  1.06it/s]Train Epoch: 26 [0/10 (0%)]	Loss: 0.381968
+dev  Epoch 26 acc: 0.6410 roc: 0.8314 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6885 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 26 acc: 0.6980 roc: 0.7671 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  26 acc: 0.7436 roc: 0.8307 pre: 0.7000 recall: 0.5000 f1: 0.5833
+Test_Retrieval Epoch 26 acc: 0.7584 roc: 0.7972 pre: 0.5957 recall: 0.6222 f1: 0.6087
+Val_Retrieval Epoch  26 macroF1: 0.6991 macroP: 0.7293 macroR: 0.6900 acc: 0.7436 roc: 0.8307
+Test_Retrieval Epoch 26 macroF1: 0.7170 macroP: 0.7145 macroR: 0.7198 acc: 0.7584 roc: 0.7972
+ 
+ 90%|█████████ | 27/30 [00:25<00:02,  1.03it/s]Train Epoch: 27 [0/10 (0%)]	Loss: 0.401012
+dev  Epoch 27 acc: 0.6410 roc: 0.8386 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6882 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 27 acc: 0.6980 roc: 0.7831 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  27 acc: 0.7308 roc: 0.8500 pre: 0.6842 recall: 0.4643 f1: 0.5532
+Test_Retrieval Epoch 27 acc: 0.7785 roc: 0.7848 pre: 0.6429 recall: 0.6000 f1: 0.6207
+Val_Retrieval Epoch  27 macroF1: 0.6803 macroP: 0.7150 macroR: 0.6721 acc: 0.7308 roc: 0.8500
+Test_Retrieval Epoch 27 macroF1: 0.7321 macroP: 0.7373 macroR: 0.7279 acc: 0.7785 roc: 0.7848
+ 
+ 93%|█████████▎| 28/30 [00:25<00:01,  1.05it/s]Train Epoch: 28 [0/10 (0%)]	Loss: 0.432926
+dev  Epoch 28 acc: 0.6410 roc: 0.8225 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6892 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 28 acc: 0.6980 roc: 0.7825 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  28 acc: 0.7564 roc: 0.8529 pre: 0.7647 recall: 0.4643 f1: 0.5778
+Test_Retrieval Epoch 28 acc: 0.7852 roc: 0.7932 pre: 0.6667 recall: 0.5778 f1: 0.6190
+Val_Retrieval Epoch  28 macroF1: 0.7033 macroP: 0.7594 macroR: 0.6921 acc: 0.7564 roc: 0.8529
+Test_Retrieval Epoch 28 macroF1: 0.7348 macroP: 0.7470 macroR: 0.7264 acc: 0.7852 roc: 0.7932
+ 
+ 97%|█████████▋| 29/30 [00:26<00:00,  1.07it/s]Train Epoch: 29 [0/10 (0%)]	Loss: 0.407169
+dev  Epoch 29 acc: 0.6410 roc: 0.8007 pre: 0.0000 recall: 0.0000 f1: 0.0000 loss: 0.6898 | macroF1: 0.3906 macroP: 0.3205 macroR: 0.5000
+test Epoch 29 acc: 0.6980 roc: 0.7795 pre: 0.0000 recall: 0.0000 f1: 0.0000 | macroF1: 0.4111 macroP: 0.3490 macroR: 0.5000
+Val_Retrieval Epoch  29 acc: 0.7821 roc: 0.8564 pre: 0.7895 recall: 0.5357 f1: 0.6383
+Test_Retrieval Epoch 29 acc: 0.7852 roc: 0.7868 pre: 0.6512 recall: 0.6222 f1: 0.6364
+Val_Retrieval Epoch  29 macroF1: 0.7412 macroP: 0.7846 macroR: 0.7279 acc: 0.7821 roc: 0.8564
+Test_Retrieval Epoch 29 macroF1: 0.7420 macroP: 0.7454 macroR: 0.7390 acc: 0.7852 roc: 0.7868
+ 
+Last Epoch, saving...
+100%|██████████| 30/30 [00:27<00:00,  1.07it/s]100%|██████████| 30/30 [00:27<00:00,  1.08it/s]
+[consensus] (archive-text space, topk=10, tau=0.2) roles over 2316 sub-clips: ignore=572  neg=1144  pos=188  drift=300  conflict=112
+[EM] pseudo-label flip rate after round 2: 0.0000
+[EM] finished 2 rounds; final round best ckpt: ./logging/Retrieval/MHC_zh/RAC_video_consensus_v2/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss_seg0.5_consensus_vs-archive/em_round1//ckpt/best_model_21_0.782051282051282.pt

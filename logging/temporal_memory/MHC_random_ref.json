@@ -1,0 +1,74 @@
+{
+  "dataset": "MHC",
+  "temporal": false,
+  "ckpt": "logging/Retrieval/MHC/RAC_video_CLIP/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_26_0.75.pt",
+  "model": "openai_clip-vit-large-patch14-336_HF",
+  "topk": 20,
+  "vote": "arithmetic (arith) / similarity-weighted (sim)",
+  "splits": {
+    "train": {
+      "n": 549,
+      "pos_n": 168,
+      "pos_rate": 0.306,
+      "majority_class": 0,
+      "majority_acc": 0.694,
+      "majority_macro_f1": 0.4097
+    },
+    "val": {
+      "n": 80,
+      "pos_n": 25,
+      "pos_rate": 0.3125,
+      "majority_class": 0,
+      "majority_acc": 0.6875,
+      "majority_macro_f1": 0.4074
+    },
+    "test": {
+      "n": 161,
+      "pos_n": 49,
+      "pos_rate": 0.3043,
+      "majority_class": 0,
+      "majority_acc": 0.6957,
+      "majority_macro_f1": 0.4103
+    }
+  },
+  "static": {
+    "train_memory": {
+      "mem_N": 549,
+      "arith": {
+        "macro_f1": 0.7113,
+        "macro_pre": 0.7586,
+        "macro_recall": 0.6945,
+        "acc": 0.7826,
+        "roc": 0.7175,
+        "pos_f1": 0.5679
+      },
+      "sim": {
+        "macro_f1": 0.7113,
+        "macro_pre": 0.7586,
+        "macro_recall": 0.6945,
+        "acc": 0.7826,
+        "roc": 0.8422,
+        "pos_f1": 0.5679
+      }
+    },
+    "train_val_memory (k=all=80)": {
+      "mem_N": 629,
+      "arith": {
+        "macro_f1": 0.7113,
+        "macro_pre": 0.7586,
+        "macro_recall": 0.6945,
+        "acc": 0.7826,
+        "roc": 0.8094,
+        "pos_f1": 0.5679
+      },
+      "sim": {
+        "macro_f1": 0.7113,
+        "macro_pre": 0.7586,
+        "macro_recall": 0.6945,
+        "acc": 0.7826,
+        "roc": 0.8335,
+        "pos_f1": 0.5679
+      }
+    }
+  }
+}

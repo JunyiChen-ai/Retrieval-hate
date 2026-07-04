@@ -1,0 +1,74 @@
+{
+  "dataset": "MHC_zh",
+  "temporal": false,
+  "ckpt": "logging/Retrieval/MHC_zh/RAC_video_CLIP/RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20__PseudoGold_positive_1_hard_negative_1_seed0_hybrid_loss/ckpt/best_model_29_0.8076923076923077.pt",
+  "model": "openai_clip-vit-large-patch14-336_HF",
+  "topk": 20,
+  "vote": "arithmetic (arith) / similarity-weighted (sim)",
+  "splits": {
+    "train": {
+      "n": 579,
+      "pos_n": 180,
+      "pos_rate": 0.3109,
+      "majority_class": 0,
+      "majority_acc": 0.6891,
+      "majority_macro_f1": 0.408
+    },
+    "val": {
+      "n": 78,
+      "pos_n": 28,
+      "pos_rate": 0.359,
+      "majority_class": 0,
+      "majority_acc": 0.641,
+      "majority_macro_f1": 0.3906
+    },
+    "test": {
+      "n": 149,
+      "pos_n": 45,
+      "pos_rate": 0.302,
+      "majority_class": 0,
+      "majority_acc": 0.698,
+      "majority_macro_f1": 0.4111
+    }
+  },
+  "static": {
+    "train_memory": {
+      "mem_N": 579,
+      "arith": {
+        "macro_f1": 0.7641,
+        "macro_pre": 0.7612,
+        "macro_recall": 0.7675,
+        "acc": 0.7987,
+        "roc": 0.8225,
+        "pos_f1": 0.6739
+      },
+      "sim": {
+        "macro_f1": 0.7706,
+        "macro_pre": 0.769,
+        "macro_recall": 0.7723,
+        "acc": 0.8054,
+        "roc": 0.8382,
+        "pos_f1": 0.6813
+      }
+    },
+    "train_val_memory (k=all=78)": {
+      "mem_N": 657,
+      "arith": {
+        "macro_f1": 0.7706,
+        "macro_pre": 0.769,
+        "macro_recall": 0.7723,
+        "acc": 0.8054,
+        "roc": 0.8299,
+        "pos_f1": 0.6813
+      },
+      "sim": {
+        "macro_f1": 0.7706,
+        "macro_pre": 0.769,
+        "macro_recall": 0.7723,
+        "acc": 0.8054,
+        "roc": 0.8378,
+        "pos_f1": 0.6813
+      }
+    }
+  }
+}
