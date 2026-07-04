@@ -1022,3 +1022,147 @@ consensus topk=10 / τ=0.2 / EM=2。日志 `slurm/logs/mhc_train_cons_*.out`,ckp
 - **caveat:** CLIP 文本 77-token 截断会切掉长 summary;schema_ok<parse_ok 的 ~1–3% 条目字段
   可能不全;档案忠实度尚无人工抽查(排入 W2);下游效用未测(W3 的事)。
 
+
+---
+
+## Iter-3 Wave 2–7 收官 — 2026-07-03 夜 → 2026-07-04(按事件记录)
+
+### 1. 多 seed 终表与配对判定(W3 复核,jobs 12215–12227,12219–12221)
+
+**结论:NO —— W3 的两个 headline 都没有活过多 seed。** 节点:
+`experiments/exp-archive-knn-seeds.md`。
+
+- ZH archive-kNN α=0.25(LoRA 基座)5 seeds val-选点:acc **0.8268±0.0266**;0.8523 是
+  seed-0 的 best-of-5 幸运高点,仅该 seed 过 0.85 → **MHClip-ZH 0.85 仍 OPEN**。
+- 同 seed 配对(archive − LoRA-only,n=5):dAcc **−0.0014±0.0313**(t=−0.10)——
+  **无可靠 accuracy 增益,方向未知**;LoRA-only floor 本身极稳(0.8282±0.0139)。
+- EN archive 臂 4 seeds:0.7935±0.0205(0.8075 是 max);EN 报 0.794±0.021。
+- 唯一方向一致的次级信号:val-选点配对 dROC +0.0095(4/5 seeds)——只配分析段。
+- 控制有效性:baseline seed-0 复跑(12223)与 12149 **bit-for-bit** 一致,证明 W5 期间的
+  src 改动全部 flag-gated OFF,配对比较同代码。
+
+### 2. 选点规则发现(零 GPU 再分析 + sha1 审计)
+
+**发现:78 样本 dev 上 val-acc 选点自损 ~2 个 acc 点;选点规则挪动估计值的幅度超过待测
+效应本身。** 节点:`experiments/exp-archive-knn-seeds.md` Addendum 1/2;脚本
+`scripts/analysis/selection_rule_robustness.py`。
+
+- 五规则网格(val-acc / val-ROC / top3-mean / last5-mean / final-epoch)重打分全部臂:
+  ZH 配对档案效应跨规则在 −0.013 ~ +0.008 摆动;无规则跨臂一致占优 → 预注册规则不改,
+  headline 数字不动;selection-robustness 论文附录段已成文。
+- **final-epoch 口径:ZH floor = archive = 0.8537±0.0120(唯一过 0.85 的均值)**;两臂
+  每 seed 逐位相同 —— sha1 审计证实 same-seed checkpoint 字节相同
+  (`6d6551e4…` 与 disk_guard B2 推送记录吻合),α=0.25 键在 ep29 0 票翻转。
+  **采用与否 = rule-shopping 风险,协议选择权留用户**(两口径并排方案见 MORNING_REPORT §6)。
+- 附带政策执行记录:一度计划的 5-seed cross-seed ensemble **按用户政策撤销**——零作业、
+  零脚本、零数字。
+
+### 3. 三臂消融终局(floor vs transcript vs archive,jobs 12228–12231 / 12260–12266)
+
+**结论:novelty 生死题两头都死——"archive>transcript" 不 seed-robust,archive 的 accuracy
+增益本身也不存在。** 节点:`ABLATION_transcript_vs_archive.md`。
+
+- 长上下文多语 mpnet-512 transcript 键(截断 0.0%)在 ZH ≤ floor(4-5/5 seeds)→
+  truncation-repair 假设死;但 archive 的 accuracy 主张同样死(配对 ≈ 0,final-epoch 全 tie)。
+- 幸存的可写内容:ZH 档案键 val-选点 ROC 4/5 seeds +0.009(弱、方向一致);EN 上
+  transcript-key ROC > archive-key(4/4 seeds,+0.017)。定稿话术:分析章节,不作 headline。
+- double key(等权拼接)低于一切;死路,不再碰。
+
+### 4. W5 共识空间证伪(jobs 12243–12246,`--consensus_space {archive,blend}`)
+
+**结论:NO(双语言、双配置全灭)——EN 共识失败不是键空间问题,机制统一主张被杀。**
+数字首次入档(val-选点 Test F1/acc):
+
+| 配置 | MHC-EN | MHC_zh |
+|---|---|---|
+| consensus(原视觉空间,E1) | 0.5948 / 0.7329 | **0.7864 / 0.8188**(赢家) |
+| consensus_space=archive | 0.5663 / 0.7205 | 0.7221 / 0.7718 |
+| consensus_space=blend | 0.6453 / 0.7143 | 0.7232 / 0.7651 |
+| floor(λ=0) | 0.7113 / 0.7826 | 0.7706 / 0.8054 |
+
+- EN:换成档案语义空间投票反而更差 → 与 E1、W2 合并成完整归因链(EN 仇恨语音承载 →
+  子片段监督本身失效,投票空间不是病灶);共识 claim 严格 scoped 到 ZH。
+- ZH:原 raw-CLIP 视觉空间就是最优;档案空间毫无增益。
+- 实现:`src/run_rac.py`/`src/utils/consensus.py` 新开关,default=clip 时与 pre-W5 逐位一致
+  (由 12223 bit-for-bit 复现 12149 背书)。
+- **附:EN 档案 α 网格与 mode=both(jobs 12247–12251,seed-0)**:knn α∈{0.15,0.2,0.3,0.35}
+  val-选点 acc 0.7888–0.8137(相对 floor 均值 0.78±噪声,全部噪声级);mode=both 0.7702
+  (有害)。EN 各杠杆至此全部噪声级或有害,唯一未决 = 角色 3 仲裁(W7)。
+
+### 5. W4 校准漂移发现(temporal evolving-memory 协议,jobs 12197/12214/12253)
+
+**结论:"hate evolves" 在 EN 可测(−0.084 macro-F1),但演化的主成分是校准漂移;
+原"加样本进记忆"机制不成立,k=20 阈值再校准零重训全额收复。** 节点:
+`EVAL_temporal_memory_W4.md`。
+
+- EN temporal ROC 0.8484 > 随机 split 参考 0.7175 → 可分性活着,operating point 死了。
+- 记忆增补:所有 k≤80、三种选样策略、双语言 flat-to-negative。
+- 阈值再校准:k=20 → 0.7336 ≥ 随机 floor 0.7113(oracle 天花板 0.7646);ZH 负对照:
+  无漂移时小 k 校准纯噪声 → 部署应由漂移信号门控。
+- 故事定稿:检索架构把 operating point 暴露为一等、O(1)、可逆旋钮;trained-MoE 头藏在
+  权重里,结构性做不到。idea 节点 `ideas/evolving-memory-protocol.md` 置
+  validated-as-calibration。
+
+### 6. 可审计性双实验(档案忠实度审计 + kNN 记忆编辑演示)
+
+**结论:可审计/可编辑主张成立为能力演示,边界条件如实入档。** 节点:
+`AUDIT_archive_faithfulness.md`、`DEMO_memory_editing.md`。
+
+- 忠实度:60 条分层抽审 faithful 77%;幻觉 15% 几乎全是字段级虚报(benign→spurious
+  mechanism,ZH-Normal 6/10 最重);洗白 5% 全是"毒性只在标题"模式;反向发现 1 例疑似
+  gt 漏标(`BV1MU4y1D7Ks`)。模型初判、人工终审条款写明。
+- 编辑:EN 定向删除切片翻转率 ≈ 随机对照 15×;删 2 条 W2 噪声条目即修复 EN
+  (0.8075→0.8199,超全部随机 seed,零训练);ZH v1 组级 0 翻转 = 诚实负结果,归因
+  target 字段召回 1.6%(有害类)——档案质量是编辑定向性的上限,属边界条件不是反例;
+  低置信规则只可作隔离候选队列,不可自动删除。
+
+### 7. v2 档案(prompt v2 生成 + ZH 编辑复测,jobs 12234/12258/12259;EN 全量 12280 在飞)
+
+**结论:审计驱动的 prompt 修复把 ZH 有害类 target 召回 1.6%→49.4%;编辑定向性改善有限。**
+节点:`DEMO_memory_editing_v2_zh.md`;prompt 变更记录在
+`src/utils/generate_video_archive_HF.py` + `scripts/slurm/gen_archive_v2.sbatch` 头注。
+
+- v2 规则:target 必填(slur 自证目标群体、标题攻击计入)+ mechanism 须有可引证据。
+- ZH train 非空 target 6/583(1.0%)→ 128/579(22.1%);有害类 3/182(1.6%)→ 89/180(49.4%)。
+- 复测(冻结 v1 获胜 ckpt,换键零重训,由 sha1 审计背书):women 切片(63 条)删除有超
+  随机包络的切片效应(0.70→0.60);LGBTQ+ 字段切片仍 0 翻转;v2 键整体基线 0.8523→0.8255。
+
+### 8. 定位评测台 + HateClipSeg 落库(jobs 12232/12274)
+
+**结论:HateMM 金标定位台建成并给出我们方法的诚实数字;HateClipSeg 90.8% 存活子集落库,
+成为主定位评测集(评测在飞)。** 节点:`EVAL_localization_hatemm.md`、
+`DATASET_hateclipseg.md`、`EVAL_localization_hateclipseg.md`。
+
+- HateMM:427/427 hate 视频 span 全解析(671 段,中位覆盖 46%)→ 定位评测可行且非平凡;
+  自定双口径协议(full / hateonly)全项目统一;我们的 model-score full mAP 0.589/AUC 0.781,
+  但 video-broadcast 对照 0.578/0.774 → 段内分辨贡献很小,hateonly AUC 仅 0.577(K=4 粗段 +
+  视觉-only 键对 speech-carried 仇恨是盲区,如实写)。
+- MultiHateLoc:官方仓库为空 → **不复现**(用户政策),发表数字只进 related work 并附
+  "不可直接比较"协议对照表;起步代码 `baselines/multihateloc_reimpl/` 标 ABANDONED 留档。
+- HateClipSeg:395/435 视频(90.8%)、10,604/10,614 段落库,ffprobe 全过、时间戳零错位;
+  selection-bias 声明成文(yt 折损 20.8% ≫ bit 6.9%,harm 类只作聚合);零训练跨数据集
+  kNN 共识打分协议写死(K=30 由金标段中位 8.1s 决定,非调参),主表待 job 12274。
+
+### 9. MoRE 复跑进度(jobs 12235–12273)
+
+**状态:阶段 1/2 完成,G6 最终训练(12273)在飞。** 节点:`BASELINE_MoRE_rerun.md`。
+
+- 环境两套(MoRE_env / MoRE_paddle)+ 版本锁定;释出代码问题 7 项全部文档化处置
+  (含 audio 检索库 bug:主跑保留 bug 的 asreleased variant + bugfix variant 双轨)。
+- 缺件全部本地复原并标注:caption=Qwen2.5-VL 复原(其生成方式零文档)、MHClip tsv/
+  speech/title/label 从 annotation(new).json 重建;ZH OCR 经 paddle GPU(cudnn 不认)/
+  CPU(SIGILL)双卒后按预授权 fallback 落 easyocr(与其 EN 官方协议同引擎),814/814 行。
+- 特征/检索全产出(3 数据集 × 2 variant);G6 = 官方 yaml、seed=2024、双轨评测
+  (官方 test 全量 sanity + 我们 clean 子集严格同场)。
+
+### 10. 三条用户政策(2026-07-03/04 生效,全项目约束)
+
+1. **禁 cross-seed ensemble**:任何集成不入方法;已计划的 ensemble 线当场撤销(见 §2)。
+2. **无代码不复现**:官方无代码的工作(MultiHateLoc)只讨论发表数字并标注不可比,
+   不投入复现(见 §8)。
+3. **不发邮件、缺件自补**:复跑他人工作缺失的资产(caption、tsv、OCR 引擎)一律本地
+   复原、如实脚注,不等作者回复(见 §9)。
+
+**Ideas 节点状态同步:** `archive-as-retrieval-key` → refuted(新节点,负结果入档);
+`retrieval-consensus-denoising` → ZH-validated / EN-refuted(归因完结);
+`evolving-memory-protocol` → validated-as-calibration(新节点)。
