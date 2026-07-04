@@ -197,23 +197,53 @@ def build_user_prompt(sample, text_only, pv="v1", fine=None):
     return "\n".join(L)
 
 
+WORD_MAP = {"hateful": "hateful", "offensive": "offensive",
+            "normal": "normal", "仇恨": "hateful", "正常": "normal"}
+_WORD_RE = None
+
+
+def _word_fallback(raw):
+    """Bare-verdict fallback for adapters SFT'd to one-word answers (v3).
+
+    Only consulted AFTER strict-JSON parsing failed; counted separately via
+    the 'word-fallback' parse_error prefix so the JSON rate stays reportable.
+    """
+    global _WORD_RE
+    if _WORD_RE is None:
+        import re
+        _WORD_RE = re.compile(r"(hateful|offensive|normal|仇恨|正常)",
+                              re.IGNORECASE)
+    m = _WORD_RE.search((raw or "").strip()[:200])
+    return WORD_MAP[m.group(1).lower()] if m else None
+
+
 def parse_verdict(raw):
-    """raw generation -> (verdict|None, key_evidence, cited_neighbor, error)."""
+    """raw generation -> (verdict|None, key_evidence, cited_neighbor, error).
+
+    Strict JSON first; if that fails, a bare-verdict word fallback (error
+    field then carries the 'word-fallback' prefix for separate accounting).
+    """
     cand = _extract_json_candidate(raw)
+    err, obj = None, None
     if cand is None:
-        return None, "", "", "no JSON object found"
-    try:
-        obj = json.loads(cand)
-    except Exception as e:  # noqa: BLE001
-        return None, "", "", "json.loads: {}".format(e)
-    if not isinstance(obj, dict):
-        return None, "", "", "not a dict"
-    v = str(obj.get("verdict") or "").strip().lower()
-    if v not in VERDICTS:
-        return None, str(obj.get("key_evidence") or ""), \
-            str(obj.get("cited_neighbor") or ""), "bad verdict: %r" % v
-    return (v, str(obj.get("key_evidence") or ""),
-            str(obj.get("cited_neighbor") or ""), None)
+        err = "no JSON object found"
+    else:
+        try:
+            obj = json.loads(cand)
+        except Exception as e:  # noqa: BLE001
+            err = "json.loads: {}".format(e)
+    if err is None and not isinstance(obj, dict):
+        err, obj = "not a dict", None
+    if obj is not None:
+        v = str(obj.get("verdict") or "").strip().lower()
+        if v in VERDICTS:
+            return (v, str(obj.get("key_evidence") or ""),
+                    str(obj.get("cited_neighbor") or ""), None)
+        err = "bad verdict: %r" % v
+    w = _word_fallback(raw)
+    if w is not None:
+        return w, "", "", "word-fallback ({})".format(err)
+    return None, "", "", err
 
 
 @torch.no_grad()
@@ -247,7 +277,7 @@ def run_one(spec, model, processor, device, args):
     ds, variant, split, mode = spec.split(":")
     assert mode in ("frames", "textonly"), mode
     pv = args.prompt_version
-    fine = fine_labels(ds) if pv == "v2" else None
+    fine = fine_labels(ds) if pv in ("v2",) else None
     gate_path = os.path.join(OUT_DIR, "gate_{}_{}.json".format(ds, variant))
     gate = json.load(open(gate_path))
     deferred = [s for s in gate["samples"]
@@ -255,7 +285,8 @@ def run_one(spec, model, processor, device, args):
     if args.limit > 0:
         deferred = deferred[:args.limit]
 
-    suffix = "" if pv == "v1" else "_p{}".format(pv)
+    tag = args.tag or pv
+    suffix = "" if tag == "v1" else "_p{}".format(tag)
     out_path = os.path.join(
         OUT_DIR, "arb_{}_{}_{}_{}{}.jsonl".format(
             ds, variant, split, mode, suffix))
@@ -289,7 +320,8 @@ def run_one(spec, model, processor, device, args):
                                        pv=pv, fine=fine)
             rec = dict(
                 id=s["id"], dataset=ds, variant=variant, split=split,
-                mode=mode, prompt_version=pv, frame_ok=frame_ok,
+                mode=mode, prompt_version=pv, tag=tag,
+                adapter=(args.adapter or None), frame_ok=frame_ok,
                 label=s["label"],
                 pred_knn=s["pred_knn"], vote=s["vote"], margin=s["margin"],
                 prompt_chars=len(prompt), raw_output=None, verdict=None,
@@ -337,6 +369,13 @@ def main():
                     help="v1 = original (byte-stable); v2 = dataset-bar "
                          "recalibration + fine precedent labels; selection "
                          "between versions happens on VAL only")
+    ap.add_argument("--adapter", default="",
+                    help="optional peft LoRA adapter dir (task-calibrated "
+                         "arbiter, e.g. logging/lora/MHC); merged into the "
+                         "base weights at load time (v3)")
+    ap.add_argument("--tag", default="",
+                    help="output-file tag (defaults to --prompt_version); "
+                         "v3 = adapter arbiter runs")
     ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
 
@@ -346,6 +385,17 @@ def main():
     model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
         args.model, torch_dtype=torch.bfloat16, attn_implementation="sdpa",
         device_map=None)
+    if args.adapter:
+        # mirror generate_VideoMLLM_embedding_lora_HF.py: attach + merge
+        if not os.path.isdir(args.adapter):
+            raise SystemExit("--adapter '{}' is not a directory".format(
+                args.adapter))
+        from peft import PeftModel
+        print("Attaching LoRA adapter from: {}".format(args.adapter),
+              flush=True)
+        model = PeftModel.from_pretrained(model, args.adapter)
+        print("Merging LoRA adapter into base weights ...", flush=True)
+        model = model.merge_and_unload()
     model.to(device).eval()
     processor = AutoProcessor.from_pretrained(
         args.model, max_pixels=args.max_pixels)

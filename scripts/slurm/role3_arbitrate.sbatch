@@ -63,6 +63,7 @@ echo "[role3_arb] === phase 2: full runs ==="
 python scripts/role3/arbitrate_qwen.py \
     --runs "$RUNS" \
     --limit "$LIMIT" \
+    --prompt_version "$PV" \
     --num_frames "${NUM_FRAMES:-16}" \
     --max_new_tokens "${MAX_NEW_TOKENS:-250}"
 

@@ -34,8 +34,10 @@ def load_gate(ds, variant):
     return json.load(open(p)) if os.path.exists(p) else None
 
 
-def load_arb(ds, variant, split, mode):
-    p = os.path.join(OUT_DIR, "arb_{}_{}_{}_{}.jsonl".format(ds, variant, split, mode))
+def load_arb(ds, variant, split, mode, pv="v1"):
+    suffix = "" if pv == "v1" else "_p{}".format(pv)
+    p = os.path.join(OUT_DIR, "arb_{}_{}_{}_{}{}.jsonl".format(
+        ds, variant, split, mode, suffix))
     if not os.path.exists(p):
         return None
     recs = {}
@@ -164,57 +166,89 @@ def main():
     args = ap.parse_args()
 
     runs = [
-        # ds, variant, mode  (test evaluation)
-        ("MHC", "base", "frames"),
-        ("MHC", "clean", "frames"),
-        ("MHC", "base", "textonly"),
-        ("MHC_zh", "base", "frames"),
-        ("MHC_zh", "base", "textonly"),
+        # ds, variant, mode, prompt version  (test evaluation)
+        (ds, variant, mode, pv)
+        for pv in ("v1", "v2", "v3")
+        for ds, variant, mode in [
+            ("MHC", "base", "frames"),
+            ("MHC", "clean", "frames"),
+            ("MHC", "base", "textonly"),
+            ("MHC_zh", "base", "frames"),
+            ("MHC_zh", "base", "textonly"),
+        ]
     ]
     R = {}
-    for ds, variant, mode in runs:
+    for ds, variant, mode, pv in runs:
         gate = load_gate(ds, variant)
         if gate is None:
             continue
-        arb_t = load_arb(ds, variant, "test", mode)
-        key = "{}|{}|{}".format(ds, variant, mode)
+        arb_t = load_arb(ds, variant, "test", mode, pv)
+        key = "{}|{}|{}|{}".format(ds, variant, mode, pv)
         R[key] = dict(test=eval_working_points(gate, arb_t, "test"))
         if variant == "base" and mode == "frames":
-            arb_v = load_arb(ds, variant, "val", mode)
-            R[key]["val"] = eval_working_points(gate, arb_v, "val")
+            arb_v = load_arb(ds, variant, "val", mode, pv)
+            if arb_v:
+                R[key]["val"] = eval_working_points(gate, arb_v, "val")
 
-    # working-point selection on VAL (base+frames), per dataset
+    # (prompt version, working point) selection on VAL (base+frames) per ds.
+    # The candidate set INCLUDES "no deferral" (keep kNN everywhere): the gate
+    # only spends MLLM budget if val shows a benefit. Ties prefer higher acc,
+    # then macro-F1, then lower deferral rate (none highest), then v1.
     sel = {}
     for ds in ["MHC", "MHC_zh"]:
-        key = "{}|base|frames".format(ds)
-        if key not in R or "val" not in R[key]:
+        cands = []
+        val_before = None
+        for pv in ("v1", "v2", "v3"):
+            key = "{}|base|frames|{}".format(ds, pv)
+            if key not in R or "val" not in R[key]:
+                continue
+            val = R[key]["val"]
+            val_before = val["before"]
+            for r in RATES:
+                cands.append((val["rates"][r]["after"]["acc"],
+                              val["rates"][r]["after"]["macro_f1"],
+                              -float(r), pv == "v1", pv, r))
+        if not cands:
             continue
-        val = R[key]["val"]
-        best = max(RATES, key=lambda r: (
-            val["rates"][r]["after"]["acc"],
-            val["rates"][r]["after"]["macro_f1"],
-            -float(r)))
-        sel[ds] = dict(rate=best,
-                       val_after=val["rates"][best]["after"],
-                       val_before=val["before"])
+        cands.append((val_before["acc"], val_before["macro_f1"],
+                      0.0, True, "none", "none"))
+        best = max(cands)
+        pv, r = best[4], best[5]
+        if pv == "none":
+            sel[ds] = dict(rate="none", pv="none",
+                           val_after=val_before, val_before=val_before)
+        else:
+            val = R["{}|base|frames|{}".format(ds, pv)]["val"]
+            sel[ds] = dict(rate=r, pv=pv,
+                           val_after=val["rates"][r]["after"],
+                           val_before=val["before"])
     # cost accounting from arb wall times
     cost = {}
-    for ds, variant, mode in runs:
+    for ds, variant, mode, pv in runs:
         for split in ["val", "test"]:
-            recs = load_arb(ds, variant, split, mode)
+            recs = load_arb(ds, variant, split, mode, pv)
             if not recs:
                 continue
             ws = [r["wall_s"] for r in recs.values() if r.get("wall_s")]
-            cost["{}|{}|{}|{}".format(ds, variant, split, mode)] = dict(
+            cost["{}|{}|{}|{}|{}".format(ds, variant, split, mode, pv)] = dict(
                 calls=len(recs), mean_wall_s=float(np.mean(ws)) if ws else None,
                 total_wall_s=float(np.sum(ws)) if ws else None)
 
     flips = {}
     for ds in ["MHC", "MHC_zh"]:
         gate = load_gate(ds, "base")
-        arb = load_arb(ds, "base", "test", "frames")
-        if gate and arb and ds in sel:
-            flips[ds] = flip_examples(gate, arb, "test", sel[ds]["rate"])
+        if gate and ds in sel and sel[ds]["rate"] != "none":
+            arb = load_arb(ds, "base", "test", "frames", sel[ds]["pv"])
+            if arb:
+                flips[ds] = flip_examples(gate, arb, "test", sel[ds]["rate"])
+        elif gate and ds in sel:
+            # honest fallback: still show flip examples from the best
+            # non-none val candidate for the human-read section
+            arb = load_arb(ds, "base", "test", "frames", "v3") or \
+                load_arb(ds, "base", "test", "frames", "v2") or \
+                load_arb(ds, "base", "test", "frames", "v1")
+            if arb:
+                flips[ds] = flip_examples(gate, arb, "test", "0.30")
 
     fine = {}
     for ds in ["MHC", "MHC_zh"]:
@@ -254,6 +288,11 @@ def write_md(path, R, sel, cost, flips, fine):
       "hateful/offensive→1, normal→0 后仅替换 deferred 样本的判决。")
     w("- 变体:base;memory-clean(先删 DEMO_memory_editing 的 2 条 W2 噪声记忆,合法:源于训练侧取证);"
       "text-only 仲裁对照(不给帧)。")
+    w("- 仲裁 prompt 两版:v1(通用平台安全口径)与 v2(按数据集标注口径重校准 + 邻居给三分类细标签;"
+      "动因:v1 smoke 显示系统性 over-flagging)。**v1/v2 与工作点一起只在 val 上选**,test 两版都报告。")
+    w("- **v3 = 任务校准 LoRA 仲裁器**:base Qwen + logging/lora/<DS> adapter(MHClip train 上一词答 SFT,"
+      "与 ZH 获胜编码器同源),prompt 同 v2、JSON-first 合同不变,新增一词裸答 fallback(单独计数);"
+      "同一 deferred 队列,与 v1/v2 同池在 val 上选配置。")
     w("")
     for ds, name in [("MHC", "MHC (EN)"), ("MHC_zh", "MHC_zh (ZH)")]:
         keys = [k for k in R if k.startswith(ds + "|")]
@@ -263,16 +302,24 @@ def write_md(path, R, sel, cost, flips, fine):
         w("")
         if ds in sel:
             s = sel[ds]
-            w("**val 选定工作点:deferral ≈ {:.0f}%**(val after-acc {:.4f},"
-              "before {:.4f};base+frames 变体)。".format(
-                  float(s["rate"]) * 100, s["val_after"]["acc"],
-                  s["val_before"]["acc"]))
+            if s["rate"] == "none":
+                w("**val 选定配置:不启用仲裁(保持 kNN,deferral 0%)**——所有 "
+                  "(prompt, rate) 候选在 val 上的 after-acc 都不超过 before "
+                  "{:.4f};门控的诚实决策是不花推理预算。".format(
+                      s["val_before"]["acc"]))
+            else:
+                w("**val 选定配置:prompt {} + deferral ≈ {:.0f}%**(val after-acc {:.4f},"
+                  "before {:.4f};base+frames)。".format(
+                      s["pv"], float(s["rate"]) * 100, s["val_after"]["acc"],
+                      s["val_before"]["acc"]))
             w("")
-        # val table (base frames)
-        key = ds + "|base|frames"
-        if key in R and "val" in R[key]:
+        # val tables (base frames, per prompt version)
+        for pv in ("v1", "v2", "v3"):
+            key = "{}|base|frames|{}".format(ds, pv)
+            if key not in R or "val" not in R[key]:
+                continue
             v = R[key]["val"]
-            w("### val(工作点选择依据;N={})".format(v["n"]))
+            w("### val,prompt {}(配置选择依据;N={})".format(pv, v["n"]))
             w("")
             w("| rate | defer n | before acc/F1 | after acc/F1 | 仲裁正确率(MLLM) | kNN在deferred上 | flips(好/坏) | 回退 |")
             w("|---|---|---|---|---|---|---|---|")
@@ -287,29 +334,33 @@ def write_md(path, R, sel, cost, flips, fine):
                     d["flips"], d["flips_good"], d["flips_bad"],
                     d["parse_fallback"]))
             w("")
-        w("### test(before/after,每变体)")
+        w("### test(before/after,每变体×prompt 版)")
         w("")
         w("| 变体 | rate | defer n (率) | MLLM calls | before acc/F1 | after acc/F1 | Δacc | 仲裁正确率 | kNN@deferred | flips(好/坏) | 回退 |")
         w("|---|---|---|---|---|---|---|---|---|---|---|")
         for variant, mode in [("base", "frames"), ("clean", "frames"),
                               ("base", "textonly")]:
-            key = "{}|{}|{}".format(ds, variant, mode)
-            if key not in R:
-                continue
-            t = R[key]["test"]
-            for r in RATES:
-                d = t["rates"][r]
-                star = " **⟵ val选定**" if ds in sel and r == sel[ds]["rate"] and variant == "base" and mode == "frames" else ""
-                w("| {}+{} | {}{} | {} ({:.1%}) | {} | {:.4f} / {:.4f} | {:.4f} / {:.4f} | {:+.4f} | {} (n={}) | {} | {} ({}/{}) | {} |".format(
-                    variant, mode, r, star, d["defer_n"], d["defer_rate"],
-                    d["mllm_calls"],
-                    t["before"]["acc"], t["before"]["macro_f1"],
-                    d["after"]["acc"], d["after"]["macro_f1"],
-                    d["after"]["acc"] - t["before"]["acc"],
-                    pct(d["deferred_mllm_acc"]), d["deferred_mllm_n"],
-                    pct(d["deferred_knn_acc"]),
-                    d["flips"], d["flips_good"], d["flips_bad"],
-                    d["parse_fallback"]))
+            for pv in ("v1", "v2", "v3"):
+                key = "{}|{}|{}|{}".format(ds, variant, mode, pv)
+                if key not in R:
+                    continue
+                t = R[key]["test"]
+                for r in RATES:
+                    d = t["rates"][r]
+                    is_sel = (ds in sel and r == sel[ds]["rate"]
+                              and pv == sel[ds]["pv"]
+                              and variant == "base" and mode == "frames")
+                    star = " **⟵ val选定**" if is_sel else ""
+                    w("| {}+{}+{} | {}{} | {} ({:.1%}) | {} | {:.4f} / {:.4f} | {:.4f} / {:.4f} | {:+.4f} | {} (n={}) | {} | {} ({}/{}) | {} |".format(
+                        variant, mode, pv, r, star, d["defer_n"],
+                        d["defer_rate"], d["mllm_calls"],
+                        t["before"]["acc"], t["before"]["macro_f1"],
+                        d["after"]["acc"], d["after"]["macro_f1"],
+                        d["after"]["acc"] - t["before"]["acc"],
+                        pct(d["deferred_mllm_acc"]), d["deferred_mllm_n"],
+                        pct(d["deferred_knn_acc"]),
+                        d["flips"], d["flips_good"], d["flips_bad"],
+                        d["parse_fallback"]))
         w("")
         if ds in fine:
             w("### deferred 切片的三分类构成(rate 0.30,test;原始 MultiHateClip 标注)")
@@ -319,7 +370,12 @@ def write_md(path, R, sel, cost, flips, fine):
             w("")
         if ds in flips:
             ex, n_flips = flips[ds]
-            w("### 翻转案例(val 选定工作点,test;共 {} 个翻转)".format(n_flips))
+            if sel.get(ds, {}).get("rate") == "none":
+                w("### 翻转案例(人工读样例;val 选定为不仲裁,以下取最佳非空配置 "
+                  "@ rate 0.30 仅供定性;共 {} 个翻转)".format(n_flips))
+            else:
+                w("### 翻转案例(val 选定配置 prompt {} @ rate {},test;共 {} 个翻转)".format(
+                    sel[ds]["pv"], sel[ds]["rate"], n_flips))
             w("")
             for e in ex:
                 w("- `{}` gt={} kNN={} → MLLM **{}**({},margin {:.3f});证据:{} "
@@ -335,7 +391,7 @@ def write_md(path, R, sel, cost, flips, fine):
     w("|---|---|---|---|")
     for k, c in cost.items():
         w("| {} | {} | {} | {} |".format(
-            k, c["calls"],
+            k.replace("|", ":"), c["calls"],
             "—" if c["mean_wall_s"] is None else "{:.1f}".format(c["mean_wall_s"]),
             "—" if c["total_wall_s"] is None else "{:.0f}".format(c["total_wall_s"])))
     w("")

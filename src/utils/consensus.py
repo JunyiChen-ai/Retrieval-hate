@@ -26,6 +26,8 @@ Agreement table (margin m_s >= tau required for every confident role):
   otherwise      -> ROLE_IGNORE   low margin; only whole-video term applies
 """
 
+import math
+
 import numpy as np
 import torch
 import faiss
@@ -136,8 +138,12 @@ def flip_rate(prev_roles, new_roles):
     return float((prev != new).mean())
 
 
-def consensus_estep(segment_cache, train_set, model, args):
-    """E-step for seg_mode=consensus.
+def build_vote_keys(segment_cache, train_set, model, args):
+    """Construct the consensus E-step voting keys -> (memory, query, space).
+
+    Shared by consensus_estep and the offline probes
+    (scripts/analysis/consensus_probe_mm.py), so probe round-0 votes are the
+    EXACT training round-0 votes by construction.
 
     Base (consensus_space=clip, default -- pre-W5 behaviour, bit-for-bit):
     model=None -> round 0: vote in the raw frozen-CLIP space (per-modality
@@ -155,20 +161,30 @@ def consensus_estep(segment_cache, train_set, model, args):
       archive: memory/query = archive vectors only (round-invariant E-step).
       blend  : key = l2n([l2n(base) | a*l2n(archive)]) -> vote similarity
                (cos_base + a^2*cos_archive)/(1+a^2), a=args.consensus_space_alpha.
+
+    EXP_mm_segment_keys (consensus_space=mm): multimodal SEGMENT-LEVEL keys.
+    Each sub-clip queries with its own two-channel key
+        l2n([sqrt(1-w)*l2n(frame CLIP) | sqrt(w)*l2n(window-ASR CLIP text)])
+    so the vote similarity is (1-w)*cos_img + w*cos_text, w=args.mm_text_weight
+    (default 0.5). Memory = the same two-channel form of the whole-video keys
+    l2n([sqrt(1-w)*l2n(vid_img) | sqrt(w)*l2n(vid_txt)]) -- vid_txt already
+    contains title+transcript, and at w=0.5 the memory keys are IDENTICAL to
+    the clip-space round-0 memory, so the ONLY change vs clip round 0 is the
+    query text channel: video-level text -> the window's own speech. Windows
+    with no speech fall back to the parent video text (args.mm_empty_text=
+    'parent', default) or to a zero text channel == pure-visual key ('zero').
+    Round-INVARIANT across EM rounds (raw-CLIP channels every round, like
+    'archive'): the mm key targets the round-0 supervision-supply failure and
+    a trained head has no segment-text input stream to re-encode with.
     """
     sub_img = segment_cache["subclip_img_feats"].float()      # [S, Dv]
     parents = segment_cache["subclip_parent"].long()          # [S]
-    inherited = segment_cache["labels"].long()                # [S] == Y_v
     vid_img = train_set.image_feats.float()                   # [N, Dv]
     vid_txt = train_set.text_feats.float()                    # [N, Dt]
-    vid_labels_np = (
-        train_set.labels.numpy() if torch.is_tensor(train_set.labels)
-        else np.asarray(train_set.labels)
-    ).astype(np.int64)
     parent_txt = vid_txt.index_select(0, parents)             # [S, Dt]
 
     space_mode = str(getattr(args, "consensus_space", "clip"))
-    if space_mode != "clip":
+    if space_mode in ("archive", "blend"):
         arc = segment_cache.get("archive_feats", None)
         if arc is None:
             raise ValueError(
@@ -184,6 +200,27 @@ def consensus_estep(segment_cache, train_set, model, args):
         # is 0 by construction.
         memory, query = arc_vid, arc_sub
         space = "archive-text"
+    elif space_mode == "mm":
+        sub_txt = segment_cache.get("subclip_txt_feats", None)
+        has_txt = segment_cache.get("subclip_txt_has_text", None)
+        if sub_txt is None or has_txt is None:
+            raise ValueError(
+                "consensus_space='mm' requires segment_cache['subclip_txt_"
+                "feats'/'subclip_txt_has_text'] (loaded in run_rac.py from "
+                "the *_subclipK<K>_mm_* cache)")
+        w = min(max(float(getattr(args, "mm_text_weight", 0.5)), 0.0), 1.0)
+        empty_mode = str(getattr(args, "mm_empty_text", "parent"))
+        txt_unit = _l2n(sub_txt.float())                       # [S, Dt]
+        if empty_mode == "parent":
+            mask = has_txt.bool().unsqueeze(1)
+            txt_unit = torch.where(mask, txt_unit, _l2n(parent_txt))
+        # empty_mode == "zero": textless windows keep a zero text channel
+        # (_l2n leaves zero rows zero) -> their key renormalises to visual-only.
+        ai, at = math.sqrt(1.0 - w), math.sqrt(w)
+        memory = _l2n(torch.cat(
+            [ai * _l2n(vid_img), at * _l2n(vid_txt)], dim=1))
+        query = _l2n(torch.cat([ai * _l2n(sub_img), at * txt_unit], dim=1))
+        space = "mm(img+segtext,w={},empty={})".format(w, empty_mode)
     else:
         if model is None:
             base_mem = _l2n(torch.cat([_l2n(vid_img), _l2n(vid_txt)], dim=1))
@@ -201,6 +238,21 @@ def consensus_estep(segment_cache, train_set, model, args):
             memory = _l2n(torch.cat([base_mem, a * arc_vid], dim=1))
             query = _l2n(torch.cat([base_query, a * arc_sub], dim=1))
             space = "blend({}+archive,a={})".format(base_name, a)
+    return memory, query, space
+
+
+def consensus_estep(segment_cache, train_set, model, args):
+    """E-step for seg_mode=consensus. Key construction: see build_vote_keys."""
+    sub_img = segment_cache["subclip_img_feats"].float()      # [S, Dv]
+    parents = segment_cache["subclip_parent"].long()          # [S]
+    inherited = segment_cache["labels"].long()                # [S] == Y_v
+    vid_labels_np = (
+        train_set.labels.numpy() if torch.is_tensor(train_set.labels)
+        else np.asarray(train_set.labels)
+    ).astype(np.int64)
+
+    memory, query, space = build_vote_keys(
+        segment_cache, train_set, model, args)
 
     vote = _knn_vote(
         query, memory, vid_labels_np, parents.numpy(),

@@ -402,7 +402,7 @@ def parse_args():
              "confusable hard negatives.")
     arg_parser.add_argument(
         "--consensus_space", type=str, default="clip",
-        choices=["clip", "archive", "blend"],
+        choices=["clip", "archive", "blend", "mm"],
         help="Embedding space for the consensus E-step kNN vote (seg_mode="
              "consensus only). W5 prescription for the MHC-EN failure:\n"
              "  clip    = current behaviour (default): round-0 raw frozen-CLIP "
@@ -417,11 +417,34 @@ def parse_args():
              "  blend   = concatenated key [l2n(base) | a*l2n(archive)] "
              "(base = clip-space key of the current round), so the vote "
              "similarity is (cos_base + a^2*cos_archive)/(1+a^2) with "
-             "a = --consensus_space_alpha.")
+             "a = --consensus_space_alpha.\n"
+             "  mm      = EXP_mm_segment_keys: multimodal SEGMENT-level keys "
+             "[sqrt(1-w)*l2n(frame CLIP) | sqrt(w)*l2n(window-ASR CLIP text)] "
+             "so the vote similarity is (1-w)*cos_img + w*cos_segtext, "
+             "w = --mm_text_weight; memory = the same two-channel form of "
+             "the whole-video keys. Requires the *_subclipK<K>_mm_* cache "
+             "(--mm_subclip_cache). Round-invariant across EM rounds.")
     arg_parser.add_argument(
         "--consensus_space_alpha", type=float, default=1.0,
         help="Archive-channel weight a for --consensus_space blend "
              "(effective similarity weight a^2/(1+a^2); a=1 -> equal).")
+    arg_parser.add_argument(
+        "--mm_text_weight", type=float, default=0.5,
+        help="Text-channel weight w in the mm vote similarity "
+             "(1-w)*cos_img + w*cos_segtext (consensus_space=mm only).")
+    arg_parser.add_argument(
+        "--mm_empty_text", type=str, default="parent",
+        choices=["parent", "zero"],
+        help="Text channel of a sub-clip window with NO ASR text "
+             "(consensus_space=mm only): 'parent' (default) = fall back to "
+             "the parent video's whole-video CLIP text embedding; 'zero' = "
+             "zero text channel (the key renormalises to visual-only).")
+    arg_parser.add_argument(
+        "--mm_subclip_cache", type=str, default="auto",
+        help="Path to the TRAIN multimodal sub-clip cache .pt "
+             "(generate_subclip_mm_embedding_HF.py), or 'auto' to derive "
+             "<path>/CLIP_Embedding/<dataset>/train_subclipK<K>_mm_<model>.pt. "
+             "Only loaded when --consensus_space mm.")
 
     args = arg_parser.parse_args()
 
@@ -896,7 +919,8 @@ def main(args):
         # space is requested; --consensus_space clip (default) leaves this
         # block dead and the run bit-for-bit identical to pre-W5 code.
         if (args.seg_mode == "consensus"
-                and getattr(args, "consensus_space", "clip") != "clip"):
+                and getattr(args, "consensus_space", "clip")
+                in ("archive", "blend")):
             arc_src = (args.archive_feats
                        if args.archive_feats is not None else "auto")
             arc_train_path = resolve_archive_path(
@@ -909,6 +933,38 @@ def main(args):
                       arc_train_path,
                       segment_cache["archive_feats"].shape[0],
                       segment_cache["archive_feats"].shape[1]))
+        # EXP_mm_segment_keys: multimodal (frame + window-ASR text) sub-clip
+        # keys for the E-step vote. Only touched when --consensus_space mm;
+        # every other configuration leaves this block dead (bit-for-bit).
+        if (args.seg_mode == "consensus"
+                and getattr(args, "consensus_space", "clip") == "mm"):
+            if args.mm_subclip_cache == "auto":
+                mm_path = os.path.join(
+                    args.path, "CLIP_Embedding", args.dataset,
+                    "train_subclipK{}_mm_{}.pt".format(
+                        args.num_subclips, args.model))
+            else:
+                mm_path = args.mm_subclip_cache
+            print("Loading multimodal sub-clip cache: {}".format(mm_path))
+            mmc = torch.load(mm_path, map_location="cpu")
+            # Hard alignment guards: the mm cache must be the SAME sub-clip
+            # corpus (row-for-row) as the visual cache loaded above.
+            assert torch.equal(mmc["subclip_parent"].long(),
+                               segment_cache["subclip_parent"]), \
+                "mm cache subclip_parent mismatch with the visual cache"
+            assert torch.equal(mmc["subclip_img_feats"].float(),
+                               segment_cache["subclip_img_feats"]), \
+                "mm cache visual feats differ from the visual cache"
+            segment_cache["subclip_txt_feats"] = \
+                mmc["subclip_txt_feats"].float()
+            segment_cache["subclip_txt_has_text"] = \
+                mmc["subclip_txt_has_text"].bool()
+            n_txt = int(segment_cache["subclip_txt_has_text"].sum())
+            total = segment_cache["subclip_txt_has_text"].numel()
+            print("[consensus] E-step voting space 'mm' (w={}, empty={}): "
+                  "{}/{} sub-clip windows have ASR text ({:.1f}%) <- {}".format(
+                      args.mm_text_weight, args.mm_empty_text, n_txt, total,
+                      100.0 * n_txt / max(total, 1), mm_path))
 
     # <----------------- Construct the model ----------------->
 

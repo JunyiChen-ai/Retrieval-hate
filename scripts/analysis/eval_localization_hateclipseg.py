@@ -179,8 +179,8 @@ def segment_metrics(gold, vids, vid_row, K, S):
     return ap_auc(np.array(labs), np.array(scs)), len(labs)
 
 
-def within_video_auc(gold, vids, vid_row, K, S):
-    """Mean per-video 1-fps AUC over videos with both classes (temporal-info
+def within_video_auc_list(gold, vids, vid_row, K, S):
+    """Per-video 1-fps AUCs over videos with both classes (temporal-info
     diagnostic; broadcast controls = 0.5 by construction)."""
     aucs = []
     for v in vids:
@@ -203,7 +203,28 @@ def within_video_auc(gold, vids, vid_row, K, S):
             aucs.append(0.5)
         else:
             aucs.append(float(roc_auc_score(lab, sc)))
-    return float(np.mean(aucs)), len(aucs)
+    return np.array(aucs)
+
+
+def within_video_auc(gold, vids, vid_row, K, S):
+    a = within_video_auc_list(gold, vids, vid_row, K, S)
+    return float(a.mean()), len(a)
+
+
+def wv_significance(gold, vids, vid_row, K, S, n_boot=10000, seed=0):
+    """Bootstrap 95% CI of the mean within-video AUC + one-sided sign test
+    vs 0.5 (ties at exactly 0.5 excluded, standard sign-test convention)."""
+    from scipy.stats import binomtest
+    a = within_video_auc_list(gold, vids, vid_row, K, S)
+    rng = np.random.RandomState(seed)
+    boot = np.array([a[rng.randint(0, len(a), len(a))].mean()
+                     for _ in range(n_boot)])
+    lo, hi = np.percentile(boot, [2.5, 97.5])
+    gt, lt = int((a > 0.5).sum()), int((a < 0.5).sum())
+    p = binomtest(gt, gt + lt, 0.5, alternative="greater").pvalue if gt + lt else 1.0
+    return {"mean": float(a.mean()), "ci95": [float(lo), float(hi)],
+            "n_videos": int(len(a)), "n_gt": gt, "n_lt": lt,
+            "n_eq": int((a == 0.5).sum()), "sign_test_p": float(p)}
 
 
 def class_slices(idx, S):
@@ -282,6 +303,15 @@ def main():
             print("  {:24s} full AP {:.4f} AUC {:.4f} | toxOnly AP {:.4f} "
                   "AUC {:.4f} | seg AP {:.4f} AUC {:.4f} | wv-AUC {:.4f} ({})"
                   .format(name, apf, aucf, apt, auct, aps, aucs_, wv, wv_n))
+
+        # within-video significance (bootstrap CI + sign test) for kNN configs
+        for cfg in ["knn_hatemm_video", "knn_hatemm_subclip"]:
+            sig = wv_significance(gold, vids, vid_row, K, S_by_cfg[cfg])
+            res_K[cfg]["within_video_significance"] = sig
+            print("  {:24s} wv mean {:.4f} CI95 [{:.4f},{:.4f}] "
+                  ">0.5:{} <0.5:{} =0.5:{} sign-p {:.4g}".format(
+                      cfg, sig["mean"], sig["ci95"][0], sig["ci95"][1],
+                      sig["n_gt"], sig["n_lt"], sig["n_eq"], sig["sign_test_p"]))
 
         # slices on the primary config
         for cfg in ["knn_hatemm_video", "vbcast_hatemm_video", "random"]:
