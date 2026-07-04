@@ -1,0 +1,441 @@
+{
+  "dataset": "MHC",
+  "topk": 10,
+  "tau": 0.2,
+  "results": [
+    {
+      "space": "clip",
+      "desc": "raw-CLIP",
+      "subclip_auc": 0.7942454458817648,
+      "video_auc": 0.7986032995875516,
+      "within_video_std": 0.047660832001477,
+      "between_video_std": 0.22805881203684927,
+      "severity_spearman": 0.46582340415308293,
+      "severity_spearman_p": 6.409987713126877e-31,
+      "mean_vote_by_class": {
+        "Normal": 0.29493189279767934,
+        "Offensive": 0.5417509278871931,
+        "Hateful": 0.49535383364683316
+      },
+      "hateful_videos": 168,
+      "all_pruned": 94,
+      "all_pruned_frac": 0.5595238095238095,
+      "pos_pct": 35.11904761904762,
+      "drift_pct": 23.958333333333332,
+      "by_fine": {
+        "Offensive": {
+          "videos": 123,
+          "drift_pct": 24.59349593495935,
+          "pos_pct": 36.99186991869919,
+          "all_pruned": 69
+        },
+        "Hateful": {
+          "videos": 45,
+          "drift_pct": 22.22222222222222,
+          "pos_pct": 30.0,
+          "all_pruned": 25
+        }
+      },
+      "by_channel": {
+        "speech/text-only": {
+          "videos": 110,
+          "drift_pct": 21.59090909090909,
+          "pos_pct": 35.45454545454545,
+          "all_pruned": 61
+        },
+        "mixed": {
+          "videos": 41,
+          "drift_pct": 28.658536585365855,
+          "pos_pct": 34.146341463414636,
+          "all_pruned": 23
+        },
+        "visual-only": {
+          "videos": 15,
+          "drift_pct": 23.333333333333332,
+          "pos_pct": 40.0,
+          "all_pruned": 8
+        },
+        "no-cues": {
+          "videos": 2,
+          "drift_pct": 62.5,
+          "pos_pct": 0.0,
+          "all_pruned": 2
+        }
+      },
+      "gate_severity": "fail",
+      "gate_supply": "PASS"
+    },
+    {
+      "space": "mm_w0.3_parent",
+      "desc": "mm(img+segtext,w=0.3,empty=parent)",
+      "subclip_auc": 0.7653569670978627,
+      "video_auc": 0.7869953755780528,
+      "within_video_std": 0.08176429082358039,
+      "between_video_std": 0.20609702126541823,
+      "severity_spearman": 0.44799244773614677,
+      "severity_spearman_p": 1.8617727355760737e-28,
+      "mean_vote_by_class": {
+        "Normal": 0.32145412033271265,
+        "Offensive": 0.529676888956943,
+        "Hateful": 0.5084084785404058
+      },
+      "hateful_videos": 168,
+      "all_pruned": 72,
+      "all_pruned_frac": 0.42857142857142855,
+      "pos_pct": 35.267857142857146,
+      "drift_pct": 24.702380952380953,
+      "by_fine": {
+        "Offensive": {
+          "videos": 123,
+          "drift_pct": 22.5609756097561,
+          "pos_pct": 36.38211382113821,
+          "all_pruned": 51
+        },
+        "Hateful": {
+          "videos": 45,
+          "drift_pct": 30.555555555555557,
+          "pos_pct": 32.22222222222222,
+          "all_pruned": 21
+        }
+      },
+      "by_channel": {
+        "speech/text-only": {
+          "videos": 110,
+          "drift_pct": 23.181818181818183,
+          "pos_pct": 35.68181818181818,
+          "all_pruned": 48
+        },
+        "mixed": {
+          "videos": 41,
+          "drift_pct": 27.4390243902439,
+          "pos_pct": 30.48780487804878,
+          "all_pruned": 19
+        },
+        "visual-only": {
+          "videos": 15,
+          "drift_pct": 18.333333333333332,
+          "pos_pct": 50.0,
+          "all_pruned": 3
+        },
+        "no-cues": {
+          "videos": 2,
+          "drift_pct": 100.0,
+          "pos_pct": 0.0,
+          "all_pruned": 2
+        }
+      },
+      "gate_severity": "fail",
+      "gate_supply": "PASS"
+    },
+    {
+      "space": "mm_w0.5_parent",
+      "desc": "mm(img+segtext,w=0.5,empty=parent)",
+      "subclip_auc": 0.7623788237407824,
+      "video_auc": 0.8017747781527309,
+      "within_video_std": 0.10142816930958594,
+      "between_video_std": 0.20261014402056082,
+      "severity_spearman": 0.47149841266029585,
+      "severity_spearman_p": 9.817697625992537e-32,
+      "mean_vote_by_class": {
+        "Normal": 0.3614010942282034,
+        "Offensive": 0.576442564072064,
+        "Hateful": 0.5511589391711302
+      },
+      "hateful_videos": 168,
+      "all_pruned": 40,
+      "all_pruned_frac": 0.23809523809523808,
+      "pos_pct": 46.42857142857143,
+      "drift_pct": 17.410714285714285,
+      "by_fine": {
+        "Offensive": {
+          "videos": 123,
+          "drift_pct": 17.073170731707318,
+          "pos_pct": 48.170731707317074,
+          "all_pruned": 28
+        },
+        "Hateful": {
+          "videos": 45,
+          "drift_pct": 18.333333333333332,
+          "pos_pct": 41.666666666666664,
+          "all_pruned": 12
+        }
+      },
+      "by_channel": {
+        "speech/text-only": {
+          "videos": 110,
+          "drift_pct": 15.227272727272727,
+          "pos_pct": 47.95454545454545,
+          "all_pruned": 25
+        },
+        "mixed": {
+          "videos": 41,
+          "drift_pct": 21.951219512195124,
+          "pos_pct": 42.073170731707314,
+          "all_pruned": 11
+        },
+        "visual-only": {
+          "videos": 15,
+          "drift_pct": 16.666666666666668,
+          "pos_pct": 51.666666666666664,
+          "all_pruned": 3
+        },
+        "no-cues": {
+          "videos": 2,
+          "drift_pct": 50.0,
+          "pos_pct": 12.5,
+          "all_pruned": 1
+        }
+      },
+      "gate_severity": "fail",
+      "gate_supply": "PASS"
+    },
+    {
+      "space": "mm_w0.7_parent",
+      "desc": "mm(img+segtext,w=0.7,empty=parent)",
+      "subclip_auc": 0.7368756639795025,
+      "video_auc": 0.7867141607299087,
+      "within_video_std": 0.11398870015899822,
+      "between_video_std": 0.1973998984883898,
+      "severity_spearman": 0.44825908746886234,
+      "severity_spearman_p": 1.7145677785070676e-28,
+      "mean_vote_by_class": {
+        "Normal": 0.38880191550165016,
+        "Offensive": 0.5869301814806144,
+        "Hateful": 0.5656455211884632
+      },
+      "hateful_videos": 168,
+      "all_pruned": 33,
+      "all_pruned_frac": 0.19642857142857142,
+      "pos_pct": 47.32142857142857,
+      "drift_pct": 14.732142857142858,
+      "by_fine": {
+        "Offensive": {
+          "videos": 123,
+          "drift_pct": 15.65040650406504,
+          "pos_pct": 48.170731707317074,
+          "all_pruned": 24
+        },
+        "Hateful": {
+          "videos": 45,
+          "drift_pct": 12.222222222222221,
+          "pos_pct": 45.0,
+          "all_pruned": 9
+        }
+      },
+      "by_channel": {
+        "speech/text-only": {
+          "videos": 110,
+          "drift_pct": 13.181818181818182,
+          "pos_pct": 49.31818181818182,
+          "all_pruned": 19
+        },
+        "mixed": {
+          "videos": 41,
+          "drift_pct": 18.29268292682927,
+          "pos_pct": 46.34146341463415,
+          "all_pruned": 11
+        },
+        "visual-only": {
+          "videos": 15,
+          "drift_pct": 11.666666666666666,
+          "pos_pct": 40.0,
+          "all_pruned": 2
+        },
+        "no-cues": {
+          "videos": 2,
+          "drift_pct": 50.0,
+          "pos_pct": 12.5,
+          "all_pruned": 1
+        }
+      },
+      "gate_severity": "fail",
+      "gate_supply": "PASS"
+    },
+    {
+      "space": "mm_w0.3_zero",
+      "desc": "mm(img+segtext,w=0.3,empty=zero)",
+      "subclip_auc": 0.751684359767529,
+      "video_auc": 0.7755905511811023,
+      "within_video_std": 0.08535354121120677,
+      "between_video_std": 0.19821243615132783,
+      "severity_spearman": 0.43070908760231663,
+      "severity_spearman_p": 3.329394661855599e-26,
+      "mean_vote_by_class": {
+        "Normal": 0.3214160943781163,
+        "Offensive": 0.5132838138796719,
+        "Hateful": 0.4958197370002156
+      },
+      "hateful_videos": 168,
+      "all_pruned": 73,
+      "all_pruned_frac": 0.43452380952380953,
+      "pos_pct": 33.779761904761905,
+      "drift_pct": 28.571428571428573,
+      "by_fine": {
+        "Offensive": {
+          "videos": 123,
+          "drift_pct": 27.4390243902439,
+          "pos_pct": 34.75609756097561,
+          "all_pruned": 52
+        },
+        "Hateful": {
+          "videos": 45,
+          "drift_pct": 31.666666666666668,
+          "pos_pct": 31.11111111111111,
+          "all_pruned": 21
+        }
+      },
+      "by_channel": {
+        "speech/text-only": {
+          "videos": 110,
+          "drift_pct": 26.59090909090909,
+          "pos_pct": 33.86363636363637,
+          "all_pruned": 50
+        },
+        "mixed": {
+          "videos": 41,
+          "drift_pct": 31.70731707317073,
+          "pos_pct": 31.097560975609756,
+          "all_pruned": 18
+        },
+        "visual-only": {
+          "videos": 15,
+          "drift_pct": 26.666666666666668,
+          "pos_pct": 45.0,
+          "all_pruned": 3
+        },
+        "no-cues": {
+          "videos": 2,
+          "drift_pct": 87.5,
+          "pos_pct": 0.0,
+          "all_pruned": 2
+        }
+      },
+      "gate_severity": "fail",
+      "gate_supply": "PASS"
+    },
+    {
+      "space": "mm_w0.5_zero",
+      "desc": "mm(img+segtext,w=0.5,empty=zero)",
+      "subclip_auc": 0.7430526262342207,
+      "video_auc": 0.7838551431071116,
+      "within_video_std": 0.10688306224893973,
+      "between_video_std": 0.19238707865104232,
+      "severity_spearman": 0.4462698559138116,
+      "severity_spearman_p": 3.1642212655087303e-28,
+      "mean_vote_by_class": {
+        "Normal": 0.3602994229797413,
+        "Offensive": 0.5491197854624681,
+        "Hateful": 0.5405537092264148
+      },
+      "hateful_videos": 168,
+      "all_pruned": 41,
+      "all_pruned_frac": 0.24404761904761904,
+      "pos_pct": 42.857142857142854,
+      "drift_pct": 21.279761904761905,
+      "by_fine": {
+        "Offensive": {
+          "videos": 123,
+          "drift_pct": 21.341463414634145,
+          "pos_pct": 43.90243902439025,
+          "all_pruned": 29
+        },
+        "Hateful": {
+          "videos": 45,
+          "drift_pct": 21.11111111111111,
+          "pos_pct": 40.0,
+          "all_pruned": 12
+        }
+      },
+      "by_channel": {
+        "speech/text-only": {
+          "videos": 110,
+          "drift_pct": 19.545454545454547,
+          "pos_pct": 43.63636363636363,
+          "all_pruned": 27
+        },
+        "mixed": {
+          "videos": 41,
+          "drift_pct": 25.0,
+          "pos_pct": 40.853658536585364,
+          "all_pruned": 10
+        },
+        "visual-only": {
+          "videos": 15,
+          "drift_pct": 18.333333333333332,
+          "pos_pct": 46.666666666666664,
+          "all_pruned": 3
+        },
+        "no-cues": {
+          "videos": 2,
+          "drift_pct": 62.5,
+          "pos_pct": 12.5,
+          "all_pruned": 1
+        }
+      },
+      "gate_severity": "fail",
+      "gate_supply": "PASS"
+    },
+    {
+      "space": "mm_w0.7_zero",
+      "desc": "mm(img+segtext,w=0.7,empty=zero)",
+      "subclip_auc": 0.7200550126546682,
+      "video_auc": 0.7739501312335958,
+      "within_video_std": 0.12042729626437272,
+      "between_video_std": 0.1862704435222383,
+      "severity_spearman": 0.4328611198224138,
+      "severity_spearman_p": 1.773826233066428e-26,
+      "mean_vote_by_class": {
+        "Normal": 0.38835522177460646,
+        "Offensive": 0.5604726294978382,
+        "Hateful": 0.5624509547151715
+      },
+      "hateful_videos": 168,
+      "all_pruned": 32,
+      "all_pruned_frac": 0.19047619047619047,
+      "pos_pct": 45.38690476190476,
+      "drift_pct": 18.898809523809526,
+      "by_fine": {
+        "Offensive": {
+          "videos": 123,
+          "drift_pct": 20.32520325203252,
+          "pos_pct": 44.51219512195122,
+          "all_pruned": 23
+        },
+        "Hateful": {
+          "videos": 45,
+          "drift_pct": 15.0,
+          "pos_pct": 47.77777777777778,
+          "all_pruned": 9
+        }
+      },
+      "by_channel": {
+        "speech/text-only": {
+          "videos": 110,
+          "drift_pct": 18.181818181818183,
+          "pos_pct": 47.27272727272727,
+          "all_pruned": 20
+        },
+        "mixed": {
+          "videos": 41,
+          "drift_pct": 20.121951219512194,
+          "pos_pct": 43.90243902439025,
+          "all_pruned": 9
+        },
+        "visual-only": {
+          "videos": 15,
+          "drift_pct": 15.0,
+          "pos_pct": 40.0,
+          "all_pruned": 2
+        },
+        "no-cues": {
+          "videos": 2,
+          "drift_pct": 62.5,
+          "pos_pct": 12.5,
+          "all_pruned": 1
+        }
+      },
+      "gate_severity": "PASS",
+      "gate_supply": "PASS"
+    }
+  ]
+}
