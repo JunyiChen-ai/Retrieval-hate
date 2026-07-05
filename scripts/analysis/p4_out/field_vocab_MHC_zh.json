@@ -1,0 +1,41 @@
+{
+  "explicitness": {
+    "type": "single",
+    "classes": [
+      "none",
+      "implicit",
+      "explicit"
+    ]
+  },
+  "modality": {
+    "type": "multi",
+    "classes": [
+      "visual",
+      "speech",
+      "on_screen_text"
+    ],
+    "coverage": 1.0
+  },
+  "mechanism": {
+    "type": "multi",
+    "classes": [
+      "slur",
+      "insult",
+      "stereotyping",
+      "OTHER"
+    ],
+    "coverage": 0.9197,
+    "n_unique": 9
+  },
+  "target_group": {
+    "type": "multi",
+    "classes": [
+      "women",
+      "men",
+      "effeminate men",
+      "OTHER"
+    ],
+    "coverage": 0.8372,
+    "n_unique": 15
+  }
+}

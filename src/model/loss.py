@@ -18,6 +18,7 @@ def compute_loss(batch,
                 train_feats=None,
                 train_labels=None,
                 segment_cache=None,
+                aux_pack=None,
                 ):
     ids = batch["ids"]
     batch_size = len(ids)
@@ -548,7 +549,50 @@ def compute_loss(batch,
             batch, model, args, segment_cache, whole_video_feats=feats)
         total_loss = total_loss + lambda_seg * seg_loss
 
+    # ----------------- P4: archive-field auxiliary distillation term -----------------
+    # L = L_main + lambda_aux * sum_field aux_field. lambda_aux == 0 (or no aux_pack)
+    # -> EXACT no-op, identical to baseline. Reuses the SAME grad-tracked whole-video
+    # fused embedding `feats` from the forward pass above (no second forward, so no
+    # extra dropout RNG is consumed and the lambda_aux=0 path is byte-identical).
+    lambda_aux = float(getattr(args, "lambda_aux", 0.0))
+    if lambda_aux > 0 and aux_pack is not None:
+        aux_loss = compute_aux_loss(feats, batch["ids"], aux_pack, args)
+        total_loss = total_loss + lambda_aux * aux_loss
+
     return total_loss, torch.mean(in_batch_loss), torch.mean(hard_loss), torch.mean(pseudo_gold_loss), loss_classifier, train_feats, train_labels
+
+
+def compute_aux_loss(feats, batch_ids, aux_pack, args):
+    """P4 archive-field distillation loss on the whole-video fused embedding.
+
+    For every field, a small linear head maps `feats` [B, proj_dim] to the field's
+    schema targets (CE for the single-label explicitness field, BCE for the multi-label
+    modality / mechanism / target_group fields). Samples whose archive is missing /
+    unparseable are masked out of the aux loss ONLY (never the main loss). Returns the
+    SUM over fields of the per-field mean loss over valid samples.
+    """
+    module = aux_pack["module"]
+    id_to_row = aux_pack["id_to_row"]
+    specs = aux_pack["specs"]
+    targets = aux_pack["targets"]
+    valids = aux_pack["valids"]
+    device = args.device
+    rows = torch.as_tensor([id_to_row[i] for i in batch_ids],
+                           dtype=torch.long, device=device)
+    ce = nn.CrossEntropyLoss()
+    bce = nn.BCEWithLogitsLoss()
+    total = torch.zeros((), device=device)
+    for field, head in module.items():
+        v = valids[field].index_select(0, rows)          # [B] bool
+        if int(v.sum().item()) == 0:
+            continue
+        logits = head(feats)[v]                            # [Bv, dim]
+        tgt = targets[field].index_select(0, rows)[v]
+        if specs[field]["type"] == "single":
+            total = total + ce(logits, tgt.long())
+        else:
+            total = total + bce(logits, tgt.float())
+    return total
 
 
 def _pair_similarity(anchor, other, args):

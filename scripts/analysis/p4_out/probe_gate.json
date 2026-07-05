@@ -1,0 +1,398 @@
+{
+  "MHC": {
+    "vocab": {
+      "explicitness": {
+        "type": "single",
+        "classes": [
+          "none",
+          "implicit",
+          "explicit"
+        ]
+      },
+      "modality": {
+        "type": "multi",
+        "classes": [
+          "visual",
+          "speech",
+          "on_screen_text"
+        ],
+        "coverage": 1.0
+      },
+      "mechanism": {
+        "type": "multi",
+        "classes": [
+          "stereotyping",
+          "slur",
+          "insult",
+          "OTHER"
+        ],
+        "coverage": 0.9562,
+        "n_unique": 7
+      },
+      "target_group": {
+        "type": "multi",
+        "classes": [
+          "gay people",
+          "women",
+          "men",
+          "OTHER"
+        ],
+        "coverage": 0.6395,
+        "n_unique": 49
+      }
+    },
+    "vocab_path": "scripts/analysis/p4_out/field_vocab_MHC.json",
+    "decodability_a": {
+      "explicitness": {
+        "single": {
+          "n": 549,
+          "majority_acc": 0.5556,
+          "probe_acc": 0.7086,
+          "macro_f1": 0.4806,
+          "beats_majority": true
+        }
+      },
+      "modality": {
+        "per_label": {
+          "visual": {
+            "n": 549,
+            "pos": 132,
+            "majority_acc": 0.7596,
+            "auc": 0.8883,
+            "probe_acc": 0.8452,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "speech": {
+            "n": 549,
+            "pos": 307,
+            "majority_acc": 0.5592,
+            "auc": 0.9262,
+            "probe_acc": 0.8506,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "on_screen_text": {
+            "n": 549,
+            "pos": 136,
+            "majority_acc": 0.7523,
+            "auc": 0.7261,
+            "probe_acc": 0.7413,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          }
+        },
+        "coverage": 1.0
+      },
+      "mechanism": {
+        "per_label": {
+          "stereotyping": {
+            "n": 549,
+            "pos": 137,
+            "majority_acc": 0.7505,
+            "auc": 0.8282,
+            "probe_acc": 0.7851,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "slur": {
+            "n": 549,
+            "pos": 120,
+            "majority_acc": 0.7814,
+            "auc": 0.7454,
+            "probe_acc": 0.7923,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "insult": {
+            "n": 549,
+            "pos": 114,
+            "majority_acc": 0.7923,
+            "auc": 0.7678,
+            "probe_acc": 0.7778,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          },
+          "OTHER": {
+            "n": 549,
+            "pos": 17,
+            "majority_acc": 0.969,
+            "auc": 0.6218,
+            "probe_acc": 0.969,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          }
+        },
+        "coverage": 0.9562
+      },
+      "target_group": {
+        "per_label": {
+          "gay people": {
+            "n": 549,
+            "pos": 53,
+            "majority_acc": 0.9035,
+            "auc": 0.9313,
+            "probe_acc": 0.9271,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "women": {
+            "n": 549,
+            "pos": 40,
+            "majority_acc": 0.9271,
+            "auc": 0.8021,
+            "probe_acc": 0.9253,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          },
+          "men": {
+            "n": 549,
+            "pos": 17,
+            "majority_acc": 0.969,
+            "auc": 0.8804,
+            "probe_acc": 0.9727,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "OTHER": {
+            "n": 549,
+            "pos": 61,
+            "majority_acc": 0.8889,
+            "auc": 0.7547,
+            "probe_acc": 0.9035,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          }
+        },
+        "coverage": 0.6395
+      }
+    },
+    "informativeness_b": {
+      "n": 549,
+      "pos": 168,
+      "majority_acc": 0.694,
+      "auc": 0.7444,
+      "probe_acc": 0.7486,
+      "macro_f1": 0.6661,
+      "beats_majority": true,
+      "auc_beats_chance": true
+    },
+    "gate": {
+      "a_pass": true,
+      "a_signals": [
+        "explicitness",
+        "modality:visual",
+        "modality:speech",
+        "modality:on_screen_text",
+        "mechanism:stereotyping",
+        "mechanism:slur",
+        "mechanism:insult",
+        "mechanism:OTHER",
+        "target_group:gay people",
+        "target_group:women",
+        "target_group:men",
+        "target_group:OTHER"
+      ],
+      "b_pass": true,
+      "open": true
+    }
+  },
+  "MHC_zh": {
+    "vocab": {
+      "explicitness": {
+        "type": "single",
+        "classes": [
+          "none",
+          "implicit",
+          "explicit"
+        ]
+      },
+      "modality": {
+        "type": "multi",
+        "classes": [
+          "visual",
+          "speech",
+          "on_screen_text"
+        ],
+        "coverage": 1.0
+      },
+      "mechanism": {
+        "type": "multi",
+        "classes": [
+          "slur",
+          "insult",
+          "stereotyping",
+          "OTHER"
+        ],
+        "coverage": 0.9197,
+        "n_unique": 9
+      },
+      "target_group": {
+        "type": "multi",
+        "classes": [
+          "women",
+          "men",
+          "effeminate men",
+          "OTHER"
+        ],
+        "coverage": 0.8372,
+        "n_unique": 15
+      }
+    },
+    "vocab_path": "scripts/analysis/p4_out/field_vocab_MHC_zh.json",
+    "decodability_a": {
+      "explicitness": {
+        "single": {
+          "n": 579,
+          "majority_acc": 0.5751,
+          "probe_acc": 0.7012,
+          "macro_f1": 0.4983,
+          "beats_majority": true
+        }
+      },
+      "modality": {
+        "per_label": {
+          "visual": {
+            "n": 579,
+            "pos": 136,
+            "majority_acc": 0.7651,
+            "auc": 0.8197,
+            "probe_acc": 0.8273,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "speech": {
+            "n": 579,
+            "pos": 268,
+            "majority_acc": 0.5371,
+            "auc": 0.8741,
+            "probe_acc": 0.8014,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "on_screen_text": {
+            "n": 579,
+            "pos": 179,
+            "majority_acc": 0.6908,
+            "auc": 0.7743,
+            "probe_acc": 0.7427,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          }
+        },
+        "coverage": 1.0
+      },
+      "mechanism": {
+        "per_label": {
+          "slur": {
+            "n": 579,
+            "pos": 158,
+            "majority_acc": 0.7271,
+            "auc": 0.7975,
+            "probe_acc": 0.7927,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "insult": {
+            "n": 579,
+            "pos": 131,
+            "majority_acc": 0.7737,
+            "auc": 0.7619,
+            "probe_acc": 0.7686,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          },
+          "stereotyping": {
+            "n": 579,
+            "pos": 89,
+            "majority_acc": 0.8463,
+            "auc": 0.7622,
+            "probe_acc": 0.8066,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          },
+          "OTHER": {
+            "n": 579,
+            "pos": 33,
+            "majority_acc": 0.943,
+            "auc": 0.7314,
+            "probe_acc": 0.9309,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          }
+        },
+        "coverage": 0.9197
+      },
+      "target_group": {
+        "per_label": {
+          "women": {
+            "n": 579,
+            "pos": 63,
+            "majority_acc": 0.8912,
+            "auc": 0.8102,
+            "probe_acc": 0.8808,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          },
+          "men": {
+            "n": 579,
+            "pos": 28,
+            "majority_acc": 0.9516,
+            "auc": 0.6935,
+            "probe_acc": 0.9499,
+            "beats_majority": false,
+            "auc_beats_chance": true
+          },
+          "effeminate men": {
+            "n": 579,
+            "pos": 17,
+            "majority_acc": 0.9706,
+            "auc": 0.8264,
+            "probe_acc": 0.9741,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          },
+          "OTHER": {
+            "n": 579,
+            "pos": 21,
+            "majority_acc": 0.9637,
+            "auc": 0.8668,
+            "probe_acc": 0.9724,
+            "beats_majority": true,
+            "auc_beats_chance": true
+          }
+        },
+        "coverage": 0.8372
+      }
+    },
+    "informativeness_b": {
+      "n": 579,
+      "pos": 180,
+      "majority_acc": 0.6891,
+      "auc": 0.7844,
+      "probe_acc": 0.7496,
+      "macro_f1": 0.6759,
+      "beats_majority": true,
+      "auc_beats_chance": true
+    },
+    "gate": {
+      "a_pass": true,
+      "a_signals": [
+        "explicitness",
+        "modality:visual",
+        "modality:speech",
+        "modality:on_screen_text",
+        "mechanism:slur",
+        "mechanism:insult",
+        "mechanism:stereotyping",
+        "mechanism:OTHER",
+        "target_group:women",
+        "target_group:men",
+        "target_group:effeminate men",
+        "target_group:OTHER"
+      ],
+      "b_pass": true,
+      "open": true
+    }
+  }
+}

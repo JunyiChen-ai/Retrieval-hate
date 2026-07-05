@@ -1,0 +1,41 @@
+{
+  "explicitness": {
+    "type": "single",
+    "classes": [
+      "none",
+      "implicit",
+      "explicit"
+    ]
+  },
+  "modality": {
+    "type": "multi",
+    "classes": [
+      "visual",
+      "speech",
+      "on_screen_text"
+    ],
+    "coverage": 1.0
+  },
+  "mechanism": {
+    "type": "multi",
+    "classes": [
+      "stereotyping",
+      "slur",
+      "insult",
+      "OTHER"
+    ],
+    "coverage": 0.9562,
+    "n_unique": 7
+  },
+  "target_group": {
+    "type": "multi",
+    "classes": [
+      "gay people",
+      "women",
+      "men",
+      "OTHER"
+    ],
+    "coverage": 0.6395,
+    "n_unique": 49
+  }
+}

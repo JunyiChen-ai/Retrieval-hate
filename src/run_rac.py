@@ -374,6 +374,22 @@ def parse_args():
         help="Weight of the archive channel in archive_mode=knn. Effective "
              "similarity weight is alpha^2/(1+alpha^2) (alpha=1 -> equal).")
 
+    # <----------------- P4: archive-field auxiliary distillation Configs ----------------->
+    arg_parser.add_argument(
+        "--lambda_aux", type=float, default=0.0,
+        help="Weight of the P4 archive-field auxiliary distillation loss "
+             "(small linear heads on the fused embedding predict the MLLM "
+             "archive schema fields for each TRAIN video). 0 == OFF, exact "
+             "no-op (bit-for-bit baseline). Pre-registered value 0.1.")
+    arg_parser.add_argument(
+        "--aux_fields", type=str,
+        default="explicitness,modality,mechanism,target_group",
+        help="Comma-separated archive schema fields to distil (only when "
+             "--lambda_aux > 0).")
+    arg_parser.add_argument(
+        "--aux_archive_version", type=str, default="v2",
+        help="Archive version for the P4 aux targets (train split only).")
+
     # <----------------- Consensus / selfscore (EM) Configs ----------------->
     arg_parser.add_argument(
         "--consensus_topk", type=int, default=10,
@@ -464,8 +480,17 @@ def model_pass(
     sparse_dict=None,
     segment_cache=None,
     archive_bank=None,
+    aux_pack=None,
 ):
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
+    # P4: the aux linear heads are optimised jointly with the model. When aux_pack
+    # is None (lambda_aux == 0) the optimizer is built over model.parameters() only,
+    # i.e. byte-identical to the baseline.
+    if aux_pack is not None:
+        optimizer = torch.optim.AdamW(
+            list(model.parameters()) + list(aux_pack["module"].parameters()),
+            lr=args.lr)
+    else:
+        optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     num_training_steps = args.epochs * len(train_dl)
     if args.lr_scheduler:
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
@@ -517,6 +542,7 @@ def model_pass(
                 train_feats=train_feats,
                 train_labels=train_labels,
                 segment_cache=segment_cache,
+                aux_pack=aux_pack,
             )
             """if args.sparse_dictionary is None and (args.no_hard_negatives != 0 and args.no_pseudo_gold_positives != 0):
                 # Only for dense retrieval
@@ -775,6 +801,9 @@ def main(args):
             args.archive_mode,
             "-a{}".format(args.archive_alpha)
             if args.archive_mode in ("knn", "both") else "")
+    # P4: distinguish aux runs from the lambda_aux=0 floor within the same group.
+    if float(getattr(args, "lambda_aux", 0.0)) > 0:
+        exp_name += "_p4aux-l{}".format(args.lambda_aux)
     # Construct output path
     args.output_path = os.path.join(
         args.output_path, "Retrieval", args.dataset, args.group_name, exp_name, "")
@@ -994,6 +1023,50 @@ def main(args):
     print(model)
     # evaluate_split(train, dev, "dev")
 
+    # <----------------- P4: archive-field auxiliary distillation heads ----------------->
+    # Fully inert when --lambda_aux == 0 (no heads built, no RNG drawn) -> the
+    # lambda_aux=0 run is byte-identical to the baseline. When lambda_aux > 0, the
+    # aux heads are built with the global CPU-RNG state SAVED and RESTORED, so the
+    # DataLoader shuffle order (RandomSampler uses the global CPU generator) is
+    # unchanged and the ONLY difference from the floor is the aux gradient.
+    aux_pack = None
+    if float(getattr(args, "lambda_aux", 0.0)) > 0:
+        from utils.p4_archive_fields import (
+            load_archive_records, derive_vocab, encode_record)
+        fields = [f.strip() for f in args.aux_fields.split(",") if f.strip()]
+        arc_recs = load_archive_records(
+            args.dataset, "train", args.aux_archive_version)
+        vocab = derive_vocab(arc_recs)
+        train_ids = list(train_set.ids)
+        id_to_row = {vid: r for r, vid in enumerate(train_ids)}
+        enc = [encode_record(arc_recs.get(vid), vocab) for vid in train_ids]
+        targets, valids, specs, dims = {}, {}, {}, {}
+        for field in fields:
+            specs[field] = {"type": vocab[field]["type"]}
+            dims[field] = len(vocab[field]["classes"])
+            dtype = (torch.long if vocab[field]["type"] == "single"
+                     else torch.float)
+            targets[field] = torch.tensor(
+                [enc_i[field][0] for enc_i in enc], dtype=dtype,
+                device=args.device)
+            valids[field] = torch.tensor(
+                [bool(enc_i[field][1]) for enc_i in enc], dtype=torch.bool,
+                device=args.device)
+        rng_cpu = torch.get_rng_state()
+        aux_module = nn.ModuleDict(
+            {field: nn.Linear(args.proj_dim, dims[field]) for field in fields})
+        torch.set_rng_state(rng_cpu)
+        aux_module.to(args.device)
+        aux_pack = {"module": aux_module, "id_to_row": id_to_row,
+                    "specs": specs, "targets": targets, "valids": valids,
+                    "vocab": vocab, "fields": fields}
+        print("[p4aux] lambda_aux={} fields={} dims={} coverage(mech={}, tg={})".format(
+            args.lambda_aux, fields, dims,
+            vocab["mechanism"].get("coverage"),
+            vocab["target_group"].get("coverage")))
+        print("[p4aux] valid train targets per field: {} / {}".format(
+            {f: int(valids[f].sum().item()) for f in fields}, len(train_ids)))
+
     # <----------------- Train the model ----------------->
     if segment_cache is not None and args.seg_mode in ("consensus", "selfscore"):
         # EM driver (DESIGN_iter3 SS2). Each round: M-step = retrain the head
@@ -1074,6 +1147,7 @@ def main(args):
             sparse_dict=sparse_dict,
             segment_cache=segment_cache,
             archive_bank=archive_bank,
+            aux_pack=aux_pack,
         )
 
 if __name__ == "__main__":
