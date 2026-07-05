@@ -1,0 +1,24 @@
+{
+ "diag": {
+  "probe_hateful_but_benign": {
+   "verdict": "CONTRADICT",
+   "reason": "The description depicts ordinary, harmless content without targeting any protected group.",
+   "raw": "VERDICT: CONTRADICT\nREASON: The description depicts ordinary, harmless content without targeting any protected group."
+  },
+  "probe_benign_but_slur": {
+   "verdict": "CONTRADICT",
+   "reason": "Explicit slurs targeting a religious group contradict the benign label.",
+   "raw": "VERDICT: CONTRADICT\nREASON: Explicit slurs targeting a religious group contradict the benign label."
+  },
+  "probe_hateful_consistent": {
+   "verdict": "SUPPORT",
+   "reason": "Calls women property and dehumanizes them.",
+   "raw": "VERDICT: SUPPORT\nREASON: Calls women property and dehumanizes them."
+  },
+  "probe_vague_hateful": {
+   "verdict": "UNSURE",
+   "reason": "Summary lacks concrete details about content.",
+   "raw": "VERDICT: UNSURE\nREASON: Summary lacks concrete details about content."
+  }
+ }
+}
