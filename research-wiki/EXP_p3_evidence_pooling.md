@@ -1,6 +1,8 @@
 # EXP_p3_evidence_pooling — MLLM evidence-density weighted pooling of the video embedding
 
-**Status:** PRE-REGISTERED (code + gates fixed before any GPU run) · **Started:** 2026-07-06 ·
+**Status:** **DONE — verdict: MLLM evidence-density pooling earns NO method role on any of EN/ZH/HateMM
+(EN probe-kill; ZH & HateMM trained → within-noise both protocols). Signal real, intervention doesn't
+translate. Scores are a reusable localization asset.** · **Started:** 2026-07-06 · **Finished:** 2026-07-07 ·
 **Owner:** subagent P3 (方法开发, src/ 只读复用, 新缓存不覆盖旧缓存)
 
 **Front (P3):** the direct attack on the diagnosed EN root cause. W2/EXP_mm established that
@@ -203,9 +205,57 @@ final-epoch ΔF1 +0.0088 (2/3+) but < 1pt → FAIL. **ZH verdict: within-noise, 
 has a small positive final-epoch trend (+0.009 F1/acc) but it is under the noise floor and negative
 under val-selection — exactly what the razor-thin probe pass predicted.
 
-### 3.2 HateMM (probe passed, k-consistent) — pending
+### 3.2 HateMM (probe passed cleanest) — WITHIN-NOISE, NO CLAIM (the decisive result)
 
-dev/test ASR (job 12393) → dev/test scoring → all-split caches → 3-seed floor/wsoftT1/wmild.
+Floor (16-frame mean-of-subclips) reproduces the published HateMM CLIP floor (val-sel acc 0.8217 vs
+published 0.828). Test macro-F1 / acc, seeds 0/1/2:
+
+| lens | pool | seed0 | seed1 | seed2 | 3-seed F1 | paired ΔF1 vs floor |
+|---|---|---|---|---|---|---|
+| val-sel | floor | .8163/.8279 | .7975/.8093 | .8134/.8279 | 0.8091±0.0083 | — |
+| val-sel | **wsoftT1** | .8208/.8326 | .7977/.8140 | .7965/.8140 | 0.8050±0.0112 | **−0.0041±0.0092** (2/3+) |
+| val-sel | wmild | .7819/.8000 | .7954/.8093 | .7954/.8093 | 0.7909±0.0064 | −0.0182 (0/3+) |
+| final-ep | floor | .7875/.8047 | .8078/.8233 | .8022/.8186 | 0.7992±0.0086 | — |
+| final-ep | **wsoftT1** | .7733/.7953 | .7999/.8140 | .8254/.8372 | 0.7995±0.0213 | **+0.0004±0.0163** (1/3+) |
+| final-ep | wmild | .7895/.8093 | .7910/.8047 | .8044/.8186 | 0.7950±0.0067 | −0.0042 (2/3+) |
+
+Scorecard (≥2/3 seeds + AND mean ΔF1 > 1pt, BOTH protocols): val-selected ΔF1 −0.0041 → FAIL;
+final-epoch ΔF1 +0.0004 → FAIL. **HateMM verdict: within-noise, no claim.**
+
+This is the decisive datapoint: HateMM had the **cleanest probe pass** (concat LOO +0.0108, positive
+at every k; densest evidence scores of the three) — yet the trained retrieval head shows **no gain
+beyond noise** under either protocol. A passing no-head probe is *necessary but not sufficient*: the
+learned align-fusion head (elementwise product of projected img×text) absorbs the small input-space
+reweighting, and the text stream / learned projection wash it out.
+
+## 4. Verdict — FINAL
+
+**MLLM evidence-density weighted pooling does NOT earn a method role on any of the three datasets.**
+
+| dataset | probe (concat LOO @k20 Δ) | training (wsoftT1 vs floor, both protocols) | outcome |
+|---|---|---|---|
+| MHC-EN | −0.0055 (within-noise, sign flips across k) | not trained (probe kill) | **no** |
+| MHC_zh | +0.0017 (thin, within-noise) | val −0.0074 / final +0.0088 F1 (both <1pt) | **within-noise, no claim** |
+| HateMM | +0.0108 (clean, k-consistent, strongest) | val −0.0041 / final +0.0004 F1 (both <1pt) | **within-noise, no claim** |
+
+**Signal real, intervention doesn't translate — everywhere.** The MLLM genuinely and strongly
+localizes hate evidence (hateful vs benign within-video score VAR / mean-seg-score separation on all
+three, densest on HateMM/EN). But reweighting the frozen-CLIP pooled video embedding toward those
+segments does not improve the retrieval-contrastive detector beyond the ~1-video noise floor — under
+BOTH val-selected and final-epoch protocols, on all three datasets, *including the one where the
+no-head probe passed cleanly*. So diluted mean-pooling is **not** the operative bottleneck for this
+frozen-encoder + fusion-head detector.
+
+**Reusable byproduct (the real value):** the per-K=4-window MLLM hate-evidence scores
+(`data/MLLM_scores/<DS>/<split>_segscoreK4_qwen.jsonl`) are a calibrated, localized, label-free
+segment-saliency signal. That is a *localization* asset, not a *pooling* asset — its natural consumer
+is temporal-localization evaluation (`EVAL_localization_hateclipseg.md`, `EVAL_localization_hatemm.md`;
+P6 now uses exactly this signal for HateClipSeg). Honest one-liner: the score vector that failed to
+help pooling is a good map of *where* the hate is.
+
+**Methodological takeaway:** probe-before-train paid off — it killed EN cheaply — but HateMM shows a
+passing probe is not a guarantee of a training gain; the learned head can absorb an input-space edge.
+Report both lenses; trust neither a single-k probe delta nor a val-selected training delta alone.
 
 ## 4. Verdict
 
