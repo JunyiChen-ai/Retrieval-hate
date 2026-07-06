@@ -120,13 +120,79 @@
     },
     "fallback": 1
    }
+  },
+  "C4": {
+   "MHC": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.592,
+    "correct_drop": 0.5826666666666667,
+    "wrong_drop": 0.6013333333333334,
+    "lift": 0.01866666666666672,
+    "verdicts": {
+     "INCOMPARABLE": 888,
+     "COMPARABLE": 603,
+     "UNSURE": 9
+    },
+    "fallback": 8
+   },
+   "MHC_zh": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.4846666666666667,
+    "correct_drop": 0.516,
+    "wrong_drop": 0.4533333333333333,
+    "lift": -0.0626666666666667,
+    "verdicts": {
+     "INCOMPARABLE": 727,
+     "UNSURE": 4,
+     "COMPARABLE": 769
+    },
+    "fallback": 2
+   }
+  },
+  "C5": {
+   "MHC": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.646,
+    "correct_drop": 0.64,
+    "wrong_drop": 0.652,
+    "lift": 0.01200000000000001,
+    "verdicts": {
+     "INCOMPARABLE": 969,
+     "COMPARABLE": 481,
+     "UNSURE": 50
+    },
+    "fallback": 0
+   },
+   "MHC_zh": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.5066666666666667,
+    "correct_drop": 0.54,
+    "wrong_drop": 0.47333333333333333,
+    "lift": -0.06666666666666671,
+    "verdicts": {
+     "INCOMPARABLE": 760,
+     "COMPARABLE": 655,
+     "UNSURE": 85
+    },
+    "fallback": 0
+   }
   }
  },
  "promote": {
   "C0": false,
   "C1": false,
   "C2": false,
-  "C3": false
+  "C3": false,
+  "C4": false,
+  "C5": false
  },
  "winner": null
 }

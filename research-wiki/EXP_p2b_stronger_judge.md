@@ -96,8 +96,58 @@ only, no vLLM/AWQ). No cross-seed ensembles. No `.pt` in git; checkpoints pulled
 
 ## TRAIN-SIDE LEADERBOARD
 
-_(appended after each config; test pass gated on the promotion bar)_
+Run 2026-07-06. Benchmark = seed-0 LOO-gated train queries, 1500 balanced pairs/language
+(750 correct-vote / 750 wrong-vote); EN gated 137/549 train, ZH 145/579. Judge jobs: 7B C0–C3
+= 12371–12374; 32B C4–C5 = 12387–12388 (Qwen2.5-32B-Instruct, text-only bf16, 1×A100-80G).
+Parse-fallbacks negligible (0 for all 7B; C4 8/3000, C5 0). Numbers by
+`scripts/analysis/p2b_score.py` → `p2_out/p2b_trainbench.json`.
 
-## RESULTS (test pass)
+**selectivity lift = drop_rate(wrong-vote) − drop_rate(correct-vote)** (higher = the judge
+preferentially removes the neighbours that would misvote; the oracle = +100%).
 
-_(only if a config is promoted)_
+| cfg | model · evidence · prompt | EN drop% (corr/wrong) | EN lift | ZH drop% (corr/wrong) | ZH lift | promote |
+|---|---|---|---|---|---|---|
+| C0 | 7B · archive · orig (= P2) | 72.5 (72.5/72.5) | **+0.0** | 58.2 (60.9/55.5) | **−5.5** | no |
+| C1 | 7B · archive · flip | 58.1 (56.8/59.5) | **+2.7** | 45.3 (46.9/43.7) | **−3.2** | no |
+| C2 | 7B · archive+transcript · orig | 73.5 (73.3/73.7) | **+0.4** | 57.6 (60.9/54.3) | **−6.7** | no |
+| C3 | 7B · archive+transcript · flip | 60.1 (59.1/61.1) | **+2.0** | 39.9 (43.3/36.5) | **−6.8** | no |
+| C4 | **32B** · archive+transcript · flip | 59.2 (58.3/60.1) | **+1.9** | 48.5 (51.6/45.3) | **−6.3** | no |
+| C5 | **32B** · archive+transcript · orig | 64.6 (64.0/65.2) | **+1.2** | 50.7 (54.0/47.3) | **−6.7** | no |
+
+## VERDICT — P2b dies TRAIN-side (no test contact)
+
+**No config clears the promotion bar** (EN lift ≥ +10 pt, ZH lift > 0, EN drop-rate ∈ [15,50]%).
+Best EN lift across the whole grid = **+2.7 pt** (C1) — a quarter of the way to the bar; **ZH
+lift is negative for all six configs** (−3.2 to −6.8 pt: on Chinese the judge, if anything,
+*prefers* dropping the correct-vote neighbours). Per the pre-registration this is a valid,
+cheap kill: **P2b never touches the test set.**
+
+What the three levers bought, isolated on the labelled benchmark:
+
+1. **Prompt flip (the over-flag fix) works — but only on drop-rate, not selectivity.** Flipping
+   INCOMPARABLE to burden-of-proof cut the drop-rate from 72.5%→58.1% (EN) and 58.2%→45.3% (ZH)
+   and nudged EN lift from +0.0 to +2.7 pt. So the P2 over-flag ratchet was real and fixable —
+   but a judge that drops a *sane* 40–60% of neighbours is **still not selective**: it removes
+   correct-vote and wrong-vote neighbours at nearly equal rates.
+2. **Transcript evidence adds nothing.** C2/C3 ≈ C0/C1 (EN lift +0.4/+2.0 vs +0.0/+2.7); the
+   thin-archive-field hypothesis is not the bottleneck — richer text did not make the match
+   track label-relevance.
+3. **Model scale (7B→32B) is NOT the lever.** The 32B is no more selective than the 7B — EN
+   lift +1.9 (C4) ≤ the 7B flip's +2.7 (C1); ZH still −6.3. A 4.5× bigger judge with the best
+   prompt+evidence combo does not move selectivity off zero.
+
+**Mechanism claim (confirmed, and the reason the whole line is closed): comparability ⊥
+vote-correctness.** The P2b premise was that a *better* comparability judge would recover the
+oracle's +7.5/+10.6 pt. The train benchmark refutes the premise, not just the executor: across
+2 models, 2 evidence sets and 2 prompts, whether a neighbour is topically COMPARABLE to the
+query is essentially **independent of whether its label matches the query's** (|lift| ≤ 2.7 pt
+EN, and wrong-signed on ZH). Dropping incomparable neighbours therefore cannot preferentially
+remove misvoters, so no comparability-based reranker — 7B, 32B, or (by this evidence) larger —
+can convert the oracle headroom into accuracy. The oracle (drop by *true label*) remains the
+only rule that captures it, and it is not implementable without the labels it is scoring
+against. **The reranking line is closed; the surviving carrot from P2 (the gate + the oracle's
++7.5/+10.6 pt) needs a fundamentally different membership signal, not a stronger judge.**
+
+*(Leaderboard by `scripts/analysis/p2b_score.py` from the six `tb_verdicts_*` files; verdict
+prose human-written against `p2b_trainbench.json`. 32B model + seed-0 heads deleted after the
+run; no `.pt` in git.)*
