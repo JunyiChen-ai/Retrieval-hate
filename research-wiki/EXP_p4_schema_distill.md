@@ -100,9 +100,64 @@ distillation is a plausible training signal — proceed to train both datasets.
 
 ## RESULTS
 
-_(filled after training job completes; JSON `scripts/analysis/p4_out/p4_results.json`)_
+Training job **12360** COMPLETED (all 12 runs = 2 ds × {λ=0, λ=0.1} × seeds 0/1/2, each a
+full 30-epoch run; 6m16s total — these are tiny frozen-feature heads, ~25s/run at ~1.15
+epoch/s, so the short wall-clock is expected, not a crash). JSON:
+`scripts/analysis/p4_out/p4_results.json`.
 
-<!-- RESULTS_PLACEHOLDER -->
+### Success-criteria scorecard
+| # | criterion | outcome |
+|---|---|---|
+| 1 | λ=0 reproduces the floor bit-for-bit | **PASS (exact)** — MHC λ=0 s0 val-sel = 0.7826 acc / 0.7113 maF1; MHC_zh = 0.8054 / 0.7706; both match the known floor to 4 dp |
+| 2 | probe gate passes | **PASS** — both datasets OPEN (see above) |
+| 3 | aux beats floor >0.01 maF1, ≥2/3 seeds, both protocols, no >0.01 harm | **FAIL** — no win dataset; val-selected harm on both |
+
+### Floor (λ=0) vs aux (λ=0.1), 3 seeds, paired
+| dataset | protocol | floor maF1 | aux maF1 | Δ maF1 (per-seed) | seeds+ | Δ acc |
+|---|---|---|---|---|---|---|
+| MHC (EN) | val-selected | 0.6715 | 0.6291 | **−0.0424** [−.087, +.079, −.120] | 1/3 | −0.0269 |
+| MHC (EN) | final-epoch | 0.7202 | 0.7188 | **−0.0014** [+.001, −.002, −.004] | 1/3 | +0.0041 |
+| MHC_zh | val-selected | 0.7676 | 0.7551 | **−0.0124** [−.063, +.010, +.016] | 2/3 | −0.0134 |
+| MHC_zh | final-epoch | 0.7720 | 0.7797 | **+0.0077** [+.013, +.020, −.010] | 2/3 | +0.0045 |
+
+### What happened
+- **Bit-for-bit and probe gate both pass**, so the negative result is trustworthy (not a
+  bug and not a dead field): the aux code is a verified no-op at λ=0, and the fields it
+  distils are genuinely decodable + label-informative.
+- **The aux term does not reliably help.** Under the STABLE final-epoch protocol it is
+  essentially flat on EN (−0.0014 maF1) and a **sub-threshold +0.0077 maF1 on ZH** (2/3
+  seeds positive but below the pre-registered 0.01 bar). Under the NOISIER val-selected
+  protocol it is net-negative on both (EN −0.042, ZH −0.012), driven by val-selection
+  variance — e.g. MHC λ=0.1 s2 val-selects epoch 16 (maF1 0.580) though its final-epoch
+  maF1 is 0.726. This matches the known regime where 78-sample dev selection is the
+  dominant noise source on these ~150-sample test sets.
+- **No dataset clears the pre-registered bar under BOTH protocols**, and two cells show
+  >1pt harm ⇒ criterion (3) fails.
+- **Mechanism (why it is neutral):** the fused embedding is already trained end-to-end with
+  the hateful label (contrastive + hybrid BCE). The archive fields correlate with that label
+  (probe-b AUC 0.74–0.78) but carry little signal *beyond* it, and they are the MLLM's noisy
+  reading — so distilling them adds no information the label does not already provide, and
+  the extra head only mildly perturbs the shared trunk. The signal is real (probe passes)
+  but redundant with the supervised objective.
+
+### Verdict (plain language)
+**Archive-field auxiliary distillation does NOT earn the MLLM a method role here.** It is
+within-noise-to-slightly-harmful: flat on EN, +0.8pt (sub-threshold) on ZH final-epoch,
+net-negative under val-selection, and it fails the pre-registered success bar on both
+datasets under both protocols. The honest kill is clean because the two guards (bit-for-bit
+λ=0, probe gate) both pass — the fields are decodable and label-informative, but distilling
+them into an already label-supervised embedding is redundant. No tuning of λ was attempted
+(pre-registered single value) — tuning to chase the sub-threshold ZH gain would be p-hacking
+against a within-noise effect.
+
+### Jobs / artifacts / repro
+- Probe gate: `scripts/analysis/p4_probe_gate.py` (CPU). Vocab: `p4_out/field_vocab_<ds>.json`.
+- Code (new flag + loader + loss, no behavior change at λ=0):
+  `--lambda_aux` in `src/run_rac.py`, `compute_aux_loss` in `src/model/loss.py`,
+  `src/utils/p4_archive_fields.py` (shared field schema). External review: bit-for-bit
+  no-op + RNG isolation confirmed.
+- Training: `scripts/slurm/train_p4aux.sbatch` (job 12360, 12 runs), GROUP `RAC_video_p4aux`.
+  Parser: `scripts/analysis/p4_collect.py`. Results: `p4_out/p4_results.json`.
 
 ### Jobs / artifacts / repro
 - Probe gate: `scripts/analysis/p4_probe_gate.py` (CPU). Vocab: `p4_out/field_vocab_<ds>.json`.

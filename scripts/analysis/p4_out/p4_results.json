@@ -1,0 +1,302 @@
+{
+  "runs": {
+    "MHC|l0|s0": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 26,
+        "test_acc": 0.7826,
+        "test_maf1": 0.7113,
+        "val_acc": 0.75
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.764,
+        "test_maf1": 0.7145
+      }
+    },
+    "MHC|l0|s1": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 16,
+        "test_acc": 0.7329,
+        "test_maf1": 0.6034,
+        "val_acc": 0.7625
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7826,
+        "test_maf1": 0.7159
+      }
+    },
+    "MHC|l0|s2": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 27,
+        "test_acc": 0.7702,
+        "test_maf1": 0.6997,
+        "val_acc": 0.7625
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7888,
+        "test_maf1": 0.7303
+      }
+    },
+    "MHC|l0.1|s0": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 18,
+        "test_acc": 0.7391,
+        "test_maf1": 0.6243,
+        "val_acc": 0.7625
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7826,
+        "test_maf1": 0.7159
+      }
+    },
+    "MHC|l0.1|s1": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 28,
+        "test_acc": 0.7516,
+        "test_maf1": 0.6827,
+        "val_acc": 0.75
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7764,
+        "test_maf1": 0.7144
+      }
+    },
+    "MHC|l0.1|s2": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 16,
+        "test_acc": 0.7143,
+        "test_maf1": 0.5802,
+        "val_acc": 0.775
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7888,
+        "test_maf1": 0.7262
+      }
+    },
+    "MHC_zh|l0|s0": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 29,
+        "test_acc": 0.8054,
+        "test_maf1": 0.7706,
+        "val_acc": 0.8077
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.8054,
+        "test_maf1": 0.7706
+      }
+    },
+    "MHC_zh|l0|s1": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 28,
+        "test_acc": 0.8054,
+        "test_maf1": 0.7579,
+        "val_acc": 0.7821
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.8054,
+        "test_maf1": 0.7542
+      }
+    },
+    "MHC_zh|l0|s2": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 25,
+        "test_acc": 0.8121,
+        "test_maf1": 0.7742,
+        "val_acc": 0.8205
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.8322,
+        "test_maf1": 0.7913
+      }
+    },
+    "MHC_zh|l0.1|s0": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 21,
+        "test_acc": 0.7517,
+        "test_maf1": 0.7073,
+        "val_acc": 0.8205
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.8188,
+        "test_maf1": 0.7837
+      }
+    },
+    "MHC_zh|l0.1|s1": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 28,
+        "test_acc": 0.8054,
+        "test_maf1": 0.7677,
+        "val_acc": 0.7949
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.8121,
+        "test_maf1": 0.7742
+      }
+    },
+    "MHC_zh|l0.1|s2": {
+      "n_epochs": 30,
+      "val_sel": {
+        "epoch": 27,
+        "test_acc": 0.8255,
+        "test_maf1": 0.7904,
+        "val_acc": 0.8205
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.8255,
+        "test_maf1": 0.7813
+      }
+    }
+  },
+  "bit_for_bit": {
+    "MHC": {
+      "got_acc_maf1": [
+        0.7826,
+        0.7113
+      ],
+      "expected": [
+        0.7826,
+        0.7113
+      ],
+      "exact": true
+    },
+    "MHC_zh": {
+      "got_acc_maf1": [
+        0.8054,
+        0.7706
+      ],
+      "expected": [
+        0.8054,
+        0.7706
+      ],
+      "exact": true
+    }
+  },
+  "compare": {
+    "MHC": {
+      "val_sel": {
+        "floor_maf1_mean": 0.6715,
+        "aux_maf1_mean": 0.6291,
+        "floor_acc_mean": 0.7619,
+        "aux_acc_mean": 0.735,
+        "delta_maf1_mean": -0.0424,
+        "delta_maf1_per_seed": [
+          -0.087,
+          0.0793,
+          -0.1195
+        ],
+        "delta_maf1_pos_seeds": 1,
+        "delta_acc_mean": -0.0269,
+        "delta_acc_per_seed": [
+          -0.0435,
+          0.0187,
+          -0.0559
+        ],
+        "delta_acc_pos_seeds": 1,
+        "n_seeds": 3
+      },
+      "final": {
+        "floor_maf1_mean": 0.7202,
+        "aux_maf1_mean": 0.7188,
+        "floor_acc_mean": 0.7785,
+        "aux_acc_mean": 0.7826,
+        "delta_maf1_mean": -0.0014,
+        "delta_maf1_per_seed": [
+          0.0014,
+          -0.0015,
+          -0.0041
+        ],
+        "delta_maf1_pos_seeds": 1,
+        "delta_acc_mean": 0.0041,
+        "delta_acc_per_seed": [
+          0.0186,
+          -0.0062,
+          0.0
+        ],
+        "delta_acc_pos_seeds": 1,
+        "n_seeds": 3
+      }
+    },
+    "MHC_zh": {
+      "val_sel": {
+        "floor_maf1_mean": 0.7676,
+        "aux_maf1_mean": 0.7551,
+        "floor_acc_mean": 0.8076,
+        "aux_acc_mean": 0.7942,
+        "delta_maf1_mean": -0.0124,
+        "delta_maf1_per_seed": [
+          -0.0633,
+          0.0098,
+          0.0162
+        ],
+        "delta_maf1_pos_seeds": 2,
+        "delta_acc_mean": -0.0134,
+        "delta_acc_per_seed": [
+          -0.0537,
+          0.0,
+          0.0134
+        ],
+        "delta_acc_pos_seeds": 1,
+        "n_seeds": 3
+      },
+      "final": {
+        "floor_maf1_mean": 0.772,
+        "aux_maf1_mean": 0.7797,
+        "floor_acc_mean": 0.8143,
+        "aux_acc_mean": 0.8188,
+        "delta_maf1_mean": 0.0077,
+        "delta_maf1_per_seed": [
+          0.0131,
+          0.02,
+          -0.01
+        ],
+        "delta_maf1_pos_seeds": 2,
+        "delta_acc_mean": 0.0045,
+        "delta_acc_per_seed": [
+          0.0134,
+          0.0067,
+          -0.0067
+        ],
+        "delta_acc_pos_seeds": 2,
+        "n_seeds": 3
+      }
+    }
+  },
+  "verdict": {
+    "win_datasets": [],
+    "harm": [
+      [
+        "MHC",
+        "val_sel",
+        -0.0424
+      ],
+      [
+        "MHC_zh",
+        "val_sel",
+        -0.0124
+      ]
+    ],
+    "criterion3_pass": false
+  }
+}
