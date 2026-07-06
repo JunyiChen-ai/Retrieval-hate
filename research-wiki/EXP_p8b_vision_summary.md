@@ -40,11 +40,19 @@ The C bar is the honest one: on ZH, shorter single-chunk text alone (no MLLM) al
 so B_vision only earns a role if the *vision-grounded semantics* (on-screen-text transcription) push
 past that. If B_vision ≤ C → **kill, no training** (vision grounding adds nothing over shorter text).
 
+**P8 ZH probe numbers (from p1-prior, the bars to beat):** A(floor) **0.7375**, B_text **0.7271**
+(this is why P8 closed on ZH), C(naive-trunc) **0.7910**. So B_vision must clear **0.7910** — the
+strong control on ZH — to earn a role; merely beating B_text (0.727) or A (0.738) is not enough.
+
 ### Training (only if gate opens)
-3 seeds {0,1,2} × {A, B_vision, C}, standard RAC_video_CLIP recipe, GROUP `RAC_video_p8vsum`,
-FORCE=False, distinct `--model` tags. Both protocols (val-selected + final-epoch), acc + macro-F1,
-paired per-seed deltas vs A. Success (frozen, same as P8): B_vision > A by >0.01 macro-F1, ≥2/3 seeds,
-BOTH protocols, **AND B_vision > C** (rent test), no >0.01 harm. Anything weaker = within-noise/no claim.
+**Efficiency (coordinated with p1-prior): A and C are the SAME floor/trunc caches for both arms, so
+their P8 A/C results ARE this arm's baseline — do NOT retrain them.** Train only **B_vision**, 3 seeds
+{0,1,2}, `scripts/slurm/train_p8vsum.sbatch` (flags matched EXACTLY to p1-prior's P8 recipe:
+align/triplet/cos/hybrid, topk20, warmup5, dropout .2/.4/.1, `--model p8vsum_HF --exp_comment _p8Bvis
+--group_name RAC_video_p8vsum`, FORCE=False). Trainlog `p8vsum_<ds>_Bvis_s<seed>.trainlog` (foldable
+by p1-prior's `p8_collect.py`). Compare B_vision − A vs p1-prior's A; rent test B_vision vs their C.
+Both protocols. Success (frozen, same as P8): B_vision > A by >0.01 macro-F1, ≥2/3 seeds, BOTH
+protocols, **AND B_vision > C** (rent test), no >0.01 harm. Anything weaker = within-noise/no claim.
 
 ### Ops
 Generation GPU job = `12427` (MHC_zh all splits), queued behind P2c 72B judges + P8 EN training.
