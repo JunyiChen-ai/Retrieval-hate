@@ -124,3 +124,31 @@ MoRE(WWW 2025)官方代码全量复跑,同 split(逐行 diff 一致)、同 clean
 ---
 
 _附:`research-wiki/ITERATION_LOG.md` 已追加终局记录(2026-07-05);ideas 节点收口:`mm-segment-keys` 新建(outcome=attribution-closed)、`role3-selective-reasoning` 新建(closed)、`retrieval-consensus-denoising` 终态刷新(repair-yes / beat-floor-no / attribution-closed);全部 open 问题已移入本报告 §8 TODO。三条用户政策(禁 cross-seed ensemble / 无代码不复现 / 不发邮件缺件自补)全程执行,记录在 ITERATION_LOG §10。_
+
+---
+
+## 9. MLLM 方法角色攻关(2026-07-06,收卷后新增波次)
+
+> 本节为终版报告固化(2026-07-05)之后新增的独立攻关波次。**不改动 §1–§8 任何结论,也不改动 §4 定位/三件套(仍待用户确认)。** 完整八行记分板与证据见 `research-wiki/CAMPAIGN_mllm_method_role.md`。
+
+**问题(用户命题):** MLLM 除做冻结 encoder 外,能否挣得一个可被消融的**方法角色**——移除它会可测量地掉点(超过这些 ~150 样本测试集 ~1.6 视频 ≈ 1 acc 点的噪声地板)?六条独立集成路线各自预注册、各带"移除 MLLM"消融。
+
+**结论:在 MHClip 上 MLLM 未挣得可移除的方法角色。** 七个已结前沿全部为诚实 kill 或 within-noise,且**每条都有复现 / bit-for-bit / probe 护栏背书**(非 harness 假象)。
+
+| 前沿 | MLLM 的方法职责 | 结果 | 一句话死因 | doc·commit |
+|---|---|---|---|---|
+| P1 零标注先验重校准 | 读档案→无标注 HARMFUL/BENIGN→adjusted classify-count 估先验→分位重设漂移门控阈值 | FAIL(p̂ 误差 0.22 EN/0.18 ZH) | 判据 FPR 在时间边界漂移(.372→.238),train 端校正失真;机制本身成立(oracle 先验补回 EN 80% 缺口) | p1·`2a69246` |
+| P2 7B 邻居重排 | 边界样本按可比性删 INCOMPARABLE 邻居再投票(不出标签) | FAIL(B−A −0.002/−0.020) | 过判 INCOMPARABLE(83%/70%),删除与投票正确性无关(selectivity +1.1%/−3.2%) | p2·`bc689e1` |
+| P2b 强判据+train 端校准 | 7B/32B×证据×prompt train 端选择性榜,过 +10pt 才碰 test | FAIL(train 端即死,最佳 EN lift +2.7,ZH 全负) | **可比性 ⊥ 投票正确性**,32B 亦不选择性;重排线彻底关闭 | p2b·`cc4ca6e` |
+| P3-EN 证据密度池化 | MLLM 打分段级证据密度 0–3→softmax 重加权池化视频嵌入 | FAIL(probe kill −0.0055@k20) | 信号真(hate/benign 段内 var 1.11/0.40)但**干预不迁移**:冻结 CLIP 中集中视觉信号并不比均值更可分 | p3·`c2ba59f` |
+| P3-ZH 同上 | 同 | within-noise 无 claim(val −0.007/final +0.009,均 <1pt) | ZH 证据 ASR 稀疏(var 0.33/0.12),thin probe 早已预示 | p3·`15f5f08` |
+| P4 schema 蒸馏 | 辅助线性头蒸馏档案字段(explicit/modality/mechanism/target,λ=0.1),eval 丢弃 | within-noise(EN −0.001/ZH +0.008 sub-threshold) | 字段可解码(AUC .62–.93)且预测标签(.74–.78),但**与直接标签监督冗余** | p4·`6f1f0da`,`00816aa` |
+| P5 反事实孪生负样本 | MLLM 洗白转写→同视觉+洗白文本负样本(每 anchor 一个额外 hard-neg) | FAIL(质量门关闭 flip 0.503/0.337;诊断训练伤 EN −0.027) | MLLM 无法可靠洗白;干净孪生因**共享 anchor 视觉过近**(cos 0.73)反伤,pairing 不胜随机 | p5·`fc25cac`,`66d3103` |
+
+**跨前沿定性(统一失败形状):** MLLM 语义能力真实(会读档案、能定位证据、字段可解码),但该能力**与决策变量正交或冗余**——语义"关于什么"不等于"在仇恨/冒犯/良性边界的哪一侧",而后者正是检索头已直接监督的量。
+
+**存活价值(独立于上述 kill,可入论文):**(a) 可编辑记忆的**否决/守门**角色(auto-repair 定向删噪改善 EN)与人审记忆卫生——移除代价体现在完整性/可控性而非 raw acc;(b) P3 段级证据密度分是**无标注定位显著图**,是该信号的正确归宿(cross-ref `EVAL_localization_hateclipseg.md` / `EVAL_localization_hatemm.md`);(c) P2 oracle 头部空间 **+7.5/+10.6(均跨 0.85)** 作为量化天花板 + 已被 P2b 排除的"更强判据"路线,为未来"成员性信号"工作定标。
+
+**两条仍在途前沿(pending,落地后回填):**
+- **[pending] P3-HateMM 训练** — probe 是三者中唯一 k-consistent 正例(+0.0108@k20,证据信号最密 var 1.28/0.71),ASR 作业 12393 运行中 →打分→3-seed floor/wsoftT1/wmild(双口径)。若过 >1pt/≥2/3/双口径,则是池化干预唯一挣得角色之处;EN/ZH 规律预示 within-noise。
+- **[pending] P6 HateClipSeg 定位** — 由 p2-rerank 承接;把 P3 存活的段级证据分接入定位评测(§8 TODO#2 的自然归宿)。
