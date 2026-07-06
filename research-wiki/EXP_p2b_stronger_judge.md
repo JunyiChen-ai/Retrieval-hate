@@ -151,3 +151,34 @@ against. **The reranking line is closed; the surviving carrot from P2 (the gate 
 *(Leaderboard by `scripts/analysis/p2b_score.py` from the six `tb_verdicts_*` files; verdict
 prose human-written against `p2b_trainbench.json`. 32B model + seed-0 heads deleted after the
 run; no `.pt` in git.)*
+
+---
+
+## P2c — 72B tier (pre-registered extension; completes the 7B→32B→72B scale ladder)
+
+> **Pre-registered before any 72B judgment.** P2b left the ladder incomplete (7B, 32B). P2c adds
+> the 72B rung on the **identical frozen** train benchmark (`p2b_train_benchmark.py` /
+> `p2b_score.py`, same 1500 balanced correct/wrong-vote pairs per language) with the **unchanged
+> promotion bar** (EN selectivity lift ≥ +10 pt AND EN drop-rate ∈ [15,50]% AND ZH lift > 0). No
+> other change. If a config clears, the single best is promoted to the one A–D test pass (the 0.85
+> shot); if neither clears, the ladder is complete and flat and the kill is definitive.
+
+- **Configs:** **C6 = 72B · archive+transcript · flip**, **C7 = 72B · archive+transcript · orig**
+  (the model-effect isolator). Same evidence/prompt as the 32B rung so C6−C4 / C7−C5 isolate scale.
+- **Load path (documented deviation):** the intended `Qwen2.5-72B-Instruct-AWQ` (41 G) and the
+  GPTQ-Int4 fallback **both require backends absent from the installed stack** (no `autoawq`, no
+  `auto_gptq`/`gptqmodel`), and installing them into the shared `HateVideo` env would risk
+  downgrading `transformers` 4.49 and breaking the sibling Qwen2.5-VL jobs mid-campaign.
+  `bitsandbytes` 0.49.2 + `accelerate` 1.5.2 ARE installed, so P2c loads the **bf16
+  `Qwen/Qwen2.5-72B-Instruct` under on-the-fly 4-bit nf4 (double-quant, bf16 compute)** —
+  ~40 G on 1×A100-80G, zero env mutation, zero sibling risk. Cost: the bf16 checkpoint (~145 G)
+  is downloaded instead of the 41 G AWQ; deleted after the run. Text-only, greedy, same judge
+  script (`--quant bnb4`).
+
+### P2c leaderboard
+
+_(appended after C6/C7 run)_
+
+### P2c verdict
+
+_(promote-and-test if a config clears the bar; else definitive scale-ladder kill)_

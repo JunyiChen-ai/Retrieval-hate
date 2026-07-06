@@ -2,12 +2,13 @@
 #SBATCH --partition=slurmpartition
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=96G
+#SBATCH --mem=64G
 #SBATCH --job-name=p2b_judge
 #SBATCH --output=/data/jehc223/RGCL/slurm/logs/%x_%j.out
 # NOTE: intentionally NO --time limit (job auto-releases from JobHeldUser).
-# P2b configurable comparability judge over a pairs file (TRAIN benchmark or TEST pairs).
-#   CONFIG in {C0,C1,C2,C3,C4,C5}; SET in {train,test}; both languages inside.
+# P2b/P2c configurable comparability judge over a pairs file (TRAIN benchmark or TEST pairs).
+#   CONFIG in {C0..C5 (7B/32B), C6/C7 (72B bnb-4bit, P2c)}; SET in {train,test}; both langs.
+#   --mem=64G so two 72B jobs co-run under the 128G user cap (bnb4 low_cpu_mem load).
 #   train: CONFIG=C1 SET=train sbatch scripts/slurm/p2b_judge.sbatch
 #   test : CONFIG=C3 SET=test  sbatch scripts/slurm/p2b_judge.sbatch
 set -euo pipefail
@@ -29,8 +30,11 @@ case "$CONFIG" in
   C3) MODEL="Qwen/Qwen2.5-VL-7B-Instruct"; MT=vl;     EV=archive_transcript; PR=flip ;;
   C4) MODEL="Qwen/Qwen2.5-32B-Instruct";   MT=causal; EV=archive_transcript; PR=flip ;;
   C5) MODEL="Qwen/Qwen2.5-32B-Instruct";   MT=causal; EV=archive_transcript; PR=orig ;;
+  C6) MODEL="Qwen/Qwen2.5-72B-Instruct";   MT=causal; EV=archive_transcript; PR=flip; QUANT=bnb4 ;;
+  C7) MODEL="Qwen/Qwen2.5-72B-Instruct";   MT=causal; EV=archive_transcript; PR=orig; QUANT=bnb4 ;;
   *) echo "unknown CONFIG=$CONFIG"; exit 1 ;;
 esac
+QUANT=${QUANT:-none}
 
 echo "[p2b_judge] CONFIG=$CONFIG SET=$SET MODEL=$MODEL EV=$EV PR=$PR"
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
@@ -47,6 +51,6 @@ for DS in MHC MHC_zh; do
   python scripts/analysis/judge_neighbor_compat_p2b.py \
     --dataset "$DS" --pairs_file "$PAIRS" --out_file "$OUTF" \
     --model "$MODEL" --model_type "$MT" --evidence "$EV" --prompt "$PR" \
-    --limit "$LIMIT"
+    --quant "$QUANT" --limit "$LIMIT"
 done
 echo "[p2b_judge] done CONFIG=$CONFIG SET=$SET"

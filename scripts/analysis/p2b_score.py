@@ -19,7 +19,8 @@ OUT = os.path.join(ROOT, "scripts/analysis/p2_out")
 CONFIG_DESC = {
     "C0": "7B · archive · orig (P2 ref)", "C1": "7B · archive · flip",
     "C2": "7B · archive+transcript · orig", "C3": "7B · archive+transcript · flip",
-    "C4": "32B · archive+transcript · flip", "C5": "32B · archive+transcript · orig"}
+    "C4": "32B · archive+transcript · flip", "C5": "32B · archive+transcript · orig",
+    "C6": "72B(bnb4) · archive+transcript · flip", "C7": "72B(bnb4) · archive+transcript · orig"}
 
 
 def score_file(path):

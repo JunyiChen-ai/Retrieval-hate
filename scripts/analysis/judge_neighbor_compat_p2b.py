@@ -180,12 +180,21 @@ class VLBackend:
 
 
 class CausalBackend:
-    def __init__(self, model_id):
+    def __init__(self, model_id, quant="none"):
         from transformers import AutoTokenizer, AutoModelForCausalLM
         self.tok = AutoTokenizer.from_pretrained(model_id)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_id, torch_dtype=torch.bfloat16, attn_implementation="sdpa",
-            device_map="auto")
+        kw = dict(torch_dtype=torch.bfloat16, attn_implementation="sdpa",
+                  device_map="auto")
+        if quant == "bnb4":
+            # 4-bit nf4 load (bitsandbytes) — loads a bf16 checkpoint under the
+            # INSTALLED stack (no autoawq/auto_gptq), fits 72B on 1xA100-80G.
+            from transformers import BitsAndBytesConfig
+            kw["quantization_config"] = BitsAndBytesConfig(
+                load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_use_double_quant=True)
+            kw.pop("torch_dtype", None)
+        self.model = AutoModelForCausalLM.from_pretrained(model_id, **kw)
         self.model.eval()
 
     @torch.no_grad()
@@ -210,6 +219,8 @@ def main():
     ap.add_argument("--evidence", default="archive",
                     choices=["archive", "archive_transcript"])
     ap.add_argument("--prompt", default="orig", choices=["orig", "flip"])
+    ap.add_argument("--quant", default="none", choices=["none", "bnb4"],
+                    help="bnb4 = 4-bit nf4 (bitsandbytes) for the 72B causal tier")
     ap.add_argument("--max_new_tokens", type=int, default=96)
     ap.add_argument("--limit", type=int, default=0)
     args = ap.parse_args()
@@ -219,7 +230,8 @@ def main():
         mt = "vl" if "VL" in args.model else "causal"
     print("[judge_p2b] model={} type={} evidence={} prompt={}".format(
         args.model, mt, args.evidence, args.prompt), flush=True)
-    backend = VLBackend(args.model) if mt == "vl" else CausalBackend(args.model)
+    backend = (VLBackend(args.model) if mt == "vl"
+               else CausalBackend(args.model, quant=args.quant))
 
     recs = load_v2_records(args.dataset)
     texts = load_texts(args.dataset)
