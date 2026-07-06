@@ -1,0 +1,132 @@
+{
+ "board": {
+  "C0": {
+   "MHC": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.7253333333333334,
+    "correct_drop": 0.7253333333333334,
+    "wrong_drop": 0.7253333333333334,
+    "lift": 0.0,
+    "verdicts": {
+     "INCOMPARABLE": 1088,
+     "COMPARABLE": 412
+    },
+    "fallback": 0
+   },
+   "MHC_zh": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.582,
+    "correct_drop": 0.6093333333333333,
+    "wrong_drop": 0.5546666666666666,
+    "lift": -0.05466666666666664,
+    "verdicts": {
+     "COMPARABLE": 626,
+     "INCOMPARABLE": 873,
+     "UNSURE": 1
+    },
+    "fallback": 1
+   }
+  },
+  "C1": {
+   "MHC": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.5813333333333334,
+    "correct_drop": 0.568,
+    "wrong_drop": 0.5946666666666667,
+    "lift": 0.026666666666666727,
+    "verdicts": {
+     "INCOMPARABLE": 872,
+     "COMPARABLE": 628
+    },
+    "fallback": 0
+   },
+   "MHC_zh": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.4533333333333333,
+    "correct_drop": 0.4693333333333333,
+    "wrong_drop": 0.43733333333333335,
+    "lift": -0.03199999999999997,
+    "verdicts": {
+     "COMPARABLE": 820,
+     "INCOMPARABLE": 680
+    },
+    "fallback": 0
+   }
+  },
+  "C2": {
+   "MHC": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.7353333333333333,
+    "correct_drop": 0.7333333333333333,
+    "wrong_drop": 0.7373333333333333,
+    "lift": 0.0040000000000000036,
+    "verdicts": {
+     "COMPARABLE": 397,
+     "INCOMPARABLE": 1103
+    },
+    "fallback": 1
+   },
+   "MHC_zh": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.576,
+    "correct_drop": 0.6093333333333333,
+    "wrong_drop": 0.5426666666666666,
+    "lift": -0.06666666666666665,
+    "verdicts": {
+     "INCOMPARABLE": 864,
+     "COMPARABLE": 636
+    },
+    "fallback": 3
+   }
+  },
+  "C3": {
+   "MHC": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.6006666666666667,
+    "correct_drop": 0.5906666666666667,
+    "wrong_drop": 0.6106666666666667,
+    "lift": 0.020000000000000018,
+    "verdicts": {
+     "COMPARABLE": 599,
+     "INCOMPARABLE": 901
+    },
+    "fallback": 1
+   },
+   "MHC_zh": {
+    "n": 1500,
+    "n_correct": 750,
+    "n_wrong": 750,
+    "drop_rate": 0.3993333333333333,
+    "correct_drop": 0.43333333333333335,
+    "wrong_drop": 0.36533333333333334,
+    "lift": -0.068,
+    "verdicts": {
+     "COMPARABLE": 901,
+     "INCOMPARABLE": 599
+    },
+    "fallback": 1
+   }
+  }
+ },
+ "promote": {
+  "C0": false,
+  "C1": false,
+  "C2": false,
+  "C3": false
+ },
+ "winner": null
+}

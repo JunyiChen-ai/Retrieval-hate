@@ -1,0 +1,26 @@
+{
+ "MHC": {
+  "dataset": "MHC",
+  "seed": 0,
+  "n_train": 549,
+  "n_gated": 137,
+  "gate_thr": 0.30603063305219014,
+  "pairs_correct": 1485,
+  "pairs_wrong": 1255,
+  "subsample": 1500,
+  "sub_correct": 750,
+  "sub_wrong": 750
+ },
+ "MHC_zh": {
+  "dataset": "MHC_zh",
+  "seed": 0,
+  "n_train": 579,
+  "n_gated": 145,
+  "gate_thr": 0.428587258713586,
+  "pairs_correct": 1592,
+  "pairs_wrong": 1308,
+  "subsample": 1500,
+  "sub_correct": 750,
+  "sub_wrong": 750
+ }
+}

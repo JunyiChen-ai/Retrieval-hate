@@ -276,7 +276,9 @@ def cmd_revote(args):
     out = {}
     for ds in dss:
         verdicts = {}
-        vp = os.path.join(args.cache_dir, "verdicts_{}.jsonl".format(ds))
+        tag = getattr(args, "verdicts_tag", "") or ""
+        fname = "verdicts_{}{}.jsonl".format(ds, ("_" + tag) if tag else "")
+        vp = os.path.join(args.cache_dir, fname)
         n_fb = 0
         vcount = Counter()
         if os.path.exists(vp):
@@ -511,6 +513,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", required=True, choices=["collect", "revote"])
     ap.add_argument("--datasets", default="MHC,MHC_zh")
+    ap.add_argument("--verdicts_tag", default="",
+                    help="revote: read verdicts_<ds>_<tag>.jsonl (P2b promoted config)")
     ap.add_argument("--cache_dir",
                     default=os.path.join(ROOT, "scripts/analysis/p2_out"))
     ap.add_argument("--out_json",
