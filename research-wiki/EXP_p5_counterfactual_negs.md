@@ -70,17 +70,78 @@ epoch), macro-F1 and accuracy, paired per-seed deltas. Known floors (val-sel): E
 
 ---
 
-## QUALITY-GATE RESULTS
+## QUALITY-GATE RESULTS — BOTH DATASETS GATE-CLOSED (flip criterion fails)
 
-_(filled after the generation job; JSON `scripts/analysis/p5_out/quality_gate.json`)_
+Generation job **12377** COMPLETED (24 min, 348 anchors). JSON:
+`scripts/analysis/p5_out/quality_gate.json`.
 
-<!-- GATE_PLACEHOLDER -->
+| dataset | anchors | orig HARMFUL | verified flips | **cond. flip rate** (≥0.80?) | retention | near-miss frac (hardness) | twin_sim vs median-benign |
+|---|---|---|---|---|---|---|---|
+| MHC (EN) | 168 | 149 | 75 | **0.503 — FAIL** | 0.446 | 0.987 PASS | 0.732 vs 0.296 |
+| MHC_zh | 180 | 169 | 57 | **0.337 — FAIL** | 0.317 | 0.614 PASS | 0.795 vs 0.793 |
 
-## RESULTS
+- **(a) Self-verdict flip FAILS on both** (0.503 / 0.337 ≪ 0.80). The SAME MLLM still judges
+  ~half (EN) / two-thirds (ZH) of its OWN sanitized rewrites HARMFUL, even after one
+  regeneration — i.e. it cannot reliably manufacture a clean counterfactual. Those
+  non-flipping rewrites are DROPPED, leaving only 75 (EN) / 57 (ZH) verified-clean twins.
+- **(b) Hardness PASSES.** The verified twins are genuine near misses: EN twin↔anchor cosine
+  0.732 vs median-benign 0.296 (98.7% are nearer than the median benign); ZH 0.795 vs 0.793
+  (61.4% — barely, because ZH benign transcripts already crowd the anchor in CLIP-text space).
+- **Gate decision (pre-registered): CLOSED for both datasets** (a fails). Per success
+  criterion (2) the method as specified is not viable — its premise (the MLLM makes clean
+  boundary counterfactuals) holds only ~50%/34% of the time.
 
-_(filled after training; JSON `scripts/analysis/p5_out/p5_results.json`)_
+**Diagnostic training (transparently gate-failed):** because the KEPT twins (verified flips)
+are clean and hard, we still run floor/cf/cfrand on the verified-flip subset (the cache masks
+to flipped=True) to answer the complementary question — *does the clean subset help despite
+partial coverage (twin on only 45%/32% of positives)?* This is reported as a diagnostic, NOT
+as a gate pass.
 
-<!-- RESULTS_PLACEHOLDER -->
+## RESULTS (gate-failed DIAGNOSTIC — not a gate pass)
+
+Training job **12392** COMPLETED (18 runs = floor/cf/cfrand × 3 seeds × 2 ds, 30 ep). The cf
+runs verified they loaded the twin bank (EN 75 / ZH 57 valid flipped twins). JSON:
+`scripts/analysis/p5_out/p5_results.json`.
+
+- **Bit-for-bit PASS (both):** floor seed0 val-sel = MHC 0.7826/0.7113, MHC_zh 0.8054/0.7706,
+  exact. The `--cf_negs False` no-op holds.
+
+Floor vs cf (ours) and cfrand (random-pairing control), macro-F1, 3 seeds paired:
+| dataset | protocol | floor | cf | Δ cf (per-seed) | cfrand | Δ cfrand |
+|---|---|---|---|---|---|---|
+| MHC (EN) | val-selected | 0.6715 | 0.6080 | **−0.0635** [−.105, +.058, −.144] | 0.5984 | −0.0731 |
+| MHC (EN) | final-epoch | 0.7202 | 0.6931 | **−0.0271** [−.020, −.032, −.030] (0/3+) | 0.6730 | −0.0473 |
+| MHC_zh | val-selected | 0.7676 | 0.7167 | **−0.0509** [−.016, +.013, −.150] | 0.7237 | −0.0439 |
+| MHC_zh | final-epoch | 0.7720 | 0.7733 | **+0.0013** [−.007, +.010, .000] | 0.7746 | +0.0025 |
+
+### What happened
+- **The counterfactual twin as a hard negative HURTS EN and is flat on ZH.** On EN it is
+  net-negative under BOTH protocols (final −0.027 with 0/3 seeds positive; val-sel −0.064);
+  on ZH it is flat (final +0.0013). No dataset comes near the pre-registered +0.01 bar.
+- **The per-anchor pairing does not matter.** cfrand (random OTHER twin) is about the same as
+  cf — also hurting EN and flat on ZH. So the specific counterfactual pairing gives no benefit
+  over merely adding a random benign-text negative on the anchor's visuals.
+- **Mechanism (why it hurts EN):** the twin shares the anchor's REAL visuals and differs only
+  in (sanitized) text, so it sits extremely close to the anchor in the align-fusion space
+  (cosine 0.73). Repelling the anchor from a point that carries its own visual signal fights
+  that signal and destabilises the positive cluster; with a twin on only ~45% of EN positives
+  the pressure is also asymmetric. Net: harmful. On ZH the twins are barely near-misses (0.795
+  vs 0.793) and fewer (57), so the effect washes out to flat.
+
+### Verdict (plain language)
+**MLLM counterfactual hard-negative twins do NOT earn the MLLM a method role.** Two independent
+failures, both trustworthy (bit-for-bit floor holds):
+1. **Primary — quality gate CLOSED:** the MLLM cannot reliably manufacture the clean boundary
+   counterfactual the method needs — its self-verdict flip rate is only 0.503 (EN) / 0.337 (ZH),
+   far below 0.80, so half (EN) / two-thirds (ZH) of "sanitized" rewrites are still judged
+   harmful. The method's premise does not hold.
+2. **Diagnostic — even the clean subset does not help:** trained on the verified-clean, verified-
+   hard twins, the extra negative HURTS EN (−0.027 final) and is flat on ZH, and does not beat a
+   random-pairing control. The mechanism itself (repel the anchor from a visually-identical
+   text-sanitized twin) is counterproductive in this fused space.
+
+Hardness alone (the one gate that passed) is not enough: a negative that is *too* close because
+it shares the anchor's visuals is a distractor, not a useful boundary. Honest kill.
 
 ### Jobs / artifacts / repro
 - Generation: `scripts/analysis/p5_generate_twins.py` + `scripts/slurm/p5_generate_twins.sbatch`.

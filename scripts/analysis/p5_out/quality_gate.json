@@ -1,0 +1,38 @@
+{
+  "MHC": {
+    "n_anchors": 168,
+    "n_orig_harmful": 149,
+    "n_verified_flips": 75,
+    "n_regen": 95,
+    "conditional_flip_rate": 0.5034,
+    "overall_retention": 0.4464,
+    "hardness_n_eval": 75,
+    "near_miss_fraction": 0.9867,
+    "twin_sim_mean": 0.7318,
+    "twin_sim_median": 0.7492,
+    "median_benign_sim_mean": 0.2964,
+    "gate": {
+      "flip_pass": false,
+      "hardness_pass": true,
+      "open": false
+    }
+  },
+  "MHC_zh": {
+    "n_anchors": 180,
+    "n_orig_harmful": 169,
+    "n_verified_flips": 57,
+    "n_regen": 125,
+    "conditional_flip_rate": 0.3373,
+    "overall_retention": 0.3167,
+    "hardness_n_eval": 57,
+    "near_miss_fraction": 0.614,
+    "twin_sim_mean": 0.7951,
+    "twin_sim_median": 0.8305,
+    "median_benign_sim_mean": 0.7926,
+    "gate": {
+      "flip_pass": false,
+      "hardness_pass": true,
+      "open": false
+    }
+  }
+}
