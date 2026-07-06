@@ -135,18 +135,57 @@ that is an honest kill and is reported as the verdict. No cross-seed ensembles; 
 
 ---
 
-## 1. Sanity results
+## 1. Sanity results — PASS
 
-(pending — filled by `scripts/analysis/p3_probe.py --sanity` on the built caches)
+- **Equal-weights == mean pooling, bit-for-bit.** `build_pool_cache.py` asserts
+  `torch.equal(uniform-weighted-sum, sub-clip mean)` on every dataset/split it writes;
+  the p3pool_mean cache reports `|Δmean|max = 0.0000` on MHC and MHC_zh train.
+- **Text/labels/ids untouched.** All three pool caches (mean/wsoftT1/wmild) share
+  `torch.equal` text_feats, equal labels, identical id order (asserted at build).
+- Builder+probe validated end-to-end on a scratch copy with synthetic scores before any GPU run.
 
-## 2. Probe results
+## 2. Probe results (TRAIN split, no trained head)
 
-(pending — filled per dataset after scoring)
+Scoring jobs: MHC 12355 (549/549), MHC_zh 12356 (579/579), both COMPLETED, parse-fail 0%.
+Real score distributions are **sparse**: MHC frac(score≥2)=0.108, per-video var 0.617;
+MHC_zh frac≥2=0.026, var 0.183 (ZH evidence is visual/ASR-poor, as W2 found).
+
+### 2.1 Score-concentration check — the MLLM signal is REAL (both datasets)
+
+The MLLM scores separate true-Hateful from benign train videos in the correct direction:
+
+| dataset | within-video score VAR (hate/benign) | MAX score (hate/benign) | mean seg score (hate/benign) | frac≥2 (hate/benign) |
+|---|---|---|---|---|
+| MHC-EN | **1.110 / 0.400** (Δ+0.711) | 1.464 / 0.533 | 0.613 / 0.191 | 0.207 / 0.065 |
+| MHC_zh | 0.325 / 0.119 (Δ+0.206) | 0.417 / 0.155 | 0.153 / 0.043 | 0.051 / 0.014 |
+
+The evidence-density signal is strong on EN, weak (but correct-signed) on ZH. So the
+*mechanism* — "hateful videos have localized high-evidence segments" — holds, most on EN.
+
+### 2.2 PRIMARY gate (concat [l2n(img)|l2n(text)] LOO kNN acc @k=20, weighted-soft vs mean)
+
+| dataset | mean | weighted (soft) | Δ | GATE | img-only Δ (diagnostic) |
+|---|---|---|---|---|---|
+| **MHC-EN** | 0.7450 | 0.7395 | **−0.0055** | **FAIL** | +0.0073 |
+| **MHC_zh** | 0.7478 | 0.7496 | **+0.0017** | **PASS** | +0.0104 |
+
+Both deltas are **within the LOO noise band** (±0.005–0.012 across k; EN was +0.009/+0.007 at
+k=5/10 and only negative at the pre-registered k=20). Per pre-registration the decision is taken
+at the fixed gate point (k=20, matching `--topk 20`), no k-shopping:
+
+- **EN → probe KILL (arm CLOSED).** The direct attack on the diagnosed EN root cause does not
+  clear even the no-head probe: reweighting the pooled visual embedding toward high-evidence
+  segments does not improve (and slightly hurts) the fused video retrieval. The score *mechanism*
+  is real (§2.1), but the *pooling intervention* is within-noise-negative at the gate.
+- **ZH → gate PASS (arm OPEN).** Razor-thin (+0.0017 concat, +0.0104 img-only); proceed to
+  training to get the real (val-selected + final-epoch, 3-seed) verdict.
+
+- **HateMM:** ASR (job 12357) still generating (train 486/744); score + probe pending its ASR.
 
 ## 3. Training results
 
-(pending — gated on §2)
+Only ZH arm opened by the probe. (pending — ZH dev/test ASR → scoring → build caches → 3 seeds.)
 
 ## 4. Verdict
 
-(pending)
+(pending training; interim: EN — the target front — is a probe kill; ZH marginal-pass under test.)
