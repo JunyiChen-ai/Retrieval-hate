@@ -158,33 +158,54 @@ The MLLM scores separate true-Hateful from benign train videos in the correct di
 |---|---|---|---|---|
 | MHC-EN | **1.110 / 0.400** (Δ+0.711) | 1.464 / 0.533 | 0.613 / 0.191 | 0.207 / 0.065 |
 | MHC_zh | 0.325 / 0.119 (Δ+0.206) | 0.417 / 0.155 | 0.153 / 0.043 | 0.051 / 0.014 |
+| HateMM | **1.277 / 0.710** (Δ+0.567) | **2.826 / 1.004** | **2.116 / 0.493** | **0.706 / 0.165** |
 
-The evidence-density signal is strong on EN, weak (but correct-signed) on ZH. So the
-*mechanism* — "hateful videos have localized high-evidence segments" — holds, most on EN.
+The evidence-density signal is strong on EN, **densest on HateMM** (explicit hate-speech dataset),
+weak (but correct-signed) on ZH. So the *mechanism* — "hateful videos have localized high-evidence
+segments" — holds on all three, most on HateMM/EN.
 
 ### 2.2 PRIMARY gate (concat [l2n(img)|l2n(text)] LOO kNN acc @k=20, weighted-soft vs mean)
 
-| dataset | mean | weighted (soft) | Δ | GATE | img-only Δ (diagnostic) |
-|---|---|---|---|---|---|
-| **MHC-EN** | 0.7450 | 0.7395 | **−0.0055** | **FAIL** | +0.0073 |
-| **MHC_zh** | 0.7478 | 0.7496 | **+0.0017** | **PASS** | +0.0104 |
+| dataset | mean | weighted (soft) | Δ @k20 | Δ across k=1/5/10 | GATE | img-only Δ@k20 |
+|---|---|---|---|---|---|---|
+| **MHC-EN** | 0.7450 | 0.7395 | **−0.0055** | +0.002/+0.009/+0.007 | **FAIL** | +0.0073 |
+| **MHC_zh** | 0.7478 | 0.7496 | **+0.0017** | −0.002/−0.012/+0.010 | **PASS** (thin) | +0.0104 |
+| **HateMM** | 0.7742 | 0.7849 | **+0.0108** | +0.024/+0.016/+0.011 | **PASS** (k-consistent) | +0.0054 |
 
-Both deltas are **within the LOO noise band** (±0.005–0.012 across k; EN was +0.009/+0.007 at
-k=5/10 and only negative at the pre-registered k=20). Per pre-registration the decision is taken
-at the fixed gate point (k=20, matching `--topk 20`), no k-shopping:
+Decision at the fixed gate point (k=20, matching `--topk 20`), no k-shopping:
 
-- **EN → probe KILL (arm CLOSED).** The direct attack on the diagnosed EN root cause does not
-  clear even the no-head probe: reweighting the pooled visual embedding toward high-evidence
-  segments does not improve (and slightly hurts) the fused video retrieval. The score *mechanism*
-  is real (§2.1), but the *pooling intervention* is within-noise-negative at the gate.
-- **ZH → gate PASS (arm OPEN).** Razor-thin (+0.0017 concat, +0.0104 img-only); proceed to
-  training to get the real (val-selected + final-epoch, 3-seed) verdict.
-
-- **HateMM:** ASR (job 12357) still generating (train 486/744); score + probe pending its ASR.
+- **EN → probe KILL (arm CLOSED).** Within-noise-negative; the direct attack on the diagnosed EN
+  root cause does not clear even the no-head probe. Mechanism real (§2.1), intervention doesn't
+  translate. See §4.
+- **ZH → gate PASS but razor-thin & within-noise** (+0.0017 concat; sign flips across k). Trained;
+  result §3.1 = no claim.
+- **HateMM → gate PASS, and unlike EN/ZH it is POSITIVE AT EVERY k** (+0.024→+0.011), so this is a
+  genuine probe signal not a coin-flip. Arm OPEN; training in progress (§3.2).
 
 ## 3. Training results
 
-Only ZH arm opened by the probe. (pending — ZH dev/test ASR → scoring → build caches → 3 seeds.)
+### 3.1 MHC_zh (probe passed thin) — WITHIN-NOISE, NO CLAIM
+
+Floor (16-frame mean-of-subclips) reproduces the published ZH numbers (val-sel acc 0.8009 / F1
+0.7575 vs published 0.8054 / 0.7706), validating the floor. Test macro-F1 / acc, seeds 0/1/2:
+
+| lens | pool | seed0 | seed1 | seed2 | 3-seed F1 | paired ΔF1 vs floor |
+|---|---|---|---|---|---|---|
+| val-sel | floor | .7669/.7987 | .7513/.7987 | .7542/.8054 | 0.7575±0.0068 | — |
+| val-sel | **wsoftT1** | .7016/.7584 | .7641/.7987 | .7845/.8255 | 0.7501±0.0353 | **−0.0074±0.0416** (2/3+; seed0 −0.065) |
+| val-sel | wmild | .7357/.7785 | .7308/.7852 | .7742/.8121 | 0.7469±0.0194 | −0.0106 (1/3+) |
+| final-ep | floor | .7669/.7987 | .7513/.7987 | .7542/.8054 | 0.7575±0.0068 | — |
+| final-ep | **wsoftT1** | .7742/.8121 | .7372/.7919 | .7875/.8255 | 0.7663±0.0213 | **+0.0088±0.0194** (2/3+) |
+| final-ep | wmild | .7453/.7852 | .7308/.7852 | .7711/.8188 | 0.7491±0.0167 | −0.0084 (1/3+) |
+
+Scorecard (≥2/3 seeds + AND mean ΔF1 > 1pt, BOTH protocols): val-selected ΔF1 −0.0074 → FAIL;
+final-epoch ΔF1 +0.0088 (2/3+) but < 1pt → FAIL. **ZH verdict: within-noise, no claim.** wsoftT1
+has a small positive final-epoch trend (+0.009 F1/acc) but it is under the noise floor and negative
+under val-selection — exactly what the razor-thin probe pass predicted.
+
+### 3.2 HateMM (probe passed, k-consistent) — pending
+
+dev/test ASR (job 12393) → dev/test scoring → all-split caches → 3-seed floor/wsoftT1/wmild.
 
 ## 4. Verdict
 

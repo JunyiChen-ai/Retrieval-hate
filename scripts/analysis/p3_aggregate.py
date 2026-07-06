@@ -15,20 +15,34 @@ import re
 
 import numpy as np
 
-RR = re.compile(r"^RESULT_ROW\t(\d+)\t([\d.]+)\t([\d.]+)\t([\d.]+)")
-RRF = re.compile(r"^RESULT_ROW_FINAL\t(\d+)\t([\d.]+)\t([\d.]+)\t([\d.]+)")
+VRE = re.compile(r"Val_Retrieval Epoch\s+(\d+) macroF1: ([\d.]+) macroP: ([\d.]+) macroR: ([\d.]+) acc: ([\d.]+) roc: ([\d.]+)")
+TRE = re.compile(r"Test_Retrieval Epoch\s+(\d+) macroF1: ([\d.]+) macroP: ([\d.]+) macroR: ([\d.]+) acc: ([\d.]+) roc: ([\d.]+)")
+WARMUP = 5
 
 
 def parse_log(path):
-    val = fin = None
+    """Parse the raw per-epoch Val/Test macro lines and reproduce the two
+    pre-registered lenses: val-selected (warmup>=5, by val acc then roc) and
+    final-epoch. Returns (val, fin) each = (test_macroF1, test_acc, test_roc)."""
+    val_by_e, test_by_e = {}, {}
     with open(path) as f:
         for line in f:
-            m = RR.match(line)
+            m = VRE.search(line)
             if m:
-                val = (float(m.group(2)), float(m.group(3)), float(m.group(4)))  # f1,acc,roc
-            m = RRF.match(line)
+                e = int(m.group(1))
+                val_by_e[e] = (float(m.group(2)), float(m.group(5)), float(m.group(6)))  # f1,acc,roc
+            m = TRE.search(line)
             if m:
-                fin = (float(m.group(2)), float(m.group(3)), float(m.group(4)))
+                e = int(m.group(1))
+                test_by_e[e] = (float(m.group(2)), float(m.group(5)), float(m.group(6)))
+    if not val_by_e or not test_by_e:
+        return None, None
+    warm = [e for e in val_by_e if e >= WARMUP]
+    cand = warm or list(val_by_e.keys())
+    best = max(cand, key=lambda e: (val_by_e[e][1], val_by_e[e][2]))  # val acc, roc
+    fe = max(val_by_e.keys())
+    val = test_by_e.get(best)
+    fin = test_by_e.get(fe)
     return val, fin
 
 
