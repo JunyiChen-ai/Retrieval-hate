@@ -188,4 +188,30 @@ Only ZH arm opened by the probe. (pending — ZH dev/test ASR → scoring → bu
 
 ## 4. Verdict
 
-(pending training; interim: EN — the target front — is a probe kill; ZH marginal-pass under test.)
+**Interim (EN settled; ZH in training; HateMM pending):**
+
+- **EN (the target front) = probe KILL.** The direct attack on the diagnosed EN root cause does
+  not clear even the no-head probe. Decisive framing: **the evidence-density SIGNAL is real, but
+  the pooling INTERVENTION does not translate.** The MLLM strongly localizes hate evidence on EN
+  (hateful vs benign within-video score VAR **1.11 vs 0.40**, mean seg score 0.61 vs 0.19), yet
+  reweighting the pooled visual embedding toward those segments is within-noise-**negative** at the
+  pre-registered gate (concat LOO acc −0.0055 @k=20). So diluted-mean-pooling is *not* the operative
+  bottleneck for EN retrieval — the localized visual/frame signal, once concentrated, does not
+  separate hateful from benign better than the mean in the frozen CLIP space (and img-only, where it
+  does help +0.007, is swamped once fused with the unchanged text stream). EN stays closed per
+  pre-registration; no EN training (confirmed with team-lead — do not train coin-flips).
+
+- **Reusable asset (independent of P3's own outcome):** the per-K=4-window MLLM hate-evidence
+  scores in `data/MLLM_scores/<DS>/<split>_segscoreK4_qwen.jsonl` are a **calibrated, localized,
+  label-free segment-level evidence signal**. Their strong hateful/benign concentration on EN makes
+  them the natural input for **temporal localization** evaluation — cross-ref
+  `research-wiki/EVAL_localization_hateclipseg.md` and `EVAL_localization_hatemm.md`: the same score
+  vector that failed to help *pooling* is exactly a per-segment saliency map for *where* the hate is.
+  That is a better home for this signal than input-embedding reweighting.
+
+- **ZH / HateMM:** training/probe pending; verdict updated in §3 as results land. Expectation given
+  the razor-thin ZH probe pass (+0.0017) is within-noise at training too, but it is the one arm the
+  pre-registered gate opened, so we run it for the real (both-protocol, 3-seed) number.
+
+**Does MLLM evidence-density pooling earn a method role?** On EN — **no** (probe kill; mechanism
+real, intervention within-noise). Final cross-dataset verdict after ZH/HateMM.
