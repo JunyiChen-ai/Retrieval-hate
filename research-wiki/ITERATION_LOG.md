@@ -1241,6 +1241,10 @@ K=30 密度匹配负结果;换记忆零重训改变行为模式(可换记忆支�
 
 - 收卷后新增六路独立攻关,验证"MLLM 能否挣得可消融方法角色":P1 零标注先验重校准 /
   P2 7B 邻居重排 / P2b 强判据 train 端校准 / P3 证据密度池化(EN·ZH·HateMM)/ P4 schema 蒸馏 /
-  P5 反事实孪生负样本。七个已结前沿全为诚实 kill 或 within-noise(均带复现 / bit-for-bit /
-  probe 护栏);统一失败形状=**语义能力与决策变量正交或冗余**。记分板 `CAMPAIGN_mllm_method_role.md`;
-  P3-HateMM 训练 + P6 定位仍在途。未触 §4 定位/三件套(待用户确认)。
+  P5 反事实孪生负样本。所有方法角色前沿(P1/P2/P2b/P3-EN/ZH/HateMM/P4/P5)全为诚实 kill 或
+  within-noise(均带复现 / bit-for-bit / probe 护栏);统一失败形状=**语义能力与决策变量正交或冗余**。
+  记分板 `CAMPAIGN_mllm_method_role.md`。**P3 三臂全部收口(2026-07-07)**:EN probe-kill;ZH/HateMM
+  探针过闸(HateMM 是三者中唯一 k-一致 +0.0108)但训练双口径均 within-noise(<1pt)——证据密度池化
+  在任何数据集都未挣得方法角色;决定性教训=**过闸的 no-head 探针不保证训练增益**(习得 align 融合头
+  吸收了输入端重加权)。唯一存活价值:每段 MLLM 证据分是可复用的**定位**信号(P6 已消费,定位主 bar 达成)。
+  §4 定位/三件套沿用 P6 结论。
