@@ -390,6 +390,23 @@ def parse_args():
         "--aux_archive_version", type=str, default="v2",
         help="Archive version for the P4 aux targets (train split only).")
 
+    # <----------------- P5: counterfactual hard-negative twin Configs ----------------->
+    arg_parser.add_argument(
+        "--cf_negs", type=lambda x: (str(x).lower() == "true"), default=False,
+        help="Add the MLLM sanitized-counterfactual twin of each TRAIN positive video as "
+             "ONE extra per-anchor hard negative in the contrastive loss (weight 1.0, no "
+             "new hyperparam). False == OFF, exact no-op (bit-for-bit baseline).")
+    arg_parser.add_argument(
+        "--cf_negs_random", type=lambda x: (str(x).lower() == "true"), default=False,
+        help="Control: give each anchor a RANDOMLY chosen OTHER anchor's sanitized twin "
+             "text as the extra negative (tests whether the per-anchor pairing matters). "
+             "Only meaningful with --cf_negs True.")
+    arg_parser.add_argument(
+        "--cf_twin_cache", type=str, default="auto",
+        help="Path to the twin text cache .pt (p5_generate_twins.py), or 'auto' -> "
+             "<path>/CLIP_Embedding/<dataset>/train_cftwin_<model>.pt. Only loaded when "
+             "--cf_negs True.")
+
     # <----------------- Consensus / selfscore (EM) Configs ----------------->
     arg_parser.add_argument(
         "--consensus_topk", type=int, default=10,
@@ -481,6 +498,7 @@ def model_pass(
     segment_cache=None,
     archive_bank=None,
     aux_pack=None,
+    cf_pack=None,
 ):
     # P4: the aux linear heads are optimised jointly with the model. When aux_pack
     # is None (lambda_aux == 0) the optimizer is built over model.parameters() only,
@@ -543,6 +561,7 @@ def model_pass(
                 train_labels=train_labels,
                 segment_cache=segment_cache,
                 aux_pack=aux_pack,
+                cf_pack=cf_pack,
             )
             """if args.sparse_dictionary is None and (args.no_hard_negatives != 0 and args.no_pseudo_gold_positives != 0):
                 # Only for dense retrieval
@@ -804,6 +823,9 @@ def main(args):
     # P4: distinguish aux runs from the lambda_aux=0 floor within the same group.
     if float(getattr(args, "lambda_aux", 0.0)) > 0:
         exp_name += "_p4aux-l{}".format(args.lambda_aux)
+    # P5: distinguish cf-negative runs from the floor within the same group.
+    if getattr(args, "cf_negs", False):
+        exp_name += "_p5cf{}".format("rand" if getattr(args, "cf_negs_random", False) else "")
     # Construct output path
     args.output_path = os.path.join(
         args.output_path, "Retrieval", args.dataset, args.group_name, exp_name, "")
@@ -1067,6 +1089,54 @@ def main(args):
         print("[p4aux] valid train targets per field: {} / {}".format(
             {f: int(valids[f].sum().item()) for f in fields}, len(train_ids)))
 
+    # <----------------- P5: counterfactual twin negative bank ----------------->
+    # Inert when --cf_negs False (no cache load) -> byte-identical baseline. No new params
+    # (the twin reuses the SAME head), so the optimizer/model init are untouched; only the
+    # per-step loss gets one extra negative. Loading the cache draws no torch RNG.
+    cf_pack = None
+    if getattr(args, "cf_negs", False):
+        if args.cf_twin_cache == "auto":
+            cf_path = os.path.join(
+                args.path, "CLIP_Embedding", args.dataset,
+                "train_cftwin_{}.pt".format(args.model))
+        else:
+            cf_path = args.cf_twin_cache
+        tw = torch.load(cf_path, map_location="cpu")
+        tw_ids = [i for sub in tw["ids"] for i in sub]
+        twin_text = tw["text_feats"].float()
+        flipped = tw["flipped"].bool()
+        assert twin_text.shape[1] == text_feat_dim, \
+            "twin text dim {} != model text dim {}".format(
+                twin_text.shape[1], text_feat_dim)
+        if getattr(args, "cf_negs_random", False):
+            # each valid anchor gets ANOTHER valid anchor's twin text (seeded derangement)
+            valid_rows = [r for r in range(len(tw_ids)) if bool(flipped[r])]
+            assert len(valid_rows) >= 2, \
+                "cf_negs_random needs >=2 verified twins to derange"
+            rng = np.random.default_rng(args.seed)
+            perm = list(valid_rows)
+            deranged = False
+            for _ in range(20):
+                rng.shuffle(perm)
+                if all(a != b for a, b in zip(valid_rows, perm)):
+                    deranged = True
+                    break
+            if not deranged:
+                # guaranteed fixed-point-free fallback: cyclic shift by 1
+                perm = valid_rows[1:] + valid_rows[:1]
+            remapped = twin_text.clone()
+            for a, b in zip(valid_rows, perm):
+                remapped[a] = twin_text[b]
+            twin_text = remapped
+        cf_pack = {
+            "id_to_row": {vid: r for r, vid in enumerate(tw_ids)},
+            "twin_text": twin_text.to(args.device),
+            "valid": flipped.to(args.device),
+        }
+        print("[p5cf] cf_negs=True random={} twins={} valid(flipped)={} <- {}".format(
+            getattr(args, "cf_negs_random", False), len(tw_ids),
+            int(flipped.sum().item()), cf_path))
+
     # <----------------- Train the model ----------------->
     if segment_cache is not None and args.seg_mode in ("consensus", "selfscore"):
         # EM driver (DESIGN_iter3 SS2). Each round: M-step = retrain the head
@@ -1148,6 +1218,7 @@ def main(args):
             segment_cache=segment_cache,
             archive_bank=archive_bank,
             aux_pack=aux_pack,
+            cf_pack=cf_pack,
         )
 
 if __name__ == "__main__":

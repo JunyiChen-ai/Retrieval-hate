@@ -19,6 +19,7 @@ def compute_loss(batch,
                 train_labels=None,
                 segment_cache=None,
                 aux_pack=None,
+                cf_pack=None,
                 ):
     ids = batch["ids"]
     batch_size = len(ids)
@@ -429,6 +430,18 @@ def compute_loss(batch,
         # use tensor zero instead
         pseudo_gold_loss = torch.tensor([0.0], device=args.device)
 
+    # ----------------- P5: counterfactual twin as one extra hard negative -----------------
+    # For each anchor (TRAIN positive) with a verified sanitized twin, push the anchor away
+    # from twin_fused = model(anchor_img, sanitized_text). Same sign/scale as a mined hard
+    # negative (cosine added into hard_loss, inside the triplet relu). cf_negs off (or no
+    # cf_pack) -> EXACT no-op. Defined for the triplet/naive video recipe only.
+    if getattr(args, "cf_negs", False) and cf_pack is not None:
+        if args.loss == "contrastive":
+            raise NotImplementedError(
+                "cf_negs is defined for the triplet/naive video recipe")
+        cf_sim = compute_cf_negative_sim(feats, batch, model, cf_pack, args)  # [B]
+        hard_loss = hard_loss + cf_sim
+
     if args.loss == "naive":
         # Take mean on batch-sample level
         total_loss = torch.mean(in_batch_loss + hard_loss - pseudo_gold_loss)
@@ -593,6 +606,49 @@ def compute_aux_loss(feats, batch_ids, aux_pack, args):
         else:
             total = total + bce(logits, tgt.float())
     return total
+
+
+def compute_cf_negative_sim(feats, batch, model, cf_pack, args):
+    """P5: per-anchor counterfactual-twin negative similarity, returned as [B] (0 where the
+    anchor has no verified twin). twin_fused = model(anchor real img_feats, sanitized twin
+    text_feats); the returned cosine is added into hard_loss as one extra hard negative.
+
+    The twin forward is wrapped in a CPU+CUDA RNG save/restore so it does NOT perturb the
+    main training RNG stream (dropout / shuffle): the cf_negs run then differs from the floor
+    ONLY by this added negative's gradient (the main forward + hard-neg mining draws are
+    byte-identical to the floor).
+    """
+    device = args.device
+    ids = batch["ids"]
+    B = len(ids)
+    out = torch.zeros(B, device=device)
+    id_to_row = cf_pack["id_to_row"]
+    valid = cf_pack["valid"]
+    rows, bidx = [], []
+    for i, vid in enumerate(ids):
+        r = id_to_row.get(vid)
+        if r is not None and bool(valid[r]):
+            rows.append(r)
+            bidx.append(i)
+    if not rows:
+        return out
+    rows_t = torch.as_tensor(rows, dtype=torch.long, device=device)
+    bidx_t = torch.as_tensor(bidx, dtype=torch.long, device=device)
+    anchor_img = batch["image_feats"].to(device).index_select(0, bidx_t)   # [n, Dv] real
+    twin_text = cf_pack["twin_text"].index_select(0, rows_t)               # [n, Dt] sanitized
+
+    is_cuda = str(device).startswith("cuda")
+    cpu_state = torch.get_rng_state()
+    cuda_state = torch.cuda.get_rng_state() if is_cuda else None
+    _, twin_fused = model(anchor_img, twin_text, return_embed=True)        # [n, D] grad-tracked
+    if cuda_state is not None:
+        torch.cuda.set_rng_state(cuda_state)
+    torch.set_rng_state(cpu_state)
+
+    anchor_fused = feats.index_select(0, bidx_t)                           # [n, D] grad-tracked
+    sim = _pair_similarity(anchor_fused, twin_fused, args)                 # [n]
+    out = out.index_copy(0, bidx_t, sim)
+    return out
 
 
 def _pair_similarity(anchor, other, args):
