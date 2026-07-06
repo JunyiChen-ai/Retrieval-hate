@@ -93,4 +93,70 @@ differ, i.e. window alignment).
 
 ## RESULTS
 
-_(appended after the scoring + eval runs)_
+Run 2026-07-06/07. ASR = SLURM job 12394 (Whisper large-v3, K=30 word-timestamps; 395 videos,
+394 with speech, 0 no-audio). MLLM scores = job 12395 (frozen P3 scorer, K=30/M=120; 395 videos,
+394 decodable, 11,820/11,850 windows parsed; **1 undecodable video** yt_NzvfkIYS5Yg → zero row,
+kept). MLLM score distribution is near-binary: **0 = 77.8%, 3 = 21.7%** (1/2 almost unused) — the
+rater flags a minority of windows as explicit hate and the rest as none. Eval =
+`p6_eval_localization.py` (CPU); condition (a) reproduces the existing K=30 memory numbers
+bit-identically. Machine JSON: `loc_out_hcs/results_p6_mllm_loc.json`.
+
+### K=30 — all conditions (395 videos; wv over the 329 both-class videos)
+
+| condition | frame-full AP / AUC | frame-tox AP / AUC | segment AP / AUC | **within-video AUC** |
+|---|---|---|---|---|
+| a — memory `knn_hatemm_subclip` | 0.5329 / 0.5754 | 0.6074 / 0.5850 | 0.5246 / 0.5839 | 0.5140 |
+| a′ — memory `knn_hatemm_video` | 0.5247 / 0.5656 | 0.6020 / 0.5732 | 0.5120 / 0.5688 | 0.5134 |
+| **b — MLLM (ours)** | 0.5421 / **0.6034** | 0.6023 / 0.6017 | 0.5599 / **0.6353** | **0.5435** |
+| c — per-video rank-avg(a,b) | 0.4971 / 0.5268 | 0.5624 / 0.5314 | 0.4867 / 0.5393 | 0.5371 |
+| d — random | 0.4699 / 0.5084 | 0.5360 / 0.5090 | 0.4507 / 0.5065 | 0.5088 |
+| e — broadcast of MLLM mean | **0.6297 / 0.6831** | 0.6778 / 0.6545 | 0.6158 / 0.6817 | 0.5000\* |
+
+\* broadcast wv-AUC = 0.5 by construction (constant within video).
+
+### Within-video significance (the primary metric)
+
+- **MLLM (b) vs its own null:** mean wv-AUC **0.5435**, bootstrap 95% CI **[0.5330, 0.5544]**
+  (excludes 0.5), sign-test **p = 5.4e-8** (vs the memory best cell's p=0.0066 — three orders
+  tighter).
+- **MLLM (b) vs memory (a), PAIRED per video (n=329):** mean Δ = **+0.0296**, bootstrap 95% CI
+  **[+0.0088, +0.0504]** (excludes 0), sign-test **p = 0.0071** (b>a on 184 videos, b<a on 139).
+- Segment-level AUC 0.6353 vs memory 0.5839 (+0.051) and frame AUC 0.6034 vs 0.5754 (+0.028)
+  move the same way; the threshold-free **ranking** metrics all favour the MLLM.
+
+### Verdict vs the pre-registered bar
+
+1. **PRIMARY — MET.** (1) wv-AUC(b)=0.5435 > a=0.5140 AND > d=0.5088 ✓; (2) b's 95% CI excludes
+   0.5 and sign-p<0.05 ✓ (and the paired b>a test is also significant, p=0.007). **The MLLM
+   earns a real, removable localization role.**
+2. **SECONDARY — not met (as anticipated).** frame-full AP(b)−AP(a) = **+0.0092** ≪ the +0.176
+   bar. But pooled AP is **density-dominated**: the broadcast control (e) — the MLLM's per-video
+   MEAN broadcast to all windows — is the single best pooled number (AP 0.6297 / AUC 0.6831),
+   i.e. the MLLM's strongest signal is **video-level toxicity density**, not fine localization.
+   Adding the (imperfect) within-video variation to that mean actually lowers pooled AP from
+   0.63 (broadcast) to 0.54 (b), which is why the pooled-AP bar can't be met even though the
+   within-video ranking is significantly better. This is exactly why the pre-registration made
+   within-video AUC — not pooled AP — the primary metric.
+3. **Combination (c) — not required, does not help.** rank-averaging with the weaker memory
+   scorer dilutes the MLLM (wv 0.5371 < 0.5435). The MLLM stands alone; fusion hurts.
+
+### Plain-language bottom line
+
+**P6 is the campaign's first clearly-positive MLLM method-role result: reading frames + ASR, the
+MLLM localizes hate WITHIN videos significantly better than the CLIP-visual memory scorer and
+than chance.** It upgrades the localization capability from an *existence proof* (memory:
+within-video AUC 0.526, significant in only 1 of 4 cells at p=0.0066) to a **significant
+single-config MLLM localizer** (wv-AUC 0.5435, CI [0.533, 0.554], p=5.4e-8; and paired over
+memory +0.030, p=0.007). The honest magnitude caveat: this is still a **modest** localizer —
+0.5435 is ~3.5 points of AUC above chance and ~3 points above memory, not a strong 0.7-style
+signal — and the MLLM's *dominant* competence here is video-level density detection (broadcast
+AP 0.63), with fine within-window localization the smaller, though now statistically solid,
+increment. The mechanism matches the prior doc's diagnosis: the memory scorer's CLIP-visual keys
+are blind to speech-borne hate, and the MLLM's window ASR is exactly what closes part of that
+gap. The MLLM-localization role is **kept** (not existence-proof-only), reported at its true
+modest-but-significant strength; the natural next lever is finer/segment-native windows and
+speech-weighted scoring, out of P6's frozen-scorer scope.
+
+*(Numbers by `scripts/analysis/p6_eval_localization.py` / paired test in the run log; condition
+(a) reproduces `EVAL_localization_hateclipseg.md` K=30 exactly. ASR + MLLM score caches under
+`data/ASR/HateClipSeg/` and `data/MLLM_scores/HateClipSeg/`; no `.pt` in git.)*
