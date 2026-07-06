@@ -6,13 +6,21 @@ costs accuracy**? Every front below gives the MLLM a distinct, non-encoder job, 
 bar, and includes the ablation "remove the MLLM." A role is earned only if removing it costs
 something beyond the ~1.6-video (≈1 acc pt) noise floor of these ~150-sample test sets.
 
-**Bottom line.** Across six independent integration routes, **the MLLM does not earn a removable
-method role on MHClip.** The recurring shape: the MLLM is *semantically competent* (it reads the
-videos, localizes evidence, produces decodable structured fields) but that competence is
-**orthogonal to, or redundant with, the decision variable** the retrieval head already optimizes.
-Every negative is backed by a passing reproduction / bit-for-bit / probe guard, so these are
-trustworthy findings, not harness artifacts. Two things survive for the paper (guard-rail /
-localization roles + a quantified oracle bar); see §4.
+**Bottom line — the campaign answer.** The MLLM earns exactly **two** removable method roles here:
+as the **frozen encoder** (Qwen features beat CLIP on HateMM by +4.2 macro-F1, crossing 0.85) and
+as a **span-free localization scorer** (P6 — its per-window evidence scores rank hate windows better
+than the retrieval memory and random: within-video AUC **0.5435 vs 0.5140 / 0.5088**, paired b>a
+p=0.007, CI excludes null; magnitude modest, statistics solid). The **main-table accuracy role is
+exhaustively refuted**: across **eight pre-registered routes at 7B–32B scale**
+(P1/P2/P2b/P3-EN,ZH,HateMM/P4/P5) no MLLM component lifts static test accuracy beyond the
+~1.6-video (≈1 acc pt) noise floor, and every verdict is guard-backed (reproduction / bit-for-bit /
+probe). Two methodology takeaways generalize: **(i) a passing no-head probe is *necessary but not
+sufficient*** — HateMM had the cleanest probe of the three yet the learned align-fusion head washed
+the input reweighting out (P3-HateMM); **(ii) semantic competence is *orthogonal to, or redundant
+with, the decision variable*** — comparability ⊥ vote-correctness, era-drifting verdict rates,
+schema fields ⊂ the label (P1/P2/P2b/P4/P5). Semantic aboutness is not the same quantity as which
+side of the hate/offensive/benign boundary — and it is that boundary, already directly supervised,
+that a main-table lift would need moved.
 
 ---
 
@@ -28,6 +36,7 @@ localization roles + a quantified oracle bar); see §4.
 | **P3-HateMM** same | " | probe pass (**PASS, k-consistent +0.0108**) → train | **FAIL (within-noise, no claim).** Cleanest probe pass of the three (densest evidence, var 1.28/0.71) yet trained wsoftT1 vs floor: val-sel ΔF1 −0.0041, final-ep +0.0004 — both <1pt. Floor reproduces published 0.828 acc. **Decisive: a passing no-head probe does NOT guarantee a training gain — the learned align-fusion head absorbs the input-space reweight.** | EXP_p3_evidence_pooling · `22fe62a` |
 | **P4** schema-field distillation | aux linear heads on the fused embedding predict MLLM archive fields (explicitness/modality/mechanism/target_group); L=main+0.1·Σaux; heads dropped at eval | λ=0 bit-for-bit; probe gate (decodable + label-informative); aux beats floor >1pt, ≥2/3 seeds, both protocols | **FAIL (within-noise).** bit-for-bit exact; **probe PASS** (fields decodable AUC .62–.93, label-informative AUC .74–.78); train EN final −0.001, ZH +0.008 (sub-threshold); val-sel negative | fields real but **redundant** with the direct hateful-label supervision the embedding already receives — distilling adds nothing beyond the label | EXP_p4_schema_distill · `6f1f0da`,`00816aa` |
 | **P5** counterfactual twins | MLLM rewrites each TRAIN positive's transcript into a sanitized counterfactual; twin = anchor's REAL img + sanitized-text embedding; one extra per-anchor hard negative | flag-off bit-for-bit; **quality gate** flip≥0.80 + hardness; cf beats floor >1pt, ≥2/3, both protocols | **FAIL.** bit-for-bit exact; **gate CLOSED** (flip **0.503 EN / 0.337 ZH**, hardness pass); diagnostic cf **hurts EN −0.027**, flat ZH; cfrand ≈ cf | MLLM **can't reliably manufacture** the clean counterfactual (half EN / two-thirds ZH still harmful); and clean twins hurt because they **share the anchor's visuals → too close** (cos 0.73), so repelling fights the visual signal | EXP_p5_counterfactual_negs · `fc25cac`,`66d3103` |
+| **P6** localization scorer *(the one PASS)* | per-window MLLM evidence scores (frames + ASR) rank HateClipSeg windows for **span-free temporal localization** (memory-free saliency) | within-video mean-AUC(MLLM) > memory AND random; b's 95% CI excludes 0.5; sign-test p<0.05 | **PASS — earns a removable role.** wv-AUC **0.5435** vs memory 0.5140 / random 0.5088; paired b>a **Δ+0.0296** CI[+.009,+.050] **p=0.007**; vs-null p=5.4e-8; seg-AUC 0.635 vs 0.584 | *win, not fail:* the same evidence signal P3 couldn't **pool** is a genuine **localizer** — magnitude modest, statistics solid | EXP_p6_mllm_localization · `c9e3bd8` |
 
 Noise-floor convention (all fronts): 1 acc pt ≈ 1.6 videos on these ~150-sample test sets;
 sub-1pt effects are reported as **within-noise, no claim** — the headline is the paired-delta sign
@@ -75,10 +84,13 @@ and it is that boundary — already supervised directly — that the method need
    as **integrity/controllability**, not raw accuracy — a defensible contribution framing.
 2. **Human-in-the-loop audit.** The archive re-finds human-labeled noise → an auditable
    memory-hygiene tool, orthogonal to the accuracy claim.
-3. **Localization-chapter material (the P3 signal's real home).** The per-K4-segment evidence
-   scores (`data/MLLM_scores/<DS>/*_segscoreK4_qwen.jsonl`) are a strong label-free saliency map;
-   the same vector that failed at *pooling* is exactly a per-segment map for *where* the hate is —
-   cross-ref EVAL_localization_hateclipseg / EVAL_localization_hatemm.
+3. **Localization scorer — an EARNED, statistically-validated method role (P6).** The per-window
+   MLLM evidence scores (`data/MLLM_scores/<DS>/*_segscoreK4_qwen.jsonl`) rank hate windows on
+   HateClipSeg **better than the retrieval memory and random**: within-video AUC 0.5435 vs
+   0.5140 / 0.5088, paired b>a p=0.007 (CI excludes 0), vs-null p=5.4e-8. The same vector that
+   failed at *pooling* (P3) is a genuine *localizer* — modest magnitude, solid statistics — so this
+   is a removable role, not just material. (EXP_p6_mllm_localization; cross-ref
+   EVAL_localization_hateclipseg / EVAL_localization_hatemm.)
 4. **Quantified oracle bar for future work.** P2's oracle membership editor (drop by *true* label)
    lifts the gated slice to 100% and overall accuracy **+7.5pt EN / +10.6pt ZH, both across 0.85**.
    The gate is sound and the prize is real; P2b shows a *stronger comparability judge* is not the

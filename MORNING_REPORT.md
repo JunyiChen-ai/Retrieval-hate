@@ -149,6 +149,8 @@ _附:`research-wiki/ITERATION_LOG.md` 已追加终局记录(2026-07-05);ideas �
 
 **存活价值(独立于上述 kill,可入论文):**(a) 可编辑记忆的**否决/守门**角色(auto-repair 定向删噪改善 EN)与人审记忆卫生——移除代价体现在完整性/可控性而非 raw acc;(b) P3 段级证据密度分是**无标注定位显著图**,是该信号的正确归宿(cross-ref `EVAL_localization_hateclipseg.md` / `EVAL_localization_hatemm.md`);(c) P2 oracle 头部空间 **+7.5/+10.6(均跨 0.85)** 作为量化天花板 + 已被 P2b 排除的"更强判据"路线,为未来"成员性信号"工作定标。
 
-**两条仍在途前沿(pending,落地后回填):**
-- **[pending] P3-HateMM 训练** — probe 是三者中唯一 k-consistent 正例(+0.0108@k20,证据信号最密 var 1.28/0.71),ASR 作业 12393 运行中 →打分→3-seed floor/wsoftT1/wmild(双口径)。若过 >1pt/≥2/3/双口径,则是池化干预唯一挣得角色之处;EN/ZH 规律预示 within-noise。
-- **[pending] P6 HateClipSeg 定位** — 由 p2-rerank 承接;把 P3 存活的段级证据分接入定位评测(§8 TODO#2 的自然归宿)。
+**两条前沿已落地(2026-07-07 更新):**
+- **[已结·negative] P3-HateMM 训练** — 三者中唯一 k-consistent probe 正例(+0.0108@k20,证据最密 var 1.28/0.71),但训练仍 within-noise(wsoftT1 vs floor:val-sel ΔF1 −0.0041 / final +0.0004,双口径均 <1pt;floor 复现 published 0.828)。**决定性教训:过 no-head probe 是必要非充分——习得的 align-fusion(img×text)头吸收了输入端重加权。** 证据密度池化在 EN/ZH/HateMM 均未挣得方法角色。commit `22fe62a`/`783b751`。
+- **[已结·POSITIVE] P6 HateClipSeg 定位(p2-rerank 承接)** — MLLM 逐窗证据分(帧+ASR)做无 span 时序定位:within-video AUC **0.5435** > memory 0.5140 > random 0.5088;配对 b>a Δ+0.0296 CI[+.009,+.050] p=0.007,对空 p=5.4e-8。**MLLM 挣得一个可移除的定位角色(幅度温和、统计稳固)。** commit `c9e3bd8`。
+
+**Campaign 答案:** MLLM 在本项目挣得恰好**两个可移除方法角色**——**encoder**(HateMM +4.2 F1 跨 0.85)与**定位打分器**(P6)。**主表 accuracy 角色被八条预注册路线(P1/P2/P2b/P3-EN,ZH,HateMM/P4/P5,7B–32B 规模)彻底证伪**:无任何 MLLM 组件把静态测试 acc 抬过 ~1.6 视频噪声地板,且每条均护栏背书(复现 / bit-for-bit / probe)。两条方法论定论:**(i) 过 no-head probe 是必要非充分**(P3-HateMM 是最干净 probe 却训练 within-noise);**(ii) 语义能力与决策变量正交或冗余**(P1/P2/P2b/P4/P5)——"关于什么"不等于"在仇恨/冒犯/良性边界的哪一侧",而后者才是主表提升需移动、且已被直接监督的量。
