@@ -100,8 +100,39 @@ To make `rgcl: true` runnable (the true embedding-contrastive arm), two changes:
 
 ## RESULTS
 
-<!-- SMOKE_PLACEHOLDER -->
-<!-- RESULTS_PLACEHOLDER -->
+### Fork readiness — 4 half-finished spots found + fixed (one-line paper finding)
+The released `Ver202512` sft_classifier stage does NOT run out of the box; the RA-HMD stage-2 as
+shipped runs **rgcl-OFF** (its RGCL contrastive path is unwired). To run the classifier at all
+required: (1) the unwired RGCL (deferred behind the dev gate; patch plan above); (2) a YAML
+duplicate-key crash from my smoke step (append only `max_steps`); (3) vision-tower CUDA OOM on
+8-frame video (fix: `image_max_pixels 65536`/256²/frame, bs1×accum16, `expandable_segments`);
+(4) `evaluate()`/`predict()` in `workflow.py:165/173` pass generation `gen_kwargs` to the custom
+regression trainer that rejects them (fix: drop gen_kwargs — classifier eval is head-based, not
+generative). Smoke walltime: **17.2 s/step**; full 3-epoch ≈ 30–46 min/cell.
+
+### Seed-0 C3 (rgcl-OFF joint LM+classifier head) DEV accuracy — MLP-head read-out
+| dataset | C3 dev acc (AUROC/F1) | frozen-head floor dev acc | Δ | gate (C3≥floor) |
+|---|---|---|---|---|
+| MHC (EN) | **0.8250** (0.874/0.731) | 0.7500 | **+7.5pt** | OPEN → seeds 1,2 |
+| MHC_zh | **0.8974** (0.952/0.867) | ~0.80 | **~+9pt** | OPEN → seeds 1,2 |
+| HateMM | 0.8411 (0.931/0.809) | 0.8411 (90/107) | **0.0 (exact tie)** | opens on tie (see below) |
+
+EN and ZH are the campaign's first substantial over-floor signals (contrast iter-2, which LoRA'd
+the encoder + read out via our EXTERNAL RGCL head and regressed EN; C3 uses the LMM's OWN
+end-to-end joint head). **Calibration:** DEV, seed-0, MLP-head — not the claim; TEST (once/cell,
+after all seeds) + the C3-knn read-out are pending.
+
+### HateMM expansion — DEFERRED, not cancelled (team-lead ruling, verbatim)
+> The gate opens on a literal tie (0.8411 ≥ 0.8411); expansion is deferred behind the two cells
+> with real dev signal because (a) queue budget, (b) HateMM's role in this experiment is
+> no-harm/completeness for the paper table, not the goal-carrying claim; the rule's expansion set
+> is unchanged.
+
+This keeps the decision rule-literal (no conservative-direction rule-shopping either) while
+spending GPU where the signal is. Priority order: ZH s2 (12443) → kNN passes (12444/12445) →
+EN/ZH single TEST pass (after all their seeds + read-outs) → then HateMM s1/s2 + its kNN + TEST.
+
+<!-- RESULTS_PENDING: multi-seed EN/ZH dev; C3-knn read-out; per-cell TEST; verdict -->
 
 ### Jobs / artifacts
 - Data: `src/utils/build_lora_sft_data.py` (word + yesno), `scripts/slurm/p9_build_data.sbatch`
