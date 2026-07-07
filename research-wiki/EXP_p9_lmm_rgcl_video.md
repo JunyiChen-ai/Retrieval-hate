@@ -100,7 +100,7 @@ To make `rgcl: true` runnable (the true embedding-contrastive arm), two changes:
 
 ## RESULTS
 
-### Fork readiness — 4 half-finished spots found + fixed (one-line paper finding)
+### Fork readiness — 5 half-finished spots found + fixed (one-line paper finding)
 The released `Ver202512` sft_classifier stage does NOT run out of the box; the RA-HMD stage-2 as
 shipped runs **rgcl-OFF** (its RGCL contrastive path is unwired). To run the classifier at all
 required: (1) the unwired RGCL (deferred behind the dev gate; patch plan above); (2) a YAML
@@ -108,31 +108,64 @@ duplicate-key crash from my smoke step (append only `max_steps`); (3) vision-tow
 8-frame video (fix: `image_max_pixels 65536`/256²/frame, bs1×accum16, `expandable_segments`);
 (4) `evaluate()`/`predict()` in `workflow.py:165/173` pass generation `gen_kwargs` to the custom
 regression trainer that rejects them (fix: drop gen_kwargs — classifier eval is head-based, not
-generative). Smoke walltime: **17.2 s/step**; full 3-epoch ≈ 30–46 min/cell.
+generative); (5) **the fork saves `classifier.bin` at train time (`trainer.save_model`) but never
+reloads it** — a predict/eval-only run inits a *fresh* (random) head, so any post-hoc test pass
+would score garbage. Fix (`workflow.py`, after `add_module`): when `not do_train`, load the trained
+head from the adapter dir. Verified: predict-only on ZH-s0 val **reproduces eval_accuracy 0.8974
+exactly** (= the training-run final-epoch val). Smoke walltime: **17.2 s/step**; full 3-epoch ≈
+30–46 min/cell; predict-only eval ≈ 3 min/cell.
 
-### Seed-0 C3 (rgcl-OFF joint LM+classifier head) DEV accuracy — MLP-head read-out
-| dataset | C3 dev acc (AUROC/F1) | frozen-head floor dev acc | Δ | gate (C3≥floor) |
-|---|---|---|---|---|
-| MHC (EN) | **0.8250** (0.874/0.731) | 0.7500 | **+7.5pt** | OPEN → seeds 1,2 |
-| MHC_zh | **0.8974** (0.952/0.867) | ~0.80 | **~+9pt** | OPEN → seeds 1,2 |
-| HateMM | 0.8411 (0.931/0.809) | 0.8411 (90/107) | **0.0 (exact tie)** | opens on tie (see below) |
+### Floor definition (corrected — load-bearing)
+Two candidate floors were considered; the honest one is the **trained-RGCL baseline** = our actual
+current method (align-fusion head + retrieval kNN, `Test_Retrieval`) on the SAME frozen-Qwen
+features, matched test splits (EN 161 / ZH 149):
+- **EN** — recent 3-seed `arcbase_MHC_Qwen2.5-VL-7B-Instruct_HF_seed{1,2,3}` (final-epoch):
+  test **0.7847** (0.7702/0.7826/0.8012), dev **0.7750** (0.7875/0.7750/0.7625).
+- **ZH** — `rgcl_MHC_zh_Qwen2.5-VL-7B-Instruct_HF`: test **0.8188** (corroborated: raw-kNN of the
+  same frozen features also gives 0.8188). ZH dev floor is taken as the matched raw-kNN 0.8590.
 
-EN and ZH are the campaign's first substantial over-floor signals (contrast iter-2, which LoRA'd
-the encoder + read out via our EXTERNAL RGCL head and regressed EN; C3 uses the LMM's OWN
-end-to-end joint head). **Calibration:** DEV, seed-0, MLP-head — not the claim; TEST (once/cell,
-after all seeds) + the C3-knn read-out are pending.
+A *headless raw-kNN* floor (EN test 0.7453 / ZH 0.8188) was used in interim reports — for EN this is
+a **strawman ~4pt below our real system**, so all "+4pt EN" interim deltas are withdrawn. ZH test
+floors coincide (0.8188) so ZH deltas are unaffected by the correction.
 
-### HateMM expansion — DEFERRED, not cancelled (team-lead ruling, verbatim)
+### C3 TEST accuracy vs the trained-RGCL floor (the deciding metric), 3 seeds
+| read-out | EN test (floor 0.7847) | ZH test (floor 0.8188) |
+|---|---|---|
+| **C3-mlp** (LoRA-SFT LMM + its own classifier head) | 0.7909 (.783/.795/.795) = **+0.6pt, 2/3** | 0.8635 (.846/.879/.866) = **+4.5pt, 3/3** |
+| **C3-knn** (OUR retrieval memory on the SFT'd backbone) | 0.7578 (.758/.739/.776) = **−2.7pt, 0/3** | 0.7964 (.792/.752/.846) = **−2.2pt, 1/3** |
+
+Supporting DEV (3 seeds): C3-mlp EN 0.7792 / ZH 0.8761; C3-knn EN 0.7708 / ZH 0.8632 (the ZH-kNN
+s0=0.8333 that looked "below floor" was the low seed — multi-seed dev ≈ floor).
+
+### Verdict
+1. **EN — no gain.** C3-mlp +0.6pt is inside the 3-pt arcbase seed spread; C3-knn −2.7pt below floor.
+   (EN low-prior; iter-2 encoder-LoRA also regressed EN.)
+2. **ZH — a real +4.5pt test gain, but it lives in the LMM's OWN classifier head, not our memory.**
+   C3-mlp beats floor on all 3 SFT seeds. But **C3-knn — our retrieval-memory read-out, the method's
+   novelty pillar — is −2.2pt BELOW floor on ZH (and −2.7 on EN).** SFT-ing the backbone for our kNN
+   *hurts* on both datasets; the MLLM helps only through its vanilla head, only on ZH.
+3. **Campaign bar NOT met.** The one real gain is vanilla decision-level LoRA-SFT on one of two
+   primary datasets via the LMM's own head — not a *novel* integration with the retrieval memory,
+   which actively regresses. The MLLM earns a decision-level *classifier* role on ZH; it **displaces**
+   rather than enhances the memory pillar.
+4. **RGCL-fix: not worth it.** Its purpose is to improve the embedding-space kNN — below floor on
+   both datasets. Do not spend the ~0.5–1 day forward-patch.
+
+### Paper-usable findings (independent of the verdict)
+- The released RA-HMD stage-2 (`Ver202512`) runs **rgcl-OFF** and needs **5 fixes** to run on video
+  (§Fork readiness), incl. it **never reloads its own trained classifier head** on eval/predict.
+- Decision-level LMM-SFT lifts ZH **+4.5pt** via its own head, but our retrieval read-out on the
+  SFT'd embedding space **loses on both** datasets — a clean "the gain is not from the memory"
+  negative for the method-integration story.
+
+### HateMM — DEFERRED per team-lead ruling (verbatim, still standing)
 > The gate opens on a literal tie (0.8411 ≥ 0.8411); expansion is deferred behind the two cells
 > with real dev signal because (a) queue budget, (b) HateMM's role in this experiment is
 > no-harm/completeness for the paper table, not the goal-carrying claim; the rule's expansion set
 > is unchanged.
 
-This keeps the decision rule-literal (no conservative-direction rule-shopping either) while
-spending GPU where the signal is. Priority order: ZH s2 (12443) → kNN passes (12444/12445) →
-EN/ZH single TEST pass (after all their seeds + read-outs) → then HateMM s1/s2 + its kNN + TEST.
-
-<!-- RESULTS_PENDING: multi-seed EN/ZH dev; C3-knn read-out; per-cell TEST; verdict -->
+Since EN/ZH landed as "head-carried, memory-negative," HateMM s1/s2 + test are pending a team-lead
+call (table-completeness vs stop). Test touched once/cell; no HateMM test run yet.
 
 ### Jobs / artifacts
 - Data: `src/utils/build_lora_sft_data.py` (word + yesno), `scripts/slurm/p9_build_data.sbatch`
