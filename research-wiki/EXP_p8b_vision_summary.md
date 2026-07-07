@@ -100,7 +100,12 @@ tokens (truncated at encode, same as P8).
 
 # P8c — Chinese-language vision summaries (the diagnosed salvage lever)
 
-**Status:** PRE-REGISTERED (frozen before probe) · **Started:** 2026-07-07 · **Owner:** subagent P8c.
+**Status:** **DONE — ZH gate CLOSED, no training. The Chinese-forced summary is 99.8% compliant and
+evidence-dense yet scores the WORST of all arms (0.7168) because CLIP's English-centric text encoder
+byte-fragments Chinese (97% of summaries truncated at 75 tok) and encodes it weakly. Root cause of the
+ZH summary-input failure is the FROZEN ENCODER, not the summary content. Summary-input family closed on
+ZH with complete three-arm attribution.** · **Started:** 2026-07-07 · **Finished:** 2026-07-07 ·
+**Owner:** subagent P8c.
 Team-lead fired this after P8b: P8b measured the OCR gain (+1.4 pt through translation loss) and
 diagnosed the loss as ZH→EN paraphrase dropping ZH surface forms. P8c isolates it by forcing the
 summary INTO CHINESE. p1-prior's caveat (probe-maybe / train-no; the whole summary-input family hit a
@@ -124,5 +129,39 @@ the gate opens**.
   is closed on ZH with a complete three-arm attribution (text-only 0.727 < vision 0.741 < vision-zh ?
   vs the naive-trunc bar 0.791).
 
-## P8c results
-_(pending: gen 12430 → build p8vsumzh cache → probe → verdict)_
+## P8c results — ZH gate CLOSED (worst arm), summary-input family closed on ZH
+
+Gen 12430 COMPLETED (41 min): 579/78/149 summaries, 0% empty, **Chinese-compliance 99.8–100%**
+(meanCJK 0.97–0.98 — the 强制中文 clause held). Summaries are fully Chinese + evidence-dense, e.g.
+`WHO：男性 WHAT：手淫对前列腺炎的影响及危害 主题：男性健康教育…`. **But at CLIP-text encode, 563/579
+(97%) exceed 75 content tokens** (Chinese byte-fragments into many CLIP BPE tokens: "141 > 77") → heavy
+single-chunk truncation.
+
+**Three-arm attribution (ZH TRAIN probe, LOO kNN @k20, same harness):**
+
+| cond | text channel | acc@k20 | macro-F1 |
+|---|---|---|---|
+| A | floor raw chunk-mean (multi-chunk, no single-chunk trunc) | 0.7375 | 0.6367 |
+| B_text | EN text-only summary | 0.7271 | — |
+| B_vision | EN vision summary | 0.7409 | 0.6710 |
+| **B_vision_zh** | **CN vision summary** | **0.7168** | 0.5792 |
+| C | naive first-70-tok raw ZH | **0.7910** | 0.7527 |
+
+**GATE: B_vision_zh ≥ A ✗ (0.7168 < 0.7375), ≥ C ✗ → CLOSED. No training.**
+
+## P8c verdict + P8-family close-out on ZH
+
+- **The Chinese hypothesis is refuted, and the real bottleneck is now identified: the FROZEN ENCODER,
+  not the summary content or its language.** The CN summary is fully compliant and dense, but CLIP's
+  English-centric text tokenizer **byte-fragments Chinese** (a ≤90-char CN summary → ~140 CLIP tokens,
+  97% truncated at 75) and its text tower encodes Chinese weakly. So the CN summary — despite keeping
+  ZH surface forms — is encoded worse than the shorter raw-ZH truncation and even worse than the EN
+  summaries. Keeping Chinese *hurts* here because of the encoder, not because of the content.
+- **Complete three-arm attribution on ZH:** text-EN 0.727 < vision-EN 0.741 (OCR helps) but **CN 0.717
+  (encoder byte-fragmentation dominates)**, all < naive raw-ZH truncation **C 0.791**. C wins because
+  raw ZH is short (median ~26 tok → fits one chunk) AND keeps the exact surface forms CLIP was (weakly)
+  trained on. **No MLLM summary variant — text or vision, EN or CN — beats naive raw-text truncation on
+  ZH.** The summary-as-text-input family is **closed on ZH**.
+- The real lever for ZH would be a **Chinese-capable text encoder** (e.g. a multilingual/Chinese CLIP
+  or mpnet-zh text tower), not a better summary — but that changes the frozen encoder (a different
+  experiment family, not this one). Honest kill at the probe; no test/training spent (one gen job total).
