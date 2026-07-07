@@ -30,7 +30,15 @@ ASR → integer 0–3), K=30/M=120. Its HateMM-calibration within-video AUC is t
 promotion bar is stated relative to it. (Data point already in hand: the same scorer at K=4 gives
 HateMM wv-AUC 0.5478, CI [0.533,0.563], p=3.9e-8, n=389.)
 
-**ANCHOR (P6 config, K=30, HateMM): wv-AUC = `<filled after job 12474>`.**
+**ANCHOR (P6 config, K=30, HateMM TRAIN hateful): wv-AUC = 0.5387** (CI [0.5244, 0.5534],
+sign-p 5.6e-11, n=266 partial-coverage videos; random 0.494; job 12474).
+→ **promotion bar = paired wv-AUC ≥ 0.5387 + 0.04 = 0.5787, CI(Δ) excluding 0.**
+
+> **Calibration-set note:** a comma in the `SPLITS=train,val,test` sbatch `--export` value collided
+> with the `--export` comma separator, so all calibration scoring collapsed to `SPLITS=train`. This
+> is benign and if anything cleaner — the calibration set is the **HateMM train hateful videos**
+> (298 scored, 266 both-class), a large labeled span set with **zero** val/test/HateClipSeg contact.
+> All configs are compared on this identical train set (apples-to-apples paired deltas).
 
 ## Iteration grid (HateMM calibration — logged, cheap→expensive)
 
