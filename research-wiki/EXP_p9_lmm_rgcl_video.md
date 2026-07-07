@@ -250,4 +250,32 @@ Only two things were broken, both fixable without touching the Qwen forward:
   Anything weaker = honest kill.
 - Configs: `my_configs/hatevideo/p9_{mhc,mhc_zh}_d3_s{0,1,2}.yaml`. Smoke: job 12485.
 
-<!-- RESULTS_PENDING: smoke; λ=0 bit-for-bit; D3 6-train + read-outs; verdict vs the goal bar -->
+## P9b RESULTS — smoke (job 12485) + guards
+
+**Patch validated (runs end-to-end):** rgcl_loss logged nonzero, **no NaN**, checkpoint saves
+(adapter + classifier.bin), gradient flows, lm/cls losses decrease. The 5 fork bugs + 4 Codex
+CPU-faiss bugs all clear at runtime.
+
+**BLOCKER — the rgcl loss is degenerate in the bs=1 video regime.** Logged components (ZH s0, 20 steps):
+- `in_batch_negative_loss = 0.0` at **every** step: `per_device_train_batch_size=1` (forced by the
+  8-frame vision-tower OOM) → one sample per batch → **no in-batch positives/negatives**, so RGCL's
+  primary contrastive signal is identically zero.
+- The only remaining signal (1 hard-neg + 1 pseudo-gold retrieved from the bank) collapses:
+  `negative_loss` 2.25→2.49, `positive_loss` 2.69→2.50 (gap 0.44 → 0.006) → hard-neg ≈ pseudo-pos →
+  **`rgcl_loss` pinned at ln(2)=0.692** (0.58/0.6916/0.6923/0.6919) = ~zero discriminative gradient.
+- Cause: (1) bs=1 removes in-batch negatives; (2) the bank is reindexed only at step 0 (579 forwards
+  ≈5 min — too expensive to refresh often), so as lm/cls training drifts the space, all bank features
+  become equidistant from the query.
+- **Consequence:** as configured (RA-HMD defaults, bs=1), the rgcl term contributes ~no gradient →
+  **D3 ≈ C3 by construction.** RGCL does not port to the bs=1 video regime without restoring the
+  in-batch-negative signal. Pending team-lead config call (raise effective batch ≥4–8 via fewer
+  frames / lower pixels = RA-HMD-faithful fix; or reindex-often; or more retrieved pairs).
+
+**Bit-for-bit (resolved):** the λ=0 guard (12487) matches a **fresh rgcl-OFF C3-repro** (12491, same
+current code) to within ~0.001 early (guard lm 0.3291 / cls 0.84 vs repro 0.3286 / 0.8393),
+diverging chaotically like any two GPU runs. **Both** differ from the old C3 run 12438 (lm 0.3178) →
+12438 was a **stale reference**, not a patch corruption. The RNG-isolation discipline holds; the
+plumbing is transparent (not provably bit-identical without deterministic-CUDA mode, which we don't
+run). So loss_ratio=[1,1,0] ≈ rgcl-OFF as intended.
+
+<!-- RESULTS_PENDING: config decision → D3 6-train + read-outs; verdict vs the goal bar -->
