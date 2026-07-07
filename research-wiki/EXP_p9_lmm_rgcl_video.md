@@ -207,10 +207,13 @@ is built to repair. (HateMM s1/s2 MLP predicts 12470/12472 pending behind GPU co
 
 **Directive (team-lead, supersedes the earlier "RGCL-fix not worth it" EV call).** The locked goal
 (meaningful+novel MLLM integration AND substantial main-table improvement) is primary. P9's own
-finding motivates this precisely: rgcl-OFF SFT reshaped the space *for the MLP head and AGAINST our
-kNN* (C3-knn −2.2/−2.7 below floor). The **rgcl contrastive term is the missing objective that
-trains the embedding space FOR the memory vote** — the literal form of the goal (MLLM trained by our
-retrieval-contrastive loss, decision by our updatable kNN memory). RA-HMD's release never ran this.
+finding motivates this precisely. **Motivating observation (all 3 datasets, C3 rgcl-OFF):** the
+LMM's own head lands ≈ the trained-RGCL floor while OUR retrieval read-out on the same SFT'd space
+regresses BELOW it — **C3-knn vs floor: EN −2.7, ZH −2.2, HateMM −4.7** (head: EN +0.6, ZH +1.0,
+HateMM +0.9). So rgcl-OFF SFT reshaped the embedding space *for the MLP head and AGAINST our kNN*.
+The **rgcl contrastive term is the missing objective that trains the embedding space FOR the memory
+vote** — the literal form of the goal (MLLM trained by our retrieval-contrastive loss, decision by
+our updatable kNN memory). RA-HMD's release never ran this.
 
 ## The patch (implemented 2026-07-08; Codex-reviewed; no Qwen forward surgery)
 Recon overturned the scoped "hard forward patch": the trainer's RGCL orchestration is **already
