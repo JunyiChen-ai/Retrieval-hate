@@ -1,6 +1,9 @@
 # EXP_p8b — vision-grounded evidence summaries as the text channel (P8 extra arm)
 
-**Status:** PRE-REGISTERED (gate frozen before probe/training) · **Started:** 2026-07-07 ·
+**Status:** **DONE — ZH gate CLOSED, no training. Vision grounding measurably beats text-only
+summaries (B_vision 0.7409 > B_text 0.7271, the on-screen-text clause works) but is dominated by
+naive raw-text truncation (C 0.7910): MLLM summarization translates ZH→EN and paraphrases away the
+ZH lexical signal that C keeps.** · **Started:** 2026-07-07 · **Finished:** 2026-07-07 ·
 **Owner:** subagent P8b · **Parent:** `EXP_p8_semantic_compression.md`
 
 **Why.** P8's text-only summary arm gated **CLOSED on ZH** (train probe: B 0.727 < A floor 0.738,
@@ -58,5 +61,38 @@ protocols, **AND B_vision > C** (rent test), no >0.01 harm. Anything weaker = wi
 Generation GPU job = `12427` (MHC_zh all splits), queued behind P2c 72B judges + P8 EN training.
 Everything downstream (cache build, probe) is CPU. FORCE=False; no .pt in git; foreground sacct polling.
 
-## Results
-_(pending: generation 12427 → build p8vsum cache → probe → §gate verdict → training if open)_
+## Results — ZH gate CLOSED (no training)
+
+Generation 12427 COMPLETED (44 min): MHC_zh train/val/test = 579/78/149 summaries, **0% empty**
+(vision covers empty-transcript videos, unlike text-only). The on-screen-text clause works — samples
+pull Chinese overlay text into the summary, e.g. *'The text "真正的痞子" appears, which translates to
+"Real scumbag"'* (text the CLIP image encoder cannot read). 155/579 train summaries exceed 75 content
+tokens (truncated at encode, same as P8).
+
+**ZH TRAIN probe (LOO kNN @k20 over [l2n(img)|l2n(text)], reusing P8's rep/loo_knn):**
+
+| cond | text channel | acc@k20 | macro-F1 | note |
+|---|---|---|---|---|
+| A | floor raw chunk-mean | **0.7375** | 0.6367 | matches p1-prior exactly |
+| B_text | text-only summary (P8) | 0.7271 | — | (p1-prior) why P8 closed on ZH |
+| **B_vision** | vision-grounded summary | **0.7409** | 0.6710 | +0.0034 vs A, **+0.0138 vs B_text** |
+| C | naive first-70-token trunc | **0.7910** | 0.7527 | the strong control |
+
+**GATE: B_vision ≥ A ✓ but B_vision ≥ C(0.791) ✗ → CLOSED. No training** (per pre-registration).
+
+## Verdict
+
+- **Vision grounding is a real, measurable improvement over text-only summarization** (B_vision 0.7409
+  > B_text 0.7271, +1.4 pt) — the on-screen-text transcription clause did exactly what it was meant
+  to (surfacing Chinese overlay/caption text CLIP's image encoder is blind to), and it lifts the ZH
+  summary probe above the floor A. That part of the hypothesis is confirmed.
+- **But it does not earn a method role**, because on ZH the MLLM summary — text OR vision — is
+  **dominated by naive single-chunk truncation of the raw text (C 0.791)**. Root cause: Qwen writes
+  the summary in **English** (translating/paraphrasing the ZH Title+Transcript), so the CLIP text
+  encoder loses the ZH surface forms that the raw-ZH truncation C retains. Compression/translation
+  throws away more discriminative lexical signal than the on-screen-text grounding recovers.
+- Consistent with W2 and P8: on ZH the win is "keep the raw (short) text in one chunk", not "have an
+  MLLM rewrite it". The vision channel helps at the margin but cannot overcome the translation loss.
+- Honest kill at the probe (no test measurement spent). If a future variant wants to salvage this,
+  the lever is **summarize in Chinese** (avoid the ZH→EN translation loss) — but that is a new
+  pre-registration, not this arm.
