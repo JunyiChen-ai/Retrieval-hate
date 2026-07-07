@@ -39,11 +39,9 @@ DATASET_INFO = os.path.join(LF_ROOT, "data", "dataset_info.json")
 NUM_FRAMES = 8
 MAX_TRANSCRIPT_CHARS = 1500
 
-# id prefix per dataset for dataset_info registration.
-DS_REGISTER = {
-    "MHC": ("mhc_lora_train", "mhc_lora_val"),
-    "MHC_zh": ("mhc_zh_lora_train", "mhc_zh_lora_val"),
-}
+# id prefix per dataset for dataset_info registration (train/val/test).
+DS_PREFIX = {"MHC": "mhc", "MHC_zh": "mhc_zh", "HateMM": "hatemm"}
+SPLITS = ("train", "val", "test")
 
 IMG_TOKENS = "<image>" * NUM_FRAMES
 
@@ -135,7 +133,8 @@ def build_split(items, ds, video_root, frames_root, instr_tmpl, label_map):
     return records, n_skip, n_hate, n_norm
 
 
-def register_dataset_info(train_key, val_key, train_json, val_json):
+def register_dataset_info(keys_to_json):
+    """keys_to_json: {dataset_info_key: abs_json_path}. Merges into dataset_info.json."""
     with open(DATASET_INFO, "r") as f:
         info = json.load(f)
     entry = lambda fn: {
@@ -149,23 +148,26 @@ def register_dataset_info(train_key, val_key, train_json, val_json):
             "assistant_tag": "assistant",
         },
     }
-    info[train_key] = entry(os.path.abspath(train_json))
-    info[val_key] = entry(os.path.abspath(val_json))
+    for key, fn in keys_to_json.items():
+        info[key] = entry(os.path.abspath(fn))
     with open(DATASET_INFO, "w") as f:
         json.dump(info, f, indent=2, ensure_ascii=False)
-    print("[register] added '{}' and '{}' to {}".format(train_key, val_key, DATASET_INFO))
+    print("[register] added {} to {}".format(list(keys_to_json), DATASET_INFO))
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", required=True, choices=["MHC", "MHC_zh"])
+    ap.add_argument("--dataset", required=True, choices=["MHC", "MHC_zh", "HateMM"])
+    ap.add_argument("--splits", default="train,val,test",
+                    help="comma list of gt splits to build (train/val/test)")
     args = ap.parse_args()
     ds = args.dataset
 
-    if ds == "MHC":
-        instr_tmpl, label_map = INSTR_EN, LABEL_EN
-    else:
+    # ZH uses the Chinese instruction/labels; EN + HateMM use English.
+    if ds == "MHC_zh":
         instr_tmpl, label_map = INSTR_ZH, LABEL_ZH
+    else:
+        instr_tmpl, label_map = INSTR_EN, LABEL_EN
 
     gt_dir = os.path.join(RGCL_ROOT, "data", "gt", ds)
     video_root = os.path.join(RGCL_ROOT, "data", "video", ds, "All")
@@ -173,9 +175,15 @@ def main():
     out_dir = os.path.join(RGCL_ROOT, "data", "lora_sft", ds)
     os.makedirs(out_dir, exist_ok=True)
 
-    summary = {}
-    for split in ("train", "val"):
-        items = read_gt(os.path.join(gt_dir, "{}.jsonl".format(split)))
+    splits = [s.strip() for s in args.splits.split(",") if s.strip()]
+    prefix = DS_PREFIX[ds]
+    summary, keys_to_json = {}, {}
+    for split in splits:
+        gt_path = os.path.join(gt_dir, "{}.jsonl".format(split))
+        if not os.path.exists(gt_path):
+            print("[{}] no gt for split '{}' ({}) -> skip".format(ds, split, gt_path))
+            continue
+        items = read_gt(gt_path)
         records, n_skip, n_hate, n_norm = build_split(
             items, ds, video_root, frames_root, instr_tmpl, label_map
         )
@@ -185,6 +193,7 @@ def main():
         summary[split] = dict(
             n_in=len(items), n_out=len(records), n_skip=n_skip, hate=n_hate, norm=n_norm
         )
+        keys_to_json["{}_lora_{}".format(prefix, split)] = out_path
         print(
             "[{}] {}: n={} skipped={} hateful={} normal={} -> {}".format(
                 ds, split, len(records), n_skip, n_hate, n_norm, out_path
@@ -192,13 +201,7 @@ def main():
             flush=True,
         )
 
-    train_key, val_key = DS_REGISTER[ds]
-    register_dataset_info(
-        train_key,
-        val_key,
-        os.path.join(out_dir, "train.json"),
-        os.path.join(out_dir, "val.json"),
-    )
+    register_dataset_info(keys_to_json)
 
     print("\n==== SUMMARY {} ====".format(ds))
     for split, s in summary.items():
