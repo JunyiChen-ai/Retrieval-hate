@@ -146,6 +146,17 @@ stable protocol. The truncation-repair premise is real at the probe level but do
 through end-to-end training. Honest kill. (The vision-grounded variant P8b, run in parallel by
 p3-pool on ZH under GROUP RAC_video_p8vsum, is a separate arm — its verdict is reported there.)
 
+### Cross-reference — the ZH summary-input family is fully closed (P8b/P8c)
+The vision-grounded (P8b) and Chinese-language (P8c) summary arms on ZH, run by p3-pool
+(`EXP_p8b_vision_summary.md`), close the family with a mechanistic diagnosis: ZH train-probe
+acc A 0.7375 / B_text 0.7271 / B_vision(EN) 0.7409 / **B_vision_zh(CN) 0.7168** / C(raw first-70)
+**0.7910**. The CN summary is 99.8% Chinese-compliant and evidence-dense yet scores WORST —
+because the frozen **English-centric CLIP text tower byte-fragments Chinese** (≤90-char CN
+summary → ~140 CLIP tokens, 97% truncated at 75) and encodes it weakly, so raw-ZH truncation
+(short, one chunk, exact surface forms) wins. So on ZH the summary-input bottleneck is the
+**frozen encoder**, not summary content/length/language — the real lever is a Chinese-capable
+text tower (multilingual/CN CLIP or mpnet-zh), a different experiment family.
+
 ### Jobs / artifacts / repro
 - Generation + cache build: `scripts/analysis/p8_generate_summaries.py` +
   `scripts/slurm/p8_generate_summaries.sbatch`. Summaries `data/Summaries/<DS>/`, caches
