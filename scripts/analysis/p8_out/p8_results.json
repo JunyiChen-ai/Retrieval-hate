@@ -1,0 +1,259 @@
+{
+  "runs": {
+    "MHC|A|s0": {
+      "val_sel": {
+        "epoch": 26,
+        "test_acc": 0.7826,
+        "test_maf1": 0.7113
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.764,
+        "test_maf1": 0.7145
+      }
+    },
+    "MHC|A|s1": {
+      "val_sel": {
+        "epoch": 16,
+        "test_acc": 0.7329,
+        "test_maf1": 0.6034
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7826,
+        "test_maf1": 0.7159
+      }
+    },
+    "MHC|A|s2": {
+      "val_sel": {
+        "epoch": 27,
+        "test_acc": 0.7702,
+        "test_maf1": 0.6997
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7888,
+        "test_maf1": 0.7303
+      }
+    },
+    "MHC|B|s0": {
+      "val_sel": {
+        "epoch": 29,
+        "test_acc": 0.7329,
+        "test_maf1": 0.6263
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7329,
+        "test_maf1": 0.6263
+      }
+    },
+    "MHC|B|s1": {
+      "val_sel": {
+        "epoch": 23,
+        "test_acc": 0.7516,
+        "test_maf1": 0.6728
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7329,
+        "test_maf1": 0.651
+      }
+    },
+    "MHC|B|s2": {
+      "val_sel": {
+        "epoch": 22,
+        "test_acc": 0.7329,
+        "test_maf1": 0.6454
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7329,
+        "test_maf1": 0.6454
+      }
+    },
+    "MHC|C|s0": {
+      "val_sel": {
+        "epoch": 12,
+        "test_acc": 0.7205,
+        "test_maf1": 0.5935
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7516,
+        "test_maf1": 0.6349
+      }
+    },
+    "MHC|C|s1": {
+      "val_sel": {
+        "epoch": 29,
+        "test_acc": 0.7578,
+        "test_maf1": 0.6672
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7578,
+        "test_maf1": 0.6672
+      }
+    },
+    "MHC|C|s2": {
+      "val_sel": {
+        "epoch": 5,
+        "test_acc": 0.7205,
+        "test_maf1": 0.556
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.764,
+        "test_maf1": 0.684
+      }
+    },
+    "MHC|D|s0": {
+      "val_sel": {
+        "epoch": 24,
+        "test_acc": 0.7888,
+        "test_maf1": 0.7342
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.764,
+        "test_maf1": 0.6532
+      }
+    },
+    "MHC|D|s1": {
+      "val_sel": {
+        "epoch": 23,
+        "test_acc": 0.7888,
+        "test_maf1": 0.7342
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7391,
+        "test_maf1": 0.6243
+      }
+    },
+    "MHC|D|s2": {
+      "val_sel": {
+        "epoch": 25,
+        "test_acc": 0.795,
+        "test_maf1": 0.7322
+      },
+      "final": {
+        "epoch": 29,
+        "test_acc": 0.7267,
+        "test_maf1": 0.5605
+      }
+    }
+  },
+  "bit_for_bit": {
+    "MHC": {
+      "got": [
+        0.7826,
+        0.7113
+      ],
+      "expected": [
+        0.7826,
+        0.7113
+      ],
+      "exact": true
+    }
+  },
+  "compare": {
+    "MHC": {
+      "B": {
+        "val_sel": {
+          "A_maf1": 0.6715,
+          "cond_maf1": 0.6482,
+          "delta_mean": -0.0233,
+          "delta_per_seed": [
+            -0.085,
+            0.0694,
+            -0.0543
+          ],
+          "pos_seeds": 1,
+          "n": 3
+        },
+        "final": {
+          "A_maf1": 0.7202,
+          "cond_maf1": 0.6409,
+          "delta_mean": -0.0793,
+          "delta_per_seed": [
+            -0.0882,
+            -0.0649,
+            -0.0849
+          ],
+          "pos_seeds": 0,
+          "n": 3
+        }
+      },
+      "C": {
+        "val_sel": {
+          "A_maf1": 0.6715,
+          "cond_maf1": 0.6056,
+          "delta_mean": -0.0659,
+          "delta_per_seed": [
+            -0.1178,
+            0.0638,
+            -0.1437
+          ],
+          "pos_seeds": 1,
+          "n": 3
+        },
+        "final": {
+          "A_maf1": 0.7202,
+          "cond_maf1": 0.662,
+          "delta_mean": -0.0582,
+          "delta_per_seed": [
+            -0.0796,
+            -0.0487,
+            -0.0463
+          ],
+          "pos_seeds": 0,
+          "n": 3
+        }
+      },
+      "D": {
+        "val_sel": {
+          "A_maf1": 0.6715,
+          "cond_maf1": 0.7335,
+          "delta_mean": 0.0621,
+          "delta_per_seed": [
+            0.0229,
+            0.1308,
+            0.0325
+          ],
+          "pos_seeds": 3,
+          "n": 3
+        },
+        "final": {
+          "A_maf1": 0.7202,
+          "cond_maf1": 0.6127,
+          "delta_mean": -0.1076,
+          "delta_per_seed": [
+            -0.0613,
+            -0.0916,
+            -0.1698
+          ],
+          "pos_seeds": 0,
+          "n": 3
+        }
+      }
+    }
+  },
+  "verdict": {
+    "win_datasets": [],
+    "harm": [
+      [
+        "MHC",
+        "val_sel",
+        -0.0233
+      ],
+      [
+        "MHC",
+        "final",
+        -0.0793
+      ]
+    ],
+    "criterion_pass": false
+  }
+}

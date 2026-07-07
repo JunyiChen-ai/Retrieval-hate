@@ -79,17 +79,72 @@ final-epoch), acc + macro-F1, paired per-seed deltas.
 
 ---
 
-## PROBE-GATE RESULTS
+## PROBE-GATE RESULTS — EN OPENS, ZH + HateMM CLOSE
 
-_(filled after generation; JSON `scripts/analysis/p8_out/probe_gate.json`)_
+Generation job **12423** COMPLETED (45 min; 790 EN / 806 ZH / 1066 HateMM summaries; empty
+summaries 0/0/74). Probe = train-side LOO kNN acc@k20 over `[l2n(img)|l2n(text)]`. JSON:
+`scripts/analysis/p8_out/probe_gate.json`.
 
-<!-- GATE_PLACEHOLDER -->
+| dataset | A floor (raw chunk-mean) | B summary (ours) | C first-70-tok | gate B≥A | B≥C |
+|---|---|---|---|---|---|
+| **MHC (EN)** | 0.7359 | **0.7523** | 0.7067 | **OPEN** | ✓ |
+| MHC_zh | 0.7375 | 0.7271 | **0.7910** | CLOSED | ✗ |
+| HateMM | 0.7715 | 0.7702 | **0.7876** | CLOSED (tie −0.001) | ✗ |
 
-## RESULTS
+- **EN opens** — the truncation-repair target: the ≤60-word summary beats the diluted chunk-mean
+  floor (+1.6pt) AND the naive first-70-tok control (+4.6pt). Trained (job 12426, A/B/C/D × 3
+  seeds). Whether the probe gain survives the learned align-fusion head is the open question
+  (cf. the P3-HateMM "probe necessary-but-not-sufficient" lesson).
+- **ZH / HateMM close.** On both, the naive first-70-tok control C is the BEST probe (ZH 0.791,
+  HateMM 0.788): single-chunk (no dilution) helps, but the MLLM summary does NOT beat raw
+  single-chunk — "shorter helps" ≠ "MLLM semantics help". ZH: summary hurts (short ~26-tok text
+  + partial English-translation loss). HateMM: B≈A tie. Not trained (pre-registration).
+- **ZH English-translation rate = 13%** (87% ZH summaries stayed Chinese — the English-pivot
+  confound is much smaller than the smoke suggested). Truncation on single-chunk encode: B
+  (summary) rarely truncated (EN 13/549, HateMM 13/744) — summaries fit; ZH B 362/579 truncated
+  is an artifact of CJK tokenization, not length.
 
-_(filled after training; JSON `scripts/analysis/p8_out/p8_results.json`)_
+## RESULTS — FAIL (the strongest probe of the campaign still does not survive training)
 
-<!-- RESULTS_PLACEHOLDER -->
+EN training job **12426** COMPLETED (12 runs = A/B/C/D × 3 seeds). Only EN opened the probe.
+JSON: `scripts/analysis/p8_out/p8_results.json`.
+
+- **Bit-for-bit A PASS:** A seed0 val-sel = 0.7826 acc / 0.7113 maF1, exact vs the RAC_video_CLIP
+  floor. Trustworthy.
+
+EN, mean over 3 seeds, TEST macro-F1 (acc):
+| condition | val-selected | final-epoch | Δ maF1 vs A (val / final) | seeds+ (val / final) |
+|---|---|---|---|---|
+| **A** floor (raw chunk-mean) | 0.6715 (0.762) | 0.7202 (0.779) | — | — |
+| **B** summary (ours) | 0.6482 (0.739) | 0.6409 (0.733) | **−0.023 / −0.079** | 1/3 · 0/3 |
+| **C** first-70-tok (rent) | 0.6056 (0.733) | 0.6620 (0.758) | −0.066 / −0.058 | 1/3 · 0/3 |
+| **D** concat[raw\|sum] | 0.7335 (0.791) | 0.6127 (0.743) | +0.062 / −0.108 | 3/3 · 0/3 |
+
+### What happened
+- **B (summary) HURTS EN under both protocols** (val-sel −0.023, final-epoch **−0.079**, 0/3
+  seeds positive on the stable protocol). The pre-registered bar (B−A>0.01, ≥2/3 seeds, both
+  protocols, AND B>C) FAILS on every clause.
+- **The rent test fails in the wrong direction:** on final-epoch B (−0.079) is *worse* than the
+  naive first-70-token control C (−0.058) — the MLLM summary does not even beat blind truncation
+  once trained.
+- **D is pure val-selection noise:** val-sel +0.062 (3/3) but final-epoch −0.108 (0/3, the WORST
+  cell). The two protocols flip sign by 0.17 maF1 — a textbook selection artifact, no claim.
+- **The decisive lesson (sharpest instance in the campaign):** P8 had the *strongest* no-head
+  probe of any front — the EN summary beat both the floor (+1.6pt) and the rent-test control
+  (+4.6pt) at the probe — yet the trained retrieval head does WORSE on the compressed text than
+  on the raw chunk-mean. **A passing no-head probe is necessary but not sufficient** (cf.
+  P3-HateMM). Mechanism: the single-chunk summary is a *lossy* re-encoding; the learned
+  align-fusion head exploits the full raw (even diluted) text better than the MLLM's paraphrase,
+  and the compression discards signal the head would otherwise use.
+
+### Verdict
+**MLLM speech-channel semantic compression does NOT earn a method role and does not produce the
+substantial improvement the user's goal requires.** On the one dataset whose probe opened (EN),
+the compressed summary text input is net-negative vs both the floor and naive truncation once the
+head is trained; the only "positive" (D val-sel) is a selection artifact that inverts on the
+stable protocol. The truncation-repair premise is real at the probe level but does not translate
+through end-to-end training. Honest kill. (The vision-grounded variant P8b, run in parallel by
+p3-pool on ZH under GROUP RAC_video_p8vsum, is a separate arm — its verdict is reported there.)
 
 ### Jobs / artifacts / repro
 - Generation + cache build: `scripts/analysis/p8_generate_summaries.py` +
