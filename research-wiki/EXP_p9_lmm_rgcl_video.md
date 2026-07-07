@@ -136,27 +136,46 @@ floors coincide (0.8188) so ZH deltas are unaffected by the correction.
 
 Supporting DEV (3 seeds): C3-mlp EN 0.7792 / ZH 0.8761; C3-knn EN 0.7708 / ZH 0.8632 (the ZH-kNN
 s0=0.8333 that looked "below floor" was the low seed — multi-seed dev ≈ floor).
+ZH C3-mlp per-seed test: **0.8456 / 0.8792 / 0.8658** (F1 .768/.830/.796), final-checkpoint
+(no val-selection). **2/3 seeds cross 0.85; s0 (0.8456) is just under.**
+
+### ZH floor reconciliation (protocol-matched — the +4.5 shrinks to +1.0)
+The "+4.5pt" is vs the **frozen** RGCL floor (a), which attributes the *entire LoRA benefit* to C3.
+But we already have LoRA systems on ZH, so the fair floor is a LoRA system at the **same
+no-selection protocol**:
+| ZH floor | value | what it is | C3-mlp 0.8635 Δ | matched? |
+|---|---|---|---|---|
+| (a) arcbase/rgcl frozen-Qwen RGCL | 0.8188 | frozen encoder + our kNN head, final-ep | +4.5pt | no (frozen vs LoRA) |
+| (b) LoRA-encoder+head, val-sel | 0.8322 | LoRA enc + our head, val-selected, 1 seed | +3.1pt | no (val-sel, 1 seed) |
+| **(c) LoRA final-epoch, multi-seed** | **0.8537±0.012** | LoRA enc + our head, no-selection, 3-seed | **+1.0pt** | **yes** |
+
+**Defensible headline = +1.0pt vs (c), WITHIN NOISE** (bands overlap: 0.8635−0.017=0.8465 vs
+0.8537+0.012=0.8657). The LMM's own head does **not substantially beat** our existing LoRA-encoder +
+RGCL-kNN route on ZH — it *matches* it. And (c) **already crosses 0.85** (0.8537) at no-selection, so
+C3-mlp does **not newly** satisfy the ZH 0.85 target.
 
 ### Verdict
-1. **EN — no gain.** C3-mlp +0.6pt is inside the 3-pt arcbase seed spread; C3-knn −2.7pt below floor.
-   (EN low-prior; iter-2 encoder-LoRA also regressed EN.)
-2. **ZH — a real +4.5pt test gain, but it lives in the LMM's OWN classifier head, not our memory.**
-   C3-mlp beats floor on all 3 SFT seeds. But **C3-knn — our retrieval-memory read-out, the method's
-   novelty pillar — is −2.2pt BELOW floor on ZH (and −2.7 on EN).** SFT-ing the backbone for our kNN
-   *hurts* on both datasets; the MLLM helps only through its vanilla head, only on ZH.
-3. **Campaign bar NOT met.** The one real gain is vanilla decision-level LoRA-SFT on one of two
-   primary datasets via the LMM's own head — not a *novel* integration with the retrieval memory,
-   which actively regresses. The MLLM earns a decision-level *classifier* role on ZH; it **displaces**
-   rather than enhances the memory pillar.
+1. **EN — no gain.** C3-mlp +0.6pt vs frozen best 0.7847 is inside the 3-pt arcbase seed spread;
+   C3-knn −2.7pt below floor. (EN low-prior; iter-2 encoder-LoRA also regressed EN, so frozen IS EN's
+   best existing config.)
+2. **ZH — matches, does not beat, our best existing system.** vs the protocol-matched LoRA floor (c)
+   C3-mlp is **+1.0pt, within noise** (the +4.5 vs frozen is the LoRA benefit we already had). And
+   **C3-knn — our retrieval-memory read-out, the method's novelty pillar — is −2.2pt BELOW floor on
+   ZH (and −2.7 on EN).** SFT-ing the backbone for our kNN *hurts* on both; the MLLM's own head only
+   *matches* the LoRA route on ZH.
+3. **Campaign bar NOT met, under every honest framing.** No substantial improvement over our own best
+   config on either dataset (EN +0.6 noise, ZH +1.0 noise); the retrieval-memory decision actively
+   regresses. The MLLM's own head **displaces** rather than enhances the memory pillar — the
+   integration clause fails.
 4. **RGCL-fix: not worth it.** Its purpose is to improve the embedding-space kNN — below floor on
    both datasets. Do not spend the ~0.5–1 day forward-patch.
 
 ### Paper-usable findings (independent of the verdict)
 - The released RA-HMD stage-2 (`Ver202512`) runs **rgcl-OFF** and needs **5 fixes** to run on video
   (§Fork readiness), incl. it **never reloads its own trained classifier head** on eval/predict.
-- Decision-level LMM-SFT lifts ZH **+4.5pt** via its own head, but our retrieval read-out on the
-  SFT'd embedding space **loses on both** datasets — a clean "the gain is not from the memory"
-  negative for the method-integration story.
+- Decision-level LMM-SFT **matches** our LoRA route on ZH (+1.0pt vs protocol-matched floor, noise)
+  and our retrieval read-out on the SFT'd embedding space **loses on both** datasets — a clean "the
+  gain is not from the memory, and not beyond our existing LoRA" negative for the method story.
 
 ### HateMM — DEFERRED per team-lead ruling (verbatim, still standing)
 > The gate opens on a literal tie (0.8411 ≥ 0.8411); expansion is deferred behind the two cells
@@ -164,8 +183,10 @@ s0=0.8333 that looked "below floor" was the low seed — multi-seed dev ≈ floo
 > no-harm/completeness for the paper table, not the goal-carrying claim; the rule's expansion set
 > is unchanged.
 
-Since EN/ZH landed as "head-carried, memory-negative," HateMM s1/s2 + test are pending a team-lead
-call (table-completeness vs stop). Test touched once/cell; no HateMM test run yet.
+Team-lead confirmed the rule-literal expansion; HateMM completion now **RUNNING** for paper-table
+completeness: s0 already trained (dev tie 0.8411), s1/s2 training = jobs 12463/12464; then kNN
+extraction (s0/s1/s2) + single test pass (test_yn built, 215 vids / 40% hateful). Matched frozen
+floor ≈ 0.870 (the campaign's HateMM SOTA). Test touched once/cell; no HateMM test run yet.
 
 ### Jobs / artifacts
 - Data: `src/utils/build_lora_sft_data.py` (word + yesno), `scripts/slurm/p9_build_data.sbatch`

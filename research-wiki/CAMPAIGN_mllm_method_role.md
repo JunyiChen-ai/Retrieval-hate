@@ -11,10 +11,15 @@ as the **frozen encoder** (Qwen features beat CLIP on HateMM by +4.2 macro-F1, c
 as a **span-free localization scorer** (P6 — its per-window evidence scores rank hate windows better
 than the retrieval memory and random: within-video AUC **0.5435 vs 0.5140 / 0.5088**, paired b>a
 p=0.007, CI excludes null; magnitude modest, statistics solid). The **main-table accuracy role is
-exhaustively refuted**: across **eight pre-registered routes at 7B–32B scale**
-(P1/P2/P2b/P3-EN,ZH,HateMM/P4/P5) no MLLM component lifts static test accuracy beyond the
-~1.6-video (≈1 acc pt) noise floor, and every verdict is guard-backed (reproduction / bit-for-bit /
-probe). Two methodology takeaways generalize: **(i) a passing no-head probe is *necessary but not
+exhaustively refuted**: across **nine pre-registered routes at 7B–32B scale**
+(P1/P2/P2b/P3-EN,ZH,HateMM/P4/P5, plus P9 the **decision level** itself) no MLLM component lifts
+static test accuracy beyond the ~1.6-video (≈1 acc pt) noise floor, and every verdict is guard-backed
+(reproduction / bit-for-bit / probe). **P9 closes the last architectural locus**: even LoRA-SFT-ing
+the *whole* LMM as the classifier only *matches* our existing LoRA-encoder+RGCL route on ZH (+1.0pt
+vs the protocol-matched final-epoch floor, within noise) and is noise on EN — and reading that same
+SFT'd backbone through our *retrieval memory* loses on both (−2.2 ZH / −2.7 EN), so the MLLM's own
+head **displaces** rather than **enhances** the memory pillar. (HateMM completion in flight for the
+paper table; EN/ZH settled.) Two methodology takeaways generalize: **(i) a passing no-head probe is *necessary but not
 sufficient*** — HateMM had the cleanest probe of the three yet the learned align-fusion head washed
 the input reweighting out (P3-HateMM); **(ii) semantic competence is *orthogonal to, or redundant
 with, the decision variable*** — comparability ⊥ vote-correctness, era-drifting verdict rates,
@@ -38,6 +43,7 @@ that a main-table lift would need moved.
 | **P7** score-level fusion | fuse the visual kNN vote share with the MLLM semantic channel (bin=P1 verdict / dens=P3 density) at the SCORE level via two frozen rules (R1 rank-average, R2 band-limited veto-boost) | **train-side gate**: some rule corrects ≥15% of seed-0 LOO errors net-of-damage (no test contact) | **FAIL (train-side KILL, premise refuted).** every rule×channel net **−0.10…−0.38** (damages > corrects); no test spent | **channels are NOT decorrelated**: corr(channel, vote share) **+0.21…+0.51** (positive), and the channel is the weaker classifier (AUC 0.54–0.69 vs floor LOO acc 0.81–0.86) → agrees where vote is right, adds noise where it's wrong | EXP_p7_score_fusion · `8f920e5` |
 | **P5** counterfactual twins | MLLM rewrites each TRAIN positive's transcript into a sanitized counterfactual; twin = anchor's REAL img + sanitized-text embedding; one extra per-anchor hard negative | flag-off bit-for-bit; **quality gate** flip≥0.80 + hardness; cf beats floor >1pt, ≥2/3, both protocols | **FAIL.** bit-for-bit exact; **gate CLOSED** (flip **0.503 EN / 0.337 ZH**, hardness pass); diagnostic cf **hurts EN −0.027**, flat ZH; cfrand ≈ cf | MLLM **can't reliably manufacture** the clean counterfactual (half EN / two-thirds ZH still harmful); and clean twins hurt because they **share the anchor's visuals → too close** (cos 0.73), so repelling fights the visual signal | EXP_p5_counterfactual_negs · `fc25cac`,`66d3103` |
 | **P6** localization scorer *(the one PASS)* | per-window MLLM evidence scores (frames + ASR) rank HateClipSeg windows for **span-free temporal localization** (memory-free saliency) | within-video mean-AUC(MLLM) > memory AND random; b's 95% CI excludes 0.5; sign-test p<0.05 | **PASS — earns a removable role.** wv-AUC **0.5435** vs memory 0.5140 / random 0.5088; paired b>a **Δ+0.0296** CI[+.009,+.050] **p=0.007**; vs-null p=5.4e-8; seg-AUC 0.635 vs 0.584 | *win, not fail:* the same evidence signal P3 couldn't **pool** is a genuine **localizer** — magnitude modest, statistics solid | EXP_p6_mllm_localization · `c9e3bd8` |
+| **P9** decision-level LMM-SFT *(LMM-RGCL stage-2)* | LoRA-SFT the **whole** Qwen2.5-VL LMM + its own classifier head (RA-HMD `sft_classifier`, rgcl-OFF); two read-outs — the in-LMM MLP head (C3-mlp) and OUR kNN over the SFT'd embeddings (C3-knn) | C3 beats the frozen floor >1pt, ≥2/3 seeds, both read-outs; user goal = *substantial* + *novel integration* | **FAIL vs protocol-matched floor (EN/ZH; HateMM in flight 12463/12464).** C3-mlp test: EN 0.7909 = **+0.6pt** vs frozen best 0.7847 (noise); ZH 0.8635 = **+4.5 vs frozen but only +1.0 vs our LoRA final-epoch 0.8537** (noise). **C3-knn (our memory) EN −2.7 / ZH −2.2 BELOW floor.** | the ZH gain vs frozen is the **LoRA benefit we already had**; the LMM's own head only *matches* our LoRA-encoder+RGCL route, and our retrieval read-out on the SFT'd space **loses on both** ⇒ the MLLM **displaces**, not enhances, the memory pillar. Fork finding: RA-HMD stage-2 ships rgcl-OFF, needs 5 fixes (incl. never reloads classifier.bin) | EXP_p9_lmm_rgcl_video · `455e666` |
 
 Noise-floor convention (all fronts): 1 acc pt ≈ 1.6 videos on these ~150-sample test sets;
 sub-1pt effects are reported as **within-noise, no claim** — the headline is the paired-delta sign
