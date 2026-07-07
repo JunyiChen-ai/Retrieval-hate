@@ -94,5 +94,35 @@ tokens (truncated at encode, same as P8).
 - Consistent with W2 and P8: on ZH the win is "keep the raw (short) text in one chunk", not "have an
   MLLM rewrite it". The vision channel helps at the margin but cannot overcome the translation loss.
 - Honest kill at the probe (no test measurement spent). If a future variant wants to salvage this,
-  the lever is **summarize in Chinese** (avoid the ZH→EN translation loss) — but that is a new
-  pre-registration, not this arm.
+  the lever is **summarize in Chinese** (avoid the ZH→EN translation loss) — pre-registered as P8c below.
+
+---
+
+# P8c — Chinese-language vision summaries (the diagnosed salvage lever)
+
+**Status:** PRE-REGISTERED (frozen before probe) · **Started:** 2026-07-07 · **Owner:** subagent P8c.
+Team-lead fired this after P8b: P8b measured the OCR gain (+1.4 pt through translation loss) and
+diagnosed the loss as ZH→EN paraphrase dropping ZH surface forms. P8c isolates it by forcing the
+summary INTO CHINESE. p1-prior's caveat (probe-maybe / train-no; the whole summary-input family hit a
+probe≠training wall on EN) is noted — hence cheap scope: one gen job + CPU probe, **no training unless
+the gate opens**.
+
+## Pre-registration (frozen)
+- **Generation:** byte-identical to P8b except the frozen prompt forces Chinese output and keeps
+  on-screen text verbatim (`要求:摘要必须用中文书写;画面中出现的屏幕文字…请原样保留`), ≤90 汉字
+  (≈ the ≤60-word budget). Same 8 frames, greedy, all ZH splits.
+  `generate_vision_summary.py --summary_lang zh --out_dir data/Summaries_vision_zh`
+  (parallel dir; P8b's `data/Summaries_vision/` untouched). Gen job = **12430**.
+- **Encoding:** `p8b_build_cache.py --summaries_dir data/Summaries_vision_zh --tag p8vsumzh`
+  → `<split>_p8vsumzh_HF.pt` (reuses P8's encode_single; floor img/ids/labels verbatim).
+- **Probe gate (ZH TRAIN LOO @k20, same harness):** `p8b_probe.py --vsum_tag p8vsumzh --label B_vision_zh`.
+  **Gate: B_vision_zh must beat BOTH A (0.7375) AND C (0.7910)** — the same higher bar as P8b.
+  Reference points: B_text 0.7271, B_vision(EN) 0.7409. B_vision_zh needs ≥ +0.050 over B_vision(EN)
+  just from keeping Chinese to clear C.
+- **Training:** only if the gate opens — 3 seeds, `--model p8vsumzh_HF`, trainlog
+  `p8vsumzh_MHC_zh_Bvis_s<seed>.trainlog`, else HONEST KILL. If it fails too, the summary-input family
+  is closed on ZH with a complete three-arm attribution (text-only 0.727 < vision 0.741 < vision-zh ?
+  vs the naive-trunc bar 0.791).
+
+## P8c results
+_(pending: gen 12430 → build p8vsumzh cache → probe → verdict)_

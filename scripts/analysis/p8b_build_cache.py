@@ -24,6 +24,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--datasets", default="MHC_zh")
     ap.add_argument("--summaries_dir", default="data/Summaries_vision")
+    ap.add_argument("--tag", default="p8vsum", help="cache tag (p8vsum=P8b English, p8vsumzh=P8c CN).")
     ap.add_argument("--clip_model", default="openai/clip-vit-large-patch14-336")
     ap.add_argument("--device", default="cpu")
     a = ap.parse_args()
@@ -59,7 +60,7 @@ def main():
             d["text_feats"] = B.float().contiguous()
             assert torch.equal(d["img_feats"], floor["img_feats"])
             assert d["ids"] == floor["ids"] and torch.equal(d["labels"], floor["labels"])
-            op = os.path.join(ds_dir, "{}_p8vsum_HF.pt".format(outname))
+            op = os.path.join(ds_dir, "{}_{}_HF.pt".format(outname, a.tag))
             torch.save(d, op)
             print("[{}/{}] N={} trunc(>75tok)={} missing={} -> {}".format(
                 ds, split, len(floor_ids), ntrunc, miss, op))

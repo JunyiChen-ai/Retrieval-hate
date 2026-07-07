@@ -43,6 +43,16 @@ USER_PROMPT = (
     "offensive. Output only the condensed text, no commentary.\n\n"
     "Title+Transcript: {text}"
 )
+# P8c: Chinese-forced variant. Same content instruction, but the summary MUST be
+# written in Chinese (avoids the ZH->EN translation loss diagnosed in P8b) and
+# on-screen text is kept verbatim. ~90 Chinese chars ~= the ~60-word budget.
+USER_PROMPT_ZH = (
+    "请把这个短视频概括为不超过90个汉字,保留:被针对的对象(WHO)、有可能构成仇恨或"
+    "冒犯的言语或画面(WHAT)、以及整体主题。要求:摘要必须用中文书写;画面中出现的"
+    "屏幕文字(字幕、表情包、叠加文字、标语)若可能含仇恨或冒犯内容,请原样保留在摘要中。"
+    "只输出概括文本,不要任何解释。\n\n标题+字幕:{text}"
+)
+LANG_PROMPTS = {"en": USER_PROMPT, "zh": USER_PROMPT_ZH}
 
 
 def parse_args(argv=None):
@@ -54,6 +64,8 @@ def parse_args(argv=None):
     ap.add_argument("--out_dir", type=str, default="./data/Summaries_vision")
     ap.add_argument("--model", type=str, default="Qwen/Qwen2.5-VL-7B-Instruct")
     ap.add_argument("--num_frames", type=int, default=8)
+    ap.add_argument("--summary_lang", type=str, default="en", choices=["en", "zh"],
+                    help="en = P8b English summary (default); zh = P8c Chinese-forced summary.")
     ap.add_argument("--max_pixels", type=int, default=360 * 420)
     ap.add_argument("--max_new_tokens", type=int, default=160)
     ap.add_argument("--limit", type=int, default=0, help="If >0, first N videos (smoke).")
@@ -78,7 +90,7 @@ def read_gt(gt_path):
     return items
 
 
-def build_messages(frames, text):
+def build_messages(frames, text, prompt_tmpl=USER_PROMPT):
     t = (text or "").strip()
     if len(t) > MAX_TEXT_CHARS:
         t = t[:MAX_TEXT_CHARS] + " ...[truncated]"
@@ -88,14 +100,14 @@ def build_messages(frames, text):
         {"role": "system", "content": [{"type": "text", "text": SYSTEM_PROMPT}]},
         {"role": "user", "content": [
             {"type": "video", "video": frames},
-            {"type": "text", "text": USER_PROMPT.format(text=t)},
+            {"type": "text", "text": prompt_tmpl.format(text=t)},
         ]},
     ]
 
 
 @torch.no_grad()
-def generate_summary(frames, text, processor, model, device, max_new_tokens):
-    messages = build_messages(frames, text)
+def generate_summary(frames, text, processor, model, device, max_new_tokens, prompt_tmpl=USER_PROMPT):
+    messages = build_messages(frames, text, prompt_tmpl)
     chat = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     inputs = processor(text=[chat], images=None, videos=[frames], return_tensors="pt").to(device)
     out_ids = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
@@ -124,6 +136,9 @@ def main(args):
     from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
 
     device = torch.device(args.device)
+    prompt_tmpl = LANG_PROMPTS[args.summary_lang]
+    max_new = max(args.max_new_tokens, 220) if args.summary_lang == "zh" else args.max_new_tokens
+    print("summary_lang={} (max_new_tokens={})".format(args.summary_lang, max_new), flush=True)
     print("Loading Qwen2.5-VL: {}".format(args.model), flush=True)
     model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
         args.model, torch_dtype=torch.bfloat16, attn_implementation="sdpa", device_map=None)
@@ -161,7 +176,7 @@ def main(args):
                 frames, ok = load_video_frames(vpath, args.num_frames)
                 if ok:
                     summary = generate_summary(
-                        frames, item["text"], processor, model, device, args.max_new_tokens)
+                        frames, item["text"], processor, model, device, max_new, prompt_tmpl)
                 else:
                     summary = ""  # unreadable video -> empty (logged)
                 fout.write(json.dumps({

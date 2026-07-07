@@ -23,6 +23,8 @@ from p8_probe_gate import rep, loo_knn, MODEL  # noqa: E402
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--datasets", default="MHC_zh")
+    ap.add_argument("--vsum_tag", default="p8vsum", help="p8vsum=P8b English, p8vsumzh=P8c CN.")
+    ap.add_argument("--label", default="B_vision", help="condition label for the vsum arm.")
     ap.add_argument("--out", default="scripts/analysis/p8_out/p8b_probe_gate.json")
     a = ap.parse_args()
     result = {}
@@ -32,7 +34,7 @@ def main():
         img = floor["img_feats"]
         labels = floor["labels"].long().numpy()
         texts = {"A": floor["text_feats"]}
-        for tag, cond in (("p8trunc", "C"), ("p8vsum", "B_vision")):
+        for tag, cond in (("p8trunc", "C"), (a.vsum_tag, a.label)):
             p = os.path.join(ds_dir, "train_{}_HF.pt".format(tag))
             if not os.path.exists(p):
                 print("[WARN] missing {}".format(p)); texts[cond] = None; continue
@@ -47,21 +49,22 @@ def main():
             conds[cond] = {"acc_k20": acc20, "macro_f1_k20": mf20, "acc_k1_5_10": kc}
         a_acc = conds.get("A", {}).get("acc_k20")
         c_acc = conds.get("C", {}).get("acc_k20")
-        b_acc = conds.get("B_vision", {}).get("acc_k20")
+        b_acc = conds.get(a.label, {}).get("acc_k20")
         beats_A = (b_acc is not None and a_acc is not None and b_acc >= a_acc)
         beats_C = (b_acc is not None and c_acc is not None and b_acc >= c_acc)
         gate = bool(beats_A and beats_C)
         result[ds] = {"n": int(len(labels)), "pos": int(labels.sum()), "conds": conds,
-                      "B_vision_beats_A": bool(beats_A), "B_vision_beats_C": bool(beats_C),
+                      "{}_beats_A".format(a.label): bool(beats_A),
+                      "{}_beats_C".format(a.label): bool(beats_C),
                       "GATE_open": gate}
-        print("\n===== P8b probe :: {} (n={}, pos={}) =====".format(ds, len(labels), int(labels.sum())))
-        for cond in ("A", "C", "B_vision"):
+        print("\n===== P8b/c probe :: {} (n={}, pos={}) =====".format(ds, len(labels), int(labels.sum())))
+        for cond in ("A", "C", a.label):
             if cond in conds:
                 c = conds[cond]
-                print("  {:9s}: acc@k20={} macroF1={} | k1/5/10={}".format(
+                print("  {:11s}: acc@k20={} macroF1={} | k1/5/10={}".format(
                     cond, c["acc_k20"], c["macro_f1_k20"], c["acc_k1_5_10"]))
-        print("  B_vision >= A: {}  |  B_vision >= C(0.791 bar): {}  ->  GATE {}".format(
-            beats_A, beats_C, "OPEN" if gate else "CLOSED"))
+        print("  {0} >= A: {1}  |  {0} >= C(0.791 bar): {2}  ->  GATE {3}".format(
+            a.label, beats_A, beats_C, "OPEN" if gate else "CLOSED"))
     os.makedirs(os.path.dirname(os.path.join(ROOT, a.out)), exist_ok=True)
     with open(os.path.join(ROOT, a.out), "w") as f:
         json.dump(result, f, indent=2)
