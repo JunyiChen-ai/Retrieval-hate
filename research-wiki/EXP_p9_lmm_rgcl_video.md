@@ -278,4 +278,26 @@ diverging chaotically like any two GPU runs. **Both** differ from the old C3 run
 plumbing is transparent (not provably bit-identical without deterministic-CUDA mode, which we don't
 run). So loss_ratio=[1,1,0] ≈ rgcl-OFF as intended.
 
-<!-- RESULTS_PENDING: config decision → D3 6-train + read-outs; verdict vs the goal bar -->
+## PRE-REGISTRATION AMENDMENT (option a — team-lead ruling, justified by the bs=1 degeneracy)
+The bs=1 config makes `in_batch_negative_loss ≡ 0` and pins `rgcl_loss` at ln(2) (pos/neg gap
+0.44→0.006) — RGCL's primary in-batch term is dead. **Fix = restore in-batch contrastive by raising
+the physical batch:** 4 frames (subsampled [0,2,4,6] from the already-extracted 8 — uniform, no
+re-decode) at 256², **per_device_train_batch_size 4 × grad_accum 4 = effective 16**. Data registered
+`*_lora_yn4_*` (`scripts/analysis/p9b_make_4frame_data.py`).
+- **4-frame smoke (12492) PASSES:** `in_batch_negative_loss` nonzero+moving (0.79/0.65/0.89/0.73),
+  `rgcl_loss` off the ln2 pin (~1.1), no NaN, no OOM (bs4 fits), bs4 eval fits, ckpt saves.
+- **reindex_every=25** for the wave (fix #2 direction — the retrieved pos/neg still converges, but
+  that's a 20-step-smoke artifact since a 2nd reindex only fires at step 25; 25 gives 5 reindexes vs
+  3 in the full run → fresher bank). The in-batch term is now the primary signal regardless.
+- **Matched control C3′** (team-lead, load-bearing): rerun rgcl-OFF at the SAME 4-frame config but
+  **through the rgcl branch with loss_ratio `[1,1,0]`** (not the else-branch). So **D3 − C3′ = pure
+  rgcl-term effect**, sidestepping the λ=0 branch-divergence (12438 = stale ref; the branch itself
+  matches a fresh else-branch C3-repro within GPU noise — footnote, off the critical path). The
+  original 8-frame C3 stays as the original condition; the amended comparison is **C3′ vs D3**.
+- **Wave:** {D3, C3′} × {ZH, EN} × seeds 0/1/2 = 12 runs (jobs 12494–12505). Read-outs both; floors
+  EN 0.7847 / ZH 0.8537; bar D3-knn > floor +1.5pt (≥2/3) AND D3-knn ≥ D3-mlp−1; **+ D3-knn vs
+  C3′-knn = the mechanism claim** (does the rgcl term specifically help our memory read-out).
+- **Honest caveat:** 4 frames is a real evidence cut (esp. ZH visual-borne hate); frames-vs-batch is
+  a follow-up if D3 works at 4 frames.
+
+<!-- RESULTS_PENDING: wave (12494–12505) → extractions + predicts → D3 vs C3′ verdict -->
