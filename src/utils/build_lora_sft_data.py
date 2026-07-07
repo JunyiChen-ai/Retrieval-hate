@@ -60,6 +60,21 @@ INSTR_ZH = (
 )
 LABEL_ZH = {1: "仇恨", 0: "正常"}
 
+# Yes/No answer variant (REQUIRED by the RA-HMD sft_classifier stage: the binary target
+# is derived from the presence of the "Yes" token id in the answer). Same 8 frames + text.
+INSTR_EN_YN = (
+    "Analyze this video using the 8 frames and the transcript below. Consider visuals, "
+    "on-screen text, gestures, symbols, and speech. Transcript: {text}. Is this video "
+    "hateful or harmful (attacks or demeans people based on identity, or promotes harm)? "
+    "Answer with exactly one word: Yes or No."
+)
+INSTR_ZH_YN = (
+    "请结合这8帧画面和下面的文字记录分析这段视频。请综合考虑画面、屏幕文字、手势、"
+    "符号以及语音。文字记录：{text}。这段视频是否属于仇恨/有害内容（基于身份攻击或"
+    "贬低他人，或宣扬伤害）？请只用一个英文单词回答：Yes 或 No。"
+)
+LABEL_YN = {1: "Yes", 0: "No"}
+
 
 def read_gt(path):
     items = []
@@ -160,14 +175,22 @@ def main():
     ap.add_argument("--dataset", required=True, choices=["MHC", "MHC_zh", "HateMM"])
     ap.add_argument("--splits", default="train,val,test",
                     help="comma list of gt splits to build (train/val/test)")
+    ap.add_argument("--answer", default="word", choices=["word", "yesno"],
+                    help="'word' = hateful/normal (plain generative SFT); "
+                         "'yesno' = Yes/No (REQUIRED by the sft_classifier stage). "
+                         "yesno writes <split>_yn.json + registers <prefix>_lora_yn_<split>.")
     args = ap.parse_args()
     ds = args.dataset
 
-    # ZH uses the Chinese instruction/labels; EN + HateMM use English.
-    if ds == "MHC_zh":
-        instr_tmpl, label_map = INSTR_ZH, LABEL_ZH
+    zh = (ds == "MHC_zh")
+    if args.answer == "yesno":
+        instr_tmpl = INSTR_ZH_YN if zh else INSTR_EN_YN
+        label_map = LABEL_YN
+        suffix, keytag = "_yn", "_yn"
     else:
-        instr_tmpl, label_map = INSTR_EN, LABEL_EN
+        instr_tmpl = INSTR_ZH if zh else INSTR_EN
+        label_map = LABEL_EN if not zh else LABEL_ZH
+        suffix, keytag = "", ""
 
     gt_dir = os.path.join(RGCL_ROOT, "data", "gt", ds)
     video_root = os.path.join(RGCL_ROOT, "data", "video", ds, "All")
@@ -187,13 +210,13 @@ def main():
         records, n_skip, n_hate, n_norm = build_split(
             items, ds, video_root, frames_root, instr_tmpl, label_map
         )
-        out_path = os.path.join(out_dir, "{}.json".format(split))
+        out_path = os.path.join(out_dir, "{}{}.json".format(split, suffix))
         with open(out_path, "w") as f:
             json.dump(records, f, indent=2, ensure_ascii=False)
         summary[split] = dict(
             n_in=len(items), n_out=len(records), n_skip=n_skip, hate=n_hate, norm=n_norm
         )
-        keys_to_json["{}_lora_{}".format(prefix, split)] = out_path
+        keys_to_json["{}_lora{}_{}".format(prefix, keytag, split)] = out_path
         print(
             "[{}] {}: n={} skipped={} hateful={} normal={} -> {}".format(
                 ds, split, len(records), n_skip, n_hate, n_norm, out_path
