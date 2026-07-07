@@ -23,15 +23,18 @@ conda activate HateVideo
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 WANDB_MODE=disabled PYTHONUNBUFFERED=1
 export DISABLE_VERSION_CHECK=1
 export CUDA_HOME=${LF_ROOT}/.cuda_home_shim
+# 8-frame video vision-tower forward is memory-heavy; reduce fragmentation OOM.
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 bash ${RGCL_ROOT}/scripts/disk_guard.sh || true
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
 
-# smoke: cap steps by writing a temp config that appends max_steps + shrinks epochs.
+# smoke: cap steps via max_steps ONLY (a NEW key — never duplicate an existing key, which
+# yaml rejects with ConstructorError). HF Trainer: positive max_steps overrides num_train_epochs.
 RUN_CONFIG="${CONFIG}"
 if [ -n "${MAX_STEPS}" ]; then
     RUN_CONFIG=$(mktemp --suffix=.yaml)
     cp "${CONFIG}" "${RUN_CONFIG}"
-    { echo "max_steps: ${MAX_STEPS}"; echo "num_train_epochs: 1.0"; echo "save_steps: 1000000"; } >> "${RUN_CONFIG}"
+    echo "max_steps: ${MAX_STEPS}" >> "${RUN_CONFIG}"
     echo "[p9train] SMOKE max_steps=${MAX_STEPS} config=${RUN_CONFIG}"
 fi
 
