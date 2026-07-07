@@ -193,3 +193,51 @@ floor ≈ 0.870 (the campaign's HateMM SOTA). Test touched once/cell; no HateMM 
   (frames). Config: `RA-HMD/LLAMA-FACTORY-Ver202512/my_configs/hatevideo/p9_mhc_c3_classifier.yaml`.
   Train: `scripts/slurm/p9_train.sbatch`. C3-knn read-out reuses `scripts/slurm/gen_embed_lora.sbatch`
   + `generate_VideoMLLM_embedding_lora_HF.py` → our kNN eval.
+
+---
+
+# P9b — RGCL-ON arm (train the MLLM by our retrieval-contrastive loss; decide by our memory)
+
+**Directive (team-lead, supersedes the earlier "RGCL-fix not worth it" EV call).** The locked goal
+(meaningful+novel MLLM integration AND substantial main-table improvement) is primary. P9's own
+finding motivates this precisely: rgcl-OFF SFT reshaped the space *for the MLP head and AGAINST our
+kNN* (C3-knn −2.2/−2.7 below floor). The **rgcl contrastive term is the missing objective that
+trains the embedding space FOR the memory vote** — the literal form of the goal (MLLM trained by our
+retrieval-contrastive loss, decision by our updatable kNN memory). RA-HMD's release never ran this.
+
+## The patch (implemented 2026-07-08; Codex-reviewed; no Qwen forward surgery)
+Recon overturned the scoped "hard forward patch": the trainer's RGCL orchestration is **already
+wired** (feature bank + reindex, `compute_rgcl_loss` call, `loss_ratio[2]` combine, rgcl logging).
+Only two things were broken, both fixable without touching the Qwen forward:
+- **(a) `sample_ids`** — `compute_rgcl_loss` only uses `len(sample_ids)=batch_size` on the dense
+  path (self-exclusion is label-based), so `inputs["sample_ids"] = torch.arange(bs)` suffices.
+- **(b) the never-implemented `model(classification_mode=True, output_embeds=True) → (outputs, pred,
+  embeds)` contract** at two call sites (trainer query batch + `dense_retrieve` reindex) — both
+  routed through the existing `get_embeds_from_last_layer` (the exact pooling+classifier the MLP head
+  uses), via a `_rgcl_embed_fn` threaded into `compute_rgcl_loss`/`dense_retrieve`.
+- **CPU-faiss fixes** (Codex-found; RA-HMD only ever ran GPU faiss, `faiss.get_num_gpus()==0` here):
+  `train_feats is None` (was `== None`, crashes on the cached numpy bank at step 1); numpy `index.add
+  /search` branch (was torch `.to(float32)`); `torch.zeros` device/dtype captured pre-numpy-conversion.
+- **Files:** `sft_classifier/trainer.py` (compute_loss rgcl branch + `_rgcl_embed_fn`),
+  `sft_classifier/rgcl_loss.py` (`embed_fn` thread + CPU-faiss fixes).
+
+## PRE-REGISTRATION (locked before D3 training)
+- **Condition D3 = rgcl-ON**: identical recipe to C3 (r128 α256, lr 4e-5, classifier_lr 1e-4, 3
+  epochs, 8 frames, bf16, final-checkpoint no-selection) EXCEPT `rgcl: true`, `loss_ratio: [1,1,1]`
+  (lm,cls,rgcl — RA-HMD default equal weighting), `Faiss_GPU: false`, RGCL defaults (contrastive/cos,
+  1 hard-neg + 1 pseudo-gold, in-batch), `rgcl_reindex_every: 50` (video deviation: short training).
+- **Read-outs (BOTH, one test touch/cell):** D3-mlp (in-LMM head) and **D3-knn** (our kNN vote over
+  the SFT'd LMM's last-token embeddings, SAME pipeline as C3-knn → comparable). *Note: the rgcl loss
+  shapes the proj_dim=1024 classifier-embed; D3-knn reads the 3584-d hidden state, shaped indirectly
+  through the classifier — the experiment tests whether that transfer helps our memory.*
+- **Datasets/seeds:** ZH (primary — head showed life) + EN, seeds 0/1/2, dev-gated as C3.
+- **Floors (protocol-matched, from the P9 reconciliation):** EN test 0.7847, ZH test **0.8537**
+  (LoRA final-epoch, NOT the frozen 0.8188).
+- **Guards:** (1) **λ_rgcl=0 bit-for-bit** — `loss_ratio:[1,1,0]` must reproduce the rgcl-OFF C3 run
+  exactly (same seed). (2) 20-step smoke: rgcl loss logged nonzero + decreasing, no NaN, ckpt saves.
+- **Success bar (the goal's):** **D3-knn beats the protocol-matched floor by >1.5pt mean, ≥2/3
+  seeds, AND D3-knn ≥ D3-mlp − 1pt** (the memory read-out must carry the story, not be a casualty).
+  Anything weaker = honest kill.
+- Configs: `my_configs/hatevideo/p9_{mhc,mhc_zh}_d3_s{0,1,2}.yaml`. Smoke: job 12485.
+
+<!-- RESULTS_PENDING: smoke; λ=0 bit-for-bit; D3 6-train + read-outs; verdict vs the goal bar -->
