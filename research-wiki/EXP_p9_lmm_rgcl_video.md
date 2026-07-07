@@ -183,10 +183,17 @@ C3-mlp does **not newly** satisfy the ZH 0.85 target.
 > no-harm/completeness for the paper table, not the goal-carrying claim; the rule's expansion set
 > is unchanged.
 
-Team-lead confirmed the rule-literal expansion; HateMM completion now **RUNNING** for paper-table
-completeness: s0 already trained (dev tie 0.8411), s1/s2 training = jobs 12463/12464; then kNN
-extraction (s0/s1/s2) + single test pass (test_yn built, 215 vids / 40% hateful). Matched frozen
-floor ≈ 0.870 (the campaign's HateMM SOTA). Test touched once/cell; no HateMM test run yet.
+HateMM completion (paper-table completeness) — nearly done; **confirms the P9 pattern on the 3rd
+dataset.** Matched frozen floors: raw-kNN test 0.786; **trained-RGCL Test_Retrieval 0.8605** (val-sel
+0.870). All 3 seeds trained + kNN-extracted.
+| read-out | HateMM test | vs trained-RGCL floor 0.8605 |
+|---|---|---|
+| **C3-mlp** (in-LMM head) | **0.8698** (s0 only; s1/s2 predicts GPU-blocked) | +0.9pt (≈ floor) |
+| **C3-knn** (our memory) | **0.814** (s0 .823 / s1 .814 / s2 .805) | **−4.7pt (BELOW)** |
+
+Same shape as EN/ZH: the LMM's own head ≈ the trained-RGCL floor, while our retrieval read-out on the
+rgcl-OFF SFT'd space loses by ~5pt. This is exactly the C3-knn regression that P9b's rgcl-ON arm (D3)
+is built to repair. (HateMM s1/s2 MLP predicts 12470/12472 pending behind GPU contention.)
 
 ### Jobs / artifacts
 - Data: `src/utils/build_lora_sft_data.py` (word + yesno), `scripts/slurm/p9_build_data.sbatch`
