@@ -177,8 +177,46 @@ run; no `.pt` in git.)*
 
 ### P2c leaderboard
 
-_(appended after C6/C7 run)_
+Run 2026-07-07. 72B = `Qwen/Qwen2.5-72B-Instruct` bf16 under bitsandbytes 4-bit nf4, text-only,
+greedy, on the identical 1500-pair benchmark. Jobs: C7 = 12425, C6 = 12429 (resumed from a
+1102-verdict cache after a scheduling swap to free a GPU for P8; resume-by-key, no data loss).
+0 parse-fallbacks. Full 7B→32B→72B ladder (drop-rate = correct/wrong):
 
-### P2c verdict
+| cfg | model · evidence · prompt | EN drop% (corr/wrong) | EN lift | ZH drop% (corr/wrong) | ZH lift | promote |
+|---|---|---|---|---|---|---|
+| C0 | 7B · archive · orig | 72.5 (72.5/72.5) | +0.0 | 58.2 (60.9/55.5) | −5.5 | no |
+| C1 | 7B · archive · flip | 58.1 (56.8/59.5) | +2.7 | 45.3 (46.9/43.7) | −3.2 | no |
+| C2 | 7B · archive+transcript · orig | 73.5 (73.3/73.7) | +0.4 | 57.6 (60.9/54.3) | −6.7 | no |
+| C3 | 7B · archive+transcript · flip | 60.1 (59.1/61.1) | +2.0 | 39.9 (43.3/36.5) | −6.8 | no |
+| C4 | 32B · archive+transcript · flip | 59.2 (58.3/60.1) | +1.9 | 48.5 (51.6/45.3) | −6.3 | no |
+| C5 | 32B · archive+transcript · orig | 64.6 (64.0/65.2) | +1.2 | 50.7 (54.0/47.3) | −6.7 | no |
+| **C6** | **72B · archive+transcript · flip** | 35.7 (34.8/36.5) | **+1.7** | 25.5 (27.2/23.7) | **−3.5** | **no** |
+| **C7** | **72B · archive+transcript · orig** | 30.9 (30.7/31.2) | **+0.5** | 14.9 (16.3/13.5) | **−2.8** | **no** |
 
-_(promote-and-test if a config clears the bar; else definitive scale-ladder kill)_
+### P2c verdict — definitive scale-ladder kill (7B → 32B → 72B flat on selectivity)
+
+**No config clears the bar at any rung; P2c never touches the test set.** The ladder is now
+complete and the two axes cleanly separate:
+
+- **Calibration IMPROVES monotonically with scale.** Orig-prompt drop-rate collapses 7B 72.5% →
+  32B 64.6% → **72B 30.9%** (EN) and 58.2% → 50.7% → **14.9%** (ZH): the over-flag ratchet that
+  the flip prompt had to hand-fix at 7B, the 72B fixes *on its own* — it drops far fewer
+  neighbours and uses UNSURE judiciously (72B-orig: 254 EN / 362 ZH UNSURE). Scale buys a
+  well-behaved, non-trigger-happy judge.
+- **Selectivity does NOT move with scale — it stays pinned at ~0.** EN lift never exceeds **+2.7
+  pt** anywhere on the ladder (72B: +1.7 / +0.5, ≤ the 7B flip's +2.7); ZH lift is **negative at
+  every one of the 8 configs** (−2.8 to −6.8). A well-calibrated 72B that drops a sane 31% of
+  neighbours *still* removes correct-vote and wrong-vote neighbours at the same rate.
+
+This is the decisive completion of the P2b mechanism claim: **comparability ⊥ vote-correctness at
+every open-source scale.** Whether a neighbour is topically comparable to the query is independent
+of whether its label matches — and making the judge bigger (up to 72B) makes it *better behaved*
+without making its comparability calls track label-relevance at all. No comparability-based
+reranker — 7B, 32B, or 72B — can preferentially drop the misvoters, so none can convert the P2
+oracle headroom (+7.5 EN / +10.6 ZH) into accuracy. **The neighbour-reranking line is closed at
+open-source scale; the 0.85-crossing oracle prize is real but needs a fundamentally different
+membership signal, not a stronger judge.**
+
+*(72B leaderboard by `p2b_score.py` from the eight `tb_verdicts_*` files. Load path = bnb-4bit
+on the bf16 checkpoint, documented above; 136 G 72B cache deleted after the run; no `.pt` in
+git.)*
