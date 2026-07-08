@@ -299,3 +299,123 @@ test touch is now **spent**; P10-b closes the last in-register path of the MLLM-
 campaign. Whether "modest-plus" is worth the 72B inference cost is a framing decision for the
 user, not a statistical one.
 
+---
+
+# P10-c — new-generation open-VLM scorer (third calibration round; OPEN execution of Kit-B)
+
+> **Status: PRE-REGISTERED (design frozen before any HateMM scoring or aggregation).** This is the
+> **open-source** execution of `OPTION_KITS_terminus.md` Kit-B (the closed-API P10-c draft): instead
+> of GPT-5/Gemini/Claude over a third-party API (data-exfiltration + non-reproducible), we run a
+> **new-generation OPEN VLM (non-Qwen2.5-VL) fully on-cluster** as the localization scorer. No data
+> leaves the node; the result is reproducible and open-pipeline-legal. P10-b climbed the *same-family*
+> scale ladder (Qwen2.5-VL 7B→32B→72B) and promoted 72B A-fuse (calib wv-AUC **0.5913** → test
+> **0.5755 MODEST**). P10-c asks the one remaining question the reaggregation ceiling (0.5932, commit
+> 93e82fa) leaves open: **does a genuinely stronger, newer scorer generation clear the substantial
+> gate?** Only a stronger scorer can — aggregation is exhausted.
+
+## Reconnaissance (measured, not guessed) — candidate new-gen open VLMs
+
+HF metadata pulled 2026-07-09 (`huggingface.co` reachable from the login node). Env constraint: the
+HateVideo env (transformers **4.49**) is **not** touched; Qwen3-VL needs the native
+`Qwen3VL*ForConditionalGeneration` classes (config `transformers_version` 4.57.0.dev0), so a
+**separate cloned env `HateVideoVLM`** was built (`conda create --clone HateVideo` → `pip install -U
+transformers` → **transformers 4.57.6**, torch **2.6.0+cu124** and decord/PyAV **preserved** by the
+clone; Qwen3VL classes + video backends import-verified). ms-swift's `transformers<4.50` pin conflict
+is benign (ms-swift is not on the scoring path).
+
+| candidate | HF repo | size (bf16) | load plan (A100-80G) | throughput est | wallclock est (calib) | key risk |
+|---|---|---|---|---|---|---|
+| **C1 Qwen3-VL-32B (dense)** | `Qwen/Qwen3-VL-32B-Instruct` | 66.7 GB / 14 shards | bf16, 1 GPU, `expandable_segments` (~13 GB headroom — proven for 32B in P10-b) | ~0.35–0.5 s/gen (dense-32B class) | K30 (8,940 gens) ≈ 3–4.5 h + K4 (1,192) ≈ 0.5 h | processor video-kwarg adaptation (necessary eng.) |
+| **C2 Qwen3-VL-30B-A3B (MoE)** | `Qwen/Qwen3-VL-30B-A3B-Instruct` | 62.1 GB / 13 shards | bf16, 1 GPU | fast (3B active) ~0.15–0.3 s/gen | K30 ≈ 1.5–2.5 h + K4 ≈ 0.3 h | MoE routing; same HF path as C1 |
+
+**Rejected candidates (recorded, so the choice is auditable):**
+- `Qwen/Qwen3-VL-235B-A22B-Instruct` — 471 GB bf16 (96 shards); on-the-fly bnb4 still needs the full
+  bf16 download (infeasible on a shared /data at 97 %, 548 G free), and its FP8 release cannot run
+  natively on **A100 (Ampere = no FP8)**. **Infeasible.**
+- `OpenGVLab/InternVL3_5-38B` (76.8 GB) / `OpenGVLab/InternVL3-78B` (156.8 GB) / `InternVL3_5-30B-A3B`
+  (61.7 GB) — all use the **custom `InternVLChatModel`** (`model_type=internvl_chat`,
+  `trust_remote_code`) with a **different dynamic-tiling image pipeline + `model.chat()` API**, not the
+  HF processor/`generate` contract. That is a real deviation from the **frozen frame-window recipe**
+  ("only swap the model") → comparability + bug risk; 78B also carries a 156 GB download disk risk.
+  **Rejected in favor of Qwen3-VL's drop-in HF processor/generate path** (byte-identical recipe except
+  the model class). If Qwen3-VL fails the gate, InternVL is the natural *next* family to try — but it
+  is out of scope for this pre-registered round.
+
+**Why Qwen3-VL is in-recipe.** `p10c_score_segments.py` reuses `p10_score_segments.py` verbatim
+(SYSTEM_P6 prompt, RUBRIC, USER_TAIL, greedy `do_sample=False`/`max_new_tokens=8`, K30/M120 + K4/M16
+windows, window-level ASR, `[0-3]` parse, output contract) — the **only** change is loading via the
+generic `AutoModelForImageTextToText` (→ `Qwen3VL*ForConditionalGeneration`) instead of the hard-wired
+Qwen2.5-VL class. The video message `{"type":"video","video":<PIL frames>}` and
+`apply_chat_template → processor(text,videos) → generate` path are the same Qwen-VL convention.
+
+## Frozen candidate list (exactly 4 rows — no additions)
+
+Calibration set / harness / anchor / paired protocol **identical to rounds 1–2** (HateMM
+train-hateful, 298 scored / **n=266** both-class; `p10_eval_hatemm.py`, paired bootstrap 10k 95% CI
+on per-video Δ vs the frozen **7B anchor 0.5387**; sign-test). Each scorer is run at **K=30 (fine)**
+and **K=4 (coarse)** so its A-fuse channel is the SAME model (no cross-model fusion). "anchor-agg" =
+raw K=30.
+
+| # | candidate | scorer | aggregation | score tag | source |
+|---|---|---|---|---|---|
+| C1a | Qwen3-VL-32B · anchor-agg | Qwen3-VL-32B (bf16) | raw K=30 | `segscoreK30_p10c-qwen3vl-32b` | GPU (`p10c_score_qwen3vl.sbatch`) |
+| C1b | Qwen3-VL-32B · A-fuse | Qwen3-VL-32B (bf16) | 0.5·K30 + 0.5·K4(map), same model | `segscoreK30_p10c-qwen3vl-32b-fuse` | GPU + CPU re-agg |
+| C2a | Qwen3-VL-30B-A3B · anchor-agg | Qwen3-VL-30B-A3B (bf16) | raw K=30 | `segscoreK30_p10c-qwen3vl-30ba3b` | GPU |
+| C2b | Qwen3-VL-30B-A3B · A-fuse | Qwen3-VL-30B-A3B (bf16) | 0.5·K30 + 0.5·K4(map), same model | `segscoreK30_p10c-qwen3vl-30ba3b-fuse` | GPU + CPU re-agg |
+
+Version strings are frozen as of this commit (repos above; env HateVideoVLM / transformers 4.57.6) to
+prevent post-hoc model/version shopping.
+
+## Promotion bar — STRICTER than rounds 1–2 (third round, sequential-testing control)
+
+A candidate is promoted to the single HateClipSeg test **iff**, on the HateMM calibration set:
+1. **calibration wv-AUC ≥ 0.616**, **AND**
+2. paired Δ vs the frozen 7B anchor (0.5387) has its bootstrap 95% CI **excluding 0**.
+
+(Condition 1 subsumes the rounds-1/2 "+0.04 over anchor" gate: 0.616 − 0.5387 = **+0.0773** ≥ +0.04,
+so 0.616 is the binding threshold.) If several clear, the single **highest** calibration wv-AUC is
+promoted. **If none clears, P10-c = FAIL, the HateClipSeg test is NEVER touched, and P10-b's 0.5755
+stands as the final localization number.**
+
+**Round / multiple-comparison accounting (honest).** This is the **third** calibration round.
+Configs compared against the frozen anchor: round 1 = **5** (A-gate/K60/fewshot/A-lex/A-fuse) + round 2
+= **5** (R2-1..R2-5) + round 3 = **4** (C1a/C1b/C2a/C2b) = **14 total**. The bar is **tightened**, not
+loosened, for round 3.
+
+**Why the 0.616 gate (not the +0.04 anchor gate) governs round 3.** Two rounds already spent the
+**single** HateClipSeg test touch on the 72B champion (calib 0.5913 → test 0.5755). Spending nothing
+more is the default; a third test touch is only justified if a candidate beats the *already-tested*
+champion by a margin that plausibly lands ≥ 0.60 on test. The **two observed calibration→test points**
+— (0.5387 → 0.5435) and (0.5913 → 0.5755) — extrapolate linearly to **test 0.60 ⇔ calibration ≈
+0.616** (same waterline as the TERMINUS exploratory ceiling analysis). The **reaggregation ceiling is
+proven at 0.5932 < 0.616** (commit 93e82fa), so **only a stronger scorer**, not any aggregation knob,
+can reach 0.616 — which is exactly what P10-c tests. Requiring wv-AUC ≥ 0.616 (well above the champion
+0.5913) is the sequential-testing control: it stops a candidate that merely ties the champion (and
+would only re-deliver ~0.5755 MODEST on test) from consuming the final test touch.
+
+## Substantial bar on the HateClipSeg test — UNCHANGED (one touch total, promoted config only)
+
+Frozen P6 harness (`p6_eval_localization.py`, 395-video split, within-video AUC + CI + memory/random
+controls): **wv-AUC ≥ 0.60 = substantial** / **0.56 ≤ wv-AUC < 0.60 with CI excluding P6's 0.5435 =
+modest** / **< 0.56 = P6/P10-b stands**. Scoring the test pass reuses the same K30/M120 + K4/M16 recipe
+(`p10c_score_qwen3vl.sbatch DS=HateClipSeg SPLITS=test GTDIR=./data/gt`); ASR is the stored
+`test_seen_asrK{30,4}_whisper-large-v3` (no Whisper re-run); A-fuse on CPU (`p10_aggregate_b.py --mode
+fuse --split test_seen`).
+
+## Calibration→test transfer risk (must stay attached to any verdict)
+
+The whole gate rests on a **two-point, zero-degree-of-freedom** calibration→test line. Three
+fragilities carry over from Kit-B B.5: (a) two points define the line with no slope uncertainty, and
+the observed transfer is only ~60 % strength (calib +0.0526 → test +0.0319); (b) the 0.5913→0.616
+region is **extrapolation beyond the observed champion**; (c) HateMM (n=266) and HateClipSeg (n=329)
+are **cross-corpus**. Therefore **even a candidate clearing 0.616 does not guarantee test ≥ 0.60** —
+the final test-touch decision is returned to the user, not auto-triggered by the calibration number.
+
+## Hard rules (carry over)
+
+SLURM only (no `--time`, `HF_HUB_OFFLINE=1` in-job, `WANDB_MODE=disabled`), foreground `sacct`
+polling; calibration scoring uses hateful-only gt (`data/gt_p10hate/`) at K30 and K4; no `.pt`/weights
+in git; **Qwen3-VL caches deleted after use** (quota watch on the shared 97 %-full /data); the
+HateVideo env is never mutated (all P10-c runs in `HateVideoVLM`). Report the full three-round
+leaderboard **before** any test pass.
+
