@@ -1,9 +1,9 @@
-# TERMINUS — MLLM 方法角色 campaign 战略终局报告(草稿)
+# TERMINUS — MLLM 方法角色 campaign 战略终局报告(定稿)
 
-> **状态:DRAFT(草稿,未 commit)。** 面向用户决策。除下方 **P10-b scale ladder(在跑)**
-> 占位符外,campaign 已跑完的 11 条路线全部判定完毕。本文件只整理**已 commit 的事实与数字**,
-> 引用各前沿 EXP 文档的判定原文,不新增测量、不四舍五入到误导。P10-b 落地后由主会话决定是否补完定稿。
-> 生成:2026-07-08。素材:`CAMPAIGN_mllm_method_role.md` + 11 份 `EXP_*.md` + `MORNING_REPORT.md §9`。
+> **状态:FINAL(定稿,2026-07-09)。** 面向用户决策。campaign 全部在册路线(含最后一条 **P10-b
+> scale ladder**,见 §6)判定完毕。本文件只整理**已 commit 的事实与数字**,引用各前沿 EXP 文档的判定
+> 原文,不新增测量、不四舍五入到误导。生成:2026-07-08;定稿:2026-07-09(P10-b 落地,§6 占位符补完)。
+> 素材:`CAMPAIGN_mllm_method_role.md` + 11 份 `EXP_*.md` + `MORNING_REPORT.md §9` + `EXP_p10_loc_amplify.md`(commit 03880f2)。
 
 ---
 
@@ -14,8 +14,11 @@
 移除它会在**主表 accuracy** 上可测量地掉点(超过这些 ~150 样本测试集的 ~1.6 视频 ≈ 1 acc 点噪声地板)。
 **判定现状:主表 accuracy 角色被彻底证伪。** 11 条预注册路线(auto-repair, P1–P10;含 P2b/P2c 的
 7B→32B→72B 规模梯、P3 的 EN/ZH/HateMM 三库、P8b/P8c、P9b 的 rgcl-ON 臂)全部为**诚实 kill 或 within-noise**,
-且每条都有**复现 / bit-for-bit / probe 护栏背书**(非 harness 假象)。唯一在飞路线为 P10-b(见 §6)。
-MLLM 挣得的、可入论文的角色降为:**encoder + P6 定位打分器(modest 显著)+ guard-rail/审计**(详见 §4)。
+且每条都有**复现 / bit-for-bit / probe 护栏背书**(非 harness 假象)。最后一条在册路线 P10-b 已落地(见 §6):
+stronger-scorer scale ladder(Qwen2.5-VL 7B→32B→72B × A-fuse)把定位角色从 modest **放大为 modest-plus**
+(72B A-fuse,HateClipSeg 单次 test wv-AUC 0.5755,对 memory +6.2pt / 对 P6-7B +3.2pt 配对显著),但**未达
+substantial(0.60)bar**,主表 accuracy 已被证伪的终局不变。MLLM 挣得的、可入论文的角色为:**encoder + 定位
+打分器(P6 modest → P10-b modest-plus,显著)+ guard-rail/审计**(详见 §4)。
 
 ---
 
@@ -53,6 +56,11 @@ MLLM 挣得的、可入论文的角色降为:**encoder + P6 定位打分器(mode
    单调收敛(EN 72.5%→64.6%→30.9%,ZH 58.2%→50.7%→14.9%):更大的判据**更守规矩、不再 trigger-happy**;但
    selectivity(是否偏删会误投的邻居)**全程钉在 ~0**(EN lift 从不超 +2.7,ZH 每一档为负)。**把判据做大只是让它更
    well-behaved,不让它的可比性判断追踪 label-relevance。** 这是「更强闭源模型能否救活重排/判据线」最直接的反证据。
+   **唯一例外在定位赛道(与本条恰成对照)。** P10-b(§6)证明 **scale 在 localization 上确实起作用**:A-fuse×scale
+   在 HateMM 标定集单调 7B +0.0305 → 32B +0.0437 → 72B +0.0526,72B 迁移到 HateClipSeg wv-AUC 0.5755(对 P6-7B
+   +0.0319 配对显著)。区别在于重排里 MLLM 的语义能力(可比性)⊥ 决策变量、scale 只改 calibration 不改 selectivity;
+   而定位里 MLLM 的语义能力(段内仇恨 saliency)**就是**被评的目标量,故更大的 scorer 能被 metric 直接兑现。
+   localization 因此是这套方法里**唯一** scale 能移动指标的赛道。
 
 3. **过 no-head probe 是必要非充分(方法论定论,两处最尖锐)。** P3-HateMM 是三库最干净 probe(+0.0108,k-consistent,
    证据最密)却训练 within-noise;P8-EN 是**全 campaign 最强 probe**(摘要 probe 同时压过 floor +1.6pt 与朴素截断 +4.6pt)
@@ -77,18 +85,24 @@ MLLM 挣得的、可入论文的角色降为:**encoder + P6 定位打分器(mode
 1. **encoder(已入主表)。** Qwen 特征在 HateMM 上比 CLIP **+4.2 macro-F1 且跨 0.85** —— 这是 MLLM 唯一进主表
    accuracy 的身份,但它是「冻结 encoder」而非本 campaign 追求的「新方法角色」。
 
-2. **P6 定位打分器(唯一挣得的可移除方法角色,modest 显著)。** 逐窗证据分把 HateClipSeg 时序定位从「存在性证明」
-   (memory wv-AUC 0.526,4 cell 中仅 1 显著)升级为**单配置显著 localizer**:wv-AUC **0.5435**,CI[+.533,+.554],
-   p=5.4e-8;配对超 memory **+0.030,p=0.007**。诚实幅度警告:仍是 modest(高出 chance ~3.5 AUC 点),MLLM 在此
-   的主导能力其实是 **video-level density**(broadcast AP 0.63),细粒度 within-window 定位是更小但统计稳固的增量。
+2. **定位打分器(唯一挣得的可移除方法角色,P6 modest → P10-b modest-plus,显著)。** 逐窗证据分把 HateClipSeg
+   时序定位从「存在性证明」(memory wv-AUC 0.526,4 cell 中仅 1 显著)升级为**显著 localizer**:P6-7B wv-AUC
+   **0.5435**,CI[+.533,+.554],p=5.4e-8,配对超 memory **+0.030,p=0.007**;**P10-b 用 72B A-fuse 把它进一步放大到
+   wv-AUC 0.5755**(CI[0.5581,0.5933],sign-p 1.4e-9,n=329;对 memory **+0.0615** CI[+.0359,+.0869]、对 P6-7B
+   **+0.0319** CI[+.0170,+.0474],两 CI 均排除 0)—— 三档判定 **modest**(0.56≤0.5755<0.60,未达 substantial 0.60)。
+   诚实幅度警告:仍是 modest-plus(高出 chance ~7.5 AUC 点),MLLM 在此的主导能力其实是 **video-level density**
+   (broadcast AP 0.62),细粒度 within-window 定位是更小但统计稳固、且随 scorer 规模单调增长的增量。
 
 3. **guard-rail / 审计(可控性,非 raw acc)。** auto-repair 的语义票**否决** embedding-only 对真仇恨记忆的过删(C>D);
    可编辑档案记忆支持定向删噪(人审 2-entry 删除改善 EN);标签盲档案审计重找到人审噪声 id —— 移除代价体现在
    **完整性/可控性**,是一条 defensible 的贡献口径,但**不是主表 accuracy**。
 
-4. **A-fuse 杠杆(显著但未达标)。** P10 中 coarse×fine(K4×K30)融合是唯一在标定集**显著移针**的放大器
-   (+0.0305,CI 排除 0,p=7e-7),但低于 +0.04 promotion bar,故 HateClipSeg test 未触、P6 as-is 站住。
-   若要放大定位角色,A-fuse + 更强 scorer 是自然起点(正是 P10-b)。
+4. **A-fuse × scale 杠杆(P10-b 已兑现为 modest-plus)。** P10 round-1 中 coarse×fine(K4×K30)融合是唯一在标定集
+   **显著移针**的放大器(7B +0.0305,CI 排除 0,p=7e-7),但低于 +0.04 promotion bar,round-1 未触 test。**P10-b
+   把该杠杆沿 scale ladder 爬高兑现**:A-fuse×scale 在 HateMM 标定单调 7B +0.0305 → 32B +0.0437(过线)→ **72B
+   +0.0526 CI[+0.0333,+0.0721](最高 Δ,唯一晋级)**;而 raw-K30 规模单独走不过线(7B 0.5387→32B 0.5512→72B
+   0.5593)。72B A-fuse 晋级并花掉唯一一次 HateClipSeg test → wv-AUC 0.5755(modest,见上第 2 条)。**localization
+   放大线到此关闭**,P6→P10-b 为最终定位数。
 
 ---
 
@@ -99,24 +113,29 @@ MLLM 挣得的、可入论文的角色降为:**encoder + P6 定位打分器(mode
 ### 选项 (a) —— 改目标口径:接受 localization + encoder + guard-rail 为 MLLM 的角色故事
 
 - **做法:** 放弃「MLLM 挣得主表 accuracy 角色」的表述,把论文的 MLLM 贡献重定为三件套:**encoder(HateMM 跨 0.85)+
-  P6 可移除定位角色(modest 显著)+ 可编辑/可审计记忆的 guard-rail**。方法学章附「11 路线全负 + 两条定论」作为
-  强负结果与 ruled-out map。
+  可移除定位角色(P6 modest → P10-b 72B A-fuse **modest-plus**,wv-AUC 0.5755)+ 可编辑/可审计记忆的 guard-rail**。
+  方法学章附「11 路线全负 + 两条定论」作为强负结果与 ruled-out map。
 - **代价:** 近零额外计算(全部已 commit);叙事上放弃「substantial main-table improvement」的强 claim,需说服自己/审稿人
-  接受「定位 modest + 完整性/可控性」的较弱贡献口径。
+  接受「定位 modest-plus + 完整性/可控性」的较弱贡献口径。
 - **预期收益:** 立即可定稿;负结果链(尤其 comparability⊥vote-correctness 规模梯、probe 必要非充分两条方法学定论)
-  本身有发表价值;P6 是干净的正例。
+  本身有发表价值;定位正例现被 **P10-b 加固**——定位角色升为 72B A-fuse **0.5755**,对 memory **+6.2pt** 配对显著
+  (CI[+.0359,+.0869]),比 P6-7B 的 +3.0pt 更强,是干净且幅度更大的正例(仍诚实标注 modest,未达 0.60)。
 - **红线相容:** **完全相容**(不需任何新实验/新 baseline/邮件)。**风险最低、可立即执行。**
 
 ### 选项 (b) —— 上更大闭源模型(GPT/Gemini/Claude API)重跑关键路线
 
 - **候选路线(按「是否可能翻案」排序):** ①**P2/P2b 重排**(oracle 头空间 +7.5/+10.6 跨 0.85,是唯一有大 prize 的
-  route);②P1 先验估计;③P10-b/P6 定位放大器(A-fuse + 强 scorer);④P5 反事实洗白(flip rate 是模型能力瓶颈)。
+  route);②P1 先验估计;③定位放大器(A-fuse + 强 scorer)——**此子目标已被开源 72B 在 P10-b 兑现为 modest-plus
+  0.5755**,闭源 API 只剩「把 0.5755 推到 0.60+」这一段增量;④P5 反事实洗白(flip rate 是模型能力瓶颈)。
 - **代价:** ①API 费用(P2 判据每语言 ~5k–10k pairs × 多配置,是 token 大头);②数据出域(仇恨内容送第三方 API 的
   合规/伦理审查);③闭源不可复现、不可作为「方法组件」写进可开源 pipeline(审稿人会质疑可复现性)。
 - **预期收益(据 §3.2 定量外推,偏保守):** P2b 规模梯已证 **selectivity 不随 scale 涨**(comparability⊥vote-correctness
   是**机制**而非**执行力**问题),故换更大模型**最可能仍不选择性** —— 翻案概率低。P1 的瓶颈是 verdict FPR 跨时间边界漂移,
-  更强模型可能降低绝对 FPR 但漂移方向未必消失。**唯一相对乐观的是 P10-b 定位放大器**(A-fuse 已 +0.03 显著,差 +0.01
-  到 bar,换 32B/闭源 scorer 有望补上)—— 但那放大的是**定位**角色,仍非主表 accuracy。
+  更强模型可能降低绝对 FPR 但漂移方向未必消失。**唯一相对乐观的仍是定位放大器,且已被 P10-b 部分证实**:开源
+  scale ladder(A-fuse×规模 7B +0.0305→32B +0.0437→**72B +0.0526**,单调)已把定位从 modest 抬到 modest-plus
+  (HateClipSeg 0.5755)—— 闭源模型能否把 **0.5755→0.60+**(清 substantial bar)属未知,但 7B→32B→72B 的单调梯度
+  给了正向外推依据(唯一 scale 起作用的赛道,§3.2)。代价是那放大的仍是**定位**角色、非主表 accuracy,且闭源不可
+  复现、不可写进可开源 pipeline。
 - **红线相容:** 不触 cross-seed/baseline/邮件三条红线;但**新增「送外部 API」的合规维度**,须用户确认数据可外发。
   **中风险、中成本,主表翻案的期望收益低,定位放大的期望收益中等。**
 
@@ -132,25 +151,84 @@ MLLM 挣得的、可入论文的角色降为:**encoder + P6 定位打分器(mode
 - **红线相容:** 若换族意味着「重造某个 codeless baseline」则**触红线**;若是自建新方法则相容(缺失代码自己补符合红线)。
   **风险最高、周期最长;仅在用户判定「弱贡献口径不可接受、必须拿主表增益」时才值得。**
 
-**一句话权衡:** (a) 立即可交、零风险、弱 claim;(b) 中成本、主表翻案期望低但定位放大期望中等、需数据外发许可;
-(c) 上限最高但周期/不确定性最大。**当前证据链最支持 (a),(b) 仅在「定位放大」子目标上有正期望。**
+**一句话权衡:** (a) 立即可交、零风险、claim 已被 P10-b 加固(定位 modest-plus);(b) 中成本、主表翻案期望低,而
+「定位放大」子目标**已被开源 72B 兑现为 modest-plus 0.5755**、闭源只剩 0.60+ 增量、需数据外发许可;(c) 上限最高但
+周期/不确定性最大。**当前证据链最支持 (a);(b) 的定位放大期望已部分实现(开源到 modest-plus),闭源续推至
+substantial 有单调梯度依据但仍属未知。**
 
 ---
 
-## 6. P10-b 结果占位符(PENDING —— 等在飞 scale ladder 落地后填)
+## 6. P10-b —— 定位放大器的 stronger-scorer scale ladder(FINAL:MODEST amplification)
 
-> **P10-b = 定位放大器的 stronger-scorer scale ladder(在跑)。** P10 一轮已判 FAIL:A-fuse(K4×K30)是唯一显著移针
-> 的放大器(+0.0305,CI[+.0175,+.0437],p=7e-7),但低于 +0.04 promotion bar,HateClipSeg test 未触、P6 as-is 站住
-> (wv-AUC 0.5435)。P10 预注册网格中 **32B scorer** 一档为「仅当 7B variant 接近 bar 时才跑」;A-fuse 差 +0.01 到位,
-> 故 P10-b 用更强 scorer(32B / A-fuse×强 scorer)在 HateMM 标定集上再测,看能否清 +0.04 gate 从而促成单次 HateClipSeg test。
+> **P10-b = campaign 最后一条在册路径。** 它问:一个**更强的定位 scorer** 能否把 P6 的 modest 定位增益放大到
+> 预注册的 substantial bar?round-1(P10,commit 7194ee2)已 FAIL —— A-fuse(K4×K30 coarse×fine)是唯一显著移针的
+> 放大器(7B +0.0305,CI[+.0175,+.0437],p=7e-7),但低于 +0.04 promotion bar。P10-b 沿 Qwen2.5-VL scale ladder
+> (7B→32B→72B)把 scorer 爬高,配 round-1 的胜出聚合(A-fuse),用**未改动**的 promotion bar 复测。
+> 治理链:预注册 **3d641f4**(冻结 5 候选 R2-1..R2-5、+0.04 晋级线、两轮 11 比较记账,bar 不为 round-2 松动);
+> 执行 bug 修复 **c5c47ee**(32B bf16 coarse-pass OOM → expandable_segments + 逐视频 empty_cache,score-neutral)、
+> **e69065f**(coarse pass 必须 M=16 而非 M=120,匹配 P3-default 配方);校准落地 **24de185**;最终结果 **03880f2**。
+> 全部数字见 `research-wiki/EXP_p10_loc_amplify.md`(该文件已 commit 03880f2,本节仅引用、不重测)。
 
-- **状态:PENDING**(截至 2026-07-08,`squeue` 无在飞作业记录;以主会话/后续 harvest 为准)。
-- **待填:** P10-b HateMM 标定榜(各 config paired Δ vs anchor 0.5387 + CI)；是否有 config 清 +0.04 bar;
-  若清 → 单次 HateClipSeg test 的 wv-AUC(对 substantial bar 0.60 / modest 0.56 / 无迁移 <0.56);若不清 → 定位放大线亦关闭,P6 as-is 为最终定位数。
-- **对结论的影响面:** P10-b 只影响**定位角色能否从 modest 放大到 substantial**,**不影响主表 accuracy 已被 11 路线证伪的
-  终局**。无论 P10-b 结果如何,§3 五条横切定论与 §4 幸存角色(encoder + P6 + guard-rail)不变;P10-b 至多把 §4 第 2/4 条的
-  「modest」升级为「substantial 定位」或确认其停在 modest。
+- **状态:FINAL(2026-07-09)。** 校准 round-2 与单次 HateClipSeg test 均已落地并 commit。
+
+### 6.1 HateMM 校准 leaderboard(两轮 11 比较 vs 冻结 7B anchor 0.5387;bar = paired Δ ≥ +0.04 且 CI 排除 0)
+
+| round | variant | HateMM wv-AUC | paired Δ vs anchor | paired Δ 95% CI | 过 bar |
+|---|---|---|---|---|---|
+| — | **anchor**(7B,raw K30) | 0.5387 | — | — | — |
+| 1 | A-gate / K60 / fewshot | 0.5314 / 0.5319 / 0.5359 | −0.0074 / −0.0068 / −0.0028 | 均含 0 | no |
+| 1 | A-lex | 0.5450 | +0.0062 | [−0.0000, +0.0123] | no |
+| 1 | A-fuse(7B) | 0.5693 | +0.0305 | [+0.0175, +0.0437] | no(Δ<+0.04) |
+| 2 | R2-5 · 7B A-fuse×A-lex(CPU) | 0.5752 | +0.0365 | [+0.0223, +0.0506] | no(Δ<+0.04) |
+| 2 | R2-1 · 32B anchor-agg | 0.5512 | +0.0125 | [−0.0006, +0.0257] | no |
+| 2 | R2-2 · 32B A-fuse | 0.5825 | +0.0437 | [+0.0240, +0.0631] | **yes** |
+| 2 | R2-3 · 72B anchor-agg | 0.5593 | +0.0206 | [+0.0065, +0.0347] | no(Δ<+0.04) |
+| 2 | **R2-4 · 72B A-fuse** | **0.5913** | **+0.0526** | **[+0.0333, +0.0721]** | **yes — 最高 Δ,晋级** |
+
+**两条干净梯度:**(a) **raw-K30 规模单独走不过线** —— anchor-agg 单调 7B 0.5387 → 32B 0.5512 → 72B 0.5593,但
+72B 的 Δ(+0.0206)仍只有 gate 的一半;(b) **A-fuse × 规模是唯一杠杆** —— coarse×fine 融合增益随 scorer 增长
+7B +0.0305 → 32B +0.0437(过线)→ **72B +0.0526**;32B/72B A-fuse 均清未改动的 bar,按冻结规则(最高 paired Δ)
+**R2-4(72B A-fuse)单独晋级**。R2-5 把 round-1 两个 CPU 胜者叠在 7B 分上只到 +0.0365 —— 缺的是 scorer 强度而非聚合。
+
+### 6.2 HateClipSeg 单次 test(冻结 P6 harness,promoted R2-4;控制组逐位复现 P6)
+
+单次 test pass(job 12585,72B bnb4,395 视频,K30/M120 + K4/M16,5h50;K4 ASR 于 CPU 从存储 chunk 时戳重分箱,
+无 Whisper 重跑),fuse 于 CPU,eval = **冻结 P6 harness**(`p6_eval_localization.py`,同 395-video split、同估计量);
+harness 完整性经「用 default tag 逐位复现已发表 P6 数字」预验证,控制组(memory 行、random)复现 P6 exactly。
+
+| condition | frame AP / AUC | seg AP / AUC | **within-video AUC** |
+|---|---|---|---|
+| a — memory `knn_hatemm_subclip` | 0.5329 / 0.5754 | 0.5246 / 0.5839 | 0.5140 |
+| **b — R2-4(72B A-fuse,promoted)** | 0.5929 / **0.6488** | 0.5948 / **0.6561** | **0.5755** |
+| d — random | 0.4699 / 0.5084 | 0.4507 / 0.5065 | 0.5088 |
+| *(P6 参考:b at 7B)* | 0.5421 / 0.6034 | 0.5599 / 0.6353 | 0.5435 |
+
+- **within-video 主指标:** R2-4 wv-AUC **0.5755**,bootstrap 95% CI **[0.5581, 0.5933]**,sign-p **1.4e-9**(n=329)。
+- **paired vs memory**(0.5140):Δ **+0.0615**,CI **[+0.0359, +0.0869]**,sign-p 4.9e-5。
+- **paired vs P6-7B**(0.5435):Δ **+0.0319**,CI **[+0.0170, +0.0474]**,sign-p 0.0024 —— 校准侧承诺(对 7B anchor
+  +0.0526)以 ~60% 强度迁移到 test。
+- 支撑指标同向:frame AUC 0.6034→0.6488、seg AUC 0.6353→0.6561;broadcast 控制(video-mean AP 0.62)仍是最高 pooled
+  AP,即 video-level density 仍是 MLLM 的主导能力,但 within-window 增量现已更大且与 P6 baseline CI 分离。
+
+### 6.3 三档判定 —— **MODEST amplification**
+
+- substantial(wv-AUC ≥ 0.60):**未达**(0.5755 < 0.60)。
+- **modest(0.56 ≤ wv-AUC < 0.60 且 CI 排除 P6 的 0.5435):MET** —— 0.5755 ∈ [0.56, 0.60) 且 CI 下界 **0.5581 > 0.5435**
+  (paired-vs-P6 的 CI 亦排除 0)。第二轮 / 11 比较 caveat 如预注册声明。
+- 定位角色由 **modest(7B)升为 modest-plus(72B A-fuse)**:earned-roles 判定(encoder + localizer + guard-rail/审计,
+  无主表 accuracy 角色)**性质不变、程度加强**。唯一一次 HateClipSeg **test 触碰已花掉**;campaign **最后一条在册路径关闭**。
+
+### 6.4 对本报告其余小节的影响(已同步)
+
+- **§1、§4:** 定位角色数字与措辞已从「P6 modest 0.5435」更新为「P6 → P10-b modest-plus 0.5755」。
+- **§3.2:** 已补一条对照定论 —— localization 是这套方法里**唯一** scale 能移动指标的赛道(A-fuse×规模单调,72B 迁移
+  wv-AUC 0.5755),与重排线「scale 改 calibration 不改 selectivity」恰成对照。
+- **§5:** 选项 (a) 证据加固(定位现为 72B+fuse 0.5755,对 memory +6.2pt 配对显著);选项 (b) 的「定位放大」子目标已被
+  **开源 72B 兑现为 modest-plus**,闭源能否把 0.5755→0.60+ 属未知但 7B→32B→72B 单调梯度给了外推依据。
+- **主表 accuracy 终局不变:** P10-b 只把定位角色从 modest 升到 modest-plus,**不改**「主表 accuracy 角色被 11 路线
+  证伪」的终局;§3 五条横切定论与 §4 幸存角色(encoder + 定位 + guard-rail)结构不变。
 
 ---
 
-*(本草稿只汇总各前沿 EXP 文档已 commit 的判定与数字,不新增测量。P10-b 落地后更新 §6 占位符,再由主会话决定是否定稿并 commit。)*
+*(本报告只汇总各前沿 EXP 文档已 commit 的判定与数字,不新增测量。P10-b(commit 03880f2)落地后 §6 占位符已补完,
+本文件定稿为 FINAL。)*
