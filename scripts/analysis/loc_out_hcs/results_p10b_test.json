@@ -1,0 +1,189 @@
+{
+ "K30": {
+  "n_videos": 395,
+  "n_toxic_videos": 345,
+  "primary_mem": "knn_hatemm_subclip",
+  "mllm_meta": {
+   "path": "/data/jehc223/RGCL/data/MLLM_scores/HateClipSeg/test_seen_segscoreK30_p10-p6-72b-bnb4-fuse.jsonl",
+   "n_scored": 395,
+   "n_missing": 0,
+   "n_bad_len": 0
+  },
+  "configs": {
+   "a_knn_hatemm_subclip": {
+    "frame_full": {
+     "AP": 0.5328880135234642,
+     "AUC": 0.5754382042185566
+    },
+    "frame_toxiconly": {
+     "AP": 0.607382476109167,
+     "AUC": 0.584964697740574
+    },
+    "segment_full": {
+     "AP": 0.5246491333561439,
+     "AUC": 0.5839009536585855,
+     "n_segments": 10572
+    },
+    "within_video_meanAUC": {
+     "mean": 0.5139655276008355,
+     "n_videos": 329
+    },
+    "within_video_significance": {
+     "mean": 0.5139655276008355,
+     "ci95": [
+      0.495546842400069,
+      0.5322743494662477
+     ],
+     "n_videos": 329,
+     "n_gt": 167,
+     "n_lt": 144,
+     "n_eq": 18,
+     "sign_test_p": 0.10607221052636316
+    }
+   },
+   "a_knn_hatemm_video": {
+    "frame_full": {
+     "AP": 0.5246645231729099,
+     "AUC": 0.5655577020850882
+    },
+    "frame_toxiconly": {
+     "AP": 0.6019619264372917,
+     "AUC": 0.5731843956818949
+    },
+    "segment_full": {
+     "AP": 0.5120096401354085,
+     "AUC": 0.5688052938461986,
+     "n_segments": 10572
+    },
+    "within_video_meanAUC": {
+     "mean": 0.5133663111252608,
+     "n_videos": 329
+    },
+    "within_video_significance": {
+     "mean": 0.5133663111252608,
+     "ci95": [
+      0.4944739648530134,
+      0.5324917048110375
+     ],
+     "n_videos": 329,
+     "n_gt": 168,
+     "n_lt": 153,
+     "n_eq": 8,
+     "sign_test_p": 0.2173060082795832
+    }
+   },
+   "b_mllm": {
+    "frame_full": {
+     "AP": 0.5928896406866153,
+     "AUC": 0.6488170460636293
+    },
+    "frame_toxiconly": {
+     "AP": 0.6383767242450966,
+     "AUC": 0.6261981927549609
+    },
+    "segment_full": {
+     "AP": 0.5947587192166637,
+     "AUC": 0.6561315422590741,
+     "n_segments": 10572
+    },
+    "within_video_meanAUC": {
+     "mean": 0.5754714755609178,
+     "n_videos": 329
+    },
+    "within_video_significance": {
+     "mean": 0.5754714755609178,
+     "ci95": [
+      0.5580593087978853,
+      0.5933489300783977
+     ],
+     "n_videos": 329,
+     "n_gt": 212,
+     "n_lt": 106,
+     "n_eq": 11,
+     "sign_test_p": 1.4058809103607294e-09
+    }
+   },
+   "c_rankavg": {
+    "frame_full": {
+     "AP": 0.4951425677154536,
+     "AUC": 0.5374780258075784
+    },
+    "frame_toxiconly": {
+     "AP": 0.5610513821111711,
+     "AUC": 0.5419216830951961
+    },
+    "segment_full": {
+     "AP": 0.4810135674084286,
+     "AUC": 0.548608621548281,
+     "n_segments": 10572
+    },
+    "within_video_meanAUC": {
+     "mean": 0.5578074817872692,
+     "n_videos": 329
+    },
+    "within_video_significance": {
+     "mean": 0.5578074817872692,
+     "ci95": [
+      0.5389015371933731,
+      0.5769354707293244
+     ],
+     "n_videos": 329,
+     "n_gt": 202,
+     "n_lt": 123,
+     "n_eq": 4,
+     "sign_test_p": 6.908747804496878e-06
+    }
+   },
+   "d_random": {
+    "frame_full": {
+     "AP": 0.4698948264849025,
+     "AUC": 0.5083715963061142
+    },
+    "frame_toxiconly": {
+     "AP": 0.5359647328942846,
+     "AUC": 0.5089557954077178
+    },
+    "segment_full": {
+     "AP": 0.4507468262600195,
+     "AUC": 0.5064965967382159,
+     "n_segments": 10572
+    },
+    "within_video_meanAUC": {
+     "mean": 0.5088202756932072,
+     "n_videos": 329
+    },
+    "within_video_significance": {
+     "mean": 0.5088202756932072,
+     "ci95": [
+      0.4935310497834235,
+      0.523703554174986
+     ],
+     "n_videos": 329,
+     "n_gt": 177,
+     "n_lt": 152,
+     "n_eq": 0,
+     "sign_test_p": 0.09284892025166153
+    }
+   },
+   "e_bcast_mllm": {
+    "frame_full": {
+     "AP": 0.6197500284522991,
+     "AUC": 0.6598366837174745
+    },
+    "frame_toxiconly": {
+     "AP": 0.659355117491021,
+     "AUC": 0.6265814200923964
+    },
+    "segment_full": {
+     "AP": 0.6002416189438302,
+     "AUC": 0.659521472106314,
+     "n_segments": 10572
+    },
+    "within_video_meanAUC": {
+     "mean": 0.5,
+     "n_videos": 329
+    }
+   }
+  }
+ }
+}

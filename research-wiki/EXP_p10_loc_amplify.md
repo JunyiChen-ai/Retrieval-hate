@@ -214,5 +214,88 @@ two-round leaderboard **before** any test pass.
 
 ## P10-b HateMM CALIBRATION LEADERBOARD
 
-_(to be appended after the round-2 scoring completes.)_
+Run 2026-07-08/09. Same calibration set and harness as round 1 (HateMM train hateful, 298 scored,
+**n=266** both-class; `p10_eval_hatemm.py`, paired bootstrap 10k 95% CI vs the frozen 7B anchor).
+Jobs: 32B = 12562 (K30 complete; K4 OOM) + 12570 (K4/M16 done after fixes; 12568 = intermediate
+fail); 72B = 12571 (bnb4-nf4, 4h04). Two execution bugs were hit and fixed **before** any round-2
+number was computed (commits c5c47ee, e69065f): (a) 32B bf16 OOM on the coarse pass —
+`expandable_segments` + per-video `empty_cache()`, both score-neutral; (b) the ladder's coarse pass
+initially passed M=120; the round-1 recipe (P3-default `train_segscoreK4_qwen.jsonl`) is **K=4/M=16**,
+so the pass was corrected to M=16 (also removes the OOM: 4-frame windows). Scoring health uniform
+across models (1 undecodable video; parse fallbacks ≤0.35%). Machine rows appended to
+`scripts/analysis/loc_out/p10_hatemm_leaderboard.jsonl`.
+
+Full two-round table (11 comparisons vs the anchor; bar: paired Δ ≥ +0.04 AND CI(Δ) excl. 0):
+
+| round | variant | HateMM wv-AUC | paired Δ vs anchor | paired Δ 95% CI | clears bar |
+|---|---|---|---|---|---|
+| — | **anchor** (7B, raw K30) | 0.5387 | — | — | — |
+| 1 | A-gate | 0.5314 | −0.0074 | [−0.0195, +0.0045] | no |
+| 1 | K60 | 0.5319 | −0.0068 | [−0.0156, +0.0019] | no |
+| 1 | fewshot | 0.5359 | −0.0028 | [−0.0090, +0.0034] | no |
+| 1 | A-lex | 0.5450 | +0.0062 | [−0.0000, +0.0123] | no |
+| 1 | A-fuse (7B) | 0.5693 | +0.0305 | [+0.0175, +0.0437] | no (Δ<+0.04) |
+| 2 | R2-5 · 7B A-fuse×A-lex (CPU) | 0.5752 | +0.0365 | [+0.0223, +0.0506] | no (Δ<+0.04) |
+| 2 | R2-1 · 32B anchor-agg | 0.5512 | +0.0125 | [−0.0006, +0.0257] | no |
+| 2 | R2-2 · 32B A-fuse | 0.5825 | +0.0437 | [+0.0240, +0.0631] | **yes** |
+| 2 | R2-3 · 72B anchor-agg | 0.5593 | +0.0206 | [+0.0065, +0.0347] | no (Δ<+0.04) |
+| 2 | **R2-4 · 72B A-fuse** | **0.5913** | **+0.0526** | **[+0.0333, +0.0721]** | **yes — highest Δ, PROMOTED** |
+
+Two clean gradients separate on the calibration set:
+- **Raw scorer scale alone does not clear the bar.** Anchor aggregation improves monotonically
+  7B 0.5387 → 32B 0.5512 → 72B 0.5593, but even the 72B's Δ (+0.0206) is half the gate.
+- **A-fuse × scale is the lever.** The coarse×fine fusion gains grow with the scorer:
+  7B +0.0305 → 32B +0.0437 → 72B +0.0526. Both 32B and 72B A-fuse clear the unchanged bar;
+  per the frozen rule (highest paired Δ) **R2-4 (72B A-fuse) is the single promoted config**.
+- R2-5 (stacking the two round-1 CPU winners on 7B scores) lands at +0.0365 — the best 7B-only
+  number, still short of the gate: the missing ingredient was scorer strength, not aggregation.
+
+## P10-b HateClipSeg TEST (single pass, promoted R2-4)
+
+Run 2026-07-09. Scoring job 12585 (72B bnb4, HateClipSeg test 395 videos, K30/M120 + K4/M16,
+5h50; K4 ASR re-binned on CPU from the stored chunk timestamps, no Whisper re-run). Fuse on CPU →
+`test_seen_segscoreK30_p10-p6-72b-bnb4-fuse.jsonl`; eval = the **frozen P6 harness**
+(`p6_eval_localization.py --mllm_tag p10-p6-72b-bnb4-fuse`, same 395-video split, same estimators;
+harness integrity pre-verified by reproducing the published P6 numbers bit-for-bit with the default
+tag). Controls (memory row, random) recomputed **unchanged** — they reproduce P6 exactly. Machine
+JSON: `loc_out_hcs/results_p10b_test.json`, paired stats `loc_out_hcs/p10b_test_paired.json`.
+
+| condition | frame-full AP / AUC | seg AP / AUC | **within-video AUC** |
+|---|---|---|---|
+| a — memory `knn_hatemm_subclip` | 0.5329 / 0.5754 | 0.5246 / 0.5839 | 0.5140 |
+| **b — R2-4 (72B A-fuse, promoted)** | 0.5929 / 0.6488 | 0.5948 / 0.6561 | **0.5755** |
+| d — random | 0.4699 / 0.5084 | 0.4507 / 0.5065 | 0.5088 |
+| e — broadcast of b's video mean | 0.6198 / 0.6598 | 0.6002 / 0.6595 | 0.5000\* |
+| *(P6 reference: b at 7B)* | 0.5421 / 0.6034 | 0.5599 / 0.6353 | 0.5435 |
+
+\* by construction. c (rank-avg with memory) = 0.5578 — again dilutes the MLLM; fusion with the
+weaker memory scorer still hurts.
+
+**Within-video significance (primary):** R2-4 wv-AUC **0.5755**, bootstrap 95% CI
+**[0.5581, 0.5933]**, sign-p 1.4e-9 (n=329 both-class videos).
+- **paired vs memory** (0.5140): Δ **+0.0615**, CI **[+0.0359, +0.0869]**, sign-p 4.9e-5.
+- **paired vs P6's 7B scorer** (0.5435): Δ **+0.0319**, CI **[+0.0170, +0.0474]**, sign-p 0.0024 —
+  the calibration-side promise (+0.0526 over the 7B anchor on HateMM) transfers at ~60% strength.
+
+### VERDICT vs the pre-registered three-band test bar — **MODEST amplification**
+
+- **wv-AUC ≥ 0.60 (substantial): NOT met** (0.5755 < 0.60).
+- **0.56 ≤ wv-AUC < 0.60 with CI excluding P6's 0.5435: MET** — 0.5755 ∈ [0.56, 0.60) and the CI
+  lower bound 0.5581 > 0.5435 (and the paired-vs-P6 CI excludes 0). Second-round /
+  11-comparison caveat stated as pre-registered.
+- Supporting metrics move the same way: frame AUC 0.6034→0.6488, segment AUC 0.6353→0.6561 vs P6;
+  the broadcast control (e) remains the best pooled AP (0.6198), so video-level density is still
+  the MLLM's dominant competence — but the within-video increment is now larger and CI-separated
+  from the P6 baseline.
+
+**Bottom line: P10-b = MODEST amplification, honestly reported.** The scale ladder × coarse×fine
+fusion (Qwen2.5-VL-72B, A-fuse) lifts the MLLM localizer from P6's wv-AUC 0.5435 to **0.5755**
+(CI [0.5581, 0.5933]; paired over P6 +0.0319, over memory +0.0615, both CIs excluding 0) on the
+held-out HateClipSeg test — a real, statistically solid improvement that **does not reach the
+0.60 substantial bar**. The campaign's MLLM localization role is upgraded from "modest (7B)" to
+"modest-plus (72B A-fuse)": the earned-roles verdict (encoder + localizer + guard-rail/audit, no
+main-table accuracy role) is **unchanged in kind, strengthened in degree**. The single HateClipSeg
+test touch is now **spent**; P10-b closes the last in-register path of the MLLM-method-role
+campaign. Whether "modest-plus" is worth the 72B inference cost is a framing decision for the
+user, not a statistical one.
 
