@@ -1,0 +1,14 @@
+{
+  "dataset": "MHC",
+  "tag": "p9c3p_en_s1",
+  "topk": 20,
+  "mem_n": 549,
+  "dev": {
+    "acc": 0.775,
+    "macro_f1": 0.7566
+  },
+  "test": {
+    "acc": 0.764,
+    "macro_f1": 0.7274
+  }
+}

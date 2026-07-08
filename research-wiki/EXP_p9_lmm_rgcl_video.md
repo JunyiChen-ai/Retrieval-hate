@@ -300,4 +300,88 @@ re-decode) at 256², **per_device_train_batch_size 4 × grad_accum 4 = effective
 - **Honest caveat:** 4 frames is a real evidence cut (esp. ZH visual-borne hate); frames-vs-batch is
   a follow-up if D3 works at 4 frames.
 
-<!-- RESULTS_PENDING: wave (12494–12505) → extractions + predicts → D3 vs C3′ verdict -->
+## P9b WAVE RESULTS (12494–12505 + chains; harvested 2026-07-08)
+
+**Wave execution: clean.** All 12 trainings COMPLETED (~39–44 min each), all 12 embedding
+extractions (p9bx, jobs 12506–12528 even, ~16–18 min each), all 12 test-MLP predicts (p9bp, odd,
+~2 min each), and the kNN read-out (12536, `scripts/slurm/p9b_knn_eval.sbatch` →
+`scripts/analysis/p9b_knn_out/*.json`) — zero failures, zero requeues. Test touched once per
+run via the pre-committed predict configs + the single kNN pass (final-checkpoint, no selection).
+
+*Pipeline note (held constant, not a knob):* embeddings for the kNN read-out are extracted at the
+standard 8-frame setting (`gen_embed_lora.sbatch` default) even though D3/C3′ trained on 4-frame
+inputs — identical for both arms, and identical to the C3-knn/floor extraction pipeline, so
+read-out comparability is preserved; only the training objective differs between arms.
+
+### Per-seed accuracy (dev = final-epoch eval; test = single touch)
+| cell | seed | mlp_dev | mlp_test | knn_dev | knn_test |
+|---|---|---|---|---|---|
+| D3_ZH | s0 | 0.8590 | 0.8255 | 0.8333 | 0.8322 |
+| D3_ZH | s1 | 0.8718 | 0.8389 | 0.8718 | 0.8456 |
+| D3_ZH | s2 | 0.8718 | 0.8591 | 0.8718 | 0.8389 |
+| C3′_ZH | s0 | 0.8974 | 0.8658 | 0.8590 | 0.8322 |
+| C3′_ZH | s1 | 0.8590 | 0.8591 | 0.8974 | 0.8322 |
+| C3′_ZH | s2 | 0.8590 | 0.8523 | 0.9231 | 0.7987 |
+| D3_EN | s0 | 0.8000 | 0.7826 | 0.8125 | 0.7640 |
+| D3_EN | s1 | 0.7625 | 0.7764 | 0.7625 | 0.7764 |
+| D3_EN | s2 | 0.8375 | 0.7826 | 0.7750 | 0.7826 |
+| C3′_EN | s0 | 0.8125 | 0.7888 | 0.7875 | 0.7640 |
+| C3′_EN | s1 | 0.7875 | 0.8012 | 0.7750 | 0.7640 |
+| C3′_EN | s2 | 0.8375 | 0.7888 | 0.7875 | 0.7888 |
+
+### Cell means (mean±std, n=3)
+| cell | mlp_dev | mlp_test | knn_dev | knn_test |
+|---|---|---|---|---|
+| **D3_ZH** | 0.8675±0.006 | 0.8412±0.014 | 0.8590±0.018 | **0.8389±0.005** |
+| C3′_ZH | 0.8718±0.018 | 0.8591±0.005 | 0.8932±0.026 | 0.8210±0.016 |
+| **D3_EN** | 0.8000±0.031 | 0.7805±0.003 | 0.7833±0.021 | **0.7743±0.008** |
+| C3′_EN | 0.8125±0.020 | 0.7930±0.006 | 0.7833±0.006 | 0.7723±0.012 |
+
+### Verdict vs the pre-registered bar — **FAIL (honest kill)**
+Bar: D3-knn > protocol-matched floor by **+1.5pt mean with ≥2/3 seeds**, AND **D3-knn ≥
+D3-mlp − 1pt**. Floors: EN test 0.7847, ZH test 0.8537.
+1. **C1 (beat floor) — FAIL on both datasets.**
+   ZH: D3-knn 0.8389 = **−1.5pt vs floor**, 0/3 seeds ≥ floor+1.5 (best seed 0.8456).
+   EN: D3-knn 0.7743 = **−1.0pt vs floor**, 0/3 seeds (best 0.7826).
+2. **C2 (memory read-out not a casualty) — PASS on both.**
+   ZH: knn 0.8389 vs mlp 0.8412 (−0.2pt); EN: 0.7743 vs 0.7805 (−0.6pt). In rgcl-OFF C3 the gap
+   was −2 to −5pt; with rgcl-ON the knn read-out now *matches* the LMM's own head.
+3. Overall = C1 ∧ C2 = **FAIL**. The memory read-out is repaired *relative to the head* but the
+   whole D3 system sits below the protocol-matched floor on both datasets.
+
+### Mechanism read (D3 − C3′ = the pure rgcl-term effect, same branch, same recipe)
+- **On the memory read-out (the claim): positive.** D3-knn − C3′-knn = **ZH +1.8pt**
+  (0.8389 vs 0.8210), **EN +0.2pt** (0.7743 vs 0.7723). The rgcl contrastive term does train the
+  LMM embedding space *toward* the kNN memory vote — sign confirmed, magnitude modest, EN within
+  noise.
+- **On the MLP head: the mirror image.** D3-mlp − C3′-mlp = **ZH −1.8pt** (0.8412 vs 0.8591),
+  **EN −1.2pt** (0.7805 vs 0.7930). At equal loss weighting [1,1,1] the rgcl term *redistributes*
+  accuracy from the head to the memory read-out (ZH: an almost exact ±1.8pt swap) rather than
+  adding any.
+- **Net mechanism conclusion:** the RGCL loss works as designed (shapes the space for the memory),
+  but in this regime it buys no system-level accuracy — no cell of the wave (either arm, either
+  read-out) beats its protocol-matched floor; the best cell overall is C3′-ZH-mlp 0.8591 ≈ floor
+  0.8537 (+0.5pt, within the ±1.2pt seed band).
+- Side observation (confounded, non-load-bearing): at 4-frame/bs4 the rgcl-OFF control's knn
+  read-out already improves on the old 8-frame/bs1 C3-knn (ZH 0.8210 vs 0.7964, EN 0.7723 vs
+  0.7578) — batch/frames/branch all changed, so no attribution claimed.
+
+### Campaign consequence
+P9b was the last open architectural locus (decision-level LMM training BY our retrieval loss).
+The pre-registered bar fails; combined with P9 (rgcl-OFF SFT) and the settled MLLM method-role
+campaign, the conclusion stands: **the MLLM earns no main-table accuracy role in this system at
+7B; the rgcl term's effect is a head↔memory redistribution, not a gain.** Paper-usable positives
+from P9b: (i) first working port of RA-HMD's (released-broken) LMM-RGCL stage-2 to video, incl.
+the bs=1 in-batch-degeneracy finding + 4-frame/bs4 fix; (ii) the clean D3−C3′ mechanism pair
+showing the retrieval-contrastive term specifically re-shapes the LMM space for kNN memory
+(+1.8pt ZH) at the head's expense — evidence the memory pillar and the LMM head compete for the
+same capacity in this regime.
+
+### Artifacts
+- Harvest/verdict: `scripts/analysis/p9b_harvest.py` (reads training `eval_results.json`, predict
+  dirs `logging/lora_p9/predict/*f4*_test/`, and `scripts/analysis/p9b_knn_out/*.json`).
+- kNN read-out job: `scripts/slurm/p9b_knn_eval.sbatch` (12536). Extraction caches
+  `data/CLIP_Embedding/{MHC,MHC_zh}/{train,dev_seen,test_seen}_p9{d3,c3p}_{zh,en}_s{0,1,2}.pt`
+  (pushed to B2 `embeddings/`).
+- Fork commits (submodule): 4ade9754 (rgcl wiring), 63d52fd1/c00cd96d (guards), 9b409c0b (wave
+  configs); predict configs `my_configs/hatevideo/p9_predict/test_{d3,c3prime}_{zh,en}_s{0,1,2}.yaml`.
