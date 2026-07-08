@@ -278,3 +278,36 @@ scorer 池内 _不可达_** —— 现有 7B/32B/72B 分数的任何合法 re-ag
 定论(MODEST amplification,test 已花掉、不再触碰)**。
 
 *(EXPLORATORY 附录结束。上文 FINAL 正文不受影响。)*
+
+---
+
+## P10-c:开源代际跳跃(2026-07-09,FAIL)
+
+> **追加小节,不改动上文任何 FINAL 正文 / EXPLORATORY 附录。** P10-c 是 campaign 之外的最后一次开源探针:
+> 换**代**(Qwen3-VL)而非换**规模**,能否越过 EXPLORATORY 附录判定的 re-aggregation 天花板(校准 0.5932
+> < 0.616)。全部数字见 `research-wiki/EXP_p10_loc_amplify.md` 的 P10-c 节(commit `74f0eac`),本小节仅引用、
+> 不重测。
+
+- **预注册(`8810c11`):** Qwen3-VL-32B(dense)+ Qwen3-VL-30B-A3B(MoE,3B active)× {anchor-agg, A-fuse},
+  第三轮门槛 = **校准 wv-AUC ≥ 0.616 且 CI(Δ) 不含 0** —— 即两点校准→test 映射外推 test ≥ 0.60 所需的功效分析
+  水位(高于已花掉 test 的 72B 冠军 0.5913,是 sequential-testing 控制);累计 **14 比较** vs 7B anchor 0.5387。
+
+- **结果:** 四臂全部低于 0.616。最佳 **C1b(Qwen3-VL-32B A-fuse)校准 wv-AUC 0.5866**,paired Δ vs anchor
+  **+0.0479 CI[+0.0287, +0.0677]**(显著但 < gate),且**低于** Qwen2.5-VL-72B A-fuse 冠军 0.5913 → 按预注册
+  **HateClipSeg test 未触碰**,**P10-b 的 0.5755 MODEST 定论仍立**。(其余三臂:C2b 30B-A3B A-fuse 0.5821、
+  C1a 32B anchor-agg 0.5594、C2a 30B-A3B anchor-agg 0.5469。)
+
+- **机制定论:**(i)**换代 ≠ 换规模** —— Qwen3-VL-32B 在两种聚合上都落在 Qwen2.5-VL-32B 的噪声内(anchor-agg
+  0.5594 vs 0.5512;A-fuse 0.5866 vs 0.5825),新一代 32B ≈ 两代前的 32B 档;(ii)**30B-A3B(3B active)最弱**
+  (anchor-agg 0.5469,CI 含 0)→ **定位能力由激活参数量主导**,非总参数量、非代际;(iii)**A-fuse 显著性在第 5 个
+  scorer 复现**(7B / 32B / 72B / Qwen3-32B / Qwen3-30B-A3B 全部 A-fuse 显著高于同模型 anchor-agg),再证
+  coarse×fine 融合是唯一杠杆。此读数**连带排除 Qwen3-VL-235B-A22B**(22B active,按激活参数律预期不过 32B 档;
+  且本集群 A100 无 FP8、471 GB bf16 磁盘不可行)—— 记为超范围。
+
+- **结论:** 开源可行域的**三面墙** —— **重聚合**(EXPLORATORY 天花板 0.5932)/ **规模梯**(72B A-fuse 0.5913)/
+  **代际同档**(Qwen3-VL-32B A-fuse 0.5866)—— 现已全部闭合,**substantial 线(校准 ≈0.616 → test ≥0.60)在本
+  集群开源域正式不可达**。**对 §5 选项 (b) 的读数(不改正文,记于此):开源代际已排除,闭源是 scorer 类别上唯一
+  未测的增量。** 主表 accuracy 终局与 §4 幸存角色(encoder + 定位 + guard-rail)不受影响;P10-b 仍是最终定位数
+  (0.5755,MODEST)。
+
+*(P10-c 小节结束。上文 FINAL 正文与 EXPLORATORY 附录均不受影响。)*
