@@ -208,6 +208,8 @@ def main():
                 fout.write(json.dumps(dict(id=vid, scores=scores, parse_ok=oks,
                                            video_ok=bool(ok)), ensure_ascii=False) + "\n")
                 fout.flush()
+                if device.type == "cuda":
+                    torch.cuda.empty_cache()  # score-neutral; fights fragmentation OOM
                 if (vi + 1) % 25 == 0:
                     print("  [{}] {}/{}".format(split, vi + 1, len(todo)), flush=True)
         print("[{}] done -> {}".format(split, out_path), flush=True)

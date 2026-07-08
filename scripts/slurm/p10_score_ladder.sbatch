@@ -17,6 +17,9 @@ source /data/jehc223/miniconda3/etc/profile.d/conda.sh
 conda activate HateVideo
 bash /data/jehc223/RGCL/scripts/disk_guard.sh || true
 export HF_HUB_OFFLINE=1 WANDB_MODE=disabled PYTHONUNBUFFERED=1
+# 32B bf16 leaves only ~13G activation headroom on 80G; the K4 pass (30-frame windows)
+# needs a ~1.7G single attention alloc -> fragmentation OOM without this (job 12562).
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 MODEL=${MODEL:?set MODEL=Qwen/Qwen2.5-VL-32B-Instruct or -72B-}
 QUANT=${QUANT:-none}
