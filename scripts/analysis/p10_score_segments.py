@@ -166,9 +166,10 @@ def main():
     proc = AutoProcessor.from_pretrained(args.model, max_pixels=args.max_pixels)
 
     # output tag: p6 -> qwen (P6-compatible); variants get their own tag so caches never collide
+    size = "-32b" if "32B" in args.model else ("-72b" if "72B" in args.model else "")
     tag = "qwen" if (args.prompt == "p6" and args.quant == "none"
                      and "7B" in args.model) else "p10-{}{}{}".format(
-        args.prompt, "-32b" if "32B" in args.model else "",
+        args.prompt, size,
         "-" + args.quant if args.quant != "none" else "")
     video_root = os.path.join(args.video_dir, args.dataset, "All")
     out_ds = os.path.join(args.out_dir, args.dataset)

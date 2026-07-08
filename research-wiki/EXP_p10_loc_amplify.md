@@ -130,3 +130,89 @@ scorer — but under the frozen P10 protocol it does not clear the bar.
 **Not run.** No config cleared the calibration-side promotion bar, so per the pre-registration the
 single HateClipSeg test pass was never spent. P6's HateClipSeg result (wv-AUC 0.5435) stands as the
 final localization number.
+
+---
+
+# P10-b — scale-ladder second calibration round (32B / 72B scorer × A-fuse aggregation)
+
+> **Status: PRE-REGISTERED (design frozen before the round-2 evaluation).** This is the **last
+> in-register path** of the whole MLLM-method-role campaign (`novelty-scope-and-plan.md`): does a
+> **stronger localization scorer** amplify the P6 localizer past the pre-registered substantial bar?
+> Round 1 (above, commit 7194ee2) FAILed: the anchor (Qwen2.5-VL-7B, K=30) HateMM-calibration
+> wv-AUC = **0.5387**; the single significant lever was **A-fuse** (K4×K30 coarse×fine)
+> wv-AUC 0.5693, **paired Δ +0.0305, CI [+0.0175, +0.0437]** — real but below the **+0.04** gate.
+> P10-b climbs the scorer up the Qwen2.5-VL scale ladder (7B→32B→72B), pairs it with the round-1
+> winning aggregation (A-fuse), and re-tests the **unchanged** promotion bar. No bar was moved.
+
+## Frozen candidate list (exactly 5 rows — no additions)
+
+Calibration set, harness, anchor, and paired protocol are **identical to round 1** (HateMM
+train-hateful, 298 scored / n=266 both-class; `p10_eval_hatemm.py`; paired bootstrap 10k 95% CI on
+the per-video Δ vs the frozen 7B anchor over the common video set; sign-test). Each stronger scorer
+is scored at **K=30 (fine)** and **K=4 (coarse)** so its A-fuse channel is the SAME model
+(matching the 7B A-fuse recipe exactly; no cross-model fusion). "Anchor aggregation" = the raw K=30
+scores evaluated directly.
+
+| # | candidate | scorer | aggregation | source |
+|---|---|---|---|---|
+| R2-1 | 32B · anchor-agg | Qwen2.5-VL-32B (bf16) | raw K=30 | GPU (`p10_score_ladder.sbatch`) |
+| R2-2 | 32B · A-fuse | Qwen2.5-VL-32B (bf16) | 0.5·K30 + 0.5·K4(map), same model | GPU + CPU re-agg |
+| R2-3 | 72B · anchor-agg | Qwen2.5-VL-72B (bnb4-nf4) | raw K=30 | GPU (if feasible) |
+| R2-4 | 72B · A-fuse | Qwen2.5-VL-72B (bnb4-nf4) | 0.5·K30 + 0.5·K4(map), same model | GPU + CPU re-agg |
+| R2-5 | 7B · A-fuse×A-lex | Qwen2.5-VL-7B (round-1 scores) | 0.5·K30 + 0.5·K4(map) + min(lex_hits,3) | **CPU only, no GPU** |
+
+R2-5 is a pure re-aggregation stacking the two round-1 winners (A-fuse coarse×fine + A-lex ASR
+hate-lexicon boost) on the already-landed 7B scores; it is explicitly a **multiple-comparison
+extension** (`p10_aggregate_b.py --mode fuselex7b`). The other four are the {32B,72B}×{anchor,A-fuse}
+scale grid the brief fixes.
+
+## Infrastructure inventory & feasibility (measured, not guessed)
+
+- **Anchor rate (measured):** 7B, 298 vids × 30 windows = 8,940 multimodal gens in **52 min**
+  (job 12474), ≈ 0.34 s/gen.
+- **32B-VL — FEASIBLE.** `Qwen/Qwen2.5-VL-32B-Instruct` = **68.3 GB** (bf16), fits 1×A100-80G
+  (device_map=auto; 8-token gen → negligible KV). Est single-job wall ≈ **3–4 h** (K30) + ≈ 0.5 h
+  (K4). Transformers 4.49 loads it via `Qwen2_5_VLForConditionalGeneration`. Downloaded on the
+  login node (P2c pattern), offline in-job.
+- **72B-VL — memory-feasible via bnb4; disk/throughput risk documented.** `Qwen/Qwen2.5-VL-72B-
+  Instruct` bf16 = **146.8 GB** → **exceeds 80 G VRAM**, so it cannot run bf16 on 1 GPU. Load path =
+  on-the-fly **4-bit nf4 (double-quant, bf16 compute)** — the exact P2c 72B recipe (`--quant bnb4`,
+  ~40 G resident on 1×A100-80G, zero env mutation). Two residual risks: (a) the **147 GB checkpoint
+  download** lands on a **shared /data at 97 % full (≈552 G free)**; (b) bnb4 multimodal throughput
+  → est single-job wall ≈ **9–13 h**. Plan: attempt the 72B download; **if it completes within the
+  disk budget, submit R2-3/R2-4; if the download/disk fails, downgrade to 32B-only and record R2-3/
+  R2-4 as "not run — 72B infeasible" here.** No bar change either way.
+
+## Promotion bar — UNCHANGED from round 1 (not moved to admit any round-2 config)
+
+A candidate is promoted to the single HateClipSeg test **iff**, on the HateMM calibration set, its
+**paired wv-AUC beats the frozen 7B anchor (0.5387) by ≥ +0.04** (equivalently wv-AUC ≥ **0.5787**)
+**AND** the paired bootstrap 95% CI on the per-video Δ **excludes 0**. If several clear, the single
+**highest paired Δ** is promoted. If none clears, **P10-b = FAIL, the HateClipSeg test is never
+touched, and P6 stands as-is** (wv-AUC 0.5435).
+
+## Multiple-comparison / round accounting (reported honestly)
+
+This is the **second** calibration round. Configs compared against the frozen anchor so far:
+**round 1 = 5** (A-gate, K60, fewshot, A-lex, A-fuse) + **round 2 = 5** (R2-1..R2-5) = **10 total**.
+The +0.04 gate was **not** loosened for round 2, and round-2 positives (if any) are reported as
+second-round, 10-comparison results. The A-fuse magnitude (+0.0305) is the round-1 reference the
+scale ladder must exceed.
+
+## Substantial bar on the HateClipSeg test (unchanged; one touch total)
+
+Promoted config only, single pass, frozen P6 harness (`p6_eval_localization.py`, 395-video split,
+within-video AUC + CI + memory/random controls): **wv-AUC ≥ 0.60 = substantial** / **0.56–0.60 with
+CI excluding P6's 0.5435 = modest** / **< 0.56 = P6 stands**.
+
+## Hard rules (carry over)
+
+SLURM only (no `--time`, `HF_HUB_OFFLINE=1`, `WANDB_MODE=disabled`), foreground `sacct` polling (no
+background waiter); calibration scoring uses hateful-only gt (`data/gt_p10hate/`) at K=30 and K=4;
+no `.pt` in git; 32B/72B caches **deleted after use**; quota watch on the shared FS. Report the full
+two-round leaderboard **before** any test pass.
+
+## P10-b HateMM CALIBRATION LEADERBOARD
+
+_(to be appended after the round-2 scoring completes.)_
+
