@@ -419,3 +419,67 @@ in git; **Qwen3-VL caches deleted after use** (quota watch on the shared 97 %-fu
 HateVideo env is never mutated (all P10-c runs in `HateVideoVLM`). Report the full three-round
 leaderboard **before** any test pass.
 
+## P10-c HateMM CALIBRATION LEADERBOARD (round 3)
+
+Run 2026-07-09. Same calibration set and harness as rounds 1–2 (HateMM train hateful, 298 scored,
+**n=266** both-class; `p10_eval_hatemm.py`, paired bootstrap 10k 95% CI vs the frozen 7B anchor
+0.5387; random control wv 0.4940). Jobs: smoke 12604 (32B, LIMIT=3, path-validated: within-video
+discrimination confirmed, `video_grid_thw` t=2 encodes all 4 frames/window); full runs 12605
+(30B-A3B, 1h50) + 12606 (32B, 1h34). Scoring health uniform and identical to previous rounds
+(1 undecodable video; parse fallbacks 0.34% at both K). A-fuse on CPU (`p10_aggregate_b.py --mode
+fuse`). Machine rows appended to `scripts/analysis/loc_out/p10_hatemm_leaderboard.jsonl`.
+
+Full three-round table (14 comparisons vs the anchor; round-3 gate: **wv-AUC ≥ 0.616 AND CI(Δ)
+excl. 0**):
+
+| round | variant | HateMM wv-AUC | paired Δ vs anchor | paired Δ 95% CI | clears round-3 bar |
+|---|---|---|---|---|---|
+| — | **anchor** (7B, raw K30) | 0.5387 | — | — | — |
+| 1 | A-gate | 0.5314 | −0.0074 | [−0.0195, +0.0045] | — |
+| 1 | K60 | 0.5319 | −0.0068 | [−0.0156, +0.0019] | — |
+| 1 | fewshot | 0.5359 | −0.0028 | [−0.0090, +0.0034] | — |
+| 1 | A-lex | 0.5450 | +0.0062 | [−0.0000, +0.0123] | — |
+| 1 | A-fuse (7B) | 0.5693 | +0.0305 | [+0.0175, +0.0437] | — |
+| 2 | R2-5 · 7B A-fuse×A-lex | 0.5752 | +0.0365 | [+0.0223, +0.0506] | — |
+| 2 | R2-1 · 32B anchor-agg | 0.5512 | +0.0125 | [−0.0006, +0.0257] | — |
+| 2 | R2-2 · 32B A-fuse | 0.5825 | +0.0437 | [+0.0240, +0.0631] | — |
+| 2 | R2-3 · 72B anchor-agg | 0.5593 | +0.0206 | [+0.0065, +0.0347] | — |
+| 2 | R2-4 · 72B A-fuse (**champion, test-spent 0.5755**) | **0.5913** | +0.0526 | [+0.0333, +0.0721] | — |
+| 3 | C2a · Qwen3-VL-30B-A3B anchor-agg | 0.5469 | +0.0082 | [−0.0058, +0.0222] | no |
+| 3 | C1a · Qwen3-VL-32B anchor-agg | 0.5594 | +0.0207 | [+0.0077, +0.0339] | no (0.5594 < 0.616) |
+| 3 | C2b · Qwen3-VL-30B-A3B A-fuse | 0.5821 | +0.0433 | [+0.0227, +0.0644] | no (0.5821 < 0.616) |
+| 3 | **C1b · Qwen3-VL-32B A-fuse** (round-3 best) | **0.5866** | **+0.0479** | **[+0.0287, +0.0677]** | **no (0.5866 < 0.616)** |
+
+**Reading (three clean facts):**
+- **The new generation reproduces the P10-b structure almost exactly, at ~half the parameter cost.**
+  Qwen3-VL-32B lands within noise of Qwen2.5-VL-32B on both aggregations (anchor-agg 0.5594 vs
+  0.5512; A-fuse 0.5866 vs 0.5825), and A-fuse × scorer strength is again the only lever
+  (30B-A3B +0.0433, 32B +0.0479 — both significant, both far above their anchor-agg rows).
+- **Generation upgrade ≠ scale upgrade.** Qwen3-VL-32B A-fuse (0.5866) does **not** surpass the
+  Qwen2.5-VL-**72B** A-fuse champion (0.5913): a newer 32B ties the two-generations-older 32B tier
+  and stays below the 72B tier. Under the frozen recipe, within-video localization tracks
+  *capacity* more than *generation*.
+- The MoE (30B-A3B, 3B active) anchor-agg row (0.5469, CI incl. 0) is the weakest, consistent with
+  active-parameter count (~3B) rather than total (30B) governing per-window rating quality; its
+  A-fuse row still clears the old +0.04 bar — A-fuse's robustness across scorers is now shown on
+  **five** models (7B/32B/72B/Qwen3-32B/Qwen3-30B-A3B).
+
+### VERDICT vs the pre-registered round-3 gate — **FAIL (no promotion, test never touched)**
+
+No candidate reaches calibration wv-AUC ≥ 0.616 (best: Qwen3-VL-32B A-fuse **0.5866**, below even
+the already-tested 72B champion 0.5913). Per the pre-registration, **P10-c dies calibration-side:
+the third HateClipSeg test touch is NOT spent**, and P10-b's result stands as the final localization
+number (HateClipSeg wv-AUC **0.5755**, MODEST). The ceiling argument extends: neither aggregation
+knobs (≤0.5932, commit 93e82fa) **nor a one-generation-newer open scorer at the ~32B tier** reaches
+the 0.616 waterline the two-point calibration→test mapping demands for a substantial (≥0.60) test
+result. What remains untried within open weights is a genuinely *larger* new-gen scorer
+(Qwen3-VL-235B-A22B — infeasible on this cluster's A100/FP8 + disk budget) — recorded as out of
+reach, not as an open in-register path.
+
+**Bottom line: P10-c = FAIL, honestly closed.** Round 3 adds 4 comparisons (14 total vs anchor),
+zero promotions. The MLLM-localization role remains at its P10-b magnitude: **modest-plus
+(HateClipSeg wv-AUC 0.5755, CI [0.5581, 0.5933])**. The campaign's earned-roles verdict is
+unchanged: encoder + localizer + guard-rail/audit, no main-table accuracy role; the localization
+substantial line (0.60) is not reached by any open-weights scorer feasible on this cluster.
+Qwen3-VL caches deleted after the runs per quota policy.
+
