@@ -83,8 +83,8 @@ def fuse_vec(s30, s4):
     return [0.5 * s30[k] + 0.5 * s4[min(K4 - 1, k * K4 // K30)] for k in range(K30)]
 
 
-def write(D, name):
-    p = os.path.join(MD, "train_segscoreK30_{}.jsonl".format(name))
+def write(D, name, split="train"):
+    p = os.path.join(MD, "{}_segscoreK30_{}.jsonl".format(split, name))
     with open(p, "w") as f:
         for vid, sc in D.items():
             f.write(json.dumps(dict(id=vid, scores=sc, video_ok=True)) + "\n")
@@ -92,10 +92,15 @@ def write(D, name):
 
 
 def main():
+    global MD, AD
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", required=True, choices=["fuselex7b", "fuse"])
     ap.add_argument("--prefix", default="", help="model tag for --mode fuse, e.g. p10-p6-32b")
+    ap.add_argument("--dataset", default="HateMM")
+    ap.add_argument("--split", default="train", help="file prefix: train|dev_seen|test_seen")
     args = ap.parse_args()
+    MD = os.path.join(ROOT, "data/MLLM_scores", args.dataset)
+    AD = os.path.join(ROOT, "data/ASR", args.dataset)
 
     if args.mode == "fuselex7b":
         s30 = load_jsonl_scores(os.path.join(MD, "train_segscoreK30_qwen.jsonl"))
@@ -125,8 +130,8 @@ def main():
 
     # mode == fuse: A-fuse for a stronger scorer (needs its own K30 + K4 files)
     pre = args.prefix
-    p30 = os.path.join(MD, "train_segscoreK30_{}.jsonl".format(pre))
-    p4 = os.path.join(MD, "train_segscoreK4_{}.jsonl".format(pre))
+    p30 = os.path.join(MD, "{}_segscoreK30_{}.jsonl".format(args.split, pre))
+    p4 = os.path.join(MD, "{}_segscoreK4_{}.jsonl".format(args.split, pre))
     if not (os.path.exists(p30) and os.path.exists(p4)):
         raise SystemExit("missing scores for prefix {}: {} / {}".format(pre, p30, p4))
     s30 = load_jsonl_scores(p30)
@@ -137,7 +142,7 @@ def main():
             continue
         s4v = s4.get(vid)
         out[vid] = fuse_vec(sc, s4v) if (s4v and len(s4v) >= K4) else list(sc)
-    write(out, "{}-fuse".format(pre))
+    write(out, "{}-fuse".format(pre), args.split)
 
 
 if __name__ == "__main__":

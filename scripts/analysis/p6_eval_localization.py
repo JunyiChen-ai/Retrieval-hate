@@ -27,10 +27,10 @@ import eval_localization_hateclipseg as L  # noqa: E402  (frozen harness)
 MLLM_DIR = os.path.join(ROOT, "data/MLLM_scores/HateClipSeg")
 
 
-def load_mllm_S(video_ids, K):
+def load_mllm_S(video_ids, K, tag="qwen"):
     """[V,K] float matrix of P3 integer scores, aligned to video_ids order.
     Missing ids / short rows -> zero row (constant -> wv-AUC 0.5, pooled low)."""
-    path = os.path.join(MLLM_DIR, "test_seen_segscoreK{}_qwen.jsonl".format(K))
+    path = os.path.join(MLLM_DIR, "test_seen_segscoreK{}_{}.jsonl".format(K, tag))
     by_id = {}
     n_bad = 0
     with open(path) as f:
@@ -92,6 +92,8 @@ def main():
     ap.add_argument("--Ks", default="30")
     ap.add_argument("--mem", default="knn_hatemm_subclip",
                     help="primary memory config for conditions a & c")
+    ap.add_argument("--mllm_tag", default="qwen",
+                    help="MLLM score file tag for condition b (default = frozen P6)")
     ap.add_argument("--out_json",
                     default=os.path.join(L.OUT, "results_p6_mllm_loc.json"))
     args = ap.parse_args()
@@ -118,7 +120,7 @@ def main():
             S_mem[mem] = np.load(npz)["S"]
         S_a = S_mem[args.mem]
         # b: MLLM
-        S_b, b_meta = load_mllm_S(vids, K)
+        S_b, b_meta = load_mllm_S(vids, K, args.mllm_tag)
         print("K={}: MLLM scored {} / {} videos (missing {}, bad-len {})".format(
             K, b_meta["n_scored"], len(vids), b_meta["n_missing"], b_meta["n_bad_len"]))
         # c: per-video rank-average(a,b)

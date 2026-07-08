@@ -23,17 +23,18 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 MODEL=${MODEL:?set MODEL=Qwen/Qwen2.5-VL-32B-Instruct or -72B-}
 QUANT=${QUANT:-none}
+DS=${DS:-HateMM}
 SPLITS=${SPLITS:-train}
-GTDIR=./data/gt_p10hate
+GTDIR=${GTDIR:-./data/gt_p10hate}
 ASRTAG_K30=${ASRTAG_K30:-asrK30_whisper-large-v3}
 ASRTAG_K4=${ASRTAG_K4:-asrK4_whisper-large-v3}
-echo "[p10_ladder] MODEL=$MODEL QUANT=$QUANT SPLITS=$SPLITS"
+echo "[p10_ladder] MODEL=$MODEL QUANT=$QUANT DS=$DS SPLITS=$SPLITS GTDIR=$GTDIR"
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
 
 run_k () {  # $1=K  $2=M  $3=asr_tag
   echo "=== scoring K=$1 M=$2 (asr=$3) ==="
   python scripts/analysis/p10_score_segments.py \
-    --dataset HateMM --splits "$SPLITS" --gt_dir "$GTDIR" \
+    --dataset "$DS" --splits "$SPLITS" --gt_dir "$GTDIR" \
     --num_frames "$2" --num_subclips "$1" \
     --asr_tag "$3" --model "$MODEL" --prompt p6 --quant "$QUANT"
 }
