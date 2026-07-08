@@ -30,14 +30,18 @@ ASRTAG_K4=${ASRTAG_K4:-asrK4_whisper-large-v3}
 echo "[p10_ladder] MODEL=$MODEL QUANT=$QUANT SPLITS=$SPLITS"
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || true
 
-run_k () {  # $1=K  $2=asr_tag
-  echo "=== scoring K=$1 (asr=$2) ==="
+run_k () {  # $1=K  $2=M  $3=asr_tag
+  echo "=== scoring K=$1 M=$2 (asr=$3) ==="
   python scripts/analysis/p10_score_segments.py \
     --dataset HateMM --splits "$SPLITS" --gt_dir "$GTDIR" \
-    --num_frames 120 --num_subclips "$1" \
-    --asr_tag "$2" --model "$MODEL" --prompt p6 --quant "$QUANT"
+    --num_frames "$2" --num_subclips "$1" \
+    --asr_tag "$3" --model "$MODEL" --prompt p6 --quant "$QUANT"
 }
 
-run_k 30 "$ASRTAG_K30"
-run_k 4  "$ASRTAG_K4"
+# K30/M120 and K4/M16 = the EXACT round-1 recipes (P6-anchor fine + P3-default coarse).
+# K4 MUST be M=16 (4 frames/window): the 7B train_segscoreK4_qwen.jsonl that round-1
+# A-fuse fused was scored at M=16; M=120 (30-frame windows) also OOMs 32B bf16
+# (jobs 12562/12568: ~11.5k-token vision seq -> 1.74G SDPA alloc > headroom).
+run_k 30 120 "$ASRTAG_K30"
+run_k 4  16  "$ASRTAG_K4"
 echo "[p10_ladder] done MODEL=$MODEL"
