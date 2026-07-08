@@ -160,3 +160,10 @@ _附:`research-wiki/ITERATION_LOG.md` 已追加终局记录(2026-07-05);ideas �
 - **P10 一轮(HateMM-span 标定 leaderboard)FAIL —— A-fuse 显著但未达标。** 在 HateMM span 上自由标定 P6 scorer、单次测 HateClipSeg,想把 P6 的 modest 定位放大到 substantial;无变体过 **+0.04** 晋级线。**A-fuse(K4×K30 coarse×fine)+0.0305 CI[+0.0175,+0.0437] p=7e-7 显著但 < +0.04 bar**,HateClipSeg test 未触、**P6 as-is 站住(wv-AUC 0.5435)**。commit `7194ee2`。
 - **P10-b 在飞。** 32B/72B × A-fuse 二轮(预注册 `3d641f4`)由另一代理执行中,CPU 行 7B fuse×lex 0.5752(差 0.0035 到 0.5787 bar);只影响**定位角色能否从 modest 放大到 substantial**,不影响主表结论。
 - **终局草稿就位。** `research-wiki/TERMINUS_mllm_campaign_DRAFT.md` 已以 DRAFT 状态汇总 11 路线判定 + 5 条横切机制定论 + 4 幸存角色 + 3 决策选项(§6 留 P10-b 占位符),待 P10-b 落地后由主会话决定是否定稿。
+
+**07-09 终局(P10-b/P10-c 落地 + campaign 全数结题):** 收卷波次全部落地,主表 accuracy 结论不动;**定位角色止步 MODEST,substantial 线开源不可达。**
+- **P10-b 终 —— 72B A-fuse 唯一晋级,test = MODEST。** 二轮标定中仅 **72B A-fuse** 过晋级线(HateMM-span 校准 **0.5913**),单次触 HateClipSeg test = **0.5755 = MODEST**(< 0.60 substantial 线;对 memory 基线 +0.0615、对 P6 as-is +0.0319,均显著)。commit `03880f2`。
+- **重聚合天花板 0.5932。** 对已算 scorer 输出做全变体重聚合的上界为 **0.5932**(仍 < 0.60),关闭「换聚合方式即可到 substantial」的希望。commit `93e82fa`。
+- **P10-c 开源代际跳跃 FAIL。** 押注「换代 > 换规模」:**Qwen3-VL-32B A-fuse 校准仅 0.5866**,< **0.616** 晋级门槛,且低于 72B 冠军 —— **换代 ≠ 换规模,激活参数量主导**;HateClipSeg test 未触碰。commit `74f0eac`。
+- **结论:开源可行域三面墙闭合。** 规模(≤72B)、代际(Qwen3-VL)、聚合(重聚合天花板)三向均已撞墙,**substantial 定位线开源不可达**;MLLM campaign **12 条路线全部结题**。
+- **决策悬置(等用户裁决)。** 三选项:**(a) 定稿**(MODEST 定位 + encoder/guard-rail 角色收官)/ **(b) 闭源 API**(需数据外发批准)/ **(c) 换方法族**。执行包 `research-wiki/OPTION_KITS_terminus.md`、终局报告 `TERMINUS_mllm_campaign_DRAFT.md`(已转 **FINAL**)、论文主表 `PAPER_MASTER_TABLES.md`(commit `d9731e8`)均就绪。
