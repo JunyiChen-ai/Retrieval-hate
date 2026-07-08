@@ -154,3 +154,9 @@ _附:`research-wiki/ITERATION_LOG.md` 已追加终局记录(2026-07-05);ideas �
 - **[已结·POSITIVE] P6 HateClipSeg 定位(p2-rerank 承接)** — MLLM 逐窗证据分(帧+ASR)做无 span 时序定位:within-video AUC **0.5435** > memory 0.5140 > random 0.5088;配对 b>a Δ+0.0296 CI[+.009,+.050] p=0.007,对空 p=5.4e-8。**MLLM 挣得一个可移除的定位角色(幅度温和、统计稳固)。** commit `c9e3bd8`。
 
 **Campaign 答案:** MLLM 在本项目挣得恰好**两个可移除方法角色**——**encoder**(HateMM +4.2 F1 跨 0.85)与**定位打分器**(P6)。**主表 accuracy 角色被八条预注册路线(P1/P2/P2b/P3-EN,ZH,HateMM/P4/P5,7B–32B 规模)彻底证伪**:无任何 MLLM 组件把静态测试 acc 抬过 ~1.6 视频噪声地板,且每条均护栏背书(复现 / bit-for-bit / probe)。两条方法论定论:**(i) 过 no-head probe 是必要非充分**(P3-HateMM 是最干净 probe 却训练 within-noise);**(ii) 语义能力与决策变量正交或冗余**(P1/P2/P2b/P4/P5)——"关于什么"不等于"在仇恨/冒犯/良性边界的哪一侧",而后者才是主表提升需移动、且已被直接监督的量。
+
+**07-08 endgame(P9b / P10 收尾 + 终局草稿就位):** 收卷后又跑完两条路线,均 FAIL,主表 accuracy 结论不动。
+- **P9b(rgcl-ON 12-run 波次)FAIL —— 再分配机制,非净增益。** 打开我方检索对比(rgcl)损失训练 LMM 嵌入空间(D3):D3-knn test **ZH 0.8389±0.005**(−1.5pt vs floor 0.8537,0/3 seeds)、**EN 0.7743±0.008**(−1.0pt vs 0.7847,0/3);判据 2(D3-knn ≥ D3-mlp−1pt)PASS,但判据 1 败,**0/12 cell 超 floor**。机制:rgcl 项把精度从 LMM 自带头**搬到**我方 kNN 读出(D3−C3′ knn +1.8pt ZH / +0.2pt EN),而自带头镜像下降(−1.8 / −1.2 mlp)——**head↔memory 精度再分配,非净增益**。这关闭了「决策级+rgcl」这最后一个架构 locus。详见 `CAMPAIGN_mllm_method_role.md` P9b 行 / `EXP_p9_lmm_rgcl_video.md`「P9b WAVE RESULTS」,commit `4d28655`。
+- **P10 一轮(HateMM-span 标定 leaderboard)FAIL —— A-fuse 显著但未达标。** 在 HateMM span 上自由标定 P6 scorer、单次测 HateClipSeg,想把 P6 的 modest 定位放大到 substantial;无变体过 **+0.04** 晋级线。**A-fuse(K4×K30 coarse×fine)+0.0305 CI[+0.0175,+0.0437] p=7e-7 显著但 < +0.04 bar**,HateClipSeg test 未触、**P6 as-is 站住(wv-AUC 0.5435)**。commit `7194ee2`。
+- **P10-b 在飞。** 32B/72B × A-fuse 二轮(预注册 `3d641f4`)由另一代理执行中,CPU 行 7B fuse×lex 0.5752(差 0.0035 到 0.5787 bar);只影响**定位角色能否从 modest 放大到 substantial**,不影响主表结论。
+- **终局草稿就位。** `research-wiki/TERMINUS_mllm_campaign_DRAFT.md` 已以 DRAFT 状态汇总 11 路线判定 + 5 条横切机制定论 + 4 幸存角色 + 3 决策选项(§6 留 P10-b 占位符),待 P10-b 落地后由主会话决定是否定稿。
