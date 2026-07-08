@@ -1,0 +1,2602 @@
+[p9b2ad] pushing logging/lora_p9 adapters to B2
+[b2_push] copy: logging/lora_p9 -> b2:junyi-data/RGCL_video/adapters/lora_p9
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 8
+Elapsed time:         0.5sTransferred:   	          0 B / 17.122 GiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 311
+Transferred:            0 / 288, 0%
+Elapsed time:         0.9s
+Transferring:
+ *               qwen25vl_mhc_zh_c3_s2/README.md:  0% /2.466Ki, 0/s, -
+ *     qwen25vl_mhc_zh_c3_s2/adapter_config.json:  0% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferring
+ *       qwen25vl_mhc_zh_c3_s2/added_tokens.json:  0% /605, 0/s, -
+ *        qwen25vl_mhc_zh_c3_s2/all_results.json:  0% /649, 0/s, -
+ *      qwen25vl_mhc_zh_c3_s2/chat_template.json:  0% /1.024Ki, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin:  0% /14.010Mi, 0/s, -
+ *  qwen25vl_mhc_zh_c3_s2/classifier_config.json:  0% /138, 0/s, -Transferred:   	    2.466 KiB / 17.122 GiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 311
+Transferred:            0 / 288, 0%
+Elapsed time:         1.4s
+Transferring:
+ *               qwen25vl_mhc_zh_c3_s2/README.md:100% /2.466Ki, 0/s, -
+ *     qwen25vl_mhc_zh_c3_s2/adapter_config.json:  0% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferring
+ *       qwen25vl_mhc_zh_c3_s2/added_tokens.json:  0% /605, 0/s, -
+ *        qwen25vl_mhc_zh_c3_s2/all_results.json:  0% /649, 0/s, -
+ *      qwen25vl_mhc_zh_c3_s2/chat_template.json:  0% /1.024Ki, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin:  0% /14.010Mi, 0/s, -
+ *  qwen25vl_mhc_zh_c3_s2/classifier_config.json:  0% /138, 0/s, -Transferred:   	    3.690 KiB / 17.122 GiB, 0%, 0 B/s, ETA -
+Checks:                 0 / 0, -, Listed 311
+Transferred:            0 / 288, 0%
+Elapsed time:         1.9s
+Transferring:
+ *               qwen25vl_mhc_zh_c3_s2/README.md:100% /2.466Ki, 2.465Ki/s, 0s
+ *     qwen25vl_mhc_zh_c3_s2/adapter_config.json:  0% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferring
+ *       qwen25vl_mhc_zh_c3_s2/added_tokens.json:100% /605, 604/s, 0s
+ *        qwen25vl_mhc_zh_c3_s2/all_results.json:100% /649, 0/s, -
+ *      qwen25vl_mhc_zh_c3_s2/chat_template.json:  0% /1.024Ki, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin:  0% /14.010Mi, 0/s, -
+ *  qwen25vl_mhc_zh_c3_s2/classifier_config.json:  0% /138, 0/s, -Transferred:   	  865.863 KiB / 17.122 GiB, 0%, 1.845 KiB/s, ETA 16w14h34m
+Checks:                 0 / 0, -, Listed 311
+Transferred:            3 / 288, 1%
+Elapsed time:         2.4s
+Transferring:
+ *     qwen25vl_mhc_zh_c3_s2/adapter_config.json:  0% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferring
+ *      qwen25vl_mhc_zh_c3_s2/chat_template.json:100% /1.024Ki, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin:  0% /14.010Mi, 0/s, -
+ *  qwen25vl_mhc_zh_c3_s2/classifier_config.json:100% /138, 0/s, -
+ *       qwen25vl_mhc_zh_c3_s2/eval_results.json:100% /463, 0/s, -
+ *              qwen25vl_mhc_zh_c3_s2/merges.txt: 52% /1.594Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…eprocessor_config.json:100% /575, 0/s, -Transferred:   	    2.794 MiB / 18.325 GiB, 0%, 1.845 KiB/s, ETA 17w1d12h
+Checks:                 0 / 0, -, Listed 311
+Transferred:            8 / 288, 3%
+Elapsed time:         2.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin:  8% /14.010Mi, 525.999Ki/s, 24
+ *              qwen25vl_mhc_zh_c3_s2/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/special_tokens_map.json:100% /613, 0/s, -
+ *   qwen25vl_mhc_zh_c3_s2/tokenizer_config.json:100% /5.666Ki, 0/s, -
+ *      qwen25vl_mhc_zh_c3_s2/train_results.json:100% /221, 0/s, -
+ * predict/qwen25vl_mhc_s0_test/all_results.json:100% /428, 0/s, -
+ * predict/qwen25vl_mhc_s…test/eval_results.json:100% /428, 0/s, -Transferred:   	    5.132 MiB / 18.325 GiB, 0%, 953.681 KiB/s, ETA 5h35m42s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           12 / 288, 4%
+Elapsed time:         3.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin: 19% /14.010Mi, 525.999Ki/s, 21
+ *              qwen25vl_mhc_zh_c3_s2/merges.txt:100% /1.594Mi, 1.589Mi/s, 0s
+ * predict/qwen25vl_mhc_s…test/eval_results.json:100% /428, 0/s, -
+ * predict/qwen25vl_mhc_s…test/trainer_log.jsonl:100% /3.871Ki, 0/s, -
+ *       qwen25vl_mhc_zh_c3_s2/trainer_log.jsonl:100% /4.985Ki, 0/s, -
+ *      qwen25vl_mhc_zh_c3_s2/trainer_state.json:100% /8.250Ki, 0/s, -
+ *       qwen25vl_mhc_zh_c3_s2/training_args.bin:100% /9.117Ki, 0/s, -Transferred:   	   13.567 MiB / 18.325 GiB, 0%, 3.392 MiB/s, ETA 1h32m8s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           17 / 288, 6%
+Elapsed time:         4.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  0% /1.203Gi, 1.812Mi/s, 11m
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin: 40% /14.010Mi, 1.520Mi/s, 5s
+ *              qwen25vl_mhc_zh_c3_s2/merges.txt:100% /1.594Mi, 1.589Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…ning_eval_accuracy.png:100% /42.695Ki, 0/s, -
+ *  qwen25vl_mhc_zh_c3_s2/training_eval_loss.png:100% /43.228Ki, 0/s, -
+ *       qwen25vl_mhc_zh_c3_s2/training_loss.png:100% /42.572Ki, 0/s, -
+ *              qwen25vl_mhc_zh_c3_s2/vocab.json: 45% /3.227Mi, 0/s, -
+ * predict/qwen25vl_mhc_s1_test/all_results.json:100% /430, 0/s, -Transferred:   	   24.728 MiB / 18.325 GiB, 0%, 3.392 MiB/s, ETA 1h32m5s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           21 / 288, 7%
+Elapsed time:         4.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  0% /1.203Gi, 1.812Mi/s, 11m
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin: 68% /14.010Mi, 1.520Mi/s, 2s
+ *              qwen25vl_mhc_zh_c3_s2/vocab.json: 60% /3.227Mi, 0/s, -
+ * predict/qwen25vl_mhc_s1_test/all_results.json:100% /430, 0/s, -
+ * predict/qwen25vl_mhc_s…test/eval_results.json:100% /430, 0/s, -
+ * predict/qwen25vl_mhc_s…test/trainer_log.jsonl:100% /3.871Ki, 0/s, -
+ * predict/qwen25vl_mhc_s2_test/all_results.json:100% /431, 0/s, -
+ * predict/qwen25vl_mhc_s…test/eval_results.json:100% /431, 0/s, -Transferred:   	   40.544 MiB / 18.325 GiB, 0%, 8.109 MiB/s, ETA 38m29s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           27 / 288, 9%
+Elapsed time:         5.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  1% /1.203Gi, 8.156Mi/s, 2m2
+ *          qwen25vl_mhc_zh_c3_s2/classifier.bin:100% /14.010Mi, 3.502Mi/s, 0s
+ *              qwen25vl_mhc_zh_c3_s2/vocab.json:100% /3.227Mi, 3.226Mi/s, 0s
+ * predict/qwen25vl_mhc_z…_test/all_results.json:100% /429, 0/s, -
+ * predict/qwen25vl_mhc_z…test/eval_results.json:100% /429, 0/s, -
+ * predict/qwen25vl_mhc_z…test/trainer_log.jsonl:100% /3.520Ki, 0/s, -
+ * predict/qwen25vl_mhc_z…smoke/all_results.json:100% /420, 0/s, -
+ * predict/qwen25vl_mhc_z…moke/eval_results.json:100% /420, 0/s, -Transferred:   	   58.707 MiB / 18.325 GiB, 0%, 8.109 MiB/s, ETA 38m26s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           33 / 288, 11%
+Elapsed time:         5.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  3% /1.203Gi, 8.156Mi/s, 2m2
+ *              qwen25vl_mhc_zh_c3_s2/vocab.json:100% /3.227Mi, 3.226Mi/s, 0s
+ * predict/qwen25vl_mhc_z…moke/trainer_log.jsonl:100% /1.871Ki, 0/s, -
+ * predict/qwen25vl_mhc_z…_test/all_results.json:100% /431, 0/s, -
+ * predict/qwen25vl_mhc_z…test/eval_results.json:100% /431, 0/s, -
+ * predict/qwen25vl_mhc_z…test/trainer_log.jsonl:100% /3.521Ki, 0/s, -
+ * predict/qwen25vl_mhc_z…_test/all_results.json:100% /427, 0/s, -
+ * predict/qwen25vl_mhc_z…test/eval_results.json:100% /427, 0/s, -Transferred:   	   77.847 MiB / 17.122 GiB, 0%, 8.109 MiB/s, ETA 35m52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           40 / 288, 14%
+Elapsed time:         5.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  4% /1.203Gi, 17.177Mi/s, 1m
+ * predict/qwen25vl_mhc_z…test/eval_results.json:100% /427, 0/s, -
+ * predict/qwen25vl_mhc_z…test/trainer_log.jsonl:100% /3.519Ki, 0/s, -
+ *     qwen25vl_hatemm_c3_s0/adapter_config.json:100% /3.195Ki, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ *       qwen25vl_hatemm_c3_s0/added_tokens.json:100% /605, 0/s, -
+ *                  qwen25vl_mhc_c3_s2/README.md:100% /2.457Ki, 0/s, -
+ *        qwen25vl_mhc_c3_s2/adapter_config.json:100% /3.195Ki, 0/s, -Transferred:   	   91.349 MiB / 15.919 GiB, 1%, 12.974 MiB/s, ETA 20m49s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           45 / 288, 16%
+Elapsed time:         6.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  5% /1.203Gi, 17.177Mi/s, 1m
+ *     qwen25vl_hatemm_c3_s0/adapter_config.json:100% /3.195Ki, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ *        qwen25vl_mhc_c3_s2/adapter_config.json:100% /3.195Ki, 0/s, -
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: transferring
+ *           qwen25vl_mhc_c3_s2/all_results.json:100% /646, 0/s, -
+ *         qwen25vl_mhc_c3_s2/chat_template.json:100% /1.024Ki, 0/s, -
+ *             qwen25vl_mhc_c3_s2/classifier.bin:  0% /14.010Mi, 0/s, -Transferred:   	  107.191 MiB / 15.919 GiB, 1%, 15.232 MiB/s, ETA 17m43s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           49 / 288, 17%
+Elapsed time:         7.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  6% /1.203Gi, 19.789Mi/s, 58
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s2/classifier.bin: 24% /14.010Mi, 0/s, -
+ *     qwen25vl_mhc_c3_s2/classifier_config.json:100% /138, 0/s, -
+ *          qwen25vl_mhc_c3_s2/eval_results.json:100% /459, 0/s, -
+ *                 qwen25vl_mhc_c3_s2/merges.txt:100% /1.594Mi, 0/s, -
+ *   qwen25vl_mhc_c3_s2/preprocessor_config.json:100% /575, 0/s, -Transferred:   	  117.416 MiB / 15.919 GiB, 1%, 15.232 MiB/s, ETA 17m42s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           52 / 288, 18%
+Elapsed time:         7.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  7% /1.203Gi, 19.789Mi/s, 57
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s2/classifier.bin: 49% /14.010Mi, 6.294Mi/s, 1s
+ *                 qwen25vl_mhc_c3_s2/merges.txt:100% /1.594Mi, 0/s, -
+ *    qwen25vl_mhc_c3_s2/special_tokens_map.json:100% /613, 0/s, -
+ *      qwen25vl_mhc_c3_s2/tokenizer_config.json:100% /5.666Ki, 0/s, -
+ *         qwen25vl_mhc_c3_s2/train_results.json:  0% /222, 0/s, -Transferred:   	  132.491 MiB / 15.919 GiB, 1%, 16.503 MiB/s, ETA 16m19s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           54 / 288, 19%
+Elapsed time:         8.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  8% /1.203Gi, 19.037Mi/s, 59
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s2/classifier.bin: 81% /14.010Mi, 6.294Mi/s, 0s
+ *                 qwen25vl_mhc_c3_s2/merges.txt:100% /1.594Mi, 1.589Mi/s, 0s
+ *      qwen25vl_mhc_c3_s2/tokenizer_config.json:100% /5.666Ki, 0/s, -
+ *          qwen25vl_mhc_c3_s2/trainer_log.jsonl:100% /4.771Ki, 0/s, -
+ *         qwen25vl_mhc_c3_s2/trainer_state.json:100% /8.006Ki, 0/s, -Transferred:   	  151.559 MiB / 15.919 GiB, 1%, 16.503 MiB/s, ETA 16m18s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           57 / 288, 20%
+Elapsed time:         8.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  9% /1.203Gi, 19.037Mi/s, 58
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s2/classifier.bin:100% /14.010Mi, 6.294Mi/s, 0s
+ *                 qwen25vl_mhc_c3_s2/merges.txt:100% /1.594Mi, 1.589Mi/s, 0s
+ *          qwen25vl_mhc_c3_s2/training_args.bin:100% /9.117Ki, 0/s, -
+ * qwen25vl_mhc_c3_s2/training_eval_accuracy.png:100% /39.102Ki, 0/s, -
+ *     qwen25vl_mhc_c3_s2/training_eval_loss.png:100% /39.643Ki, 0/s, -Transferred:   	  177.056 MiB / 17.122 GiB, 1%, 19.673 MiB/s, ETA 14m42s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           62 / 288, 22%
+Elapsed time:         9.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 11% /1.203Gi, 21.937Mi/s, 49
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *          qwen25vl_mhc_c3_s2/training_loss.png:100% /44.265Ki, 0/s, -
+ *                 qwen25vl_mhc_c3_s2/vocab.json:100% /3.227Mi, 0/s, -
+ *   qwen25vl_mhc_c3_s2/checkpoint-102/README.md:100% /4.981Ki, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…02/adapter_config.json:100% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: transferringTransferred:   	  202.088 MiB / 17.122 GiB, 1%, 19.673 MiB/s, ETA 14m40s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           65 / 288, 23%
+Elapsed time:         9.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 12% /1.203Gi, 21.937Mi/s, 48
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *                 qwen25vl_mhc_c3_s2/vocab.json:100% /3.227Mi, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s2/che…-102/added_tokens.json:100% /605, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…102/chat_template.json:  0% /1.024Ki, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…int-102/classifier.bin:  0% /14.010Mi, 0/s, -Transferred:   	  242.772 MiB / 17.122 GiB, 1%, 24.277 MiB/s, ETA 11m52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           66 / 288, 23%
+Elapsed time:        10.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 14% /1.203Gi, 24.509Mi/s, 42
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 10.249Mi/s, 1m
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  0% /1.203Gi, 3.499Mi/s, 5m50s
+ *                 qwen25vl_mhc_c3_s2/vocab.json:100% /3.227Mi, 3.203Mi/s, 0s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s2/che…102/chat_template.json:100% /1.024Ki, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…int-102/classifier.bin: 67% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…classifier_config.json:100% /138, 0/s, -Transferred:   	  280.912 MiB / 17.122 GiB, 2%, 24.277 MiB/s, ETA 11m50s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           67 / 288, 23%
+Elapsed time:        10.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 16% /1.203Gi, 24.509Mi/s, 42
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  1% /1.203Gi, 10.249Mi/s, 1m
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  0% /1.203Gi, 3.499Mi/s, 5m49s
+ *                 qwen25vl_mhc_c3_s2/vocab.json:100% /3.227Mi, 3.203Mi/s, 0s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s2/che…int-102/classifier.bin:100% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…classifier_config.json:100% /138, 0/s, -
+ *  qwen25vl_mhc_c3_s2/checkpoint-102/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	  322.301 MiB / 18.325 GiB, 2%, 29.300 MiB/s, ETA 10m29s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           69 / 288, 24%
+Elapsed time:        11.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 17% /1.203Gi, 26.395Mi/s, 38
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  2% /1.203Gi, 13.328Mi/s, 1m
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  1% /1.203Gi, 8.297Mi/s, 2m26s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…int-102/classifier.bin:100% /14.010Mi, 13.849Mi/s, 0
+ *  qwen25vl_mhc_c3_s2/checkpoint-102/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…eprocessor_config.json:100% /575, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…oint-102/rng_state.pth:100% /13.910Ki, 0/s, -Transferred:   	  383.667 MiB / 18.325 GiB, 2%, 29.300 MiB/s, ETA 10m27s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           73 / 288, 25%
+Elapsed time:        11.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 19% /1.203Gi, 26.395Mi/s, 37
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  4% /1.203Gi, 13.328Mi/s, 1m
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  2% /1.203Gi, 8.297Mi/s, 2m24s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *  qwen25vl_mhc_c3_s2/checkpoint-102/merges.txt:100% /1.594Mi, 1.589Mi/s, 0s
+ * qwen25vl_mhc_c3_s2/che…/tokenizer_config.json:100% /5.666Ki, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…102/trainer_state.json:100% /7.749Ki, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…-102/training_args.bin:100% /9.117Ki, 0/s, -Transferred:   	  461.666 MiB / 18.325 GiB, 2%, 38.472 MiB/s, ETA 7m55s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           75 / 288, 26%
+Elapsed time:        12.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 21% /1.203Gi, 28.576Mi/s, 33
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  6% /1.203Gi, 23.844Mi/s, 48
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  4% /1.203Gi, 17.364Mi/s, 1m7s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:  0% /1.203Gi, 4.250Mi/s, 4m4
+ * qwen25vl_mhc_c3_s2/che…102/trainer_state.json:100% /7.749Ki, 0/s, -
+ * qwen25vl_mhc_c3_s2/che…-102/training_args.bin:100% /9.117Ki, 0/s, -
+ *  qwen25vl_mhc_c3_s2/checkpoint-102/vocab.json: 39% /3.227Mi, 0/s, -
+ *                  qwen25vl_mhc_c3_s0/README.md:100% /2.457Ki, 0/s, -Transferred:   	  531.106 MiB / 17.122 GiB, 3%, 38.472 MiB/s, ETA 7m21s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           77 / 288, 27%
+Elapsed time:        12.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 23% /1.203Gi, 28.576Mi/s, 32
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  8% /1.203Gi, 23.844Mi/s, 47
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  5% /1.203Gi, 17.364Mi/s, 1m7s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:  0% /1.203Gi, 4.250Mi/s, 4m4
+ *  qwen25vl_mhc_c3_s2/checkpoint-102/vocab.json: 49% /3.227Mi, 0/s, -
+ *                  qwen25vl_mhc_c3_s0/README.md:100% /2.457Ki, 0/s, -
+ *        qwen25vl_mhc_c3_s0/adapter_config.json:100% /3.195Ki, 0/s, -
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: transferringTransferred:   	  608.714 MiB / 17.122 GiB, 3%, 46.824 MiB/s, ETA 6m1s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           80 / 288, 28%
+Elapsed time:        13.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 25% /1.203Gi, 30.916Mi/s, 29
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 11% /1.203Gi, 31.250Mi/s, 35
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  5% /1.203Gi, 17.297Mi/s, 1m7s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:  2% /1.203Gi, 11.828Mi/s, 1m
+ *  qwen25vl_mhc_c3_s2/checkpoint-102/vocab.json:100% /3.227Mi, 3.226Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: transferring
+ *          qwen25vl_mhc_c3_s0/added_tokens.json:100% /605, 0/s, -
+ *         qwen25vl_mhc_c3_s0/chat_template.json:100% /1.024Ki, 0/s, -Transferred:   	  688.367 MiB / 17.122 GiB, 4%, 46.824 MiB/s, ETA 5m59s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           82 / 288, 28%
+Elapsed time:        13.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 27% /1.203Gi, 30.916Mi/s, 28
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 13% /1.203Gi, 31.250Mi/s, 34
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  6% /1.203Gi, 17.297Mi/s, 1m6s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:  3% /1.203Gi, 11.828Mi/s, 1m
+ *  qwen25vl_mhc_c3_s2/checkpoint-102/vocab.json:100% /3.227Mi, 3.226Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s0/classifier.bin:  9% /14.010Mi, 0/s, -
+ *     qwen25vl_mhc_c3_s0/classifier_config.json:100% /138, 0/s, -Transferred:   	  769.837 MiB / 17.122 GiB, 4%, 46.824 MiB/s, ETA 5m57s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           84 / 288, 29%
+Elapsed time:        13.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 28% /1.203Gi, 32.102Mi/s, 27
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 15% /1.203Gi, 35.594Mi/s, 29
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  7% /1.203Gi, 17.656Mi/s, 1m4s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:  6% /1.203Gi, 22.552Mi/s, 51
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s0/classifier.bin: 20% /14.010Mi, 0/s, -
+ *          qwen25vl_mhc_c3_s0/eval_results.json:100% /460, 0/s, -
+ *                 qwen25vl_mhc_c3_s0/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	  858.087 MiB / 17.122 GiB, 5%, 54.988 MiB/s, ETA 5m3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           84 / 288, 29%
+Elapsed time:        14.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 30% /1.203Gi, 32.102Mi/s, 26
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 17% /1.203Gi, 35.594Mi/s, 28
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  8% /1.203Gi, 17.656Mi/s, 1m3s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:  8% /1.203Gi, 22.552Mi/s, 50
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s0/classifier.bin: 50% /14.010Mi, 3.080Mi/s, 2s
+ *          qwen25vl_mhc_c3_s0/eval_results.json:100% /460, 0/s, -
+ *                 qwen25vl_mhc_c3_s0/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	  954.806 MiB / 18.325 GiB, 5%, 54.988 MiB/s, ETA 5m23s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           85 / 288, 30%
+Elapsed time:        15.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 31% /1.203Gi, 32.195Mi/s, 26
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 19% /1.203Gi, 38.260Mi/s, 25
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:  9% /1.203Gi, 19.875Mi/s, 55s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 10% /1.203Gi, 30.687Mi/s, 35
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *             qwen25vl_mhc_c3_s0/classifier.bin: 82% /14.010Mi, 3.080Mi/s, 0s
+ *                 qwen25vl_mhc_c3_s0/merges.txt:100% /1.594Mi, 1.588Mi/s, 0s
+ *   qwen25vl_mhc_c3_s0/preprocessor_config.json:100% /575, 0/s, -Transferred:   	    1.032 GiB / 18.325 GiB, 6%, 63.656 MiB/s, ETA 4m38s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           86 / 288, 30%
+Elapsed time:        15.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 33% /1.203Gi, 32.195Mi/s, 25
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 21% /1.203Gi, 38.260Mi/s, 25
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 11% /1.203Gi, 19.875Mi/s, 54s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 12% /1.203Gi, 30.687Mi/s, 35
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *             qwen25vl_mhc_c3_s0/classifier.bin:100% /14.010Mi, 6.321Mi/s, 0s
+ *                 qwen25vl_mhc_c3_s0/merges.txt:100% /1.594Mi, 1.588Mi/s, 0s
+ *    qwen25vl_mhc_c3_s0/special_tokens_map.json:100% /613, 0/s, -Transferred:   	    1.124 GiB / 18.325 GiB, 6%, 63.656 MiB/s, ETA 4m36s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           89 / 288, 31%
+Elapsed time:        15.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 33% /1.203Gi, 31.812Mi/s, 25
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 23% /1.203Gi, 40.728Mi/s, 22
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 14% /1.203Gi, 24.482Mi/s, 43s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 14% /1.203Gi, 35.375Mi/s, 29
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  0% /1.203Gi, 4.843Mi/s, 4m12s
+ *      qwen25vl_mhc_c3_s0/tokenizer_config.json:100% /5.666Ki, 0/s, -
+ *         qwen25vl_mhc_c3_s0/train_results.json:100% /221, 0/s, -
+ *          qwen25vl_mhc_c3_s0/trainer_log.jsonl:100% /4.767Ki, 0/s, -Transferred:   	    1.225 GiB / 18.325 GiB, 7%, 71.925 MiB/s, ETA 4m3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           92 / 288, 32%
+Elapsed time:        16.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 34% /1.203Gi, 31.812Mi/s, 25
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 26% /1.203Gi, 40.728Mi/s, 22
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 16% /1.203Gi, 24.482Mi/s, 42s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 17% /1.203Gi, 35.375Mi/s, 28
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  1% /1.203Gi, 4.843Mi/s, 4m9s
+ *         qwen25vl_mhc_c3_s0/trainer_state.json:100% /7.994Ki, 0/s, -
+ *          qwen25vl_mhc_c3_s0/training_args.bin:100% /9.117Ki, 0/s, -
+ * qwen25vl_mhc_c3_s0/training_eval_accuracy.png:100% /45.952Ki, 0/s, -Transferred:   	    1.329 GiB / 18.325 GiB, 7%, 71.925 MiB/s, ETA 4m1s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           94 / 288, 33%
+Elapsed time:        16.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 35% /1.203Gi, 30.933Mi/s, 25
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 28% /1.203Gi, 42.254Mi/s, 20
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 18% /1.203Gi, 28.199Mi/s, 35s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 19% /1.203Gi, 38.427Mi/s, 25
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  2% /1.203Gi, 12.203Mi/s, 1m38
+ * qwen25vl_mhc_c3_s0/training_eval_accuracy.png:100% /45.952Ki, 0/s, -
+ *     qwen25vl_mhc_c3_s0/training_eval_loss.png:100% /41.440Ki, 0/s, -
+ *          qwen25vl_mhc_c3_s0/training_loss.png:100% /43.674Ki, 0/s, -Transferred:   	    1.439 GiB / 18.325 GiB, 8%, 80.562 MiB/s, ETA 3m34s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           96 / 288, 33%
+Elapsed time:        17.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 36% /1.203Gi, 30.933Mi/s, 25
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 30% /1.203Gi, 42.254Mi/s, 20
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 20% /1.203Gi, 28.199Mi/s, 34s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 21% /1.203Gi, 38.427Mi/s, 25
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  4% /1.203Gi, 12.203Mi/s, 1m36
+ *          qwen25vl_mhc_c3_s0/training_loss.png:100% /43.674Ki, 0/s, -
+ *                 qwen25vl_mhc_c3_s0/vocab.json:100% /3.227Mi, 0/s, -
+ *               qwen25vl_mhc_zh_c3_s0/README.md:100% /2.466Ki, 0/s, -Transferred:   	    1.529 GiB / 18.325 GiB, 8%, 80.562 MiB/s, ETA 3m33s
+Checks:                 0 / 0, -, Listed 311
+Transferred:           98 / 288, 34%
+Elapsed time:        17.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 37% /1.203Gi, 30.185Mi/s, 25
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 31% /1.203Gi, 42.493Mi/s, 19
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 22% /1.203Gi, 31.069Mi/s, 30s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 23% /1.203Gi, 40.469Mi/s, 23
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  5% /1.203Gi, 20.250Mi/s, 57s
+ *                 qwen25vl_mhc_c3_s0/vocab.json:100% /3.227Mi, 0/s, -
+ *    qwen25vl_mhc_c3_s0/checkpoint-20/README.md:100% /4.981Ki, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…20/adapter_config.json:100% /3.195Ki, 0/s, -Transferred:   	    1.628 GiB / 17.122 GiB, 10%, 88.321 MiB/s, ETA 2m59s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          100 / 288, 35%
+Elapsed time:        18.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 38% /1.203Gi, 30.185Mi/s, 25
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 33% /1.203Gi, 42.493Mi/s, 19
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 25% /1.203Gi, 31.069Mi/s, 29s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 25% /1.203Gi, 40.469Mi/s, 22
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  6% /1.203Gi, 20.250Mi/s, 56s
+ *                 qwen25vl_mhc_c3_s0/vocab.json:100% /3.227Mi, 3.227Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…t-20/added_tokens.json:100% /605, 0/s, -Transferred:   	    1.733 GiB / 17.122 GiB, 10%, 88.321 MiB/s, ETA 2m58s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          102 / 288, 35%
+Elapsed time:        18.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 40% /1.203Gi, 30.434Mi/s, 24
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 35% /1.203Gi, 42.194Mi/s, 18
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 27% /1.203Gi, 33.056Mi/s, 27s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 27% /1.203Gi, 42.144Mi/s, 21
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  7% /1.203Gi, 20.625Mi/s, 55s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…-20/chat_template.json:100% /1.024Ki, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…oint-20/classifier.bin:  5% /14.010Mi, 0/s, -Transferred:   	    1.846 GiB / 17.122 GiB, 11%, 96.185 MiB/s, ETA 2m42s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          103 / 288, 36%
+Elapsed time:        19.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 41% /1.203Gi, 30.434Mi/s, 23
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 37% /1.203Gi, 42.194Mi/s, 18
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 29% /1.203Gi, 33.056Mi/s, 26s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 30% /1.203Gi, 42.144Mi/s, 20
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:  9% /1.203Gi, 20.625Mi/s, 54s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…oint-20/classifier.bin: 20% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…classifier_config.json:100% /138, 0/s, -Transferred:   	    1.951 GiB / 17.122 GiB, 11%, 96.185 MiB/s, ETA 2m41s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          104 / 288, 36%
+Elapsed time:        19.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 42% /1.203Gi, 30.725Mi/s, 22
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 39% /1.203Gi, 43.673Mi/s, 16
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 30% /1.203Gi, 34.165Mi/s, 25s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 31% /1.203Gi, 42.667Mi/s, 19
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 10% /1.203Gi, 22.675Mi/s, 48s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…oint-20/classifier.bin: 27% /14.010Mi, 3.471Mi/s, 2s
+ *   qwen25vl_mhc_c3_s0/checkpoint-20/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	    2.064 GiB / 17.122 GiB, 12%, 103.816 MiB/s, ETA 2m28s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          104 / 288, 36%
+Elapsed time:        20.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 44% /1.203Gi, 30.725Mi/s, 22
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 41% /1.203Gi, 43.673Mi/s, 16
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 32% /1.203Gi, 34.165Mi/s, 24s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 32% /1.203Gi, 42.667Mi/s, 19
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 13% /1.203Gi, 22.675Mi/s, 47s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…oint-20/classifier.bin: 57% /14.010Mi, 3.471Mi/s, 1s
+ *   qwen25vl_mhc_c3_s0/checkpoint-20/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	    2.194 GiB / 18.325 GiB, 12%, 112.834 MiB/s, ETA 2m26s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          104 / 288, 36%
+Elapsed time:        21.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 46% /1.203Gi, 31.332Mi/s, 21
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 44% /1.203Gi, 44.578Mi/s, 15
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 33% /1.203Gi, 34.331Mi/s, 23s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 35% /1.203Gi, 42.841Mi/s, 18
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 15% /1.203Gi, 27.771Mi/s, 37s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…oint-20/classifier.bin: 94% /14.010Mi, 5.407Mi/s, 0s
+ *   qwen25vl_mhc_c3_s0/checkpoint-20/merges.txt:100% /1.594Mi, 1.588Mi/s, 0sTransferred:   	    2.326 GiB / 18.325 GiB, 13%, 112.834 MiB/s, ETA 2m25s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          105 / 288, 36%
+Elapsed time:        21.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 48% /1.203Gi, 31.332Mi/s, 20
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 46% /1.203Gi, 44.578Mi/s, 14
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 35% /1.203Gi, 34.331Mi/s, 23s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 37% /1.203Gi, 42.841Mi/s, 17
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 17% /1.203Gi, 27.771Mi/s, 36s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…oint-20/classifier.bin:100% /14.010Mi, 5.407Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…eprocessor_config.json:  0% /575, 0/s, -Transferred:   	    2.448 GiB / 18.325 GiB, 13%, 112.834 MiB/s, ETA 2m24s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          106 / 288, 37%
+Elapsed time:        22.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 50% /1.203Gi, 32.463Mi/s, 18
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 48% /1.203Gi, 45.329Mi/s, 13
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 36% /1.203Gi, 34.202Mi/s, 22s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 40% /1.203Gi, 44.216Mi/s, 16
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 19% /1.203Gi, 31.411Mi/s, 31s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  1% /1.203Gi, 11.875Mi/s, 1m
+ * qwen25vl_mhc_c3_s0/che…eprocessor_config.json:100% /575, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…point-20/rng_state.pth:100% /13.848Ki, 0/s, -Transferred:   	    2.561 GiB / 18.325 GiB, 14%, 122.069 MiB/s, ETA 2m12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          108 / 288, 38%
+Elapsed time:        22.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 52% /1.203Gi, 32.463Mi/s, 17
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 50% /1.203Gi, 45.329Mi/s, 13
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 36% /1.203Gi, 34.202Mi/s, 22s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 42% /1.203Gi, 44.216Mi/s, 16
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 21% /1.203Gi, 31.411Mi/s, 30s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  1% /1.203Gi, 11.875Mi/s, 1m
+ * qwen25vl_mhc_c3_s0/che…pecial_tokens_map.json:100% /613, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…/tokenizer_config.json:100% /5.666Ki, 0/s, -Transferred:   	    2.671 GiB / 18.325 GiB, 15%, 122.069 MiB/s, ETA 2m11s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          110 / 288, 38%
+Elapsed time:        22.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 54% /1.203Gi, 33.487Mi/s, 16
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 52% /1.203Gi, 45.937Mi/s, 12
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 36% /1.203Gi, 32.449Mi/s, 23s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 44% /1.203Gi, 44.901Mi/s, 15
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 23% /1.203Gi, 33.156Mi/s, 28s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  2% /1.203Gi, 14.187Mi/s, 1m
+ * qwen25vl_mhc_c3_s0/che…-20/trainer_state.json:100% /2.124Ki, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…t-20/training_args.bin:100% /9.055Ki, 0/s, -Transferred:   	    2.809 GiB / 18.325 GiB, 15%, 128.735 MiB/s, ETA 2m3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          111 / 288, 39%
+Elapsed time:        23.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 56% /1.203Gi, 33.487Mi/s, 15
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 55% /1.203Gi, 45.937Mi/s, 12
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 36% /1.203Gi, 32.449Mi/s, 23s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 46% /1.203Gi, 44.901Mi/s, 14
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 25% /1.203Gi, 33.156Mi/s, 27s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  4% /1.203Gi, 14.187Mi/s, 1m
+ * qwen25vl_mhc_c3_s0/che…t-20/training_args.bin:100% /9.055Ki, 0/s, -
+ *   qwen25vl_mhc_c3_s0/checkpoint-20/vocab.json:100% /3.227Mi, 0/s, -Transferred:   	    2.932 GiB / 17.122 GiB, 17%, 128.735 MiB/s, ETA 1m52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          113 / 288, 39%
+Elapsed time:        23.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 58% /1.203Gi, 34.781Mi/s, 14
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 57% /1.203Gi, 46.348Mi/s, 11
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 37% /1.203Gi, 30.583Mi/s, 25s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 48% /1.203Gi, 45.647Mi/s, 13
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 27% /1.203Gi, 35.111Mi/s, 25s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  7% /1.203Gi, 23.708Mi/s, 48
+ *   qwen25vl_mhc_c3_s0/checkpoint-20/vocab.json:100% /3.227Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferringTransferred:   	    3.054 GiB / 17.122 GiB, 18%, 137.458 MiB/s, ETA 1m44s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          114 / 288, 40%
+Elapsed time:        24.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 60% /1.203Gi, 34.781Mi/s, 14
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 59% /1.203Gi, 46.348Mi/s, 10
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 37% /1.203Gi, 30.583Mi/s, 25s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 50% /1.203Gi, 45.647Mi/s, 13
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 28% /1.203Gi, 35.111Mi/s, 24s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  9% /1.203Gi, 23.708Mi/s, 47
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ *       qwen25vl_mhc_zh_c3_s0/added_tokens.json:100% /605, 0/s, -Transferred:   	    3.167 GiB / 17.122 GiB, 18%, 137.458 MiB/s, ETA 1m43s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          115 / 288, 40%
+Elapsed time:        25.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 61% /1.203Gi, 34.687Mi/s, 13
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 61% /1.203Gi, 46.529Mi/s, 10
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 38% /1.203Gi, 29.631Mi/s, 25s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 52% /1.203Gi, 46.225Mi/s, 12
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 30% /1.203Gi, 35.944Mi/s, 23s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 11% /1.203Gi, 31.148Mi/s, 35
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ *        qwen25vl_mhc_zh_c3_s0/all_results.json:100% /637, 0/s, -Transferred:   	    3.296 GiB / 17.122 GiB, 19%, 143.788 MiB/s, ETA 1m38s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          117 / 288, 41%
+Elapsed time:        25.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 63% /1.203Gi, 34.687Mi/s, 13
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 62% /1.203Gi, 46.529Mi/s, 9s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 39% /1.203Gi, 29.631Mi/s, 25s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 55% /1.203Gi, 46.225Mi/s, 11
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 32% /1.203Gi, 35.944Mi/s, 23s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 13% /1.203Gi, 31.148Mi/s, 34
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ *          qwen25vl_mhc_zh_c3_s0/classifier.bin:  0% /14.010Mi, 0/s, -Transferred:   	    3.422 GiB / 17.122 GiB, 20%, 143.788 MiB/s, ETA 1m37s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          117 / 288, 41%
+Elapsed time:        26.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 64% /1.203Gi, 34.892Mi/s, 12
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 64% /1.203Gi, 45.998Mi/s, 9s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 40% /1.203Gi, 29.404Mi/s, 24s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 57% /1.203Gi, 46.552Mi/s, 11
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 33% /1.203Gi, 36.727Mi/s, 22s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 15% /1.203Gi, 35.825Mi/s, 28
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ *          qwen25vl_mhc_zh_c3_s0/classifier.bin: 12% /14.010Mi, 0/s, -Transferred:   	    3.548 GiB / 17.122 GiB, 21%, 151.264 MiB/s, ETA 1m31s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          117 / 288, 41%
+Elapsed time:        26.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 66% /1.203Gi, 34.892Mi/s, 11
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 66% /1.203Gi, 45.998Mi/s, 8s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 42% /1.203Gi, 29.404Mi/s, 24s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 59% /1.203Gi, 46.552Mi/s, 10
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 34% /1.203Gi, 36.727Mi/s, 21s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 17% /1.203Gi, 35.825Mi/s, 28
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ *          qwen25vl_mhc_zh_c3_s0/classifier.bin: 28% /14.010Mi, 3.916Mi/s, 2sTransferred:   	    3.676 GiB / 18.325 GiB, 20%, 157.978 MiB/s, ETA 1m34s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          117 / 288, 41%
+Elapsed time:        27.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 67% /1.203Gi, 35.559Mi/s, 11
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 68% /1.203Gi, 46.545Mi/s, 8s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 43% /1.203Gi, 29.853Mi/s, 23s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 61% /1.203Gi, 46.975Mi/s, 10
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 35% /1.203Gi, 35.482Mi/s, 22s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 20% /1.203Gi, 39.031Mi/s, 25
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s0/classifier.bin: 51% /14.010Mi, 3.916Mi/s, 1sTransferred:   	    3.799 GiB / 18.325 GiB, 21%, 157.978 MiB/s, ETA 1m34s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          117 / 288, 41%
+Elapsed time:        27.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 68% /1.203Gi, 35.559Mi/s, 10
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 71% /1.203Gi, 46.545Mi/s, 7s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 45% /1.203Gi, 29.853Mi/s, 22s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 62% /1.203Gi, 46.975Mi/s, 9s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 36% /1.203Gi, 35.482Mi/s, 21s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 22% /1.203Gi, 39.031Mi/s, 24
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s0/classifier.bin: 89% /14.010Mi, 6.145Mi/s, 0sTransferred:   	    3.923 GiB / 18.325 GiB, 21%, 163.889 MiB/s, ETA 1m29s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          117 / 288, 41%
+Elapsed time:        28.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 69% /1.203Gi, 34.956Mi/s, 10
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 73% /1.203Gi, 46.908Mi/s, 7s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 46% /1.203Gi, 30.507Mi/s, 21s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 64% /1.203Gi, 46.453Mi/s, 9s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 37% /1.203Gi, 34.851Mi/s, 22s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 24% /1.203Gi, 41.219Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 1.969Mi/s, 10m
+ *          qwen25vl_mhc_zh_c3_s0/classifier.bin:100% /14.010Mi, 6.145Mi/s, 0sTransferred:   	    4.064 GiB / 18.325 GiB, 22%, 163.889 MiB/s, ETA 1m29s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          118 / 288, 41%
+Elapsed time:        28.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 70% /1.203Gi, 34.956Mi/s, 10
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 75% /1.203Gi, 46.908Mi/s, 6s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 48% /1.203Gi, 30.507Mi/s, 20s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 67% /1.203Gi, 46.453Mi/s, 8s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 39% /1.203Gi, 34.851Mi/s, 21s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 26% /1.203Gi, 41.219Mi/s, 21
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 1.969Mi/s, 10m
+ *  qwen25vl_mhc_zh_c3_s0/classifier_config.json:100% /138, 0/s, -Transferred:   	    4.194 GiB / 18.325 GiB, 23%, 163.889 MiB/s, ETA 1m28s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          119 / 288, 41%
+Elapsed time:        28.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 71% /1.203Gi, 34.125Mi/s, 10
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 77% /1.203Gi, 47.171Mi/s, 5s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 50% /1.203Gi, 31.491Mi/s, 19s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 69% /1.203Gi, 47.247Mi/s, 7s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 40% /1.203Gi, 34.783Mi/s, 21s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 28% /1.203Gi, 42.883Mi/s, 20
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  1% /1.203Gi, 6.625Mi/s, 3m3
+ *       qwen25vl_mhc_zh_c3_s0/eval_results.json:100% /452, 0/s, -Transferred:   	    4.330 GiB / 18.325 GiB, 24%, 170.982 MiB/s, ETA 1m23s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          119 / 288, 41%
+Elapsed time:        29.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 72% /1.203Gi, 34.125Mi/s, 10
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 79% /1.203Gi, 47.171Mi/s, 5s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 52% /1.203Gi, 31.491Mi/s, 18s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 71% /1.203Gi, 47.247Mi/s, 7s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 41% /1.203Gi, 34.783Mi/s, 20s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 30% /1.203Gi, 42.883Mi/s, 19
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  2% /1.203Gi, 6.625Mi/s, 3m1
+ *       qwen25vl_mhc_zh_c3_s0/eval_results.json:100% /452, 0/s, -Transferred:   	    4.458 GiB / 18.325 GiB, 24%, 177.180 MiB/s, ETA 1m20s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          120 / 288, 42%
+Elapsed time:        30.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 72% /1.203Gi, 33.049Mi/s, 10
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 81% /1.203Gi, 47.494Mi/s, 4s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 54% /1.203Gi, 32.040Mi/s, 17s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 73% /1.203Gi, 47.634Mi/s, 6s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 42% /1.203Gi, 34.262Mi/s, 20s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 31% /1.203Gi, 42.667Mi/s, 19
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  4% /1.203Gi, 17.094Mi/s, 1m
+ *              qwen25vl_mhc_zh_c3_s0/merges.txt:  0% /1.594Mi, 0/s, -Transferred:   	    4.620 GiB / 18.325 GiB, 25%, 177.180 MiB/s, ETA 1m19s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          120 / 288, 42%
+Elapsed time:        30.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 74% /1.203Gi, 33.049Mi/s, 9s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 83% /1.203Gi, 47.494Mi/s, 4s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 56% /1.203Gi, 32.040Mi/s, 16s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 76% /1.203Gi, 47.634Mi/s, 6s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 44% /1.203Gi, 34.262Mi/s, 19s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 33% /1.203Gi, 42.667Mi/s, 19
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  6% /1.203Gi, 17.094Mi/s, 1m
+ *              qwen25vl_mhc_zh_c3_s0/merges.txt: 54% /1.594Mi, 0/s, -Transferred:   	    4.792 GiB / 18.325 GiB, 26%, 177.180 MiB/s, ETA 1m18s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          120 / 288, 42%
+Elapsed time:        30.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 75% /1.203Gi, 32.643Mi/s, 9s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 85% /1.203Gi, 47.844Mi/s, 3s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 58% /1.203Gi, 33.184Mi/s, 15s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 78% /1.203Gi, 48.037Mi/s, 5s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 47% /1.203Gi, 34.896Mi/s, 18s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 35% /1.203Gi, 42.712Mi/s, 18
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  8% /1.203Gi, 25.969Mi/s, 43
+ *              qwen25vl_mhc_zh_c3_s0/merges.txt:100% /1.594Mi, 1.211Mi/s, 0sTransferred:   	    4.960 GiB / 18.325 GiB, 27%, 187.493 MiB/s, ETA 1m12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          120 / 288, 42%
+Elapsed time:        31.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 77% /1.203Gi, 32.643Mi/s, 8s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 87% /1.203Gi, 47.844Mi/s, 3s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 60% /1.203Gi, 33.184Mi/s, 14s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 80% /1.203Gi, 48.037Mi/s, 5s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 49% /1.203Gi, 34.896Mi/s, 17s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 37% /1.203Gi, 42.712Mi/s, 17
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 10% /1.203Gi, 25.969Mi/s, 42
+ *              qwen25vl_mhc_zh_c3_s0/merges.txt:100% /1.594Mi, 1.211Mi/s, 0sTransferred:   	    5.138 GiB / 18.325 GiB, 28%, 187.493 MiB/s, ETA 1m12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          121 / 288, 42%
+Elapsed time:        32.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 78% /1.203Gi, 33.214Mi/s, 7s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 90% /1.203Gi, 48.303Mi/s, 2s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 61% /1.203Gi, 33.997Mi/s, 13s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 82% /1.203Gi, 48.226Mi/s, 4s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 51% /1.203Gi, 35.989Mi/s, 16s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 40% /1.203Gi, 43.457Mi/s, 16
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 13% /1.203Gi, 31.756Mi/s, 33
+ * qwen25vl_mhc_zh_c3_s0/…eprocessor_config.json:  0% /575, 0/s, -Transferred:   	    5.295 GiB / 18.325 GiB, 29%, 197.937 MiB/s, ETA 1m7s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          121 / 288, 42%
+Elapsed time:        32.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 81% /1.203Gi, 33.214Mi/s, 6s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 91% /1.203Gi, 48.303Mi/s, 2s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 62% /1.203Gi, 33.997Mi/s, 13s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 84% /1.203Gi, 48.226Mi/s, 3s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 53% /1.203Gi, 35.989Mi/s, 15s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 42% /1.203Gi, 43.457Mi/s, 16
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 15% /1.203Gi, 31.756Mi/s, 32
+ * qwen25vl_mhc_zh_c3_s0/…eprocessor_config.json:100% /575, 0/s, -Transferred:   	    5.461 GiB / 18.325 GiB, 30%, 197.937 MiB/s, ETA 1m6s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          122 / 288, 42%
+Elapsed time:        32.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 83% /1.203Gi, 34.472Mi/s, 5s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 93% /1.203Gi, 48.191Mi/s, 1s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 64% /1.203Gi, 33.677Mi/s, 13s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 86% /1.203Gi, 48.603Mi/s, 3s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 54% /1.203Gi, 36.861Mi/s, 15s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 44% /1.203Gi, 44.273Mi/s, 15
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 17% /1.203Gi, 35.370Mi/s, 28
+ * qwen25vl_mhc_zh_c3_s0/special_tokens_map.json:  0% /613, 0/s, -Transferred:   	    5.616 GiB / 18.325 GiB, 31%, 206.271 MiB/s, ETA 1m3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          123 / 288, 43%
+Elapsed time:        33.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 85% /1.203Gi, 34.472Mi/s, 5s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 94% /1.203Gi, 48.191Mi/s, 1s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 65% /1.203Gi, 33.677Mi/s, 12s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 89% /1.203Gi, 48.603Mi/s, 2s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 56% /1.203Gi, 36.861Mi/s, 14s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 46% /1.203Gi, 44.273Mi/s, 14
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 19% /1.203Gi, 35.370Mi/s, 27
+ *   qwen25vl_mhc_zh_c3_s0/tokenizer_config.json:100% /5.666Ki, 0/s, -Transferred:   	    5.765 GiB / 18.325 GiB, 31%, 206.271 MiB/s, ETA 1m2s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          124 / 288, 43%
+Elapsed time:        33.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 87% /1.203Gi, 35.603Mi/s, 4s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 95% /1.203Gi, 46.755Mi/s, 1s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 66% /1.203Gi, 33.697Mi/s, 12s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 91% /1.203Gi, 48.958Mi/s, 2s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 58% /1.203Gi, 37.006Mi/s, 13s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 48% /1.203Gi, 44.808Mi/s, 14
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 21% /1.203Gi, 37.884Mi/s, 25
+ *      qwen25vl_mhc_zh_c3_s0/train_results.json:100% /220, 0/s, -Transferred:   	    5.913 GiB / 18.325 GiB, 32%, 212.794 MiB/s, ETA 59s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          125 / 288, 43%
+Elapsed time:        34.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 89% /1.203Gi, 35.603Mi/s, 3s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 96% /1.203Gi, 46.755Mi/s, 1s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 68% /1.203Gi, 33.697Mi/s, 11s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 93% /1.203Gi, 48.958Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 60% /1.203Gi, 37.006Mi/s, 13s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 50% /1.203Gi, 44.808Mi/s, 13
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 24% /1.203Gi, 37.884Mi/s, 24
+ *       qwen25vl_mhc_zh_c3_s0/trainer_log.jsonl:100% /4.985Ki, 0/s, -Transferred:   	    6.034 GiB / 18.325 GiB, 33%, 212.794 MiB/s, ETA 59s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          125 / 288, 43%
+Elapsed time:        35.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 92% /1.203Gi, 36.743Mi/s, 2s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 96% /1.203Gi, 44.710Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 69% /1.203Gi, 33.271Mi/s, 11s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 93% /1.203Gi, 48.117Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 62% /1.203Gi, 38.070Mi/s, 12s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 52% /1.203Gi, 45.192Mi/s, 12
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 26% /1.203Gi, 39.797Mi/s, 22
+ *       qwen25vl_mhc_zh_c3_s0/trainer_log.jsonl:100% /4.985Ki, 0/s, -Transferred:   	    6.169 GiB / 18.325 GiB, 34%, 216.741 MiB/s, ETA 57s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          126 / 288, 44%
+Elapsed time:        35.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 94% /1.203Gi, 36.743Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 97% /1.203Gi, 44.710Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 70% /1.203Gi, 33.271Mi/s, 10s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 94% /1.203Gi, 48.117Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 64% /1.203Gi, 38.070Mi/s, 11s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 54% /1.203Gi, 45.192Mi/s, 12
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 28% /1.203Gi, 39.797Mi/s, 22
+ *      qwen25vl_mhc_zh_c3_s0/trainer_state.json:100% /8.208Ki, 0/s, -Transferred:   	    6.293 GiB / 18.325 GiB, 34%, 216.741 MiB/s, ETA 56s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          127 / 288, 44%
+Elapsed time:        36.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 96% /1.203Gi, 37.742Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 97% /1.203Gi, 42.825Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 72% /1.203Gi, 33.506Mi/s, 10s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 95% /1.203Gi, 46.147Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 66% /1.203Gi, 38.581Mi/s, 10s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 56% /1.203Gi, 45.585Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 30% /1.203Gi, 41.063Mi/s, 20
+ *       qwen25vl_mhc_zh_c3_s0/training_args.bin:100% /9.117Ki, 0/s, -Transferred:   	    6.392 GiB / 18.325 GiB, 35%, 219.723 MiB/s, ETA 55s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          128 / 288, 44%
+Elapsed time:        36.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 97% /1.203Gi, 37.742Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 98% /1.203Gi, 42.825Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 73% /1.203Gi, 33.506Mi/s, 9s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 95% /1.203Gi, 46.147Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 67% /1.203Gi, 38.581Mi/s, 10s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 58% /1.203Gi, 45.585Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 31% /1.203Gi, 41.063Mi/s, 20
+ * qwen25vl_mhc_zh_c3_s0/…ning_eval_accuracy.png:100% /37.840Ki, 0/s, -Transferred:   	    6.490 GiB / 18.325 GiB, 35%, 219.723 MiB/s, ETA 55s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          129 / 288, 45%
+Elapsed time:        37.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 99% /1.203Gi, 37.732Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 98% /1.203Gi, 40.975Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 75% /1.203Gi, 33.679Mi/s, 9s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 96% /1.203Gi, 44.128Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 68% /1.203Gi, 38.113Mi/s, 10s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 60% /1.203Gi, 45.822Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 32% /1.203Gi, 39.394Mi/s, 21
+ *  qwen25vl_mhc_zh_c3_s0/training_eval_loss.png:100% /41.019Ki, 0/s, -Transferred:   	    6.592 GiB / 18.325 GiB, 36%, 218.630 MiB/s, ETA 54s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          129 / 288, 45%
+Elapsed time:        37.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 99% /1.203Gi, 37.732Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 99% /1.203Gi, 40.975Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 76% /1.203Gi, 33.679Mi/s, 8s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 96% /1.203Gi, 44.128Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 69% /1.203Gi, 38.113Mi/s, 9s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 61% /1.203Gi, 45.822Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 35% /1.203Gi, 39.394Mi/s, 20
+ *  qwen25vl_mhc_zh_c3_s0/training_eval_loss.png:100% /41.019Ki, 0/s, -Transferred:   	    6.691 GiB / 18.325 GiB, 37%, 217.834 MiB/s, ETA 54s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          129 / 288, 45%
+Elapsed time:        38.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:100% /1.203Gi, 36.435Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 99% /1.203Gi, 39.199Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 78% /1.203Gi, 34.334Mi/s, 7s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 97% /1.203Gi, 42.219Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 71% /1.203Gi, 37.640Mi/s, 9s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 63% /1.203Gi, 45.085Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 37% /1.203Gi, 41.571Mi/s, 18
+ *  qwen25vl_mhc_zh_c3_s0/training_eval_loss.png:100% /41.019Ki, 41.017Ki/s, 0sTransferred:   	    6.795 GiB / 18.325 GiB, 37%, 217.834 MiB/s, ETA 54s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          129 / 288, 45%
+Elapsed time:        38.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:100% /1.203Gi, 36.435Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:100% /1.203Gi, 39.199Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 80% /1.203Gi, 34.334Mi/s, 6s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 97% /1.203Gi, 42.219Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 72% /1.203Gi, 37.640Mi/s, 9s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 65% /1.203Gi, 45.085Mi/s, 9s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 39% /1.203Gi, 41.571Mi/s, 18
+ *  qwen25vl_mhc_zh_c3_s0/training_eval_loss.png:100% /41.019Ki, 41.017Ki/s, 0sTransferred:   	    6.882 GiB / 18.325 GiB, 38%, 216.422 MiB/s, ETA 54s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          130 / 288, 45%
+Elapsed time:        39.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:100% /1.203Gi, 34.186Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:100% /1.203Gi, 37.038Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 82% /1.203Gi, 35.358Mi/s, 5s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 98% /1.203Gi, 40.457Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 73% /1.203Gi, 37.293Mi/s, 8s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 67% /1.203Gi, 45.367Mi/s, 8s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 41% /1.203Gi, 42.026Mi/s, 17
+ *       qwen25vl_mhc_zh_c3_s0/training_loss.png:100% /43.801Ki, 0/s, -Transferred:   	    6.978 GiB / 18.325 GiB, 38%, 216.422 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          131 / 288, 45%
+Elapsed time:        39.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:100% /1.203Gi, 34.186Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:100% /1.203Gi, 37.038Mi/s, 0s
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 84% /1.203Gi, 35.358Mi/s, 5s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 98% /1.203Gi, 40.457Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 74% /1.203Gi, 37.293Mi/s, 8s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 69% /1.203Gi, 45.367Mi/s, 8s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 43% /1.203Gi, 42.026Mi/s, 16
+ *              qwen25vl_mhc_zh_c3_s0/vocab.json: 22% /3.227Mi, 0/s, -Transferred:   	    7.069 GiB / 18.325 GiB, 39%, 214.882 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          133 / 288, 46%
+Elapsed time:        40.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 86% /1.203Gi, 36.164Mi/s, 4s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 99% /1.203Gi, 38.753Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 76% /1.203Gi, 36.923Mi/s, 7s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 71% /1.203Gi, 45.637Mi/s, 7s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 44% /1.203Gi, 42.132Mi/s, 16
+ *              qwen25vl_mhc_zh_c3_s0/vocab.json: 40% /3.227Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…eckpoint-108/README.md:100% /4.981Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…08/adapter_config.json:100% /3.195Ki, 0/s, -Transferred:   	    7.158 GiB / 17.122 GiB, 42%, 214.882 MiB/s, ETA 47s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          135 / 288, 47%
+Elapsed time:        40.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 88% /1.203Gi, 36.164Mi/s, 3s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors: 99% /1.203Gi, 38.753Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 77% /1.203Gi, 36.923Mi/s, 7s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 73% /1.203Gi, 45.637Mi/s, 7s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 46% /1.203Gi, 42.132Mi/s, 15
+ *              qwen25vl_mhc_zh_c3_s0/vocab.json: 70% /3.227Mi, 1.871Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s0/…-108/added_tokens.json:100% /605, 0/s, -Transferred:   	    7.236 GiB / 17.122 GiB, 42%, 212.097 MiB/s, ETA 47s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          135 / 288, 47%
+Elapsed time:        41.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 90% /1.203Gi, 36.765Mi/s, 3s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:100% /1.203Gi, 36.881Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 78% /1.203Gi, 36.377Mi/s, 7s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 75% /1.203Gi, 46.125Mi/s, 6s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 47% /1.203Gi, 41.879Mi/s, 15
+ *              qwen25vl_mhc_zh_c3_s0/vocab.json:100% /3.227Mi, 1.871Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s0/…-108/added_tokens.json:100% /605, 0/s, -Transferred:   	    7.317 GiB / 17.122 GiB, 43%, 212.097 MiB/s, ETA 47s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          136 / 288, 47%
+Elapsed time:        41.5s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 91% /1.203Gi, 36.765Mi/s, 2s
+ * qwen25vl_mhc_c3_s2/che…pter_model.safetensors:100% /1.203Gi, 36.881Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 79% /1.203Gi, 36.377Mi/s, 6s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 77% /1.203Gi, 46.125Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 49% /1.203Gi, 41.879Mi/s, 14
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s0/…-108/added_tokens.json:100% /605, 604/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…108/chat_template.json:100% /1.024Ki, 0/s, -Transferred:   	    7.401 GiB / 17.122 GiB, 43%, 209.401 MiB/s, ETA 47s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          138 / 288, 48%
+Elapsed time:        42.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 92% /1.203Gi, 36.268Mi/s, 2s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 81% /1.203Gi, 36.045Mi/s, 6s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 80% /1.203Gi, 46.443Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 51% /1.203Gi, 42.267Mi/s, 14
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s0/…-108/added_tokens.json:100% /605, 604/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…int-108/classifier.bin:  7% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…classifier_config.json:100% /138, 0/s, -Transferred:   	    7.486 GiB / 18.325 GiB, 41%, 209.401 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          140 / 288, 49%
+Elapsed time:        42.5s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 93% /1.203Gi, 36.268Mi/s, 2s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 82% /1.203Gi, 36.045Mi/s, 5s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 82% /1.203Gi, 46.443Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 53% /1.203Gi, 42.267Mi/s, 13
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…int-108/classifier.bin: 24% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…ckpoint-108/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…eprocessor_config.json:100% /575, 0/s, -Transferred:   	    7.572 GiB / 18.325 GiB, 41%, 207.279 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          142 / 288, 49%
+Elapsed time:        43.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 94% /1.203Gi, 35.409Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 84% /1.203Gi, 36.109Mi/s, 5s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 84% /1.203Gi, 46.724Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 56% /1.203Gi, 43.014Mi/s, 12
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…int-108/classifier.bin: 38% /14.010Mi, 4.345Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…oint-108/rng_state.pth:100% /13.848Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…pecial_tokens_map.json:100% /613, 0/s, -Transferred:   	    7.666 GiB / 18.325 GiB, 42%, 207.279 MiB/s, ETA 52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          143 / 288, 50%
+Elapsed time:        43.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 95% /1.203Gi, 35.409Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 85% /1.203Gi, 36.109Mi/s, 4s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 86% /1.203Gi, 46.724Mi/s, 3s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 58% /1.203Gi, 43.014Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  1% /1.203Gi, 12.624Mi/s, 1m
+ * qwen25vl_mhc_zh_c3_s0/…int-108/classifier.bin: 60% /14.010Mi, 4.345Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…oint-108/rng_state.pth:100% /13.848Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…/tokenizer_config.json:100% /5.666Ki, 0/s, -Transferred:   	    7.751 GiB / 18.325 GiB, 42%, 205.797 MiB/s, ETA 52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          145 / 288, 50%
+Elapsed time:        44.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 96% /1.203Gi, 34.483Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 87% /1.203Gi, 36.266Mi/s, 4s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 88% /1.203Gi, 47.169Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 60% /1.203Gi, 43.398Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  1% /1.203Gi, 12.624Mi/s, 1m
+ * qwen25vl_mhc_zh_c3_s0/…int-108/classifier.bin:100% /14.010Mi, 6.297Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…108/trainer_state.json:100% /7.953Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s0/…-108/training_args.bin:100% /9.117Ki, 0/s, -Transferred:   	    7.824 GiB / 18.325 GiB, 43%, 205.797 MiB/s, ETA 52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          147 / 288, 51%
+Elapsed time:        44.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 96% /1.203Gi, 34.483Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 88% /1.203Gi, 36.266Mi/s, 3s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 90% /1.203Gi, 47.169Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 60% /1.203Gi, 43.398Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  2% /1.203Gi, 15.406Mi/s, 1m
+ * qwen25vl_mhc_zh_c3_s0/…int-108/classifier.bin:100% /14.010Mi, 6.297Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…ckpoint-108/vocab.json:100% /3.227Mi, 0/s, -
+ *               qwen25vl_mhc_zh_c3_s1/README.md:100% /2.466Ki, 0/s, -Transferred:   	    7.894 GiB / 18.325 GiB, 43%, 205.797 MiB/s, ETA 51s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          147 / 288, 51%
+Elapsed time:        44.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 97% /1.203Gi, 33.154Mi/s, 1s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 89% /1.203Gi, 36.015Mi/s, 3s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 92% /1.203Gi, 47.416Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 62% /1.203Gi, 42.383Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  4% /1.203Gi, 15.406Mi/s, 1m
+ * qwen25vl_mhc_zh_c3_s0/…int-108/classifier.bin:100% /14.010Mi, 4.640Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…ckpoint-108/vocab.json:100% /3.227Mi, 0/s, -
+ *               qwen25vl_mhc_zh_c3_s1/README.md:100% /2.466Ki, 0/s, -Transferred:   	    7.987 GiB / 18.325 GiB, 44%, 202.063 MiB/s, ETA 52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          148 / 288, 51%
+Elapsed time:        45.5s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 97% /1.203Gi, 33.154Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 90% /1.203Gi, 36.015Mi/s, 3s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 93% /1.203Gi, 47.416Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 64% /1.203Gi, 42.383Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  5% /1.203Gi, 23.145Mi/s, 50
+ * qwen25vl_mhc_zh_c3_s0/…ckpoint-108/vocab.json:100% /3.227Mi, 3.226Mi/s, 0s
+ *               qwen25vl_mhc_zh_c3_s1/README.md:100% /2.466Ki, 2.465Ki/s, 0s
+ *     qwen25vl_mhc_zh_c3_s1/adapter_config.json:100% /3.195Ki, 0/s, -Transferred:   	    8.063 GiB / 17.122 GiB, 47%, 200.229 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          151 / 288, 52%
+Elapsed time:        46.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 98% /1.203Gi, 31.899Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 92% /1.203Gi, 35.781Mi/s, 2s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 94% /1.203Gi, 46.283Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 67% /1.203Gi, 43.321Mi/s, 9s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  7% /1.203Gi, 23.145Mi/s, 49
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ *       qwen25vl_mhc_zh_c3_s1/added_tokens.json:100% /605, 0/s, -
+ *        qwen25vl_mhc_zh_c3_s1/all_results.json:100% /649, 0/s, -Transferred:   	    8.136 GiB / 17.122 GiB, 48%, 200.229 MiB/s, ETA 45s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          153 / 288, 53%
+Elapsed time:        46.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 98% /1.203Gi, 31.899Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 94% /1.203Gi, 35.781Mi/s, 1s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 95% /1.203Gi, 46.283Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 68% /1.203Gi, 43.321Mi/s, 8s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  8% /1.203Gi, 25.156Mi/s, 44
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ *      qwen25vl_mhc_zh_c3_s1/chat_template.json:100% /1.024Ki, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s1/classifier.bin: 13% /14.010Mi, 0/s, -Transferred:   	    8.212 GiB / 17.122 GiB, 48%, 197.230 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          154 / 288, 53%
+Elapsed time:        47.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 99% /1.203Gi, 30.739Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 95% /1.203Gi, 36.244Mi/s, 1s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 95% /1.203Gi, 44.564Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 70% /1.203Gi, 43.540Mi/s, 8s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:  9% /1.203Gi, 25.156Mi/s, 44
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ *          qwen25vl_mhc_zh_c3_s1/classifier.bin: 33% /14.010Mi, 0/s, -
+ *  qwen25vl_mhc_zh_c3_s1/classifier_config.json:100% /138, 0/s, -Transferred:   	    8.271 GiB / 17.122 GiB, 48%, 197.230 MiB/s, ETA 45s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          154 / 288, 53%
+Elapsed time:        47.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors: 99% /1.203Gi, 30.739Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 96% /1.203Gi, 36.244Mi/s, 1s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 96% /1.203Gi, 44.564Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 72% /1.203Gi, 43.540Mi/s, 7s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 10% /1.203Gi, 25.631Mi/s, 42
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ *          qwen25vl_mhc_zh_c3_s1/classifier.bin: 34% /14.010Mi, 4.609Mi/s, 1s
+ *  qwen25vl_mhc_zh_c3_s1/classifier_config.json:100% /138, 0/s, -Transferred:   	    8.329 GiB / 17.122 GiB, 49%, 197.230 MiB/s, ETA 45s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          156 / 288, 54%
+Elapsed time:        47.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s2/adapter_model.safetensors:100% /1.203Gi, 29.346Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 97% /1.203Gi, 35.665Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 96% /1.203Gi, 42.570Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 74% /1.203Gi, 43.832Mi/s, 7s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 11% /1.203Gi, 25.631Mi/s, 42
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ *          qwen25vl_mhc_zh_c3_s1/classifier.bin: 43% /14.010Mi, 4.609Mi/s, 1s
+ *              qwen25vl_mhc_zh_c3_s1/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	    8.384 GiB / 18.325 GiB, 46%, 192.471 MiB/s, ETA 52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          157 / 288, 55%
+Elapsed time:        48.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 98% /1.203Gi, 35.665Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 97% /1.203Gi, 42.570Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 76% /1.203Gi, 43.832Mi/s, 6s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 12% /1.203Gi, 25.896Mi/s, 41
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s1/classifier.bin: 88% /14.010Mi, 5.914Mi/s, 0s
+ *              qwen25vl_mhc_zh_c3_s1/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…eprocessor_config.json:100% /575, 0/s, -Transferred:   	    8.442 GiB / 18.325 GiB, 46%, 187.677 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          158 / 288, 55%
+Elapsed time:        49.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 99% /1.203Gi, 34.703Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 97% /1.203Gi, 40.614Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 78% /1.203Gi, 43.981Mi/s, 6s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 14% /1.203Gi, 25.896Mi/s, 40
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *          qwen25vl_mhc_zh_c3_s1/classifier.bin:100% /14.010Mi, 5.914Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…eprocessor_config.json:100% /575, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/special_tokens_map.json:100% /613, 0/s, -Transferred:   	    8.508 GiB / 18.325 GiB, 46%, 187.677 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          160 / 288, 56%
+Elapsed time:        49.5s
+Transferring:
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors: 99% /1.203Gi, 34.703Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 98% /1.203Gi, 40.614Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 80% /1.203Gi, 43.981Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 16% /1.203Gi, 27.763Mi/s, 37
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  0% /1.203Gi, 2.906Mi/s, 7m1
+ * qwen25vl_mhc_zh_c3_s1/…eprocessor_config.json:100% /575, 574/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/special_tokens_map.json:100% /613, 0/s, -
+ *      qwen25vl_mhc_zh_c3_s1/train_results.json:100% /220, 0/s, -Transferred:   	    8.580 GiB / 18.325 GiB, 47%, 187.677 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          162 / 288, 56%
+Elapsed time:        49.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:100% /1.203Gi, 33.378Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 98% /1.203Gi, 38.880Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 82% /1.203Gi, 44.688Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 18% /1.203Gi, 27.763Mi/s, 36
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  1% /1.203Gi, 2.906Mi/s, 6m5
+ *      qwen25vl_mhc_zh_c3_s1/train_results.json:100% /220, 0/s, -
+ *       qwen25vl_mhc_zh_c3_s1/trainer_log.jsonl:100% /4.986Ki, 0/s, -
+ *      qwen25vl_mhc_zh_c3_s1/trainer_state.json:100% /8.268Ki, 0/s, -Transferred:   	    8.648 GiB / 18.325 GiB, 47%, 184.791 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          165 / 288, 57%
+Elapsed time:        50.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:100% /1.203Gi, 33.378Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 99% /1.203Gi, 38.880Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 84% /1.203Gi, 44.688Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 20% /1.203Gi, 30.879Mi/s, 31
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  2% /1.203Gi, 8.234Mi/s, 2m2
+ *       qwen25vl_mhc_zh_c3_s1/training_args.bin:100% /9.117Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…ning_eval_accuracy.png:100% /37.905Ki, 0/s, -
+ *  qwen25vl_mhc_zh_c3_s1/training_eval_loss.png:100% /43.298Ki, 0/s, -Transferred:   	    8.730 GiB / 18.325 GiB, 48%, 182.768 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          167 / 288, 58%
+Elapsed time:        51.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s0/adapter_model.safetensors:100% /1.203Gi, 31.506Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 99% /1.203Gi, 37.294Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 86% /1.203Gi, 44.963Mi/s, 3s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 22% /1.203Gi, 30.879Mi/s, 30
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  4% /1.203Gi, 8.234Mi/s, 2m2
+ * qwen25vl_mhc_zh_c3_s1/…ning_eval_accuracy.png:100% /37.905Ki, 0/s, -
+ *       qwen25vl_mhc_zh_c3_s1/training_loss.png:100% /44.325Ki, 0/s, -
+ *              qwen25vl_mhc_zh_c3_s1/vocab.json:100% /3.227Mi, 0/s, -Transferred:   	    8.813 GiB / 18.325 GiB, 48%, 182.768 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          169 / 288, 59%
+Elapsed time:        51.5s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:100% /1.203Gi, 37.294Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 89% /1.203Gi, 44.963Mi/s, 3s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 24% /1.203Gi, 33.305Mi/s, 27
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  6% /1.203Gi, 17.604Mi/s, 1m
+ *       qwen25vl_mhc_zh_c3_s1/training_loss.png:100% /44.325Ki, 0/s, -
+ *              qwen25vl_mhc_zh_c3_s1/vocab.json:100% /3.227Mi, 0/s, -
+ *   qwen25vl_mhc_c3_s0/checkpoint-102/README.md:100% /4.981Ki, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…02/adapter_config.json:100% /3.195Ki, 0/s, -Transferred:   	    8.876 GiB / 17.122 GiB, 52%, 182.768 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          172 / 288, 60%
+Elapsed time:        51.9s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:100% /1.203Gi, 35.379Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 90% /1.203Gi, 44.825Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 26% /1.203Gi, 33.305Mi/s, 27
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  8% /1.203Gi, 17.604Mi/s, 1m
+ * qwen25vl_mhc_c3_s0/che…02/adapter_config.json:100% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…-102/added_tokens.json:100% /605, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…102/chat_template.json:100% /1.024Ki, 0/s, -Transferred:   	    8.941 GiB / 17.122 GiB, 52%, 180.724 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          175 / 288, 61%
+Elapsed time:        52.5s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:100% /1.203Gi, 35.379Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 91% /1.203Gi, 44.825Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 27% /1.203Gi, 33.975Mi/s, 26
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 10% /1.203Gi, 27.219Mi/s, 40
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…int-102/classifier.bin: 38% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…classifier_config.json:100% /138, 0/s, -
+ *  qwen25vl_mhc_c3_s0/checkpoint-102/merges.txt: 62% /1.594Mi, 0/s, -Transferred:   	    9.014 GiB / 17.122 GiB, 53%, 178.261 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          177 / 288, 61%
+Elapsed time:        53.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 93% /1.203Gi, 44.451Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 29% /1.203Gi, 33.975Mi/s, 25
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 13% /1.203Gi, 32.462Mi/s, 32
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…int-102/classifier.bin: 49% /14.010Mi, 0/s, -
+ *  qwen25vl_mhc_c3_s0/checkpoint-102/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…eprocessor_config.json:100% /575, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…oint-102/rng_state.pth:100% /13.848Ki, 0/s, -Transferred:   	    9.069 GiB / 17.122 GiB, 53%, 178.261 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          177 / 288, 61%
+Elapsed time:        53.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 94% /1.203Gi, 44.451Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 30% /1.203Gi, 34.537Mi/s, 24
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 15% /1.203Gi, 32.462Mi/s, 32
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s0/che…int-102/classifier.bin: 53% /14.010Mi, 6.784Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/checkpoint-102/merges.txt:100% /1.594Mi, 1.588Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…eprocessor_config.json:100% /575, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…oint-102/rng_state.pth:100% /13.848Ki, 0/s, -Transferred:   	    9.127 GiB / 18.325 GiB, 50%, 178.261 MiB/s, ETA 52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          178 / 288, 62%
+Elapsed time:        54.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 95% /1.203Gi, 43.393Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 32% /1.203Gi, 34.537Mi/s, 24
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 17% /1.203Gi, 32.462Mi/s, 31
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…int-102/classifier.bin: 64% /14.010Mi, 6.784Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/checkpoint-102/merges.txt:100% /1.594Mi, 1.588Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…eprocessor_config.json:100% /575, 574/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pecial_tokens_map.json:100% /613, 0/s, -Transferred:   	    9.184 GiB / 18.325 GiB, 50%, 174.358 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          182 / 288, 63%
+Elapsed time:        54.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 96% /1.203Gi, 43.393Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 33% /1.203Gi, 34.380Mi/s, 23
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 19% /1.203Gi, 35.745Mi/s, 27
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…int-102/classifier.bin:100% /14.010Mi, 6.142Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…102/trainer_state.json:100% /7.738Ki, 0/s, -
+ * qwen25vl_mhc_c3_s0/che…-102/training_args.bin:100% /9.117Ki, 0/s, -
+ *  qwen25vl_mhc_c3_s0/checkpoint-102/vocab.json: 39% /3.227Mi, 0/s, -Transferred:   	    9.243 GiB / 17.122 GiB, 54%, 174.358 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          185 / 288, 64%
+Elapsed time:        54.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 96% /1.203Gi, 41.621Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 35% /1.203Gi, 34.380Mi/s, 23
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 21% /1.203Gi, 35.745Mi/s, 26
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  0% /1.203Gi, 5.500Mi/s, 3m4
+ * qwen25vl_mhc_c3_s0/che…int-102/classifier.bin:100% /14.010Mi, 6.142Mi/s, 0s
+ *  qwen25vl_mhc_c3_s0/checkpoint-102/vocab.json:100% /3.227Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…08/adapter_config.json:100% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferringTransferred:   	    9.303 GiB / 17.122 GiB, 54%, 170.909 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          187 / 288, 65%
+Elapsed time:        55.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 97% /1.203Gi, 41.621Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 37% /1.203Gi, 34.791Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 24% /1.203Gi, 38.183Mi/s, 24
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  0% /1.203Gi, 5.500Mi/s, 3m4
+ * qwen25vl_mhc_zh_c3_s1/…08/adapter_config.json:100% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s1/…-108/added_tokens.json:100% /605, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…108/chat_template.json:100% /1.024Ki, 0/s, -Transferred:   	    9.379 GiB / 17.122 GiB, 55%, 168.919 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          190 / 288, 66%
+Elapsed time:        56.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 97% /1.203Gi, 39.726Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 39% /1.203Gi, 34.791Mi/s, 21
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 25% /1.203Gi, 38.183Mi/s, 23
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  1% /1.203Gi, 10.047Mi/s, 2m
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s1/…int-108/classifier.bin: 42% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…classifier_config.json:100% /138, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…ckpoint-108/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	    9.459 GiB / 17.122 GiB, 55%, 168.919 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          191 / 288, 66%
+Elapsed time:        56.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 98% /1.203Gi, 39.726Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 41% /1.203Gi, 36.013Mi/s, 20
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 28% /1.203Gi, 40.031Mi/s, 22
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  3% /1.203Gi, 10.047Mi/s, 1m
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s1/…int-108/classifier.bin: 90% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…ckpoint-108/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…eprocessor_config.json:100% /575, 0/s, -Transferred:   	    9.529 GiB / 17.122 GiB, 56%, 167.928 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          192 / 288, 67%
+Elapsed time:        57.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 98% /1.203Gi, 38.074Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 42% /1.203Gi, 36.013Mi/s, 19
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 30% /1.203Gi, 40.031Mi/s, 21
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  5% /1.203Gi, 20.125Mi/s, 58
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s1/…int-108/classifier.bin:100% /14.010Mi, 13.743Mi/s, 0
+ * qwen25vl_mhc_zh_c3_s1/…ckpoint-108/merges.txt:100% /1.594Mi, 1.588Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…oint-108/rng_state.pth:100% /13.910Ki, 0/s, -Transferred:   	    9.576 GiB / 18.325 GiB, 52%, 167.928 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          194 / 288, 67%
+Elapsed time:        57.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 99% /1.203Gi, 38.074Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 43% /1.203Gi, 35.804Mi/s, 19
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 31% /1.203Gi, 41.632Mi/s, 20
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  6% /1.203Gi, 20.125Mi/s, 57
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…ckpoint-108/merges.txt:100% /1.594Mi, 1.588Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pecial_tokens_map.json:100% /613, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…/tokenizer_config.json:100% /5.666Ki, 0/s, -Transferred:   	    9.639 GiB / 18.325 GiB, 53%, 164.504 MiB/s, ETA 54s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          198 / 288, 69%
+Elapsed time:        58.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 99% /1.203Gi, 36.518Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 44% /1.203Gi, 35.804Mi/s, 18
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 33% /1.203Gi, 41.632Mi/s, 19
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  7% /1.203Gi, 21.633Mi/s, 52
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…108/trainer_state.json:100% /8.013Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s1/…ckpoint-108/vocab.json:100% /3.227Mi, 0/s, -
+ *        qwen25vl_hatemm_c3_s0/all_results.json:100% /642, 0/s, -Transferred:   	    9.702 GiB / 18.325 GiB, 53%, 164.504 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          200 / 288, 69%
+Elapsed time:        58.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:100% /1.203Gi, 36.518Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 45% /1.203Gi, 35.209Mi/s, 18
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 36% /1.203Gi, 41.334Mi/s, 19
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  8% /1.203Gi, 21.633Mi/s, 52
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  0% /1.203Gi, 5.437Mi/s, 3m4
+ * qwen25vl_mhc_zh_c3_s1/…ckpoint-108/vocab.json:100% /3.227Mi, 0/s, -
+ *        qwen25vl_hatemm_c3_s0/all_results.json:100% /642, 0/s, -
+ *          qwen25vl_hatemm_c3_s0/classifier.bin:  3% /14.010Mi, 0/s, -Transferred:   	    9.764 GiB / 18.325 GiB, 53%, 162.218 MiB/s, ETA 54s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          202 / 288, 70%
+Elapsed time:        59.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:100% /1.203Gi, 34.395Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 47% /1.203Gi, 35.209Mi/s, 18
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 38% /1.203Gi, 41.334Mi/s, 18
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:  9% /1.203Gi, 22.350Mi/s, 50
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  1% /1.203Gi, 5.437Mi/s, 3m4
+ * qwen25vl_mhc_zh_c3_s1/…ckpoint-108/vocab.json:100% /3.227Mi, 3.214Mi/s, 0s
+ *          qwen25vl_hatemm_c3_s0/classifier.bin: 18% /14.010Mi, 0/s, -
+ *       qwen25vl_hatemm_c3_s0/eval_results.json:100% /457, 0/s, -Transferred:   	    9.835 GiB / 18.325 GiB, 54%, 162.218 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          203 / 288, 70%
+Elapsed time:        59.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:100% /1.203Gi, 34.395Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 48% /1.203Gi, 34.778Mi/s, 18
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 40% /1.203Gi, 42.903Mi/s, 17
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 10% /1.203Gi, 22.350Mi/s, 49
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  2% /1.203Gi, 10.890Mi/s, 1m
+ *          qwen25vl_hatemm_c3_s0/classifier.bin: 26% /14.010Mi, 3.619Mi/s, 2s
+ *       qwen25vl_hatemm_c3_s0/eval_results.json:100% /457, 0/s, -
+ *              qwen25vl_hatemm_c3_s0/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	    9.922 GiB / 18.325 GiB, 54%, 162.203 MiB/s, ETA 53s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          205 / 288, 71%
+Elapsed time:       1m0.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 49% /1.203Gi, 34.778Mi/s, 17
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 42% /1.203Gi, 42.903Mi/s, 16
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 11% /1.203Gi, 23.146Mi/s, 47
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  4% /1.203Gi, 10.890Mi/s, 1m
+ *          qwen25vl_hatemm_c3_s0/classifier.bin: 44% /14.010Mi, 3.619Mi/s, 2s
+ *              qwen25vl_hatemm_c3_s0/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…eprocessor_config.json:100% /575, 0/s, -
+ * qwen25vl_hatemm_c3_s0/special_tokens_map.json:100% /613, 0/s, -Transferred:   	   10.004 GiB / 18.325 GiB, 55%, 162.203 MiB/s, ETA 52s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          206 / 288, 72%
+Elapsed time:       1m0.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 50% /1.203Gi, 34.680Mi/s, 17
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 44% /1.203Gi, 44.003Mi/s, 15
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 12% /1.203Gi, 23.146Mi/s, 46
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  6% /1.203Gi, 21.562Mi/s, 53
+ *          qwen25vl_hatemm_c3_s0/classifier.bin: 89% /14.010Mi, 5.981Mi/s, 0s
+ *              qwen25vl_hatemm_c3_s0/merges.txt:100% /1.594Mi, 1.594Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…eprocessor_config.json:100% /575, 0/s, -
+ *   qwen25vl_hatemm_c3_s0/tokenizer_config.json:100% /5.666Ki, 0/s, -Transferred:   	   10.090 GiB / 18.325 GiB, 55%, 162.203 MiB/s, ETA 51s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          209 / 288, 73%
+Elapsed time:       1m0.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 52% /1.203Gi, 34.680Mi/s, 16
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 46% /1.203Gi, 44.003Mi/s, 14
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 14% /1.203Gi, 25.549Mi/s, 41
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  7% /1.203Gi, 21.562Mi/s, 52
+ *          qwen25vl_hatemm_c3_s0/classifier.bin:100% /14.010Mi, 5.981Mi/s, 0s
+ *   qwen25vl_hatemm_c3_s0/tokenizer_config.json:100% /5.666Ki, 0/s, -
+ *       qwen25vl_hatemm_c3_s0/trainer_log.jsonl:100% /6.298Ki, 0/s, -
+ *      qwen25vl_hatemm_c3_s0/trainer_state.json:100% /10.158Ki, 0/s, -Transferred:   	   10.166 GiB / 18.325 GiB, 55%, 162.798 MiB/s, ETA 51s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          210 / 288, 73%
+Elapsed time:       1m1.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 54% /1.203Gi, 35.042Mi/s, 16
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 47% /1.203Gi, 44.108Mi/s, 14
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 17% /1.203Gi, 25.549Mi/s, 40
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:  9% /1.203Gi, 26.140Mi/s, 42
+ *          qwen25vl_hatemm_c3_s0/classifier.bin:100% /14.010Mi, 4.669Mi/s, 0s
+ *   qwen25vl_hatemm_c3_s0/tokenizer_config.json:100% /5.666Ki, 5.664Ki/s, 0s
+ *       qwen25vl_hatemm_c3_s0/trainer_log.jsonl:100% /6.298Ki, 0/s, -
+ *       qwen25vl_hatemm_c3_s0/training_args.bin:100% /9.117Ki, 0/s, -Transferred:   	   10.250 GiB / 18.325 GiB, 56%, 162.798 MiB/s, ETA 50s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          215 / 288, 75%
+Elapsed time:       1m1.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 56% /1.203Gi, 35.042Mi/s, 15
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 47% /1.203Gi, 44.108Mi/s, 14
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 19% /1.203Gi, 28.910Mi/s, 34
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 12% /1.203Gi, 26.140Mi/s, 41
+ * qwen25vl_hatemm_c3_s0/…ning_eval_accuracy.png:100% /42.435Ki, 0/s, -
+ *       qwen25vl_hatemm_c3_s0/training_loss.png:100% /48.428Ki, 0/s, -
+ *              qwen25vl_hatemm_c3_s0/vocab.json:100% /3.227Mi, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…eckpoint-138/README.md:100% /4.981Ki, 0/s, -Transferred:   	   10.328 GiB / 17.122 GiB, 60%, 162.890 MiB/s, ETA 42s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          217 / 288, 75%
+Elapsed time:       1m2.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 57% /1.203Gi, 35.458Mi/s, 14
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 48% /1.203Gi, 42.056Mi/s, 15
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 21% /1.203Gi, 28.910Mi/s, 33
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 14% /1.203Gi, 31.706Mi/s, 33
+ *              qwen25vl_hatemm_c3_s0/vocab.json:100% /3.227Mi, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…eckpoint-138/README.md:100% /4.981Ki, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…38/adapter_config.json:100% /3.195Ki, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferringTransferred:   	   10.398 GiB / 17.122 GiB, 61%, 162.134 MiB/s, ETA 42s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          219 / 288, 76%
+Elapsed time:       1m3.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 59% /1.203Gi, 35.458Mi/s, 14
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 48% /1.203Gi, 42.056Mi/s, 15
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 23% /1.203Gi, 31.462Mi/s, 30
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 16% /1.203Gi, 31.706Mi/s, 32
+ *              qwen25vl_hatemm_c3_s0/vocab.json:100% /3.227Mi, 3.226Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_hatemm_c3_s0/…-138/added_tokens.json:100% /605, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…138/chat_template.json:100% /1.024Ki, 0/s, -Transferred:   	   10.484 GiB / 17.122 GiB, 61%, 162.134 MiB/s, ETA 41s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          221 / 288, 77%
+Elapsed time:       1m3.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 61% /1.203Gi, 35.853Mi/s, 13
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 48% /1.203Gi, 39.727Mi/s, 15
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 25% /1.203Gi, 31.462Mi/s, 29
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 18% /1.203Gi, 35.338Mi/s, 28
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_hatemm_c3_s0/…-138/added_tokens.json:100% /605, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…int-138/classifier.bin: 33% /14.010Mi, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…classifier_config.json:100% /138, 0/s, -Transferred:   	   10.564 GiB / 17.122 GiB, 62%, 162.612 MiB/s, ETA 41s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          222 / 288, 77%
+Elapsed time:       1m4.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 63% /1.203Gi, 35.853Mi/s, 12
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 49% /1.203Gi, 38.002Mi/s, 16
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 27% /1.203Gi, 33.316Mi/s, 26
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 20% /1.203Gi, 35.338Mi/s, 27
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_hatemm_c3_s0/…-138/added_tokens.json:100% /605, 604/s, 0s
+ * qwen25vl_hatemm_c3_s0/…int-138/classifier.bin: 41% /14.010Mi, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…ckpoint-138/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	   10.638 GiB / 17.122 GiB, 62%, 162.612 MiB/s, ETA 40s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          223 / 288, 77%
+Elapsed time:       1m4.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 65% /1.203Gi, 36.811Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 49% /1.203Gi, 38.002Mi/s, 16
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 28% /1.203Gi, 33.316Mi/s, 26
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 22% /1.203Gi, 37.629Mi/s, 25
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_hatemm_c3_s0/…int-138/classifier.bin: 43% /14.010Mi, 5.654Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…ckpoint-138/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…eprocessor_config.json:100% /575, 0/s, -Transferred:   	   10.728 GiB / 17.122 GiB, 63%, 162.612 MiB/s, ETA 40s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          223 / 288, 77%
+Elapsed time:       1m5.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 67% /1.203Gi, 36.811Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 51% /1.203Gi, 38.002Mi/s, 15
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 29% /1.203Gi, 33.148Mi/s, 26
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 24% /1.203Gi, 37.629Mi/s, 24
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: transferring
+ * qwen25vl_hatemm_c3_s0/…int-138/classifier.bin: 57% /14.010Mi, 5.654Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…ckpoint-138/merges.txt:100% /1.594Mi, 1.589Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…eprocessor_config.json:100% /575, 0/s, -Transferred:   	   10.821 GiB / 18.325 GiB, 59%, 162.962 MiB/s, ETA 47s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          224 / 288, 78%
+Elapsed time:       1m5.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 69% /1.203Gi, 37.770Mi/s, 9s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 52% /1.203Gi, 37.303Mi/s, 15
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 31% /1.203Gi, 33.148Mi/s, 25
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 27% /1.203Gi, 39.637Mi/s, 22
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…int-138/classifier.bin:100% /14.010Mi, 5.639Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…ckpoint-138/merges.txt:100% /1.594Mi, 1.589Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…oint-138/rng_state.pth:100% /13.848Ki, 0/s, -Transferred:   	   10.900 GiB / 18.325 GiB, 59%, 162.962 MiB/s, ETA 46s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          226 / 288, 78%
+Elapsed time:       1m5.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 71% /1.203Gi, 37.770Mi/s, 9s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 53% /1.203Gi, 37.303Mi/s, 15
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 33% /1.203Gi, 34.380Mi/s, 23
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 29% /1.203Gi, 39.637Mi/s, 22
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…int-138/classifier.bin:100% /14.010Mi, 5.639Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…ckpoint-138/merges.txt:100% /1.594Mi, 813.382Ki/s, 0
+ * qwen25vl_hatemm_c3_s0/…/tokenizer_config.json:100% /5.666Ki, 0/s, -Transferred:   	   10.990 GiB / 18.325 GiB, 60%, 163.779 MiB/s, ETA 45s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          230 / 288, 80%
+Elapsed time:       1m6.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 73% /1.203Gi, 38.675Mi/s, 8s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 55% /1.203Gi, 36.293Mi/s, 15
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 35% /1.203Gi, 34.380Mi/s, 23
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 30% /1.203Gi, 40.385Mi/s, 21
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 2.031Mi/s, 10m
+ * qwen25vl_hatemm_c3_s0/…-138/training_args.bin:100% /9.117Ki, 0/s, -
+ * qwen25vl_hatemm_c3_s0/…ckpoint-138/vocab.json: 91% /3.227Mi, 0/s, -
+ *                  qwen25vl_mhc_c3_s1/README.md:100% /2.457Ki, 0/s, -Transferred:   	   11.087 GiB / 18.325 GiB, 61%, 163.779 MiB/s, ETA 45s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          231 / 288, 80%
+Elapsed time:       1m7.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 75% /1.203Gi, 38.675Mi/s, 7s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 57% /1.203Gi, 36.293Mi/s, 14
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 37% /1.203Gi, 34.882Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 32% /1.203Gi, 40.385Mi/s, 20
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  0% /1.203Gi, 2.031Mi/s, 10m
+ * qwen25vl_hatemm_c3_s0/…ckpoint-138/vocab.json:100% /3.227Mi, 0/s, -
+ *                  qwen25vl_mhc_c3_s1/README.md:100% /2.457Ki, 0/s, -
+ *        qwen25vl_mhc_c3_s1/adapter_config.json:100% /3.195Ki, 0/s, -Transferred:   	   11.191 GiB / 17.122 GiB, 65%, 165.510 MiB/s, ETA 36s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          234 / 288, 81%
+Elapsed time:       1m7.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 76% /1.203Gi, 38.787Mi/s, 7s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 59% /1.203Gi, 37.107Mi/s, 13
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 39% /1.203Gi, 34.882Mi/s, 21
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 34% /1.203Gi, 40.356Mi/s, 20
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  1% /1.203Gi, 6.422Mi/s, 3m8
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: transferring
+ *          qwen25vl_mhc_c3_s1/added_tokens.json:100% /605, 0/s, -
+ *           qwen25vl_mhc_c3_s1/all_results.json:100% /649, 0/s, -Transferred:   	   11.283 GiB / 17.122 GiB, 66%, 165.510 MiB/s, ETA 36s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          236 / 288, 82%
+Elapsed time:       1m7.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 78% /1.203Gi, 38.787Mi/s, 6s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 61% /1.203Gi, 37.107Mi/s, 12
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 41% /1.203Gi, 36.069Mi/s, 20
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 35% /1.203Gi, 40.356Mi/s, 19
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  3% /1.203Gi, 6.422Mi/s, 3m5
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: transferring
+ *         qwen25vl_mhc_c3_s1/chat_template.json:100% /1.024Ki, 0/s, -
+ *             qwen25vl_mhc_c3_s1/classifier.bin:  3% /14.010Mi, 0/s, -Transferred:   	   11.399 GiB / 17.122 GiB, 67%, 167.814 MiB/s, ETA 34s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          237 / 288, 82%
+Elapsed time:       1m8.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 80% /1.203Gi, 39.242Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 62% /1.203Gi, 37.995Mi/s, 12
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 43% /1.203Gi, 36.069Mi/s, 19
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 36% /1.203Gi, 39.668Mi/s, 19
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  5% /1.203Gi, 15.323Mi/s, 1m
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s1/classifier.bin: 33% /14.010Mi, 0/s, -
+ *     qwen25vl_mhc_c3_s1/classifier_config.json:100% /138, 0/s, -Transferred:   	   11.509 GiB / 17.122 GiB, 67%, 167.814 MiB/s, ETA 34s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          238 / 288, 83%
+Elapsed time:       1m9.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 82% /1.203Gi, 39.242Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 64% /1.203Gi, 37.995Mi/s, 11
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 44% /1.203Gi, 36.629Mi/s, 18
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 38% /1.203Gi, 39.668Mi/s, 19
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  6% /1.203Gi, 15.323Mi/s, 1m
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s1/classifier.bin: 35% /14.010Mi, 4.648Mi/s, 1s
+ *          qwen25vl_mhc_c3_s1/eval_results.json:100% /462, 0/s, -Transferred:   	   11.625 GiB / 17.122 GiB, 68%, 171.730 MiB/s, ETA 32s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          239 / 288, 83%
+Elapsed time:       1m9.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 83% /1.203Gi, 39.243Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 67% /1.203Gi, 38.314Mi/s, 10
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 46% /1.203Gi, 36.629Mi/s, 17
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 40% /1.203Gi, 40.338Mi/s, 18
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:  8% /1.203Gi, 22.055Mi/s, 51
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: transferring
+ *             qwen25vl_mhc_c3_s1/classifier.bin: 44% /14.010Mi, 4.648Mi/s, 1s
+ *                 qwen25vl_mhc_c3_s1/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	   11.734 GiB / 18.325 GiB, 64%, 171.730 MiB/s, ETA 39s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          239 / 288, 83%
+Elapsed time:       1m9.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 84% /1.203Gi, 39.243Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 69% /1.203Gi, 38.314Mi/s, 9s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 48% /1.203Gi, 36.869Mi/s, 17
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 42% /1.203Gi, 40.338Mi/s, 17
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 10% /1.203Gi, 22.055Mi/s, 50
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *             qwen25vl_mhc_c3_s1/classifier.bin: 92% /14.010Mi, 6.027Mi/s, 0s
+ *                 qwen25vl_mhc_c3_s1/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	   11.850 GiB / 18.325 GiB, 65%, 175.399 MiB/s, ETA 37s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          239 / 288, 83%
+Elapsed time:      1m10.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 85% /1.203Gi, 38.192Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 71% /1.203Gi, 39.601Mi/s, 8s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 49% /1.203Gi, 36.869Mi/s, 16
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 44% /1.203Gi, 41.228Mi/s, 16
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 12% /1.203Gi, 26.119Mi/s, 41
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  0% /1.203Gi, 0/s, -
+ *             qwen25vl_mhc_c3_s1/classifier.bin:100% /14.010Mi, 6.027Mi/s, 0s
+ *                 qwen25vl_mhc_c3_s1/merges.txt:100% /1.594Mi, 1.589Mi/s, 0sTransferred:   	   11.965 GiB / 18.325 GiB, 65%, 175.399 MiB/s, ETA 37s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          240 / 288, 83%
+Elapsed time:      1m10.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 87% /1.203Gi, 38.192Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 73% /1.203Gi, 39.601Mi/s, 8s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 51% /1.203Gi, 37.102Mi/s, 16
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 46% /1.203Gi, 41.228Mi/s, 15
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 14% /1.203Gi, 26.119Mi/s, 40
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  0% /1.203Gi, 6.906Mi/s, 2m57s
+ *             qwen25vl_mhc_c3_s1/classifier.bin:100% /14.010Mi, 4.637Mi/s, 0s
+ *   qwen25vl_mhc_c3_s1/preprocessor_config.json:100% /575, 0/s, -Transferred:   	   12.088 GiB / 18.325 GiB, 66%, 179.219 MiB/s, ETA 35s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          241 / 288, 84%
+Elapsed time:      1m11.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 88% /1.203Gi, 38.235Mi/s, 3s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 75% /1.203Gi, 40.362Mi/s, 7s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 53% /1.203Gi, 37.102Mi/s, 15
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 48% /1.203Gi, 41.830Mi/s, 15
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 16% /1.203Gi, 30.760Mi/s, 33
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  1% /1.203Gi, 6.906Mi/s, 2m55s
+ *             qwen25vl_mhc_c3_s1/classifier.bin:100% /14.010Mi, 4.637Mi/s, 0s
+ *    qwen25vl_mhc_c3_s1/special_tokens_map.json:100% /613, 0/s, -Transferred:   	   12.224 GiB / 18.325 GiB, 67%, 179.219 MiB/s, ETA 34s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          244 / 288, 85%
+Elapsed time:      1m11.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 90% /1.203Gi, 38.235Mi/s, 3s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 77% /1.203Gi, 40.362Mi/s, 6s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 55% /1.203Gi, 37.986Mi/s, 14
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 51% /1.203Gi, 41.830Mi/s, 14
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 19% /1.203Gi, 30.760Mi/s, 32
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  2% /1.203Gi, 11.312Mi/s, 1m45
+ *         qwen25vl_mhc_c3_s1/train_results.json:100% /222, 0/s, -
+ *          qwen25vl_mhc_c3_s1/trainer_log.jsonl:100% /4.770Ki, 0/s, -Transferred:   	   12.359 GiB / 18.325 GiB, 67%, 184.577 MiB/s, ETA 33s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          246 / 288, 85%
+Elapsed time:      1m12.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 92% /1.203Gi, 38.392Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 79% /1.203Gi, 40.388Mi/s, 6s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 57% /1.203Gi, 37.986Mi/s, 13
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 53% /1.203Gi, 42.533Mi/s, 13
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 21% /1.203Gi, 34.018Mi/s, 28
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  4% /1.203Gi, 11.312Mi/s, 1m44
+ *         qwen25vl_mhc_c3_s1/trainer_state.json:100% /8.035Ki, 0/s, -
+ *          qwen25vl_mhc_c3_s1/training_args.bin:100% /9.117Ki, 0/s, -Transferred:   	   12.499 GiB / 18.325 GiB, 68%, 184.577 MiB/s, ETA 32s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          248 / 288, 86%
+Elapsed time:      1m12.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 93% /1.203Gi, 38.392Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 81% /1.203Gi, 40.388Mi/s, 5s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 59% /1.203Gi, 38.313Mi/s, 13
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 55% /1.203Gi, 42.533Mi/s, 12
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 23% /1.203Gi, 34.018Mi/s, 27
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  6% /1.203Gi, 20.229Mi/s, 57s
+ * qwen25vl_mhc_c3_s1/training_eval_accuracy.png:100% /37.238Ki, 0/s, -
+ *     qwen25vl_mhc_c3_s1/training_eval_loss.png:100% /42.429Ki, 0/s, -Transferred:   	   12.637 GiB / 18.325 GiB, 69%, 190.603 MiB/s, ETA 30s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          249 / 288, 86%
+Elapsed time:      1m13.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 95% /1.203Gi, 38.467Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 83% /1.203Gi, 41.048Mi/s, 4s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 60% /1.203Gi, 38.313Mi/s, 12
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 57% /1.203Gi, 43.156Mi/s, 12
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 25% /1.203Gi, 36.406Mi/s, 25
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  7% /1.203Gi, 20.229Mi/s, 56s
+ *     qwen25vl_mhc_c3_s1/training_eval_loss.png:100% /42.429Ki, 0/s, -
+ *          qwen25vl_mhc_c3_s1/training_loss.png:100% /42.272Ki, 0/s, -Transferred:   	   12.770 GiB / 18.325 GiB, 70%, 190.603 MiB/s, ETA 29s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          250 / 288, 87%
+Elapsed time:      1m13.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 96% /1.203Gi, 38.467Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 85% /1.203Gi, 41.048Mi/s, 4s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 62% /1.203Gi, 38.391Mi/s, 12
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 59% /1.203Gi, 43.156Mi/s, 11
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 27% /1.203Gi, 36.406Mi/s, 24
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:  9% /1.203Gi, 25.867Mi/s, 43s
+ *          qwen25vl_mhc_c3_s1/training_loss.png:100% /42.272Ki, 0/s, -
+ *                 qwen25vl_mhc_c3_s1/vocab.json:100% /3.227Mi, 0/s, -Transferred:   	   12.883 GiB / 18.325 GiB, 70%, 196.082 MiB/s, ETA 28s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          251 / 288, 87%
+Elapsed time:      1m14.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 97% /1.203Gi, 37.942Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 87% /1.203Gi, 41.843Mi/s, 3s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 63% /1.203Gi, 38.391Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 61% /1.203Gi, 43.494Mi/s, 11
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 29% /1.203Gi, 38.396Mi/s, 22
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 11% /1.203Gi, 25.867Mi/s, 42s
+ *                 qwen25vl_mhc_c3_s1/vocab.json:100% /3.227Mi, 0/s, -
+ *   qwen25vl_mhc_c3_s1/checkpoint-102/README.md:100% /4.981Ki, 0/s, -Transferred:   	   13.005 GiB / 18.325 GiB, 71%, 198.794 MiB/s, ETA 27s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          252 / 288, 88%
+Elapsed time:      1m15.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 98% /1.203Gi, 37.942Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 89% /1.203Gi, 42.250Mi/s, 3s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 64% /1.203Gi, 37.982Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 63% /1.203Gi, 43.494Mi/s, 10
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 31% /1.203Gi, 38.396Mi/s, 21
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 13% /1.203Gi, 29.631Mi/s, 36s
+ *                 qwen25vl_mhc_c3_s1/vocab.json:100% /3.227Mi, 3.206Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…02/adapter_config.json:100% /3.195Ki, 0/s, -Transferred:   	   13.094 GiB / 18.325 GiB, 71%, 198.794 MiB/s, ETA 26s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          252 / 288, 88%
+Elapsed time:      1m15.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 99% /1.203Gi, 36.775Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 90% /1.203Gi, 42.250Mi/s, 2s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 65% /1.203Gi, 37.982Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 64% /1.203Gi, 43.551Mi/s, 10
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 33% /1.203Gi, 39.112Mi/s, 21
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 14% /1.203Gi, 29.631Mi/s, 35s
+ *                 qwen25vl_mhc_c3_s1/vocab.json:100% /3.227Mi, 3.206Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…02/adapter_config.json:100% /3.195Ki, 0/s, -Transferred:   	   13.183 GiB / 17.122 GiB, 77%, 197.662 MiB/s, ETA 20s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          254 / 288, 88%
+Elapsed time:      1m16.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors: 99% /1.203Gi, 36.775Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 91% /1.203Gi, 41.256Mi/s, 2s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 66% /1.203Gi, 37.327Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 65% /1.203Gi, 43.551Mi/s, 9s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 35% /1.203Gi, 39.112Mi/s, 20
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 16% /1.203Gi, 31.677Mi/s, 32s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s1/che…-102/added_tokens.json:100% /605, 0/s, -Transferred:   	   13.288 GiB / 17.122 GiB, 78%, 197.662 MiB/s, ETA 19s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          255 / 288, 89%
+Elapsed time:      1m16.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:100% /1.203Gi, 35.156Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 93% /1.203Gi, 41.256Mi/s, 2s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 68% /1.203Gi, 37.327Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 66% /1.203Gi, 42.267Mi/s, 9s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 37% /1.203Gi, 39.869Mi/s, 19
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 18% /1.203Gi, 31.677Mi/s, 31s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s1/che…102/chat_template.json:100% /1.024Ki, 0/s, -Transferred:   	   13.388 GiB / 17.122 GiB, 78%, 198.552 MiB/s, ETA 19s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          256 / 288, 89%
+Elapsed time:      1m17.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:100% /1.203Gi, 35.156Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 94% /1.203Gi, 40.480Mi/s, 1s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 70% /1.203Gi, 37.269Mi/s, 9s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 68% /1.203Gi, 42.267Mi/s, 9s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 39% /1.203Gi, 39.869Mi/s, 18
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 20% /1.203Gi, 33.397Mi/s, 29s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s1/che…int-102/classifier.bin: 35% /14.010Mi, 0/s, -Transferred:   	   13.500 GiB / 17.122 GiB, 79%, 198.552 MiB/s, ETA 18s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          256 / 288, 89%
+Elapsed time:      1m17.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:100% /1.203Gi, 32.959Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 95% /1.203Gi, 40.480Mi/s, 1s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 72% /1.203Gi, 37.269Mi/s, 9s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 70% /1.203Gi, 42.203Mi/s, 8s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 41% /1.203Gi, 41.130Mi/s, 17
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 21% /1.203Gi, 33.397Mi/s, 28s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s1/che…int-102/classifier.bin: 46% /14.010Mi, 0/s, -Transferred:   	   13.609 GiB / 17.122 GiB, 79%, 198.552 MiB/s, ETA 18s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          256 / 288, 89%
+Elapsed time:      1m18.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s0/…pter_model.safetensors:100% /1.203Gi, 32.959Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 96% /1.203Gi, 40.480Mi/s, 1s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 74% /1.203Gi, 38.247Mi/s, 8s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 71% /1.203Gi, 42.203Mi/s, 8s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 44% /1.203Gi, 41.130Mi/s, 16
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 23% /1.203Gi, 34.617Mi/s, 27s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: transferring
+ * qwen25vl_mhc_c3_s1/che…int-102/classifier.bin: 50% /14.010Mi, 6.538Mi/s, 1sTransferred:   	   13.710 GiB / 18.325 GiB, 75%, 200.338 MiB/s, ETA 23s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          257 / 288, 89%
+Elapsed time:      1m18.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 97% /1.203Gi, 39.688Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 76% /1.203Gi, 38.247Mi/s, 7s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 73% /1.203Gi, 42.251Mi/s, 7s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 46% /1.203Gi, 42.233Mi/s, 15
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 25% /1.203Gi, 34.617Mi/s, 26s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_c3_s1/che…int-102/classifier.bin: 64% /14.010Mi, 6.538Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…classifier_config.json:100% /138, 0/s, -Transferred:   	   13.806 GiB / 18.325 GiB, 75%, 200.374 MiB/s, ETA 23s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          257 / 288, 89%
+Elapsed time:      1m19.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 97% /1.203Gi, 39.688Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 78% /1.203Gi, 38.677Mi/s, 6s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 75% /1.203Gi, 42.251Mi/s, 7s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 48% /1.203Gi, 42.233Mi/s, 14
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 26% /1.203Gi, 35.684Mi/s, 25s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_c3_s1/che…int-102/classifier.bin:100% /14.010Mi, 6.191Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…classifier_config.json:100% /138, 0/s, -Transferred:   	   13.900 GiB / 18.325 GiB, 76%, 200.374 MiB/s, ETA 22s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          258 / 288, 90%
+Elapsed time:      1m19.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 98% /1.203Gi, 38.210Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 79% /1.203Gi, 38.677Mi/s, 6s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 76% /1.203Gi, 42.202Mi/s, 6s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 50% /1.203Gi, 43.029Mi/s, 14
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 28% /1.203Gi, 35.684Mi/s, 24s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  0% /1.203Gi, 3.906Mi/s, 5m1
+ * qwen25vl_mhc_c3_s1/che…int-102/classifier.bin:100% /14.010Mi, 6.191Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/checkpoint-102/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	   14.009 GiB / 18.325 GiB, 76%, 200.859 MiB/s, ETA 22s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          259 / 288, 90%
+Elapsed time:      1m20.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 98% /1.203Gi, 38.210Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 81% /1.203Gi, 38.757Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 78% /1.203Gi, 42.202Mi/s, 6s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 53% /1.203Gi, 43.029Mi/s, 13
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 29% /1.203Gi, 34.959Mi/s, 24s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  1% /1.203Gi, 3.906Mi/s, 5m1
+ *  qwen25vl_mhc_c3_s1/checkpoint-102/merges.txt:100% /1.594Mi, 0/s, -
+ * qwen25vl_mhc_c3_s1/che…eprocessor_config.json:100% /575, 0/s, -Transferred:   	   14.114 GiB / 18.325 GiB, 77%, 200.859 MiB/s, ETA 21s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          259 / 288, 90%
+Elapsed time:      1m20.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 99% /1.203Gi, 36.681Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 82% /1.203Gi, 38.757Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 80% /1.203Gi, 42.348Mi/s, 5s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 55% /1.203Gi, 43.817Mi/s, 12
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 31% /1.203Gi, 34.959Mi/s, 24s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  2% /1.203Gi, 8.844Mi/s, 2m1
+ *  qwen25vl_mhc_c3_s1/checkpoint-102/merges.txt:100% /1.594Mi, 1.594Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…eprocessor_config.json:100% /575, 0/s, -Transferred:   	   14.230 GiB / 18.325 GiB, 78%, 200.859 MiB/s, ETA 20s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          260 / 288, 90%
+Elapsed time:      1m20.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 99% /1.203Gi, 36.681Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 84% /1.203Gi, 38.896Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 82% /1.203Gi, 42.348Mi/s, 5s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 57% /1.203Gi, 43.817Mi/s, 11
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 33% /1.203Gi, 36.318Mi/s, 22s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  3% /1.203Gi, 8.844Mi/s, 2m1
+ *  qwen25vl_mhc_c3_s1/checkpoint-102/merges.txt:100% /1.594Mi, 1.594Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…oint-102/rng_state.pth:100% /13.910Ki, 0/s, -Transferred:   	   14.332 GiB / 18.325 GiB, 78%, 202.437 MiB/s, ETA 20s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          262 / 288, 91%
+Elapsed time:      1m21.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:100% /1.203Gi, 35.214Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 85% /1.203Gi, 38.896Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 84% /1.203Gi, 42.511Mi/s, 4s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 59% /1.203Gi, 44.514Mi/s, 11
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 35% /1.203Gi, 36.318Mi/s, 21s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  4% /1.203Gi, 18.229Mi/s, 1m
+ * qwen25vl_mhc_c3_s1/che…pecial_tokens_map.json:100% /613, 0/s, -
+ * qwen25vl_mhc_c3_s1/che…/tokenizer_config.json:100% /5.666Ki, 0/s, -Transferred:   	   14.425 GiB / 18.325 GiB, 79%, 202.437 MiB/s, ETA 19s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          263 / 288, 91%
+Elapsed time:      1m22.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:100% /1.203Gi, 35.214Mi/s, 0s
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 87% /1.203Gi, 38.429Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 85% /1.203Gi, 42.511Mi/s, 4s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 61% /1.203Gi, 44.514Mi/s, 10
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 37% /1.203Gi, 37.159Mi/s, 20s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  5% /1.203Gi, 18.229Mi/s, 1m
+ * qwen25vl_mhc_c3_s1/che…pecial_tokens_map.json:100% /613, 0/s, -
+ * qwen25vl_mhc_c3_s1/che…102/trainer_state.json:100% /7.778Ki, 0/s, -Transferred:   	   14.521 GiB / 18.325 GiB, 79%, 202.255 MiB/s, ETA 19s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          266 / 288, 92%
+Elapsed time:      1m22.5s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 88% /1.203Gi, 38.429Mi/s, 3s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 87% /1.203Gi, 42.649Mi/s, 3s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 63% /1.203Gi, 44.597Mi/s, 10
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 39% /1.203Gi, 37.159Mi/s, 20s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  6% /1.203Gi, 17.469Mi/s, 1m
+ * qwen25vl_mhc_c3_s1/che…-102/training_args.bin:100% /9.117Ki, 0/s, -
+ *  qwen25vl_mhc_c3_s1/checkpoint-102/vocab.json:100% /3.227Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…eckpoint-108/README.md:100% /4.981Ki, 0/s, -Transferred:   	   14.609 GiB / 17.122 GiB, 85%, 201.370 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          268 / 288, 93%
+Elapsed time:      1m23.0s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 89% /1.203Gi, 38.115Mi/s, 3s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 89% /1.203Gi, 42.649Mi/s, 3s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 65% /1.203Gi, 44.597Mi/s, 9s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 40% /1.203Gi, 37.697Mi/s, 19s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  7% /1.203Gi, 17.469Mi/s, 1m
+ *  qwen25vl_mhc_c3_s1/checkpoint-102/vocab.json:100% /3.227Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…08/adapter_config.json:100% /3.195Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferringTransferred:   	   14.699 GiB / 17.122 GiB, 86%, 201.370 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          269 / 288, 93%
+Elapsed time:      1m23.5s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 90% /1.203Gi, 38.115Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 91% /1.203Gi, 42.667Mi/s, 2s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 66% /1.203Gi, 44.874Mi/s, 9s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 42% /1.203Gi, 37.697Mi/s, 18s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:  8% /1.203Gi, 19.556Mi/s, 57
+ *  qwen25vl_mhc_c3_s1/checkpoint-102/vocab.json:100% /3.227Mi, 3.226Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s2/…-108/added_tokens.json:100% /605, 0/s, -Transferred:   	   14.798 GiB / 17.122 GiB, 86%, 200.921 MiB/s, ETA 11s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          270 / 288, 94%
+Elapsed time:      1m24.0s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 92% /1.203Gi, 37.411Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 92% /1.203Gi, 42.667Mi/s, 2s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 69% /1.203Gi, 44.874Mi/s, 8s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 44% /1.203Gi, 37.679Mi/s, 18s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 10% /1.203Gi, 19.556Mi/s, 56
+ *  qwen25vl_mhc_c3_s1/checkpoint-102/vocab.json:100% /3.227Mi, 3.226Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s2/…108/chat_template.json:100% /1.024Ki, 0/s, -Transferred:   	   14.903 GiB / 17.122 GiB, 87%, 200.921 MiB/s, ETA 11s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          272 / 288, 94%
+Elapsed time:      1m24.5s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 93% /1.203Gi, 37.411Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 93% /1.203Gi, 42.126Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 71% /1.203Gi, 45.270Mi/s, 7s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 45% /1.203Gi, 37.679Mi/s, 17s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 12% /1.203Gi, 23.531Mi/s, 45
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s2/…int-108/classifier.bin: 38% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…classifier_config.json:100% /138, 0/s, -Transferred:   	   15.015 GiB / 17.122 GiB, 88%, 202.199 MiB/s, ETA 10s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          273 / 288, 95%
+Elapsed time:      1m25.0s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 94% /1.203Gi, 36.815Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 94% /1.203Gi, 42.126Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 73% /1.203Gi, 45.270Mi/s, 7s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 47% /1.203Gi, 38.083Mi/s, 16s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 14% /1.203Gi, 23.531Mi/s, 44
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: transferring
+ * qwen25vl_mhc_zh_c3_s2/…int-108/classifier.bin: 48% /14.010Mi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	   15.103 GiB / 18.325 GiB, 82%, 202.199 MiB/s, ETA 16s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          273 / 288, 95%
+Elapsed time:      1m25.4s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 95% /1.203Gi, 36.815Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 95% /1.203Gi, 41.286Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 75% /1.203Gi, 45.802Mi/s, 6s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 49% /1.203Gi, 38.083Mi/s, 16s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 16% /1.203Gi, 27.826Mi/s, 36
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…int-108/classifier.bin: 51% /14.010Mi, 6.705Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/merges.txt:100% /1.594Mi, 0/s, -Transferred:   	   15.203 GiB / 18.325 GiB, 83%, 201.659 MiB/s, ETA 15s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          273 / 288, 95%
+Elapsed time:      1m26.0s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 96% /1.203Gi, 36.231Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 95% /1.203Gi, 41.286Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 78% /1.203Gi, 45.802Mi/s, 5s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 51% /1.203Gi, 38.539Mi/s, 15s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 19% /1.203Gi, 27.826Mi/s, 35
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  0% /1.203Gi, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…int-108/classifier.bin: 70% /14.010Mi, 6.705Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/merges.txt:100% /1.594Mi, 1.588Mi/s, 0sTransferred:   	   15.302 GiB / 18.325 GiB, 84%, 201.659 MiB/s, ETA 15s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          273 / 288, 95%
+Elapsed time:      1m26.4s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 97% /1.203Gi, 36.231Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 96% /1.203Gi, 39.520Mi/s, 1s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 80% /1.203Gi, 46.231Mi/s, 5s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 52% /1.203Gi, 38.539Mi/s, 15s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 21% /1.203Gi, 30.945Mi/s, 31
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  0% /1.203Gi, 4.495Mi/s, 4m3
+ * qwen25vl_mhc_zh_c3_s2/…int-108/classifier.bin:100% /14.010Mi, 6.118Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/merges.txt:100% /1.594Mi, 1.588Mi/s, 0sTransferred:   	   15.388 GiB / 18.325 GiB, 84%, 200.898 MiB/s, ETA 14s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          274 / 288, 95%
+Elapsed time:      1m27.0s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 98% /1.203Gi, 35.672Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 97% /1.203Gi, 39.520Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 82% /1.203Gi, 46.231Mi/s, 4s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 53% /1.203Gi, 38.353Mi/s, 14s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 23% /1.203Gi, 30.945Mi/s, 30
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  0% /1.203Gi, 4.495Mi/s, 4m3
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/merges.txt:100% /1.594Mi, 813.217Ki/s, 0
+ * qwen25vl_mhc_zh_c3_s2/…eprocessor_config.json:100% /575, 0/s, -Transferred:   	   15.493 GiB / 18.325 GiB, 85%, 200.898 MiB/s, ETA 14s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          275 / 288, 95%
+Elapsed time:      1m27.5s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors: 99% /1.203Gi, 35.672Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 97% /1.203Gi, 37.851Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 84% /1.203Gi, 46.738Mi/s, 4s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 55% /1.203Gi, 38.353Mi/s, 14s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 25% /1.203Gi, 33.444Mi/s, 27
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  1% /1.203Gi, 9.045Mi/s, 2m1
+ * qwen25vl_mhc_zh_c3_s2/…eprocessor_config.json:100% /575, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…oint-108/rng_state.pth:100% /13.910Ki, 0/s, -Transferred:   	   15.591 GiB / 18.325 GiB, 85%, 200.898 MiB/s, ETA 13s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          277 / 288, 96%
+Elapsed time:      1m28.0s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:100% /1.203Gi, 34.598Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 98% /1.203Gi, 37.851Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 86% /1.203Gi, 46.738Mi/s, 3s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 57% /1.203Gi, 38.022Mi/s, 13s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 27% /1.203Gi, 33.444Mi/s, 26
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  3% /1.203Gi, 9.045Mi/s, 2m1
+ * qwen25vl_mhc_zh_c3_s2/…pecial_tokens_map.json:100% /613, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…/tokenizer_config.json:100% /5.666Ki, 0/s, -Transferred:   	   15.692 GiB / 18.325 GiB, 86%, 201.347 MiB/s, ETA 13s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          280 / 288, 97%
+Elapsed time:      1m28.5s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:100% /1.203Gi, 34.598Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 98% /1.203Gi, 36.323Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 89% /1.203Gi, 47.203Mi/s, 2s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 59% /1.203Gi, 38.022Mi/s, 13s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 29% /1.203Gi, 34.947Mi/s, 24
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  4% /1.203Gi, 19.634Mi/s, 59
+ * qwen25vl_mhc_zh_c3_s2/…-108/training_args.bin:100% /9.117Ki, 0/s, -
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/vocab.json: 86% /3.227Mi, 0/s, -Transferred:   	   15.773 GiB / 18.325 GiB, 86%, 201.347 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          281 / 288, 98%
+Elapsed time:      1m28.9s
+Transferring:
+ * qwen25vl_mhc_c3_s0/che…pter_model.safetensors:100% /1.203Gi, 32.435Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 99% /1.203Gi, 36.323Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 91% /1.203Gi, 47.203Mi/s, 2s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 60% /1.203Gi, 38.747Mi/s, 12s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 31% /1.203Gi, 34.947Mi/s, 24
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  5% /1.203Gi, 19.634Mi/s, 59
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/vocab.json:100% /3.227Mi, 0/s, -Transferred:   	   15.841 GiB / 18.325 GiB, 86%, 200.385 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          282 / 288, 98%
+Elapsed time:      1m29.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors: 99% /1.203Gi, 34.869Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 92% /1.203Gi, 47.484Mi/s, 1s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 62% /1.203Gi, 38.747Mi/s, 11s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 32% /1.203Gi, 35.872Mi/s, 23
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  5% /1.203Gi, 17.608Mi/s, 1m
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/vocab.json:100% /3.227Mi, 3.224Mi/s, 0sTransferred:   	   15.906 GiB / 18.325 GiB, 87%, 196.355 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          282 / 288, 98%
+Elapsed time:      1m30.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:100% /1.203Gi, 34.869Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 94% /1.203Gi, 47.484Mi/s, 1s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 64% /1.203Gi, 38.992Mi/s, 11s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 34% /1.203Gi, 35.872Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  5% /1.203Gi, 17.608Mi/s, 1m
+ * qwen25vl_mhc_zh_c3_s2/…ckpoint-108/vocab.json:100% /3.227Mi, 3.224Mi/s, 0sTransferred:   	   15.949 GiB / 18.325 GiB, 87%, 196.355 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          283 / 288, 98%
+Elapsed time:      1m30.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s1/…pter_model.safetensors:100% /1.203Gi, 33.173Mi/s, 0s
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 95% /1.203Gi, 46.748Mi/s, 1s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 65% /1.203Gi, 38.992Mi/s, 10s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 35% /1.203Gi, 35.841Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  6% /1.203Gi, 15.568Mi/s, 1mTransferred:   	   15.998 GiB / 18.325 GiB, 87%, 196.355 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m30.9s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 95% /1.203Gi, 46.748Mi/s, 1s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 67% /1.203Gi, 38.959Mi/s, 10s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 35% /1.203Gi, 35.841Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  6% /1.203Gi, 15.568Mi/s, 1mTransferred:   	   16.041 GiB / 18.325 GiB, 88%, 189.979 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m31.5s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 96% /1.203Gi, 45.038Mi/s, 1s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 69% /1.203Gi, 38.959Mi/s, 9s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 36% /1.203Gi, 34.337Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  7% /1.203Gi, 15.291Mi/s, 1mTransferred:   	   16.086 GiB / 18.325 GiB, 88%, 183.779 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m32.0s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 96% /1.203Gi, 45.038Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 71% /1.203Gi, 39.675Mi/s, 8s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 36% /1.203Gi, 34.337Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  8% /1.203Gi, 15.291Mi/s, 1mTransferred:   	   16.136 GiB / 18.325 GiB, 88%, 183.779 MiB/s, ETA 12s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m32.5s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 97% /1.203Gi, 43.037Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 73% /1.203Gi, 39.675Mi/s, 8s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 37% /1.203Gi, 32.618Mi/s, 23
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:  9% /1.203Gi, 16.548Mi/s, 1mTransferred:   	   16.196 GiB / 18.325 GiB, 88%, 183.779 MiB/s, ETA 11s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m32.9s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 97% /1.203Gi, 43.037Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 75% /1.203Gi, 40.074Mi/s, 7s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 38% /1.203Gi, 32.618Mi/s, 23
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 11% /1.203Gi, 16.548Mi/s, 1mTransferred:   	   16.261 GiB / 18.325 GiB, 89%, 179.310 MiB/s, ETA 11s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m33.4s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 98% /1.203Gi, 41.068Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 77% /1.203Gi, 40.074Mi/s, 6s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 39% /1.203Gi, 32.077Mi/s, 23
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 13% /1.203Gi, 19.449Mi/s, 55Transferred:   	   16.339 GiB / 18.325 GiB, 89%, 177.246 MiB/s, ETA 11s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m34.0s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 98% /1.203Gi, 41.068Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 79% /1.203Gi, 40.559Mi/s, 6s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 41% /1.203Gi, 32.077Mi/s, 22
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 15% /1.203Gi, 19.449Mi/s, 53Transferred:   	   16.408 GiB / 18.325 GiB, 90%, 177.246 MiB/s, ETA 11s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m34.4s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 99% /1.203Gi, 39.327Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 80% /1.203Gi, 40.559Mi/s, 5s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 43% /1.203Gi, 32.467Mi/s, 21
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 17% /1.203Gi, 23.142Mi/s, 43Transferred:   	   16.478 GiB / 18.325 GiB, 90%, 175.086 MiB/s, ETA 10s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m35.0s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors: 99% /1.203Gi, 39.327Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 82% /1.203Gi, 40.519Mi/s, 5s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 44% /1.203Gi, 32.467Mi/s, 20
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 19% /1.203Gi, 23.142Mi/s, 42Transferred:   	   16.542 GiB / 18.325 GiB, 90%, 175.086 MiB/s, ETA 10s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m35.4s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:100% /1.203Gi, 37.715Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 83% /1.203Gi, 40.519Mi/s, 5s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 46% /1.203Gi, 33.086Mi/s, 19
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 21% /1.203Gi, 26.193Mi/s, 36Transferred:   	   16.609 GiB / 18.325 GiB, 91%, 175.086 MiB/s, ETA 10s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          284 / 288, 99%
+Elapsed time:      1m35.9s
+Transferring:
+ * qwen25vl_hatemm_c3_s0/…pter_model.safetensors:100% /1.203Gi, 37.715Mi/s, 0s
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 85% /1.203Gi, 40.045Mi/s, 4s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 48% /1.203Gi, 33.086Mi/s, 19
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 23% /1.203Gi, 26.193Mi/s, 36Transferred:   	   16.669 GiB / 18.325 GiB, 91%, 172.504 MiB/s, ETA 9s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m36.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 86% /1.203Gi, 40.045Mi/s, 4s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 50% /1.203Gi, 34.231Mi/s, 17
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 24% /1.203Gi, 27.159Mi/s, 34Transferred:   	   16.743 GiB / 18.325 GiB, 91%, 172.504 MiB/s, ETA 9s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m36.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 88% /1.203Gi, 40.229Mi/s, 3s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 53% /1.203Gi, 34.231Mi/s, 16
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 27% /1.203Gi, 27.159Mi/s, 33Transferred:   	   16.811 GiB / 18.325 GiB, 92%, 170.318 MiB/s, ETA 9s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m37.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 89% /1.203Gi, 40.229Mi/s, 3s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 55% /1.203Gi, 35.385Mi/s, 15
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 28% /1.203Gi, 29.338Mi/s, 29Transferred:   	   16.875 GiB / 18.325 GiB, 92%, 168.078 MiB/s, ETA 8s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m38.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 91% /1.203Gi, 40.018Mi/s, 2s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 57% /1.203Gi, 35.385Mi/s, 14
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 30% /1.203Gi, 29.338Mi/s, 29Transferred:   	   16.947 GiB / 18.325 GiB, 92%, 168.078 MiB/s, ETA 8s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m38.5s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 92% /1.203Gi, 40.018Mi/s, 2s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 59% /1.203Gi, 36.189Mi/s, 13
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 32% /1.203Gi, 30.865Mi/s, 26Transferred:   	   17.015 GiB / 18.325 GiB, 93%, 168.078 MiB/s, ETA 7s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m38.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 94% /1.203Gi, 39.939Mi/s, 1s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 61% /1.203Gi, 36.189Mi/s, 13
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 35% /1.203Gi, 30.865Mi/s, 25Transferred:   	   17.063 GiB / 18.325 GiB, 93%, 166.563 MiB/s, ETA 7s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m39.5s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 95% /1.203Gi, 39.939Mi/s, 1s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 63% /1.203Gi, 37.382Mi/s, 12
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 36% /1.203Gi, 31.600Mi/s, 24Transferred:   	   17.108 GiB / 18.325 GiB, 93%, 166.563 MiB/s, ETA 7s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m39.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 96% /1.203Gi, 39.212Mi/s, 1s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 65% /1.203Gi, 37.382Mi/s, 11
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 37% /1.203Gi, 31.600Mi/s, 24Transferred:   	   17.159 GiB / 18.325 GiB, 94%, 162.096 MiB/s, ETA 7s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m40.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 96% /1.203Gi, 39.212Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 67% /1.203Gi, 37.839Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 38% /1.203Gi, 31.593Mi/s, 23Transferred:   	   17.212 GiB / 18.325 GiB, 94%, 162.096 MiB/s, ETA 7s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m41.0s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 97% /1.203Gi, 37.871Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 68% /1.203Gi, 37.839Mi/s, 10
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 40% /1.203Gi, 31.593Mi/s, 23Transferred:   	   17.259 GiB / 18.325 GiB, 94%, 158.615 MiB/s, ETA 6s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m41.4s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 99% /1.203Gi, 37.871Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 70% /1.203Gi, 38.167Mi/s, 9s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 42% /1.203Gi, 32.121Mi/s, 22Transferred:   	   17.317 GiB / 18.325 GiB, 94%, 158.615 MiB/s, ETA 6s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m41.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors: 99% /1.203Gi, 37.166Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 72% /1.203Gi, 38.167Mi/s, 8s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 43% /1.203Gi, 32.121Mi/s, 21Transferred:   	   17.362 GiB / 18.325 GiB, 95%, 155.442 MiB/s, ETA 6s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m42.5s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:100% /1.203Gi, 37.166Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 74% /1.203Gi, 38.686Mi/s, 8s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 45% /1.203Gi, 32.691Mi/s, 20Transferred:   	   17.405 GiB / 18.325 GiB, 95%, 155.442 MiB/s, ETA 6s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m42.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:100% /1.203Gi, 35.321Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 76% /1.203Gi, 38.686Mi/s, 7s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 47% /1.203Gi, 32.691Mi/s, 19Transferred:   	   17.444 GiB / 18.325 GiB, 95%, 151.338 MiB/s, ETA 5s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m43.5s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:100% /1.203Gi, 35.321Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 78% /1.203Gi, 39.186Mi/s, 6s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 48% /1.203Gi, 33.164Mi/s, 19Transferred:   	   17.488 GiB / 18.325 GiB, 95%, 151.338 MiB/s, ETA 5s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          285 / 288, 99%
+Elapsed time:      1m43.9s
+Transferring:
+ *  qwen25vl_mhc_c3_s1/adapter_model.safetensors:100% /1.203Gi, 33.113Mi/s, 0s
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 80% /1.203Gi, 39.186Mi/s, 6s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 50% /1.203Gi, 33.164Mi/s, 18Transferred:   	   17.536 GiB / 18.325 GiB, 96%, 147.221 MiB/s, ETA 5s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m44.4s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 82% /1.203Gi, 39.918Mi/s, 5s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 51% /1.203Gi, 33.501Mi/s, 17Transferred:   	   17.580 GiB / 18.325 GiB, 96%, 147.221 MiB/s, ETA 5s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m44.9s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 84% /1.203Gi, 39.918Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 53% /1.203Gi, 33.501Mi/s, 17Transferred:   	   17.621 GiB / 18.325 GiB, 96%, 143.926 MiB/s, ETA 5s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m45.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 86% /1.203Gi, 40.679Mi/s, 4s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 55% /1.203Gi, 33.802Mi/s, 16Transferred:   	   17.672 GiB / 18.325 GiB, 96%, 140.766 MiB/s, ETA 4s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m46.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 89% /1.203Gi, 40.679Mi/s, 3s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 56% /1.203Gi, 33.802Mi/s, 15Transferred:   	   17.710 GiB / 18.325 GiB, 97%, 140.766 MiB/s, ETA 4s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m46.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 90% /1.203Gi, 41.438Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 58% /1.203Gi, 34.250Mi/s, 15Transferred:   	   17.739 GiB / 18.325 GiB, 97%, 136.261 MiB/s, ETA 4s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m47.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 92% /1.203Gi, 41.438Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 59% /1.203Gi, 34.250Mi/s, 14Transferred:   	   17.771 GiB / 18.325 GiB, 97%, 136.261 MiB/s, ETA 4s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m47.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 93% /1.203Gi, 40.967Mi/s, 2s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 60% /1.203Gi, 34.205Mi/s, 14Transferred:   	   17.790 GiB / 18.325 GiB, 97%, 131.001 MiB/s, ETA 4s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m48.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 93% /1.203Gi, 40.967Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 61% /1.203Gi, 34.205Mi/s, 13Transferred:   	   17.816 GiB / 18.325 GiB, 97%, 131.001 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m48.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 94% /1.203Gi, 39.354Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 63% /1.203Gi, 34.053Mi/s, 13Transferred:   	   17.839 GiB / 18.325 GiB, 97%, 131.001 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m48.9s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 94% /1.203Gi, 39.354Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 64% /1.203Gi, 34.053Mi/s, 12Transferred:   	   17.855 GiB / 18.325 GiB, 97%, 125.962 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m49.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 94% /1.203Gi, 37.728Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 66% /1.203Gi, 33.867Mi/s, 12Transferred:   	   17.871 GiB / 18.325 GiB, 98%, 120.128 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m50.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 95% /1.203Gi, 37.728Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 67% /1.203Gi, 33.867Mi/s, 11Transferred:   	   17.894 GiB / 18.325 GiB, 98%, 120.128 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m50.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 95% /1.203Gi, 35.614Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 68% /1.203Gi, 33.670Mi/s, 11Transferred:   	   17.917 GiB / 18.325 GiB, 98%, 115.612 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m51.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 96% /1.203Gi, 35.614Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 70% /1.203Gi, 33.670Mi/s, 10Transferred:   	   17.942 GiB / 18.325 GiB, 98%, 115.612 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m51.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 96% /1.203Gi, 34.254Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 71% /1.203Gi, 33.749Mi/s, 10Transferred:   	   17.978 GiB / 18.325 GiB, 98%, 115.612 MiB/s, ETA 3s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m52.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 97% /1.203Gi, 34.254Mi/s, 1s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 73% /1.203Gi, 33.749Mi/s, 9sTransferred:   	   18.004 GiB / 18.325 GiB, 98%, 112.250 MiB/s, ETA 2s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m52.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 97% /1.203Gi, 32.962Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 75% /1.203Gi, 34.894Mi/s, 8sTransferred:   	   18.030 GiB / 18.325 GiB, 98%, 112.250 MiB/s, ETA 2s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m52.9s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 98% /1.203Gi, 32.962Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 77% /1.203Gi, 34.894Mi/s, 8sTransferred:   	   18.057 GiB / 18.325 GiB, 99%, 108.553 MiB/s, ETA 2s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m53.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 98% /1.203Gi, 31.760Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 78% /1.203Gi, 35.146Mi/s, 7sTransferred:   	   18.083 GiB / 18.325 GiB, 99%, 105.186 MiB/s, ETA 2s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m54.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 99% /1.203Gi, 31.760Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 80% /1.203Gi, 35.146Mi/s, 6sTransferred:   	   18.110 GiB / 18.325 GiB, 99%, 105.186 MiB/s, ETA 2s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m54.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors: 99% /1.203Gi, 30.589Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 82% /1.203Gi, 35.526Mi/s, 6sTransferred:   	   18.137 GiB / 18.325 GiB, 99%, 105.186 MiB/s, ETA 1s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m55.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:100% /1.203Gi, 30.589Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 84% /1.203Gi, 35.526Mi/s, 5sTransferred:   	   18.152 GiB / 18.325 GiB, 99%, 102.039 MiB/s, ETA 1s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m55.4s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:100% /1.203Gi, 29.011Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 85% /1.203Gi, 36.026Mi/s, 4sTransferred:   	   18.181 GiB / 18.325 GiB, 99%, 98.490 MiB/s, ETA 1s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m56.0s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:100% /1.203Gi, 29.011Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 88% /1.203Gi, 36.026Mi/s, 4sTransferred:   	   18.204 GiB / 18.325 GiB, 99%, 98.490 MiB/s, ETA 1s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          286 / 288, 99%
+Elapsed time:      1m56.5s
+Transferring:
+ * qwen25vl_mhc_c3_s1/che…pter_model.safetensors:100% /1.203Gi, 27.197Mi/s, 0s
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 89% /1.203Gi, 37.054Mi/s, 3sTransferred:   	   18.219 GiB / 18.325 GiB, 99%, 94.754 MiB/s, ETA 1s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:      1m57.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 91% /1.203Gi, 37.054Mi/s, 2sTransferred:   	   18.231 GiB / 18.325 GiB, 99%, 94.754 MiB/s, ETA 1s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:      1m57.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 92% /1.203Gi, 36.551Mi/s, 2sTransferred:   	   18.244 GiB / 18.325 GiB, 100%, 94.754 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:      1m57.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 93% /1.203Gi, 36.551Mi/s, 2sTransferred:   	   18.255 GiB / 18.325 GiB, 100%, 90.473 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:      1m58.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 94% /1.203Gi, 35.915Mi/s, 1sTransferred:   	   18.265 GiB / 18.325 GiB, 100%, 90.473 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:      1m58.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 95% /1.203Gi, 35.915Mi/s, 1sTransferred:   	   18.277 GiB / 18.325 GiB, 100%, 86.152 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:      1m59.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 96% /1.203Gi, 35.004Mi/s, 1sTransferred:   	   18.291 GiB / 18.325 GiB, 100%, 86.152 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m0.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 97% /1.203Gi, 35.004Mi/s, 1sTransferred:   	   18.304 GiB / 18.325 GiB, 100%, 82.400 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m0.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 98% /1.203Gi, 34.508Mi/s, 0sTransferred:   	   18.312 GiB / 18.325 GiB, 100%, 82.400 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m1.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 98% /1.203Gi, 34.508Mi/s, 0sTransferred:   	   18.315 GiB / 18.325 GiB, 100%, 78.639 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m1.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 99% /1.203Gi, 33.236Mi/s, 0sTransferred:   	   18.317 GiB / 18.325 GiB, 100%, 78.639 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m1.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 99% /1.203Gi, 33.236Mi/s, 0sTransferred:   	   18.317 GiB / 18.325 GiB, 100%, 73.999 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m2.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 99% /1.203Gi, 31.297Mi/s, 0sTransferred:   	   18.317 GiB / 18.325 GiB, 100%, 73.999 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m3.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 99% /1.203Gi, 31.297Mi/s, 0sTransferred:   	   18.324 GiB / 18.325 GiB, 100%, 69.386 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m3.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors: 99% /1.203Gi, 29.646Mi/s, 0sTransferred:   	   18.325 GiB / 18.325 GiB, 100%, 65.572 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m4.0s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:100% /1.203Gi, 29.646Mi/s, 0sTransferred:   	   18.325 GiB / 18.325 GiB, 100%, 65.572 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m4.5s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:100% /1.203Gi, 28.011Mi/s, 0sTransferred:   	   18.325 GiB / 18.325 GiB, 100%, 65.572 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m4.9s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:100% /1.203Gi, 28.011Mi/s, 0sTransferred:   	   18.325 GiB / 18.325 GiB, 100%, 61.474 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          287 / 288, 100%
+Elapsed time:       2m5.4s
+Transferring:
+ * qwen25vl_mhc_zh_c3_s2/…pter_model.safetensors:100% /1.203Gi, 26.260Mi/s, 0sTransferred:   	   18.325 GiB / 18.325 GiB, 100%, 61.474 MiB/s, ETA 0s
+Checks:                 0 / 0, -, Listed 311
+Transferred:          288 / 288, 100%
+Elapsed time:       2m5.6s
+[b2_push] done -> b2:junyi-data/RGCL_video/adapters/lora_p9
+[p9b2ad] DONE

@@ -1,0 +1,49 @@
+[p9b_knn] === MHC_zh / p9d3_zh_s0 ===
+[MHC_zh] C3-knn DEV: acc=0.8333 macroF1=0.825 (mem=579 train)
+[MHC_zh] C3-knn TEST: acc=0.8322 macroF1=0.8177
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9d3_zh_s0.json
+[p9b_knn] === MHC_zh / p9d3_zh_s1 ===
+[MHC_zh] C3-knn DEV: acc=0.8718 macroF1=0.8662 (mem=579 train)
+[MHC_zh] C3-knn TEST: acc=0.8456 macroF1=0.8294
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9d3_zh_s1.json
+[p9b_knn] === MHC_zh / p9d3_zh_s2 ===
+[MHC_zh] C3-knn DEV: acc=0.8718 macroF1=0.8607 (mem=579 train)
+[MHC_zh] C3-knn TEST: acc=0.8389 macroF1=0.8176
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9d3_zh_s2.json
+[p9b_knn] === MHC_zh / p9c3p_zh_s0 ===
+[MHC_zh] C3-knn DEV: acc=0.859 macroF1=0.8519 (mem=579 train)
+[MHC_zh] C3-knn TEST: acc=0.8322 macroF1=0.8145
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9c3p_zh_s0.json
+[p9b_knn] === MHC_zh / p9c3p_zh_s1 ===
+[MHC_zh] C3-knn DEV: acc=0.8974 macroF1=0.8917 (mem=579 train)
+[MHC_zh] C3-knn TEST: acc=0.8322 macroF1=0.8145
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9c3p_zh_s1.json
+[p9b_knn] === MHC_zh / p9c3p_zh_s2 ===
+[MHC_zh] C3-knn DEV: acc=0.9231 macroF1=0.9135 (mem=579 train)
+[MHC_zh] C3-knn TEST: acc=0.7987 macroF1=0.7548
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9c3p_zh_s2.json
+[p9b_knn] === MHC / p9d3_en_s0 ===
+[MHC] C3-knn DEV: acc=0.8125 macroF1=0.8013 (mem=549 train)
+[MHC] C3-knn TEST: acc=0.764 macroF1=0.7302
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9d3_en_s0.json
+[p9b_knn] === MHC / p9d3_en_s1 ===
+[MHC] C3-knn DEV: acc=0.7625 macroF1=0.7483 (mem=549 train)
+[MHC] C3-knn TEST: acc=0.7764 macroF1=0.7417
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9d3_en_s1.json
+[p9b_knn] === MHC / p9d3_en_s2 ===
+[MHC] C3-knn DEV: acc=0.775 macroF1=0.7484 (mem=549 train)
+[MHC] C3-knn TEST: acc=0.7826 macroF1=0.7502
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9d3_en_s2.json
+[p9b_knn] === MHC / p9c3p_en_s0 ===
+[MHC] C3-knn DEV: acc=0.7875 macroF1=0.7775 (mem=549 train)
+[MHC] C3-knn TEST: acc=0.764 macroF1=0.7353
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9c3p_en_s0.json
+[p9b_knn] === MHC / p9c3p_en_s1 ===
+[MHC] C3-knn DEV: acc=0.775 macroF1=0.7566 (mem=549 train)
+[MHC] C3-knn TEST: acc=0.764 macroF1=0.7274
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9c3p_en_s1.json
+[p9b_knn] === MHC / p9c3p_en_s2 ===
+[MHC] C3-knn DEV: acc=0.7875 macroF1=0.7439 (mem=549 train)
+[MHC] C3-knn TEST: acc=0.7888 macroF1=0.7446
+[out] wrote /data/jehc223/RGCL/scripts/analysis/p9b_knn_out/p9c3p_en_s2.json
+[p9b_knn] DONE — results in /data/jehc223/RGCL/scripts/analysis/p9b_knn_out

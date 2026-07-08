@@ -1,0 +1,262 @@
+[2026-07-08 17:52:14] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-08 17:52:14] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-08 17:52:14] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-08 17:52:14] [disk_guard] WARNING: could not determine quota usage from 'quota -s'. Doing NOTHING destructive.
+[2026-07-08 17:52:14] [disk_guard] ==== disk_guard end (usage unknown) ====
+NVIDIA A100-SXM4-80GB, 81920 MiB
+[p9train] python src/train.py /data/jehc223/RGCL/RA-HMD/LLAMA-FACTORY-Ver202512/my_configs/hatevideo/p9_predict/test_c3prime_zh_s2.yaml
+[WARNING|2026-07-08 17:52:19] llamafactory.extras.misc:154 >> Version checking has been disabled, may lead to unexpected behaviors.
+[2026-07-08 17:52:20,199] [INFO] [real_accelerator.py:222:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/jieba/_compat.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[INFO|2026-07-08 17:52:22] llamafactory.hparams.parser:468 >> Process rank: 0, world size: 1, device: cuda:0, distributed training: False, compute dtype: torch.bfloat16
+[INFO|hub.py:302] 2026-07-08 17:52:22,950 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:1930] 2026-07-08 17:52:22,951 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:22,952 >> loading file vocab.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/vocab.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:22,952 >> loading file merges.txt from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/merges.txt
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:22,952 >> loading file added_tokens.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:22,952 >> loading file special_tokens_map.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:22,952 >> loading file tokenizer_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:22,952 >> loading file tokenizer.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:22,952 >> loading file chat_template.jinja from cache at None
+[INFO|tokenization_utils_base.py:2313] 2026-07-08 17:52:23,140 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[INFO|hub.py:302] 2026-07-08 17:52:23,140 >> Offline mode: forcing local_files_only=True
+[INFO|hub.py:302] 2026-07-08 17:52:23,141 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:324] 2026-07-08 17:52:23,141 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:381] 2026-07-08 17:52:23,141 >> loading configuration file preprocessor_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/preprocessor_config.json
+[INFO|image_processing_base.py:324] 2026-07-08 17:52:23,142 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:381] 2026-07-08 17:52:23,142 >> loading configuration file preprocessor_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/preprocessor_config.json
+[INFO|image_processing_base.py:434] 2026-07-08 17:52:23,143 >> Image processor Qwen2VLImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.48145466,
+    0.4578275,
+    0.40821073
+  ],
+  "image_processor_type": "Qwen2VLImageProcessor",
+  "image_std": [
+    0.26862954,
+    0.26130258,
+    0.27577711
+  ],
+  "max_pixels": 12845056,
+  "merge_size": 2,
+  "min_pixels": 3136,
+  "patch_size": 14,
+  "processor_class": "Qwen2_5_VLProcessor",
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "longest_edge": 12845056,
+    "shortest_edge": 3136
+  },
+  "temporal_patch_size": 2
+}
+
+[INFO|tokenization_utils_base.py:1930] 2026-07-08 17:52:23,143 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:23,144 >> loading file vocab.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/vocab.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:23,144 >> loading file merges.txt from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/merges.txt
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:23,144 >> loading file added_tokens.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:23,144 >> loading file special_tokens_map.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:23,144 >> loading file tokenizer_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:23,144 >> loading file tokenizer.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 17:52:23,144 >> loading file chat_template.jinja from cache at None
+[INFO|tokenization_utils_base.py:2313] 2026-07-08 17:52:23,338 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[INFO|processing_utils.py:694] 2026-07-08 17:52:23,339 >> Offline mode: forcing local_files_only=True
+[INFO|processing_utils.py:876] 2026-07-08 17:52:23,775 >> Processor Qwen2_5_VLProcessor:
+- image_processor: Qwen2VLImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.48145466,
+    0.4578275,
+    0.40821073
+  ],
+  "image_processor_type": "Qwen2VLImageProcessor",
+  "image_std": [
+    0.26862954,
+    0.26130258,
+    0.27577711
+  ],
+  "max_pixels": 12845056,
+  "merge_size": 2,
+  "min_pixels": 3136,
+  "patch_size": 14,
+  "processor_class": "Qwen2_5_VLProcessor",
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "longest_edge": 12845056,
+    "shortest_edge": 3136
+  },
+  "temporal_patch_size": 2
+}
+
+- tokenizer: Qwen2Tokenizer(name_or_path='Qwen/Qwen2.5-VL-7B-Instruct', vocab_size=151643, model_max_length=131072, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'eos_token': '<|im_end|>', 'pad_token': '<|endoftext|>', 'additional_special_tokens': ['<|im_start|>', '<|im_end|>', '<|object_ref_start|>', '<|object_ref_end|>', '<|box_start|>', '<|box_end|>', '<|quad_start|>', '<|quad_end|>', '<|vision_start|>', '<|vision_end|>', '<|vision_pad|>', '<|image_pad|>', '<|video_pad|>']}, clean_up_tokenization_spaces=False, added_tokens_decoder={
+	151643: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151644: AddedToken("<|im_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151645: AddedToken("<|im_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151646: AddedToken("<|object_ref_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151647: AddedToken("<|object_ref_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151648: AddedToken("<|box_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151649: AddedToken("<|box_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151650: AddedToken("<|quad_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151651: AddedToken("<|quad_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151652: AddedToken("<|vision_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151653: AddedToken("<|vision_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151654: AddedToken("<|vision_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151655: AddedToken("<|image_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151656: AddedToken("<|video_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151657: AddedToken("<tool_call>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151658: AddedToken("</tool_call>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151659: AddedToken("<|fim_prefix|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151660: AddedToken("<|fim_middle|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151661: AddedToken("<|fim_suffix|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151662: AddedToken("<|fim_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151663: AddedToken("<|repo_name|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151664: AddedToken("<|file_sep|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+}
+)
+
+{
+  "processor_class": "Qwen2_5_VLProcessor"
+}
+
+[INFO|2026-07-08 17:52:23] llamafactory.data.loader:143 >> Loading dataset /data/jehc223/RGCL/data/lora_sft/MHC_zh/test_yn4.json...
+Converting format of dataset (num_proc=8):   0%|          | 0/149 [00:00<?, ? examples/s]Converting format of dataset (num_proc=8): 100%|██████████| 149/149 [00:00<00:00, 872.89 examples/s]
+Running tokenizer on dataset (num_proc=8):   0%|          | 0/149 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=8):  13%|█▎        | 19/149 [00:03<00:26,  4.84 examples/s]Running tokenizer on dataset (num_proc=8):  26%|██▌       | 38/149 [00:05<00:15,  6.95 examples/s]Running tokenizer on dataset (num_proc=8):  38%|███▊      | 57/149 [00:07<00:10,  8.80 examples/s]Running tokenizer on dataset (num_proc=8):  51%|█████     | 76/149 [00:08<00:07,  9.64 examples/s]Running tokenizer on dataset (num_proc=8):  64%|██████▍   | 95/149 [00:10<00:05,  9.85 examples/s]Running tokenizer on dataset (num_proc=8):  76%|███████▌  | 113/149 [00:12<00:03,  9.49 examples/s]Running tokenizer on dataset (num_proc=8):  88%|████████▊ | 131/149 [00:14<00:01, 10.03 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 149/149 [00:16<00:00, 10.42 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 149/149 [00:16<00:00,  9.24 examples/s]
+eval example:
+input_ids:
+[151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, 151645, 198, 151644, 872, 198, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 14880, 100374, 43288, 23, 116226, 102650, 33108, 100431, 109502, 65577, 101042, 107083, 87140, 1773, 14880, 99799, 101118, 102650, 5373, 102718, 87335, 5373, 116270, 5373, 108872, 101034, 105761, 1773, 87335, 65577, 5122, 56006, 27, 336, 536, 428, 19863, 755, 99680, 99388, 70108, 522, 336, 29, 33126, 103259, 100623, 1112, 659, 11162, 236, 120, 106171, 108749, 99680, 99388, 70108, 3837, 99680, 99388, 57750, 102021, 102481, 11319, 110814, 105317, 3837, 99414, 99748, 30534, 17, 15, 31207, 3837, 56568, 104241, 49567, 99245, 11319, 105348, 107377, 103924, 3837, 104515, 28919, 107083, 87140, 64471, 100409, 117828, 14, 108589, 43815, 9909, 104210, 101294, 102109, 57191, 103666, 99285, 104287, 3837, 57191, 118516, 104229, 7552, 11319, 14880, 91680, 11622, 46944, 105205, 110011, 102104, 5122, 9454, 92313, 2308, 1773, 151645, 198, 151644, 77091, 198, 9454, 151645, 198]
+inputs:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|>请结合这8帧画面和下面的文字记录分析这段视频。请综合考虑画面、屏幕文字、手势、符号以及语音。文字记录：比<em class="keyword">妈宝男</em>更可怕的人... . 🎼人人讨厌妈宝男，妈宝女是什么样子？我妈说了，彩礼要20万，你还在等什么？赶紧点赞啊，我要。。这段视频是否属于仇恨/有害内容（基于身份攻击或贬低他人，或宣扬伤害）？请只用一个英文单词回答：Yes 或 No。<|im_end|>
+<|im_start|>assistant
+Yes<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 9454, 151645, 198]
+labels:
+Yes<|im_end|>
+
+[INFO|hub.py:302] 2026-07-08 17:52:42,952 >> Offline mode: forcing local_files_only=True
+[INFO|configuration_utils.py:699] 2026-07-08 17:52:42,953 >> loading configuration file config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/config.json
+[INFO|configuration_utils.py:771] 2026-07-08 17:52:42,955 >> Model config Qwen2_5_VLConfig {
+  "_name_or_path": "Qwen/Qwen2.5-VL-7B-Instruct",
+  "architectures": [
+    "Qwen2_5_VLForConditionalGeneration"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "eos_token_id": 151645,
+  "hidden_act": "silu",
+  "hidden_size": 3584,
+  "image_token_id": 151655,
+  "initializer_range": 0.02,
+  "intermediate_size": 18944,
+  "max_position_embeddings": 128000,
+  "max_window_layers": 28,
+  "model_type": "qwen2_5_vl",
+  "num_attention_heads": 28,
+  "num_hidden_layers": 28,
+  "num_key_value_heads": 4,
+  "rms_norm_eps": 1e-06,
+  "rope_scaling": {
+    "mrope_section": [
+      16,
+      24,
+      24
+    ],
+    "rope_type": "default",
+    "type": "default"
+  },
+  "rope_theta": 1000000.0,
+  "sliding_window": 32768,
+  "tie_word_embeddings": false,
+  "torch_dtype": "bfloat16",
+  "transformers_version": "4.49.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "video_token_id": 151656,
+  "vision_config": {
+    "hidden_size": 1280,
+    "in_chans": 3,
+    "model_type": "qwen2_5_vl",
+    "spatial_patch_size": 14,
+    "tokens_per_second": 2
+  },
+  "vision_end_token_id": 151653,
+  "vision_start_token_id": 151652,
+  "vision_token_id": 151654,
+  "vocab_size": 152064
+}
+
+[INFO|2026-07-08 17:52:42] llamafactory.model.model_utils.kv_cache:143 >> KV cache is enabled for faster generation.
+[INFO|hub.py:302] 2026-07-08 17:52:42,964 >> Offline mode: forcing local_files_only=True
+[INFO|hub.py:302] 2026-07-08 17:52:42,968 >> Offline mode: forcing local_files_only=True
+[INFO|modeling_utils.py:3641] 2026-07-08 17:52:42,969 >> Offline mode: forcing local_files_only=True
+[INFO|modeling_utils.py:3982] 2026-07-08 17:52:42,969 >> loading weights file model.safetensors from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/model.safetensors.index.json
+[INFO|modeling_utils.py:1633] 2026-07-08 17:52:42,970 >> Instantiating Qwen2_5_VLForConditionalGeneration model under default dtype torch.bfloat16.
+[INFO|configuration_utils.py:1140] 2026-07-08 17:52:42,973 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "eos_token_id": 151645
+}
+
+[INFO|modeling_utils.py:1633] 2026-07-08 17:52:42,973 >> Instantiating Qwen2_5_VisionTransformerPretrainedModel model under default dtype torch.bfloat16.
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:01<00:04,  1.23s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:02<00:03,  1.13s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:03<00:02,  1.12s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:04<00:01,  1.12s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:05<00:00,  1.07it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:05<00:00,  1.03s/it]
+[INFO|modeling_utils.py:4970] 2026-07-08 17:52:48,192 >> All model checkpoint weights were used when initializing Qwen2_5_VLForConditionalGeneration.
+
+[INFO|modeling_utils.py:4978] 2026-07-08 17:52:48,193 >> All the weights of Qwen2_5_VLForConditionalGeneration were initialized from the model checkpoint at Qwen/Qwen2.5-VL-7B-Instruct.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use Qwen2_5_VLForConditionalGeneration for predictions without further training.
+[INFO|configuration_utils.py:1095] 2026-07-08 17:52:48,254 >> loading configuration file generation_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/generation_config.json
+[INFO|configuration_utils.py:1140] 2026-07-08 17:52:48,255 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "do_sample": true,
+  "eos_token_id": [
+    151645,
+    151643
+  ],
+  "pad_token_id": 151643,
+  "repetition_penalty": 1.05,
+  "temperature": 1e-06
+}
+
+[INFO|2026-07-08 17:52:48] llamafactory.model.model_utils.attention:143 >> Using torch SDPA for faster training and inference.
+[INFO|2026-07-08 17:52:56] llamafactory.model.adapter:143 >> Merged 1 adapter(s).
+[INFO|2026-07-08 17:52:56] llamafactory.model.adapter:143 >> Loaded adapter(s): /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_c3primef4_s2
+[INFO|2026-07-08 17:52:56] llamafactory.model.loader:143 >> all params: 8,292,166,656
+[p9] loaded trained classifier head from /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_c3primef4_s2/classifier.bin
+/data/jehc223/RGCL/RA-HMD/LLAMA-FACTORY-Ver202512/src/llamafactory/train/sft_classifier/trainer.py:85: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `CustomSeq2SeqRegressionTrainer.__init__`. Use `processing_class` instead.
+  super().__init__(**kwargs)
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+[INFO|trainer.py:746] 2026-07-08 17:52:56,453 >> Using auto half precision backend
+[WARNING|trainer.py:814] 2026-07-08 17:52:56,454 >> Trainer.tokenizer is now deprecated. You should use Trainer.processing_class instead.
+[INFO|2026-07-08 17:52:56] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 17:52:56] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 149
+[INFO|2026-07-08 17:52:56] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 4
+  0%|          | 0/38 [00:00<?, ?it/s]  5%|▌         | 2/38 [00:01<00:29,  1.21it/s]  8%|▊         | 3/38 [00:03<00:40,  1.16s/it] 11%|█         | 4/38 [00:04<00:45,  1.34s/it] 13%|█▎        | 5/38 [00:06<00:50,  1.52s/it] 16%|█▌        | 6/38 [00:08<00:49,  1.54s/it] 18%|█▊        | 7/38 [00:10<00:48,  1.58s/it] 21%|██        | 8/38 [00:11<00:47,  1.59s/it] 24%|██▎       | 9/38 [00:13<00:45,  1.58s/it] 26%|██▋       | 10/38 [00:14<00:43,  1.57s/it] 29%|██▉       | 11/38 [00:16<00:42,  1.59s/it] 32%|███▏      | 12/38 [00:17<00:41,  1.60s/it] 34%|███▍      | 13/38 [00:19<00:40,  1.61s/it] 37%|███▋      | 14/38 [00:21<00:38,  1.62s/it] 39%|███▉      | 15/38 [00:22<00:36,  1.60s/it] 42%|████▏     | 16/38 [00:24<00:34,  1.59s/it] 45%|████▍     | 17/38 [00:25<00:32,  1.57s/it] 47%|████▋     | 18/38 [00:27<00:31,  1.57s/it] 50%|█████     | 19/38 [00:29<00:29,  1.58s/it] 53%|█████▎    | 20/38 [00:30<00:27,  1.55s/it] 55%|█████▌    | 21/38 [00:32<00:26,  1.54s/it] 58%|█████▊    | 22/38 [00:33<00:25,  1.59s/it] 61%|██████    | 23/38 [00:35<00:23,  1.59s/it] 63%|██████▎   | 24/38 [00:36<00:22,  1.59s/it] 66%|██████▌   | 25/38 [00:38<00:20,  1.57s/it] 68%|██████▊   | 26/38 [00:40<00:18,  1.58s/it] 71%|███████   | 27/38 [00:41<00:18,  1.66s/it] 74%|███████▎  | 28/38 [00:43<00:16,  1.65s/it] 76%|███████▋  | 29/38 [00:45<00:14,  1.62s/it] 79%|███████▉  | 30/38 [00:46<00:12,  1.59s/it] 82%|████████▏ | 31/38 [00:48<00:11,  1.59s/it] 84%|████████▍ | 32/38 [00:50<00:10,  1.67s/it] 87%|████████▋ | 33/38 [00:51<00:08,  1.64s/it] 89%|████████▉ | 34/38 [00:53<00:06,  1.63s/it] 92%|█████████▏| 35/38 [00:54<00:04,  1.62s/it] 95%|█████████▍| 36/38 [00:56<00:03,  1.63s/it] 97%|█████████▋| 37/38 [00:57<00:01,  1.55s/it]100%|██████████| 38/38 [00:58<00:00,  1.14s/it]Accuracy: 0.8523, AUROC: 0.9363, Precision: 0.7091, Recall: 0.8667, F1: 0.7800
+100%|██████████| 38/38 [00:58<00:00,  1.53s/it]
+***** eval metrics *****
+  eval_accuracy            =     0.8523
+  eval_auroc               =     0.9363
+  eval_classification_loss =     0.3607
+  eval_f1                  =       0.78
+  eval_lm_loss             =     0.1144
+  eval_loss                =     0.4751
+  eval_precision           =     0.7091
+  eval_recall              =     0.8667
+  eval_runtime             = 0:01:00.33
+  eval_samples_per_second  =       2.47
+  eval_steps_per_second    =       0.63
+
+real	1m44.294s
+user	3m0.673s
+sys	0m10.331s
+[p9train] DONE

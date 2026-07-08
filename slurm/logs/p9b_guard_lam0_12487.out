@@ -1,0 +1,455 @@
+[2026-07-08 06:47:47] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-08 06:47:47] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-08 06:47:47] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-08 06:47:47] [disk_guard] current /data usage: 277G (threshold 250G, target 250G).
+[2026-07-08 06:47:47] [disk_guard] usage 277G > threshold 250G: starting reclaim.
+[2026-07-08 06:47:47] [disk_guard] Step (a): rclone VFS cache purge.
+[2026-07-08 06:47:47] [disk_guard]   no rclone vfs* cache dirs present (nothing to do).
+[2026-07-08 06:47:47] [disk_guard]   usage now 277G still > target 250G: continuing.
+[2026-07-08 06:47:47] [disk_guard] Step (b): HuggingFace cache.
+[2026-07-08 06:47:47] [disk_guard]   HF cache purge skipped (conservative); needs manual review. Set DISK_GUARD_HF_PURGE=1 to allow datasets--*/.locks removal (never models--*).
+[2026-07-08 06:47:47] [disk_guard]   usage now 277G still > target 250G: continuing.
+[2026-07-08 06:47:47] [disk_guard] Step (c): push-verify-prune oldest logging/ checkpoints (mirrored to B2 under logs/).
+[2026-07-08 06:47:47] [disk_guard]   found 2 candidate checkpoint(s), oldest-first.
+[2026-07-08 06:47:47] [disk_guard]   need to free ~27.00GB to reach target 250G.
+[2026-07-08 06:47:47] [disk_guard]   candidate: /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3_s0/checkpoint-20/optimizer.pt
+[2026-07-08 06:47:47] [disk_guard]     mtime=2026-07-08 06:46:44 size=2.43GB
+[2026-07-08 06:47:47] [disk_guard]     -> b2 subpath: logs/lora_p9/qwen25vl_mhc_zh_d3_s0/checkpoint-20/optimizer.pt
+[2026-07-08 06:47:47] [disk_guard]     pushing to B2 ...
+[2026-07-08 06:49:06] [disk_guard] verify: OK sha1=6b894091f6663d88d52e73f5f0c5be58478bf406 matches at b2:junyi-data/RGCL_video/logs/lora_p9/qwen25vl_mhc_zh_d3_s0/checkpoint-20/optimizer.pt
+[2026-07-08 06:49:06] [disk_guard]     PRUNED local (verified on B2): /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3_s0/checkpoint-20/optimizer.pt  (freed 2.43GB)
+[2026-07-08 06:49:06] [disk_guard]   candidate: /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3_s0/checkpoint-20/scheduler.pt
+[2026-07-08 06:49:06] [disk_guard]     mtime=2026-07-08 06:46:44 size=1.04KB
+[2026-07-08 06:49:06] [disk_guard]     -> b2 subpath: logs/lora_p9/qwen25vl_mhc_zh_d3_s0/checkpoint-20/scheduler.pt
+[2026-07-08 06:49:06] [disk_guard]     pushing to B2 ...
+[2026-07-08 06:49:11] [disk_guard] verify: OK sha1=bd4f8670bb2b9e79b20e90f0ce22495bcddee630 matches at b2:junyi-data/RGCL_video/logs/lora_p9/qwen25vl_mhc_zh_d3_s0/checkpoint-20/scheduler.pt
+[2026-07-08 06:49:11] [disk_guard]     PRUNED local (verified on B2): /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3_s0/checkpoint-20/scheduler.pt  (freed 1.04KB)
+[2026-07-08 06:49:11] [disk_guard]   step (c) projected/actual freed: 2.43GB.
+[2026-07-08 06:49:11] [disk_guard]   usage now 274G still > target 250G: continuing.
+[2026-07-08 06:49:11] [disk_guard] WARNING: still over target (usage=274G > target 250G) after all SAFE steps.
+[2026-07-08 06:49:11] [disk_guard] WARNING: MANUAL INTERVENTION required — an approved larger offload (e.g. raw datasets or another project) is needed.
+[2026-07-08 06:49:11] [disk_guard] WARNING: this guard will NOT touch raw datasets (Multihateclip/HateMM/ImpliHateVid) or non-project data. Stopping.
+[2026-07-08 06:49:11] [disk_guard] ==== disk_guard end ====
+NVIDIA A100-SXM4-80GB, 81920 MiB
+[p9train] SMOKE max_steps=20 config=/data/jehc223/home/tmp/tmp.EpgCeEP4HC.yaml
+[p9train] python src/train.py /data/jehc223/home/tmp/tmp.EpgCeEP4HC.yaml
+[WARNING|2026-07-08 06:49:17] llamafactory.extras.misc:154 >> Version checking has been disabled, may lead to unexpected behaviors.
+[2026-07-08 06:49:17,560] [INFO] [real_accelerator.py:222:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/jieba/_compat.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[INFO|2026-07-08 06:49:20] llamafactory.hparams.parser:468 >> Process rank: 0, world size: 1, device: cuda:0, distributed training: False, compute dtype: torch.bfloat16
+[INFO|hub.py:302] 2026-07-08 06:49:20,342 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:1930] 2026-07-08 06:49:20,343 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,344 >> loading file vocab.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/vocab.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,344 >> loading file merges.txt from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/merges.txt
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,344 >> loading file added_tokens.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,344 >> loading file special_tokens_map.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,344 >> loading file tokenizer_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,344 >> loading file tokenizer.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,344 >> loading file chat_template.jinja from cache at None
+[INFO|tokenization_utils_base.py:2313] 2026-07-08 06:49:20,556 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[INFO|hub.py:302] 2026-07-08 06:49:20,557 >> Offline mode: forcing local_files_only=True
+[INFO|hub.py:302] 2026-07-08 06:49:20,557 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:324] 2026-07-08 06:49:20,557 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:381] 2026-07-08 06:49:20,558 >> loading configuration file preprocessor_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/preprocessor_config.json
+[INFO|image_processing_base.py:324] 2026-07-08 06:49:20,559 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:381] 2026-07-08 06:49:20,559 >> loading configuration file preprocessor_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/preprocessor_config.json
+[INFO|image_processing_base.py:434] 2026-07-08 06:49:20,560 >> Image processor Qwen2VLImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.48145466,
+    0.4578275,
+    0.40821073
+  ],
+  "image_processor_type": "Qwen2VLImageProcessor",
+  "image_std": [
+    0.26862954,
+    0.26130258,
+    0.27577711
+  ],
+  "max_pixels": 12845056,
+  "merge_size": 2,
+  "min_pixels": 3136,
+  "patch_size": 14,
+  "processor_class": "Qwen2_5_VLProcessor",
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "longest_edge": 12845056,
+    "shortest_edge": 3136
+  },
+  "temporal_patch_size": 2
+}
+
+[INFO|tokenization_utils_base.py:1930] 2026-07-08 06:49:20,560 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,561 >> loading file vocab.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/vocab.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,561 >> loading file merges.txt from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/merges.txt
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,561 >> loading file added_tokens.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,561 >> loading file special_tokens_map.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,561 >> loading file tokenizer_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,561 >> loading file tokenizer.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 06:49:20,561 >> loading file chat_template.jinja from cache at None
+[INFO|tokenization_utils_base.py:2313] 2026-07-08 06:49:20,747 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[INFO|processing_utils.py:694] 2026-07-08 06:49:20,748 >> Offline mode: forcing local_files_only=True
+[INFO|processing_utils.py:876] 2026-07-08 06:49:21,169 >> Processor Qwen2_5_VLProcessor:
+- image_processor: Qwen2VLImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.48145466,
+    0.4578275,
+    0.40821073
+  ],
+  "image_processor_type": "Qwen2VLImageProcessor",
+  "image_std": [
+    0.26862954,
+    0.26130258,
+    0.27577711
+  ],
+  "max_pixels": 12845056,
+  "merge_size": 2,
+  "min_pixels": 3136,
+  "patch_size": 14,
+  "processor_class": "Qwen2_5_VLProcessor",
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "longest_edge": 12845056,
+    "shortest_edge": 3136
+  },
+  "temporal_patch_size": 2
+}
+
+- tokenizer: Qwen2Tokenizer(name_or_path='Qwen/Qwen2.5-VL-7B-Instruct', vocab_size=151643, model_max_length=131072, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'eos_token': '<|im_end|>', 'pad_token': '<|endoftext|>', 'additional_special_tokens': ['<|im_start|>', '<|im_end|>', '<|object_ref_start|>', '<|object_ref_end|>', '<|box_start|>', '<|box_end|>', '<|quad_start|>', '<|quad_end|>', '<|vision_start|>', '<|vision_end|>', '<|vision_pad|>', '<|image_pad|>', '<|video_pad|>']}, clean_up_tokenization_spaces=False, added_tokens_decoder={
+	151643: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151644: AddedToken("<|im_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151645: AddedToken("<|im_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151646: AddedToken("<|object_ref_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151647: AddedToken("<|object_ref_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151648: AddedToken("<|box_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151649: AddedToken("<|box_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151650: AddedToken("<|quad_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151651: AddedToken("<|quad_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151652: AddedToken("<|vision_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151653: AddedToken("<|vision_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151654: AddedToken("<|vision_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151655: AddedToken("<|image_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151656: AddedToken("<|video_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151657: AddedToken("<tool_call>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151658: AddedToken("</tool_call>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151659: AddedToken("<|fim_prefix|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151660: AddedToken("<|fim_middle|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151661: AddedToken("<|fim_suffix|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151662: AddedToken("<|fim_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151663: AddedToken("<|repo_name|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151664: AddedToken("<|file_sep|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+}
+)
+
+{
+  "processor_class": "Qwen2_5_VLProcessor"
+}
+
+[INFO|2026-07-08 06:49:21] llamafactory.data.loader:143 >> Loading dataset /data/jehc223/RGCL/data/lora_sft/MHC_zh/train_yn.json...
+Converting format of dataset (num_proc=8):   0%|          | 0/579 [00:00<?, ? examples/s]Converting format of dataset (num_proc=8): 100%|██████████| 579/579 [00:00<00:00, 3160.68 examples/s]
+[INFO|2026-07-08 06:49:21] llamafactory.data.loader:143 >> Loading dataset /data/jehc223/RGCL/data/lora_sft/MHC_zh/val_yn.json...
+Converting format of dataset (num_proc=8):   0%|          | 0/78 [00:00<?, ? examples/s]Converting format of dataset (num_proc=8): 100%|██████████| 78/78 [00:00<00:00, 459.05 examples/s]
+Running tokenizer on dataset (num_proc=8):   0%|          | 0/579 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=8):  13%|█▎        | 73/579 [00:14<01:41,  4.99 examples/s]Running tokenizer on dataset (num_proc=8):  25%|██▌       | 146/579 [00:17<00:45,  9.46 examples/s]Running tokenizer on dataset (num_proc=8):  38%|███▊      | 219/579 [00:18<00:22, 15.80 examples/s]Running tokenizer on dataset (num_proc=8):  50%|█████     | 291/579 [00:27<00:24, 11.70 examples/s]Running tokenizer on dataset (num_proc=8):  63%|██████▎   | 363/579 [00:27<00:12, 17.83 examples/s]Running tokenizer on dataset (num_proc=8):  75%|███████▌  | 435/579 [00:28<00:06, 23.26 examples/s]Running tokenizer on dataset (num_proc=8):  88%|████████▊ | 507/579 [00:30<00:02, 26.90 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 579/579 [00:30<00:00, 36.61 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 579/579 [00:30<00:00, 18.72 examples/s]
+training example:
+input_ids:
+[151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, 151645, 198, 151644, 872, 198, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 14880, 100374, 43288, 23, 116226, 102650, 33108, 100431, 109502, 65577, 101042, 107083, 87140, 1773, 14880, 99799, 101118, 102650, 5373, 102718, 87335, 5373, 116270, 5373, 108872, 101034, 105761, 1773, 87335, 65577, 5122, 10904, 103357, 99981, 9370, 101254, 10958, 99366, 102207, 100158, 659, 659, 46944, 110828, 100472, 101935, 99360, 100648, 113043, 99261, 102636, 26939, 70108, 108434, 105951, 69249, 101717, 3837, 101885, 20412, 99250, 105631, 69249, 99319, 3837, 87267, 100681, 102302, 99319, 18830, 109953, 106287, 1773, 144236, 1773, 107083, 87140, 64471, 100409, 117828, 14, 108589, 43815, 9909, 104210, 101294, 102109, 57191, 103666, 99285, 104287, 3837, 57191, 118516, 104229, 7552, 11319, 14880, 91680, 11622, 46944, 105205, 110011, 102104, 5122, 9454, 92313, 2308, 1773, 151645, 198, 151644, 77091, 198, 2753, 151645, 198]
+inputs:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|>请结合这8帧画面和下面的文字记录分析这段视频。请综合考虑画面、屏幕文字、手势、符号以及语音。文字记录：【泼妇的日常】玩闹一下 . .一个流浪猫妈妈把他的侄儿吓到男老师的宿舍里床上，而且是被窝里边，可能感觉那里边有安全感嗯。😊。这段视频是否属于仇恨/有害内容（基于身份攻击或贬低他人，或宣扬伤害）？请只用一个英文单词回答：Yes 或 No。<|im_end|>
+<|im_start|>assistant
+No<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 2753, 151645, 198]
+labels:
+No<|im_end|>
+
+Running tokenizer on dataset (num_proc=8):   0%|          | 0/78 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=8):  13%|█▎        | 10/78 [00:03<00:25,  2.68 examples/s]Running tokenizer on dataset (num_proc=8):  26%|██▌       | 20/78 [00:05<00:13,  4.19 examples/s]Running tokenizer on dataset (num_proc=8):  38%|███▊      | 30/78 [00:07<00:10,  4.46 examples/s]Running tokenizer on dataset (num_proc=8):  51%|█████▏    | 40/78 [00:08<00:07,  5.12 examples/s]Running tokenizer on dataset (num_proc=8):  64%|██████▍   | 50/78 [00:11<00:06,  4.62 examples/s]Running tokenizer on dataset (num_proc=8):  77%|███████▋  | 60/78 [00:12<00:03,  5.31 examples/s]Running tokenizer on dataset (num_proc=8):  88%|████████▊ | 69/78 [00:13<00:01,  5.69 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 78/78 [00:15<00:00,  5.44 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 78/78 [00:15<00:00,  4.92 examples/s]
+eval example:
+input_ids:
+[151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, 151645, 198, 151644, 872, 198, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 14880, 100374, 43288, 23, 116226, 102650, 33108, 100431, 109502, 65577, 101042, 107083, 87140, 1773, 14880, 99799, 101118, 102650, 5373, 102718, 87335, 5373, 116270, 5373, 108872, 101034, 105761, 1773, 87335, 65577, 5122, 112829, 100439, 33108, 33071, 99424, 18830, 100145, 101037, 11319, 659, 4891, 245, 107, 1773, 107307, 112829, 100439, 80158, 104022, 56568, 33071, 99424, 117489, 101037, 11319, 105092, 99520, 103924, 3837, 104367, 104535, 106998, 101807, 100517, 33071, 112829, 100439, 3837, 100624, 56568, 117234, 102201, 18830, 23, 15, 4, 104571, 36993, 49828, 99796, 99487, 101807, 100517, 33071, 44793, 100439, 1773, 35946, 81596, 99601, 99882, 47815, 100205, 112829, 9370, 99376, 100088, 100517, 99252, 103924, 3837, 100131, 101045, 107516, 88051, 100517, 101304, 1773, 88051, 100517, 101304, 18493, 56568, 101099, 105398, 31843, 99719, 117400, 103920, 3837, 106998, 99405, 115340, 34187, 3837, 112505, 107257, 100489, 99918, 118039, 71268, 89012, 99733, 100493, 100373, 103920, 3837, 88051, 100517, 103939, 99793, 1773, 105684, 106998, 85336, 105593, 99719, 102342, 99692, 100371, 85336, 107140, 3837, 113780, 100503, 57750, 101938, 101304, 100856, 102176, 1773, 99999, 101036, 101932, 99883, 101036, 3837, 112829, 100439, 102410, 99557, 101883, 105990, 62112, 1773, 101063, 99557, 16530, 29077, 16628, 99424, 87267, 101063, 3837, 100131, 74763, 102410, 36993, 107558, 101099, 9370, 31843, 99719, 100347, 101883, 101933, 105802, 100145, 1773, 104198, 105516, 21287, 3837, 100020, 35946, 3837, 114130, 107971, 9370, 100322, 69526, 100032, 28919, 107083, 87140, 64471, 100409, 117828, 14, 108589, 43815, 9909, 104210, 101294, 102109, 57191, 103666, 99285, 104287, 3837, 57191, 118516, 104229, 7552, 11319, 14880, 91680, 11622, 46944, 105205, 110011, 102104, 5122, 9454, 92313, 2308, 1773, 151645, 198, 151644, 77091, 198, 2753, 151645, 198]
+inputs:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|>请结合这8帧画面和下面的文字记录分析这段视频。请综合考虑画面、屏幕文字、手势、符号以及语音。文字记录：阴道炎和性生活有关系吗？ . 嗯。得了阴道炎就证明你性生活紊乱吗？显然不是啊，每一个女生比如说霉菌性阴道炎，那么你终生大概有80%的机会会得一次这个霉菌性道炎。我么现在叫外阴阴道的念珠菌病啊，但是其实就是一个真菌感染。真菌感染在你身体体内内环境失调的时候，比如说吃抗生素了，把这个正常的乳酸杆菌都给杀灭掉的时候，真菌就会起来。当你比如说去了一些环境不太好的地方去游泳，哪怕是幼女都会感染滴虫。所以呢整体来说呢，阴道炎有可能跟一些外界因。有关跟不接新生活可能有关，但是也有可能会跟你身体的内环境出现一些改变是有关系。我是光明生，关注我，了解更多靠谱的坦科知识。。这段视频是否属于仇恨/有害内容（基于身份攻击或贬低他人，或宣扬伤害）？请只用一个英文单词回答：Yes 或 No。<|im_end|>
+<|im_start|>assistant
+No<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 2753, 151645, 198]
+labels:
+No<|im_end|>
+
+[INFO|hub.py:302] 2026-07-08 06:50:14,223 >> Offline mode: forcing local_files_only=True
+[INFO|configuration_utils.py:699] 2026-07-08 06:50:14,224 >> loading configuration file config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/config.json
+[INFO|configuration_utils.py:771] 2026-07-08 06:50:14,227 >> Model config Qwen2_5_VLConfig {
+  "_name_or_path": "Qwen/Qwen2.5-VL-7B-Instruct",
+  "architectures": [
+    "Qwen2_5_VLForConditionalGeneration"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "eos_token_id": 151645,
+  "hidden_act": "silu",
+  "hidden_size": 3584,
+  "image_token_id": 151655,
+  "initializer_range": 0.02,
+  "intermediate_size": 18944,
+  "max_position_embeddings": 128000,
+  "max_window_layers": 28,
+  "model_type": "qwen2_5_vl",
+  "num_attention_heads": 28,
+  "num_hidden_layers": 28,
+  "num_key_value_heads": 4,
+  "rms_norm_eps": 1e-06,
+  "rope_scaling": {
+    "mrope_section": [
+      16,
+      24,
+      24
+    ],
+    "rope_type": "default",
+    "type": "default"
+  },
+  "rope_theta": 1000000.0,
+  "sliding_window": 32768,
+  "tie_word_embeddings": false,
+  "torch_dtype": "bfloat16",
+  "transformers_version": "4.49.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "video_token_id": 151656,
+  "vision_config": {
+    "hidden_size": 1280,
+    "in_chans": 3,
+    "model_type": "qwen2_5_vl",
+    "spatial_patch_size": 14,
+    "tokens_per_second": 2
+  },
+  "vision_end_token_id": 151653,
+  "vision_start_token_id": 151652,
+  "vision_token_id": 151654,
+  "vocab_size": 152064
+}
+
+[INFO|2026-07-08 06:50:14] llamafactory.model.model_utils.kv_cache:143 >> KV cache is disabled during training.
+[INFO|hub.py:302] 2026-07-08 06:50:14,235 >> Offline mode: forcing local_files_only=True
+[INFO|hub.py:302] 2026-07-08 06:50:14,239 >> Offline mode: forcing local_files_only=True
+[INFO|modeling_utils.py:3641] 2026-07-08 06:50:14,239 >> Offline mode: forcing local_files_only=True
+[INFO|modeling_utils.py:3982] 2026-07-08 06:50:14,240 >> loading weights file model.safetensors from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/model.safetensors.index.json
+[INFO|modeling_utils.py:1633] 2026-07-08 06:50:14,241 >> Instantiating Qwen2_5_VLForConditionalGeneration model under default dtype torch.bfloat16.
+[INFO|configuration_utils.py:1140] 2026-07-08 06:50:14,244 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "eos_token_id": 151645,
+  "use_cache": false
+}
+
+[INFO|modeling_utils.py:1633] 2026-07-08 06:50:14,244 >> Instantiating Qwen2_5_VisionTransformerPretrainedModel model under default dtype torch.bfloat16.
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:01<00:04,  1.20s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:02<00:03,  1.10s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:03<00:02,  1.08s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:04<00:01,  1.09s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:04<00:00,  1.10it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:04<00:00,  1.00it/s]
+[INFO|modeling_utils.py:4970] 2026-07-08 06:50:19,318 >> All model checkpoint weights were used when initializing Qwen2_5_VLForConditionalGeneration.
+
+[INFO|modeling_utils.py:4978] 2026-07-08 06:50:19,318 >> All the weights of Qwen2_5_VLForConditionalGeneration were initialized from the model checkpoint at Qwen/Qwen2.5-VL-7B-Instruct.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use Qwen2_5_VLForConditionalGeneration for predictions without further training.
+[INFO|configuration_utils.py:1095] 2026-07-08 06:50:19,379 >> loading configuration file generation_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/generation_config.json
+[INFO|configuration_utils.py:1140] 2026-07-08 06:50:19,379 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "do_sample": true,
+  "eos_token_id": [
+    151645,
+    151643
+  ],
+  "pad_token_id": 151643,
+  "repetition_penalty": 1.05,
+  "temperature": 1e-06
+}
+
+[INFO|2026-07-08 06:50:19] llamafactory.model.model_utils.checkpointing:143 >> Gradient checkpointing enabled.
+[INFO|2026-07-08 06:50:19] llamafactory.model.model_utils.attention:143 >> Using torch SDPA for faster training and inference.
+[INFO|2026-07-08 06:50:19] llamafactory.model.adapter:143 >> Upcasting trainable params to float32.
+[INFO|2026-07-08 06:50:19] llamafactory.model.adapter:143 >> Fine-tuning method: LoRA
+[INFO|2026-07-08 06:50:19] llamafactory.model.model_utils.misc:143 >> Found linear modules: o_proj,down_proj,q_proj,up_proj,k_proj,gate_proj,v_proj
+[INFO|2026-07-08 06:50:19] llamafactory.model.model_utils.visual:143 >> Set vision model not trainable: ['visual.patch_embed', 'visual.blocks'].
+[INFO|2026-07-08 06:50:19] llamafactory.model.model_utils.visual:143 >> Set multi model projector not trainable: visual.merger.
+[INFO|2026-07-08 06:50:28] llamafactory.model.loader:143 >> trainable params: 322,961,408 || all params: 8,615,128,064 || trainable%: 3.7488
+/data/jehc223/RGCL/RA-HMD/LLAMA-FACTORY-Ver202512/src/llamafactory/train/sft_classifier/trainer.py:85: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `CustomSeq2SeqRegressionTrainer.__init__`. Use `processing_class` instead.
+  super().__init__(**kwargs)
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+[INFO|trainer.py:696] 2026-07-08 06:50:28,106 >> max_steps is given, it will override any value given in num_train_epochs
+[INFO|trainer.py:746] 2026-07-08 06:50:28,106 >> Using auto half precision backend
+[WARNING|trainer.py:814] 2026-07-08 06:50:28,107 >> Trainer.tokenizer is now deprecated. You should use Trainer.processing_class instead.
+[INFO|trainer.py:2405] 2026-07-08 06:50:28,426 >> ***** Running training *****
+[INFO|trainer.py:2406] 2026-07-08 06:50:28,426 >>   Num examples = 579
+[INFO|trainer.py:2407] 2026-07-08 06:50:28,426 >>   Num Epochs = 1
+[INFO|trainer.py:2408] 2026-07-08 06:50:28,426 >>   Instantaneous batch size per device = 1
+[INFO|trainer.py:2411] 2026-07-08 06:50:28,426 >>   Total train batch size (w. parallel, distributed & accumulation) = 16
+[INFO|trainer.py:2412] 2026-07-08 06:50:28,426 >>   Gradient Accumulation steps = 16
+[INFO|trainer.py:2413] 2026-07-08 06:50:28,426 >>   Total optimization steps = 20
+[INFO|trainer.py:2414] 2026-07-08 06:50:28,429 >>   Number of trainable parameters = 326,633,473
+  0%|          | 0/20 [00:00<?, ?it/s]Start to reindex dense retrieval index
+  5%|▌         | 1/20 [06:35<2:05:22, 395.92s/it] 10%|█         | 2/20 [06:50<51:33, 171.85s/it]   15%|█▌        | 3/20 [07:05<28:22, 100.16s/it] 20%|██        | 4/20 [07:20<17:45, 66.62s/it]  25%|██▌       | 5/20 [07:36<12:00, 48.02s/it]                                              {'loss': 1.1691, 'lm_loss': 0.3291, 'classification_loss': 0.84, 'rgcl_loss': 0.58, 'in_batch_negative_loss': 0.0, 'negative_loss': 2.249, 'positive_loss': 2.6906, 'grad_norm': 16.81159782409668, 'learning_rate': 3.732050807568878e-05, 'epoch': 0.14}
+ 25%|██▌       | 5/20 [07:36<12:00, 48.02s/it] 30%|███       | 6/20 [07:51<08:36, 36.91s/it] 35%|███▌      | 7/20 [08:06<06:28, 29.88s/it] 40%|████      | 8/20 [08:20<04:58, 24.85s/it] 45%|████▌     | 9/20 [08:35<03:59, 21.80s/it] 50%|█████     | 10/20 [08:50<03:16, 19.61s/it]                                               {'loss': 0.6401, 'lm_loss': 0.1558, 'classification_loss': 0.4843, 'rgcl_loss': 0.6918, 'in_batch_negative_loss': 0.0, 'negative_loss': 2.5502, 'positive_loss': 2.5573, 'grad_norm': 4.282116889953613, 'learning_rate': 2.3472963553338614e-05, 'epoch': 0.28}
+ 50%|█████     | 10/20 [08:50<03:16, 19.61s/it] 55%|█████▌    | 11/20 [09:05<02:42, 18.04s/it] 60%|██████    | 12/20 [09:19<02:15, 16.93s/it] 65%|██████▌   | 13/20 [09:34<01:53, 16.26s/it] 70%|███████   | 14/20 [09:48<01:34, 15.67s/it] 75%|███████▌  | 15/20 [10:03<01:16, 15.32s/it]                                               {'loss': 0.7863, 'lm_loss': 0.1869, 'classification_loss': 0.5994, 'rgcl_loss': 0.6924, 'in_batch_negative_loss': 0.0, 'negative_loss': 2.5013, 'positive_loss': 2.505, 'grad_norm': 12.180327415466309, 'learning_rate': 7.1442478062692135e-06, 'epoch': 0.41}
+ 75%|███████▌  | 15/20 [10:03<01:16, 15.32s/it] 80%|████████  | 16/20 [10:17<01:00, 15.13s/it] 85%|████████▌ | 17/20 [10:32<00:45, 15.01s/it] 90%|█████████ | 18/20 [10:47<00:29, 14.99s/it] 95%|█████████▌| 19/20 [11:02<00:14, 14.93s/it]100%|██████████| 20/20 [11:16<00:00, 14.83s/it]                                               {'loss': 0.715, 'lm_loss': 0.1587, 'classification_loss': 0.5564, 'rgcl_loss': 0.6921, 'in_batch_negative_loss': 0.0, 'negative_loss': 2.4916, 'positive_loss': 2.4967, 'grad_norm': 19.44930076599121, 'learning_rate': 0.0, 'epoch': 0.55}
+100%|██████████| 20/20 [11:16<00:00, 14.83s/it][INFO|2026-07-08 07:01:45] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 07:01:45] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 78
+[INFO|2026-07-08 07:01:45] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 1
+
+  0%|          | 0/78 [00:00<?, ?it/s][A
+  3%|▎         | 2/78 [00:00<00:23,  3.20it/s][A
+  4%|▍         | 3/78 [00:01<00:32,  2.28it/s][A
+  5%|▌         | 4/78 [00:01<00:37,  1.97it/s][A
+  6%|▋         | 5/78 [00:02<00:40,  1.78it/s][A
+  8%|▊         | 6/78 [00:03<00:42,  1.68it/s][A
+  9%|▉         | 7/78 [00:03<00:44,  1.60it/s][A
+ 10%|█         | 8/78 [00:04<00:42,  1.64it/s][A
+ 12%|█▏        | 9/78 [00:05<00:42,  1.63it/s][A
+ 13%|█▎        | 10/78 [00:05<00:41,  1.64it/s][A
+ 14%|█▍        | 11/78 [00:06<00:42,  1.56it/s][A
+ 15%|█▌        | 12/78 [00:06<00:40,  1.62it/s][A
+ 17%|█▋        | 13/78 [00:07<00:40,  1.61it/s][A
+ 18%|█▊        | 14/78 [00:08<00:41,  1.55it/s][A
+ 19%|█▉        | 15/78 [00:08<00:39,  1.59it/s][A
+ 21%|██        | 16/78 [00:09<00:38,  1.63it/s][A
+ 22%|██▏       | 17/78 [00:10<00:36,  1.65it/s][A
+ 23%|██▎       | 18/78 [00:10<00:38,  1.58it/s][A
+ 24%|██▍       | 19/78 [00:11<00:37,  1.59it/s][A
+ 26%|██▌       | 20/78 [00:12<00:36,  1.57it/s][A
+ 27%|██▋       | 21/78 [00:12<00:36,  1.54it/s][A
+ 28%|██▊       | 22/78 [00:13<00:35,  1.57it/s][A
+ 29%|██▉       | 23/78 [00:13<00:33,  1.64it/s][A
+ 31%|███       | 24/78 [00:14<00:33,  1.59it/s][A
+ 32%|███▏      | 25/78 [00:15<00:34,  1.55it/s][A
+ 33%|███▎      | 26/78 [00:15<00:32,  1.60it/s][A
+ 35%|███▍      | 27/78 [00:16<00:32,  1.56it/s][A
+ 36%|███▌      | 28/78 [00:17<00:32,  1.53it/s][A
+ 37%|███▋      | 29/78 [00:17<00:32,  1.49it/s][A
+ 38%|███▊      | 30/78 [00:18<00:30,  1.55it/s][A
+ 40%|███▉      | 31/78 [00:19<00:31,  1.51it/s][A
+ 41%|████      | 32/78 [00:19<00:29,  1.55it/s][A
+ 42%|████▏     | 33/78 [00:20<00:29,  1.51it/s][A
+ 44%|████▎     | 34/78 [00:21<00:28,  1.55it/s][A
+ 45%|████▍     | 35/78 [00:21<00:28,  1.51it/s][A
+ 46%|████▌     | 36/78 [00:22<00:28,  1.49it/s][A
+ 47%|████▋     | 37/78 [00:23<00:26,  1.55it/s][A
+ 49%|████▊     | 38/78 [00:23<00:25,  1.57it/s][A
+ 50%|█████     | 39/78 [00:24<00:24,  1.62it/s][A
+ 51%|█████▏    | 40/78 [00:24<00:23,  1.62it/s][A
+ 53%|█████▎    | 41/78 [00:25<00:28,  1.30it/s][A
+ 54%|█████▍    | 42/78 [00:26<00:25,  1.39it/s][A
+ 55%|█████▌    | 43/78 [00:27<00:23,  1.47it/s][A
+ 56%|█████▋    | 44/78 [00:27<00:23,  1.45it/s][A
+ 58%|█████▊    | 45/78 [00:28<00:23,  1.43it/s][A
+ 59%|█████▉    | 46/78 [00:29<00:21,  1.47it/s][A
+ 60%|██████    | 47/78 [00:29<00:21,  1.47it/s][A
+ 62%|██████▏   | 48/78 [00:30<00:20,  1.45it/s][A
+ 63%|██████▎   | 49/78 [00:31<00:20,  1.43it/s][A
+ 64%|██████▍   | 50/78 [00:32<00:19,  1.42it/s][A
+ 65%|██████▌   | 51/78 [00:32<00:18,  1.46it/s][A
+ 67%|██████▋   | 52/78 [00:33<00:17,  1.50it/s][A
+ 68%|██████▊   | 53/78 [00:34<00:17,  1.46it/s][A
+ 69%|██████▉   | 54/78 [00:34<00:16,  1.44it/s][A
+ 71%|███████   | 55/78 [00:35<00:15,  1.50it/s][A
+ 72%|███████▏  | 56/78 [00:36<00:15,  1.45it/s][A
+ 73%|███████▎  | 57/78 [00:36<00:14,  1.44it/s][A
+ 74%|███████▍  | 58/78 [00:37<00:13,  1.48it/s][A
+ 76%|███████▌  | 59/78 [00:38<00:12,  1.54it/s][A
+ 77%|███████▋  | 60/78 [00:38<00:11,  1.56it/s][A
+ 78%|███████▊  | 61/78 [00:39<00:11,  1.51it/s][A
+ 79%|███████▉  | 62/78 [00:40<00:10,  1.52it/s][A
+ 81%|████████  | 63/78 [00:40<00:09,  1.54it/s][A
+ 82%|████████▏ | 64/78 [00:41<00:09,  1.51it/s][A
+ 83%|████████▎ | 65/78 [00:41<00:08,  1.55it/s][A
+ 85%|████████▍ | 66/78 [00:42<00:07,  1.50it/s][A
+ 86%|████████▌ | 67/78 [00:43<00:07,  1.50it/s][A
+ 87%|████████▋ | 68/78 [00:43<00:06,  1.54it/s][A
+ 88%|████████▊ | 69/78 [00:44<00:06,  1.49it/s][A
+ 90%|████████▉ | 70/78 [00:45<00:05,  1.50it/s][A
+ 91%|█████████ | 71/78 [00:45<00:04,  1.54it/s][A
+ 92%|█████████▏| 72/78 [00:46<00:04,  1.48it/s][A
+ 94%|█████████▎| 73/78 [00:47<00:03,  1.52it/s][A
+ 95%|█████████▍| 74/78 [00:47<00:02,  1.50it/s][A
+ 96%|█████████▌| 75/78 [00:48<00:02,  1.48it/s][A
+ 97%|█████████▋| 76/78 [00:49<00:01,  1.46it/s][A
+ 99%|█████████▊| 77/78 [00:50<00:00,  1.44it/s][A
+100%|██████████| 78/78 [00:50<00:00,  1.59it/s][AAccuracy: 0.7564, AUROC: 0.8829, Precision: 0.6098, Recall: 0.8929, F1: 0.7246
+                                               
+                                               [A{'eval_loss': 0.6740909814834595, 'eval_lm_loss': 0.14007128775119781, 'eval_classification_loss': 0.5340198874473572, 'eval_accuracy': 0.7564102411270142, 'eval_auroc': 0.8828571438789368, 'eval_precision': 0.6097561120986938, 'eval_recall': 0.8928571343421936, 'eval_f1': 0.7246376872062683, 'eval_runtime': 51.4265, 'eval_samples_per_second': 1.517, 'eval_steps_per_second': 1.517, 'epoch': 0.55}
+100%|██████████| 20/20 [12:08<00:00, 14.83s/it]
+100%|██████████| 78/78 [00:50<00:00,  1.59it/s][A
+                                               [A[INFO|trainer.py:3942] 2026-07-08 07:02:36,676 >> Saving model checkpoint to /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20
+/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/peft/utils/save_and_load.py:246: UserWarning: Could not find a config file in Qwen/Qwen2.5-VL-7B-Instruct - will assume that the vocabulary was not modified.
+  warnings.warn(
+[INFO|tokenization_utils_base.py:2500] 2026-07-08 07:02:37,852 >> tokenizer config file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2509] 2026-07-08 07:02:37,852 >> Special tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20/special_tokens_map.json
+[INFO|tokenization_utils_base.py:2562] 2026-07-08 07:02:37,853 >> added tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20/added_tokens.json
+[INFO|image_processing_base.py:261] 2026-07-08 07:02:40,832 >> Image processor saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20/preprocessor_config.json
+[INFO|tokenization_utils_base.py:2500] 2026-07-08 07:02:40,835 >> tokenizer config file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2509] 2026-07-08 07:02:40,836 >> Special tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20/special_tokens_map.json
+[INFO|tokenization_utils_base.py:2562] 2026-07-08 07:02:40,836 >> added tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20/added_tokens.json
+[INFO|processing_utils.py:638] 2026-07-08 07:02:41,580 >> chat template saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/checkpoint-20/chat_template.json
+[INFO|trainer.py:2657] 2026-07-08 07:02:41,580 >> 
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+                                               {'train_runtime': 733.1507, 'train_samples_per_second': 0.436, 'train_steps_per_second': 0.027, 'train_loss': 0.8276432037353516, 'epoch': 0.55}
+100%|██████████| 20/20 [12:13<00:00, 14.83s/it]100%|██████████| 20/20 [12:13<00:00, 36.66s/it]
+[INFO|image_processing_base.py:261] 2026-07-08 07:02:41,582 >> Image processor saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/preprocessor_config.json
+[INFO|tokenization_utils_base.py:2500] 2026-07-08 07:02:41,582 >> tokenizer config file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2509] 2026-07-08 07:02:41,583 >> Special tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/special_tokens_map.json
+[INFO|tokenization_utils_base.py:2562] 2026-07-08 07:02:41,583 >> added tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/added_tokens.json
+[INFO|processing_utils.py:638] 2026-07-08 07:02:42,326 >> chat template saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/chat_template.json
+[INFO|trainer.py:3942] 2026-07-08 07:02:42,327 >> Saving model checkpoint to /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0
+/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/peft/utils/save_and_load.py:246: UserWarning: Could not find a config file in Qwen/Qwen2.5-VL-7B-Instruct - will assume that the vocabulary was not modified.
+  warnings.warn(
+[INFO|tokenization_utils_base.py:2500] 2026-07-08 07:02:43,379 >> tokenizer config file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2509] 2026-07-08 07:02:43,379 >> Special tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/special_tokens_map.json
+[INFO|tokenization_utils_base.py:2562] 2026-07-08 07:02:43,379 >> added tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/added_tokens.json
+***** train metrics *****
+  epoch                    =     0.5527
+  total_flos               = 12577278GF
+  train_loss               =     0.8276
+  train_runtime            = 0:12:13.15
+  train_samples_per_second =      0.436
+  train_steps_per_second   =      0.027
+Figure saved at: /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/training_loss.png
+Figure saved at: /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/training_eval_loss.png
+Figure saved at: /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_zh_d3lam0_s0/training_eval_accuracy.png
+[INFO|2026-07-08 07:02:43] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 07:02:43] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 78
+[INFO|2026-07-08 07:02:43] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 1
+  0%|          | 0/78 [00:00<?, ?it/s]  3%|▎         | 2/78 [00:00<00:24,  3.09it/s]  4%|▍         | 3/78 [00:01<00:33,  2.21it/s]  5%|▌         | 4/78 [00:01<00:38,  1.90it/s]  6%|▋         | 5/78 [00:02<00:42,  1.73it/s]  8%|▊         | 6/78 [00:03<00:44,  1.63it/s]  9%|▉         | 7/78 [00:03<00:45,  1.56it/s] 10%|█         | 8/78 [00:04<00:43,  1.60it/s] 12%|█▏        | 9/78 [00:05<00:43,  1.60it/s] 13%|█▎        | 10/78 [00:05<00:42,  1.62it/s] 14%|█▍        | 11/78 [00:06<00:43,  1.56it/s] 15%|█▌        | 12/78 [00:07<00:40,  1.63it/s] 17%|█▋        | 13/78 [00:07<00:39,  1.63it/s] 18%|█▊        | 14/78 [00:08<00:40,  1.58it/s] 19%|█▉        | 15/78 [00:08<00:38,  1.63it/s] 21%|██        | 16/78 [00:09<00:37,  1.67it/s] 22%|██▏       | 17/78 [00:10<00:35,  1.70it/s] 23%|██▎       | 18/78 [00:10<00:37,  1.62it/s] 24%|██▍       | 19/78 [00:11<00:36,  1.63it/s] 26%|██▌       | 20/78 [00:11<00:35,  1.62it/s] 27%|██▋       | 21/78 [00:12<00:36,  1.57it/s] 28%|██▊       | 22/78 [00:13<00:34,  1.61it/s] 29%|██▉       | 23/78 [00:13<00:32,  1.67it/s] 31%|███       | 24/78 [00:14<00:33,  1.60it/s] 32%|███▏      | 25/78 [00:15<00:34,  1.55it/s] 33%|███▎      | 26/78 [00:15<00:32,  1.60it/s] 35%|███▍      | 27/78 [00:16<00:33,  1.54it/s] 36%|███▌      | 28/78 [00:17<00:32,  1.52it/s] 37%|███▋      | 29/78 [00:17<00:32,  1.51it/s] 38%|███▊      | 30/78 [00:18<00:30,  1.59it/s] 40%|███▉      | 31/78 [00:19<00:30,  1.55it/s] 41%|████      | 32/78 [00:19<00:29,  1.59it/s] 42%|████▏     | 33/78 [00:20<00:29,  1.54it/s] 44%|████▎     | 34/78 [00:20<00:27,  1.58it/s] 45%|████▍     | 35/78 [00:21<00:27,  1.54it/s] 46%|████▌     | 36/78 [00:22<00:27,  1.52it/s] 47%|████▋     | 37/78 [00:22<00:25,  1.59it/s] 49%|████▊     | 38/78 [00:23<00:24,  1.61it/s] 50%|█████     | 39/78 [00:23<00:23,  1.67it/s] 51%|█████▏    | 40/78 [00:24<00:22,  1.66it/s] 53%|█████▎    | 41/78 [00:25<00:27,  1.32it/s] 54%|█████▍    | 42/78 [00:26<00:25,  1.42it/s] 55%|█████▌    | 43/78 [00:26<00:23,  1.49it/s] 56%|█████▋    | 44/78 [00:27<00:22,  1.49it/s] 58%|█████▊    | 45/78 [00:28<00:22,  1.48it/s] 59%|█████▉    | 46/78 [00:28<00:20,  1.52it/s] 60%|██████    | 47/78 [00:29<00:20,  1.54it/s] 62%|██████▏   | 48/78 [00:30<00:19,  1.52it/s] 63%|██████▎   | 49/78 [00:30<00:19,  1.49it/s] 64%|██████▍   | 50/78 [00:31<00:18,  1.49it/s] 65%|██████▌   | 51/78 [00:32<00:17,  1.53it/s] 67%|██████▋   | 52/78 [00:32<00:16,  1.59it/s] 68%|██████▊   | 53/78 [00:33<00:16,  1.54it/s] 69%|██████▉   | 54/78 [00:34<00:15,  1.52it/s] 71%|███████   | 55/78 [00:34<00:14,  1.58it/s] 72%|███████▏  | 56/78 [00:35<00:14,  1.51it/s] 73%|███████▎  | 57/78 [00:36<00:14,  1.49it/s] 74%|███████▍  | 58/78 [00:36<00:13,  1.52it/s] 76%|███████▌  | 59/78 [00:37<00:12,  1.58it/s] 77%|███████▋  | 60/78 [00:37<00:11,  1.59it/s] 78%|███████▊  | 61/78 [00:38<00:11,  1.53it/s] 79%|███████▉  | 62/78 [00:39<00:10,  1.54it/s] 81%|████████  | 63/78 [00:39<00:09,  1.55it/s] 82%|████████▏ | 64/78 [00:40<00:09,  1.52it/s] 83%|████████▎ | 65/78 [00:41<00:08,  1.56it/s] 85%|████████▍ | 66/78 [00:41<00:07,  1.51it/s] 86%|████████▌ | 67/78 [00:42<00:07,  1.51it/s] 87%|████████▋ | 68/78 [00:43<00:06,  1.55it/s] 88%|████████▊ | 69/78 [00:43<00:05,  1.50it/s] 90%|████████▉ | 70/78 [00:44<00:05,  1.51it/s] 91%|█████████ | 71/78 [00:45<00:04,  1.56it/s] 92%|█████████▏| 72/78 [00:45<00:04,  1.49it/s] 94%|█████████▎| 73/78 [00:46<00:03,  1.53it/s] 95%|█████████▍| 74/78 [00:47<00:02,  1.52it/s] 96%|█████████▌| 75/78 [00:47<00:01,  1.51it/s] 97%|█████████▋| 76/78 [00:48<00:01,  1.49it/s] 99%|█████████▊| 77/78 [00:49<00:00,  1.49it/s]100%|██████████| 78/78 [00:49<00:00,  1.63it/s]Accuracy: 0.7564, AUROC: 0.8829, Precision: 0.6098, Recall: 0.8929, F1: 0.7246
+100%|██████████| 78/78 [00:49<00:00,  1.57it/s]
+***** eval metrics *****
+  epoch                    =     0.5527
+  eval_accuracy            =     0.7564
+  eval_auroc               =     0.8829
+  eval_classification_loss =      0.534
+  eval_f1                  =     0.7246
+  eval_lm_loss             =     0.1401
+  eval_loss                =     0.6741
+  eval_precision           =     0.6098
+  eval_recall              =     0.8929
+  eval_runtime             = 0:00:50.58
+  eval_samples_per_second  =      1.542
+  eval_steps_per_second    =      1.542
+[INFO|modelcard.py:449] 2026-07-08 07:03:34,590 >> Dropping the following result as it does not have all the necessary fields:
+{'task': {'name': 'Causal Language Modeling', 'type': 'text-generation'}, 'metrics': [{'name': 'Accuracy', 'type': 'accuracy', 'value': 0.7564102411270142}, {'name': 'Precision', 'type': 'precision', 'value': 0.6097561120986938}, {'name': 'Recall', 'type': 'recall', 'value': 0.8928571343421936}, {'name': 'F1', 'type': 'f1', 'value': 0.7246376872062683}]}
+
+real	14m24.637s
+user	20m25.859s
+sys	0m24.699s
+[p9train] DONE

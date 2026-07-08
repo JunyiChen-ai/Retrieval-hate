@@ -1,0 +1,500 @@
+[2026-07-08 14:30:23] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-08 14:30:23] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-08 14:30:23] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-08 14:30:23] [disk_guard] WARNING: could not determine quota usage from 'quota -s'. Doing NOTHING destructive.
+[2026-07-08 14:30:23] [disk_guard] ==== disk_guard end (usage unknown) ====
+NVIDIA A100-SXM4-80GB, 81920 MiB
+[p9train] python src/train.py /data/jehc223/RGCL/RA-HMD/LLAMA-FACTORY-Ver202512/my_configs/hatevideo/p9_mhc_d3f4_s2.yaml
+[WARNING|2026-07-08 14:30:28] llamafactory.extras.misc:154 >> Version checking has been disabled, may lead to unexpected behaviors.
+[2026-07-08 14:30:29,224] [INFO] [real_accelerator.py:222:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/jieba/_compat.py:18: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[INFO|2026-07-08 14:30:32] llamafactory.hparams.parser:468 >> Process rank: 0, world size: 1, device: cuda:0, distributed training: False, compute dtype: torch.bfloat16
+[INFO|hub.py:302] 2026-07-08 14:30:32,002 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:1930] 2026-07-08 14:30:32,003 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,003 >> loading file vocab.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/vocab.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,004 >> loading file merges.txt from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/merges.txt
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,004 >> loading file added_tokens.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,004 >> loading file special_tokens_map.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,004 >> loading file tokenizer_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,004 >> loading file tokenizer.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,004 >> loading file chat_template.jinja from cache at None
+[INFO|tokenization_utils_base.py:2313] 2026-07-08 14:30:32,215 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[INFO|hub.py:302] 2026-07-08 14:30:32,216 >> Offline mode: forcing local_files_only=True
+[INFO|hub.py:302] 2026-07-08 14:30:32,216 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:324] 2026-07-08 14:30:32,216 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:381] 2026-07-08 14:30:32,217 >> loading configuration file preprocessor_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/preprocessor_config.json
+[INFO|image_processing_base.py:324] 2026-07-08 14:30:32,218 >> Offline mode: forcing local_files_only=True
+[INFO|image_processing_base.py:381] 2026-07-08 14:30:32,218 >> loading configuration file preprocessor_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/preprocessor_config.json
+[INFO|image_processing_base.py:434] 2026-07-08 14:30:32,219 >> Image processor Qwen2VLImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.48145466,
+    0.4578275,
+    0.40821073
+  ],
+  "image_processor_type": "Qwen2VLImageProcessor",
+  "image_std": [
+    0.26862954,
+    0.26130258,
+    0.27577711
+  ],
+  "max_pixels": 12845056,
+  "merge_size": 2,
+  "min_pixels": 3136,
+  "patch_size": 14,
+  "processor_class": "Qwen2_5_VLProcessor",
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "longest_edge": 12845056,
+    "shortest_edge": 3136
+  },
+  "temporal_patch_size": 2
+}
+
+[INFO|tokenization_utils_base.py:1930] 2026-07-08 14:30:32,219 >> Offline mode: forcing local_files_only=True
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,220 >> loading file vocab.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/vocab.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,220 >> loading file merges.txt from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/merges.txt
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,220 >> loading file added_tokens.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,220 >> loading file special_tokens_map.json from cache at None
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,220 >> loading file tokenizer_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,220 >> loading file tokenizer.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/tokenizer.json
+[INFO|tokenization_utils_base.py:2050] 2026-07-08 14:30:32,220 >> loading file chat_template.jinja from cache at None
+[INFO|tokenization_utils_base.py:2313] 2026-07-08 14:30:32,418 >> Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+[INFO|processing_utils.py:694] 2026-07-08 14:30:32,418 >> Offline mode: forcing local_files_only=True
+[INFO|processing_utils.py:876] 2026-07-08 14:30:32,885 >> Processor Qwen2_5_VLProcessor:
+- image_processor: Qwen2VLImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.48145466,
+    0.4578275,
+    0.40821073
+  ],
+  "image_processor_type": "Qwen2VLImageProcessor",
+  "image_std": [
+    0.26862954,
+    0.26130258,
+    0.27577711
+  ],
+  "max_pixels": 12845056,
+  "merge_size": 2,
+  "min_pixels": 3136,
+  "patch_size": 14,
+  "processor_class": "Qwen2_5_VLProcessor",
+  "resample": 3,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "longest_edge": 12845056,
+    "shortest_edge": 3136
+  },
+  "temporal_patch_size": 2
+}
+
+- tokenizer: Qwen2Tokenizer(name_or_path='Qwen/Qwen2.5-VL-7B-Instruct', vocab_size=151643, model_max_length=131072, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'eos_token': '<|im_end|>', 'pad_token': '<|endoftext|>', 'additional_special_tokens': ['<|im_start|>', '<|im_end|>', '<|object_ref_start|>', '<|object_ref_end|>', '<|box_start|>', '<|box_end|>', '<|quad_start|>', '<|quad_end|>', '<|vision_start|>', '<|vision_end|>', '<|vision_pad|>', '<|image_pad|>', '<|video_pad|>']}, clean_up_tokenization_spaces=False, added_tokens_decoder={
+	151643: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151644: AddedToken("<|im_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151645: AddedToken("<|im_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151646: AddedToken("<|object_ref_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151647: AddedToken("<|object_ref_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151648: AddedToken("<|box_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151649: AddedToken("<|box_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151650: AddedToken("<|quad_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151651: AddedToken("<|quad_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151652: AddedToken("<|vision_start|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151653: AddedToken("<|vision_end|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151654: AddedToken("<|vision_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151655: AddedToken("<|image_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151656: AddedToken("<|video_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	151657: AddedToken("<tool_call>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151658: AddedToken("</tool_call>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151659: AddedToken("<|fim_prefix|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151660: AddedToken("<|fim_middle|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151661: AddedToken("<|fim_suffix|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151662: AddedToken("<|fim_pad|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151663: AddedToken("<|repo_name|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+	151664: AddedToken("<|file_sep|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=False),
+}
+)
+
+{
+  "processor_class": "Qwen2_5_VLProcessor"
+}
+
+[INFO|2026-07-08 14:30:32] llamafactory.data.loader:143 >> Loading dataset /data/jehc223/RGCL/data/lora_sft/MHC/train_yn4.json...
+Converting format of dataset (num_proc=8):   0%|          | 0/549 [00:00<?, ? examples/s]Converting format of dataset (num_proc=8): 100%|██████████| 549/549 [00:00<00:00, 3041.62 examples/s]
+[INFO|2026-07-08 14:30:33] llamafactory.data.loader:143 >> Loading dataset /data/jehc223/RGCL/data/lora_sft/MHC/val_yn4.json...
+Converting format of dataset (num_proc=8):   0%|          | 0/80 [00:00<?, ? examples/s]Converting format of dataset (num_proc=8): 100%|██████████| 80/80 [00:00<00:00, 507.52 examples/s]
+Running tokenizer on dataset (num_proc=8):   0%|          | 0/549 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=8):  13%|█▎        | 69/549 [00:07<00:53,  8.89 examples/s]Running tokenizer on dataset (num_proc=8):  25%|██▌       | 138/549 [00:10<00:27, 15.10 examples/s]Running tokenizer on dataset (num_proc=8):  38%|███▊      | 207/549 [00:11<00:16, 20.79 examples/s]Running tokenizer on dataset (num_proc=8):  50%|█████     | 276/549 [00:13<00:10, 26.15 examples/s]Running tokenizer on dataset (num_proc=8):  63%|██████▎   | 345/549 [00:15<00:06, 31.07 examples/s]Running tokenizer on dataset (num_proc=8):  75%|███████▌  | 413/549 [00:17<00:04, 28.38 examples/s]Running tokenizer on dataset (num_proc=8):  88%|████████▊ | 481/549 [00:18<00:02, 34.00 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 549/549 [00:21<00:00, 33.32 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 549/549 [00:21<00:00, 25.90 examples/s]
+training example:
+input_ids:
+[151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, 151645, 198, 151644, 872, 198, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 2082, 55856, 419, 2766, 1667, 279, 220, 19, 14087, 323, 279, 35715, 3685, 13, 21144, 52977, 11, 389, 29260, 1467, 11, 52392, 11, 17738, 11, 323, 8806, 13, 90303, 25, 847, 54541, 11618, 17973, 50629, 17916, 3170, 537, 8, 760, 10319, 4266, 1865, 847, 569, 13, 77, 2596, 2576, 389, 72742, 52854, 760, 671, 591, 261, 671, 6280, 25891, 671, 15587, 4266, 659, 11162, 236, 120, 6713, 944, 279, 3853, 1101, 3783, 53280, 944, 279, 57882, 2525, 11153, 2845, 1187, 13, 358, 1410, 4484, 1449, 728, 1182, 11, 1896, 2524, 1182, 421, 807, 67, 6502, 1182, 279, 4379, 518, 892, 882, 8471, 311, 11466, 13, 146421, 26155, 20327, 476, 11259, 553, 13, 14695, 4633, 264, 1438, 13, 3512, 3259, 752, 22683, 13, 752, 51249, 323, 73853, 1449, 8338, 311, 1378, 52601, 7196, 432, 594, 882, 311, 1077, 882, 496, 2160, 419, 2766, 75715, 476, 27756, 320, 80110, 476, 2429, 68, 596, 1251, 3118, 389, 9569, 11, 476, 38890, 11428, 11843, 21806, 448, 6896, 825, 3409, 25, 7414, 476, 2308, 13, 151645, 198, 151644, 77091, 198, 2753, 151645, 198]
+inputs:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|>Analyze this video using the 4 frames and the transcript below. Consider visuals, on-screen text, gestures, symbols, and speech. Transcript: my queer journey (+hair bc why not) | picrew made my @.nuggts on TikTok | #queer #nonbinary #picrew . 🎼Can't the future just wait.Can't the deadlines come fashionably la. I could push every go back, take control back if theyd roll back the rate at which time starts to fly.🎼Never landing or standing by. Never taking a break. ever making me retry. me nickel and dime every quarter to two.But maybe it's time to let time.. Is this video hateful or harmful (attacks or demeans people based on identity, or promotes harm)? Answer with exactly one word: Yes or No.<|im_end|>
+<|im_start|>assistant
+No<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 2753, 151645, 198]
+labels:
+No<|im_end|>
+
+Running tokenizer on dataset (num_proc=8):   0%|          | 0/80 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=8):  12%|█▎        | 10/80 [00:03<00:21,  3.33 examples/s]Running tokenizer on dataset (num_proc=8):  25%|██▌       | 20/80 [00:04<00:13,  4.53 examples/s]Running tokenizer on dataset (num_proc=8):  38%|███▊      | 30/80 [00:06<00:10,  4.93 examples/s]Running tokenizer on dataset (num_proc=8):  50%|█████     | 40/80 [00:08<00:07,  5.10 examples/s]Running tokenizer on dataset (num_proc=8):  62%|██████▎   | 50/80 [00:09<00:05,  5.54 examples/s]Running tokenizer on dataset (num_proc=8):  75%|███████▌  | 60/80 [00:11<00:03,  5.62 examples/s]Running tokenizer on dataset (num_proc=8):  88%|████████▊ | 70/80 [00:13<00:01,  5.84 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 80/80 [00:14<00:00,  5.71 examples/s]Running tokenizer on dataset (num_proc=8): 100%|██████████| 80/80 [00:15<00:00,  5.30 examples/s]
+eval example:
+input_ids:
+[151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, 151645, 198, 151644, 872, 198, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 151652, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151655, 151653, 2082, 55856, 419, 2766, 1667, 279, 220, 19, 14087, 323, 279, 35715, 3685, 13, 21144, 52977, 11, 389, 29260, 1467, 11, 52392, 11, 17738, 11, 323, 8806, 13, 90303, 25, 66829, 25, 576, 57487, 572, 5326, 553, 279, 16517, 15417, 13, 671, 461, 71, 12642, 671, 67, 2462, 659, 1096, 7214, 9223, 11, 15330, 12296, 1140, 22757, 879, 3171, 944, 19309, 894, 5021, 11, 374, 9704, 287, 705, 448, 264, 12592, 18028, 41726, 13, 23309, 2664, 5480, 1091, 1059, 1482, 5089, 1008, 13, 1597, 429, 374, 5785, 304, 95427, 11, 879, 5926, 1865, 1059, 422, 2462, 2081, 2525, 1182, 13, 1075, 323, 1795, 369, 803, 13, 144236, 13, 2160, 419, 2766, 75715, 476, 27756, 320, 80110, 476, 2429, 68, 596, 1251, 3118, 389, 9569, 11, 476, 38890, 11428, 11843, 21806, 448, 6896, 825, 3409, 25, 7414, 476, 2308, 13, 151645, 198, 151644, 77091, 198, 2753, 151645, 198]
+inputs:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+<|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|><|vision_start|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|image_pad|><|vision_end|>Analyze this video using the 4 frames and the transcript below. Consider visuals, on-screen text, gestures, symbols, and speech. Transcript: Disclaimer: The gossip was written by the entertainment lawyer. #rihanna #dior . This foreign born, permanent aid list singer who doesn't sink any longer, is hooking up with a Middle Eastern prince. Much better decision than her current significant other. And that is reference in Rihanna, who recently made her Dior cour come back. like and follow for more.😊. Is this video hateful or harmful (attacks or demeans people based on identity, or promotes harm)? Answer with exactly one word: Yes or No.<|im_end|>
+<|im_start|>assistant
+No<|im_end|>
+
+label_ids:
+[-100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, -100, 2753, 151645, 198]
+labels:
+No<|im_end|>
+
+[INFO|hub.py:302] 2026-07-08 14:31:15,263 >> Offline mode: forcing local_files_only=True
+[INFO|configuration_utils.py:699] 2026-07-08 14:31:15,264 >> loading configuration file config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/config.json
+[INFO|configuration_utils.py:771] 2026-07-08 14:31:15,267 >> Model config Qwen2_5_VLConfig {
+  "_name_or_path": "Qwen/Qwen2.5-VL-7B-Instruct",
+  "architectures": [
+    "Qwen2_5_VLForConditionalGeneration"
+  ],
+  "attention_dropout": 0.0,
+  "bos_token_id": 151643,
+  "eos_token_id": 151645,
+  "hidden_act": "silu",
+  "hidden_size": 3584,
+  "image_token_id": 151655,
+  "initializer_range": 0.02,
+  "intermediate_size": 18944,
+  "max_position_embeddings": 128000,
+  "max_window_layers": 28,
+  "model_type": "qwen2_5_vl",
+  "num_attention_heads": 28,
+  "num_hidden_layers": 28,
+  "num_key_value_heads": 4,
+  "rms_norm_eps": 1e-06,
+  "rope_scaling": {
+    "mrope_section": [
+      16,
+      24,
+      24
+    ],
+    "rope_type": "default",
+    "type": "default"
+  },
+  "rope_theta": 1000000.0,
+  "sliding_window": 32768,
+  "tie_word_embeddings": false,
+  "torch_dtype": "bfloat16",
+  "transformers_version": "4.49.0",
+  "use_cache": true,
+  "use_sliding_window": false,
+  "video_token_id": 151656,
+  "vision_config": {
+    "hidden_size": 1280,
+    "in_chans": 3,
+    "model_type": "qwen2_5_vl",
+    "spatial_patch_size": 14,
+    "tokens_per_second": 2
+  },
+  "vision_end_token_id": 151653,
+  "vision_start_token_id": 151652,
+  "vision_token_id": 151654,
+  "vocab_size": 152064
+}
+
+[INFO|2026-07-08 14:31:15] llamafactory.model.model_utils.kv_cache:143 >> KV cache is disabled during training.
+[INFO|hub.py:302] 2026-07-08 14:31:15,276 >> Offline mode: forcing local_files_only=True
+[INFO|hub.py:302] 2026-07-08 14:31:15,281 >> Offline mode: forcing local_files_only=True
+[INFO|modeling_utils.py:3641] 2026-07-08 14:31:15,281 >> Offline mode: forcing local_files_only=True
+[INFO|modeling_utils.py:3982] 2026-07-08 14:31:15,282 >> loading weights file model.safetensors from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/model.safetensors.index.json
+[INFO|modeling_utils.py:1633] 2026-07-08 14:31:15,283 >> Instantiating Qwen2_5_VLForConditionalGeneration model under default dtype torch.bfloat16.
+[INFO|configuration_utils.py:1140] 2026-07-08 14:31:15,286 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "eos_token_id": 151645,
+  "use_cache": false
+}
+
+[INFO|modeling_utils.py:1633] 2026-07-08 14:31:15,286 >> Instantiating Qwen2_5_VisionTransformerPretrainedModel model under default dtype torch.bfloat16.
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:01<00:04,  1.21s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:02<00:03,  1.11s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:03<00:02,  1.09s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:04<00:01,  1.09s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:05<00:00,  1.10it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:05<00:00,  1.00s/it]
+[INFO|modeling_utils.py:4970] 2026-07-08 14:31:20,381 >> All model checkpoint weights were used when initializing Qwen2_5_VLForConditionalGeneration.
+
+[INFO|modeling_utils.py:4978] 2026-07-08 14:31:20,382 >> All the weights of Qwen2_5_VLForConditionalGeneration were initialized from the model checkpoint at Qwen/Qwen2.5-VL-7B-Instruct.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use Qwen2_5_VLForConditionalGeneration for predictions without further training.
+[INFO|configuration_utils.py:1095] 2026-07-08 14:31:20,442 >> loading configuration file generation_config.json from cache at /data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5/generation_config.json
+[INFO|configuration_utils.py:1140] 2026-07-08 14:31:20,443 >> Generate config GenerationConfig {
+  "bos_token_id": 151643,
+  "do_sample": true,
+  "eos_token_id": [
+    151645,
+    151643
+  ],
+  "pad_token_id": 151643,
+  "repetition_penalty": 1.05,
+  "temperature": 1e-06
+}
+
+[INFO|2026-07-08 14:31:20] llamafactory.model.model_utils.checkpointing:143 >> Gradient checkpointing enabled.
+[INFO|2026-07-08 14:31:20] llamafactory.model.model_utils.attention:143 >> Using torch SDPA for faster training and inference.
+[INFO|2026-07-08 14:31:20] llamafactory.model.adapter:143 >> Upcasting trainable params to float32.
+[INFO|2026-07-08 14:31:20] llamafactory.model.adapter:143 >> Fine-tuning method: LoRA
+[INFO|2026-07-08 14:31:20] llamafactory.model.model_utils.misc:143 >> Found linear modules: up_proj,v_proj,o_proj,gate_proj,k_proj,down_proj,q_proj
+[INFO|2026-07-08 14:31:20] llamafactory.model.model_utils.visual:143 >> Set vision model not trainable: ['visual.patch_embed', 'visual.blocks'].
+[INFO|2026-07-08 14:31:20] llamafactory.model.model_utils.visual:143 >> Set multi model projector not trainable: visual.merger.
+[INFO|2026-07-08 14:31:26] llamafactory.model.loader:143 >> trainable params: 322,961,408 || all params: 8,615,128,064 || trainable%: 3.7488
+/data/jehc223/RGCL/RA-HMD/LLAMA-FACTORY-Ver202512/src/llamafactory/train/sft_classifier/trainer.py:85: FutureWarning: `tokenizer` is deprecated and will be removed in version 5.0.0 for `CustomSeq2SeqRegressionTrainer.__init__`. Use `processing_class` instead.
+  super().__init__(**kwargs)
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+[INFO|trainer.py:746] 2026-07-08 14:31:26,344 >> Using auto half precision backend
+[WARNING|trainer.py:814] 2026-07-08 14:31:26,345 >> Trainer.tokenizer is now deprecated. You should use Trainer.processing_class instead.
+[INFO|trainer.py:2405] 2026-07-08 14:31:26,705 >> ***** Running training *****
+[INFO|trainer.py:2406] 2026-07-08 14:31:26,705 >>   Num examples = 549
+[INFO|trainer.py:2407] 2026-07-08 14:31:26,705 >>   Num Epochs = 3
+[INFO|trainer.py:2408] 2026-07-08 14:31:26,705 >>   Instantaneous batch size per device = 4
+[INFO|trainer.py:2411] 2026-07-08 14:31:26,705 >>   Total train batch size (w. parallel, distributed & accumulation) = 16
+[INFO|trainer.py:2412] 2026-07-08 14:31:26,705 >>   Gradient Accumulation steps = 4
+[INFO|trainer.py:2413] 2026-07-08 14:31:26,705 >>   Total optimization steps = 102
+[INFO|trainer.py:2414] 2026-07-08 14:31:26,708 >>   Number of trainable parameters = 326,633,473
+  0%|          | 0/102 [00:00<?, ?it/s]Start to reindex dense retrieval index
+  1%|          | 1/102 [03:58<6:41:47, 238.69s/it]  2%|▏         | 2/102 [04:08<2:53:14, 103.94s/it]  3%|▎         | 3/102 [04:17<1:40:13, 60.75s/it]   4%|▍         | 4/102 [04:26<1:05:59, 40.41s/it]  5%|▍         | 5/102 [04:36<47:06, 29.14s/it]                                                 {'loss': 1.9754, 'lm_loss': 0.2467, 'classification_loss': 0.7549, 'rgcl_loss': 0.9738, 'in_batch_negative_loss': 0.6421, 'negative_loss': 2.0335, 'positive_loss': 2.7163, 'grad_norm': 4.347651481628418, 'learning_rate': 1.8181818181818182e-05, 'epoch': 0.14}
+  5%|▍         | 5/102 [04:36<47:06, 29.14s/it]  6%|▌         | 6/102 [04:44<35:25, 22.14s/it]  7%|▋         | 7/102 [04:53<28:23, 17.93s/it]  8%|▊         | 8/102 [05:03<23:56, 15.28s/it]  9%|▉         | 9/102 [05:12<20:43, 13.37s/it] 10%|▉         | 10/102 [05:21<18:34, 12.12s/it]                                                {'loss': 2.0195, 'lm_loss': 0.1732, 'classification_loss': 0.6776, 'rgcl_loss': 1.1687, 'in_batch_negative_loss': 0.7929, 'negative_loss': 2.6859, 'positive_loss': 2.6867, 'grad_norm': 6.550130367279053, 'learning_rate': 3.6363636363636364e-05, 'epoch': 0.29}
+ 10%|▉         | 10/102 [05:21<18:34, 12.12s/it] 11%|█         | 11/102 [05:31<17:05, 11.27s/it] 12%|█▏        | 12/102 [05:40<16:00, 10.67s/it] 13%|█▎        | 13/102 [05:49<15:03, 10.15s/it] 14%|█▎        | 14/102 [05:59<14:39, 10.00s/it] 15%|█▍        | 15/102 [06:08<14:13,  9.81s/it]                                                {'loss': 1.7416, 'lm_loss': 0.1887, 'classification_loss': 0.5461, 'rgcl_loss': 1.0069, 'in_batch_negative_loss': 0.6908, 'negative_loss': 2.2397, 'positive_loss': 2.6531, 'grad_norm': 9.845569610595703, 'learning_rate': 3.980960887975127e-05, 'epoch': 0.43}
+ 15%|█▍        | 15/102 [06:08<14:13,  9.81s/it] 16%|█▌        | 16/102 [06:17<13:50,  9.66s/it] 17%|█▋        | 17/102 [06:27<13:30,  9.53s/it] 18%|█▊        | 18/102 [06:36<13:09,  9.39s/it] 19%|█▊        | 19/102 [06:45<12:50,  9.28s/it] 20%|█▉        | 20/102 [06:54<12:29,  9.14s/it]                                                {'loss': 1.4674, 'lm_loss': 0.1271, 'classification_loss': 0.4065, 'rgcl_loss': 0.9338, 'in_batch_negative_loss': 0.6587, 'negative_loss': 1.8024, 'positive_loss': 2.6226, 'grad_norm': 16.809284210205078, 'learning_rate': 3.904235331821428e-05, 'epoch': 0.58}
+ 20%|█▉        | 20/102 [06:54<12:29,  9.14s/it][INFO|2026-07-08 14:38:20] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 14:38:20] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 80
+[INFO|2026-07-08 14:38:20] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 4
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+ 10%|█         | 2/20 [00:01<00:15,  1.18it/s][A
+ 15%|█▌        | 3/20 [00:03<00:20,  1.19s/it][A
+ 20%|██        | 4/20 [00:05<00:22,  1.38s/it][A
+ 25%|██▌       | 5/20 [00:06<00:22,  1.50s/it][A
+ 30%|███       | 6/20 [00:08<00:21,  1.57s/it][A
+ 35%|███▌      | 7/20 [00:10<00:20,  1.58s/it][A
+ 40%|████      | 8/20 [00:11<00:20,  1.68s/it][A
+ 45%|████▌     | 9/20 [00:13<00:18,  1.69s/it][A
+ 50%|█████     | 10/20 [00:15<00:16,  1.68s/it][A
+ 55%|█████▌    | 11/20 [00:17<00:15,  1.68s/it][A
+ 60%|██████    | 12/20 [00:18<00:13,  1.68s/it][A
+ 65%|██████▌   | 13/20 [00:20<00:11,  1.67s/it][A
+ 70%|███████   | 14/20 [00:22<00:10,  1.69s/it][A
+ 75%|███████▌  | 15/20 [00:23<00:08,  1.65s/it][A
+ 80%|████████  | 16/20 [00:25<00:06,  1.64s/it][A
+ 85%|████████▌ | 17/20 [00:26<00:04,  1.64s/it][A
+ 90%|█████████ | 18/20 [00:28<00:03,  1.61s/it][A
+ 95%|█████████▌| 19/20 [00:30<00:01,  1.64s/it][A
+100%|██████████| 20/20 [00:31<00:00,  1.55s/it][AAccuracy: 0.7375, AUROC: 0.8691, Precision: 0.5526, Recall: 0.8400, F1: 0.6667
+                                                
+                                               [A{'eval_loss': 0.6208998560905457, 'eval_lm_loss': 0.14520949125289917, 'eval_classification_loss': 0.4756903648376465, 'eval_accuracy': 0.737500011920929, 'eval_auroc': 0.8690909147262573, 'eval_precision': 0.5526315569877625, 'eval_recall': 0.8399999737739563, 'eval_f1': 0.6666666865348816, 'eval_runtime': 33.7168, 'eval_samples_per_second': 2.373, 'eval_steps_per_second': 0.593, 'epoch': 0.58}
+ 20%|█▉        | 20/102 [07:27<12:29,  9.14s/it]
+100%|██████████| 20/20 [00:31<00:00,  1.55s/it][A
+                                               [A 21%|██        | 21/102 [07:36<26:00, 19.27s/it] 22%|██▏       | 22/102 [07:46<21:38, 16.23s/it] 23%|██▎       | 23/102 [07:55<18:35, 14.12s/it] 24%|██▎       | 24/102 [08:04<16:31, 12.72s/it] 25%|██▍       | 25/102 [08:14<15:04, 11.74s/it]                                                {'loss': 1.9654, 'lm_loss': 0.2078, 'classification_loss': 0.6291, 'rgcl_loss': 1.1285, 'in_batch_negative_loss': 0.8182, 'negative_loss': 1.41, 'positive_loss': 2.3636, 'grad_norm': 15.659130096435547, 'learning_rate': 3.7709120513064196e-05, 'epoch': 0.72}
+ 25%|██▍       | 25/102 [08:14<15:04, 11.74s/it]Start to reindex dense retrieval index
+ 25%|██▌       | 26/102 [12:11<1:40:41, 79.49s/it] 26%|██▋       | 27/102 [12:21<1:13:05, 58.47s/it] 27%|██▋       | 28/102 [12:30<54:04, 43.85s/it]   28%|██▊       | 29/102 [12:40<40:43, 33.48s/it] 29%|██▉       | 30/102 [12:48<31:17, 26.08s/it]                                                {'loss': 1.5975, 'lm_loss': 0.1415, 'classification_loss': 0.4612, 'rgcl_loss': 0.9948, 'in_batch_negative_loss': 0.7302, 'negative_loss': 1.6273, 'positive_loss': 2.6492, 'grad_norm': 7.717601299285889, 'learning_rate': 3.584953683902181e-05, 'epoch': 0.87}
+ 29%|██▉       | 30/102 [12:48<31:17, 26.08s/it] 30%|███       | 31/102 [12:57<24:45, 20.92s/it] 31%|███▏      | 32/102 [13:07<20:19, 17.42s/it] 32%|███▏      | 33/102 [13:16<17:16, 15.03s/it] 33%|███▎      | 34/102 [13:26<15:10, 13.39s/it] 34%|███▍      | 35/102 [13:37<14:24, 12.91s/it]                                                {'loss': 1.5169, 'lm_loss': 0.1455, 'classification_loss': 0.4059, 'rgcl_loss': 0.8932, 'in_batch_negative_loss': 0.6171, 'negative_loss': 1.6076, 'positive_loss': 2.6717, 'grad_norm': 14.094503402709961, 'learning_rate': 3.351887288289509e-05, 'epoch': 1.03}
+ 34%|███▍      | 35/102 [13:37<14:24, 12.91s/it] 35%|███▌      | 36/102 [13:47<12:59, 11.81s/it] 36%|███▋      | 37/102 [13:56<11:54, 10.99s/it] 37%|███▋      | 38/102 [14:05<11:04, 10.38s/it] 38%|███▊      | 39/102 [14:14<10:36, 10.11s/it] 39%|███▉      | 40/102 [14:23<10:09,  9.84s/it]                                                {'loss': 1.0395, 'lm_loss': 0.1139, 'classification_loss': 0.3099, 'rgcl_loss': 0.6157, 'in_batch_negative_loss': 0.3519, 'negative_loss': 0.6709, 'positive_loss': 2.5378, 'grad_norm': 9.061317443847656, 'learning_rate': 3.0786400689983986e-05, 'epoch': 1.17}
+ 39%|███▉      | 40/102 [14:23<10:09,  9.84s/it][INFO|2026-07-08 14:45:50] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 14:45:50] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 80
+[INFO|2026-07-08 14:45:50] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 4
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+ 10%|█         | 2/20 [00:01<00:15,  1.15it/s][A
+ 15%|█▌        | 3/20 [00:03<00:20,  1.21s/it][A
+ 20%|██        | 4/20 [00:05<00:22,  1.39s/it][A
+ 25%|██▌       | 5/20 [00:06<00:22,  1.50s/it][A
+ 30%|███       | 6/20 [00:08<00:22,  1.58s/it][A
+ 35%|███▌      | 7/20 [00:10<00:20,  1.59s/it][A
+ 40%|████      | 8/20 [00:12<00:20,  1.70s/it][A
+ 45%|████▌     | 9/20 [00:13<00:18,  1.71s/it][A
+ 50%|█████     | 10/20 [00:15<00:17,  1.70s/it][A
+ 55%|█████▌    | 11/20 [00:17<00:15,  1.70s/it][A
+ 60%|██████    | 12/20 [00:18<00:13,  1.71s/it][A
+ 65%|██████▌   | 13/20 [00:20<00:11,  1.69s/it][A
+ 70%|███████   | 14/20 [00:22<00:10,  1.71s/it][A
+ 75%|███████▌  | 15/20 [00:23<00:08,  1.68s/it][A
+ 80%|████████  | 16/20 [00:25<00:06,  1.66s/it][A
+ 85%|████████▌ | 17/20 [00:27<00:04,  1.65s/it][A
+ 90%|█████████ | 18/20 [00:28<00:03,  1.63s/it][A
+ 95%|█████████▌| 19/20 [00:30<00:01,  1.66s/it][A
+100%|██████████| 20/20 [00:31<00:00,  1.57s/it][AAccuracy: 0.8000, AUROC: 0.8771, Precision: 0.6667, Recall: 0.7200, F1: 0.6923
+                                                
+                                               [A{'eval_loss': 0.6225654482841492, 'eval_lm_loss': 0.182111456990242, 'eval_classification_loss': 0.44045400619506836, 'eval_accuracy': 0.800000011920929, 'eval_auroc': 0.8770908713340759, 'eval_precision': 0.6666666865348816, 'eval_recall': 0.7200000286102295, 'eval_f1': 0.692307710647583, 'eval_runtime': 34.089, 'eval_samples_per_second': 2.347, 'eval_steps_per_second': 0.587, 'epoch': 1.17}
+ 39%|███▉      | 40/102 [14:57<10:09,  9.84s/it]
+100%|██████████| 20/20 [00:31<00:00,  1.57s/it][A
+                                               [A 40%|████      | 41/102 [15:07<20:17, 19.95s/it] 41%|████      | 42/102 [15:16<16:43, 16.73s/it] 42%|████▏     | 43/102 [15:25<14:13, 14.47s/it] 43%|████▎     | 44/102 [15:35<12:33, 12.99s/it] 44%|████▍     | 45/102 [15:44<11:17, 11.89s/it]                                                {'loss': 1.1288, 'lm_loss': 0.0879, 'classification_loss': 0.3053, 'rgcl_loss': 0.7356, 'in_batch_negative_loss': 0.4236, 'negative_loss': 0.8352, 'positive_loss': 2.5227, 'grad_norm': 11.136357307434082, 'learning_rate': 2.7733334858828376e-05, 'epoch': 1.32}
+ 44%|████▍     | 45/102 [15:44<11:17, 11.89s/it] 45%|████▌     | 46/102 [15:54<10:25, 11.17s/it] 46%|████▌     | 47/102 [16:03<09:45, 10.64s/it] 47%|████▋     | 48/102 [16:12<09:13, 10.25s/it] 48%|████▊     | 49/102 [16:22<08:47,  9.95s/it]Start to reindex dense retrieval index
+ 49%|████▉     | 50/102 [20:21<1:08:19, 78.83s/it]                                                  {'loss': 1.2291, 'lm_loss': 0.1127, 'classification_loss': 0.3717, 'rgcl_loss': 0.7446, 'in_batch_negative_loss': 0.3146, 'negative_loss': 1.0277, 'positive_loss': 2.4709, 'grad_norm': 13.896519660949707, 'learning_rate': 2.445041867912629e-05, 'epoch': 1.46}
+ 49%|████▉     | 50/102 [20:21<1:08:19, 78.83s/it] 50%|█████     | 51/102 [20:31<49:22, 58.10s/it]   51%|█████     | 52/102 [20:40<36:10, 43.41s/it] 52%|█████▏    | 53/102 [20:49<27:01, 33.09s/it] 53%|█████▎    | 54/102 [20:58<20:42, 25.89s/it] 54%|█████▍    | 55/102 [21:08<16:26, 21.00s/it]                                                {'loss': 1.0732, 'lm_loss': 0.0906, 'classification_loss': 0.2948, 'rgcl_loss': 0.6878, 'in_batch_negative_loss': 0.2501, 'negative_loss': 0.8784, 'positive_loss': 2.6693, 'grad_norm': 21.480144500732422, 'learning_rate': 2.1035227057684193e-05, 'epoch': 1.61}
+ 54%|█████▍    | 55/102 [21:08<16:26, 21.00s/it] 55%|█████▍    | 56/102 [21:17<13:22, 17.45s/it] 56%|█████▌    | 57/102 [21:26<11:11, 14.93s/it] 57%|█████▋    | 58/102 [21:35<09:43, 13.25s/it] 58%|█████▊    | 59/102 [21:45<08:41, 12.14s/it] 59%|█████▉    | 60/102 [21:55<08:00, 11.44s/it]                                                {'loss': 1.0826, 'lm_loss': 0.1105, 'classification_loss': 0.3129, 'rgcl_loss': 0.6591, 'in_batch_negative_loss': 0.2419, 'negative_loss': 1.116, 'positive_loss': 2.6558, 'grad_norm': 7.2997541427612305, 'learning_rate': 1.758926639489354e-05, 'epoch': 1.75}
+ 59%|█████▉    | 60/102 [21:55<08:00, 11.44s/it][INFO|2026-07-08 14:53:21] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 14:53:21] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 80
+[INFO|2026-07-08 14:53:21] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 4
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+ 10%|█         | 2/20 [00:01<00:15,  1.17it/s][A
+ 15%|█▌        | 3/20 [00:03<00:20,  1.19s/it][A
+ 20%|██        | 4/20 [00:05<00:22,  1.38s/it][A
+ 25%|██▌       | 5/20 [00:06<00:22,  1.51s/it][A
+ 30%|███       | 6/20 [00:08<00:22,  1.58s/it][A
+ 35%|███▌      | 7/20 [00:10<00:20,  1.58s/it][A
+ 40%|████      | 8/20 [00:12<00:20,  1.68s/it][A
+ 45%|████▌     | 9/20 [00:13<00:18,  1.69s/it][A
+ 50%|█████     | 10/20 [00:15<00:16,  1.68s/it][A
+ 55%|█████▌    | 11/20 [00:17<00:15,  1.68s/it][A
+ 60%|██████    | 12/20 [00:18<00:13,  1.69s/it][A
+ 65%|██████▌   | 13/20 [00:20<00:11,  1.67s/it][A
+ 70%|███████   | 14/20 [00:22<00:10,  1.69s/it][A
+ 75%|███████▌  | 15/20 [00:23<00:08,  1.66s/it][A
+ 80%|████████  | 16/20 [00:25<00:06,  1.64s/it][A
+ 85%|████████▌ | 17/20 [00:26<00:04,  1.64s/it][A
+ 90%|█████████ | 18/20 [00:28<00:03,  1.61s/it][A
+ 95%|█████████▌| 19/20 [00:30<00:01,  1.64s/it][A
+100%|██████████| 20/20 [00:31<00:00,  1.56s/it][AAccuracy: 0.8000, AUROC: 0.8836, Precision: 0.6552, Recall: 0.7600, F1: 0.7037
+                                                
+                                               [A{'eval_loss': 0.5897035598754883, 'eval_lm_loss': 0.14361752569675446, 'eval_classification_loss': 0.4460860788822174, 'eval_accuracy': 0.800000011920929, 'eval_auroc': 0.8836363554000854, 'eval_precision': 0.6551724076271057, 'eval_recall': 0.7599999904632568, 'eval_f1': 0.7037037014961243, 'eval_runtime': 33.7496, 'eval_samples_per_second': 2.37, 'eval_steps_per_second': 0.593, 'epoch': 1.75}
+ 59%|█████▉    | 60/102 [22:28<08:00, 11.44s/it]
+100%|██████████| 20/20 [00:31<00:00,  1.56s/it][A
+                                               [A 60%|█████▉    | 61/102 [22:37<14:15, 20.85s/it] 61%|██████    | 62/102 [22:46<11:30, 17.27s/it] 62%|██████▏   | 63/102 [22:56<09:38, 14.84s/it] 63%|██████▎   | 64/102 [23:04<08:14, 13.02s/it] 64%|██████▎   | 65/102 [23:13<07:18, 11.86s/it]                                                {'loss': 1.1274, 'lm_loss': 0.0936, 'classification_loss': 0.3138, 'rgcl_loss': 0.7199, 'in_batch_negative_loss': 0.1973, 'negative_loss': 1.3827, 'positive_loss': 2.6836, 'grad_norm': 10.012537956237793, 'learning_rate': 1.4214957609268648e-05, 'epoch': 1.9}
+ 64%|██████▎   | 65/102 [23:13<07:18, 11.86s/it] 65%|██████▍   | 66/102 [23:23<06:40, 11.14s/it] 66%|██████▌   | 67/102 [23:32<06:10, 10.60s/it] 67%|██████▋   | 68/102 [23:41<05:43, 10.09s/it] 68%|██████▊   | 69/102 [23:53<05:49, 10.58s/it] 69%|██████▊   | 70/102 [24:02<05:23, 10.10s/it]                                                {'loss': 0.9064, 'lm_loss': 0.0611, 'classification_loss': 0.219, 'rgcl_loss': 0.5831, 'in_batch_negative_loss': 0.1184, 'negative_loss': 1.1813, 'positive_loss': 2.6636, 'grad_norm': 2.08400821685791, 'learning_rate': 1.1012591980656771e-05, 'epoch': 2.06}
+ 69%|██████▊   | 70/102 [24:02<05:23, 10.10s/it] 70%|██████▉   | 71/102 [24:11<05:03,  9.78s/it] 71%|███████   | 72/102 [24:20<04:50,  9.67s/it] 72%|███████▏  | 73/102 [24:29<04:34,  9.46s/it] 73%|███████▎  | 74/102 [24:38<04:21,  9.34s/it]Start to reindex dense retrieval index
+ 74%|███████▎  | 75/102 [28:38<35:14, 78.30s/it]                                                {'loss': 0.6692, 'lm_loss': 0.0414, 'classification_loss': 0.127, 'rgcl_loss': 0.5009, 'in_batch_negative_loss': 0.0886, 'negative_loss': 0.9372, 'positive_loss': 2.6548, 'grad_norm': 4.855927467346191, 'learning_rate': 8.077350290615495e-06, 'epoch': 2.2}
+ 74%|███████▎  | 75/102 [28:38<35:14, 78.30s/it] 75%|███████▍  | 76/102 [28:47<24:58, 57.64s/it] 75%|███████▌  | 77/102 [28:56<17:57, 43.09s/it] 76%|███████▋  | 78/102 [29:05<13:10, 32.92s/it] 77%|███████▋  | 79/102 [29:15<09:54, 25.86s/it] 78%|███████▊  | 80/102 [29:24<07:38, 20.86s/it]                                                {'loss': 0.7513, 'lm_loss': 0.0617, 'classification_loss': 0.1506, 'rgcl_loss': 0.539, 'in_batch_negative_loss': 0.1206, 'negative_loss': 0.6743, 'positive_loss': 2.7144, 'grad_norm': 6.645513534545898, 'learning_rate': 5.496473857132476e-06, 'epoch': 2.35}
+ 78%|███████▊  | 80/102 [29:24<07:38, 20.86s/it][INFO|2026-07-08 15:00:51] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 15:00:51] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 80
+[INFO|2026-07-08 15:00:51] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 4
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+ 10%|█         | 2/20 [00:01<00:15,  1.16it/s][A
+ 15%|█▌        | 3/20 [00:03<00:20,  1.21s/it][A
+ 20%|██        | 4/20 [00:05<00:22,  1.40s/it][A
+ 25%|██▌       | 5/20 [00:06<00:22,  1.52s/it][A
+ 30%|███       | 6/20 [00:08<00:22,  1.60s/it][A
+ 35%|███▌      | 7/20 [00:10<00:20,  1.60s/it][A
+ 40%|████      | 8/20 [00:12<00:20,  1.71s/it][A
+ 45%|████▌     | 9/20 [00:13<00:18,  1.72s/it][A
+ 50%|█████     | 10/20 [00:15<00:17,  1.71s/it][A
+ 55%|█████▌    | 11/20 [00:17<00:15,  1.71s/it][A
+ 60%|██████    | 12/20 [00:19<00:13,  1.72s/it][A
+ 65%|██████▌   | 13/20 [00:20<00:11,  1.70s/it][A
+ 70%|███████   | 14/20 [00:22<00:10,  1.71s/it][A
+ 75%|███████▌  | 15/20 [00:24<00:08,  1.68s/it][A
+ 80%|████████  | 16/20 [00:25<00:06,  1.66s/it][A
+ 85%|████████▌ | 17/20 [00:27<00:04,  1.66s/it][A
+ 90%|█████████ | 18/20 [00:28<00:03,  1.63s/it][A
+ 95%|█████████▌| 19/20 [00:30<00:01,  1.67s/it][A
+100%|██████████| 20/20 [00:32<00:00,  1.57s/it][AAccuracy: 0.8000, AUROC: 0.8785, Precision: 0.6667, Recall: 0.7200, F1: 0.6923
+                                                
+                                               [A{'eval_loss': 0.655857264995575, 'eval_lm_loss': 0.15227827429771423, 'eval_classification_loss': 0.5035789608955383, 'eval_accuracy': 0.800000011920929, 'eval_auroc': 0.8785454630851746, 'eval_precision': 0.6666666865348816, 'eval_recall': 0.7200000286102295, 'eval_f1': 0.692307710647583, 'eval_runtime': 34.216, 'eval_samples_per_second': 2.338, 'eval_steps_per_second': 0.585, 'epoch': 2.35}
+ 78%|███████▊  | 80/102 [29:58<07:38, 20.86s/it]
+100%|██████████| 20/20 [00:32<00:00,  1.57s/it][A
+                                               [A 79%|███████▉  | 81/102 [30:08<09:41, 27.69s/it] 80%|████████  | 82/102 [30:17<07:22, 22.14s/it] 81%|████████▏ | 83/102 [30:26<05:46, 18.25s/it] 82%|████████▏ | 84/102 [30:35<04:41, 15.64s/it] 83%|████████▎ | 85/102 [30:45<03:53, 13.76s/it]                                                {'loss': 0.6474, 'lm_loss': 0.0361, 'classification_loss': 0.1179, 'rgcl_loss': 0.4934, 'in_batch_negative_loss': 0.0687, 'negative_loss': 0.1695, 'positive_loss': 2.6689, 'grad_norm': 11.950178146362305, 'learning_rate': 3.346671546255875e-06, 'epoch': 2.49}
+ 83%|████████▎ | 85/102 [30:45<03:53, 13.76s/it] 84%|████████▍ | 86/102 [30:54<03:18, 12.43s/it] 85%|████████▌ | 87/102 [31:03<02:52, 11.47s/it] 86%|████████▋ | 88/102 [31:12<02:29, 10.67s/it] 87%|████████▋ | 89/102 [31:22<02:13, 10.30s/it] 88%|████████▊ | 90/102 [31:31<02:00, 10.08s/it]                                                {'loss': 0.554, 'lm_loss': 0.0277, 'classification_loss': 0.1009, 'rgcl_loss': 0.4254, 'in_batch_negative_loss': 0.0671, 'negative_loss': 0.2034, 'positive_loss': 2.6874, 'grad_norm': 0.47829172015190125, 'learning_rate': 1.6918398294926742e-06, 'epoch': 2.64}
+ 88%|████████▊ | 90/102 [31:31<02:00, 10.08s/it] 89%|████████▉ | 91/102 [31:40<01:47,  9.79s/it] 90%|█████████ | 92/102 [31:50<01:37,  9.72s/it] 91%|█████████ | 93/102 [31:59<01:27,  9.67s/it] 92%|█████████▏| 94/102 [32:09<01:16,  9.52s/it] 93%|█████████▎| 95/102 [32:18<01:06,  9.52s/it]                                                {'loss': 0.4784, 'lm_loss': 0.0296, 'classification_loss': 0.0896, 'rgcl_loss': 0.3593, 'in_batch_negative_loss': 0.0262, 'negative_loss': 0.3386, 'positive_loss': 2.7069, 'grad_norm': 3.870647668838501, 'learning_rate': 5.811636514789598e-07, 'epoch': 2.78}
+ 93%|█████████▎| 95/102 [32:18<01:06,  9.52s/it] 94%|█████████▍| 96/102 [32:28<00:57,  9.51s/it] 95%|█████████▌| 97/102 [32:37<00:46,  9.37s/it] 96%|█████████▌| 98/102 [32:46<00:37,  9.44s/it] 97%|█████████▋| 99/102 [32:55<00:27,  9.32s/it]Start to reindex dense retrieval index
+ 98%|█████████▊| 100/102 [36:53<02:35, 77.93s/it]                                                 {'loss': 0.6319, 'lm_loss': 0.038, 'classification_loss': 0.1321, 'rgcl_loss': 0.4618, 'in_batch_negative_loss': 0.0812, 'negative_loss': 0.237, 'positive_loss': 2.6421, 'grad_norm': 4.8835015296936035, 'learning_rate': 4.7654553975049476e-08, 'epoch': 2.93}
+ 98%|█████████▊| 100/102 [36:53<02:35, 77.93s/it][INFO|2026-07-08 15:08:20] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 15:08:20] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 80
+[INFO|2026-07-08 15:08:20] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 4
+
+  0%|          | 0/20 [00:00<?, ?it/s][A
+ 10%|█         | 2/20 [00:01<00:15,  1.15it/s][A
+ 15%|█▌        | 3/20 [00:03<00:20,  1.21s/it][A
+ 20%|██        | 4/20 [00:05<00:22,  1.40s/it][A
+ 25%|██▌       | 5/20 [00:06<00:22,  1.52s/it][A
+ 30%|███       | 6/20 [00:08<00:22,  1.59s/it][A
+ 35%|███▌      | 7/20 [00:10<00:20,  1.59s/it][A
+ 40%|████      | 8/20 [00:12<00:20,  1.70s/it][A
+ 45%|████▌     | 9/20 [00:13<00:18,  1.70s/it][A
+ 50%|█████     | 10/20 [00:15<00:16,  1.69s/it][A
+ 55%|█████▌    | 11/20 [00:17<00:15,  1.69s/it][A
+ 60%|██████    | 12/20 [00:18<00:13,  1.70s/it][A
+ 65%|██████▌   | 13/20 [00:20<00:11,  1.68s/it][A
+ 70%|███████   | 14/20 [00:22<00:10,  1.70s/it][A
+ 75%|███████▌  | 15/20 [00:23<00:08,  1.67s/it][A
+ 80%|████████  | 16/20 [00:25<00:06,  1.65s/it][A
+ 85%|████████▌ | 17/20 [00:27<00:04,  1.65s/it][A
+ 90%|█████████ | 18/20 [00:28<00:03,  1.62s/it][A
+ 95%|█████████▌| 19/20 [00:30<00:01,  1.65s/it][A
+100%|██████████| 20/20 [00:31<00:00,  1.56s/it][AAccuracy: 0.8375, AUROC: 0.8800, Precision: 0.7500, Recall: 0.7200, F1: 0.7347
+                                                 
+                                               [A{'eval_loss': 0.8114495277404785, 'eval_lm_loss': 0.18288108706474304, 'eval_classification_loss': 0.6285683512687683, 'eval_accuracy': 0.8374999761581421, 'eval_auroc': 0.8799999952316284, 'eval_precision': 0.75, 'eval_recall': 0.7200000286102295, 'eval_f1': 0.7346938848495483, 'eval_runtime': 34.046, 'eval_samples_per_second': 2.35, 'eval_steps_per_second': 0.587, 'epoch': 2.93}
+ 98%|█████████▊| 100/102 [37:27<02:35, 77.93s/it]
+100%|██████████| 20/20 [00:31<00:00,  1.56s/it][A
+                                               [A 99%|█████████▉| 101/102 [37:37<01:07, 67.70s/it]100%|██████████| 102/102 [37:47<00:00, 50.26s/it][INFO|trainer.py:3942] 2026-07-08 15:09:13,917 >> Saving model checkpoint to /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102
+/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/peft/utils/save_and_load.py:246: UserWarning: Could not find a config file in Qwen/Qwen2.5-VL-7B-Instruct - will assume that the vocabulary was not modified.
+  warnings.warn(
+[INFO|tokenization_utils_base.py:2500] 2026-07-08 15:09:14,972 >> tokenizer config file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2509] 2026-07-08 15:09:14,972 >> Special tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102/special_tokens_map.json
+[INFO|tokenization_utils_base.py:2562] 2026-07-08 15:09:14,972 >> added tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102/added_tokens.json
+[INFO|image_processing_base.py:261] 2026-07-08 15:09:17,631 >> Image processor saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102/preprocessor_config.json
+[INFO|tokenization_utils_base.py:2500] 2026-07-08 15:09:17,633 >> tokenizer config file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2509] 2026-07-08 15:09:17,633 >> Special tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102/special_tokens_map.json
+[INFO|tokenization_utils_base.py:2562] 2026-07-08 15:09:17,633 >> added tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102/added_tokens.json
+[INFO|processing_utils.py:638] 2026-07-08 15:09:18,388 >> chat template saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/checkpoint-102/chat_template.json
+[INFO|trainer.py:2657] 2026-07-08 15:09:18,388 >> 
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+                                                 {'train_runtime': 2271.6799, 'train_samples_per_second': 0.725, 'train_steps_per_second': 0.045, 'train_loss': 1.1673569293583141, 'epoch': 2.99}
+100%|██████████| 102/102 [37:51<00:00, 50.26s/it]100%|██████████| 102/102 [37:51<00:00, 22.27s/it]
+[INFO|image_processing_base.py:261] 2026-07-08 15:09:18,390 >> Image processor saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/preprocessor_config.json
+[INFO|tokenization_utils_base.py:2500] 2026-07-08 15:09:18,390 >> tokenizer config file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2509] 2026-07-08 15:09:18,391 >> Special tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/special_tokens_map.json
+[INFO|tokenization_utils_base.py:2562] 2026-07-08 15:09:18,391 >> added tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/added_tokens.json
+[INFO|processing_utils.py:638] 2026-07-08 15:09:19,134 >> chat template saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/chat_template.json
+[INFO|trainer.py:3942] 2026-07-08 15:09:19,134 >> Saving model checkpoint to /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2
+/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/peft/utils/save_and_load.py:246: UserWarning: Could not find a config file in Qwen/Qwen2.5-VL-7B-Instruct - will assume that the vocabulary was not modified.
+  warnings.warn(
+[INFO|tokenization_utils_base.py:2500] 2026-07-08 15:09:20,115 >> tokenizer config file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/tokenizer_config.json
+[INFO|tokenization_utils_base.py:2509] 2026-07-08 15:09:20,116 >> Special tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/special_tokens_map.json
+[INFO|tokenization_utils_base.py:2562] 2026-07-08 15:09:20,116 >> added tokens file saved in /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/added_tokens.json
+***** train metrics *****
+  epoch                    =     2.9855
+  total_flos               = 46434521GF
+  train_loss               =     1.1674
+  train_runtime            = 0:37:51.67
+  train_samples_per_second =      0.725
+  train_steps_per_second   =      0.045
+Figure saved at: /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/training_loss.png
+Figure saved at: /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/training_eval_loss.png
+Figure saved at: /data/jehc223/RGCL/logging/lora_p9/qwen25vl_mhc_d3f4_s2/training_eval_accuracy.png
+[INFO|2026-07-08 15:09:20] llamafactory.train.sft_classifier.trainer:695 >> ***** Running Evaluation *****
+[INFO|2026-07-08 15:09:20] llamafactory.train.sft_classifier.trainer:697 >>   Num examples = 80
+[INFO|2026-07-08 15:09:20] llamafactory.train.sft_classifier.trainer:700 >>   Batch size = 4
+  0%|          | 0/20 [00:00<?, ?it/s] 10%|█         | 2/20 [00:01<00:15,  1.17it/s] 15%|█▌        | 3/20 [00:03<00:20,  1.20s/it] 20%|██        | 4/20 [00:05<00:22,  1.39s/it] 25%|██▌       | 5/20 [00:06<00:22,  1.51s/it] 30%|███       | 6/20 [00:08<00:22,  1.58s/it] 35%|███▌      | 7/20 [00:10<00:20,  1.59s/it] 40%|████      | 8/20 [00:12<00:20,  1.70s/it] 45%|████▌     | 9/20 [00:13<00:18,  1.71s/it] 50%|█████     | 10/20 [00:15<00:16,  1.69s/it] 55%|█████▌    | 11/20 [00:17<00:15,  1.69s/it] 60%|██████    | 12/20 [00:18<00:13,  1.70s/it] 65%|██████▌   | 13/20 [00:20<00:11,  1.68s/it] 70%|███████   | 14/20 [00:22<00:10,  1.70s/it] 75%|███████▌  | 15/20 [00:23<00:08,  1.67s/it] 80%|████████  | 16/20 [00:25<00:06,  1.65s/it] 85%|████████▌ | 17/20 [00:27<00:04,  1.65s/it] 90%|█████████ | 18/20 [00:28<00:03,  1.62s/it] 95%|█████████▌| 19/20 [00:30<00:01,  1.65s/it]100%|██████████| 20/20 [00:31<00:00,  1.56s/it]Accuracy: 0.8375, AUROC: 0.8807, Precision: 0.7500, Recall: 0.7200, F1: 0.7347
+100%|██████████| 20/20 [00:31<00:00,  1.59s/it]
+***** eval metrics *****
+  epoch                    =     2.9855
+  eval_accuracy            =     0.8375
+  eval_auroc               =     0.8807
+  eval_classification_loss =     0.6257
+  eval_f1                  =     0.7347
+  eval_lm_loss             =     0.1824
+  eval_loss                =     0.8081
+  eval_precision           =       0.75
+  eval_recall              =       0.72
+  eval_runtime             = 0:00:33.96
+  eval_samples_per_second  =      2.355
+  eval_steps_per_second    =      0.589
+[INFO|modelcard.py:449] 2026-07-08 15:09:54,704 >> Dropping the following result as it does not have all the necessary fields:
+{'task': {'name': 'Causal Language Modeling', 'type': 'text-generation'}, 'metrics': [{'name': 'Accuracy', 'type': 'accuracy', 'value': 0.8374999761581421}, {'name': 'Precision', 'type': 'precision', 'value': 0.75}, {'name': 'Recall', 'type': 'recall', 'value': 0.7200000286102295}, {'name': 'F1', 'type': 'f1', 'value': 0.7346938848495483}]}
+
+real	39m33.104s
+user	40m48.933s
+sys	3m56.266s
+[p9train] DONE
