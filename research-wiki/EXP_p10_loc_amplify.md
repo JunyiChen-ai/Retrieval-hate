@@ -84,8 +84,49 @@ the test pass.
 
 ## HateMM CALIBRATION LEADERBOARD
 
-_(anchor + every iterated config appended here before any test pass)_
+Run 2026-07-08. All configs scored on the **HateMM train hateful** calibration set (298 scored,
+**n=266** both-class videos); eval `scripts/analysis/p10_eval_hatemm.py` (within-video AUC primary,
+paired bootstrap 10k 95% CI on the per-video Δ vs anchor over the common video set, sign-test).
+Anchor reproduces the pre-registered number bit-for-bit (0.5387). Random control wv 0.4940 for all.
+Machine JSON: `scripts/analysis/loc_out/p10_hatemm_leaderboard.jsonl`.
+
+| variant | source | K | HateMM wv-AUC | paired Δ vs anchor | paired Δ 95% CI | AP-hateonly | promoted? |
+|---|---|---|---|---|---|---|---|
+| **anchor** (P6 cfg, Qwen-7B, frames+ASR→0–3) | 12474 | 30 | **0.5387** | — (bar: ≥+0.04) | — | 0.7321 | — |
+| A-gate (zero no-speech windows) | CPU re-agg | 30 | 0.5314 | −0.0074 | [−0.0195, +0.0045] | 0.7127 | no |
+| K60 (K=60/M=120, finer windows) | 12475 | 60 | 0.5319 | −0.0068 | [−0.0156, +0.0019] | 0.7295 | no |
+| fewshot (K=30 + 0–3 exemplars) | 12476 | 30 | 0.5359 | −0.0028 | [−0.0090, +0.0034] | 0.7291 | no |
+| A-lex (ASR hate-lexicon weight) | CPU re-agg | 30 | 0.5450 | +0.0062 | [−0.0000, +0.0123] | 0.7345 | no |
+| **A-fuse** (K4×K30 coarse×fine) | CPU re-agg | 30 | **0.5693** | **+0.0305** | **[+0.0175, +0.0437]** | 0.7441 | **no (Δ<+0.04)** |
+
+**Reading of the bar (Δ ≥ +0.04 AND paired Δ CI excluding 0):**
+- The two **GPU** scoring variants (K60, fewshot) and A-gate all land **at or slightly below** the
+  anchor (paired Δ negative, CI straddling 0) — finer windows, in-context exemplars, and
+  no-speech gating do not amplify localization; if anything they dilute it.
+- A-lex nudges up (+0.0062) but its CI touches 0 and Δ is 6× short of the bar.
+- **A-fuse is the single closest config**: it *does* clear the CI-excludes-0 half of the bar
+  (paired Δ +0.0305, CI [+0.0175, +0.0437], sign-p 7e-7) — a real, significant improvement over the
+  anchor — but its magnitude **+0.0305 is below the pre-registered +0.04 threshold** (equivalently
+  0.5693 < 0.5787). Per the frozen bar it is **not promoted**. The bar was not moved to admit it.
+
+### VERDICT vs the pre-registered promotion bar — **FAIL (no promotion)**
+
+No config reaches paired wv-AUC ≥ 0.5787 with the paired Δ CI excluding 0. The best amplifier
+(A-fuse) is significant but only +0.0305 over anchor — modest, below the +0.04 gate. **P10 dies
+calibration-side: the HateClipSeg held-out test is NEVER touched, and P6 stands as-is** (HateClipSeg
+within-video AUC 0.5435, CI [0.533, 0.554], p=5.4e-8; paired over memory +0.030, p=0.007 — a modest
+but statistically solid MLLM localizer). The localization gain does not amplify to *substantial* on
+the calibration set, so there is no honest basis to spend the single HateClipSeg test pass.
+
+**Bottom line:** P10 = FAIL / no promotion. The MLLM-localization role remains at its P6 magnitude
+(modest, significant). MLLM's earned roles across the campaign stay: encoder + localizer +
+guard-rail/audit — no substantial amplification of the localizer at Qwen-7B, no HateClipSeg test
+consumed. Coarse×fine fusion (A-fuse) is the only lever that even moved the needle significantly on
+calibration (+0.03) and is the natural starting point if this is ever revisited with a stronger
+scorer — but under the frozen P10 protocol it does not clear the bar.
 
 ## HateClipSeg TEST (promoted config only)
 
-_(one pass; only if a config clears the promotion bar)_
+**Not run.** No config cleared the calibration-side promotion bar, so per the pre-registration the
+single HateClipSeg test pass was never spent. P6's HateClipSeg result (wv-AUC 0.5435) stands as the
+final localization number.
