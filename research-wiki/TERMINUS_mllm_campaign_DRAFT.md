@@ -311,3 +311,40 @@ scorer 池内 _不可达_** —— 现有 7B/32B/72B 分数的任何合法 re-ag
   (0.5755,MODEST)。
 
 *(P10-c 小节结束。上文 FINAL 正文与 EXPLORATORY 附录均不受影响。)*
+
+---
+
+## P11:MLLM 弱监督定位训练(2026-07-09,PROBE FAIL)
+
+> **追加小节,不改动上文任何 FINAL 正文 / EXPLORATORY 附录 / P10-c 小节。** P11 是 campaign 第 13 条(也是
+> 最后一条)预注册路线,把 MLLM 从 zero-shot 定位**打分器**升格为**训练信号**:将 72B A-fuse 逐段密度**蒸馏**进
+> 一个**可训练段级头**,问它能否胜过(A)仅用视频标签的 top-k MIL 头与(C)memory-kNN 弱标注器,在 HateClipSeg
+> 弱监督定位赛道上。全部数字见 `research-wiki/EXP_p11_weaksup_localization.md`(预注册 commit `eaf72db`、probe
+> 结果 commit `0b3cf40`),本小节仅引用、不重测。
+
+- **probe 门(HateMM 标定集,n=266,CPU,不碰 HateClipSeg):** 问 MLLM 弱标签是否比 video-label MIL proxy 携带
+  更多 gold-span 定位信号。字面门(A-fuse(K30×K4) − MIL(K4))**+0.0386,CI[+0.0037,+0.0749] 排除 0 → 过**,但两侧
+  同时在**粒度与算子上混淆**(fused-MLLM vs raw-single-K MIL);预注册在 K30 缓存落地前**钉死的同算子 matched 规则**
+  (A-fuse − MIL A-fuse,同一 rank-fusion 算子,同 "+0.03 且 CI 排除 0" bar)**+0.0359,CI[−0.0009,+0.0730](差 0.0009
+  未排除 0),sign-p 0.13,n.s.**;raw-vs-raw 两个粒度(K4 +0.0058、K30 +0.0143)亦均 n.s.。
+
+- **判定:PROBE FAIL → P11 killed(保守方向)。** 在混淆的字面门通过、而钉死的 matched 门不显著时**选择 kill**,是
+  **保守方向**(与 bar-shopping 相反)。**成功线可证不可达:** teacher 对 MIL proxy 的全部优势 ≤+0.036(n=266 即 n.s.),
+  蒸馏学生无法超过 teacher 的信号优势 → §3 的 B−A ≥ +0.05 显著在更小的 HateClipSeg test(119 视频)上无望;且 teacher
+  绝对值 0.5913(HateMM)/ 0.5755(HateClipSeg test,P10-b)距 B ≥ 0.65 的绝对 bar 尚差 ~0.07–0.09。
+
+- **机制(campaign 反复出现的形状,现落在监督轴上):** 72B A-fuse 的 zero-shot 优势来自 coarse×fine **聚合技巧**,
+  而非更好的**逐段标注**;把同一技巧给一个 video-label MIL 头,gap 即收缩到 n.s.。一个 5-fold 线性 top-k MIL 头在
+  冻结 CLIP 上已达 ~0.55 wv-AUC(与 7B 级 MLLM 打分器相当)—— 即**视频标签本身已含 MLLM 弱标签能教的大部分信息**。
+  MLLM 密度分仍是**零训练打分器**(P6/P10-b 保留角色),但**不是**能胜过朴素 MIL 监督的训练信号。
+
+- **零成本 / test 冻结:** 无训练作业提交,HateClipSeg test split(及其唯一一次触碰)**从未消费**;唯一开销是一次 1h 的
+  HateMM K30 CLIP 特征抽取(其缓存为可复用资产)。P11 split(`p11_split.json`)保持冻结未消费,以备任何前提不同的
+  HateClipSeg 训练路线。
+
+- **对 §4 的影响(不改正文,记于此):** P6/P10 定位角色的**边界更清晰**了 —— MLLM 定位器**显著优于 memory**
+  (A-fuse − memory **+0.0996**,CI[+0.0635,+0.1366] 排除 0),但对「**视频标签 + 简单 MIL**」的优势**不显著**。因此论文里
+  定位角色的**对照叙述应写 memory 对照,而非 MIL 对照**;且这**不改变 zero-shot / 换库能力叙事** —— MIL 需要**目标域的
+  视频标签**,而 zero-shot memory-swap **不需要**,两者不是同一能力口径。
+
+*(P11 小节结束。上文 FINAL 正文、EXPLORATORY 附录、P10-c 小节均不受影响。)*
