@@ -86,7 +86,7 @@ inference with no gradient step*. Two operations follow.
 **Cross-dataset swap (capability).** A head trained on source A classifies target T by **swapping in
 T's own labelled memory** — no retraining. The learned space transfers: it beats the target
 majority baseline on **5 of 6** informative cross cells, lagging in-domain by only ≈ 0.04–0.09
-macro-F1 on working cells [DOC:exp-cross-dataset-transfer.md, DOC:PAPER_MASTER_TABLES.md T3]. A
+macro-F1 on working cells [DOC:experiments/exp-cross-dataset-transfer.md, DOC:PAPER_MASTER_TABLES.md T3]. A
 trained MoE head is **structurally incapable** of being re-pointed at a new support set; this is a
 headline capability delta vs MoRE, reported honestly as a capability demonstration (cross never
 beats in-domain), not an accuracy win.
@@ -119,7 +119,7 @@ inherited-label segment term costs −0.066 macro-F1, and consensus removes that
 weakly above the floor across 5 seeds and both protocol calibrations. It **does not beat the floor**
 significantly (val-selected +0.0115, p ≈ 0.57; final-epoch +0.0247, p ≈ 0.11), so the claim is
 precisely *"consensus de-poisons sub-clip supervision"*, not an accuracy win
-[DOC:exp-consensus-zh-seeds.md]. On MHClip-EN the same repair does **not** transfer, and the
+[DOC:experiments/exp-consensus-zh-seeds.md]. On MHClip-EN the same repair does **not** transfer, and the
 attribution chain is complete rather than hand-waved: swapping the vote space (archive / blend)
 does not rescue it, so the vote *space* is not the culprit; an evidence-matched segment-speech key
 (window-level ASR + CLIP-text) fully repairs the *annotator* (supervision supply, within-video vote
@@ -184,13 +184,14 @@ the two are not the same capability. Wording red line: we claim only **span-free
 as controllability, not accuracy.
 
 **Explicit non-role (for falsifiability).** At 7B–72B scale, the MLLM earns **no main-table-accuracy
-role** in this retrieval-memory pipeline. Eleven pre-registered routes (prior recalibration, neighbour
-reranking, evidence-density pooling, schema distillation, counterfactual mining, score fusion,
-semantic speech compression, decision-level LoRA-SFT) are all honest kills or within-noise, each
+role** in this retrieval-memory pipeline. Eleven pre-registered routes (label-noise repair, prior
+recalibration, neighbour reranking, evidence-density pooling, schema distillation, counterfactual
+mining, score fusion, semantic speech compression, decision-level LoRA-SFT) are all honest kills or
+within-noise, each
 guard-backed by a reproduction / bit-for-bit / probe check [DOC:PAPER_MASTER_TABLES.md T4]. Two
 mechanistic conclusions generalise: comparability ⊥ vote-correctness (scale improves the judge's
 *calibration*, not its *selectivity*), and a passing no-head probe is *necessary but not sufficient*
-(a learned align-fusion head absorbs input-space advantages). The quantified prize is real but out of
+(a learned alignment-fusion head absorbs input-space advantages). The quantified prize is real but out of
 this campaign's reach: an oracle membership editor lifts the gated slice to 100% and overall accuracy
 +7.5pt EN / +10.6pt ZH (both cross 0.85) — which a stronger comparability judge is shown *not* to
 unlock. Details are deferred to the analysis chapter [DOC:DRAFT_analysis_chapter.md].

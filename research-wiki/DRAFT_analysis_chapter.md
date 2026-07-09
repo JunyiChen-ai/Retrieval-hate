@@ -119,7 +119,7 @@ floor gave val-selected ΔF1 −0.0041 and final-epoch +0.0004, both under a poi
 [DOC:EXP_p3_evidence_pooling.md]. Semantic speech compression on EN produced the **strongest probe of
 the entire campaign** — a ≤60-word evidence-dense summary scoring 0.7523, beating both the floor
 (0.7359, +1.6) and naive truncation (0.7067, +4.6) — yet trained to −0.023 / −0.079 and *below* naive
-truncation (P8) [DOC:EXP_p8_semantic_compression.md]. The common cause: the learned align-fusion head
+truncation (P8) [DOC:EXP_p8_semantic_compression.md]. The common cause: the learned alignment-fusion head
 (elementwise image × text) **absorbs the input-space advantage** — it re-exploits the original, even
 diluted, text — washing out the reweight the probe measured. The practical consequence is our
 dual-protocol rule: a probe pass must be confirmed under both validation-selected and final-epoch

@@ -34,7 +34,7 @@ implicit/explicit split is collapsed into the positive class.
 
 **Leakage discipline and our split declaration.** Cross-paper baseline numbers were untrusted, so
 all "floors" in this chapter are re-established on **our own clean splits** rather than lifted from
-prior papers [DOC:exp-baseline-reproduction.md]. Two leakage controls travel with every result.
+prior papers [DOC:experiments/exp-baseline-reproduction.md]. Two leakage controls travel with every result.
 First, on the classification benchmarks the memory bank is built from the **training** split only;
 the test split never enters the bank, and the kNN index is rebuilt per epoch over training
 embeddings alone. Second, for localization (§4) HateClipSeg has no official split; we declare our
@@ -46,7 +46,7 @@ periods, and the temporal-test split never enters the memory [DOC:EVAL_temporal_
 **Clean-test coverage.** Because a fraction of MHClip videos have missing labels or dead download
 links, our strict same-arena test subsets are **HateMM n=215, MHClip-EN n=161, MHClip-ZH n=149**;
 the corresponding clean training banks hold 743 (297 hateful) HateMM videos, 549 (168 hateful) EN,
-and 579 ZH videos [DOC:BASELINE_MoRE_rerun.md §1.4, DOC:exp-cross-dataset-transfer.md]. These
+and 579 ZH videos [DOC:BASELINE_MoRE_rerun.md §1.4, DOC:experiments/exp-cross-dataset-transfer.md]. These
 counts are fixed across all our configurations and across the MoRE re-run, so every reported delta
 is on identical test videos.
 
@@ -293,7 +293,7 @@ its true strength, and each is paired with the operation the baseline head canno
 **Cross-dataset memory swap.** A head trained on source A classifies target T by **swapping in T's
 own labelled memory with no gradient step**. The learned space transfers: it beats the target
 majority baseline on **5 of 6** informative cross cells, lagging in-domain by only ≈ 0.04–0.09
-macro-F1 on working cells [DOC:exp-cross-dataset-transfer.md]. A trained MoE router bakes its
+macro-F1 on working cells [DOC:experiments/exp-cross-dataset-transfer.md]. A trained MoE router bakes its
 decision into weights and **cannot be re-pointed at a new support set** — this is the headline
 capability delta versus MoRE, reported as a capability (cross never beats in-domain), not an accuracy
 win.

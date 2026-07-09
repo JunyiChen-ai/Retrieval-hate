@@ -79,13 +79,13 @@ pre-registered negative results honestly rather than hiding them.
   is *structurally incapable* of. Under temporal shift (MHClip-EN, −0.084 macro-F1) we show the loss
   is calibration drift, not lost separability, and recover it in full by re-calibrating the operating
   point from **k = 20** new-period labels (0.6273 → 0.7336, zero retraining), with a ZH no-drift
-  negative control [DOC:exp-cross-dataset-transfer.md, DOC:EVAL_temporal_memory_W4.md].
+  negative control [DOC:experiments/exp-cross-dataset-transfer.md, DOC:EVAL_temporal_memory_W4.md].
 - **(C3) Consensus denoising of label-inherited segment supervision.** Sub-clips inherit the video
   label but are mostly benign, which poisons a naive segment-contrastive term; a retrieval-consensus
   E-step de-poisons it. This is **validated on Chinese as a repair** (removes a −0.066 macro-F1 hole),
   with an honest, complete cross-lingual boundary: the repair does not transfer to English, and a full
   attribution chain pins the residual failure on the segment-supervision channel itself having no gain
-  for speech-carried hate — not on a bad key choice [DOC:exp-consensus-zh-seeds.md,
+  for speech-carried hate — not on a bad key choice [DOC:experiments/exp-consensus-zh-seeds.md,
   DOC:EXP_mm_segment_keys.md].
 - **(C4) An auditable and human-editable archive memory.** MLLM-produced structured archive records
   make the memory auditable (a stratified audit finds it faithful on 77% of records; the label-blind
@@ -250,7 +250,7 @@ labels, our clean subsets are smaller than the released datasets and will shrink
 links decay; all "floors" are re-established on our own clean splits rather than lifted from prior
 papers, and every reported delta is on identical test videos, but the absolute counts are a moving
 target that future re-runs on freshly-downloaded data may not reproduce exactly
-[DOC:DRAFT_experiments_chapter.md §1.1, DOC:exp-baseline-reproduction.md].
+[DOC:DRAFT_experiments_chapter.md §1.1, DOC:experiments/exp-baseline-reproduction.md].
 
 ---
 
