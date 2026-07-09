@@ -170,8 +170,85 @@ overwritten. Commit (no push), footer `Co-Authored-By: Claude Fable 5
 
 ## PROBE RESULTS
 
-_(appended after `p11_probe_hatemm.py` runs; verdict vs the §4 gate)_
+Run 2026-07-09. Probe = `scripts/analysis/p11_probe_hatemm.py` (CPU; estimators mirror
+`p10_eval_hatemm.py` bit-for-bit — the MLLM 72B A-fuse row reproduces the P10-b
+leaderboard 0.5913 and the 7B anchor 0.5387 exactly). Calibration set = HateMM train
+hateful, **n=266** both-class videos; paired bootstrap 10k 95% CI + sign test. MIL-proxy
+= 5-fold-CV-by-video top-k MIL **linear** head on frozen-CLIP HateMM windows (held-out
+fold logits only, no leakage; strongest k per granularity taken = MIL's best shot).
+Machine JSON: `scripts/analysis/loc_out/p11_probe_hatemm.json`.
+
+### Signal table (per-video within-video AUC on HateMM gold spans)
+
+| signal | granularity | wv-AUC | 95% CI |
+|---|---|---|---|
+| MLLM 72B **A-fuse** (arm-B teacher) | K30×K4 | **0.5913** | [0.5694, 0.6141] |
+| MLLM 72B raw | K30 | 0.5593 | [0.5401, 0.5782] |
+| MLLM 72B raw | K4 | 0.5585 | [0.5393, 0.5782] |
+| MLLM 7B raw (anchor) | K30 | 0.5387 | [0.5242, 0.5534] |
+| **MIL-proxy** (video labels only), best k=2 | K4 | **0.5526** | [0.5229, 0.5824] |
+| MIL-proxy, best k=3 | K30 | 0.5450 | [0.5172, 0.5727] |
+| **MIL-proxy A-fuse** (same rank-fusion operator) | K30×K4 | **0.5580** | [0.5268, 0.5890] |
+| memory MHC-video kNN (arm-C analogue) | K4 | 0.4917 | [0.4618, 0.5220] |
+
+### Gate ladder (paired per-video Δ, n=266)
+
+| comparison | Δ wv-AUC | 95% CI(Δ) | CI excl 0 | reading |
+|---|---|---|---|---|
+| letter-of-§4: MLLM **A-fuse(K30×K4)** − MIL(**K4**) | **+0.0386** | [+0.0037, +0.0749] | **yes** | passes the committed letter — but **granularity/operator-confounded** (fused MLLM vs raw single-K MIL) |
+| §4 robustness (committed): MLLM 72B **K4** − MIL **K4** | +0.0058 | [−0.0271, +0.0397] | no | "positive" only vacuously — the matched-granularity advantage is ≈0 |
+| matched raw: MLLM 72B **K30** − MIL **K30** | +0.0143 | [−0.0182, +0.0465] | no | null |
+| **matched best-vs-best: MLLM A-fuse − MIL A-fuse** (identical rank-fusion operator; **binding matched rule, fixed before the K30 numbers existed**) | **+0.0359** | **[−0.0009, +0.0730]** | **no** (misses by 0.0009) | sign-p 0.13; not significant |
+| context: MLLM A-fuse − memory | +0.0996 | [+0.0635, +0.1366] | yes | arm C confirmed a much weaker teacher |
+
+### Decision chain (recorded verbatim, no rule-shopping in either direction)
+
+1. The **committed letter gate passed** (+0.0386, CI excl 0). But its two sides differ
+   in BOTH granularity (K30-fused vs K4) and operator (coarse×fine fusion vs raw), and
+   the committed robustness check came back **+0.0058 ≈ 0** — exactly the "K=4 gate is
+   ambiguous" condition §5 pre-authorized resolving with a K30 extraction.
+2. The K30 remedy was executed (SLURM job **12616**, HateMM train subclipK30/M120,
+   1h00, COMPLETED; reusable cache
+   `data/CLIP_Embedding/HateMM/train_subclipK30_*.pt`; 744 videos, 1 zero-vector
+   guard, consistent with prior runs). The **binding matched rule** — best-vs-best
+   under the identical A-fuse rank-fusion operator, same "+0.03 AND CI excl 0" bar —
+   was fixed in `p11_probe_hatemm.py` **before** the K30 cache landed.
+3. **Matched verdict: FAIL.** Raw-vs-raw at both K (+0.006, +0.014, both n.s.) and
+   fused-vs-fused (+0.0359, CI includes 0, sign-p 0.13) — the MLLM's weak-label
+   advantage over a video-label MIL proxy is **not significant at any matched
+   comparison**. Killing on the matched test despite the confounded letter-pass is
+   the *conservative* direction — the opposite of bar-shopping.
+
+### Why the kill is decisive for the §3 success line (not just the gate)
+
+- **B − A ≥ +0.05 is unreachable:** the teacher's entire advantage over the MIL proxy
+  is ≤ +0.036 (n.s. at n=266). A distilled student cannot exceed its teacher's signal
+  advantage; demanding +0.05 significant on the *smaller* HateClipSeg test (119
+  videos) from a ≤+0.036-n.s. teacher edge is hopeless.
+- **B ≥ 0.65 is unreachable:** the teacher itself scores 0.5913 (HateMM) / 0.5755
+  (HateClipSeg test, P10-b) — the ceiling distillation could transfer sits ~0.07–0.09
+  below the absolute bar.
+- **Mechanism (the campaign's recurring shape, now on the supervision axis):** the 72B
+  A-fuse's zero-shot edge comes from the coarse×fine **aggregation trick**, not from
+  being a better per-segment labeller — grant the same trick to a video-label MIL head
+  and the gap collapses to n.s. A simple 5-fold linear top-k MIL head on frozen CLIP
+  already reaches ~0.55 wv-AUC (matching 7B-class MLLM scorers), i.e. **video labels
+  alone already contain most of what the MLLM weak labels would teach**. The MLLM
+  density scores remain a *zero-training scorer* (P6/P10-b, the kept role); they are
+  **not** a training signal that beats plain MIL supervision.
+
+### VERDICT — **PROBE FAIL → P11 KILLED**
+
+No training was submitted; the HateClipSeg test split (and its single touch) was never
+consumed. Campaign accounting: P11 = the **13th pre-registered route**, killed
+probe-side at zero training cost (one 1h feature-extraction job whose K30 HateMM CLIP
+cache is a reusable asset). The MLLM's earned roles are unchanged — encoder + zero-shot
+localization scorer (modest-plus) + guard-rail/audit — and the weak-supervision
+*training* role is now also refuted. The declared P11 split (`p11_split.json`) remains
+frozen and unconsumed should any differently-premised HateClipSeg training route ever
+be proposed.
 
 ## TRAINING
 
-_(appended only if the probe passes; else this section records the kill)_
+**Not run.** The probe gate failed (see PROBE RESULTS); per the pre-registration no
+training job was submitted and the test split was never touched.
