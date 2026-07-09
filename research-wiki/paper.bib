@@ -1,0 +1,245 @@
+% ===========================================================================
+%  paper.bib — bibliography for the hateful-video-detection paper draft
+%  Keys match the four chapter drafts (DRAFT_intro_related_limitations.md,
+%  DRAFT_method_chapter.md, DRAFT_experiments_chapter.md,
+%  DRAFT_analysis_chapter.md).  20 entries.
+%
+%  Assembled 2026-07-09.  Bibliographic data web-verified where noted;
+%  entries whose final peer-reviewed venue could not be confirmed are cited
+%  in their verified arXiv-preprint form and flagged [UNVERIFIED] in note.
+%  No venue/pages are invented.
+% ===========================================================================
+
+% ---------------------------------------------------------------------------
+%  Core same-arena / base methods
+% ---------------------------------------------------------------------------
+
+@inproceedings{more,
+  author    = {Lang, Jian and Hong, Rongpei and Xu, Jin and Li, Yili and Xu, Xovee and Zhou, Fan},
+  title     = {Biting Off More Than You Can Detect: Retrieval-Augmented Multimodal Experts for Short Video Hate Detection},
+  booktitle = {Proceedings of the ACM Web Conference 2025 (WWW '25)},
+  year      = {2025},
+  address   = {Sydney, NSW, Australia},
+  publisher = {ACM},
+  doi       = {10.1145/3696410.3714560},
+  note      = {MoRE. Verified: ACM DL / OpenReview.}
+}
+
+@inproceedings{rgcl,
+  author    = {Mei, Jingbiao and Chen, Jinghong and Lin, Weizhe and Byrne, Bill and Tomalin, Marcus},
+  title     = {Improving Hateful Meme Detection through Retrieval-Guided Contrastive Learning},
+  booktitle = {Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  year      = {2024},
+  pages     = {5333--5347},
+  address   = {Bangkok, Thailand},
+  publisher = {Association for Computational Linguistics},
+  eprint    = {2311.08110},
+  archivePrefix = {arXiv},
+  note      = {RGCL. Verified: ACL Anthology 2024.acl-long.291.}
+}
+
+@inproceedings{rahmd,
+  author    = {Mei, Jingbiao and Chen, Jinghong and Yang, Guangyu and Lin, Weizhe and Byrne, Bill},
+  title     = {Robust Adaptation of Large Multimodal Models for Retrieval-Augmented Hateful Meme Detection},
+  booktitle = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year      = {2025},
+  publisher = {Association for Computational Linguistics},
+  eprint    = {2502.13061},
+  archivePrefix = {arXiv},
+  note      = {RA-HMD / LMM-RGCL (EMNLP 2025 Oral). Verified: authors' GitHub.}
+}
+
+% ---------------------------------------------------------------------------
+%  Datasets / benchmarks
+% ---------------------------------------------------------------------------
+
+@inproceedings{das2023hatemm,
+  author    = {Das, Mithun and Raj, Rohit and Saha, Punyajoy and Mathew, Binny and Gupta, Manish and Mukherjee, Animesh},
+  title     = {HateMM: A Multi-Modal Dataset for Hate Video Classification},
+  booktitle = {Proceedings of the International AAAI Conference on Web and Social Media (ICWSM)},
+  year      = {2023},
+  eprint    = {2305.03915},
+  archivePrefix = {arXiv},
+  note      = {HateMM. Verified: arXiv 2305.03915; ICWSM 2023.}
+}
+
+@inproceedings{multihateclip,
+  author    = {Wang, Han and Yang, Tan Rui and Naseem, Usman and Lee, Roy Ka-Wei},
+  title     = {MultiHateClip: A Multilingual Benchmark Dataset for Hateful Video Detection on YouTube and Bilibili},
+  booktitle = {Proceedings of the 32nd ACM International Conference on Multimedia (MM '24)},
+  year      = {2024},
+  publisher = {ACM},
+  eprint    = {2408.03468},
+  archivePrefix = {arXiv},
+  note      = {MHC. Verified: arXiv 2408.03468; ACM MM 2024 (Social-AI-Studio).}
+}
+
+@inproceedings{rehman2025implihatevid,
+  author    = {Rehman, Mohammad Zia Ur and Bhatnagar, Anukriti and Kabde, Omkar and Bansal, Shubhi and Kumar, Nagendra},
+  title     = {ImpliHateVid: A Benchmark Dataset and Two-stage Contrastive Learning Framework for Implicit Hate Speech Detection in Videos},
+  booktitle = {Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  year      = {2025},
+  address   = {Vienna, Austria},
+  publisher = {Association for Computational Linguistics},
+  eprint    = {2508.06570},
+  archivePrefix = {arXiv},
+  note      = {ImpliHateVid. Verified: ACL Anthology 2025.acl-long.842.}
+}
+
+@inproceedings{hateclipseg,
+  author    = {Wang, Han and Wang, Zhuoran and Lee, Roy Ka-Wei},
+  title     = {HateClipSeg: A Segment-Level Annotated Dataset for Fine-Grained Hate Video Detection},
+  booktitle = {Proceedings of the 33rd ACM International Conference on Multimedia (MM '25)},
+  year      = {2025},
+  publisher = {ACM},
+  eprint    = {2508.01712},
+  archivePrefix = {arXiv},
+  note      = {HateClipSeg. Verified: arXiv 2508.01712; ACM MM 2025 (Social-AI-Studio).}
+}
+
+% ---------------------------------------------------------------------------
+%  Reasoning-VLM / competing detectors (related work)
+% ---------------------------------------------------------------------------
+
+@inproceedings{hvguard,
+  author    = {Jing, Yiheng and Zhang, Mingming and Zhuang, Yong and Guo, Jiacheng and Wang, Juan and Xu, Xiaoyang and Yi, Wenzhe and Guo, Keyan and Hu, Hongxin},
+  title     = {HVGuard: Utilizing Multimodal Large Language Models for Hateful Video Detection},
+  booktitle = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+  year      = {2025},
+  pages     = {8993--9006},
+  address   = {Suzhou, China},
+  publisher = {Association for Computational Linguistics},
+  note      = {HVGuard. Verified: ACL Anthology 2025.emnlp-main.456.}
+}
+
+@inproceedings{mmhsd,
+  author    = {C{\'e}spedes-Sarrias, Berta and Collado-Capell, Carlos and Rodenas-Ruiz, Pablo and Hrynenko, Olena and Cavallaro, Andrea},
+  title     = {MM-HSD: Multi-Modal Hate Speech Detection in Videos},
+  booktitle = {Proceedings of the 33rd ACM International Conference on Multimedia (MM '25)},
+  year      = {2025},
+  publisher = {ACM},
+  eprint    = {2508.20546},
+  archivePrefix = {arXiv},
+  note      = {MM-HSD (HateMM video-level SOTA, M-F1 0.874). Verified arXiv 2508.20546; [UNVERIFIED] ACM MM 2025 venue is per project wiki, not independently web-confirmed.}
+}
+
+@article{mars,
+  author    = {Yang, Shuonan and Zhang, Yuchen and Fu, Zeyu},
+  title     = {Training-Free and Interpretable Hateful Video Detection via Multi-stage Adversarial Reasoning},
+  journal   = {arXiv preprint arXiv:2601.15115},
+  year      = {2026},
+  eprint    = {2601.15115},
+  archivePrefix = {arXiv},
+  note      = {MARS. [UNVERIFIED] arXiv preprint; no peer-reviewed venue confirmed.}
+}
+
+@article{iare,
+  author    = {Lu, Junyu and Ji, Deyi and Liu, Liqun and Zhang, Xiaokun and Wu, Youlin and Lee, Roy Ka-Wei and Shu, Peng and Yu, Huan and Jiang, Jie and Xu, Bo and Yang, Liang and Lin, Hongfei},
+  title     = {Decoding Multimodal Cues: Unveiling the Implicit Meaning Behind Hateful Videos},
+  journal   = {arXiv preprint arXiv:2606.11953},
+  year      = {2026},
+  eprint    = {2606.11953},
+  archivePrefix = {arXiv},
+  note      = {IARE. [UNVERIFIED] arXiv preprint; project wiki anticipates SIGIR 2026 — final venue not confirmed.}
+}
+
+@article{ramf,
+  author    = {Yang, Shuonan and Chen, Tailin and Yue, Jiangbei and Cheng, Guangliang and Jiao, Jianbo and Fu, Zeyu},
+  title     = {Reasoning-Aware Multimodal Fusion for Hateful Video Detection},
+  journal   = {arXiv preprint arXiv:2512.02743},
+  year      = {2025},
+  eprint    = {2512.02743},
+  archivePrefix = {arXiv},
+  note      = {RAMF. [UNVERIFIED] arXiv preprint; no peer-reviewed venue confirmed.}
+}
+
+% ---------------------------------------------------------------------------
+%  Temporal localization line (related work)
+% ---------------------------------------------------------------------------
+
+@article{multihateloc,
+  author    = {Sun, Qiyue and Chen, Tailin and Zhang, Yinghui and Zhang, Yuchen and Yue, Jiangbei and Jiao, Jianbo and Fu, Zeyu},
+  title     = {MultiHateLoc: Towards Temporal Localisation of Multimodal Hate Content in Online Videos},
+  journal   = {arXiv preprint arXiv:2512.10408},
+  year      = {2025},
+  eprint    = {2512.10408},
+  archivePrefix = {arXiv},
+  note      = {MultiHateLoc. [UNVERIFIED] arXiv preprint; project wiki anticipates WWW 2026 — final venue not confirmed.}
+}
+
+@article{lela,
+  author    = {Sun, Yueming and Yang, Long and Jiao, Jianbo and Fu, Zeyu},
+  title     = {Towards Training-free Multimodal Hate Localisation with Large Language Models},
+  journal   = {arXiv preprint arXiv:2602.09637},
+  year      = {2026},
+  eprint    = {2602.09637},
+  archivePrefix = {arXiv},
+  note      = {LELA. [UNVERIFIED] arXiv preprint; no peer-reviewed venue confirmed.}
+}
+
+@article{tandem,
+  author    = {Koushik, Girish A. and Treharne, Helen and Kanojia, Diptesh},
+  title     = {TANDEM: Temporal-Aware Neural Detection for Multimodal Hate Speech},
+  journal   = {arXiv preprint arXiv:2601.11178},
+  year      = {2026},
+  eprint    = {2601.11178},
+  archivePrefix = {arXiv},
+  note      = {TANDEM. [UNVERIFIED] arXiv preprint; no peer-reviewed venue confirmed.}
+}
+
+% ---------------------------------------------------------------------------
+%  Retrieval-augmented cross-domain / auditable-record adjacents
+% ---------------------------------------------------------------------------
+
+@inproceedings{crave,
+  author    = {Hong, Rongpei and Lang, Jian and Zhong, Ting and Zhou, Fan},
+  title     = {Borrowing Eyes for the Blind Spot: Overcoming Data Scarcity in Malicious Video Detection via Cross-Domain Retrieval Augmentation},
+  booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year      = {2025},
+  note      = {CRAVE. Verified: authors' GitHub (ronpay/CRAVE), ICCV 2025.}
+}
+
+@inproceedings{safelens,
+  author    = {Wang, Zhuoran and Raharja, Dylan and Hu, Yujia and Lee, Roy Ka-Wei},
+  title     = {SafeLens: Segment-Level Hate Speech Detection in Online Videos},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence (Demonstration Track)},
+  year      = {2026},
+  publisher = {AAAI Press},
+  note      = {SafeLens (AAAI-26 demonstration). Verified: AAAI OJS + socialai.studio; pages not yet available.}
+}
+
+% ---------------------------------------------------------------------------
+%  Foundation encoders / ASR (tooling)
+% ---------------------------------------------------------------------------
+
+@article{qwen25vl,
+  author    = {{Qwen Team, Alibaba Group}},
+  title     = {Qwen2.5-VL Technical Report},
+  journal   = {arXiv preprint arXiv:2502.13923},
+  year      = {2025},
+  eprint    = {2502.13923},
+  archivePrefix = {arXiv},
+  note      = {Verified: arXiv 2502.13923.}
+}
+
+@inproceedings{clip,
+  author    = {Radford, Alec and Kim, Jong Wook and Hallacy, Chris and Ramesh, Aditya and Goh, Gabriel and Agarwal, Sandhini and Sastry, Girish and Askell, Amanda and Mishkin, Pamela and Clark, Jack and Krueger, Gretchen and Sutskever, Ilya},
+  title     = {Learning Transferable Visual Models From Natural Language Supervision},
+  booktitle = {Proceedings of the 38th International Conference on Machine Learning (ICML)},
+  year      = {2021},
+  pages     = {8748--8763},
+  eprint    = {2103.00020},
+  archivePrefix = {arXiv},
+  note      = {CLIP. Verified: ICML 2021; arXiv 2103.00020.}
+}
+
+@inproceedings{whisper,
+  author    = {Radford, Alec and Kim, Jong Wook and Xu, Tao and Brockman, Greg and McLeavey, Christine and Sutskever, Ilya},
+  title     = {Robust Speech Recognition via Large-Scale Weak Supervision},
+  booktitle = {Proceedings of the 40th International Conference on Machine Learning (ICML)},
+  year      = {2023},
+  pages     = {28492--28518},
+  eprint    = {2212.04356},
+  archivePrefix = {arXiv},
+  note      = {Whisper. Verified: ICML 2023; arXiv 2212.04356.}
+}
