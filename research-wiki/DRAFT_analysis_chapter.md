@@ -21,7 +21,8 @@ point ≈ 1.6 videos; MHClip-EN n=161, MHClip-ZH n=149, HateMM clean n=215). To 
 MLLM a distinct non-encoder job aimed at main-table accuracy (label-noise repair, prior
 recalibration, neighbour reranking, evidence-density pooling, schema distillation, counterfactual
 mining, score-level fusion, semantic speech compression, and decision-level LMM fine-tuning); two
-target temporal localization. The verdict is uniform and, we will argue, mechanistically legible:
+target temporal localization (the P6 scorer and its P10/P11 amplification-and-weak-supervision
+thread). The verdict is uniform and, we will argue, mechanistically legible:
 **the main-table-accuracy role is refuted across all eleven routes**, while the MLLM earns three
 genuinely removable roles — encoder, localization scorer, and guard-rail/audit — none of which is a
 main-table-accuracy role. This chapter is the analysis: the discipline that makes the negative

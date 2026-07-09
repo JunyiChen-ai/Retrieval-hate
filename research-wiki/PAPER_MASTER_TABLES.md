@@ -161,10 +161,18 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 
 ---
 
-## T4 — 反结果表(方法学章素材:MLLM 方法角色 campaign 全 12 路线)
+## T4 — 反结果表(方法学章素材:MLLM 方法角色 campaign 全 13 路线,已结题)
 
 判定口径:1 acc 点 ≈ 1.6 视频;sub-1pt = within-noise。每条均有复现 / bit-for-bit / probe 护栏背书
 (非 harness 假象)。**行 7(P6)与 P10-b 是正例**,置于此表以完整呈现 campaign。
+
+**计数口径(与 DRAFT_analysis_chapter.md §1 对齐,避免 11 与 13 混淆):** 本表 **13 行 = campaign
+全部 13 条预注册路线**(route-family 粒度;CAMPAIGN_mllm_method_role.md「13 条预注册路线全部结题」)。
+其中 **定位赛道 3 行**——行 7 **P6**(scorer,正例)、行 11 **P10/P10-b/P10-c**(amplify,P10-b MODEST
+正例、P10-c 落线)、行 12 **P11**(weak-sup training,probe-fail);**其余 10 行为主表 accuracy 路线,
+全数证伪**。DRAFT §1 把主表路线以更细粒度记为「**十一条**」(P9/P9b 分列计数),与本表 10 主表行**同指
+一组结果、仅计数粒度不同**;两处终态一致 = **13 全结题,主表 accuracy 角色被证伪,定位赛道
+= P6 + P10-b/P10-c/P11**。
 
 | # | 路线(MLLM 方法职责) | 关键数字 | kill / 判定依据 | 文档 · commit |
 |---|---|---|---|---|
@@ -180,6 +188,7 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 | 9 | **P8/P8b/P8c** 语义压缩 speech 通道:MLLM ≤60 词摘要作文本通道 | EN probe 开(B 0.7523>A 0.7359>朴素截断 C 0.7067)却训练 B −0.023/−0.079 劣于 C;ZH/HateMM probe 关;P8c 中文摘要 0.7168 最差 | **FAIL(全库)**:**campaign 最强 probe 却训练不过**(probe 必要非充分最尖锐);ZH 瓶颈=冻结 English-centric CLIP text tower 把中文 byte-fragment 97% 截断 | EXP_p8_semantic_compression / EXP_p8b_vision_summary · `e63d8fe`,`703f4fd` |
 | 10 | **P9/P9b** 决策级 LMM-SFT:LoRA-SFT 整个 Qwen2.5-VL + 自带头(C3);P9b 加 rgcl-ON 臂(D3) | C3-mlp EN 0.7909(+0.6 noise)/ ZH 0.8635(**+1.0 vs 协议匹配 LoRA floor 0.8537**,noise);**C3-knn EN −2.7 / ZH −2.2 / HateMM −4.7 BELOW floor**;P9b D3-knn ZH 0.8389(−1.5)/ EN 0.7743(−1.0),0/12 cell 超 floor;D3−C3′ = head↔memory ±1.8pt 再分配 | **FAIL(最后架构 locus 关闭)**:LMM 头 displaces 而非 enhances memory;rgcl 项只再分配、非净增益。幸存=首次成功 port RA-HMD(released rgcl-OFF)stage-2 到 video(5 fork 修复) | EXP_p9_lmm_rgcl_video · `455e666`,`4d28655` |
 | 11 | **P10/P10-b/P10-c** 放大定位角色:HateMM span 标定 scorer,单次测 HateClipSeg | round-1 A-fuse 7B **+0.0305 < +0.04**;P10-b 72B A-fuse 校准 0.5913 → **test 0.5755 MODEST**;P10-c Qwen3-VL-32B A-fuse **0.5866 < 0.616**(test 未触) | **round1/P10-c FAIL(no promotion);P10-b = MODEST amplification**(见 T2);把定位从 modest 升 modest-plus,不改主表终局 | EXP_p10_loc_amplify · `7194ee2`,`03880f2`,`74f0eac` |
+| 12 | **P11** MLLM 段级密度作**弱监督训练信号**:蒸馏 72B A-fuse 段级密度 → 训练段级 head,比 (A) video-label MIL 与 (C) memory-kNN 弱标注器 | matched 同算子门 **A-fuse−MIL A-fuse +0.0359** CI[−0.0009,+0.0730] sign-p **0.13 n.s.**(差 0.0009);raw-vs-raw 两 K 亦 n.s.(+0.0058 K4 / +0.0143 K30);**教师优势 = coarse×fine 聚合技巧**非更好段级 labeller,5-fold 线性 MIL 已 ~0.55 wv-AUC(video labels 已含大部分教师信号);**memory 教师 0.4917 ≈ random** | **PROBE FAIL → 保守 kill**:committed letter gate(A-fuse−MIL K4 **+0.0386** CI excl 0)pass 但 granularity/operator-confounded,binding **matched** gate 不显著即 kill(反 bar-shopping,保守方向);**零训练成本**(仅一个 1h K30 特征提取,cache 可复用);**HateClipSeg test split 冻结未消费**;§3 成功线(B−A/B−C ≥ +0.05 & B abs ≥ 0.65)provably unreachable | EXP_p11_weaksup_localization · `eaf72db`,`0b3cf40` |
 
 **两条方法学定论(横切,贯穿 T4):**
 1. **过 no-head probe 是必要非充分。** P3-HateMM(三库最干净 probe +0.0108,证据最密)与 P8-EN
@@ -200,13 +209,14 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 - **问题:** hateful **video** detection;把 RGCL/RA-HMD(原 hateful-meme)适配到视频。
 - **贡献定位(四支柱 + MLLM 三角色):** ①检索对比 + kNN 记忆核心 ②可更新记忆 + 时间协议
   ③共识去噪(修复机制,ZH-scoped)④可审计/可编辑档案记忆;MLLM 挣得 **encoder + 定位打分器 +
-  guard-rail/审计** 三角色,**主表 accuracy 角色被 12 路线证伪**(方法学负结果贡献)。
+  guard-rail/审计** 三角色,**主表 accuracy 角色被 13 路线全 campaign 中的 11 条主表路线证伪**
+  (定位赛道 P6/P10-b/P10-c/P11 另计;方法学负结果贡献)。
 - **(a):** 强调「四支柱能力 + 定位 modest-plus + 强负结果链」,**不主张 substantial main-table**。
   **(b):** Intro 保留定位子目标为「开放问题:闭源能否 0.5755→0.60+」。**(c):** 重写 Intro 把 headline
   从主表 accuracy 转到「唯一 scale 起作用的定位赛道」或换编码器族的 ZH 主表。
 
 ### 方法(四支柱 + MLLM 三角色 + 一条明确非角色)
-- 四支柱骨架 + MLLM 三角色框架(OPTION_KITS A.2);明确非角色 = 12 路线 ruled-out map + 两条方法学定论。
+- 四支柱骨架 + MLLM 三角色框架(OPTION_KITS A.2);明确非角色 = 13 路线 ruled-out map + 两条方法学定论。
 - **(a):** 照 OPTION_KITS A.2 直接落地,零改动。**(b):** 方法章加一小节 P10-c 闭源定位放大(须先获数据外发
   批准)。**(c):** 方法章重构——可训练-MLLM + in-context 检索,或换 CN 文本塔检索族;放弃部分现有四支柱资产。
 
@@ -260,6 +270,12 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 6. **【口径提醒】consensus ZH 与 archive-kNN ZH 编码器不同。** consensus 行(0.8107/0.8175)是 **frozen-CLIP**
    base;archive-kNN ZH 主栈(0.8268/0.8537)是 **LoRA-Qwen**。T1.1 已用 † 标注不可直接同格并比;consensus 仅
    作机制/robustness 行。
+7. **【计数粒度澄清,非矛盾】「11 条主表」vs「13 条总数」。** 两个数**同时正确、指不同粒度**,勿混淆:
+   **13 = campaign 全部预注册路线**(T4 本表 13 行 / CAMPAIGN_mllm_method_role.md「13 条全结题」/ DRAFT §1
+   "thirteen-route"),其中定位赛道 = **P6 + P10-b/P10-c/P11**(3 行),其余 10 行瞄准主表 accuracy。
+   **11 = DRAFT §1 记的主表路线细粒度计数**(把 P9/P9b 分列),与 T4 的 10 主表行**同指一组结果**。两处终态一致:
+   主表 accuracy 角色全数证伪。**易错点:早期文本「主表被 12/13 路线证伪」暗示全部路线都瞄准主表——错;
+   定位赛道(P6/P10/P11)不属主表路线**,已在 T4 表头与骨架 Intro/方法段更正。
 
 ---
 
