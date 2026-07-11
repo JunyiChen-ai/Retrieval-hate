@@ -101,7 +101,7 @@ attribution is developed in the analysis chapter.
 
 | Dataset (n) | Config | Encoder | val-sel acc | val-sel F1 | final-ep acc | final-ep F1 | seeds |
 |---|---|---|---|---|---|---|---|
-| HateMM (215) | frozen-CLIP RGCL floor | CLIP ViT-L/14-336 | 0.8732 | — | — | — | 1 |
+| HateMM (215) | frozen-CLIP RGCL floor | CLIP ViT-L/14-336 | 0.8279 | 0.8172 | — | — | 1 |
 | **HateMM (215)** | **frozen-Qwen RGCL (best)** | Qwen2.5-VL-7B (frozen) | **0.870** | **0.861** | — | — | 1 |
 | HateMM (P9-matched) | trained-RGCL floor | frozen-Qwen | 0.870 | — | 0.8605 | — | 3 |
 | HateMM (P9-matched) | raw-kNN floor | frozen-Qwen | — | — | 0.786 | — | 3 |
@@ -148,7 +148,7 @@ headline accuracy row.
 **Encoder-role ablation (CLIP vs frozen-Qwen vs LoRA-Qwen).** The encoder is the one component
 whose swap moves the main table, and it moves it as a *frozen-encoder identity*, not as a new method
 role. On HateMM, frozen Qwen2.5-VL features beat frozen CLIP by ≈ +4.2 macro-F1-equivalent and are
-what carries the 0.85 crossing (0.870 / 0.861 vs the 0.8732-accuracy CLIP floor). On ZH, LoRA
+what carries the 0.85 crossing (0.870 / 0.861 vs the 0.8279-accuracy / 0.8172-macro-F1 CLIP floor). On ZH, LoRA
 adaptation of Qwen2.5-VL is the best available front-end and is used for the main ZH stack; on EN,
 frozen Qwen is best and LoRA regresses. The three front-ends are read by the same head with no
 head-code change (feature dims are read from cache), which is exactly what makes the encoder a

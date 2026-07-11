@@ -102,7 +102,7 @@ HateMM 帧目录为均匀抽帧(抽样核对 12 个视频)→ 第 k 段映射 [k
 
 | 方法 | test acc | test macro-F1 | 来源 |
 |---|---|---|---|
-| frozen-CLIP RGCL(RAC_video_CLIP)| 0.8732 | 0.8686 | job 12132,选型 ep24,logging/Retrieval/HateMM |
+| frozen-CLIP RGCL(RAC_video_CLIP)| 0.8279 | 0.8172 | job 1035814,val-selected ep24(n=215),`rgcl_HateMM_openai_clip-vit-large-patch14-336_HF_1035814.trainlog:257-259` |
 | frozen-Qwen RGCL | 0.870 | — | exp-baseline-reproduction.md |
 
 **产出**:`/data/jehc223/RGCL/scripts/analysis/eval_localization_ours.py`

@@ -10,7 +10,7 @@ _面向项目负责人验收的终版报告:全部实验已收敛,无在飞作�
 
 | 数据集 | 状态 | 终版数字 | 说明 |
 |---|---|---|---|
-| **HateMM** | **✓ 达标** | frozen-Qwen RGCL **0.870** / F1 0.861;frozen-CLIP 0.8732 | 早已达标,后续未动(`experiments/exp-baseline-reproduction.md`) |
+| **HateMM** | **✓ 达标** | frozen-Qwen RGCL **0.870** / F1 0.861;frozen-CLIP 0.8279 / F1 0.8172 | 早已达标,后续未动(`experiments/exp-baseline-reproduction.md`) |
 | **ImpliHateVid** | **✓ 达标** | **~0.91**(frozen-CLIP 0.910 / frozen-Qwen 0.900) | 早已达标(`experiments/exp-baseline-reproduction.md`、`DESIGN_iter1.md`) |
 | **MHClip-ZH** | △ 双口径,协议选择=用户拍板项 | **val-选点 ~0.827**(archive 臂 0.8268±0.0266 / LoRA-only floor 0.8282±0.0139,5 seeds,均不过 0.85);**final-epoch(selection-free)floor 0.8537±0.0120 —— 过 0.85**(seeds 3/4 达 0.8658;archive 臂与 floor 每 seed 逐位相同) | 预注册口径不过线、标准 selection-free 口径过线;因过线才换口径 = rule-shopping,风险与两口径并排方案见 §7.1(`experiments/exp-archive-knn-seeds.md` Addendum 1/2) |
 | **MHClip-EN** | ✗ 未达,**近天花板定位**(所有杠杆穷尽) | **≈0.78–0.80 双口径**:val-选点 floor 0.7702±0.0221 / archive 0.7935±0.0205(n=4);final-epoch floor 0.7888±0.0152 / archive 0.7826±0.0134;全配置挤在 0.77–0.79,无任何配置分离(`experiments/exp-archive-knn-seeds.md` Addendum 3) | **已测杠杆全部噪声级、有害或未过 val 门**(全名单见 §5):LoRA-SFT、consensus-clip/archive/blend/mm、transcript 键、archive-kNN α 网格、mode=both、double key、role-3 三代仲裁器。**同场定位**:MoRE 同场复跑 EN clean 仅 **0.69–0.72 acc**(as-released 0.6894 / bugfix 0.7019 / 5-seed 均值 0.722);**CRAVE 发表 M-F1 79.81 / ACC 82.50 为该 split 场上最高发表数字**(全量 split,与 clean 子集不可直接比,`HEADTOHEAD_FEASIBILITY.md` §3)。我们 0.79/0.74(acc/F1,frozen-Qwen)已在发表最强者的量级上、大幅高于同场可复跑者 —— 支持"近天花板"定位,叙事转归因分析(§4③) |

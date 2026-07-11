@@ -32,7 +32,7 @@ HateMM/ImpliHateVid 早已达标 acc≥0.85。
 
 | 数据集 (n) | 配置 | 编码器 | val-sel acc | val-sel macro-F1 | final-ep acc | final-ep macro-F1 | seeds | 来源 · commit |
 |---|---|---|---|---|---|---|---|---|
-| **HateMM** (215) | frozen-CLIP RGCL floor | CLIP ViT-L/14-336 | 0.8732 | — | — | — | 1 | exp-baseline-reproduction · `becfd91` |
+| **HateMM** (215) | frozen-CLIP RGCL floor | CLIP ViT-L/14-336 | 0.8279 | 0.8172 | — | — | 1 | `1035814.trainlog:257-259`(val-sel ep24) · exp-baseline-reproduction |
 | **HateMM** (215) | **frozen-Qwen RGCL(最优栈)** | Qwen2.5-VL-7B(冻结) | **0.870** | **0.861** | — | — | 1 | exp-baseline-reproduction / MoRE §3.2 · `ebc1988` |
 | **HateMM** (P9 匹配) | trained-RGCL floor(P9 口径) | frozen-Qwen | 0.870 | — | 0.8605 | — | 3 | EXP_p9 · `4d28655` |
 | **HateMM** (P9 匹配) | raw-kNN floor(P9 口径) | frozen-Qwen | — | — | 0.786 | — | 3 | EXP_p9 · `4d28655` |
@@ -276,6 +276,17 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
    **11 = DRAFT §1 记的主表路线细粒度计数**(把 P9/P9b 分列),与 T4 的 10 主表行**同指一组结果**。两处终态一致:
    主表 accuracy 角色全数证伪。**易错点:早期文本「主表被 12/13 路线证伪」暗示全部路线都瞄准主表——错;
    定位赛道(P6/P10/P11)不属主表路线**,已在 T4 表头与骨架 Intro/方法段更正。
+8. **【硬勘误,已修正 2026-07-11】HateMM frozen-CLIP RGCL floor 数字错误。** 原记 **0.8732 acc / 0.8686 mF1**,
+   并错引「job 12132, ep24」。溯源(2026-07-11):**0.8732 实为该日志的 Val_Retrieval ROC-AUC**
+   (`rgcl_HateMM_openai_clip-vit-large-patch14-336_HF_1035814.trainlog` ep9/ep20,line 117/217),被误当成
+   test acc 抄入;**0.8686 在 1035814 与 1029175 两份日志中均无对应读数(幽灵数)**;错引的 **job 12132 实为一个
+   MHC seg 训练作业**(`slurm/logs/mhc_train_seg_12132.out`),与 HateMM CLIP 无关。**正确读数 = val-selected ep24
+   的 test acc 0.8279 / macro-F1 0.8172**(n=215,`1035814.trainlog:257-259`)。**传播链:**
+   EVAL_localization_hatemm.md:105 →(本表 T1.1 L35 + DRAFT_experiments_chapter.md L104 表/L151 正文 +
+   MORNING_REPORT.md L13)→ 用户 target-loop 注册表 `TARGET_STATE.json`(exact_baselines.HateMM,L62-63)。
+   **修正:上述我方 4 处文档已全部改为 0.8279/0.8172 并更正出处(见本次勘误 commit);TARGET_STATE.json 属用户 loop
+   状态,未改,需用户自行同步 L62-63 及其 hard_target/audit_note。** 附:frozen-Qwen 0.870/0.861 经同轮交叉核对
+   (`1029175` ep28 val-selected test 0.8698/0.8606 ≈ 0.870/0.861)确认无误,保留不动。
 
 ---
 
