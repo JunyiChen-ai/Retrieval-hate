@@ -3,8 +3,8 @@ type: experiment
 node_id: exp:exp-encoder-3seed
 title: "MLLM-as-encoder vs frozen-CLIP: 3-seed paired encoder-swap test (HateMM + MHC-EN), dual protocol, archive OFF"
 idea_id: ""
-verdict: pending
-confidence: ""
+verdict: partial
+confidence: high
 date: "2026-07-11"
 hardware: "1x A100 (SLURM), frozen features cached -> ~21-25 s/run"
 duration: "10 runs, seconds each, one serial sbatch"
@@ -15,7 +15,10 @@ tags: ["hateful-video", "MLLM-encoder", "frozen-CLIP", "encoder-swap", "multi-se
 
 # MLLM-as-encoder vs frozen-CLIP: 3-seed paired encoder-swap test
 
-**verdict:** `pending` (pre-registration; results section filled after the runs)
+**verdict:** `partial` — **HateMM PASSES the pre-registered criterion under BOTH protocols
+(3/3 seeds positive, mean +5.3 to +5.6 acc pts, +5.6 to +6.6 F1 pts); MHC-EN FAILS under
+BOTH protocols.** The ">= 2 datasets" headline criterion is therefore **NOT met**; the honest
+claim is dataset-specific. · **confidence:** `high`
 
 ## Hypothesis (pre-registered)
 
@@ -114,6 +117,147 @@ Via `scripts/slurm/enc3seed.sbatch` (one serial sbatch, current code,
 
 (MHC-EN Qwen s1/s2 reused from 12275/12276.)
 
-## Results
+## Results (2026-07-11, SLURM job 12850, COMPLETED 19:48, exit 0; all 10 runs)
 
-**PENDING** — filled after the runs complete.
+All numbers below were read back from the raw trainlogs after tabulation
+(`slurm/logs/enc3s_<dataset>_<model>_seed<s>_12850.trainlog`; line numbers in the
+provenance table at the end of this section). Runner: `scripts/slurm/enc3seed.sbatch`.
+
+### Code-version / reproduction audit (run FIRST, gates everything below)
+
+The current-code seed0 re-runs reproduce the old-code seed0 logs **to all 4 printed
+decimals, both protocols, all 4 arms**:
+
+| dataset | arm | old-code s0 (val-sel F1/acc; final F1/acc) | new-code s0 (12850) | match |
+|---|---|---|---|---|
+| HateMM | CLIP | 0.8172/0.8279; 0.7997/0.8186 (1035814) | identical | MATCH |
+| HateMM | Qwen | 0.8606/0.8698; 0.8507/0.8605 (1029175) | identical | MATCH |
+| MHC-EN | CLIP | 0.7113/0.7826; 0.7145/0.7640 (1035813) | identical | MATCH |
+| MHC-EN | Qwen | 0.7378/0.7888; 0.7596/0.8012 (1029174) | identical | MATCH |
+
+This retires the old-code-vs-new-code confound: every flag added to `run_rac.py` since
+the old runs is inert at defaults. Namespace diff between arms (audited on
+enc3s MHC CLIP s1 vs reused arcbase 12275): substantive fields differ **only** in
+`model=` (+ derived `exp_comment`/`output_path`); the extra fields present only in
+current code (`aux_archive_version`, `aux_fields`, `lambda_aux=0.0`, `cf_negs=False`,
+`cf_negs_random=False`, `cf_twin_cache='auto'`, `mm_text_weight=0.5`,
+`mm_empty_text='parent'`, `mm_subclip_cache='auto'`) are all at inert defaults —
+proven inert by the bit-for-bit seed0 reproductions above. The reused MHC-EN Qwen
+s1/s2 logs (12275/12276) are therefore fully comparable with the CLIP arm.
+
+### Per-seed absolute readings (Test)
+
+**HateMM**
+
+| seed | arm | val-sel Test F1 / acc / roc (sel ep) | final-ep Test F1 / acc / roc |
+|---|---|---|---|
+| 0 | CLIP | 0.8172 / 0.8279 / 0.8903 (e24) | 0.7997 / 0.8186 / 0.8857 (e29) |
+| 0 | Qwen | 0.8606 / 0.8698 / 0.9156 (e28) | 0.8507 / 0.8605 / 0.9283 (e29) |
+| 1 | CLIP | 0.8163 / 0.8279 / 0.8771 (e26) | 0.7822 / 0.8047 / 0.8762 (e29) |
+| 1 | Qwen | 0.8586 / 0.8651 / 0.9228 (e22) | 0.8514 / 0.8605 / 0.9283 (e29) |
+| 2 | CLIP | 0.7920 / 0.8047 / 0.8734 (e24) | 0.7988 / 0.8140 / 0.8812 (e29) |
+| 2 | Qwen | 0.8753 / 0.8837 / 0.9306 (e29) | 0.8753 / 0.8837 / 0.9306 (e29) |
+
+**MHC-EN**
+
+| seed | arm | val-sel Test F1 / acc / roc (sel ep) | final-ep Test F1 / acc / roc |
+|---|---|---|---|
+| 0 | CLIP | 0.7113 / 0.7826 / 0.8422 (e26) | 0.7145 / 0.7640 / 0.8353 (e29) |
+| 0 | Qwen | 0.7378 / 0.7888 / 0.8402 (e28) | 0.7596 / 0.8012 / 0.8528 (e29) |
+| 1 | CLIP | 0.6034 / 0.7329 / 0.8048 (e16) | 0.7159 / 0.7826 / 0.8236 (e29) |
+| 1 | Qwen | 0.7283 / 0.7826 / 0.8375 (e25) | 0.7203 / 0.7702 / 0.8473 (e29) |
+| 2 | CLIP | 0.6997 / 0.7702 / 0.8271 (e27) | 0.7303 / 0.7888 / 0.8233 (e29) |
+| 2 | Qwen | 0.6997 / 0.7702 / 0.8138 (e18) | 0.7475 / 0.7826 / 0.8570 (e29) |
+
+(Curiosity, declared: MHC-EN seed2 val-sel picks different epochs per arm — CLIP e27,
+Qwen e18 — that happen to yield identical Test macroF1/P/R/acc; only roc differs. Small
+test set; treated as an exact-zero paired delta.)
+
+### Paired deltas (Qwen − CLIP), per protocol
+
+**HateMM — protocol (A) val-selected**
+
+| seed | Δacc | ΔmF1 |
+|---|---|---|
+| 0 | +0.0419 | +0.0434 |
+| 1 | +0.0372 | +0.0423 |
+| 2 | +0.0790 | +0.0833 |
+| **mean±std** | **+0.0527 ± 0.0229** (paired t=+3.99, 3/3 positive) | **+0.0563 ± 0.0234** (t=+4.18, 3/3 positive) |
+
+→ mean Δacc ≥ +0.030 ✓, mean ΔmF1 ≥ +0.030 ✓, sign 3/3 ✓ — **PASS**
+
+**HateMM — protocol (B) final-epoch**
+
+| seed | Δacc | ΔmF1 |
+|---|---|---|
+| 0 | +0.0419 | +0.0510 |
+| 1 | +0.0558 | +0.0692 |
+| 2 | +0.0697 | +0.0765 |
+| **mean±std** | **+0.0558 ± 0.0139** (t=+6.95, 3/3 positive) | **+0.0656 ± 0.0131** (t=+8.65, 3/3 positive) |
+
+→ **PASS**
+
+**MHC-EN — protocol (A) val-selected**
+
+| seed | Δacc | ΔmF1 |
+|---|---|---|
+| 0 | +0.0062 | +0.0265 |
+| 1 | +0.0497 | +0.1249 |
+| 2 | 0.0000 | 0.0000 |
+| **mean±std** | **+0.0186 ± 0.0271** (t=+1.19, 2/3 positive) | **+0.0505 ± 0.0658** (t=+1.33, 2/3 positive) |
+
+→ mean Δacc < +0.030 ✗, sign 2/3 ✗ (ΔmF1 mean passes numerically but is carried by one
+seed's CLIP-arm selection pathology, s1 e16 → F1 0.6034) — **FAIL**
+
+**MHC-EN — protocol (B) final-epoch**
+
+| seed | Δacc | ΔmF1 |
+|---|---|---|
+| 0 | +0.0372 | +0.0451 |
+| 1 | −0.0124 | +0.0044 |
+| 2 | −0.0062 | +0.0172 |
+| **mean±std** | **+0.0062 ± 0.0270** (t=+0.40, 1/3 positive) | **+0.0222 ± 0.0208** (t=+1.85, 3/3 positive) |
+
+→ mean Δacc < +0.030 ✗, acc sign 1/3 ✗, mean ΔmF1 < +0.030 ✗ — **FAIL**
+
+(Per pre-registration, paired t at n=3 is reported as an effect-size descriptor only;
+no significance claim.)
+
+### Judgment (pre-registered rules, applied verbatim)
+
+- **HateMM:** PASS under **both** protocols. The frozen-Qwen encoder beats frozen-CLIP
+  on every seed, both metrics, both protocols; the smallest per-seed acc delta is +0.037.
+  This is the most seed- and protocol-robust positive effect measured in this project.
+- **MHC-EN:** FAIL under **both** protocols. val-sel: mean Δacc +0.019 (2/3 seeds);
+  final-epoch: mean Δacc +0.006 (1/3 seeds). Direction weakly positive for F1 (final-ep
+  3/3 but mean +0.022 < +0.030 and driven by small deltas); the honest EN statement
+  remains "≈0.77-0.80 regardless of encoder" (consistent with the archive-seeds node).
+- **Headline (">= 2 datasets") criterion: NOT MET** — H1 as pre-registered is
+  **rejected**. Supported dataset-specific claim: *swapping frozen-CLIP for a frozen
+  Qwen2.5-VL-7B encoder in the unchanged RGCL head yields a large, seed-robust,
+  protocol-robust improvement on HateMM (≈+5 acc / +6 F1 points) but no reliable
+  improvement on MHC-EN.*
+- Consistency note: EN Qwen val-sel 3-seed mean acc = 0.7805 vs CLIP 0.7619; final-ep
+  0.7847 vs 0.7785 — both arms sit inside the known EN 0.77-0.80 noise band.
+
+### Numeric provenance (raw-log line numbers, all in `slurm/logs/`)
+
+| reading | file:line |
+|---|---|
+| HateMM CLIP s0 val-sel e24 | `enc3s_HateMM_openai_clip-vit-large-patch14-336_HF_seed0_12850.trainlog:258` |
+| HateMM CLIP s0 final e29 | same file `:304` |
+| HateMM CLIP s1 val-sel e26 / final e29 | `..._seed1_12850.trainlog:276` / `:304` |
+| HateMM CLIP s2 val-sel e24 / final e29 | `..._seed2_12850.trainlog:258` / `:304` |
+| HateMM Qwen s0 val-sel e28 / final e29 | `enc3s_HateMM_Qwen2.5-VL-7B-Instruct_HF_seed0_12850.trainlog:293` / `:303` |
+| HateMM Qwen s1 val-sel e22 / final e29 | `..._seed1_12850.trainlog:235` / `:299` |
+| HateMM Qwen s2 val-sel = final e29 | `..._seed2_12850.trainlog:302` |
+| MHC-EN CLIP s0 val-sel e26 / final e29 | `enc3s_MHC_openai_clip-vit-large-patch14-336_HF_seed0_12850.trainlog:248` / `:273` |
+| MHC-EN CLIP s1 val-sel e16 / final e29 | `..._seed1_12850.trainlog:167` / `:272` |
+| MHC-EN CLIP s2 val-sel e27 / final e29 | `..._seed2_12850.trainlog:256` / `:273` |
+| MHC-EN Qwen s0 val-sel e28 / final e29 | `enc3s_MHC_Qwen2.5-VL-7B-Instruct_HF_seed0_12850.trainlog:263` / `:272` |
+| MHC-EN Qwen s1 val-sel e25 / final e29 (reused) | `arcbase_MHC_Qwen2.5-VL-7B-Instruct_HF_seed1_12275.trainlog:240` / `:273` |
+| MHC-EN Qwen s2 val-sel e18 / final e29 (reused) | `arcbase_MHC_Qwen2.5-VL-7B-Instruct_HF_seed2_12276.trainlog:185` / `:274` |
+
+Selection rule for "val-sel": epoch >= warmup 5 maximizing Val_Retrieval acc (roc
+tie-break), identical to the sbatch template parser; "final" = epoch 29 (all runs
+trained the full 30 epochs).
