@@ -1,0 +1,275 @@
+{
+  "schema_version": 5,
+  "config_name": "lb_scgp_v5",
+  "authorization": {
+    "authorized_stages": [
+      "G0"
+    ],
+    "locked_stages": [
+      "G1",
+      "G2",
+      "G3",
+      "G4"
+    ],
+    "teacher_calls_allowed": false,
+    "new_ocr_calls_allowed": false
+  },
+  "paths": {
+    "root": "/data/jehc223/RGCL",
+    "artifacts": "artifacts/lb_scgp/v5",
+    "bank": "artifacts/ssr/v1/oof/MHC_zh/fold4/embeddings.npz",
+    "checkpoint": "artifacts/ssr/v1/oof/MHC_zh/fold4/checkpoint_epoch28.pt",
+    "remove_ledger": "artifacts/ssr/v1/oof/MHC_zh/fold4/train.jsonl",
+    "outer_train_feature_cache": "artifacts/lb_scgp/inputs/MHC_zh/fold4/outer_train_features.pt",
+    "sanitized_provenance": "artifacts/lb_scgp/inputs/MHC_zh/fold4/sanitized_provenance.json",
+    "sanitizer_decision": "artifacts/lb_scgp/inputs/MHC_zh/fold4/sanitizer_decision.json",
+    "pre_freeze_sanitizer_contract": "refine-logs/lb_scgp/v2/PRE_FREEZE_SANITIZER_CONTRACT_SNAPSHOT.json",
+    "experiment_plan": "refine-logs/lb_scgp/EXPERIMENT_PLAN.md",
+    "experiment_tracker": "refine-logs/lb_scgp/EXPERIMENT_TRACKER.md",
+    "problem_anchor": "refine-logs/lb_scgp/PROBLEM_ANCHOR.md",
+    "final_proposal": "refine-logs/lb_scgp/FINAL_PROPOSAL.md",
+    "review_summary": "refine-logs/lb_scgp/REVIEW_SUMMARY.md",
+    "refinement_report": "refine-logs/lb_scgp/REFINEMENT_REPORT.md",
+    "target_loop": "TARGET_LOOP.md",
+    "target_state": "TARGET_STATE.json"
+  },
+  "lineage": {
+    "version": "v5",
+    "artifact_namespace": "artifacts/lb_scgp/v5",
+    "config_path": "configs/lb_scgp/lb_scgp_v5.json",
+    "freeze_name": "LBSCGP-G0-FREEZE-v5",
+    "review_report_path": "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V5.md",
+    "review_record_path": "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V5.record.json",
+    "audit_publish_wrapper_path": "scripts/slurm/lb_scgp_g0_audit_publish.sbatch",
+    "run_ids": {
+      "freeze": "LBSCGP-G0-FREEZE-v5",
+      "code_audit": "LBSCGP-G0-CODE-AUDIT-v5",
+      "synthetic": "LBSCGP-G0-SYNTH-v5",
+      "realfold": "LBSCGP-G0-REAL-MHC_zh-F4-S0-v5",
+      "replay": "LBSCGP-G0-REAL-REPLAY-MHC_zh-F4-S0-v5",
+      "decision": "LBSCGP-G0-DECISION-v5"
+    },
+    "future_locked_run_id_templates": {
+      "g1_oof": "LBSCGP-G1-OOF-{DATASET}-F{FOLD}-S0-v5",
+      "g1_decision": "LBSCGP-G1-DECISION-v5",
+      "g2_sample": "LBSCGP-G2-SAMPLE-{DATASET}-v5",
+      "g2_teacher": "LBSCGP-G2-TEACHER-{DATASET}-v5",
+      "g2_decision": "LBSCGP-G2-DECISION-v5",
+      "g3_arm": "LBSCGP-G3-{DATASET}-S0-{ARM}-v5",
+      "g3_decision": "LBSCGP-G3-DECISION-v5",
+      "g4_arm": "LBSCGP-G4-{DATASET}-S{SEED}-{ARM}-v5",
+      "g4_final_stats": "LBSCGP-G4-FINAL-STATS-v5"
+    },
+    "freeze_input_path_keys": [
+      "experiment_plan",
+      "problem_anchor",
+      "final_proposal",
+      "review_summary",
+      "refinement_report",
+      "pre_freeze_sanitizer_contract"
+    ],
+    "mutable_records_excluded_from_freeze_inputs": [
+      "refine-logs/lb_scgp/EXPERIMENT_TRACKER.md",
+      "TARGET_LOOP.md",
+      "TARGET_STATE.json",
+      "TARGET_FINDINGS.md",
+      "TARGET_REVIEW_RAW.md",
+      "refine-logs/lb_scgp/G0_V5_NAMEERROR_REPAIR_DESIGN.md",
+      "refine-logs/lb_scgp/G0_V5_REPAIR_HANDOFF.md",
+      "refine-logs/lb_scgp/G0_FREEZE_EXECUTION_V5.md",
+      "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V5.md",
+      "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V5.record.json"
+    ],
+    "formal_artifact_exclude_prefixes": [
+      "artifacts/lb_scgp/v1/",
+      "artifacts/lb_scgp/v2/",
+      "artifacts/lb_scgp/v3/",
+      "artifacts/lb_scgp/v4/",
+      "artifacts/lb_scgp/v5/"
+    ],
+    "dirty_state_excluded_paths": [
+      "refine-logs/lb_scgp/EXPERIMENT_TRACKER.md",
+      "TARGET_LOOP.md",
+      "TARGET_STATE.json",
+      "TARGET_FINDINGS.md",
+      "TARGET_REVIEW_RAW.md",
+      "refine-logs/lb_scgp/G0_V5_NAMEERROR_REPAIR_DESIGN.md",
+      "refine-logs/lb_scgp/G0_V5_REPAIR_HANDOFF.md",
+      "refine-logs/lb_scgp/G0_FREEZE_EXECUTION_V5.md",
+      "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V5.md",
+      "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V5.record.json"
+    ],
+    "dirty_state_excluded_prefixes": [
+      "refine-logs/lb_scgp/runtime/"
+    ],
+    "prior_lineage_no_clobber_hashes": {
+      "artifacts/lb_scgp/v1/CONFIG_FREEZE.json": "b6697472b61a61706c694a67b21618d618fcad6e7f59265d8696aee79dc46889",
+      "artifacts/lb_scgp/v1/CONFIG_FREEZE.json.publish.lock": "34a05bde46775bcb75384c1c853cef7985f5c05efcdf3afec5fad6d85ef57d8d",
+      "artifacts/lb_scgp/v2/CONFIG_FREEZE.json": "4c6f0199a429bbf766cb284b9ecaedd9dcaf38733834dd54574245ab86b633ae",
+      "artifacts/lb_scgp/v2/CONFIG_FREEZE.json.publish.lock": "22426f693ba3f72d52928b0a86d08fe439d7e7fd43f9c74c61aedb710443e211",
+      "artifacts/lb_scgp/v3/CONFIG_FREEZE.json": "9fba7f1649dd67d4bb0fcc193e555d8246d7a4966307732e87d5e9fca7346dd9",
+      "artifacts/lb_scgp/v3/CONFIG_FREEZE.json.publish.lock": "9c32d07c524e466ad06c06fc2a472829764cd1facff22390eac8b2879d329b8f",
+      "artifacts/lb_scgp/v4/CONFIG_FREEZE.json": "dcf65eceba04e7c4f08145b2012653705f7347c6e96ebc8b2b769280dff48fd0",
+      "artifacts/lb_scgp/v4/CONFIG_FREEZE.json.publish.lock": "09003ce9e741d7c0310045f854479deb8fecff74bfddd33f6b9d80dc6df9572a",
+      "artifacts/lb_scgp/v4/g0/code_audit/audit.json": "098f5e02b9df17c14a5b43df3ffe15e7fc8e45638b89f6e9d5f3ab84239b290f",
+      "artifacts/lb_scgp/v4/g0/code_audit/audit.json.publish.lock": "19af29eb3a41c2f7dd4ff9e372996df262bfb5cdb6f698de69454103c21f5eeb",
+      "artifacts/lb_scgp/v4/g0/code_audit/publication_index.json": "b3b5c86250dd9675c1bfac0d63adbe8b45ea734f459495586a13f4296ab8604b",
+      "artifacts/lb_scgp/v4/g0/code_audit/publication_index.json.publish.lock": "e7395ce7d56a21e78bb1a1c355041badabfcd367a486a0eb3f619e320f4d40f7",
+      "artifacts/lb_scgp/v4/g0/code_audit/review.md": "616bd9093334b08c067208c7de7a2d54649b19be131d8f8a49a2ce48b84bb53d",
+      "artifacts/lb_scgp/v4/g0/code_audit/review.md.publish.lock": "ac0a4ffc2a9929b616c691528d380fa651815192c8e91c97e72c0339bf33d1f5",
+      "artifacts/lb_scgp/v4/g0/code_audit/review_record.json": "b2e8ef2ac9c5d3fede5ace5f678e65a5d1c0f6a565356b19fb6143e186a44f5e",
+      "artifacts/lb_scgp/v4/g0/code_audit/review_record.json.publish.lock": "75bf2e1fb6aec7be1e1fe02f22482fbe850ecbe489a46708bf5c8e3989f097b2"
+    },
+    "pre_freeze_sanitizer_schema": "dedicated_reduced_schema_v2",
+    "full_generic_manifest_schema_applies_from_stage": "G0_FREEZE"
+  },
+  "implementation_files": [
+    "scripts/analysis/lb_scgp_common.py",
+    "scripts/analysis/lb_scgp_sanitize_inputs.py",
+    "scripts/analysis/lb_scgp_verify_sanitizer.py",
+    "scripts/analysis/lb_scgp_g0.py",
+    "scripts/analysis/lb_scgp_real_replay.py",
+    "scripts/analysis/lb_scgp_independent_verify.py",
+    "scripts/slurm/lb_scgp_sanitize_inputs.sbatch",
+    "scripts/slurm/lb_scgp_g0_cpu.sbatch",
+    "scripts/slurm/lb_scgp_g0_gpu.sbatch",
+    "scripts/slurm/lb_scgp_g0_audit_publish.sbatch"
+  ],
+  "supervision": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false
+  },
+  "counters": {
+    "mllm_call_count": 0,
+    "ocr_call_count": 0,
+    "teacher_cache_read_count": 0,
+    "teacher_cache_write_count": 0,
+    "outer_held_label_read_count": 0,
+    "outer_held_content_read_count": 0,
+    "val_content_read_count": 0,
+    "test_content_read_count": 0,
+    "val_test_teacher_artifact_count": 0
+  },
+  "sealed_real_fixture": {
+    "dataset": "MHC_zh",
+    "outer_fold": 4,
+    "outer_train_n": 464,
+    "outer_held_n": 115,
+    "allowed_bank_members": [
+      "memory_ids",
+      "memory_z",
+      "memory_labels",
+      "query_ids"
+    ],
+    "forbidden_bank_members": [
+      "query_z",
+      "query_labels"
+    ],
+    "memory_ids_sha256": "2c436c0ff1c441392ec6804f8168d2542f61ef30fcfe0e4206563ce2f497d95d",
+    "query_ids_sha256": "af4beede11e3af43448dfffdb30d6f9f6bd06ce59ae5ddd19d54cdf08e733323",
+    "checkpoint_sha256": "c135924c87d1b12218f332ed8b955795cc34d6da972a576c011820572c3d0a39",
+    "remove_ledger_sha256": "970b4c55319c83bffc4659976d885ecf89ff9043d659898fa175156a3736a9f6",
+    "outer_train_feature_cache_sha256": "ea5f0ace7fa614b243269e155ef12e44cfa646f7e2063ec7f0d7aaee11d87496",
+    "sanitized_provenance_sha256": "b921477c2cc8858f2f9dfe9b6da21a0aaea2287fdaf9059c2f1dba08010d8007",
+    "sanitizer_decision_sha256": "172c9db7589c5b80af7fe6f8476dd9866a4eb840bc1b4524a79b6010c2c3c954",
+    "bank_member_sha256": {
+      "memory_ids": "2db3c268e6efc0ad75ef6a483a7fb97fb992e0ec5b28e8b27dc7963d9ed28193",
+      "memory_z": "af336d46c81de46c6a88863fa95469dead690f0e5da8d6baefb4a0355041e2de",
+      "memory_labels": "4666d718b4e2ea1dd66c7f55aa9c69da49dac5f8f64f83f52594656547cc92c5",
+      "query_ids": "d12166e5900780c81561996f83baa1c82cc79e4ebc7d0ae8ee12be5c7087aff7"
+    }
+  },
+  "registered_cone_definition": {
+    "singleton": "for each anchor i and memory j!=i, the unit tangent to z_j at z_i, signed attractive for same parent label and repulsive for opposite parent label",
+    "pair": "all normalized sums of two distinct singleton columns for the same anchor",
+    "triplet": "all normalized sums of one same-label attractive singleton and one opposite-label repulsive singleton for the same anchor",
+    "supcon": "for each anchor, the normalized sum of all same-label attractive singleton columns",
+    "labels": "parent-video binary labels only"
+  },
+  "solver": {
+    "topk": 20,
+    "vote_weight_sum": 210.0,
+    "row_trust_scale": 0.05,
+    "class_mean_trust_scale": 0.02,
+    "semantic_radius_ratio": 0.9,
+    "slack_budget_ratio": 0.2,
+    "offdiag_upper": 0.9999,
+    "projector_tolerance": 1e-7,
+    "operator_adjoint_tolerance": 1e-10,
+    "dykstra_set_violation_tolerance": 1e-6,
+    "dykstra_relative_change_tolerance": 1e-7,
+    "max_dykstra_cycles": 500,
+    "tie_tolerance": 1e-7,
+    "max_independent_orientations": 8,
+    "max_pivots": 32,
+    "variational_inequality_tolerance": 1e-8,
+    "variational_probes": 1000,
+    "factor_negative_reject": -1e-7,
+    "factor_tolerance": 1e-6,
+    "farkas_max_gap": 1e-5,
+    "farkas_min_separation": 0.25,
+    "farkas_separation_tolerance": 1e-8,
+    "farkas_column_generation_max_iter": 64
+  },
+  "synthetic": {
+    "canonical_seed": 20260711,
+    "expected_cases": {
+      "projectors": {
+        "row_ball": "PASS",
+        "class_mean_ball": "PASS",
+        "semantic_zero_radius": "PASS",
+        "semantic_positive_radius": "PASS",
+        "slack_capped_simplex": "PASS",
+        "psd_symmetrized": "PASS",
+        "halfspace": "PASS"
+      },
+      "dykstra": {
+        "feasible_interior": "LOCAL_STATIONARY_CERTIFIED",
+        "feasible_boundary": "LOCAL_STATIONARY_CERTIFIED",
+        "feasible_oriented_boundary": "LOCAL_STATIONARY_CERTIFIED",
+        "infeasible_constraints": "BOUNDED_SEARCH_FEASIBLE",
+        "deliberately_capped": "BOUNDED_SEARCH_FEASIBLE"
+      },
+      "rank_cells": {
+        "exact_top20": "PASS",
+        "simultaneous_ties": "PASS",
+        "unresolved_tie_map": "REMOVE",
+        "orientation_over_budget": "REMOVE",
+        "pivot_over_budget": "REMOVE",
+        "incomplete_adjacent_enumeration": "REMOVE"
+      },
+      "factor": {
+        "negative_reject": "PASS",
+        "repeated_and_null": "PASS"
+      },
+      "farkas": {
+        "known_in_cone": "PASS",
+        "known_out_of_cone": "PASS"
+      },
+      "rollback": {
+        "failure_replay": "PASS"
+      }
+    }
+  },
+  "real_fit": {
+    "seed": 0,
+    "embedding_dim": 1024,
+    "scheduled_divisor": 4,
+    "relative_target_residual_max": 0.5,
+    "displacement_cosine_min": 0.8,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.01,
+    "batch_size": 64,
+    "gpu_peak_gib_max": 24.0,
+    "host_peak_gib_max": 64.0
+  },
+  "cost": {
+    "folds": 10,
+    "refresh_multiplier": 5,
+    "contingency": 1.25,
+    "formula": "1.25 * 10 * [2*H_REMOVE_fullfold + 5*p95(H_bank+H_target+H_factor+H_fitblock+H_verify+H_farkas) + H_final_bank]",
+    "g1_upper_gpu_hours_strict_max": 160.0,
+    "p95_sample_semantics": "For G0, timing samples are preregistered per sealed observation; if exactly one observation exists, p95 is the conservative max/upper statistic of that single sample. H_final_bank is outside the refresh term."
+  }
+}

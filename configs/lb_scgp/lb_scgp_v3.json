@@ -1,0 +1,247 @@
+{
+  "schema_version": 3,
+  "config_name": "lb_scgp_v3",
+  "lineage": {
+    "version": "v3",
+    "config_path": "configs/lb_scgp/lb_scgp_v3.json",
+    "artifact_namespace": "artifacts/lb_scgp/v3",
+    "freeze_name": "LBSCGP-G0-FREEZE-v3",
+    "run_ids": {
+      "freeze": "LBSCGP-G0-FREEZE-v3",
+      "code_audit": "LBSCGP-G0-CODE-AUDIT-v3",
+      "synthetic": "LBSCGP-G0-SYNTH-v3",
+      "realfold": "LBSCGP-G0-REAL-MHC_zh-F4-S0-v3",
+      "replay": "LBSCGP-G0-REAL-REPLAY-MHC_zh-F4-S0-v3",
+      "decision": "LBSCGP-G0-DECISION-v3"
+    },
+    "future_locked_run_id_templates": {
+      "g1_oof": "LBSCGP-G1-OOF-{DATASET}-F{FOLD}-S0-v3",
+      "g1_decision": "LBSCGP-G1-DECISION-v3",
+      "g2_sample": "LBSCGP-G2-SAMPLE-{DATASET}-v3",
+      "g2_teacher": "LBSCGP-G2-TEACHER-{DATASET}-v3",
+      "g2_decision": "LBSCGP-G2-DECISION-v3",
+      "g3_arm": "LBSCGP-G3-{DATASET}-S0-{ARM}-v3",
+      "g3_decision": "LBSCGP-G3-DECISION-v3",
+      "g4_arm": "LBSCGP-G4-{DATASET}-S{SEED}-{ARM}-v3",
+      "g4_final_stats": "LBSCGP-G4-FINAL-STATS-v3"
+    },
+    "freeze_input_path_keys": [
+      "experiment_plan",
+      "problem_anchor",
+      "final_proposal",
+      "review_summary",
+      "refinement_report",
+      "pre_freeze_sanitizer_contract"
+    ],
+    "mutable_records_excluded_from_freeze_inputs": [
+      "refine-logs/lb_scgp/EXPERIMENT_TRACKER.md",
+      "TARGET_LOOP.md",
+      "TARGET_STATE.json",
+      "TARGET_FINDINGS.md",
+      "TARGET_REVIEW_RAW.md",
+      "refine-logs/lb_scgp/G0_V3_REPAIR_HANDOFF.md",
+      "refine-logs/lb_scgp/G0_FREEZE_EXECUTION_V3.md",
+      "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V3.md"
+    ],
+    "formal_artifact_exclude_prefixes": [
+      "artifacts/lb_scgp/v1/",
+      "artifacts/lb_scgp/v2/",
+      "artifacts/lb_scgp/v3/"
+    ],
+    "dirty_state_excluded_paths": [
+      "refine-logs/lb_scgp/EXPERIMENT_TRACKER.md",
+      "TARGET_LOOP.md",
+      "TARGET_STATE.json",
+      "TARGET_FINDINGS.md",
+      "TARGET_REVIEW_RAW.md",
+      "refine-logs/lb_scgp/G0_V3_REPAIR_HANDOFF.md",
+      "refine-logs/lb_scgp/G0_FREEZE_EXECUTION_V3.md",
+      "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V3.md"
+    ],
+    "dirty_state_excluded_prefixes": [
+      "refine-logs/lb_scgp/runtime/"
+    ],
+    "full_generic_manifest_schema_applies_from_stage": "G0_FREEZE",
+    "pre_freeze_sanitizer_schema": "dedicated_reduced_schema_v2"
+  },
+  "authorization": {
+    "authorized_stages": [
+      "G0"
+    ],
+    "locked_stages": [
+      "G1",
+      "G2",
+      "G3",
+      "G4"
+    ],
+    "teacher_calls_allowed": false,
+    "new_ocr_calls_allowed": false
+  },
+  "supervision": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false
+  },
+  "paths": {
+    "root": "/data/jehc223/RGCL",
+    "artifacts": "artifacts/lb_scgp/v3",
+    "checkpoint": "artifacts/ssr/v1/oof/MHC_zh/fold4/checkpoint_epoch28.pt",
+    "bank": "artifacts/ssr/v1/oof/MHC_zh/fold4/embeddings.npz",
+    "outer_train_feature_cache": "artifacts/lb_scgp/inputs/MHC_zh/fold4/outer_train_features.pt",
+    "sanitized_provenance": "artifacts/lb_scgp/inputs/MHC_zh/fold4/sanitized_provenance.json",
+    "sanitizer_decision": "artifacts/lb_scgp/inputs/MHC_zh/fold4/sanitizer_decision.json",
+    "remove_ledger": "artifacts/ssr/v1/oof/MHC_zh/fold4/train.jsonl",
+    "experiment_plan": "refine-logs/lb_scgp/EXPERIMENT_PLAN.md",
+    "experiment_tracker": "refine-logs/lb_scgp/EXPERIMENT_TRACKER.md",
+    "problem_anchor": "refine-logs/lb_scgp/PROBLEM_ANCHOR.md",
+    "final_proposal": "refine-logs/lb_scgp/FINAL_PROPOSAL.md",
+    "review_summary": "refine-logs/lb_scgp/REVIEW_SUMMARY.md",
+    "refinement_report": "refine-logs/lb_scgp/REFINEMENT_REPORT.md",
+    "target_loop": "TARGET_LOOP.md",
+    "target_state": "TARGET_STATE.json",
+    "pre_freeze_sanitizer_contract": "refine-logs/lb_scgp/v2/PRE_FREEZE_SANITIZER_CONTRACT_SNAPSHOT.json"
+  },
+  "sealed_real_fixture": {
+    "dataset": "MHC_zh",
+    "outer_fold": 4,
+    "outer_train_n": 464,
+    "outer_held_n": 115,
+    "checkpoint_sha256": "c135924c87d1b12218f332ed8b955795cc34d6da972a576c011820572c3d0a39",
+    "bank_member_sha256": {
+      "memory_ids": "2db3c268e6efc0ad75ef6a483a7fb97fb992e0ec5b28e8b27dc7963d9ed28193",
+      "memory_z": "af336d46c81de46c6a88863fa95469dead690f0e5da8d6baefb4a0355041e2de",
+      "memory_labels": "4666d718b4e2ea1dd66c7f55aa9c69da49dac5f8f64f83f52594656547cc92c5",
+      "query_ids": "d12166e5900780c81561996f83baa1c82cc79e4ebc7d0ae8ee12be5c7087aff7"
+    },
+    "outer_train_feature_cache_sha256": "ea5f0ace7fa614b243269e155ef12e44cfa646f7e2063ec7f0d7aaee11d87496",
+    "sanitized_provenance_sha256": "b921477c2cc8858f2f9dfe9b6da21a0aaea2287fdaf9059c2f1dba08010d8007",
+    "sanitizer_decision_sha256": "172c9db7589c5b80af7fe6f8476dd9866a4eb840bc1b4524a79b6010c2c3c954",
+    "remove_ledger_sha256": "970b4c55319c83bffc4659976d885ecf89ff9043d659898fa175156a3736a9f6",
+    "memory_ids_sha256": "2c436c0ff1c441392ec6804f8168d2542f61ef30fcfe0e4206563ce2f497d95d",
+    "query_ids_sha256": "af4beede11e3af43448dfffdb30d6f9f6bd06ce59ae5ddd19d54cdf08e733323",
+    "allowed_bank_members": [
+      "memory_ids",
+      "memory_z",
+      "memory_labels",
+      "query_ids"
+    ],
+    "forbidden_bank_members": [
+      "query_z",
+      "query_labels"
+    ]
+  },
+  "implementation_files": [
+    "scripts/analysis/lb_scgp_common.py",
+    "scripts/analysis/lb_scgp_sanitize_inputs.py",
+    "scripts/analysis/lb_scgp_verify_sanitizer.py",
+    "scripts/analysis/lb_scgp_g0.py",
+    "scripts/analysis/lb_scgp_real_replay.py",
+    "scripts/analysis/lb_scgp_independent_verify.py",
+    "scripts/slurm/lb_scgp_sanitize_inputs.sbatch",
+    "scripts/slurm/lb_scgp_g0_cpu.sbatch",
+    "scripts/slurm/lb_scgp_g0_gpu.sbatch"
+  ],
+  "synthetic": {
+    "canonical_seed": 20260711,
+    "expected_cases": {
+      "projectors": {
+        "row_ball": "PASS",
+        "class_mean_ball": "PASS",
+        "semantic_positive_radius": "PASS",
+        "semantic_zero_radius": "PASS",
+        "psd_symmetrized": "PASS",
+        "halfspace": "PASS",
+        "slack_capped_simplex": "PASS"
+      },
+      "dykstra": {
+        "feasible_interior": "LOCAL_STATIONARY_CERTIFIED",
+        "feasible_boundary": "LOCAL_STATIONARY_CERTIFIED",
+        "feasible_oriented_boundary": "LOCAL_STATIONARY_CERTIFIED",
+        "deliberately_capped": "BOUNDED_SEARCH_FEASIBLE",
+        "infeasible_constraints": "BOUNDED_SEARCH_FEASIBLE"
+      },
+      "rank_cells": {
+        "exact_top20": "PASS",
+        "simultaneous_ties": "PASS",
+        "orientation_over_budget": "REMOVE",
+        "pivot_over_budget": "REMOVE",
+        "unresolved_tie_map": "REMOVE",
+        "incomplete_adjacent_enumeration": "REMOVE"
+      },
+      "farkas": {
+        "known_out_of_cone": "PASS",
+        "known_in_cone": "PASS"
+      },
+      "factor": {
+        "repeated_and_null": "PASS",
+        "negative_reject": "PASS"
+      },
+      "rollback": {
+        "failure_replay": "PASS"
+      }
+    }
+  },
+  "solver": {
+    "topk": 20,
+    "vote_weight_sum": 210.0,
+    "tie_tolerance": 1E-7,
+    "max_independent_orientations": 8,
+    "max_pivots": 32,
+    "max_dykstra_cycles": 500,
+    "dykstra_set_violation_tolerance": 0.000001,
+    "dykstra_relative_change_tolerance": 1E-7,
+    "operator_adjoint_tolerance": 1E-10,
+    "projector_tolerance": 1E-7,
+    "variational_inequality_tolerance": 1E-8,
+    "variational_probes": 1000,
+    "semantic_radius_ratio": 0.9,
+    "offdiag_upper": 0.9999,
+    "row_trust_scale": 0.05,
+    "class_mean_trust_scale": 0.02,
+    "slack_budget_ratio": 0.2,
+    "factor_negative_reject": -1E-7,
+    "factor_tolerance": 0.000001,
+    "farkas_min_separation": 0.25,
+    "farkas_max_gap": 0.00001,
+    "farkas_column_generation_max_iter": 64,
+    "farkas_separation_tolerance": 1E-8
+  },
+  "registered_cone_definition": {
+    "singleton": "for each anchor i and memory j!=i, the unit tangent to z_j at z_i, signed attractive for same parent label and repulsive for opposite parent label",
+    "pair": "all normalized sums of two distinct singleton columns for the same anchor",
+    "triplet": "all normalized sums of one same-label attractive singleton and one opposite-label repulsive singleton for the same anchor",
+    "supcon": "for each anchor, the normalized sum of all same-label attractive singleton columns",
+    "labels": "parent-video binary labels only"
+  },
+  "real_fit": {
+    "seed": 0,
+    "embedding_dim": 1024,
+    "batch_size": 64,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.01,
+    "scheduled_divisor": 4,
+    "displacement_cosine_min": 0.8,
+    "relative_target_residual_max": 0.5,
+    "gpu_peak_gib_max": 24.0,
+    "host_peak_gib_max": 64.0
+  },
+  "cost": {
+    "contingency": 1.25,
+    "folds": 10,
+    "refresh_multiplier": 5,
+    "formula": "1.25 * 10 * [2*H_REMOVE_fullfold + 5*p95(H_bank+H_target+H_factor+H_fitblock+H_verify+H_farkas) + H_final_bank]",
+    "p95_sample_semantics": "For G0, timing samples are preregistered per sealed observation; if exactly one observation exists, p95 is the conservative max/upper statistic of that single sample. H_final_bank is outside the refresh term.",
+    "g1_upper_gpu_hours_strict_max": 160.0
+  },
+  "counters": {
+    "mllm_call_count": 0,
+    "ocr_call_count": 0,
+    "teacher_cache_read_count": 0,
+    "teacher_cache_write_count": 0,
+    "outer_held_label_read_count": 0,
+    "outer_held_content_read_count": 0,
+    "val_content_read_count": 0,
+    "test_content_read_count": 0,
+    "val_test_teacher_artifact_count": 0
+  }
+}

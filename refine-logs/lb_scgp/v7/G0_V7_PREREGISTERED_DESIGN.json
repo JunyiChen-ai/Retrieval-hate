@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "task": "lb_scgp_g0_v7_final_prospective_repair_design",
+  "thread_session": "g0-v7-final-repair-20260712T000000Z-codex-local",
+  "eta": 1e-12,
+  "eta_status": "fixed_before_any_v7_numerical_run_and_not_to_be_changed",
+  "write_boundary": {
+    "allowed_prefixes": [
+      "refine-logs/lb_scgp/v7/"
+    ],
+    "allowed_handoff": "refine-logs/lb_scgp/G0_V7_FINAL_REPAIR_HANDOFF.md",
+    "forbidden": [
+      "v1-v6 method/config/freeze/artifact/report/result/code mutation",
+      "freeze",
+      "formal gate",
+      "G1",
+      "realfold",
+      "performance claim",
+      "PASS claim",
+      "segment-level work"
+    ]
+  },
+  "immutable_contract": {
+    "topk": 20,
+    "tau": 1e-7,
+    "violation": 1e-6,
+    "relative": 1e-7,
+    "max_independent_orientations": 8,
+    "max_pivots": 32,
+    "phase_i_original_residual_tolerance": 1e-8,
+    "phase_ii_vi_tolerance": 1e-8,
+    "phase_ii_complementarity_tolerance": 1e-6
+  },
+  "supervision_contract": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false,
+    "mllm_call_count": 0,
+    "ocr_call_count": 0,
+    "teacher_cache_read_count": 0,
+    "teacher_cache_write_count": 0,
+    "outer_held_label_read_count": 0,
+    "outer_held_content_read_count": 0,
+    "val_content_read_count": 0,
+    "test_content_read_count": 0,
+    "val_test_teacher_artifact_count": 0
+  },
+  "canonical_signed_cell_logic": [
+    "Build orientation descriptors only from ties or near-ties that can change canonical_top20(G0,tau) final membership or position.",
+    "For each compatible cell store final_top20_rankings, full_outsider_order_for_enumeration, signed_gap_edges, cell_sha256, and top20_sha256 as separate hash-bound objects.",
+    "Every required internal top20 edge and every 20th-vs-all-outsiders edge is enforced as G[q,a]-G[q,b] >= tau+eta.",
+    "Internal top20 ties are not retained as tie groups in v7; they are oriented into strict signed gaps.",
+    "Reject duplicate IDs, cycles, unresolved tie maps, incomplete adjacent enumeration, orientation rank over 8, pivot count over 32, and any full-ranking-to-top20 acceptance check."
+  ],
+  "phase_i_acceptance": [
+    "Use the exact actual oriented v5 fixture and the complete frozen 589 original residual map.",
+    "Keep the additive signed-gap map separate from the original 589 residual map.",
+    "Accept a cell only if max original residual <= 1e-8, PSD is positive full-rank, signed gaps pass, canonical_top20(G,tau) exactly equals the stored final top20, hashes bind, and independent replay agrees.",
+    "Remove an incompatible cell only with a replayed logical contradiction or replayed conic/Farkas certificate; no witness or nonconvergence is not infeasibility."
+  ],
+  "phase_ii_certificate_scheme": [
+    "Optimize the original frozen Gram displacement plus original slack objective over direct Gram upper triangle and xi.",
+    "Use all 589 original constraints, additive signed gaps, SOC trust constraints, and PSD.",
+    "SciPy may search primals, but acceptance requires solver-independent replay.",
+    "Reconstruct equality/free duals, nonnegative linear multipliers, Lorentz-cone SOC duals, and a PSD dual matrix S.",
+    "If PSD is inactive, certify S=0 and a positive eig margin; if active, certify S, SG, trace(SG), and PSD dual feasibility.",
+    "Replay recomputes objective, all 589 residuals, signed gaps, canonical top20, orientation completeness, hashes, stationarity, dual feasibility, VI, PSD/SOC/linear duals, and complementarity."
+  ],
+  "execution_order": [
+    "Submit static validator through SLURM with conda HateVideo, CPU-only, no --time.",
+    "Only if the validator naturally completes and machine gate is OK, submit the actual certificate job through SLURM.",
+    "After natural terminal certificate job, submit independent replay as a separate SLURM job.",
+    "Record every v7 job, natural state, exit, resources, hashes, and failures."
+  ],
+  "nonclaims": [
+    "No G0 PASS or freeze claim.",
+    "No formal gate, G1, realfold, performance, validation, test, teacher, MLLM, OCR, or segment-level claim.",
+    "Terminal outcome may only request a fresh result-to-claim review or route pivot."
+  ]
+}

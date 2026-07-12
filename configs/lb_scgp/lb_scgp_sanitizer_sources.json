@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "purpose": "quarantine_only_mixed_cache_source_lineage_for_LB_SCGP_sanitizer",
+  "formal_g0_input": false,
+  "dataset": "MHC_zh",
+  "outer_fold": 4,
+  "mixed_whole_video_cache": "data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt",
+  "mixed_whole_video_cache_sha256": "929571f81a5bf4a7f306eaaeceecafd62c85b73cf86ce8177ab175dbcfff8f17",
+  "quarantine_rule": "This file may be read only by scripts/analysis/lb_scgp_sanitize_inputs.py before formal G0 freeze. Formal G0 producer/verifier paths must not read, hash, or freeze this file."
+}

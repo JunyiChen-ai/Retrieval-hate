@@ -1,0 +1,63 @@
+{
+  "archive_forbidden_key_access_count": 0,
+  "conda_env": "HateVideo",
+  "config_canonical_sha256": "8645c97225aaea995ccab583e5c440ce4a8faf2a4e6a274ad66cc099185c2149",
+  "dataset": "MHC_zh",
+  "dirty_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "fold_ids_sha256": "8c2459dfa70eeac1f99112ac1a713e2e75b66cdc29e32d9a77a783af6d66772f",
+  "git_head": "a1b1922bc970bb831526b4d21c911380ec871248",
+  "gpu_name": null,
+  "implementation_sha256": "882e20c1909d982d4936e0b920f4a223ef027a9866e74a1432c6e937bef103fb",
+  "input_files": [
+    {
+      "path": "src/utils/generate_video_archive_HF.py",
+      "sha256": "7702a2519d51565aa636687699bc85c1a4ef52d8fbacaabe886fb1fc789b060d"
+    },
+    {
+      "path": "scripts/slurm/gen_archive_v2.sbatch",
+      "sha256": "7e6b146c0b6d2cb085d4330240608446ea2a8e34f226f4286e7557e5af139e18"
+    },
+    {
+      "path": "data/Archive/MHC_zh/v2/train_Qwen2.5-VL-7B-Instruct_archive.jsonl",
+      "sha256": "7c83e3e7f21ea7848d4981c4b4d233df3820ddcc2d2d0e8604ba3ac44df47a27"
+    },
+    {
+      "path": "artifacts/ssr/v1/folds/MHC_zh.json",
+      "sha256": "b3aaeb2af131316302e1c8f6d249e1770c70b2ce23f9a83fc250916979e9887f"
+    },
+    {
+      "path": "slurm/logs/gen_archive_v2_12234.out",
+      "sha256": "59cb9cfa942f965708178a95cfb4b1bdb99c4ac83d2ae17f3ce2568116617bf5"
+    }
+  ],
+  "new_teacher_call_count": 0,
+  "only_gold_supervision": "parent_video_binary_label",
+  "outer_held_q_read_count": 0,
+  "output_files": [
+    {
+      "path": "artifacts/sq/v1/s0/provenance/MHC_zh/provenance.json",
+      "sha256": "4299101a6b791b609e1081e64a4f178e192508dc65f92a6eeb23d404deee0e3b"
+    }
+  ],
+  "payload_sha256": "8301b2be8aa682c632791625063d9571ec576579415924e35f064ca534bc338e",
+  "q_signal_status": "PROXY_ONLY_CHEAP_FORMAT",
+  "run_id": "SQ-S0-PROVENANCE-MHC_zh-v1",
+  "schema_version": 1,
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "slurm_job_id": "12725",
+  "stage": "S0_PROVENANCE",
+  "status": "PASS_PROXY_ONLY",
+  "teacher_cache_read_count": 0,
+  "teacher_cache_write_count": 0,
+  "test_content_read_count": 0,
+  "val_content_read_count": 0,
+  "val_test_teacher_artifact_count": 0,
+  "versions": {
+    "cuda": "12.4",
+    "faiss": "1.13.2",
+    "python": "3.11.8",
+    "sklearn": "1.5.2",
+    "torch": "2.6.0+cu124"
+  }
+}

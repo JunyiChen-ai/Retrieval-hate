@@ -1,0 +1,11 @@
+{
+  "critical": 0,
+  "formal_pass_authorized": true,
+  "high": 0,
+  "no_segment_gold_pass": true,
+  "record_payload_sha256": "ee876984651c77ef1d861294da1bb353036d2e899a71e90d80c42964668996a2",
+  "record_sha256": "b2e8ef2ac9c5d3fede5ace5f678e65a5d1c0f6a565356b19fb6143e186a44f5e",
+  "review_sha256": "616bd9093334b08c067208c7de7a2d54649b19be131d8f8a49a2ce48b84bb53d",
+  "slurm_job_id": "12784",
+  "status": "PASS"
+}

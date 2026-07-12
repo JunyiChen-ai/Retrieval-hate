@@ -1,0 +1,251 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "definitions": {
+    "cert": {
+      "additionalProperties": false,
+      "properties": {
+        "context_shift_observable": {"$ref": "#/definitions/tri_state_observable"},
+        "counter_context_observable": {"$ref": "#/definitions/tri_state_observable"},
+        "cross_modal_binding_observable": {"$ref": "#/definitions/tri_state_observable"},
+        "dehumanizing_or_threat_surface_observable": {"$ref": "#/definitions/tri_state_observable"},
+        "harmful_surface_observable": {"$ref": "#/definitions/tri_state_observable"},
+        "modality_binding_observable": {"$ref": "#/definitions/modality_observable"},
+        "parse_flags": {"items": {"type": "string"}, "type": "array"},
+        "schema_version": {"const": "scgp_global_cert_v2", "type": "string"},
+        "source_alignment_observable": {"$ref": "#/definitions/tri_state_observable"},
+        "text_audio_reference_observable": {"$ref": "#/definitions/tri_state_observable"},
+        "visual_reference_observable": {"$ref": "#/definitions/tri_state_observable"}
+      },
+      "required": [
+        "schema_version",
+        "visual_reference_observable",
+        "text_audio_reference_observable",
+        "harmful_surface_observable",
+        "dehumanizing_or_threat_surface_observable",
+        "cross_modal_binding_observable",
+        "source_alignment_observable",
+        "counter_context_observable",
+        "context_shift_observable",
+        "modality_binding_observable",
+        "parse_flags"
+      ],
+      "type": "object"
+    },
+    "float_array": {"items": {"type": "number"}, "type": "array"},
+    "float_matrix": {"items": {"$ref": "#/definitions/float_array"}, "type": "array"},
+    "modality_observable": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {"maximum": 4, "minimum": 0, "type": "integer"},
+        "state": {
+          "enum": ["multi_modal", "single_modal", "text_audio", "unresolved", "visual_audio", "visual_text"],
+          "type": "string"
+        }
+      },
+      "required": ["state", "confidence"],
+      "type": "object"
+    },
+    "named_metric": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string"},
+        "value": {"type": "number"}
+      },
+      "required": ["name", "value"],
+      "type": "object"
+    },
+    "tri_state_observable": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {"maximum": 4, "minimum": 0, "type": "integer"},
+        "state": {"enum": ["contradicted", "supported", "unresolved"], "type": "string"}
+      },
+      "required": ["state", "confidence"],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "acceptance_path": {"const": "serialized_h_metric_normal_cone_kkt", "type": "string"},
+    "case_id": {"type": "string"},
+    "case_role": {"type": "string"},
+    "consensus_records": {"items": {"$ref": "#/definitions/cert"}, "type": "array"},
+    "d": {"minimum": 1, "type": "integer"},
+    "factor_replay": {
+      "additionalProperties": false,
+      "properties": {
+        "factor_returned_null": {"type": "boolean"},
+        "gram_reconstruction_residual": {"type": "number"},
+        "nondegenerate": {"type": "boolean"},
+        "procrustes_orthogonality_residual": {"type": "number"},
+        "zstar_gram_residual": {"type": "number"}
+      },
+      "required": [
+        "factor_returned_null",
+        "gram_reconstruction_residual",
+        "zstar_gram_residual",
+        "procrustes_orthogonality_residual",
+        "nondegenerate"
+      ],
+      "type": "object"
+    },
+    "finite_vi_diagnostics": {
+      "additionalProperties": false,
+      "properties": {
+        "acceptance_role": {"const": "non_accepting_diagnostic_only", "type": "string"},
+        "attempted_acceptance": {"const": false, "type": "boolean"},
+        "computed": {"type": "boolean"},
+        "max_probe_violation": {"type": "number"}
+      },
+      "required": ["computed", "max_probe_violation", "acceptance_role", "attempted_acceptance"],
+      "type": "object"
+    },
+    "hashes": {
+      "additionalProperties": false,
+      "properties": {
+        "case_payload_sha256": {"type": "string"},
+        "operator_hash": {"type": "string"},
+        "primal_hash": {"type": "string"}
+      },
+      "required": ["operator_hash", "primal_hash", "case_payload_sha256"],
+      "type": "object"
+    },
+    "ids": {"items": {"type": "string"}, "type": "array"},
+    "kkt_status": {"enum": ["PASS", "FAIL"], "type": "string"},
+    "labels": {"items": {"enum": [0, 1], "type": "integer"}, "type": "array"},
+    "operator": {
+      "additionalProperties": false,
+      "properties": {
+        "M_Q_shape": {"items": {"type": "integer"}, "type": "array"},
+        "Q_shape": {"items": {"type": "integer"}, "type": "array"},
+        "actual_orth_cap_executed": {"const": true, "type": "boolean"},
+        "b_struct": {"$ref": "#/definitions/float_array"},
+        "m_q_formula": {"const": "Q^T(G-I)Q/N", "type": "string"},
+        "q_rank": {"minimum": 0, "type": "integer"},
+        "raw_rank_before_cap": {"minimum": 0, "type": "integer"},
+        "rank_cap": {"const": 8, "type": "integer"},
+        "r_struct_length": {"minimum": 0, "type": "integer"},
+        "sigma_cache": {"type": "number"},
+        "vech_valid": {"type": "boolean"}
+      },
+      "required": [
+        "actual_orth_cap_executed",
+        "rank_cap",
+        "raw_rank_before_cap",
+        "q_rank",
+        "Q_shape",
+        "M_Q_shape",
+        "r_struct_length",
+        "b_struct",
+        "sigma_cache",
+        "m_q_formula",
+        "vech_valid"
+      ],
+      "type": "object"
+    },
+    "movement_metrics": {
+      "additionalProperties": false,
+      "properties": {
+        "fro_norm_G_star_minus_G0": {"type": "number"},
+        "max_abs_offdiag_change": {"type": "number"},
+        "positive_threshold": {"type": "number"},
+        "structural_adjoint_offdiag_l2": {"type": "number"},
+        "structural_dual_l2": {"type": "number"},
+        "structural_residual_l2": {"type": "number"}
+      },
+      "required": [
+        "fro_norm_G_star_minus_G0",
+        "max_abs_offdiag_change",
+        "positive_threshold",
+        "structural_dual_l2",
+        "structural_residual_l2",
+        "structural_adjoint_offdiag_l2"
+      ],
+      "type": "object"
+    },
+    "primal_residuals": {"items": {"$ref": "#/definitions/named_metric"}, "type": "array"},
+    "rank_audit": {
+      "additionalProperties": false,
+      "properties": {
+        "eps_rank": {"type": "number"},
+        "failure_policy": {"type": "string"},
+        "lambda_d": {"type": "number"},
+        "lambda_dplus1": {"type": "number"},
+        "lambda_min": {"type": "number"},
+        "negative_eigenmass": {"type": "number"},
+        "omitted_positive_eigenmass_beyond_d": {"type": "number"},
+        "positive_eigenmass": {"type": "number"},
+        "rank_eps": {"minimum": 0, "type": "integer"},
+        "reconstruction_residual": {"type": "number"},
+        "status": {"enum": ["PASS", "ENCODER_RANK_GATE_FAIL"], "type": "string"},
+        "tail_ratio": {"type": "number"}
+      },
+      "required": [
+        "lambda_d",
+        "lambda_dplus1",
+        "rank_eps",
+        "eps_rank",
+        "positive_eigenmass",
+        "omitted_positive_eigenmass_beyond_d",
+        "tail_ratio",
+        "negative_eigenmass",
+        "lambda_min",
+        "reconstruction_residual",
+        "status",
+        "failure_policy"
+      ],
+      "type": "object"
+    },
+    "replicas": {
+      "items": {"items": {"$ref": "#/definitions/cert"}, "type": "array"},
+      "type": "array"
+    },
+    "robust_coverage": {
+      "additionalProperties": false,
+      "properties": {
+        "coverage_gate_pass": {"type": "boolean"},
+        "robust_constraints_enabled": {"const": false, "type": "boolean"},
+        "robust_query_count_by_class": {
+          "additionalProperties": false,
+          "properties": {
+            "0": {"minimum": 0, "type": "integer"},
+            "1": {"minimum": 0, "type": "integer"}
+          },
+          "required": ["0", "1"],
+          "type": "object"
+        },
+        "safety_claim": {"enum": ["disabled", "not_claimed"], "type": "string"}
+      },
+      "required": [
+        "coverage_gate_pass",
+        "robust_constraints_enabled",
+        "robust_query_count_by_class",
+        "safety_claim"
+      ],
+      "type": "object"
+    },
+    "system": {"enum": ["FULL", "REMOVE", "SHUFFLE", "NOISE", "AMBIGUOUS", "ROBUST_COVERAGE"], "type": "string"}
+  },
+  "required": [
+    "case_id",
+    "case_role",
+    "system",
+    "ids",
+    "labels",
+    "d",
+    "replicas",
+    "consensus_records",
+    "operator",
+    "movement_metrics",
+    "primal_residuals",
+    "rank_audit",
+    "factor_replay",
+    "robust_coverage",
+    "finite_vi_diagnostics",
+    "acceptance_path",
+    "kkt_status",
+    "hashes"
+  ],
+  "title": "LB-SCGP Global-R2 Run2 strict synthetic KKT case",
+  "type": "object"
+}

@@ -1,0 +1,6 @@
+{"cell_index":0,"elapsed_seconds":212.56723867892288,"full_rank_margin":0.004263333136541338,"max_589_original_residual":1.5452176205243973e-09,"phase":"phase_i","signed_gap_min_margin":-6.736095449260811e-15,"start_name":"accepted_12866_0","status":"NO_COMPATIBILITY_WITNESS_CANDIDATE"}
+{"cell_index":0,"elapsed_seconds":226.03368184901774,"full_rank_margin":0.00467087292646139,"max_589_original_residual":2.580594377077361e-09,"phase":"phase_i","signed_gap_min_margin":-9.073364282596437e-15,"start_name":"frozen_g0_zero_slack","status":"NO_COMPATIBILITY_WITNESS_CANDIDATE"}
+{"cell_index":1,"elapsed_seconds":225.20602571801282,"full_rank_margin":0.004237523491788285,"max_589_original_residual":1.081838910121924e-09,"phase":"phase_i","signed_gap_min_margin":-3.5671283028553954e-14,"start_name":"accepted_12866_0","status":"NO_COMPATIBILITY_WITNESS_CANDIDATE"}
+{"cell_index":1,"elapsed_seconds":224.94649983709678,"full_rank_margin":0.004697389340520555,"max_589_original_residual":1.7364167603783898e-09,"phase":"phase_i","signed_gap_min_margin":-1.7186069668545097e-14,"start_name":"frozen_g0_zero_slack","status":"NO_COMPATIBILITY_WITNESS_CANDIDATE"}
+{"cell_index":0,"phase":"phase_ii_skipped","reason":"NO_COMPATIBILITY_WITNESS_NO_FARKAS"}
+{"cell_index":1,"phase":"phase_ii_skipped","reason":"NO_COMPATIBILITY_WITNESS_NO_FARKAS"}

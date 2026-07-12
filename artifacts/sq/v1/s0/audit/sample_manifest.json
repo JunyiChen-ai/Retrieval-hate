@@ -1,0 +1,52 @@
+{
+  "category_definitions": [
+    "a news report, reportage, interview, documentary, broadcast, or current-events coverage",
+    "a staged comedy sketch, satire, parody, meme performance, role-play, or acted skit",
+    "an educational explanation, tutorial, lecture, analysis, demonstration, or informational presentation",
+    "a personal story, first-person narrative, opinion discussion, conversation, vlog, or direct-to-camera commentary",
+    "gameplay, gaming, music performance, dance, sports, entertainment montage, or edited amusement clip",
+    "presentation style is mixed, ambiguous, or cannot be determined"
+  ],
+  "dataset_label_column_present": false,
+  "datasets": {
+    "MHC": {
+      "allocation": {
+        "0": 10,
+        "1": 11,
+        "2": 11,
+        "3": 11,
+        "4": 11,
+        "5": 10
+      },
+      "audit_csv": "artifacts/sq/v1/s0/audit/MHC.csv",
+      "n": 64,
+      "private_id_map": "artifacts/sq/v1/s0/audit/MHC_private_id_map.json",
+      "result_status": "NOT_INGESTED_PROXY_ONLY",
+      "sample_ids_sha256": "5422b422f16a57219ecfa1897e52df3994ff1831276bea3d75c56f9c49863627"
+    },
+    "MHC_zh": {
+      "allocation": {
+        "0": 10,
+        "1": 12,
+        "2": 12,
+        "3": 12,
+        "4": 13,
+        "5": 5
+      },
+      "audit_csv": "artifacts/sq/v1/s0/audit/MHC_zh.csv",
+      "n": 64,
+      "private_id_map": "artifacts/sq/v1/s0/audit/MHC_zh_private_id_map.json",
+      "result_status": "NOT_INGESTED_PROXY_ONLY",
+      "sample_ids_sha256": "a36c91c1d157a8a37fd632514009ae5d0ca414d6d2eb2be70ed018f366352d91"
+    }
+  },
+  "new_teacher_call_count": 0,
+  "payload_sha256": "a04b4180fb3e2723ad40e11a2f447d0357fa60f09cff81d6b1e2ac1166a85453",
+  "qc_not_gold_supervision": true,
+  "run_id": "SQ-S0-AUDIT-FREEZE-v1",
+  "schema_version": 1,
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "status": "AWAITING_HUMAN_QC",
+  "whole_video_only": true
+}

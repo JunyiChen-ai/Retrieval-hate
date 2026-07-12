@@ -1,0 +1,421 @@
+{
+  "schema_version": "scgp_global_experiment_plan_review_v1",
+  "generated_at": "2026-07-12T00:00:00+12:00",
+  "reviewer": {
+    "requested_model": "GPT-5.5 xhigh",
+    "session": "Codex independent reviewer in current session",
+    "reasoning_level": "xhigh_requested",
+    "constraints_honored": [
+      "no_subagents",
+      "no_external_model_or_mllm_calls",
+      "no_experiments",
+      "no_slurm_submissions",
+      "no_plan_artifact_edits",
+      "review_outputs_only"
+    ]
+  },
+  "source_hashes": {
+    "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "f5d0cc07fc69a46cf4689d9e76813e76f707ae9948356416d921f9d14416f158",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "9f64ce08a3bd1f98187825e36f6446d61e711c5276d2749b1fb0ca3f248daf9e",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "a60aa8a3c2bdbf3b297c7591649595cc07e5ab90c89367b84de2a5c747b23dc2",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": "9cee8bd922c359c3362c2278dff04b7e05c4d028bca1239bb0604bc057bfc45b"
+  },
+  "plan_hashes": {
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "f5d0cc07fc69a46cf4689d9e76813e76f707ae9948356416d921f9d14416f158",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "9f64ce08a3bd1f98187825e36f6446d61e711c5276d2749b1fb0ca3f248daf9e",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "a60aa8a3c2bdbf3b297c7591649595cc07e5ab90c89367b84de2a5c747b23dc2"
+  },
+  "verdict": "REVISE",
+  "severity_counts": {
+    "critical": 0,
+    "high": 5,
+    "medium": 2,
+    "low": 2
+  },
+  "zero_critical_and_zero_high": false,
+  "findings": [
+    {
+      "id": "H1",
+      "severity": "HIGH",
+      "title": "Moving strongest comparator is not actionably frozen",
+      "claim_impact": ["C2"],
+      "locations": [
+        "EXPERIMENT_PLAN.md:26",
+        "EXPERIMENT_PLAN.md:37",
+        "EXPERIMENT_PLAN.md:75",
+        "EXPERIMENT_PLAN.md:86",
+        "EXPERIMENT_TRACKER.md:18",
+        "EXPERIMENT_TRACKER.md:23",
+        "EXPERIMENT_PLAN.machine.json:75",
+        "EXPERIMENT_PLAN.machine.json:279"
+      ],
+      "run_ids": [
+        "LBSCGP-GLOBAL-M2-MHC-S0-COMP-VALID-v1",
+        "LBSCGP-GLOBAL-M2-MHC_zh-S0-COMP-VALID-v1",
+        "LBSCGP-GLOBAL-M3-MHC-S0-COMP-v1",
+        "LBSCGP-GLOBAL-M3-MHC-S1-COMP-v1",
+        "LBSCGP-GLOBAL-M3-MHC-S2-COMP-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S0-COMP-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S1-COMP-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S2-COMP-v1"
+      ],
+      "description": "The plan requires comparison against the moving strongest same-protocol non-MLLM comparator, but does not define the candidate set, source ledgers, selection criterion, tie-breaks, or no-final-test rule needed to make strongest reproducible.",
+      "risk": "The final C2 performance claim can be under- or over-stated by an ambiguous comparator choice.",
+      "concrete_fix": "Add a comparator-freeze artifact before M2 with eligible systems, hashes, selection metrics, tie-breaks, and proof that selection uses no final test labels or adaptive held/query labels."
+    },
+    {
+      "id": "H2",
+      "severity": "HIGH",
+      "title": "Direct-moment control required by proposal is missing or not explicit",
+      "claim_impact": ["C2"],
+      "locations": [
+        "FINAL_PROPOSAL.md:564",
+        "FINAL_PROPOSAL.md:586",
+        "EXPERIMENT_PLAN.md:37",
+        "EXPERIMENT_PLAN.md:98",
+        "EXPERIMENT_PLAN.machine.json:84",
+        "EXPERIMENT_PLAN.machine.json:679"
+      ],
+      "run_ids": [
+        "LBSCGP-GLOBAL-M4-MHC-S0-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-CONTROLS-v1"
+      ],
+      "description": "The final proposal lists DIRECT-MOMENT, DIRECT-CERT-FEATURE, and SCALAR-PROPENSITY controls. The experiment plan/machine JSON list one DIRECT certificate distillation arm and scalar propensity, leaving direct moment replaceability untested unless the direct arm is expanded.",
+      "risk": "A direct structural-moment route could match FULL, invalidating mechanism attribution without being tested.",
+      "concrete_fix": "Add an explicit DIRECT-MOMENT arm or define DIRECT certificate distillation to cover both moment and certificate-feature routes; update arms, schemas, Table 2, gates, and budgets."
+    },
+    {
+      "id": "H3",
+      "severity": "HIGH",
+      "title": "Control matching provenance can leak or become test-adaptive",
+      "claim_impact": ["C2"],
+      "locations": [
+        "EXPERIMENT_PLAN.md:37",
+        "EXPERIMENT_PLAN.md:97",
+        "EXPERIMENT_TRACKER.md:35",
+        "EXPERIMENT_PLAN.machine.json:670"
+      ],
+      "run_ids": [
+        "LBSCGP-GLOBAL-M4-MHC-S0-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-CONTROLS-v1"
+      ],
+      "description": "SHUFFLE matching uses label/prediction/margin/error-propensity bins while M4 scope is final train/test. The plan does not state that all bins, propensities, and matching manifests are train-only or pre-final OOF/validation artifacts.",
+      "risk": "Control construction could accidentally use final test labels, predictions, margins, or errors, creating leakage or adaptive test use.",
+      "concrete_fix": "Require matching bins and scalar/error-propensity estimates to come only from train/OOF or preregistered validation artifacts frozen before final test evaluation; add counters proving final test data are evaluator-only."
+    },
+    {
+      "id": "H4",
+      "severity": "HIGH",
+      "title": "M4 control bundles are under-budgeted for multiple trained arms",
+      "claim_impact": ["C2"],
+      "locations": [
+        "EXPERIMENT_PLAN.md:94",
+        "EXPERIMENT_PLAN.md:118",
+        "EXPERIMENT_PLAN.md:124",
+        "EXPERIMENT_TRACKER.md:35",
+        "EXPERIMENT_PLAN.machine.json:670",
+        "EXPERIMENT_PLAN.machine.json:933"
+      ],
+      "run_ids": [
+        "LBSCGP-GLOBAL-M4-MHC-S0-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-CONTROLS-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-CONTROLS-v1"
+      ],
+      "description": "Each M4 bundle contains five arms and says direct/scalar controls use the same split/init/schedule/inference constraints as FULL. The bundle budget is 36 GPU-h, while a single M3 comparator or FULL run is budgeted at 18 GPU-h; four trained controls would imply about 72 GPU-h per bundle before overhead.",
+      "risk": "The plan hides multi-arm compute and may exceed the stated 480 GPU-h budget.",
+      "concrete_fix": "Split M4 controls into per-arm runs or itemize shared-work assumptions; recompute GPU/CPU/storage totals and concurrency after adding DIRECT-MOMENT."
+    },
+    {
+      "id": "H5",
+      "severity": "HIGH",
+      "title": "Hierarchical paired bootstrap and Holm protocol are underspecified",
+      "claim_impact": ["C2"],
+      "locations": [
+        "EXPERIMENT_PLAN.md:91",
+        "EXPERIMENT_PLAN.md:101",
+        "EXPERIMENT_PLAN.md:167",
+        "EXPERIMENT_TRACKER.md:42",
+        "EXPERIMENT_PLAN.machine.json:837",
+        "EXPERIMENT_PLAN.machine.json:974"
+      ],
+      "run_ids": [
+        "LBSCGP-GLOBAL-M5-FINAL-STATS-v1"
+      ],
+      "description": "The plan names hierarchical paired bootstrap and Holm correction but does not define the resampling hierarchy, uncertainty unit, paired statistic, macro-F1 recomputation, one-sided lower-bound rule, or p-value source.",
+      "risk": "The final C2 statistical gate is not implementable and could be inconsistently interpreted.",
+      "concrete_fix": "Define the dataset x metric paired test exactly, including seed/video hierarchy, bootstrap statistic, CI/lower-bound calculation, p-values, Holm ordering, and joint enforcement of +0.030 and lower>0."
+    },
+    {
+      "id": "M1",
+      "severity": "MEDIUM",
+      "title": "Aggregate CPU/storage budget arithmetic does not match run matrix",
+      "claim_impact": ["C1", "C2"],
+      "locations": [
+        "EXPERIMENT_PLAN.md:124",
+        "EXPERIMENT_PLAN.machine.json:933",
+        "EXPERIMENT_TRACKER.md:10"
+      ],
+      "run_ids": [],
+      "description": "Summing machine runs gives 488 must-run CPU-h and 504 total CPU-h, not declared 504/520. Must-run storage sums to 578 GB and total storage to 583 GB, not declared 575/580. GPU/API totals match.",
+      "risk": "Resource planning and hash-bound run matrix are inconsistent.",
+      "concrete_fix": "Regenerate aggregate totals from the run list after control-budget revisions."
+    },
+    {
+      "id": "M2",
+      "severity": "MEDIUM",
+      "title": "Final inference isolation counters are not schema-complete",
+      "claim_impact": ["C1", "C2"],
+      "locations": [
+        "EXPERIMENT_PLAN.md:17",
+        "EXPERIMENT_PLAN.md:81",
+        "EXPERIMENT_PLAN.md:89",
+        "EXPERIMENT_PLAN.machine.json:953",
+        "EXPERIMENT_PLAN.machine.json:971"
+      ],
+      "run_ids": [
+        "LBSCGP-GLOBAL-M2-MHC-S0-FULL-VALID-v1",
+        "LBSCGP-GLOBAL-M2-MHC_zh-S0-FULL-VALID-v1",
+        "LBSCGP-GLOBAL-M3-MHC-S0-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC-S1-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC-S2-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S0-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S1-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S2-FULL-v1"
+      ],
+      "description": "The text forbids validation/test cache, compiler target, teacher, head, reranker, key selector, and certificate-feature loads, but machine zero counters cover only cache/teacher/MLLM call categories.",
+      "risk": "A forbidden validation/test artifact load might not be represented as a required zero counter in machine artifacts.",
+      "concrete_fix": "Add explicit counters for validation/test cache reads, certificate reads, compiler-target reads, head loads, reranker loads, key-selector loads, and teacher artifacts."
+    },
+    {
+      "id": "L1",
+      "severity": "LOW",
+      "title": "Terminal decision-chain summary omits M3 paired-main completion",
+      "claim_impact": ["C2"],
+      "locations": [
+        "EXPERIMENT_PLAN.machine.json:906"
+      ],
+      "run_ids": [
+        "LBSCGP-GLOBAL-M5-FINAL-STATS-v1"
+      ],
+      "description": "The actual DAG is acyclic and dependencies recover the correct order, but the terminal decision chain jumps from M2 decision to M4 controls decision without an explicit M3 paired-main-complete node.",
+      "risk": "Machine consumers using the summary chain rather than dependencies may present an incomplete execution state.",
+      "concrete_fix": "Add an explicit M3 paired-main-complete decision node to the terminal chain."
+    },
+    {
+      "id": "L2",
+      "severity": "LOW",
+      "title": "Validation/test source hashes need provenance clarification",
+      "claim_impact": ["C1", "C2"],
+      "locations": [
+        "EXPERIMENT_PLAN.machine.json:14",
+        "EXPERIMENT_PLAN.md:17"
+      ],
+      "run_ids": [],
+      "description": "Machine source hashes include validation/test JSONL files without saying these hashes are provenance-only and not cache, matching, selection, or G0 access.",
+      "risk": "Readers may confuse provenance hashing with experimental data access before allowed gates.",
+      "concrete_fix": "Mark val/test hashes as provenance-only or move them to final evaluator provenance artifacts generated after freeze."
+    }
+  ],
+  "claim_coverage_matrix": [
+    {
+      "claim_id": "C1",
+      "claim": "executable isolated certifiable encoder-realizable global geometry",
+      "required_evidence": [
+        "first G0 gates",
+        "closed strong convexity",
+        "common Q",
+        "serialized H-metric KKT-only acceptance",
+        "rank tail <= d",
+        "nondegeneration",
+        "REMOVE/null parity",
+        "replay/hash/isolation",
+        "resource preflight",
+        "robust low coverage disables safety claim only",
+        "retired local v7 cannot provide PASS"
+      ],
+      "coverage_status": "PARTIAL_READY_AFTER_REVISIONS",
+      "blocking_findings": ["H3", "H4", "M1", "M2"],
+      "notes": "Core C1 design is present, but leakage-counter completeness and resource realism need repair before implementation."
+    },
+    {
+      "claim_id": "C2",
+      "claim": "final ordinary kNN performance and attribution",
+      "required_evidence": [
+        "MHC and MHC_zh",
+        "seeds 0/1/2 paired design",
+        "FULL vs strongest same-protocol non-MLLM comparator",
+        "accuracy and macro-F1 each >= +0.030",
+        "all paired seed deltas positive",
+        "hierarchical paired bootstrap lower > 0",
+        "Holm over four dataset-metric claims",
+        "FULL beats REMOVE SHUFFLE NOISE direct scalar controls",
+        "ordinary full-video train-memory top20 kNN"
+      ],
+      "coverage_status": "BLOCKED",
+      "blocking_findings": ["H1", "H2", "H3", "H4", "H5"],
+      "notes": "Run structure exists, but comparator, controls, budget, and statistics are not yet decisive."
+    }
+  ],
+  "audit_results": {
+    "leakage_gold_boundary": {
+      "status": "REVISE",
+      "passes": [
+        "only parent_video_binary_label is gold",
+        "segment_gold_exists=false and segment_gold_used=false",
+        "cache is train-only and label-blind",
+        "labels enter after cache seal only",
+        "final endpoint is ordinary top20 kNN without MLLM/cache/teacher/head/rerank/key selection"
+      ],
+      "concerns": ["H3", "M2", "L2"]
+    },
+    "run_order_dag": {
+      "status": "PASS_WITH_LOW_FIX",
+      "run_count_total": 33,
+      "must_run_count": 32,
+      "nice_to_have_count": 1,
+      "first_three_g0": [
+        "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+        "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+      ],
+      "acyclic": true,
+      "unknown_dependencies": 0,
+      "order_violations": 0,
+      "comparator_before_full": true,
+      "no_performance_before_g0_cache_gates": true,
+      "concerns": ["L1"]
+    },
+    "global_g0_completeness": {
+      "status": "PASS_WITH_RESOURCE_AND_COUNTER_REVISIONS",
+      "covered": [
+        "closed strong convexity",
+        "common Q",
+        "H-metric normal-cone KKT-only acceptance",
+        "rank tail <= d",
+        "nondegeneration",
+        "REMOVE/null parity",
+        "replay/hash/isolation",
+        "resource preflight",
+        "robust low coverage disables safety only",
+        "local v7 cannot provide PASS"
+      ],
+      "concerns": ["H4", "M1", "M2"]
+    },
+    "teacher_cache_necessity": {
+      "status": "PASS_WITH_CONTROL_REVISIONS",
+      "api_call_formula": "4 * (U_MHC + U_MHC_zh) + R_MHC + R_MHC_zh",
+      "base_calls": 4512,
+      "retry_cap": 9024,
+      "seed_independent_cache": true,
+      "schema_qc_retry_fallback_seal": true,
+      "cost_uncertainty_honest": true,
+      "certificate_predictivity_diagnostic_only": true,
+      "concerns": ["H2", "H3", "H4"]
+    },
+    "resource_budget_arithmetic": {
+      "status": "REVISE",
+      "per_run_caps_ok": true,
+      "concurrency_caps_ok_if_followed": true,
+      "slurm_policy_ok": true,
+      "computed_from_machine": {
+        "must_cpu_hours": 488,
+        "nice_cpu_hours": 16,
+        "total_cpu_hours": 504,
+        "must_gpu_hours": 480,
+        "nice_gpu_hours": 0,
+        "total_gpu_hours": 480,
+        "must_api_base": 4512,
+        "must_api_retry_cap": 9024,
+        "must_storage_gb": 578,
+        "nice_storage_gb": 5,
+        "total_storage_gb": 583
+      },
+      "declared": {
+        "must_cpu_hours": 504,
+        "total_cpu_hours": 520,
+        "must_gpu_hours": 480,
+        "total_gpu_hours": 480,
+        "must_api_base": 4512,
+        "must_api_retry_cap": 9024,
+        "must_storage_gb": 575,
+        "total_storage_gb": 580
+      },
+      "concerns": ["H4", "M1"]
+    },
+    "statistics": {
+      "status": "REVISE",
+      "two_datasets": true,
+      "seeds_0_1_2": true,
+      "paired_design": true,
+      "accuracy_and_macro_f1_thresholds": true,
+      "all_seed_deltas_positive": true,
+      "holm_four_claims": true,
+      "uncertainty_unit_hierarchy_defined": false,
+      "concerns": ["H5"]
+    },
+    "machine_tracker_parity": {
+      "status": "PASS_WITH_REVISIONS",
+      "json_valid": true,
+      "run_ids_unique": true,
+      "run_order_matches_runs": true,
+      "all_required_run_fields_present": true,
+      "tracker_machine_per_run_budgets_aligned": true,
+      "plan_hash_manifest_matches": true,
+      "explicit_false_gold_fields": true,
+      "explicit_global_validation_false": true,
+      "concerns": ["M1", "L1", "L2"]
+    },
+    "forbidden_routes": {
+      "status": "PASS",
+      "no_sample_weighting": true,
+      "no_key_selection": true,
+      "no_pair_triplet_supcon": true,
+      "no_segment_route": true,
+      "no_test_teacher": true,
+      "no_test_head": true,
+      "no_test_rerank": true
+    },
+    "first_three_runs": {
+      "status": "PASS",
+      "runs": [
+        "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+        "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+      ],
+      "all_g0": true,
+      "no_performance_claims": true
+    }
+  },
+  "implementation_readiness": {
+    "ready_for_implementation": false,
+    "reason": "0 Critical but 5 High findings remain.",
+    "zero_critical_zero_high_required": true,
+    "zero_critical_zero_high_met": false,
+    "remaining_nonblocking_requirements_if_later_ready": [],
+    "prioritized_author_revision_checklist": [
+      "Freeze the moving strongest comparator candidate set and selection ledger before M2.",
+      "Add DIRECT-MOMENT or explicitly cover it in the direct-control arm.",
+      "Make SHUFFLE/scalar matching provenance train-only or pre-final OOF/validation-only and add final-test construction-access counters.",
+      "Split or itemize M4 control arms and recompute CPU/GPU/storage budgets and concurrency.",
+      "Define the hierarchical paired bootstrap and Holm protocol exactly.",
+      "Regenerate machine JSON, tracker, aggregate totals, access-counter schemas, and hash manifest."
+    ]
+  },
+  "review_artifacts": {
+    "markdown": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW.md",
+    "machine_json": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW.machine.json",
+    "hash_manifest": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_HASHES.sha256"
+  }
+}

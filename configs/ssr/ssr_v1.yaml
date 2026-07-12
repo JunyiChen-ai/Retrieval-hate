@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "config_name": "ssr_v1",
+  "config_sha256": "b32e57e8361392516c0e5087ea8c7bb5c85a6544ba384c5ea4bb3e9a4d64718e",
+  "supervision": {
+    "only_gold": "video_level_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_forbidden": true,
+    "mllm_relations": "weak_privileged_train_only_pseudo_signals"
+  },
+  "paths": {
+    "root": "/data/jehc223/RGCL",
+    "gt": "data/gt",
+    "clip": "data/CLIP_Embedding",
+    "video": "data/video",
+    "asr": "data/ASR",
+    "artifacts": "artifacts/ssr/v1"
+  },
+  "datasets": {
+    "MHC": {
+      "epoch_index": 25,
+      "lambda_seg": 0.5,
+      "seg_mode": "full",
+      "language": "en"
+    },
+    "MHC_zh": {
+      "epoch_index": 28,
+      "lambda_seg": 0.5,
+      "seg_mode": "milmax",
+      "language": "zh"
+    }
+  },
+  "folds": {
+    "n_splits": 5,
+    "shuffle": true,
+    "random_state": 20260710
+  },
+  "comparator": {
+    "model": "openai_clip-vit-large-patch14-336_HF",
+    "batch_size": 64,
+    "lr": 0.0001,
+    "optimizer": "AdamW_repository_default_weight_decay",
+    "num_layers": 3,
+    "proj_dim": 1024,
+    "map_dim": 1024,
+    "dropout": [0.2, 0.4, 0.1],
+    "fusion_mode": "align",
+    "batch_norm": false,
+    "loss": "triplet",
+    "metric": "cos",
+    "triplet_margin": 0.1,
+    "hybrid_loss": true,
+    "ce_weight": 0.5,
+    "hard_negatives_loss": true,
+    "no_hard_negatives": 1,
+    "no_pseudo_gold_positives": 1,
+    "grad_clip": 0.1,
+    "seed": 0,
+    "num_subclips": 4,
+    "topk": 20,
+    "use_similarity_vote": true,
+    "vote_threshold": 0.0
+  },
+  "pair_mining": {
+    "max_sc_per_query": 3,
+    "max_mi_per_query": 3,
+    "max_unique_pairs": 1200,
+    "allocator_hash_salt": "ssr-v1"
+  },
+  "mllm": {
+    "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "num_frames": 4,
+    "max_evidence_chars_per_video": 2048,
+    "max_pixels": 151200,
+    "max_new_tokens": 256,
+    "do_sample": false,
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "prompt_versions": ["P0", "P1"],
+    "orders": ["AB", "BA"],
+    "min_field_agreement": 0.75,
+    "smoke_pairs_per_dataset": 16
+  },
+  "b1": {
+    "min_accepted": 80,
+    "audit_n": 80,
+    "wilson_z": 1.959963984540054,
+    "wilson_lower_min": 0.8,
+    "conditional_groups": 5,
+    "logistic_C": 1.0,
+    "logistic_solver": "lbfgs",
+    "logistic_max_iter": 5000,
+    "logistic_tol": 1e-9,
+    "permutations": 10000,
+    "permutation_seed_base": 20260710,
+    "holm_alpha": 0.05,
+    "oracle_gain_min": 0.05
+  }
+}

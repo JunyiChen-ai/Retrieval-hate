@@ -1,0 +1,73 @@
+{
+  "archive_forbidden_key_access_count": 0,
+  "checks": {
+    "scripts/analysis/sq_common.py": "PASS",
+    "scripts/analysis/sq_s0.py": "PASS",
+    "scripts/analysis/sq_s1.py": "PASS",
+    "scripts/slurm/sq_s0_cpu.sbatch": "PASS",
+    "scripts/slurm/sq_s0_gpu.sbatch": "PASS",
+    "scripts/slurm/sq_s1_cpu.sbatch": "PASS",
+    "scripts/slurm/sq_s1_gpu.sbatch": "PASS"
+  },
+  "conda_env": "HateVideo",
+  "config_canonical_sha256": "8645c97225aaea995ccab583e5c440ce4a8faf2a4e6a274ad66cc099185c2149",
+  "dirty_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "git_head": "a1b1922bc970bb831526b4d21c911380ec871248",
+  "gpu_name": null,
+  "implementation_sha256": "882e20c1909d982d4936e0b920f4a223ef027a9866e74a1432c6e937bef103fb",
+  "input_files": [
+    {
+      "path": "scripts/analysis/sq_common.py",
+      "sha256": "5d4af73cc7cbc199c2e817b28cbed83ed3bd4755e7b00dace6506cdd61cb6e9f"
+    },
+    {
+      "path": "scripts/analysis/sq_s0.py",
+      "sha256": "f89c5128366cbd5fa084b571f03ed87053935459481577d8b91467f8cca5ffcb"
+    },
+    {
+      "path": "scripts/analysis/sq_s1.py",
+      "sha256": "65388ce8cacb72c34f453fbee3857b0074fd172cfbf34f687d545583774cc163"
+    },
+    {
+      "path": "scripts/slurm/sq_s0_cpu.sbatch",
+      "sha256": "8621b979a644da9d63f4421a5853be6e9ef88bdedfbf1c57212e96708d8543f7"
+    },
+    {
+      "path": "scripts/slurm/sq_s0_gpu.sbatch",
+      "sha256": "24699a3339a897b909d3dfcf90cb1f5d58ca5f6353aa91612c826731b3528b15"
+    },
+    {
+      "path": "scripts/slurm/sq_s1_cpu.sbatch",
+      "sha256": "84c3ee4f1934e13031976a873598e338b0a31308975048cb7b9fae3a2f70bdbc"
+    },
+    {
+      "path": "scripts/slurm/sq_s1_gpu.sbatch",
+      "sha256": "4a30d1c58b8b4fe2bb04a7598a047ff56f4ceffb3138ca2e0e3578239f650ec1"
+    }
+  ],
+  "new_teacher_call_count": 0,
+  "no_gpu_compute": true,
+  "only_gold_supervision": "parent_video_binary_label",
+  "outer_held_q_read_count": 0,
+  "output_files": [],
+  "payload_sha256": "6ff8144c207fe75cce63de7e414fe0f8a0e4d5e7547f2dff15e6c233768c5dc5",
+  "run_id": "SQ-STATIC-SANITY-v1",
+  "schema_version": 1,
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "slurm_job_id": "12723",
+  "stage": "STATIC_SANITY",
+  "status": "PASS",
+  "teacher_cache_read_count": 0,
+  "teacher_cache_write_count": 0,
+  "test_content_read_count": 0,
+  "val_content_read_count": 0,
+  "val_test_teacher_artifact_count": 0,
+  "versions": {
+    "cuda": "12.4",
+    "faiss": "1.13.2",
+    "python": "3.11.8",
+    "sklearn": "1.5.2",
+    "torch": "2.6.0+cu124"
+  }
+}

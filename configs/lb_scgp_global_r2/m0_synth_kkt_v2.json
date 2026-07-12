@@ -1,0 +1,126 @@
+{
+  "schema_version": "lb_scgp_global_r2_m0_synth_kkt_v2_config_v1",
+  "authorization": {
+    "authorized_run_ids": [
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2"
+    ],
+    "gpu_allowed": false,
+    "mllm_calls_allowed": false,
+    "network_or_model_calls_allowed": false,
+    "ocr_calls_allowed": false,
+    "performance_evaluation_allowed": false,
+    "query_labels_allowed": false,
+    "query_z_allowed": false,
+    "run3_or_later_allowed": false,
+    "training_allowed": false,
+    "validation_or_test_allowed": false
+  },
+  "dirty_policy": {
+    "allowed_new_files_after_run": [
+      "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json",
+      "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json.publish.lock",
+      "artifacts/lb_scgp_global/v2/m0/synth_kkt/source_manifest.json",
+      "artifacts/lb_scgp_global/v2/m0/synth_kkt/source_manifest.json.publish.lock",
+      "artifacts/lb_scgp_global/v2/m0/synth_kkt/access_ledger.json",
+      "artifacts/lb_scgp_global/v2/m0/synth_kkt/access_ledger.json.publish.lock",
+      "artifacts/lb_scgp_global/v2/m0/synth_kkt/semantic_verification.json",
+      "artifacts/lb_scgp_global/v2/m0/synth_kkt/semantic_verification.json.publish.lock"
+    ],
+    "artifact_outputs_excluded_from_source_binding": true,
+    "failure_outputs_must_be_cleaned_by_wrapper": true,
+    "no_clobber": true
+  },
+  "hash_bindings": {
+    "authoritative_inputs": {
+      "AGENTS.md": "e6aaf5d66399cdbbe7fcc2c811931277b0ed4a24b592ffa5cbb60315b29ea23c",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "af1c217c44efc26003150be0bf22fedb499a7019931ca69a0c0164c30557b23a",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "6caa5c2e78961fc7d60f9f970e319534aa6af3b6cc4a033b76b83f2ab18a0492",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": "2e6d731dba169d4b2487b098e996e77b8089efe3b41d9375f08ee210d774c802",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.md": "d952989742c9402cfd38de935deece73b2933e7ab8f70883ca8e0bea40a4bd46",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.machine.json": "8c222ff6db3a38752851fbc113c9e1988845ca424ce8fc51d48cfdea0c51f472",
+      "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "327614bbb3a8ce0c493acbdda4ef6b25fa555243bdbe041535a51a9d81800db2",
+      "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff",
+      "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_EXECUTION.md": "71a502375ec4f99224e8a8cd55aa61ea9f96cff6bf81743646c59e10d1efeebb",
+      "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_INDEPENDENT_REVIEW.md": "37dcf8825ef9cf3af9df47a0346e647272c19d70110a1247cc6ed865beee34ed",
+      "refine-logs/lb_scgp_global/M0_IMPLEMENTATION_HANDOFF.md": "f5d28177cf4d1e40c9fbe45c52b08f5dadde01db1a5ba0d3e03d46842c3f6746",
+      "refine-logs/lb_scgp_global/M0_RUN2_LOCAL_PYTHON_DISCIPLINE_RECORD.md": "c2d4b6168828a734740311c309172a95a33cae3f95ee29dbd131135fe125df39",
+      "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW.md": "12f42df893d90d6ef4a7759dbbb86e8f8d820375be9aae3a0b94010fda1335ef",
+      "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW_FRESH.md": "b02e5a0f7839e8b215c15197f6f120e3bebfe498ab89d2120c26b50585707a0c",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.md": "95b4b839017479bad4d2ed7a48455864c765e8f91997adab0fa4a7ca66aa57fb",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.machine.json": "56603297b2a1f6bcf12e941d96ce95911bb2ab8bfd0de967586430d38959f3d8",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT_HASHES.sha256": "a88fc1c75c10b653deebf03c1792733d2bb412f13dc021567b221d009cc38390",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT_REVIEW.md": "3cbbc9669978e7b530c54a4b5f1d755f8fcbe096ca1363ed084cdeea728fd921",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT_REVIEW.machine.json": "be7c8ded6574e1b484e90f9e155293533ffe1cbe1e7ce325409fccbeed2057ee",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT_REVIEW_HASHES.sha256": "17097b6b91c5b6ef099acd4cba37652ac804631c2cc21c065b703887999b34a9",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_AMENDMENT_INDEPENDENT_REVIEW.md": "7fcc171244fba63fbe07ac45ad2ecad6b53e65a15adcdf2a885fa046510b10de",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_IMPLEMENTATION_AUDIT.md": "c8f4e030c47dfa5b3f48c5fbc91f5e1131c3db38ccaff8ba14a0a6f194f70eea",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_IMPLEMENTATION_FIX_FREEZE.md": "1a3ce9f1cea8df5ebe488bec700066910742e57c2aab1873713032eb5c467ec0",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_CODE_REVIEW.md": "be646c3ad2cf55681b44397cfa67cc38313d70cb0b26705d5c4354f3a5c3c9bc"
+    },
+    "declared_validation_test_provenance_not_opened": {
+      "data/gt/MHC/test.jsonl": "0377f9d83d0a57e17212c17fe8fcfc552648356cc1a7b2f1c98a2445a1ce0d76",
+      "data/gt/MHC/val.jsonl": "749f9563d002367bc05a16627eb4f28045daba30825f0414335bab5a6543f6cb",
+      "data/gt/MHC_zh/test.jsonl": "79f666050ce92910ecd1ca4fbaf42bcae36f46b898313e2b4fc026ad72858d31",
+      "data/gt/MHC_zh/val.jsonl": "6b2b5916fedba05ade93e694c13ba09f92968bde73e15f6cb345025eb0afc04b"
+    },
+    "old_protected_pre_snapshot": {
+      "manifest_sha256": "243e89b69b169b222dd97f9df092d511f823fb26201e91fd89cb581710940462",
+      "path_count": 278,
+      "snapshot_scope": "old LB-SCGP source/artifact scope frozen by Run1 review"
+    },
+    "run1_frozen": {
+      "artifacts/lb_scgp_global/v1/m0/contract_freeze.json": "09b78682389f1c9774c9dffc43c759bceeec9d7f44eca1ce4cd626d0cd6d12da",
+      "artifacts/lb_scgp_global/v1/m0/contract_freeze.json.publish.lock": "c6fbb49c3c8aba942da3f254c3c5f65d037002548fafb961154e6fa79a3e4ea7",
+      "configs/lb_scgp_global_r2/m0_contract_freeze_v1.json": "5111c2d6d74c745afe35a7067566b531714ce6482df3f5b9469a442486146868",
+      "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json": "4d3f1663e633c30ae58e35c0feddaa2fa9bbedba279cdbe6f38ecc35d761f22f",
+      "schemas/lb_scgp_global_r2/scgp_global_contract_freeze_v1.schema.json": "d6a22233ec2ad028f1fdf8a0315641a30a76e1b3a96249615c48161b3d890105",
+      "scripts/analysis/lb_scgp_global_r2_common.py": "b0461460a71f72c81b611bb060950a459e84d7f5cfe46f62da19625e624c59db",
+      "scripts/analysis/lb_scgp_global_r2_contract_freeze.py": "1c11544e5305c4350b3d985ccf81e88de8f1f31c58e662df819570aaa92bccbc",
+      "scripts/analysis/lb_scgp_global_r2_validate.py": "061cf80ae532e268b623050db5b39c47b9f0858f0a9591d94f8404e11e778fd2",
+      "scripts/slurm/lb_scgp_global_r2_m0_contract_freeze.sbatch": "ccbade355239d3c313b70ed55a2907f7a2d51716a62b809e835ec9ad1441d882",
+      "scripts/wrappers/lb_scgp_global_r2_run1.sh": "1eb342475c63df5d16bf570c82de465803652e4a6157444ea02294b58fa9596d"
+    }
+  },
+  "implementation_files": [
+    "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json",
+    "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v2.schema.json",
+    "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_case_v2.schema.json",
+    "scripts/analysis/lb_scgp_global_r2_run2_v2_common.py",
+    "scripts/analysis/lb_scgp_global_r2_run2_v2_validate.py",
+    "scripts/analysis/lb_scgp_global_r2_run2_v2_producer.py",
+    "scripts/analysis/lb_scgp_global_r2_run2_v2_independent_verify.py",
+    "scripts/wrappers/lb_scgp_global_r2_run2_v2.sh",
+    "scripts/slurm/lb_scgp_global_r2_m0_synth_kkt_v2.sbatch"
+  ],
+  "paths": {
+    "access_ledger_path": "artifacts/lb_scgp_global/v2/m0/synth_kkt/access_ledger.json",
+    "artifact_path": "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json",
+    "case_schema": "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_case_v2.schema.json",
+    "cert_schema": "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json",
+    "experiment_machine": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json",
+    "experiment_tracker": "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md",
+    "payload_schema": "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v2.schema.json",
+    "semantic_verification_path": "artifacts/lb_scgp_global/v2/m0/synth_kkt/semantic_verification.json",
+    "slurm_script": "scripts/slurm/lb_scgp_global_r2_m0_synth_kkt_v2.sbatch",
+    "source_manifest_path": "artifacts/lb_scgp_global/v2/m0/synth_kkt/source_manifest.json",
+    "wrapper": "scripts/wrappers/lb_scgp_global_r2_run2_v2.sh"
+  },
+  "projection_contract": {
+    "lambda_struct": 1.0
+  },
+  "rank_factor_contract": {
+    "d": 3
+  },
+  "run": {
+    "artifact_path": "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json",
+    "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "schema_id": "scgp_global_synth_kkt_payload_v2",
+    "slurm": {
+      "cpu": 8,
+      "env": "HateVideo",
+      "gpu": 0,
+      "no_time_flag": true,
+      "ram_gb": 64
+    }
+  }
+}

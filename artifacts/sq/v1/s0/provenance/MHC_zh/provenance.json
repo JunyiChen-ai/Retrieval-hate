@@ -1,0 +1,43 @@
+{
+  "archive_forbidden_key_access_count": 0,
+  "archive_rows": 579,
+  "dataset": "MHC_zh",
+  "expected_train_rows": 579,
+  "id_set_valid": true,
+  "new_teacher_call_count": 0,
+  "only_gold_supervision": "parent_video_binary_label",
+  "original_run_linkage": {
+    "candidate_original_logs": [
+      "slurm/logs/gen_archive_v2_12234.out"
+    ],
+    "cryptographically_complete": false,
+    "current_generator_sha256": "7702a2519d51565aa636687699bc85c1a4ef52d8fbacaabe886fb1fc789b060d",
+    "current_sbatch_sha256": "7e6b146c0b6d2cb085d4330240608446ea2a8e34f226f4286e7557e5af139e18",
+    "exact_model_revision_embedded": false,
+    "original_generator_sha256_embedded": false,
+    "original_input_manifest_sha256_embedded": false,
+    "original_prompt_sha256_embedded": false,
+    "reason": "original-run prompt/model-revision/input/code cryptographic linkage absent"
+  },
+  "payload_sha256": "87e17ba71aac2f9c881763b97f5227884377981aa1f9141bc83a16428f772fab",
+  "promotion_allowed": false,
+  "q_signal_status": "PROXY_ONLY_CHEAP_FORMAT",
+  "reader_access_counts": {
+    "archive.neutral_summary": 580,
+    "id": 580,
+    "parse_ok": 580,
+    "split": 580
+  },
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "static_data_flow": {
+    "generate_signature_has_no_label": true,
+    "label_poison_projection_sha256": "ece2b5a5a36d1a8b23fc1875f8fadb12ba89f89a50a47af6936eeea68e506d0f",
+    "label_written_to_output_record": true,
+    "prompt_call_uses_item_text": true,
+    "v2_train_requested_by_sbatch_default": true
+  },
+  "status": "PASS_PROXY_ONLY",
+  "teacher_cache_read_count": 0,
+  "teacher_cache_write_count": 0
+}

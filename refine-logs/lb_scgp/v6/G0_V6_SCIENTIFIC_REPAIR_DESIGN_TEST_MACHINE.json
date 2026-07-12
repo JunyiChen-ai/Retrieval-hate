@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "prospective_v6_design_test_machine",
+  "thread_session": "fresh GPT-5.5 xhigh v6 scientific-repair implementer; no subagents",
+  "scope": {
+    "namespace": "refine-logs/lb_scgp/v6",
+    "handoff": "refine-logs/lb_scgp/G0_V6_SCIENTIFIC_REPAIR_HANDOFF.md",
+    "formal_claim": false,
+    "g0_pass_claim": false,
+    "freeze": false,
+    "formal_synthetic": false,
+    "real_fold": false,
+    "performance_experiment": false
+  },
+  "phase_i_semantics": {
+    "job_12866": "Phase-I Slater/primal feasibility warm start evidence only",
+    "job_12866_scientific_projection": false,
+    "failed_solver_is_infeasibility_proof": false
+  },
+  "phase_ii_scheme": {
+    "variables": [
+      "Gram matrix G in S_+^n",
+      "nonnegative original slack vector xi"
+    ],
+    "convexity_locality": "Convex in Gram space for the original local cell; any factor-space result is local-only and cannot imply Gram convex optimality.",
+    "objective": "0.5 * ||G - G0||_F^2 plus original quadratic slack terms.",
+    "constraints": [
+      "unit diagonal",
+      "PSD",
+      "off-diagonal box",
+      "top20 rank halfspaces: 19 internal adjacent inequalities per row",
+      "top20 rank halfspaces: 20th-vs-all-outsider inequalities per row",
+      "self exclusion",
+      "canonical-ID tie semantics",
+      "all compatible adjacent top20 orientations",
+      "nonnegative and budgeted slack"
+    ],
+    "stationarity_diagnostics": [
+      "original objective stationarity",
+      "variational inequality residual",
+      "KKT active-set residual",
+      "PSD minimum eigenvalue",
+      "complementarity",
+      "primal residuals"
+    ],
+    "fail_closed": "Any unsatisfied replay, residual, KKT/VI/PSD/complementarity, hash, top20 completeness, or no-segment check is BOUNDED/REMOVE, never PASS."
+  },
+  "immutable_thresholds": {
+    "topk": 20,
+    "max_cycles": 500,
+    "dykstra_set_violation_tolerance": 1e-06,
+    "dykstra_relative_change_tolerance": 1e-07,
+    "tie_tolerance": 1e-07,
+    "max_independent_orientations": 8,
+    "max_pivots": 32
+  },
+  "supervision_contract": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false,
+    "mllm_call_count": 0,
+    "ocr_call_count": 0,
+    "teacher_cache_read_count": 0,
+    "teacher_cache_write_count": 0,
+    "outer_held_label_read_count": 0,
+    "outer_held_content_read_count": 0,
+    "val_content_read_count": 0,
+    "test_content_read_count": 0,
+    "val_test_teacher_artifact_count": 0
+  },
+  "required_adversarial_sanity_cases": [
+    "top20_stable_outsider_shuffle",
+    "zero_orientation_scalar_converged_top20_stable_true",
+    "zero_orientation_scalar_converged_top20_stable_false",
+    "known_local_one_boundary_orientation",
+    "known_bounded_one_boundary_orientation",
+    "near_threshold_below_1e-6",
+    "near_threshold_above_1e-6",
+    "relative_change_without_feasibility",
+    "canonical_tie_below_1e-7",
+    "canonical_tie_at_1e-7",
+    "canonical_tie_above_1e-7",
+    "duplicate_id_negative",
+    "unresolved_tie_map_negative",
+    "orientation_over_budget",
+    "pivot_over_budget",
+    "self_exclusion_top20",
+    "psd_unitdiag_box_trust_stress",
+    "no_segment_zero_counter_manifest"
+  ],
+  "machine_jobs": {
+    "fresh_validator_first": "refine-logs/lb_scgp/v6/runtime/validate_scientific_repair_v6.sbatch",
+    "prospective_nonformal_oracle_after_validator_pass": "refine-logs/lb_scgp/v6/runtime/scientific_repair_sanity.sbatch"
+  }
+}

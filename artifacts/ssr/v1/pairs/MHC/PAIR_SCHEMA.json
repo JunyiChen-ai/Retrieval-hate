@@ -1,0 +1,28 @@
+{
+  "arc_schema": {
+    "event_is": "counterfactual_exact_video_vote_flip_not_segment_annotation",
+    "families": [
+      "MI",
+      "SC"
+    ]
+  },
+  "canonical_pair": {
+    "gold_fields": [
+      "video_a_label",
+      "video_b_label"
+    ],
+    "gold_granularity": "video",
+    "required": [
+      "canonical_pair_id",
+      "dataset",
+      "video_a_id",
+      "video_b_id",
+      "video_a_label",
+      "video_b_label",
+      "direction_mask",
+      "arc_ids"
+    ],
+    "segment_fields_forbidden": true
+  },
+  "pair_schema_version": 1
+}

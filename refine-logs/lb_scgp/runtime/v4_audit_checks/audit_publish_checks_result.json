@@ -1,0 +1,808 @@
+{
+  "all_passed": true,
+  "direct_wrong_config_path": {
+    "expected": "failure",
+    "passed": true,
+    "result": {
+      "cmd": [
+        "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+        "scripts/analysis/lb_scgp_independent_verify.py",
+        "--config",
+        "configs/lb_scgp/lb_scgp_v3.json",
+        "--task",
+        "audit-publish",
+        "--run-id",
+        "LBSCGP-G0-CODE-AUDIT-v4",
+        "--review",
+        "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+        "--review-record",
+        "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+      ],
+      "returncode": 1,
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 749, in audit_publish\n    raise RuntimeError(\"wrong code-audit run id\")\nRuntimeError: wrong code-audit run id\n",
+      "stdout_tail": ""
+    }
+  },
+  "direct_wrong_review_path": {
+    "expected": "failure",
+    "passed": true,
+    "result": {
+      "cmd": [
+        "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+        "scripts/analysis/lb_scgp_independent_verify.py",
+        "--config",
+        "configs/lb_scgp/lb_scgp_v4.json",
+        "--task",
+        "audit-publish",
+        "--run-id",
+        "LBSCGP-G0-CODE-AUDIT-v4",
+        "--review",
+        "refine-logs/lb_scgp/runtime/v4_audit_checks/not_the_review.md",
+        "--review-record",
+        "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+      ],
+      "returncode": 1,
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 651, in _validate_review_record\n    raise RuntimeError(\"review/report sidecar paths are not the exact v4 paths\")\nRuntimeError: review/report sidecar paths are not the exact v4 paths\n",
+      "stdout_tail": ""
+    }
+  },
+  "final_residue": {
+    "code_audit_absent": true,
+    "record_source_exists": false,
+    "review_source_exists": false,
+    "tmp_absent": true,
+    "tmp_paths": []
+  },
+  "negative_checks": [
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "missing_review_report",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 652, in _validate_review_record\n    review_bytes = _read_bytes_logged(review_path)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 455, in _read_bytes_logged\n    with open(path, \"rb\") as handle:\n         ^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/data/jehc223/RGCL/refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md'\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "missing_review_record",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "pendent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 654, in _validate_review_record\n    record_bytes = _read_bytes_logged(record_path)\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 455, in _read_bytes_logged\n    with open(path, \"rb\") as handle:\n         ^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/data/jehc223/RGCL/refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json'\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "malformed_review_record_json",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 246, in read_json\n    return json.load(handle)\n           ^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/json/__init__.py\", line 293, in load\n    return loads(fp.read(),\n           ^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/json/decoder.py\", line 337, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/json/decoder.py\", line 353, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ^^^^^^^^^^^^^^^^^^^^^^\njson.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "extra_review_record_field",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "ll last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 657, in _validate_review_record\n    _require_exact_keys(\"review_record\", record, CODE_AUDIT_REVIEW_RECORD_KEYS)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 435, in _require_exact_keys\n    raise RuntimeError(\"{} schema keys mismatch missing={} extra={}\".format(\nRuntimeError: review_record schema keys mismatch missing=[] extra=['unexpected']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "wrong_review_report_hash",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['review_report_sha256']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "wrong_record_run_id",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['run_id']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "wrong_config_path_in_record",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['config_path']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "wrong_freeze_file_sha256",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['freeze_file_sha256']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "wrong_implementation_sha256",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['implementation_sha256']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "nonzero_critical",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['critical']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "nonzero_high",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['high']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "no_segment_gold_false",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['no_segment']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "segment_gold_fields_true",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['supervision']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "formal_pass_not_authorized",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['authorized']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "repair_executor_claimed",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['not_repair_executor']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "wrong_review_process_identity",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 756, in audit_publish\n    review_info = _validate_review_record(cfg, args, freeze_info)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 692, in _validate_review_record\n    raise RuntimeError(\"review record failed strict checks {}\".format(failed))\nRuntimeError: review record failed strict checks ['process']\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "dirty_state_drift",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 755, in audit_publish\n    freeze_info = _verify_freeze_for_audit_publish(cfg)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 592, in _verify_freeze_for_audit_publish\n    raise RuntimeError(\"current dirty/head state differs from frozen state\")\nRuntimeError: current dirty/head state differs from frozen state\n",
+        "stdout_tail": ""
+      }
+    },
+    {
+      "expected": "failure_no_formal_residue",
+      "name": "preexisting_code_audit_dir_and_lock",
+      "passed": true,
+      "residue_after_cleanup": {
+        "code_audit_absent": true,
+        "record_source_exists": false,
+        "review_source_exists": false,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "residue_before_cleanup": {
+        "code_audit_absent": false,
+        "record_source_exists": true,
+        "review_source_exists": true,
+        "tmp_absent": true,
+        "tmp_paths": []
+      },
+      "result": {
+        "cmd": [
+          "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+          "scripts/analysis/lb_scgp_independent_verify.py",
+          "--config",
+          "configs/lb_scgp/lb_scgp_v4.json",
+          "--task",
+          "audit-publish",
+          "--run-id",
+          "LBSCGP-G0-CODE-AUDIT-v4",
+          "--review",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.md",
+          "--review-record",
+          "refine-logs/lb_scgp/G0_FORMAL_CODE_AUDIT_REVIEW_V4.record.json"
+        ],
+        "returncode": 1,
+        "stderr_tail": "Traceback (most recent call last):\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2540, in <module>\n    if __name__==\"__main__\": main()\n                             ^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 2535, in main\n    audit_publish(cfg, args)\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 755, in audit_publish\n    freeze_info = _verify_freeze_for_audit_publish(cfg)\n                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/jehc223/RGCL/scripts/analysis/lb_scgp_independent_verify.py\", line 571, in _verify_freeze_for_audit_publish\n    raise RuntimeError(\"code-audit namespace already exists\")\nRuntimeError: code-audit namespace already exists\n",
+        "stdout_tail": ""
+      }
+    }
+  ],
+  "positive_check": {
+    "expected": "validation_pass_no_publication",
+    "name": "positive_prepublication_validation_without_transaction",
+    "passed": true,
+    "record_payload_sha256": "06e696b22e25fe9920151cfe27cc3ec254efa2a7467f55ab03e45cdc7d714625"
+  },
+  "python": "3.11.8 (main, Feb 26 2024, 21:39:34) [GCC 11.2.0]",
+  "slurm_job_id": "12780",
+  "wrapper_checks": [
+    {
+      "expected": "failure_before_python",
+      "name": "wrapper_wrong_task",
+      "passed": true,
+      "result": {
+        "cmd": [
+          "bash",
+          "scripts/slurm/lb_scgp_g0_audit_publish.sbatch"
+        ],
+        "returncode": 2,
+        "stderr_tail": "Refusing unauthorized task: freeze\n",
+        "stdout_tail": "[2026-07-11 15:44:08] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====\n[2026-07-11 15:44:08] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video\n[2026-07-11 15:44:08] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log\n[2026-07-11 15:44:08] [disk_guard] WARNING: could not determine quota usage from 'quota -s'. Doing NOTHING destructive.\n[2026-07-11 15:44:08] [disk_guard] ==== disk_guard end (usage unknown) ====\n"
+      }
+    },
+    {
+      "expected": "failure_before_python",
+      "name": "wrapper_wrong_run_id",
+      "passed": true,
+      "result": {
+        "cmd": [
+          "bash",
+          "scripts/slurm/lb_scgp_g0_audit_publish.sbatch"
+        ],
+        "returncode": 2,
+        "stderr_tail": "Refusing unauthorized code-audit RUN_ID for CONFIG\n",
+        "stdout_tail": "[2026-07-11 15:44:08] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====\n[2026-07-11 15:44:08] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video\n[2026-07-11 15:44:08] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log\n[2026-07-11 15:44:08] [disk_guard] WARNING: could not determine quota usage from 'quota -s'. Doing NOTHING destructive.\n[2026-07-11 15:44:08] [disk_guard] ==== disk_guard end (usage unknown) ====\n"
+      }
+    },
+    {
+      "expected": "failure_before_python",
+      "name": "wrapper_wrong_review_path",
+      "passed": true,
+      "result": {
+        "cmd": [
+          "bash",
+          "scripts/slurm/lb_scgp_g0_audit_publish.sbatch"
+        ],
+        "returncode": 2,
+        "stderr_tail": "Refusing non-config review or review-record path\n",
+        "stdout_tail": "[2026-07-11 15:44:09] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====\n[2026-07-11 15:44:09] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video\n[2026-07-11 15:44:09] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log\n[2026-07-11 15:44:09] [disk_guard] WARNING: could not determine quota usage from 'quota -s'. Doing NOTHING destructive.\n[2026-07-11 15:44:09] [disk_guard] ==== disk_guard end (usage unknown) ====\n"
+      }
+    },
+    {
+      "expected": "failure_before_python",
+      "name": "wrapper_wrong_config_path",
+      "passed": true,
+      "result": {
+        "cmd": [
+          "bash",
+          "scripts/slurm/lb_scgp_g0_audit_publish.sbatch"
+        ],
+        "returncode": 2,
+        "stderr_tail": "Refusing unauthorized code-audit RUN_ID for CONFIG\n",
+        "stdout_tail": "[2026-07-11 15:44:09] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====\n[2026-07-11 15:44:09] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video\n[2026-07-11 15:44:09] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log\n[2026-07-11 15:44:09] [disk_guard] WARNING: could not determine quota usage from 'quota -s'. Doing NOTHING destructive.\n[2026-07-11 15:44:09] [disk_guard] ==== disk_guard end (usage unknown) ====\n"
+      }
+    }
+  ]
+}

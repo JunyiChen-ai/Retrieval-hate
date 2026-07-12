@@ -1,0 +1,50 @@
+{
+  "A1_unlocked": false,
+  "A2_A3_locked": true,
+  "all_binding_gates_pass": false,
+  "config_sha256": "86345378b39ef51aebae931970116490688f7e5a37a9163e00401a680426eeab",
+  "dataset_gates": {
+    "MHC": {
+      "all_video_supported_fraction": false,
+      "fold_output_vote_metric_provenance": true,
+      "oracle_accuracy_gain": false,
+      "oracle_macro_f1_gain": false,
+      "unique_reachable_errors": false
+    },
+    "MHC_zh": {
+      "all_video_supported_fraction": false,
+      "fold_output_vote_metric_provenance": true,
+      "oracle_accuracy_gain": false,
+      "oracle_macro_f1_gain": false,
+      "unique_reachable_errors": false
+    }
+  },
+  "decision": "STOP",
+  "edcm_mllm_calls_before_decision": 0,
+  "failed_cells_or_checks": [
+    "MHC:all_video_supported_fraction=false",
+    "MHC:unique_reachable_errors=false",
+    "MHC:oracle_accuracy_gain=false",
+    "MHC:oracle_macro_f1_gain=false",
+    "MHC_zh:all_video_supported_fraction=false",
+    "MHC_zh:unique_reachable_errors=false",
+    "MHC_zh:oracle_accuracy_gain=false",
+    "MHC_zh:oracle_macro_f1_gain=false"
+  ],
+  "ocr_artifact_count": 0,
+  "only_gold_supervision": "video_level_binary_label",
+  "payload_sha256": "8256b454a7ae4a8a4cff1726851bd450999f8c5c814047dedfc9ffdff1e3c159",
+  "reuse_audit_sha256": "5f178ef6488cc3fdad4ab8241e545fe13648d19ce53c9ebcdde05d0c1882012d",
+  "run_id": "EDCM-A0-DECISION-v1",
+  "schema_version": 1,
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "slurm_job_id": "12713",
+  "source_manifest_sha256": {
+    "MHC": "e3b04ba52571ccde3b7c4ff7b7922a40ff2207b510148b415df01014f6a56bf8",
+    "MHC_zh": "1607dfa2cf6067a5f9fc662c5cacc5a8eb66de3aa5de456fe44ad0a08cf81198"
+  },
+  "stage": "A0_pre_mllm_frozen_geometry_reachability_cost_screen",
+  "teacher_or_mllm_artifact_count": 0,
+  "validation_test_teacher_artifact_count": 0
+}

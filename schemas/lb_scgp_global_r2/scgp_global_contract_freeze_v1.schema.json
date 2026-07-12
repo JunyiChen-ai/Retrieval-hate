@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": true,
+  "properties": {
+    "artifact_schema_id": {
+      "const": "scgp_global_contract_freeze_v1",
+      "type": "string"
+    },
+    "contract": {"type": "object"},
+    "forbidden_routes": {"type": "object"},
+    "run_id": {
+      "const": "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "type": "string"
+    },
+    "slurm_policy": {"type": "object"},
+    "source_hashes": {"type": "object"},
+    "terminal_state": {
+      "enum": ["FROZEN", "FAIL"],
+      "type": "string"
+    },
+    "zero_counters": {"type": "object"}
+  },
+  "required": [
+    "artifact_schema_id",
+    "run_id",
+    "terminal_state",
+    "source_hashes",
+    "contract",
+    "forbidden_routes",
+    "slurm_policy",
+    "zero_counters"
+  ],
+  "title": "LB-SCGP Global-R2 M0 contract freeze",
+  "type": "object"
+}

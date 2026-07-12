@@ -1,0 +1,124 @@
+{
+  "authorization": {
+    "authorized_run_ids": ["LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1"],
+    "forbidden_run_ids": [
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
+      "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
+      "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
+      "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
+      "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1"
+    ],
+    "mllm_calls_allowed": false,
+    "ocr_calls_allowed": false,
+    "performance_evaluation_allowed": false,
+    "query_labels_allowed": false,
+    "query_z_allowed": false,
+    "run2_or_run3_allowed": false,
+    "training_allowed": false
+  },
+  "config_name": "lb_scgp_global_r2_m0_contract_freeze_v1",
+  "dirty_policy": {
+    "allowed_new_prefixes": [
+      "artifacts/lb_scgp_global/",
+      "configs/lb_scgp_global_r2/",
+      "schemas/lb_scgp_global_r2/",
+      "scripts/wrappers/lb_scgp_global_r2_",
+      "scripts/analysis/lb_scgp_global_r2_"
+    ],
+    "allowed_modified_paths_after_run": [
+      "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md",
+      "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_EXECUTION.md",
+      "refine-logs/lb_scgp_global/M0_IMPLEMENTATION_HANDOFF.md"
+    ],
+    "protected_old_prefixes": [
+      "artifacts/lb_scgp/",
+      "configs/lb_scgp/",
+      "refine-logs/lb_scgp/"
+    ]
+  },
+  "hash_bindings": {
+    "authoritative_inputs": {
+      "AGENTS.md": "e6aaf5d66399cdbbe7fcc2c811931277b0ed4a24b592ffa5cbb60315b29ea23c",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "f0339096270d84f5f14b4a19468bb3168357c4fd4f488c799d2f357d8c619a9e",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "a0528dd4242becff1db85f797cca3363e8884bc661d8e992a3c90d87cee9e054",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": "96569cbfa7e51c0694be0976795ae6074ecd66d41d4cf44310d9f4c3c0a94c54",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.machine.json": "8c222ff6db3a38752851fbc113c9e1988845ca424ce8fc51d48cfdea0c51f472",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.md": "d952989742c9402cfd38de935deece73b2933e7ab8f70883ca8e0bea40a4bd46",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2_HASHES.sha256": "951bac5b250004710220800da659951948f8d97c8df89680edd213e1a04d00c3",
+      "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "328dc0f8af51c4fd6dc03807c8fd935993a4686c1290f7474ca22dcee7a42dae",
+      "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff"
+    },
+    "declared_validation_test_provenance_not_opened": {
+      "data/gt/MHC/test.jsonl": "0377f9d83d0a57e17212c17fe8fcfc552648356cc1a7b2f1c98a2445a1ce0d76",
+      "data/gt/MHC/val.jsonl": "749f9563d002367bc05a16627eb4f28045daba30825f0414335bab5a6543f6cb",
+      "data/gt/MHC_zh/test.jsonl": "79f666050ce92910ecd1ca4fbaf42bcae36f46b898313e2b4fc026ad72858d31",
+      "data/gt/MHC_zh/val.jsonl": "6b2b5916fedba05ade93e694c13ba09f92968bde73e15f6cb345025eb0afc04b"
+    },
+    "old_protected_pre_snapshot": {
+      "manifest_sha256": "243e89b69b169b222dd97f9df092d511f823fb26201e91fd89cb581710940462",
+      "path_count": 278,
+      "snapshot_scope": "configs/lb_scgp, artifacts/lb_scgp, refine-logs/lb_scgp, old scripts/analysis/lb_scgp_*.py and scripts/slurm/lb_scgp_*.sbatch excluding lb_scgp_global_r2_*"
+    },
+    "train_bank_provenance_members": {
+      "data/gt/MHC/train.jsonl": "501b1bb4340d410fe67df7c9ede797a3cbc972dbbf24caca35988903ac8bea14",
+      "data/gt/MHC_zh/train.jsonl": "f99dffa38b0be8afc79e4a0100eb81b9dbc109c507a787cd483bcda3244fb655"
+    }
+  },
+  "implementation_files": [
+    "configs/lb_scgp_global_r2/m0_contract_freeze_v1.json",
+    "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json",
+    "schemas/lb_scgp_global_r2/scgp_global_contract_freeze_v1.schema.json",
+    "scripts/analysis/lb_scgp_global_r2_common.py",
+    "scripts/analysis/lb_scgp_global_r2_contract_freeze.py",
+    "scripts/analysis/lb_scgp_global_r2_validate.py",
+    "scripts/wrappers/lb_scgp_global_r2_run1.sh",
+    "scripts/slurm/lb_scgp_global_r2_m0_contract_freeze.sbatch"
+  ],
+  "namespace_absence_precheck": {
+    "checked_before_creation": true,
+    "command": "find configs/lb_scgp_global_r2 scripts/wrappers schemas/lb_scgp_global_r2 artifacts/lb_scgp_global -maxdepth 4 -print",
+    "result": "no matching files or directories"
+  },
+  "paths": {
+    "artifact_path": "artifacts/lb_scgp_global/v1/m0/contract_freeze.json",
+    "artifact_root": "artifacts/lb_scgp_global/v1",
+    "contract_schema": "schemas/lb_scgp_global_r2/scgp_global_contract_freeze_v1.schema.json",
+    "cert_schema": "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json",
+    "experiment_machine": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json",
+    "experiment_tracker": "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md",
+    "root": "/data/jehc223/RGCL",
+    "slurm_script": "scripts/slurm/lb_scgp_global_r2_m0_contract_freeze.sbatch",
+    "wrapper": "scripts/wrappers/lb_scgp_global_r2_run1.sh"
+  },
+  "projection_contract": {
+    "ambiguous_cases": {
+      "claim_policy": "fail_closed",
+      "geometry_policy": "fail_open"
+    },
+    "box_delta": 0.0001,
+    "class_trust_scale": 0.02,
+    "coordinate_trust_policy": "rho_coord_from_positive_g0_gap_with_floor",
+    "finite_vi_role": "diagnostic_only",
+    "kkt_acceptance_path": "serialized_h_metric_normal_cone_only",
+    "lambda_struct": 1.0,
+    "psd_normal_sign": "v_psd=-S_psd",
+    "robust_constraints_default": "off_until_coverage_gate",
+    "row_trust_scale": 0.05,
+    "unit_diagonal": true
+  },
+  "restricted_certificate_schema_id": "scgp_global_cert_v2",
+  "run": {
+    "artifact_path": "artifacts/lb_scgp_global/v1/m0/contract_freeze.json",
+    "expected_terminal_states": ["FROZEN", "FAIL"],
+    "run_id": "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+    "schema_id": "scgp_global_contract_freeze_v1",
+    "slurm": {"cpu": 4, "env": "HateVideo", "gpu": 0, "no_time_flag": true, "ram_gb": 16}
+  },
+  "schema_version": "lb_scgp_global_r2_m0_contract_freeze_config_v1",
+  "supervision": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false
+  }
+}

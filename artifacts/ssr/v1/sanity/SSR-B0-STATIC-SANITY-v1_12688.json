@@ -1,0 +1,28 @@
+{
+  "checks": {
+    "ba_canonicalization": true,
+    "conda_hatevideo": true,
+    "config_frozen": true,
+    "config_hash_computed": true,
+    "four_call_record": true,
+    "label_applied_after_record": true,
+    "payload_forbidden_keys": [],
+    "segment_schema_fields": [],
+    "slurm": true,
+    "source_scripts": {
+      "scripts/analysis/ssr_common.py": "4971498b5e145ef88bff6c5d10768d57fd1bd8a8bd3af88c0da15938e8b69786",
+      "scripts/analysis/ssr_extract_relations.py": "83a86956fcaefe56c3145209bab361877c70e205df7710836de51f2b90d9e0c3",
+      "scripts/analysis/ssr_make_folds.py": "bf3dbe843614ea9aaaff03835dbc4b8b02d44159dc0823be5f651855d2b16558",
+      "scripts/analysis/ssr_mine_pairs.py": "0062520f9ce9146436a7994e26608ce25be32e245cd454f0a926b77ca8d201f3",
+      "scripts/analysis/ssr_oof.py": "274e2a5c32ded808dd6c7cb4a3ccf256090662a39281e5a5b1bb9fef36dc0710"
+    },
+    "strict_parse": true,
+    "strict_parse_rejects_value_repair": true
+  },
+  "only_gold": "video_level_binary_label",
+  "required_config_sha256": "b32e57e8361392516c0e5087ea8c7bb5c85a6544ba384c5ea4bb3e9a4d64718e",
+  "run_id": "SSR-B0-STATIC-SANITY-v1",
+  "segment_gold_exists": false,
+  "slurm_job_id": "12688",
+  "status": "GO"
+}

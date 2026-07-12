@@ -1,0 +1,67 @@
+{
+  "archive_forbidden_key_access_count": 0,
+  "blind_qc_completed": false,
+  "conda_env": "HateVideo",
+  "config_canonical_sha256": "8645c97225aaea995ccab583e5c440ce4a8faf2a4e6a274ad66cc099185c2149",
+  "dirty_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "git_head": "a1b1922bc970bb831526b4d21c911380ec871248",
+  "gpu_name": null,
+  "implementation_sha256": "882e20c1909d982d4936e0b920f4a223ef027a9866e74a1432c6e937bef103fb",
+  "input_files": [
+    {
+      "path": "artifacts/sq/v1/s0/qproxy/MHC/posterior.jsonl",
+      "sha256": "f0ceb1c2545834e0c58fc01de8ce1d55f2b34d125cdc98ba5f15d445449dccb4"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/qproxy/MHC_zh/posterior.jsonl",
+      "sha256": "d52a679cf934b0e50f49288f0a849bae0555845bb1bce59fba6086d7582fdaa4"
+    }
+  ],
+  "new_teacher_call_count": 0,
+  "only_gold_supervision": "parent_video_binary_label",
+  "outer_held_q_read_count": 0,
+  "output_files": [
+    {
+      "path": "artifacts/sq/v1/s0/audit/MHC.csv",
+      "sha256": "26a164962a41de29622fcf011082cb5ac638f81f5c3aa0a712dd06f8645ab685"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/audit/MHC_private_id_map.json",
+      "sha256": "8716451d558c2651e60082ba7259f98b5bcd86b33723c3156f5b5cafaebd684c"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/audit/MHC_zh.csv",
+      "sha256": "85965e50a4814d4ef3059ee6c9bcf87c29600da642a7ce2ada9bc225a78c9650"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/audit/MHC_zh_private_id_map.json",
+      "sha256": "f1b22c8ff7c2669ebc3a27e984a804128e7be7b3e11b1de003f260e1033845f1"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/audit/sample_manifest.json",
+      "sha256": "2bb23ad88904dada4cc87c2bcb2265103674d2f4908c685da66e5ff90eb18ab8"
+    }
+  ],
+  "payload_sha256": "3f7db41853f88691adbd4ad2256acb343e9418f1faf25419955be80f246f1d45",
+  "q_signal_promotion_allowed": false,
+  "q_signal_status_without_ingest": "PROXY_ONLY_CHEAP_FORMAT",
+  "run_id": "SQ-S0-AUDIT-FREEZE-v1",
+  "schema_version": 1,
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "slurm_job_id": "12729",
+  "stage": "S0_AUDIT_FREEZE",
+  "status": "PASS_ARTIFACT_PREPARED",
+  "teacher_cache_read_count": 0,
+  "teacher_cache_write_count": 0,
+  "test_content_read_count": 0,
+  "val_content_read_count": 0,
+  "val_test_teacher_artifact_count": 0,
+  "versions": {
+    "cuda": "12.4",
+    "faiss": "1.13.2",
+    "python": "3.11.8",
+    "sklearn": "1.5.2",
+    "torch": "2.6.0+cu124"
+  }
+}

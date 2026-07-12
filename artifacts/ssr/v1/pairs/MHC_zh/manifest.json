@@ -1,0 +1,58 @@
+{
+  "all_endpoints_train_only": true,
+  "config_sha256": "b32e57e8361392516c0e5087ea8c7bb5c85a6544ba384c5ea4bb3e9a4d64718e",
+  "dataset": "MHC_zh",
+  "family_arcs": {
+    "MI": 619,
+    "SC": 603
+  },
+  "family_positive_events": {
+    "MI": 6,
+    "SC": 29
+  },
+  "family_unique_queries": {
+    "MI": 409,
+    "SC": 409
+  },
+  "max_unique_pairs": 1200,
+  "n_directed_arcs": 1222,
+  "n_unique_pairs": 1200,
+  "outputs": {
+    "PAIR_SCHEMA.json": "e2ed25c3746c5b6aeafcf7ad55349831a52f58819dc2e7dc18bea51b6f46a97d",
+    "arcs.jsonl": "eb0107672cd47f244ec73a3151a3e0742afb4cf5e5a8dadad55bb57ca566a1b3",
+    "events.jsonl": "269584e025d021282b73c6e1d62eba93beb6d0607b9a116056c40c285f0ad5f6",
+    "pairs.jsonl": "327b847f66e36d35e52069b2222323c00bffb9f753995e4ab7c1e25a5a3fa584"
+  },
+  "replay_hash": "e6a7c2160722d4d1cc323ffc3f83accebd93393ae58cb84a8d5d312463190bc3",
+  "run_id": "SSR-B0-MINE-MHC_zh-v1",
+  "segment_gold_used": false,
+  "slurm_job_id": "12702",
+  "source_oof_hashes": {
+    "0": {
+      "manifest": "9eace8344631ec4dbf515c588bc21a9e4d076b348341f07eb31f6a1920d23ced",
+      "predictions": "4fd75b5a84dae656048a222789b20909f50e51b0e1025697b1f83665b59ba33b",
+      "ranking": "52faad359b499ae42e937b3e89e216edc7fdbc70417d2627cea5ca7bc02b6224"
+    },
+    "1": {
+      "manifest": "2cf90395b776d3daa3dfd90fbb6e3a1746bbc1f56eebe81715b56f1abf67da12",
+      "predictions": "f4f02248eb21cecf7e8a7866cf49e7c2624498a30d22a8fead15ae8c4d83e647",
+      "ranking": "183155d505006f2ec90728469d1fe984248ee343f8e8341d48eb79a88610dbe2"
+    },
+    "2": {
+      "manifest": "6b4282eaa774607621989514f16c809df81c031bbb85e4a23e043107fc6e4b11",
+      "predictions": "5b56f89a4747505bf768992b2bbf7b6a07878ec63391028989dbe4257ac83a95",
+      "ranking": "30cb6a27e604acebcab04cc6940aaab5f1ecd1f4a0957ec80934413ded8082dd"
+    },
+    "3": {
+      "manifest": "c2a8954313e73b9fb7adb4e5642118b517404be9c01f8dd6c862d3258c26f2b0",
+      "predictions": "14f5af5b575520ddab91a5d47b0d7702091a53edb4d936964f006a7e1aeb050a",
+      "ranking": "3f5ca2443f0c50e5a3c141dc7a9b96080ddd0c0ab8cbdca83f7bffe71530fddd"
+    },
+    "4": {
+      "manifest": "bddc432a812638f8e5b58229d60144a37a7cdf06e46ed584546462f8c156bcf6",
+      "predictions": "f3b9d94d6921c05089617b0a21830252d63ef9c75ed11baa7b4f8e23f1589ad2",
+      "ranking": "14a31398f9ca5d27043d6372aa2f9eff5ef85fd8d3c05e5efa864d91a9451ff3"
+    }
+  },
+  "status": "COMPLETED"
+}

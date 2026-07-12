@@ -1,0 +1,45 @@
+{
+  "config_sha256": "b32e57e8361392516c0e5087ea8c7bb5c85a6544ba384c5ea4bb3e9a4d64718e",
+  "dataset": "MHC_zh",
+  "dev_or_test_endpoint_count": 0,
+  "epochs_trained": 29,
+  "fixed_epoch_index": 28,
+  "fold_artifact_sha256": "b3aaeb2af131316302e1c8f6d249e1770c70b2ce23f9a83fc250916979e9887f",
+  "memory_ids_sha256": "62b0bfbec941c9035a3aa965b2602b205be0a9fea0e50aeb42003d38b15c34d0",
+  "memory_n": 463,
+  "only_gold_supervision": "video_level_binary_label",
+  "outer_fold": 2,
+  "outputs": {
+    "checkpoint_epoch28.pt": "ca199fab9dbe85118ec3a0b9579d7eb5d7164676a17901f17df4fedcd890d676",
+    "embeddings.npz": "c7d1baaec41794cb3e9c47a51ae06f842b3636e1fc4325eb9814699475a48ed1",
+    "predictions.json": "5b56f89a4747505bf768992b2bbf7b6a07878ec63391028989dbe4257ac83a95",
+    "ranking.jsonl": "30cb6a27e604acebcab04cc6940aaab5f1ecd1f4a0957ec80934413ded8082dd",
+    "train.jsonl": "92f5dbcdcb8469eb6888294ba83e39c3e478cea416c08fdb4ee082c15ba797b1"
+  },
+  "query_ids_sha256": "97009d12c192bb6a7a8ea3110513a058dcfa64b33bbfe1238b1fddc4d284baad",
+  "query_memory_overlap": [],
+  "query_n": 116,
+  "run_id": "SSR-B0-OOF-MHC_zh-F2-S0",
+  "segment_gold_exists": false,
+  "slurm_job_id": "12698",
+  "source_subclip_cache": "data/CLIP_Embedding/MHC_zh/train_subclipK4_openai_clip-vit-large-patch14-336_HF.pt",
+  "source_train_cache": {
+    "path": "data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "sha256": "929571f81a5bf4a7f306eaaeceecafd62c85b73cf86ce8177ab175dbcfff8f17"
+  },
+  "status": "COMPLETED",
+  "subclip_contract": {
+    "label_source": "inherited_parent_video_label_not_segment_gold",
+    "n_parents": 463,
+    "n_subclips": 1852,
+    "sha256": "9f2896832176563351e52095124f9dfddb3b60a9412f2d3166e0ebf529f02c12"
+  },
+  "training_last": {
+    "epoch_index": 28,
+    "mean_loss": 0.4903697595000267,
+    "outer_batch_order_sha256": "d56911ca8ddb5968c719d81148e5be9bf2a28313d730796e729c534e000b83d3",
+    "outer_batch_rows": 463,
+    "steps": 8,
+    "wall_s": 22.194
+  }
+}

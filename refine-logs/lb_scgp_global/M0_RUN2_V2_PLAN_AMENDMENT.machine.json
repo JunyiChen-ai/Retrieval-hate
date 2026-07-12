@@ -1,0 +1,297 @@
+{
+  "schema_version": "lbscgp_global_m0_run2_v2_plan_amendment_v1",
+  "generated_at": "2026-07-12T00:00:00+12:00",
+  "author_thread": "fresh exact GPT-5.5 xhigh prospective plan-amendment author in /data/jehc223/RGCL",
+  "constraints_honored": [
+    "no_subagents",
+    "no_workflows",
+    "no_other_model_delegation",
+    "no_project_python_execution",
+    "no_slurm_submission",
+    "no_experiments",
+    "no_gpu_training_performance_work",
+    "no_api_mllm_ocr_calls",
+    "planning_file_edits_only",
+    "lightweight_jq_hash_text_checks_only"
+  ],
+  "source_hashes": {
+    "AGENTS.md": "e6aaf5d66399cdbbe7fcc2c811931277b0ed4a24b592ffa5cbb60315b29ea23c",
+    "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md.pre_amendment": "6a40be206807465e41ca67ca407da6806c445f8666b689ec5b51922295a196b0",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md.pre_amendment": "eb211858b5cb56d5a8d6ae9f896fbd0095349cb18bcc892d97b4b28c9c39d52c",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json.pre_amendment": "348fc8bd8ad1a230beca6287ab5a271b8d6376e1309fb2d798b687de9fc1bc50",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256.pre_amendment": "806eaa37bafa5a9506673b3d1093d6f1343e9511cfca4d526bfad7510cbaf28b",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.md": "d952989742c9402cfd38de935deece73b2933e7ab8f70883ca8e0bea40a4bd46",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.machine.json": "8c222ff6db3a38752851fbc113c9e1988845ca424ce8fc51d48cfdea0c51f472",
+    "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_EXECUTION.md": "71a502375ec4f99224e8a8cd55aa61ea9f96cff6bf81743646c59e10d1efeebb",
+    "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_INDEPENDENT_REVIEW.md": "37dcf8825ef9cf3af9df47a0346e647272c19d70110a1247cc6ed865beee34ed",
+    "refine-logs/lb_scgp_global/M0_SYNTH_KKT_IMPLEMENTATION.md": "1e248d4f7b8432bf5d2f4f5e04c4a465f4d8b54c8fe72ddc4105a68e108484aa",
+    "refine-logs/lb_scgp_global/M0_SYNTH_KKT_EXECUTION.md": "31481cb10808e9a6ce81754c47d18351079bf84b602088618b0ecdd341c80333",
+    "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW_FRESH.md": "b02e5a0f7839e8b215c15197f6f120e3bebfe498ab89d2120c26b50585707a0c",
+    "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW.md": "12f42df893d90d6ef4a7759dbbb86e8f8d820375be9aae3a0b94010fda1335ef",
+    "slurm/logs/lbscgp_global_r2_run2_synth_kkt_12902.err": "77ba892b49d7c6262bc0a6165188c173b8f0619a7cbbfe9fdcc881fc8ec5f71c",
+    "slurm/logs/lbscgp_global_r2_run2_synth_kkt_12902.out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "slurm/logs/lbscgp_global_r2_run2_12904.err": "93e8515cad0d89ec65d3a1844d497694324143b9d836bc304b732765f1ead306",
+    "slurm/logs/lbscgp_global_r2_run2_12904.out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "review_hashes": {
+    "fresh_result_to_claim_review": {
+      "path": "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW_FRESH.md",
+      "sha256": "b02e5a0f7839e8b215c15197f6f120e3bebfe498ab89d2120c26b50585707a0c",
+      "trusted_for_current_judgment": true
+    },
+    "stale_result_to_claim_review": {
+      "path": "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW.md",
+      "sha256": "12f42df893d90d6ef4a7759dbbb86e8f8d820375be9aae3a0b94010fda1335ef",
+      "trusted_for_current_judgment": false,
+      "use": "explicitly_untrusted_provenance_only"
+    },
+    "plan_review_r2": {
+      "markdown_sha256": "d952989742c9402cfd38de935deece73b2933e7ab8f70883ca8e0bea40a4bd46",
+      "machine_sha256": "8c222ff6db3a38752851fbc113c9e1988845ca424ce8fc51d48cfdea0c51f472",
+      "pre_v2_failure_review": true
+    }
+  },
+  "pre_post_run_order_diff": {
+    "original_r2_prefix": [
+      "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+    ],
+    "amended_prefix": [
+      "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+    ],
+    "inserted_run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "inserted_exactly_once": true,
+    "v1_retained_exactly_once": true,
+    "run3_old_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+    "run3_new_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "downstream_run_ids_unchanged": true,
+    "downstream_order_unchanged": true
+  },
+  "v1_failure_evidence": {
+    "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+    "lineage_status": "FAIL_STOP",
+    "historical_planned_record_retained": true,
+    "remaining_budget_zero": true,
+    "artifact_accepted": false,
+    "pass_claim_allowed": false,
+    "classification": "infrastructure_interface_failure_before_publish",
+    "not_evidence_for": [
+      "scientific_failure",
+      "numerical_failure",
+      "KKT_failure",
+      "rank_failure",
+      "factor_failure",
+      "mechanism_failure",
+      "dataset_failure",
+      "MLLM_failure",
+      "OCR_failure",
+      "training_failure",
+      "performance_failure"
+    ],
+    "slurm_attempts": [
+      {
+        "job_id": "12902",
+        "resources": {
+          "cpu": 8,
+          "ram_gb": 64,
+          "gpu": 0
+        },
+        "elapsed_seconds": 4,
+        "terminal_state": "FAILED",
+        "exit_code": "1:0",
+        "path": "older_producer_path",
+        "exception": "KeyError: finite_vi_diagnostic",
+        "artifact": "none",
+        "stderr_sha256": "77ba892b49d7c6262bc0a6165188c173b8f0619a7cbbfe9fdcc881fc8ec5f71c",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "job_id": "12904",
+        "resources": {
+          "cpu": 8,
+          "ram_gb": 64,
+          "gpu": 0
+        },
+        "elapsed_seconds": 1,
+        "terminal_state": "FAILED",
+        "exit_code": "1:0",
+        "path": "newer_validator_path",
+        "exception": "KeyError: payload_schema",
+        "artifact": "none",
+        "stderr_sha256": "93e8515cad0d89ec65d3a1844d497694324143b9d836bc304b732765f1ead306",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "v2_spec": {
+    "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "priority": "MUST",
+    "status": "LOCKED_PENDING_AMENDMENT_REVIEW",
+    "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json",
+    "artifact_namespace": "artifacts/lb_scgp_global/v2/m0/synth_kkt/",
+    "artifact_manifest": "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json",
+    "schema_id": "scgp_global_synth_kkt_payload_v2",
+    "lineage_bound_outputs_required": [
+      "schemas",
+      "locks",
+      "source_manifest",
+      "access_ledger",
+      "payload",
+      "manifest",
+      "publish_lock"
+    ],
+    "unreviewed_partial_v2_files_authorized": false,
+    "unreviewed_partial_v2_files_are_implementation_evidence": false,
+    "unreviewed_partial_v2_files_are_execution_permission": false
+  },
+  "science_freeze_equality_assertions": {
+    "resource_request_identical_to_v1": true,
+    "resource_request": {
+      "cpu": 8,
+      "ram_gb": 64,
+      "gpu": 0,
+      "env": "HateVideo",
+      "no_time_flag": true
+    },
+    "planned_budget_identical_to_v1": true,
+    "planned_budget": {
+      "cpu_hours": 32,
+      "gpu_hours": 0,
+      "api_calls": 0,
+      "storage_gb": 5
+    },
+    "schema_intent_unchanged": true,
+    "thresholds_unchanged": true,
+    "fixtures_unchanged": true,
+    "expected_decisions_unchanged": true,
+    "kkt_tolerances_unchanged": true,
+    "movement_nondegeneration_target_unchanged": true,
+    "rank_factor_rules_unchanged": true,
+    "solver_math_verifier_logic_unchanged": true,
+    "intended_claim_unchanged": true,
+    "failure_transition_unchanged": true,
+    "only_allowed_repair": "interface_key_contract_alignment_across_config_schema_validator_wrapper_producer_verifier_artifact_paths",
+    "solver_fix_allowed": false,
+    "tuning_allowed": false,
+    "tolerance_change_allowed": false,
+    "fixture_change_allowed": false,
+    "rescue_allowed": false,
+    "posthoc_scientific_change_allowed": false
+  },
+  "budget_arithmetic": {
+    "original_approved_r2_envelope_before_v2": {
+      "must_run_count": 64,
+      "nice_to_have_count": 1,
+      "total_run_count": 65,
+      "must_cpu_hours": 704,
+      "must_gpu_hours": 684,
+      "must_api_base": 4512,
+      "must_api_retry_cap": 9024,
+      "must_storage_gb": 786,
+      "total_cpu_hours": 720,
+      "total_gpu_hours": 684,
+      "total_api_base": 4512,
+      "total_api_retry_cap": 9024,
+      "total_storage_gb": 791
+    },
+    "paper_plan_substitution_envelope": {
+      "explanation": "v2 substitutes for the exhausted v1 synthetic KKT slot, so aggregate paper-plan planned totals remain unchanged while lineage records increase by one",
+      "must_run_count": 64,
+      "nice_to_have_count": 1,
+      "total_run_count": 65,
+      "must_cpu_hours": 704,
+      "must_gpu_hours": 684,
+      "must_api_base": 4512,
+      "must_api_retry_cap": 9024,
+      "must_storage_gb": 786,
+      "total_cpu_hours": 720,
+      "total_gpu_hours": 684,
+      "total_api_base": 4512,
+      "total_api_retry_cap": 9024,
+      "total_storage_gb": 791
+    },
+    "lifetime_lineage_envelope": {
+      "must_run_count": 65,
+      "nice_to_have_count": 1,
+      "total_run_count": 66,
+      "must_cpu_hours": 736,
+      "must_gpu_hours": 684,
+      "must_api_base": 4512,
+      "must_api_retry_cap": 9024,
+      "must_storage_gb": 791,
+      "total_cpu_hours": 752,
+      "total_gpu_hours": 684,
+      "total_api_base": 4512,
+      "total_api_retry_cap": 9024,
+      "total_storage_gb": 796
+    },
+    "remaining_prospective_budget": {
+      "must_cpu_hours": 700,
+      "must_gpu_hours": 684,
+      "must_api_base": 4512,
+      "must_api_retry_cap": 9024,
+      "must_storage_gb": 785,
+      "total_cpu_hours": 716,
+      "total_gpu_hours": 684,
+      "total_api_base": 4512,
+      "total_api_retry_cap": 9024,
+      "total_storage_gb": 790,
+      "execution_authorized_remaining_cpu_hours": 0,
+      "execution_authorized_remaining_gpu_hours": 0,
+      "execution_authorized_remaining_api_calls": 0
+    },
+    "actual_v1_diagnostic_spend": {
+      "slurm_jobs": 2,
+      "wall_seconds_total": 5,
+      "allocated_cpu_seconds": 40,
+      "cpu_hours": 0.0111111111,
+      "gpu_hours": 0,
+      "api_calls": 0,
+      "scientific_artifact_storage_gb": 0
+    }
+  },
+  "dag_changes": {
+    "v2_follows_run1_freeze": true,
+    "v2_follows_preserved_v1_failure_evidence": true,
+    "run3_depends_on_v2_pass_instead_of_v1": true,
+    "run3_plus_locked_until_v2_pass_and_fresh_independent_artifact_review": true,
+    "all_other_run_ids_unchanged": true,
+    "downstream_ordering_valid": true
+  },
+  "authorization": {
+    "this_amendment_authorizes_v2_execution": false,
+    "this_amendment_can_authorize_after_independent_review": "v2_implementation_audit_only",
+    "v2_execution_requires_completed_implementation": true,
+    "v2_execution_requires_static_contract_matrix_negative_tests": true,
+    "v2_execution_requires_fresh_independent_code_review_zero_critical_zero_high": true,
+    "v2_execution_requires_exact_hashes_no_clobber": true,
+    "v2_execution_requires_separate_execution_authorization": true,
+    "run3_plus_locked": true
+  },
+  "gold_isolation": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false,
+    "frame_gold_exists": false,
+    "timestamp_gold_exists": false,
+    "span_gold_exists": false,
+    "localization_gold_exists": false,
+    "stance_gold_exists": false,
+    "target_gold_exists": false,
+    "mechanism_gold_exists": false,
+    "rationale_gold_exists": false,
+    "forbidden_access_call_counters_zero": true,
+    "no_science_tuning": true
+  },
+  "output_hashes": {
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "8ef1417fe16f8a556c82394705259f13447e7747d600c0f8f8061e237ecb8994",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "d0c7e6ff291b6ae4ba6d5661b2e8ddc2bb8a80ac7f2f6d1e37ab8494782df483",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "838370c8eee68f568b6d133f80b305fed23bc14342d4c4bf08df976fd4d73d07",
+    "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.md": "95b4b839017479bad4d2ed7a48455864c765e8f91997adab0fa4a7ca66aa57fb"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "config_name": "edcm_a0_v1",
+  "config_sha256": "86345378b39ef51aebae931970116490688f7e5a37a9163e00401a680426eeab",
+  "stage": "A0_pre_mllm_frozen_geometry_reachability_cost_screen",
+  "paths": {
+    "root": "/data/jehc223/RGCL",
+    "ssr_config": "configs/ssr/ssr_v1.yaml",
+    "ssr_freeze_manifest": "artifacts/ssr/v1/freeze_manifest.json",
+    "ssr_artifacts": "artifacts/ssr/v1",
+    "output": "artifacts/edcm/v1"
+  },
+  "supervision_contract": {
+    "only_gold_supervision": "video_level_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false,
+    "subclip_label_status": "inherited_parent_video_label_not_segment_gold",
+    "mllm_calls_allowed": false,
+    "ocr_calls_allowed": false,
+    "teacher_cache_allowed": false,
+    "validation_test_teacher_artifact_count": 0
+  },
+  "reachability": {
+    "topk": 20,
+    "search_depth": 64,
+    "max_swaps": 2,
+    "support_min_each_label_relation": 4,
+    "supported_fraction_min": 0.8,
+    "oracle_accuracy_gain_min": 0.05,
+    "oracle_macro_f1_gain_min": 0.05,
+    "vote": "arithmetic_weights_20_to_1_times_cosine_times_signed_video_label",
+    "prediction": "vote_greater_than_or_equal_to_zero"
+  },
+  "expected": {
+    "git_head": "a1b1922bc970bb831526b4d21c911380ec871248",
+    "ssr_canonical_config_sha256": "b32e57e8361392516c0e5087ea8c7bb5c85a6544ba384c5ea4bb3e9a4d64718e",
+    "files": {
+      "configs/ssr/ssr_v1.yaml": "dde8fdd0f0d62632a2b462c969cffb195883f81219a58af0180d0fbbc0bd9d5d",
+      "scripts/analysis/ssr_oof.py": "274e2a5c32ded808dd6c7cb4a3ccf256090662a39281e5a5b1bb9fef36dc0710",
+      "scripts/analysis/ssr_common.py": "4971498b5e145ef88bff6c5d10768d57fd1bd8a8bd3af88c0da15938e8b69786",
+      "src/data_loader/rac_dataloader.py": "3545cffc7e6c1e136bd25ceed547b62c4983d37cabb77aecae317f29b1dbef2e",
+      "src/model/classifier.py": "82c0d89a8b788c12d08a702cf9aebb88bddffbaea8f9d785c6e24644a94b04d9",
+      "src/model/loss.py": "89f497b07bdeabcbce14b31941b82e8fe4df8628224b22e79ae1b4b0b80dbfa9",
+      "src/utils/retrieval.py": "b2877a84421e860ef8313fd2e708ad10c783911b801cbe39ad1531a5706dd025",
+      "src/utils/metrics.py": "1dd00feaad5c5b917971567291dede5a85f1362c8a3fcebd07350569527b9f35",
+      "artifacts/ssr/v1/freeze_manifest.json": "10a2d252690bc39de38c4c8c9155bd1c0b522a3168bb729d36e1c02e09419b4e",
+      "artifacts/ssr/v1/folds/MHC.json": "bc7e3088faeeb6fad091b97fd1d10a506ed4a53826d2580b9a92891646a3584d",
+      "artifacts/ssr/v1/folds/MHC_zh.json": "b3aaeb2af131316302e1c8f6d249e1770c70b2ce23f9a83fc250916979e9887f"
+    },
+    "implementation": {
+      "scripts/analysis/edcm_a0.py": "9c0915a289a7c712a4a2c811c34e218b60c706cc83c1c9883ea805d3097ea445",
+      "scripts/slurm/edcm_a0_cpu.sbatch": "5bc1452065e9a8d3b7a114124929fa4bc400de24ead380f85bd98225838717ae"
+    },
+    "datasets": {
+      "MHC": {
+        "n": 549,
+        "reachable_errors_min": 28,
+        "fold_artifact_sha256": "bc7e3088faeeb6fad091b97fd1d10a506ed4a53826d2580b9a92891646a3584d",
+        "epoch_index": 25,
+        "seg_mode": "full",
+        "lambda_seg": 0.5,
+        "fold_manifest_sha256": {
+          "0": "ba161382b393dd9ac6bcdc85030963b0a90e7c43419fa5020cc587c198fc3a2f",
+          "1": "c61a227a8ea44b88b2bb042677b0e7dc59bcba75ee8eff2d1b3df77af9d27a98",
+          "2": "009e738ab94bf4dcf55215482dd7892d1ad0b6741b0bb411747c1020b7df815f",
+          "3": "f2d9eb6eacf486cea64697fc91836cdb7fddcd3d446689b07ef645652f3d3997",
+          "4": "aa3b9cac4f1a81cbf8c8e6baa31f5f18bc9ebb8b24e8ea9554a19aef4ff0c8e3"
+        }
+      },
+      "MHC_zh": {
+        "n": 579,
+        "reachable_errors_min": 29,
+        "fold_artifact_sha256": "b3aaeb2af131316302e1c8f6d249e1770c70b2ce23f9a83fc250916979e9887f",
+        "epoch_index": 28,
+        "seg_mode": "milmax",
+        "lambda_seg": 0.5,
+        "fold_manifest_sha256": {
+          "0": "9eace8344631ec4dbf515c588bc21a9e4d076b348341f07eb31f6a1920d23ced",
+          "1": "2cf90395b776d3daa3dfd90fbb6e3a1746bbc1f56eebe81715b56f1abf67da12",
+          "2": "6b4282eaa774607621989514f16c809df81c031bbb85e4a23e043107fc6e4b11",
+          "3": "c2a8954313e73b9fb7adb4e5642118b517404be9c01f8dd6c862d3258c26f2b0",
+          "4": "bddc432a812638f8e5b58229d60144a37a7cdf06e46ed584546462f8c156bcf6"
+        }
+      }
+    }
+  }
+}

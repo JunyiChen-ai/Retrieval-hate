@@ -1,0 +1,13 @@
+{
+  "phase": "done",
+  "round": 3,
+  "agent_id": "/root/edcm_pivot_refine/edcm_reviewer",
+  "last_score": 9.11,
+  "last_verdict": "READY",
+  "status": "completed",
+  "timestamp": "2026-07-10T23:40:00+12:00",
+  "output_dir": "refine-logs/edcm",
+  "route": "EDCM/CCGC-RGCL",
+  "anchor_file": "refine-logs/edcm/PROBLEM_ANCHOR.md",
+  "ssr_logs_preserved": true
+}

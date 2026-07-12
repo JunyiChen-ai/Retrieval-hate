@@ -1,0 +1,132 @@
+{
+  "authorization": {
+    "authorized_run_ids": [
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1"
+    ],
+    "forbidden_run_ids": [
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
+      "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
+      "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
+      "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
+      "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
+      "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+    ],
+    "mllm_calls_allowed": false,
+    "ocr_calls_allowed": false,
+    "performance_evaluation_allowed": false,
+    "query_labels_allowed": false,
+    "query_z_allowed": false,
+    "run3_or_later_allowed": false,
+    "training_allowed": false,
+    "validation_or_test_allowed": false
+  },
+  "config_name": "lb_scgp_global_r2_m0_synth_kkt_v1",
+  "dependencies": {
+    "run1_artifact_path": "artifacts/lb_scgp_global/v1/m0/contract_freeze.json",
+    "run1_artifact_sha256": "09b78682389f1c9774c9dffc43c759bceeec9d7f44eca1ce4cd626d0cd6d12da",
+    "run1_payload_sha256": "57f935cfa6ff22f81ec726eba9e0000d76f95bf93575b7539b78ba4d7c5bde53",
+    "run1_publish_lock_path": "artifacts/lb_scgp_global/v1/m0/contract_freeze.json.publish.lock",
+    "run1_publish_lock_sha256": "c6fbb49c3c8aba942da3f254c3c5f65d037002548fafb961154e6fa79a3e4ea7",
+    "run1_access_ledger_sha256": "f2437ea61b95782ef9fd79c4ddd856ebf869d6ed7bda8a23d6c93c104b8bc823",
+    "run1_dirty_tree_sha256": "e4087426cd2d1d43ab4d7c950d7ef9f4077580766bfae3d03e0b2c17b21524d9",
+    "run1_git_head": "040adb86e37db380827a09135136ab36cf6caf9e"
+  },
+  "dirty_policy": {
+    "bind_full_dirty_tree_hash": true,
+    "allowed_run2_new_prefixes": [
+      "artifacts/lb_scgp_global/v1/m0/synth_kkt/",
+      "configs/lb_scgp_global_r2/m0_synth_kkt_v1.json",
+      "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v1.schema.json",
+      "scripts/analysis/lb_scgp_global_r2_synth_kkt",
+      "scripts/wrappers/lb_scgp_global_r2_run2_synth_kkt.sh",
+      "scripts/slurm/lb_scgp_global_r2_m0_synth_kkt.sbatch",
+      "refine-logs/lb_scgp_global/M0_SYNTH_KKT_"
+    ],
+    "allowed_modified_paths_after_run": [
+      "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md",
+      "refine-logs/lb_scgp_global/M0_SYNTH_KKT_EXECUTION.md"
+    ],
+    "protected_run1_paths": [
+      "artifacts/lb_scgp_global/v1/m0/contract_freeze.json",
+      "artifacts/lb_scgp_global/v1/m0/contract_freeze.json.publish.lock",
+      "configs/lb_scgp_global_r2/m0_contract_freeze_v1.json",
+      "scripts/analysis/lb_scgp_global_r2_common.py",
+      "scripts/analysis/lb_scgp_global_r2_contract_freeze.py",
+      "scripts/analysis/lb_scgp_global_r2_validate.py",
+      "scripts/wrappers/lb_scgp_global_r2_run1.sh",
+      "scripts/slurm/lb_scgp_global_r2_m0_contract_freeze.sbatch"
+    ]
+  },
+  "implementation_files": [
+    "configs/lb_scgp_global_r2/m0_synth_kkt_v1.json",
+    "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v1.schema.json",
+    "scripts/analysis/lb_scgp_global_r2_synth_kkt.py",
+    "scripts/analysis/lb_scgp_global_r2_synth_kkt_validate.py",
+    "scripts/wrappers/lb_scgp_global_r2_run2_synth_kkt.sh",
+    "scripts/slurm/lb_scgp_global_r2_m0_synth_kkt.sbatch",
+    "refine-logs/lb_scgp_global/M0_SYNTH_KKT_IMPLEMENTATION.md",
+    "refine-logs/lb_scgp_global/M0_SYNTH_KKT_EXECUTION.md"
+  ],
+  "paths": {
+    "artifact_path": "artifacts/lb_scgp_global/v1/m0/synth_kkt/manifest.json",
+    "artifact_root": "artifacts/lb_scgp_global/v1/m0/synth_kkt",
+    "contract_artifact": "artifacts/lb_scgp_global/v1/m0/contract_freeze.json",
+    "experiment_machine": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json",
+    "experiment_tracker": "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md",
+    "root": "/data/jehc223/RGCL",
+    "schema": "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v1.schema.json",
+    "slurm_script": "scripts/slurm/lb_scgp_global_r2_m0_synth_kkt.sbatch",
+    "wrapper": "scripts/wrappers/lb_scgp_global_r2_run2_synth_kkt.sh"
+  },
+  "run": {
+    "artifact_path": "artifacts/lb_scgp_global/v1/m0/synth_kkt/manifest.json",
+    "dependencies": [
+      "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1"
+    ],
+    "expected_terminal_states": [
+      "RUN2_SYNTH_KKT_GO",
+      "RUN2_SYNTH_KKT_STOP"
+    ],
+    "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+    "schema_id": "scgp_global_synth_kkt_payload_v1",
+    "slurm": {
+      "cpu": 8,
+      "env": "HateVideo",
+      "gpu": 0,
+      "no_time_flag": true,
+      "ram_gb": 64
+    }
+  },
+  "schema_version": "lb_scgp_global_r2_m0_synth_kkt_config_v1",
+  "semantic_thresholds": {
+    "box_delta": 0.0001,
+    "complementarity_abs": 1e-09,
+    "dual_feasibility": 1e-10,
+    "finite_vi_is_diagnostic_only": true,
+    "kkt_stationarity_inf": 1e-09,
+    "lambda_struct": 1.0,
+    "psd_min_eigenvalue": -1e-09,
+    "rank_d": 3,
+    "rank_tail_ratio": 1e-08,
+    "robust_coverage_min_for_synthetic": 0.95
+  },
+  "synthetic_cases": [
+    "FULL",
+    "REMOVE_NULL",
+    "SHUFFLE",
+    "NOISE"
+  ],
+  "synthetic_injection_failures": [
+    "stationarity_tamper",
+    "psd_sign_flip",
+    "rank_tail_corrupt",
+    "segment_counter_nonzero",
+    "finite_vi_acceptance_tamper",
+    "payload_hash_tamper"
+  ],
+  "supervision": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false
+  }
+}

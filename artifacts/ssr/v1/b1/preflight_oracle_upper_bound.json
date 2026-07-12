@@ -1,0 +1,106 @@
+{
+  "B2_B3_locked": true,
+  "cells": [
+    {
+      "baseline_accuracy": 0.7686703096539163,
+      "baseline_macro_f1": 0.6934134211602475,
+      "dataset": "MHC",
+      "dual_metric_upper_bound_pass": false,
+      "family": "MI",
+      "minimum_touched_for_accuracy_gate": 28,
+      "n_candidate_arcs": 634,
+      "n_oof_videos": 549,
+      "n_positive_event_arcs": 6,
+      "n_unique_event_touched_errors": 2,
+      "optimistic_assumption": "every_selected_candidate_is_an_accepted_reliable_relation",
+      "upper_accuracy_gain": 0.0036429872495445936,
+      "upper_macro_f1_gain": 0.004828135099838593,
+      "upper_oracle_accuracy": 0.7723132969034608,
+      "upper_oracle_macro_f1": 0.6982415562600861
+    },
+    {
+      "baseline_accuracy": 0.7686703096539163,
+      "baseline_macro_f1": 0.6934134211602475,
+      "dataset": "MHC",
+      "dual_metric_upper_bound_pass": false,
+      "family": "SC",
+      "minimum_touched_for_accuracy_gate": 28,
+      "n_candidate_arcs": 585,
+      "n_oof_videos": 549,
+      "n_positive_event_arcs": 18,
+      "n_unique_event_touched_errors": 7,
+      "optimistic_assumption": "every_selected_candidate_is_an_accepted_reliable_relation",
+      "upper_accuracy_gain": 0.012750455373406133,
+      "upper_macro_f1_gain": 0.017588509002938957,
+      "upper_oracle_accuracy": 0.7814207650273224,
+      "upper_oracle_macro_f1": 0.7110019301631865
+    },
+    {
+      "baseline_accuracy": 0.7599309153713298,
+      "baseline_macro_f1": 0.7194229555746912,
+      "dataset": "MHC_zh",
+      "dual_metric_upper_bound_pass": false,
+      "family": "MI",
+      "minimum_touched_for_accuracy_gate": 29,
+      "n_candidate_arcs": 619,
+      "n_oof_videos": 579,
+      "n_positive_event_arcs": 6,
+      "n_unique_event_touched_errors": 3,
+      "optimistic_assumption": "every_selected_candidate_is_an_accepted_reliable_relation",
+      "upper_accuracy_gain": 0.005181347150259086,
+      "upper_macro_f1_gain": 0.006475122954966328,
+      "upper_oracle_accuracy": 0.7651122625215889,
+      "upper_oracle_macro_f1": 0.7258980785296575
+    },
+    {
+      "baseline_accuracy": 0.7599309153713298,
+      "baseline_macro_f1": 0.7194229555746912,
+      "dataset": "MHC_zh",
+      "dual_metric_upper_bound_pass": false,
+      "family": "SC",
+      "minimum_touched_for_accuracy_gate": 29,
+      "n_candidate_arcs": 603,
+      "n_oof_videos": 579,
+      "n_positive_event_arcs": 29,
+      "n_unique_event_touched_errors": 15,
+      "optimistic_assumption": "every_selected_candidate_is_an_accepted_reliable_relation",
+      "upper_accuracy_gain": 0.02590673575129543,
+      "upper_macro_f1_gain": 0.030660586614114194,
+      "upper_oracle_accuracy": 0.7858376511226253,
+      "upper_oracle_macro_f1": 0.7500835421888054
+    }
+  ],
+  "common_families_surviving_upper_bound": [],
+  "config_sha256": "b32e57e8361392516c0e5087ea8c7bb5c85a6544ba384c5ea4bb3e9a4d64718e",
+  "logic": "true accepted relation touched queries are a subset of the all-candidates event-positive touched set",
+  "only_gold": "video_level_binary_label",
+  "oracle_gain_min_each_metric": 0.05,
+  "payload_sha256": "450e215e48d2f259989c9237296608ef350b7d0326f65f1e06019f25c1f9095b",
+  "relation_extraction_can_change_this_bound": false,
+  "run_id": "SSR-B1-PREFLIGHT-ORACLE-UPPER-v1",
+  "segment_gold_used": false,
+  "slurm_job_id": "12704",
+  "source_hashes": {
+    "MHC": {
+      "arcs": "b9702d4afa1b0742d42fa82d588292ef724d6d6165a54e6c518155c4f3615eed",
+      "predictions": {
+        "0": "f6d8b0532c8889d49d70ec6076e7108cd680a134dbfa7cb7e5b955cc486cb0a3",
+        "1": "c43367b3c730c874e90c5fcf509ab5373f5cc9410b56b6d03ad34b848adb258b",
+        "2": "e6b5277e7096b63a670f3afd2a06cc4682f03efb278647b15bb8f30fa4582f0f",
+        "3": "d7379c65d598fa9ef217939f149a74f11cc10d6f1d52c78a95bb21ac5cdef529",
+        "4": "191b579053314d46f8706c422740959ea4a242c6dbe5bffa553d011d53873cbd"
+      }
+    },
+    "MHC_zh": {
+      "arcs": "eb0107672cd47f244ec73a3151a3e0742afb4cf5e5a8dadad55bb57ca566a1b3",
+      "predictions": {
+        "0": "4fd75b5a84dae656048a222789b20909f50e51b0e1025697b1f83665b59ba33b",
+        "1": "f4f02248eb21cecf7e8a7866cf49e7c2624498a30d22a8fead15ae8c4d83e647",
+        "2": "5b56f89a4747505bf768992b2bbf7b6a07878ec63391028989dbe4257ac83a95",
+        "3": "14f5af5b575520ddab91a5d47b0d7702091a53edb4d936964f006a7e1aeb050a",
+        "4": "f3b9d94d6921c05089617b0a21830252d63ef9c75ed11baa7b4f8e23f1589ad2"
+      }
+    }
+  },
+  "status": "STOP_SSR"
+}

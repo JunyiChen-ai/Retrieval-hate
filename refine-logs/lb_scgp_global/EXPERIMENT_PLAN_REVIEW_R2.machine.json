@@ -1,0 +1,285 @@
+{
+  "schema_version": "scgp_global_experiment_plan_review_r2_v1",
+  "generated_at": "2026-07-12T00:00:00+12:00",
+  "reviewer": {
+    "requested_model": "GPT-5.5 xhigh",
+    "session": "Codex independent reviewer in current session",
+    "review_round": "R2",
+    "constraints_honored": [
+      "no_subagents",
+      "no_external_model_or_mllm_calls",
+      "no_experiments",
+      "no_slurm_submissions",
+      "no_gpu_jobs",
+      "no_api_calls",
+      "no_plan_artifact_edits",
+      "r2_review_outputs_only"
+    ]
+  },
+  "source_hashes": {
+    "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "a0528dd4242becff1db85f797cca3363e8884bc661d8e992a3c90d87cee9e054",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "328dc0f8af51c4fd6dc03807c8fd935993a4686c1290f7474ca22dcee7a42dae",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "f0339096270d84f5f14b4a19468bb3168357c4fd4f488c799d2f357d8c619a9e",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": "96569cbfa7e51c0694be0976795ae6074ecd66d41d4cf44310d9f4c3c0a94c54",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW.md": "21051175a7cc3301c79b995dc222b9e82f041f1d5c214b39896e03e60db27f86",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW.machine.json": "54544df2b0f2d408d8f794a7287036d5ad5207b6ad9b11d920b117fd6a0b868c"
+  },
+  "plan_hashes": {
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "a0528dd4242becff1db85f797cca3363e8884bc661d8e992a3c90d87cee9e054",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "328dc0f8af51c4fd6dc03807c8fd935993a4686c1290f7474ca22dcee7a42dae",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "f0339096270d84f5f14b4a19468bb3168357c4fd4f488c799d2f357d8c619a9e"
+  },
+  "verdict": "READY_FOR_IMPLEMENTATION",
+  "severity_counts": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "zero_critical_and_zero_high_confirmed": true,
+  "findings": [],
+  "r1_closure_checks": [
+    {
+      "id": "H1",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:49", "EXPERIMENT_PLAN.machine.json:81", "EXPERIMENT_TRACKER.md:19"],
+      "summary": "Comparator freeze run, candidate ledger fields, selection scope, tie-breaks, rejected candidates, and zero final-test/adaptive-query counters are specified before validation/final runs."
+    },
+    {
+      "id": "H2",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:39", "EXPERIMENT_PLAN.md:119", "EXPERIMENT_PLAN.machine.json:61", "EXPERIMENT_PLAN.machine.json:89"],
+      "summary": "DIRECT-MOMENT, DIRECT-CERT-FEATURE, and SCALAR-PROPENSITY are explicit and distinct."
+    },
+    {
+      "id": "H3",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:120", "EXPERIMENT_PLAN.md:201", "EXPERIMENT_PLAN.machine.json:89", "EXPERIMENT_PLAN.machine.json:316"],
+      "summary": "SHUFFLE and scalar construction are train/OOF or preregistered validation-frozen only, with final-test construction counters fixed to zero."
+    },
+    {
+      "id": "H4",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:155", "EXPERIMENT_PLAN.md:160", "EXPERIMENT_PLAN.machine.json:203", "EXPERIMENT_PLAN.machine.json:263"],
+      "summary": "M4 controls are split into 36 per-arm runs with mechanically consistent per-arm and aggregate resources."
+    },
+    {
+      "id": "H5",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:128", "EXPERIMENT_PLAN.machine.json:97", "EXPERIMENT_TRACKER.md:75"],
+      "summary": "Hierarchical bootstrap, paired unit, macro-F1 recomputation, lower bound, p-values, Holm, +0.030 threshold, and seed-sign gates are implementable."
+    },
+    {
+      "id": "M1",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:160", "EXPERIMENT_TRACKER.md:6", "EXPERIMENT_PLAN.machine.json:263"],
+      "summary": "Budget totals match machine run sums."
+    },
+    {
+      "id": "M2",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:20", "EXPERIMENT_PLAN.md:201", "EXPERIMENT_PLAN.machine.json:292"],
+      "summary": "Validation/test inference and construction isolation counters are schema-complete."
+    },
+    {
+      "id": "L1",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:112", "EXPERIMENT_TRACKER.md:37", "EXPERIMENT_PLAN.machine.json:246"],
+      "summary": "M3 paired-main decision is explicit and precedes M4 controls."
+    },
+    {
+      "id": "L2",
+      "status": "CLOSED",
+      "evidence_locations": ["EXPERIMENT_PLAN.md:43", "EXPERIMENT_PLAN.machine.json:30"],
+      "summary": "Validation/test hashes are provenance-only or evaluator-only and cannot be used for cache, control construction, G0, adaptive tuning, or final-test comparator selection."
+    }
+  ],
+  "claim_coverage_matrix": [
+    {
+      "claim_id": "C1",
+      "claim": "executable isolated certifiable encoder-realizable global geometry",
+      "coverage_status": "READY_FOR_IMPLEMENTATION",
+      "evidence": [
+        "first three G0 runs",
+        "common Q",
+        "closed strong convexity",
+        "serialized H-metric KKT-only acceptance",
+        "rank tail <= d",
+        "nondegeneration",
+        "REMOVE/null parity",
+        "replay/hash/isolation",
+        "resource preflight",
+        "robust low coverage disables safety only",
+        "local v7 cannot provide PASS"
+      ],
+      "blocking_findings": []
+    },
+    {
+      "claim_id": "C2",
+      "claim": "final ordinary kNN performance and attribution",
+      "coverage_status": "READY_FOR_IMPLEMENTATION",
+      "evidence": [
+        "frozen comparator",
+        "MHC and MHC_zh",
+        "seeds 0/1/2",
+        "paired FULL vs comparator",
+        "ordinary full-video train-memory top20 kNN",
+        "accuracy and macro-F1 observed delta >= +0.030",
+        "all paired seed deltas positive",
+        "hierarchical bootstrap lower > 0",
+        "Holm over four tests",
+        "per-arm controls REMOVE SHUFFLE NOISE DIRECT-MOMENT DIRECT-CERT-FEATURE SCALAR-PROPENSITY"
+      ],
+      "blocking_findings": []
+    }
+  ],
+  "audit_results": {
+    "leakage_gold_boundary": {
+      "status": "PASS",
+      "only_gold_supervision": "parent_video_binary_label",
+      "segment_gold_exists": false,
+      "segment_gold_used": false,
+      "fragment_gold_exists": false,
+      "forbidden_gold_types_absent": [
+        "segment",
+        "frame",
+        "timestamp",
+        "span",
+        "localization",
+        "stance",
+        "target",
+        "mechanism",
+        "rationale",
+        "fragment"
+      ],
+      "validation_test_labels_evaluator_only": true
+    },
+    "comparator_freeze": {
+      "status": "PASS",
+      "run_id": "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
+      "selection_scope": "train/OOF and official validation only",
+      "final_test_or_adaptive_query_access_counters_zero": true
+    },
+    "controls": {
+      "status": "PASS",
+      "direct_moment_explicit": true,
+      "direct_cert_feature_explicit": true,
+      "scalar_explicit": true,
+      "shuffle_final_test_construction_access_zero": true,
+      "per_arm_runs": 36
+    },
+    "statistics": {
+      "status": "PASS",
+      "tests": ["MHC_accuracy", "MHC_macro_f1", "MHC_zh_accuracy", "MHC_zh_macro_f1"],
+      "bootstrap_replicates": 10000,
+      "rng_seed": 20260712,
+      "resampling_hierarchy_defined": true,
+      "macro_f1_recompute_rule_defined": true,
+      "observed_delta_threshold": 0.03,
+      "one_sided_lower_bound_required_gt_zero": true,
+      "holm_all_four_required": true,
+      "all_seed_deltas_positive_required": true
+    },
+    "run_order_dag": {
+      "status": "PASS",
+      "total_runs": 65,
+      "must_run_count": 64,
+      "nice_to_have_count": 1,
+      "run_order_matches_runs": true,
+      "tracker_order_matches_machine": true,
+      "dependencies_acyclic": true,
+      "unknown_dependencies": 0,
+      "order_violations": 0,
+      "m3_decision_precedes_m4": true
+    },
+    "first_three_g0": {
+      "status": "PASS",
+      "runs": [
+        "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+        "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+      ],
+      "no_performance_claims": true
+    },
+    "resource_budget_arithmetic": {
+      "status": "PASS",
+      "computed_from_machine": {
+        "must_run_count": 64,
+        "nice_to_have_count": 1,
+        "total_run_count": 65,
+        "must_cpu_hours": 704,
+        "nice_cpu_hours": 16,
+        "total_cpu_hours": 720,
+        "must_gpu_hours": 684,
+        "nice_gpu_hours": 0,
+        "total_gpu_hours": 684,
+        "must_api_base": 4512,
+        "must_api_retry_cap": 9024,
+        "must_storage_gb": 786,
+        "nice_storage_gb": 5,
+        "total_storage_gb": 791
+      },
+      "declared_totals_match": true,
+      "per_run_caps_ok": true,
+      "slurm_no_time_flag_true_for_all_runs": true,
+      "slurm_env_hatevideo_for_all_runs": true,
+      "cited_slurm_active_time_directive_found": false
+    },
+    "machine_tracker_parity": {
+      "status": "PASS",
+      "json_valid": true,
+      "plan_hash_manifest_verified": true,
+      "all_required_run_fields_present": true,
+      "tracker_run_count": 65,
+      "tracker_order_matches_machine": true,
+      "per_run_tracker_budget_resources_match_machine": true,
+      "explicit_global_pivot_validated_false": true,
+      "planning_only": true
+    },
+    "forbidden_routes": {
+      "status": "PASS",
+      "no_sample_weighting": true,
+      "no_key_selection": true,
+      "no_pair_triplet_supcon": true,
+      "no_segment_route": true,
+      "no_local_v8": true,
+      "no_local_v7_pass_reuse": true,
+      "no_test_teacher": true,
+      "no_test_head": true,
+      "no_test_rerank": true
+    }
+  },
+  "plan_run_count_budgets": {
+    "must_run_count": 64,
+    "nice_to_have_count": 1,
+    "total_run_count": 65,
+    "must_cpu_hours": 704,
+    "total_cpu_hours": 720,
+    "must_gpu_hours": 684,
+    "total_gpu_hours": 684,
+    "api_calls_base": 4512,
+    "api_calls_retry_cap": 9024,
+    "must_storage_gb": 786,
+    "total_storage_gb": 791
+  },
+  "first_three_g0_runs": [
+    "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+    "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+    "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+  ],
+  "implementation_readiness": {
+    "ready_for_implementation": true,
+    "ready_for_implementation_verdict_allowed": true,
+    "zero_critical_zero_high_required": true,
+    "zero_critical_zero_high_met": true,
+    "remaining_nonblocking_requirements": [],
+    "success_claim_allowed_now": false,
+    "success_claim_note": "Planning readiness is not experimental success; success can be claimed only after the planned gates pass with actual results."
+  },
+  "review_artifacts": {
+    "markdown": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.md",
+    "machine_json": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.machine.json",
+    "hash_manifest": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2_HASHES.sha256"
+  }
+}

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#SBATCH --partition=slurmpartition
+#SBATCH --gres=gpu:a100:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --job-name=sq_s0_gpu
+#SBATCH --output=/data/jehc223/RGCL/slurm/logs/%x_%j.out
+# Intentionally no --time.
+set -euo pipefail
+cd /data/jehc223/RGCL
+source /data/jehc223/miniconda3/etc/profile.d/conda.sh
+conda activate HateVideo
+export PYTHONUNBUFFERED=1 HF_HUB_OFFLINE=1 WANDB_MODE=disabled
+TASK=${TASK:?set TASK}; RUN_ID=${RUN_ID:?set RUN_ID}; DATASET=${DATASET:?set DATASET}
+python scripts/analysis/sq_s0.py --config "${CONFIG:-configs/sq/sq_v1.json}" \
+  --task "$TASK" --dataset "$DATASET" --run-id "$RUN_ID"

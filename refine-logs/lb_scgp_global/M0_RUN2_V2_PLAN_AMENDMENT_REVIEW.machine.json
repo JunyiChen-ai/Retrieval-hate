@@ -1,0 +1,261 @@
+{
+  "audit_results": {
+    "authorization_boundary": {
+      "execution_authorized": false,
+      "run3_authorized": false,
+      "v2_execution_authorized": false,
+      "v2_implementation_audit_authorized": true
+    },
+    "budget_arithmetic": {
+      "actual_v1_diagnostic_spend": {
+        "allocated_cpu_seconds": 40,
+        "api_calls": 0,
+        "cpu_hours": 0.0111111111,
+        "gpu_hours": 0,
+        "scientific_artifact_storage_gb": 0,
+        "slurm_jobs": 2,
+        "wall_seconds_total": 5
+      },
+      "declared_lifetime_lineage_total": {
+        "api_calls_base": 4512,
+        "api_calls_retry_cap": 9024,
+        "cpu_hours": 752,
+        "gpu_hours": 684,
+        "storage_gb": 796
+      },
+      "declared_lifetime_lineage_must": {
+        "api_calls_base": 4512,
+        "api_calls_retry_cap": 9024,
+        "cpu_hours": 736,
+        "gpu_hours": 684,
+        "storage_gb": 791
+      },
+      "execution_authorized_remaining_budget": {
+        "api_calls": 0,
+        "cpu_hours": 0,
+        "gpu_hours": 0,
+        "storage_gb": 0
+      },
+      "machine_run_sum_total": {
+        "api_calls_base": 4512,
+        "api_calls_retry_cap": 9024,
+        "cpu_hours": 752,
+        "gpu_hours": 684,
+        "storage_gb": 796
+      },
+      "machine_run_sum_must": {
+        "api_calls_base": 4512,
+        "api_calls_retry_cap": 9024,
+        "cpu_hours": 736,
+        "gpu_hours": 684,
+        "storage_gb": 791
+      },
+      "original_approved_r2_envelope": {
+        "must_cpu_hours": 704,
+        "total_cpu_hours": 720
+      },
+      "remaining_prospective_budget": {
+        "must_cpu_hours": 700,
+        "total_cpu_hours": 716
+      },
+      "substitution_paper_plan_envelope": {
+        "must_cpu_hours": 704,
+        "total_cpu_hours": 720
+      },
+      "status": "PASS"
+    },
+    "dag_and_parity": {
+      "dag_order_violations": 0,
+      "machine_run_order_count": 66,
+      "machine_runs_count": 66,
+      "must_count": 65,
+      "nice_count": 1,
+      "run3_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "tracker_order_matches_machine": true,
+      "tracker_row_count": 66,
+      "unknown_dependencies": 0,
+      "v1_count_in_run_order": 1,
+      "v2_count_in_run_order": 1,
+      "status": "PASS"
+    },
+    "gold_isolation": {
+      "forbidden_gold_types_absent": [
+        "segment",
+        "frame",
+        "timestamp",
+        "span",
+        "localization",
+        "stance",
+        "target",
+        "mechanism",
+        "rationale",
+        "fragment"
+      ],
+      "only_gold_supervision": "parent_video_binary_label",
+      "segment_gold_exists": false,
+      "segment_gold_used": false,
+      "zero_access_counter_count": 48,
+      "zero_access_nonzero_entries": [],
+      "status": "PASS"
+    },
+    "hash_manifests": {
+      "amendment_hash_manifest_verified": true,
+      "plan_hash_manifest_verified": true,
+      "status": "PASS"
+    },
+    "json_validation": {
+      "amendment_machine_json_jq_empty": true,
+      "plan_machine_json_jq_empty": true,
+      "status": "PASS"
+    },
+    "science_freeze": {
+      "expected_decisions_unchanged": true,
+      "failure_transition_unchanged": true,
+      "fixture_change_allowed": false,
+      "fixtures_unchanged": true,
+      "kkt_tolerances_unchanged": true,
+      "movement_nondegeneration_target_unchanged": true,
+      "only_allowed_repair": "interface_key_contract_alignment_across_config_schema_validator_wrapper_producer_verifier_artifact_paths",
+      "planned_budget": {
+        "api_calls": 0,
+        "cpu_hours": 32,
+        "gpu_hours": 0,
+        "storage_gb": 5
+      },
+      "posthoc_scientific_change_allowed": false,
+      "rank_factor_rules_unchanged": true,
+      "resource_request": {
+        "cpu": 8,
+        "env": "HateVideo",
+        "gpu": 0,
+        "no_time_flag": true,
+        "ram_gb": 64
+      },
+      "solver_math_verifier_logic_unchanged": true,
+      "thresholds_unchanged": true,
+      "tuning_allowed": false,
+      "status": "PASS"
+    },
+    "stale_vs_fresh_result_to_claim": {
+      "authoritative_fresh_report": "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW_FRESH.md",
+      "fresh_report_sha256": "b02e5a0f7839e8b215c15197f6f120e3bebfe498ab89d2120c26b50585707a0c",
+      "fresh_report_trusted_for_current_judgment": true,
+      "stale_report": "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW.md",
+      "stale_report_sha256": "12f42df893d90d6ef4a7759dbbb86e8f8d820375be9aae3a0b94010fda1335ef",
+      "stale_report_trusted_for_current_judgment": false,
+      "status": "PASS"
+    },
+    "v1_fail_stop": {
+      "artifact_accepted": false,
+      "classification": "infrastructure_interface_failure_before_publish",
+      "historical_run_record_retained_exactly_once": true,
+      "lineage_status": "FAIL_STOP",
+      "not_scientific_kkt_rank_factor_evidence": true,
+      "pass_claim_allowed": false,
+      "synth_kkt_artifact_namespace_absent": true,
+      "slurm_attempts": [
+        {
+          "elapsed_seconds": 4,
+          "exception": "KeyError: finite_vi_diagnostic",
+          "exit_code": "1:0",
+          "job_id": "12902",
+          "resources": {
+            "cpu": 8,
+            "gpu": 0,
+            "ram_gb": 64
+          },
+          "stderr_sha256": "77ba892b49d7c6262bc0a6165188c173b8f0619a7cbbfe9fdcc881fc8ec5f71c",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "terminal_state": "FAILED"
+        },
+        {
+          "elapsed_seconds": 1,
+          "exception": "KeyError: payload_schema",
+          "exit_code": "1:0",
+          "job_id": "12904",
+          "resources": {
+            "cpu": 8,
+            "gpu": 0,
+            "ram_gb": 64
+          },
+          "stderr_sha256": "93e8515cad0d89ec65d3a1844d497694324143b9d836bc304b732765f1ead306",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "terminal_state": "FAILED"
+        }
+      ],
+      "status": "PASS"
+    },
+    "v2_lineage": {
+      "artifact_namespace": "artifacts/lb_scgp_global/v2/m0/synth_kkt/",
+      "existing_v2_workspace_files_unreviewed_unapproved": true,
+      "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json",
+      "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "status_in_plan": "LOCKED_PENDING_AMENDMENT_REVIEW",
+      "unique_new_lineage": true,
+      "status": "PASS"
+    }
+  },
+  "constraints_honored": [
+    "no_subagents",
+    "no_workflows",
+    "no_slurm_submission_or_monitoring",
+    "no_experiment_code_execution",
+    "no_python",
+    "no_ml_api_mllm_ocr_gpu_or_data_processing",
+    "no_code_config_schema_log_or_artifact_modification",
+    "only_three_reviewer_artifacts_created"
+  ],
+  "findings": {
+    "critical": [],
+    "high": [],
+    "medium": [],
+    "low": [
+      {
+        "id": "L1",
+        "severity": "Low",
+        "finding": "Pre-existing v2 workspace files are present but explicitly unreviewed and unapproved.",
+        "impact": "No amendment defect and no execution authority; future v2 implementation audit must hash-bind exactly reviewed files and enforce no-clobber lineage."
+      }
+    ]
+  },
+  "generated_at": "2026-07-12T00:00:00+12:00",
+  "inspected_input_hashes": {
+    "AGENTS.md": "e6aaf5d66399cdbbe7fcc2c811931277b0ed4a24b592ffa5cbb60315b29ea23c",
+    "artifacts/lb_scgp_global/v1/m0/contract_freeze.json": "09b78682389f1c9774c9dffc43c759bceeec9d7f44eca1ce4cd626d0cd6d12da",
+    "artifacts/lb_scgp_global/v1/m0/contract_freeze.json.publish.lock": "c6fbb49c3c8aba942da3f254c3c5f65d037002548fafb961154e6fa79a3e4ea7",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "838370c8eee68f568b6d133f80b305fed23bc14342d4c4bf08df976fd4d73d07",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "8ef1417fe16f8a556c82394705259f13447e7747d600c0f8f8061e237ecb8994",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": "0839260bbe8c046a292762dff2cbc73e8623b70b3626d991ee17eecbe10c2a15",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW.md": "21051175a7cc3301c79b995dc222b9e82f041f1d5c214b39896e03e60db27f86",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.machine.json": "8c222ff6db3a38752851fbc113c9e1988845ca424ce8fc51d48cfdea0c51f472",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.md": "d952989742c9402cfd38de935deece73b2933e7ab8f70883ca8e0bea40a4bd46",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "d0c7e6ff291b6ae4ba6d5661b2e8ddc2bb8a80ac7f2f6d1e37ab8494782df483",
+    "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_EXECUTION.md": "71a502375ec4f99224e8a8cd55aa61ea9f96cff6bf81743646c59e10d1efeebb",
+    "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_INDEPENDENT_REVIEW.md": "37dcf8825ef9cf3af9df47a0346e647272c19d70110a1247cc6ed865beee34ed",
+    "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW.md": "12f42df893d90d6ef4a7759dbbb86e8f8d820375be9aae3a0b94010fda1335ef",
+    "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW_FRESH.md": "b02e5a0f7839e8b215c15197f6f120e3bebfe498ab89d2120c26b50585707a0c",
+    "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.machine.json": "56603297b2a1f6bcf12e941d96ce95911bb2ab8bfd0de967586430d38959f3d8",
+    "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.md": "95b4b839017479bad4d2ed7a48455864c765e8f91997adab0fa4a7ca66aa57fb",
+    "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT_HASHES.sha256": "a88fc1c75c10b653deebf03c1792733d2bb412f13dc021567b221d009cc38390",
+    "refine-logs/lb_scgp_global/M0_SYNTH_KKT_EXECUTION.md": "31481cb10808e9a6ce81754c47d18351079bf84b602088618b0ecdd341c80333",
+    "refine-logs/lb_scgp_global/M0_SYNTH_KKT_IMPLEMENTATION.md": "1e248d4f7b8432bf5d2f4f5e04c4a465f4d8b54c8fe72ddc4105a68e108484aa",
+    "slurm/logs/lbscgp_global_r2_run2_12904.err": "93e8515cad0d89ec65d3a1844d497694324143b9d836bc304b732765f1ead306",
+    "slurm/logs/lbscgp_global_r2_run2_12904.out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "slurm/logs/lbscgp_global_r2_run2_synth_kkt_12902.err": "77ba892b49d7c6262bc0a6165188c173b8f0619a7cbbfe9fdcc881fc8ec5f71c",
+    "slurm/logs/lbscgp_global_r2_run2_synth_kkt_12902.out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "reviewer": {
+    "requested_model": "GPT-5.5 xhigh",
+    "role": "fresh independent amendment reviewer",
+    "workspace": "/data/jehc223/RGCL"
+  },
+  "schema_version": "lbscgp_global_m0_run2_v2_plan_amendment_review_v1",
+  "severity_counts": {
+    "critical": 0,
+    "high": 0,
+    "low": 1,
+    "medium": 0
+  },
+  "verdict": "AUTHORIZE V2 IMPLEMENTATION AUDIT",
+  "zero_critical_zero_high_confirmed": true
+}

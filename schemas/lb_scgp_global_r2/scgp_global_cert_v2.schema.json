@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "properties": {
+    "context_shift_observable": {"$ref": "#/definitions/tri_state_observable"},
+    "counter_context_observable": {"$ref": "#/definitions/tri_state_observable"},
+    "cross_modal_binding_observable": {"$ref": "#/definitions/tri_state_observable"},
+    "dehumanizing_or_threat_surface_observable": {"$ref": "#/definitions/tri_state_observable"},
+    "harmful_surface_observable": {"$ref": "#/definitions/tri_state_observable"},
+    "modality_binding_observable": {"$ref": "#/definitions/modality_observable"},
+    "parse_flags": {
+      "items": {"type": "string"},
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "scgp_global_cert_v2",
+      "type": "string"
+    },
+    "source_alignment_observable": {"$ref": "#/definitions/tri_state_observable"},
+    "text_audio_reference_observable": {"$ref": "#/definitions/tri_state_observable"},
+    "visual_reference_observable": {"$ref": "#/definitions/tri_state_observable"}
+  },
+  "required": [
+    "schema_version",
+    "visual_reference_observable",
+    "text_audio_reference_observable",
+    "harmful_surface_observable",
+    "dehumanizing_or_threat_surface_observable",
+    "cross_modal_binding_observable",
+    "source_alignment_observable",
+    "counter_context_observable",
+    "context_shift_observable",
+    "modality_binding_observable",
+    "parse_flags"
+  ],
+  "title": "LB-SCGP Global-R2 restricted train-only certificate",
+  "type": "object",
+  "definitions": {
+    "confidence": {
+      "maximum": 4,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "modality_observable": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {"$ref": "#/definitions/confidence"},
+        "state": {
+          "enum": [
+            "multi_modal",
+            "single_modal",
+            "text_audio",
+            "unresolved",
+            "visual_audio",
+            "visual_text"
+          ],
+          "type": "string"
+        }
+      },
+      "required": ["state", "confidence"],
+      "type": "object"
+    },
+    "tri_state_observable": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {"$ref": "#/definitions/confidence"},
+        "state": {
+          "enum": ["contradicted", "supported", "unresolved"],
+          "type": "string"
+        }
+      },
+      "required": ["state", "confidence"],
+      "type": "object"
+    }
+  }
+}

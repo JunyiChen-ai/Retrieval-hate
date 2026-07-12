@@ -1,0 +1,4242 @@
+{
+  "schema_version": "scgp_global_experiment_plan_v2",
+  "generated_at": "2026-07-12T00:00:00+12:00",
+  "requested_model": "GPT-5.5 xhigh",
+  "revision_round": 2,
+  "planning_only": true,
+  "global_pivot_validated": false,
+  "source_hashes": {
+    "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW.md": "21051175a7cc3301c79b995dc222b9e82f041f1d5c214b39896e03e60db27f86",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW.machine.json": "54544df2b0f2d408d8f794a7287036d5ad5207b6ad9b11d920b117fd6a0b868c",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md.before_revision": "f5d0cc07fc69a46cf4689d9e76813e76f707ae9948356416d921f9d14416f158",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md.before_revision": "9f64ce08a3bd1f98187825e36f6446d61e711c5276d2749b1fb0ca3f248daf9e",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json.before_revision": "a60aa8a3c2bdbf3b297c7591649595cc07e5ab90c89367b84de2a5c747b23dc2",
+    "configs/ssr/ssr_v1.yaml": "dde8fdd0f0d62632a2b462c969cffb195883f81219a58af0180d0fbbc0bd9d5d",
+    "artifacts/ssr/v1/freeze_manifest.json": "10a2d252690bc39de38c4c8c9155bd1c0b522a3168bb729d36e1c02e09419b4e",
+    "artifacts/ssr/v1/folds/MHC.json": "bc7e3088faeeb6fad091b97fd1d10a506ed4a53826d2580b9a92891646a3584d",
+    "artifacts/ssr/v1/folds/MHC_zh.json": "b3aaeb2af131316302e1c8f6d249e1770c70b2ce23f9a83fc250916979e9887f",
+    "artifacts/ssr/v1/B1_DECISION.json": "cb038e7585b5eb925f01e5e5be20e6a762dde56471ea6992760e496e3c0084e7",
+    "scripts/slurm/train_archive_baseline.sbatch": "34e47a494d70135e504b802b2cb685119b414b56b8a32e523af0c47b7c280601",
+    "scripts/slurm/train_archive.sbatch": "dab724282b3306731adf8cc451e792cc45a10c9254caa31cd6164d7148801ff1",
+    "scripts/slurm/train_transcript.sbatch": "62a438e62ed7a8fa916880cbafcd8fa6f37eeca87406054ada865236bbe016a2",
+    "data/gt/MHC/train.jsonl": "501b1bb4340d410fe67df7c9ede797a3cbc972dbbf24caca35988903ac8bea14",
+    "data/gt/MHC/val.jsonl": "749f9563d002367bc05a16627eb4f28045daba30825f0414335bab5a6543f6cb",
+    "data/gt/MHC/test.jsonl": "0377f9d83d0a57e17212c17fe8fcfc552648356cc1a7b2f1c98a2445a1ce0d76",
+    "data/gt/MHC_zh/train.jsonl": "f99dffa38b0be8afc79e4a0100eb81b9dbc109c507a787cd483bcda3244fb655",
+    "data/gt/MHC_zh/val.jsonl": "6b2b5916fedba05ade93e694c13ba09f92968bde73e15f6cb345025eb0afc04b",
+    "data/gt/MHC_zh/test.jsonl": "79f666050ce92910ecd1ca4fbaf42bcae36f46b898313e2b4fc026ad72858d31",
+    "AGENTS.md": "e6aaf5d66399cdbbe7fcc2c811931277b0ed4a24b592ffa5cbb60315b29ea23c",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.md": "d952989742c9402cfd38de935deece73b2933e7ab8f70883ca8e0bea40a4bd46",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_REVIEW_R2.machine.json": "8c222ff6db3a38752851fbc113c9e1988845ca424ce8fc51d48cfdea0c51f472",
+    "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_EXECUTION.md": "71a502375ec4f99224e8a8cd55aa61ea9f96cff6bf81743646c59e10d1efeebb",
+    "refine-logs/lb_scgp_global/M0_CONTRACT_FREEZE_INDEPENDENT_REVIEW.md": "37dcf8825ef9cf3af9df47a0346e647272c19d70110a1247cc6ed865beee34ed",
+    "refine-logs/lb_scgp_global/M0_SYNTH_KKT_IMPLEMENTATION.md": "1e248d4f7b8432bf5d2f4f5e04c4a465f4d8b54c8fe72ddc4105a68e108484aa",
+    "refine-logs/lb_scgp_global/M0_SYNTH_KKT_EXECUTION.md": "31481cb10808e9a6ce81754c47d18351079bf84b602088618b0ecdd341c80333",
+    "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW_FRESH.md": "b02e5a0f7839e8b215c15197f6f120e3bebfe498ab89d2120c26b50585707a0c",
+    "refine-logs/lb_scgp_global/M0_RUN2_RESULT_TO_CLAIM_REVIEW.md": "12f42df893d90d6ef4a7759dbbb86e8f8d820375be9aae3a0b94010fda1335ef",
+    "slurm/logs/lbscgp_global_r2_run2_synth_kkt_12902.err": "77ba892b49d7c6262bc0a6165188c173b8f0619a7cbbfe9fdcc881fc8ec5f71c",
+    "slurm/logs/lbscgp_global_r2_run2_synth_kkt_12902.out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "slurm/logs/lbscgp_global_r2_run2_12904.err": "93e8515cad0d89ec65d3a1844d497694324143b9d836bc304b732765f1ead306",
+    "slurm/logs/lbscgp_global_r2_run2_12904.out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "hash_policy": {
+    "validation_and_test_hashes_are_provenance_only": true,
+    "validation_hash_use": "comparator freeze and validation evaluator provenance only; not cache, MLLM prompt, G0, control construction, or adaptive tuning",
+    "test_hash_use": "final evaluator provenance only after freeze; never comparator selection or control construction",
+    "train_hash_use": "train-only cache/compiler/evaluator provenance as permitted by the contract"
+  },
+  "immutable_contract": {
+    "max_primary_claims": 2,
+    "max_core_blocks": 5,
+    "max_baseline_families": 3,
+    "datasets": [
+      {
+        "name": "MHC-EN",
+        "code": "MHC",
+        "train_n": 549,
+        "val_n": 80,
+        "test_n": 161
+      },
+      {
+        "name": "MHC-ZH",
+        "code": "MHC_zh",
+        "train_n": 579,
+        "val_n": 78,
+        "test_n": 149
+      }
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false,
+    "fragment_gold_exists": false,
+    "segment_gold_used_for_selection": false,
+    "uniform_frames_and_full_transcript_are_inputs_not_annotations": true,
+    "train_only_label_blind_mllm_cache": true,
+    "labels_enter_after_cache_seal_only": true,
+    "final_inference": "ordinary_full_video_train_memory_top20_knn",
+    "forbidden_routes": [
+      "test_time_mllm",
+      "teacher",
+      "auxiliary_head",
+      "rerank",
+      "key_selection",
+      "sample_weighting",
+      "pair_triplet_supcon",
+      "segment_route",
+      "local_rank_cell_v8",
+      "reuse_local_v7_as_global_pass"
+    ],
+    "slurm": {
+      "required": true,
+      "conda_env": "HateVideo",
+      "time_flag_allowed": false,
+      "max_cpu": 16,
+      "max_ram_gb": 128,
+      "max_gpu": 2,
+      "jobhelduser_action": "wait_auto_release"
+    }
+  },
+  "claim_map": {
+    "C1": {
+      "name": "executable_isolated_certifiable_encoder_realizable_global_geometry",
+      "minimum_evidence": "M0 G0 contract, synthetic KKT-only payload, independent verification, real train-bank resource/replay, rank-tail <= d, zero leakage counters, nondegeneration",
+      "blocks": [
+        "B0"
+      ]
+    },
+    "C2": {
+      "name": "final_ordinary_knn_performance_and_attribution",
+      "minimum_evidence": "both datasets seeds 0/1/2, FULL vs frozen moving strongest same-protocol non-MLLM comparator accuracy and macro-F1 each >= +0.030, all paired seed deltas positive, hierarchical bootstrap lower > 0, Holm across four dataset-metric tests, controls decisive",
+      "blocks": [
+        "B1",
+        "B2",
+        "B3",
+        "B4"
+      ]
+    }
+  },
+  "baseline_families": {
+    "F1": {
+      "name": "moving_strongest_same_protocol_comparator_remove",
+      "arms": [
+        "frozen_moving_strongest_same_protocol_non_mllm_comparator",
+        "REMOVE"
+      ]
+    },
+    "F2": {
+      "name": "certificate_identity_corruption",
+      "arms": [
+        "SHUFFLE",
+        "covariance_matched_NOISE"
+      ]
+    },
+    "F3": {
+      "name": "direct_replaceability",
+      "arms": [
+        "DIRECT-MOMENT",
+        "DIRECT-CERT-FEATURE",
+        "SCALAR-PROPENSITY"
+      ]
+    }
+  },
+  "blocks": [
+    {
+      "id": "B0",
+      "name": "G0 contract synthetic KKT and train-bank resource gate",
+      "priority": "MUST"
+    },
+    {
+      "id": "B1",
+      "name": "train-only label-blind MLLM cache seal",
+      "priority": "MUST"
+    },
+    {
+      "id": "B2",
+      "name": "comparator freeze and directional final-target pilot",
+      "priority": "MUST"
+    },
+    {
+      "id": "B3",
+      "name": "final paired main runs and completion decision",
+      "priority": "MUST"
+    },
+    {
+      "id": "B4",
+      "name": "controls statistics tables diagnostics",
+      "priority": "MUST_WITH_NICE_APPENDIX"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "M0",
+      "block": "B0",
+      "gate": "C1_G0_GO_or_STOP"
+    },
+    {
+      "id": "M1",
+      "block": "B1",
+      "gate": "CACHE_SEAL_GO_or_STOP"
+    },
+    {
+      "id": "M2",
+      "block": "B2",
+      "gate": "COMPARATOR_FREEZE_AND_DIRECTIONAL_VALIDATION_GO_or_STOP"
+    },
+    {
+      "id": "M3",
+      "block": "B3",
+      "gate": "PAIRED_MAIN_COMPLETE_or_STOP"
+    },
+    {
+      "id": "M4",
+      "block": "B4",
+      "gate": "ATTRIBUTION_GO_or_MECHANISM_UNSUPPORTED"
+    },
+    {
+      "id": "M5",
+      "block": "B4",
+      "gate": "FINAL_STATS_GO_or_NO_SUCCESS_CLAIM"
+    }
+  ],
+  "comparator_freeze": {
+    "run_id": "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
+    "eligible_candidate_rules": [
+      "non_mllm",
+      "ordinary_full_video_train_memory_top20_knn",
+      "same_vote_rule",
+      "no_teacher_head_rerank_key_selector",
+      "no_sample_weighting",
+      "no_pair_triplet_supcon",
+      "no_segment_route",
+      "no_fragment_gold"
+    ],
+    "candidate_ledger_required_fields": [
+      "candidate_id",
+      "family",
+      "config_path",
+      "config_sha256",
+      "script_path",
+      "script_sha256",
+      "train_oof_ledger_sha256",
+      "validation_prediction_ledger_sha256",
+      "code_or_source_tree_hash",
+      "split_hashes",
+      "topk",
+      "vote_rule",
+      "seeds",
+      "rejection_reason_if_any",
+      "zero_access_counters"
+    ],
+    "selection_data_scope": "train/OOF and official validation only",
+    "selection_criterion": [
+      "max_validation_macro_f1_mean",
+      "tie_break_validation_accuracy_mean",
+      "tie_break_lower_estimated_gpu_hours",
+      "tie_break_lexicographic_candidate_id"
+    ],
+    "forbidden_selection_access_counters": {
+      "final_test_label_reads": 0,
+      "final_test_prediction_reads": 0,
+      "final_test_margin_reads": 0,
+      "adaptive_query_label_reads": 0
+    }
+  },
+  "control_construction_policy": {
+    "SHUFFLE": "train-only/OOF bins or preregistered validation-frozen bins before final-test evaluation; final test labels/predictions/margins/errors never used",
+    "NOISE": "covariance matched from sealed train certificate encodings only",
+    "DIRECT-MOMENT": "direct structural moment route distinct from certificate-feature route",
+    "DIRECT-CERT-FEATURE": "direct certificate-feature distillation route distinct from structural moment route",
+    "SCALAR-PROPENSITY": "train/OOF or preregistered validation-frozen scalar difficulty/error propensity only",
+    "final_test_control_construction_zero_counters": {
+      "label_reads": 0,
+      "prediction_reads": 0,
+      "margin_reads": 0,
+      "error_reads": 0
+    }
+  },
+  "statistics_protocol": {
+    "tests": [
+      "MHC_accuracy",
+      "MHC_macro_f1",
+      "MHC_zh_accuracy",
+      "MHC_zh_macro_f1"
+    ],
+    "bootstrap_replicates": 10000,
+    "rng_seed": 20260712,
+    "resampling_hierarchy": [
+      "sample seeds with replacement within dataset",
+      "sample test videos with replacement within sampled seed stratified by parent_video_binary_label"
+    ],
+    "uncertainty_unit": "paired video prediction within seed and dataset",
+    "paired_statistic": "metric(FULL) - metric(frozen_comparator)",
+    "macro_f1_rule": "recompute from resampled confusion counts for both classes",
+    "one_sided_lower_bound": "5th percentile of bootstrap deltas; must be > 0",
+    "p_value": "(1 + count(delta_b <= 0)) / (B + 1)",
+    "holm": {
+      "alpha": 0.05,
+      "m": 4,
+      "order": "ascending p-values across four dataset-by-metric tests",
+      "threshold": "0.05/(m-k+1)"
+    },
+    "joint_success_rule": "observed delta >= 0.030, every paired seed delta positive, bootstrap lower > 0, and Holm rejection for all four tests"
+  },
+  "run_order": [
+    "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+    "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+    "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
+    "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
+    "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
+    "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
+    "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
+    "LBSCGP-GLOBAL-M2-MHC-S0-COMP-VALID-v1",
+    "LBSCGP-GLOBAL-M2-MHC-S0-FULL-VALID-v1",
+    "LBSCGP-GLOBAL-M2-MHC_zh-S0-COMP-VALID-v1",
+    "LBSCGP-GLOBAL-M2-MHC_zh-S0-FULL-VALID-v1",
+    "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1",
+    "LBSCGP-GLOBAL-M3-MHC-S0-COMP-v1",
+    "LBSCGP-GLOBAL-M3-MHC-S0-FULL-v1",
+    "LBSCGP-GLOBAL-M3-MHC-S1-COMP-v1",
+    "LBSCGP-GLOBAL-M3-MHC-S1-FULL-v1",
+    "LBSCGP-GLOBAL-M3-MHC-S2-COMP-v1",
+    "LBSCGP-GLOBAL-M3-MHC-S2-FULL-v1",
+    "LBSCGP-GLOBAL-M3-MHC_zh-S0-COMP-v1",
+    "LBSCGP-GLOBAL-M3-MHC_zh-S0-FULL-v1",
+    "LBSCGP-GLOBAL-M3-MHC_zh-S1-COMP-v1",
+    "LBSCGP-GLOBAL-M3-MHC_zh-S1-FULL-v1",
+    "LBSCGP-GLOBAL-M3-MHC_zh-S2-COMP-v1",
+    "LBSCGP-GLOBAL-M3-MHC_zh-S2-FULL-v1",
+    "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S0-REMOVE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S0-SHUFFLE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S0-NOISE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S0-DIRECT-MOMENT-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S0-DIRECT-CERT-FEATURE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S0-SCALAR-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S1-REMOVE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S1-SHUFFLE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S1-NOISE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S1-DIRECT-MOMENT-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S1-DIRECT-CERT-FEATURE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S1-SCALAR-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S2-REMOVE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S2-SHUFFLE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S2-NOISE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S2-DIRECT-MOMENT-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S2-DIRECT-CERT-FEATURE-v1",
+    "LBSCGP-GLOBAL-M4-MHC-S2-SCALAR-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S0-REMOVE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S0-SHUFFLE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S0-NOISE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S0-DIRECT-MOMENT-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S0-DIRECT-CERT-FEATURE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S0-SCALAR-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S1-REMOVE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S1-SHUFFLE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S1-NOISE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S1-DIRECT-MOMENT-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S1-DIRECT-CERT-FEATURE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S1-SCALAR-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S2-REMOVE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S2-SHUFFLE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S2-NOISE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S2-DIRECT-MOMENT-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S2-DIRECT-CERT-FEATURE-v1",
+    "LBSCGP-GLOBAL-M4-MHC_zh-S2-SCALAR-v1",
+    "LBSCGP-GLOBAL-M4-CONTROLS-DECISION-v1",
+    "LBSCGP-GLOBAL-M5-FINAL-STATS-v1",
+    "LBSCGP-GLOBAL-M5-TABLES-FIGURES-v1",
+    "LBSCGP-GLOBAL-M5-MECHANISM-FAILURE-APPENDIX-v1"
+  ],
+  "runs": [
+    {
+      "run_id": "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "milestone": "M0",
+      "block": "B0",
+      "claim": "C1",
+      "purpose": "implementation contract audit and freeze",
+      "dataset": "both",
+      "split_scope": "manifests/configs/scripts only; no validation/test/outer-held content",
+      "system_variant": "FULL_CONTRACT_FREEZE",
+      "baseline_family": [],
+      "arm": null,
+      "seed": null,
+      "dependencies": [],
+      "metrics": [
+        "zero_access_counters",
+        "schema_completeness",
+        "forbidden_route_audit"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m0/contract_freeze.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_contract_freeze_v1"
+      ],
+      "slurm": {
+        "cpu": 4,
+        "ram_gb": 16,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 4,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 1
+      },
+      "gate": "GO iff contract, source hashes, counters, no-segment-gold, no local-v7 evidence, and SLURM policy pass",
+      "failure_transition": "STOP before cache or performance work",
+      "parallel_group": "g0_serial",
+      "priority": "MUST",
+      "status": "FROZEN"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "milestone": "M0",
+      "block": "B0",
+      "claim": "C1",
+      "purpose": "synthetic closed-convex projection with serialized H-metric normal-cone KKT-only payload and independent verification",
+      "dataset": "synthetic",
+      "split_scope": "synthetic fixtures only",
+      "system_variant": "FULL_SYNTH_KKT_FIXTURES",
+      "baseline_family": [
+        "F1",
+        "F2"
+      ],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1"
+      ],
+      "metrics": [
+        "common_basis_operator",
+        "closed_strong_convexity",
+        "PSD_unit_diag",
+        "coordinate_row_class_trust",
+        "KKT_residual",
+        "rank_tail_le_d",
+        "nondegeneration",
+        "REMOVE_null_parity",
+        "cache_isolation_injection_failures",
+        "robust_interval_coverage"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m0/synth_kkt/manifest.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_synth_kkt_payload_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 32,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 5
+      },
+      "lineage_role": "historical_planned_record_failed_infrastructure_evidence",
+      "historical_planned_envelope": {
+        "cpu_hours": 32,
+        "gpu_hours": 0,
+        "api_calls": 0,
+        "storage_gb": 5
+      },
+      "actual_diagnostic_spend": {
+        "slurm_jobs": 2,
+        "wall_seconds_total": 5,
+        "allocated_cpu_seconds": 40,
+        "cpu_hours": 0.0111111111,
+        "gpu_hours": 0,
+        "api_calls": 0,
+        "scientific_artifact_storage_gb": 0
+      },
+      "remaining_prospective_budget": {
+        "cpu_hours": 0,
+        "gpu_hours": 0,
+        "api_calls": 0,
+        "storage_gb": 0
+      },
+      "slurm_attempts": [
+        {
+          "job_id": "12902",
+          "job_name": "lbscgp_global_r2_run2_synth_kkt",
+          "resources": {
+            "cpu": 8,
+            "ram_gb": 64,
+            "gpu": 0
+          },
+          "elapsed_seconds": 4,
+          "terminal_state": "FAILED",
+          "exit_code": "1:0",
+          "failure_path": "older_producer_path",
+          "failure_exception": "KeyError: finite_vi_diagnostic",
+          "artifact_published": false,
+          "stderr_sha256": "77ba892b49d7c6262bc0a6165188c173b8f0619a7cbbfe9fdcc881fc8ec5f71c",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "job_id": "12904",
+          "job_name": "lbscgp_global_r2_run2",
+          "resources": {
+            "cpu": 8,
+            "ram_gb": 64,
+            "gpu": 0
+          },
+          "elapsed_seconds": 1,
+          "terminal_state": "FAILED",
+          "exit_code": "1:0",
+          "failure_path": "newer_validator_path",
+          "failure_exception": "KeyError: payload_schema",
+          "artifact_published": false,
+          "stderr_sha256": "93e8515cad0d89ec65d3a1844d497694324143b9d836bc304b732765f1ead306",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "evidence_classification": {
+        "infrastructure_interface_failure_before_publish": true,
+        "scientific_numerical_kkt_rank_factor_evidence": false,
+        "pass_claim_allowed": false,
+        "delete_overwrite_reuse_or_call_pass_forbidden": true
+      },
+      "gate": "GO iff KKT payload independently verifies; solver traces and finite probes are diagnostics only",
+      "failure_transition": "Historical fail-stop evidence preserved: job12902 finite_vi_diagnostic implementation mismatch and job12904 payload_schema preflight failure. No artifact is accepted and no PASS claim is made.",
+      "parallel_group": "g0_serial",
+      "priority": "MUST",
+      "status": "FAIL_STOP"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "milestone": "M0",
+      "block": "B0",
+      "claim": "C1",
+      "purpose": "Prospective Run2-v2 supplement for synthetic KKT-only global-operator closure; repairs implementation/config/schema/wrapper/verifier alignment without changing d, fixture identities/counts, thresholds, case roles, expected outcomes, rank gate, or scope.",
+      "dataset": "synthetic",
+      "split_scope": "synthetic fixtures only",
+      "system_variant": "FULL_SYNTH_KKT_FIXTURES",
+      "baseline_family": [
+        "F1",
+        "F2"
+      ],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+        "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1"
+      ],
+      "metrics": [
+        "common_basis_operator",
+        "closed_strong_convexity",
+        "PSD_unit_diag",
+        "coordinate_row_class_trust",
+        "KKT_residual",
+        "rank_tail_le_d",
+        "nondegeneration",
+        "REMOVE_null_parity",
+        "cache_isolation_injection_failures",
+        "robust_interval_coverage"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json"
+      ],
+      "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json",
+      "artifact_namespace": "artifacts/lb_scgp_global/v2/m0/synth_kkt/",
+      "lineage_bound_outputs": [
+        "v2_config",
+        "v2_payload_schema",
+        "v2_case_schema",
+        "v2_source_manifest",
+        "v2_access_ledger",
+        "v2_publish_lock",
+        "v2_no_clobber_lock",
+        "v2_manifest"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_synth_kkt_payload_v2"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 32,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 5
+      },
+      "science_freeze_assertions": {
+        "resource_request_identical_to_v1": true,
+        "planned_budget_identical_to_v1": true,
+        "schema_intent_unchanged": true,
+        "thresholds_unchanged": true,
+        "fixtures_unchanged": true,
+        "expected_decisions_unchanged": true,
+        "kkt_tolerances_unchanged": true,
+        "movement_nondegeneration_target_unchanged": true,
+        "rank_factor_rules_unchanged": true,
+        "solver_math_verifier_logic_unchanged": false,
+        "solver_math_verifier_logic_change_scope": "fix2 makes the frozen rank<=d PSD/KKT contract mathematically consistent and independently verifiable without changing d, fixture identities/counts, thresholds, case roles, rank gate, or downstream scope",
+        "intended_claim_unchanged": true,
+        "failure_transition_unchanged": true,
+        "only_allowed_repair": "implementation_config_schema_wrapper_verifier_contract_alignment_without_threshold_fixture_rank_gate_or_scope_change",
+        "solver_fix_tuning_tolerance_fixture_rescue_or_posthoc_science_change_allowed": false
+      },
+      "authorization_requirements": {
+        "requires_run1_frozen": true,
+        "requires_preserved_v1_failure_evidence": true,
+        "requires_approved_amendment_after_independent_amendment_review": true,
+        "requires_static_contract_matrix_and_negative_tests": true,
+        "requires_fresh_independent_v2_code_review_zero_critical_zero_high": true,
+        "requires_exact_hashes_and_no_clobber_check": true,
+        "requires_separate_execution_authorization": true,
+        "this_amendment_authorizes_execution": false,
+        "this_amendment_can_authorize_only_v2_implementation_audit_after_independent_amendment_review": true
+      },
+      "implementation_fix_freeze": {
+        "amendment_review_passed_zero_critical_zero_high": true,
+        "fix_freeze_complete": true,
+        "fresh_fix_review_failed_zero_critical_two_high_one_medium_one_low": true,
+        "fix2_freeze_complete": true,
+        "execution_evidence": false,
+        "execution_permission": false,
+        "requires_fresh_independent_v2_code_review_zero_critical_zero_high": true,
+        "requires_separate_execution_authorization": true
+      },
+      "gate": "Fix2 implementation/freeze complete, but locked pending fresh independent v2 code review with 0 Critical / 0 High, exact hashes/no-clobber review, and separate execution authorization before any SLURM submission. Future single SLURM job only: 8 CPU, 64 GB, 0 GPU, HateVideo, no --time; wrapper must run authoritative validator, producer, and independent semantic verifier; finiteVI diagnostics are non-accepting; missing jsonschema fails closed in the validator before publish.",
+      "failure_transition": "STOP; preserve v2 logs/artifacts as failure evidence; no automatic Run3 unlock.",
+      "parallel_group": "g0_serial",
+      "priority": "MUST",
+      "status": "FIX2_COMPLETE_FRESH_REVIEW_LOCKED"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
+      "milestone": "M0",
+      "block": "B0",
+      "claim": "C1",
+      "purpose": "actual train-bank static/resource microbenchmark plus replay/decision without training or performance claim",
+      "dataset": "MHC,MHC_zh",
+      "split_scope": "train banks and manifests only; no validation/test labels",
+      "system_variant": "FULL_REALBANK_STATIC_REPLAY",
+      "baseline_family": [
+        "F1",
+        "F2"
+      ],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2"
+      ],
+      "metrics": [
+        "resource_peak",
+        "rank_tail_le_d",
+        "replay_hash",
+        "robust_coverage",
+        "isolation_injection_failures"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m0/realbank_resource/decision.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_realbank_resource_v1"
+      ],
+      "slurm": {
+        "cpu": 16,
+        "ram_gb": 96,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 64,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff Run1 is frozen, Run2-v1 failure evidence is preserved, Run2-v2 semantic verification is PASS in its single SLURM artifact, and a fresh independent v2 artifact review authorizes unlock; Run2-v1 remains FAIL_STOP evidence only.",
+      "failure_transition": "STOP before M1 cache",
+      "parallel_group": "g0_serial",
+      "priority": "MUST",
+      "status": "LOCKED_UNTIL_V2_PASS"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
+      "milestone": "M1",
+      "block": "B1",
+      "claim": "C1",
+      "purpose": "train-only label-blind MLLM cache for MHC",
+      "dataset": "MHC",
+      "split_scope": "train videos only; N=549; labels not opened before seal",
+      "system_variant": "FULL_CACHE",
+      "baseline_family": [],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+      ],
+      "metrics": [
+        "parse_rate",
+        "unresolved_count",
+        "call_count",
+        "merkle_leaves",
+        "zero_forbidden_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache.jsonl"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_cache_replica_v2"
+      ],
+      "slurm": {
+        "cpu": 4,
+        "ram_gb": 32,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 2196,
+        "api_retry_cap": 4392,
+        "estimated_storage_gb": 4
+      },
+      "gate": "GO iff restricted schema, QC, and zero forbidden counters pass",
+      "failure_transition": "STOP or canonical unresolved fallback; no prompt rescue",
+      "parallel_group": "m1_cache_parallel_max2",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
+      "milestone": "M1",
+      "block": "B1",
+      "claim": "C1",
+      "purpose": "train-only label-blind MLLM cache for MHC-ZH",
+      "dataset": "MHC_zh",
+      "split_scope": "train videos only; N=579; labels not opened before seal",
+      "system_variant": "FULL_CACHE",
+      "baseline_family": [],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+      ],
+      "metrics": [
+        "parse_rate",
+        "unresolved_count",
+        "call_count",
+        "merkle_leaves",
+        "zero_forbidden_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m1/cache/MHC_zh/cache.jsonl"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_cache_replica_v2"
+      ],
+      "slurm": {
+        "cpu": 4,
+        "ram_gb": 32,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 2316,
+        "api_retry_cap": 4632,
+        "estimated_storage_gb": 4
+      },
+      "gate": "GO iff restricted schema, QC, and zero forbidden counters pass",
+      "failure_transition": "STOP or canonical unresolved fallback; no prompt rescue",
+      "parallel_group": "m1_cache_parallel_max2",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
+      "milestone": "M1",
+      "block": "B1",
+      "claim": "C1",
+      "purpose": "cache seal decision",
+      "dataset": "both",
+      "split_scope": "cache artifacts only; labels enter after seal decision",
+      "system_variant": "CACHE_SEAL",
+      "baseline_family": [],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
+        "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1"
+      ],
+      "metrics": [
+        "merkle_root",
+        "access_ledger",
+        "prompt_input_model_schema_hashes"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m1/cache_seal_decision.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_cache_seal_v1"
+      ],
+      "slurm": {
+        "cpu": 4,
+        "ram_gb": 32,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 1
+      },
+      "gate": "GO iff both cache roots verify and forbidden counters are zero",
+      "failure_transition": "STOP before compiler",
+      "parallel_group": "m1_decision",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
+      "milestone": "M2",
+      "block": "B2",
+      "claim": "C2",
+      "purpose": "freeze moving strongest same-protocol non-MLLM comparator before M2 validation",
+      "dataset": "both",
+      "split_scope": "train/OOF and official validation ledgers only; test unopened",
+      "system_variant": "COMPARATOR_FREEZE",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_moving_strongest_same_protocol_non_mllm_comparator",
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1"
+      ],
+      "metrics": [
+        "candidate_hash_ledger",
+        "validation_macro_f1",
+        "validation_accuracy",
+        "tie_breaks",
+        "zero_final_test_and_adaptive_query_label_access"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m2/comparator_freeze.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_comparator_freeze_v1"
+      ],
+      "slurm": {
+        "cpu": 4,
+        "ram_gb": 32,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 2
+      },
+      "gate": "GO iff eligible candidate set, source ledgers/hashes, train/validation-only selection, tie-breaks, and zero final-test/adaptive access verify",
+      "failure_transition": "STOP M2 if comparator cannot be frozen reproducibly",
+      "parallel_group": "m2_freeze",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M2-MHC-S0-COMP-VALID-v1",
+      "milestone": "M2",
+      "block": "B2",
+      "claim": "C2",
+      "purpose": "frozen comparator first on validation",
+      "dataset": "MHC",
+      "split_scope": "train->validation; test unopened",
+      "system_variant": "FROZEN_COMP_VALID",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_comparator",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1"
+      ],
+      "metrics": [
+        "validation_accuracy",
+        "validation_macro_f1",
+        "ordinary_knn_parity",
+        "validation_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m2/MHC/S0/comp_valid.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_fit_eval_ledger_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 8,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff frozen comparator reproduces and validation inference has no forbidden artifact loads",
+      "failure_transition": "STOP M2 if comparator cannot reproduce",
+      "parallel_group": "m2_dataset_parallel_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M2-MHC-S0-FULL-VALID-v1",
+      "milestone": "M2",
+      "block": "B2",
+      "claim": "C2",
+      "purpose": "FULL validation directional pilot",
+      "dataset": "MHC",
+      "split_scope": "train->validation; test unopened",
+      "system_variant": "FULL_VALID",
+      "baseline_family": [],
+      "arm": "FULL",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-MHC-S0-COMP-VALID-v1"
+      ],
+      "metrics": [
+        "validation_accuracy",
+        "validation_macro_f1",
+        "rank_tail",
+        "fit_residual",
+        "validation_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m2/MHC/S0/full_valid.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_target_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 16,
+        "estimated_gpu_hours": 16,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "GO iff FULL minus frozen comparator is positive for accuracy and macro-F1 and C1 gates pass",
+      "failure_transition": "STOP expansion; no hyperparameter rescue",
+      "parallel_group": "m2_dataset_parallel_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M2-MHC_zh-S0-COMP-VALID-v1",
+      "milestone": "M2",
+      "block": "B2",
+      "claim": "C2",
+      "purpose": "frozen comparator first on validation",
+      "dataset": "MHC_zh",
+      "split_scope": "train->validation; test unopened",
+      "system_variant": "FROZEN_COMP_VALID",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_comparator",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1"
+      ],
+      "metrics": [
+        "validation_accuracy",
+        "validation_macro_f1",
+        "ordinary_knn_parity",
+        "validation_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m2/MHC_zh/S0/comp_valid.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_fit_eval_ledger_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 8,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff frozen comparator reproduces and validation inference has no forbidden artifact loads",
+      "failure_transition": "STOP M2 if comparator cannot reproduce",
+      "parallel_group": "m2_dataset_parallel_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M2-MHC_zh-S0-FULL-VALID-v1",
+      "milestone": "M2",
+      "block": "B2",
+      "claim": "C2",
+      "purpose": "FULL validation directional pilot",
+      "dataset": "MHC_zh",
+      "split_scope": "train->validation; test unopened",
+      "system_variant": "FULL_VALID",
+      "baseline_family": [],
+      "arm": "FULL",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-MHC_zh-S0-COMP-VALID-v1"
+      ],
+      "metrics": [
+        "validation_accuracy",
+        "validation_macro_f1",
+        "rank_tail",
+        "fit_residual",
+        "validation_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m2/MHC_zh/S0/full_valid.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_target_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 16,
+        "estimated_gpu_hours": 16,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "GO iff FULL minus frozen comparator is positive for accuracy and macro-F1 and C1 gates pass",
+      "failure_transition": "STOP expansion; no hyperparameter rescue",
+      "parallel_group": "m2_dataset_parallel_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1",
+      "milestone": "M2",
+      "block": "B2",
+      "claim": "C2",
+      "purpose": "directional expansion decision",
+      "dataset": "both",
+      "split_scope": "validation ledgers only; test unopened",
+      "system_variant": "DIRECTION_DECISION",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": null,
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-MHC-S0-FULL-VALID-v1",
+        "LBSCGP-GLOBAL-M2-MHC_zh-S0-FULL-VALID-v1"
+      ],
+      "metrics": [
+        "paired_validation_deltas",
+        "leakage_audit",
+        "frozen_comparator_hash_match"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m2/direction_decision.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_stats_v1"
+      ],
+      "slurm": {
+        "cpu": 4,
+        "ram_gb": 16,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 4,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 1
+      },
+      "gate": "GO iff both datasets have positive validation accuracy and macro-F1 deltas and freeze ledger is immutable",
+      "failure_transition": "STOP; do not run M3 or M4",
+      "parallel_group": "m2_decision",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC-S0-COMP-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final paired comparator",
+      "dataset": "MHC",
+      "split_scope": "final train/test; evaluator reads test labels only",
+      "system_variant": "FROZEN_COMP_FINAL",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_comparator",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "paired_ledger",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC/S0/comp.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_fit_eval_ledger_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "paired with FULL seed 0; ordinary kNN only",
+      "failure_transition": "blocks paired seed",
+      "parallel_group": "m3_pair_MHC_S0",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC-S0-FULL-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final FULL",
+      "dataset": "MHC",
+      "split_scope": "final train/test; no test cache/compiler/teacher/head/rerank/key/certificate loads",
+      "system_variant": "FULL_FINAL",
+      "baseline_family": [],
+      "arm": "FULL",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-MHC-S0-COMP-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "target_rank_fit_isolation",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC/S0/full.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_target_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "seed delta must be positive; aggregate M5 decides +0.030 and Holm",
+      "failure_transition": "nonpositive seed delta fails final claim",
+      "parallel_group": "m3_pair_MHC_S0",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC-S1-COMP-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final paired comparator",
+      "dataset": "MHC",
+      "split_scope": "final train/test; evaluator reads test labels only",
+      "system_variant": "FROZEN_COMP_FINAL",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_comparator",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "paired_ledger",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC/S1/comp.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_fit_eval_ledger_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "paired with FULL seed 1; ordinary kNN only",
+      "failure_transition": "blocks paired seed",
+      "parallel_group": "m3_pair_MHC_S1",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC-S1-FULL-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final FULL",
+      "dataset": "MHC",
+      "split_scope": "final train/test; no test cache/compiler/teacher/head/rerank/key/certificate loads",
+      "system_variant": "FULL_FINAL",
+      "baseline_family": [],
+      "arm": "FULL",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-MHC-S1-COMP-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "target_rank_fit_isolation",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC/S1/full.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_target_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "seed delta must be positive; aggregate M5 decides +0.030 and Holm",
+      "failure_transition": "nonpositive seed delta fails final claim",
+      "parallel_group": "m3_pair_MHC_S1",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC-S2-COMP-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final paired comparator",
+      "dataset": "MHC",
+      "split_scope": "final train/test; evaluator reads test labels only",
+      "system_variant": "FROZEN_COMP_FINAL",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_comparator",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "paired_ledger",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC/S2/comp.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_fit_eval_ledger_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "paired with FULL seed 2; ordinary kNN only",
+      "failure_transition": "blocks paired seed",
+      "parallel_group": "m3_pair_MHC_S2",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC-S2-FULL-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final FULL",
+      "dataset": "MHC",
+      "split_scope": "final train/test; no test cache/compiler/teacher/head/rerank/key/certificate loads",
+      "system_variant": "FULL_FINAL",
+      "baseline_family": [],
+      "arm": "FULL",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-MHC-S2-COMP-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "target_rank_fit_isolation",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC/S2/full.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_target_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "seed delta must be positive; aggregate M5 decides +0.030 and Holm",
+      "failure_transition": "nonpositive seed delta fails final claim",
+      "parallel_group": "m3_pair_MHC_S2",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC_zh-S0-COMP-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final paired comparator",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test; evaluator reads test labels only",
+      "system_variant": "FROZEN_COMP_FINAL",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_comparator",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "paired_ledger",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC_zh/S0/comp.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_fit_eval_ledger_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "paired with FULL seed 0; ordinary kNN only",
+      "failure_transition": "blocks paired seed",
+      "parallel_group": "m3_pair_MHC_zh_S0",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC_zh-S0-FULL-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final FULL",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test; no test cache/compiler/teacher/head/rerank/key/certificate loads",
+      "system_variant": "FULL_FINAL",
+      "baseline_family": [],
+      "arm": "FULL",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-MHC_zh-S0-COMP-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "target_rank_fit_isolation",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC_zh/S0/full.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_target_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "seed delta must be positive; aggregate M5 decides +0.030 and Holm",
+      "failure_transition": "nonpositive seed delta fails final claim",
+      "parallel_group": "m3_pair_MHC_zh_S0",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC_zh-S1-COMP-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final paired comparator",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test; evaluator reads test labels only",
+      "system_variant": "FROZEN_COMP_FINAL",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_comparator",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "paired_ledger",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC_zh/S1/comp.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_fit_eval_ledger_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "paired with FULL seed 1; ordinary kNN only",
+      "failure_transition": "blocks paired seed",
+      "parallel_group": "m3_pair_MHC_zh_S1",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC_zh-S1-FULL-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final FULL",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test; no test cache/compiler/teacher/head/rerank/key/certificate loads",
+      "system_variant": "FULL_FINAL",
+      "baseline_family": [],
+      "arm": "FULL",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-MHC_zh-S1-COMP-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "target_rank_fit_isolation",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC_zh/S1/full.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_target_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "seed delta must be positive; aggregate M5 decides +0.030 and Holm",
+      "failure_transition": "nonpositive seed delta fails final claim",
+      "parallel_group": "m3_pair_MHC_zh_S1",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC_zh-S2-COMP-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final paired comparator",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test; evaluator reads test labels only",
+      "system_variant": "FROZEN_COMP_FINAL",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "frozen_comparator",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "paired_ledger",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC_zh/S2/comp.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_fit_eval_ledger_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "paired with FULL seed 2; ordinary kNN only",
+      "failure_transition": "blocks paired seed",
+      "parallel_group": "m3_pair_MHC_zh_S2",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-MHC_zh-S2-FULL-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "final FULL",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test; no test cache/compiler/teacher/head/rerank/key/certificate loads",
+      "system_variant": "FULL_FINAL",
+      "baseline_family": [],
+      "arm": "FULL",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-MHC_zh-S2-COMP-v1"
+      ],
+      "metrics": [
+        "test_accuracy",
+        "test_macro_f1",
+        "target_rank_fit_isolation",
+        "test_inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/MHC_zh/S2/full.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_target_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 18,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 20
+      },
+      "gate": "seed delta must be positive; aggregate M5 decides +0.030 and Holm",
+      "failure_transition": "nonpositive seed delta fails final claim",
+      "parallel_group": "m3_pair_MHC_zh_S2",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1",
+      "milestone": "M3",
+      "block": "B3",
+      "claim": "C2",
+      "purpose": "paired-main completion decision before M4",
+      "dataset": "both",
+      "split_scope": "all M3 final ledgers; test labels evaluator-only",
+      "system_variant": "M3_COMPLETION_DECISION",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-MHC-S0-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC-S1-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC-S2-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S0-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S1-FULL-v1",
+        "LBSCGP-GLOBAL-M3-MHC_zh-S2-FULL-v1"
+      ],
+      "metrics": [
+        "ledger_completeness",
+        "paired_seed_identity",
+        "isolation_zero_counters",
+        "evaluator_provenance_hashes"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m3/paired_main_decision.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_stats_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 32,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 16,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 2
+      },
+      "gate": "GO iff all 12 M3 ledgers are complete, paired, frozen, and isolated; no tuning or selection",
+      "failure_transition": "STOP before M4 controls",
+      "parallel_group": "m3_decision",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S0-REMOVE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "removability control",
+      "dataset": "MHC",
+      "split_scope": "final train/test paired to seed 0",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "REMOVE",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "ordinary_knn_only",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S0/REMOVE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 6,
+        "estimated_gpu_hours": 8,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff REMOVE replays same protocol and inference artifacts remain absent",
+      "failure_transition": "REMOVE drift blocks attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S0-SHUFFLE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "identity/corruption shuffle control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 0; construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "SHUFFLE",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "matched_bins",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S0/SHUFFLE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff shuffle matching uses no final-test labels/predictions/margins/errors",
+      "failure_transition": "leakage fails attribution; matching failure invalidates SHUFFLE control",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S0-NOISE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "covariance-matched noise control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 0; train certificate covariance only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "NOISE",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "covariance_match",
+        "noise_degradation"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S0/NOISE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff covariance-matched noise is train-only and degrades or erases gain",
+      "failure_transition": "NOISE not degrading weakens corruption claim",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S0-DIRECT-MOMENT-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct structural-moment replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 0",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-MOMENT",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_moment_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S0/DIRECT-MOMENT.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct moment route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-MOMENT match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S0-DIRECT-CERT-FEATURE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct certificate-feature replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 0",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-CERT-FEATURE",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_cert_feature_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S0/DIRECT-CERT-FEATURE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct certificate-feature route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-CERT-FEATURE match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S0-SCALAR-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "scalar difficulty/error propensity replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 0; scalar construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "SCALAR-PROPENSITY",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "scalar_propensity_ledger",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S0/SCALAR.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 10,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff scalar propensity uses no final-test construction data; FULL must beat it",
+      "failure_transition": "SCALAR match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S1-REMOVE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "removability control",
+      "dataset": "MHC",
+      "split_scope": "final train/test paired to seed 1",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "REMOVE",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "ordinary_knn_only",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S1/REMOVE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 6,
+        "estimated_gpu_hours": 8,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff REMOVE replays same protocol and inference artifacts remain absent",
+      "failure_transition": "REMOVE drift blocks attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S1-SHUFFLE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "identity/corruption shuffle control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 1; construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "SHUFFLE",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "matched_bins",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S1/SHUFFLE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff shuffle matching uses no final-test labels/predictions/margins/errors",
+      "failure_transition": "leakage fails attribution; matching failure invalidates SHUFFLE control",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S1-NOISE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "covariance-matched noise control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 1; train certificate covariance only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "NOISE",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "covariance_match",
+        "noise_degradation"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S1/NOISE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff covariance-matched noise is train-only and degrades or erases gain",
+      "failure_transition": "NOISE not degrading weakens corruption claim",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S1-DIRECT-MOMENT-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct structural-moment replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 1",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-MOMENT",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_moment_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S1/DIRECT-MOMENT.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct moment route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-MOMENT match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S1-DIRECT-CERT-FEATURE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct certificate-feature replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 1",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-CERT-FEATURE",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_cert_feature_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S1/DIRECT-CERT-FEATURE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct certificate-feature route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-CERT-FEATURE match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S1-SCALAR-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "scalar difficulty/error propensity replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 1; scalar construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "SCALAR-PROPENSITY",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "scalar_propensity_ledger",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S1/SCALAR.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 10,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff scalar propensity uses no final-test construction data; FULL must beat it",
+      "failure_transition": "SCALAR match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S2-REMOVE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "removability control",
+      "dataset": "MHC",
+      "split_scope": "final train/test paired to seed 2",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "REMOVE",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "ordinary_knn_only",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S2/REMOVE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 6,
+        "estimated_gpu_hours": 8,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff REMOVE replays same protocol and inference artifacts remain absent",
+      "failure_transition": "REMOVE drift blocks attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S2-SHUFFLE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "identity/corruption shuffle control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 2; construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "SHUFFLE",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "matched_bins",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S2/SHUFFLE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff shuffle matching uses no final-test labels/predictions/margins/errors",
+      "failure_transition": "leakage fails attribution; matching failure invalidates SHUFFLE control",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S2-NOISE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "covariance-matched noise control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 2; train certificate covariance only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "NOISE",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "covariance_match",
+        "noise_degradation"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S2/NOISE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff covariance-matched noise is train-only and degrades or erases gain",
+      "failure_transition": "NOISE not degrading weakens corruption claim",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S2-DIRECT-MOMENT-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct structural-moment replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 2",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-MOMENT",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_moment_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S2/DIRECT-MOMENT.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct moment route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-MOMENT match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S2-DIRECT-CERT-FEATURE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct certificate-feature replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 2",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-CERT-FEATURE",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_cert_feature_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S2/DIRECT-CERT-FEATURE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct certificate-feature route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-CERT-FEATURE match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC-S2-SCALAR-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "scalar difficulty/error propensity replaceability control",
+      "dataset": "MHC",
+      "split_scope": "final protocol paired to seed 2; scalar construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "SCALAR-PROPENSITY",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "scalar_propensity_ledger",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC/S2/SCALAR.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 10,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff scalar propensity uses no final-test construction data; FULL must beat it",
+      "failure_transition": "SCALAR match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S0-REMOVE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "removability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test paired to seed 0",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "REMOVE",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "ordinary_knn_only",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S0/REMOVE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 6,
+        "estimated_gpu_hours": 8,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff REMOVE replays same protocol and inference artifacts remain absent",
+      "failure_transition": "REMOVE drift blocks attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S0-SHUFFLE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "identity/corruption shuffle control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 0; construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "SHUFFLE",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "matched_bins",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S0/SHUFFLE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff shuffle matching uses no final-test labels/predictions/margins/errors",
+      "failure_transition": "leakage fails attribution; matching failure invalidates SHUFFLE control",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S0-NOISE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "covariance-matched noise control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 0; train certificate covariance only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "NOISE",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "covariance_match",
+        "noise_degradation"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S0/NOISE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff covariance-matched noise is train-only and degrades or erases gain",
+      "failure_transition": "NOISE not degrading weakens corruption claim",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S0-DIRECT-MOMENT-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct structural-moment replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 0",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-MOMENT",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_moment_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S0/DIRECT-MOMENT.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct moment route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-MOMENT match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S0-DIRECT-CERT-FEATURE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct certificate-feature replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 0",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-CERT-FEATURE",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_cert_feature_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S0/DIRECT-CERT-FEATURE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct certificate-feature route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-CERT-FEATURE match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S0-SCALAR-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "scalar difficulty/error propensity replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 0; scalar construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "SCALAR-PROPENSITY",
+      "seed": 0,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "scalar_propensity_ledger",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S0/SCALAR.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 10,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff scalar propensity uses no final-test construction data; FULL must beat it",
+      "failure_transition": "SCALAR match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S1-REMOVE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "removability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test paired to seed 1",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "REMOVE",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "ordinary_knn_only",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S1/REMOVE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 6,
+        "estimated_gpu_hours": 8,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff REMOVE replays same protocol and inference artifacts remain absent",
+      "failure_transition": "REMOVE drift blocks attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S1-SHUFFLE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "identity/corruption shuffle control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 1; construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "SHUFFLE",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "matched_bins",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S1/SHUFFLE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff shuffle matching uses no final-test labels/predictions/margins/errors",
+      "failure_transition": "leakage fails attribution; matching failure invalidates SHUFFLE control",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S1-NOISE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "covariance-matched noise control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 1; train certificate covariance only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "NOISE",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "covariance_match",
+        "noise_degradation"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S1/NOISE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff covariance-matched noise is train-only and degrades or erases gain",
+      "failure_transition": "NOISE not degrading weakens corruption claim",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S1-DIRECT-MOMENT-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct structural-moment replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 1",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-MOMENT",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_moment_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S1/DIRECT-MOMENT.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct moment route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-MOMENT match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S1-DIRECT-CERT-FEATURE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct certificate-feature replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 1",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-CERT-FEATURE",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_cert_feature_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S1/DIRECT-CERT-FEATURE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct certificate-feature route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-CERT-FEATURE match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S1-SCALAR-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "scalar difficulty/error propensity replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 1; scalar construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "SCALAR-PROPENSITY",
+      "seed": 1,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "scalar_propensity_ledger",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S1/SCALAR.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 10,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff scalar propensity uses no final-test construction data; FULL must beat it",
+      "failure_transition": "SCALAR match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S2-REMOVE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "removability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final train/test paired to seed 2",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F1"
+      ],
+      "arm": "REMOVE",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "ordinary_knn_only",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S2/REMOVE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 6,
+        "estimated_gpu_hours": 8,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 10
+      },
+      "gate": "GO iff REMOVE replays same protocol and inference artifacts remain absent",
+      "failure_transition": "REMOVE drift blocks attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S2-SHUFFLE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "identity/corruption shuffle control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 2; construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "SHUFFLE",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "matched_bins",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S2/SHUFFLE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff shuffle matching uses no final-test labels/predictions/margins/errors",
+      "failure_transition": "leakage fails attribution; matching failure invalidates SHUFFLE control",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S2-NOISE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "covariance-matched noise control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 2; train certificate covariance only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F2"
+      ],
+      "arm": "NOISE",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "covariance_match",
+        "noise_degradation"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S2/NOISE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 12,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff covariance-matched noise is train-only and degrades or erases gain",
+      "failure_transition": "NOISE not degrading weakens corruption claim",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S2-DIRECT-MOMENT-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct structural-moment replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 2",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-MOMENT",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_moment_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S2/DIRECT-MOMENT.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct moment route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-MOMENT match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S2-DIRECT-CERT-FEATURE-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "direct certificate-feature replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 2",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "DIRECT-CERT-FEATURE",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "direct_cert_feature_ledger",
+        "inference_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S2/DIRECT-CERT-FEATURE.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 10,
+        "estimated_gpu_hours": 14,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 14
+      },
+      "gate": "GO iff direct certificate-feature route is distinct and same-protocol; FULL must beat it",
+      "failure_transition": "DIRECT-CERT-FEATURE match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-MHC_zh-S2-SCALAR-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "scalar difficulty/error propensity replaceability control",
+      "dataset": "MHC_zh",
+      "split_scope": "final protocol paired to seed 2; scalar construction train/OOF or validation-frozen only",
+      "system_variant": "CONTROL_ARM",
+      "baseline_family": [
+        "F3"
+      ],
+      "arm": "SCALAR-PROPENSITY",
+      "seed": 2,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1"
+      ],
+      "metrics": [
+        "control_accuracy",
+        "control_macro_f1",
+        "scalar_propensity_ledger",
+        "final_test_construction_zero_counters"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/MHC_zh/S2/SCALAR.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_control_arm_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 64,
+        "gpu": 1,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 8,
+        "estimated_gpu_hours": 10,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 12
+      },
+      "gate": "GO iff scalar propensity uses no final-test construction data; FULL must beat it",
+      "failure_transition": "SCALAR match kills mechanism attribution",
+      "parallel_group": "m4_controls_max2gpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M4-CONTROLS-DECISION-v1",
+      "milestone": "M4",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "control attribution decision",
+      "dataset": "both",
+      "split_scope": "all 36 M4 control-arm ledgers and M3 FULL ledgers",
+      "system_variant": "CONTROL_DECISION",
+      "baseline_family": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M4-MHC-S0-REMOVE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S0-SHUFFLE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S0-NOISE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S0-DIRECT-MOMENT-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S0-DIRECT-CERT-FEATURE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S0-SCALAR-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-REMOVE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-SHUFFLE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-NOISE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-DIRECT-MOMENT-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-DIRECT-CERT-FEATURE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S1-SCALAR-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-REMOVE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-SHUFFLE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-NOISE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-DIRECT-MOMENT-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-DIRECT-CERT-FEATURE-v1",
+        "LBSCGP-GLOBAL-M4-MHC-S2-SCALAR-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-REMOVE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-SHUFFLE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-NOISE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-DIRECT-MOMENT-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-DIRECT-CERT-FEATURE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S0-SCALAR-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-REMOVE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-SHUFFLE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-NOISE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-DIRECT-MOMENT-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-DIRECT-CERT-FEATURE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S1-SCALAR-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-REMOVE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-SHUFFLE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-NOISE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-DIRECT-MOMENT-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-DIRECT-CERT-FEATURE-v1",
+        "LBSCGP-GLOBAL-M4-MHC_zh-S2-SCALAR-v1"
+      ],
+      "metrics": [
+        "control_deltas",
+        "noise_degradation",
+        "direct_moment_match_flag",
+        "direct_cert_feature_match_flag",
+        "scalar_match_flag"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m4/control_decision.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_stats_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 32,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 12,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 2
+      },
+      "gate": "GO iff FULL beats REMOVE/SHUFFLE/DIRECT-MOMENT/DIRECT-CERT-FEATURE/SCALAR and NOISE erases or degrades gain",
+      "failure_transition": "mechanism unsupported if any direct/scalar control matches FULL",
+      "parallel_group": "m4_decision",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M5-FINAL-STATS-v1",
+      "milestone": "M5",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "final corrected inference",
+      "dataset": "both",
+      "split_scope": "M3 and M4 final ledgers",
+      "system_variant": "FINAL_STATS",
+      "baseline_family": [
+        "F1",
+        "F2",
+        "F3"
+      ],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M4-CONTROLS-DECISION-v1"
+      ],
+      "metrics": [
+        "hierarchical_paired_bootstrap",
+        "Holm",
+        "seed_signs",
+        "plus_0_030_gates"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m5/final_stats.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_stats_v1"
+      ],
+      "slurm": {
+        "cpu": 16,
+        "ram_gb": 64,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 32,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 5
+      },
+      "gate": "GO iff observed delta >= +0.030, every paired seed delta positive, bootstrap lower > 0, and Holm rejection pass for all four dataset-metric tests",
+      "failure_transition": "no final success claim",
+      "parallel_group": "m5_cpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M5-TABLES-FIGURES-v1",
+      "milestone": "M5",
+      "block": "B4",
+      "claim": "C2",
+      "purpose": "paper tables and figures",
+      "dataset": "both",
+      "split_scope": "stats artifacts only",
+      "system_variant": "TABLES_FIGURES",
+      "baseline_family": [],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M5-FINAL-STATS-v1"
+      ],
+      "metrics": [
+        "table_completeness",
+        "figure_manifest_hashes"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m5/tables_figures/manifest.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_table_figure_manifest_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 32,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 16,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 5
+      },
+      "gate": "GO iff Main Table 1, Table 2, G0 table, Figure 1, and Figure 2 reproduce from hashes",
+      "failure_transition": "fix reporting only; cannot alter results",
+      "parallel_group": "m5_cpu",
+      "priority": "MUST",
+      "status": "TODO"
+    },
+    {
+      "run_id": "LBSCGP-GLOBAL-M5-MECHANISM-FAILURE-APPENDIX-v1",
+      "milestone": "M5",
+      "block": "B4",
+      "claim": "diagnostic_only",
+      "purpose": "non-blocking mechanism and failure appendix",
+      "dataset": "both",
+      "split_scope": "diagnostics only; no selection",
+      "system_variant": "APPENDIX_DIAGNOSTIC",
+      "baseline_family": [],
+      "arm": null,
+      "seed": null,
+      "dependencies": [
+        "LBSCGP-GLOBAL-M5-FINAL-STATS-v1"
+      ],
+      "metrics": [
+        "failure_slices",
+        "certificate_field_predictivity_diagnostic"
+      ],
+      "artifact_paths": [
+        "artifacts/lb_scgp_global/v1/m5/appendix/mechanism_failure.json"
+      ],
+      "artifact_schema_ids": [
+        "scgp_global_stats_v1"
+      ],
+      "slurm": {
+        "cpu": 8,
+        "ram_gb": 32,
+        "gpu": 0,
+        "env": "HateVideo",
+        "no_time_flag": true
+      },
+      "budget": {
+        "estimated_cpu_hours": 16,
+        "estimated_gpu_hours": 0,
+        "estimated_api_calls": 0,
+        "api_retry_cap": 0,
+        "estimated_storage_gb": 5
+      },
+      "gate": "NICE only; cannot delay or rescue decisions",
+      "failure_transition": "omit appendix",
+      "parallel_group": "m5_cpu_nice",
+      "priority": "NICE",
+      "status": "TODO"
+    }
+  ],
+  "dependency_dag": {
+    "encoded_in_run_dependencies": true,
+    "pre_post_run_order_diff": {
+      "inserted_after": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "inserted_run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "run3_old_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "run3_new_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "downstream_run_ids_unchanged": true,
+      "downstream_order_unchanged": true
+    },
+    "locks": {
+      "run3_and_later_locked_until_v2_pass": true,
+      "mllm_cache_locked_until_v2_pass_and_fresh_independent_artifact_review": true,
+      "v1_failure_evidence_must_remain_addressable": true
+    },
+    "terminal_decision_chain": [
+      "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
+      "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
+      "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
+      "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1",
+      "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1",
+      "LBSCGP-GLOBAL-M4-CONTROLS-DECISION-v1",
+      "LBSCGP-GLOBAL-M5-FINAL-STATS-v1"
+    ]
+  },
+  "gates_and_terminal_statuses": {
+    "success_status": "FINAL_SUCCESS_ONLY_AFTER_M5_GO",
+    "v2_authorization_boundary": {
+      "amendment_authorizes_execution": false,
+      "amendment_review_passed_zero_critical_zero_high": true,
+      "amendment_can_authorize_only_implementation_audit_after_independent_amendment_review": true,
+      "implementation_fix_freeze_complete": true,
+      "execution_requires_completed_v2_implementation": true,
+      "execution_requires_static_contract_matrix_negative_tests": true,
+      "execution_requires_fresh_independent_code_review_zero_critical_zero_high": true,
+      "execution_requires_exact_hashes_no_clobber_check": true,
+      "execution_requires_separate_execution_authorization": true,
+      "run3_plus_locked": true
+    },
+    "terminal_stops": [
+      "CONTRACT_FAIL",
+      "KKT_CERTIFICATE_FAIL",
+      "RESOURCE_CAP_FAIL",
+      "CACHE_SEAL_FAIL",
+      "COMPARATOR_FREEZE_FAIL",
+      "ENCODER_RANK_GATE_FAIL",
+      "DIRECTIONAL_VALIDATION_FAIL",
+      "PAIRED_MAIN_INCOMPLETE",
+      "FINAL_METRIC_FAIL",
+      "ATTRIBUTION_UNSUPPORTED",
+      "LEAKAGE_OR_FORBIDDEN_ROUTE_FAIL"
+    ],
+    "robust_coverage_low_status": "SAFETY_CLAIM_DISABLED_ONLY"
+  },
+  "budget_ranges": {
+    "conventions": {
+      "lineage_run_records_include_historical_v1_and_prospective_v2": true,
+      "v1_slurm_attempts_are_actual_diagnostics_not_additional_planned_scientific_runs": true,
+      "paper_plan_substitution_view_replaces_exhausted_v1_with_v2": true,
+      "execution_authorized_remaining_budget_now": {
+        "cpu_hours": 0,
+        "gpu_hours": 0,
+        "api_calls": 0,
+        "storage_gb": 0
+      }
+    },
+    "original_approved_r2_envelope_before_v2": {
+      "must_run_count": 64,
+      "nice_to_have_count": 1,
+      "total_run_count": 65,
+      "must_cpu_hours": 704,
+      "must_gpu_hours": 684,
+      "must_api_base": 4512,
+      "must_api_retry_cap": 9024,
+      "must_storage_gb": 786,
+      "total_cpu_hours": 720,
+      "total_gpu_hours": 684,
+      "total_api_base": 4512,
+      "total_api_retry_cap": 9024,
+      "total_storage_gb": 791
+    },
+    "paper_plan_substitution_envelope": {
+      "must_run_count": 64,
+      "nice_to_have_count": 1,
+      "total_run_count": 65,
+      "must_cpu_hours": 704,
+      "must_gpu_hours": 684,
+      "must_api_base": 4512,
+      "must_api_retry_cap": 9024,
+      "must_storage_gb": 786,
+      "total_cpu_hours": 720,
+      "total_gpu_hours": 684,
+      "total_api_base": 4512,
+      "total_api_retry_cap": 9024,
+      "total_storage_gb": 791
+    },
+    "status_aware_counts": {
+      "must_frozen": 1,
+      "must_fail_stop_zero_remaining": 1,
+      "must_fix2_complete_fresh_review_locked_v2": 1,
+      "must_downstream_locked_until_v2_pass": 62,
+      "must_downstream_explicit_locked_until_v2_pass": 1,
+      "must_downstream_dependency_gated_todo": 61,
+      "nice_dependency_gated_todo": 1,
+      "must_run_records": 65,
+      "nice_to_have_records": 1,
+      "total_lineage_records": 66
+    },
+    "remaining_prospective_budget": {
+      "must_cpu_hours": 700,
+      "must_gpu_hours": 684,
+      "must_api_base": 4512,
+      "must_api_retry_cap": 9024,
+      "must_storage_gb": 785,
+      "total_cpu_hours": 716,
+      "total_gpu_hours": 684,
+      "total_api_base": 4512,
+      "total_api_retry_cap": 9024,
+      "total_storage_gb": 790
+    },
+    "actual_diagnostic_spend_v1": {
+      "slurm_jobs": 2,
+      "wall_seconds_total": 5,
+      "allocated_cpu_seconds": 40,
+      "cpu_hours": 0.0111111111,
+      "gpu_hours": 0,
+      "api_calls": 0,
+      "scientific_artifact_storage_gb": 0
+    },
+    "lifetime_lineage_envelope": {
+      "must_run_count": 65,
+      "nice_to_have_count": 1,
+      "total_run_count": 66,
+      "must_cpu_hours": 736,
+      "must_gpu_hours": 684,
+      "must_api_base": 4512,
+      "must_api_retry_cap": 9024,
+      "must_storage_gb": 791,
+      "total_cpu_hours": 752,
+      "total_gpu_hours": 684,
+      "total_api_base": 4512,
+      "total_api_retry_cap": 9024,
+      "total_storage_gb": 796
+    },
+    "matrix_estimated_must_run": {
+      "run_count": 65,
+      "cpu_hours": 736,
+      "gpu_hours": 684,
+      "api_calls_base": 4512,
+      "api_calls_retry_cap": 9024,
+      "storage_gb_cumulative": 791,
+      "human_hours_schema_qc": "8-12"
+    },
+    "matrix_estimated_total_with_nice": {
+      "run_count": 66,
+      "cpu_hours": 752,
+      "gpu_hours": 684,
+      "api_calls_base": 4512,
+      "api_calls_retry_cap": 9024,
+      "storage_gb_cumulative": 796,
+      "human_hours_schema_qc": "8-12"
+    },
+    "by_milestone_must": {
+      "M0": {
+        "cpu_hours": 132,
+        "gpu_hours": 0,
+        "api_calls_base": 0,
+        "api_calls_retry_cap": 0,
+        "storage_gb": 21
+      },
+      "M1": {
+        "cpu_hours": 24,
+        "gpu_hours": 0,
+        "api_calls_base": 4512,
+        "api_calls_retry_cap": 9024,
+        "storage_gb": 9
+      },
+      "M2": {
+        "cpu_hours": 60,
+        "gpu_hours": 48,
+        "api_calls_base": 0,
+        "api_calls_retry_cap": 0,
+        "storage_gb": 63
+      },
+      "M3": {
+        "cpu_hours": 160,
+        "gpu_hours": 216,
+        "api_calls_base": 0,
+        "api_calls_retry_cap": 0,
+        "storage_gb": 242
+      },
+      "M4": {
+        "cpu_hours": 312,
+        "gpu_hours": 420,
+        "api_calls_base": 0,
+        "api_calls_retry_cap": 0,
+        "storage_gb": 446
+      },
+      "M5_must": {
+        "cpu_hours": 48,
+        "gpu_hours": 0,
+        "api_calls_base": 0,
+        "api_calls_retry_cap": 0,
+        "storage_gb": 10
+      },
+      "M5_nice": {
+        "cpu_hours": 16,
+        "gpu_hours": 0,
+        "api_calls_base": 0,
+        "api_calls_retry_cap": 0,
+        "storage_gb": 5
+      }
+    },
+    "measured": {
+      "scope": "Run2-v1 diagnostic failures only; no scientific artifact published",
+      "cpu_hours": 0.0111111111,
+      "gpu_hours": 0,
+      "api_calls": 0,
+      "storage_gb": 0
+    },
+    "provider_prices": "not estimated"
+  },
+  "concurrency": {
+    "max_cpu": 16,
+    "max_ram_gb": 128,
+    "max_gpu": 2,
+    "policy": "at most two concurrent one-GPU jobs or CPU jobs whose total CPU/RAM remain under cap; G0 and decision chain jobs are serial at their gates",
+    "parallel_groups": {
+      "g0_serial": {
+        "max_concurrent": 1
+      },
+      "m1_cache_parallel_max2": {
+        "max_concurrent": 2,
+        "max_cpu_total": 8,
+        "max_ram_total_gb": 64
+      },
+      "m2_dataset_parallel_max2gpu": {
+        "max_concurrent": 2,
+        "max_gpu_total": 2
+      },
+      "m3_pair_*": {
+        "max_concurrent_global": 2,
+        "max_gpu_total": 2
+      },
+      "m4_controls_max2gpu": {
+        "max_concurrent_global": 2,
+        "max_gpu_total": 2
+      },
+      "m5_cpu": {
+        "max_concurrent": 2
+      }
+    }
+  },
+  "zero_access_counters": {
+    "segment_gold_read_count": 0,
+    "frame_gold_read_count": 0,
+    "timestamp_gold_read_count": 0,
+    "span_gold_read_count": 0,
+    "localization_gold_read_count": 0,
+    "stance_gold_read_count": 0,
+    "target_gold_read_count": 0,
+    "mechanism_gold_read_count": 0,
+    "rationale_gold_read_count": 0,
+    "query_label_read_count": 0,
+    "query_embedding_read_count": 0,
+    "ocr_calls": 0,
+    "mllm_calls": 0,
+    "network_model_api_calls": 0,
+    "v1_synth_kkt_artifact_overwrite_count": 0,
+    "v1_synth_kkt_artifact_delete_count": 0,
+    "v1_synth_kkt_artifact_reuse_as_v2_count": 0,
+    "cache_outer_held_label_read_count": 0,
+    "cache_outer_held_content_read_count": 0,
+    "cache_validation_label_read_count": 0,
+    "cache_validation_content_read_count": 0,
+    "cache_test_label_read_count": 0,
+    "cache_test_content_read_count": 0,
+    "teacher_cache_read_count": 0,
+    "teacher_cache_write_count": 0,
+    "mllm_calls_outside_train_cache": 0,
+    "validation_cache_read_count": 0,
+    "validation_certificate_read_count": 0,
+    "validation_compiler_target_read_count": 0,
+    "validation_auxiliary_head_load_count": 0,
+    "validation_reranker_load_count": 0,
+    "validation_key_selector_load_count": 0,
+    "validation_teacher_artifact_read_count": 0,
+    "test_cache_read_count": 0,
+    "test_certificate_read_count": 0,
+    "test_compiler_target_read_count": 0,
+    "test_auxiliary_head_load_count": 0,
+    "test_reranker_load_count": 0,
+    "test_key_selector_load_count": 0,
+    "test_teacher_artifact_read_count": 0,
+    "control_construction_final_test_label_read_count": 0,
+    "control_construction_final_test_prediction_read_count": 0,
+    "control_construction_final_test_margin_read_count": 0,
+    "control_construction_final_test_error_read_count": 0,
+    "comparator_freeze_final_test_label_read_count": 0,
+    "comparator_freeze_final_test_prediction_read_count": 0,
+    "comparator_freeze_final_test_margin_read_count": 0,
+    "comparator_freeze_adaptive_query_label_read_count": 0
+  },
+  "artifact_schemas": {
+    "scgp_global_contract_freeze_v1": [
+      "run_id",
+      "source_hashes",
+      "contract",
+      "forbidden_routes",
+      "slurm_policy",
+      "zero_counters"
+    ],
+    "scgp_global_synth_kkt_payload_v1": [
+      "primal",
+      "metric",
+      "affine_normals",
+      "box_coordinate_normals",
+      "soc_normals",
+      "psd_normal",
+      "halfspace_normals",
+      "stationarity",
+      "dual_feasibility",
+      "complementarity",
+      "duality_gap",
+      "hashes"
+    ],
+    "scgp_global_realbank_resource_v1": [
+      "resource_peak",
+      "rank_tail",
+      "replay_hashes",
+      "robust_coverage",
+      "isolation_injection_results"
+    ],
+    "scgp_global_cache_replica_v2": [
+      "video_id",
+      "evidence_pack_sha256",
+      "replica_index",
+      "schema_version",
+      "observables",
+      "parse_flags"
+    ],
+    "scgp_global_cache_seal_v1": [
+      "dataset",
+      "train_id_allowlist_sha256",
+      "cache_merkle_root",
+      "prompt_hash",
+      "input_builder_hash",
+      "model_processor_hash",
+      "call_count",
+      "zero_counters"
+    ],
+    "scgp_global_comparator_freeze_v1": [
+      "candidate_ledger",
+      "eligible_candidates",
+      "rejected_candidates",
+      "selection_data_scope",
+      "selection_metric",
+      "tie_breaks",
+      "selected_by_dataset",
+      "source_hashes",
+      "zero_final_test_and_adaptive_access_counters"
+    ],
+    "scgp_global_target_manifest_v1": [
+      "G0_hash",
+      "operator_hash",
+      "KKT_certificate_hash",
+      "rank_tail",
+      "Zstar_hash",
+      "fit_ledger_hash",
+      "validation_or_test_inference_isolation_counters"
+    ],
+    "scgp_global_fit_eval_ledger_v1": [
+      "dataset",
+      "seed",
+      "system",
+      "split",
+      "topk",
+      "predictions_hash",
+      "accuracy",
+      "macro_f1",
+      "ordinary_knn_only",
+      "validation_or_test_inference_isolation_counters"
+    ],
+    "scgp_global_control_arm_v1": [
+      "dataset",
+      "seed",
+      "arm",
+      "construction_scope",
+      "construction_manifest_hash",
+      "control_ledger_hash",
+      "accuracy",
+      "macro_f1",
+      "final_test_construction_zero_counters",
+      "inference_isolation_counters"
+    ],
+    "scgp_global_stats_v1": [
+      "paired_deltas",
+      "hierarchical_bootstrap",
+      "macro_f1_recompute_rule",
+      "p_values",
+      "Holm_order",
+      "seed_signs",
+      "control_decisions"
+    ],
+    "scgp_global_table_figure_manifest_v1": [
+      "tables",
+      "figures",
+      "source_hashes"
+    ],
+    "scgp_global_synth_kkt_payload_v2": [
+      "primal",
+      "metric",
+      "affine_normals",
+      "box_coordinate_normals",
+      "soc_normals",
+      "psd_normal",
+      "halfspace_normals",
+      "stationarity",
+      "dual_feasibility",
+      "complementarity",
+      "duality_gap",
+      "hashes"
+    ]
+  },
+  "tables_figures": {
+    "main_table_1": "paired final frozen comparator/FULL by dataset/seed with deltas/bootstrap lower/p-values/Holm inference",
+    "table_2": "decisive controls: REMOVE, SHUFFLE, NOISE, DIRECT-MOMENT, DIRECT-CERT-FEATURE, SCALAR-PROPENSITY",
+    "g0_table": "certificate/replay/rank/resource table",
+    "figure_1": "method and run order",
+    "figure_2": "paired deltas/bootstrap",
+    "optional_appendix": "mechanism/failure diagnostics only if non-blocking"
+  },
+  "readiness": {
+    "ready_for_independent_review": true,
+    "ready_for_execution": false,
+    "ready_for_v2_implementation_audit": false,
+    "ready_for_fresh_independent_v2_code_review": true,
+    "requires_independent_amendment_review_before_v2_implementation_audit": false,
+    "requires_preimplementation_review": false,
+    "requires_fresh_independent_v2_code_review_zero_critical_zero_high": true,
+    "requires_exact_hashes_no_clobber_review": true,
+    "requires_separate_execution_authorization": true,
+    "success_claim_allowed": false,
+      "formal_review_items_addressed": [
+        "H1",
+        "H2",
+        "H3",
+        "H4",
+        "H5",
+        "H6",
+        "M1",
+        "M2",
+        "L1",
+        "L2"
+      ],
+    "first_three_g0_runs": [
+      "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2"
+    ],
+    "status": "Run2-v2 fix2 implementation/freeze is complete and ready for fresh independent 0C/0H implementation/code review only. It does not authorize execution; no PASS claim and no SLURM submission are authorized.",
+    "g0_runs_through_v2_supplement": [
+      "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+    ]
+  },
+  "supplement_amendment": {
+    "id": "M0_RUN2_V2_PLAN_AMENDMENT",
+    "lineage": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "status": "FIX2_COMPLETE_FRESH_REVIEW_LOCKED",
+    "author_thread": "fresh exact GPT-5.5 xhigh prospective plan-amendment author; no subagent/workflow/model delegation",
+    "amendment_artifacts": [
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.md",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.machine.json",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT_HASHES.sha256"
+    ],
+    "fix_freeze_artifact": "refine-logs/lb_scgp_global/M0_RUN2_V2_IMPLEMENTATION_FIX_FREEZE.md",
+    "fix2_freeze_artifact": "refine-logs/lb_scgp_global/M0_RUN2_V2_IMPLEMENTATION_FIX2_FREEZE.md",
+    "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json",
+    "artifact_path": "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json",
+    "artifact_namespace": "artifacts/lb_scgp_global/v2/m0/synth_kkt/",
+    "no_science_contract_change": true,
+    "only_allowed_repair": "implementation_config_schema_wrapper_verifier_contract_alignment_without_threshold_fixture_rank_gate_or_scope_change",
+    "no_local_python_validation": true,
+    "no_slurm_submission_in_this_task": true,
+    "fix_freeze_files_are_execution_permission": false,
+    "authorization": {
+      "amendment_authorizes_execution": false,
+      "can_authorize_after_independent_review": "v2_implementation_audit_only",
+      "execution_requires_completed_v2_implementation": true,
+      "execution_requires_static_contract_matrix_negative_tests": true,
+      "execution_requires_fresh_independent_code_review_zero_critical_zero_high": true,
+      "execution_requires_exact_hashes_no_clobber": true,
+      "execution_requires_separate_authorization": true
+    },
+    "run3_realbank_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "run3_plus_locked_until_v2_pass_and_fresh_artifact_review": true
+  }
+}

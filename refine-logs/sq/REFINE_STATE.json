@@ -1,0 +1,20 @@
+{
+  "phase": "done",
+  "round": 4,
+  "agent_id": "/root/sq_reviewer_replacement",
+  "last_score": 9.12,
+  "last_verdict": "READY",
+  "status": "completed",
+  "timestamp": "2026-07-11T02:24:00+12:00",
+  "output_dir": "refine-logs/sq",
+  "reviewer_requirement": "one continuous independent GPT-5.5 high reviewer thread from Round 1 onward; maximum 5 rounds; READY requires overall >=9 and no drift",
+  "reviewer_recovery_note": "Initial child reviewer /root/sq_method_refine/sq_reviewer repeatedly interrupted before producing output. It was discarded. Canonical continuous reviewer is the completed replacement /root/sq_reviewer_replacement.",
+  "only_gold_supervision": "video_level_binary_label",
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "code_changed": false,
+  "job_submitted": false,
+  "new_teacher_call_count": 0,
+  "target_met": false,
+  "next_gate": "independent experiment plan and implementation audit; execute P0/SQ-0 only; no teacher call before SQ-0 GO"
+}

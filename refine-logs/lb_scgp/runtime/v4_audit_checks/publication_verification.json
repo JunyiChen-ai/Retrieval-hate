@@ -1,0 +1,100 @@
+{
+  "all_ok": false,
+  "audit_payload_sha256": "fc9d590d7b2e2154e0a9bdba13f8abac987828b1a79b0402d2e789bcaee6a6bf",
+  "audit_sha256": "098f5e02b9df17c14a5b43df3ffe15e7fc8e45638b89f6e9d5f3ab84239b290f",
+  "decision_consumer_ok": true,
+  "dirty_binding": {
+    "audit_dirty": "8ca10aec315f800959e7869beb200f4bbc5f5d27841d8c307d896f1644803e7a",
+    "current_dirty": "8ca10aec315f800959e7869beb200f4bbc5f5d27841d8c307d896f1644803e7a",
+    "freeze_dirty": "8ca10aec315f800959e7869beb200f4bbc5f5d27841d8c307d896f1644803e7a"
+  },
+  "formal_file_set_ok": true,
+  "lock_hashes": {
+    "artifacts/lb_scgp/v4/g0/code_audit/audit.json.publish.lock": "19af29eb3a41c2f7dd4ff9e372996df262bfb5cdb6f698de69454103c21f5eeb",
+    "artifacts/lb_scgp/v4/g0/code_audit/publication_index.json.publish.lock": "e7395ce7d56a21e78bb1a1c355041badabfcd367a486a0eb3f619e320f4d40f7",
+    "artifacts/lb_scgp/v4/g0/code_audit/review.md.publish.lock": "ac0a4ffc2a9929b616c691528d380fa651815192c8e91c97e72c0339bf33d1f5",
+    "artifacts/lb_scgp/v4/g0/code_audit/review_record.json.publish.lock": "75bf2e1fb6aec7be1e1fe02f22482fbe850ecbe489a46708bf5c8e3989f097b2"
+  },
+  "no_segment_gold_ok": true,
+  "output_files": [
+    {
+      "path": "artifacts/lb_scgp/v4/g0/code_audit/review.md",
+      "sha256": "616bd9093334b08c067208c7de7a2d54649b19be131d8f8a49a2ce48b84bb53d"
+    },
+    {
+      "path": "artifacts/lb_scgp/v4/g0/code_audit/review_record.json",
+      "sha256": "b2e8ef2ac9c5d3fede5ace5f678e65a5d1c0f6a565356b19fb6143e186a44f5e"
+    },
+    {
+      "path": "artifacts/lb_scgp/v4/g0/code_audit/audit.json",
+      "sha256": "098f5e02b9df17c14a5b43df3ffe15e7fc8e45638b89f6e9d5f3ab84239b290f"
+    }
+  ],
+  "prior_lineage_no_clobber_hashes": [
+    {
+      "path": "artifacts/lb_scgp/v1/CONFIG_FREEZE.json",
+      "sha256": "b6697472b61a61706c694a67b21618d618fcad6e7f59265d8696aee79dc46889"
+    },
+    {
+      "path": "artifacts/lb_scgp/v1/CONFIG_FREEZE.json.publish.lock",
+      "sha256": "34a05bde46775bcb75384c1c853cef7985f5c05efcdf3afec5fad6d85ef57d8d"
+    },
+    {
+      "path": "artifacts/lb_scgp/v2/CONFIG_FREEZE.json",
+      "sha256": "4c6f0199a429bbf766cb284b9ecaedd9dcaf38733834dd54574245ab86b633ae"
+    },
+    {
+      "path": "artifacts/lb_scgp/v2/CONFIG_FREEZE.json.publish.lock",
+      "sha256": "22426f693ba3f72d52928b0a86d08fe439d7e7fd43f9c74c61aedb710443e211"
+    },
+    {
+      "path": "artifacts/lb_scgp/v3/CONFIG_FREEZE.json",
+      "sha256": "9fba7f1649dd67d4bb0fcc193e555d8246d7a4966307732e87d5e9fca7346dd9"
+    },
+    {
+      "path": "artifacts/lb_scgp/v3/CONFIG_FREEZE.json.publish.lock",
+      "sha256": "9c32d07c524e466ad06c06fc2a472829764cd1facff22390eac8b2879d329b8f"
+    }
+  ],
+  "producer_access_ledger_sha256": "17a60517c85c26f0037ae10d6df5ea4f0d4e9a9141c22e22ec57d41be5f279a8",
+  "producer_consumer_error": "NameError: name 'git_state' is not defined",
+  "producer_consumer_ok": false,
+  "publication_index_payload_sha256": "fd0f8c26197fe0d53eb8799f7a7c9140fbc870eb769fcac99d793aa85efa4aa9",
+  "publication_index_sha256": "b3b5c86250dd9675c1bfac0d63adbe8b45ea734f459495586a13f4296ab8604b",
+  "published_record_sha256": "b2e8ef2ac9c5d3fede5ace5f678e65a5d1c0f6a565356b19fb6143e186a44f5e",
+  "published_review_sha256": "616bd9093334b08c067208c7de7a2d54649b19be131d8f8a49a2ce48b84bb53d",
+  "record_payload_sha256": "ee876984651c77ef1d861294da1bb353036d2e899a71e90d80c42964668996a2",
+  "schema_payload_ok": true,
+  "slurm_job_id": "12787",
+  "source_copy_ok": true,
+  "source_record_sha256": "b2e8ef2ac9c5d3fede5ace5f678e65a5d1c0f6a565356b19fb6143e186a44f5e",
+  "source_review_sha256": "616bd9093334b08c067208c7de7a2d54649b19be131d8f8a49a2ce48b84bb53d",
+  "status": "PASS",
+  "tmp_absent": true,
+  "tmp_paths": [],
+  "v4_files": [
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/CONFIG_FREEZE.json",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/CONFIG_FREEZE.json.publish.lock",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/g0/code_audit/audit.json",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/g0/code_audit/audit.json.publish.lock",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/g0/code_audit/publication_index.json",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/g0/code_audit/publication_index.json.publish.lock",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/g0/code_audit/review.md",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/g0/code_audit/review.md.publish.lock",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/g0/code_audit/review_record.json",
+    "/data/jehc223/RGCL/artifacts/lb_scgp/v4/g0/code_audit/review_record.json.publish.lock"
+  ],
+  "zero_counters": {
+    "formal_model_optimizer_evaluator_outer_held_read_count": 0,
+    "mllm_call_count": 0,
+    "ocr_call_count": 0,
+    "outer_held_content_read_count": 0,
+    "outer_held_label_read_count": 0,
+    "teacher_cache_read_count": 0,
+    "teacher_cache_write_count": 0,
+    "test_content_read_count": 0,
+    "val_content_read_count": 0,
+    "val_test_teacher_artifact_count": 0
+  },
+  "zero_counters_ok": true
+}

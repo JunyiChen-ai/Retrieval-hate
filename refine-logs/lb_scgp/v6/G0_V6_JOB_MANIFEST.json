@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "task": "LB-SCGP v6 numerical certificate takeover review job manifest",
+  "scope": {
+    "allowed_write_root": "refine-logs/lb_scgp/v6/",
+    "report_path": "refine-logs/lb_scgp/G0_V6_NUMERICAL_CERTIFICATE_REVIEW.md",
+    "slurm_policy": "read-only monitoring only after submission; no cancel/requeue/release/hold/suspend/state alteration",
+    "supervision_boundary": {
+      "only_gold_supervision": "parent_video_binary_label",
+      "segment_gold_exists": false,
+      "segment_gold_used": false,
+      "mllm_call_count": 0,
+      "ocr_call_count": 0,
+      "teacher_cache_read_count": 0,
+      "teacher_cache_write_count": 0,
+      "outer_held_label_read_count": 0,
+      "outer_held_content_read_count": 0,
+      "val_content_read_count": 0,
+      "test_content_read_count": 0,
+      "val_test_teacher_artifact_count": 0
+    }
+  },
+  "jobs": [
+    {
+      "job_id": "12837",
+      "name": "lbscgp_v6_probe",
+      "command": "sbatch refine-logs/lb_scgp/v6/runtime/solver_probe.sbatch",
+      "role": "pre-repair wrapper probe",
+      "state": "FAILED",
+      "exit_code": "1:0",
+      "elapsed": "00:00:00",
+      "resources": {"alloc_cpus": 2, "req_mem": "4G", "max_rss": "3372K"},
+      "start": "2026-07-11T22:04:44",
+      "end": "2026-07-11T22:04:44",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_probe_12837.out", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_probe_12837.err", "sha256": "c453debcadfce9ed85fd1af10942c2299d1122632cda1da6e63d9c4adfa8eebc"}
+      },
+      "results": [],
+      "evidence_use": "wrapper failure only; no numerical evidence"
+    },
+    {
+      "job_id": "12838",
+      "name": "lbscgp_v6_probe",
+      "command": "sbatch refine-logs/lb_scgp/v6/runtime/solver_probe.sbatch",
+      "role": "solver availability probe",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:01",
+      "resources": {"alloc_cpus": 2, "req_mem": "4G", "max_rss": "3264K"},
+      "start": "2026-07-11T22:06:04",
+      "end": "2026-07-11T22:06:05",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_probe_12838.out", "sha256": "37521bcbcf4dac1affd449fd782ec9620a94a01283b0f83cd4b4ff7253f76cf1"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_probe_12838.err", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+      },
+      "results": [
+        {"path": "refine-logs/lb_scgp/v6/results/solver_probe_12838.json", "sha256": "61e459721a3f99da29428ca8ac1b408f3cf3657f51d908a71b2b6b71c87b9548", "payload_sha256": "5dc7b74275506c7091dbb5a3fc869e367fa8b0ab33bb5ba7b91aaf39513dcc64"}
+      ],
+      "evidence_use": "environment inventory only: SciPy/mpmath available, cvxpy and conic solvers unavailable"
+    },
+    {
+      "job_id": "12839",
+      "name": "lbscgp_v6_validate",
+      "command": "sbatch refine-logs/lb_scgp/v6/runtime/validate_v6.sbatch",
+      "role": "pre-patch validator",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:00",
+      "resources": {"alloc_cpus": 2, "req_mem": "4G", "max_rss": "3308K"},
+      "start": "2026-07-11T22:08:57",
+      "end": "2026-07-11T22:08:57",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_validate_12839.out", "sha256": "a501cf6aa840a61752f379adcbf571d607f0945ec8b1ee093e7fc52a6ac08932"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_validate_12839.err", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+      },
+      "results": [
+        {"path": "refine-logs/lb_scgp/v6/results/validation_12839.json", "sha256": "11d5a06dad87d68587faba4250b26097772a7d9d2870b6b4ceb138f815a43c51"}
+      ],
+      "evidence_use": "artifact syntax/payload validation only"
+    },
+    {
+      "job_id": "12840",
+      "name": "lbscgp_v6_cert",
+      "command": "sbatch refine-logs/lb_scgp/v6/runtime/oriented_certificate.sbatch",
+      "role": "invalid cancelled certificate attempt",
+      "state": "CANCELLED by 135258174",
+      "exit_code": "0:0 job; 0:15 batch",
+      "elapsed": "00:11:36 job; 00:11:37 batch",
+      "resources": {"alloc_cpus": 4, "req_mem": "24G", "max_rss": "164096K"},
+      "start": "2026-07-11T22:09:25",
+      "end": "2026-07-11T22:21:02",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_cert_12840.out", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_cert_12840.err", "sha256": "3ca6418f85c1475cb88a62e193912f1effbea548ac371ef4801511cf802bdbb5"}
+      },
+      "results": [],
+      "protocol_deviation": "improperly cancelled by previous reviewer; preserve logs; invalid/no numerical evidence",
+      "evidence_use": "never cite as support for feasibility, infeasibility, LOCAL, BOUNDED, or solver performance"
+    },
+    {
+      "job_id": "12841",
+      "name": "vlp_pgd2_20_core_flickr",
+      "command": "not part of v6 review; command not audited",
+      "role": "intervening unrelated job in audited ID range",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:01:17",
+      "resources": {"alloc_cpus": 8, "req_mem": "64G", "max_rss": "7700948K"},
+      "start": "2026-07-11T22:12:07",
+      "end": "2026-07-11T22:13:24",
+      "logs": {},
+      "results": [],
+      "evidence_use": "unrelated; not used"
+    },
+    {
+      "job_id": "12842",
+      "name": "vlp_pgd2_20_core_flickr",
+      "command": "not part of v6 review; command not audited",
+      "role": "intervening unrelated job in audited ID range",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:08:47",
+      "resources": {"alloc_cpus": 8, "req_mem": "64G", "max_rss": "7695292K"},
+      "start": "2026-07-11T22:14:18",
+      "end": "2026-07-11T22:23:05",
+      "logs": {},
+      "results": [],
+      "evidence_use": "unrelated; not used"
+    },
+    {
+      "job_id": "12843",
+      "name": "lbscgp_v6_validate",
+      "command": "sbatch refine-logs/lb_scgp/v6/runtime/validate_v6.sbatch",
+      "role": "takeover-start validator, completed naturally before new solver submission",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:01",
+      "resources": {"alloc_cpus": 2, "req_mem": "4G", "max_rss": "3348K"},
+      "start": "2026-07-11T22:23:08",
+      "end": "2026-07-11T22:23:09",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_validate_12843.out", "sha256": "dad72d40f83860c85e0c47e6672e764bc2f28ba87f08236de56f60ad3c3ad501"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_validate_12843.err", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+      },
+      "results": [
+        {"path": "refine-logs/lb_scgp/v6/results/validation_12843.json", "sha256": "2e72c301cbcd198574f1a7c6d9c0adc02311d2be3ba56c379f9b012548ef4e5a", "payload_sha256": "a037ba0ef0b12676e6db9942d356f3fd7dd8cbbbf156b8f180b3ff2aa655dc12"}
+      ],
+      "evidence_use": "allowed SLSQP submission gate"
+    },
+    {
+      "job_id": "12845",
+      "name": "lbscgp_v6_validate",
+      "command": "sbatch refine-logs/lb_scgp/v6/runtime/validate_v6.sbatch",
+      "role": "post-v6-repair validator before certificate run",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:01",
+      "resources": {"alloc_cpus": 2, "req_mem": "4G", "max_rss": "3308K"},
+      "start": "2026-07-11T22:31:51",
+      "end": "2026-07-11T22:31:52",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_validate_12845.out", "sha256": "e8869b1238b9268352a100c2db7178914235b3257ff3ed1d5199437e8f7675f4"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_validate_12845.err", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+      },
+      "results": [
+        {"path": "refine-logs/lb_scgp/v6/results/validation_12845.json", "sha256": "fe2b7d267c80ed364cca2bcf413060fc3bae0f2e80192a497ec6031a9971613a", "payload_sha256": "716232e38a786ed99071277ff94e437270adbd8063804f0b655053a7afa7f418"}
+      ],
+      "evidence_use": "validated repaired v6 runtime before certificate submission"
+    },
+    {
+      "job_id": "12846",
+      "name": "lbscgp_v6_cert_slsqp",
+      "command": "sbatch refine-logs/lb_scgp/v6/runtime/oriented_certificate_slsqp.sbatch",
+      "role": "independent SciPy SLSQP numerical certificate attempt",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "05:11:14",
+      "resources": {"alloc_cpus": 4, "req_mem": "24G", "max_rss": "230556K"},
+      "start": "2026-07-11T22:32:34",
+      "end": "2026-07-12T03:43:48",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_cert_slsqp_12846.out", "sha256": "6e418af2aa8e9749b9313b08126b4aba0ad637e9db0c2e2928787833951b7c3a"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_cert_slsqp_12846.err", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+      },
+      "results": [
+        {"path": "refine-logs/lb_scgp/v6/results/oriented_certificate_checkpoint_12846.jsonl", "sha256": "4e261d3c365beed1836e726232c651564e34d814832e4ab40700dfe5d88e3b3e"},
+        {"path": "refine-logs/lb_scgp/v6/results/oriented_certificate_12846.json", "sha256": "5c824f0d45c5ef3cdfbc25fcd927c077bec5c6c9cdb7425c2333bf89750245e5", "payload_sha256": "7d284014c6570ce942bcf92c593b7ef373d02831682597d80a1c798daeef83fb"},
+        {"path": "refine-logs/lb_scgp/v6/results/canonical_top20_controller_12846.json", "sha256": "ba8ddb0057697a765a33c2e817ee294dcc94050036e8cc8bb928890eff182565", "payload_sha256": "68d335dc62aabf2500cc499e0a89fdd2842095d969f9389ebce42586e9c02334"},
+        {"path": "refine-logs/lb_scgp/v6/results/case_matrix_12846.json", "sha256": "f6369d940ed55116d701b8e8f5bd0098ec87716599dcd38dc46477763a18a6d6", "payload_sha256": "150fc4ac6bff68fa4cd44410fe54d8dfda62c2e088fa58b50a57ab3dab924993"}
+      ],
+      "evidence_use": "numerical non-witness evidence only; no proof-grade infeasibility",
+      "determination": {
+        "cell_count": 2,
+        "feasible_witness_count": 0,
+        "local_feasible_cell_exists_numerically": false,
+        "complete_local_controller_certificate_numerically": false,
+        "evidence_strength": "numerical_not_proof_grade"
+      }
+    },
+    {
+      "job_id": "12888",
+      "name": "lbscgp_v6_replay",
+      "command": "CERTIFICATE_PATH=refine-logs/lb_scgp/v6/results/oriented_certificate_12846.json sbatch refine-logs/lb_scgp/v6/runtime/witness_replay.sbatch",
+      "role": "independent serialized witness/residual replay",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:02",
+      "resources": {"alloc_cpus": 2, "req_mem": "4G", "max_rss": "3380K"},
+      "start": "2026-07-12T03:44:09",
+      "end": "2026-07-12T03:44:11",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_replay_12888.out", "sha256": "cf51486b3a00cc80ecc3af2b96d9a1e03b040476605f671a6291ab1d31f179f7"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_replay_12888.err", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+      },
+      "results": [
+        {"path": "refine-logs/lb_scgp/v6/results/witness_replay_12888.json", "sha256": "44a0e1479d63b8b26e0d706db7ab097767d363fdc248f66ca8b6966145d3045f", "payload_sha256": "da66805b40326144545c328391843f3cf5c30bd9cdbe55927d94281303ed3ab2"}
+      ],
+      "evidence_use": "confirms replayed residuals/objectives and zero feasible replay witnesses"
+    },
+    {
+      "job_id": "12891",
+      "name": "lbscgp_v6_validate",
+      "command": "sbatch refine-logs/lb_scgp/v6/runtime/validate_v6.sbatch",
+      "role": "post-certificate/pre-report v6 artifact validator",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:00:01",
+      "resources": {"alloc_cpus": 2, "req_mem": "4G", "max_rss": "3324K"},
+      "start": "2026-07-12T03:47:41",
+      "end": "2026-07-12T03:47:42",
+      "logs": {
+        "stdout": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_validate_12891.out", "sha256": "6103401a02b3c47a5a2bfc528ad576ffd712d984333cf66280aca6f4512bddf4"},
+        "stderr": {"path": "refine-logs/lb_scgp/v6/logs/lbscgp_v6_validate_12891.err", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+      },
+      "results": [
+        {"path": "refine-logs/lb_scgp/v6/results/validation_12891.json", "sha256": "0885f875cf277ced8d81279c6d89e0af3af1437d2cd27614fa171adfa5ae30d9", "payload_sha256": "cff191ad619df7a9e14bc96458f47bf983f0bace8384cb2318c573ba408c8d3a"}
+      ],
+      "evidence_use": "ok=true; 23 JSON payloads and 13 Python files validated"
+    }
+  ],
+  "runtime_hashes": {
+    "oriented_certificate.py": "46d28451ca1feabd51770de03bbb9435306d7dcdf3a647ba339002a4f3fc6ec9",
+    "oriented_certificate_slsqp.sbatch": "5dff9844f81eabbd2abbe284552430d6fec44d2cf8a4aec9e05f4382429f7cb3",
+    "witness_replay.py": "f40e179dcc8476daf9f280c1fd463677f4705c6de190c716b1c97734ed34be35",
+    "witness_replay.sbatch": "a05eb8f8b8d0c69595a0d2efe678a0c90dc8fa425c9ad4391b47e737e5eaad12",
+    "validate_v6.py": "4920d9c39d44697cea5343258721f114face224921f4e26e4acd1cd22772c632",
+    "validate_v6.sbatch": "2d9ce058b18a8e1480a0eeecdae1bf395b4d4e8fbc6e74243f62be6f88dfc9eb"
+  },
+  "frozen_v5_hashes": {
+    "config": "a51981045073e8f5b69da272654d2102ef3f2f5c8739b765d0b161c1f8c75346",
+    "freeze": "254e45afe9c0355892824c0c26bc73b4b0854cb20c67c3703982762fad010931",
+    "manifest": "07dc7d5d17194cd7a2b5d42d539adb9e8248e78b4dc629bbcdaf9d4f64719242",
+    "cases": "8d619f3579886fc9e6a515c5c6c1215a09f4bc628a89ba5e418c18887d27b698",
+    "dykstra": "c28090bbd26da0d6ba89ca67340355c8cebc6e24e20899954282dfeed02a92f6",
+    "rank_cells": "aad6d4d573b18043059476049279ba5919084b6b220d56cafaf6924efb215a98",
+    "exact_vote": "bc0c1f4b5823f153c49a9cfb1efb7de531a7a7550890c553810f468b8d00690b",
+    "farkas": "b7abd457d44ffcc07b701590d9302e293019842e298ece4aaa70611823c30e90",
+    "factor": "75df4129030cd528bee20f0de2c750898a4eeaf90fd49af5698b2b64cc0af6dc",
+    "v5_log": "a8a249101ebf8ebe3ab56d5b152b8df35a8f593c2271e26e111b04364726ce49"
+  }
+}

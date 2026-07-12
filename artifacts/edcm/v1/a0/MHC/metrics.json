@@ -1,0 +1,120 @@
+{
+  "N": 549,
+  "all_binding_gates_pass": false,
+  "baseline": {
+    "accuracy": 0.7686703096539163,
+    "confusion_matrix_labels_0_1": [
+      [
+        347,
+        34
+      ],
+      [
+        93,
+        75
+      ]
+    ],
+    "macro_f1": 0.6934134211602475,
+    "per_class_f1_labels_0_1": [
+      0.8453105968331304,
+      0.5415162454873647
+    ]
+  },
+  "baseline_error_count": 127,
+  "config_sha256": "86345378b39ef51aebae931970116490688f7e5a37a9163e00401a680426eeab",
+  "dataset": "MHC",
+  "decision": "STOP",
+  "delta_accuracy": 0.02732240437158462,
+  "delta_macro_f1": 0.039377567575672345,
+  "edcm_mllm_calls_before_decision": 0,
+  "gates": {
+    "all_video_supported_fraction": false,
+    "fold_output_vote_metric_provenance": true,
+    "oracle_accuracy_gain": false,
+    "oracle_macro_f1_gain": false,
+    "unique_reachable_errors": false
+  },
+  "implementation_sha256": {
+    "scripts/analysis/edcm_a0.py": "9c0915a289a7c712a4a2c811c34e218b60c706cc83c1c9883ea805d3097ea445",
+    "scripts/slurm/edcm_a0_cpu.sbatch": "5bc1452065e9a8d3b7a114124929fa4bc400de24ead380f85bd98225838717ae"
+  },
+  "ocr_artifact_count": 0,
+  "only_gold_supervision": "video_level_binary_label",
+  "oracle": {
+    "accuracy": 0.7959927140255009,
+    "confusion_matrix_labels_0_1": [
+      [
+        352,
+        29
+      ],
+      [
+        83,
+        85
+      ]
+    ],
+    "macro_f1": 0.7327909887359199,
+    "per_class_f1_labels_0_1": [
+      0.8627450980392157,
+      0.6028368794326241
+    ]
+  },
+  "payload_sha256": "9f117d0e91aca2fc5c477108170ff3da65fa592fe060767971996ceebefa3a30",
+  "reachability_rows_sha256": "e84560e2bb36881d720523de07053b3e62c94b70dfcb4ba381698bc8e0571144",
+  "reachable_fraction_all_videos": 0.0273224043715847,
+  "reachable_fraction_baseline_errors": 0.11811023622047244,
+  "reuse_audit_sha256": "5f178ef6488cc3fdad4ab8241e545fe13648d19ce53c9ebcdde05d0c1882012d",
+  "run_id": "EDCM-A0-REACH-MHC-v1",
+  "schema_version": 1,
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "slurm_job_id": "12711",
+  "source_file_sha256": {
+    "artifacts/ssr/v1/folds/MHC.json": "bc7e3088faeeb6fad091b97fd1d10a506ed4a53826d2580b9a92891646a3584d",
+    "artifacts/ssr/v1/oof/MHC/fold0/checkpoint_epoch25.pt": "8a2383c108ff3d8be9cdb0b7648f629991906605c26844b1eba54882026ff64b",
+    "artifacts/ssr/v1/oof/MHC/fold0/embeddings.npz": "6b416b06c5ad06b59639ede3d2bee3d9c65fd5e2c46d9c8356e98fb8bcf4e185",
+    "artifacts/ssr/v1/oof/MHC/fold0/manifest.json": "ba161382b393dd9ac6bcdc85030963b0a90e7c43419fa5020cc587c198fc3a2f",
+    "artifacts/ssr/v1/oof/MHC/fold0/predictions.json": "f6d8b0532c8889d49d70ec6076e7108cd680a134dbfa7cb7e5b955cc486cb0a3",
+    "artifacts/ssr/v1/oof/MHC/fold0/ranking.jsonl": "a4a7f3ab0db2f87a7d6ad4841a0b1309a74b96850a8fa6610deab00f8ba9a738",
+    "artifacts/ssr/v1/oof/MHC/fold0/train.jsonl": "fe19ce31378f544010f6297ff2a83c3dcbf8f16a734c2ad9f2859319738536b1",
+    "artifacts/ssr/v1/oof/MHC/fold1/checkpoint_epoch25.pt": "5d32571a469078d67398e54111719060e21a5c529e617f7ec36f239a5bbf2a44",
+    "artifacts/ssr/v1/oof/MHC/fold1/embeddings.npz": "70120e2234749c7ab44cb0756d88296d33d04c1c0ca8bb9eb5ee2e4e74b3f80d",
+    "artifacts/ssr/v1/oof/MHC/fold1/manifest.json": "c61a227a8ea44b88b2bb042677b0e7dc59bcba75ee8eff2d1b3df77af9d27a98",
+    "artifacts/ssr/v1/oof/MHC/fold1/predictions.json": "c43367b3c730c874e90c5fcf509ab5373f5cc9410b56b6d03ad34b848adb258b",
+    "artifacts/ssr/v1/oof/MHC/fold1/ranking.jsonl": "3b3886fcaa04c02547d1e87aa496004225f32c8175f5460045702d2068610dd0",
+    "artifacts/ssr/v1/oof/MHC/fold1/train.jsonl": "637ae69ceed3ce8f6867b3ca7057cc2ada18f41b51baca264851d0b797dcd3e0",
+    "artifacts/ssr/v1/oof/MHC/fold2/checkpoint_epoch25.pt": "9e893da50262b921663e4bb4a5d2adee32e3529f0aa22297e8c72ff121c8f28e",
+    "artifacts/ssr/v1/oof/MHC/fold2/embeddings.npz": "d367b959122fcd4afb8e593594426297169525011c9d46adc2e06e582121eab8",
+    "artifacts/ssr/v1/oof/MHC/fold2/manifest.json": "009e738ab94bf4dcf55215482dd7892d1ad0b6741b0bb411747c1020b7df815f",
+    "artifacts/ssr/v1/oof/MHC/fold2/predictions.json": "e6b5277e7096b63a670f3afd2a06cc4682f03efb278647b15bb8f30fa4582f0f",
+    "artifacts/ssr/v1/oof/MHC/fold2/ranking.jsonl": "3598ca15b70585a215f7d67444a5e8f1b8d6e046f719cae387c03c3d9b8c9ded",
+    "artifacts/ssr/v1/oof/MHC/fold2/train.jsonl": "dfa6aafde7d43877fc8416f40c5a693411ea69a2a2b39d8e9cd35587c3881c22",
+    "artifacts/ssr/v1/oof/MHC/fold3/checkpoint_epoch25.pt": "8db4784d8fb0a5b6ddb1a20185a86337408bf2b2bf711624f1ca7ea4f3ccaef4",
+    "artifacts/ssr/v1/oof/MHC/fold3/embeddings.npz": "34d721df25e01f5d517f9c9ccf12676838ee71288e23d2e84123e376d3d442ae",
+    "artifacts/ssr/v1/oof/MHC/fold3/manifest.json": "f2d9eb6eacf486cea64697fc91836cdb7fddcd3d446689b07ef645652f3d3997",
+    "artifacts/ssr/v1/oof/MHC/fold3/predictions.json": "d7379c65d598fa9ef217939f149a74f11cc10d6f1d52c78a95bb21ac5cdef529",
+    "artifacts/ssr/v1/oof/MHC/fold3/ranking.jsonl": "ffc828db38a961b23268f9fd06c922c95dbadc8073e4258b98aaffcb2c3feb9c",
+    "artifacts/ssr/v1/oof/MHC/fold3/train.jsonl": "428aa55e8744ade097aedcd7f537759ab307a8753aef188418e2edb306aac41d",
+    "artifacts/ssr/v1/oof/MHC/fold4/checkpoint_epoch25.pt": "b076aad8fadf0034f72a8bd1ee77cc71da3ebca4fb82f0a623cd1806fa39f8bd",
+    "artifacts/ssr/v1/oof/MHC/fold4/embeddings.npz": "cb793f434c5b467ac89f5768e9cf3d760e4c21350f558817061dda7164a2c5ca",
+    "artifacts/ssr/v1/oof/MHC/fold4/manifest.json": "aa3b9cac4f1a81cbf8c8e6baa31f5f18bc9ebb8b24e8ea9554a19aef4ff0c8e3",
+    "artifacts/ssr/v1/oof/MHC/fold4/predictions.json": "191b579053314d46f8706c422740959ea4a242c6dbe5bffa553d011d53873cbd",
+    "artifacts/ssr/v1/oof/MHC/fold4/ranking.jsonl": "353b3cad3be46b1285a1c4a8ba4ed5a509e2538ef8b376f7b8881e7bc7f5cb96",
+    "artifacts/ssr/v1/oof/MHC/fold4/train.jsonl": "ef05df8837ee1070b20284cf8d5e36be947795ca6dfdc89908dad1eba57480e8",
+    "data/CLIP_Embedding/MHC/train_openai_clip-vit-large-patch14-336_HF.pt": "deea74ff78d81836b0937c7996caef4706e97a1e279343581d547ee2e98dc73e",
+    "data/CLIP_Embedding/MHC/train_subclipK4_openai_clip-vit-large-patch14-336_HF.pt": "b6fc5a15ef1c758a80ec9c1efb100cfe7fd7ba1dba311e3aeda22d7c846ed145",
+    "data/gt/MHC/train.jsonl": "501b1bb4340d410fe67df7c9ede797a3cbc972dbbf24caca35988903ac8bea14"
+  },
+  "source_vote_records_sha256": "740ad41fcf262f0d31886ab51264508bcabfcd32918dde55c5275d9c700b0c2c",
+  "stage": "A0_pre_mllm_frozen_geometry_reachability_cost_screen",
+  "status": "COMPLETED",
+  "supported_count": 202,
+  "supported_fraction": 0.3679417122040073,
+  "teacher_or_mllm_artifact_count": 0,
+  "thresholds": {
+    "oracle_accuracy_gain_min": 0.05,
+    "oracle_macro_f1_gain_min": 0.05,
+    "reachable_errors_min": 28,
+    "supported_fraction_min": 0.8
+  },
+  "unique_reachable_errors": 15,
+  "validation_test_teacher_artifact_count": 0
+}

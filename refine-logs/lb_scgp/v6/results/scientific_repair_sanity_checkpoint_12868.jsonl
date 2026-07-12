@@ -1,0 +1,3 @@
+{"event":"threshold_check","thresholds_ok":{"max_cycles":true,"orientation_budget":true,"pivot_budget":true,"relative":true,"tie":true,"topk":true,"violation":true}}
+{"all_cases_ok":false,"case_count":18,"event":"case_ledger_complete"}
+{"event":"phase_ii_complete","gates":{"box":true,"complementarity":true,"diag":true,"iteration_budget":true,"kkt_dual_nonnegative":true,"kkt_stationarity":true,"linear_residual":true,"psd":true,"solver_success":true,"symmetry":true,"top20_completeness":true,"vi":true},"status":"LOCAL_CERTIFIED_NONFORMAL"}

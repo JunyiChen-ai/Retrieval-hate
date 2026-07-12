@@ -1,0 +1,110 @@
+{
+  "phase": "done",
+  "round": 3,
+  "author_thread_id": "019f5349-1642-7351-b1a2-7964fb7a4b78",
+  "reviewer_thread_id": "019f5351-d691-7501-958d-92432aa97d8a",
+  "last_score": 9.1,
+  "last_verdict": "READY",
+  "status": "completed",
+  "timestamp": "2026-07-12T11:08:48+12:00",
+  "model": "gpt-5.5",
+  "reasoning_effort": "xhigh",
+  "phase_history": [
+    {
+      "phase": "anchor",
+      "round": 0,
+      "author_thread_id": null,
+      "reviewer_thread_id": null,
+      "last_score": null,
+      "last_verdict": null,
+      "status": "in_progress",
+      "timestamp": "2026-07-12T10:29:34+12:00",
+      "model": "gpt-5.5",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "phase": "proposal",
+      "round": 0,
+      "author_thread_id": null,
+      "reviewer_thread_id": null,
+      "last_score": null,
+      "last_verdict": null,
+      "status": "in_progress",
+      "timestamp": "2026-07-12T10:33:18+12:00",
+      "model": "gpt-5.5",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "phase": "review",
+      "round": 1,
+      "author_thread_id": "019f5349-1642-7351-b1a2-7964fb7a4b78",
+      "reviewer_thread_id": "019f5351-d691-7501-958d-92432aa97d8a",
+      "last_score": 7.1,
+      "last_verdict": "REVISE",
+      "status": "in_progress",
+      "timestamp": "2026-07-12T10:37:32+12:00",
+      "model": "gpt-5.5",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "phase": "refine",
+      "round": 1,
+      "author_thread_id": "019f5349-1642-7351-b1a2-7964fb7a4b78",
+      "reviewer_thread_id": "019f5351-d691-7501-958d-92432aa97d8a",
+      "last_score": 7.1,
+      "last_verdict": "REVISE",
+      "status": "in_progress",
+      "timestamp": "2026-07-12T10:46:14+12:00",
+      "model": "gpt-5.5",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "phase": "review",
+      "round": 2,
+      "author_thread_id": "019f5349-1642-7351-b1a2-7964fb7a4b78",
+      "reviewer_thread_id": "019f5351-d691-7501-958d-92432aa97d8a",
+      "last_score": 8.3,
+      "last_verdict": "REVISE",
+      "status": "in_progress",
+      "timestamp": "2026-07-12T10:49:09+12:00",
+      "model": "gpt-5.5",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "phase": "refine",
+      "round": 2,
+      "author_thread_id": "019f5349-1642-7351-b1a2-7964fb7a4b78",
+      "reviewer_thread_id": "019f5351-d691-7501-958d-92432aa97d8a",
+      "last_score": 8.3,
+      "last_verdict": "REVISE",
+      "status": "in_progress",
+      "timestamp": "2026-07-12T10:55:34+12:00",
+      "model": "gpt-5.5",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "phase": "review",
+      "round": 3,
+      "author_thread_id": "019f5349-1642-7351-b1a2-7964fb7a4b78",
+      "reviewer_thread_id": "019f5351-d691-7501-958d-92432aa97d8a",
+      "last_score": 9.1,
+      "last_verdict": "READY",
+      "status": "in_progress",
+      "timestamp": "2026-07-12T10:57:49+12:00",
+      "model": "gpt-5.5",
+      "reasoning_effort": "xhigh"
+    },
+    {
+      "phase": "done",
+      "round": 3,
+      "author_thread_id": "019f5349-1642-7351-b1a2-7964fb7a4b78",
+      "reviewer_thread_id": "019f5351-d691-7501-958d-92432aa97d8a",
+      "last_score": 9.1,
+      "last_verdict": "READY",
+      "status": "completed",
+      "timestamp": "2026-07-12T11:08:48+12:00",
+      "model": "gpt-5.5",
+      "reasoning_effort": "xhigh"
+    }
+  ]
+}

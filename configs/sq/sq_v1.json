@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "config_name": "sq_v1",
+  "config_sha256": "8645c97225aaea995ccab583e5c440ce4a8faf2a4e6a274ad66cc099185c2149",
+  "supervision": {
+    "only_gold": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false,
+    "validation_test_forbidden": true,
+    "new_teacher_calls_forbidden": true
+  },
+  "paths": {
+    "root": "/data/jehc223/RGCL",
+    "artifacts": "artifacts/sq/v1",
+    "ssr_artifacts": "artifacts/ssr/v1",
+    "clip": "data/CLIP_Embedding",
+    "gt": "data/gt",
+    "video": "data/video",
+    "archive": "data/Archive"
+  },
+  "datasets": {
+    "MHC": {
+      "archive": "data/Archive/MHC/v2/train_Qwen2.5-VL-7B-Instruct_archive.jsonl",
+      "archive_sha256": "fa179621b49eefdfdd5f42eee40a2019dfb9918215a2c47e6677ff925ccbafd6",
+      "epoch_index": 25,
+      "lambda_seg": 0.5,
+      "seg_mode": "full"
+    },
+    "MHC_zh": {
+      "archive": "data/Archive/MHC_zh/v2/train_Qwen2.5-VL-7B-Instruct_archive.jsonl",
+      "archive_sha256": "7c83e3e7f21ea7848d4981c4b4d233df3820ddcc2d2d0e8604ba3ac44df47a27",
+      "epoch_index": 28,
+      "lambda_seg": 0.5,
+      "seg_mode": "milmax"
+    }
+  },
+  "signal": {
+    "model": "openai/clip-vit-large-patch14-336",
+    "temperature": 0.1,
+    "prototypes": [
+      "a news report, reportage, interview, documentary, broadcast, or current-events coverage",
+      "a staged comedy sketch, satire, parody, meme performance, role-play, or acted skit",
+      "an educational explanation, tutorial, lecture, analysis, demonstration, or informational presentation",
+      "a personal story, first-person narrative, opinion discussion, conversation, vlog, or direct-to-camera commentary",
+      "gameplay, gaming, music performance, dance, sports, entertainment montage, or edited amusement clip",
+      "presentation style is mixed, ambiguous, or cannot be determined"
+    ],
+    "audit_salt": "sq-v1-audit",
+    "audit_n_per_dataset": 64
+  },
+  "evaluator": {
+    "topk": 20,
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": 20260711,
+    "parity_abs_tolerance": 0.00002,
+    "gradient_rel_tolerance": 0.001
+  },
+  "sq": {
+    "margin": 0.1,
+    "temperature": 0.1,
+    "triplets_per_anchor": 64,
+    "min_kish_ess": 8.0,
+    "lambda_candidates": [0.025, 0.05, 0.1, 0.2],
+    "lambda_target_ratio": 0.2,
+    "lambda_dataset_ratio_min": 0.05,
+    "lambda_dataset_ratio_max": 0.5,
+    "seed": 0,
+    "shuffle_seed": "sq-v1-shuffle",
+    "random_seed": "sq-v1-random"
+  },
+  "s0_gates": {
+    "usable_coverage_min": 0.9,
+    "cell_mass_min": 10.0,
+    "cell_ess_min": 8.0,
+    "effective_environment_min": 2.5,
+    "active_anchor_fraction_min": 0.8,
+    "p0_auc_delta_min": 0.03,
+    "p0_alignment_delta_min": 0.1,
+    "micro_peak_gib_max": 24.0,
+    "micro_full_remove_ratio_max": 2.0,
+    "strength_cap_fold_fraction_max": 0.2
+  },
+  "power": {
+    "alpha_star": 0.00625,
+    "power": 0.8,
+    "delta_auc": 0.02,
+    "delta_align": 0.1,
+    "closure_cap_per_dataset": 128
+  },
+  "training": {
+    "model": "openai_clip-vit-large-patch14-336_HF",
+    "batch_size": 64,
+    "lr": 0.0001,
+    "num_layers": 3,
+    "proj_dim": 1024,
+    "map_dim": 1024,
+    "dropout": [0.2, 0.4, 0.1],
+    "fusion_mode": "align",
+    "batch_norm": false,
+    "loss": "triplet",
+    "metric": "cos",
+    "triplet_margin": 0.1,
+    "hybrid_loss": true,
+    "ce_weight": 0.5,
+    "hard_negatives_loss": true,
+    "no_hard_negatives": 1,
+    "no_pseudo_gold_positives": 1,
+    "grad_clip": 0.1,
+    "num_subclips": 4
+  }
+}

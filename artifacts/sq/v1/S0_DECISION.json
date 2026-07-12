@@ -1,0 +1,138 @@
+{
+  "S1_unlocked": false,
+  "S2_S4_locked": true,
+  "S2_unlocked": false,
+  "archive_forbidden_key_access_count": 0,
+  "blind_audit_completed": false,
+  "blind_audit_effect": "binding fail-closed STOP when absent/incomplete",
+  "conda_env": "HateVideo",
+  "config_canonical_sha256": "8645c97225aaea995ccab583e5c440ce4a8faf2a4e6a274ad66cc099185c2149",
+  "dataset_gates": {
+    "MHC": {
+      "checks": {
+        "blind_presentation_audit_completed": false,
+        "blind_presentation_audit_pass": false,
+        "freeze": true,
+        "original_provenance_complete": false,
+        "q_is_numeric_and_id_unique": true,
+        "q_output_hash_matches": true,
+        "reader_valid": true,
+        "zero_calls": true
+      },
+      "fast_fail_reason": [
+        "original_provenance_complete",
+        "blind_presentation_audit_completed",
+        "blind_presentation_audit_pass"
+      ],
+      "micro_status": "NOT_RUN_AFTER_BINDING_PROVENANCE_AUDIT_FAST_FAIL",
+      "parity_power_p0_status": "NOT_RUN_AFTER_BINDING_PROVENANCE_AUDIT_FAST_FAIL",
+      "pass": false
+    },
+    "MHC_zh": {
+      "checks": {
+        "blind_presentation_audit_completed": false,
+        "blind_presentation_audit_pass": false,
+        "freeze": true,
+        "original_provenance_complete": false,
+        "q_is_numeric_and_id_unique": true,
+        "q_output_hash_matches": true,
+        "reader_valid": true,
+        "zero_calls": true
+      },
+      "fast_fail_reason": [
+        "original_provenance_complete",
+        "blind_presentation_audit_completed",
+        "blind_presentation_audit_pass"
+      ],
+      "micro_status": "NOT_RUN_AFTER_BINDING_PROVENANCE_AUDIT_FAST_FAIL",
+      "parity_power_p0_status": "NOT_RUN_AFTER_BINDING_PROVENANCE_AUDIT_FAST_FAIL",
+      "pass": false
+    }
+  },
+  "decision_rule": "SQ-S0-DECISION-v1",
+  "dirty_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "formal_stop_reason": "archive original-run cryptographic provenance and/or blind whole-video presentation QC incomplete; q remains proxy-only",
+  "freeze_recomputed": {
+    "archive_hashes_match": true,
+    "config_hash_matches": true,
+    "implementation_hash_matches": true,
+    "pass": true,
+    "producer_status": "PASS"
+  },
+  "git_head": "a1b1922bc970bb831526b4d21c911380ec871248",
+  "gpu_name": null,
+  "implementation_sha256": "882e20c1909d982d4936e0b920f4a223ef027a9866e74a1432c6e937bef103fb",
+  "input_files": [
+    {
+      "path": "artifacts/sq/v1/CONFIG_FREEZE.json",
+      "sha256": "a5145b689c977ec387067e4d1aba6c8edf1f4694d594365893986a0ff9a1a03e"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/audit/sample_manifest.json",
+      "sha256": "2bb23ad88904dada4cc87c2bcb2265103674d2f4908c685da66e5ff90eb18ab8"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/audit/manifest.json",
+      "sha256": "8b75ff071ea66fe2bfb81a56575631ca5cf7c9ddf6ea187f4a95a160ec5df050"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/provenance/MHC/provenance.json",
+      "sha256": "009de11f21e62cdf605936755848b463de53cc53ee874b68b226131e8797f8b9"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/qproxy/MHC/manifest.json",
+      "sha256": "c1ac07ad83c28f250a84ce17a1860fd0d6cd74483e71a91406431f8fa1a9419a"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/qproxy/MHC/posterior.jsonl",
+      "sha256": "f0ceb1c2545834e0c58fc01de8ce1d55f2b34d125cdc98ba5f15d445449dccb4"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/audit/MHC.csv",
+      "sha256": "26a164962a41de29622fcf011082cb5ac638f81f5c3aa0a712dd06f8645ab685"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/provenance/MHC_zh/provenance.json",
+      "sha256": "4299101a6b791b609e1081e64a4f178e192508dc65f92a6eeb23d404deee0e3b"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/qproxy/MHC_zh/manifest.json",
+      "sha256": "093abda20e8ae027d4067c968f77970d9729ff4087b1047a1c7bb1e0a8790f24"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/qproxy/MHC_zh/posterior.jsonl",
+      "sha256": "d52a679cf934b0e50f49288f0a849bae0555845bb1bce59fba6086d7582fdaa4"
+    },
+    {
+      "path": "artifacts/sq/v1/s0/audit/MHC_zh.csv",
+      "sha256": "85965e50a4814d4ef3059ee6c9bcf87c29600da642a7ce2ada9bc225a78c9650"
+    }
+  ],
+  "lambda_Q": null,
+  "lambda_candidates": [],
+  "new_teacher_call_count": 0,
+  "only_gold_supervision": "parent_video_binary_label",
+  "outer_held_q_read_count": 0,
+  "output_files": [],
+  "payload_sha256": "c0267475172d7fc1493eeec4a00e18efd974ce998545b1aab93508fb6a85977d",
+  "q_signal_status": "PROXY_ONLY_CHEAP_FORMAT",
+  "run_id": "SQ-S0-DECISION-v1",
+  "schema_version": 1,
+  "segment_gold_exists": false,
+  "segment_gold_used": false,
+  "slurm_job_id": "12730",
+  "stage": "S0_DECISION",
+  "status": "STOP",
+  "teacher_cache_read_count": 0,
+  "teacher_cache_write_count": 0,
+  "test_content_read_count": 0,
+  "val_content_read_count": 0,
+  "val_test_teacher_artifact_count": 0,
+  "versions": {
+    "cuda": "12.4",
+    "faiss": "1.13.2",
+    "python": "3.11.8",
+    "sklearn": "1.5.2",
+    "torch": "2.6.0+cu124"
+  }
+}
