@@ -20,6 +20,7 @@ def compute_loss(batch,
                 segment_cache=None,
                 aux_pack=None,
                 cf_pack=None,
+                target_pack=None,
                 ):
     ids = batch["ids"]
     batch_size = len(ids)
@@ -257,6 +258,8 @@ def compute_loss(batch,
                 args=args,
                 train_feats=train_feats,
                 train_labels=train_labels,
+                target_pack=target_pack,
+                query_ids=ids,
             )
         # Both hard negative and pseudo gold,
         # In default we will consider hard negative, which is key
@@ -280,6 +283,8 @@ def compute_loss(batch,
                 args=args,
                 train_feats=train_feats,
                 train_labels=train_labels,
+                target_pack=target_pack,
+                query_ids=ids,
             )
         else:
             pass
@@ -572,6 +577,16 @@ def compute_loss(batch,
         aux_loss = compute_aux_loss(feats, batch["ids"], aux_pack, args)
         total_loss = total_loss + lambda_aux * aux_loss
 
+    # ----------------- TARC V3: intra-target separation regulariser -----------------
+    # L = L_main + lambda_tarc * L_tarc (exp-tarc-t0.md §2 V3). lambda_tarc == 0 (or no
+    # target_pack) -> EXACT no-op, identical to baseline. Reuses the SAME grad-tracked
+    # whole-video fused embedding `feats` from the forward pass above (no second forward,
+    # no extra dropout RNG), so the lambda_tarc=0 path is byte-identical (mirrors P4).
+    lambda_tarc = float(getattr(args, "lambda_tarc", 0.0))
+    if lambda_tarc > 0 and target_pack is not None:
+        tarc_loss = compute_target_loss(feats, batch["ids"], target_pack, labels, args)
+        total_loss = total_loss + lambda_tarc * tarc_loss
+
     return total_loss, torch.mean(in_batch_loss), torch.mean(hard_loss), torch.mean(pseudo_gold_loss), loss_classifier, train_feats, train_labels
 
 
@@ -606,6 +621,53 @@ def compute_aux_loss(feats, batch_ids, aux_pack, args):
         else:
             total = total + bce(logits, tgt.float())
     return total
+
+
+def compute_target_loss(feats, batch_ids, target_pack, labels, args):
+    """TARC V3 intra-target separation regulariser (exp-tarc-t0.md §2 V3).
+
+    Within each target community T present in the batch with BOTH a hateful and a
+    benign example, push that community's hate centroid and benign centroid apart:
+
+        L_tarc = mean_T relu( margin + sim(mu_{T,hate}, mu_{T,benign}) )
+
+    where mu_{T,.} are the batch's per-target per-label mean fused embeddings and sim
+    is the run's metric (_pair_similarity, higher == more similar). Driving L_tarc down
+    drives that similarity below -margin, i.e. SEPARATES the same-community hate/benign
+    centroids ("same community, opposite intent" becomes explicit geometry).
+
+    Sign note (load-bearing). The pre-registration wrote `relu(m - d(mu_hate,mu_benign))`
+    naming d = _pair_similarity, but _pair_similarity is a SIMILARITY (higher == closer),
+    so relu(m - sim) would PULL the centroids together -- the opposite of the stated
+    intent. To realise "push apart by a margin" we hinge on similarity directly:
+    relu(margin + sim), which reaches 0 once the two centroids are at similarity
+    <= -margin. Recorded as a deliberate deviation from the literal formula in §9.
+
+    Centroids are means of the grad-tracked `feats`; no new params, no RNG. Targets
+    with code < 0 (no community) and targets missing either class in the batch are
+    skipped. Returns a scalar (0 when no eligible target is present in the batch).
+    """
+    device = args.device
+    id_to_target = target_pack["id_to_target"]
+    codes = torch.as_tensor(
+        [id_to_target.get(vid, -1) for vid in batch_ids],
+        dtype=torch.long, device=device)                       # [B]
+    is_hate = labels.to(device).bool()                         # [B]
+    margin = float(getattr(args, "triplet_margin", 0.1))
+    terms = []
+    for t in torch.unique(codes[codes >= 0]).tolist():
+        sel = (codes == t)
+        hate_sel = sel & is_hate
+        benign_sel = sel & (~is_hate)
+        if int(hate_sel.sum().item()) == 0 or int(benign_sel.sum().item()) == 0:
+            continue
+        mu_hate = feats[hate_sel].mean(dim=0, keepdim=True)    # [1, D] grad-tracked
+        mu_benign = feats[benign_sel].mean(dim=0, keepdim=True)
+        sim = _pair_similarity(mu_hate, mu_benign, args)       # [1]
+        terms.append(torch.relu(margin + sim).reshape(()))
+    if not terms:
+        return torch.zeros((), device=device)
+    return torch.stack(terms).mean()
 
 
 def compute_cf_negative_sim(feats, batch, model, cf_pack, args):

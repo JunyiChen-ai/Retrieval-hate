@@ -407,6 +407,52 @@ def parse_args():
              "<path>/CLIP_Embedding/<dataset>/train_cftwin_<model>.pt. Only loaded when "
              "--cf_negs True.")
 
+    # <----------------- TARC (target-aware retrieval-contrastive, B-line) Configs ----------------->
+    # exp-tarc-t0.md. Every knob defaults to a full no-op: with --tarc_target_source
+    # off, target_pack stays None and every TARC branch short-circuits, so the run is
+    # byte-for-byte identical to the baseline (same tensors, same RNG consumption).
+    arg_parser.add_argument(
+        "--tarc_target_source", type=str, default="off",
+        choices=["off", "mllm_pred", "gt_oracle"],
+        help="Source of the per-video `target` community code (exp-tarc-t0.md §5). "
+             "off (default) = TARC fully disabled (bit-for-bit baseline). "
+             "mllm_pred = load data/gt/<ds>/target_pred_<mllm>.json (main-table G3; "
+             "may FileNotFoundError until G2 produces it). "
+             "gt_oracle = load data/gt/<ds>/target_map.json (GT target); ADMISSIBLE "
+             "ONLY as the ceiling probe and ONLY with --oracle_probe True (asserted).")
+    arg_parser.add_argument(
+        "--oracle_probe", type=lambda x: (str(x).lower() == "true"), default=False,
+        help="Explicit opt-in required to read GT target (--tarc_target_source "
+             "gt_oracle). Stamps ORACLE_CEILING into the run name + trainlog so an "
+             "oracle-ceiling number can never be silently reported as a result.")
+    arg_parser.add_argument(
+        "--tarc_hn_mode", type=str, default="off",
+        choices=["off", "prefer", "require"],
+        help="V1 target-matched hard-negative mining (train-time). off (default) = "
+             "identical mining to baseline. prefer = among opposite-label candidates, "
+             "take same-target ones first, else fall back to current behaviour. "
+             "require = same-target opposite-label only (else zero-fill, as the code "
+             "already does when too few hard negatives are found).")
+    arg_parser.add_argument(
+        "--lambda_tarc", type=float, default=0.0,
+        help="V3 intra-target separation regulariser weight. 0.0 (default) = exact "
+             "no-op (the term is never computed). Pre-registered sweep 0.1 / 0.5.")
+    arg_parser.add_argument(
+        "--tarc_vote_gamma", type=float, default=0.0,
+        help="V2 target-consistency kNN-vote multiplier. A neighbour whose target "
+             "matches the query's is up-weighted by (1+gamma); gamma=0 (default) = "
+             "identity = baseline vote. Pre-registered sweep 0.5 / 1.0.")
+    arg_parser.add_argument(
+        "--tarc_multitarget", type=str, default="primary",
+        choices=["primary", "any"],
+        help="Multi-target handling. primary (default, G1) = each video's "
+             "first-listed target code. any = reserved for later (not implemented at "
+             "G1).")
+    arg_parser.add_argument(
+        "--tarc_mllm", type=str, default="",
+        help="MLLM tag for the mllm_pred target file data/gt/<ds>/target_pred_"
+             "<tag>.json. Empty (default) falls back to --model. Unused for gt_oracle.")
+
     # <----------------- Consensus / selfscore (EM) Configs ----------------->
     arg_parser.add_argument(
         "--consensus_topk", type=int, default=10,
@@ -499,6 +545,7 @@ def model_pass(
     archive_bank=None,
     aux_pack=None,
     cf_pack=None,
+    target_pack=None,
 ):
     # P4: the aux linear heads are optimised jointly with the model. When aux_pack
     # is None (lambda_aux == 0) the optimizer is built over model.parameters() only,
@@ -562,6 +609,7 @@ def model_pass(
                 segment_cache=segment_cache,
                 aux_pack=aux_pack,
                 cf_pack=cf_pack,
+                target_pack=target_pack,
             )
             """if args.sparse_dictionary is None and (args.no_hard_negatives != 0 and args.no_pseudo_gold_positives != 0):
                 # Only for dense retrieval
@@ -619,10 +667,12 @@ def model_pass(
                 eval_name="dev",
                 epoch=epoch,
                 archive_bank=archive_bank,
+                target_pack=target_pack,
             )
 
             acc, roc, pre, recall, f1, prediction, labels, macro_val = compute_metrics_retrieval(
-                logging_dict, evaluate_labels, majority_voting=args.majority_voting, topk=args.topk, use_sim=True
+                logging_dict, evaluate_labels, majority_voting=args.majority_voting, topk=args.topk, use_sim=True,
+                tarc_vote_gamma=float(getattr(args, "tarc_vote_gamma", 0.0))
             )
 
             logging_dict_test, test_labels = retrieve_evaluate_RAC_(
@@ -635,10 +685,12 @@ def model_pass(
                 eval_name="test",
                 epoch=epoch,
                 archive_bank=archive_bank,
+                target_pack=target_pack,
             )
 
             acc_test, roc_test, pre_test, recall_test, f1_test, prediction, labels, macro_test = compute_metrics_retrieval(
-                logging_dict_test, test_labels, majority_voting=args.majority_voting, topk=args.topk, use_sim=True
+                logging_dict_test, test_labels, majority_voting=args.majority_voting, topk=args.topk, use_sim=True,
+                tarc_vote_gamma=float(getattr(args, "tarc_vote_gamma", 0.0))
             )
         else:
             acc, roc, pre, recall, f1 = 0, 0, 0, 0, 0
@@ -826,6 +878,23 @@ def main(args):
     # P5: distinguish cf-negative runs from the floor within the same group.
     if getattr(args, "cf_negs", False):
         exp_name += "_p5cf{}".format("rand" if getattr(args, "cf_negs_random", False) else "")
+    # TARC (exp-tarc-t0.md §5): gate the GT-target oracle path and stamp provenance
+    # into the run name so an ORACLE_CEILING number can never masquerade as a result.
+    tarc_source = str(getattr(args, "tarc_target_source", "off"))
+    if tarc_source == "gt_oracle":
+        assert getattr(args, "oracle_probe", False), (
+            "--tarc_target_source gt_oracle reads GT target and is a CEILING probe "
+            "only; it requires --oracle_probe True (exp-tarc-t0.md §5).")
+    if tarc_source != "off":
+        exp_name += "_tarc-{}".format(tarc_source)
+        if str(getattr(args, "tarc_hn_mode", "off")) != "off":
+            exp_name += "-hn{}".format(args.tarc_hn_mode)
+        if float(getattr(args, "lambda_tarc", 0.0)) > 0:
+            exp_name += "-lt{}".format(args.lambda_tarc)
+        if float(getattr(args, "tarc_vote_gamma", 0.0)) > 0:
+            exp_name += "-vg{}".format(args.tarc_vote_gamma)
+        if tarc_source == "gt_oracle" and getattr(args, "oracle_probe", False):
+            exp_name += "_ORACLE_CEILING"
     # Construct output path
     args.output_path = os.path.join(
         args.output_path, "Retrieval", args.dataset, args.group_name, exp_name, "")
@@ -840,6 +909,16 @@ def main(args):
 
     
     print(args)
+
+    # TARC provenance stamp in the trainlog header (exp-tarc-t0.md §5 enforcement).
+    if str(getattr(args, "tarc_target_source", "off")) != "off":
+        print("[TARC] target_source={} oracle_probe={} {}hn_mode={} lambda_tarc={} "
+              "vote_gamma={} multitarget={}".format(
+                  args.tarc_target_source, getattr(args, "oracle_probe", False),
+                  "ORACLE_CEILING " if (args.tarc_target_source == "gt_oracle"
+                                        and getattr(args, "oracle_probe", False)) else "",
+                  args.tarc_hn_mode, args.lambda_tarc, args.tarc_vote_gamma,
+                  args.tarc_multitarget))
 
     # <----------------- Load the data ----------------->
     if args.dataset == "FB":
@@ -1137,6 +1216,54 @@ def main(args):
             getattr(args, "cf_negs_random", False), len(tw_ids),
             int(flipped.sum().item()), cf_path))
 
+    # <----------------- TARC (B-line) target_pack ----------------->
+    # exp-tarc-t0.md §2/§5. Inert when --tarc_target_source off (target_pack None) ->
+    # byte-identical baseline (no torch RNG drawn; only reads a JSON id->code map).
+    # id_to_target covers ALL splits (train + val + test) so V2 can look up query
+    # (eval) targets; row_target is the train_set-order primary code vector.
+    target_pack = None
+    tarc_source = str(getattr(args, "tarc_target_source", "off"))
+    if tarc_source != "off":
+        if str(getattr(args, "tarc_multitarget", "primary")) != "primary":
+            raise NotImplementedError(
+                "--tarc_multitarget any is reserved for later; G1 uses primary only "
+                "(exp-tarc-t0.md §4).")
+        if tarc_source == "gt_oracle":
+            tarc_path = os.path.join(args.path, "gt", args.dataset, "target_map.json")
+        else:  # mllm_pred
+            mllm_tag = getattr(args, "tarc_mllm", "") or args.model
+            tarc_path = os.path.join(
+                args.path, "gt", args.dataset,
+                "target_pred_{}.json".format(mllm_tag))
+        if not os.path.exists(tarc_path):
+            # G2 has not produced the MLLM-pred map yet; fail loudly (exp-tarc-t0.md §5).
+            raise FileNotFoundError(
+                "TARC target source '{}' expects {} (not present this round -- "
+                "produced by G2 for mllm_pred).".format(tarc_source, tarc_path))
+        with open(tarc_path, "r") as f:
+            raw_map = json.load(f)
+        meta = raw_map.get("_meta", {})
+        num_targets = int(meta.get("num_targets", 8))
+        id_to_target = {
+            k: int(v["primary"]) for k, v in raw_map.items()
+            if not k.startswith("_")}
+        train_ids_t = list(train_set.ids)
+        row_target = torch.as_tensor(
+            [id_to_target.get(vid, -1) for vid in train_ids_t], dtype=torch.long)
+        target_pack = {
+            "id_to_target": id_to_target,
+            "num_targets": num_targets,
+            "row_target": row_target,
+            "source": tarc_source,
+        }
+        from collections import Counter as _Counter
+        train_have = int((row_target >= 0).sum().item())
+        cls_hist = dict(_Counter(int(x) for x in row_target.tolist() if x >= 0))
+        print("[TARC] target_pack source={} path={} num_targets={} "
+              "train coverage(primary>=0)={}/{} train-primary hist={}".format(
+                  tarc_source, tarc_path, num_targets, train_have,
+                  len(train_ids_t), cls_hist))
+
     # <----------------- Train the model ----------------->
     if segment_cache is not None and args.seg_mode in ("consensus", "selfscore"):
         # EM driver (DESIGN_iter3 SS2). Each round: M-step = retrain the head
@@ -1219,6 +1346,7 @@ def main(args):
             archive_bank=archive_bank,
             aux_pack=aux_pack,
             cf_pack=cf_pack,
+            target_pack=target_pack,
         )
 
 if __name__ == "__main__":

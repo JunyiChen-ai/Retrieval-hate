@@ -1,0 +1,6491 @@
+{
+"_meta": {
+"_note": "TARC GT-target oracle map (exp-tarc-t0.md G0). Keys are video stems; skip keys starting with '_'. GT target -- read ONLY on the --tarc_target_source gt_oracle probe path (never a main-table run).",
+"code_dict": {
+"Blacks": 0,
+"Jews": 1,
+"Whites": 2,
+"Others": 3,
+"LGBTQ": 4,
+"Muslims": 5,
+"Sexits": 6,
+"Asian": 7
+},
+"num_targets": 8,
+"primary_rule": "first-listed normalised target; -1 == no target",
+"source_csv": "data/gt/HateMM/HateMM_annotation.csv",
+"n_videos": 1083
+},
+"hate_video_1": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_2": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_1": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_3": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_2": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_4": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_3": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_4": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_5": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_5": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_6": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_7": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_6": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_7": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_8": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_9": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_8": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_9": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_10": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_11": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_10": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_12": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_11": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_12": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_13": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_14": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_15": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_13": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_16": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_17": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_18": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_14": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_19": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_15": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_20": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_16": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_17": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_21": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_22": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_23": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_24": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_25": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_26": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_27": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_18": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_28": {
+"targets": [],
+"primary": -1
+},
+"hate_video_19": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_20": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_29": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_30": {
+"targets": [],
+"primary": -1
+},
+"hate_video_21": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_31": {
+"targets": [],
+"primary": -1
+},
+"hate_video_22": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_32": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_33": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_34": {
+"targets": [],
+"primary": -1
+},
+"hate_video_23": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_35": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_24": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_36": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_37": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_38": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_39": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_40": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_41": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_42": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_43": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_25": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_44": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_26": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_45": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_46": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_27": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_28": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_47": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_29": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_30": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_48": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_31": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_32": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_33": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_34": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_49": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_50": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_51": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_52": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_53": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_54": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_35": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_36": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_55": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_37": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_38": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_39": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_40": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_41": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_56": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_42": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_57": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_43": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_58": {
+"targets": [
+"Whites",
+"Blacks"
+],
+"primary": 2
+},
+"hate_video_44": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_59": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_60": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_45": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_46": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_61": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_47": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_48": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_49": {
+"targets": [
+"Muslims",
+"Blacks",
+"Jews"
+],
+"primary": 5
+},
+"non_hate_video_62": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_63": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_50": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_64": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_51": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_65": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_66": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_67": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_68": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_52": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_53": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_69": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_70": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_54": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_55": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_56": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_57": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"hate_video_58": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_71": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_72": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_73": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_74": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_59": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_60": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_75": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_76": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_77": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_78": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_79": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_80": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_61": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_81": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_82": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_83": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_84": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_85": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_62": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_63": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_86": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_87": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_64": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_88": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_89": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_90": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_91": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_92": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_65": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_66": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_93": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_67": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_68": {
+"targets": [
+"LGBTQ"
+],
+"primary": 4
+},
+"non_hate_video_94": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_69": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_95": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_70": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_71": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_96": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_97": {
+"targets": [
+"Blacks",
+"Others"
+],
+"primary": 0
+},
+"non_hate_video_98": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_99": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_100": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_72": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_101": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_102": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_103": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_104": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_105": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_106": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_73": {
+"targets": [
+"Asian",
+"Blacks",
+"Jews"
+],
+"primary": 7
+},
+"hate_video_74": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_75": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_107": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_108": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_109": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_110": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_76": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_111": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_112": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_113": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_114": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_115": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_116": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_117": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_118": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_119": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_77": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_120": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_121": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_78": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_122": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_123": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_124": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_79": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_125": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_126": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_80": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_127": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_128": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_81": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_82": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_83": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_84": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_129": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_130": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_85": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_131": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_132": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_86": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_87": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_133": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_88": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_134": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_89": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_90": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_91": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_135": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_92": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_136": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_137": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_138": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_139": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_93": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_140": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_141": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_94": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_142": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_143": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_144": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_145": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_146": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_147": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_148": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_149": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_150": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_151": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_95": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_96": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_152": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_97": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_98": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_153": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_99": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_154": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_155": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_156": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_100": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_157": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_158": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_159": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_160": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_161": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_101": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_102": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_103": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_104": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_162": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_105": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_163": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_164": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_106": {
+"targets": [
+"Muslims",
+"Blacks",
+"LGBTQ"
+],
+"primary": 5
+},
+"non_hate_video_165": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_166": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_107": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_167": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_168": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_169": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_170": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_171": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_172": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_173": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_108": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_109": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_174": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_110": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_175": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_111": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_176": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_177": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_112": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_178": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_179": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_180": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_181": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_113": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_182": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_183": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_184": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_114": {
+"targets": [
+"Sexits"
+],
+"primary": 6
+},
+"hate_video_115": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_185": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_116": {
+"targets": [
+"Sexits"
+],
+"primary": 6
+},
+"non_hate_video_186": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_187": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_188": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_117": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_118": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_119": {
+"targets": [
+"Blacks",
+"LGBTQ"
+],
+"primary": 0
+},
+"hate_video_120": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_189": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"hate_video_121": {
+"targets": [
+"Muslims",
+"Blacks"
+],
+"primary": 5
+},
+"non_hate_video_190": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"hate_video_122": {
+"targets": [
+"Sexits",
+"Muslims"
+],
+"primary": 6
+},
+"non_hate_video_191": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_123": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_192": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_193": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_194": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_124": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_195": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_196": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_125": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_197": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_198": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_126": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_199": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_200": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_127": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_201": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_128": {
+"targets": [
+"Sexits",
+"Blacks",
+"LGBTQ"
+],
+"primary": 6
+},
+"non_hate_video_202": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_203": {
+"targets": [
+"Whites",
+"Blacks"
+],
+"primary": 2
+},
+"non_hate_video_204": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_205": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_206": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_129": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_207": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_208": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_209": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_130": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_131": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_210": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_132": {
+"targets": [
+"Whites",
+"Blacks"
+],
+"primary": 2
+},
+"non_hate_video_211": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_212": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_213": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_214": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_133": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_134": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_215": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_216": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_135": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_217": {
+"targets": [
+"Sexits"
+],
+"primary": 6
+},
+"hate_video_136": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_137": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_218": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_219": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_220": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_138": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_221": {
+"targets": [
+"Whites",
+"Blacks"
+],
+"primary": 2
+},
+"hate_video_139": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_222": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_140": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_223": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_224": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_225": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_141": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_226": {
+"targets": [
+"Sexits",
+"Others"
+],
+"primary": 6
+},
+"hate_video_142": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_143": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_144": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_227": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_228": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_145": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_229": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_230": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_146": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_231": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_232": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_233": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_234": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_147": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_235": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_236": {
+"targets": [
+"Whites",
+"Blacks"
+],
+"primary": 2
+},
+"hate_video_148": {
+"targets": [
+"Blacks",
+"Others"
+],
+"primary": 0
+},
+"non_hate_video_237": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_238": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_149": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_239": {
+"targets": [
+"Whites",
+"Blacks"
+],
+"primary": 2
+},
+"hate_video_150": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_151": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_152": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_153": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_154": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_155": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_156": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_157": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_158": {
+"targets": [
+"Whites",
+"Blacks"
+],
+"primary": 2
+},
+"non_hate_video_240": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_241": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_242": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_159": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_160": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_161": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_162": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_243": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_244": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_163": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_164": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_245": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_246": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_247": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_248": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_249": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_250": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_251": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_252": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_253": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_254": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_255": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_256": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_257": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_258": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_259": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_260": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_261": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_262": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_263": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_264": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_165": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_265": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_166": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_266": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_267": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_268": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_269": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_270": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_271": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_272": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_273": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_274": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_275": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_276": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_277": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_167": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_168": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_169": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_278": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_279": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_280": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_281": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_282": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_283": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_170": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_171": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_284": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_172": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_285": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_286": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_287": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_288": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_289": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_290": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_173": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_291": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_174": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_292": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_175": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_176": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_293": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_294": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_295": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_296": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_297": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_298": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_177": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_299": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_300": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_301": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_178": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_179": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_180": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_302": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_303": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_304": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_305": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_306": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_181": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_307": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_182": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_183": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_184": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_185": {
+"targets": [
+"Blacks",
+"LGBTQ"
+],
+"primary": 0
+},
+"hate_video_186": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_187": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_308": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_188": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_189": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_309": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_190": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_310": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_191": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_311": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_192": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_312": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_193": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_313": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_314": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_194": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_195": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_196": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_197": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_198": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_315": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_199": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_200": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_201": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_202": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_203": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_204": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"hate_video_205": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_206": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_207": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_208": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_209": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_210": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_211": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_212": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_213": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_316": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_317": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_214": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_215": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_216": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_217": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_218": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_318": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_319": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_320": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_321": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_322": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_323": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_324": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_325": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_326": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_219": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_327": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_220": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_221": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_222": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_223": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_224": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_225": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_226": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_227": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_228": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_328": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_229": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_230": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_231": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_232": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_233": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_234": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"hate_video_235": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_236": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"hate_video_237": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_238": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_239": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_240": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_241": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_242": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_243": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_244": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_245": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_246": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_247": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_248": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_249": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_250": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_251": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_329": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_252": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_253": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_254": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_255": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_330": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_256": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_257": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_258": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_259": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_260": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_331": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_261": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_262": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_332": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_333": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_263": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_334": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_335": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_336": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_337": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_338": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_339": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_340": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_341": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_342": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_343": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_264": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_344": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_345": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_346": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_347": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_265": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_348": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_349": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_350": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_266": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_351": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_267": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_352": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"non_hate_video_353": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_354": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_268": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_355": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_356": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_357": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_269": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_358": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_270": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_359": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_271": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_272": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_273": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_274": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_360": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_361": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_362": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_363": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_364": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_275": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_276": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_365": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_366": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_367": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_277": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_368": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_369": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_278": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_370": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_371": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_372": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_279": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_373": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_374": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_375": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_376": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_280": {
+"targets": [
+"Muslims",
+"Blacks",
+"LGBTQ"
+],
+"primary": 5
+},
+"non_hate_video_377": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_378": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_281": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_282": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_379": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_380": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_283": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_284": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_381": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_285": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_286": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"hate_video_287": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_288": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_289": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_382": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_383": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_384": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_385": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_386": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_387": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_388": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_290": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_389": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_390": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_391": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_392": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_393": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_291": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_292": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_394": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_293": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_294": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_395": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_295": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_396": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_397": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_398": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_296": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_399": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_297": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_400": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_401": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_402": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_403": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_298": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_299": {
+"targets": [],
+"primary": -1
+},
+"hate_video_300": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_404": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_405": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"non_hate_video_406": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_301": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_302": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_303": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_304": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"non_hate_video_407": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_305": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_306": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_408": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_307": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_409": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_410": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_308": {
+"targets": [
+"Blacks",
+"Others"
+],
+"primary": 0
+},
+"non_hate_video_411": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_412": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_309": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_310": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_413": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_414": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_415": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_416": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_417": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_418": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_419": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_420": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_421": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_311": {
+"targets": [
+"Blacks",
+"LGBTQ"
+],
+"primary": 0
+},
+"hate_video_312": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_422": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_423": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_424": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_425": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_426": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_427": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_428": {
+"targets": [
+"LGBTQ"
+],
+"primary": 4
+},
+"hate_video_313": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_429": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_430": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_431": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_432": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_433": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_434": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_435": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_436": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_314": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_437": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_315": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_438": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_439": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_316": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_440": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_317": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_318": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_319": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_320": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_441": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_442": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_321": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_322": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_323": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_443": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_444": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_445": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_446": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_324": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_447": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_448": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_449": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_450": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_451": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_325": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_326": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_327": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_328": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_329": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_452": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_453": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_454": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_330": {
+"targets": [
+"Blacks",
+"Muslims"
+],
+"primary": 0
+},
+"hate_video_331": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_455": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_332": {
+"targets": [
+"Blacks",
+"LGBTQ"
+],
+"primary": 0
+},
+"hate_video_333": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_456": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_334": {
+"targets": [
+"Blacks",
+"LGBTQ"
+],
+"primary": 0
+},
+"hate_video_335": {
+"targets": [
+"Blacks",
+"Muslims"
+],
+"primary": 0
+},
+"hate_video_336": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_457": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_337": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_458": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"hate_video_338": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_459": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_460": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_461": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_462": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_339": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_463": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_464": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_465": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_340": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_466": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_467": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_468": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_341": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_469": {
+"targets": [
+"LGBTQ"
+],
+"primary": 4
+},
+"non_hate_video_470": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_342": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_471": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_343": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_472": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_473": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_474": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_475": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_476": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_344": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_477": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_345": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_346": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_347": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_478": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_479": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_480": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_481": {
+"targets": [
+"Blacks",
+"Others"
+],
+"primary": 0
+},
+"non_hate_video_482": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_483": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_484": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_485": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_486": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_487": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_488": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_489": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_348": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_490": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_491": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_492": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_493": {
+"targets": [
+"Blacks",
+"Others"
+],
+"primary": 0
+},
+"non_hate_video_494": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_495": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_496": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"non_hate_video_497": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_498": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_499": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_500": {
+"targets": [
+"Blacks",
+"Others"
+],
+"primary": 0
+},
+"hate_video_349": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_501": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_502": {
+"targets": [
+"Asian",
+"Blacks"
+],
+"primary": 7
+},
+"non_hate_video_503": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_504": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_350": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_505": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_351": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_352": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_506": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_507": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_508": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_353": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_509": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_510": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_511": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_354": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_355": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_356": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_357": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_512": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_513": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_514": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_515": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_358": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_516": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_359": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_360": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_517": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_518": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_519": {
+"targets": [
+"Whites",
+"Blacks"
+],
+"primary": 2
+},
+"hate_video_361": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"hate_video_362": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_363": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_520": {
+"targets": [],
+"primary": -1
+},
+"hate_video_364": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_521": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_522": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_523": {
+"targets": [],
+"primary": -1
+},
+"hate_video_365": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_524": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_525": {
+"targets": [],
+"primary": -1
+},
+"hate_video_366": {
+"targets": [
+"LGBTQ",
+"Jews"
+],
+"primary": 4
+},
+"hate_video_367": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_526": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_527": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_528": {
+"targets": [],
+"primary": -1
+},
+"hate_video_368": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_529": {
+"targets": [],
+"primary": -1
+},
+"hate_video_369": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"non_hate_video_530": {
+"targets": [],
+"primary": -1
+},
+"hate_video_370": {
+"targets": [
+"LGBTQ",
+"Jews"
+],
+"primary": 4
+},
+"non_hate_video_531": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_532": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_533": {
+"targets": [],
+"primary": -1
+},
+"hate_video_371": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_372": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_534": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_535": {
+"targets": [],
+"primary": -1
+},
+"hate_video_373": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_536": {
+"targets": [],
+"primary": -1
+},
+"hate_video_374": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_537": {
+"targets": [],
+"primary": -1
+},
+"hate_video_375": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_376": {
+"targets": [
+"Blacks",
+"Whites"
+],
+"primary": 0
+},
+"non_hate_video_538": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_539": {
+"targets": [],
+"primary": -1
+},
+"hate_video_377": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_540": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_541": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_542": {
+"targets": [],
+"primary": -1
+},
+"hate_video_378": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_543": {
+"targets": [],
+"primary": -1
+},
+"hate_video_379": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"hate_video_380": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_544": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_545": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_546": {
+"targets": [],
+"primary": -1
+},
+"hate_video_381": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_547": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_548": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_549": {
+"targets": [],
+"primary": -1
+},
+"hate_video_382": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_550": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_551": {
+"targets": [],
+"primary": -1
+},
+"hate_video_383": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_552": {
+"targets": [],
+"primary": -1
+},
+"non_hate_video_553": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_554": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_555": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_556": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_557": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_384": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_385": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_558": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_559": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_560": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_386": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_561": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_562": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_563": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_564": {
+"targets": [
+"LGBTQ"
+],
+"primary": 4
+},
+"hate_video_387": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"hate_video_388": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_389": {
+"targets": [
+"Jews",
+"Whites"
+],
+"primary": 1
+},
+"hate_video_390": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_565": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_566": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_567": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_568": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_569": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_570": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_571": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_572": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_573": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_574": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_391": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_392": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_575": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_393": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"non_hate_video_576": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_577": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_394": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_395": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_396": {
+"targets": [
+"Sexits",
+"Jews"
+],
+"primary": 6
+},
+"non_hate_video_578": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_579": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_580": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_581": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_582": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_397": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_583": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_584": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_585": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_586": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_587": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_588": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_589": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_590": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_591": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_398": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_592": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_593": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_399": {
+"targets": [
+"Others",
+"Jews"
+],
+"primary": 3
+},
+"hate_video_400": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_594": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_595": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_401": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_596": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_402": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_597": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_403": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_404": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_405": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_598": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_406": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_407": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_408": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_409": {
+"targets": [
+"LGBTQ"
+],
+"primary": 4
+},
+"hate_video_410": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_411": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_412": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_599": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_413": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_414": {
+"targets": [
+"Blacks",
+"Jews"
+],
+"primary": 0
+},
+"hate_video_415": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_600": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_416": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_601": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_602": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_603": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_604": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_605": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_606": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_607": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_608": {
+"targets": [
+"Muslims"
+],
+"primary": 5
+},
+"non_hate_video_609": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_610": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_611": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_417": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_612": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_418": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_613": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_614": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_419": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_615": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_616": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_617": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_618": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_619": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_420": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_620": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_621": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_622": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_421": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_623": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_624": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_625": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_422": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_423": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_626": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_627": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_628": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_629": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_424": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"hate_video_425": {
+"targets": [
+"Blacks",
+"Whites"
+],
+"primary": 0
+},
+"hate_video_426": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_630": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_631": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_632": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_633": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_634": {
+"targets": [
+"Blacks"
+],
+"primary": 0
+},
+"non_hate_video_635": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_636": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_637": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_427": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_638": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_639": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_640": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_641": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_428": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_642": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"non_hate_video_643": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_429": {
+"targets": [
+"Others",
+"Jews"
+],
+"primary": 3
+},
+"non_hate_video_644": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_645": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_646": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_647": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_648": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_649": {
+"targets": [
+"Others",
+"Whites"
+],
+"primary": 3
+},
+"non_hate_video_650": {
+"targets": [
+"Whites"
+],
+"primary": 2
+},
+"hate_video_430": {
+"targets": [
+"Jews"
+],
+"primary": 1
+},
+"non_hate_video_651": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"non_hate_video_652": {
+"targets": [
+"Others"
+],
+"primary": 3
+},
+"hate_video_431": {
+"targets": [
+"Jews"
+],
+"primary": 1
+}
+}

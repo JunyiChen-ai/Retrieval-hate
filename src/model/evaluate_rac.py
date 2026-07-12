@@ -320,8 +320,14 @@ def _archive_augment_keys(fused_feats, ids, archive_bank):
 
 def retrieve_evaluate_RAC_(
     train_dl, evaluate_dl, model, largest_retrieval=100, threshold=0.5, args=None, eval_name=None, epoch=None,
-    archive_bank=None,
+    archive_bank=None, target_pack=None,
 ):
+    # TARC V2 (exp-tarc-t0.md §2): attach per-query / per-neighbour target codes to the
+    # logging dict so the kNN vote can up-weight same-community neighbours. Active ONLY
+    # when a target source is set AND --tarc_vote_gamma > 0; otherwise the logging dict
+    # is byte-identical to baseline (no extra keys).
+    tarc_v2 = (target_pack is not None
+               and float(getattr(args, "tarc_vote_gamma", 0.0)) > 0)
     model.eval()
     # Get the features and labels
     train_ids = []
@@ -466,6 +472,12 @@ def retrieve_evaluate_RAC_(
             "retrieved_out": torch.cat(retrieved_out),
             "eval_out": eval_out[i].cpu().detach(),
         }
+        if tarc_v2:
+            _id_to_target = target_pack["id_to_target"]
+            logging_dict[evaluate_ids[i]]["query_target"] = int(
+                _id_to_target.get(evaluate_ids[i], -1))
+            logging_dict[evaluate_ids[i]]["retrieved_target"] = [
+                int(_id_to_target.get(rid, -1)) for rid in retrieved_ids]
     pickle_dict["logging_dict"] = logging_dict
     if args.save_embed:
         with open(pickle_save_path, 'wb') as handle:

@@ -315,7 +315,18 @@ def dense_retrieve_hard_negatives_pseudo_positive(
     train_dl, query_feats, query_labels, model,
     largest_retrieval=1, threshold=None, args=None,
     train_feats=None, train_labels=None,
+    target_pack=None, query_ids=None,
 ):
+    # TARC V1 (exp-tarc-t0.md §2): target-matched hard-negative mining. Active ONLY
+    # when a target source is set AND --tarc_hn_mode != off AND query ids are supplied.
+    # When inactive the ORIGINAL mining loop runs verbatim (byte-identical baseline);
+    # no target array is built and no behaviour changes.
+    tarc_active = (
+        target_pack is not None
+        and query_ids is not None
+        and str(getattr(args, "tarc_hn_mode", "off")) != "off"
+        and str(getattr(args, "tarc_target_source", "off")) != "off"
+    )
     model.eval()
     # Get the batch size, do not use args.batch_size,
     # since the last batch might be smaller
@@ -329,7 +340,13 @@ def dense_retrieve_hard_negatives_pseudo_positive(
     # We will reindex the searching index with updated training data
     if train_feats is None or train_labels is None:
         #print("Start to reindex dense retrieval index")
+        # TARC V1: collect the (shuffled) train ids in this same rebuild loop so the
+        # per-row target vector is ALIGNED to train_feats' FAISS row order. Cached on
+        # target_pack because train_feats is reused across steps within an epoch.
+        train_ids_accum = [] if tarc_active else None
         for i, batch in enumerate(train_dl):
+            if tarc_active:
+                train_ids_accum.extend(batch["ids"])
             image_feats = batch["image_feats"].to(args.device)
             text_feats = batch["text_feats"].to(args.device)
             # Image+Text features after modality fusion
@@ -360,6 +377,11 @@ def dense_retrieve_hard_negatives_pseudo_positive(
                         (train_feats, all_feats.cpu().detach().numpy().astype("float32")))
                     train_labels = np.concatenate(
                         (train_labels, batch["labels"].cpu().detach().numpy().astype("int")))
+        # TARC V1: cache the primary-target code per index row, aligned to train_feats.
+        if tarc_active:
+            _id_to_target = target_pack["id_to_target"]
+            target_pack["_train_targets"] = np.asarray(
+                [_id_to_target.get(vid, -1) for vid in train_ids_accum], dtype="int64")
 
     # Perform dense retrieval
     # Get the dimension of the features
@@ -430,54 +452,132 @@ def dense_retrieve_hard_negatives_pseudo_positive(
     # and we thus minimizes the loss (giving some sort of reward in not finding the hard negatives)
     #
 
-    for i, row in enumerate(D):
+    # TARC V1: query- and index-row target codes (only when target-preferred mining).
+    if tarc_active:
+        _id_to_target = target_pack["id_to_target"]
+        query_targets_np = np.asarray(
+            [_id_to_target.get(vid, -1) for vid in query_ids], dtype="int64")
+        train_targets_np = target_pack.get("_train_targets")
+        if train_targets_np is None:
+            # cache miss (should not happen: index rebuilt at each epoch start) ->
+            # fall back to baseline mining for this step rather than mis-align.
+            tarc_active = False
 
-        # Initialize the counter for the number of hard negatives
-        j = 0
+    if not tarc_active:
+        for i, row in enumerate(D):
 
-        # initalize the counter for the number of pseudo gold positives
-        k = 0
-        for iter, value in enumerate(row):
-            # print(query_labels[i].item())
-            # If the label is opposite (negative)
-            # print(train_labels[I[i, j]].item(), query_labels[i].item(), query_labels[i], train_labels[I[i, j]].item() != query_labels[i].item())
+            # Initialize the counter for the number of hard negatives
+            j = 0
 
-            # For the hard negatives
-            if train_labels[I[i, iter]].item() != query_labels[i].item() and j < args.no_hard_negatives:
+            # initalize the counter for the number of pseudo gold positives
+            k = 0
+            for iter, value in enumerate(row):
+                # print(query_labels[i].item())
+                # If the label is opposite (negative)
+                # print(train_labels[I[i, j]].item(), query_labels[i].item(), query_labels[i], train_labels[I[i, j]].item() != query_labels[i].item())
 
-                if args.Faiss_GPU:
-                    # GPU implementation
-                    hard_negative_features[i][j] = train_feats[I[i, iter]]
-                    hard_negative_scores[i][j] = value
-                else:
+                # For the hard negatives
+                if train_labels[I[i, iter]].item() != query_labels[i].item() and j < args.no_hard_negatives:
 
-                    # CPU implementation with numpy
-                    hard_negative_features[i][j] = torch.from_numpy(
-                        train_feats[I[i, iter]]).float().to(args.device)
-                    hard_negative_scores[i][j] = torch.from_numpy(
-                        np.asarray(value)).float().to(args.device)
+                    if args.Faiss_GPU:
+                        # GPU implementation
+                        hard_negative_features[i][j] = train_feats[I[i, iter]]
+                        hard_negative_scores[i][j] = value
+                    else:
 
-                j += 1
+                        # CPU implementation with numpy
+                        hard_negative_features[i][j] = torch.from_numpy(
+                            train_feats[I[i, iter]]).float().to(args.device)
+                        hard_negative_scores[i][j] = torch.from_numpy(
+                            np.asarray(value)).float().to(args.device)
 
-            # For the pseudo gold positives
-            elif train_labels[I[i, iter]].item() == query_labels[i].item() and k < args.no_pseudo_gold_positives:
-                if args.Faiss_GPU:
-                    # GPU implementation
-                    pseudo_positive_features[i][k] = train_feats[I[i, iter]]
-                    pseudo_positive_scores[i][k] = value
-                else:
-                    # CPU implementation with numpy
-                    pseudo_positive_features[i][k] = torch.from_numpy(
-                        train_feats[I[i, iter]]).float().to(args.device)
-                    pseudo_positive_scores[i][k] = torch.from_numpy(
-                        np.asarray(value)).float().to(args.device)
+                    j += 1
 
-                k += 1
-            # Only if both the number of hard negatives and pseudo gold positives are found, then break
-            if j == largest_retrieval and k == args.no_pseudo_gold_positives:
-                break
-        # print("Searched top {} to get {} hard negatives".format(iter+1, j))
-        
+                # For the pseudo gold positives
+                elif train_labels[I[i, iter]].item() == query_labels[i].item() and k < args.no_pseudo_gold_positives:
+                    if args.Faiss_GPU:
+                        # GPU implementation
+                        pseudo_positive_features[i][k] = train_feats[I[i, iter]]
+                        pseudo_positive_scores[i][k] = value
+                    else:
+                        # CPU implementation with numpy
+                        pseudo_positive_features[i][k] = torch.from_numpy(
+                            train_feats[I[i, iter]]).float().to(args.device)
+                        pseudo_positive_scores[i][k] = torch.from_numpy(
+                            np.asarray(value)).float().to(args.device)
+
+                    k += 1
+                # Only if both the number of hard negatives and pseudo gold positives are found, then break
+                if j == largest_retrieval and k == args.no_pseudo_gold_positives:
+                    break
+            # print("Searched top {} to get {} hard negatives".format(iter+1, j))
+    else:
+        # TARC V1 target-preferred mining. Pseudo-gold positives use the IDENTICAL
+        # rule as baseline (first same-label neighbours, in retrieved order); only the
+        # HARD-NEGATIVE choice changes: prefer/require an opposite-label neighbour that
+        # SHARES the anchor's target community. require = same-target only (else the
+        # slot stays zero, exactly as the baseline zero-fills when too few HN exist);
+        # prefer = same-target first, then fall back to any opposite-label in order.
+        hn_mode = str(getattr(args, "tarc_hn_mode", "off"))
+
+        def _store_hn(i, j, iter_idx, value):
+            if args.Faiss_GPU:
+                hard_negative_features[i][j] = train_feats[I[i, iter_idx]]
+                hard_negative_scores[i][j] = value
+            else:
+                hard_negative_features[i][j] = torch.from_numpy(
+                    train_feats[I[i, iter_idx]]).float().to(args.device)
+                hard_negative_scores[i][j] = torch.from_numpy(
+                    np.asarray(value)).float().to(args.device)
+
+        def _store_pp(i, k, iter_idx, value):
+            if args.Faiss_GPU:
+                pseudo_positive_features[i][k] = train_feats[I[i, iter_idx]]
+                pseudo_positive_scores[i][k] = value
+            else:
+                pseudo_positive_features[i][k] = torch.from_numpy(
+                    train_feats[I[i, iter_idx]]).float().to(args.device)
+                pseudo_positive_scores[i][k] = torch.from_numpy(
+                    np.asarray(value)).float().to(args.device)
+
+        for i, row in enumerate(D):
+            ql = query_labels[i].item()
+            qt = int(query_targets_np[i])
+            # pseudo-gold positives: identical to baseline (same-label, in order)
+            if args.no_pseudo_gold_positives != 0:
+                k = 0
+                for iter_idx, value in enumerate(row):
+                    cand = int(I[i, iter_idx])
+                    if train_labels[cand].item() == ql and k < args.no_pseudo_gold_positives:
+                        _store_pp(i, k, iter_idx, value)
+                        k += 1
+                        if k >= args.no_pseudo_gold_positives:
+                            break
+            # hard negatives, phase A: opposite-label AND same-target community
+            j = 0
+            used = set()
+            for iter_idx, value in enumerate(row):
+                if j >= args.no_hard_negatives:
+                    break
+                cand = int(I[i, iter_idx])
+                if (train_labels[cand].item() != ql and qt >= 0
+                        and int(train_targets_np[cand]) == qt):
+                    _store_hn(i, j, iter_idx, value)
+                    used.add(cand)
+                    j += 1
+            # phase B (prefer only): fall back to any opposite-label, in order
+            if hn_mode == "prefer":
+                for iter_idx, value in enumerate(row):
+                    if j >= args.no_hard_negatives:
+                        break
+                    cand = int(I[i, iter_idx])
+                    if cand in used:
+                        continue
+                    if train_labels[cand].item() != ql:
+                        _store_hn(i, j, iter_idx, value)
+                        used.add(cand)
+                        j += 1
+
     if args.no_pseudo_gold_positives == 0:
         return hard_negative_features, hard_negative_scores, train_feats, train_labels
     elif args.no_pseudo_gold_positives != 0:

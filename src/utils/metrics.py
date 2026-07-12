@@ -211,7 +211,7 @@ def compute_metrics_retrieval_baseline(logging_dict, labels, majority_voting="me
     return acc, roc, pre, recall, f1
 
 
-def compute_metrics_retrieval(logging_dict, labels, majority_voting="mean", topk=0, use_prob=False, use_sim=False):
+def compute_metrics_retrieval(logging_dict, labels, majority_voting="mean", topk=0, use_prob=False, use_sim=False, tarc_vote_gamma=0.0):
     """
     # Loop through the logging_dict to get the retrieved labels
     # Structure of logging_dict:
@@ -264,10 +264,18 @@ def compute_metrics_retrieval(logging_dict, labels, majority_voting="mean", topk
             retrieved_labels = value["retrieved_label"]
             retrieved_sims = value["retrieved_scores"]
             retrieved_sims = np.array([sim.item() for sim in retrieved_sims ])
-            #map 0 to -1, map 1 to 1 
+            #map 0 to -1, map 1 to 1
             retrieved_labels_map = np.array(retrieved_labels)*2-1
             # times the similarity
             retrieved_labels_map = retrieved_labels_map*retrieved_sims
+            # TARC V2 (exp-tarc-t0.md §2): up-weight neighbours whose target community
+            # matches the query's by (1+gamma). gamma==0 (or no target info in the
+            # logging dict) -> identity, i.e. byte-identical to the baseline vote.
+            if tarc_vote_gamma > 0 and "query_target" in value:
+                qt = value["query_target"]
+                rtg = np.asarray(value["retrieved_target"])
+                tmult = np.where((rtg == qt) & (qt >= 0), 1.0 + tarc_vote_gamma, 1.0)
+                retrieved_labels_map = retrieved_labels_map * tmult
             length = len(retrieved_labels_map)
             if majority_voting == "mean":
                 list_majority_voted.append(np.mean(retrieved_labels_map))
