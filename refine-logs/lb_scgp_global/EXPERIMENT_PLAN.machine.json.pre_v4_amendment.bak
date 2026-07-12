@@ -289,7 +289,7 @@
   "run_order": [
     "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
     "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
-    "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
+    "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
     "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
     "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
     "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
@@ -520,11 +520,11 @@
       "status": "FAIL_STOP"
     },
     {
-      "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
+      "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
       "milestone": "M0",
       "block": "B0",
       "claim": "C1",
-      "purpose": "Prospective Run2-v4 supplement for synthetic KKT-only global-operator closure; byte-exact clone of the consumed-and-closed v3 lineage (v3 was itself a byte-clone of the v2 fix2 code), opened by the v4 plan amendment (REPLACE at run_order[2]/runs[2], v2 content -> v4) after v3 died at the machine run_order[2] v2/v3 plan-drift assert (job 12974). No science, solver, threshold, fixture, case-role, rank-gate, or scope change vs v3; the only changes are lineage identity (v2/v3 -> v4 file/run_id/namespace/schema tokens) and the amendment-driven config hash-binding cascade.",
+      "purpose": "Prospective Run2-v2 supplement for synthetic KKT-only global-operator closure; repairs implementation/config/schema/wrapper/verifier alignment without changing d, fixture identities/counts, thresholds, case roles, expected outcomes, rank gate, or scope.",
       "dataset": "synthetic",
       "split_scope": "synthetic fixtures only",
       "system_variant": "FULL_SYNTH_KKT_FIXTURES",
@@ -551,22 +551,22 @@
         "robust_interval_coverage"
       ],
       "artifact_paths": [
-        "artifacts/lb_scgp_global/v4/m0/synth_kkt/manifest.json"
+        "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json"
       ],
-      "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v4.json",
-      "artifact_namespace": "artifacts/lb_scgp_global/v4/m0/synth_kkt/",
+      "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json",
+      "artifact_namespace": "artifacts/lb_scgp_global/v2/m0/synth_kkt/",
       "lineage_bound_outputs": [
-        "v4_config",
-        "v4_payload_schema",
-        "v4_case_schema",
-        "v4_source_manifest",
-        "v4_access_ledger",
-        "v4_publish_lock",
-        "v4_no_clobber_lock",
-        "v4_manifest"
+        "v2_config",
+        "v2_payload_schema",
+        "v2_case_schema",
+        "v2_source_manifest",
+        "v2_access_ledger",
+        "v2_publish_lock",
+        "v2_no_clobber_lock",
+        "v2_manifest"
       ],
       "artifact_schema_ids": [
-        "scgp_global_synth_kkt_payload_v4"
+        "scgp_global_synth_kkt_payload_v2"
       ],
       "slurm": {
         "cpu": 8,
@@ -593,7 +593,7 @@
         "movement_nondegeneration_target_unchanged": true,
         "rank_factor_rules_unchanged": true,
         "solver_math_verifier_logic_unchanged": false,
-        "solver_math_verifier_logic_change_scope": "v4 is a byte-exact clone of v3 (which is a byte-clone of the v2 fix2 solver/verifier logic); there is no solver/math/verifier byte change vs v3. solver_math_verifier_logic_unchanged=false is stated relative to v1: the historical v1->v2 fix2 reconciliation (making the frozen rank<=d PSD/KKT contract mathematically consistent and independently verifiable without changing d, fixture identities/counts, thresholds, case roles, rank gate, or downstream scope) is inherited unchanged by v3 and v4.",
+        "solver_math_verifier_logic_change_scope": "fix2 makes the frozen rank<=d PSD/KKT contract mathematically consistent and independently verifiable without changing d, fixture identities/counts, thresholds, case roles, rank gate, or downstream scope",
         "intended_claim_unchanged": true,
         "failure_transition_unchanged": true,
         "only_allowed_repair": "implementation_config_schema_wrapper_verifier_contract_alignment_without_threshold_fixture_rank_gate_or_scope_change",
@@ -602,38 +602,29 @@
       "authorization_requirements": {
         "requires_run1_frozen": true,
         "requires_preserved_v1_failure_evidence": true,
-        "requires_preserved_v2_and_v3_failure_evidence": true,
-        "requires_approved_v4_amendment_after_independent_amendment_review": true,
-        "requires_fresh_independent_v4_code_review_zero_critical_zero_high": true,
-        "requires_runtime_crosscheck_static_simulation_table_all_pass": true,
-        "requires_dependency_availability_evidence": true,
+        "requires_approved_amendment_after_independent_amendment_review": true,
+        "requires_static_contract_matrix_and_negative_tests": true,
+        "requires_fresh_independent_v2_code_review_zero_critical_zero_high": true,
         "requires_exact_hashes_and_no_clobber_check": true,
         "requires_separate_execution_authorization": true,
         "this_amendment_authorizes_execution": false,
-        "this_amendment_can_authorize_only_fresh_v4_code_review_after_independent_amendment_review": true
+        "this_amendment_can_authorize_only_v2_implementation_audit_after_independent_amendment_review": true
       },
-      "clone_freeze": {
-        "v4_is_byte_exact_clone_of_v3": true,
-        "clone_freeze_artifact": "refine-logs/lb_scgp_global/M0_RUN2_V4_CLONE_FREEZE.md",
-        "clone_freeze_complete": true,
-        "v4_amendment_authored": true,
-        "v4_amendment_independent_review_passed": false,
-        "fresh_independent_v4_code_review_passed": false,
-        "runtime_crosscheck_static_simulation_table_all_pass_confirmed_by_reviewer": false,
-        "carried_static_residuals": [
-          "M-A",
-          "M-B"
-        ],
+      "implementation_fix_freeze": {
+        "amendment_review_passed_zero_critical_zero_high": true,
+        "fix_freeze_complete": true,
+        "fresh_fix_review_failed_zero_critical_two_high_one_medium_one_low": true,
+        "fix2_freeze_complete": true,
         "execution_evidence": false,
         "execution_permission": false,
-        "requires_fresh_independent_v4_code_review_zero_critical_zero_high": true,
+        "requires_fresh_independent_v2_code_review_zero_critical_zero_high": true,
         "requires_separate_execution_authorization": true
       },
-      "gate": "v4 byte-exact clone of v3 plus v4 plan amendment; clone/freeze complete and the authoritative machine plan REPLACED in place at index[2] (v2 content -> v4), but locked pending independent v4 amendment review, fresh independent v4 code review with 0 Critical / 0 High including the mandatory runtime cross-check static-simulation table (every row PASS), dependency-availability evidence, exact hashes/no-clobber review, and separate execution authorization before any SLURM submission. Future single SLURM job only: 8 CPU, 64 GB, 0 GPU, HateVideo, no --time; wrapper must run authoritative validator, producer, and independent semantic verifier; finiteVI diagnostics are non-accepting; missing jsonschema fails closed in the validator before publish.",
-      "failure_transition": "STOP; preserve v4 logs/artifacts as failure evidence; no automatic Run3 unlock.",
+      "gate": "Fix2 implementation/freeze complete, but locked pending fresh independent v2 code review with 0 Critical / 0 High, exact hashes/no-clobber review, and separate execution authorization before any SLURM submission. Future single SLURM job only: 8 CPU, 64 GB, 0 GPU, HateVideo, no --time; wrapper must run authoritative validator, producer, and independent semantic verifier; finiteVI diagnostics are non-accepting; missing jsonschema fails closed in the validator before publish.",
+      "failure_transition": "STOP; preserve v2 logs/artifacts as failure evidence; no automatic Run3 unlock.",
       "parallel_group": "g0_serial",
       "priority": "MUST",
-      "status": "V4_CLONE_FROZEN_AMENDMENT_PENDING_INDEPENDENT_REVIEW"
+      "status": "FIX2_COMPLETE_FRESH_REVIEW_LOCKED"
     },
     {
       "run_id": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
@@ -651,7 +642,7 @@
       "arm": null,
       "seed": null,
       "dependencies": [
-        "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4"
+        "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2"
       ],
       "metrics": [
         "resource_peak",
@@ -680,11 +671,11 @@
         "api_retry_cap": 0,
         "estimated_storage_gb": 10
       },
-      "gate": "GO iff Run1 is frozen, Run2-v1/v2/v3 failure evidence is preserved, Run2-v4 semantic verification is PASS in its single SLURM artifact, and a fresh independent v4 artifact review authorizes unlock; Run2-v1/v2/v3 remain FAIL_STOP / consumed-closed evidence only.",
+      "gate": "GO iff Run1 is frozen, Run2-v1 failure evidence is preserved, Run2-v2 semantic verification is PASS in its single SLURM artifact, and a fresh independent v2 artifact review authorizes unlock; Run2-v1 remains FAIL_STOP evidence only.",
       "failure_transition": "STOP before M1 cache",
       "parallel_group": "g0_serial",
       "priority": "MUST",
-      "status": "LOCKED_UNTIL_V4_PASS"
+      "status": "LOCKED_UNTIL_V2_PASS"
     },
     {
       "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
@@ -3750,16 +3741,8 @@
     "pre_post_run_order_diff": {
       "inserted_after": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
       "inserted_run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
-      "inserted_run_id_note": "historical v2 plan-amendment INSERT record; preserved (not rewritten to v1->v4) per the v3 result-to-claim verdict",
       "run3_old_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
-      "run3_new_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
-      "v4_replace_record": {
-        "operation": "REPLACE_IN_PLACE_AT_INDEX_2",
-        "replaced_run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
-        "replacement_run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
-        "reason": "v4 is a byte-clone of v3 whose verify_machine_run2 is pinned to machine.runs[2]/run_order[2] (numeric literals a token-sed cannot move); index[2] itself becomes v4, so v2 content is REPLACED in place, not inserted; array length and every downstream index unchanged (realbank stays at [3], [3..65] tail unchanged); v2 and v3 failure evidence preserved in the refine-logs lineage, not as run-array entries",
-        "intermediate_v3_lineage": "consumed and CLOSED (job 12974, machine run_order[2] v2/v3 plan-drift); never entered the run-array"
-      },
+      "run3_new_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
       "downstream_run_ids_unchanged": true,
       "downstream_order_unchanged": true
     },
@@ -3771,7 +3754,7 @@
     "terminal_decision_chain": [
       "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
       "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
-      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
       "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
       "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
       "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
@@ -3783,16 +3766,14 @@
   },
   "gates_and_terminal_statuses": {
     "success_status": "FINAL_SUCCESS_ONLY_AFTER_M5_GO",
-    "v4_authorization_boundary": {
+    "v2_authorization_boundary": {
       "amendment_authorizes_execution": false,
-      "v4_amendment_authored_pending_independent_review": true,
-      "amendment_review_passed_zero_critical_zero_high": false,
-      "amendment_can_authorize_only_fresh_v4_code_review_after_independent_amendment_review": true,
-      "clone_freeze_complete": true,
-      "execution_requires_completed_v4_byte_clone_and_freeze": true,
-      "execution_requires_runtime_crosscheck_static_simulation_table_all_pass": true,
-      "execution_requires_fresh_independent_v4_code_review_zero_critical_zero_high": true,
-      "execution_requires_dependency_availability_evidence": true,
+      "amendment_review_passed_zero_critical_zero_high": true,
+      "amendment_can_authorize_only_implementation_audit_after_independent_amendment_review": true,
+      "implementation_fix_freeze_complete": true,
+      "execution_requires_completed_v2_implementation": true,
+      "execution_requires_static_contract_matrix_negative_tests": true,
+      "execution_requires_fresh_independent_code_review_zero_critical_zero_high": true,
       "execution_requires_exact_hashes_no_clobber_check": true,
       "execution_requires_separate_execution_authorization": true,
       "run3_plus_locked": true
@@ -4180,20 +4161,6 @@
       "complementarity",
       "duality_gap",
       "hashes"
-    ],
-    "scgp_global_synth_kkt_payload_v4": [
-      "primal",
-      "metric",
-      "affine_normals",
-      "box_coordinate_normals",
-      "soc_normals",
-      "psd_normal",
-      "halfspace_normals",
-      "stationarity",
-      "dual_feasibility",
-      "complementarity",
-      "duality_gap",
-      "hashes"
     ]
   },
   "tables_figures": {
@@ -4205,71 +4172,71 @@
     "optional_appendix": "mechanism/failure diagnostics only if non-blocking"
   },
   "readiness": {
-    "ready_for_independent_amendment_review": true,
+    "ready_for_independent_review": true,
     "ready_for_execution": false,
-    "ready_for_fresh_independent_v4_code_review": false,
-    "fresh_v4_code_review_gated_behind_amendment_review": true,
-    "requires_independent_v4_amendment_review": true,
-    "requires_fresh_independent_v4_code_review_zero_critical_zero_high": true,
-    "requires_runtime_crosscheck_static_simulation_table_all_pass": true,
-    "requires_dependency_availability_evidence": true,
+    "ready_for_v2_implementation_audit": false,
+    "ready_for_fresh_independent_v2_code_review": true,
+    "requires_independent_amendment_review_before_v2_implementation_audit": false,
+    "requires_preimplementation_review": false,
+    "requires_fresh_independent_v2_code_review_zero_critical_zero_high": true,
     "requires_exact_hashes_no_clobber_review": true,
     "requires_separate_execution_authorization": true,
     "success_claim_allowed": false,
-    "carried_static_residuals_pending_fresh_v4_review": [
-      "M-A",
-      "M-B"
-    ],
+      "formal_review_items_addressed": [
+        "H1",
+        "H2",
+        "H3",
+        "H4",
+        "H5",
+        "H6",
+        "M1",
+        "M2",
+        "L1",
+        "L2"
+      ],
     "first_three_g0_runs": [
       "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
       "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
-      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4"
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2"
     ],
-    "status": "v4 is a byte-exact clone of the consumed-and-closed v3 lineage; the authoritative machine plan has been REPLACED in place at index[2] (v2 content -> v4) and the v4 entities are clone-frozen. Ready for independent v4 amendment review; a fresh independent 0C/0H v4 code review (with the mandatory runtime cross-check static-simulation table all-PASS and dependency-availability evidence) and a separate execution authorization are then required. This does not authorize execution; no PASS claim and no SLURM submission are authorized.",
-    "g0_runs_through_v4_supplement": [
+    "status": "Run2-v2 fix2 implementation/freeze is complete and ready for fresh independent 0C/0H implementation/code review only. It does not authorize execution; no PASS claim and no SLURM submission are authorized.",
+    "g0_runs_through_v2_supplement": [
       "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
       "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
-      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
       "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
     ]
   },
   "supplement_amendment": {
-    "id": "M0_RUN2_V4_PLAN_AMENDMENT",
-    "lineage": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
-    "status": "V4_CLONE_FROZEN_AMENDMENT_PENDING_INDEPENDENT_REVIEW",
-    "lineage_model": "byte_exact_clone_of_v3_no_fix_cycle",
-    "placement_semantics": "REPLACE_IN_PLACE_AT_INDEX_2 (v2 content -> v4); array length and all downstream indices unchanged; byte-clone verify_machine_run2 pinned to machine.runs[2]/run_order[2]",
-    "supersedes": {
-      "v2": "closed lineage; single-submit spent (job 12971, missing jsonschema); evidence preserved in refine-logs (M0_RUN2_V2_* + M0_RUN2_V2_RESULT_TO_CLAIM_REVIEW.md)",
-      "v3": "consumed and CLOSED (job 12974, machine run_order[2] v2/v3 plan-drift); evidence preserved in refine-logs (M0_RUN2_V3_* + M0_RUN2_V3_RESULT_TO_CLAIM_REVIEW.md)"
-    },
-    "author_thread": "fresh Claude Opus 4.8 v4-prep role in /data/jehc223/RGCL; separate from the independent amendment reviewer, v4 code reviewer, execution authorizer, and executor; no subagent/workflow/model/API delegation, no SLURM submission, no git commit",
+    "id": "M0_RUN2_V2_PLAN_AMENDMENT",
+    "lineage": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "status": "FIX2_COMPLETE_FRESH_REVIEW_LOCKED",
+    "author_thread": "fresh exact GPT-5.5 xhigh prospective plan-amendment author; no subagent/workflow/model delegation",
     "amendment_artifacts": [
-      "refine-logs/lb_scgp_global/M0_RUN2_V4_PLAN_AMENDMENT.md",
-      "refine-logs/lb_scgp_global/M0_RUN2_V4_PLAN_AMENDMENT.machine.json",
-      "refine-logs/lb_scgp_global/M0_RUN2_V4_PLAN_AMENDMENT_HASHES.sha256"
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.md",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.machine.json",
+      "refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT_HASHES.sha256"
     ],
-    "clone_freeze_artifact": "refine-logs/lb_scgp_global/M0_RUN2_V4_CLONE_FREEZE.md",
-    "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v4.json",
-    "artifact_path": "artifacts/lb_scgp_global/v4/m0/synth_kkt/manifest.json",
-    "artifact_namespace": "artifacts/lb_scgp_global/v4/m0/synth_kkt/",
+    "fix_freeze_artifact": "refine-logs/lb_scgp_global/M0_RUN2_V2_IMPLEMENTATION_FIX_FREEZE.md",
+    "fix2_freeze_artifact": "refine-logs/lb_scgp_global/M0_RUN2_V2_IMPLEMENTATION_FIX2_FREEZE.md",
+    "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json",
+    "artifact_path": "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json",
+    "artifact_namespace": "artifacts/lb_scgp_global/v2/m0/synth_kkt/",
     "no_science_contract_change": true,
-    "only_allowed_change": "byte_exact_clone_of_v3_plus_lineage_identity_repoint_plus_amendment_driven_config_hash_binding_cascade_no_behavioral_code_change",
+    "only_allowed_repair": "implementation_config_schema_wrapper_verifier_contract_alignment_without_threshold_fixture_rank_gate_or_scope_change",
     "no_local_python_validation": true,
     "no_slurm_submission_in_this_task": true,
-    "no_git_commit_in_this_task": true,
-    "amendment_files_are_execution_permission": false,
+    "fix_freeze_files_are_execution_permission": false,
     "authorization": {
       "amendment_authorizes_execution": false,
-      "can_authorize_after_independent_review": "fresh_v4_code_review_only",
-      "execution_requires_completed_v4_byte_clone_and_freeze": true,
-      "execution_requires_runtime_crosscheck_static_simulation_table_all_pass": true,
-      "execution_requires_fresh_independent_v4_code_review_zero_critical_zero_high": true,
-      "execution_requires_dependency_availability_evidence": true,
+      "can_authorize_after_independent_review": "v2_implementation_audit_only",
+      "execution_requires_completed_v2_implementation": true,
+      "execution_requires_static_contract_matrix_negative_tests": true,
+      "execution_requires_fresh_independent_code_review_zero_critical_zero_high": true,
       "execution_requires_exact_hashes_no_clobber": true,
       "execution_requires_separate_authorization": true
     },
-    "run3_realbank_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
-    "run3_plus_locked_until_v4_pass_and_fresh_artifact_review": true
+    "run3_realbank_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "run3_plus_locked_until_v2_pass_and_fresh_artifact_review": true
   }
 }

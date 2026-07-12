@@ -102,3 +102,10 @@
 - Amendment review passed 0C/0H, the first implementation fix/freeze was reviewed and failed 0C/2H/1M/1L, and fix2 is complete. It remains locked for fresh independent 0C/0H implementation/code review, exact hashes/no-clobber review, and separate execution authorization.
 - Execution remains unauthorized and requires fresh independent code review with 0 Critical / 0 High, exact hashes/no-clobber check, and separate execution authorization.
 - The future wrapper must run authoritative validator, producer, and independent verifier under SLURM with 8 CPU, 64 GB, 0 GPU, `HateVideo`, and no `--time`.
+
+## Run2-v4 Amendment Note (2026-07-13)
+
+- The v2 and v3 single-submit lineages are both closed: v2 spent its budget (job `12971`, missing `jsonschema`); v3 was consumed and CLOSED (job `12974`, machine `run_order[2]` v2/v3 plan-document/code drift, per `M0_RUN2_V3_RESULT_TO_CLAIM_REVIEW.md`).
+- `M0_RUN2_V4_PLAN_AMENDMENT.md` opens the v4 lineage. v4 is a byte-exact clone of v3; the authoritative `EXPERIMENT_PLAN.machine.json` REPLACES index `[2]` in place (v2 content -> v4). Array length and every downstream index are unchanged; the row-3 realbank run stays at `[3]` and now depends on `LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4`.
+- The v1/v2/v3 evidence above is preserved as closed-lineage failure evidence and is not rewritten.
+- v4 remains locked pending independent v4 amendment review, a fresh independent 0C/0H v4 code review (with the mandatory runtime cross-check static-simulation table, every row PASS) plus dependency-availability evidence, exact hashes/no-clobber check, and separate execution authorization. No PASS claim, no execution, and no SLURM submission are authorized.

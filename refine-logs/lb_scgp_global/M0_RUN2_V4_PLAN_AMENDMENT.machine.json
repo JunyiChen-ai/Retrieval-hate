@@ -1,0 +1,246 @@
+{
+  "schema_version": "lbscgp_global_m0_run2_v4_plan_amendment_v1",
+  "generated_at": "2026-07-13T00:00:00+12:00",
+  "author_thread": "fresh Claude Opus 4.8 v4-prep role in /data/jehc223/RGCL; separate from the independent amendment reviewer, fresh v4 code reviewer, execution authorizer, and executor",
+  "constraints_honored": [
+    "no_subagents",
+    "no_workflows",
+    "no_other_model_delegation",
+    "no_project_python_execution",
+    "no_slurm_submission",
+    "no_git_commit",
+    "no_experiments",
+    "no_gpu_training_performance_work",
+    "no_api_mllm_ocr_calls",
+    "planning_and_byte_clone_edits_only",
+    "lightweight_jq_sha256_sed_diff_grep_read_only_checks_only"
+  ],
+  "lineage_model": "byte_exact_clone_of_v3_no_fix_cycle",
+  "placement_semantics": "REPLACE_IN_PLACE_AT_INDEX_2",
+  "source_hashes": {
+    "AGENTS.md": "e6aaf5d66399cdbbe7fcc2c811931277b0ed4a24b592ffa5cbb60315b29ea23c",
+    "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json.pre_v4_amendment.bak": "6caa5c2e78961fc7d60f9f970e319534aa6af3b6cc4a033b76b83f2ab18a0492",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md.pre_v4": "af1c217c44efc26003150be0bf22fedb499a7019931ca69a0c0164c30557b23a",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md.pre_v4": "327614bbb3a8ce0c493acbdda4ef6b25fa555243bdbe041535a51a9d81800db2",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256.pre_v4": "2e6d731dba169d4b2487b098e996e77b8089efe3b41d9375f08ee210d774c802",
+    "configs/lb_scgp_global_r2/m0_synth_kkt_v3.json": "e6d33b5d3078b12d87e4c0dc70d0f4fe1ee53681543da347f0e4402fedceb7d5",
+    "refine-logs/lb_scgp_global/M0_RUN2_V3_RESULT_TO_CLAIM_REVIEW.md": "fcdb7ec4c067da62064839d43caa0432f3fcb20330cfb7c8d0084b39497f45a7",
+    "refine-logs/lb_scgp_global/M0_RUN2_V3_CLONE_FREEZE.md": "1336e7edc134516ba2d4b56c789f6140f86fd051e78f0644f03779ad92383413",
+    "slurm/logs/lbscgp_global_r2_run2_v3_12974.err": "3482445c110ad4505ddfa0de16d602c4b1d71512a855f56e3bc06ad6365f4adc"
+  },
+  "governing_review": {
+    "path": "refine-logs/lb_scgp_global/M0_RUN2_V3_RESULT_TO_CLAIM_REVIEW.md",
+    "sha256": "fcdb7ec4c067da62064839d43caa0432f3fcb20330cfb7c8d0084b39497f45a7",
+    "verdict": "claim_supported=no; route=infrastructure_repair; v3 lineage CLOSED; v4 lineage authorized in principle after full section-5 ceremony"
+  },
+  "pre_post_run_order_diff": {
+    "operation": "REPLACE_IN_PLACE_AT_INDEX_2",
+    "original_prefix_before_v4": [
+      "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+    ],
+    "amended_prefix": [
+      "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
+    ],
+    "replaced_run_id_at_index_2": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "replacement_run_id_at_index_2": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
+    "array_length_unchanged": true,
+    "downstream_indices_unchanged": true,
+    "realbank_stays_at_index_3": true,
+    "run3_old_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+    "run3_new_dependency": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
+    "v1_v2_insert_history_preserved": true,
+    "reason": "v4 is a byte-clone of v3 whose verify_machine_run2 is pinned to machine.runs[2]/run_order[2] numeric literals; index[2] itself must become v4, so v2 content is replaced in place, not inserted; inserting would shift every downstream index against the still-uncoded realbank run and is temporally backwards"
+  },
+  "closed_lineage_evidence": {
+    "v1": {
+      "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
+      "status": "FAIL_STOP",
+      "jobs": ["12902", "12904"],
+      "retained_as_run_array_entry_index_1": true
+    },
+    "v2": {
+      "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+      "status": "CLOSED",
+      "job": "12971",
+      "cause": "missing_jsonschema_dependency",
+      "evidence_in_refine_logs_not_run_array": true
+    },
+    "v3": {
+      "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v3",
+      "status": "CONSUMED_AND_CLOSED",
+      "job": "12974",
+      "cause": "machine_run_order_index_2_v2_v3_plan_document_code_drift",
+      "evidence_in_refine_logs_not_run_array": true,
+      "death_log": "slurm/logs/lbscgp_global_r2_run2_v3_12974.err"
+    }
+  },
+  "v4_spec": {
+    "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
+    "priority": "MUST",
+    "status": "V4_CLONE_FROZEN_AMENDMENT_PENDING_INDEPENDENT_REVIEW",
+    "byte_exact_clone_of": "v3 nine entities",
+    "planned_config_path": "configs/lb_scgp_global_r2/m0_synth_kkt_v4.json",
+    "artifact_namespace": "artifacts/lb_scgp_global/v4/m0/synth_kkt/",
+    "artifact_manifest": "artifacts/lb_scgp_global/v4/m0/synth_kkt/manifest.json",
+    "schema_id": "scgp_global_synth_kkt_payload_v4",
+    "cert_schema_preserved": "scgp_global_cert_v2",
+    "clone_freeze_artifact": "refine-logs/lb_scgp_global/M0_RUN2_V4_CLONE_FREEZE.md"
+  },
+  "machine_field_change_groups": {
+    "group_a_code_read_index_2": {
+      "run_order[2]": {"before": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2", "after": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4"},
+      "runs[2].run_id": {"before": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2", "after": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4"},
+      "runs[2].artifact_paths[0]": {"before": "artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json", "after": "artifacts/lb_scgp_global/v4/m0/synth_kkt/manifest.json"},
+      "runs[2].artifact_schema_ids[0]": {"before": "scgp_global_synth_kkt_payload_v2", "after": "scgp_global_synth_kkt_payload_v4"}
+    },
+    "group_a_prime_unchanged": {
+      "runs[2].slurm": {"cpu": 8, "ram_gb": 64, "gpu": 0, "env": "HateVideo", "no_time_flag": true},
+      "runs[2].dependencies": ["LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1", "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1"]
+    },
+    "group_b_coherence": [
+      "runs[2].purpose", "runs[2].planned_config_path", "runs[2].artifact_namespace",
+      "runs[2].lineage_bound_outputs[0..7]",
+      "runs[2].science_freeze_assertions.solver_math_verifier_logic_change_scope",
+      "runs[2].authorization_requirements (v2->v4 key relabel + sim-table/dependency items)",
+      "runs[2].implementation_fix_freeze -> clone_freeze (truthful v4 pending state)",
+      "runs[2].gate", "runs[2].failure_transition", "runs[2].status",
+      "runs[3].dependencies[0]", "runs[3].gate", "runs[3].status (LOCKED_UNTIL_V2_PASS->V4)",
+      "dependency_dag.pre_post_run_order_diff.run3_new_dependency (+ v4_replace_record; v2 insert history preserved)",
+      "dependency_dag.terminal_decision_chain[2]",
+      "gates_and_terminal_statuses.v2_authorization_boundary -> v4_authorization_boundary (truthful)",
+      "readiness.first_three_g0_runs[2]", "readiness.status",
+      "readiness.g0_runs_through_v2_supplement -> g0_runs_through_v4_supplement[2]",
+      "readiness review-flags -> truthful v4 pending set",
+      "supplement_amendment (full v4 rewrite)"
+    ],
+    "group_c_registry": {
+      "artifact_schemas.scgp_global_synth_kkt_payload_v4": "added; v1/v2 registry entries retained"
+    }
+  },
+  "deliberately_preserved_v2_vocabulary": [
+    "schema_version=scgp_global_experiment_plan_v2 (plan schema version, not lineage)",
+    "scgp_global_cache_replica_v2 (M1 cache schema, different lineage)",
+    "artifact_schemas.scgp_global_synth_kkt_payload_v2 (registry entry retained)",
+    "dependency_dag.pre_post_run_order_diff.inserted_run_id (+ note) = v2 INSERT history",
+    "dependency_dag.pre_post_run_order_diff.v4_replace_record.replaced_run_id = v2 (history)",
+    "dependency_dag.locks.run3_and_later_locked_until_v2_pass (gating vocab; value true)",
+    "dependency_dag.locks.mllm_cache_locked_until_v2_pass_and_fresh_independent_artifact_review (gating vocab)",
+    "budget_ranges.conventions.lineage_run_records_include_historical_v1_and_prospective_v2 (budget convention)",
+    "budget_ranges.conventions.paper_plan_substitution_view_replaces_exhausted_v1_with_v2 (budget convention)",
+    "budget_ranges.original_approved_r2_envelope_before_v2 (historical budget baseline name)",
+    "budget_ranges.*.status_aware_counts.must_fix2_complete_fresh_review_locked_v2 (count=1 still correct)",
+    "budget_ranges.*.status_aware_counts.must_downstream_locked_until_v2_pass (counts 62/1 still correct)",
+    "isolation_counters.v1_synth_kkt_artifact_reuse_as_v2_count (value 0 still correct)"
+  ],
+  "preserved_vocabulary_rationale": "not enumerated in M0_RUN2_V3_RESULT_TO_CLAIM_REVIEW.md section 5(a.1); either genuine v2/v3 history, unrelated schema names, or policy/budget vocabulary whose numeric values remain correct for v4. Surfaced for the independent amendment reviewer to extend if desired. The v4-prep author rewrote only lineage-identity strings and fields that would otherwise assert a concretely false completed-review claim about v4 (anti-fabrication).",
+  "hash_cascade": {
+    "runtime_checked_bindings": {
+      "EXPERIMENT_PLAN.machine.json": {"before": "6caa5c2e78961fc7d60f9f970e319534aa6af3b6cc4a033b76b83f2ab18a0492", "after": "42bf49ed02a17532b79e83fdb31b1556e216615c74da52939e86d761b4590a90"},
+      "EXPERIMENT_PLAN.md": {"before": "af1c217c44efc26003150be0bf22fedb499a7019931ca69a0c0164c30557b23a", "after": "a98effc3e9c266fc248977d172575dad9dce913a65f12180b427e387c95ae3eb"},
+      "EXPERIMENT_TRACKER.md": {"before": "327614bbb3a8ce0c493acbdda4ef6b25fa555243bdbe041535a51a9d81800db2", "after": "4d3c4b8c10090f3b6aa26db41751b4190f80024e2c9885654a91bb974c9e9da4"},
+      "EXPERIMENT_PLAN_HASHES.sha256": {"before": "2e6d731dba169d4b2487b098e996e77b8089efe3b41d9375f08ee210d774c802", "after": "910f0f643bef7cfae1175f3ebe45d14395a20667b4ae9d031510c46d8d1568b1"}
+    },
+    "config_authoritative_inputs_updated": [
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json -> 42bf49ed...4590a90",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256 -> 910f0f64...1568b1",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md -> a98effc3...5ae3eb",
+      "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md -> 4d3c4b8c...9e9da4"
+    ],
+    "config_authoritative_inputs_added": [
+      "refine-logs/lb_scgp_global/M0_RUN2_V4_PLAN_AMENDMENT.md",
+      "refine-logs/lb_scgp_global/M0_RUN2_V4_PLAN_AMENDMENT.machine.json",
+      "refine-logs/lb_scgp_global/M0_RUN2_V4_PLAN_AMENDMENT_HASHES.sha256"
+    ],
+    "deferred_to_execution_authorizer_post_amendment_review": [
+      "M0_RUN2_V4_PLAN_AMENDMENT_REVIEW.md/.machine.json/_HASHES.sha256",
+      "M0_RUN2_V4_AMENDMENT_INDEPENDENT_REVIEW.md",
+      "final config re-freeze after those bindings are added"
+    ],
+    "config_own_hash_not_runtime_pinned": true,
+    "config_hash_and_nine_entity_hashes_recorded_in": "refine-logs/lb_scgp_global/M0_RUN2_V4_CLONE_FREEZE.md"
+  },
+  "science_freeze_equality_assertions": {
+    "byte_clone_of_v3": true,
+    "d_unchanged": 3,
+    "resource_request_identical_to_v1": true,
+    "resource_request": {"cpu": 8, "ram_gb": 64, "gpu": 0, "env": "HateVideo", "no_time_flag": true},
+    "planned_budget_identical_to_v1": true,
+    "planned_budget": {"cpu_hours": 32, "gpu_hours": 0, "api_calls": 0, "storage_gb": 5},
+    "schema_intent_unchanged": true,
+    "thresholds_unchanged": true,
+    "fixtures_unchanged": true,
+    "expected_decisions_unchanged": true,
+    "kkt_tolerances_unchanged": true,
+    "movement_nondegeneration_target_unchanged": true,
+    "rank_factor_rules_unchanged": true,
+    "solver_math_verifier_logic_unchanged_vs_v3": true,
+    "intended_claim_unchanged": true,
+    "failure_transition_unchanged": true,
+    "carried_static_residuals": ["M-A", "M-B"],
+    "only_allowed_change": "byte_exact_clone_of_v3_plus_lineage_identity_repoint_plus_amendment_driven_config_hash_binding_cascade_no_behavioral_code_change",
+    "solver_fix_allowed": false,
+    "tuning_allowed": false,
+    "tolerance_change_allowed": false,
+    "fixture_change_allowed": false,
+    "rescue_allowed": false,
+    "posthoc_scientific_change_allowed": false
+  },
+  "dag_changes": {
+    "v4_replaces_v2_in_place_at_index_2": true,
+    "v4_follows_run1_freeze": true,
+    "v4_depends_on_run1_and_synth_kkt_v1": true,
+    "run3_depends_on_v4_pass_instead_of_v2": true,
+    "run3_plus_locked_until_v4_pass_and_fresh_independent_artifact_review": true,
+    "all_other_run_ids_unchanged": true,
+    "downstream_ordering_valid": true
+  },
+  "authorization": {
+    "this_amendment_authorizes_v4_execution": false,
+    "this_amendment_can_authorize_after_independent_review": "fresh_v4_code_review_only",
+    "v4_execution_requires_completed_byte_clone_and_freeze": true,
+    "v4_execution_requires_runtime_crosscheck_static_simulation_table_all_pass": true,
+    "v4_execution_requires_fresh_independent_code_review_zero_critical_zero_high": true,
+    "v4_execution_requires_dependency_availability_evidence": true,
+    "v4_execution_requires_exact_hashes_no_clobber": true,
+    "v4_execution_requires_separate_execution_authorization": true,
+    "run3_plus_locked": true
+  },
+  "gold_isolation": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "segment_gold_exists": false,
+    "segment_gold_used": false,
+    "frame_gold_exists": false,
+    "timestamp_gold_exists": false,
+    "span_gold_exists": false,
+    "localization_gold_exists": false,
+    "stance_gold_exists": false,
+    "target_gold_exists": false,
+    "mechanism_gold_exists": false,
+    "rationale_gold_exists": false,
+    "forbidden_access_call_counters_zero": true,
+    "no_science_tuning": true,
+    "v4_produced_no_artifact_and_no_counters": true
+  },
+  "readiness": {
+    "ready_for_independent_amendment_review": true,
+    "ready_for_execution": false,
+    "role_separation": "v4-prep author is separate from the amendment reviewer, v4 code reviewer, execution authorizer, and executor",
+    "no_slurm_submission_in_this_task": true,
+    "no_git_commit_in_this_task": true,
+    "no_local_project_python_execution_in_this_task": true
+  },
+  "output_hashes": {
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "42bf49ed02a17532b79e83fdb31b1556e216615c74da52939e86d761b4590a90",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "a98effc3e9c266fc248977d172575dad9dce913a65f12180b427e387c95ae3eb",
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "4d3c4b8c10090f3b6aa26db41751b4190f80024e2c9885654a91bb974c9e9da4",
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": "910f0f643bef7cfae1175f3ebe45d14395a20667b4ae9d031510c46d8d1568b1",
+    "refine-logs/lb_scgp_global/M0_RUN2_V4_PLAN_AMENDMENT.md": "8428b7f8e16cff6569061cc06e40b3e3121cd9b35c51f6fdc5db1a2122b42422"
+  }
+}
