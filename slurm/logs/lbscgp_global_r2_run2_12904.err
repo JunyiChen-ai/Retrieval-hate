@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_run2_validate.py", line 159, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_run2_validate.py", line 127, in main
+    cfg["paths"]["payload_schema"],
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'payload_schema'

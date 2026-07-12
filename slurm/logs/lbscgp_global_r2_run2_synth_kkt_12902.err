@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_synth_kkt.py", line 865, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_synth_kkt.py", line 858, in main
+    manifest = build_manifest(cfg, validation, ledger)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_synth_kkt.py", line 817, in build_manifest
+    semantic = verify_manifest(manifest, cfg)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_synth_kkt.py", line 640, in verify_manifest
+    if manifest["finite_vi_diagnostic"]["used_for_acceptance"]:
+       ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'finite_vi_diagnostic'

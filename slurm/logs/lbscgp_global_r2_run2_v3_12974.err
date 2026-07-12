@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_run2_v3_producer.py", line 413, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_run2_v3_producer.py", line 271, in main
+    machine_summary = verify_machine_run2(cfg, ledger)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_run2_v3_common.py", line 821, in verify_machine_run2
+    assert_equal(machine["run_order"][2], RUN2, "machine run order[2]")
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_run2_v3_common.py", line 387, in assert_equal
+    raise RuntimeError(f"{label} drift: expected {expected!r}, got {actual!r}")
+RuntimeError: machine run order[2] drift: expected 'LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v3', got 'LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2'

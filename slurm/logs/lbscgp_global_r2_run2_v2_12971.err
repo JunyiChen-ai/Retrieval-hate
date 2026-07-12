@@ -1,0 +1,172 @@
+{
+  "checks": [
+    {
+      "args": [
+        "jq",
+        "-e",
+        ".",
+        "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": "_opened\": {\n      \"data/gt/MHC/test.jsonl\": \"0377f9d83d0a57e17212c17fe8fcfc552648356cc1a7b2f1c98a2445a1ce0d76\",\n      \"data/gt/MHC/val.jsonl\": \"749f9563d002367bc05a16627eb4f28045daba30825f0414335bab5a6543f6cb\",\n      \"data/gt/MHC_zh/test.jsonl\": \"79f666050ce92910ecd1ca4fbaf42bcae36f46b898313e2b4fc026ad72858d31\",\n      \"data/gt/MHC_zh/val.jsonl\": \"6b2b5916fedba05ade93e694c13ba09f92968bde73e15f6cb345025eb0afc04b\"\n    },\n    \"old_protected_pre_snapshot\": {\n      \"manifest_sha256\": \"243e89b69b169b222dd97f9df092d511f823fb26201e91fd89cb581710940462\",\n      \"path_count\": 278,\n      \"snapshot_scope\": \"old LB-SCGP source/artifact scope frozen by Run1 review\"\n    },\n    \"run1_frozen\": {\n      \"artifacts/lb_scgp_global/v1/m0/contract_freeze.json\": \"09b78682389f1c9774c9dffc43c759bceeec9d7f44eca1ce4cd626d0cd6d12da\",\n      \"artifacts/lb_scgp_global/v1/m0/contract_freeze.json.publish.lock\": \"c6fbb49c3c8aba942da3f254c3c5f65d037002548fafb961154e6fa79a3e4ea7\",\n      \"configs/lb_scgp_global_r2/m0_contract_freeze_v1.json\": \"5111c2d6d74c745afe35a7067566b531714ce6482df3f5b9469a442486146868\",\n      \"schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json\": \"4d3f1663e633c30ae58e35c0feddaa2fa9bbedba279cdbe6f38ecc35d761f22f\",\n      \"schemas/lb_scgp_global_r2/scgp_global_contract_freeze_v1.schema.json\": \"d6a22233ec2ad028f1fdf8a0315641a30a76e1b3a96249615c48161b3d890105\",\n      \"scripts/analysis/lb_scgp_global_r2_common.py\": \"b0461460a71f72c81b611bb060950a459e84d7f5cfe46f62da19625e624c59db\",\n      \"scripts/analysis/lb_scgp_global_r2_contract_freeze.py\": \"1c11544e5305c4350b3d985ccf81e88de8f1f31c58e662df819570aaa92bccbc\",\n      \"scripts/analysis/lb_scgp_global_r2_validate.py\": \"061cf80ae532e268b623050db5b39c47b9f0858f0a9591d94f8404e11e778fd2\",\n      \"scripts/slurm/lb_scgp_global_r2_m0_contract_freeze.sbatch\": \"ccbade355239d3c313b70ed55a2907f7a2d51716a62b809e835ec9ad1441d882\",\n      \"scripts/wrappers/lb_scgp_global_r2_run1.sh\": \"1eb342475c63df5d16bf570c82de465803652e4a6157444ea02294b58fa9596d\"\n    }\n  },\n  \"implementation_files\": [\n    \"configs/lb_scgp_global_r2/m0_synth_kkt_v2.json\",\n    \"schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v2.schema.json\",\n    \"schemas/lb_scgp_global_r2/scgp_global_synth_kkt_case_v2.schema.json\",\n    \"scripts/analysis/lb_scgp_global_r2_run2_v2_common.py\",\n    \"scripts/analysis/lb_scgp_global_r2_run2_v2_validate.py\",\n    \"scripts/analysis/lb_scgp_global_r2_run2_v2_producer.py\",\n    \"scripts/analysis/lb_scgp_global_r2_run2_v2_independent_verify.py\",\n    \"scripts/wrappers/lb_scgp_global_r2_run2_v2.sh\",\n    \"scripts/slurm/lb_scgp_global_r2_m0_synth_kkt_v2.sbatch\"\n  ],\n  \"paths\": {\n    \"access_ledger_path\": \"artifacts/lb_scgp_global/v2/m0/synth_kkt/access_ledger.json\",\n    \"artifact_path\": \"artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json\",\n    \"case_schema\": \"schemas/lb_scgp_global_r2/scgp_global_synth_kkt_case_v2.schema.json\",\n    \"cert_schema\": \"schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json\",\n    \"experiment_machine\": \"refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json\",\n    \"experiment_tracker\": \"refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md\",\n    \"payload_schema\": \"schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v2.schema.json\",\n    \"semantic_verification_path\": \"artifacts/lb_scgp_global/v2/m0/synth_kkt/semantic_verification.json\",\n    \"slurm_script\": \"scripts/slurm/lb_scgp_global_r2_m0_synth_kkt_v2.sbatch\",\n    \"source_manifest_path\": \"artifacts/lb_scgp_global/v2/m0/synth_kkt/source_manifest.json\",\n    \"wrapper\": \"scripts/wrappers/lb_scgp_global_r2_run2_v2.sh\"\n  },\n  \"projection_contract\": {\n    \"lambda_struct\": 1.0\n  },\n  \"rank_factor_contract\": {\n    \"d\": 3\n  },\n  \"run\": {\n    \"artifact_path\": \"artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json\",\n    \"run_id\": \"LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2\",\n    \"schema_id\": \"scgp_global_synth_kkt_payload_v2\",\n    \"slurm\": {\n      \"cpu\": 8,\n      \"env\": \"HateVideo\",\n      \"gpu\": 0,\n      \"no_time_flag\": true,\n      \"ram_gb\": 64\n    }\n  }\n}\n"
+    },
+    {
+      "args": [
+        "jq",
+        "-e",
+        ".",
+        "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": "\n      \"affine_normals\",\n      \"box_coordinate_normals\",\n      \"soc_normals\",\n      \"psd_normal\",\n      \"halfspace_normals\",\n      \"stationarity\",\n      \"dual_feasibility\",\n      \"complementarity\",\n      \"duality_gap\",\n      \"hashes\"\n    ]\n  },\n  \"tables_figures\": {\n    \"main_table_1\": \"paired final frozen comparator/FULL by dataset/seed with deltas/bootstrap lower/p-values/Holm inference\",\n    \"table_2\": \"decisive controls: REMOVE, SHUFFLE, NOISE, DIRECT-MOMENT, DIRECT-CERT-FEATURE, SCALAR-PROPENSITY\",\n    \"g0_table\": \"certificate/replay/rank/resource table\",\n    \"figure_1\": \"method and run order\",\n    \"figure_2\": \"paired deltas/bootstrap\",\n    \"optional_appendix\": \"mechanism/failure diagnostics only if non-blocking\"\n  },\n  \"readiness\": {\n    \"ready_for_independent_review\": true,\n    \"ready_for_execution\": false,\n    \"ready_for_v2_implementation_audit\": false,\n    \"ready_for_fresh_independent_v2_code_review\": true,\n    \"requires_independent_amendment_review_before_v2_implementation_audit\": false,\n    \"requires_preimplementation_review\": false,\n    \"requires_fresh_independent_v2_code_review_zero_critical_zero_high\": true,\n    \"requires_exact_hashes_no_clobber_review\": true,\n    \"requires_separate_execution_authorization\": true,\n    \"success_claim_allowed\": false,\n    \"formal_review_items_addressed\": [\n      \"H1\",\n      \"H2\",\n      \"H3\",\n      \"H4\",\n      \"H5\",\n      \"H6\",\n      \"M1\",\n      \"M2\",\n      \"L1\",\n      \"L2\"\n    ],\n    \"first_three_g0_runs\": [\n      \"LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1\",\n      \"LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1\",\n      \"LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2\"\n    ],\n    \"status\": \"Run2-v2 fix2 implementation/freeze is complete and ready for fresh independent 0C/0H implementation/code review only. It does not authorize execution; no PASS claim and no SLURM submission are authorized.\",\n    \"g0_runs_through_v2_supplement\": [\n      \"LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1\",\n      \"LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1\",\n      \"LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2\",\n      \"LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1\"\n    ]\n  },\n  \"supplement_amendment\": {\n    \"id\": \"M0_RUN2_V2_PLAN_AMENDMENT\",\n    \"lineage\": \"LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2\",\n    \"status\": \"FIX2_COMPLETE_FRESH_REVIEW_LOCKED\",\n    \"author_thread\": \"fresh exact GPT-5.5 xhigh prospective plan-amendment author; no subagent/workflow/model delegation\",\n    \"amendment_artifacts\": [\n      \"refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.md\",\n      \"refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT.machine.json\",\n      \"refine-logs/lb_scgp_global/M0_RUN2_V2_PLAN_AMENDMENT_HASHES.sha256\"\n    ],\n    \"fix_freeze_artifact\": \"refine-logs/lb_scgp_global/M0_RUN2_V2_IMPLEMENTATION_FIX_FREEZE.md\",\n    \"fix2_freeze_artifact\": \"refine-logs/lb_scgp_global/M0_RUN2_V2_IMPLEMENTATION_FIX2_FREEZE.md\",\n    \"planned_config_path\": \"configs/lb_scgp_global_r2/m0_synth_kkt_v2.json\",\n    \"artifact_path\": \"artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json\",\n    \"artifact_namespace\": \"artifacts/lb_scgp_global/v2/m0/synth_kkt/\",\n    \"no_science_contract_change\": true,\n    \"only_allowed_repair\": \"implementation_config_schema_wrapper_verifier_contract_alignment_without_threshold_fixture_rank_gate_or_scope_change\",\n    \"no_local_python_validation\": true,\n    \"no_slurm_submission_in_this_task\": true,\n    \"fix_freeze_files_are_execution_permission\": false,\n    \"authorization\": {\n      \"amendment_authorizes_execution\": false,\n      \"can_authorize_after_independent_review\": \"v2_implementation_audit_only\",\n      \"execution_requires_completed_v2_implementation\": true,\n      \"execution_requires_static_contract_matrix_negative_tests\": true,\n      \"execution_requires_fresh_independent_code_review_zero_critical_zero_high\": true,\n      \"execution_requires_exact_hashes_no_clobber\": true,\n      \"execution_requires_separate_authorization\": true\n    },\n    \"run3_realbank_dependency\": \"LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2\",\n    \"run3_plus_locked_until_v2_pass_and_fresh_artifact_review\": true\n  }\n}\n"
+    },
+    {
+      "args": [
+        "jq",
+        "-e",
+        ".",
+        "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v2.schema.json"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": "alues\": {\n          \"additionalProperties\": false,\n          \"properties\": {\n            \"encoded_row_norm_positive\": {\n              \"const\": true,\n              \"type\": \"boolean\"\n            },\n            \"schema_status\": {\n              \"const\": \"PASS\",\n              \"type\": \"string\"\n            },\n            \"state\": {\n              \"const\": \"unresolved\",\n              \"type\": \"string\"\n            }\n          },\n          \"required\": [\n            \"state\",\n            \"schema_status\",\n            \"encoded_row_norm_positive\"\n          ],\n          \"type\": \"object\"\n        }\n      },\n      \"required\": [\n        \"invalid_schema\",\n        \"unresolved_values\"\n      ],\n      \"type\": \"object\"\n    },\n    \"schema_version\": {\n      \"const\": \"lb_scgp_global_r2_synth_kkt_manifest_v2\",\n      \"type\": \"string\"\n    },\n    \"slurm_policy\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"conda_env\": {\n          \"const\": \"HateVideo\",\n          \"type\": \"string\"\n        },\n        \"cpu\": {\n          \"const\": 8,\n          \"type\": \"integer\"\n        },\n        \"gpu\": {\n          \"const\": 0,\n          \"type\": \"integer\"\n        },\n        \"job_id\": {\n          \"type\": \"string\"\n        },\n        \"no_time_flag\": {\n          \"const\": true,\n          \"type\": \"boolean\"\n        },\n        \"ram_gb\": {\n          \"const\": 64,\n          \"type\": \"integer\"\n        },\n        \"required\": {\n          \"const\": true,\n          \"type\": \"boolean\"\n        }\n      },\n      \"required\": [\n        \"required\",\n        \"conda_env\",\n        \"job_id\",\n        \"cpu\",\n        \"ram_gb\",\n        \"gpu\",\n        \"no_time_flag\"\n      ],\n      \"type\": \"object\"\n    },\n    \"soc_normals\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"class_trust\": {\n          \"$ref\": \"#/definitions/normal_block\"\n        },\n        \"row_trust\": {\n          \"$ref\": \"#/definitions/normal_block\"\n        }\n      },\n      \"required\": [\n        \"row_trust\",\n        \"class_trust\"\n      ],\n      \"type\": \"object\"\n    },\n    \"source_manifest_path\": {\n      \"type\": \"string\"\n    },\n    \"stationarity\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"acceptance_tolerance\": {\n          \"const\": 0.000001,\n          \"type\": \"number\"\n        },\n        \"gradient_norm\": {\n          \"minimum\": 0,\n          \"type\": \"number\"\n        },\n        \"normal_sum_norm\": {\n          \"minimum\": 0,\n          \"type\": \"number\"\n        },\n        \"normalized_residual\": {\n          \"maximum\": 0.000001,\n          \"minimum\": 0,\n          \"type\": \"number\"\n        },\n        \"residual_norm\": {\n          \"maximum\": 0.000001,\n          \"minimum\": 0,\n          \"type\": \"number\"\n        },\n        \"status\": {\n          \"enum\": [\n            \"PASS\",\n            \"FAIL\"\n          ],\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"status\",\n        \"residual_norm\",\n        \"normalized_residual\",\n        \"gradient_norm\",\n        \"normal_sum_norm\",\n        \"acceptance_tolerance\"\n      ],\n      \"type\": \"object\"\n    },\n    \"terminal_state\": {\n      \"enum\": [\n        \"PRODUCED_PENDING_INDEPENDENT_VERIFY\",\n        \"FAIL\"\n      ],\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"schema_version\",\n    \"artifact_schema_id\",\n    \"run_id\",\n    \"terminal_state\",\n    \"authorized_boundary\",\n    \"no_success_claim\",\n    \"slurm_policy\",\n    \"config_path\",\n    \"source_manifest_path\",\n    \"access_ledger_path\",\n    \"primal\",\n    \"metric\",\n    \"movement_metrics\",\n    \"affine_normals\",\n    \"box_coordinate_normals\",\n    \"soc_normals\",\n    \"psd_normal\",\n    \"halfspace_normals\",\n    \"stationarity\",\n    \"dual_feasibility\",\n    \"complementarity\",\n    \"duality_gap\",\n    \"case_matrix\",\n    \"orth_cap_matrix\",\n    \"rank_failure_probe\",\n    \"schema_fixture_results\",\n    \"injection_results_expected\",\n    \"gold_isolation\",\n    \"dirty_binding\",\n    \"acceptance\",\n    \"hashes\",\n    \"payload_sha256\"\n  ],\n  \"title\": \"LB-SCGP Global-R2 Run2 strict synthetic KKT payload\",\n  \"type\": \"object\"\n}\n"
+    },
+    {
+      "args": [
+        "jq",
+        "-e",
+        ".",
+        "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_case_v2.schema.json"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": "minus_G0\": {\n          \"type\": \"number\"\n        },\n        \"max_abs_offdiag_change\": {\n          \"type\": \"number\"\n        },\n        \"positive_threshold\": {\n          \"type\": \"number\"\n        },\n        \"structural_adjoint_offdiag_l2\": {\n          \"type\": \"number\"\n        },\n        \"structural_dual_l2\": {\n          \"type\": \"number\"\n        },\n        \"structural_residual_l2\": {\n          \"type\": \"number\"\n        }\n      },\n      \"required\": [\n        \"fro_norm_G_star_minus_G0\",\n        \"max_abs_offdiag_change\",\n        \"positive_threshold\",\n        \"structural_dual_l2\",\n        \"structural_residual_l2\",\n        \"structural_adjoint_offdiag_l2\"\n      ],\n      \"type\": \"object\"\n    },\n    \"primal_residuals\": {\n      \"items\": {\n        \"$ref\": \"#/definitions/named_metric\"\n      },\n      \"type\": \"array\"\n    },\n    \"rank_audit\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"eps_rank\": {\n          \"type\": \"number\"\n        },\n        \"failure_policy\": {\n          \"type\": \"string\"\n        },\n        \"lambda_d\": {\n          \"type\": \"number\"\n        },\n        \"lambda_dplus1\": {\n          \"type\": \"number\"\n        },\n        \"lambda_min\": {\n          \"type\": \"number\"\n        },\n        \"negative_eigenmass\": {\n          \"type\": \"number\"\n        },\n        \"omitted_positive_eigenmass_beyond_d\": {\n          \"type\": \"number\"\n        },\n        \"positive_eigenmass\": {\n          \"type\": \"number\"\n        },\n        \"rank_eps\": {\n          \"minimum\": 0,\n          \"type\": \"integer\"\n        },\n        \"reconstruction_residual\": {\n          \"type\": \"number\"\n        },\n        \"status\": {\n          \"enum\": [\n            \"PASS\",\n            \"ENCODER_RANK_GATE_FAIL\"\n          ],\n          \"type\": \"string\"\n        },\n        \"tail_ratio\": {\n          \"type\": \"number\"\n        }\n      },\n      \"required\": [\n        \"lambda_d\",\n        \"lambda_dplus1\",\n        \"rank_eps\",\n        \"eps_rank\",\n        \"positive_eigenmass\",\n        \"omitted_positive_eigenmass_beyond_d\",\n        \"tail_ratio\",\n        \"negative_eigenmass\",\n        \"lambda_min\",\n        \"reconstruction_residual\",\n        \"status\",\n        \"failure_policy\"\n      ],\n      \"type\": \"object\"\n    },\n    \"replicas\": {\n      \"items\": {\n        \"items\": {\n          \"$ref\": \"#/definitions/cert\"\n        },\n        \"type\": \"array\"\n      },\n      \"type\": \"array\"\n    },\n    \"robust_coverage\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"coverage_gate_pass\": {\n          \"type\": \"boolean\"\n        },\n        \"robust_constraints_enabled\": {\n          \"const\": false,\n          \"type\": \"boolean\"\n        },\n        \"robust_query_count_by_class\": {\n          \"additionalProperties\": false,\n          \"properties\": {\n            \"0\": {\n              \"minimum\": 0,\n              \"type\": \"integer\"\n            },\n            \"1\": {\n              \"minimum\": 0,\n              \"type\": \"integer\"\n            }\n          },\n          \"required\": [\n            \"0\",\n            \"1\"\n          ],\n          \"type\": \"object\"\n        },\n        \"safety_claim\": {\n          \"enum\": [\n            \"disabled\",\n            \"not_claimed\"\n          ],\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"coverage_gate_pass\",\n        \"robust_constraints_enabled\",\n        \"robust_query_count_by_class\",\n        \"safety_claim\"\n      ],\n      \"type\": \"object\"\n    },\n    \"system\": {\n      \"enum\": [\n        \"FULL\",\n        \"REMOVE\",\n        \"SHUFFLE\",\n        \"NOISE\",\n        \"AMBIGUOUS\",\n        \"ROBUST_COVERAGE\"\n      ],\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"case_id\",\n    \"case_role\",\n    \"system\",\n    \"ids\",\n    \"labels\",\n    \"d\",\n    \"replicas\",\n    \"consensus_records\",\n    \"operator\",\n    \"movement_metrics\",\n    \"primal_residuals\",\n    \"rank_audit\",\n    \"factor_replay\",\n    \"robust_coverage\",\n    \"finite_vi_diagnostics\",\n    \"acceptance_path\",\n    \"kkt_status\",\n    \"hashes\"\n  ],\n  \"title\": \"LB-SCGP Global-R2 Run2 strict synthetic KKT case\",\n  \"type\": \"object\"\n}\n"
+    },
+    {
+      "args": [
+        "jq",
+        "-e",
+        ".",
+        "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"additionalProperties\": false,\n  \"properties\": {\n    \"context_shift_observable\": {\n      \"$ref\": \"#/definitions/tri_state_observable\"\n    },\n    \"counter_context_observable\": {\n      \"$ref\": \"#/definitions/tri_state_observable\"\n    },\n    \"cross_modal_binding_observable\": {\n      \"$ref\": \"#/definitions/tri_state_observable\"\n    },\n    \"dehumanizing_or_threat_surface_observable\": {\n      \"$ref\": \"#/definitions/tri_state_observable\"\n    },\n    \"harmful_surface_observable\": {\n      \"$ref\": \"#/definitions/tri_state_observable\"\n    },\n    \"modality_binding_observable\": {\n      \"$ref\": \"#/definitions/modality_observable\"\n    },\n    \"parse_flags\": {\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"type\": \"array\"\n    },\n    \"schema_version\": {\n      \"const\": \"scgp_global_cert_v2\",\n      \"type\": \"string\"\n    },\n    \"source_alignment_observable\": {\n      \"$ref\": \"#/definitions/tri_state_observable\"\n    },\n    \"text_audio_reference_observable\": {\n      \"$ref\": \"#/definitions/tri_state_observable\"\n    },\n    \"visual_reference_observable\": {\n      \"$ref\": \"#/definitions/tri_state_observable\"\n    }\n  },\n  \"required\": [\n    \"schema_version\",\n    \"visual_reference_observable\",\n    \"text_audio_reference_observable\",\n    \"harmful_surface_observable\",\n    \"dehumanizing_or_threat_surface_observable\",\n    \"cross_modal_binding_observable\",\n    \"source_alignment_observable\",\n    \"counter_context_observable\",\n    \"context_shift_observable\",\n    \"modality_binding_observable\",\n    \"parse_flags\"\n  ],\n  \"title\": \"LB-SCGP Global-R2 restricted train-only certificate\",\n  \"type\": \"object\",\n  \"definitions\": {\n    \"confidence\": {\n      \"maximum\": 4,\n      \"minimum\": 0,\n      \"type\": \"integer\"\n    },\n    \"modality_observable\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"confidence\": {\n          \"$ref\": \"#/definitions/confidence\"\n        },\n        \"state\": {\n          \"enum\": [\n            \"multi_modal\",\n            \"single_modal\",\n            \"text_audio\",\n            \"unresolved\",\n            \"visual_audio\",\n            \"visual_text\"\n          ],\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"state\",\n        \"confidence\"\n      ],\n      \"type\": \"object\"\n    },\n    \"tri_state_observable\": {\n      \"additionalProperties\": false,\n      \"properties\": {\n        \"confidence\": {\n          \"$ref\": \"#/definitions/confidence\"\n        },\n        \"state\": {\n          \"enum\": [\n            \"contradicted\",\n            \"supported\",\n            \"unresolved\"\n          ],\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"state\",\n        \"confidence\"\n      ],\n      \"type\": \"object\"\n    }\n  }\n}\n"
+    },
+    {
+      "args": [
+        "jq",
+        "-e",
+        ".",
+        "artifacts/lb_scgp_global/v1/m0/contract_freeze.json"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": "      \"returncode\": 0,\n        \"status\": \"PASS\",\n        \"stderr\": \"\",\n        \"stdout\": \"\"\n      },\n      {\n        \"args\": [\n          \"bash\",\n          \"-n\",\n          \"scripts/slurm/lb_scgp_global_r2_m0_contract_freeze.sbatch\"\n        ],\n        \"returncode\": 0,\n        \"status\": \"PASS\",\n        \"stderr\": \"\",\n        \"stdout\": \"\"\n      },\n      {\n        \"args\": [\n          \"/data/jehc223/miniconda3/envs/HateVideo/bin/python\",\n          \"-m\",\n          \"py_compile\",\n          \"scripts/analysis/lb_scgp_global_r2_common.py\",\n          \"scripts/analysis/lb_scgp_global_r2_contract_freeze.py\",\n          \"scripts/analysis/lb_scgp_global_r2_validate.py\"\n        ],\n        \"returncode\": 0,\n        \"status\": \"PASS\",\n        \"stderr\": \"\",\n        \"stdout\": \"\"\n      },\n      {\n        \"args\": [\n          \"git\",\n          \"diff\",\n          \"--check\",\n          \"--\",\n          \"refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md\"\n        ],\n        \"returncode\": 0,\n        \"status\": \"PASS\",\n        \"stderr\": \"\",\n        \"stdout\": \"\"\n      }\n    ],\n    \"jq_path\": {\n      \"args\": [\n        \"bash\",\n        \"-lc\",\n        \"command -v jq\"\n      ],\n      \"returncode\": 0,\n      \"status\": \"PASS\",\n      \"stderr\": \"\",\n      \"stdout\": \"/usr/bin/jq\\n\"\n    },\n    \"new_file_whitespace_scan\": {\n      \"bad_lines\": [],\n      \"status\": \"PASS\"\n    },\n    \"run_id\": \"LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1\",\n    \"schema_version\": \"lb_scgp_global_r2_run1_validation_v1\",\n    \"status\": \"PASS\",\n    \"tracked_git_diff_check_scope\": [\n      \"refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md\"\n    ],\n    \"validator_sha256\": \"061cf80ae532e268b623050db5b39c47b9f0858f0a9591d94f8404e11e778fd2\"\n  },\n  \"wrapper_hashes\": {\n    \"scripts/slurm/lb_scgp_global_r2_m0_contract_freeze.sbatch\": \"ccbade355239d3c313b70ed55a2907f7a2d51716a62b809e835ec9ad1441d882\",\n    \"scripts/wrappers/lb_scgp_global_r2_run1.sh\": \"1eb342475c63df5d16bf570c82de465803652e4a6157444ea02294b58fa9596d\"\n  },\n  \"zero_counters\": {\n    \"auxiliary_head_route_count\": 0,\n    \"cache_outer_held_content_read_count\": 0,\n    \"cache_outer_held_label_read_count\": 0,\n    \"cache_test_content_read_count\": 0,\n    \"cache_test_label_read_count\": 0,\n    \"cache_validation_content_read_count\": 0,\n    \"cache_validation_label_read_count\": 0,\n    \"comparator_freeze_adaptive_query_label_read_count\": 0,\n    \"comparator_freeze_final_test_label_read_count\": 0,\n    \"comparator_freeze_final_test_margin_read_count\": 0,\n    \"comparator_freeze_final_test_prediction_read_count\": 0,\n    \"control_construction_final_test_error_read_count\": 0,\n    \"control_construction_final_test_label_read_count\": 0,\n    \"control_construction_final_test_margin_read_count\": 0,\n    \"control_construction_final_test_prediction_read_count\": 0,\n    \"held_content_read_count\": 0,\n    \"held_label_read_count\": 0,\n    \"key_selection_route_count\": 0,\n    \"local_v7_pass_evidence_reuse_count\": 0,\n    \"mllm_call_count\": 0,\n    \"mllm_calls_outside_train_cache\": 0,\n    \"ocr_call_count\": 0,\n    \"pair_triplet_supcon_route_count\": 0,\n    \"query_labels_read_count\": 0,\n    \"query_z_read_count\": 0,\n    \"reranking_route_count\": 0,\n    \"sample_weighting_route_count\": 0,\n    \"segment_gold_read_count\": 0,\n    \"teacher_cache_read_count\": 0,\n    \"teacher_cache_write_count\": 0,\n    \"test_auxiliary_head_load_count\": 0,\n    \"test_cache_read_count\": 0,\n    \"test_certificate_read_count\": 0,\n    \"test_compiler_target_read_count\": 0,\n    \"test_content_read_count\": 0,\n    \"test_key_selector_load_count\": 0,\n    \"test_label_read_count\": 0,\n    \"test_reranker_load_count\": 0,\n    \"test_teacher_artifact_read_count\": 0,\n    \"validation_auxiliary_head_load_count\": 0,\n    \"validation_cache_read_count\": 0,\n    \"validation_certificate_read_count\": 0,\n    \"validation_compiler_target_read_count\": 0,\n    \"validation_content_read_count\": 0,\n    \"validation_key_selector_load_count\": 0,\n    \"validation_label_read_count\": 0,\n    \"validation_reranker_load_count\": 0,\n    \"validation_teacher_artifact_read_count\": 0\n  }\n}\n"
+    },
+    {
+      "errors": {},
+      "status": "PASS"
+    },
+    {
+      "args": [
+        "bash",
+        "-n",
+        "scripts/wrappers/lb_scgp_global_r2_run2_v2.sh"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "args": [
+        "bash",
+        "-n",
+        "scripts/slurm/lb_scgp_global_r2_m0_synth_kkt_v2.sbatch"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "args": [
+        "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+        "-c",
+        "import importlib.util, json, sys\nmissing=[name for name in ['jsonschema'] if importlib.util.find_spec(name) is None]\nprint(json.dumps({'checked':['jsonschema'],'missing':missing}))\nsys.exit(1 if missing else 0)\n"
+      ],
+      "check": "python_dependency_jsonschema",
+      "returncode": 1,
+      "status": "FAIL",
+      "stderr": "",
+      "stdout": "{\"checked\": [\"jsonschema\"], \"missing\": [\"jsonschema\"]}\n"
+    },
+    {
+      "args": [
+        "/data/jehc223/miniconda3/envs/HateVideo/bin/python",
+        "-m",
+        "py_compile",
+        "scripts/analysis/lb_scgp_global_r2_run2_v2_common.py",
+        "scripts/analysis/lb_scgp_global_r2_run2_v2_validate.py",
+        "scripts/analysis/lb_scgp_global_r2_run2_v2_producer.py",
+        "scripts/analysis/lb_scgp_global_r2_run2_v2_independent_verify.py"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "args": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "configs/lb_scgp_global_r2/m0_synth_kkt_v2.json",
+        "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_payload_v2.schema.json",
+        "schemas/lb_scgp_global_r2/scgp_global_synth_kkt_case_v2.schema.json",
+        "scripts/analysis/lb_scgp_global_r2_run2_v2_common.py",
+        "scripts/analysis/lb_scgp_global_r2_run2_v2_validate.py",
+        "scripts/analysis/lb_scgp_global_r2_run2_v2_producer.py",
+        "scripts/analysis/lb_scgp_global_r2_run2_v2_independent_verify.py",
+        "scripts/wrappers/lb_scgp_global_r2_run2_v2.sh",
+        "scripts/slurm/lb_scgp_global_r2_m0_synth_kkt_v2.sbatch",
+        "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md"
+      ],
+      "returncode": 0,
+      "status": "PASS",
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "bad_lines": [],
+      "status": "PASS"
+    },
+    {
+      "mismatches": [],
+      "status": "PASS"
+    },
+    {
+      "existing_forbidden_outputs": [],
+      "status": "PASS"
+    },
+    {
+      "errors": [],
+      "status": "PASS"
+    }
+  ],
+  "run_id": "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2",
+  "schema_version": "lb_scgp_global_r2_run2_v2_validation_v1",
+  "slurm_job_id": "12971",
+  "status": "FAIL",
+  "validator_sha256": "4389c4a1d1cbe21ec516ec414c472ebff075bbfb4a8041939163f478bdc3fc36"
+}
