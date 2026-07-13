@@ -1,0 +1,13 @@
+[MHC|Zbest] PERM n=150 k8 mean=-0.0031 sd=0.0088 max=+0.0207 | maxk mean=-0.0019 max=+0.0287 | p(realmax>=permmax)=0.0467 real_beats_all=False  [835s]
+[HateMM|Zbest] PERM n=150 k8 mean=-0.0014 sd=0.0063 max=+0.0200 | maxk mean=-0.0009 max=+0.0200 | p(realmax>=permmax)=0.7000 real_beats_all=False  [1000s]
+[HateMM|Qwen] Zdim=7168 C_Z=0.001 accZ=0.8413 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [21s]
+   text_pca_k8  accZA=0.8413 dacc=+0.0000 CI[-0.0193,+0.0180]
+   text_pca_k16 accZA=0.8380 dacc=-0.0033 CI[-0.0253,+0.0187]
+   text_pca_k32 accZA=0.8320 dacc=-0.0093 CI[-0.0353,+0.0160]
+   text_pca_k64 accZA=0.7960 dacc=-0.0453 CI[-0.0753,-0.0160]
+   text_full_cvC accZA=0.8440 dacc=+0.0027 CI[-0.0107,+0.0167]
+   shuffled(seed12345) k8=-0.0020 k16=+0.0000  real_max_over_kdec=+0.0000
+
+==== VERDICT=C3_NONTARGET_DEAD_AT_FUSION | calib=True C1=False C2=False C3=False best k16 dacc=+0.0160 CI[-0.0187,+0.0507] perm_maxk_max=+0.0287 ====
+wrote /data/jehc223/RGCL/refine-logs/C3_FUSION_PROBE_OUT.json
+elapsed 1856s
