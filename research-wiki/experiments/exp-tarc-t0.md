@@ -726,6 +726,11 @@ summary cached `scratchpad/g2_score_summary.json`). Scored over videos with GT `
 | all split videos w/ GT target (n=1023) | 0.3184 | **0.6137** | **PASS** |
 | hate videos only w/ GT target (n=426)  | 0.3363 | **0.6760** | **PASS** |
 
+**Convention:** videos with GT primary=-1 excluded from scored population (predicting a
+target on a no-target video is not an FP); under the inclusive convention all-videos =
+0.5959 (<0.60) while hate-only = 0.6755 remains PASS — sub-gate A robust via the hate-only
+population; see TARC_G2_SCORE_AUDIT.md
+
 Per-effective-class (all-videos): Blacks P0.773 R0.745 F1 0.758 (sup 466); Jews P0.597 R0.896
 F1 0.717 (sup 106); Other P0.646 **R0.255** F1 0.366 (sup 451). Hate-only: Blacks F1 **0.880**
 (sup 317); Jews F1 0.763 (sup 67); Other F1 0.385 (sup 42). **Confusion (all, rows=GT,
