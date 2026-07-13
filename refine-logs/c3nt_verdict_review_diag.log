@@ -1,0 +1,24 @@
+[repro] {'C_Z': 1.0, 'accZ': 0.7306666666666666, 'real_dacc': {'8': 0.05333333333333334, '16': 0.044, '32': 0.03799999999999999, '64': 0.010666666666666668}, 'real_max_over_k': 0.05333333333333334, 'shuf_dacc_seed12345': {'8': 0.02266666666666667, '16': 0.007333333333333334, '32': 0.0020000000000000005, '64': -0.030666666666666665}}
+[perm 10] k8_mean=-0.0005 sd=0.0067 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0013 p(permmax>=realmax+0.0533)=0.000
+[perm 20] k8_mean=+0.0000 sd=0.0060 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0009 p(permmax>=realmax+0.0533)=0.000
+[perm 30] k8_mean=+0.0006 sd=0.0075 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0019 p(permmax>=realmax+0.0533)=0.000
+[perm 40] k8_mean=+0.0021 sd=0.0089 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0035 p(permmax>=realmax+0.0533)=0.000
+[perm 50] k8_mean=+0.0018 sd=0.0088 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0038 p(permmax>=realmax+0.0533)=0.000
+[perm 60] k8_mean=+0.0018 sd=0.0082 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0038 p(permmax>=realmax+0.0533)=0.000
+[perm 70] k8_mean=+0.0014 sd=0.0082 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0035 p(permmax>=realmax+0.0533)=0.000
+[perm 80] k8_mean=+0.0011 sd=0.0082 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0032 p(permmax>=realmax+0.0533)=0.000
+[perm 90] k8_mean=+0.0008 sd=0.0084 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0030 p(permmax>=realmax+0.0533)=0.000
+[perm 100] k8_mean=+0.0007 sd=0.0084 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0027 p(permmax>=realmax+0.0533)=0.000
+[perm 110] k8_mean=+0.0002 sd=0.0084 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0023 p(permmax>=realmax+0.0533)=0.000
+[perm 120] k8_mean=+0.0000 sd=0.0087 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0022 p(permmax>=realmax+0.0533)=0.000
+[perm 130] k8_mean=+0.0003 sd=0.0087 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0025 p(permmax>=realmax+0.0533)=0.000
+[perm 140] k8_mean=+0.0004 sd=0.0085 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0025 p(permmax>=realmax+0.0533)=0.000
+[perm 150] k8_mean=+0.0005 sd=0.0084 p(k8null>=real+0.0533)=0.000 | maxk_mean=+0.0027 p(permmax>=realmax+0.0533)=0.000
+[gauss 10] mean=-0.0017 sd=0.0068
+[gauss 20] mean=+0.0001 sd=0.0059
+[gauss 30] mean=+0.0012 sd=0.0075
+[gauss 40] mean=+0.0008 sd=0.0078
+[gauss 50] mean=+0.0006 sd=0.0082
+[gauss 60] mean=+0.0010 sd=0.0088
+[gauss 70] mean=+0.0013 sd=0.0090
+[gauss 80] mean=+0.0017 sd=0.0088

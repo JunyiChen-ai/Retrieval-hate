@@ -1,0 +1,51 @@
+
+[HateMM/CLIP] C_Z=0.001 C_full=0.001 Zdim=1792 accZ=0.8353 label_accZA=1.0000 (headroom_frac=1.000) CALIB_PASS=True
+   label_oracle         accZA=1.0000 dacc=+0.1647 CI[+0.1260,+0.2060] dbits=+0.5913 fano=+0.1488 CI[+0.1240,+0.1777]
+   text_pca_k8          accZA=0.8307 dacc=-0.0047 CI[-0.0427,+0.0327] dbits=+0.0270 fano=+0.0106 CI[-0.0163,+0.0332]
+   text_pca_k16         accZA=0.8333 dacc=-0.0020 CI[-0.0367,+0.0327] dbits=+0.0184 fano=+0.0073 CI[-0.0218,+0.0312]
+   text_pca_k32         accZA=0.8227 dacc=-0.0127 CI[-0.0500,+0.0247] dbits=-0.0255 fano=-0.0105 CI[-0.0536,+0.0218]
+   text_pca_k64         accZA=0.7887 dacc=-0.0467 CI[-0.0847,-0.0080] dbits=-0.2242 fano=-0.1154 CI[-0.3283,-0.0353]
+   shuffled_text_k8     accZA=0.8193 dacc=-0.0160 CI[-0.0347,+0.0020] dbits=-0.0093 fano=-0.0038 CI[-0.0123,+0.0039]
+   shuffled_text_k16    accZA=0.8060 dacc=-0.0293 CI[-0.0553,-0.0040] dbits=-0.0160 fano=-0.0065 CI[-0.0190,+0.0046]
+   shuffled_text_k32    accZA=0.7867 dacc=-0.0487 CI[-0.0807,-0.0173] dbits=-0.0725 fano=-0.0312 CI[-0.0550,-0.0124]
+   shuffled_text_k64    accZA=0.7380 dacc=-0.0973 CI[-0.1320,-0.0620] dbits=-0.2591 fano=-0.1409 CI[-0.2945,-0.0787]
+   text_full_cvC        accZA=0.8260 dacc=-0.0093 CI[-0.0413,+0.0213] dbits=+0.0491 fano=+0.0188 CI[-0.0011,+0.0364]
+
+[HateMM/Qwen] C_Z=0.001 C_full=0.001 Zdim=7168 accZ=0.8413 label_accZA=1.0000 (headroom_frac=1.000) CALIB_PASS=True
+   label_oracle         accZA=1.0000 dacc=+0.1587 CI[+0.1193,+0.1987] dbits=+0.5286 fano=+0.1251 CI[+0.0916,+0.1658]
+   text_pca_k8          accZA=0.8413 dacc=+0.0000 CI[-0.0187,+0.0193] dbits=-0.0365 fano=-0.0136 CI[-0.0323,+0.0005]
+   text_pca_k16         accZA=0.8380 dacc=-0.0033 CI[-0.0247,+0.0180] dbits=-0.0595 fano=-0.0225 CI[-0.0473,-0.0055]
+   text_pca_k32         accZA=0.8320 dacc=-0.0093 CI[-0.0353,+0.0160] dbits=-0.0779 fano=-0.0300 CI[-0.0652,-0.0068]
+   text_pca_k64         accZA=0.7960 dacc=-0.0453 CI[-0.0747,-0.0173] dbits=-0.2688 fano=-0.1273 CI[-0.3245,-0.0599]
+   shuffled_text_k8     accZA=0.8393 dacc=-0.0020 CI[-0.0207,+0.0160] dbits=-0.0062 fano=-0.0022 CI[-0.0130,+0.0078]
+   shuffled_text_k16    accZA=0.8420 dacc=+0.0007 CI[-0.0200,+0.0220] dbits=-0.0119 fano=-0.0043 CI[-0.0189,+0.0090]
+   shuffled_text_k32    accZA=0.8220 dacc=-0.0193 CI[-0.0433,+0.0033] dbits=-0.0867 fano=-0.0337 CI[-0.0639,-0.0119]
+   shuffled_text_k64    accZA=0.7800 dacc=-0.0613 CI[-0.0907,-0.0307] dbits=-0.2717 fano=-0.1292 CI[-0.2615,-0.0703]
+   text_full_cvC        accZA=0.8440 dacc=+0.0027 CI[-0.0100,+0.0167] dbits=-0.0083 fano=-0.0030 CI[-0.0139,+0.0065]
+
+[MHC/CLIP] C_Z=1.0 C_full=0.001 Zdim=1792 accZ=0.7307 label_accZA=1.0000 (headroom_frac=1.000) CALIB_PASS=True
+   label_oracle         accZA=1.0000 dacc=+0.2693 CI[+0.2247,+0.3133] dbits=+1.1373 fano=+0.5000 CI[+0.3366,+0.5000]
+   text_pca_k8          accZA=0.7840 dacc=+0.0533 CI[+0.0173,+0.0900] dbits=+0.0482 fano=+0.0000 CI[-0.0817,+0.1987]
+   text_pca_k16         accZA=0.7747 dacc=+0.0440 CI[+0.0040,+0.0847] dbits=-0.0481 fano=+0.0000 CI[-0.1288,+0.1196]
+   text_pca_k32         accZA=0.7687 dacc=+0.0380 CI[-0.0047,+0.0807] dbits=-0.2195 fano=+0.0000 CI[-0.1624,+0.0000]
+   text_pca_k64         accZA=0.7413 dacc=+0.0107 CI[-0.0347,+0.0560] dbits=-1.1486 fano=+0.0000 CI[-0.1648,+0.0000]
+   shuffled_text_k8     accZA=0.7533 dacc=+0.0227 CI[+0.0020,+0.0447] dbits=-0.0603 fano=+0.0000 CI[-0.1212,+0.0136]
+   shuffled_text_k16    accZA=0.7380 dacc=+0.0073 CI[-0.0187,+0.0333] dbits=-0.1002 fano=+0.0000 CI[-0.1383,+0.0000]
+   shuffled_text_k32    accZA=0.7327 dacc=+0.0020 CI[-0.0287,+0.0327] dbits=-0.2140 fano=+0.0000 CI[-0.1604,+0.0000]
+   shuffled_text_k64    accZA=0.7000 dacc=-0.0307 CI[-0.0700,+0.0080] dbits=-0.7182 fano=+0.0000 CI[-0.1706,+0.0000]
+   text_full_cvC        accZA=0.7747 dacc=+0.0440 CI[+0.0020,+0.0847] dbits=+0.4963 fano=+0.3372 CI[+0.1880,+0.3630]
+
+[MHC/Qwen] C_Z=1.0 C_full=0.01 Zdim=7168 accZ=0.7980 label_accZA=1.0000 (headroom_frac=1.000) CALIB_PASS=True
+   label_oracle         accZA=1.0000 dacc=+0.2020 CI[+0.1620,+0.2433] dbits=+1.1258 fano=+0.5000 CI[+0.2784,+0.5000]
+   text_pca_k8          accZA=0.7967 dacc=-0.0013 CI[-0.0273,+0.0233] dbits=-0.0170 fano=+0.0000 CI[-0.1249,+0.1067]
+   text_pca_k16         accZA=0.8020 dacc=+0.0040 CI[-0.0253,+0.0333] dbits=-0.0257 fano=+0.0000 CI[-0.1417,+0.1238]
+   text_pca_k32         accZA=0.7960 dacc=-0.0020 CI[-0.0347,+0.0307] dbits=-0.1164 fano=+0.0000 CI[-0.1854,+0.0622]
+   text_pca_k64         accZA=0.7527 dacc=-0.0453 CI[-0.0833,-0.0073] dbits=-0.9325 fano=+0.0000 CI[-0.2228,+0.0000]
+   shuffled_text_k8     accZA=0.7933 dacc=-0.0047 CI[-0.0227,+0.0140] dbits=-0.0493 fano=+0.0000 CI[-0.1201,+0.0450]
+   shuffled_text_k16    accZA=0.7840 dacc=-0.0140 CI[-0.0367,+0.0080] dbits=-0.1107 fano=+0.0000 CI[-0.1626,+0.0000]
+   shuffled_text_k32    accZA=0.7733 dacc=-0.0247 CI[-0.0513,+0.0013] dbits=-0.2353 fano=+0.0000 CI[-0.2161,+0.0000]
+   shuffled_text_k64    accZA=0.7353 dacc=-0.0627 CI[-0.0987,-0.0280] dbits=-0.8552 fano=+0.0000 CI[-0.2232,+0.0000]
+   text_full_cvC        accZA=0.7993 dacc=+0.0013 CI[-0.0247,+0.0273] dbits=+0.4438 fano=+0.3191 CI[+0.1431,+0.3559]
+
+==== calib_all_pass=True best_direct=('MHC/CLIP/k8', 0.05333333333333334) best_fano=('HateMM/CLIP/k8', 0.010575458805915483) => VERDICT=C3_NONTARGET_PROCEED ====
+wrote refine-logs/C3_NONTARGET_PILOT_OUT.json
