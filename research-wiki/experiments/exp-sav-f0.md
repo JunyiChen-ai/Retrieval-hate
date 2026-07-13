@@ -30,6 +30,8 @@ tags: ["hateful-video", "MLLM", "sparse-attention-vectors", "SAV", "feature-mini
 
 # SAV — Sparse Attention-head feature mining from frozen Qwen2.5-VL (C2)
 
+> **F-G1 KILL — CONFIRMED BY INDEPENDENT VERDICT REVIEW 2026-07-14 (refine-logs/SAV_F1_VERDICT_REVIEW.md). 18th negative route.** Machine verdict KILL (job 13099) upheld under corrected machinery (λ-grid widened; the deployed grid's edge-saturation had INFLATED SAV by crushing the higher-dim pooled baseline): MHC cell collapses to CI-including-0, HateMM no-harm violation confirmed and stronger, U-1 = pooled-equivalent null. Dilution hypothesis FALSIFIED — MHC-EN is data/label-limited. Single submissions 13058+13099 consumed; no F-G2.
+
 > **PRE-REGISTRATION STATUS: DRAFT-REV2-AWAITING-DELTA-CHECK.** Pre-registers hypotheses,
 > mechanism, gates, kill numbers, seeds, and protocol for the cheapest C-line candidate (C2).
 > **Rev-1 (2026-07-13) applied the mandatory revisions M1–M5; Rev-2 (2026-07-13) applied the
