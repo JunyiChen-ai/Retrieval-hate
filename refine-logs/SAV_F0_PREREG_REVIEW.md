@@ -242,3 +242,178 @@ gate — at which point the pre-registration is APPROVED-able.
   149 / train 579; `HateMM` val 107 / test 215 / train 744 (counted live).
 - G0-cond recipe / noise-floor doctrine: `research-wiki/REFLECTION_mllm_integration_failures.md:37–43`;
   `research-wiki/LITERATURE_mllm_integration_2026-07-13.md:60–65`.
+
+---
+---
+
+# Rev-1 RE-REVIEW (same reviewer, 2026-07-13, second pass)
+
+**Object:** `research-wiki/experiments/exp-sav-f0.md` at status DRAFT-REVISED-AWAITING-REREVIEW
+(Rev-1, §8 revision history). Checked against my own M1–M5 + recommended items above.
+**Context change acknowledged:** A-line lb_scgp_global is PAUSED at a zero-GPU G0-cond kill
+(`refine-logs/lb_scgp_global/A_LINE_PAUSE_DECISION.md`, verified to exist and to say what the
+coordinator says it says) — SAV is now the lead experiment; this re-review is the last gate before
+an execution-authorization cycle. That raises, not lowers, the bar for statistical soundness of the
+deciding gate.
+
+## VERDICT: **REVISE (minor — Rev-2 is text-only statistics pinning, no design change).**
+
+All five mandatory items M1–M5 are applied faithfully and, in two places, better than I asked
+(≥5 seeds; oracle-selection pre-check added). **No design-level objection remains.** Three residual
+items (R1–R3) must land in the pre-registration text before `sbatch` because they pin the deciding
+gate's statistics; all are small edits. **Upon faithful application of R1–R3 as written, this
+pre-registration is APPROVED — a delta-check of the edited text suffices; no further full re-review
+cycle is needed.**
+
+## 1. Item-by-item compliance check
+
+| item | required | Rev-1 state | verdict |
+|---|---|---|---|
+| M1a multi-seed | ≥3 seeds, CI excludes 0 | **≥5 seeds (0–4)**, bootstrap CI excludes 0, cross-seed distribution decides | ✅ exceeds — **acceptable** (coordinator's question answered: 5 > 3 is strictly better), but conditional on R1a: the seeds must inject *genuine* variation |
+| M1b noise-floor argument | projected-gain-vs-noise argument, effective n stated | explicit bar = projected > +0.030 acc + noise band, CI-excludes-0; per-example resolution (1.25%) and effective n stated; G0-cond quote verbatim (`REFLECTION:41`) | ✅ (one statistical error in the "≈400 draws" claim → R1b) |
+| M1c MDL or justified substitute | codelength primary OR justified capacity-matched accuracy | **MDL/codelength primary** + capacity-matched accuracy **co-primary** with the exact justification I required (representation-level feature swap, not low-bandwidth aux signal) | ✅ (estimator not pinned → R1c) |
+| M1 (scope widening) | — (my review implied EN-only decision was fragile) | decision spans MHC-EN + HateMM no-harm + MHC-ZH secondary with a pre-declared combined rule; EN remains the carrying target | ✅ good addition |
+| M2a reproduction guard | fresh-forward full-hidden read-out reproduces pooled floor, stated tolerance | present, ±0.010 val acc, admissibility-blocking | ✅ present (tolerance quantization issue → R2) |
+| M2b frame-source pin | same source as cached extraction | pinned to **symlinked mp4s** `data/video/<ds>/All/<id>.mp4` via the same decord→PyAV 8-frame sampler; lora_frames explicitly forbidden | ✅ **independently verified this pass**: extractor reads `--video_dir ./data/video`, path `<dataset>/All/<id>.mp4` (`generate_VideoMLLM_embedding_HF.py:73-76,334,341`); `data/video/HateMM/All/*.mp4` and `data/video/MHC/All/*.mp4` confirmed symlinks into `/data/jehc223/HateMM/video/` and `/data/jehc223/Multihateclip/English/video_mp4/` (checked live). The pin is factually correct and matches the cached pipeline — my original review's uncertainty about which source the cached extraction used is resolved: it is the symlinked mp4s, NOT lora_frames, so Rev-1 chose correctly |
+| M2c deferred-import audit + review | explicit, pre-submit | both required as F-G1 prerequisites, kill-wired | ✅ |
+| M3 confound controls | isolating control(s) or re-scope | **both**: C-pos + C-sparse controls AND the causal claim re-scoped in §1/§6, licensed only if SAV beats C-pos | ✅ (attribution nuance → Rec-1; C-sparse wording → Rec-2) |
+| M4a VLGuard decimals | flag pending PDF | flagged, transcription-blocked until PDF re-read | ✅ |
+| M4b Qwen2-VL vs 2.5 | explicit assumption caveat | present, framed as "assumption F-G1 is testing" | ✅ |
+| M5a all 784 heads | drop layer-subset hedge | committed, storage bounded (~1.2 GB), hedge explicitly retired as a hidden DoF | ✅ |
+| M5b OCR-veto note | record on-screen-text prompt clause | present in §5 | ✅ (line cite is 44-46; the constant actually spans 45-47 — trivial, Rec-3) |
+| Recommended U-1/U-2 | upper-bound probes | both added | ✅ |
+
+## 2. Residual mandatory items (Rev-2, text-only)
+
+**R1 — Pin the F-G1 statistics precisely (the CI must be real, not decorative).**
+  (a) **State what the ≥5 seeds actually vary.** The extraction is a deterministic frozen forward;
+      nearest-centroid head selection on the full train set is also deterministic. If nothing varies,
+      5 seeds produce 5 identical replicates, the cross-seed CI degenerates to a point, and
+      "CI excludes 0" becomes trivially true for any nonzero delta — illusory rigor of exactly the
+      kind the burn history punishes. The seeds must inject genuine variation: e.g. resampled
+      head-selection subsets (SAV-style ~20/class few-shot draws from train) and/or resampled probe
+      train splits. Declare which.
+  (b) **Fix the pooling claim.** "val pooled across the ≥5 seeds (≈400 val-example draws)" is a
+      statistical error as written: the same 80 val examples across seeds are correlated (identical,
+      if (a) is not fixed), and seed×example are NOT ~400 independent draws — pooling replicates
+      narrows the CI by ~√5 spuriously. Required: bootstrap **clustered at the example level**
+      (resample the 80 MHC-EN val examples; within each draw, average the per-example paired delta
+      across seeds). Effective n stays 80; seeds reduce per-example variance, they do not multiply n.
+  (c) **Pre-declare the exact MDL estimator and bits→acc rule.** "Prequential/online codelength of
+      the val labels" is ambiguous (online coding over what ordering? or holdout log-loss = description
+      length of val given a train-fit probe?). Pin one (holdout log-loss is the simplest defensible
+      choice here), and pin the bits→acc conversion (Fano bound vs empirical slope, per REFLECTION
+      §4(iii)'s "Fano/经验斜率") so the +0.030+noise projection is computed one pre-declared way.
+
+**R2 — Reproduction-guard tolerance is quantized to zero flips; pre-declare a feature-level primary
+check to avoid a post-hoc amendment.** ±0.010 val acc on the 80-sample MHC-EN val allows **zero**
+prediction flips (1 flip = 0.0125 > 0.010), i.e. the guard as written demands exact prediction
+reproduction and can trip on benign bf16/kernel nondeterminism — forcing exactly the kind of
+after-the-fact tolerance renegotiation the ceremony rules exist to prevent. Required: make the
+**primary** guard statistic feature-level — e.g. per-video cosine between the fresh-forward pooled
+feature and the cached feature, threshold pre-declared (≥0.999 or a max-abs-diff bound) — with the
+±0.010 probe read as secondary/confirmatory, and state the flip-quantization fact in the text. (The
+guard's failure direction is safe/fail-closed either way; this is about not baking in a gate that
+predictably needs amending.)
+
+**R3 — F-G2 (answering the coordinator's explicit question).** Keeping F-G2 at **+0.015 val is
+ACCEPTABLE and I do NOT ask for it to be raised to +0.030.** Rationale, both directions: F-G2's job is
+no longer to establish the effect (the rebuilt F-G1 upstream now does that at G0-cond strength); it is
+a *survival* check that the probe gain survives the trained RGCL head before spending the one test
+touch. Raising it to +0.030 on an 80-sample val (2.4 examples) at 3 seeds would risk killing a true
++0.030-test effect on val noise — the premature-kill direction. The revision agent's judgment call is
+endorsed. **Two small tightenings required, same statistics discipline as F-G1:**
+  (a) add the example-level paired bootstrap CI-excludes-0 co-requirement to the F-G2 pass rule (mean
+      +0.015 + sign ≥2/3 alone can still be noise-carried on 80 samples);
+  (b) the HateMM no-harm check appears in F-G2's run spec but has no kill number in its pass/kill
+      rule — state it explicitly (reuse F-G1's: mean paired Δacc not below −0.010).
+
+## 3. Recommended (non-blocking)
+
+- **Rec-1:** If SAV beats C-pos, attribution between "sparse heads" and "multi-layer pre-o_proj
+  head-space read-out" is still open (C-pos isolates position only; layer depth remains entangled).
+  Pre-declare the U-1 reading as the tie-breaker: U-1 ≈ SAV ⇒ the gain is the head-space/multi-layer
+  read-out, not sparsity per se. Also note U-1's capacity-matching needs care (784×128 = 100,352-d
+  probe input vs 2,560-d for top-20) — state the regularization.
+- **Rec-2:** Clarify C-sparse construction in one phrase: the selected heads' outputs **span-mean
+  pooled over token positions** (the wording "mean-pooled selected-head vectors" — inherited from my
+  own review — is ambiguous between token-pooling and head-averaging).
+- **Rec-3:** Editorial: (i) the multiple "C-line queues behind A-line M2/M3" clauses are now stale —
+  A-line is PAUSED (`A_LINE_PAUSE_DECISION.md`) and SAV is the lead; harmless (queueing behind a
+  paused line = no contention) but update at next touch; (ii) the §5 OCR-note line cite should be
+  `generate_VideoMLLM_embedding_HF.py:45-47` (44 is the comment line).
+
+## 4. Bottom line
+
+Rev-1 is a faithful, in places stronger-than-asked, application of M1–M5. The residuals are all
+pin-the-statistics edits on the deciding gate — no experiment design changes, no new controls, no new
+cost. **REVISE (minor); pre-authorized APPROVED once R1–R3 land as written** (delta-check only).
+The route remains worth running: representation-level, cheapest C-line pilot, genuine falsifiable
+null, and now the project's lead experiment with GPU free.
+
+### Additional live verifications this pass
+
+- Extractor video path: `src/utils/generate_VideoMLLM_embedding_HF.py:73-76` (`--video_dir`,
+  default `./data/video`, "<dataset>/All/<id>.mp4"), `:334` (`video_root`), `:341` (`video_path`).
+- Symlink topology: `data/video/HateMM/All/hate_video_100.mp4 -> /data/jehc223/HateMM/video/...`,
+  `data/video/MHC/All/01ygFLVdj8s.mp4 -> /data/jehc223/Multihateclip/English/video_mp4/...`
+  (ls -la, 2026-07-13).
+- decord→PyAV sampler present in the cited region (`_decode_with_decord` at ~:155).
+- `refine-logs/lb_scgp_global/A_LINE_PAUSE_DECISION.md` exists (2026-07-13 21:46); confirms A-line
+  PAUSE at zero-GPU G0-cond kill and GPU redirect to C-line with SAV as lead.
+
+---
+---
+
+# Rev-2 DELTA-CHECK (same reviewer, 2026-07-13, third pass — final)
+
+**Object:** `research-wiki/experiments/exp-sav-f0.md` at status DRAFT-REV2-AWAITING-DELTA-CHECK.
+Scope per the pre-authorization in the Rev-1 re-review: verify R1–R3 (+ Rec-1..3) landed **as
+written**; no new full review cycle.
+
+## VERDICT: **APPROVED.**
+
+All residuals landed faithfully; in one place (R2) stronger than asked. The pre-registration is now,
+in my judgment, a properly powered, confound-controlled, fail-closed, G0-cond-compliant design. No
+blocking items remain.
+
+## Delta-by-delta verification (against the residuals as I wrote them)
+
+| residual | required | Rev-2 text (exp-sav-f0.md) | verdict |
+|---|---|---|---|
+| **R1a** | declare what the ≥5 seeds vary; name the degenerate-CI failure | F-G1 "Extraction & selection": extraction declared deterministic and **run once**; full-train nearest-centroid selection acknowledged deterministic; seeds pre-declared to vary **(i)** SAV-style head-selection subsample draws (20/class, without replacement, from train — matching SAV's own few-shot scale) and **(ii)** stratified 80% probe train-split resampling; the identical-replicates → degenerate-CI → "trivially excludes 0" failure is named verbatim; head-set stability across draws is itself reported | ✅ as written |
+| **R1b** | retire "≈400 draws"; example-level clustered bootstrap; n stays 80 | the "≈400 val-example draws" phrasing explicitly called "a statistical error and RETIRED"; procedure = resample the 80 val examples with replacement, average each drawn example's paired delta across seeds **first**, 10,000 draws; "effective n stays 80 — seeds reduce per-example variance, they do not multiply n"; clustered rule extended to ΔL, the projected-gain bootstrap, HateMM (107), MHC-ZH (78); co-primary bullet states seed×example draws are never pooled as independent | ✅ as written |
+| **R1c** | pin MDL estimator + bits→acc rule | estimator pinned = **holdout log-loss** (Σ −log₂ p̂ over val, probe fit on the seed's train subset only, p̂ clipped to [10⁻⁶, 1−10⁻⁶]); prequential/online explicitly rejected (ordering ambiguity); conversion pinned = **Fano / inverse-binary-entropy** acc(ℓ)=1−h₂⁻¹(min(ℓ,1)); empirical slope explicitly NOT used (post-hoc DoF) — the exact recommendation | ✅ as written |
+| **R2** | feature-level primary guard, ±0.010 demoted to secondary, flip-quantization stated | two-tier guard: PRIMARY = **min per-video cosine ≥ 0.999**, fresh-vs-cached pooled features, **both img_feats and text_feats, over every train+val video** (broader than I asked — I suggested a per-video cosine; Rev-2 pins min over both streams and both splits); SECONDARY = ±0.010 probe, confirmatory only, with the zero-flips quantization fact stated; primary-pass + secondary-trip = PASS with recorded discrepancy; primary-fail = FAIL regardless; "No post-hoc tolerance amendment is needed or permitted"; F-G0 kill clause updated to the primary check | ✅ stronger than asked |
+| **R3a** | example-level paired bootstrap CI-excludes-0 in the F-G2 pass rule | pass rule now (i) mean +0.015 both metrics, (ii) sign ≥2/3, (iii) example-level paired bootstrap CI excludes 0 (same clustered rule, 10k draws); my ruling against raising the bar to +0.030 is quoted with its rationale | ✅ as written |
+| **R3b** | HateMM no-harm kill number inside the F-G2 kill rule | kill rule now contains "HateMM regresses: 3-seed mean paired Δacc below −0.010 vs the pooled-feature HateMM floor (same no-harm number as F-G1)" | ✅ as written |
+| **Rec-1** | U-1 tie-breaker + U-1 probe regularization | pre-declared both readings (U-1 ≈ SAV ⇒ multi-layer head-space read-out, not sparsity; SAV > U-1 ⇒ sparsity contributes); 100,352-d capacity risk named; regularization pinned (same probe family, L2, λ ∈ {10⁻⁴..10²} by 5-fold CV within the seed's 80% train split, never tuned on val) | ✅ |
+| **Rec-2** | C-sparse construction clarified | "span-mean pooled over TOKEN POSITIONS … NOT an average across heads; per-head identity kept, pooled per-head vectors concatenated" | ✅ |
+| **Rec-3** | stale A-line clauses; OCR cite | scheduling clause rewritten (A-line PAUSED, SAV lead, GPU free, no queueing constraint) in header/status/§4-Ceremony/§7; OCR cite corrected to `:45-47` with "44 is the comment line" | ✅ |
+
+Front-matter verdict line, §7 status, and the §8 Rev-2 history entry are consistent with the body.
+
+## Non-blocking notes for the execution phase (do NOT hold the sbatch for these)
+
+1. **Pin the carry-forward head set before F-G2.** F-G1's five seeds each select heads from a 20/class
+   draw (correct for the stability-measured CI), but the draft does not yet say **which head set
+   deploys to F-G2** (e.g. re-selection on the full train set — deterministic — or the consensus/
+   intersection of the 5 draws). Any choice is fine; it just must be written down in the F-G2
+   pre-flight BEFORE F-G1 results are seen (it does not affect F-G0/F-G1 and so does not block this
+   approval).
+2. **C-sparse needs span-mean per-head vectors — emit them in the same extraction pass.** The
+   committed cache is final-token per-head (784×128/video). C-sparse (Rec-2 wording) requires each
+   selected head's output span-mean pooled over token positions — computable as a running mean during
+   the same forward, roughly doubling the cache to ~2.4 GB total (still trivial), but the hook code
+   must know to emit it. Flag for the F-G0 implementation + codex-code-review checklist so it does not
+   surface as a surprise plan amendment.
+3. **Trivial editorial:** §6 still ends "Run it before the more expensive C1" — C1 is now
+   KILL_CONFIRMED (refine-logs/C1_KILL_REVIEW.md); harmless, update at next touch.
+
+## Final status
+
+**APPROVED** per the Rev-1 re-review pre-authorization. The remaining path to GPU is the draft's own:
+user-visible report → F-G0 execution (hook feasibility + two-tier reproduction guard + frame-source
+pin + deferred-import audit + codex-code-review) → F-G1 sbatch (single-submit ceremony). This
+reviewer's role is complete; notes 1–2 above should be folded into the F-G0/F-G2 pre-flight
+checklists by the executing agent.
