@@ -90,8 +90,8 @@ I measured ARE exactly the ×50, effectively-unpenalized appended columns the re
 appending them over 150 fresh permutations raises held-out accuracy by a mean of only **+0.0005** (SD
 0.0084). So un-penalized appended columns do **not** systematically lift accuracy at C_Z=1.0 — there is
 no "free-column floor." The **Gaussian-noise-block control** (append 8 iid N(0,1)×s columns instead of
-permuted-PCA scores) independently confirms: mean **+0.0010** (SD ~0.008, n=60 seeds and stable) — pure
-noise columns also add ≈ 0. (A C_Z sweep of the null continues appending to the diagnostic OUT.json as a
+permuted-PCA scores) independently confirms: mean **+0.0014** (SD 0.0090, stable through n=100 seeds) —
+pure noise columns also add ≈ 0. (A C_Z sweep of the null continues appending to the diagnostic OUT.json as a
 tertiary localization; the two ≈-0 nulls above are definitive and do not depend on it.) So **"why only
 MHC/CLIP" is not a weak-regularization floor** — it is redundancy structure: MHC/CLIP is the only cell where A_text carries genuine conditional information
 beyond Z, because CLIP is the weakest encoder (accZ 0.7307) with the most headroom for a Qwen-derived
@@ -123,8 +123,8 @@ null (CI-low > 0) sits exactly at the top trigger. Corrections:
 **Corrected effect size:** the genuine conditional-information component is **≈ +0.053** (raw = corrected,
 because the proper floor = null mean ≈ 0). The record's paired real−shuffled read (+0.0307 [−0.0087,
 +0.0713], CI incl. 0) is an **over-correction**: it subtracted the unlucky-HIGH single seed-12345 null
-(+0.0227, itself a 2.3σ draw) instead of the null mean (≈ 0). The correct reading is therefore *more*
-favorable to the effect than the record's F2 caveat suggested.
+(+0.0227, itself a 2.6σ / 99.3rd-percentile draw) instead of the null mean (≈ 0). The correct reading is
+therefore *more* favorable to the effect than the record's F2 caveat suggested.
 
 ## 3. Frozen-rule adjudication (both readings — the rule is genuinely ambiguous)
 
@@ -173,10 +173,11 @@ This is the binding constraint and the reason the verdict is QUALIFIED, not CONF
 **PROCEED_QUALIFIED.** The shuffled-null +0.0227 that triggered this review is neither a crush/leak
 defect nor a gate-killing artifact: it is a mis-specified null test (one permutation, plus a video-level
 bootstrap CI measured on the wrong random axis). Measured properly as a distribution over 150
-permutations, the null is centered at ≈ 0 (mean +0.0018, SD 0.0082) — the machinery is unbiased, there
-is no systematic floor (Gaussian-noise and C_Z-sweep controls agree), and the reported +0.0227 is just
-a ~2.3σ upper-tail draw the design was unlucky to select. Against the correct null the real trigger
-+0.0533 is ≈ 6σ (p < 0.007), survives the max-over-k selection correction (p < 0.007), and is
+permutations, the null is centered at ≈ 0 (mean +0.0005, SD 0.0084) — the machinery is unbiased, there
+is no systematic floor (a Gaussian-noise-block control agrees: appending pure-noise unpenalized columns
+adds ≈ +0.001), and the reported +0.0227 is just a 2.6σ / 99.3rd-percentile upper-tail draw the design
+was unlucky to select. Against the correct null the real trigger
++0.0533 is 6.3σ (p < 0.007), survives the max-over-k selection correction (p < 0.007), and is
 corroborated by an independent full-dim capacity-matched arm — so the conditional-information effect is
 GENUINE and, corrected, essentially the full +0.053 (the record's paired read over-subtracted an
 outlier null). This rules out `PROCEED_OVERTURNED_DEAD`. It is not `PROCEED_CONFIRMED`-and-go, however,

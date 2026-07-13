@@ -22,3 +22,16 @@
 [gauss 60] mean=+0.0010 sd=0.0088
 [gauss 70] mean=+0.0013 sd=0.0090
 [gauss 80] mean=+0.0017 sd=0.0088
+[gauss 90] mean=+0.0018 sd=0.0090
+[gauss 100] mean=+0.0014 sd=0.0090
+[gauss 110] mean=+0.0013 sd=0.0087
+[gauss 120] mean=+0.0013 sd=0.0088
+[gauss 130] mean=+0.0012 sd=0.0086
+[gauss 140] mean=+0.0010 sd=0.0087
+[gauss 150] mean=+0.0010 sd=0.0086
+[cz=0.001] accZ=0.7233 perm_mean=-0.0022 gauss_mean=-0.0060
+[cz=0.01] accZ=0.7373 perm_mean=-0.0052 gauss_mean=-0.0071
+[cz=0.1] accZ=0.7353 perm_mean=-0.0023 gauss_mean=-0.0037
+[cz=1.0] accZ=0.7307 perm_mean=+0.0020 gauss_mean=+0.0008
+DONE
+elapsed 2276s
