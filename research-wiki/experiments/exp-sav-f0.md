@@ -274,10 +274,24 @@ degree of freedom in head selection).
   per-example resolution. **The pre-declared bar: the projected gain must exceed `+0.030 acc + the ±1-2pt
   noise band`, with the cross-seed bootstrap CI on the projection excluding 0.** This is the project's
   G0-cond threshold verbatim (`REFLECTION:41`: "bits→acc 换算后投影增益必须 > +3 acc + 噪声带,多 seed
-  bootstrap CI 排除 0"). A probe that clears the old +0.015 but **projects below +0.030+noise does NOT
-  license the GPU spend.** (Oracle sanity, REFLECTION §4(iii): if even a gold-label-selected head set
-  projects < +0.030, the sparse-head family is dead — run the oracle-selection projection as the cheapest
-  possible pre-check; gold used for probing only, compliant.)
+  bootstrap CI 排除 0"). **Noise-band number PINNED (Rev-2b main-loop ruling, 2026-07-13): 0.010, so
+  the numeric bar = +0.040 projected acc.** Rationale: protocol consistency with the A-line G0-cond
+  probe precedent (`refine-logs/lb_scgp_global/M1_G0COND_PROBE_RECORD.md` used +0.030 + 0.01 = +0.040);
+  a per-gate drifting bar invites protocol-inconsistency criticism. Implemented as
+  `NOISE_BAND_ACC = 0.010` / `PROJECTED_GAIN_BAR = 0.040` in `scripts/analysis/sav_f0_common.py`,
+  echoed in the F-G1 verdict JSON `config`. A probe that clears the old +0.015 but **projects below
+  +0.030+noise does NOT license the GPU spend.** (Oracle sanity, REFLECTION §4(iii): if even a
+  gold-label-selected head set projects < +0.030, the sparse-head family is dead — run the
+  oracle-selection projection as the cheapest possible pre-check; gold used for probing only, compliant.)
+
+- **Probe-stream scope PINNED: img-stream per-head only (Rev-2b main-loop ruling, 2026-07-13).**
+  F-G1's per-head extraction and all probe arms operate on the **img forward** (visual+instruction
+  "prefix" span) — the literal mean-pooling-dilution target of H, and the only stream where the C-pos
+  position control is non-degenerate (the text stream's pooled read-out is already a near-final-token
+  response tail). The **text stream remains pooled-only** (forward-passed for the F-G0(b) reproduction
+  guard, which checks BOTH cached streams; no text per-head cache). **Text-stream / concat per-head
+  extraction is DEFERRED as an F-G2-stage option only if SAV wins F-G1** — pre-declared here so it
+  cannot become a post-hoc degree of freedom.
 
 - **Isolating controls for the 3-axis confound (M3).** SAV feature vs pooled baseline differ on
   sparsity/granularity **and** token position (final-token vs span-mean) **and** layer depth (all-layer vs
@@ -314,6 +328,15 @@ degree of freedom in head selection).
   carry no label information beyond the pooled feature.)
 
 ### F-G2 — RGCL integration, 3-seed paired, both protocols, VAL (cost: ~2-3 GPU-hr; only if F-G1 passes)
+- **Pre-flight — carry-forward head set PINNED pre-F-G1 (Rev-2a execution note 1, delta-check note 1).**
+  The head set that DEPLOYS to F-G2 (and thence F-G3) is the **deterministic full-train
+  nearest-centroid selection** — i.e. run the canonical SAV head-selection procedure once over the
+  ENTIRE train set (all train labels, no subsampling → deterministic), take the top-k for the k that
+  F-G1 promotes. The five F-G1 seed draws (20/class subsamples) are used ONLY to power the cross-seed CI
+  and to **report head-set consensus (intersection size / mean pairwise Jaccard) as a stability
+  diagnostic** — they do NOT choose the deployed head set. This is pinned BEFORE any F-G1 result is seen
+  (it does not affect F-G0/F-G1 and cannot be back-fit to results); it is the `oracle_order`/full-train
+  selection already emitted by the F-G1 engine, carried forward unchanged.
 - **Run:** feed the selected-head feature into the RGCL alignment-fusion head + triplet-contrastive + kNN
   (the deployed decision), MHC-EN (+ HateMM no-harm), **seeds 0/1/2 paired vs the pooled-feature RGCL
   floor**, both protocols, judged on **val**.
@@ -379,8 +402,10 @@ MHC-EN encoder failure. Even a clean F-G1 kill is paper-usable ("MHC-EN is data-
 pooling-limited — sparse-head re-reading of the frozen encoder does not recover it") — **subject to the
 M3 scope**: if the F-G1 control **C-pos** (final-token full last-layer hidden) already closes the gap, the
 kill/pass narrative is re-scoped to *final-token re-reading* rather than *sparse-head dilution recovery*
-(§1 causal-claim scope). An F-G1 pass is the cheapest path to the ≥ 2-dataset headline. Run it before the
-more expensive C1.
+(§1 causal-claim scope). An F-G1 pass is the cheapest path to the ≥ 2-dataset headline. **(Rev-2a execution note 3,
+delta-check note 3: the earlier "run it before the more expensive C1" clause is stale — C1 is
+`KILL_CONFIRMED` (`refine-logs/C1_KILL_REVIEW.md`); SAV/C2 is the standalone lead C-line pilot, no
+longer sequenced against C1.)**
 
 ---
 
@@ -492,3 +517,43 @@ written (delta-check only)**. All residuals applied, text-only, no design change
 
 **Status after Rev-2: DRAFT-REV2-AWAITING-DELTA-CHECK.** No gate executed, no code changed, nothing
 committed. Awaiting the pre-authorized delta-check of R1–R3 + a user-visible report before any `sbatch`.
+
+### Rev-2a 2026-07-13 execution-notes pinning (delta-check non-blocking notes 1 & 3)
+
+Applied by the implementation agent alongside the F-G0/F-G1 code build (no design change, no gate run,
+nothing committed by this edit). These are the ONLY two prereg edits made during implementation:
+
+- **Exec note 1 (delta-check note 1) — carry-forward head set pinned PRE-F-G1 (§4 F-G2 Pre-flight).**
+  The head set deployed to F-G2/F-G3 is the **deterministic full-train nearest-centroid selection**
+  (canonical SAV over the entire train set, top-k for the F-G1-promoted k); the five 20/class seed draws
+  power only the F-G1 cross-seed CI and a reported head-set consensus/stability diagnostic (intersection
+  size + mean pairwise Jaccard) — they do not choose the deployed set. Pinned before any F-G1 result is
+  seen; realised in code as the F-G1 engine's full-train `oracle_order` arm, carried forward unchanged.
+- **Exec note 3 (delta-check note 3) — §6 stale "before the more expensive C1" editorial fixed.** C1 is
+  `KILL_CONFIRMED` (`refine-logs/C1_KILL_REVIEW.md`); the clause is annotated as stale and SAV/C2 is the
+  standalone lead C-line pilot.
+
+Delta-check note 2 (C-sparse span-mean per-head vectors emitted in the same extraction pass) is realised
+directly in the F-G0 extractor (`sav_f0_extract.py` emits `img_head_spanmean` alongside `img_head_final`),
+so no prereg text change was required for it. Code: `scripts/analysis/sav_f0_{common,extract,guard,probe}.py`,
+`scripts/wrappers/sav_f0.sh`, `scripts/slurm/sav_f0.sbatch`; impl self-audit: `refine-logs/SAV_F0_IMPL_NOTES.md`.
+
+### Rev-2b 2026-07-13 main-loop rulings: noise band 0.010 (A-line precedent), img-stream-only scope pinned
+
+Two main-loop rulings on the implementation agent's open questions, applied pre-F-G1 (no gate run,
+nothing committed, no design change beyond pinning two already-flagged constants/scopes):
+
+- **Noise band = 0.010 ⇒ F-G1 projected-gain bar = +0.040 acc.** The implementation had provisionally
+  pinned the "±1-2pt noise band" at its upper end (0.020 ⇒ bar 0.050); the main loop ruled **0.010**
+  for protocol consistency with the A-line G0-cond probe precedent
+  (`refine-logs/lb_scgp_global/M1_G0COND_PROBE_RECORD.md`: +0.030 + 0.01 = +0.040) — a per-gate
+  drifting bar invites protocol-inconsistency criticism. Applied in §4 F-G1 (bar paragraph),
+  `scripts/analysis/sav_f0_common.py` (`NOISE_BAND_ACC`/`PROJECTED_GAIN_BAR`), and the F-G1 verdict
+  JSON `config` echo.
+- **Probe stream = IMG only, ACCEPTED and pre-declared.** F-G1 per-head extraction + all probe arms on
+  the img (visual+instruction "prefix") forward — the literal dilution-hypothesis target and the only
+  stream where C-pos is non-degenerate; text stream stays pooled-only for the F-G0(b) guard.
+  **Text-stream / concat per-head extraction DEFERRED as an F-G2-stage option only if SAV wins F-G1**
+  (pre-declared in §4 F-G1 so it cannot become a post-hoc degree of freedom).
+- Open questions 3 & 4 (uniform StandardScaler + L2 LogisticRegressionCV probe family across arms;
+  U-1 CPU pole) accepted as-is, no change.
