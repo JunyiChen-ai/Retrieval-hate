@@ -1,0 +1,266 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "scgp_global_cache_replica_v2",
+  "title": "LB-SCGP Global-R2 M1 cache replica record (scgp_global_cache_replica_v2)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "video_id",
+    "evidence_pack_sha256",
+    "replica_index",
+    "schema_version",
+    "observables",
+    "parse_flags"
+  ],
+  "properties": {
+    "video_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_pack_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "replica_index": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 3
+    },
+    "schema_version": {
+      "const": "scgp_global_cert_v2"
+    },
+    "observables": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "visual_reference_observable",
+        "text_audio_reference_observable",
+        "harmful_surface_observable",
+        "dehumanizing_or_threat_surface_observable",
+        "cross_modal_binding_observable",
+        "source_alignment_observable",
+        "counter_context_observable",
+        "context_shift_observable",
+        "modality_binding_observable"
+      ],
+      "properties": {
+        "visual_reference_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        },
+        "text_audio_reference_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        },
+        "harmful_surface_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        },
+        "dehumanizing_or_threat_surface_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        },
+        "cross_modal_binding_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        },
+        "source_alignment_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        },
+        "counter_context_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        },
+        "context_shift_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        },
+        "modality_binding_observable": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "confidence"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "visual_text",
+                "visual_audio",
+                "text_audio",
+                "multi_modal",
+                "single_modal",
+                "unresolved"
+              ]
+            },
+            "confidence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            }
+          }
+        }
+      }
+    },
+    "parse_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

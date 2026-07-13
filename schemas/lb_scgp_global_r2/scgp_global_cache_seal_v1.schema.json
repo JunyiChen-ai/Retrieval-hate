@@ -1,0 +1,410 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "scgp_global_cache_seal_v1",
+  "title": "LB-SCGP Global-R2 M1 cache seal decision (scgp_global_cache_seal_v1)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_schema_id",
+    "run_id",
+    "terminal_state",
+    "decision",
+    "no_success_claim",
+    "labels_enter_after_this_seal_only",
+    "gate_rule",
+    "per_dataset",
+    "gold_isolation",
+    "slurm_job_id",
+    "hashes",
+    "payload_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "lb_scgp_global_r2_m1_cache_seal_manifest_v1"
+    },
+    "artifact_schema_id": {
+      "const": "scgp_global_cache_seal_v1"
+    },
+    "run_id": {
+      "const": "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1"
+    },
+    "terminal_state": {
+      "type": "string",
+      "enum": [
+        "CACHE_SEALED",
+        "CACHE_SEAL_STOP"
+      ]
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "GO",
+        "STOP"
+      ]
+    },
+    "no_success_claim": {
+      "const": true
+    },
+    "labels_enter_after_this_seal_only": {
+      "const": true
+    },
+    "gate_rule": {
+      "type": "string",
+      "minLength": 1
+    },
+    "per_dataset": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dataset",
+          "train_id_allowlist_sha256",
+          "cache_merkle_root",
+          "prompt_hash",
+          "input_builder_hash",
+          "model_processor_hash",
+          "call_count",
+          "zero_counters",
+          "seal_checks"
+        ],
+        "properties": {
+          "dataset": {
+            "type": "string",
+            "enum": [
+              "MHC",
+              "MHC_zh"
+            ]
+          },
+          "train_id_allowlist_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "cache_merkle_root": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "prompt_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "input_builder_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "model_processor_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "call_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "zero_counters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "cache_outer_held_content_read_count",
+              "cache_outer_held_label_read_count",
+              "cache_test_content_read_count",
+              "cache_test_label_read_count",
+              "cache_validation_content_read_count",
+              "cache_validation_label_read_count",
+              "certificate_read_count",
+              "compiler_target_read_count",
+              "forbidden_path_read_count",
+              "held_content_read_count",
+              "held_label_read_count",
+              "margin_read_count",
+              "mllm_calls_outside_train_cache",
+              "neighbor_read_count",
+              "network_model_api_call_count",
+              "non_allowlisted_train_content_read_count",
+              "ocr_call_count",
+              "prediction_read_count",
+              "query_labels_read_count",
+              "query_z_read_count",
+              "seed_read_count",
+              "segment_gold_read_count",
+              "split_statistic_read_count",
+              "teacher_artifact_read_count",
+              "teacher_cache_read_count",
+              "test_content_read_count",
+              "test_label_read_count",
+              "train_label_read_count",
+              "validation_content_read_count",
+              "validation_label_read_count"
+            ],
+            "properties": {
+              "cache_outer_held_content_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "cache_outer_held_label_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "cache_test_content_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "cache_test_label_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "cache_validation_content_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "cache_validation_label_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "certificate_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "compiler_target_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "forbidden_path_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "held_content_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "held_label_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "margin_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "mllm_calls_outside_train_cache": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "neighbor_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "network_model_api_call_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "non_allowlisted_train_content_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "ocr_call_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "prediction_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "query_labels_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "query_z_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "seed_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "segment_gold_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "split_statistic_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "teacher_artifact_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "teacher_cache_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "test_content_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "test_label_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "train_label_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "validation_content_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              },
+              "validation_label_read_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              }
+            }
+          },
+          "seal_checks": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "merkle_root_recomputed_match",
+              "recomputed_merkle_root",
+              "call_count_equals_4_unique",
+              "unique_pack_count",
+              "record_count",
+              "video_count",
+              "all_videos_have_R_replicas",
+              "zero_counters_all_zero",
+              "provenance_hashes_present",
+              "manifest_payload_ok",
+              "verified",
+              "cache_jsonl_sha256",
+              "cache_manifest_sha256"
+            ],
+            "properties": {
+              "merkle_root_recomputed_match": {
+                "type": "boolean"
+              },
+              "recomputed_merkle_root": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "call_count_equals_4_unique": {
+                "type": "boolean"
+              },
+              "unique_pack_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "record_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "video_count": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "all_videos_have_R_replicas": {
+                "type": "boolean"
+              },
+              "zero_counters_all_zero": {
+                "type": "boolean"
+              },
+              "provenance_hashes_present": {
+                "type": "boolean"
+              },
+              "manifest_payload_ok": {
+                "type": "boolean"
+              },
+              "verified": {
+                "type": "boolean"
+              },
+              "cache_jsonl_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "cache_manifest_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "gold_isolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "only_gold_supervision",
+        "train_labels_opened_by_seal"
+      ],
+      "properties": {
+        "only_gold_supervision": {
+          "const": "parent_video_binary_label"
+        },
+        "train_labels_opened_by_seal": {
+          "const": false
+        }
+      }
+    },
+    "slurm_job_id": {
+      "type": "string"
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "config_sha256",
+        "replica_schema_sha256",
+        "seal_schema_sha256"
+      ],
+      "properties": {
+        "config_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "replica_schema_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "seal_schema_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "payload_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

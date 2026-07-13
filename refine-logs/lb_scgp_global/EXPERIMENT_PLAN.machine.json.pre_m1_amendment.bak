@@ -764,60 +764,22 @@
       "slurm": {
         "cpu": 4,
         "ram_gb": 32,
-        "gpu": 1,
+        "gpu": 0,
         "env": "HateVideo",
         "no_time_flag": true
       },
       "budget": {
         "estimated_cpu_hours": 8,
-        "estimated_gpu_hours": 8,
+        "estimated_gpu_hours": 0,
         "estimated_api_calls": 2196,
         "api_retry_cap": 4392,
-        "estimated_storage_gb": 4,
-        "api_calls_semantics": {
-          "estimated_api_calls_are_local_mllm_inference": true,
-          "external_network_model_api_calls": 0,
-          "note": "estimated_api_calls counts LOCAL Qwen2.5-VL-7B generate() calls on the allocated GPU under HF_HUB_OFFLINE=1. Because network_model_api_calls=0 forbids any external/provider API, local GPU inference is the ONLY legal way to realize these calls; hence runs[4]/[5] require gpu=1. Formula 4*N_train (R=4 replicas x unique evidence packs): MHC 4*549=2196, MHC_zh 4*579=2316."
-        }
+        "estimated_storage_gb": 4
       },
       "gate": "GO iff restricted schema, QC, and zero forbidden counters pass",
       "failure_transition": "STOP or canonical unresolved fallback; no prompt rescue",
       "parallel_group": "m1_cache_parallel_max2",
       "priority": "MUST",
-      "status": "TODO",
-      "model_pin": {
-        "model_id": "Qwen/Qwen2.5-VL-7B-Instruct",
-        "local_weights_root": "/data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct",
-        "offline": "HF_HUB_OFFLINE=1; no download; no network",
-        "rationale": [
-          "project default MLLM with complete offline weights",
-          "structural observables are coarse-grained {supported,contradicted,unresolved} states; the settled MLLM-method campaign showed model scale (7B->32B->72B) does not flip the decision variables at this granularity",
-          "compute economy: one 7B pass per replica versus a 32B/72B ladder"
-        ],
-        "authority": "coordination-session pin; PENDING fresh independent review approval; the science lead retains override but MUST pin the model before cache seal (model_processor_hash is bound into cache_seal_v1).",
-        "decoding": "greedy do_sample=false, temperature=0, num_beams=1; fixed across all R=4 replicas"
-      },
-      "evidence_pack_protocol": {
-        "frames": {
-          "num_frames": 16,
-          "rule": "uniform full-video sampling (project M=16 discipline)"
-        },
-        "title": "gt train.jsonl 'text' field (video title/description metadata); deterministically truncated",
-        "asr": "data/ASR/<DS>/train_asrK4_whisper-large-v3.jsonl chunk text, deterministically concatenated in timestamp order and truncated",
-        "label_blind": "the pack contains and reads NO label/split/seed/neighbor/prediction/margin/correctness signal; only id+title+asr+frame-sampling-spec enter the evidence_pack_sha256",
-        "dedup": "U_D = unique(evidence_pack_sha256) among train videos; base calls C_D = 4 * U_D"
-      },
-      "replica_protocol": {
-        "replicas": 4,
-        "semantics_pin": "FINAL_PROPOSAL fixes 'four deterministic calls per train video; fixed decoding/model/processor/prompt/input/schema hashes'. Replicas therefore use BYTE-IDENTICAL evidence-pack input and fixed greedy decoding; no per-replica prompt/frame/temperature variation is introduced. The only admissible cross-replica difference is hardware-level FP nondeterminism, which the M2 replica-stability gate sigma_cache bounds. This pins the previously-underspecified replica semantics.",
-        "parse_failure_policy": "canonical all-unresolved record + parse_flags; NO prompt/schema rescue; transport/no-response retries only, capped at api_retry_cap"
-      },
-      "ocr_policy": {
-        "live_ocr": false,
-        "ocr_calls": 0,
-        "statement": "The ocr_calls=0 forbidden counter is honored: NO live OCR engine is invoked. On-screen text reaches the MLLM only through the 16 sampled frames (the VLM reads it visually). ASR transcript + title are the only textual evidence; 'ASR/OCR text if available' in the schema resolves to ASR-only for this cache."
-      },
-      "m1_amendment": "M1_CACHE_PLAN_AMENDMENT.md (2026-07-13): gpu 0->1, estimated_gpu_hours 0->8, model pinned, OCR omitted; pending fresh independent review."
+      "status": "TODO"
     },
     {
       "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
@@ -850,60 +812,22 @@
       "slurm": {
         "cpu": 4,
         "ram_gb": 32,
-        "gpu": 1,
+        "gpu": 0,
         "env": "HateVideo",
         "no_time_flag": true
       },
       "budget": {
         "estimated_cpu_hours": 8,
-        "estimated_gpu_hours": 8,
+        "estimated_gpu_hours": 0,
         "estimated_api_calls": 2316,
         "api_retry_cap": 4632,
-        "estimated_storage_gb": 4,
-        "api_calls_semantics": {
-          "estimated_api_calls_are_local_mllm_inference": true,
-          "external_network_model_api_calls": 0,
-          "note": "estimated_api_calls counts LOCAL Qwen2.5-VL-7B generate() calls on the allocated GPU under HF_HUB_OFFLINE=1. Because network_model_api_calls=0 forbids any external/provider API, local GPU inference is the ONLY legal way to realize these calls; hence runs[4]/[5] require gpu=1. Formula 4*N_train (R=4 replicas x unique evidence packs): MHC 4*549=2196, MHC_zh 4*579=2316."
-        }
+        "estimated_storage_gb": 4
       },
       "gate": "GO iff restricted schema, QC, and zero forbidden counters pass",
       "failure_transition": "STOP or canonical unresolved fallback; no prompt rescue",
       "parallel_group": "m1_cache_parallel_max2",
       "priority": "MUST",
-      "status": "TODO",
-      "model_pin": {
-        "model_id": "Qwen/Qwen2.5-VL-7B-Instruct",
-        "local_weights_root": "/data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct",
-        "offline": "HF_HUB_OFFLINE=1; no download; no network",
-        "rationale": [
-          "project default MLLM with complete offline weights",
-          "structural observables are coarse-grained {supported,contradicted,unresolved} states; the settled MLLM-method campaign showed model scale (7B->32B->72B) does not flip the decision variables at this granularity",
-          "compute economy: one 7B pass per replica versus a 32B/72B ladder"
-        ],
-        "authority": "coordination-session pin; PENDING fresh independent review approval; the science lead retains override but MUST pin the model before cache seal (model_processor_hash is bound into cache_seal_v1).",
-        "decoding": "greedy do_sample=false, temperature=0, num_beams=1; fixed across all R=4 replicas"
-      },
-      "evidence_pack_protocol": {
-        "frames": {
-          "num_frames": 16,
-          "rule": "uniform full-video sampling (project M=16 discipline)"
-        },
-        "title": "gt train.jsonl 'text' field (video title/description metadata); deterministically truncated",
-        "asr": "data/ASR/<DS>/train_asrK4_whisper-large-v3.jsonl chunk text, deterministically concatenated in timestamp order and truncated",
-        "label_blind": "the pack contains and reads NO label/split/seed/neighbor/prediction/margin/correctness signal; only id+title+asr+frame-sampling-spec enter the evidence_pack_sha256",
-        "dedup": "U_D = unique(evidence_pack_sha256) among train videos; base calls C_D = 4 * U_D"
-      },
-      "replica_protocol": {
-        "replicas": 4,
-        "semantics_pin": "FINAL_PROPOSAL fixes 'four deterministic calls per train video; fixed decoding/model/processor/prompt/input/schema hashes'. Replicas therefore use BYTE-IDENTICAL evidence-pack input and fixed greedy decoding; no per-replica prompt/frame/temperature variation is introduced. The only admissible cross-replica difference is hardware-level FP nondeterminism, which the M2 replica-stability gate sigma_cache bounds. This pins the previously-underspecified replica semantics.",
-        "parse_failure_policy": "canonical all-unresolved record + parse_flags; NO prompt/schema rescue; transport/no-response retries only, capped at api_retry_cap"
-      },
-      "ocr_policy": {
-        "live_ocr": false,
-        "ocr_calls": 0,
-        "statement": "The ocr_calls=0 forbidden counter is honored: NO live OCR engine is invoked. On-screen text reaches the MLLM only through the 16 sampled frames (the VLM reads it visually). ASR transcript + title are the only textual evidence; 'ASR/OCR text if available' in the schema resolves to ASR-only for this cache."
-      },
-      "m1_amendment": "M1_CACHE_PLAN_AMENDMENT.md (2026-07-13): gpu 0->1, estimated_gpu_hours 0->8, model pinned, OCR omitted; pending fresh independent review."
+      "status": "TODO"
     },
     {
       "run_id": "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
@@ -950,13 +874,7 @@
       "failure_transition": "STOP before compiler",
       "parallel_group": "m1_decision",
       "priority": "MUST",
-      "status": "TODO",
-      "seal_protocol": {
-        "cpu_only": true,
-        "verifies": "both dataset cache banks: recompute Merkle root, verify call_count==4*U_D, forbidden zero_counters, prompt_hash/input_builder_hash/model_processor_hash present and consistent, strict schema; GO iff BOTH verify",
-        "model_processor_hash_pin_required_before_seal": true,
-        "m1_amendment": "M1_CACHE_PLAN_AMENDMENT.md (2026-07-13): seal remains CPU-only (gpu=0, estimated_api_calls=0); added for completeness."
-      }
+      "status": "TODO"
     },
     {
       "run_id": "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
@@ -3966,20 +3884,19 @@
       "total_gpu_hours": 684,
       "total_api_base": 4512,
       "total_api_retry_cap": 9024,
-      "total_storage_gb": 791,
-      "gpu_hours_note": "historical snapshot retained at 684 (the M1 local-MLLM GPU-h omission was present at approval time, before the v2/M1 amendments); forward views are corrected to 700 -- see budget_ranges.m1_local_mllm_gpu_correction"
+      "total_storage_gb": 791
     },
     "paper_plan_substitution_envelope": {
       "must_run_count": 64,
       "nice_to_have_count": 1,
       "total_run_count": 65,
       "must_cpu_hours": 704,
-      "must_gpu_hours": 700,
+      "must_gpu_hours": 684,
       "must_api_base": 4512,
       "must_api_retry_cap": 9024,
       "must_storage_gb": 786,
       "total_cpu_hours": 720,
-      "total_gpu_hours": 700,
+      "total_gpu_hours": 684,
       "total_api_base": 4512,
       "total_api_retry_cap": 9024,
       "total_storage_gb": 791
@@ -3998,12 +3915,12 @@
     },
     "remaining_prospective_budget": {
       "must_cpu_hours": 700,
-      "must_gpu_hours": 700,
+      "must_gpu_hours": 684,
       "must_api_base": 4512,
       "must_api_retry_cap": 9024,
       "must_storage_gb": 785,
       "total_cpu_hours": 716,
-      "total_gpu_hours": 700,
+      "total_gpu_hours": 684,
       "total_api_base": 4512,
       "total_api_retry_cap": 9024,
       "total_storage_gb": 790
@@ -4022,12 +3939,12 @@
       "nice_to_have_count": 1,
       "total_run_count": 66,
       "must_cpu_hours": 736,
-      "must_gpu_hours": 700,
+      "must_gpu_hours": 684,
       "must_api_base": 4512,
       "must_api_retry_cap": 9024,
       "must_storage_gb": 791,
       "total_cpu_hours": 752,
-      "total_gpu_hours": 700,
+      "total_gpu_hours": 684,
       "total_api_base": 4512,
       "total_api_retry_cap": 9024,
       "total_storage_gb": 796
@@ -4035,7 +3952,7 @@
     "matrix_estimated_must_run": {
       "run_count": 65,
       "cpu_hours": 736,
-      "gpu_hours": 700,
+      "gpu_hours": 684,
       "api_calls_base": 4512,
       "api_calls_retry_cap": 9024,
       "storage_gb_cumulative": 791,
@@ -4044,7 +3961,7 @@
     "matrix_estimated_total_with_nice": {
       "run_count": 66,
       "cpu_hours": 752,
-      "gpu_hours": 700,
+      "gpu_hours": 684,
       "api_calls_base": 4512,
       "api_calls_retry_cap": 9024,
       "storage_gb_cumulative": 796,
@@ -4060,11 +3977,10 @@
       },
       "M1": {
         "cpu_hours": 24,
-        "gpu_hours": 16,
+        "gpu_hours": 0,
         "api_calls_base": 4512,
         "api_calls_retry_cap": 9024,
-        "storage_gb": 9,
-        "gpu_hours_erratum": "0->16: M1 local-MLLM GPU-hours were omitted; 8 (MHC) + 8 (MHC_zh), seal CPU-only. See M1_CACHE_PLAN_AMENDMENT.md."
+        "storage_gb": 9
       },
       "M2": {
         "cpu_hours": 60,
@@ -4109,31 +4025,7 @@
       "api_calls": 0,
       "storage_gb": 0
     },
-    "provider_prices": "not estimated",
-    "m1_local_mllm_gpu_correction": {
-      "erratum": "M1 local-MLLM GPU-hours were omitted (0) from every run-row-summing GPU-hour aggregate; the two cache runs each need 1 GPU (Qwen2.5-VL-7B local inference), 8 GPU-h est each = +16 GPU-h.",
-      "gpu_hours_before": 684,
-      "gpu_hours_after": 700,
-      "cpu_storage_api_unchanged": true,
-      "aggregates_corrected": [
-        "paper_plan_substitution_envelope.must_gpu_hours",
-        "paper_plan_substitution_envelope.total_gpu_hours",
-        "remaining_prospective_budget.must_gpu_hours",
-        "remaining_prospective_budget.total_gpu_hours",
-        "lifetime_lineage_envelope.must_gpu_hours",
-        "lifetime_lineage_envelope.total_gpu_hours",
-        "matrix_estimated_must_run.gpu_hours",
-        "matrix_estimated_total_with_nice.gpu_hours",
-        "by_milestone_must.M1.gpu_hours 0->16"
-      ],
-      "historical_snapshot_intentionally_retained_at_684": {
-        "fields": [
-          "original_approved_r2_envelope_before_v2.must_gpu_hours",
-          "original_approved_r2_envelope_before_v2.total_gpu_hours"
-        ],
-        "reason": "provenance integrity (M1_CACHE_CODE_REVIEW.md ruling (1)): a '...before_v2' field is a point-in-time record; it keeps its as-approved 684 value plus a superseded annotation rather than being retro-overwritten to 700. Removed from aggregates_corrected."
-      }
-    }
+    "provider_prices": "not estimated"
   },
   "concurrency": {
     "max_cpu": 16,
@@ -4147,8 +4039,7 @@
       "m1_cache_parallel_max2": {
         "max_concurrent": 2,
         "max_cpu_total": 8,
-        "max_ram_total_gb": 64,
-        "max_gpu_total": 2
+        "max_ram_total_gb": 64
       },
       "m2_dataset_parallel_max2gpu": {
         "max_concurrent": 2,

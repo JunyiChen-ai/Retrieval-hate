@@ -1,0 +1,1 @@
+SMOKE_DONE {"gpu_guard_passed": true, "cuda_visible_devices": "0", "n": 10, "decode_ok": 10, "parse_rate": 0.9, "deterministic_videos": 10, "gpu_peak_gib": 52.71, "avg_sec_per_video": 50.67, "extrap_hours_1gpu": 15.88, "model_load_s": 5.97}

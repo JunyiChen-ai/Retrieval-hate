@@ -1,0 +1,120 @@
+{
+  "schema_version": "lb_scgp_global_r2_m1_cache_plan_amendment_v1",
+  "amendment_id": "M1_CACHE_PLAN_AMENDMENT",
+  "generated_at": "2026-07-13T00:00:00+12:00",
+  "lineage": "LBSCGP-GLOBAL-M1-CACHE",
+  "milestone": "M1",
+  "block": "B1",
+  "claim": "C1",
+  "author_thread": "fresh Claude Opus 4.8 m1-prep role in /data/jehc223/RGCL; separate from the independent amendment reviewer, the fresh 0C/0H M1 code reviewer, the execution authorizer, and the executor; no SLURM submission, no git commit, no local project GPU/MLLM execution",
+  "decided_by": "coordination-session ruling 2026-07-13 (resource fix + model pin + OCR omission); recorded pending fresh independent amendment review and fresh 0C/0H M1 code review; the science lead retains override on the model pin but MUST pin the model before cache seal (model_processor_hash binds into cache_seal_v1)",
+  "gate": {
+    "gate_open": true,
+    "gate_evidence": "M0 fully closed: synth-KKT v4 (M0_RUN2_V4_ARTIFACT_REVIEW.md) and realbank v2 (REALBANK_RESOURCE_V2_ARTIFACT_REVIEW.md) both ARTIFACT_ACCEPTED (2026-07-13); M1 gate unlocked",
+    "amendment_authorizes_execution": false,
+    "requires_fresh_independent_amendment_review": true,
+    "requires_fresh_independent_m1_code_review_zero_critical_zero_high": true,
+    "requires_runtime_crosscheck_static_simulation_table_all_pass": true,
+    "requires_dependency_availability_evidence": true,
+    "requires_exact_hashes_no_clobber_review": true,
+    "requires_separate_execution_authorization": true,
+    "cache_slurm_job": {"cpu": 4, "ram_gb": 32, "gpu": 1, "env": "HateVideo", "no_time_flag": true},
+    "seal_slurm_job": {"cpu": 4, "ram_gb": 32, "gpu": 0, "env": "HateVideo", "no_time_flag": true}
+  },
+  "decisions": {
+    "resource_contradiction_fix": {
+      "problem": "runs[4]/[5] had slurm.gpu=0 and estimated_gpu_hours=0 while carrying estimated_api_calls=2196/2316. The zero_access_counters pin network_model_api_calls=0 (no external/provider API). Local GPU inference is therefore the ONLY legal realization of those calls.",
+      "fix": {
+        "runs4_5_slurm_gpu": "0 -> 1",
+        "runs4_5_estimated_gpu_hours": "0 -> 8 (est each)",
+        "estimated_api_calls_semantics": "reinterpreted as LOCAL Qwen2.5-VL-7B generate() calls on the allocated GPU under HF_HUB_OFFLINE=1; external_network_model_api_calls stays 0; formula 4*N_train (R=4 replicas x unique evidence packs): MHC 2196, MHC_zh 2316",
+        "seal_run6": "unchanged CPU-only (gpu=0, estimated_api_calls=0)",
+        "by_milestone_must_M1_gpu_hours": "0 -> 16 (8 MHC + 8 MHC_zh; seal CPU)",
+        "run_row_gpu_hour_aggregates": "684 -> 700 in original_approved_r2_envelope_before_v2, paper_plan_substitution_envelope, remaining_prospective_budget, lifetime_lineage_envelope, matrix_estimated_must_run, matrix_estimated_total_with_nice (must_gpu_hours and total_gpu_hours); CPU/API/storage unchanged",
+        "concurrency": "m1_cache_parallel_max2 gains max_gpu_total=2 (two concurrent 1-GPU jobs within the 2-GPU cap)"
+      },
+      "erratum_class": "resource miscount (M1 local-MLLM GPU-hours omitted), corrected everywhere it summed the run rows; not a science/scope change"
+    },
+    "model_pin": {
+      "model_id": "Qwen/Qwen2.5-VL-7B-Instruct",
+      "local_weights_root": "/data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct",
+      "rationale": [
+        "project default MLLM with complete offline weights",
+        "structural observables are coarse-grained {supported,contradicted,unresolved}; the settled MLLM-method campaign (CAMPAIGN_mllm_method_role.md) showed 7B->32B->72B scale does not flip decision variables at this granularity",
+        "compute economy vs a 32B/72B ladder"
+      ],
+      "authority": "coordination-session pin PENDING fresh independent review approval; science lead retains override but MUST pin before seal (model_processor_hash bound into cache_seal_v1)",
+      "decoding": "greedy do_sample=false temperature=0 num_beams=1; fixed across R=4 replicas"
+    },
+    "ocr_omission": {
+      "live_ocr": false,
+      "ocr_calls": 0,
+      "statement": "The ocr_calls=0 forbidden counter is honored: NO live OCR engine is invoked. Evidence text = title (gt 'text' field) + ASR transcript (whisper) only, deterministically truncated. On-screen text reaches the MLLM only through the 16 sampled frames (the VLM reads it visually). 'ASR/OCR text if available' resolves to ASR-only for this cache."
+    },
+    "replica_semantics_pin": {
+      "replicas": 4,
+      "pin": "FINAL_PROPOSAL.md fixes 'four deterministic calls per train video; fixed decoding/model/processor/prompt/input/schema hashes'. Replicas therefore use BYTE-IDENTICAL evidence-pack input and fixed greedy decoding; no per-replica prompt/frame/temperature variation. The only admissible cross-replica difference is hardware-level FP nondeterminism, bounded by the M2 replica-stability gate sigma_cache. This resolves the previously-underspecified replica semantics.",
+      "frames": 16,
+      "frame_rule": "uniform full-video sampling, project M=16 discipline (score_segments_mllm.py, predict_target_qwen.py, generate_segment_asr_HF.py)"
+    }
+  },
+  "plan_edits": {
+    "machine_runs_indexes": [4, 5, 6],
+    "machine_edit": "runs[4]/[5]: slurm.gpu 0->1, budget.estimated_gpu_hours 0->8, added budget.api_calls_semantics, model_pin, evidence_pack_protocol, replica_protocol, ocr_policy, m1_amendment note. runs[6]: added seal_protocol + m1_amendment note (CPU-only unchanged). budget_ranges: by_milestone_must.M1.gpu_hours 0->16, all run-row GPU-hour aggregates 684->700, added m1_local_mllm_gpu_correction record. concurrency.m1_cache_parallel_max2: added max_gpu_total=2. Array length unchanged; run_order unchanged; every other run index untouched.",
+    "estimated_api_calls_left_numeric_unchanged": "2196 (MHC), 2316 (MHC_zh), 0 (seal); only their SEMANTICS were annotated (local inference, not external API)"
+  },
+  "hash_cascade": {
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": {"before": "f4d54b78501b02253c14da2b42b2c04431f2f1c80f56c0f27b3420adf830fc9b", "after": "93fdd75259593f94b55554e1a9b98dda4c8315da395ee1b39a10bc12861d5ef6"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": {"before": "a3325f9d2de21b7be21b3000c7a5953426908dd0444a995bb8f699a5ecb3dd8c", "after": "ed38f38cc173be2b79084b50d2f47471150457b8fae199c978c9fa20a6918916"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": {"before": "51367c176ce62979fefa37542b6a53809ff43143d819f300c1d807cacd407618", "after": "e19b7f2693b620e5c1a294441a92208824a9c561ed1b23876c46a55e2c24f591"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": {"before": "8-prefix a3325f9d/51367c17/f4d54b78 triple", "after": "ed38f38c/e19b7f26/93fdd752 triple"}
+  },
+  "pre_amendment_backup": {
+    "path": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json.pre_m1_amendment.bak",
+    "sha256": "f4d54b78501b02253c14da2b42b2c04431f2f1c80f56c0f27b3420adf830fc9b"
+  },
+  "entities_implemented": [
+    {"path": "schemas/lb_scgp_global_r2/scgp_global_cache_replica_v2.schema.json", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "schemas/lb_scgp_global_r2/scgp_global_cache_seal_v1.schema.json", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/analysis/lb_scgp_global_r2_m1_cache_v1_common.py", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/analysis/lb_scgp_global_r2_m1_evidence_pack_v1.py", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/analysis/lb_scgp_global_r2_m1_cache_producer_v1.py", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/analysis/lb_scgp_global_r2_m1_cache_seal_v1.py", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "configs/lb_scgp_global_r2/m1_cache_mhc_v1.json", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "configs/lb_scgp_global_r2/m1_cache_mhc_zh_v1.json", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "configs/lb_scgp_global_r2/m1_cache_seal_v1.json", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/wrappers/lb_scgp_global_r2_m1_cache_v1.sh", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/wrappers/lb_scgp_global_r2_m1_cache_seal_v1.sh", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/slurm/lb_scgp_global_r2_m1_cache_mhc_v1.sbatch", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/slurm/lb_scgp_global_r2_m1_cache_mhc_zh_v1.sbatch", "sha256": "SEE_M1_CACHE_FREEZE.md"},
+    {"path": "scripts/slurm/lb_scgp_global_r2_m1_cache_seal_v1.sbatch", "sha256": "SEE_M1_CACHE_FREEZE.md"}
+  ],
+  "artifact_namespace": "artifacts/lb_scgp_global/v1/m1/",
+  "artifact_outputs": [
+    "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache.jsonl",
+    "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache_manifest.json",
+    "artifacts/lb_scgp_global/v1/m1/cache/MHC/access_ledger.json",
+    "artifacts/lb_scgp_global/v1/m1/cache/MHC_zh/cache.jsonl",
+    "artifacts/lb_scgp_global/v1/m1/cache/MHC_zh/cache_manifest.json",
+    "artifacts/lb_scgp_global/v1/m1/cache/MHC_zh/access_ledger.json",
+    "artifacts/lb_scgp_global/v1/m1/cache_seal_decision.json"
+  ],
+  "no_science_contract_change": true,
+  "only_allowed_change": "pins the resource envelope (local GPU for the MLLM), the model, the replica semantics, and the OCR policy that the frozen plan left underdetermined for already-approved run entries runs[4]/[5]/[6]; no change to claims, gates C1/C2, forbidden routes, datasets, seeds, only_gold_supervision, or the two-primary-claim contract",
+  "gold_isolation": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "labels_enter_after_cache_seal_only": true,
+    "evidence_pack_contains_no_label_split_seed_neighbor": true,
+    "train_id_allowlist_is_split_membership_not_gold": true
+  },
+  "no_local_python_validation_beyond_py_compile": true,
+  "no_slurm_submission_in_this_task": true,
+  "no_git_commit_in_this_task": true,
+  "amendment_files_are_execution_permission": false,
+  "readiness": {
+    "ready_for_independent_amendment_review": true,
+    "ready_for_fresh_independent_m1_code_review": true,
+    "ready_for_execution": false,
+    "success_claim_allowed": false
+  }
+}
