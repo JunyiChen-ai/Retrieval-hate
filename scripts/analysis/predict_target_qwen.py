@@ -220,9 +220,9 @@ def main(args):
     model.to(device).eval()
     processor = AutoProcessor.from_pretrained(args.model, max_pixels=args.max_pixels)
 
-    gt_dir = os.path.join(args.gt_dir, "HateMM")
-    asr_dir = os.path.join(args.asr_dir, "HateMM")
-    video_root = os.path.join(args.video_dir, "HateMM", "All")
+    gt_dir = os.path.join(args.gt_dir, args.dataset)
+    asr_dir = os.path.join(args.asr_dir, args.dataset)
+    video_root = os.path.join(args.video_dir, args.dataset, "All")
 
     jsonl_path = os.path.join(gt_dir, "target_pred_{}.jsonl".format(args.tag))
     json_path = os.path.join(gt_dir, "target_pred_{}.json".format(args.tag))
@@ -286,7 +286,9 @@ def main(args):
 
 
 def parse_args(argv=None):
-    ap = argparse.ArgumentParser(description="TARC G2 MLLM target-community prediction (HateMM).")
+    ap = argparse.ArgumentParser(description="TARC G2/G3 MLLM target-community prediction.")
+    ap.add_argument("--dataset", type=str, default="HateMM",
+                    help="HateMM | MHC | MHC_zh (paths data/{gt,ASR,video}/<dataset>/).")
     ap.add_argument("--splits", type=str, default="train,val,test")
     ap.add_argument("--gt_dir", type=str, default="./data/gt")
     ap.add_argument("--video_dir", type=str, default="./data/video")

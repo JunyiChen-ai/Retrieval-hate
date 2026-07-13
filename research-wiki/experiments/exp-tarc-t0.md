@@ -3,10 +3,10 @@ type: experiment
 node_id: exp:exp-tarc-t0
 title: "TARC (target-aware retrieval-contrastive): pre-registration + cheap GT-target oracle probe (B-line)"
 idea_id: ""
-verdict: pre-registered
-confidence: n/a
+verdict: negative — B-line KILLED at G3 (both HateMM and MHC-EN fail the +0.030 TEST bar, both protocols; §12)
+confidence: high (3-seed paired, single sanctioned test-touch consumed; OFF no-op reproduced to 4dp on both datasets)
 date: "2026-07-13"
-status: DESIGN ONLY — no runs, no SLURM, no commit. HARD CONSTRAINT: the method proper uses NO gold annotations (target OR time-span); gold labels are used ONLY to probe the ceiling (oracle) or to score MLLM predictions. See §5.
+status: EXECUTED G0–G3 (2026-07-13). G1 oracle ceiling real but protocol-fragile/test-flat (§10); G2 MLLM target-pred passed both sub-gates via v1prefer (macro-F1 0.61/0.68; retention +0.0218=117% oracle; §11); G3 no TEST transfer on either dataset → B-line killed (§12). No commit. HARD CONSTRAINT upheld: the method proper used NO gold annotations (target OR time-span); gold labels only probed the ceiling (G1) or scored MLLM predictions (G2). See §5. Single TARC test-touch now consumed — no further TARC test read.
 hardware: "planned: 1x A100 (SLURM), frozen CLIP features cached -> ~21-25 s/run (enc3seed precedent)"
 provenance: "data facts verified live 2026-07-13 against data/gt/HateMM/HateMM_annotation.csv, data/gt/HateMM/{train,val,test}.jsonl, data/gt/MHC{,_zh}/{train,val,test}.jsonl; code change points cite src/ file:line read live; cost/protocol precedent = exp-encoder-3seed.md (job 12850)"
 added: 2026-07-13T00:00:00Z
@@ -677,3 +677,243 @@ Three caveats the verdict must carry forward — the pass is real but fragile:
 line is not dead. But the ceiling is protocol-fragile and test-flat, so whether to spend the
 G2 MLLM inference is a **user decision** (proceed to G2 on the two survivors, or stop the
 line here on the weak-ceiling read). No test-touch was spent; G3 remains untouched.
+
+---
+
+## 11. G2 RESULTS — MLLM target-prediction quality (2026-07-13)
+
+**Executed** the two G2 sub-gates of §6 on the two G1 survivors (v1prefer, v3lt0.1).
+No test-touch spent (G3 still untouched). GPU cost: smoke 59 s (`12976`) + full
+prediction 38 min 02 s (`12985`) + retention retrain 3 min 07 s (`12992`) ≈ **42 min**,
+one A100 each, serial. Code (all new, no edit to the reviewed G1/enc3seed paths):
+`scripts/analysis/predict_target_qwen.py` (predictor, GT-isolated), `score_target_pred.py`
+(scorer, the ONLY GT-`target` reader besides G0/G1), `scripts/slurm/tarc_g2_predict.sbatch`,
+`scripts/slurm/tarc_g2_retrain.sbatch` (both without any `b2_push`/rclone tail).
+
+**Gold-annotation isolation upheld (§5).** The predictor reads only sampled frames
+(`data/video/HateMM/All/<id>.mp4`, M=16, reusing `load_video_frames`) + the Whisper
+transcript (`data/ASR/HateMM/*_asrK4_*` joined `window_text`); it never opens
+`target_map.json`. GT `target` enters at exactly two sites — the G0 builder and the G2
+scorer. The retrain arms ran `--tarc_target_source mllm_pred --tarc_mllm qwen7b` with **no**
+`--oracle_probe` and no `ORACLE_CEILING` stamp (`tarc_g2rt_12992.out` carries neither a
+`FileNotFound` nor an oracle stamp), so no GT-`target` path fed a retrain.
+
+### 11.1 Sub-gate A — prediction & macro-F1 quality (Qwen2.5-VL-7B, HateMM)
+
+**Prediction (job `12985`).** All 1066 split videos, closed 8+1 label set
+(Blacks/Jews/Whites/Others/LGBTQ/Muslims/Sexists/Asian/None), one generation/video,
+transcript + 16 frames. `slurm/logs/tarc_g2pred_12985.out:64`: `new=1066 parse_ok=1064
+parse_fail=1 novideo=1`; `:65`: assembled 1066 → `data/gt/HateMM/target_pred_qwen7b.json`.
+**Usable-prediction rate 1064/1066 = 99.8 %** (well above the smoke-stage ≥80 % parse gate,
+which the 20-video smoke `12976` cleared at 20/20). The 2 non-labels both fall back to code
+`-1`: `non_hate_video_472` (model answered "Mexicans", out-of-set) and `hate_video_95`
+(no decodable frames). (The scorer counts `parse_fail=2` because it labels the undecodable
+video's `-1` as a parse-fail too; the predictor's `parse_fail=1 novideo=1` are disjoint
+buckets — same 1064 usable.)
+
+**Predicted distribution** (scorer over 1066 ids): Blacks 455, None 251, Jews 177, Whites 99,
+Others 28, LGBTQ 27, Muslims 18, Sexits 6, Asian 5. **GT primary over those ids**: Blacks 466,
+Others 393, Jews 106, None 43, Whites 28, Muslims 14, LGBTQ 7, Sexits 7, Asian 2. (Note the
+MLLM barely uses "Others" — 28 vs GT 393 — and over-assigns "None" — 251 vs GT 43; it
+collapses the benign content-community tag into None and the two dominant hate targets.)
+
+**Scoring** (`scripts/analysis/score_target_pred.py`, GT = `target_map.json` primary;
+summary cached `scratchpad/g2_score_summary.json`). Scored over videos with GT `primary ≥ 0`
+(the 43 GT-`None` excluded): **all split = 1023, hate-only = 426**.
+
+| population | 8-class macro-F1 | **effective 3-class {Blacks,Jews,Other}** | gate ≥0.60 |
+|---|---|---|---|
+| all split videos w/ GT target (n=1023) | 0.3184 | **0.6137** | **PASS** |
+| hate videos only w/ GT target (n=426)  | 0.3363 | **0.6760** | **PASS** |
+
+Per-effective-class (all-videos): Blacks P0.773 R0.745 F1 0.758 (sup 466); Jews P0.597 R0.896
+F1 0.717 (sup 106); Other P0.646 **R0.255** F1 0.366 (sup 451). Hate-only: Blacks F1 **0.880**
+(sup 317); Jews F1 0.763 (sup 67); Other F1 0.385 (sup 42). **Confusion (all, rows=GT,
+cols=pred Blacks/Jews/Other/None):** Blacks 347/18/55/46 · Jews 1/95/8/2 · Other
+101/46/115/**189**. The 8-class macro-F1 is low (0.32) only because the tail classes
+Sexits/Asian/LGBTQ score ~0 (sup 7/2/7); the pre-registered gate is the effective 3-class
+metric, which passes on both populations. **Honest read:** the pass is carried almost
+entirely by Blacks (F1 0.76–0.88) and Jews (F1 0.72–0.76) — 97.4 % of hate targets (§4) —
+while the "Other" community is mostly mis-routed to None/Blacks (R 0.26 all / 0.48 hate).
+
+**Sub-gate A verdict: PASS** (effective macro-F1 0.6137/0.6760 ≥ 0.60).
+
+### 11.2 Sub-gate B — retention retrain (predicted target ≥ 0.6 × GT-oracle Δacc)
+
+The two survivors re-trained with **MLLM-predicted** target (job `12992`, 6 ON arms; OFF
+control **reused** from G1 `12975`, same code/seeds — legal). Judge metric = **final-epoch
+(protocol B) VAL Δacc, arm − OFF, paired within seed**, per §6. OFF epoch-29 VAL acc
+(`slurm/logs/tarc_g1_off_seed{0,1,2}_12975.trainlog:303`): 0.7944 / 0.8131 / 0.8224.
+
+Retrain epoch-29 VAL acc (source `tarc_g2rt_<arm>_seed<s>_12992.trainlog` + `RESULT_ROW` in
+`tarc_g2rt_12992.out`):
+
+| arm | s0 | s1 | s2 | src (trainlog `Val…Epoch 29`) | RESULT_ROW (out) |
+|---|---|---|---|---|---|
+| v1prefer | 0.8318 | 0.8224 | 0.8411 | `:302 / :304 / :305` | `out:317/631/946` |
+| v3lt0.1  | 0.7944 | 0.8224 | 0.8318 | `:305 / :303 / :303` | `out:1261/1574/1887` |
+
+**Paired final-epoch VAL Δacc (retention gate = 0.6 × GT-oracle protocol-B mean, §10.3):**
+
+| arm | Δ s0 | Δ s1 | Δ s2 | mean | pos | gate | retains | verdict |
+|---|---|---|---|---|---|---|---|---|
+| **v1prefer** | +0.0374 | +0.0093 | +0.0187 | **+0.0218** | 3/3 | ≥ +0.0112 | **117 %** | **PASS** |
+| v3lt0.1 | +0.0000 | +0.0093 | +0.0094 | +0.0062 | 2/3 | ≥ +0.0131 | 29 % | **KILL** |
+
+v1prefer's MLLM-predicted-target gain (+0.0218) **matches/slightly exceeds** its GT-oracle
+gain (+0.0187, §10.3): the predictor nails Blacks+Jews, which is exactly the community
+structure V1's same-target hard-negative *preference* exploits, so the tail-class errors
+cost it nothing. V3's per-target centroids (`compute_target_loss`) read the whole predicted
+distribution and break under the MLLM's shift (no "Others", too much "None") → only 29 %
+retained → killed at G2.
+
+### 11.3 G2 TOTAL VERDICT + caveats + G3 readiness
+
+**G2 PASSES via v1prefer** (sub-gate A macro-F1 0.6137/0.6760 ≥ 0.60 **AND** sub-gate B
+retention +0.0218 ≥ +0.0112, 3/3). **v3lt0.1 is killed** (retention 29 % < 60 %). The B-line
+survives with **v1prefer as the sole variant carried to G3.**
+
+Three caveats the verdict must carry forward (identical shape to G1 §10.4 — the pass is real
+but fragile):
+
+1. **Protocol-B-only.** v1prefer **val-selected** VAL Δacc = +0.0000 / +0.0093 / −0.0187 →
+   mean **−0.0031** (1/3 pos): flat-to-negative at the peak. The effect is late-epoch
+   regularisation (target-conditioning slows OFF's overfit), not a peak gain — the same open
+   peak-vs-final protocol question as G1.
+2. **TEST is flat (recorded, not judged).** v1prefer final-epoch TEST Δacc = +0.0000 /
+   +0.0000 / −0.0093 → mean **−0.0031** (0/3 pos) vs OFF final TEST 0.8186/0.8047/0.8140
+   (§10.1). The oracle-and-now-MLLM val gain still does **not** transfer to test — exactly
+   §8-H0 / P3's "clean probe, flat trained metric".
+3. **G3 outlook is poor.** G3's bar is **+0.030 TEST acc AND +0.030 paired-F1, sign 3/3**
+   (§6). Current v1prefer TEST signal is ~0 on HateMM; on MHC target is fully MLLM-predicted
+   from scratch (harder, multilingual, no GT even in principle). Reaching +0.03 on test from a
+   ~0 val-only-late-epoch effect is unlikely.
+
+**G3 readiness checklist (if the user elects to spend the single test-touch):**
+- v1prefer only; drop v3lt0.1.
+- **HateMM**: predicted target ready (`target_pred_qwen7b.json`, 744/744 train covered);
+  the G3 run reuses it train-side (V1 is train-only) — a `tarc_g2_retrain`-style sbatch
+  with the **TEST** protocol judged (both protocols reported), OFF reused from `12975`.
+- **MHC-EN (the headline; no GT target even in principle, §4)**: **still to produce** — needs
+  a Qwen2.5-VL-7B target-prediction pass over MHC-EN train (549) + val (80); MHC has
+  `data/video/MHC/All/*.mp4` + `data/ASR/MHC/*` (predictor already dataset-generic via the
+  same frames+transcript path, only `--splits`/paths differ). V1 is train-only so **no test
+  target needed** for MHC either. Est. ≈549+80 videos × one pass ≈ 15–20 min GPU.
+- Decision to run G3 is a **user call** (spends the one test-touch); the honest prior is a
+  G3 miss on the +0.03 bar, but G2 formally clears both sub-gates so the pre-registration
+  routes v1prefer forward.
+
+---
+
+## 12. G3 RESULTS — real 3-seed paired TEST confirmation (2026-07-13)
+
+**User ruling 2026-07-13:** proceed to G3 with **v1prefer only** (v3lt0.1 dropped at G2).
+This is the **single, final TARC test-touch** — no further TARC test read after this. Both
+datasets judged by the pre-registered §6 rule: **mean paired TEST Δacc ≥ +0.030 AND mean
+paired Δmacro-F1 ≥ +0.030 AND sign 3/3**, on **≥1 dataset**, each protocol (A=val-selected,
+B=final-epoch) judged separately. **G3 PASS iff ≥1 dataset passes; both fail → B-line kill.**
+
+**GPU (this stage):** MHC-EN train target prediction 29 min (`12995`) + MHC-EN G3 6-arm run
+2 min 28 s (`12997`); HateMM G3 needed **no new run** (reused `12992` v1prefer ×3, the
+deterministic G3 arm, vs OFF `12975`). Everything `mllm_pred`, no `--oracle_probe`, no
+`ORACLE` stamp, no `FileNotFound` (`tarc_g3mhc_12997.out`).
+
+### 12.1 MHC-EN train target prediction (audit; no GT)
+
+Predictor generalised to `--dataset` (one-line path swap; predictor still reads only
+frames+transcript, never GT). **MHC-EN train only** (549) — V1 is train-only mining, so MHC
+val/test target is **never** predicted and MHC test stays pristine.
+`slurm/logs/tarc_g2pred_12995.out`: `new=549 parse_ok=549` (**100 %**), assembled →
+`data/gt/MHC/target_pred_qwen7b.json` (549/549 train covered). No GT exists for MHC target
+(§4), so this is unscored; **predicted distribution (audit only):** None 200, LGBTQ 108,
+Sexits 91, Others 55, Whites 39, Blacks 29, Asian 16, Muslims 9, Jews 2 (349/549 with a
+predicted community). This is a *very* different profile from HateMM's Blacks-dominated one —
+MHC-EN skews LGBTQ / gender / None — so the mechanism gets a genuinely multi-community
+structure to mine here.
+
+### 12.2 HateMM G3 (reuse `12992` v1prefer mllm_pred ×3 vs `12975` OFF)
+
+Both arms consumed MLLM-predicted target (train-side), never GT. TEST acc/macro-F1 from the
+per-epoch `Test_Retrieval` lines (val-selected epoch chosen by val-acc, warmup≥5; final = ep29).
+
+**Protocol A (val-selected):**
+
+| seed | OFF acc / F1 (src) | v1prefer acc / F1 (src) | Δacc | ΔF1 |
+|---|---|---|---|---|
+| 0 | 0.8279 / 0.8172 (`12975 s0:258`) | 0.8186 / 0.8121 (`12992 s0:257`) | −0.0093 | −0.0051 |
+| 1 | 0.8279 / 0.8163 (`s1:276`) | 0.8233 / 0.8136 (`s1:259`) | −0.0046 | −0.0027 |
+| 2 | 0.8047 / 0.7920 (`s2:258`) | 0.8186 / 0.8054 (`s2:260`) | +0.0139 | +0.0134 |
+| **mean** | | | **+0.0000** (1/3) | **+0.0019** (1/3) |
+
+**Protocol B (final epoch 29):**
+
+| seed | OFF acc / F1 (src) | v1prefer acc / F1 (src) | Δacc | ΔF1 |
+|---|---|---|---|---|
+| 0 | 0.8186 / 0.7997 (`12975 s0:304`) | 0.8186 / 0.8054 (`12992 s0:303`) | +0.0000 | +0.0057 |
+| 1 | 0.8047 / 0.7822 (`s1:304`) | 0.8047 / 0.7875 (`s1:305`) | +0.0000 | +0.0053 |
+| 2 | 0.8140 / 0.7988 (`s2:304`) | 0.8047 / 0.7887 (`s2:306`) | −0.0093 | −0.0101 |
+| **mean** | | | **−0.0031** (0/3) | **+0.0003** (2/3) |
+
+**HateMM G3 verdict: FAIL (both protocols).** TEST Δacc ≈ 0, Δmacro-F1 ≈ 0 — an order of
+magnitude below the +0.030 bar. The val-only late-epoch gain (G2 §11.2) does **not** transfer
+to test, exactly as §8-H0 / P3 predicted.
+
+### 12.3 MHC-EN G3 (`12997`: off ×3 + v1prefer mllm_pred ×3)
+
+**OFF no-op gate — PASS.** All 3 OFF seeds reproduce `enc3s_MHC_openai_clip-*_12850` to 4 dp
+(VALSEL acc/F1 and FINAL acc/F1 all identical): s0 0.7826/0.7113 & 0.7640/0.7145; s1
+0.7329/0.6034 & 0.7826/0.7159; s2 0.7702/0.6997 & 0.7888/0.7303
+(`tarc_g3mhc_12997.out:287/568/850`). ⇒ the TARC code is a byte-identical no-op on MHC too;
+batch valid.
+
+**Protocol A (val-selected):**
+
+| seed | OFF acc / F1 (src) | v1prefer acc / F1 (src) | Δacc | ΔF1 |
+|---|---|---|---|---|
+| 0 | 0.7826 / 0.7113 (`12997 off s0:248`) | 0.7826 / 0.7203 (`v1p s0:262`) | +0.0000 | +0.0090 |
+| 1 | 0.7329 / 0.6034 (`off s1:167`) | 0.7702 / 0.7086 (`v1p s1:249`) | +0.0373 | +0.1052 |
+| 2 | 0.7702 / 0.6997 (`off s2:256`) | 0.7702 / 0.6897 (`v1p s2:251`) | +0.0000 | −0.0100 |
+| **mean** | | | **+0.0124** (1/3) | **+0.0347** (2/3) |
+
+**Protocol B (final epoch 29):**
+
+| seed | OFF acc / F1 (src `12997.out`) | v1prefer acc / F1 (src) | Δacc | ΔF1 |
+|---|---|---|---|---|
+| 0 | 0.7640 / 0.7145 (`:287`) | 0.7826 / 0.6958 (`:1138`) | +0.0186 | −0.0187 |
+| 1 | 0.7826 / 0.7159 (`:568`) | 0.7702 / 0.7166 (`:1421`) | −0.0124 | +0.0007 |
+| 2 | 0.7888 / 0.7303 (`:850`) | 0.7764 / 0.7144 (`:1706`) | −0.0124 | −0.0159 |
+| **mean** | | | **−0.0021** (1/3) | **−0.0113** (1/3) |
+
+**MHC-EN G3 verdict: FAIL (both protocols).** Protocol A's Δmacro-F1 mean (+0.0347) *looks*
+above the bar but is a **selection artifact**: it is carried entirely by seed 1's +0.1052,
+which exists only because OFF seed 1's val-selected point is an anomalously bad ep16
+(TEST F1 0.6034) — the ~2-pt val-selection noise on the 78/80-item MHC dev set documented
+across the campaign. The accompanying Δacc is only +0.0124 (1/3 pos), and Protocol B is
+negative on both metrics. No protocol clears +0.030 acc **and** +0.030 F1 at 3/3.
+
+### 12.4 G3 TOTAL VERDICT — B-line KILLED (pre-registered negative)
+
+| dataset | protocol A (val-sel) Δacc / ΔF1 | protocol B (final) Δacc / ΔF1 | verdict |
+|---|---|---|---|
+| HateMM | +0.0000 / +0.0019 | −0.0031 / +0.0003 | FAIL |
+| MHC-EN | +0.0124 / +0.0347\* | −0.0021 / −0.0113 | FAIL |
+
+(\*MHC-A ΔF1 is a val-selection artifact, §12.3; Δacc fails and neither is 3/3.)
+
+**Neither dataset passes → G3 FAILS → the TARC B-line is formally KILLED.** This is a clean,
+pre-registered negative result, fully archived: the ceiling was real but unreachable on test.
+The line falsified cheaply and completely: **G1** oracle ceiling real but protocol-fragile &
+test-flat (§10.4); **G2** the MLLM predicted target well enough (eff-3 macro-F1 0.61/0.68) to
+**retain/exceed** the oracle's *val* gain for v1prefer (+0.0218, 117 %, §11.2); **G3** the
+effect **does not transfer to TEST** on either dataset — the same "clean probe, flat trained
+metric" shape (§8-H0) that closed P2/P3 and the 13 MLLM routes. The campaign's +0.03 test bar
+remains met **only once** (the encoder swap, HateMM). **No further TARC test-touch will be
+spent** (the single sanctioned read is now consumed). Total TARC GPU across G1–G3 ≈ 12 min
+(G1) + 42 min (G2) + 34 min (G3) ≈ **1.5 h**, one A100.
+
+**Method-side reading (for the paper's negative-results / analysis section):** target-community
+conditioning of the retrieval graph is a real but *regularisation-only* effect — it slows
+late-epoch overfit on val without moving the test metric — and it is **not** a source of the
+"substantial improvement" the campaign goal requires. It joins the archive of honestly
+falsified structural levers; the MLLM's earned roles stay encoder + localizer + guard-rail
+(no main-table accuracy role at 7B), now confirmed on one more axis (target structure).

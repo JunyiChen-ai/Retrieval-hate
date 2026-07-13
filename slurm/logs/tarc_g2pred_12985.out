@@ -1,0 +1,66 @@
+[2026-07-13 11:31:30] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-13 11:31:31] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-13 11:31:31] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-13 11:31:31] [disk_guard] WARNING: could not determine quota usage from 'quota -s'. Doing NOTHING destructive.
+[2026-07-13 11:31:31] [disk_guard] ==== disk_guard end (usage unknown) ====
+[tarc_g2pred] SPLITS=train,val,test LIMIT=0 TAG=qwen7b MODEL=Qwen/Qwen2.5-VL-7B-Instruct
+Loading Qwen2.5-VL: Qwen/Qwen2.5-VL-7B-Instruct
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.36it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.42it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  5.73it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  6.19it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.70it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.14it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+[train] 744 videos (0 already done)
+/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/transformers/generation/configuration_utils.py:629: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `1e-06` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+  [train] 25/744 parse_ok=25 parse_fail=0 novideo=0
+  [train] 50/744 parse_ok=50 parse_fail=0 novideo=0
+  [train] 75/744 parse_ok=75 parse_fail=0 novideo=0
+  [train] 100/744 parse_ok=100 parse_fail=0 novideo=0
+  [train] 125/744 parse_ok=125 parse_fail=0 novideo=0
+  [train] 150/744 parse_ok=150 parse_fail=0 novideo=0
+  [train] 175/744 parse_ok=175 parse_fail=0 novideo=0
+  [train] 200/744 parse_ok=200 parse_fail=0 novideo=0
+  [train] 225/744 parse_ok=225 parse_fail=0 novideo=0
+  [train] 250/744 parse_ok=250 parse_fail=0 novideo=0
+  [train] 275/744 parse_ok=274 parse_fail=1 novideo=0
+  [train] 300/744 parse_ok=299 parse_fail=1 novideo=0
+  [train] 325/744 parse_ok=324 parse_fail=1 novideo=0
+  [train] 350/744 parse_ok=349 parse_fail=1 novideo=0
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0x146aa940] stream 0, offset 0x23cc8c9: partial file
+[WARN] decord failed for ./data/video/HateMM/All/hate_video_95.mp4 (DECORDError('[11:44:24] /github/workspace/src/video/video_reader.cc:486: Error: av_read_frame failed with 1094995529')); trying PyAV.
+Invalid NAL unit size (1472 > 1168).
+missing picture in access unit with size 1172
+Invalid NAL unit size (1472 > 1168).
+Error splitting the input into NAL units.
+[WARN] PyAV failed for ./data/video/HateMM/All/hate_video_95.mp4 (InvalidDataError(1094995529, 'Invalid data found when processing input', 'avcodec_send_packet()', (16, 'h264', 'Error splitting the input into NAL units.\n'))).
+[WARN] no decodable frames for ./data/video/HateMM/All/hate_video_95.mp4.
+  [train] 375/744 parse_ok=373 parse_fail=1 novideo=1
+  [train] 400/744 parse_ok=398 parse_fail=1 novideo=1
+  [train] 425/744 parse_ok=423 parse_fail=1 novideo=1
+  [train] 450/744 parse_ok=448 parse_fail=1 novideo=1
+  [train] 475/744 parse_ok=473 parse_fail=1 novideo=1
+  [train] 500/744 parse_ok=498 parse_fail=1 novideo=1
+  [train] 525/744 parse_ok=523 parse_fail=1 novideo=1
+  [train] 550/744 parse_ok=548 parse_fail=1 novideo=1
+  [train] 575/744 parse_ok=573 parse_fail=1 novideo=1
+  [train] 600/744 parse_ok=598 parse_fail=1 novideo=1
+  [train] 625/744 parse_ok=623 parse_fail=1 novideo=1
+  [train] 650/744 parse_ok=648 parse_fail=1 novideo=1
+  [train] 675/744 parse_ok=673 parse_fail=1 novideo=1
+  [train] 700/744 parse_ok=698 parse_fail=1 novideo=1
+  [train] 725/744 parse_ok=723 parse_fail=1 novideo=1
+[val] 107 videos (744 already done)
+  [val] 25/107 parse_ok=767 parse_fail=1 novideo=1
+  [val] 50/107 parse_ok=792 parse_fail=1 novideo=1
+  [val] 75/107 parse_ok=817 parse_fail=1 novideo=1
+  [val] 100/107 parse_ok=842 parse_fail=1 novideo=1
+[test] 215 videos (851 already done)
+  [test] 25/215 parse_ok=874 parse_fail=1 novideo=1
+  [test] 50/215 parse_ok=899 parse_fail=1 novideo=1
+  [test] 75/215 parse_ok=924 parse_fail=1 novideo=1
+  [test] 100/215 parse_ok=949 parse_fail=1 novideo=1
+  [test] 125/215 parse_ok=974 parse_fail=1 novideo=1
+  [test] 150/215 parse_ok=999 parse_fail=1 novideo=1
+  [test] 175/215 parse_ok=1024 parse_fail=1 novideo=1
+  [test] 200/215 parse_ok=1049 parse_fail=1 novideo=1
+[predict] new=1066 parse_ok=1064 parse_fail=1 novideo=1 (already_done=0) parse_fail_rate(incl novideo)=0.002
+[assemble] 1066 entries -> ./data/gt/HateMM/target_pred_qwen7b.json
+[tarc_g2pred] done SPLITS=train,val,test LIMIT=0

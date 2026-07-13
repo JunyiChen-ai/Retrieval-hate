@@ -26,13 +26,15 @@ export HF_HUB_OFFLINE=1
 export WANDB_MODE=disabled
 export PYTHONUNBUFFERED=1
 
+DATASET=${DATASET:-HateMM}
 SPLITS=${SPLITS:-train,val,test}
 LIMIT=${LIMIT:-0}
 TAG=${TAG:-qwen7b}
 MODEL=${MODEL:-Qwen/Qwen2.5-VL-7B-Instruct}
 
-echo "[tarc_g2pred] SPLITS=$SPLITS LIMIT=$LIMIT TAG=$TAG MODEL=$MODEL"
+echo "[tarc_g2pred] DATASET=$DATASET SPLITS=$SPLITS LIMIT=$LIMIT TAG=$TAG MODEL=$MODEL"
 python scripts/analysis/predict_target_qwen.py \
+    --dataset "$DATASET" \
     --splits "$SPLITS" \
     --tag "$TAG" \
     --model "$MODEL" \
