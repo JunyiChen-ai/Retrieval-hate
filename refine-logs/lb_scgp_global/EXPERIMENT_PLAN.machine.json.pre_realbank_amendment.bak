@@ -290,7 +290,7 @@
     "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
     "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
     "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
-    "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2",
+    "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
     "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
     "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
     "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
@@ -636,7 +636,7 @@
       "status": "V4_CLONE_FROZEN_AMENDMENT_PENDING_INDEPENDENT_REVIEW"
     },
     {
-      "run_id": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2",
+      "run_id": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
       "milestone": "M0",
       "block": "B0",
       "claim": "C1",
@@ -664,7 +664,7 @@
         "artifacts/lb_scgp_global/v1/m0/realbank_resource/decision.json"
       ],
       "artifact_schema_ids": [
-        "scgp_global_realbank_resource_v2"
+        "scgp_global_realbank_resource_v1"
       ],
       "slurm": {
         "cpu": 16,
@@ -681,57 +681,10 @@
         "estimated_storage_gb": 10
       },
       "gate": "GO iff Run1 is frozen, Run2-v1/v2/v3 failure evidence is preserved, Run2-v4 semantic verification is PASS in its single SLURM artifact, and a fresh independent v4 artifact review authorizes unlock; Run2-v1/v2/v3 remain FAIL_STOP / consumed-closed evidence only.",
-      "gate_satisfied_by": "M0_RUN2_V4_ARTIFACT_REVIEW.md verdict ARTIFACT_ACCEPTED (2026-07-13); the realbank GATE is now open. This does NOT authorize realbank execution; realbank carries its own single-submit ceremony (fresh independent amendment review + 0C/0H code review + runtime cross-check static-simulation table all-PASS + dependency-availability evidence + exact hashes/no-clobber review + separate execution authorization).",
-      "v1_burn_and_v2_clone": "The realbank v1 single submit (job 12994) died preflight at the wrapper's $TMPDIR path escape: the wrapper wrote the validator->producer handoff JSON out-of-repo and the producer's in-repo-only canonical_root_path guard rejected it (REALBANK_FULLCHAIN_STATIC_AUDIT.md: 1 defect, 10/11 handoff rows PASS, fix (a) CONFIRMED). No artifact was published; the v1 burn is preserved as refine-logs evidence (audit + result-to-claim), not as a run-array entry. v2 is a byte-clone of the eight v1 entities (run_id/schema-id/file version tokens v1->v2, artifact namespace lb_scgp_global/v1/ unchanged) plus the audit-specified three-line wrapper fix (validation temp -> in-repo slurm/tmp/). The A/B/C input protocol is unchanged; runs[3] is REPLACED in place (run_id and artifact_schema_ids v1->v2), array length and downstream indices unchanged.",
-      "realbank_protocol": {
-        "decision_record": "refine-logs/lb_scgp_global/REALBANK_RESOURCE_V1_PLAN_AMENDMENT.md (A/B/C, unchanged); refine-logs/lb_scgp_global/REALBANK_FULLCHAIN_STATIC_AUDIT.md (v1 burn diagnosis + fix (a) spec); refine-logs/lb_scgp_global/REALBANK_RESOURCE_V2_CLONE_FREEZE.md (v2 clone + wrapper fix)",
-        "decided_by": "coordination-session ruling 2026-07-13 (A/B/C); v2 clone + fix (a) per REALBANK_FULLCHAIN_STATIC_AUDIT.md; recorded here pending fresh independent amendment review and a fresh 0C/0H realbank code review; the science owner retains the M-A-analogue right to overrule the placeholder before any downstream scientific claim rests on it",
-        "meaning": "This run is a train-bank static/resource microbenchmark. It does NOT run a convex solver (none exists yet; v4 CONSTRUCTS synthetic KKT-closed tuples, it does not solve). It measures resource_peak, rank_tail<=d, in-job replay-hash determinism, robust-coverage (fail-open), and isolation-injection defenses of the real-N dense linear-algebra + eigendecomposition + rank-factor + structural-moment pipeline on the real train banks. No training, no kNN, no performance/accuracy/macro-F1.",
-        "A_train_bank_source": {
-          "z0_construction": "Z0 = rownorm(concat(img_feats, text_feats)) from the frozen CLIP-L/336 pooler train bank; G0 = psd_gram_from_features(Z0); this is the preregistered resource-probe stand-in for the M2 comparator Z0 (which is frozen only at M2, after this run)",
-          "d_rule": "d = Z0.shape[1] read at runtime (encoder embedding dimension per FINAL_PROPOSAL.md); rank_tail_le_d is rank_eps(G0) <= d",
-          "train_only": true,
-          "no_validation_or_test_labels": true,
-          "banks": {
-            "MHC": {
-              "path": "data/CLIP_Embedding/MHC/train_openai_clip-vit-large-patch14-336_HF.pt",
-              "sha256": "deea74ff78d81836b0937c7996caef4706e97a1e279343581d547ee2e98dc73e",
-              "train_n": 549
-            },
-            "MHC_zh": {
-              "path": "data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt",
-              "sha256": "929571f81a5bf4a7f306eaaeceecafd62c85b73cf86ce8177ab175dbcfff8f17",
-              "train_n": 579
-            }
-          }
-        },
-        "B_structural_placeholder": {
-          "policy": "preferred_synthetic_placeholder_b_struct_opens_structural_code_path",
-          "rank_cap_r": 8,
-          "m_scale": 36,
-          "m_formula": "m = r(r+1)/2 with r = r_max = 8 (FINAL_PROPOSAL.md compute-envelope worst case, 'even with r<=8, m<=36')",
-          "b_struct_source": "deterministic, label-blind, NON-SCIENCE placeholder; opens the structural-moment/adjoint code path at the real (N, r=8, m=36) scale so the measured peak RSS is faithful to (an upper bound on) the eventual FULL target; it certifies nothing and is not the real cache b_struct",
-          "is_science": false,
-          "fallback_if_no_m_basis": "G0-only with an explicit 'peak = lower bound, re-measure after M1' caveat; NOT used because the proposal r_max=8 supplies the m scale"
-        },
-        "C_acceptance": {
-          "two_stage": "producer emits PRODUCED_PENDING_INDEPENDENT_VERIFY candidate; a separate independent verifier re-loads the banks, independently recomputes, and stamps decision PASS/FAIL (v4 precedent)",
-          "go_criterion": "GO iff job_peak_rss_bytes <= 103079215104 (96 GiB) AND rank_eps(G0) <= d for every dataset AND the in-job second replay hash matches the first for every dataset AND every isolation injection is REJECTED",
-          "robust_coverage_rule": "reported, fail-open; low coverage disables only the robust safety claim and never fails the run",
-          "resource_cap_bytes": 103079215104,
-          "schema_top_level_keys": [
-            "resource_peak",
-            "rank_tail",
-            "replay_hashes",
-            "robust_coverage",
-            "isolation_injection_results"
-          ]
-        }
-      },
       "failure_transition": "STOP before M1 cache",
       "parallel_group": "g0_serial",
       "priority": "MUST",
-      "status": "V2_CLONE_FROZEN_AFTER_V1_TMPDIR_BURN_PENDING_INDEPENDENT_REVIEW"
+      "status": "LOCKED_UNTIL_V4_PASS"
     },
     {
       "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
@@ -746,7 +699,7 @@
       "arm": null,
       "seed": null,
       "dependencies": [
-        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2"
+        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
       ],
       "metrics": [
         "parse_rate",
@@ -794,7 +747,7 @@
       "arm": null,
       "seed": null,
       "dependencies": [
-        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2"
+        "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
       ],
       "metrics": [
         "parse_rate",
@@ -3819,7 +3772,7 @@
       "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
       "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
       "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
-      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2",
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
       "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
       "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
       "LBSCGP-GLOBAL-M2-DIRECTION-DECISION-v1",
@@ -4131,7 +4084,7 @@
       "duality_gap",
       "hashes"
     ],
-    "scgp_global_realbank_resource_v2": [
+    "scgp_global_realbank_resource_v1": [
       "resource_peak",
       "rank_tail",
       "replay_hashes",
@@ -4277,7 +4230,7 @@
       "LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1",
       "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
       "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
-      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2"
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1"
     ]
   },
   "supplement_amendment": {

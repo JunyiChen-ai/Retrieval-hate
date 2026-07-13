@@ -1,0 +1,116 @@
+{
+  "schema_version": "lb_scgp_global_r2_m0_realbank_resource_v2_config_v1",
+  "authorization": {
+    "authorized_run_ids": [
+      "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2"
+    ],
+    "gpu_allowed": false,
+    "mllm_calls_allowed": false,
+    "network_or_model_calls_allowed": false,
+    "ocr_calls_allowed": false,
+    "performance_evaluation_allowed": false,
+    "query_labels_allowed": false,
+    "query_z_allowed": false,
+    "validation_or_test_allowed": false,
+    "training_allowed": false,
+    "m1_cache_or_later_allowed": false,
+    "train_bank_read_allowed": true
+  },
+  "dirty_policy": {
+    "allowed_new_files_after_run": [
+      "artifacts/lb_scgp_global/v1/m0/realbank_resource/decision.json",
+      "artifacts/lb_scgp_global/v1/m0/realbank_resource/decision.json.publish.lock",
+      "artifacts/lb_scgp_global/v1/m0/realbank_resource/source_manifest.json",
+      "artifacts/lb_scgp_global/v1/m0/realbank_resource/source_manifest.json.publish.lock",
+      "artifacts/lb_scgp_global/v1/m0/realbank_resource/access_ledger.json",
+      "artifacts/lb_scgp_global/v1/m0/realbank_resource/access_ledger.json.publish.lock",
+      "artifacts/lb_scgp_global/v1/m0/realbank_resource/semantic_verification.json",
+      "artifacts/lb_scgp_global/v1/m0/realbank_resource/semantic_verification.json.publish.lock"
+    ],
+    "artifact_outputs_excluded_from_source_binding": true,
+    "failure_outputs_must_be_cleaned_by_wrapper": true,
+    "no_clobber": true
+  },
+  "hash_bindings": {
+    "authoritative_inputs": {
+      "AGENTS.md": "e6aaf5d66399cdbbe7fcc2c811931277b0ed4a24b592ffa5cbb60315b29ea23c",
+      "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "a3325f9d2de21b7be21b3000c7a5953426908dd0444a995bb8f699a5ecb3dd8c",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "f4d54b78501b02253c14da2b42b2c04431f2f1c80f56c0f27b3420adf830fc9b",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": "d3251b0b335d9806b7c14c08efc00d98243b0284cb3a599dee7c963f9f59947c",
+      "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "51367c176ce62979fefa37542b6a53809ff43143d819f300c1d807cacd407618",
+      "refine-logs/lb_scgp_global/M0_RUN2_V4_ARTIFACT_REVIEW.md": "103ea07c894e278a36d0af020a8c1c19109843c763463a84ed46ac5c7c832729",
+      "refine-logs/lb_scgp_global/REALBANK_RESOURCE_V1_PLAN_AMENDMENT.md": "3333c4344772c8294aa1ce3ff10a7e42d39b45bb992a3fea8367b410f2c00d37",
+      "refine-logs/lb_scgp_global/REALBANK_RESOURCE_V1_PLAN_AMENDMENT.machine.json": "ccae7f677134bfa77d304363093c4a08e814d4914c8f4844e616135969d6b81b",
+      "refine-logs/lb_scgp_global/REALBANK_RESOURCE_V1_PLAN_AMENDMENT_HASHES.sha256": "26462aa0c3dbbab189382469dbdb4538a9b81c8e210ad40b57312b6fe1b173e1",
+      "refine-logs/lb_scgp_global/REALBANK_FULLCHAIN_STATIC_AUDIT.md": "ab436cc483e0cd44c0efb44a5ad206f69555d5a81d757a4e463aa41a851b9ce7"
+    },
+    "declared_validation_test_provenance_not_opened": {
+      "data/gt/MHC/test.jsonl": "0377f9d83d0a57e17212c17fe8fcfc552648356cc1a7b2f1c98a2445a1ce0d76",
+      "data/gt/MHC/val.jsonl": "749f9563d002367bc05a16627eb4f28045daba30825f0414335bab5a6543f6cb",
+      "data/gt/MHC_zh/test.jsonl": "79f666050ce92910ecd1ca4fbaf42bcae36f46b898313e2b4fc026ad72858d31",
+      "data/gt/MHC_zh/val.jsonl": "6b2b5916fedba05ade93e694c13ba09f92968bde73e15f6cb345025eb0afc04b"
+    },
+    "old_protected_pre_snapshot": {
+      "manifest_sha256": "243e89b69b169b222dd97f9df092d511f823fb26201e91fd89cb581710940462",
+      "path_count": 278,
+      "snapshot_scope": "old LB-SCGP source/artifact scope frozen by Run1 review"
+    },
+    "run1_frozen": {
+      "artifacts/lb_scgp_global/v1/m0/contract_freeze.json": "09b78682389f1c9774c9dffc43c759bceeec9d7f44eca1ce4cd626d0cd6d12da",
+      "artifacts/lb_scgp_global/v1/m0/contract_freeze.json.publish.lock": "c6fbb49c3c8aba942da3f254c3c5f65d037002548fafb961154e6fa79a3e4ea7",
+      "configs/lb_scgp_global_r2/m0_contract_freeze_v1.json": "5111c2d6d74c745afe35a7067566b531714ce6482df3f5b9469a442486146868",
+      "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json": "4d3f1663e633c30ae58e35c0feddaa2fa9bbedba279cdbe6f38ecc35d761f22f",
+      "schemas/lb_scgp_global_r2/scgp_global_contract_freeze_v1.schema.json": "d6a22233ec2ad028f1fdf8a0315641a30a76e1b3a96249615c48161b3d890105",
+      "scripts/analysis/lb_scgp_global_r2_common.py": "b0461460a71f72c81b611bb060950a459e84d7f5cfe46f62da19625e624c59db",
+      "scripts/analysis/lb_scgp_global_r2_contract_freeze.py": "1c11544e5305c4350b3d985ccf81e88de8f1f31c58e662df819570aaa92bccbc",
+      "scripts/analysis/lb_scgp_global_r2_validate.py": "061cf80ae532e268b623050db5b39c47b9f0858f0a9591d94f8404e11e778fd2",
+      "scripts/slurm/lb_scgp_global_r2_m0_contract_freeze.sbatch": "ccbade355239d3c313b70ed55a2907f7a2d51716a62b809e835ec9ad1441d882",
+      "scripts/wrappers/lb_scgp_global_r2_run1.sh": "1eb342475c63df5d16bf570c82de465803652e4a6157444ea02294b58fa9596d"
+    }
+  },
+  "implementation_files": [
+    "configs/lb_scgp_global_r2/m0_realbank_resource_v2.json",
+    "schemas/lb_scgp_global_r2/scgp_global_realbank_resource_v2.schema.json",
+    "scripts/analysis/lb_scgp_global_r2_realbank_resource_v2_common.py",
+    "scripts/analysis/lb_scgp_global_r2_realbank_resource_v2_validate.py",
+    "scripts/analysis/lb_scgp_global_r2_realbank_resource_v2_producer.py",
+    "scripts/analysis/lb_scgp_global_r2_realbank_resource_v2_independent_verify.py",
+    "scripts/wrappers/lb_scgp_global_r2_realbank_resource_v2.sh",
+    "scripts/slurm/lb_scgp_global_r2_m0_realbank_resource_v2.sbatch"
+  ],
+  "paths": {
+    "experiment_machine": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json",
+    "experiment_tracker": "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md",
+    "payload_schema": "schemas/lb_scgp_global_r2/scgp_global_realbank_resource_v2.schema.json",
+    "wrapper": "scripts/wrappers/lb_scgp_global_r2_realbank_resource_v2.sh",
+    "slurm_script": "scripts/slurm/lb_scgp_global_r2_m0_realbank_resource_v2.sbatch",
+    "source_manifest_path": "artifacts/lb_scgp_global/v1/m0/realbank_resource/source_manifest.json",
+    "access_ledger_path": "artifacts/lb_scgp_global/v1/m0/realbank_resource/access_ledger.json",
+    "semantic_verification_path": "artifacts/lb_scgp_global/v1/m0/realbank_resource/semantic_verification.json"
+  },
+  "train_banks": {
+    "MHC": {
+      "path": "data/CLIP_Embedding/MHC/train_openai_clip-vit-large-patch14-336_HF.pt",
+      "sha256": "deea74ff78d81836b0937c7996caef4706e97a1e279343581d547ee2e98dc73e",
+      "train_n": 549
+    },
+    "MHC_zh": {
+      "path": "data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt",
+      "sha256": "929571f81a5bf4a7f306eaaeceecafd62c85b73cf86ce8177ab175dbcfff8f17",
+      "train_n": 579
+    }
+  },
+  "run": {
+    "run_id": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2",
+    "schema_id": "scgp_global_realbank_resource_v2",
+    "artifact_path": "artifacts/lb_scgp_global/v1/m0/realbank_resource/decision.json",
+    "slurm": {
+      "cpu": 16,
+      "ram_gb": 96,
+      "gpu": 0,
+      "env": "HateVideo",
+      "no_time_flag": true
+    }
+  }
+}

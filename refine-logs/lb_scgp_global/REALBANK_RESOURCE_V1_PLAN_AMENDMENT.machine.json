@@ -1,0 +1,89 @@
+{
+  "schema_version": "lb_scgp_global_r2_realbank_resource_plan_amendment_v1",
+  "amendment_id": "M0_REALBANK_RESOURCE_V1_PLAN_AMENDMENT",
+  "generated_at": "2026-07-13T00:00:00+12:00",
+  "lineage": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
+  "milestone": "M0",
+  "block": "B0",
+  "claim": "C1",
+  "author_thread": "fresh Claude Opus 4.8 realbank-prep role in /data/jehc223/RGCL; separate from the independent amendment reviewer, the fresh 0C/0H realbank code reviewer, the execution authorizer, and the executor; no SLURM submission, no git commit, no local project Python execution",
+  "decided_by": "coordination-session ruling 2026-07-13 (A/B/C); recorded pending fresh independent amendment review and fresh 0C/0H realbank code review; science owner retains the right to overrule the NON-SCIENCE structural placeholder before any downstream scientific claim rests on it",
+  "gate": {
+    "gate_open": true,
+    "gate_evidence": "M0_RUN2_V4_ARTIFACT_REVIEW.md verdict ARTIFACT_ACCEPTED (2026-07-13); row-3 realbank gate satisfied",
+    "amendment_authorizes_execution": false,
+    "requires_fresh_independent_amendment_review": true,
+    "requires_fresh_independent_realbank_code_review_zero_critical_zero_high": true,
+    "requires_runtime_crosscheck_static_simulation_table_all_pass": true,
+    "requires_dependency_availability_evidence": true,
+    "requires_exact_hashes_no_clobber_review": true,
+    "requires_separate_execution_authorization": true,
+    "single_slurm_job_only": {"cpu": 16, "ram_gb": 96, "gpu": 0, "env": "HateVideo", "no_time_flag": true}
+  },
+  "decisions": {
+    "A_train_bank_source": {
+      "z0_construction": "Z0 = rownorm(concat(img_feats,text_feats)) from the frozen CLIP-L/336 pooler train bank; G0 = psd_gram_from_features(Z0)",
+      "d_rule": "d = Z0.shape[1] read at runtime; rank_tail is rank_eps(G0) <= d",
+      "banks": {
+        "MHC": {"path": "data/CLIP_Embedding/MHC/train_openai_clip-vit-large-patch14-336_HF.pt", "sha256": "deea74ff78d81836b0937c7996caef4706e97a1e279343581d547ee2e98dc73e", "train_n": 549},
+        "MHC_zh": {"path": "data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt", "sha256": "929571f81a5bf4a7f306eaaeceecafd62c85b73cf86ce8177ab175dbcfff8f17", "train_n": 579}
+      }
+    },
+    "B_structural_placeholder": {
+      "policy": "preferred_synthetic_placeholder_b_struct_opens_structural_code_path",
+      "rank_cap_r": 8,
+      "m_scale": 36,
+      "b_struct_source": "b_struct = vech(M_Q(G0)) from a deterministic label-blind Phi seed; NON-SCIENCE placeholder; opens orth_cap/structural-moment/adjoint path at real (N, r=8, m=36) so peak RSS is faithful to an upper bound on the eventual FULL target",
+      "is_science": false,
+      "fallback_not_used": "G0-only with peak-lower-bound caveat (not used; FINAL_PROPOSAL.md r_max=8 supplies m=36)"
+    },
+    "C_acceptance": {
+      "two_stage_producer_then_independent_verifier": true,
+      "go_criterion": "GO iff job_peak_rss_bytes<=103079215104 (96 GiB) AND rank_eps(G0)<=d for every dataset AND in-job second replay hash matches the first for every dataset AND every isolation injection is REJECTED",
+      "robust_coverage": "reported, fail-open; low coverage disables only the robust safety claim",
+      "schema_top_level_keys": ["resource_peak", "rank_tail", "replay_hashes", "robust_coverage", "isolation_injection_results"]
+    }
+  },
+  "plan_edits": {
+    "machine_runs_index": 3,
+    "machine_edit": "added runs[3].realbank_protocol (A/B/C) and runs[3].gate_satisfied_by; status LOCKED_UNTIL_V4_PASS -> GATE_OPEN_PENDING_REALBANK_IMPLEMENTATION_AND_REVIEW; runs[2] and every other index untouched; array length unchanged",
+    "doc_drift_folded_v2_to_v4": ["EXPERIMENT_TRACKER.md row 4", "EXPERIMENT_PLAN.md item 4 (section 'G0 Runs Through Run2-v2 Supplement')"]
+  },
+  "hash_cascade": {
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": {"before": "42bf49ed02a17532b79e83fdb31b1556e216615c74da52939e86d761b4590a90", "after": "d5023b621afca08eed940d2853551c872da8151378c4a83075744e422cb18fdb"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": {"before": "a98effc3e9c266fc248977d172575dad9dce913a65f12180b427e387c95ae3eb", "after": "10fd5232fa12f0d6677a0aba767b114700f2a74c9b56f364b0b0bdda1c53fa3a"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": {"before": "4d3c4b8c10090f3b6aa26db41751b4190f80024e2c9885654a91bb974c9e9da4", "after": "d226abfea1f8939fe27cdd585f4b2fd5752ee28aa97661725e66c656b3ab3b53"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": {"before": "recomputed", "after": "a8360a2acb6c2ac244bb21ddc9ea61ed669d8084e5dfe8fb529dc2f0a6bddd3e"}
+  },
+  "consumed_v4_config_binding_note": "The v4 config (m0_synth_kkt_v4.json) still binds the pre-amendment machine plan hash 42bf49ed... in its authoritative_inputs. v4 is CONSUMED and CLOSED (single-submit spent, ARTIFACT_ACCEPTED); it will not re-run, so that binding is historical provenance and is NOT retro-updated. The new machine plan hash d5023b62... is bound going forward only in the realbank config. This mirrors the v4 amendment's treatment of the consumed v2/v3 lineages.",
+  "entities_implemented": [
+    {"path": "configs/lb_scgp_global_r2/m0_realbank_resource_v1.json", "sha256": "SEE_FREEZE_DOC_config_finalized_after_binding_amendment_docs"},
+    {"path": "schemas/lb_scgp_global_r2/scgp_global_realbank_resource_v1.schema.json", "sha256": "db79cdd36b878ff8286d6471e20638349496bf19230d29c3bd3c2e78be7a73d2"},
+    {"path": "scripts/analysis/lb_scgp_global_r2_realbank_resource_v1_common.py", "sha256": "46e1f3fe36ba93a43d947a166d465a4f06580e535eeb927e49234e374f41b8a9"},
+    {"path": "scripts/analysis/lb_scgp_global_r2_realbank_resource_v1_validate.py", "sha256": "b2bbec0298e6cff75759f52e8f9a4d3d9dcfdecc65ce0188cc96b97051611ded"},
+    {"path": "scripts/analysis/lb_scgp_global_r2_realbank_resource_v1_producer.py", "sha256": "dc38d5c39f109cc3cafb670aecfe5b31f09c18bf33e919f32e0c5c3c7241c114"},
+    {"path": "scripts/analysis/lb_scgp_global_r2_realbank_resource_v1_independent_verify.py", "sha256": "49cc2d9afa12f062ab18e96edaec74e7831f344f702561dda7e507af70f54f26"},
+    {"path": "scripts/wrappers/lb_scgp_global_r2_realbank_resource_v1.sh", "sha256": "f80b41eaab7b6fa5bb80324f04a8af11b975e1dcdbefe9202323caae72d4b0a1"},
+    {"path": "scripts/slurm/lb_scgp_global_r2_m0_realbank_resource_v1.sbatch", "sha256": "9c4ecc055bf8f02b4a4c471ad230b0e18b32f85407e61dcd207403d0308ab420"}
+  ],
+  "artifact_namespace": "artifacts/lb_scgp_global/v1/m0/realbank_resource/",
+  "artifact_outputs": [
+    "artifacts/lb_scgp_global/v1/m0/realbank_resource/decision.json",
+    "artifacts/lb_scgp_global/v1/m0/realbank_resource/source_manifest.json",
+    "artifacts/lb_scgp_global/v1/m0/realbank_resource/access_ledger.json",
+    "artifacts/lb_scgp_global/v1/m0/realbank_resource/semantic_verification.json"
+  ],
+  "no_science_contract_change": true,
+  "only_allowed_change": "new-run implementation for an already-approved science run entry (runs[3]); pins the A/B/C input protocol the frozen plan left undetermined; no change to claims, gates C1/C2, forbidden routes, datasets, seeds, or the two-primary-claim contract",
+  "no_local_python_validation": true,
+  "no_slurm_submission_in_this_task": true,
+  "no_git_commit_in_this_task": true,
+  "amendment_files_are_execution_permission": false,
+  "run4_m1_cache_dependency": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1",
+  "readiness": {
+    "ready_for_independent_amendment_review": true,
+    "ready_for_fresh_independent_realbank_code_review": true,
+    "ready_for_execution": false,
+    "success_claim_allowed": false
+  }
+}

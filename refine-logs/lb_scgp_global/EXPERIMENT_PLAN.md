@@ -162,7 +162,7 @@ The G0 prefix through the v2 supplement never emits performance claims:
 1. `LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1`
 2. `LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1`
 3. `LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2`
-4. `LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1`
+4. `LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2`
 
 | Milestone | Block | Goal | Runs | Decision Gate | Cost Estimate | Risk |
 |---|---|---|---|---|---|---|
@@ -207,7 +207,7 @@ Required schema IDs:
 - `scgp_global_contract_freeze_v1`
 - `scgp_global_synth_kkt_payload_v1`
 - `scgp_global_synth_kkt_payload_v2`
-- `scgp_global_realbank_resource_v1`
+- `scgp_global_realbank_resource_v2`
 - `scgp_global_cache_replica_v2`
 - `scgp_global_cache_seal_v1`
 - `scgp_global_comparator_freeze_v1`
@@ -254,7 +254,7 @@ KKT payload must serialize primal values, H metric, affine normals, box/coordina
 1. `LBSCGP-GLOBAL-G0-M0-CONTRACT-FREEZE-v1`: implementation contract audit/freeze.
 2. `LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1`: historical FAIL_STOP evidence; no artifact is accepted and no PASS claim is made.
 3. `LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v2`: prospective synthetic KKT supplement at `artifacts/lb_scgp_global/v2/m0/synth_kkt/manifest.json`, fix2-complete but locked pending fresh 0C/0H implementation/code review, exact hashes/no-clobber review, separate execution authorization, and later artifact review gates.
-4. `LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1`: actual train-bank static/resource microbenchmark plus replay/decision, without training or performance claim; depends on Run2-v2 PASS and fresh independent v2 artifact review, not Run2-v1.
+4. `LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2`: actual train-bank static/resource microbenchmark plus replay/decision, without training or performance claim; depends on Run2-v4 PASS and fresh independent v4 artifact review (`M0_RUN2_V4_ARTIFACT_REVIEW.md` = ARTIFACT_ACCEPTED, 2026-07-13), not Run2-v1/v2/v3. The realbank input protocol (A frozen CLIP-L/336 train bank as `Z0`, B synthetic label-blind placeholder `b_struct` at `m=36`, C two-stage producer/verifier GO criterion) is pinned in `EXPERIMENT_PLAN.machine.json` `runs[3].realbank_protocol` and `REALBANK_RESOURCE_V1_PLAN_AMENDMENT.md`. The v1 single submit burned preflight on a wrapper `$TMPDIR` path escape; v2 is a byte-clone of the eight v1 entities plus the audit-specified in-repo `slurm/tmp/` handoff fix, with run_id/schema-id v1→v2 REPLACED in place (`REALBANK_FULLCHAIN_STATIC_AUDIT.md`, `REALBANK_RESOURCE_V2_CLONE_FREEZE.md`).
 
 ## Run2-v4 Amendment Note (2026-07-13)
 

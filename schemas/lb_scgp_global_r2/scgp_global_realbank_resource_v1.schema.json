@@ -1,0 +1,461 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LB-SCGP Global-R2 realbank static/resource microbenchmark decision",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "resource_dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dataset": {"enum": ["MHC", "MHC_zh"], "type": "string"},
+        "n": {"minimum": 1, "type": "integer"},
+        "d": {"minimum": 1, "type": "integer"},
+        "q_rank": {"minimum": 0, "type": "integer"},
+        "m_scale": {"minimum": 0, "type": "integer"},
+        "peak_rss_bytes_after": {"minimum": 0, "type": "integer"}
+      },
+      "required": ["dataset", "n", "d", "q_rank", "m_scale", "peak_rss_bytes_after"]
+    },
+    "rank_dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dataset": {"enum": ["MHC", "MHC_zh"], "type": "string"},
+        "d": {"minimum": 1, "type": "integer"},
+        "rank_eps": {"minimum": 0, "type": "integer"},
+        "rank_le_d": {"type": "boolean"},
+        "lambda_d": {"type": "number"},
+        "lambda_dplus1": {"type": "number"},
+        "positive_eigenmass": {"type": "number"},
+        "negative_eigenmass": {"type": "number"},
+        "tail_ratio": {"type": "number"},
+        "reconstruction_residual": {"type": "number"},
+        "status": {"enum": ["PASS", "ENCODER_RANK_GATE_FAIL"], "type": "string"}
+      },
+      "required": [
+        "dataset",
+        "d",
+        "rank_eps",
+        "rank_le_d",
+        "lambda_d",
+        "lambda_dplus1",
+        "positive_eigenmass",
+        "negative_eigenmass",
+        "tail_ratio",
+        "reconstruction_residual",
+        "status"
+      ]
+    },
+    "replay_dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dataset": {"enum": ["MHC", "MHC_zh"], "type": "string"},
+        "replay_digest_run1": {"type": "string"},
+        "replay_digest_run2": {"type": "string"},
+        "match": {"type": "boolean"}
+      },
+      "required": ["dataset", "replay_digest_run1", "replay_digest_run2", "match"]
+    },
+    "coverage_dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dataset": {"enum": ["MHC", "MHC_zh"], "type": "string"},
+        "topk": {"minimum": 1, "type": "integer"},
+        "median_positive_gap": {"type": "number"},
+        "rho_coord": {"type": "number"},
+        "robust_query_count": {"minimum": 0, "type": "integer"},
+        "total_query_count": {"minimum": 0, "type": "integer"},
+        "coverage_fraction": {"minimum": 0, "type": "number"},
+        "coverage_gate_pass": {"type": "boolean"},
+        "class_stratification": {"const": "deferred_train_labels_not_opened", "type": "string"},
+        "safety_claim": {"const": "disabled", "type": "string"}
+      },
+      "required": [
+        "dataset",
+        "topk",
+        "median_positive_gap",
+        "rho_coord",
+        "robust_query_count",
+        "total_query_count",
+        "coverage_fraction",
+        "coverage_gate_pass",
+        "class_stratification",
+        "safety_claim"
+      ]
+    },
+    "bank_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dataset": {"enum": ["MHC", "MHC_zh"], "type": "string"},
+        "path": {"type": "string"},
+        "sha256": {"type": "string"}
+      },
+      "required": ["dataset", "path", "sha256"]
+    },
+    "zero_counters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "auxiliary_head_route_count": {"const": 0, "type": "integer"},
+        "cache_outer_held_content_read_count": {"const": 0, "type": "integer"},
+        "cache_outer_held_label_read_count": {"const": 0, "type": "integer"},
+        "cache_read_count": {"const": 0, "type": "integer"},
+        "cache_test_content_read_count": {"const": 0, "type": "integer"},
+        "cache_test_label_read_count": {"const": 0, "type": "integer"},
+        "cache_validation_content_read_count": {"const": 0, "type": "integer"},
+        "cache_validation_label_read_count": {"const": 0, "type": "integer"},
+        "certificate_read_count": {"const": 0, "type": "integer"},
+        "compiler_target_read_count": {"const": 0, "type": "integer"},
+        "comparator_freeze_adaptive_query_label_read_count": {"const": 0, "type": "integer"},
+        "comparator_freeze_final_test_label_read_count": {"const": 0, "type": "integer"},
+        "comparator_freeze_final_test_margin_read_count": {"const": 0, "type": "integer"},
+        "comparator_freeze_final_test_prediction_read_count": {"const": 0, "type": "integer"},
+        "control_construction_final_test_error_read_count": {"const": 0, "type": "integer"},
+        "control_construction_final_test_label_read_count": {"const": 0, "type": "integer"},
+        "control_construction_final_test_margin_read_count": {"const": 0, "type": "integer"},
+        "control_construction_final_test_prediction_read_count": {"const": 0, "type": "integer"},
+        "forbidden_path_read_count": {"const": 0, "type": "integer"},
+        "gpu_device_count": {"const": 0, "type": "integer"},
+        "held_content_read_count": {"const": 0, "type": "integer"},
+        "held_label_read_count": {"const": 0, "type": "integer"},
+        "key_selection_route_count": {"const": 0, "type": "integer"},
+        "local_v7_pass_evidence_reuse_count": {"const": 0, "type": "integer"},
+        "mllm_call_count": {"const": 0, "type": "integer"},
+        "mllm_calls_outside_train_cache": {"const": 0, "type": "integer"},
+        "model_call_count": {"const": 0, "type": "integer"},
+        "network_call_count": {"const": 0, "type": "integer"},
+        "non_allowlisted_train_content_read_count": {"const": 0, "type": "integer"},
+        "ocr_call_count": {"const": 0, "type": "integer"},
+        "pair_triplet_supcon_route_count": {"const": 0, "type": "integer"},
+        "performance_evaluation_count": {"const": 0, "type": "integer"},
+        "query_labels_read_count": {"const": 0, "type": "integer"},
+        "query_z_read_count": {"const": 0, "type": "integer"},
+        "reranking_route_count": {"const": 0, "type": "integer"},
+        "run3_cache_or_later_attempt_count": {"const": 0, "type": "integer"},
+        "sample_weighting_route_count": {"const": 0, "type": "integer"},
+        "segment_gold_read_count": {"const": 0, "type": "integer"},
+        "teacher_artifact_read_count": {"const": 0, "type": "integer"},
+        "teacher_cache_read_count": {"const": 0, "type": "integer"},
+        "teacher_cache_write_count": {"const": 0, "type": "integer"},
+        "test_content_read_count": {"const": 0, "type": "integer"},
+        "test_label_read_count": {"const": 0, "type": "integer"},
+        "train_label_read_count": {"const": 0, "type": "integer"},
+        "training_call_count": {"const": 0, "type": "integer"},
+        "validation_content_read_count": {"const": 0, "type": "integer"},
+        "validation_label_read_count": {"const": 0, "type": "integer"}
+      },
+      "required": [
+        "auxiliary_head_route_count",
+        "cache_outer_held_content_read_count",
+        "cache_outer_held_label_read_count",
+        "cache_read_count",
+        "cache_test_content_read_count",
+        "cache_test_label_read_count",
+        "cache_validation_content_read_count",
+        "cache_validation_label_read_count",
+        "certificate_read_count",
+        "compiler_target_read_count",
+        "comparator_freeze_adaptive_query_label_read_count",
+        "comparator_freeze_final_test_label_read_count",
+        "comparator_freeze_final_test_margin_read_count",
+        "comparator_freeze_final_test_prediction_read_count",
+        "control_construction_final_test_error_read_count",
+        "control_construction_final_test_label_read_count",
+        "control_construction_final_test_margin_read_count",
+        "control_construction_final_test_prediction_read_count",
+        "forbidden_path_read_count",
+        "gpu_device_count",
+        "held_content_read_count",
+        "held_label_read_count",
+        "key_selection_route_count",
+        "local_v7_pass_evidence_reuse_count",
+        "mllm_call_count",
+        "mllm_calls_outside_train_cache",
+        "model_call_count",
+        "network_call_count",
+        "non_allowlisted_train_content_read_count",
+        "ocr_call_count",
+        "pair_triplet_supcon_route_count",
+        "performance_evaluation_count",
+        "query_labels_read_count",
+        "query_z_read_count",
+        "reranking_route_count",
+        "run3_cache_or_later_attempt_count",
+        "sample_weighting_route_count",
+        "segment_gold_read_count",
+        "teacher_artifact_read_count",
+        "teacher_cache_read_count",
+        "teacher_cache_write_count",
+        "test_content_read_count",
+        "test_label_read_count",
+        "train_label_read_count",
+        "training_call_count",
+        "validation_content_read_count",
+        "validation_label_read_count"
+      ]
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "lb_scgp_global_r2_realbank_resource_manifest_v1", "type": "string"},
+    "artifact_schema_id": {"const": "scgp_global_realbank_resource_v1", "type": "string"},
+    "run_id": {"const": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1", "type": "string"},
+    "terminal_state": {"enum": ["PRODUCED_PENDING_INDEPENDENT_VERIFY", "FAIL"], "type": "string"},
+    "no_success_claim": {"const": true, "type": "boolean"},
+    "decision": {"enum": ["GO", "STOP"], "type": "string"},
+    "authorized_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {"const": "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v1", "type": "string"},
+        "train_bank_static_replay_only": {"const": true, "type": "boolean"},
+        "m1_cache_and_later_locked": {"const": true, "type": "boolean"}
+      },
+      "required": ["run_id", "train_bank_static_replay_only", "m1_cache_and_later_locked"]
+    },
+    "slurm_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "required": {"const": true, "type": "boolean"},
+        "conda_env": {"const": "HateVideo", "type": "string"},
+        "job_id": {"type": "string"},
+        "cpu": {"const": 16, "type": "integer"},
+        "ram_gb": {"const": 96, "type": "integer"},
+        "gpu": {"const": 0, "type": "integer"},
+        "no_time_flag": {"const": true, "type": "boolean"}
+      },
+      "required": ["required", "conda_env", "job_id", "cpu", "ram_gb", "gpu", "no_time_flag"]
+    },
+    "config_path": {"type": "string"},
+    "source_manifest_path": {"type": "string"},
+    "access_ledger_path": {"type": "string"},
+    "resource_peak": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "job_peak_rss_bytes": {"minimum": 0, "type": "integer"},
+        "cap_bytes": {"const": 103079215104, "type": "integer"},
+        "within_cap": {"type": "boolean"},
+        "measurement": {"const": "resource.getrusage(RUSAGE_SELF).ru_maxrss", "type": "string"},
+        "per_dataset": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/resource_dataset"},
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": ["job_peak_rss_bytes", "cap_bytes", "within_cap", "measurement", "per_dataset"]
+    },
+    "rank_tail": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "all_rank_le_d": {"type": "boolean"},
+        "per_dataset": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/rank_dataset"},
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": ["all_rank_le_d", "per_dataset"]
+    },
+    "replay_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "all_match": {"type": "boolean"},
+        "per_dataset": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/replay_dataset"},
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": ["all_match", "per_dataset"]
+    },
+    "robust_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fail_open": {"const": true, "type": "boolean"},
+        "robust_constraints_enabled": {"const": false, "type": "boolean"},
+        "per_dataset": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/coverage_dataset"},
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": ["fail_open", "robust_constraints_enabled", "per_dataset"]
+    },
+    "isolation_injection_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "all_reject": {"type": "boolean"},
+        "cases": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "read_validation_label": {"const": "REJECT", "type": "string"},
+            "read_validation_content": {"const": "REJECT", "type": "string"},
+            "read_test_label": {"const": "REJECT", "type": "string"},
+            "read_test_content": {"const": "REJECT", "type": "string"},
+            "read_held_content": {"const": "REJECT", "type": "string"},
+            "read_cache_artifact": {"const": "REJECT", "type": "string"},
+            "read_query_z": {"const": "REJECT", "type": "string"},
+            "read_query_labels": {"const": "REJECT", "type": "string"},
+            "read_teacher_artifact": {"const": "REJECT", "type": "string"},
+            "read_non_allowlisted_train_bank": {"const": "REJECT", "type": "string"},
+            "open_mutated_train_bank_hash": {"const": "REJECT", "type": "string"}
+          },
+          "required": [
+            "read_validation_label",
+            "read_validation_content",
+            "read_test_label",
+            "read_test_content",
+            "read_held_content",
+            "read_cache_artifact",
+            "read_query_z",
+            "read_query_labels",
+            "read_teacher_artifact",
+            "read_non_allowlisted_train_bank",
+            "open_mutated_train_bank_hash"
+          ]
+        }
+      },
+      "required": ["all_reject", "cases"]
+    },
+    "structural_placeholder": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "is_science": {"const": false, "type": "boolean"},
+        "policy": {"const": "synthetic_label_blind_placeholder_b_struct_opens_structural_code_path", "type": "string"},
+        "rank_cap_r": {"const": 8, "type": "integer"},
+        "m_scale": {"const": 36, "type": "integer"},
+        "note": {"type": "string"},
+        "per_dataset_b_struct_l2": {
+          "type": "array",
+          "items": {"type": "number"},
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": ["is_science", "policy", "rank_cap_r", "m_scale", "note", "per_dataset_b_struct_l2"]
+    },
+    "allowed_reads": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "authorized_train_bank_read_count": {"const": 2, "type": "integer"},
+        "banks": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/bank_row"},
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": ["authorized_train_bank_read_count", "banks"]
+    },
+    "gold_isolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "only_gold_supervision": {"const": "parent_video_binary_label", "type": "string"},
+        "segment_gold_exists": {"const": false, "type": "boolean"},
+        "segment_gold_used": {"const": false, "type": "boolean"},
+        "train_labels_opened": {"const": false, "type": "boolean"},
+        "zero_counters": {"$ref": "#/definitions/zero_counters"}
+      },
+      "required": ["only_gold_supervision", "segment_gold_exists", "segment_gold_used", "train_labels_opened", "zero_counters"]
+    },
+    "dirty_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run1_frozen_hashes_bound": {"const": true, "type": "boolean"},
+        "source_files_bound": {"const": true, "type": "boolean"},
+        "artifact_outputs_excluded_from_source_binding": {"const": true, "type": "boolean"},
+        "docs_tracker_post_run_changes_separately_measurable": {"const": true, "type": "boolean"},
+        "old_protected_manifest_sha256": {"type": "string"},
+        "relevant_tree_sha256": {"type": "string"}
+      },
+      "required": [
+        "run1_frozen_hashes_bound",
+        "source_files_bound",
+        "artifact_outputs_excluded_from_source_binding",
+        "docs_tracker_post_run_changes_separately_measurable",
+        "old_protected_manifest_sha256",
+        "relevant_tree_sha256"
+      ]
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "producer_status": {"enum": ["PASS_CANDIDATE", "FAIL"], "type": "string"},
+        "semantic_verifier_required": {"const": true, "type": "boolean"},
+        "decision_rule": {"type": "string"}
+      },
+      "required": ["producer_status", "semantic_verifier_required", "decision_rule"]
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "config_sha256": {"type": "string"},
+        "schema_sha256": {"type": "string"},
+        "implementation_sha256": {"type": "string"},
+        "source_manifest_sha256": {"type": "string"},
+        "access_ledger_sha256": {"type": "string"},
+        "run1_artifact_sha256": {"type": "string"},
+        "run1_lock_sha256": {"type": "string"},
+        "train_bank_MHC_sha256": {"type": "string"},
+        "train_bank_MHC_zh_sha256": {"type": "string"}
+      },
+      "required": [
+        "config_sha256",
+        "schema_sha256",
+        "implementation_sha256",
+        "source_manifest_sha256",
+        "access_ledger_sha256",
+        "run1_artifact_sha256",
+        "run1_lock_sha256",
+        "train_bank_MHC_sha256",
+        "train_bank_MHC_zh_sha256"
+      ]
+    },
+    "payload_sha256": {"type": "string"}
+  },
+  "required": [
+    "schema_version",
+    "artifact_schema_id",
+    "run_id",
+    "terminal_state",
+    "no_success_claim",
+    "decision",
+    "authorized_boundary",
+    "slurm_policy",
+    "config_path",
+    "source_manifest_path",
+    "access_ledger_path",
+    "resource_peak",
+    "rank_tail",
+    "replay_hashes",
+    "robust_coverage",
+    "isolation_injection_results",
+    "structural_placeholder",
+    "allowed_reads",
+    "gold_isolation",
+    "dirty_binding",
+    "acceptance",
+    "hashes",
+    "payload_sha256"
+  ]
+}
