@@ -1,0 +1,28 @@
+=== attempt 1 02:56:16 ===
+
+[HateMM/CLIP] C=0.001 Zdim=1792 accZ=0.8239 label_accZA=1.0000 (headroom_frac=1.000) PASS=True
+   label_oracle (CALIBRATION)         accZA=1.0000 dacc=+0.1761 CI[+0.1492,+0.2024] dbits=+0.5874 CI[+0.5408,+0.6359] fano_dacc=+0.1441 CI[+0.1266,+0.1639]
+   gold_target (oracle consistency)   accZA=0.8726 dacc=+0.0487 CI[+0.0220,+0.0750] dbits=+0.1648 CI[+0.1228,+0.2055] fano_dacc=+0.0562 CI[+0.0416,+0.0712]
+   pred_target (REAL Qwen-7B)         accZA=0.8220 dacc=-0.0019 CI[-0.0180,+0.0145] dbits=+0.0245 CI[-0.0002,+0.0475] fano_dacc=+0.0094 CI[-0.0001,+0.0181]
+   shuffled_pred (null control)       accZA=0.8113 dacc=-0.0126 CI[-0.0210,-0.0048] dbits=-0.0066 CI[-0.0130,-0.0003] fano_dacc=-0.0026 CI[-0.0052,-0.0001]
+
+[HateMM/Qwen] C=0.001 Zdim=7168 accZ=0.8384 label_accZA=1.0000 (headroom_frac=1.000) PASS=True
+   label_oracle (CALIBRATION)         accZA=1.0000 dacc=+0.1616 CI[+0.1368,+0.1874] dbits=+0.5370 CI[+0.4739,+0.6046] fano_dacc=+0.1253 CI[+0.1037,+0.1510]
+   gold_target (oracle consistency)   accZA=0.8871 dacc=+0.0487 CI[+0.0301,+0.0672] dbits=+0.1391 CI[+0.0976,+0.1805] fano_dacc=+0.0446 CI[+0.0304,+0.0603]
+   pred_target (REAL Qwen-7B)         accZA=0.8425 dacc=+0.0040 CI[-0.0081,+0.0161] dbits=+0.0220 CI[-0.0015,+0.0456] fano_dacc=+0.0077 CI[-0.0005,+0.0164]
+   shuffled_pred (null control)       accZA=0.8325 dacc=-0.0059 CI[-0.0126,+0.0005] dbits=-0.0089 CI[-0.0170,-0.0010] fano_dacc=-0.0032 CI[-0.0063,-0.0003]
+
+[MHC/CLIP] C=0.01 Zdim=1792 accZ=0.7621 label_accZA=1.0000 (headroom_frac=1.000) PASS=True
+   label_oracle (CALIBRATION)         accZA=1.0000 dacc=+0.2379 CI[+0.2051,+0.2714] dbits=+0.6865 CI[+0.6114,+0.7650] fano_dacc=+0.1837 CI[+0.1512,+0.2236]
+   pred_target (REAL Qwen-7B)         accZA=0.7636 dacc=+0.0015 CI[-0.0102,+0.0135] dbits=-0.0232 CI[-0.0452,-0.0015] fano_dacc=-0.0111 CI[-0.0232,-0.0007]
+   shuffled_pred (null control)       accZA=0.7592 dacc=-0.0029 CI[-0.0138,+0.0077] dbits=-0.0184 CI[-0.0401,+0.0018] fano_dacc=-0.0087 CI[-0.0203,+0.0008]
+
+[MHC/Qwen] C=0.01 Zdim=7168 accZ=0.8047 label_accZA=1.0000 (headroom_frac=1.000) PASS=True
+   label_oracle (CALIBRATION)         accZA=1.0000 dacc=+0.1953 CI[+0.1661,+0.2251] dbits=+0.6933 CI[+0.5836,+0.8112] fano_dacc=+0.1869 CI[+0.1403,+0.2510]
+   pred_target (REAL Qwen-7B)         accZA=0.7974 dacc=-0.0073 CI[-0.0164,+0.0015] dbits=-0.0280 CI[-0.0456,-0.0094] fano_dacc=-0.0136 CI[-0.0254,-0.0045]
+   shuffled_pred (null control)       accZA=0.8033 dacc=-0.0015 CI[-0.0146,+0.0113] dbits=-0.0192 CI[-0.0497,+0.0105] fano_dacc=-0.0092 CI[-0.0267,+0.0049]
+
+wrote refine-logs/C3_REAL_PREDICTOR_PROBE_OUT.json
+=== attempt 1 rc=0 cells=4 ===
+ALL_CELLS_DONE
+WRAPPER_EXIT
