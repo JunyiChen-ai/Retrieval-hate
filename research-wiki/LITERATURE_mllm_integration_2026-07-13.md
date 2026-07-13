@@ -5,10 +5,10 @@
 
 ## 1. 统一候选排序(三路合并,已应用 OCR 否决)
 
-### C1 — RA-HMD 式 QLoRA 两阶段端到端(检索对比目标下微调 MLLM encoder 本体)【最高优先】
+### C1 — RA-HMD 式 QLoRA 两阶段端到端(检索对比目标下微调 MLLM encoder 本体)【⚠️ 2026-07-13 当日证据 triage 后降级,见 §7——预期增量低于判决线,倾向 G0 处死】
 - 锚文献:RA-HMD (Mei et al., **EMNLP 2025 Oral**, arXiv 2502.13061 — RGCL 同一血统的官方后续);CLIP-LoRA (CVPR**W** 2024, arXiv 2405.18541);DST (NeurIPS 2022 Oral, arXiv 2202.07136);DHO (preprint, arXiv 2505.07675, venue 未确认)。
 - 机制:冻结 Qwen 特征 → **QLoRA 可训练** Qwen。Stage 1: QLoRA 任务适配;Stage 2: 冻结 backbone,训 MLP + triplet 对比 head;解耦双头避免监督/对比梯度打架(即 P9b 分数再分配的文献级解法)。
-- 证据强度:RA-HMD 在 HatefulMemes 上 **+3.0 acc (82.1 vs 78.82) / +4.1 AUC** 对冻结特征 RGCL——正是我们管线的 meme 类比,达标线以上的直接先例。我们的 encoder swap(冻结)已 +5.3 HateMM,可训练化是其自然加深。
+- 证据强度:RA-HMD 在 HatefulMemes 上 **+3.3 acc (82.1 vs 78.82,Δ=+3.28;scout 原报 +3.0 系舍入不一致,归档审计已标记,待原文核实口径) / +4.1 AUC** 对冻结特征 RGCL——正是我们管线的 meme 类比,达标线以上的直接先例。我们的 encoder swap(冻结)已 +5.3 HateMM,可训练化是其自然加深。
 - ⚠️ 两个 scout 的口径分歧(预注册前必须读原文核实):methods-scout 报整条 QLoRA 管线 +3 acc vs 冻结 RGCL;cross-domain-scout 报 Stage-2 对比增量偏 OOD/跨集(in-domain FHM ≈ 冻结)。两者可同真(总增益 vs 阶段增量),需原文裁决。
 - 资产:repo 内已有 `RA-HMD/LLAMA-FACTORY-Ver202512`(用户已在铺设);7B QLoRA 2×GPU 可行。
 - 非同构:14 条死路线全部冻结 encoder 注决策侧;此路编辑表征流形本身 = 项目唯一 +3 杠杆的直接延伸。
@@ -45,7 +45,7 @@
 | TCE-DBF (2024) | 0.876 micro-F1 | 四模态 CMA | 无 |
 | HCC1 (2025) | 0.854 acc / 0.848 M-F1 | 晚融合 | 无 |
 | TANDEM (2601.11178) | 0.78 acc | Qwen2.5-VL+Qwen2-Audio SFT+RL(LMM-as-reasoner) | 本地权重 OK,**落后融合 frontier** |
-| **我们** | **~0.83 acc CLIP / ~0.88 acc Qwen** | RGCL | 无 |
+| **我们** | **~0.82 acc CLIP / 0.870 acc Qwen**(3-seed 均值 0.873 val-sel / 0.868 final-ep,exp-encoder-3seed.md:155-159;审计修正,原稿误写 ~0.88) | RGCL | 无 |
 
 ### MultiHateClip(1k EN + 1k ZH,test ~200/语言)
 | 方法 | EN | ZH | 备注 |
@@ -55,7 +55,7 @@
 | LLaMA-3.2-11B | ~0.78 M-F1 | — | 本地 LMM |
 | **我们** | **~0.79–0.81 acc** | **~0.85 acc** | 已在/超 frontier |
 
-**校准结论:** MHC-ZH 我们已超已发表最好成绩;MHC-EN 与 HateMM(Qwen floor)已在诚实 frontier 上。+3 acc ≈ 设立新 SOTA——目标在 frontier 之外,难度校准清楚。**结构性佐证:2024–2026 每一个诚实 HateMM 增益都来自加表征通道;LMM-as-reasoner 分类器(TANDEM 0.78)反而落后监督融合。** 与 reflection D2 独立吻合。RecSys 文献同构结论:LLM-as-ranker 在 warm/大数据 regime 对强协同特征冗余,LLM 只在表征注入时有效 (A-LLMRec 2404.11343; 2505.20730)。
+**校准结论(审计修正后):** MHC-ZH 我们已超已发表最好成绩;MHC-EN 在 frontier 上;HateMM Qwen floor 0.870 **略低于** MM-HSD 0.878(差距 ~0.8 pt,MM-HSD 的增量来自音频 wav2vec2 + OCR 两个通道,后者已被用户否决,前者我们管线目前没有音频通道——这是一个被文献标定的、未被 14 条死路覆盖的表征缺口)。+3 acc ≈ 设立新 SOTA——目标在 frontier 之外,难度校准清楚。**结构性佐证:2024–2026 每一个诚实 HateMM 增益都来自加表征通道;LMM-as-reasoner 分类器(TANDEM 0.78)反而落后监督融合。** 与 reflection D2 独立吻合。RecSys 文献同构结论:LLM-as-ranker 在 warm/大数据 regime 对强协同特征冗余,LLM 只在表征注入时有效 (A-LLMRec 2404.11343; 2505.20730)。
 
 ## 3. 条件信息 Gate 配方(G0-cond,制度化,零 GPU)
 
@@ -88,3 +88,13 @@
 3. C3 密集推理文本:先 G0-cond gate(零 GPU),gate 过才排队;
 4. C5/C6 仅作 C1 放大器。
 A 线 lb_scgp_global 继续走完 M2→M3 干净判决,失败即切 C 线,不空转。
+
+## 7. 当日增补:C1 证据 triage(prep agent 读 RA-HMD 原文 + repo 史比对,2026-07-13)
+
+**Scout 口径分歧已裁决(arXiv 2502.13061v1 全文,Qwen2VL-7B/HatefulMemes,Table 1 + Table 3):** 两个 scout 都对。全管线 in-domain 对冻结 RGCL = +4.06 AUC / +3.28 acc;但消融显示 **增益几乎全部来自 Stage-1 LoRA-SFT 表征适配**(去掉 Stage-1:−6.7 AUC/−7.9 acc),**Stage-2 检索对比 in-domain 只值 +0.9 AUC / +0.7 acc**(其真实价值在跨域:cross-domain 去掉 Stage-2 −3.7 AUC/−7.6 acc)。(WebFetch HTML 读数,复审时对 PDF 再核一遍小数位。)
+
+**与本项目历史对撞(关键):** 视频上的 LMM-RGCL 我们已经跑过两次并杀掉——**P9**(Stage-1 LoRA-SFT):MLP head ≈ 冻结 floor(+0.6/+1.0/+0.9,噪声内),kNN 反而**低于** floor(−2.7/−2.2/−4.7);**P9b**(RGCL 联训):0/12 cell 过 floor。C1 唯一真正未测的 cell = Stage-1 LoRA → 抽适配特征 → **顺序**训 RGCL 对比 head(P9 用的是无 Stage-2 head 的裸 kNN;P9b 是联训非顺序)。而 RA-HMD 自己的消融给这个 cell 的 in-domain 定价 ≈ **+0.7 acc**(还是 8.5k memes 规模;我们 549–744 视频)——低于 +3 判决线,也低于 ±1–2 pt 噪声地板。
+
+**Triage 结论(待 fresh 审稿确认):C1 在 G0 阶段处死**,理由 = 自家 P9/P9b 负结果 + 锚论文自己的消融天花板;不花 GPU。**C 线头号候选变更为 C2(SAV)**,C3(gate-first 密集文本)次之。此 triage 正是 G0-cond 制度的第一次实战执行。
+
+**资产事实(prep agent 实核):** 本地唯一完整 VL checkpoint = **Qwen2.5-VL-7B-Instruct(16 GB)**;32B/72B 只有锁文件无权重(此前下载日志有欺骗性),Qwen3-VL 仅元数据 stub → C 线所有候选当前都是 7B-only;C4(72B 蒸馏)在补下载(290G 配额内)之前不可行。SAV 所需的 per-(layer,head) 特征不在现有缓存中(现缓存仅末层 mean-pooled 3584-d),需一次新的冻结前向抽取。P9 已验证 8 帧 Qwen2.5-VL-7B LoRA 单张 80GB A100 可跑。
