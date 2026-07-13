@@ -1,0 +1,203 @@
+{
+ "dataset": "HateMM",
+ "design": {
+  "n_splits": 5,
+  "n_repeats": 5,
+  "C_grid": [
+   0.001,
+   0.01,
+   0.1,
+   1.0
+  ],
+  "B_boot": 5000,
+  "rng_seed": 20260714,
+  "shuffle_seed": 12345,
+  "bar_dacc": 0.04
+ },
+ "encoders": {
+  "CLIP": {
+   "encoder_file": "data/CLIP_Embedding/HateMM/train_openai_clip-vit-large-patch14-336_HF.pt",
+   "Z_dim": 1792,
+   "C": 0.001,
+   "C_cv_acc": 0.8279793216034828,
+   "baseline_acc_Z": 0.8239247311827957,
+   "arms": {
+    "oracle_target": {
+     "arm": "oracle_target (9-way one-hot, cov 1.0)",
+     "n": 744,
+     "A_dim": 9,
+     "acc_Z": 0.8239247311827957,
+     "acc_ZA": 0.8384408602150537,
+     "dacc_mean": 0.014516129032258065,
+     "dacc_ci": [
+      0.009139784946236558,
+      0.020436827956989152
+     ],
+     "bits_Z_mean": 0.596990513131198,
+     "bits_ZA_mean": 0.5735468243546921,
+     "dbits_per_video_mean": 0.02344368877650593,
+     "dbits_ci": [
+      0.019873972437806496,
+      0.027004652312664457
+     ],
+     "dbits_total": 17.44210444972041,
+     "fano_acc_ceil_Z": 0.8550759798007302,
+     "fano_acc_ceil_ZA": 0.8640448746187985,
+     "fano_dacc_proj": 0.008968894818068285
+    },
+    "shuffled_target": {
+     "arm": "shuffled_target (null control)",
+     "n": 744,
+     "A_dim": 9,
+     "acc_Z": 0.8239247311827957,
+     "acc_ZA": 0.8247311827956988,
+     "dacc_mean": 0.0008064516129032259,
+     "dacc_ci": [
+      -0.00026881720430107516,
+      0.002150537634408602
+     ],
+     "bits_Z_mean": 0.596990513131198,
+     "bits_ZA_mean": 0.5971578338954029,
+     "dbits_per_video_mean": -0.0001673207642048568,
+     "dbits_ci": [
+      -0.0006996834222608218,
+      0.0003952526199575635
+     ],
+     "dbits_total": -0.12448664856841346,
+     "fano_acc_ceil_Z": 0.8550759798007302,
+     "fano_acc_ceil_ZA": 0.8550106297135313,
+     "fano_dacc_proj": -6.535008719898983e-05
+    },
+    "label_oracle": {
+     "arm": "label_oracle (DIAGNOSTIC any-signal ceiling)",
+     "n": 744,
+     "A_dim": 2,
+     "acc_Z": 0.8239247311827957,
+     "acc_ZA": 0.871236559139785,
+     "dacc_mean": 0.04731182795698925,
+     "dacc_ci": [
+      0.036290322580645164,
+      0.05913978494623656
+     ],
+     "bits_Z_mean": 0.596990513131198,
+     "bits_ZA_mean": 0.502960006486922,
+     "dbits_per_video_mean": 0.09403050664427612,
+     "dbits_ci": [
+      0.08567172469170092,
+      0.10271768187827451
+     ],
+     "dbits_total": 69.95869694334144,
+     "fano_acc_ceil_Z": 0.8550759798007302,
+     "fano_acc_ceil_ZA": 0.8889883075822563,
+     "fano_dacc_proj": 0.033912327781526086
+    }
+   }
+  },
+  "Qwen": {
+   "encoder_file": "data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct_HF.pt",
+   "Z_dim": 7168,
+   "C": 0.001,
+   "C_cv_acc": 0.8373752947578451,
+   "baseline_acc_Z": 0.8384408602150537,
+   "arms": {
+    "oracle_target": {
+     "arm": "oracle_target (9-way one-hot, cov 1.0)",
+     "n": 744,
+     "A_dim": 9,
+     "acc_Z": 0.8384408602150537,
+     "acc_ZA": 0.8419354838709677,
+     "dacc_mean": 0.0034946236559139786,
+     "dacc_ci": [
+      0.001344086021505376,
+      0.005913978494623655
+     ],
+     "bits_Z_mean": 0.5465518091969005,
+     "bits_ZA_mean": 0.5351195454684264,
+     "dbits_per_video_mean": 0.01143226372847407,
+     "dbits_ci": [
+      0.00923262440514395,
+      0.013664594482462303
+     ],
+     "dbits_total": 8.505604213984709,
+     "fano_acc_ceil_Z": 0.8739332117184895,
+     "fano_acc_ceil_ZA": 0.8779870275917225,
+     "fano_dacc_proj": 0.004053815873233058
+    },
+    "shuffled_target": {
+     "arm": "shuffled_target (null control)",
+     "n": 744,
+     "A_dim": 9,
+     "acc_Z": 0.8384408602150537,
+     "acc_ZA": 0.8379032258064516,
+     "dacc_mean": -0.0005376344086021506,
+     "dacc_ci": [
+      -0.0018817204301075274,
+      0.0005376344086021505
+     ],
+     "bits_Z_mean": 0.5465518091969005,
+     "bits_ZA_mean": 0.5464954976000224,
+     "dbits_per_video_mean": 5.631159687811467e-05,
+     "dbits_ci": [
+      -0.0004172420086644523,
+      0.0005902556265834475
+     ],
+     "dbits_total": 0.041895828077317315,
+     "fano_acc_ceil_Z": 0.8739332117184895,
+     "fano_acc_ceil_ZA": 0.8739533700384632,
+     "fano_dacc_proj": 2.015831997370654e-05
+    },
+    "label_oracle": {
+     "arm": "label_oracle (DIAGNOSTIC any-signal ceiling)",
+     "n": 744,
+     "A_dim": 2,
+     "acc_Z": 0.8384408602150537,
+     "acc_ZA": 0.8524193548387098,
+     "dacc_mean": 0.013978494623655914,
+     "dacc_ci": [
+      0.009677419354838708,
+      0.01881720430107527
+     ],
+     "bits_Z_mean": 0.5465518091969005,
+     "bits_ZA_mean": 0.49110835468440583,
+     "dbits_per_video_mean": 0.05544345451249462,
+     "dbits_ci": [
+      0.0489489287978186,
+      0.062311270258832624
+     ],
+     "dbits_total": 41.249930157296,
+     "fano_acc_ceil_Z": 0.8739332117184895,
+     "fano_acc_ceil_ZA": 0.8928993063797415,
+     "fano_dacc_proj": 0.018966094661251987
+    }
+   }
+  }
+ },
+ "target_facts": {
+  "n": 744,
+  "base_rate_pos": 0.40053763440860213,
+  "code_dict": {
+   "Blacks": 0,
+   "Jews": 1,
+   "Whites": 2,
+   "Others": 3,
+   "LGBTQ": 4,
+   "Muslims": 5,
+   "Sexits": 6,
+   "Asian": 7
+  },
+  "primary_dist": {
+   "-1": 32,
+   "0": 332,
+   "1": 72,
+   "2": 18,
+   "3": 270,
+   "4": 6,
+   "5": 7,
+   "6": 5,
+   "7": 2
+  },
+  "coverage_non_none": 0.956989247311828,
+  "n_none": 32,
+  "none_all_nonhate": true
+ }
+}

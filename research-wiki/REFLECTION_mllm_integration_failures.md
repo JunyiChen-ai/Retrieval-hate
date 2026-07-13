@@ -42,6 +42,8 @@
 - 先跑 oracle 上限版(gold 版信号,合规:gold 仅用于 probing):oracle 条件增益 < +3 → 整个信号族直接毙掉。
 此 gate 若 6 个月前存在,P1–P5、TARC、P11 一张 GPU 卡都不用烧。
 
+**校准强制项(2026-07-14 增补,源于 C3 探针判决被推翻的教训,refine-logs/C3_PROBE_VERDICT_REVIEW.md):** 任何 G0-cond 探针必须内置 label-oracle 校准 arm(把 gold 标签本身当 A 喂入),且该 arm 必须达到 ~100% 的 Fano headroom;达不到即判定探针机器无效(常见病因:对 [Z,A] 全列共用重 L2 会把辅助列系数压死——修法:Z 按其最优正则处理,A 以未惩罚/弱惩罚的原始编码进入)。凡校准 arm 未过,任何"信号被 cap"的负判决一律不得接受。
+
 ## 5. A 线(lb_scgp_global)处置
 
 按 D2 标准,A 线证书 = 每视频 8 个 observables,带宽同样偏低;与 P1–P5 的区别是作用点为全局 Gram 几何(表征侧),不同构但先验被本 reflection 压低。处置:M1 缓存已完成(jobs 13012/13013 COMPLETED),M2/M3 成本小且有预注册干净判决 → **给 A 线一次 M3 判决机会,C 线(文献候选)并行排队;M3 若败零空转切换**。不再出现单线多轮消耗。
