@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_m1_cache_v1_common.py", line 149, in canonical_root_path
+    rel = resolved.relative_to(root)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/pathlib.py", line 730, in relative_to
+    raise ValueError("{!r} is not in the subpath of {!r}"
+ValueError: '/data/jehc223/Multihateclip/English/video_mp4/-0IpEC2xXT0.mp4' is not in the subpath of '/data/jehc223/RGCL' OR one path is relative and the other is absolute.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_m1_cache_producer_v1.py", line 329, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_m1_cache_producer_v1.py", line 136, in main
+    built = evpack.build_dataset_packs(args.dataset, ledger, hash_videos=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_m1_evidence_pack_v1.py", line 183, in build_dataset_packs
+    video_fs, _ = canonical_root_path(video_rel)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/lb_scgp_global_r2_m1_cache_v1_common.py", line 151, in canonical_root_path
+    raise RuntimeError(f"path escapes repository root: {path}") from exc
+RuntimeError: path escapes repository root: data/video/MHC/All/-0IpEC2xXT0.mp4

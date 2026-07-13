@@ -1,0 +1,82 @@
+{
+  "schema_version": "lb_scgp_global_r2_m1_cache_plan_amendment_v2",
+  "amendment_id": "M1_CACHE_PLAN_AMENDMENT_V2",
+  "generated_at": "2026-07-13T00:00:00+12:00",
+  "lineage": "LBSCGP-GLOBAL-M1-CACHE",
+  "milestone": "M1",
+  "block": "B1",
+  "claim": "C1",
+  "author_thread": "fresh Claude Opus 4.8 m1-prep role in /data/jehc223/RGCL; separate from the independent amendment reviewer, the fresh 0C/0H M1 code reviewer, the execution authorizer, and the executor; no SLURM lineage submission, no git commit",
+  "trigger": "M1_CACHE_V1_RESULT_TO_CLAIM_REVIEW.md: v1 cache runs (jobs 13003/13004) double-burned at Stage-1 evidence-pack build. Root cause = the train mp4 files are in-repo symlinks whose targets escape the repo, so the v1 canonical_root_path resolve() containment guard fired at the video site before any model load or write. No artifact, no seal contact, zero scientific information; fail-closed hygiene clean.",
+  "fix_ruling": "REJECT the 'remove byte-hash / mp4 never opened / builder-only' proposal (three factual errors: mp4 MUST be decoded for 16 frames; the guard fires at BOTH builder and producer sites; the crash is resolve() not the hash open). ADOPT a symlink-tolerant containment guard (canonical_video_path) at BOTH the builder and producer video sites; retain video_sha256 (bytes read via the OS-followed target); zero weakening of other isolation checks.",
+  "decisions": {
+    "run_id_replace_in_place": {
+      "runs4": {"old": "LBSCGP-GLOBAL-M1-CACHE-MHC-v1", "new": "LBSCGP-GLOBAL-M1-CACHE-MHC-v2"},
+      "runs5": {"old": "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1", "new": "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v2"},
+      "runs6_seal": {"run_id_unchanged": "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1", "dependencies_synced_to": ["LBSCGP-GLOBAL-M1-CACHE-MHC-v2", "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v2"]},
+      "run_order_indices_updated": [4, 5],
+      "artifact_paths_unchanged": true,
+      "artifact_schema_ids_unchanged": ["scgp_global_cache_replica_v2", "scgp_global_cache_seal_v1"],
+      "slurm_budget_unchanged": true
+    },
+    "code_fix": {
+      "new_function": "canonical_video_path(rel, dataset) in lb_scgp_global_r2_m1_cache_v2_common.py",
+      "guard_semantics": "containment on the symlink LOCATION (un-resolved relative path): no '..', under data/video/<dataset>/All/, LOCATION under ROOT lexically, parent dir resolves in-repo, leaf is regular-file-or-symlink (lstat, no follow). Returns the in-repo location for OS-follow decode/hash. The external mp4 target is permitted by design and recorded in the access ledger (followed_target) for audit. allowlist/FORBIDDEN_TOKENS still run on rel; forbidden zero-counters stay 0.",
+      "sites_changed": ["evidence_pack_v2.build_dataset_packs (was canonical_root_path)", "producer_v2.main video loop (was canonical_root_path)", "common_v2.TrainEvidenceAccessLedger.note_video_read (was canonical_root_path)"],
+      "video_sha256_retained": true,
+      "isolation_weakening": "none; only the mp4's resolved target is no longer required under ROOT"
+    },
+    "entity_clone_rename": {
+      "convention": "per lineage precedent (realbank v1->v2); clone-rename the code/config/wrapper/sbatch entities carrying the code-lineage v1 token to v2; behavioral change is guard-only",
+      "renamed_v1_to_v2": [
+        "scripts/analysis/lb_scgp_global_r2_m1_cache_v2_common.py",
+        "scripts/analysis/lb_scgp_global_r2_m1_evidence_pack_v2.py",
+        "scripts/analysis/lb_scgp_global_r2_m1_cache_producer_v2.py",
+        "scripts/analysis/lb_scgp_global_r2_m1_cache_seal_v2.py",
+        "configs/lb_scgp_global_r2/m1_cache_mhc_v2.json",
+        "configs/lb_scgp_global_r2/m1_cache_mhc_zh_v2.json",
+        "configs/lb_scgp_global_r2/m1_cache_seal_v2.json",
+        "scripts/wrappers/lb_scgp_global_r2_m1_cache_v2.sh",
+        "scripts/wrappers/lb_scgp_global_r2_m1_cache_seal_v2.sh",
+        "scripts/slurm/lb_scgp_global_r2_m1_cache_mhc_v2.sbatch",
+        "scripts/slurm/lb_scgp_global_r2_m1_cache_mhc_zh_v2.sbatch",
+        "scripts/slurm/lb_scgp_global_r2_m1_cache_seal_v2.sbatch"
+      ],
+      "carried_forward_unchanged": [
+        "schemas/lb_scgp_global_r2/scgp_global_cache_replica_v2.schema.json",
+        "schemas/lb_scgp_global_r2/scgp_global_cache_seal_v1.schema.json"
+      ],
+      "carried_forward_reason": "these are CONTRACT artifact-schema identifiers (bound in machine.artifact_schemas + runs[].artifact_schema_ids); the cert/seal contract is unchanged by the symlink plumbing fix. Their 'v2'/'v1' is the schema-contract version, orthogonal to the run-code lineage; renaming them would desync the frozen machine artifact_schema_ids (the review did not ask for a contract change).",
+      "v1_entities_retained_as_burned_lineage": true
+    }
+  },
+  "hash_cascade": {
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": {"before": "7638ac784d4f8caad6f33c00a79c97519a84950394c4dd53fc393458a4e332dd", "after": "ab0a06fb09669e1185774f20cd471ed9fd6d65d69f5a13f207a0b7535b3ce58c"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": {"before": "e5ec9bc458cc51d14adc1f4a873593dd9f76399fd5e328ff36b70a3512eaee62", "after": "e5ec9bc458cc51d14adc1f4a873593dd9f76399fd5e328ff36b70a3512eaee62", "note": "unchanged: no literal M1 cache run_id in EXPERIMENT_PLAN.md"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": {"before": "f36e3decb8e2db82e8632831f343039ab768bf6e60e98f6d4ea195fdcaa9ddbf", "after": "86db7a5f3b641004a43b1b52db9aff400a12b327f8d67946f6598696623b0298"},
+    "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": {"before": "9de299fd4f7cdfed7eeda808ebbdf70f5bba49b10c5106d486609dbc0e5dbdfa", "after": "3d603edc361dcf1ef0058b0e9c58d4713e879fbb8307d3894203d6f3ce65371a"}
+  },
+  "pre_amendment_backup": {
+    "path": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json.pre_m1_v2_amendment.bak",
+    "sha256": "7638ac784d4f8caad6f33c00a79c97519a84950394c4dd53fc393458a4e332dd"
+  },
+  "smoke_gap_lesson": "the v1 smoke (job 13002) passed because it RE-IMPLEMENTED the video loop with a raw ROOT/.../vid.mp4 join and imported only leaf helpers, bypassing canonical_root_path entirely; the burned function build_dataset_packs was never exercised on any dataset. v2 mandate: the smoke must call the frozen guard on real symlinked mp4 (M1_SMOKE2_RECORD.md).",
+  "artifact_namespace": "artifacts/lb_scgp_global/v1/m1/",
+  "no_science_contract_change": true,
+  "only_allowed_change": "run_id REPLACE-in-place for the spent v1 cache runs + a symlink-tolerant containment guard at the video sites + lineage clone-rename; no change to claims, gates C1/C2, forbidden routes, datasets, seeds, only_gold_supervision, artifact schema contract, or budget.",
+  "gold_isolation": {
+    "only_gold_supervision": "parent_video_binary_label",
+    "labels_enter_after_cache_seal_only": true,
+    "video_read_is_authorized_train_evidence": true,
+    "forbidden_zero_counters_unchanged": true
+  },
+  "no_slurm_lineage_submission_in_this_task": true,
+  "no_git_commit_in_this_task": true,
+  "amendment_files_are_execution_permission": false,
+  "readiness": {
+    "ready_for_independent_amendment_review": true,
+    "ready_for_fresh_independent_m1_v2_code_review": true,
+    "ready_for_execution": false,
+    "success_claim_allowed": false
+  }
+}

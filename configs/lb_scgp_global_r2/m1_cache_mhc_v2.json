@@ -1,0 +1,112 @@
+{
+  "schema_version": "lb_scgp_global_r2_m1_cache_config_v2",
+  "authorization": {
+    "authorized_run_ids": [
+      "LBSCGP-GLOBAL-M1-CACHE-MHC-v2"
+    ],
+    "gpu_allowed": true,
+    "local_mllm_inference_allowed": true,
+    "train_evidence_read_allowed": true,
+    "external_network_or_model_api_allowed": false,
+    "ocr_calls_allowed": false,
+    "label_read_allowed": false,
+    "validation_or_test_allowed": false,
+    "held_content_allowed": false,
+    "teacher_or_cache_read_allowed": false,
+    "query_z_or_labels_allowed": false,
+    "training_allowed": false,
+    "performance_evaluation_allowed": false
+  },
+  "dirty_policy": {
+    "allowed_new_files_after_run": [
+      "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache.jsonl",
+      "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache.jsonl.publish.lock",
+      "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache_manifest.json",
+      "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache_manifest.json.publish.lock",
+      "artifacts/lb_scgp_global/v1/m1/cache/MHC/access_ledger.json",
+      "artifacts/lb_scgp_global/v1/m1/cache/MHC/access_ledger.json.publish.lock"
+    ],
+    "artifact_outputs_excluded_from_source_binding": true,
+    "failure_outputs_must_be_cleaned_by_wrapper": true,
+    "no_clobber": true
+  },
+  "hash_bindings": {
+    "authoritative_inputs": {
+      "AGENTS.md": "e6aaf5d66399cdbbe7fcc2c811931277b0ed4a24b592ffa5cbb60315b29ea23c",
+      "refine-logs/lb_scgp_global/FINAL_PROPOSAL.md": "b5ab9409b86407da952d3492bc28b9944b80cd653e032dcf627cfca75cd1a9ff",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.md": "e5ec9bc458cc51d14adc1f4a873593dd9f76399fd5e328ff36b70a3512eaee62",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json": "ab0a06fb09669e1185774f20cd471ed9fd6d65d69f5a13f207a0b7535b3ce58c",
+      "refine-logs/lb_scgp_global/EXPERIMENT_PLAN_HASHES.sha256": "3d603edc361dcf1ef0058b0e9c58d4713e879fbb8307d3894203d6f3ce65371a",
+      "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md": "86db7a5f3b641004a43b1b52db9aff400a12b327f8d67946f6598696623b0298",
+      "refine-logs/lb_scgp_global/M1_CACHE_V1_RESULT_TO_CLAIM_REVIEW.md": "2fe3233593c6554c17b0cc121498634ef8bd4782d30f2382e529583d56a07039",
+      "refine-logs/lb_scgp_global/M1_CACHE_PLAN_AMENDMENT_V2.md": "5f0036e853434c304a0e598df11e9365e58314d566ad92266ea165a6307c189c",
+      "refine-logs/lb_scgp_global/M1_CACHE_PLAN_AMENDMENT_V2.machine.json": "df1dea76feaaa54fe1cec7c0aea25fb992b0f0260a25290a3d64290cf2e2f317",
+      "refine-logs/lb_scgp_global/M1_CACHE_PLAN_AMENDMENT_V2_HASHES.sha256": "be189f4d461f836fc4ab419985e0afddd44a34f661a5d10544696a74ddd2e8f3"
+    },
+    "run1_frozen": {
+      "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json": "4d3f1663e633c30ae58e35c0feddaa2fa9bbedba279cdbe6f38ecc35d761f22f"
+    },
+    "declared_validation_test_provenance_not_opened": {
+      "data/gt/MHC/test.jsonl": "0377f9d83d0a57e17212c17fe8fcfc552648356cc1a7b2f1c98a2445a1ce0d76",
+      "data/gt/MHC/val.jsonl": "749f9563d002367bc05a16627eb4f28045daba30825f0414335bab5a6543f6cb",
+      "data/gt/MHC_zh/test.jsonl": "79f666050ce92910ecd1ca4fbaf42bcae36f46b898313e2b4fc026ad72858d31",
+      "data/gt/MHC_zh/val.jsonl": "6b2b5916fedba05ade93e694c13ba09f92968bde73e15f6cb345025eb0afc04b"
+    }
+  },
+  "implementation_files": [
+    "configs/lb_scgp_global_r2/m1_cache_mhc_v2.json",
+    "schemas/lb_scgp_global_r2/scgp_global_cache_replica_v2.schema.json",
+    "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json",
+    "scripts/analysis/lb_scgp_global_r2_m1_cache_v2_common.py",
+    "scripts/analysis/lb_scgp_global_r2_m1_evidence_pack_v2.py",
+    "scripts/analysis/lb_scgp_global_r2_m1_cache_producer_v2.py",
+    "scripts/wrappers/lb_scgp_global_r2_m1_cache_v2.sh",
+    "scripts/slurm/lb_scgp_global_r2_m1_cache_mhc_v2.sbatch"
+  ],
+  "model": {
+    "model_id": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "offline": "HF_HUB_OFFLINE=1",
+    "decoding": {
+      "do_sample": false,
+      "temperature": 0.0,
+      "num_beams": 1,
+      "max_new_tokens": 320
+    }
+  },
+  "paths": {
+    "experiment_machine": "refine-logs/lb_scgp_global/EXPERIMENT_PLAN.machine.json",
+    "experiment_tracker": "refine-logs/lb_scgp_global/EXPERIMENT_TRACKER.md",
+    "replica_schema": "schemas/lb_scgp_global_r2/scgp_global_cache_replica_v2.schema.json",
+    "cert_schema": "schemas/lb_scgp_global_r2/scgp_global_cert_v2.schema.json",
+    "cache_manifest_path": "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache_manifest.json",
+    "access_ledger_path": "artifacts/lb_scgp_global/v1/m1/cache/MHC/access_ledger.json",
+    "wrapper": "scripts/wrappers/lb_scgp_global_r2_m1_cache_v2.sh",
+    "slurm_script": "scripts/slurm/lb_scgp_global_r2_m1_cache_mhc_v2.sbatch"
+  },
+  "train_evidence": {
+    "dataset": "MHC",
+    "expected_train_n": 549,
+    "gt_train": "data/gt/MHC/train.jsonl",
+    "asr_train": "data/ASR/MHC/train_asrK4_whisper-large-v3.jsonl",
+    "video_dir": "data/video/MHC/All",
+    "video_symlink_note": "mp4 files are in-repo symlinks to the external corpus; read via symlink-tolerant canonical_video_path (v2 fix)",
+    "num_frames": 16
+  },
+  "run": {
+    "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC-v2",
+    "dataset": "MHC",
+    "schema_id": "scgp_global_cache_replica_v2",
+    "artifact_path": "artifacts/lb_scgp_global/v1/m1/cache/MHC/cache.jsonl",
+    "budget": {
+      "estimated_api_calls": 2196,
+      "api_retry_cap": 4392
+    },
+    "slurm": {
+      "cpu": 4,
+      "ram_gb": 32,
+      "gpu": 1,
+      "env": "HateVideo",
+      "no_time_flag": true
+    }
+  }
+}

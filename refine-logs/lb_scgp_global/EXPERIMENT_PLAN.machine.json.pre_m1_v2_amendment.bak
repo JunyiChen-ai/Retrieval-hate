@@ -291,8 +291,8 @@
     "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v1",
     "LBSCGP-GLOBAL-G0-M0-SYNTH-KKT-v4",
     "LBSCGP-GLOBAL-G0-M0-REALBANK-RESOURCE-v2",
-    "LBSCGP-GLOBAL-M1-CACHE-MHC-v2",
-    "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v2",
+    "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
+    "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
     "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
     "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
     "LBSCGP-GLOBAL-M2-MHC-S0-COMP-VALID-v1",
@@ -734,7 +734,7 @@
       "status": "V2_CLONE_FROZEN_AFTER_V1_TMPDIR_BURN_PENDING_INDEPENDENT_REVIEW"
     },
     {
-      "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC-v2",
+      "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
       "milestone": "M1",
       "block": "B1",
       "claim": "C1",
@@ -817,12 +817,10 @@
         "ocr_calls": 0,
         "statement": "The ocr_calls=0 forbidden counter is honored: NO live OCR engine is invoked. On-screen text reaches the MLLM only through the 16 sampled frames (the VLM reads it visually). ASR transcript + title are the only textual evidence; 'ASR/OCR text if available' in the schema resolves to ASR-only for this cache."
       },
-      "m1_amendment": "M1_CACHE_PLAN_AMENDMENT.md (2026-07-13): gpu 0->1, estimated_gpu_hours 0->8, model pinned, OCR omitted; pending fresh independent review.",
-      "v1_burn_and_v2_replace": "v1 lineage CLOSED as an infrastructure preflight burn (jobs 13003/13004): the train mp4 files are in-repo symlinks whose targets live outside the repo, so the v1 canonical_root_path resolve() containment guard fired at Stage-1 evidence-pack build before any model load or write. No artifact, no seal contact, zero scientific info (M1_CACHE_V1_RESULT_TO_CLAIM_REVIEW.md). v2 = REPLACE-in-place with a symlink-tolerant canonical_video_path at the builder+producer video sites; run_id/run_order updated, artifact schema/paths/slurm unchanged.",
-      "v1_burn_jobs": "13003"
+      "m1_amendment": "M1_CACHE_PLAN_AMENDMENT.md (2026-07-13): gpu 0->1, estimated_gpu_hours 0->8, model pinned, OCR omitted; pending fresh independent review."
     },
     {
-      "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v2",
+      "run_id": "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1",
       "milestone": "M1",
       "block": "B1",
       "claim": "C1",
@@ -905,9 +903,7 @@
         "ocr_calls": 0,
         "statement": "The ocr_calls=0 forbidden counter is honored: NO live OCR engine is invoked. On-screen text reaches the MLLM only through the 16 sampled frames (the VLM reads it visually). ASR transcript + title are the only textual evidence; 'ASR/OCR text if available' in the schema resolves to ASR-only for this cache."
       },
-      "m1_amendment": "M1_CACHE_PLAN_AMENDMENT.md (2026-07-13): gpu 0->1, estimated_gpu_hours 0->8, model pinned, OCR omitted; pending fresh independent review.",
-      "v1_burn_and_v2_replace": "v1 lineage CLOSED as an infrastructure preflight burn (jobs 13003/13004): the train mp4 files are in-repo symlinks whose targets live outside the repo, so the v1 canonical_root_path resolve() containment guard fired at Stage-1 evidence-pack build before any model load or write. No artifact, no seal contact, zero scientific info (M1_CACHE_V1_RESULT_TO_CLAIM_REVIEW.md). v2 = REPLACE-in-place with a symlink-tolerant canonical_video_path at the builder+producer video sites; run_id/run_order updated, artifact schema/paths/slurm unchanged.",
-      "v1_burn_jobs": "13004"
+      "m1_amendment": "M1_CACHE_PLAN_AMENDMENT.md (2026-07-13): gpu 0->1, estimated_gpu_hours 0->8, model pinned, OCR omitted; pending fresh independent review."
     },
     {
       "run_id": "LBSCGP-GLOBAL-M1-CACHE-SEAL-v1",
@@ -922,8 +918,8 @@
       "arm": null,
       "seed": null,
       "dependencies": [
-        "LBSCGP-GLOBAL-M1-CACHE-MHC-v2",
-        "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v2"
+        "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
+        "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1"
       ],
       "metrics": [
         "merkle_root",
@@ -960,8 +956,7 @@
         "verifies": "both dataset cache banks: recompute Merkle root, verify call_count==4*U_D, forbidden zero_counters, prompt_hash/input_builder_hash/model_processor_hash present and consistent, strict schema; GO iff BOTH verify",
         "model_processor_hash_pin_required_before_seal": true,
         "m1_amendment": "M1_CACHE_PLAN_AMENDMENT.md (2026-07-13): seal remains CPU-only (gpu=0, estimated_api_calls=0); added for completeness."
-      },
-      "v2_dependency_sync": "dependencies re-pointed to the v2 cache run_ids in lock-step with the runs[4]/[5] REPLACE; seal run_id itself is unchanged (its v1 budget was untouched by the v1 burn)."
+      }
     },
     {
       "run_id": "LBSCGP-GLOBAL-M2-COMPARATOR-FREEZE-v1",
@@ -3913,24 +3908,7 @@
       "LBSCGP-GLOBAL-M3-PAIRED-MAIN-DECISION-v1",
       "LBSCGP-GLOBAL-M4-CONTROLS-DECISION-v1",
       "LBSCGP-GLOBAL-M5-FINAL-STATS-v1"
-    ],
-    "m1_v2_replace_record": {
-      "operation": "REPLACE_IN_PLACE_AT_INDEX_4_AND_5",
-      "replaced_run_ids": [
-        "LBSCGP-GLOBAL-M1-CACHE-MHC-v1",
-        "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v1"
-      ],
-      "replacement_run_ids": [
-        "LBSCGP-GLOBAL-M1-CACHE-MHC-v2",
-        "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v2"
-      ],
-      "seal_dependencies_synced": [
-        "LBSCGP-GLOBAL-M1-CACHE-MHC-v2",
-        "LBSCGP-GLOBAL-M1-CACHE-MHC_zh-v2"
-      ],
-      "reason": "v1 double-burn on input mp4 symlink escape; symlink-tolerant guard fix",
-      "amendment": "M1_CACHE_PLAN_AMENDMENT_V2.md"
-    }
+    ]
   },
   "gates_and_terminal_statuses": {
     "success_status": "FINAL_SUCCESS_ONLY_AFTER_M5_GO",

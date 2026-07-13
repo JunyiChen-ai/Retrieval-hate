@@ -453,3 +453,102 @@ ruling ② and the resource envelope are corroborated by the smoke. The two revi
 ratification + fresh 0C/0H code review) are **CLOSED**. Execution still requires the separate
 exact-hashes / no-clobber review and execution authorization (out of this reviewer's scope);
 `ready_for_execution` is not set by this review.
+
+---
+
+# DELTA-2 REVIEW (v2 — input-symlink guard fix, post v1 double-burn) — 2026-07-13
+
+Same reviewer / same read-only discipline (no Python). Context: after DELTA-1 RATIFIED, the v1 cache
+runs **double-burned** (jobs 13003/13004) at Stage-1 — the train mp4s are in-repo **symlinks whose
+targets escape the repo**, and v1's `canonical_root_path.resolve()` fired at the video site before any
+model load or write (`M1_CACHE_V1_RESULT_TO_CLAIM_REVIEW.md`; fail-closed, zero artifacts). m1-prep
+built v2 (run_id v1→v2 REPLACE + a symlink-tolerant `canonical_video_path` + 12-entity clone-rename +
+real-path smoke2). Re-verified all six delta items.
+
+## DD1. v2 amendment diff — exactly in scope
+pre_m1_v2 backup (`7638ac78`) ↔ current (`ab0a06fb`) machine diff = **only**: `run_order[4]/[5]` and
+`runs[4]/[5].run_id` `…-MHC-v1→v2` / `…-MHC_zh-v1→v2`; `runs[4]/[5]` gained `v1_burn_and_v2_replace` +
+`v1_burn_jobs` (13003/13004) provenance; `runs[6].dependencies` re-pointed to the two v2 ids +
+`v2_dependency_sync` note; `dependency_dag.m1_v2_replace_record` added. **Nothing else** — `runs[6].run_id`
+stays `…-SEAL-v1`, `runs[4]/[5]` artifact_paths + `artifact_schema_ids` (`scgp_global_cache_replica_v2`)
++ slurm + budget unchanged; runs array length 66=66. Amendment doc hashes verify (`5f0036e8` / `df1dea76`).
+Cascade: machine `7638ac78→ab0a06fb`, `EXPERIMENT_PLAN.md` unchanged (`e5ec9bc4`; no literal M1 run_id in
+it), TRACKER `f36e3dec→86db7a5f`, HASHES `9de299fd→3d603edc` — all recomputed and matching.
+
+## DD2. Guard-fix semantics — "tolerate input symlink location, zero other isolation weakening" ✓
+`canonical_video_path(rel, dataset)` (new in `…_v2_common.py`) contains on the **un-resolved LOCATION**:
+rejects `..`, rejects absolute, requires `rel` under `data/video/<dataset>/All/`, requires
+`normpath(ROOT/rel)` lexically under ROOT, requires the **parent dir to resolve in-repo** (only the leaf
+may be a link), and requires the leaf to be a **regular file or symlink** (`lstat`, no follow). It returns
+the in-repo location; **the sole relaxation is that the mp4 leaf's resolved target need not be under
+ROOT** — exactly the designed corpus layout.
+- **Allowlist/forbidden unchanged:** `note_video_read` still runs `forbidden_reason(rel, …)` →
+  `forbidden_path_read_count` on any forbidden token; the video-root allowlist is enforced by the guard's
+  `startswith` — so no val/test/held/label path is reachable (they fail the video-root prefix).
+  `ZERO_COUNTER_KEYS` still **30**; `forbidden_reason`/`FORBIDDEN_TOKENS`/`evidence_allowlist` byte-unchanged.
+- **Output/other paths unchanged:** every other `canonical_root_path` site (config, machine, artifact
+  publish, `builder_sha`/`common_sha`, `args.out`) is untouched; `exclusive_publish_*` (in-repo `dir=`,
+  O_EXCL, no-clobber) unchanged. Only the **two video sites** (builder `evidence_pack_v2:188`, producer
+  `producer_v2:181`) swapped `canonical_root_path`→`canonical_video_path`.
+- **`followed_target` is audit-only:** recorded in the ledger (`{is_symlink, followed_target,
+  followed_target_in_repo}`); it gates nothing. **Confirmed "log only, no other access granted."**
+  `video_sha256` retained (bytes via the OS-followed link).
+- **v1↔v2 code diffs prove guard-only:** common = guard fn + `note_video_read` rewrite + `import stat` +
+  RUN_MHC/MHC_ZH→v2 (RUN_SEAL stays v1); evidence_pack/producer = the video-site swap + refs; **seal = v1→v2
+  reference tokens only, zero behavioral change**.
+- *Informational (not a defect):* the guard trusts the symlink **target** (a symlink under `All/` pointing
+  at forbidden in-repo content would pass `forbidden_reason` on `rel`). This is out of the threat model
+  (the symlinks are the non-adversarial corpus layout, not attacker-controlled) **and** is empirically
+  excluded by the readlink audit (DD4): all 790+806+1066 targets resolve into the external video corpora,
+  none to a label/test/gt file.
+
+## DD3. 14 SHAs (12 renamed + 2 carried) + 3-config rebind — verified
+All **14** recompute = `M1_CACHE_V2_FREEZE.md` §1: the 12 v2 clones (common/evidence/producer/seal ×4,
+3 configs, 2 wrappers, 3 sbatch) at the frozen SHAs, and the **2 artifact schemas carried forward
+byte-unchanged** (`4bfcfea2` / `f4605bb7` — correct: renaming contract-versioned schema ids would desync
+the machine `artifact_schema_ids`; coordination ruled schema-naming stays). All **3 v2 configs** rebind
+the post-cascade quartet (machine `ab0a06fb` / plan `e5ec9bc4` / tracker `86db7a5f` / hashes `3d603edc`),
+run_ids MHC-v2 / MHC_zh-v2 / SEAL-v1, schema_ids unchanged. v1 entities **retained** as the burned-lineage
+record (realbank precedent). v2 sbatch correctly wired (mhc_v2→v2 config+wrapper+`--gres=gpu:a100:1`;
+seal RUN_ID=SEAL-v1 with v2 config/wrapper). 5 v2 shells `bash -n` clean.
+
+## DD4. readlink topology — independently re-derived (reproduces freeze §5.1)
+My own `find -type l` + `readlink` sweep:
+
+| dataset | video `*.mp4` | escapes? | target root | lora_frames links | gt/train link | ASR/train link |
+|---|---|---|---|---|---|---|
+| MHC | 790/790 symlink | **YES** | `/data/jehc223/Multihateclip/English/video_mp4/` | 0 | 0 | 0 |
+| MHC_zh | 806/806 symlink | **YES** | `/data/jehc223/Multihateclip/Chinese/video/` | 0 | 0 | 0 |
+| HateMM | 1066/1066 symlink | **YES** | `/data/jehc223/HateMM/video/` | 0 | 0 | 0 |
+
+The mp4 symlink is the **sole escape class, dataset-universal**; gt/ASR/lora_frames are real in-repo.
+`canonical_video_path` tolerates **exactly** this (leaf under `data/video/<ds>/All/` only; parent must
+resolve in-repo) and nothing else — the third blind-spot class (input-symlink topology) is now modeled
+per dataset (mandatory simulation row 8), and my re-derivation matches it exactly.
+
+## DD5. smoke2 (job 13009) — "real frozen entry" satisfied; DEFERRED released
+smoke2 **imports and calls the frozen** `ev.build_dataset_packs(HATEMM, …)` (line 57) and
+`C.canonical_video_path` (line 115) — the exact v1 burn surface, **not** a re-implementation (the v1
+smoke's fatal gap; HateMM is registered in the in-memory `EXPECTED_TRAIN_N` so the unmodified builder
+accepts the non-contract dataset — a constant monkeypatch, not a code fork). Result: frozen
+`build_dataset_packs` processed **744/744** real repo-escaping symlinked mp4 **with no raise** in 4.68 s,
+744/744 followed-targets recorded as external, **all forbidden zero-counters 0**; 16-frame decode via the
+followed link 5/5; **R=4 determinism 5/5** byte-identical; **cert_v2 20/20** validate; offline load 5.94 s;
+GPU guard PASS (`CUDA_VISIBLE_DEVICES="0"`); peak 52.71 GiB. This releases simulation rows 2 (GPU guard),
+7 (guard tolerates symlink / rejects `..`+non-root), 8 (topology), and 10 (model load + decode on
+symlinked mp4). Row 9 (forbidden counters at seal) stays DEFERRED-fail-closed (code-enforced; resolves at
+the real seal). Non-lineage hygiene: HateMM-only, `slurm/tmp` (cleaned, dir empty), zero MHC contact,
+artifact namespace absent, no sealed cache/ledger. Parse 16/20=0.80 — no plan threshold (DELTA-1 D4);
+`hate_video_104` 0/4 → canonical unresolved is contract-correct. Benign cosmetic notes unchanged
+(temperature=1e-06; `use_fast`).
+
+## DELTA-2 VERDICT
+
+**Critical = 0, High = 0 → `AMENDMENT_RATIFIED` (v2) + `PASS_STATIC_REVIEW`.** The v2 amendment is exactly
+in-scope; the symlink-tolerant guard tolerates precisely the input-mp4-symlink escape with zero other
+isolation weakening (allowlist/forbidden/output checks intact, `followed_target` audit-only,
+`video_sha256` retained); 14 SHAs + 3-config rebind + cascade are self-consistent; the readlink topology
+re-derives exactly; and smoke2 empirically settles the burn on the **real frozen** `build_dataset_packs`.
+The two v2 review items (amendment ratification + fresh 0C/0H v2 code review) are **CLOSED**. Remaining:
+the six-step gate's step 5 (exact-hashes/no-clobber) and step 6 (one re-submit each for MHC-v2 / MHC_zh-v2,
+then seal), which are outside this reviewer's scope; `ready_for_execution` is not set by this review.
