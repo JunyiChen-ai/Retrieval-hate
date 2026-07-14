@@ -102,6 +102,15 @@ def _log(m):
     print(m, flush=True)
 
 
+def _sha256_file(path):
+    import hashlib
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 # ===========================================================================
 # Loading (N4: train + dev_seen ONLY; test_seen is NEVER constructed).
 # ===========================================================================
@@ -677,6 +686,24 @@ def read_stage_e_gatelog(dataset, grounded_dir):
 # ===========================================================================
 # Mechanical gate check (NON-binding — pre-registered threshold arithmetic ONLY).
 # ===========================================================================
+def _stage_e_void(r, prefix):
+    """Read a Stage-E' VOID flag (prefix 'grounding_void' / 'placebo_void') from the extractor gatelog
+    for the probe memory splits (train + dev_seen). Returns True if EITHER split tripped it, False if
+    present-and-not-tripped, None if no gatelog carries the flag."""
+    ge = r.get("stage_e_gatelog") or {}
+    seen = tripped = False
+    for sp in ("train", "dev_seen"):
+        g = ge.get(sp)
+        if not isinstance(g, dict):
+            continue
+        vk = [k for k in g if k.startswith(prefix)]
+        if vk:
+            seen = True
+            if bool(g[vk[0]]):
+                tripped = True
+    return tripped if seen else None
+
+
 def mechanical_gate_check(results):
     by_ds = {r["dataset"]: r for r in results}
     checks = []
@@ -701,24 +728,48 @@ def mechanical_gate_check(results):
                    "result": "KILL(DEAD)" if oracle_all_below else "SURVIVES",
                    "note": "DEAD -> zero head GPU"})
 
+    # (Fix B) K2/K3 Stage-E' VOID surfacing — a silent no-op grounding (present-set median
+    # cos(grd,ungrd_vis)>=0.999) or a content-insensitive key (placebo median>=0.999) NULLIFIES any K9
+    # PROCEED. Read the extractor gatelog flags (train + dev_seen, the probe memory splits); a dataset
+    # is VOID if EITHER split tripped the flag.
+    grounding_void = {ds: _stage_e_void(r, "grounding_void") for ds, r in by_ds.items()}
+    placebo_void = {ds: _stage_e_void(r, "placebo_void") for ds, r in by_ds.items()}
+    for ds in by_ds:
+        gv, pv = grounding_void[ds], placebo_void[ds]
+        checks.append({"gate": "GroundingLive[%s] (K2)" % ds,
+                       "value": ("VOID" if gv else "LIVE" if gv is False else "N/A"),
+                       "threshold": "LIVE", "result": ("VOID" if gv else "LIVE" if gv is False else "N/A"),
+                       "note": "present-set median cos(grd,ungrd_vis)>=0.999 -> VOID nullifies K9"})
+        checks.append({"gate": "Placebo[%s] (K3)" % ds,
+                       "value": ("VOID" if pv else "LIVE" if pv is False else "N/A"),
+                       "threshold": "LIVE", "result": ("VOID" if pv else "LIVE" if pv is False else "N/A"),
+                       "note": "cross-video mismatched transcript no-op (median>=0.999) -> VOID nullifies K9"})
+
     # K9 BINDING conditional-info adjudicator (per dataset; sole binding performance gate).
     for ds, r in by_ds.items():
         ci = r["condinfo_Zbest"]
+        voided = bool(grounding_void[ds]) or bool(placebo_void[ds])
         checks.append({"gate": "CondInfo Z_best VERDICT[%s] (K9 BINDING)" % ds,
                        "value": ci["VERDICT"], "threshold": "CONDINFO_PROCEED",
-                       "result": ("ABOVE" if ci["VERDICT"] == "CONDINFO_PROCEED"
+                       "result": ("VOID(K2/K3-nullified)" if (ci["VERDICT"] == "CONDINFO_PROCEED" and voided)
+                                  else "ABOVE" if ci["VERDICT"] == "CONDINFO_PROCEED"
                                   else "MACHINERY_INVALID" if ci["VERDICT"] == "MACHINERY_INVALID"
                                   else "BELOW"),
                        "note": "calib_accZA={:.4f} bestk={} dacc={:+.4f} CI[{:+.4f},{:+.4f}] "
-                               "C1={} C2={} C3={} perm_maxk_max={:+.4f}".format(
+                               "C1={} C2={} C3={} perm_maxk_max={:+.4f}; grounding_void={} placebo_void={} "
+                               "(VOID nullifies K9)".format(
                                    ci["calibration"]["label_accZA"], ci["best_decision_k"],
                                    ci["best_dacc"], ci["best_ci"][0], ci["best_ci"][1],
                                    ci["C1_point_ge_bar"], ci["C2_ci_low_gt_0"],
-                                   ci["C3_real_beats_all_permmax"], ci["perm_null"]["maxk_max"])})
-    any_ci_pass = any(r["condinfo_Zbest"]["VERDICT"] == "CONDINFO_PROCEED" for r in results)
-    checks.append({"gate": "CondInfo BINDING (any dataset PROCEED) (K9)", "value": any_ci_pass,
+                                   ci["C3_real_beats_all_permmax"], ci["perm_null"]["maxk_max"],
+                                   grounding_void[ds], placebo_void[ds])})
+    # SURVIVES requires a CONDINFO_PROCEED on a dataset whose grounding is LIVE AND placebo is LIVE.
+    any_ci_pass = any(r["condinfo_Zbest"]["VERDICT"] == "CONDINFO_PROCEED"
+                      and not grounding_void[ds] and not placebo_void[ds]
+                      for ds, r in by_ds.items())
+    checks.append({"gate": "CondInfo BINDING (any LIVE dataset PROCEED) (K9)", "value": any_ci_pass,
                    "threshold": True, "result": "SURVIVES" if any_ci_pass else "BELOW",
-                   "note": "sole binding performance gate (r1 Amdt 2b)"})
+                   "note": "sole binding performance gate (r1 Amdt 2b); a K2/K3-VOID dataset cannot count"})
 
     # ADVISORY (K6/K7/K7b/K8) — HateMM only, non-gating.
     if "HateMM" in by_ds:
@@ -926,10 +977,17 @@ def main():
         return
 
     grounded_dir = GROUNDED_DIR_TMPL.format(args.num_frames)
+    datasets = [d.strip() for d in args.datasets.split(",") if d.strip()]
 
     # Resumable K9 checkpoint (perm-null is a multi-hour CPU stage). A config signature invalidates a
     # stale checkpoint so a changed Z_best/perm-count/grounded_dir never silently reuses old seeds.
-    ci_meta = {"grounded_dir": grounded_dir, "ci_nseed": CI_NSEED_PERM, "Zbest_dim": 8960}
+    # (Fix A) The signature ALSO hashes this probe script + the per-dataset grounded caches (the
+    # grd/grd_pfx keys A=grd is built from), so a re-extraction into the SAME grounded_dir or any edit
+    # to the probe re-derives a fresh checkpoint instead of silently reusing stale point-arms + seeds.
+    grd_sha = {ds: "+".join(_sha256_file(_grounded_path(ds, grounded_dir, o))
+                            for o in ("train", "dev_seen")) for ds in datasets}
+    ci_meta = {"grounded_dir": grounded_dir, "ci_nseed": CI_NSEED_PERM, "Zbest_dim": 8960,
+               "probe_sha": _sha256_file(os.path.abspath(__file__)), "grd_sha": grd_sha}
     ci_ckpt = {"_meta": ci_meta}
     if os.path.exists(args.ci_ckpt):
         loaded = json.load(open(args.ci_ckpt))
@@ -948,7 +1006,7 @@ def main():
 
     t0 = time.time()
     results = []
-    for ds in [d.strip() for d in args.datasets.split(",") if d.strip()]:
+    for ds in datasets:
         _log("[W2-A probe] --- {} ---".format(ds))
         results.append(probe_dataset(ds, grounded_dir, args.n_boot, ci_ckpt, save_cb))
     _log("[W2-A probe] probing done in {:.1f}s".format(time.time() - t0))

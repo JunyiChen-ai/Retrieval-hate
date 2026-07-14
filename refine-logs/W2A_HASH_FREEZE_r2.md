@@ -9,13 +9,34 @@ on purpose: editing `exp-w2a-grounded.md` would change its own hash and break th
 hashes" verification below (the exp doc must still hash to the r1 pin `076bfa5e…`). The r1 §16 pre-declared
 CONSTANTS table remains the authority; this file records the code freeze against it.
 
-## Frozen artifacts (r2)
+## Frozen artifacts (r2 → r2b)
 
-| artifact | sha256 |
-|---|---|
-| `scripts/analysis/w2a_extract.py`    | `2e79599a92d227d9f15366ee17a6644c2f6c77c71f36aa61c76a6274ac9402a9` |
-| `scripts/slurm/w2a_extract.sbatch`   | `9ed04c14d16799d24e196f1d956698017373e597fd13e0cb2df6919087315153` |
-| `scripts/analysis/w2a_probe.py`      | `72e25d246890ecd2f52207f64961dc7feebc6dbb29c930c636119a646ae494ce` |
+| artifact | sha256 | freeze |
+|---|---|---|
+| `scripts/analysis/w2a_extract.py`    | `2e79599a92d227d9f15366ee17a6644c2f6c77c71f36aa61c76a6274ac9402a9` | **r2 (UNCHANGED)** |
+| `scripts/slurm/w2a_extract.sbatch`   | `9ed04c14d16799d24e196f1d956698017373e597fd13e0cb2df6919087315153` | **r2 (UNCHANGED)** |
+| `scripts/analysis/w2a_probe.py`      | `af4a2f9f5b35461173fd82c176bd52c6fc84bf8fc0d09736f938d38d8f6fe06d` | **r2b (probe fixes A+B)** |
+
+**r2b (probe-only, 2026-07-15).** Applied the two code-review NON-BLOCKING fixes that must land before
+probe execution, in `w2a_probe.py` ONLY:
+- **A — checkpoint-signature hardening.** `ci_meta` now also carries `probe_sha` = sha256(this script) and
+  `grd_sha` = per-dataset sha256(train_grounded.pt)+sha256(dev_seen_grounded.pt), so a re-extraction into
+  the same `grounded_dir` or any probe edit invalidates a stale K9 checkpoint (no silent reuse of cached
+  point-arms + perm seeds).
+- **B — K2/K3 VOID surfaced in `mechanical_gate_check`.** Two rows/dataset (`GroundingLive[ds] (K2)`,
+  `Placebo[ds] (K3)`) read the Stage-E' gatelog VOID flags; a K9 `CONDINFO_PROCEED` on a VOID dataset is
+  relabelled `VOID(K2/K3-nullified)` and cannot count toward the aggregate `SURVIVES` (closes the
+  silent-no-op-grounding foot-gun the reviewer named). `mechanical_gate_check` stays explicitly non-binding.
+
+The prior extractor `2e79599a…` + sbatch `9ed04c14…` rows are **byte-UNCHANGED** — the extract SMOKE (job
+13166) runs the r2-frozen extractor; the probe change does not touch it. Re-validated after r2b: py_compile
+OK, probe synthetic self-test PASS, Fix-B VOID nullification unit-checked (LIVE→SURVIVES, VOID→nullified).
+
+**Code-review items C + D DEFERRED (extractor-side, non-blocking).** C (placebo cyclic-wrap pairing) and D
+(comment "kept"→"deferred") both live in `w2a_extract.py`; editing it now would change the extractor the
+pending SMOKE reads at execution time and break the frozen sha echo, so they are deferred to the **post-green-
+SMOKE re-freeze** (before full Stage-E' extraction) where the extractor is re-hashed anyway. Both are
+non-gating (C is safe-direction on the median VOID; D is doc-only).
 
 ## Governing docs (verified UNCHANGED vs cb59a94)
 
