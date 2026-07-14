@@ -261,3 +261,22 @@ no significance claim.)
 Selection rule for "val-sel": epoch >= warmup 5 maximizing Val_Retrieval acc (roc
 tie-break), identical to the sbatch template parser; "final" = epoch 29 (all runs
 trained the full 30 epochs).
+
+## Cross-reference changelog (does NOT alter any result/verdict above)
+
+- **2026-07-14 — MHC-ZH LoRA arm now formally measured (B3).** This node's frozen-encoder
+  swap tested HateMM (PASS both protocols) and MHC-EN (FAIL both) but not ZH. The two ZH
+  follow-ups are now closed: the **frozen**-Qwen ZH cell FAILED both protocols (B1, 20th
+  negative, `exp-encoder-zh-b1.md`), and the **LoRA**-Qwen ZH cell was measured under the
+  identical current-code `enc3seed` runner (**B3, job 13150** vs frozen-CLIP 13115) —
+  verdict `final-epoch: PASS (MARGINAL); val-selected: FAIL` (final-ep mean Δacc +0.0313 /
+  ΔmF1 +0.0453; val-sel +0.0246 acc < bar / +0.0339 F1; G-repro bit-exact vs arcbase
+  12223-25). Pointers: `refine-logs/B3_VERDICT_REVIEW.md`, `research-wiki/experiments/exp-lora-zh-b3.md`,
+  `research-wiki/PAPER_MASTER_TABLES.md` PUR-1/PUR-2 (pending-user-ruling addendum). Note the
+  ZH pass rides on the **LoRA** lever, a different mechanism from this node's **frozen**-swap
+  HateMM pass (family-vs-single-mechanism framing = pending user ruling).
+- **2026-07-14 — MHC-EN LoRA cell closed pre-GPU (B4).** The EN-side LoRA-encoder cell (the
+  mirror of B3 on `dataset=MHC`) was closed **pre-GPU** as a banked seed0 negative (22nd
+  negative): seed0 paired vs frozen-CLIP = val-sel −0.0310 acc / final-ep +0.0062 acc (≪ bar),
+  LoRA below both frozen encoders on EN. Pointer: `refine-logs/B4_FORENSIC_RECON.md`
+  (recon: `exp-lora-sft-encoder.md:21`). Consistent with this node's MHC-EN frozen-swap FAIL.

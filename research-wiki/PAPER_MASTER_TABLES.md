@@ -292,3 +292,80 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 
 *(本文件为纯汇编,不含新实验;所有数字均为已 commit 结果的转录,出处见各表 commit 列与文首 document-level
 commit 清单。三终局选项的具体第一周动作草案见 `OPTION_KITS_terminus.md`。)*
+
+---
+
+## PENDING-USER-RULING addendum(2026-07-14):LoRA-encoder family(B3/B4)
+
+> **本节 append 于 2026-07-14,与主表 T1–T4 严格隔离,遵循与文首相同的纯转录纪律**(不跑实验、不提交
+> SLURM、不重算任何数)。**本节每一行都 pending 用户裁决**(见节末 banner),**不进主表、不改主表任何数、
+> 不移动任何行到 T1–T4**。数字均转录自命名源文档(numeric-provenance discipline):B3 实测数 =
+> `refine-logs/B3_VERDICT_REVIEW.md`(job 13150,独立判决复核)+ `research-wiki/experiments/exp-lora-zh-b3.md`
+> §7a/§7b/r1;B4 预-GPU 关闭 = `refine-logs/B4_FORENSIC_RECON.md` + `research-wiki/experiments/exp-lora-sft-encoder.md`;
+> 选项账目 = `research-wiki/TERMINUS_round2_mllm_plus3.md` §6–§7。
+
+### PUR-1 — B3 配对表:LoRA-Qwen 编码器 vs frozen-CLIP,MHC-ZH(3 head-seed,job 13150 vs 13115,两协议并排)
+
+同 runner、同 `--seed`、同 149 ZH test videos 的 head-level 配对读数。**LoRA 臂 = job 13150**(fresh,G-repro
+bit-exact 复现 arcbase 12223-25,6/6 读数 4dp 零失配);**CLIP 臂 = B1 job 13115**(frozen-CLIP,既有日志,未重跑)。
+
+**协议 (B) final-epoch(epoch 29 两臂):**
+
+| seed | LoRA acc | CLIP acc | **Δacc** | LoRA mF1 | CLIP mF1 | **ΔmF1** |
+|---|---|---|---|---|---|---|
+| 0 | 0.8456 | 0.8054 | **+0.0402** | 0.8181 | 0.7706 | **+0.0475** |
+| 1 | 0.8389 | 0.8054 | **+0.0335** | 0.8113 | 0.7542 | **+0.0571** |
+| 2 | 0.8523 | 0.8322 | **+0.0201** | 0.8226 | 0.7913 | **+0.0313** |
+| **mean** | 0.8456 | 0.8143 | **+0.0313** | 0.8173 | 0.7720 | **+0.0453** |
+
+**协议 (A) val-selected(warmup≥5,max Val_Retrieval acc,roc tie-break):**
+
+| seed | LoRA acc | CLIP acc | **Δacc** | LoRA mF1 | CLIP mF1 | **ΔmF1** |
+|---|---|---|---|---|---|---|
+| 0 | 0.8322 (ep20) | 0.8054 (ep29) | **+0.0268** | 0.8023 | 0.7706 | **+0.0317** |
+| 1 | 0.8255 (ep26) | 0.8054 (ep28) | **+0.0201** | 0.7956 | 0.7579 | **+0.0377** |
+| 2 | 0.8389 (ep19) | 0.8121 (ep25) | **+0.0268** | 0.8065 | 0.7742 | **+0.0323** |
+| **mean** | 0.8322 | 0.8076 | **+0.0246** | 0.8015 | 0.7676 | **+0.0339** |
+
+**判决(绑定语言,逐字 per `refine-logs/B3_PREREG_REVIEW.md` §2.2 — 不得升级):**
+`final-epoch: PASS (MARGINAL); val-selected: FAIL`。
+(final-epoch:mean Δacc +0.0313 ≥ +0.030 AND mean ΔmF1 +0.0453 ≥ +0.030 AND sign 3/3 ⇒ PASS,标注 MARGINAL;
+val-selected:mean Δacc **+0.0246 < +0.030**,AND 规则在 acc 上失败 ⇒ FAIL,尽管 mean ΔmF1 +0.0339 与 sign 3/3
+达标。)来源:`B3_VERDICT_REVIEW.md` §0/§3/§4 · job 13150。
+
+**三条强制敏感度事实(脚注,`B3_VERDICT_REVIEW.md` §4a 要求全列):**
+- **[SF1] 贴边。** mean Δacc **+0.0313 仅高出 +0.030 门 +0.0013(≈门的 4%)**——这就是整个 pass 的全部余量。
+- **[SF2] 逐种子不均。** 逐种子 Δacc 跨度 **+0.0201 … +0.0402**;**seed2(+0.0201)本身低于逐种子 +0.030 门**;
+  pass 靠 seed0/1 与 F1(+0.0453 干净过线),而非均匀的逐种子余量。
+- **[SF3] 余量 ≪ 种子间散布。** +0.0013 的 acc 余量远小于种子间 Δacc 散布(0.0402 − 0.0201 = **0.0201**,
+  ≈15× 余量)——即 acc pass 落在 head-seed 噪声内。**结构性 marginal**(非可辩掉的随机噪声):G-repro bit-exact
+  ⇒ fresh 数不随 run 抖动,marginality 来自贴边 + 单一 CLIP 控制抽样(13115 一次)+ 单一 LoRA 编码器抽样
+  (3 种子共享单缓存,只变下游 head),不建立 LoRA-SFT 训练种子方差。
+
+### PUR-2 — LoRA-encoder 三数据集地图 + 解释行
+
+| 数据集 | LoRA-encoder 单元结果 | 关键数字 | 来源 |
+|---|---|---|---|
+| **HateMM** | **P9 fail** | 决策级 LoRA-SFT(P9 C3):C3-knn HateMM **−4.7 below floor**;LoRA-encoder flat/below-floor(HateMM 无专属 encoder-level 3-种子 LoRA 跑) | `EXP_p9_lmm_rgcl_video.md`(本文件 T4 行 10) |
+| **MHC-EN** | **banked seed0 negative**(B4 预-GPU 关闭,第 22 条) | seed0 配对 vs frozen-CLIP:val-sel **−0.0310 acc** / −0.0197 F1(回归);final-ep +0.0062 acc / +0.0157 F1(≪ +0.030 门,≈门的 1/5);EN 上 LoRA 低于两个 frozen 编码器 | `exp-lora-sft-encoder.md:21` · `B4_FORENSIC_RECON.md` §(i)/(v) |
+| **MHC-ZH** | **B3 marginal pass** | `final-epoch: PASS (MARGINAL)`(mean Δacc +0.0313)/ `val-selected: FAIL`(mean Δacc +0.0246);见 PUR-1 | `exp-lora-zh-b3.md` r1 · `B3_VERDICT_REVIEW.md` |
+
+**解释行(载重):** **LoRA 杠杆 = ZH 特定的语言适配,不是普适的 MLLM 集成机制。** 分解(final-epoch 均值,同
+runner,`B3_VERDICT_REVIEW.md` §5):frozen-Qwen 编码器交换在 ZH 上 **−0.0112**(B1 第 20 条负结果,FAIL)vs
+LoRA-Qwen **+0.0313** ⇒ **ZH 的全部增益来自 LoRA 的任务/语言适配,而非 MLLM-encoder 身份本身**。ZH/EN 符号翻转
+是既定解释(非谜团):ZH 上 LoRA 缓解了 English-centric CLIP 文本塔处理中文 byte-fragment 的记录在案劣势
+(PMT:188,237);EN 上 549 样本的 LoRA-SFT 反而退化编码器,落到两个 frozen floor 之下。三库合看:LoRA 只在
+ZH 一库有(marginal)正效应,HateMM/EN 均 fail ⇒ 无单一"LoRA-as-MLLM-integration"机制跨 ≥2 库过线。
+
+### PUR-banner — 本节全部行 PENDING 以下用户裁决(逐条,未在此解决)
+
+> **EVERY ROW IN THIS SECTION IS PENDING USER RULINGS:**
+> **(i) novelty 边界。** LoRA / RA-HMD-family 杠杆被项目分类为 *"MIXED performance lever, not novelty"*
+> (`query_pack.md:44`;`B1_PREREG_REVIEW.md:64`)。一个 LoRA-encoder 性能 pass 是否计入 goal 的 "novel" 子句,
+> 是 pending 用户裁决,本节不判。
+> **(ii) family-claim headline。** "MLLM-encoder family"(HateMM = frozen-swap PASS + ZH = LoRA PASS,**两种
+> 不同机制/杠杆**)是否可作 ≥2-数据集 headline,是用户裁决。若要求**单一**机制跨 ≥2 库过线,frozen(仅 HateMM)
+> 与 LoRA(仅 ZH)均不满足。
+> **(iii) :58 barred-comparison 注**未在此解决。B3 的同 runner 同种子配对是现存最干净的配对读数并已在 PUR-1
+> 记录,但它是否**覆盖** `PAPER_MASTER_TABLES.md:58` 的"不可直接同格并比"记账注以支撑一个论文主张,是**用户的
+> override 决定**——本节**不编辑、不重解释 :58 本身**,亦不据此把任何行并入主表 T1–T4。
