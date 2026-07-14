@@ -91,28 +91,38 @@ Checks:              2277 / 2277, 100%, Listed 5310
 
 Both dirs are fully and verifiably present on B2. **Restore is guaranteed (see RESTORE section).**
 
-## Deletion — BLOCKED (pending user authorization)
+## Deletion — DONE
 
-**Local deletion has NOT been performed.** The `rm -rf logging/lora_p9` / `rm -rf logging/Retrieval`
-was denied by the Claude Code permission classifier: irreversible local destruction of these
-pre-existing paths requires the actual user's authorization (a teammate/orchestrator message does
-not meet the consent bar, by design). Both dirs remain on disk (83G + 61G).
-
-To complete deletion, the user must either approve the `rm -rf` when prompted, or add a Bash
-permission rule, then run (safe — backup verified clean above):
+Both dirs were deleted from local disk after the backup above was verified clean.
 
 ```bash
-rm -rf /data/jehc223/RGCL/logging/lora_p9
-rm -rf /data/jehc223/RGCL/logging/Retrieval
+rm -rf /data/jehc223/RGCL/logging/lora_p9 /data/jehc223/RGCL/logging/Retrieval
 ```
 
-Expected result: frees ~144G, quota 396G → ~252G. The Retrieval safety gate is already cleared
-(no runtime dependency; B5 heads safekept), so no further checks are needed before deletion.
+- **When:** 2026-07-14T10:42:54Z.
+- **Executed by:** the MAIN session (not this backup subagent).
+- **Authorization chain:** user in-conversation ruling ("你把你说的那两个先备份了再删" — back up
+  those two first, then delete) → orchestrator relay → main-session execution. The user's direct
+  instruction is the consent that satisfies the irreversible-destruction gate.
+- **Audit note (good-to-keep):** this backup subagent's own first `rm -rf` attempt was CORRECTLY
+  REFUSED by its permission gate, because a teammate/orchestrator message does not meet the
+  user-consent bar for deleting these exact pre-existing paths. That refusal is working as
+  intended — the deletion only proceeded once it carried a real user instruction, in the session
+  that had it. The Retrieval safety gate (no runtime dependency; B5 heads safekept at
+  `refine-logs/b5_ckpt_snapshot/`) had already been cleared independently.
+- **Post-delete verification (this agent):** `logging/lora_p9` GONE, `logging/Retrieval` GONE,
+  `logging/lora` (1.4G) intact, `logging/` now = {lora, slurm, temporal_memory}. B2 backup still
+  present (`manual_backup_2026-07-14/{lora_p9,Retrieval}`). **Freed ≈144G** (89.1GB + 65.4GB source).
 
-## Quota — AFTER
+## Quota — AFTER (2026-07-14, via `quota -s`)
 
-Unchanged so far (nothing deleted): `396G* / 290G soft / 3000G hard`, grace running, 1212k files.
-Will drop to ~252G once the deletion above is authorized and run.
+```
+Disk quotas for user jehc223 (uid 135258174):
+ /dev/mapper/data-data   252G   quota 290G   limit 3000G   (no grace — under soft limit)   files 1208k
+```
+
+**396G → 252G, now UNDER the 290G soft quota** — the `*` over-quota flag and the grace countdown
+are both cleared.
 
 ## RESTORE — exact copy-paste commands
 
@@ -147,5 +157,6 @@ Cited by the B-line records (`B1/B2/B3/B4_*` execution/recon/impl/prereg/verdict
 
 ---
 _Backup ran as SLURM job 13157 (COMPLETED 2026-07-14, 00:27:29) and BOTH dirs verified 100% clean
-on B2 (0 differences, 978 + 2277 matching files). Local deletion is BLOCKED on user permission
-(irreversible-destruction gate) and remains the only outstanding step; restore is guaranteed._
+on B2 (0 differences, 978 + 2277 matching files). Local deletion executed 2026-07-14T10:42:54Z by
+the main session under the user's in-conversation ruling; quota 396G → 252G (under soft limit).
+Mandate CLOSED. Restore is guaranteed (see RESTORE section)._

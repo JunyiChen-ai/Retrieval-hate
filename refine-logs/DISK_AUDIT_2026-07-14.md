@@ -116,9 +116,10 @@ Outside RGCL (hands off, reported): SafetyContradiction 36G, ExMRD_ours 28G, Mul
 
 ---
 
-**Update 2026-07-14:** User ruled backup-then-delete for both large dirs. Both were backed up to
-`b2:junyi-data/RGCL_video/manual_backup_2026-07-14/{lora_p9,Retrieval}` and verified clean
-(rclone check: 0 differences, 978 + 2277 matching files; SLURM job 13157 COMPLETED). Local
-`rm -rf` deletion is BLOCKED on the user-permission (irreversible-destruction) gate — the ~144G
-is not yet freed. Full evidence + restore/delete commands: see `DISK_BACKUP_RECORD_2026-07-14.md`.
+**Update 2026-07-14 (CLOSED):** User ruled backup-then-delete for both large dirs. Both were
+backed up to `b2:junyi-data/RGCL_video/manual_backup_2026-07-14/{lora_p9,Retrieval}` and verified
+clean (rclone check: 0 differences, 978 + 2277 matching files; SLURM job 13157 COMPLETED), then
+DELETED locally 2026-07-14T10:42:54Z by the main session under the user's in-conversation ruling.
+**Quota 396G → 252G, now UNDER the 290G soft limit** (grace cleared). ~144G freed. Full evidence +
+restore commands: see `DISK_BACKUP_RECORD_2026-07-14.md`.
 
