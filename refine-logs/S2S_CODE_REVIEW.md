@@ -261,3 +261,185 @@ After B1 + B2 land and the three scripts are re-hashed:
 **Out of scope / unchanged:** the downstream head-training formal stage (not authorized); any second
 Stage-E submission; any change to encoder/dataset/frames beyond the two pre-declared budgets; any
 test-label use beyond the Fano/oracle ceiling.
+
+---
+
+## 5. r2 re-check (commit `0a88d73`, 2026-07-14) — VERDICT: SMOKE AUTHORIZED
+
+One-line re-check of the fixed hunks only (not a full re-review). All three BLOCKING fixes, both
+NON-BLOCKING fixes, and the NOTES are correctly applied; the r2 §10 hash table matches on-disk.
+
+**Hash re-verification (on-disk vs `S2S_PROBE_DESIGN.md §10` r2 table) — ALL MATCH.**
+
+| artifact | r2-table sha256 | on-disk | match |
+|---|---|---|---|
+| `research-wiki/experiments/exp-s2s-r3.md` | `587f9b9b…504811c7` | `587f9b9b8e103758c34ffbb4c81aaa6796f231528b4612cca7c3d513504811c7` | ✅ |
+| `scripts/analysis/s2s_extract.py` | `41979f6a…051cd23a` | `41979f6a41c95e38a3cd875e11dc54a5a48eac9a5b908f295bad4d8d051cd23a` | ✅ |
+| `scripts/slurm/s2s_extract.sbatch` | `2dc0f90b…d56665dc` | `2dc0f90b03a44f45945cab3194f78ec97012fe7b157727cd50f64d88d56665dc` | ✅ |
+| `scripts/analysis/s2s_probe.py` | `949ebbdd…f826f209` | `949ebbdd432c9d72b1b164bc715da1cbba9fafc7f363337893f9813ff826f209` | ✅ |
+
+**B1 — FIXED** (`s2s_extract.py:211-214`). `gv = grecon_vec.detach().cpu()` and
+`bv = banked_vec.detach().float().cpu()` — both operands on CPU before `F.cosine_similarity` / abs-diff.
+Cross-device crash eliminated.
+
+**B2 — FIXED** (`s2s_extract.py:352`). `banked = load_banked_imgfeats(dataset, outname)` is now loaded
+**unconditionally** (the `if args.limit` guard is gone), so `bvec = banked.get(vid)` is non-None under
+`--limit` and gate 2 (G-recon) runs in the smoke. The smoke's per-split assembly line prints
+`grecon_cos_min=… grecon_maxabs_max=…` (`:458-461`), so G-recon evidence appears in the smoke log.
+Running G-recon on the test split during extraction is not a test-touch (embedding parity check, no
+labels/scoring; extracting+caching test frame sets was already authorized, prereg §10). ✅
+
+**B3 — FIXED** (`s2s_probe.py:275-304, 427, 434-438`). `permutation_null` now computes the rank-only
+arm's own null with the **same per-seed permutation applied to both rank-only arms**
+(`mms_s`/`spool_s` reused for the `rank_only=True` votes, `:294-295`); `boot_rank =
+bootstrap_delta(a_set_r["votes"], a_pool_r["votes"], …)` is a paired bootstrap on the rank-only votes
+(`:427`); and the credit rule is `rank_corroborates = rank_sign_ok AND rank_null_ok AND rank_boot_ok`
+(`:438`) = sign-match (acc AND F1) AND rank-only obs Δacc > rank-only null-95th AND rank-only
+bootstrap-5th > 0 — exactly the pre-registered A2 rule. Surfaced in the primary dict, the results MD,
+the JSON, and three mechanical-gate lines (`:518-525`). Drove it on synthetic: all keys populate,
+`boot_rank["dacc_p5_gt0"]` present. ✅
+
+**NB-a — FIXED** (`s2s_probe.py:184-188`). After top-k selection, `topk_idx =
+topk_idx[row[topk_idx] > NEG_INF/2]` drops excluded/self sentinels before the vote, and it raises
+`RuntimeError("degenerate retrieval: no finite neighbours …")` if none remain. Stress-tested on
+synthetic: a NEG_INF value can no longer enter the vote (verified it fail-loud-raises instead of
+multiplying a label by −1e30); the arithmetic vote's `weight[:length]` handles the shortened list. This
+is a no-op for the non-excluded arms (only the diagonal is NEG_INF there, never in the top-20). ✅
+
+**NB-b — RESOLVED** (`s2s_extract.sbatch:3-5`). `gpu:a100:1` kept, with the evidence I asked for: the
+banked-cache producer `scripts/slurm/gen_embed_mllm.sbatch:3` uses the identical `--gres=gpu:a100:1` and
+ran successfully, so the a100 gres type is schedulable on this partition (and the A100 pin is what
+preserves bf16 kernel parity for G-recon). ✅
+
+**NOTES** — N-i dead `and False` no-op removed from the probe; N-ii unused `T_nominal` param dropped
+from `shard_ok` (now called `shard_ok(shard_path)`, `:365`); N-iv design §4 offline-G-decomp wording
+corrected. N4 fail-closed guard (train/dev_seen assert + 851/629 size guard) intact after the edits. All
+three scripts `py_compile` clean; sbatch `bash -n` clean.
+
+**One residual (NOTE, non-blocking) — stale smoke echo.** `s2s_extract.sbatch:20` and `:49` still print
+"(G-recon skipped)", which now **contradicts** the B2 fix (the smoke *does* run G-recon). Functionally
+harmless — the authoritative evidence is the `grecon_cos_min=`/`grecon_maxabs_max=` numbers in each
+per-split assembly line — but the echo is misleading and should be corrected. **When reading the smoke
+log, verify gate 2 via the `grecon_cos_min` assembly lines and ignore the "(G-recon skipped)" echo.**
+
+### Verdict: SMOKE AUTHORIZED
+Per the §4 smoke terms: **ONE** `SMOKE=1 sbatch scripts/slurm/s2s_extract.sbatch` — single job, no
+`--time`, `PENDING (JobHeldUser)`=wait (never force), throwaway `--out_root`, no artifact under the real
+`data/CLIP_Embedding/<ds>/frameset_qwen7b_8f/` path. The smoke log must show **all four HARD gates green**
+on ≥1 real video per dataset: gate 0a temporal control (`match==σ`, groups distinct), gate 0b grid
+(`n_vis == grid_t·(grid_h//2)·(grid_w//2)`), gate 1 G-decomp ≤ 1e-5, and **gate 2 G-recon
+`grecon_cos_min ≥ 0.9999` AND `grecon_maxabs_max ≤ 1e-3`** (read from the assembly lines; the stale echo
+is a doc bug), plus the config echo + both script sha256s. The **full Stage-E extraction is a SEPARATE
+authorization** granted only after the smoke shows all four green. Stage P stays gated behind the full
+extraction (B3 now landed and re-checked; N4 zero-test-touch verified). The stale-echo NOTE may be fixed
+opportunistically (it does not block the smoke).
+
+---
+
+## 6. r3 re-check (commit `2408347`, C2→ASYM fold, 2026-07-15) — VERDICT: STAGE-P CLEARED
+
+Diff-only re-check of the C2-candidate fold into the probe as the ASYM ablation arm. **Probe-only
+amendment; the extractor + sbatch are byte-identical to the r2 pins.** All five checks pass against the
+amended `exp-s2s-r3.md §5` + `S2S_PROBE_DESIGN.md §5`.
+
+**Hash / scope.** §10 r3 table matches on-disk for every artifact: `s2s_extract.py` `41979f6a…` and
+`s2s_extract.sbatch` `2dc0f90b…` are **UNCHANGED** from r2 (so the queued smoke 13159 validity is
+untouched), `s2s_probe.py` `141a0441…`, `exp-s2s-r3.md` `3f1f5b09…`, `S2S_PROBE_DESIGN.md`
+`d40684dc…` (self-hash confirmed). The diff touches only `build_matrices`, `permutation_null`,
+`probe_dataset`, `mechanical_gate_check`, `write_markdown` — an additive fold, no rewrite.
+
+**1. ASYM math — CORRECT.** `s2s_probe.py:150` `asym = (pooled @ G.t()).reshape(N,N,T).max(dim=2).values`
+with `pooled = normalize(g.mean(dim=1))` (the POOLED arm's query vector) and `G = ghat.reshape(N*T,D)`
+(the SET arm's L2-normed memory frame vectors). I confirmed numerically that `asym[i,j] == max_m
+cos(ĝ^Q_pooled_i, ĝ^M_j[m])` to 6e-8 — exactly the `|Q|=1` reduction of MeanMaxSim on the SAME frozen
+frame vectors, i.e. the pooled-query × set-memory off-diagonal cell. The matrix is (correctly)
+asymmetric; its diagonal is self-similar (0.635 vs 0.173 off-diagonal) and LOO-excluded by `run_vote`'s
+`fill_diagonal(NEG_INF)`. It flows through `add("ASYM", M["asym"])` → the IDENTICAL `run_vote` →
+`compute_metrics_retrieval` — **no bespoke vote code**. ✅
+
+**2. Machinery symmetry — CORRECT.** `permutation_null` now evaluates ASYM under the **same per-seed
+permutation** as every other arm (`asym_s = asym[ix]`, `ix` shared with `mms_s`/`spool_s`, `:293-297`),
+producing both Δ(ASYM−POOLED) (mirrors SET) and the Δ(ASYM−SET) adjudication contrast, each with its own
+null-95th. Bootstrap adds `boot_asym` (ASYM vs POOLED) and `boot_asym_vs_set` (ASYM vs SET), `:446-447`.
+The `c2_asym` results/JSON block exposes `asym_vs_set_d_acc/d_f1` (Δ(ASYM−SET)),
+`asym_vs_set_null_p95_acc` (null-95th), `asym_vs_set_boot_dacc_p5` (boot-5th), and `asym_beats_set`; the
+MD writer surfaces the same. ✅
+
+**3. C2 kill logic — matches the recon's two branches, non-binding.** `mechanical_gate_check` (`:571-593`):
+branch **(a)** — if `oracle_all_below` (S2S oracle Δacc < +0.04 on every dataset, the same variable that
+drives the S2S kill-switch) → `KILL(DEAD-with-S2S-family)` and **no** per-dataset ASYM adjudication;
+branch **(b)** — else per-dataset `asym_beats_set = (Δacc_{ASYM−SET} > 0 AND Δf1_{ASYM−SET} > 0)`, then
+`any_beats` across datasets → `SURVIVES(escalate-to-§11-asym)` if ASYM beats SET on ≥1 dataset, else
+`KILL(DEAD-route)`. I drove all three states on synthetic results: (a) fires and suppresses adjudication,
+(b)-fail → DEAD-route, (b)-pass → SURVIVES. This is exactly `exp-s2s-r3.md:242-247` /
+`S2S_PROBE_DESIGN.md:277-283`. The C2 checks append to the same `checks` list emitted under the
+"MECHANICAL … NOT the binding verdict" banner (`:13, :522` intact) — stays non-binding. ✅
+
+**4. Extractor/sbatch/hash-table — CONFIRMED** (above). Smoke 13159 runs the r2-pinned extractor,
+unaffected by the probe-only r3. ✅
+
+**5. No regression — CONFIRMED.** `run_vote` (incl. the NB-a `row[topk_idx] > NEG_INF/2` guard,
+`:187-189`), `load_memory` (N4 asserts + 851/629 size guard, `:73/:80/:115`), and the B3 credit rule
+(`rank_corroborates = sign AND null AND boot`, `:467`) are all **outside the diff** and grep-confirmed
+intact; B1/B2 live in the byte-identical extractor. `py_compile` clean. ✅
+
+**Residual (unchanged from r2):** the sbatch still echoes "(G-recon skipped)" (`:20/:49`) — stale, but
+the extractor is byte-identical to r2 by design, so this is the same non-blocking NOTE; verify gate 2 in
+the smoke via the `grecon_cos_min` assembly lines.
+
+### Verdict: STAGE-P CLEARED
+The ASYM fold is correct, symmetric, and faithful to the amended pre-registration; it is a pure additive
+ablation cell on the existing zero-test-touch probe with no new GPU, no new vote code, and no regression
+to any prior fix. Stage P remains cleared to run **after** the Stage-E smoke passes and the full
+extraction is separately authorized (unchanged gating). The §4/§5 smoke terms stand verbatim.
+
+---
+
+## 7. r3a re-check (commit `fabb49f`, smoke-13159 device fix, 2026-07-15) — VERDICT: CLEARED FOR SMOKE RESUBMIT
+
+Tight one-line-diff re-check after smoke 13159 failed in 13 s at gate 0a (temporal positive control),
+pre-data, with `RuntimeError: … cuda:0 and cpu` in `encode_frameset`'s G-decomp assembly. All four checks
+pass.
+
+**1. Functional change is exactly the one line.** `git show fabb49f -- s2s_extract.py`: the only code
+change is `n_t_t = torch.tensor(n_t, dtype=torch.float32)` → `n_t_t = torch.tensor(n_t,
+dtype=torch.float32, device=g.device)` (`:194`) plus a 3-line explanatory comment. `g` is
+`torch.stack(prefix[idx].mean(0)…)` on the model device, so the old CPU-default `n_t_t` made
+`recon_mean = (g * n_t_t[:,None]).sum(0).add(p_S)…` (`:202`) mix cuda+cpu. Building `n_t_t` on `g.device`
+fixes the cuda path and is **behavior-identical on CPU** (`g.device==cpu` there, so `n_t_t` lands on CPU
+exactly as before). ✅
+
+**2. No other semantic change rode the commit.** `git show --stat`: three files — `s2s_extract.py`
+(7 lines, the fix + comment), `S2S_PROBE_DESIGN.md` (+29, **purely additive**: §10 r3a hash table + §11
+revision entry, record-keeping only, 0 deletions), `S2S_SMOKE_RECORD.md` (+56, new postmortem, record).
+`s2s_probe.py` `141a0441…` UNCHANGED, `s2s_extract.sbatch` `2dc0f90b…` UNCHANGED, prereg
+`exp-s2s-r3.md` `3f1f5b09…` UNCHANGED — confirmed on-disk and restated in the r3a table. The probe (incl.
+r3 ASYM fold, B3, NB-a, N4) and the sbatch are untouched. ✅
+
+**3. Sibling-device audit — CONFIRMED, `n_t_t` was the only one.** I traced every tensor in
+`encode_frameset` and scanned the whole file for CPU-default constructors: `torch.eye(4)` (`:281`) sits in
+`temporal_positive_control`, which operates on the returned `g.detach().cpu()` (CPU) — no mix;
+`torch.zeros` (`:378-380`) and `torch.tensor` (`:441-445`) build the CPU shard/assembled `.pt` from
+CPU-loaded data — no mix. After the fix, every device-mixing op is consistent: the **G-decomp assembly**
+(`g`, `n_t_t`, `p_S`, `banked_formula_vec` all on device, `:190-203`) and the **B1 G-recon compare**
+(`gv`, `bv` both `.cpu()`, `:214-217`). No sibling device bug remains to burn a second smoke. ✅
+
+**4. Hash.** On-disk `s2s_extract.py` = `07fd162196a7e61e8e83f1a181408fe7b8080cf475cb59ecd58a1dc035b3740a`
+= the §10 r3a freeze table entry; the table also correctly records sbatch/probe/prereg as UNCHANGED.
+`py_compile` clean. ✅
+
+**Reviewer self-correction (honest note).** This device bug lived in the G-decomp assembly since r1, and
+my r1 review (§2, Lesson 1 gate-1) asserted the G-decomp operands were "both on device" — that was
+**wrong**: `n_t_t` was CPU-default, so the assembly mixed cuda+cpu. It is a GPU-only fault that the
+CPU-only synthetic drive available to this review structurally could not surface, and the mandated smoke
+(the intended backstop) caught it in 13 s pre-data — but I under-caught it, and the correction is recorded
+here. No data or meaningful GPU was consumed (crash was in the synthetic control before any real video);
+banked caches untouched.
+
+### Verdict: CLEARED FOR SMOKE RESUBMIT
+The r3a fix is correct, complete (full-function device audit done), and strictly extractor-scoped; the
+probe/sbatch/prereg pins are intact. Authorize **one** `SMOKE=1 sbatch scripts/slurm/s2s_extract.sbatch`
+resubmit under the unchanged §4/§5 terms — it must now show **all four HARD gates green** on ≥1 real video
+per dataset (0a temporal control, 0b grid, 1 G-decomp ≤ 1e-5, 2 G-recon cos ≥ 0.9999 & max-abs ≤ 1e-3 via
+the `grecon_cos_min` assembly lines; the stale "(G-recon skipped)" echo remains a cosmetic NOTE). The full
+Stage-E extraction stays a separate authorization after the smoke passes; Stage P stays gated behind it.
