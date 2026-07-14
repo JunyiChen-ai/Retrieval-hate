@@ -1,0 +1,14 @@
+# Login-node client deps for the Modal features-only offload (HateVideo conda env).
+# Install with:  conda run -n HateVideo pip install -r scripts/cloud/requirements-cloud.txt
+#
+# WHY python-socks IS REQUIRED (do not drop it):
+#   The cluster reaches api.modal.com only through the squid CONNECT proxy
+#   (http_proxy/https_proxy=http://squid.auckland.ac.nz:3128). Without
+#   python-socks, modal's proxy transport raises ImportError the instant a proxy
+#   is configured, which its gRPC fallback swallows into a misleading
+#   "Could not connect to the Modal server." See
+#   refine-logs/MODAL_CONNECTIVITY_DEBUG_2026-07-14.md.
+# This file pins the LOCAL client only; the Modal container image deps are pinned
+# inline in modal_probe_runner.py (torch/faiss/sklearn/... == HateVideo versions).
+modal==1.5.2
+python-socks[asyncio]==2.8.2

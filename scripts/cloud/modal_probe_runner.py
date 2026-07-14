@@ -47,6 +47,10 @@ image = (
         "transformers==4.49.0",
         "tqdm",
     )
+    # Match the banked SLURM run's environment (see scripts/slurm/enc3seed.sbatch)
+    # so a triage probe differs from the local number ONLY in hardware/libraries:
+    # no wandb, HF offline (features are precomputed -> no downloads), live logs.
+    .env({"WANDB_MODE": "disabled", "HF_HUB_OFFLINE": "1", "PYTHONUNBUFFERED": "1"})
     # Minimal code subset ONLY -- never the whole repo (no data/, no logs).
     .add_local_dir(str(REPO_ROOT / "src"), "/root/src", ignore=_IGNORE)
     .add_local_dir(str(REPO_ROOT / "scripts" / "analysis"),
