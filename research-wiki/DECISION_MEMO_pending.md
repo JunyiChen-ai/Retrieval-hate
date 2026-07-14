@@ -58,3 +58,86 @@
 ---
 
 *(本备忘录随 D1–D6 任一被裁决而逐项失效;裁决后由主会话把结论落地到对应文档,并从本单移除已清项。)*
+
+---
+
+## Round-2 追加裁决项(2026-07-14,B3/B4 之后)
+
+> 本节承接 D1–D6,追加 **round-2 MLLM-integration campaign** 收尾后新增的悬置裁决项:B3(LoRA-Qwen
+> 编码器 vs frozen-CLIP on MHC-ZH,job 13150,`final-epoch: PASS (MARGINAL); val-selected: FAIL`)是本轮
+> **首个实测(部分)正结果**,B4(EN 侧同一 LoRA 单元)是**第 22 条预注册负结果类条目预-GPU 关闭**。数字与
+> 判决语言逐字转录自命名源:`research-wiki/TERMINUS_round2_mllm_plus3.md`(§4/§6/§7)、
+> `refine-logs/B3_VERDICT_REVIEW.md`(§4b/§6)、`refine-logs/B4_FORENSIC_RECON.md`、
+> `research-wiki/PAPER_MASTER_TABLES.md`(PUR addendum:PUR-1/PUR-2/PUR-banner)。**同样只汇总悬置决策,
+> 不含已批准行动;每项「我方推荐」仅是建议。** 编号续 D1–D6。
+
+## D7 — LoRA / RA-HMD-family 编码器杠杆是否计入 goal 的「novel」子句
+
+- **问题:** B3 把 LoRA-Qwen 编码器 vs frozen-CLIP 在 MHC-ZH 定为 `final-epoch: PASS (MARGINAL)`(mean
+  Δacc **+0.0313**)——这是全项目**最接近** goal「+3 acc AND +3 F1」的实测配对结果(其余 21 条搜索轴全为
+  负)。但 LoRA / RA-HMD-family 一直被本项目分类为**「MIXED performance lever, not novelty」**
+  (`query_pack.md:44`;`B1_PREREG_REVIEW.md:64`)。**一个 LoRA-encoder 的性能 pass 是否计入 goal 的
+  「novel」子句?**
+- **我方推荐:不主张 novelty。** 把 B3 作为 encoder-adaptation 的**正式消融/性能行**入表,novelty 叙事仍
+  挂四支柱(retrieval-contrastive+kNN 核 + 可更新记忆 + 共识去噪 + 可审计档案);LoRA 只提供 ZH 上表征级
+  增益的证据。若用户愿按 `TERMINUS §6(b)` 重划边界(把 LoRA 正式化为 encoder 适配消融而非 novelty 主张),
+  可据此升级表述——**须用户先划 novelty 边界才可动。**
+- **来源:** `TERMINUS §6`(选项 b)· `B3_VERDICT_REVIEW.md §6`(Novelty bullet,显式 PENDING)·
+  `PAPER_MASTER_TABLES.md` PUR-banner (i)·性能数 = PUR-1。
+
+## D8 — 「MLLM-encoder family」能否作 ≥2-数据集 headline
+
+- **问题:** 两个编码器级 pass 骑在**不同机制**上——HateMM 是 **frozen-Qwen** swap **双协议 PASS**,ZH 是
+  **LoRA-Qwen** 微调 **final-epoch marginal PASS**。可否以「MLLM-encoder family」作为跨 ≥2 数据集的
+  headline?**若 goal 要求单一机制跨 ≥2 库过线,则 frozen(仅 HateMM)与 LoRA(仅 ZH)均不单独满足。**
+- **我方推荐:不打「单一机制双库」headline。** 如实报「MLLM-encoder family」= 两条不同杠杆各在一库,并在
+  正文明确二者机制不同(frozen-swap vs LoRA-adaptation);headline 主张仍走 HateMM 单库最强正效应
+  (+5.3–5.6 acc 双协议 3/3)+ 同场 MoRE 胜出。
+- **来源:** `B3_VERDICT_REVIEW.md §4b`(No headline upgrade)+ §6(第二 bullet)· `TERMINUS §6`·
+  `PAPER_MASTER_TABLES.md` PUR-banner (ii)。
+
+## D9 — `PAPER_MASTER_TABLES.md:58`「不可直接同格并比」注是否被 B3 配对覆盖
+
+- **问题:** 主表脚注(`PAPER_MASTER_TABLES.md:58`)记「LoRA-Qwen 主栈与 frozen-CLIP floor 不同编码器,
+  **不可直接同格并比**」。B3 用**同 runner、同 `--seed`、同 149 ZH test videos** 的 head-level 配对
+  (job 13150 vs 13115),是现存最干净的配对读数并已记于 PUR-1。**这一同 runner 同种子配对是否覆盖 :58
+  记账注,以支撑一个论文主张?**
+- **我方推荐:覆盖仅限「配对 Δ」这一受控读数**(可在附录以 B3 同 runner 配对表 + 三条敏感度事实呈现),
+  **不**升级为主表 headline 并比;主表 T1.1 保留 :58 注。理由:B3 仍是**单一 CLIP 抽样 + 单一 LoRA 编码器
+  抽样**(3 种子共享单缓存,只变下游 head),不建立训练种子方差。
+- **来源:** `PAPER_MASTER_TABLES.md:58` + PUR-1/PUR-banner (iii)· `B3_VERDICT_REVIEW.md §6`(第三 bullet)·
+  `TERMINUS §6`。
+
+## D10 — 可选:EN-LoRA 正式闭合跑(约 2 分钟 GPU,veto-clean)
+
+- **问题:** B4 取证证明 EN 侧同一 LoRA 单元**并非未测**:同 adapter + 同特征缓存 + 同 RGCL+kNN head 已在
+  **seed0 双协议**入账为负结果(val-sel **−0.0310 acc** / final-ep +0.0062 acc,`exp-lora-sft-encoder.md:21`)。
+  因 adapter 与缓存均在盘,把 seed0 锚定负结果**升级为正式 3-种子配对闭合行仅需约 2 分钟 GPU**,且清过全部
+  三条现行 veto(单数据集自有 train split / 无 OCR / 无 gold aux)。**跑不跑?**
+- **我方推荐:现在不跑**(遵「不在已关闭轴上烧 GPU」)。它只会把**已知负结果**形式化为论文的一行正式闭合,
+  不开新地;诚实先验 = **双协议 FAIL,证伪概率 <5%**。留作**用户请求项**——若用户要一行形式化的 3-种子闭合行
+  以补全 LoRA-encoder 三数据集地图(PUR-2),可按 `enc3seed.sbatch` 加三行运行。
+- **来源:** `B4_FORENSIC_RECON.md §(iii)/(v)`(成本表 + 诚实先验)· `TERMINUS §7`(用户选项,veto-clean)·
+  数字 = PUR-2 MHC-EN 行。
+
+## D11 — 72B-AWQ scale 点(为完整性列出)
+
+- **问题:** 72B-AWQ 编码器是唯一未跑的 scale 点。是否值得跑?
+- **我方推荐:不建议(dead-axis grinding)。** B2 已实测 32B 在 HateMM 锚数据集上**介于 CLIP 与 7B 之间**
+  (scale **单调退步**,CLIP<32B<7B),对 72B 的先验 ≈0;真要跑需抽取脚本加 AWQ 路径 + autoawq 安装 +
+  delta-check + 41G 下载。除非用户另有机制假设,否则不动。
+- **来源:** `TERMINUS §4(a)` · scale 单调退步实测 = `B2_VERDICT_REVIEW.md`(第 21 条负结果,`TERMINUS §1`)。
+
+## D12 — 基建裁决(备份 / 配额 / 遗留 flag)
+
+- **问题:** 四项运维待裁:① main 上 **125 个未推送 commit**(实核 `git rev-list --count origin/main..HEAD`
+  = 125,备份风险);② **disk_guard quota 解析 bug** —— 当前**设计上全盲**(不自动裁剪),修复可能在**超阈值时
+  重新启用自动 pruning**,风险不对称,须用户明确放行才动;③ **lora_p9 83G + Retrieval 41G 未备份**未裁决;
+  ④ A 线 **M-A/realbank `is_science` 遗留 flag**。
+- **我方推荐:** ① 尽快 push 或另做冷备(纯文档 commit,无 GPU);② disk_guard 修复**须用户明确 go**(在此
+  之前维持全盲,避免超阈值自动删);③④ 留待用户逐项裁决,不擅动。
+- **来源:** `TERMINUS §4(d)`。
+
+---
+
+*(D7–D12 与 D1–D6 同规:任一被裁决即逐项失效,裁决后由主会话落地并从本单移除已清项。)*

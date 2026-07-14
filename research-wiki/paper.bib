@@ -2,12 +2,17 @@
 %  paper.bib — bibliography for the hateful-video-detection paper draft
 %  Keys match the four chapter drafts (DRAFT_intro_related_limitations.md,
 %  DRAFT_method_chapter.md, DRAFT_experiments_chapter.md,
-%  DRAFT_analysis_chapter.md).  20 entries.
+%  DRAFT_analysis_chapter.md).  24 entries.
 %
 %  Assembled 2026-07-09.  Bibliographic data web-verified where noted;
 %  entries whose final peer-reviewed venue could not be confirmed are cited
 %  in their verified arXiv-preprint form and flagged [UNVERIFIED] in note.
 %  No venue/pages are invented.
+%
+%  2026-07-14 addendum: +4 anchors for the round-2 LoRA-family / MLLM-integration
+%  negative-results narrative (B3/B4/PUR) — lora, qlora, sav, vlmllmdesc.
+%  Metadata re-verified 2026-07-14 against arXiv (2106.09685, 2305.14314,
+%  2412.00142, 2412.11917) and LITERATURE_mllm_integration_2026-07-13.md.
 % ===========================================================================
 
 % ---------------------------------------------------------------------------
@@ -242,4 +247,50 @@
   eprint    = {2212.04356},
   archivePrefix = {arXiv},
   note      = {Whisper. Verified: ICML 2023; arXiv 2212.04356.}
+}
+
+% ---------------------------------------------------------------------------
+%  Round-2 MLLM-integration campaign anchors (LoRA-family levers, feature
+%  mining, redundancy analysis) — cited by the B3/B4/PUR negative-results
+%  narrative.  Added 2026-07-14.
+% ---------------------------------------------------------------------------
+
+@inproceedings{lora,
+  author    = {Hu, Edward J. and Shen, Yelong and Wallis, Phillip and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Shean and Wang, Lu and Chen, Weizhu},
+  title     = {{LoRA}: Low-Rank Adaptation of Large Language Models},
+  booktitle = {Proceedings of the 10th International Conference on Learning Representations (ICLR)},
+  year      = {2022},
+  eprint    = {2106.09685},
+  archivePrefix = {arXiv},
+  note      = {LoRA (B3/B4 encoder-adaptation lever). Verified 2026-07-14: arXiv 2106.09685 (Hu et al., authors re-read from arXiv); published ICLR 2022.}
+}
+
+@inproceedings{qlora,
+  author    = {Dettmers, Tim and Pagnoni, Artidoro and Holtzman, Ari and Zettlemoyer, Luke},
+  title     = {{QLoRA}: Efficient Finetuning of Quantized {LLM}s},
+  booktitle = {Advances in Neural Information Processing Systems 36 (NeurIPS)},
+  year      = {2023},
+  eprint    = {2305.14314},
+  archivePrefix = {arXiv},
+  note      = {QLoRA (C1 route anchor, RA-HMD-style two-stage). Verified 2026-07-14: arXiv 2305.14314; NeurIPS 2023 (per arXiv comments).}
+}
+
+@inproceedings{sav,
+  author    = {Mitra, Chancharik and Huang, Brandon and Chai, Tianning and Lin, Zhiqiu and Arbelle, Assaf and Feris, Rogerio and Karlinsky, Leonid and Darrell, Trevor and Ramanan, Deva and Herzig, Roei},
+  title     = {Sparse Attention Vectors: Generative Multimodal Model Features Are Discriminative Vision-Language Classifiers},
+  booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year      = {2025},
+  eprint    = {2412.00142},
+  archivePrefix = {arXiv},
+  note      = {SAV (C2 head-mining route anchor). Authors verified 2026-07-14 via arXiv + GitHub (chancharikmitra/SAVs); v1 title used (current arXiv revision retitled ``Enhancing Few-Shot Vision-Language Classification with Large Multimodal Model Features''). [UNVERIFIED] ICCV 2025 venue is per project wiki (LITERATURE_mllm_integration_2026-07-13.md §1), not independently web-confirmed.}
+}
+
+@inproceedings{vlmllmdesc,
+  author    = {Ma, Pingchuan and Rietdorf, Lennart and Kotovenko, Dmytro and Hu, Vincent Tao and Ommer, Bj{\"o}rn},
+  title     = {Does {VLM} Classification Benefit from {LLM} Description Semantics?},
+  booktitle = {Proceedings of the AAAI Conference on Artificial Intelligence (AAAI)},
+  year      = {2025},
+  eprint    = {2412.11917},
+  archivePrefix = {arXiv},
+  note      = {AAAI-25 ensembling analysis (semantic-agnostic ensembling = P4-redundancy literature form). Verified 2026-07-14: arXiv 2412.11917; authors + AAAI-25 (extended version) per arXiv metadata.}
 }
