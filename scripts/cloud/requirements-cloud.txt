@@ -12,3 +12,10 @@
 # inline in modal_probe_runner.py (torch/faiss/sklearn/... == HateVideo versions).
 modal==1.5.2
 python-socks[asyncio]==2.8.2
+# WHY aiohttp-socks IS ALSO REQUIRED (do not drop it):
+#   Modal's volume/blob batch-upload (modal_probe_runner.py::sync) goes over an
+#   aiohttp HTTP transport, NOT the gRPC control plane -- a *different* proxy code
+#   path from python-socks. Without it, `::sync` aborts with
+#   ImportError("... 'aiohttp-socks' package is not installed") before moving a
+#   byte, even though `modal app list`/smoke (gRPC) work. Same root doc as above.
+aiohttp-socks==0.11.0

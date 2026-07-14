@@ -31,18 +31,48 @@ profile `jehc223`. Image built in 58.5 s. CPU worker: python 3.11.12, torch
 driver 580.95.05, 15360 MiB`, matmul 0.246 s (4463 GFLOPS). Token + billing live;
 log streaming survived the squid tunnel with no mid-run disconnect. Cost ≈ cents.
 
-**Features sync + first triage probe — BLOCKED, pending USER authorization.** The
-`::sync` step (uploading `data/CLIP_Embedding/HateMM/**` derived caches to the
-Modal volume) was denied by the harness data-exfiltration guard: teammate/agent
-authorization does not satisfy it for pushing repo data to an external cloud. To
-unblock, the **user** must approve the upload (or add a Bash permission rule for
-`modal run …::sync`). The video guard itself was never the blocker — it refuses
-raw media; this denial is the harness refusing any repo-data egress without user
-sign-off. Once authorized, the banked comparison target is ready:
+**Features sync + first triage probe — PASS (end-to-end, 2026-07-15).** `::sync
+--dataset HateMM` uploaded **52 files / 361.9 MB** (the full HateMM feature dir +
+labels; the video-guard passed every file and refused none) to volume
+`rgcl-features`. The first triage probe — HateMM · Qwen2.5-VL-7B · seed 0, the
+exact `enc3seed.sbatch` args (only `--path`→`/root/data` and
+`--group_name`→`RAC_modal_smoke` changed), T4, WANDB disabled — ran 30/30 epochs
+in ~33 s. Cloud vs banked local
+(`slurm/logs/enc3s_HateMM_Qwen2.5-VL-7B-Instruct_HF_seed0_12850.trainlog`, both
+final epoch 29):
 
-| Config (enc3seed.sbatch, seed 0, final epoch) | Banked local (A100) | Modal triage |
-|---|---|---|
-| HateMM · Qwen2.5-VL-7B · Test_Retrieval acc | 0.8605 | pending |
-| HateMM · Qwen2.5-VL-7B · Test_Retrieval macroF1 | 0.8507 | pending |
+| HateMM · Qwen-7B · seed 0, final epoch (29) | Banked local (A100) | Modal triage (T4) | drift |
+|---|---|---|---|
+| Test_Retrieval acc     | 0.8605 | 0.8744 | +0.0139 |
+| Test_Retrieval macroF1 | 0.8507 | 0.8666 | +0.0159 |
+| Test_Retrieval roc     | 0.9283 | 0.9311 | +0.0028 |
 
-Expected cross-hardware drift ~1e-3 (triage-only; formal numbers re-run locally).
+Drift is ~1.4 pp acc — **not** float-eps, and that is expected: this is a 30-epoch
+head-*train*, not inference, so A100-vs-T4 cuBLAS/cuDNN accumulation nudges the
+optimizer onto a slightly different trajectory (≈3 test-video flips; HateMM's test
+split is ~215 videos, acc quantum ≈ 1/215). The per-epoch trajectories otherwise
+overlap tightly: the banked final (acc 0.8605 / mF1 0.8514) recurs at cloud epochs
+13 and 20, and the cloud final (0.8744 / 0.8666) also appears at epoch 25. This is
+exactly the **triage-only** regime — close enough to rank/screen, not
+bit-reproducible; every paper number is re-run locally on its table's hardware
+(G-repro rule). **MHC is not synced yet** (HateMM only).
+
+**Two client deps are required (both now pinned in `requirements-cloud.txt`):**
+`python-socks[asyncio]` (gRPC control plane) **and** `aiohttp-socks` — Modal's
+volume/blob batch-upload runs over a *separate* aiohttp HTTP transport, so without
+the second dep `::sync` aborts with an ImportError before moving a byte even
+though `modal app list`/smoke (gRPC) work.
+
+**Two runner bugs were fixed in `modal_probe_runner.py`** (the mounted-code `run`
+path, never exercised live before): (1) `REPO_ROOT = Path(__file__).resolve().parents[2]`
+IndexError-crashed the container on import — Modal mounts the entrypoint at
+`/root/<name>` (depth 1), not `scripts/cloud/`; `REPO_ROOT` is only needed locally
+(sync + image build), so it now falls back to the file's dir inside the container.
+(2) The pinned image lacked `easydict / pandas / pillow / rank-bm25 / torchmetrics
+/ wandb` (the `run_rac.py` import chain); added, pinned to the HateVideo env.
+
+**Tunnel stability + cost.** No mid-run disconnect on the 361.9 MB sync or the
+probe stream; the earlier apparent "stall" was the crash-looping container (the
+local client hung on repeated container-start failures), diagnosed via `modal app
+logs`, not a squid drop. All T4 attempts summed to a few minutes ≈ **$0.01–0.03**,
+covered by free credits. Cloud stays **triage-only, forever.**

@@ -120,3 +120,43 @@ connectivity-validated but has moved zero bytes of data.
 - modal client 1.5.2, Python 3.11.8, conda env HateVideo.
 - Token file: `/data/jehc223/home/.modal.toml`, profile `jehc223`, verified against
   `https://api.modal.com`. Token secret redacted here to `as-iCyc…`.
+
+## End-to-end validated — data upload + first triage probe (2026-07-15)
+The data-upload path that the smoke section left unexercised is now proven. Three
+blockers, all resolved, none of them connectivity or policy:
+
+1. **Second proxy transport missing — `aiohttp-socks`.** `::sync` uploads via
+   Modal's **volume/blob batch-upload**, which uses an **aiohttp HTTP** transport,
+   not the gRPC control plane python-socks fixed. It aborted mid-run with
+   `ImportError("A proxy is configured ... but the 'aiohttp-socks' package is not
+   installed")`. Same failure shape as the original bug, different transport. Fix:
+   `pip install aiohttp-socks` (now pinned `==0.11.0` in
+   `scripts/cloud/requirements-cloud.txt`). After it, `::sync --dataset HateMM`
+   uploaded 52 files / 361.9 MB over the squid tunnel with **no disconnect**.
+
+2. **Container import crash — `parents[2]` IndexError.** The `run` (mounted-code)
+   path had never run live. `modal_probe_runner.py:33`,
+   `REPO_ROOT = Path(__file__).resolve().parents[2]`, is correct locally
+   (`scripts/cloud/…` → repo root) but Modal mounts the entrypoint file at
+   `/root/<name>` (depth 1) inside the container, so `parents[2]` → `IndexError`
+   at module import, crash-looping every container. The local `modal run` client
+   then **hung** on the repeated container-start failures — which looked exactly
+   like the "long-stream squid drop" residual risk but was not; `modal app logs
+   <app-id>` (a fresh short request) surfaced the real traceback. Fix: `REPO_ROOT`
+   is only used locally (sync + image build), so guard the index and fall back to
+   the file's dir in the container.
+
+3. **Image missing run_rac.py deps.** The pinned image had
+   torch/faiss/sklearn/numpy/scipy/transformers/tqdm but not
+   `easydict / pandas / pillow / rank-bm25 / torchmetrics / wandb` (all top-level
+   imports on the run_rac → evaluate_rac / data_loader chain; `wandb` is imported
+   unconditionally but stays a no-op under `WANDB_MODE=disabled`). Added, pinned to
+   the HateVideo versions.
+
+**Result.** HateMM · Qwen2.5-VL-7B · seed 0 (exact `enc3seed.sbatch` args) ran
+30/30 epochs on a T4 in ~33 s. Final-epoch Test_Retrieval: cloud **acc 0.8744 /
+mF1 0.8666 / roc 0.9311** vs banked local (A100) **0.8605 / 0.8507 / 0.9283** →
+drift **+0.0139 / +0.0159 / +0.0028**. That ~1.4 pp is a 3-of-~215 test-video flip
+from a 30-epoch *train* diverging across A100/T4 kernels — the triage-only regime,
+not bit reproduction. **Cost across all attempts ≈ $0.01–0.03** (free credits).
+Cloud numbers are triage-only forever; paper numbers re-run locally (G-repro).

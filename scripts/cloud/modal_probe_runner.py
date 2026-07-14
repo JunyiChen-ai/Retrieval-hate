@@ -29,8 +29,12 @@ import modal
 
 APP_NAME = "rgcl-probe"
 VOLUME_NAME = "rgcl-features"
-# scripts/cloud/modal_probe_runner.py -> repo root is two levels up.
-REPO_ROOT = Path(__file__).resolve().parents[2]
+# scripts/cloud/modal_probe_runner.py -> repo root is two levels up when this
+# file runs locally (sync + image build use it). Inside a Modal container the
+# entrypoint is mounted at /root/<name>, so parents[2] would IndexError on
+# import; the container never needs REPO_ROOT, so fall back to the file's dir.
+_SELF = Path(__file__).resolve()
+REPO_ROOT = _SELF.parents[2] if len(_SELF.parents) > 2 else _SELF.parent
 
 # ---------------------------------------------------------------------------
 # Image: pinned to the HateVideo conda env versions for feature/cache parity.
@@ -46,6 +50,15 @@ image = (
         "scipy==1.17.1",
         "transformers==4.49.0",
         "tqdm",
+        # run_rac.py import chain (evaluate_rac / data_loader) needs these too;
+        # pinned to the HateVideo env so a triage probe matches the banked run.
+        # wandb is imported unconditionally but stays a no-op (WANDB_MODE=disabled).
+        "easydict==1.13",
+        "pandas==2.3.3",
+        "pillow==11.1.0",
+        "rank-bm25==0.2.2",
+        "torchmetrics==1.9.0",
+        "wandb==0.28.0",
     )
     # Match the banked SLURM run's environment (see scripts/slurm/enc3seed.sbatch)
     # so a triage probe differs from the local number ONLY in hardware/libraries:
