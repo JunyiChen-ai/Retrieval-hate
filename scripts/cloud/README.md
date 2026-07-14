@@ -55,7 +55,17 @@ overlap tightly: the banked final (acc 0.8605 / mF1 0.8514) recurs at cloud epoc
 13 and 20, and the cloud final (0.8744 / 0.8666) also appears at epoch 25. This is
 exactly the **triage-only** regime — close enough to rank/screen, not
 bit-reproducible; every paper number is re-run locally on its table's hardware
-(G-repro rule). **MHC is not synced yet** (HateMM only).
+(G-repro rule).
+
+**MHC + MHC_zh synced (2026-07-15).** `::sync --dataset MHC` uploaded **73 files /
+361.0 MB** (68 feature `.pt` incl. the 3-file `v2/` archive-key subdir + 5 labels:
+`train/val/test.jsonl` and `target_pred_qwen7b.json{,l}`); `::sync --dataset
+MHC_zh` uploaded **83 files / 385.6 MB** (80 feature `.pt` incl. `v2/` + 3 labels:
+`train/val/test.jsonl`). The video-guard passed every file and refused none (all
+`.pt`/`.jsonl`/`.json`). Volume `rgcl-features` now holds **HateMM + MHC + MHC_zh**;
+per-dataset volume `ls` counts match local (`CLIP_Embedding/MHC` 65 top-level +
+`v2/`×3 = 68; `CLIP_Embedding/MHC_zh` 77 + `v2/`×3 = 80). ZH/EN cloud probes are now
+ready.
 
 **Two client deps are required (both now pinned in `requirements-cloud.txt`):**
 `python-socks[asyncio]` (gRPC control plane) **and** `aiohttp-socks` — Modal's
