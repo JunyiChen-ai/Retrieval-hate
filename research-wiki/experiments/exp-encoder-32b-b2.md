@@ -16,6 +16,8 @@ tags: ["hateful-video", "MLLM-encoder", "encoder-scale", "frozen-CLIP", "encoder
 
 # B2 — MLLM-as-encoder SCALE axis: frozen Qwen2.5-VL-32B vs 7B vs frozen-CLIP (PRE-REGISTRATION)
 
+> **B2 GOAL-RELEVANT FAIL — 21st negative; SCALE AXIS CLOSED (independent verdict review 2026-07-14, refine-logs/B2_VERDICT_REVIEW.md; job 13146).** 32B-vs-CLIP passes on HateMM only (+0.03/+0.05 both protocols) — restates the banked 7B win while REGRESSING from 7B (final acc CLIP 0.8124 < 32B 0.8450 < 7B 0.8682); MHC-EN and MHC-ZH actively below CLIP (0/3 signs); 32B-vs-7B fails all 3 datasets. Full staged execution (D xet-outage + probe-gated retry, E 1h50m, C weights deleted, T 9m) in refine-logs/B2_EXECUTION_RECORD.md.
+
 > **STATUS: `DRAFT-REV1-AWAITING-DELTA-CHECK` — PRE-REGISTRATION ONLY. NO download, NO
 > SLURM job, NO GPU used, NO test touch spent. Reviewed 2026-07-14
 > (`refine-logs/B2_PREREG_REVIEW.md`): APPROVED with 4 mandatory revisions + conditional
