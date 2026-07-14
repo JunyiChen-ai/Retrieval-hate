@@ -55,3 +55,13 @@
 {"ts": "2026-07-14T07:10:29Z", "source": "orchestrator", "level": "info", "event": "tick", "detail": "13150 COMPLETED; checking executor transcription"}
 {"ts": "2026-07-14T07:35:58Z", "source": "orchestrator", "level": "decision", "event": "b4_recon_opened", "detail": "stop hook enforced continuation; B4 = MHC-EN LoRA-Qwen paired cell recon (no GPU until prereg+gates)"}
 {"ts": "2026-07-14T07:47:18Z", "source": "heartbeat", "level": "info", "event": "patrol"}
+{"ts": "2026-07-14T08:05:06Z", "source": "orchestrator", "level": "info", "event": "paper_support_batch_done", "detail": "7df4f11 + be30d87; entering pure monitoring"}
+{"ts": "2026-07-14T08:21:32Z", "source": "orchestrator", "level": "decision", "event": "b5_opened", "detail": "EXHAUSTION_AUDIT refuted exhaustion; B1 epitaph over-reach; B5 = threshold-calibration conversion cell, full ceremony, oracle kill-switch"}
+{"ts": "2026-07-14T08:46:22Z", "source": "heartbeat", "level": "info", "event": "patrol"}
+{"ts": "2026-07-14T09:46:52Z", "source": "heartbeat", "level": "info", "event": "patrol"}
+{"ts": "2026-07-14T10:38:12Z", "source": "orchestrator", "level": "info", "event": "tick", "detail": "S2S implementer in flight; checking 13156/13157"}
+{"ts": "2026-07-14T10:46:21Z", "source": "heartbeat", "level": "info", "event": "patrol"}
+{"ts": "2026-07-14T11:46:22Z", "source": "heartbeat", "level": "info", "event": "patrol"}
+{"ts": "2026-07-14T12:16:12Z", "source": "orchestrator", "level": "info", "event": "tick"}
+{"ts": "2026-07-14T12:43:17Z", "source": "orchestrator", "level": "info", "event": "tick", "detail": "modal probe on T4 in flight; 13158/13159 held"}
+{"ts": "2026-07-14T12:46:30Z", "source": "heartbeat", "level": "info", "event": "patrol"}

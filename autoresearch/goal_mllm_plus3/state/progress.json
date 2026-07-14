@@ -3,17 +3,22 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "round 3 opened by user ruling: novelty-mechanism-first search; B5 probe (13156) continues as performance/diagnosis line; encoder-class levers no longer goal-satisfying",
+  "phase": "round3 PARALLEL-PROBE MODE (user directive 2026-07-15): concurrent cloud probes + queue-on-pass + fast-kill; S2S smoke 13159 + B5 13158 queued local; C2 recon + wave-2 ideation + CLAUDE.md mode amendment in flight",
   "stale_count": 0,
-  "last_seen": "2026-07-14T09:37:10Z",
-  "total_findings": 23,
-  "active_line": "B5 ZH operating-point conversion (frozen-Qwen, calibrated-vs-calibrated pairing)",
-  "queued_lines": [],
+  "last_seen": "2026-07-14T13:21:48Z",
+  "total_findings": 26,
+  "active_line": "PARALLEL: S2S (novelty lead, smoke 13159 queued, +ASYM r3) | W2-A grounded-key (design) | W2-B subclip set-match (cloud probe chain) | B5 calibration (13158 queued)",
+  "queued_lines": [
+    "W2-C temporal kernel (rides S2S frameset, post-Stage-E)",
+    "W2-E prototype memory (LOW, banked-cache probe)",
+    "W2-D acoustic (only if 1-3 stall)",
+    "C5 7B-CRD (LOW)"
+  ],
   "conditional_lines": [
     "B2 32B encoder (download ruling)",
     "C4 72B CRD KD (download ruling)"
   ],
   "gpu_state": "idle",
   "orchestrator": "main session (ScheduleWakeup business loop L2 + session cron hourly patrol L1)",
-  "notes": "single-submit ceremony + G0-cond gate override any shortcut; zero interaction; TRAINING DATA = single-dataset train split ONLY (user veto 2026-07-14); no OCR; no gold annotations"
+  "notes": "single-submit ceremony + G0-cond gate override any shortcut; zero interaction; TRAINING DATA = single-dataset train split ONLY (user veto 2026-07-14); no OCR; no gold annotations | PENDING(task#35): after Modal flow proven, update CLAUDE.md — probes on cloud, formal validation local GPU only (user directive 2026-07-14, deferred until flow works) | PARALLEL-PROBE MODE: probes run concurrently on Modal; on probe pass -> immediate prereg/freeze/submit to local queue (queue time overlaps); kill fast; recon pre-done for every queued candidate"
 }

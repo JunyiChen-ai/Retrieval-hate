@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-14T07:46:56Z",
+  "updated": "2026-07-14T13:03:32Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -96,6 +96,11 @@
       "id": "B4-lora-en",
       "dir": "LoRA-Qwen encoder on MHC-EN, 3-seed paired vs CLIP",
       "epitaph": "22nd; killed pre-GPU by forensic recon: cell already banked negative at seed0 (exp-lora-sft-encoder.md EN arm: val-sel -0.0310 acc vs CLIP, below both frozen floors; final +0.0062 = 1/5 bar); P9 decision-level EN LoRA also fails; ZH/EN sign-flip = LoRA adapts ZH, degrades EN (data/label-limited); optional 2-min 3-seed formal closure = user paper option"
+    },
+    {
+      "id": "R3-C3geo",
+      "dir": "Qwen-embedding-geometry hard-negative mining for triplet head",
+      "epitaph": "killed pre-ceremony by forensic recon (C3GEO_FORENSIC_RECON.md): pipeline already mines global hardest-opposite-label in head's evolving space; frozen-space swap = textbook 2024-25 trick, cannot clear D7-tightened novelty bar; performance prior near-zero (frozen source weaker or encoder-swap-by-backdoor, B1/B2/B4 negative); 0 GPU"
     }
   ],
   "banned_constraints": [
