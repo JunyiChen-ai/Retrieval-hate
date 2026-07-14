@@ -1,1 +1,2 @@
 {"ts":"2026-07-14T07:25:21Z","source":"b3-archivist","level":"decision","event":"b3_closed","detail":"verdict archived; terminus addendum written; state updated to monitoring"}
+{"ts":"2026-07-14T07:46:56Z","source":"orchestrator","level":"decision","event":"b4_closed_pre_gpu","detail":"recon shows banked seed0 EN negative; no GPU spent; 2-min formal closure left as user option"}

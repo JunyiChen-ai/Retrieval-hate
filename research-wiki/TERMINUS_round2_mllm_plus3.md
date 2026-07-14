@@ -60,3 +60,13 @@ dali_autoresearch 转入监控模式(心跳照常,不再对已关闭轴烧 GPU);
 **单编码器抽样警告(scope):** B3 是 **head-seed** 配对测试,仅一次 LoRA-SFT 编码器抽样(3 种子共享单一特征缓存,只变下游 head)。它**不**建立 LoRA-SFT 训练种子方差;那需 ≥3 次全新 LoRA-SFT 重训 + 重抽取(B3 范围外,预注册声明)。
 
 **对选项账目的影响:** 本补遗把 §4(b) 从**"未验证"**转为**"已实测,等待用户的 novelty 裁决 + `PAPER_MASTER_TABLES.md:58` 的'不可直接同格并比'覆盖决定"**。B3 只判 goal 的**性能子句**(+0.03 acc AND +0.03 F1);是否算 novelty、"MLLM-encoder family"(HateMM frozen-swap + ZH LoRA,两种不同机制)是否算"双数据集"headline、以及 B3 的同 runner 同种子配对是否覆盖 PMT:58 的记账注,全部仍是用户裁决。这是 round-2 的**首个实测(部分)正结果**;其余全部搜索轴仍关闭(21 条负结果)。
+
+## 7. B4 补遗(2026-07-14):EN-LoRA 单元预-GPU 关闭(第 22 条)
+
+B3 把 ZH 的增益归给 LoRA 适配后,剩下的唯一非同构表征级候选是 **EN 侧的同一 LoRA 单元**(LoRA-Qwen 编码器 on MHC-EN,3-种子配对 vs frozen-CLIP)。取证侦察(`refine-logs/B4_FORENSIC_RECON.md`,零 GPU/零提交)证明**此单元并非未验证**:同一 adapter(`logging/lora/MHC`)+ 同一特征缓存 + 同一 RGCL+kNN head 已在 **seed0 双协议**测过并入账为负结果(`exp-lora-sft-encoder.md:21`,verdict partial,2026-07-02;主日志 `rgcl_MHC_...LoRA_2723309.trainlog:250/:275`)。seed0 配对 vs enc3s EN CLIP 控制(12850):**val-selected −0.0310 acc / −0.0197 F1(回归)**,final-epoch **+0.0062 acc / +0.0157 F1(约为 +0.030 门的 1/5)**;EN 上 LoRA **低于两个 frozen 编码器**(CLIP 与 frozen-Qwen)。P9 的决策级 EN LoRA 也独立失败(−2.7 vs floor,`EXP_p9:212`),且 P9 本身就把此单元当作"已关闭"来跳过 EN(`:62-63`)。诚实先验:**双协议 FAIL,证伪概率 <5%**。
+
+**LoRA 族三数据集地图现已由证据补全:HateMM(P9 fail)/ EN(banked fail)/ ZH(B3 marginal-pass)⇒ LoRA 是 ZH 特定的语言适配杠杆,不是普适的 MLLM 集成机制**(ZH 上 LoRA 缓解了 English-CLIP 文本塔处理中文的记录在案的劣势;EN 上 549 样本的 LoRA-SFT 反而退化编码器——这正是 ZH/EN 符号翻转的既定解释,不是谜团)。
+
+**判决(orchestrator,level=decision):** 依"不在已关闭轴上烧 GPU"规则,B4 作为**第 22 条预注册负结果类条目预-GPU 关闭,零 GPU 成本**。
+
+**用户选项(veto-clean,按需可跑):** 因 adapter 与特征缓存均已在盘,把 seed0 锚定的入账负结果升级为正式 3-种子配对判决**仅需约 2 分钟 GPU**(缓存特征 → 每 run ~20-25 s;`scripts/slurm/enc3seed.sbatch` 加三行 `"MHC Qwen2.5-VL-7B-Instruct-LoRA_HF {0,1,2}"`)。此单元清过全部三条现行 veto(单数据集自有 train split / 无 OCR / 无 gold aux),可作论文表格的一行**正式闭合**——但只会形式化一个已知负结果,不开新地。**现在不跑;留作用户请求项。**

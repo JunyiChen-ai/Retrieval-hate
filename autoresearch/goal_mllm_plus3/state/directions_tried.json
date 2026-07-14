@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-14T07:25:21Z",
+  "updated": "2026-07-14T07:46:56Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -91,6 +91,11 @@
       "id": "B2-32b-encoder",
       "dir": "Qwen2.5-VL-32B frozen encoder, scale axis",
       "epitaph": "21st: goal FAIL; HateMM 32B between CLIP and 7B (scale regresses); MHC-EN/ZH below CLIP; 32B-vs-7B fails everywhere; scale is not the lever for head+kNN conversion"
+    },
+    {
+      "id": "B4-lora-en",
+      "dir": "LoRA-Qwen encoder on MHC-EN, 3-seed paired vs CLIP",
+      "epitaph": "22nd; killed pre-GPU by forensic recon: cell already banked negative at seed0 (exp-lora-sft-encoder.md EN arm: val-sel -0.0310 acc vs CLIP, below both frozen floors; final +0.0062 = 1/5 bar); P9 decision-level EN LoRA also fails; ZH/EN sign-flip = LoRA adapts ZH, degrades EN (data/label-limited); optional 2-min 3-seed formal closure = user paper option"
     }
   ],
   "banned_constraints": [
