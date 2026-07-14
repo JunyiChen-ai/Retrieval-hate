@@ -53,7 +53,7 @@
 | GPT-4V zero-shot (2408.03468) | 0.81 acc / 0.79 M-F1 | 更弱 | **外部 API,我们禁用** |
 | 最佳多模态融合 (mBERT⊙MFCC⊙ViViT) | 0.75 / 0.74 | **0.80 / 0.78** | 诚实 frontier |
 | LLaMA-3.2-11B | ~0.78 M-F1 | — | 本地 LMM |
-| **我们** | **~0.79–0.81 acc** | **~0.85 acc** | 已在/超 frontier |
+| **我们** | **~0.79–0.81 acc** | **~0.85 acc**(归属修正 2026-07-14:0.8537±0.012 是 **LoRA-Qwen** 配置的 final-epoch 均值,非 frozen-CLIP floor;frozen-CLIP ZH floor = 0.8027–0.8143,≈ published frontier。见 refine-logs/B1_PREREG_REVIEW.md Task A) | LoRA 配置超 frontier;CLIP floor ≈ frontier |
 
 **校准结论(审计修正后):** MHC-ZH 我们已超已发表最好成绩;MHC-EN 在 frontier 上;HateMM Qwen floor 0.870 **略低于** MM-HSD 0.878(差距 ~0.8 pt,MM-HSD 的增量来自音频 wav2vec2 + OCR 两个通道,后者已被用户否决,前者我们管线目前没有音频通道——这是一个被文献标定的、未被 14 条死路覆盖的表征缺口)。+3 acc ≈ 设立新 SOTA——目标在 frontier 之外,难度校准清楚。**结构性佐证:2024–2026 每一个诚实 HateMM 增益都来自加表征通道;LMM-as-reasoner 分类器(TANDEM 0.78)反而落后监督融合。** 与 reflection D2 独立吻合。RecSys 文献同构结论:LLM-as-ranker 在 warm/大数据 regime 对强协同特征冗余,LLM 只在表征注入时有效 (A-LLMRec 2404.11343; 2505.20730)。
 
