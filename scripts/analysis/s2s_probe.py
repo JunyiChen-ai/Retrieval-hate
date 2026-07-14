@@ -146,6 +146,10 @@ def build_matrices(mem):
     # POOLED: cosine of the (unnormalized) pooled frame means.
     pooled = _l2norm(g.mean(dim=1), dim=-1)                            # [N, D]
     spool = (pooled @ pooled.t()).numpy().astype(np.float64)          # [N, N]
+    # (r3: C2 ASYM) pooled-query x set-memory off-diagonal cell of the S2S grid
+    # (C2MEM_FORENSIC_RECON.md §(iv)): asym[i,j] = max_m cos(pooled_query_i, ghat_j[m]).
+    # It is the |Q|=1 reduction of MeanMaxSim on the SAME frozen frame vectors.
+    asym = (pooled @ G.t()).reshape(N, N, T).max(dim=2).values.numpy().astype(np.float64)  # [N,N]
     # PIPELINE-ANCHOR: banked img_feats cosine (already L2-normed).
     imn = _l2norm(mem["img"], dim=-1)
     spipe = (imn @ imn.t()).numpy().astype(np.float64)
@@ -154,7 +158,7 @@ def build_matrices(mem):
     stext = (txn @ txn.t()).numpy().astype(np.float64)
     # single-frame max cosine per pair (near-dup transparency).
     maxframe = Sff.max(axis=(1, 3)).astype(np.float64)                # [N, N]
-    return {"C": Sff, "mms": mms, "spool": spool, "spipe": spipe, "stext": stext,
+    return {"C": Sff, "mms": mms, "spool": spool, "asym": asym, "spipe": spipe, "stext": stext,
             "maxframe": maxframe, "N": N, "T": T}
 
 
@@ -273,31 +277,39 @@ def near_dup_audit(M, guard):
 # Permutation null (N1) — same permutation applied to both arms.
 # ---------------------------------------------------------------------------
 def permutation_null(M, labels, k=TOPK):
-    """N1 permutation null for BOTH the sim-weighted primary AND the rank-only (A2)
-    co-diagnostic. Same permutation applied to both arms within a seed (paired Δ preserved).
-    B3 fix (S2S_CODE_REVIEW.md): the rank-only arm gets its OWN null so its corroboration
-    can be judged on significance, not sign alone."""
-    mms, spool = M["mms"], M["spool"]
+    """N1 permutation null for the sim-weighted primary, the rank-only (A2) co-diagnostic,
+    AND (r3: C2) the ASYM arm — same permutation applied to every arm within a seed (paired Δ
+    preserved). B3 fix: the rank-only arm gets its OWN null (significance, not sign-only).
+    r3: ASYM is treated symmetrically — its Δ vs POOLED (mirrors SET) and its Δ vs SET (the C2
+    adjudication contrast) both get a null from the SAME per-seed permutations."""
+    mms, spool, asym = M["mms"], M["spool"], M["asym"]
     obs_set_acc, obs_set_f1, _, _ = run_vote(mms, labels, k)
     obs_pool_acc, obs_pool_f1, _, _ = run_vote(spool, labels, k)
+    obs_asym_acc, obs_asym_f1, _, _ = run_vote(asym, labels, k)
     obs_set_acc_r, obs_set_f1_r, _, _ = run_vote(mms, labels, k, rank_only=True)
     obs_pool_acc_r, obs_pool_f1_r, _, _ = run_vote(spool, labels, k, rank_only=True)
     obs = {"dacc": obs_set_acc - obs_pool_acc, "df1": obs_set_f1 - obs_pool_f1,
-           "dacc_rank": obs_set_acc_r - obs_pool_acc_r, "df1_rank": obs_set_f1_r - obs_pool_f1_r}
-    nd = {"dacc": [], "df1": [], "dacc_rank": [], "df1_rank": []}
+           "dacc_rank": obs_set_acc_r - obs_pool_acc_r, "df1_rank": obs_set_f1_r - obs_pool_f1_r,
+           "dacc_asym": obs_asym_acc - obs_pool_acc, "df1_asym": obs_asym_f1 - obs_pool_f1,
+           "dacc_asym_vs_set": obs_asym_acc - obs_set_acc,
+           "df1_asym_vs_set": obs_asym_f1 - obs_set_f1}
+    nd = {kk: [] for kk in obs}
     for s in NULL_SEEDS:
         perm = np.random.default_rng(s).permutation(M["N"])
         ix = np.ix_(perm, perm)
-        mms_s, spool_s = mms[ix], spool[ix]
+        mms_s, spool_s, asym_s = mms[ix], spool[ix], asym[ix]
         sa, sf, _, _ = run_vote(mms_s, labels, k)                      # SET (sim-weighted)
         pa, pf, _, _ = run_vote(spool_s, labels, k)                    # POOLED, SAME perm
+        aa, af, _, _ = run_vote(asym_s, labels, k)                     # ASYM, SAME perm
         sar, sfr, _, _ = run_vote(mms_s, labels, k, rank_only=True)    # SET rank-only, SAME perm
         par, pfr, _, _ = run_vote(spool_s, labels, k, rank_only=True)  # POOLED rank-only, SAME perm
         nd["dacc"].append(sa - pa); nd["df1"].append(sf - pf)
         nd["dacc_rank"].append(sar - par); nd["df1_rank"].append(sfr - pfr)
+        nd["dacc_asym"].append(aa - pa); nd["df1_asym"].append(af - pf)
+        nd["dacc_asym_vs_set"].append(aa - sa); nd["df1_asym_vs_set"].append(af - sf)
     p95 = {kk: float(np.percentile(np.array(vv), 95)) for kk, vv in nd.items()}
     out = {"n_seeds": len(NULL_SEEDS)}
-    for kk in ("dacc", "df1", "dacc_rank", "df1_rank"):
+    for kk in obs:
         out["obs_" + kk] = obs[kk]
         out["null_" + kk + "_p95"] = p95[kk]
         out["obs_" + kk + "_gt_p95"] = bool(obs[kk] > p95[kk])
@@ -402,12 +414,18 @@ def probe_dataset(dataset, frameset_dir, n_boot, n_perframe):
     # A2 rank-only co-diagnostic (retrieve by arm score, neutralise sim weight to 1.0).
     a_pool_r = add("POOLED_RANKONLY", M["spool"], rank_only=True)
     a_set_r = add("SET_RANKONLY", M["mms"], rank_only=True)
+    # (r3: C2) ASYM = pooled-query x set-memory off-diagonal cell (C2MEM_FORENSIC_RECON.md);
+    # same LOO vote path, same frozen frames/seeds; adjudicated vs the symmetric SET arm.
+    a_asym = add("ASYM", M["asym"])
 
     # primary paired deltas.
     d_acc = a_set["acc"] - a_pool["acc"]
     d_f1 = a_set["macro_f1"] - a_pool["macro_f1"]
     d_acc_rank = a_set_r["acc"] - a_pool_r["acc"]
     d_f1_rank = a_set_r["macro_f1"] - a_pool_r["macro_f1"]
+    # C2 adjudication contrast: ASYM vs the symmetric SET arm (acc AND macro-F1, paired).
+    d_asym_set_acc = a_asym["acc"] - a_set["acc"]
+    d_asym_set_f1 = a_asym["macro_f1"] - a_set["macro_f1"]
 
     # Fano (N2), oracle (A4), near-dup (A3), null (N1), bootstrap (D3), per-frame null (opt).
     fano_acc = fano(labels)
@@ -425,7 +443,18 @@ def probe_dataset(dataset, frameset_dir, n_boot, n_perframe):
     boot = bootstrap_delta(a_set["votes"], a_pool["votes"], labels, n_boot)
     # B3 fix: the rank-only arm gets its OWN bootstrap (paired SET_RANKONLY - POOLED_RANKONLY).
     boot_rank = bootstrap_delta(a_set_r["votes"], a_pool_r["votes"], labels, n_boot)
+    # (r3: C2) symmetric bootstrap treatment for ASYM: vs POOLED (mirrors SET) and the C2
+    # adjudication contrast ASYM vs SET.
+    boot_asym = bootstrap_delta(a_asym["votes"], a_pool["votes"], labels, n_boot)
+    boot_asym_vs_set = bootstrap_delta(a_asym["votes"], a_set["votes"], labels, n_boot)
     pfn = per_frame_null(mem, labels, n_perframe) if n_perframe > 0 else None
+
+    # (r3: C2) route-level adjudication (pre-declared, C2MEM §5 / team-lead kill logic (b)):
+    # if S2S SET survives (oracle did NOT fire — decided in mechanical_gate_check across
+    # datasets), ASYM is dead unless it BEATS symmetric SET on acc AND macro-F1 (paired) on >=1
+    # dataset. Per-dataset flag here; the across-dataset ">=1" and the family (a) branch are in
+    # mechanical_gate_check.
+    asym_beats_set = bool(d_asym_set_acc > 0.0 and d_asym_set_f1 > 0.0)
 
     # B3 fix: pre-registered A2 credit rule (exp-s2s-r3.md:215-223) — the primary Δ is credited
     # only if the rank-only Δ matches its sign AND is itself significant (observed rank-only Δ >
@@ -454,6 +483,18 @@ def probe_dataset(dataset, frameset_dir, n_boot, n_perframe):
                     "rankonly_obs_dacc": null["obs_dacc_rank"],
                     "rankonly_boot_dacc_p5": boot_rank["dacc_p5"]},
         "bootstrap_rankonly": boot_rank,
+        "c2_asym": {  # (r3) folded C2 ablation cell — pooled-query x set-memory
+            "asym_acc": a_asym["acc"], "asym_macro_f1": a_asym["macro_f1"], "asym_roc": a_asym["roc"],
+            "asym_vs_set_d_acc": d_asym_set_acc, "asym_vs_set_d_f1": d_asym_set_f1,
+            "asym_beats_set": asym_beats_set,
+            "asym_vs_set_obs_dacc": null["obs_dacc_asym_vs_set"],
+            "asym_vs_set_null_p95_acc": null["null_dacc_asym_vs_set_p95"],
+            "asym_vs_set_obs_gt_p95": null["obs_dacc_asym_vs_set_gt_p95"],
+            "asym_vs_set_boot_dacc_p5": boot_asym_vs_set["dacc_p5"],
+            "asym_vs_pool_d_acc": a_asym["acc"] - a_pool["acc"],
+            "asym_vs_pool_d_f1": a_asym["macro_f1"] - a_pool["macro_f1"],
+            "asym_vs_pool_obs_gt_p95": null["obs_dacc_asym_gt_p95"],
+            "asym_vs_pool_boot_dacc_p5": boot_asym["dacc_p5"]},
         "fano_acc": fano_acc,
         "oracle": {"acc": orc_acc, "macro_f1": orc_f1, "d_acc": d_orc_acc, "d_f1": d_orc_f1},
         "near_dup": {"threshold": NEAR_DUP_THRESH, "flagged_pairs": nd_pairs,
@@ -527,6 +568,31 @@ def mechanical_gate_check(results):
             h["permutation_null"]["null_dacc_p95"], ">")
         rec("Bootstrap5th>0[HateMM]", h["bootstrap"]["dacc_p5"], 0.0, ">")
         rec("NearDupExclSurvives[HateMM] (A3)", h["near_dup"]["excluded_d_acc"], 0.0, ">")
+
+    # (r3: C2) pre-declared C2 kill logic (team-lead / C2MEM §5).
+    # (a) family branch: if S2S oracle Δ < +0.04 EVERYWHERE, the whole don't-pool family
+    #     (S2S + ASYM) is DEAD — no separate ASYM adjudication.
+    # (b) route branch: if SET survives (oracle did NOT fire), ASYM is dead unless it beats
+    #     symmetric SET on acc AND macro-F1 (paired) on >=1 dataset.
+    if oracle_all_below:
+        checks.append({"gate": "C2 family (ASYM) via S2S oracle kill-switch",
+                       "value": True, "threshold": "oracle DEAD",
+                       "result": "KILL(DEAD-with-S2S-family)",
+                       "note": "don't-pool family (S2S+ASYM) dead together; no ASYM adjudication"})
+    else:
+        beats = {ds: r["c2_asym"]["asym_beats_set"] for ds, r in by_ds.items()}
+        for ds, r in by_ds.items():
+            c = r["c2_asym"]
+            checks.append({"gate": "C2 ASYM beats SET (acc AND mF1) [%s]" % ds,
+                           "value": c["asym_beats_set"], "threshold": True,
+                           "result": "ABOVE" if c["asym_beats_set"] else "BELOW",
+                           "note": "Δacc={:+.4f} ΔmF1={:+.4f} (paired ASYM-SET)".format(
+                               c["asym_vs_set_d_acc"], c["asym_vs_set_d_f1"])})
+        any_beats = any(beats.values())
+        checks.append({"gate": "C2 route adjudication (ASYM beats SET on >=1 dataset)",
+                       "value": any_beats, "threshold": True,
+                       "result": "SURVIVES(escalate-to-§11-asym)" if any_beats else "KILL(DEAD-route)",
+                       "note": "if BELOW: asymmetric memory adds nothing over symmetric SET"})
     return checks
 
 
@@ -557,6 +623,13 @@ def write_markdown(results, checks, out_md):
                      p["rankonly_obs_dacc"], p["rankonly_null_p95_acc"], p["rankonly_boot_dacc_p5"],
                      p["rankonly_corroborates"], p["rankonly_sign_ok"], p["rankonly_null_ok"],
                      p["rankonly_boot_ok"]))
+        c2 = r["c2_asym"]
+        L.append("\n**C2 ASYM (r3, pooled-query × set-memory):** acc {:.4f}, macro_f1 {:.4f}. "
+                 "Adjudication Δ(ASYM−SET): acc {:+.4f}, mF1 {:+.4f} (beats_set={}); "
+                 "obs Δacc {:+.4f} vs null-95th {:+.4f}, bootstrap-5th {:+.4f}.".format(
+                     c2["asym_acc"], c2["asym_macro_f1"], c2["asym_vs_set_d_acc"],
+                     c2["asym_vs_set_d_f1"], c2["asym_beats_set"], c2["asym_vs_set_obs_dacc"],
+                     c2["asym_vs_set_null_p95_acc"], c2["asym_vs_set_boot_dacc_p5"]))
         L.append("\n**Fano (±1 gold-label key) acc:** {:.4f}.".format(r["fano_acc"]))
         o = r["oracle"]
         L.append("**Oracle ceiling (A4):** acc {:.4f} (Δ vs POOLED acc {:+.4f}, "

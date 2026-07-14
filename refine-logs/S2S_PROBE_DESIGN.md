@@ -268,6 +268,20 @@ arm's score** as a vote WEIGHT, then rank-weighted — hence A2 below.)
    text tokens — §1).
 5. `WITH-TEXT` — arms 1/2 visual score **+** fixed `cos(text_feats^Q,text_feats^M)` (identical channel
    both arms).
+6. `ASYM` (r3: C2 fold) — `max_{m∈M} cos(ĝ^Q_pooled, ĝ^M_m)`, `ĝ^Q_pooled` = L2-normed pooled query
+   (`normalize(mean_t g^Q_t)`), `ĝ^M_m` = L2-normed memory frame vecs. The pooled-query × set-memory
+   off-diagonal cell of the MeanMaxSim grid (the `|Q|=1` reduction of arm 2) — the folded C2 candidate,
+   computed on the **same** frozen `g_t`, run through the **same** LOO vote, paired, same seeds, with
+   symmetric permutation-null + bootstrap treatment (`C2MEM_FORENSIC_RECON.md`).
+
+**(r3: C2 fold) ASYM adjudication (pre-declared kill logic).** ASYM is credited/killed by two branches,
+NOT a separate ceremony: **(a)** if S2S's oracle-ceiling Δacc < +0.04 on **every** dataset (§6.4
+kill-switch fires), the whole don't-pool family — S2S **and** ASYM — is DEAD together, no ASYM
+adjudication; **(b)** if symmetric SET survives (oracle did not fire), ASYM is dead unless it **beats
+symmetric SET on acc AND macro-F1 (paired) on ≥1 dataset** — a beating ASYM escalates only as the
+asymmetric arm of the §11 downstream stage. The probe reports `Δ(ASYM − SET)` (acc + mF1), its
+permutation-null-95th and bootstrap-5th (same machinery as the SET/rank-only arms), and `asym_beats_set`
+per dataset; the mechanical gate check emits the (a)/(b) branch outcome (NOT the binding verdict).
 
 **(r1: A2) Rank-only sim-neutralized co-diagnostic — MANDATORY corroboration arm.** The `metrics.py`
 vote uses the arm's pairwise score as a multiplicative WEIGHT, not merely a ranking key. MeanMaxSim (a
@@ -477,6 +491,21 @@ re-verify these at submit time. Still AWAITING the reviewer's one-line hunk re-c
 | `refine-logs/S2S_PROBE_DESIGN.md` (this file) | recorded in the r2 commit message (a file cannot embed its own hash) |
 <!-- S2S-R2-HASH-TABLE-END -->
 
+**r3 hash table (re-pinned 2026-07-15 after the C2/ASYM fold; SUPERSEDES r2 for the probe + docs).**
+This is a **probe-only** amendment: the **extractor and sbatch are byte-identical to r2 and their r2
+hashes are UNCHANGED** (explicitly re-stated below); only `s2s_probe.py` + both docs changed. Re-verify
+these at submit time.
+
+<!-- S2S-R3-HASH-TABLE-START -->
+| artifact | sha256 (r3, 2026-07-15) | vs r2 |
+|---|---|---|
+| `scripts/analysis/s2s_extract.py` | `41979f6a41c95e38a3cd875e11dc54a5a48eac9a5b908f295bad4d8d051cd23a` | **UNCHANGED** (r2 = r3) |
+| `scripts/slurm/s2s_extract.sbatch` | `2dc0f90b03a44f45945cab3194f78ec97012fe7b157727cd50f64d88d56665dc` | **UNCHANGED** (r2 = r3) |
+| `scripts/analysis/s2s_probe.py` | `141a0441845d6175646d642a57b4534f78a48d96521ef3dc3a2d9fcf0f2301b3` | changed (ASYM fold) |
+| `research-wiki/experiments/exp-s2s-r3.md` | `3f1f5b09e24c142dc07a76c5c21d2189a6d4a4b332c8f93dbb7e2eecc08b75b0` | changed (§5/§11) |
+| `refine-logs/S2S_PROBE_DESIGN.md` (this file) | recorded in the r3 commit message (a file cannot embed its own hash) | changed (§5/§10/§11) |
+<!-- S2S-R3-HASH-TABLE-END -->
+
 ---
 
 ## 11. Revision history
@@ -519,6 +548,18 @@ re-verify these at submit time. Still AWAITING the reviewer's one-line hunk re-c
     cosmetic).
   Scripts + prereg re-hashed (§10 r2 table). Still AWAITING the reviewer's one-line hunk re-check; no
   submission authorized.
+- **r3 (2026-07-15) FOLD C2 AS ASYM ABLATION ARM — probe-only amendment (`C2MEM_FORENSIC_RECON.md`).**
+  Folded the round-3 C2 candidate into S2S as one pre-declared ablation cell (not a separate route): the
+  **ASYM** arm `max_{m∈M} cos(ĝ^Q_pooled, ĝ^M_m)` (pooled-query × set-memory) added to §5 and to
+  `s2s_probe.py` — computed on the same frozen frame vectors, run through the identical LOO vote, paired,
+  same seeds, with symmetric permutation-null + bootstrap treatment (same per-seed permutations as the
+  SET/rank-only arms). Pre-declared C2 kill logic: (a) S2S oracle Δ<+0.04 everywhere → don't-pool family
+  (S2S+ASYM) dead together; (b) SET survives → ASYM dead unless it beats symmetric SET on acc AND
+  macro-F1 (paired) on ≥1 dataset (a beating ASYM escalates only as the §11 asymmetric arm). The
+  mechanical gate check emits the (a)/(b) outcome. **PROBE-ONLY: the r2 extractor + sbatch are
+  byte-identical and their §10 hashes are UNCHANGED** (r3 table restates them); only `s2s_probe.py` +
+  both docs are re-hashed. The queued smoke 13159 (extractor, r2 pins) is untouched. Awaiting the code
+  reviewer's diff-only re-check before Stage P (which is anyway gated on extraction).
 
 ---
 

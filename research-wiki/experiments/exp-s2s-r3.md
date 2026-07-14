@@ -202,6 +202,7 @@ cancels seed/representation noise and isolates the mechanism:
 | **SET-Chamfer (single sensitivity arm)** | `0.5·[MeanMaxSim(Q→M) + MeanMaxSim(M→Q)]` | symmetric robustness variant |
 | **PIPELINE-ANCHOR pooled** | pooled-cosine kNN over the **banked** `img_feats` (with G-decomp tie to §4) | internal reference to the banked cache (folds in non-vision text; NOT the primary null) |
 | **WITH-TEXT (sensitivity)** | POOLED / SET visual score **+** fixed `cos(text_feats^Q, text_feats^M)`, identical additive channel in both arms | shows the visual mechanism survives alongside text |
+| **ASYM (r3: C2 ablation cell)** | `max_{m∈M} cos(ĝ^Q_pooled, ĝ^M_m)` — pooled query × set memory (the `\|Q\|=1` reduction of MeanMaxSim; `ĝ^Q_pooled` = L2-normed pooled query) | the folded C2 candidate: the pooled-query × set-memory off-diagonal cell of the S2S grid, adjudicated vs symmetric SET |
 
 The **primary decision** is on the **visual-isolated** POOLED-vs-SET paired Δ, because that is where
 the mechanism lives and mixing in the shared text channel only dilutes the paired contrast. Every arm
@@ -229,6 +230,22 @@ videos (the permutation null does not catch this). Pre-declared: flag any distin
 so the flag cannot swallow the signal); report the flagged-pair count at 0.98/0.99/0.995 for both metrics
 plus the single-frame max-cosine distribution; and re-run LOO dropping flagged neighbours — the SET
 advantage must survive. Full spec: `S2S_PROBE_DESIGN.md` §5.
+
+**(r3: C2 fold) ASYM ablation arm — the folded C2 candidate (no separate ceremony).** The round-3 C2
+candidate (asymmetric / multi-view MLLM memory) is **not** a separate route: its parameter-free core is
+literally the pooled-query × set-memory off-diagonal cell of S2S's own MeanMaxSim 2×2 grid
+(`ĝ^Q_pooled × set-memory`), computed on the **identical** frozen frame vectors and run through the
+**identical** Stage-P LOO vote, paired, same seeds, with symmetric treatment in the permutation-null and
+bootstrap machinery (the same per-seed permutations as the other arms). Forensic recon:
+`refine-logs/C2MEM_FORENSIC_RECON.md` (verdict FOLD-INTO-S2S; standalone novelty fails the D7 bar =
+MUVERA/ColBERT asymmetric-multi-vector; C2's learned best case is already upper-bounded by S2S's per-query
+oracle-ceiling). **Pre-declared C2 kill logic:** (a) if S2S's oracle Δacc < +0.04 on **every** dataset
+(the §6.4 kill-switch fires), the whole "don't-pool" family — S2S **and** ASYM — is **DEAD together**, no
+separate ASYM adjudication; (b) if S2S's symmetric SET survives (oracle did not fire), ASYM is **dead
+unless it beats symmetric SET on acc AND macro-F1 (paired) on ≥1 dataset** — otherwise asymmetric
+multi-view memory adds nothing over S2S's symmetric operator, and a beating ASYM would escalate only as
+the asymmetric arm of the §11 downstream stage (never a standalone route). **C2 has no separate ceremony;
+the family is adjudicated by S2S's kill-switch.**
 
 ## 6. G0-cond probe — exact procedure + oracle kill-switch (binding design rules 2–4)
 
@@ -489,3 +506,15 @@ data-limited, not dilution-limited). The most likely *informative* outcomes are 
   authoritative residual is the inline f32 number, `S2S_PROBE_DESIGN.md` §4). Scripts re-hashed (r2 table
   in `S2S_PROBE_DESIGN.md` §10). Still AWAITING the reviewer's one-line hunk re-check; no submission
   authorized.
+- **2026-07-15 — r3 FOLD C2 AS ASYM ABLATION ARM (probe-only amendment).** Per
+  `refine-logs/C2MEM_FORENSIC_RECON.md` (verdict FOLD-INTO-S2S), the round-3 C2 candidate is folded into
+  S2S as one pre-declared ablation cell rather than a separate route/ceremony: **ASYM** =
+  `max_{m∈M} cos(ĝ^Q_pooled, ĝ^M_m)` (pooled-query × set-memory, the off-diagonal cell of the MeanMaxSim
+  grid), added to §5 arms and to `s2s_probe.py` through the identical LOO vote, paired, same frozen
+  frames/seeds, with symmetric permutation-null + bootstrap treatment. Pre-declared C2 kill logic: (a)
+  S2S oracle Δ<+0.04 everywhere → don't-pool family (S2S+ASYM) dead together; (b) SET survives → ASYM
+  dead unless it beats symmetric SET on acc AND macro-F1 (paired) on ≥1 dataset. **Probe-only change —
+  the r2 extractor/sbatch remain byte-identical and their §10 hashes are UNCHANGED**; only `s2s_probe.py`
+  + both docs are re-hashed (r3 table in `S2S_PROBE_DESIGN.md` §10). The queued smoke 13159 (extractor,
+  r2 pins) is untouched. Awaiting the code reviewer's diff-only re-check before Stage P; Stage P is anyway
+  gated on extraction.
