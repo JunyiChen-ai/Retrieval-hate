@@ -1,0 +1,497 @@
+{
+  "meta": {
+    "topk": 20,
+    "null_seeds": 100,
+    "n_boot": 1000,
+    "expected_mem_primary": {
+      "HateMM": 851,
+      "MHC": 629
+    },
+    "expected_mem_trainonly": {
+      "HateMM": 744,
+      "MHC": 549
+    },
+    "raw_bar": 0.05,
+    "mhc_survival_bar": 0.03,
+    "oracle_bar": 0.04,
+    "fano_bar": 0.99,
+    "near_dup_threshold": 0.995,
+    "note": "Executor writes RAW numbers. mechanical_gate_check is pre-registered threshold arithmetic ONLY, NOT the binding verdict. K4 primary is the sole survival-determining arm (B2); K30/_mm are breadth/modality reports."
+  },
+  "primaries": [
+    {
+      "dataset": "HateMM",
+      "arm": "K4_primary",
+      "V": 851,
+      "K": 4,
+      "zero_guard": 1,
+      "arms": {
+        "POOLED": {
+          "acc": 0.7567567567567568,
+          "macro_f1": 0.7518219895435481,
+          "roc": 0.8300960266804669
+        },
+        "SET": {
+          "acc": 0.7520564042303173,
+          "macro_f1": 0.7441061078721564,
+          "roc": 0.8285319993099879
+        },
+        "SET_CHAMFER": {
+          "acc": 0.7532314923619271,
+          "macro_f1": 0.7438334250722445,
+          "roc": 0.8279109884422977
+        },
+        "ASYM": {
+          "acc": 0.7508813160987075,
+          "macro_f1": 0.7418703141990499,
+          "roc": 0.8272554769708471
+        },
+        "PIPELINE_ANCHOR": {
+          "acc": 0.7532314923619271,
+          "macro_f1": 0.7484771545026685,
+          "roc": 0.8374619055833477
+        },
+        "WITH_TEXT_POOLED": {
+          "acc": 0.7755581668625147,
+          "macro_f1": 0.774200001389188,
+          "roc": 0.8750445632798575
+        },
+        "WITH_TEXT_SET": {
+          "acc": 0.781433607520564,
+          "macro_f1": 0.778675458908017,
+          "roc": 0.8707147375079063
+        },
+        "POOLED_RANKONLY": {
+          "acc": 0.7532314923619271,
+          "macro_f1": 0.7484771545026685,
+          "roc": 0.8318296820194354
+        },
+        "SET_RANKONLY": {
+          "acc": 0.7532314923619271,
+          "macro_f1": 0.7452095808383233,
+          "roc": 0.8303030303030303
+        },
+        "POOLED_NEARDUP_EXCL": {
+          "acc": 0.7626321974148061,
+          "macro_f1": 0.7582168737060041,
+          "roc": 0.8275688574550055
+        },
+        "SET_NEARDUP_EXCL": {
+          "acc": 0.7485311398354877,
+          "macro_f1": 0.740131165880889,
+          "roc": 0.826499338738428
+        }
+      },
+      "primary": {
+        "d_acc": -0.004700352526439522,
+        "d_f1": -0.0077158816713917,
+        "rankonly_d_acc": 0.0,
+        "rankonly_d_f1": -0.003267573664345158,
+        "rankonly_sign_ok": false,
+        "rankonly_null_ok": false,
+        "rankonly_boot_ok": false,
+        "rankonly_corroborates": false,
+        "rankonly_null_p95_acc": 0.02126909518213861,
+        "rankonly_obs_dacc": 0.0,
+        "rankonly_boot_dacc_p5": -0.01527614571092828
+      },
+      "bootstrap_rankonly": {
+        "n_boot": 1000,
+        "dacc_p5": -0.01527614571092828,
+        "dacc_p50": 0.0,
+        "dacc_p95": 0.01527614571092828,
+        "df1_p5": -0.01869721573874982,
+        "df1_p50": -0.0031798717952707944,
+        "df1_p95": 0.012067254301125048,
+        "dacc_p5_gt0": false,
+        "df1_p5_gt0": false
+      },
+      "c2_asym": {
+        "asym_acc": 0.7508813160987075,
+        "asym_macro_f1": 0.7418703141990499,
+        "asym_vs_set_d_acc": -0.001175088131609825,
+        "asym_vs_set_d_f1": -0.0022357936731064454,
+        "asym_beats_set": false,
+        "asym_vs_set_obs_gt_p95": false,
+        "asym_vs_set_boot_dacc_p5": -0.007050528789659283,
+        "asym_vs_pool_boot_dacc_p5": -0.021151586368977737
+      },
+      "fano_acc": 1.0,
+      "oracle": {
+        "acc": 0.8343125734430082,
+        "macro_f1": 0.8272558834580783,
+        "d_acc": 0.07755581668625144,
+        "d_f1": 0.07543389391453026
+      },
+      "near_dup": {
+        "threshold": 0.995,
+        "flagged_pairs": 125,
+        "distribution": {
+          "pooled>=0.980": 126,
+          "mms>=0.980": 128,
+          "maxframe>=0.980": 169,
+          "pooled>=0.990": 125,
+          "mms>=0.990": 126,
+          "maxframe>=0.990": 166,
+          "pooled>=0.995": 122,
+          "mms>=0.995": 122,
+          "maxframe>=0.995": 162
+        },
+        "excluded_d_acc": -0.014101057579318454,
+        "excluded_d_f1": -0.018085707825115094
+      },
+      "permutation_null": {
+        "n_seeds": 100,
+        "obs_dacc": -0.004700352526439522,
+        "null_dacc_p95": 0.023501762632197387,
+        "obs_dacc_gt_p95": false,
+        "obs_df1": -0.0077158816713917,
+        "null_df1_p95": 0.027113361135990735,
+        "obs_df1_gt_p95": false,
+        "obs_dacc_rank": 0.0,
+        "null_dacc_rank_p95": 0.02126909518213861,
+        "obs_dacc_rank_gt_p95": false,
+        "obs_df1_rank": -0.003267573664345158,
+        "null_df1_rank_p95": 0.02835211220388016,
+        "obs_df1_rank_gt_p95": false,
+        "obs_dacc_asym": -0.005875440658049347,
+        "null_dacc_asym_p95": 0.023619271445358473,
+        "obs_dacc_asym_gt_p95": false,
+        "obs_df1_asym": -0.009951675344498145,
+        "null_df1_asym_p95": 0.0278106176946991,
+        "obs_df1_asym_gt_p95": false,
+        "obs_dacc_asym_vs_set": -0.001175088131609825,
+        "null_dacc_asym_vs_set_p95": 0.008284371327849595,
+        "obs_dacc_asym_vs_set_gt_p95": false,
+        "obs_df1_asym_vs_set": -0.0022357936731064454,
+        "null_df1_asym_vs_set_p95": 0.011427855714260731,
+        "obs_df1_asym_vs_set_gt_p95": false
+      },
+      "bootstrap": {
+        "n_boot": 1000,
+        "dacc_p5": -0.018801410105757976,
+        "dacc_p50": -0.004700352526439522,
+        "dacc_p95": 0.009400705052879044,
+        "df1_p5": -0.02272376893254967,
+        "df1_p50": -0.007821249953598175,
+        "df1_p95": 0.007195544268683881,
+        "dacc_p5_gt0": false,
+        "df1_p5_gt0": false
+      },
+      "per_frame_null": {
+        "n_seeds": 30,
+        "dacc_p95": -0.18384253819036434,
+        "df1_p95": -0.23553504788708032,
+        "dacc_mean": -0.2022326674500588,
+        "df1_mean": -0.27489794584560207
+      }
+    },
+    {
+      "dataset": "MHC",
+      "arm": "K4_primary",
+      "V": 629,
+      "K": 4,
+      "zero_guard": 0,
+      "arms": {
+        "POOLED": {
+          "acc": 0.7186009538950715,
+          "macro_f1": 0.6080996884735203,
+          "roc": 0.753565147121738
+        },
+        "SET": {
+          "acc": 0.7201907790143084,
+          "macro_f1": 0.6112266112266113,
+          "roc": 0.7543851309597377
+        },
+        "SET_CHAMFER": {
+          "acc": 0.7265500794912559,
+          "macro_f1": 0.6252736290836542,
+          "roc": 0.7547891809668681
+        },
+        "ASYM": {
+          "acc": 0.724960254372019,
+          "macro_f1": 0.616956192688808,
+          "roc": 0.7550268574416505
+        },
+        "PIPELINE_ANCHOR": {
+          "acc": 0.724960254372019,
+          "macro_f1": 0.623945535914848,
+          "roc": 0.7497860911726957
+        },
+        "WITH_TEXT_POOLED": {
+          "acc": 0.7456279809220986,
+          "macro_f1": 0.7018604100011849,
+          "roc": 0.8001378523553738
+        },
+        "WITH_TEXT_SET": {
+          "acc": 0.7456279809220986,
+          "macro_f1": 0.7001334858886347,
+          "roc": 0.8060084612825023
+        },
+        "POOLED_RANKONLY": {
+          "acc": 0.7186009538950715,
+          "macro_f1": 0.6080996884735203,
+          "roc": 0.7542425250748681
+        },
+        "SET_RANKONLY": {
+          "acc": 0.7265500794912559,
+          "macro_f1": 0.621826062639821,
+          "roc": 0.7550030897941721
+        },
+        "POOLED_NEARDUP_EXCL": {
+          "acc": 0.7186009538950715,
+          "macro_f1": 0.6080996884735203,
+          "roc": 0.7536126824166945
+        },
+        "SET_NEARDUP_EXCL": {
+          "acc": 0.7201907790143084,
+          "macro_f1": 0.6112266112266113,
+          "roc": 0.7544326662546941
+        }
+      },
+      "primary": {
+        "d_acc": 0.0015898251192368873,
+        "d_f1": 0.0031269227530910104,
+        "rankonly_d_acc": 0.007949125596184436,
+        "rankonly_d_f1": 0.013726374166300737,
+        "rankonly_sign_ok": true,
+        "rankonly_null_ok": false,
+        "rankonly_boot_ok": false,
+        "rankonly_corroborates": false,
+        "rankonly_null_p95_acc": 0.01748807631160565,
+        "rankonly_obs_dacc": 0.007949125596184436,
+        "rankonly_boot_dacc_p5": -0.004769475357710662
+      },
+      "bootstrap_rankonly": {
+        "n_boot": 1000,
+        "dacc_p5": -0.004769475357710662,
+        "dacc_p50": 0.007949125596184436,
+        "dacc_p95": 0.022257551669316422,
+        "df1_p5": -0.004965507767273708,
+        "df1_p50": 0.014473233426661347,
+        "df1_p95": 0.03376290554450535,
+        "dacc_p5_gt0": false,
+        "df1_p5_gt0": false
+      },
+      "c2_asym": {
+        "asym_acc": 0.724960254372019,
+        "asym_macro_f1": 0.616956192688808,
+        "asym_vs_set_d_acc": 0.004769475357710662,
+        "asym_vs_set_d_f1": 0.005729581462196709,
+        "asym_beats_set": true,
+        "asym_vs_set_obs_gt_p95": false,
+        "asym_vs_set_boot_dacc_p5": 0.0,
+        "asym_vs_pool_boot_dacc_p5": -0.007949125596184436
+      },
+      "fano_acc": 1.0,
+      "oracle": {
+        "acc": 0.7885532591414944,
+        "macro_f1": 0.7095817841607737,
+        "d_acc": 0.06995230524642293,
+        "d_f1": 0.10148209568725342
+      },
+      "near_dup": {
+        "threshold": 0.995,
+        "flagged_pairs": 1,
+        "distribution": {
+          "pooled>=0.980": 4,
+          "mms>=0.980": 2,
+          "maxframe>=0.980": 3,
+          "pooled>=0.990": 1,
+          "mms>=0.990": 0,
+          "maxframe>=0.990": 2,
+          "pooled>=0.995": 1,
+          "mms>=0.995": 0,
+          "maxframe>=0.995": 2
+        },
+        "excluded_d_acc": 0.0015898251192368873,
+        "excluded_d_f1": 0.0031269227530910104
+      },
+      "permutation_null": {
+        "n_seeds": 100,
+        "obs_dacc": 0.0015898251192368873,
+        "null_dacc_p95": 0.015977742448330706,
+        "obs_dacc_gt_p95": false,
+        "obs_df1": 0.0031269227530910104,
+        "null_df1_p95": 0.02010402421132484,
+        "obs_df1_gt_p95": false,
+        "obs_dacc_rank": 0.007949125596184436,
+        "null_dacc_rank_p95": 0.01748807631160565,
+        "obs_dacc_rank_gt_p95": false,
+        "obs_df1_rank": 0.013726374166300737,
+        "null_df1_rank_p95": 0.01958047481967561,
+        "obs_df1_rank_gt_p95": false,
+        "obs_dacc_asym": 0.006359300476947549,
+        "null_dacc_asym_p95": 0.01915739268680448,
+        "obs_dacc_asym_gt_p95": false,
+        "obs_df1_asym": 0.00885650421528772,
+        "null_df1_asym_p95": 0.021863787344747854,
+        "obs_df1_asym_gt_p95": false,
+        "obs_dacc_asym_vs_set": 0.004769475357710662,
+        "null_dacc_asym_vs_set_p95": 0.004769475357710662,
+        "obs_dacc_asym_vs_set_gt_p95": false,
+        "obs_df1_asym_vs_set": 0.005729581462196709,
+        "null_df1_asym_vs_set_p95": 0.008054666161653842,
+        "obs_df1_asym_vs_set_gt_p95": false
+      },
+      "bootstrap": {
+        "n_boot": 1000,
+        "dacc_p5": -0.012718600953895098,
+        "dacc_p50": 0.0023847376788552754,
+        "dacc_p95": 0.015898251192368873,
+        "df1_p5": -0.0187763583745504,
+        "df1_p50": 0.004209291592945252,
+        "df1_p95": 0.026580823233434026,
+        "dacc_p5_gt0": false,
+        "df1_p5_gt0": false
+      },
+      "per_frame_null": {
+        "n_seeds": 30,
+        "dacc_p95": -0.030206677265500748,
+        "df1_p95": -0.13666665609540826,
+        "dacc_mean": -0.053418124006359285,
+        "df1_mean": -0.16653996094396803
+      }
+    }
+  ],
+  "k30_sensitivity": null,
+  "mm_sensitivity": {
+    "arm": "mm_sensitivity_MHC",
+    "note": "modality contrast only (B2); NOT survival-determining",
+    "V": 549,
+    "K": 4,
+    "text_coverage": 0.7112932801246643,
+    "pool_acc": 0.7085610200364298,
+    "pool_f1": 0.5833017077798861,
+    "vis_set_acc": 0.7285974499089253,
+    "vis_set_f1": 0.6194682855348546,
+    "mm_set_acc": 0.7213114754098361,
+    "mm_set_f1": 0.6374830064090115,
+    "d_mm_vs_pool_acc": 0.012750455373406244,
+    "d_mm_vs_pool_f1": 0.05418129862912535,
+    "d_mm_vs_vis_acc": -0.007285974499089187,
+    "d_mm_vs_vis_f1": 0.018014720874156898,
+    "mm_vs_pool_obs_gt_null95": false,
+    "mm_vs_vis_obs_gt_null95": false,
+    "mm_vs_pool_boot_dacc_p5": -0.014571948998178486,
+    "mm_vs_vis_boot_dacc_p5": -0.03278688524590157
+  },
+  "mechanical_gate_check": [
+    {
+      "gate": "Fano[HateMM]",
+      "value": 1.0,
+      "threshold": 0.99,
+      "op": ">=",
+      "result": "ABOVE",
+      "note": "vote machine valid if ABOVE"
+    },
+    {
+      "gate": "Fano[MHC]",
+      "value": 1.0,
+      "threshold": 0.99,
+      "op": ">=",
+      "result": "ABOVE",
+      "note": "vote machine valid if ABOVE"
+    },
+    {
+      "gate": "OracleDacc_K4primary[HateMM]",
+      "value": 0.07755581668625144,
+      "threshold": 0.04,
+      "op": ">=",
+      "result": "ABOVE",
+      "note": "headroom if ABOVE (kill-switch fires only if ALL primary datasets BELOW)"
+    },
+    {
+      "gate": "OracleDacc_K4primary[MHC]",
+      "value": 0.06995230524642293,
+      "threshold": 0.04,
+      "op": ">=",
+      "result": "ABOVE",
+      "note": "headroom if ABOVE (kill-switch fires only if ALL primary datasets BELOW)"
+    },
+    {
+      "gate": "OracleKillSwitch(K4-primary,all-datasets)",
+      "value": false,
+      "threshold": "all < 0.04",
+      "result": "SURVIVES",
+      "note": "B3: K4 primary oracle only; DEAD -> don't-pool family prior down"
+    },
+    {
+      "gate": "RawDacc_K4[HateMM]",
+      "value": -0.004700352526439522,
+      "threshold": 0.05,
+      "op": ">=",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "RawDmF1_K4[HateMM]",
+      "value": -0.0077158816713917,
+      "threshold": 0.05,
+      "op": ">=",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "RankOnlyCorroborates[HateMM] (A2)",
+      "value": false,
+      "threshold": true,
+      "result": "BELOW",
+      "note": "sign=False null=False boot=False"
+    },
+    {
+      "gate": "ObsDacc>null95[HateMM]",
+      "value": -0.004700352526439522,
+      "threshold": 0.023501762632197387,
+      "op": ">",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "Bootstrap5th>0[HateMM]",
+      "value": -0.018801410105757976,
+      "threshold": 0.0,
+      "op": ">",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "NearDupExclSurvives[HateMM] (A3)",
+      "value": -0.014101057579318454,
+      "threshold": 0.0,
+      "op": ">",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "SurvivalDacc_K4[MHC-EN]",
+      "value": 0.0015898251192368873,
+      "threshold": 0.03,
+      "op": ">=",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "SurvivalDmF1_K4[MHC-EN]",
+      "value": 0.0031269227530910104,
+      "threshold": 0.03,
+      "op": ">=",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "DatasetRule (K4-primary determined, B2)",
+      "value": "(d) NEGATIVE (neither raw bar; weak-negative family update)",
+      "threshold": "a/b/c/d",
+      "result": "(d) NEGATIVE (neither raw bar; weak-negative family update)",
+      "note": "K30/_mm are NON-determining breadth/modality reports"
+    },
+    {
+      "gate": "_mm modality report[MHC-EN] (NON-determining, B2)",
+      "value": "mm-vs-pool Dacc=+0.0128 / mm-vs-vis Dacc=-0.0073",
+      "threshold": "reported only",
+      "result": "REPORTED",
+      "note": "the _mm sliver; cannot rescue K4 primary"
+    }
+  ]
+}

@@ -164,6 +164,13 @@ def _execute(script: str, script_args: str) -> dict:
     cmd = [sys.executable, f"/root/{script}"] + shlex.split(script_args)
     print(f"[run_probe] cwd=/root exec: {' '.join(cmd)}")
     result = subprocess.run(cmd, cwd="/root", env=env)
+    # Plumbing: persist any /root/data writes (e.g. a probe's --out_md/--out_json landed on the mounted
+    # volume) so they survive the container and can be retrieved with `modal volume get`. Without this the
+    # in-container writes are discarded on exit. Probe logic is untouched.
+    try:
+        features.commit()
+    except Exception as exc:  # noqa: BLE001
+        print(f"[run_probe] volume commit skipped: {exc}")
     return {"script": script, "returncode": result.returncode}
 
 
