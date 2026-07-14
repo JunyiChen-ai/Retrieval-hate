@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 #SBATCH --partition=slurmpartition
+# gres verified (NB-b, S2S_CODE_REVIEW.md): node advertises Gres=gpu:a100:8 on slurmpartition,
+# and the banked-cache producer scripts/slurm/gen_embed_mllm.sbatch used gpu:a100:1 and ran —
+# so gpu:a100:1 is a schedulable type here (bf16 A100 kernel parity for G-recon).
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
@@ -58,4 +61,5 @@ else
     echo "[s2s_extract] real run complete for HateMM + MHC (${NUM_FRAMES} frames)."
 fi
 
-echo "end=$(date -u +%FT%TZ) exit=$?"
+# N-iii: with `set -e` a python failure exits before this line, so reaching here means success.
+echo "end=$(date -u +%FT%TZ)"

@@ -114,8 +114,6 @@ def load_memory(dataset, frameset_dir):
     if N != exp:
         raise RuntimeError("N4 SIZE GUARD: memory N={} != expected train u val {} for {} "
                            "(a stray test row?)".format(N, exp, dataset))
-    if "test" in "".join(ids).lower() and False:
-        pass  # ids are video ids, not split names; the size guard above is the real check.
     _log("[{}] memory N={} (train u val), T={}, D={}, zero-guard rows={}".format(
         dataset, N, g.shape[1], g.shape[2], int(guard.sum())))
     return {"ids": ids, "g": g, "labels": labels, "guard": guard, "img": img, "txt": txt,
@@ -179,7 +177,14 @@ def run_vote(S, labels, k=TOPK, rank_only=False, exclude=None):
         row = St[i]
         topk_idx = np.argpartition(-row, k)[:k]
         topk_idx = topk_idx[np.argsort(-row[topk_idx])]     # exact order (desc, tie by idx)
-        sims = np.ones(k, dtype=np.float64) if rank_only else row[topk_idx].astype(np.float64)
+        # NB-a guard (S2S_CODE_REVIEW.md): never let an excluded/self NEG_INF entry enter the
+        # vote as a neighbour (would multiply a label by ~-1e30). Drop them; the arithmetic
+        # vote uses weight[:length] so a shorter list is handled correctly.
+        topk_idx = topk_idx[row[topk_idx] > (NEG_INF / 2)]
+        if topk_idx.size == 0:
+            raise RuntimeError("degenerate retrieval: no finite neighbours for query {}".format(i))
+        sims = (np.ones(topk_idx.size, dtype=np.float64) if rank_only
+                else row[topk_idx].astype(np.float64))
         logging_dict[i] = {
             "retrieved_label": [int(labels[j]) for j in topk_idx],
             "retrieved_scores": list(sims),          # np.float64 scalars -> .item() in metrics
@@ -268,30 +273,35 @@ def near_dup_audit(M, guard):
 # Permutation null (N1) — same permutation applied to both arms.
 # ---------------------------------------------------------------------------
 def permutation_null(M, labels, k=TOPK):
+    """N1 permutation null for BOTH the sim-weighted primary AND the rank-only (A2)
+    co-diagnostic. Same permutation applied to both arms within a seed (paired Δ preserved).
+    B3 fix (S2S_CODE_REVIEW.md): the rank-only arm gets its OWN null so its corroboration
+    can be judged on significance, not sign alone."""
     mms, spool = M["mms"], M["spool"]
     obs_set_acc, obs_set_f1, _, _ = run_vote(mms, labels, k)
     obs_pool_acc, obs_pool_f1, _, _ = run_vote(spool, labels, k)
-    obs_dacc = obs_set_acc - obs_pool_acc
-    obs_df1 = obs_set_f1 - obs_pool_f1
-    dacc_null, df1_null = [], []
+    obs_set_acc_r, obs_set_f1_r, _, _ = run_vote(mms, labels, k, rank_only=True)
+    obs_pool_acc_r, obs_pool_f1_r, _, _ = run_vote(spool, labels, k, rank_only=True)
+    obs = {"dacc": obs_set_acc - obs_pool_acc, "df1": obs_set_f1 - obs_pool_f1,
+           "dacc_rank": obs_set_acc_r - obs_pool_acc_r, "df1_rank": obs_set_f1_r - obs_pool_f1_r}
+    nd = {"dacc": [], "df1": [], "dacc_rank": [], "df1_rank": []}
     for s in NULL_SEEDS:
         perm = np.random.default_rng(s).permutation(M["N"])
         ix = np.ix_(perm, perm)
-        sa, sf, _, _ = run_vote(mms[ix], labels, k)     # SET under shuffled framesets
-        pa, pf, _, _ = run_vote(spool[ix], labels, k)   # POOLED, SAME permutation
-        dacc_null.append(sa - pa)
-        df1_null.append(sf - pf)
-    dacc_null = np.array(dacc_null)
-    df1_null = np.array(df1_null)
-    return {
-        "obs_dacc": obs_dacc, "obs_df1": obs_df1,
-        "null_dacc_p95": float(np.percentile(dacc_null, 95)),
-        "null_df1_p95": float(np.percentile(df1_null, 95)),
-        "null_dacc_mean": float(dacc_null.mean()), "null_df1_mean": float(df1_null.mean()),
-        "n_seeds": len(NULL_SEEDS),
-        "obs_dacc_gt_p95": bool(obs_dacc > np.percentile(dacc_null, 95)),
-        "obs_df1_gt_p95": bool(obs_df1 > np.percentile(df1_null, 95)),
-    }
+        mms_s, spool_s = mms[ix], spool[ix]
+        sa, sf, _, _ = run_vote(mms_s, labels, k)                      # SET (sim-weighted)
+        pa, pf, _, _ = run_vote(spool_s, labels, k)                    # POOLED, SAME perm
+        sar, sfr, _, _ = run_vote(mms_s, labels, k, rank_only=True)    # SET rank-only, SAME perm
+        par, pfr, _, _ = run_vote(spool_s, labels, k, rank_only=True)  # POOLED rank-only, SAME perm
+        nd["dacc"].append(sa - pa); nd["df1"].append(sf - pf)
+        nd["dacc_rank"].append(sar - par); nd["df1_rank"].append(sfr - pfr)
+    p95 = {kk: float(np.percentile(np.array(vv), 95)) for kk, vv in nd.items()}
+    out = {"n_seeds": len(NULL_SEEDS)}
+    for kk in ("dacc", "df1", "dacc_rank", "df1_rank"):
+        out["obs_" + kk] = obs[kk]
+        out["null_" + kk + "_p95"] = p95[kk]
+        out["obs_" + kk + "_gt_p95"] = bool(obs[kk] > p95[kk])
+    return out
 
 
 def per_frame_null(mem, labels, n_seeds, k=TOPK):
@@ -413,7 +423,19 @@ def probe_dataset(dataset, frameset_dir, n_boot, n_perframe):
 
     null = permutation_null(M, labels)
     boot = bootstrap_delta(a_set["votes"], a_pool["votes"], labels, n_boot)
+    # B3 fix: the rank-only arm gets its OWN bootstrap (paired SET_RANKONLY - POOLED_RANKONLY).
+    boot_rank = bootstrap_delta(a_set_r["votes"], a_pool_r["votes"], labels, n_boot)
     pfn = per_frame_null(mem, labels, n_perframe) if n_perframe > 0 else None
+
+    # B3 fix: pre-registered A2 credit rule (exp-s2s-r3.md:215-223) — the primary Δ is credited
+    # only if the rank-only Δ matches its sign AND is itself significant (observed rank-only Δ >
+    # 95th-pct rank-only permutation null AND rank-only bootstrap 5th-pct > 0). Significance is
+    # judged on acc (mirroring the primary raw-bar gate); sign is required on BOTH acc and F1.
+    rank_sign_ok = bool(np.sign(d_acc) == np.sign(d_acc_rank)
+                        and np.sign(d_f1) == np.sign(d_f1_rank))
+    rank_null_ok = bool(null["obs_dacc_rank_gt_p95"])
+    rank_boot_ok = bool(boot_rank["dacc_p5_gt0"])
+    rank_corroborates = bool(rank_sign_ok and rank_null_ok and rank_boot_ok)
 
     # strip the bulky vote arrays from the arm summaries for JSON.
     arm_summary = {k: {kk: v[kk] for kk in ("acc", "macro_f1", "roc")} for k, v in arms.items()}
@@ -424,8 +446,14 @@ def probe_dataset(dataset, frameset_dir, n_boot, n_perframe):
         "arms": arm_summary,
         "primary": {"d_acc": d_acc, "d_f1": d_f1,
                     "rankonly_d_acc": d_acc_rank, "rankonly_d_f1": d_f1_rank,
-                    "rankonly_corroborates_sign": bool(np.sign(d_acc) == np.sign(d_acc_rank)
-                                                        and np.sign(d_f1) == np.sign(d_f1_rank))},
+                    "rankonly_sign_ok": rank_sign_ok,
+                    "rankonly_null_ok": rank_null_ok,
+                    "rankonly_boot_ok": rank_boot_ok,
+                    "rankonly_corroborates": rank_corroborates,
+                    "rankonly_null_p95_acc": null["null_dacc_rank_p95"],
+                    "rankonly_obs_dacc": null["obs_dacc_rank"],
+                    "rankonly_boot_dacc_p5": boot_rank["dacc_p5"]},
+        "bootstrap_rankonly": boot_rank,
         "fano_acc": fano_acc,
         "oracle": {"acc": orc_acc, "macro_f1": orc_f1, "d_acc": d_orc_acc, "d_f1": d_orc_f1},
         "near_dup": {"threshold": NEAR_DUP_THRESH, "flagged_pairs": nd_pairs,
@@ -484,10 +512,17 @@ def mechanical_gate_check(results):
         h = by_ds["HateMM"]
         rec("RawDacc[HateMM]", h["primary"]["d_acc"], RAW_BAR, ">=")
         rec("RawDmF1[HateMM]", h["primary"]["d_f1"], RAW_BAR, ">=")
+        # B3: full A2 corroboration = sign match AND rank-only own null-p95 AND rank-only bootstrap-5th>0.
+        hp = h["primary"]
         checks.append({"gate": "RankOnlyCorroborates[HateMM] (A2)",
-                       "value": h["primary"]["rankonly_corroborates_sign"], "threshold": True,
-                       "result": "ABOVE" if h["primary"]["rankonly_corroborates_sign"] else "BELOW",
-                       "note": "primary credited only if corroborated"})
+                       "value": hp["rankonly_corroborates"], "threshold": True,
+                       "result": "ABOVE" if hp["rankonly_corroborates"] else "BELOW",
+                       "note": "sign_ok={} null_ok={} boot_ok={}; primary credited only if "
+                               "corroborated".format(hp["rankonly_sign_ok"], hp["rankonly_null_ok"],
+                                                     hp["rankonly_boot_ok"])})
+        rec("RankOnlyObsDacc>null95[HateMM] (A2)", hp["rankonly_obs_dacc"],
+            hp["rankonly_null_p95_acc"], ">")
+        rec("RankOnlyBoot5th>0[HateMM] (A2)", hp["rankonly_boot_dacc_p5"], 0.0, ">")
         rec("ObsDacc>null95[HateMM]", h["permutation_null"]["obs_dacc"],
             h["permutation_null"]["null_dacc_p95"], ">")
         rec("Bootstrap5th>0[HateMM]", h["bootstrap"]["dacc_p5"], 0.0, ">")
@@ -515,10 +550,13 @@ def write_markdown(results, checks, out_md):
                 name, a["acc"], a["macro_f1"], a["roc"]))
         p = r["primary"]
         L.append("\n**Primary paired Δ(SET−POOLED):** acc {:+.4f}, macro_f1 {:+.4f}. "
-                 "**Rank-only (A2):** acc {:+.4f}, macro_f1 {:+.4f} "
-                 "(sign-corroborates={}).".format(
+                 "**Rank-only (A2):** acc {:+.4f}, macro_f1 {:+.4f}; obs Δacc {:+.4f} vs "
+                 "rank-only null-95th {:+.4f}, rank-only bootstrap-5th {:+.4f} "
+                 "(corroborates={}: sign={} null={} boot={}).".format(
                      p["d_acc"], p["d_f1"], p["rankonly_d_acc"], p["rankonly_d_f1"],
-                     p["rankonly_corroborates_sign"]))
+                     p["rankonly_obs_dacc"], p["rankonly_null_p95_acc"], p["rankonly_boot_dacc_p5"],
+                     p["rankonly_corroborates"], p["rankonly_sign_ok"], p["rankonly_null_ok"],
+                     p["rankonly_boot_ok"]))
         L.append("\n**Fano (±1 gold-label key) acc:** {:.4f}.".format(r["fano_acc"]))
         o = r["oracle"]
         L.append("**Oracle ceiling (A4):** acc {:.4f} (Δ vs POOLED acc {:+.4f}, "

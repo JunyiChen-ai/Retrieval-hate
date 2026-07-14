@@ -206,9 +206,12 @@ def encode_frameset(frames, processor, model, device, banked_vec=None):
     grecon_cos = None
     grecon_maxabs = None
     if banked_vec is not None:
-        bv = banked_vec.float()
-        grecon_cos = float(F.cosine_similarity(grecon_vec, bv, dim=0).item())
-        grecon_maxabs = float((grecon_vec - bv).abs().max().item())
+        # B1 fix (S2S_CODE_REVIEW.md): grecon_vec is on `device` (CUDA), banked_vec is CPU
+        # (loaded map_location="cpu"); compare on ONE device or cross-device ops raise.
+        gv = grecon_vec.detach().cpu()
+        bv = banked_vec.detach().float().cpu()
+        grecon_cos = float(F.cosine_similarity(gv, bv, dim=0).item())
+        grecon_maxabs = float((gv - bv).abs().max().item())
         if grecon_cos < GRECON_COS_MIN or grecon_maxabs > GRECON_MAXABS_MAX:
             raise RuntimeError(
                 "[G-recon] cos {:.6f} (min {}) / max-abs {:.3e} (max {}) — fresh forward "
@@ -301,8 +304,9 @@ SHARD_KEYS = {"id", "g", "n_t", "p_S", "S", "end", "label", "grid_thw", "zero_gu
               "decomp_res", "grecon_cos", "grecon_maxabs"}
 
 
-def shard_ok(path, T_nominal):
-    """Integrity check for resume: loadable, keys present, g shape correct, gate green."""
+def shard_ok(path):
+    """Integrity check for resume: loadable, keys present, g shape correct, gate green.
+    (N-ii: g-shape is checked against the stored grid_thw[0], the authoritative per-video T.)"""
     if not os.path.exists(path):
         return False
     try:
@@ -341,7 +345,11 @@ def process_split(dataset, split, outname, args, processor, model, device):
     if args.limit and args.limit > 0:
         items = items[: args.limit]
 
-    banked = None if args.limit else load_banked_imgfeats(dataset, outname)
+    # B2 fix (S2S_CODE_REVIEW.md): G-recon must run even under --limit so the mandated
+    # SMOKE=1 (--limit 1) run exercises gate 2 (the smoke video's id IS in the banked cache).
+    # PREREG_REVIEW §5(iii) requires all FOUR hard gates green in the smoke. The banked cache
+    # is loaded from the real (unchanged) path; only --out_root is a throwaway in the smoke.
+    banked = load_banked_imgfeats(dataset, outname)
 
     outdir = os.path.join(args.out_root, dataset, "frameset_qwen7b_{}f".format(args.num_frames))
     shard_dir = os.path.join(outdir, "_shards", outname)
@@ -354,7 +362,7 @@ def process_split(dataset, split, outname, args, processor, model, device):
     for k, item in enumerate(items):
         vid = str(item["id"])
         shard_path = os.path.join(shard_dir, "{}.pt".format(vid))
-        if shard_ok(shard_path, T_nominal):
+        if shard_ok(shard_path):
             n_done += 1
             continue
 

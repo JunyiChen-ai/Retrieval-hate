@@ -476,3 +476,16 @@ data-limited, not dilution-limited). The most likely *informative* outcomes are 
   cite corrected to `:303` (§4). The three executable scripts are authored to the amended spec and are
   AWAITING INDEPENDENT CODE REVIEW; no submission is authorized. Spec ambiguities resolved by the
   implementer are recorded in `S2S_PROBE_DESIGN.md` §12.
+- **2026-07-14 — r2 CODE-REVIEW FIXES APPLIED.** Independent code review
+  (`refine-logs/S2S_CODE_REVIEW.md`, verdict APPROVED AFTER FIXES) landed three blocking + two
+  non-blocking + four note fixes in the scripts (docs unchanged in substance): **B1** G-recon compared a
+  CUDA tensor to a CPU tensor (`.cpu()` both before comparing) — the extractor would have crashed on the
+  first real video; **B2** decoupled G-recon from `--limit` so the mandated `SMOKE=1` run exercises all
+  four hard gates (PREREG_REVIEW §5(iii)); **B3** the A2 rank-only corroboration now has the rank-only
+  arm's OWN permutation null + bootstrap significance (not sign-only), per the pre-registered credit
+  rule; **NB-a** NEG_INF filter in the near-dup-excluded vote; **NB-b** the `gpu:a100:1` gres verified
+  schedulable (node advertises `gpu:a100:8`; banked-cache producer used it); notes N-i/N-ii/N-iii (dead
+  no-op removed, unused param dropped, sbatch exit cosmetic) and N-iv (offline-G-decomp wording:
+  authoritative residual is the inline f32 number, `S2S_PROBE_DESIGN.md` §4). Scripts re-hashed (r2 table
+  in `S2S_PROBE_DESIGN.md` §10). Still AWAITING the reviewer's one-line hunk re-check; no submission
+  authorized.

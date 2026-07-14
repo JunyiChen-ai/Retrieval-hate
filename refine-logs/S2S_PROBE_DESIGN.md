@@ -214,10 +214,13 @@ both the HateVideo and ExMRD envs, 2026-07-14.)
 `L2normalize( (Σ_t n_t·g_t + p_S) / end )` must equal **this forward's own** banked-formula pooled
 vector to **max-abs ≤ 1e-5**. Pure algebra (count-weighted group means + non-vision sum = overall
 mean); bit-exact within a forward. Any residual > 1e-5 ⇒ an implementation bug in the decomposition
-arithmetic (e.g. a dropped token, wrong `end`, incomplete partition) ⇒ **HALT**. Recomputable offline
-by the reviewer from the saved `{g, n_t, p_S, S, end}`. **NB (r1: A1):** a green G-decomp is *necessary
-but not sufficient* — it is the grid-consistency gate + temporal control above that certify the frame
-set; G-decomp only certifies the aggregate arithmetic.
+arithmetic (e.g. a dropped token, wrong `end`, incomplete partition) ⇒ **HALT**. **(r2: N-iv)** the
+**authoritative** residual is the inline **float32** `decomp_res` computed at extraction (stored per
+shard + `decomp_res_max` in the gatelog); an *offline* recompute from the saved `{g, p_S}` lands only to
+~1e-3 because those tensors are stored **fp16** (§6) — so an offline check verifies the decomposition to
+fp16 precision, not to the 1e-5 gate, which is the inline f32 number. **NB (r1: A1):** a green G-decomp
+is *necessary but not sufficient* — it is the grid-consistency gate + temporal control above that certify
+the frame set; G-decomp only certifies the aggregate arithmetic.
 
 ### G-recon (banked-cache parity anchor, tolerance-based) — fresh forward == banked forward
 The fresh `banked_formula_vec` vs the **banked** `img_feats[v]` (`data/CLIP_Embedding/<ds>/<split>_
@@ -460,6 +463,20 @@ remain **AWAITING INDEPENDENT CODE REVIEW** — a mismatch after a review-driven
 table is re-pinned at that point.
 <!-- S2S-R1-HASH-TABLE-END -->
 
+**r2 hash table (re-pinned 2026-07-14 after `S2S_CODE_REVIEW.md` fixes B1–B3 + guards; SUPERSEDES r1).**
+The r1 hashes above are retained for the audit trail; the **r2 hashes below are the current freeze** —
+re-verify these at submit time. Still AWAITING the reviewer's one-line hunk re-check of B1/B2/B3.
+
+<!-- S2S-R2-HASH-TABLE-START -->
+| artifact | sha256 (r2, 2026-07-14) |
+|---|---|
+| `research-wiki/experiments/exp-s2s-r3.md` | `587f9b9b8e103758c34ffbb4c81aaa6796f231528b4612cca7c3d513504811c7` |
+| `scripts/analysis/s2s_extract.py` | `41979f6a41c95e38a3cd875e11dc54a5a48eac9a5b908f295bad4d8d051cd23a` |
+| `scripts/slurm/s2s_extract.sbatch` | `2dc0f90b03a44f45945cab3194f78ec97012fe7b157727cd50f64d88d56665dc` |
+| `scripts/analysis/s2s_probe.py` | `949ebbdd432c9d72b1b164bc715da1cbba9fafc7f363337893f9813ff826f209` |
+| `refine-logs/S2S_PROBE_DESIGN.md` (this file) | recorded in the r2 commit message (a file cannot embed its own hash) |
+<!-- S2S-R2-HASH-TABLE-END -->
+
 ---
 
 ## 11. Revision history
@@ -482,6 +499,26 @@ table is re-pinned at that point.
     score (§5); **N3** sensitivity-cannot-rescue-primary (§5); **N4** fail-closed no-test-touch guard
     (§5); **N5** oracle≥raw ordering (§5); **N6** independent-verdict output split (§5); **N7** the
     provenance-cite blemish is corrected in the companion prereg §1 lineage.
+- **r2 (2026-07-14) CODE-REVIEW FIXES APPLIED (`S2S_CODE_REVIEW.md`, APPROVED AFTER FIXES).** Script-only
+  fixes (this spec's substance unchanged apart from N-iv wording + the §10 r2 hash table):
+  - **B1** — `s2s_extract.py` G-recon compared a CUDA `grecon_vec` to a CPU banked vector → would crash
+    on the first real video; both are `.cpu()`-ed before the compare.
+  - **B2** — `s2s_extract.py` loaded the banked cache for G-recon only when `--limit` was unset, so the
+    mandated `SMOKE=1` (`--limit 1`) run skipped gate 2; the banked cache is now always loaded so the
+    smoke exercises all four hard gates (PREREG_REVIEW §5(iii)).
+  - **B3** — `s2s_probe.py` A2 rank-only corroboration was sign-only; the rank-only arm now has its OWN
+    permutation null (same permutation, both arms) + bootstrap, and the credit rule is sign AND
+    rank-only observed Δ > null-95th AND rank-only bootstrap-5th > 0.
+  - **NB-a** — `run_vote` drops NEG_INF (excluded/self) entries before the vote so a near-dup-excluded
+    query can never multiply a label by ~−1e30.
+  - **NB-b** — the `gpu:a100:1` gres verified schedulable (node advertises `gpu:a100:8`; the banked-cache
+    producer `gen_embed_mllm.sbatch` used `gpu:a100:1` and ran) — kept, comment added.
+  - **N-iv** — §4 G-decomp wording: the **authoritative** residual is the inline **f32** `decomp_res`;
+    an offline recompute from the fp16-stored `{g, p_S}` only reaches ~1e-3 (fp16 precision).
+  - N-i (dead no-op removed), N-ii (unused `T_nominal` param dropped from `shard_ok`), N-iii (sbatch exit
+    cosmetic).
+  Scripts + prereg re-hashed (§10 r2 table). Still AWAITING the reviewer's one-line hunk re-check; no
+  submission authorized.
 
 ---
 
