@@ -187,8 +187,11 @@ def encode_frameset(frames, processor, model, device, banked_vec=None):
         idx = vis_pos[t * per:(t + 1) * per]
         g.append(prefix[idx].mean(0))
         n_t.append(int(idx.numel()))
-    g = torch.stack(g)                                  # [T, D] float32
-    n_t_t = torch.tensor(n_t, dtype=torch.float32)      # [T]
+    g = torch.stack(g)                                  # [T, D] float32 (on prefix.device)
+    # r3a device-alignment (smoke 13159 postmortem): torch.tensor defaults to CPU; g/p_S are
+    # on the model device, so build n_t_t on g.device or the G-decomp assembly below mixes
+    # cuda + cpu and raises. (The banked_vec G-recon compare is already CPU-aligned; B1.)
+    n_t_t = torch.tensor(n_t, dtype=torch.float32, device=g.device)  # [T]
 
     # --- non-vision prefix contribution.
     nonvis_pos = (~vis_mask[:end]).nonzero(as_tuple=True)[0]

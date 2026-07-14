@@ -506,6 +506,22 @@ these at submit time.
 | `refine-logs/S2S_PROBE_DESIGN.md` (this file) | recorded in the r3 commit message (a file cannot embed its own hash) | changed (§5/§10/§11) |
 <!-- S2S-R3-HASH-TABLE-END -->
 
+**r3a hash table (re-pinned 2026-07-15 after the smoke-13159 device postmortem; SUPERSEDES r3 for the
+extractor).** Extractor-only fix: `n_t_t` was built on CPU while `g`/`p_S` are on the model device, so
+the G-decomp assembly (`s2s_extract.py` old `:199`) raised `cuda:0 vs cpu` at gate 0a on the first real
+GPU run (a bug the CPU synthetic test could not surface; the smoke caught it in 13s, pre-data). The
+sbatch, probe, and both prereg/design docs are **UNCHANGED from r3**. Re-verify these at submit time.
+
+<!-- S2S-R3A-HASH-TABLE-START -->
+| artifact | sha256 (r3a, 2026-07-15) | vs r3 |
+|---|---|---|
+| `scripts/analysis/s2s_extract.py` | `07fd162196a7e61e8e83f1a181408fe7b8080cf475cb59ecd58a1dc035b3740a` | **changed** (device-align fix) |
+| `scripts/slurm/s2s_extract.sbatch` | `2dc0f90b03a44f45945cab3194f78ec97012fe7b157727cd50f64d88d56665dc` | UNCHANGED (r2=r3=r3a) |
+| `scripts/analysis/s2s_probe.py` | `141a0441845d6175646d642a57b4534f78a48d96521ef3dc3a2d9fcf0f2301b3` | UNCHANGED (r3) |
+| `research-wiki/experiments/exp-s2s-r3.md` | `3f1f5b09e24c142dc07a76c5c21d2189a6d4a4b332c8f93dbb7e2eecc08b75b0` | UNCHANGED (r3) |
+| `refine-logs/S2S_PROBE_DESIGN.md` (this file) | recorded in the r3a commit message (a file cannot embed its own hash) | changed (§10/§11) |
+<!-- S2S-R3A-HASH-TABLE-END -->
+
 ---
 
 ## 11. Revision history
@@ -560,6 +576,19 @@ these at submit time.
   byte-identical and their §10 hashes are UNCHANGED** (r3 table restates them); only `s2s_probe.py` +
   both docs are re-hashed. The queued smoke 13159 (extractor, r2 pins) is untouched. Awaiting the code
   reviewer's diff-only re-check before Stage P (which is anyway gated on extraction).
+- **r3a (2026-07-15) DEVICE-ALIGNMENT FIX — smoke 13159 postmortem (extractor-only).** The r3 smoke
+  (job 13159) FAILED in 13s at gate 0a (temporal positive control), pre-data: `encode_frameset` built
+  `n_t_t = torch.tensor(n_t, dtype=torch.float32)` on **CPU** while `g`/`p_S` are on the model device, so
+  the G-decomp assembly `(g * n_t_t[:,None]).sum(0).add(p_S)…` raised `RuntimeError: … cuda:0 and cpu`.
+  This is a **different** site from the B1 review fix (which aligned the `grecon_vec`-vs-banked *compare*);
+  the assembly *inputs* needed alignment. **One-line fix:** `n_t_t = torch.tensor(n_t,
+  dtype=torch.float32, device=g.device)`. Full-function device audit done: `n_t_t` was the only
+  CPU-default construction, and every remaining device-mixing op (G-decomp assembly, `banked_formula_vec`
+  compare, the B1 CPU-aligned G-recon compare) is now consistent — no sibling device bug left to burn a
+  second smoke on. **Extractor-only:** sbatch, `s2s_probe.py`, and both prereg/design docs are UNCHANGED
+  from r3; only `s2s_extract.py` (+ this §10/§11) re-hashed (r3a table). The bug was GPU-only (the CPU
+  synthetic test structurally could not surface it); the smoke did its job. Banked caches untouched (crash
+  was in the synthetic control, pre-data). Awaiting the reviewer's diff-only re-check before any resubmit.
 
 ---
 
