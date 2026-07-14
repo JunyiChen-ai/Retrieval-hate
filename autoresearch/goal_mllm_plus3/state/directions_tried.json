@@ -1,0 +1,123 @@
+{
+  "updated": "2026-07-14T07:25:21Z",
+  "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
+  "dead": [
+    {
+      "id": "P1",
+      "dir": "MLLM prior recalibration of head",
+      "epitaph": "decision-side scalar; negative"
+    },
+    {
+      "id": "P2/P2b",
+      "dir": "MLLM neighbor-comparability kNN rerank (incl 32B)",
+      "epitaph": "comparability orthogonal to vote-correctness"
+    },
+    {
+      "id": "P3",
+      "dir": "MLLM segment hate-density pooling weights",
+      "epitaph": "probe pass, train flat, 3 datasets"
+    },
+    {
+      "id": "P4",
+      "dir": "MLLM schema-field distillation",
+      "epitaph": "redundant; formalized by AAAI25 2412.11917 ensembling result"
+    },
+    {
+      "id": "P5",
+      "dir": "counterfactual twins",
+      "epitaph": "gate fail + hurts"
+    },
+    {
+      "id": "P9",
+      "dir": "Stage-1 LoRA-SFT video LMM features",
+      "epitaph": "mlp ~= floor, raw kNN below floor"
+    },
+    {
+      "id": "P9b",
+      "dir": "joint LMM-RGCL training",
+      "epitaph": "head<->memory redistribution, 0/12"
+    },
+    {
+      "id": "P10/P10b/P10c",
+      "dir": "MLLM logit A-fuse (7B..72B, gen-jump)",
+      "epitaph": "localization-only modest; no accuracy role"
+    },
+    {
+      "id": "P11",
+      "dir": "MLLM segment scores as weak-sup training labels",
+      "epitaph": "probe fail; MIL already carries it"
+    },
+    {
+      "id": "TARC V1/V2/V3",
+      "dir": "predicted-target conditioning of retrieval graph",
+      "epitaph": "regularization-only; val moves, test flat; test-touch spent"
+    },
+    {
+      "id": "archive-auto-repair",
+      "dir": "MLLM two-vote memory deletion",
+      "epitaph": "AND-rule C-A=0; guard-rail role only"
+    },
+    {
+      "id": "A-line lb_scgp_global",
+      "dir": "label-blind certificates -> global Gram proximal",
+      "epitaph": "15th; killed pre-GPU by G0-cond: cache 91-93% constant, oracle@coverage 10x under bar, v3 rejected (parsed certs noise-quality)"
+    },
+    {
+      "id": "C1 e2eq QLoRA",
+      "dir": "RA-HMD two-stage QLoRA sequential",
+      "epitaph": "16th; anchor-paper ablation prices untested cell +0.7; MEASURED: DEV kNN -0.019/-0.028 vs frozen floor (job 13039)"
+    },
+    {
+      "id": "C3-target",
+      "dir": "predicted-target one-hot as conditional channel (real Qwen-7B predictor)",
+      "epitaph": "17th: oracle ceiling +0.0487 marginal, real predictor ~0 (best +0.0094 < 0.040 rule), MHC anti-informative; calibrated machinery; C3 family survives only via non-target dense content"
+    },
+    {
+      "id": "C2-SAV",
+      "dir": "sparse attention-head mining, img-stream 784 heads frozen 7B",
+      "epitaph": "18th: F-G1 KILL confirmed under corrected machinery; MHC cell = crushed-baseline artifact; HateMM harm real; dilution hypothesis FALSIFIED (MHC-EN data/label-limited)"
+    },
+    {
+      "id": "C3-nontarget",
+      "dir": "MLLM dense reasoning-text channel on best config (fusion)",
+      "epitaph": "19th: DEAD_AT_FUSION, triple pre-declared rule failure, calibrated+perm-null instrument; CLIP-only gain = encoder redundancy, info banked in Qwen pathway"
+    },
+    {
+      "id": "B1-qwen-encoder-zh",
+      "dir": "frozen Qwen-7B encoder on MHC-ZH 3-seed",
+      "epitaph": "20th: FAIL both protocols (final -0.0112 acc mean, 1/3 sign; gates clean); P8c language-match rejected for frozen encoder; ZH 0.8537 = LoRA lever"
+    },
+    {
+      "id": "B2-32b-encoder",
+      "dir": "Qwen2.5-VL-32B frozen encoder, scale axis",
+      "epitaph": "21st: goal FAIL; HateMM 32B between CLIP and 7B (scale regresses); MHC-EN/ZH below CLIP; 32B-vs-7B fails everywhere; scale is not the lever for head+kNN conversion"
+    }
+  ],
+  "banned_constraints": [
+    "OCR channel (user veto 2026-07-13)",
+    "gold annotations inside method (time-span, target)",
+    "cross-seed ensembles",
+    "kNN-vote-pool expansion via pseudo-labels (refuted-as-posed by 3 lit scouts; representation-training expansion only)",
+    "target-as-structure at 7B",
+    "MLLM-scores-as-training-signal",
+    "P1-P5 re-proposals",
+    "external model APIs (data-export not ruled)",
+    "TRAINING DATA = single-dataset train split ONLY (user veto 2026-07-14): no cross-dataset split mixing (trivial trick, not a contribution); conservatively also bans external unlabeled-pool training (C5)"
+  ],
+  "positives_bank": [
+    {
+      "id": "encoder-swap",
+      "note": "+5.3-5.6 acc HateMM 3/3 seeds both protocols; FAILS MHC-EN (SAV tests the dilution hypothesis for this)"
+    },
+    {
+      "id": "P6+P10b",
+      "note": "MLLM localization scorer wv-AUC modest; earned roles: encoder + localizer + guard-rail"
+    },
+    {
+      "id": "B3-lora-zh",
+      "note": "LoRA-Qwen vs CLIP, MHC-ZH paired 3-seed: final-epoch +0.0313/+0.0453 3/3 = PASS (MARGINAL, binding language); val-sel FAIL (+0.0246 acc); single encoder draw; gain = LoRA adaptation not encoder identity; usable only pending user novelty ruling"
+    }
+  ],
+  "active": [],
+  "queued": []
+}

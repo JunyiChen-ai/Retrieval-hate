@@ -1,0 +1,55 @@
+{"ts":"2026-07-13T11:14:17Z","source":"orchestrator","level":"info","event":"tick","detail":"smoke job 13058 in flight (tracked waiter armed); pipeline at smoke gate"}
+{"ts":"2026-07-13T11:46:24Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T11:14:17Z fresh; business loop alive (wakeup armed); smoke 13058 held, waiter armed"}
+{"ts":"2026-07-13T12:15:42Z","source":"orchestrator","level":"info","event":"tick","detail":"awaiting smoke 13058 (held); waiter boc5tk6dw armed 6h cap"}
+{"ts":"2026-07-13T12:46:23Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T12:15:42Z fresh; loop alive; smoke 13058 still held, waiter armed"}
+{"ts":"2026-07-13T12:57:50Z","source":"orchestrator","level":"decision","event":"c3_probe_verdict_review_dispatched","detail":"label-oracle arm anomaly flagged; A-line impact assessment included in review scope"}
+{"ts":"2026-07-13T13:14:46Z","source":"orchestrator","level":"decision","event":"c3_verdict_overturned_processed","detail":"REFLECTION patched with calibration mandate; archiver dispatched; C3 status = target channel marginal-live pending real-predictor pilot"}
+{"ts":"2026-07-13T13:16:15Z","source":"orchestrator","level":"info","event":"tick","detail":"C3 overturn processed+archiving; smoke 13058 status check below"}
+{"ts":"2026-07-13T13:46:24Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T13:16:15Z fresh; loop alive (wakeup 02:17 armed); smoke 13058 held ~3h, waiter bkero51hy on duty"}
+{"ts":"2026-07-13T14:17:15Z","source":"orchestrator","level":"info","event":"tick","detail":"awaiting smoke 13058 release; all review/archive threads settled"}
+{"ts":"2026-07-13T14:46:30Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T14:17:15Z; loop alive (wakeup 02:48 armed); smoke 13058 PENDING(Resources); C3 real-predictor probe agent in flight"}
+{"ts":"2026-07-13T14:48:17Z","source":"orchestrator","level":"info","event":"tick","detail":"C3 real-pred probe in flight; smoke 13058 state below"}
+{"ts":"2026-07-13T15:09:16Z","source":"orchestrator","level":"info","event":"tick","detail":"checking smoke verdict + F-G1 submission after nudge"}
+{"ts":"2026-07-13T15:46:45Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T15:09:41Z fresh; loop alive (wakeup 04:11 armed); F-G1 job 13099 running, waiter bsuu35kqa on duty"}
+{"ts":"2026-07-13T16:11:17Z","source":"orchestrator","level":"info","event":"tick","detail":"F-G1 13099 status check"}
+{"ts":"2026-07-13T16:46:24Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T16:11:17Z fresh; loop alive (wakeup 05:12 armed); F-G1 13099 running ~1.3h"}
+{"ts":"2026-07-13T16:48:05Z","source":"orchestrator","level":"decision","event":"c3_nontarget_pilot_dispatched","detail":"scaffolding-grade G0 pilot on 2nd GPU slot: single pre-declared prompt family, 300+300 videos, calibrated probe, bar +0.040, anti-gate-hacking rules; zero-idle pivot ready if SAV F-G1 fails"}
+{"ts":"2026-07-13T17:12:14Z","source":"orchestrator","level":"info","event":"tick","detail":"13099 F-G1 + 13101 c3 gen status check"}
+{"ts":"2026-07-13T17:33:12Z","source":"orchestrator","level":"info","event":"tick","detail":"F-G1 verdict review in flight; 13101 status below"}
+{"ts":"2026-07-13T17:46:24Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T17:41:24Z fresh; loop alive; SAV closed (18th, archived 5e5fb95); c3_nontarget 13101 running, waiter armed"}
+{"ts":"2026-07-13T18:04:17Z","source":"orchestrator","level":"info","event":"tick","detail":"SAV closure done (5e5fb95); tracking 13101"}
+{"ts":"2026-07-13T18:35:19Z","source":"orchestrator","level":"info","event":"tick","detail":"tracking 13101"}
+{"ts":"2026-07-13T18:46:19Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T18:35:19Z fresh; loop alive (wakeup 06:56 armed); 13101 COMPLETED, pilot agent probe in progress"}
+{"ts":"2026-07-13T20:42:47Z","source":"orchestrator+heartbeat","level":"info","event":"tick+patrol","detail":"13101 terminal 35min ago; checking pilot record"}
+{"ts":"2026-07-13T21:14:09Z","source":"orchestrator","level":"info","event":"tick","detail":"pilot verdict PROCEED received; null-anomaly verdict review in flight; no SLURM jobs"}
+{"ts":"2026-07-13T21:16:19Z","source":"orchestrator","level":"decision","event":"user_directive","detail":"user 2026-07-14: rigor on everything, keep driving. No scope change; reinforces verdict-review + calibration regime"}
+{"ts":"2026-07-13T21:35:05Z","source":"orchestrator","level":"decision","event":"user_veto_crossdataset","detail":"C6 killed pre-work; C5 conservatively banned; pivot bench restocked: B1 qwen-encoder-ZH (top), B2 32B encoder, C4 KD — all single-dataset"}
+{"ts":"2026-07-13T21:46:21Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T21:35:05Z; loop alive; fusion probe finishing perm-null; B1 prereg review in flight"}
+{"ts":"2026-07-13T22:09:14Z","source":"orchestrator","level":"info","event":"tick","detail":"B1 job 13115 running; fusion probe verdict check below"}
+{"ts":"2026-07-13T22:29:58Z","source":"orchestrator","level":"info","event":"tick","detail":"C3 fusion archived 0e2fa7b; B1 13115 status below"}
+{"ts":"2026-07-13T22:46:19Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T22:38:44Z; loop alive; B1 archived 576d922; B2 prereg drafting in flight"}
+{"ts":"2026-07-13T22:51:44Z","source":"orchestrator","level":"info","event":"tick","detail":"B1 fully closed+archived (576d922); B2 prereg review in flight; no SLURM jobs"}
+{"ts":"2026-07-13T23:18:02Z","source":"orchestrator","level":"decision","event":"b2_c3_go","detail":"B2 authorization C2-PASS + C3 GO issued; executor running staged D->E->C->T; 21st pre-registered route, last structural lever in constraint space"}
+{"ts":"2026-07-13T23:22:22Z","source":"orchestrator","level":"decision","event":"b2_staged_infra_retry_ruling","detail":"Stage-D 13131 FAILED: HF xet CAS bridge 403 all blobs from this host (auth-independent, cross-repo incl. previously-working 7B shard) = upstream transient. Ruled probe-gated infra-retry #1 (30min probes, 12h cap, artifact unmodified 817a951d); alternative-transport needs delta-check if bridge stays down","detail2":"0 GPU-h spent; quota grace not consumed"}
+{"ts":"2026-07-13T23:23:11Z","source":"orchestrator","level":"info","event":"tick","detail":"B2 Stage-D probe loop running (xet-bridge 403); nothing else pending"}
+{"ts":"2026-07-13T23:46:19Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-13T23:23:11Z; loop alive (wakeup 12:24 armed); B2 Stage-D probe loop active (xet 403), executor standing by"}
+{"ts":"2026-07-14T00:24:14Z","source":"orchestrator","level":"info","event":"tick","detail":"B2 Stage-D probe loop active; checking latest probe results in execution record"}
+{"ts":"2026-07-14T00:46:15Z","source":"orchestrator","level":"info","event":"tick","detail":"checking 13138 (Stage-D retry) and Stage-E status"}
+{"ts":"2026-07-14T00:47:11Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-14T00:46:15Z; loop alive (wakeup 13:07 armed); Stage-D done, Stage-E submission nudged"}
+{"ts":"2026-07-14T01:07:12Z","source":"orchestrator","level":"info","event":"tick","detail":"Stage-E 13139 running (~2-3s/video, projects ~2h); waiter armed"}
+{"ts":"2026-07-14T01:46:32Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-14T01:07:12Z; loop alive (wakeup 14:08 armed); Stage-E 13139 running, waiter on duty"}
+{"ts":"2026-07-14T02:08:15Z","source":"orchestrator","level":"info","event":"tick","detail":"Stage-E status check"}
+{"ts":"2026-07-14T02:46:27Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-14T02:08:15Z; loop alive (wakeup 15:09 armed); Stage-E in flight"}
+{"ts":"2026-07-14T03:16:15Z","source":"orchestrator","level":"info","event":"tick","detail":"Stage-T 13146 status check"}
+{"ts":"2026-07-14T03:46:20Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-14T03:16:15Z; loop alive (wakeup 15:47 armed); Stage-T 13146 held, waiter on duty"}
+{"ts":"2026-07-14T03:47:21Z","source":"orchestrator","level":"info","event":"tick","detail":"awaiting executor raw-table report (T completed 15:26, nudged 15:47)"}
+{"ts":"2026-07-14T04:05:27Z","source":"orchestrator","level":"decision","event":"b3_reopened","detail":"Terminus amended: option (b) split — the MEASUREMENT half (paired LoRA-Qwen vs CLIP on ZH) needs NO user ruling and was never done (P9 ZH +1.0 claim conflicts with arcbase 0.8537 5-seed evidence — unresolved factual conflict); B3 forensic recon dispatched; novelty framing remains user's call"}
+{"ts":"2026-07-14T04:08:10Z","source":"orchestrator","level":"info","event":"tick","detail":"B2 verdict+terminus already processed (9f7a933); B3 forensic recon in flight"}
+{"ts":"2026-07-14T04:39:16Z","source":"orchestrator","level":"info","event":"tick","detail":"B3 pipeline already at execution (13150 held); recon/prereg/review/auth all done"}
+{"ts":"2026-07-14T04:46:21Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-14T04:39:16Z; loop alive (wakeup 17:10 armed); B3 13150 held, waiter on duty"}
+{"ts":"2026-07-14T05:10:12Z","source":"orchestrator","level":"info","event":"tick","detail":"B3 13150 status check"}
+{"ts":"2026-07-14T05:41:11Z","source":"orchestrator","level":"info","event":"tick","detail":"B3 13150 check; executor waiter cap check"}
+{"ts":"2026-07-14T05:46:21Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-14T05:41:11Z; loop alive (wakeup 18:42 armed); B3 13150 held, 4h waiter bvngbo9hv on duty"}
+{"ts":"2026-07-14T06:42:33Z","source":"orchestrator","level":"info","event":"tick","detail":"B3 13150 check"}
+{"ts":"2026-07-14T06:46:21Z","source":"heartbeat","level":"info","event":"patrol","detail":"last_seen=2026-07-14T06:42:33Z; loop alive (wakeup 19:43 armed); B3 13150 held ~2.7h, 4h waiter on duty"}
+{"ts": "2026-07-14T07:10:29Z", "source": "orchestrator", "level": "info", "event": "tick", "detail": "13150 COMPLETED; checking executor transcription"}

@@ -1,0 +1,19 @@
+{
+  "task": "goal_mllm_plus3",
+  "protocol": "dali_autoresearch",
+  "iteration": 1,
+  "status": "active",
+  "phase": "monitoring: B3 closed (final-epoch marginal pass measured, val-sel fail; novelty ruling pending). All search axes exhausted (21 negatives + 1 marginal positive). Terminus report delivered; awaiting user rulings.",
+  "stale_count": 4,
+  "last_seen": "2026-07-14T07:25:21Z",
+  "total_findings": 22,
+  "active_line": null,
+  "queued_lines": [],
+  "conditional_lines": [
+    "B2 32B encoder (download ruling)",
+    "C4 72B CRD KD (download ruling)"
+  ],
+  "gpu_state": "idle",
+  "orchestrator": "main session (ScheduleWakeup business loop L2 + session cron hourly patrol L1)",
+  "notes": "single-submit ceremony + G0-cond gate override any shortcut; zero interaction; TRAINING DATA = single-dataset train split ONLY (user veto 2026-07-14); no OCR; no gold annotations"
+}

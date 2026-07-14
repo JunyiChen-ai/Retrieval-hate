@@ -32,10 +32,31 @@
 ## 4. 需要用户裁决的剩余选项
 
 (a) **72B-AWQ encoder**:唯一未跑的 scale 点,但 B2 的单调退步使先验 ≈0;需抽取脚本加 AWQ 路径 + autoawq 安装 + delta-check + 41G 下载。**不建议**(dead-axis grinding),除非你另有机制假设。
-(b) **LoRA 族杠杆**(ZH LoRA-Qwen 0.8537 vs CLIP 0.8027 的未配对差距):按你的框架 LoRA-SFT 属非 novelty 杠杆且 P9 家族已关;若你愿意重新定位其角色(如作为 encoder 适配的正式消融而非 novelty 主张),这是数据上最接近 +3 的未验证配对。**需要你重新划 novelty 边界才可动。**
+(b) **LoRA 族杠杆**(ZH LoRA-Qwen 0.8537 vs CLIP 0.8027 的未配对差距):按你的框架 LoRA-SFT 属非 novelty 杠杆且 P9 家族已关;若你愿意重新定位其角色(如作为 encoder 适配的正式消融而非 novelty 主张),这是数据上最接近 +3 的未验证配对。**需要你重新划 novelty 边界才可动。** → 已实测,见 §6。
 (c) **goal 重议**:以 HateMM-only encoder +5 作为"MLLM meaningful integration"的论文主张,把 21 条负结果做成 negative-results/rigor 贡献(现有 TERMINUS/OPTION_KITS + 本文档已备料)。
 (d) 基建裁决:~120 个未推送 commit;disk_guard quota 解析 bug(当前全盲,建议修);lora_p9 83G / Retrieval 41G 未备份未裁决;A 线 M-A/realbank is_science 遗留。
 
 ## 5. 协议状态
 
 dali_autoresearch 转入监控模式(心跳照常,不再对已关闭轴烧 GPU);全部状态在 autoresearch/goal_mllm_plus3/state/;本轮资源账:GPU ≈ 5.5h 实验 + 0 浪费在被 gate 拦截的路线上,单提纪律零违规,1 次探针门控基础设施重试(上游 CDN 瞬断)。
+
+## 6. B3 补遗(2026-07-14,判决后)
+
+选项 (b) 的"未验证配对"已实测。B3 迷你仪式(预注册 → 复核 APPROVED(绑定 marginal 语言)→ 单提 job 13150(约 2.5h JobHeldUser 后 2m46s COMPLETED)→ 原始转录 → 独立判决复核,`refine-logs/B3_VERDICT_REVIEW.md`)在 current-code `enc3seed` 同码同种子协议下,把 arcbase 12223-25 的 LoRA-vs-CLIP 预览转成正式配对判决。
+
+**实测配对结果(MHC-ZH,LoRA-Qwen vs frozen-CLIP,3 种子,job 13150 vs 13115):**
+- final-epoch:均值 Δacc **+0.0313** / ΔmF1 **+0.0453**,两指标均 **3/3 同号**。
+- val-selected:均值 Δacc **+0.0246**(< +0.030,AND 规则在 acc 上失败)/ ΔmF1 **+0.0339**(3/3 同号)。
+- G-repro 硬门 **bit-exact** 复现 arcbase 12223-25(6/6 读数 4dp,零失配)。
+- **绑定语言(`B3_PREREG_REVIEW.md` §2.2,逐字,不得升级):`final-epoch: PASS (MARGINAL); val-selected: FAIL`。**
+
+**三条强制敏感度事实(§2.2 要求全列):**
+1. **贴边:** 均值 Δacc +0.0313 仅高出 +0.030 门 **+0.0013(≈门的 4%)**——这就是整个 pass 的全部余量。
+2. **逐种子不均:** seed2 的 Δacc = **+0.0201,本身低于逐种子 +0.030 门**;pass 靠 seed0/1 与 F1(+0.0453 干净过线),而非均匀的逐种子余量。
+3. **余量 ≪ 种子间散布:** +0.0013 的 acc 余量远小于种子间 Δacc 散布 **0.0201**(0.0402 − 0.0201,≈15× 余量)——即 acc pass 落在 head-seed 噪声内。
+
+**分解(final-epoch 均值,同 runner):** frozen-Qwen 编码器交换 **−0.0112**(B1 第 20 条负结果,FAIL)vs LoRA-Qwen **+0.0313** ⇒ **ZH 的增益全部来自 LoRA 的任务/语言适配,而非 MLLM-encoder 身份本身**(与 B1 一致)。
+
+**单编码器抽样警告(scope):** B3 是 **head-seed** 配对测试,仅一次 LoRA-SFT 编码器抽样(3 种子共享单一特征缓存,只变下游 head)。它**不**建立 LoRA-SFT 训练种子方差;那需 ≥3 次全新 LoRA-SFT 重训 + 重抽取(B3 范围外,预注册声明)。
+
+**对选项账目的影响:** 本补遗把 §4(b) 从**"未验证"**转为**"已实测,等待用户的 novelty 裁决 + `PAPER_MASTER_TABLES.md:58` 的'不可直接同格并比'覆盖决定"**。B3 只判 goal 的**性能子句**(+0.03 acc AND +0.03 F1);是否算 novelty、"MLLM-encoder family"(HateMM frozen-swap + ZH LoRA,两种不同机制)是否算"双数据集"headline、以及 B3 的同 runner 同种子配对是否覆盖 PMT:58 的记账注,全部仍是用户裁决。这是 round-2 的**首个实测(部分)正结果**;其余全部搜索轴仍关闭(21 条负结果)。

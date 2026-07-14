@@ -17,10 +17,10 @@ tags: ["hateful-video", "MLLM-encoder", "LoRA-SFT", "RA-HMD", "frozen-CLIP", "en
 
 # B3 — LoRA-Qwen encoder vs frozen-CLIP on MHC-ZH (PRE-REGISTRATION)
 
-> **STATUS: `DRAFT-UNREVIEWED` — PRE-REGISTRATION ONLY. NO SLURM job submitted, NO GPU
-> used, NO NEW test touch spent. Awaiting fresh pre-registration review + conditional
-> authorization BEFORE any run. This file only *proposes* the test and previews the
-> outcome from existing primary logs.**
+> **STATUS: `CLOSED` 2026-07-14 — VERDICT (`refine-logs/B3_VERDICT_REVIEW.md`; job 13150,
+> G-repro bit-exact vs arcbase 12223-25): final-epoch: PASS (MARGINAL); val-selected: FAIL.
+> Novelty = PENDING USER RULING (LoRA = RA-HMD-family performance lever). Reporting language
+> is BINDING per `B3_PREREG_REVIEW.md` §2.2 — no upgrade.**
 
 **verdict:** `draft-unreviewed` · **confidence:** n/a
 
@@ -233,7 +233,7 @@ either confirm it (G-repro passes → identical numbers) or the G-repro gate HAL
 | ZH arm (final-ep) | acc | Δ vs frozen-CLIP |
 |---|---|---|
 | frozen-CLIP (13115) | 0.8143 | — (baseline) |
-| **frozen-Qwen** encoder swap (13115, B1) | 0.8031 | **−0.0113 (FAILS — B1 20th negative)** |
+| **frozen-Qwen** encoder swap (13115, B1) | 0.8031 | **−0.0112 (FAILS — B1 20th negative)** |
 | **LoRA-Qwen** (12223-25 → B3 re-run) | 0.8456 | **+0.0313** |
 
 ⇒ The frozen MLLM-encoder swap *loses* on ZH; the LoRA fine-tune *wins*. LoRA − frozen-Qwen
@@ -411,3 +411,4 @@ use `FORCE=True` with the arcbase group.** Rationale (collision semantics verifi
 | rev | date | status | change | authority |
 |---|---|---|---|---|
 | r0 | 2026-07-14 | DRAFT-UNREVIEWED | Initial pre-registration (recon-scoped; no runs). Both-protocol preview from primary logs (final-ep PASS marginal / val-sel FAIL); GROUP=RAC_video_b3_lora + FORCE=False decision; G-repro + Namespace kill gates; novelty clause declared PENDING USER RULING; single-encoder-draw + opposite-lever-profile limitations pre-declared. | B3 prep agent |
+| r1 | 2026-07-14 | CLOSED | Executed + independently reviewed. Verdict (`refine-logs/B3_VERDICT_REVIEW.md`, job 13150): G-repro PASS bit-exact vs arcbase 12223-25 (6/6 readings, 0 mismatch); Namespace PASS; final-epoch PASS (MARGINAL) mean Δacc +0.0313 / ΔmF1 +0.0453, sign 3/3; val-selected FAIL (mean Δacc +0.0246 < +0.030 fails the AND-rule, ΔmF1 +0.0339, sign 3/3). Binding write-up format per `B3_PREREG_REVIEW.md` §2.2 — no upgrade. The §7d frozen-Qwen decomposition erratum (−0.0113 → −0.0112) was applied in place by the independent verdict reviewer (`B3_VERDICT_REVIEW.md` §5a); the number is verified −0.0112 here and NOT re-edited. Novelty = PENDING USER RULING. | B3 verdict reviewer + closure archivist |
