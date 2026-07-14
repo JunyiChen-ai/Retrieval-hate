@@ -71,7 +71,18 @@
 > `research-wiki/PAPER_MASTER_TABLES.md`(PUR addendum:PUR-1/PUR-2/PUR-banner)。**同样只汇总悬置决策,
 > 不含已批准行动;每项「我方推荐」仅是建议。** 编号续 D1–D6。
 
-## D7 — LoRA / RA-HMD-family 编码器杠杆是否计入 goal 的「novel」子句
+## D7 — LoRA / RA-HMD-family 编码器杠杆是否计入 goal 的「novel」子句 — ✅ RESOLVED 2026-07-14(RESOLVED-NEGATIVE)
+
+> **裁决(2026-07-14 晚,用户,逐字):**
+> - 「哎呀,这个 encoder swap 肯定不算 novelty 啊」
+> - 「我不管,反正这个做不出来就一直做,直到做出来为止。」
+>
+> **编排解读(binding):D7 = RESOLVED-NEGATIVE。** encoder-class 杠杆——frozen swap、LoRA-adapted
+> swap,及推而广之的通用决策规则校准(如 B5)——**均不满足 goal 的 novelty 子句**;它们保留为
+> **合法的性能 / 消融 / 诊断素材**。TERMINUS 选项 (c)「goal 重议」= **DEAD**;goal 现要求一个
+> **NOVEL MECHANISM**(novelty 在 hateful-video 检测范围内判定)× MLLM-integrated × 交付 **≥+3 acc**。
+> 据此:D8 的 family-headline 对 novelty 子句已 **moot**(仅剩性能报告口径问题);D9 不变(仍是性能
+> 报告口径问题)。以下原始悬置内容留档存证。
 
 - **问题:** B3 把 LoRA-Qwen 编码器 vs frozen-CLIP 在 MHC-ZH 定为 `final-epoch: PASS (MARGINAL)`(mean
   Δacc **+0.0313**)——这是全项目**最接近** goal「+3 acc AND +3 F1」的实测配对结果(其余 21 条搜索轴全为
@@ -95,6 +106,9 @@
   (+5.3–5.6 acc 双协议 3/3)+ 同场 MoRE 胜出。
 - **来源:** `B3_VERDICT_REVIEW.md §4b`(No headline upgrade)+ §6(第二 bullet)· `TERMINUS §6`·
   `PAPER_MASTER_TABLES.md` PUR-banner (ii)。
+- **D7 后果注(2026-07-14):** D7 裁定 encoder-class 杠杆不入 novelty ⇒「MLLM-encoder family」headline 对
+  **novelty 子句已 moot**;本项降为**纯性能报告口径问题**(如何如实报两条不同机制各在一库),不再承载
+  goal 达成主张。
 
 ## D9 — `PAPER_MASTER_TABLES.md:58`「不可直接同格并比」注是否被 B3 配对覆盖
 
@@ -107,6 +121,8 @@
   抽样**(3 种子共享单缓存,只变下游 head),不建立训练种子方差。
 - **来源:** `PAPER_MASTER_TABLES.md:58` + PUR-1/PUR-banner (iii)· `B3_VERDICT_REVIEW.md §6`(第三 bullet)·
   `TERMINUS §6`。
+- **D7 后果注(2026-07-14):** 不变——本项始终是**性能报告口径问题**(附录 B3 同 runner 配对 Δ 覆盖
+  vs 主表并比),与 novelty 子句无关;D7 裁决不改变本项。
 
 ## D10 — 可选:EN-LoRA 正式闭合跑(约 2 分钟 GPU,veto-clean)
 

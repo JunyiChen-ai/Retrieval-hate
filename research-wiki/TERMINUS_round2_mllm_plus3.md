@@ -70,3 +70,15 @@ B3 把 ZH 的增益归给 LoRA 适配后,剩下的唯一非同构表征级候选
 **判决(orchestrator,level=decision):** 依"不在已关闭轴上烧 GPU"规则,B4 作为**第 22 条预注册负结果类条目预-GPU 关闭,零 GPU 成本**。
 
 **用户选项(veto-clean,按需可跑):** 因 adapter 与特征缓存均已在盘,把 seed0 锚定的入账负结果升级为正式 3-种子配对判决**仅需约 2 分钟 GPU**(缓存特征 → 每 run ~20-25 s;`scripts/slurm/enc3seed.sbatch` 加三行 `"MHC Qwen2.5-VL-7B-Instruct-LoRA_HF {0,1,2}"`)。此单元清过全部三条现行 veto(单数据集自有 train split / 无 OCR / 无 gold aux),可作论文表格的一行**正式闭合**——但只会形式化一个已知负结果,不开新地。**现在不跑;留作用户请求项。**
+
+## 8. 用户裁决(2026-07-14 晚):D7 关闭,goal 不重议
+
+用户就 §4(b)/§6 的 novelty 边界与 §4(c) 的 goal 重议选项一次性裁决(逐字):
+- 「哎呀,这个 encoder swap 肯定不算 novelty 啊」
+- 「我不管,反正这个做不出来就一直做,直到做出来为止。」
+
+**后果(binding):**
+- **选项 (c)「goal 重议」= DEAD。** goal 不可重议;以 HateMM-only encoder +5 作为论文主张来"收尾"这条路被否——做不出来就一直做,直到做出来为止。
+- **encoder-class 杠杆(frozen swap / LoRA-adapted swap / 泛化到 B5 类决策规则校准)对 novelty 子句 = RESOLVED-NEGATIVE**(见 `DECISION_MEMO_pending.md` D7)。它们保留为**合法的性能 / 消融 / 诊断素材**,但不满足 goal 的 novelty 要求。
+- **选项 (b)「LoRA 族 / MLLM-encoder-family」重新定位 = 纯性能报告口径**(不再是 novelty-达成候选)。
+- **operative consequence:round 3 以 novelty-mechanism-first 方向生成开局。** 成功判据 = 一个 **novel mechanism**(novelty 在 hateful-video 检测范围内判定)× **MLLM-integrated** × **≥+3 acc**,在既有协议下证实:+0.03/+0.03 AND 3/3、双协议(no-selection primary)、单数据集自有 train split、无 gold aux、无 OCR、无 API、无跨数据集混合。B5 探针(job 13156)作为性能/诊断线继续,不计入 goal 达成。
