@@ -348,3 +348,46 @@ that post-smoke extractor re-hash (don't drop them).
 **cleared** to be wired into a CPU-only SLURM sbatch (no `--gres`/`--time`) or a Modal CPU app (features-
 only → eligible), never the login shell; the independent raw-only verdict review still gates the DEAD/PASS
 ruling and must cross-check the K2/K3 rows read LIVE.
+
+---
+
+## §r2c — extractor fixes C+D re-check (commit 9470b64, post-green-SMOKE re-freeze)
+
+**Verdict: CLEARED-FOR-STAGE-E′.** Fixes C and D land exactly as specified; no blockers; the green SMOKE
+(job 13166, 7/7) **carries over — no GPU re-smoke required**. New extractor sha256 =
+`9e984d61e2bf91d58f15af5e54f14d45a3fabe4e0701ce4492645399d810fa31`; sbatch `9ed04c14…` + probe `af4a2f9f…`
+**byte-unchanged** since r2b (`git diff 2bf00cb 9470b64 -- <sbatch> <probe>` empty).
+
+**Diff scope — exactly 2 hunks in `w2a_extract.py`, no drive-by edits.**
+- **D (comment, doc-only):** module docstring gate-3 line "…kept as a secondary diagnostic." → "…deferred
+  (non-gating secondary; not implemented)." Matches the code (the within-video token-shuffle placebo is not
+  implemented).
+- **C (`build_placebo_partners`):** cyclic-successor partner → **nearest-by-|Δlen| among the ADJACENT ranks
+  in the length-sorted order, NON-cyclic** (candidates = `[rank−1, rank+1]` in-bounds only; tie → later
+  rank). This is precisely the fix my r2 review specified. Verified on synthetic data (60 present + 5
+  empties): the **longest transcript is never paired with the shortest** (no wrap); every partner is a
+  length-**adjacent** rank (`|rankΔ|==1` → length-comparable); all `pid≠vid` (distinctness holds for m≥2,
+  because non-cyclic adjacents are distinct entries ⇒ distinct ids); output is **deterministic**
+  (rebuild-identical); the `len(present)<2 → {}` guard is unchanged. Extractor CPU `--self_test` (which
+  exercises `build_placebo_partners` in case (e)) re-run: **PASS**.
+
+Nothing else changed semantically — the forward runner, `pool_grounded`/`pool_control`, gate 0/1/4, the
+message builders, `encode_video`, `placebo_grd`, shard I/O, and `assemble_split` are byte-identical. The
+`W2A_HASH_FREEZE_r2.md` edit is record-keeping only (records the new extractor sha, notes sbatch/probe
+unchanged, and the carry-over rationale).
+
+**Carry-over ruling: ACCEPT — no GPU re-smoke.** Verified from the diff that **no smoke-exercised code path
+changed.** The SMOKE (`--limit 1`) validated model load, gate 0 (grid+contiguity), gate 1 (G-recon-IMG),
+gate 4 (len-parity), the grounded + img-control forwards, and the four keys (grd/grd_pfx/img_recon/
+ungrd_vis) — all in code the r2c diff does not touch. The only functional change is gate-3 placebo **partner
+selection**, whose output is consumed solely via `partners`/`placebo_subset`; under `--limit 1` that subset
+is empty (`len(partners) < 2 → placebo_subset = set()`), so the changed logic is **never exercised in the
+smoke path** and the ≥50-subset placebo is a real-run-only gate regardless. The one startup touch of the
+changed function is the **CPU** `self_test` correctness assertion, which I re-ran (PASS). A GPU re-smoke
+would only re-validate byte-identical gates 0/1/4 + G-recon — pointless spend; the CPU self-test fully
+covers the changed logic. **No re-smoke required.**
+
+**All prior clearances stand:** extractor APPROVED (r2) → probe CLEARED-FOR-PROBE-EXECUTION (r2b) → extractor
+**CLEARED-FOR-STAGE-E′** (r2c). The single Stage-E′ submit runs the r2c extractor `9e984d61…` (local A100, no
+`--time`, `JobHeldUser`→wait-never-force); probe execution and the independent raw-only verdict review (which
+must confirm the K2/K3 rows read LIVE before honoring any K9 PROCEED) remain the downstream gates.
