@@ -270,3 +270,45 @@ no other file — the mechanical edits below are the executor's to apply):
    (new sha256), and update the version→job sha table (§D) — all riding the next B5 commit.
 4. Run the ONE authorized zero-GPU CPU submission; proceed through (b)–(e) under the strict order; hand
    the raw numbers to independent verdict processing (A7 + A2 checks) — no formal stage authorized here.
+
+---
+
+## §re-check — verification of the executor's A11 application (commit a08deed) — 2026-07-15
+
+**Scope:** v3 (`7c88aa03`) → v4 only; v1→v2→v3 already cleared in §D. All hashes and diffs re-derived
+independently (isolated `diff` of my §D-verified v3 copy against `git show a08deed:…`), not taken from
+the executor's report. Commit lineage confirmed: a08deed's parent is this ruling's commit `5295076`;
+`--stat` confirms exactly the 5 declared files, nothing else touched.
+
+**1. Script v3 → v4 (`scripts/analysis/b5_conv_probe.py`, committed == on-disk == `3d075345c0425d5ef0a19c87267c6178828c9e72b709798154f370f04147cdb0`): CONFIRMED gate-tolerance-only.**
+The isolated v3→v4 diff contains exactly three hunks, all inside the §(a) gate block:
+(i) the §(a) header `print` label (cosmetic); (ii) two comment lines + the tolerance branch
+`ok = all(abs(got - exp) <= (1e-3 if k.endswith("_roc") else 5e-5) for k, (got, exp) in checks.items())`;
+(iii) the matching `mism` line with `> (1e-3 if k.endswith("_roc") else 5e-5)`. The `checks` dict is
+unchanged with exactly six keys — `test_mf1, test_acc, test_roc, dev_mf1, dev_acc, dev_roc` — so
+`endswith("_roc")` selects exactly {`test_roc`, `dev_roc`}; the four acc/mF1 checks stay at 5e-5.
+No touch to the vote path, `select_tau`/`grid`/`lower_median_idx`, `oracle_max`, honest arm, D3
+bootstrap, strict order, or `sys.exit(2)`. *Minor note (non-blocking):* the acc/mF1 comparator changed
+`< 5e-5` → `<= 5e-5`; behaviorally identical since 4dp-rounded deltas are either 0.0 or ≥ ~1e-4
+(verified numerically) — exact-4dp semantics preserved.
+
+**2. Doc REPLACE-in-place: CONFIRMED.** The old "roc to 4 dp" gate text is absent from both
+`B5_PROBE_DESIGN.md` §4 and `exp-conv-zh-b5.md` §6.3; both now carry the §B amended clause **verbatim**,
+each followed by an italic A11 provenance note (POST-HALT, ruling pointer + commit 5295076, 13158-PASS
+statement). `exp-conv-zh-b5.md` §16 has the r2 revision row and an A11 amendment-table row, both marked
+POST-HALT with the ruling pointer. `B5_PROBE_RECORD.md` §6 now carries the full v1..v4 sha chain with
+the version→job map (v1→13156, v2→13158, v3 no job, v4 = pending CPU run) — every hash matches my
+independently derived values in §D, closing the §D hygiene flag (the actual-run v2 and successors are
+now archived in-tree at a08deed).
+
+**3. cuda sbatch in the commit: record-keeping no-op, CONFIRMED.** `b5_conv_probe_cuda.sbatch` was the
+previously-untracked file that ran job 13158; the committed content's sha256
+(`65d1dd05984899a03ad5058a8a4081b77d0c4a81e60fe8dfb4fd6bd98df92a87`) matches both the on-disk file and
+the hash frozen in `B5_PROBE_RECORD.md` §6 — i.e. the commit archives the exact artifact of the consumed
+cuda spend. Committing it submits nothing and enables no new cuda path; the single-cuda-spend-CONSUMED
+status and the ONE-CPU-submission authorization are unchanged.
+
+**Re-check verdict: `CLEARED-FOR-CPU-CONTINUATION`.** The ONE authorized zero-GPU CPU submission of v4
+(`3d075345…`) may proceed through (b)–(e) under the unchanged strict order, executor
+no-interpretation rule, and independent verdict processing (A7 hand-check + A2 dev anchor). No formal
+stage is authorized by this re-check.
