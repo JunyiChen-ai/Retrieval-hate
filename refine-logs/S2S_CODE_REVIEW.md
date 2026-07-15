@@ -443,3 +443,77 @@ resubmit under the unchanged §4/§5 terms — it must now show **all four HARD 
 per dataset (0a temporal control, 0b grid, 1 G-decomp ≤ 1e-5, 2 G-recon cos ≥ 0.9999 & max-abs ≤ 1e-3 via
 the `grecon_cos_min` assembly lines; the stale "(G-recon skipped)" echo remains a cosmetic NOTE). The full
 Stage-E extraction stays a separate authorization after the smoke passes; Stage P stays gated behind it.
+
+---
+
+## 8. r4 re-check (commit `36bd7a3`, gate 0a→0a′ onset-invariance rewrite, 2026-07-16) — VERDICT: CLEARED FOR SMOKE RESUBMIT
+
+Diff-only re-check of the gate-0a replacement mandated by the independent amendment ruling
+`refine-logs/S2S_GATE0A_AMENDMENT_RULING.md` (commit `20c0bf2`, disposition **(B)-REPLACE**), after smoke
+13169 failed the old permutation-equivariance/argmax control **scientifically** (the σ test is invalid by
+construction for cumulative-causal `g_t`). I read the ruling §D myself and diffed its spec against the
+code rather than trusting the transcription. All five checks pass.
+
+**1. Code implements ruling §D.1 VERBATIM.** The only functional change is `temporal_positive_control` →
+`causal_prefix_control` (gate 0a′) with the assertions factored into `_assert_onset_invariance(gp,gq)`
+and the call-site renamed. Diffed line-by-line against §D.1:
+- **Clips:** `order_p=[0,1,2,3]` → P pairs R,G,B,Y; `order_q=[0,1,3,2]` → Q pairs R,G,Y,B (`colours[3],
+  colours[2]`=Y,B). Frames 0–3 (groups 0,1) identical; frames 4–7 (groups 2,3) differ. Exactly the
+  ruling's P=[R,G,B,Y]/Q=[R,G,Y,B], shared prefix {0,1}, changed {2,3}. ✅
+- **Encode:** both clips `banked_vec=None`, `T==4` guard, `gp/gq = F.normalize(r["g"], dim=1)` (per-group
+  L2-norm). ✅
+- **Assertion 1 (prefix-invariance):** `cross=(gp*gq).sum(1)`; for `k∈{0,1}` HALT if `c[k] < 0.999`
+  (⇔ requires cos ≥ 0.999). ✅ verbatim.
+- **Assertion 2 (onset-divergence):** HALT unless `max(c[2],c[3]) < min(c[0],c[1]) − 0.002`. ✅ verbatim.
+- **Assertion 3 (within-clip distinctness):** for **each** clip, `max off-diag of (gn@gn.t()) < 0.999`
+  (`torch.eye(4, device=gn.device)` — device-safe). ✅ verbatim (in fact stricter than old 0a, which
+  checked only one clip; the ruling says "for each clip").
+- **HALT + placement:** every violation `raise RuntimeError` (uncaught → non-zero exit); call site is in
+  `main()` before the splits loop (before any real video), comment updated to `[gate 0a']`. ✅
+
+**2. No other semantic change.** The extractor diff is two hunks only — the gate-0a function region and
+the two call-site lines. `encode_frameset` (incl. the r3a device fix, G-decomp, B1 G-recon compare),
+`process_split`, assembly, shard I/O, `main`'s model load — untouched. `s2s_extract.sbatch` `2dc0f90b…`
+and `s2s_probe.py` `141a0441…` are byte-unchanged (hashes confirmed; `grep "0a'" s2s_probe.py` → 0). ✅
+
+**3. Doc REPLACE-in-place, Stage-P bars untouched.** `exp-s2s-r3.md` + `S2S_PROBE_DESIGN.md` reworded to
+"cumulative causal group summaries" (§2/§4, §D.2/§D.3); the `g_t` definition gains the cumulative-causal
+clause; the §7 anchor table, prereg §7 gate-0, §13 K0, and both gate tables now read **0a′**
+(`exp:365/451/534`, `design:153/207/424`); r4 revision entries + §10 r4 hash table added. **No Stage-P
+bar/arm/threshold moved** — verified verbatim: oracle-ceiling `Δacc < +0.04` (`exp:314,372,455`;
+`design:358`) and raw bar `Δacc ≥ +0.05 AND ΔmF1 ≥ +0.05` (`exp:324,456`; `design:360`) are unchanged,
+and old equivariance wording ("permutes … identically" / "nearest its slab" / `sigma=[2,0,3,1]`) is
+**fully gone** from both docs. ✅
+
+**4. CPU self-test exercises the SAME code path the GPU run hits.** The assertions are factored into
+`_assert_onset_invariance`, which `causal_prefix_control` (the GPU path) calls with the real
+Qwen-derived `gp,gq`; the CPU self-test calls the **same** helper with synthetic tensors. I ran the
+committed helper: a valid PASS case returns `[1.0,1.0,~0.07,~-0.02]` (matching the implementer's
+`[1.0,1.0,0.31,−0.07]` shape), and all three targeted HALT paths fire (`PREFIX-INVARIANCE FAILED` when a
+prefix group differs, `ONSET-DIVERGENCE FAILED` when the changed groups don't diverge,
+`WITHIN-CLIP DISTINCTNESS FAILED` when groups collapse). Only the *source* of `gp,gq` differs between the
+CPU test and the GPU run; the risky assertion logic is identical and shared. ✅
+
+**5. Hash.** On-disk `s2s_extract.py` = `ce23dfe6810ee74a7311606b6992a747a7267e8754fc0554cd8c1f43d83ff677`
+= the §10 r4 freeze table entry = the commit-message hash-freeze; the r4 table's UNCHANGED rows
+(sbatch/probe) and the two changed doc hashes (`exp` `64a489f2…`, `design` `ab641369…`) all match
+on-disk. `py_compile` clean. ✅
+
+**Science soundness (confirming no false-KILL).** Prefix-invariance is guaranteed by the causal mask
+(group-{0,1} tokens attend only to the identical shared frames 0–3 → their states are ~bit-exact between
+P and Q, cos≈1.0 ≫ 0.999), so a correct extraction cannot fail it — the exact defect that sank old 0a is
+gone. The changed groups will diverge far below the 0.998 onset ceiling (the 13169 matrix showed
+different-content cumulative cos ≈ 0.79–0.90), so onset-divergence has a large margin, while a
+spatial-major/reversed/interleaved grouping leaks changed frames into an "early" group and breaks
+prefix-invariance → HALT. Valid under cumulation AND discriminative, as the ruling requires.
+
+### Verdict: CLEARED FOR SMOKE RESUBMIT
+The 0a′ rewrite is faithful to ruling §D.1, strictly extractor-scoped, changes no Stage-P bar, and leaves
+every prior fix (B1/B2/r3a device-align, B3, NB-a, N4, r3 ASYM fold) intact. Authorize **one**
+`SMOKE=1 sbatch scripts/slurm/s2s_extract.sbatch` resubmit (ruling §D.5) — single job, no `--time`,
+`JobHeldUser`=wait, throwaway `--out_root`, no real-path artifact. The smoke log must show all four hard
+gates green on ≥1 real video per dataset: **0a′** (prefix groups invariant cos≥0.999, changed groups
+diverge, groups distinct), 0b grid, 1 G-decomp ≤ 1e-5, 2 G-recon `grecon_cos_min ≥ 0.9999 &
+grecon_maxabs_max ≤ 1e-3` (via the assembly lines; the stale "(G-recon skipped)" echo is still a cosmetic
+NOTE). Full Stage-E extraction remains a separate authorization after the smoke passes; Stage P stays
+gated behind it.
