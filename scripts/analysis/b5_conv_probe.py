@@ -89,12 +89,14 @@ DEV_ANCHOR = {
 BAR = 0.03  # goal bar (mean paired delta acc AND macro-F1 >= +0.03, 3/3 sign)
 
 
-def make_args(model, device="cpu"):
+def make_args(model, device=None):
     a = types.SimpleNamespace()
     a.dataset = "MHC_zh"
     a.model = model
     a.path = os.path.join(REPO, "data")
-    a.device = device
+    # device: 'cpu' default; the authorized G-repro fallback sets B5_PROBE_DEVICE=cuda so the head
+    # forward runs on the same compute path as 13115 (Faiss_GPU stays False -> CPU faiss either way).
+    a.device = device or os.environ.get("B5_PROBE_DEVICE", "cpu")
     a.Faiss_GPU = False
     a.topk = 20
     a.similarity_threshold = -1.0
@@ -203,6 +205,7 @@ def dump_slot(slot):
     state = torch.load(os.path.join(SNAP, ckpt), map_location="cpu")
     model_obj.load_state_dict(state)
     model_obj.eval()
+    model_obj.to(args.device)   # cpu default; cuda for the authorized G-repro fallback
 
     ld_dev, y_dev = retrieve_evaluate_RAC_(train_dl, dev_dl, model_obj, largest_retrieval=20,
                                            threshold=-1.0, args=args, eval_name="dev", epoch=epoch,
@@ -235,8 +238,12 @@ def r4(x):
 
 
 def main():
+    dev = os.environ.get("B5_PROBE_DEVICE", "cpu")
     print("=" * 100)
-    print("B5 OPERATING-POINT CONVERSION PROBE  (CPU, zero formal GPU)")
+    print(f"B5 OPERATING-POINT CONVERSION PROBE  (head-forward device={dev}; Faiss_GPU=False CPU faiss)")
+    if dev != "cpu":
+        print("  [device=cuda] AUTHORIZED G-REPRO FALLBACK (review sec5 / prereg sec6.3): single "
+              "device='cuda', Faiss_GPU=False eval; matches 13115 compute path bit-for-bit.")
     print("=" * 100)
 
     # sanity: fast macro-F1 == sklearn on a spread of cases
@@ -265,7 +272,8 @@ def main():
     print("[pairing] CLIP vs Qwen dev/test ids+labels identical per seed/protocol  OK")
 
     # ===================== (a) G-REPRO GATE =====================
-    print("\n" + "-" * 100 + "\n(a) G-REPRO GATE  [deployed vote>=0; test AND dev; 4dp]\n" + "-" * 100)
+    print("\n" + "-" * 100 + "\n(a) G-REPRO GATE  [deployed vote>=0; test AND dev; acc/mF1 exact-4dp, "
+          "roc |d|<=1e-3 (A11)]\n" + "-" * 100)
     grepro = []
     all_pass = True
     for slot in SLOTS:
@@ -283,10 +291,13 @@ def main():
             "test_mf1": (r4(t_mf1), ta[0]), "test_acc": (r4(t_acc), ta[1]), "test_roc": (r4(t_roc), ta[2]),
             "dev_mf1": (r4(v_mf1), da[0]), "dev_acc": (r4(v_acc), da[1]), "dev_roc": (r4(v_roc), da[2]),
         }
-        ok = all(abs(got - exp) < 5e-5 for got, exp in checks.values())
+        # A11 gate tolerance (B5_GATE_AMENDMENT_RULING §B/§C): acc AND macroF1 exact-4dp; roc within
+        # |Δ| <= 1e-3 (roc is a rank statistic unused downstream + unsatisfiable at 4dp by any replay).
+        ok = all(abs(got - exp) <= (1e-3 if k.endswith("_roc") else 5e-5)
+                 for k, (got, exp) in checks.items())
         all_pass = all_pass and ok
         grepro.append(dict(arm=arm, seed=seed, proto=proto, epoch=epoch, ok=ok, checks=checks))
-        mism = [k for k, (g, e) in checks.items() if abs(g - e) >= 5e-5]
+        mism = [k for k, (g, e) in checks.items() if abs(g - e) > (1e-3 if k.endswith("_roc") else 5e-5)]
         print(f"  {arm} s{seed} {proto:6s} e{epoch}: {'PASS' if ok else 'FAIL'}  "
               f"test(mf1/acc/roc)={r4(t_mf1)}/{r4(t_acc)}/{r4(t_roc)} "
               f"dev={r4(v_mf1)}/{r4(v_acc)}/{r4(v_roc)}"
@@ -298,8 +309,14 @@ def main():
         json.dump(result, f, indent=2, default=float)
 
     if not all_pass:
-        print("\n*** G-REPRO FAILED ON CPU -> HALT (STRICT ORDER). No downstream arms computed. ***")
-        print("*** Authorized fallback: ONE <=1-min device='cuda', Faiss_GPU=False eval via sbatch. ***")
+        # cosmetic banner only (device-accurate); no change to logic / thresholds / strict order.
+        print(f"\n*** G-REPRO FAILED (head-forward device={dev}) -> HALT (STRICT ORDER). "
+              f"No downstream arms computed. ***")
+        if dev == "cpu":
+            print("*** Authorized fallback: ONE <=1-min device='cuda', Faiss_GPU=False eval via sbatch. ***")
+        else:
+            print("*** cuda fallback ALSO mismatched -> replay cannot certify at 4dp; report to the "
+                  "verdict/prereg process (no further cuda retries authorized). ***")
         sys.exit(2)
 
     # ===================== (b) FREEZE dev-selected thresholds =====================

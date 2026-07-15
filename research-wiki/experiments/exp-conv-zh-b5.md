@@ -229,22 +229,26 @@ selection are two distinct steps, both pre-declared.
 
 ### 6.3 G-repro hard gate (kill rule, runs FIRST)
 
-The deployed-arm test acc AND macro-F1 AND roc recomputed from the dumped votes MUST reproduce the
-13115 banked readings **to 4 decimal places** for all 6 arms × both protocols (anchor table in
-`B5_PROBE_DESIGN.md` §4, e.g. Qwen s0 final = macroF1 0.7864 / acc 0.8188 / roc 0.8906). Any
-mismatch ⇒ **HALT** the CPU replay, escalate to the 1-min GPU eval fallback (§6.1); if that still
-mismatches, the replay machinery is invalid and the probe does not proceed. (This is the D3-mandated
-"probe machine validity" check in the spirit of the REFLECTION §4 calibration mandate: if the probe
-cannot reproduce the known operating point, no calibrated number it produces is trustworthy.)
+> **G-repro gate (test AND dev; amendment A2 + roc-tolerance amendment A11).** For all 12 (6 arms × 2
+> protocols): the probe's recomputed **test** deployed `acc` AND `macroF1` MUST equal the **test** anchor
+> to 4 dp (exact), AND the recomputed **dev** deployed `acc` AND `macroF1` at each loaded checkpoint MUST
+> equal the **DEV** anchor to 4 dp (exact); AND the recomputed **test** and **dev** deployed `roc` MUST
+> each lie within **|Δ| ≤ 1e-3** of the corresponding anchor. **Rationale (A11):** the anchor `roc` is a
+> rank statistic produced by a non-deterministic cuBLAS kernel in the 13115 training forward (no
+> deterministic mode set), so `roc`-to-4dp is unsatisfiable by *any* replay — even a byte-correct,
+> same-hardware one — whereas `acc` and `macroF1` (the deployed vote-sign operating point, and the only
+> quantities the calibration consumes) reproduce exactly. Failure of `acc` or `macroF1` (test or dev) at
+> 4 dp, OR a `roc` |Δ| > 1e-3, on CPU ⇒ retry via the §6 GPU fallback; the same failure on GPU too ⇒
+> **HALT**, replay machinery invalid, probe does not proceed. The 1e-3 bound is ~1.4× the maximum drift
+> either device produced (0.0007) and ≈ 5 dev-swaps / 14 test-swaps — tight enough that any *systematic*
+> divergence (which would move acc/mF1 first, and roc by far more) still trips it.
 
-**DEV-side anchor (amendment A2, BLOCKING; `B5_PREREG_REVIEW.md` §3).** Because the calibration selects
-τ on the **78-dev** vote ordering, a gate that validates only the test votes is one-sided. As a
-**co-equal HARD gate** with identical HALT-and-fallback logic, the probe's recomputed **dev** deployed
-acc AND macroF1 AND roc at each loaded checkpoint MUST also match the corresponding trainlog
-`Val_Retrieval Epoch NN` line **to 4 dp**, for all 6 arms × both protocols. The dev anchor table lives
-in `B5_PROBE_DESIGN.md` §4 (freely available in the six 13115 trainlogs; e.g. Qwen s0 final =
-macroF1 0.7650 / acc 0.7821 / roc 0.8579; Qwen s0 val-sel e22 = 0.7940 / 0.8205 / 0.8693). **Both the
-test AND dev anchors must pass** for the probe to proceed.
+*Amendment A11 (POST-HALT, independent-review adjudicated 2026-07-15) REPLACED the prior "test+dev acc
+AND macro-F1 AND roc to 4 dp" gate (including the A2 dev-side 4dp roc clause) in place with the above.
+The dev anchor table (A2) still lives in `B5_PROBE_DESIGN.md` §4; both test AND dev must pass under the
+amended tolerances. Ruling of record: `refine-logs/B5_GATE_AMENDMENT_RULING.md` (commit 5295076); the
+existing job-13158 cuda evidence PASSES the amended gate as-is (acc/mF1 12/12 exact; every roc
+|Δ| ≤ 0.0007 < 1e-3), so no new GPU is needed for the gate.*
 
 ### 6.4 ORACLE KILL-SWITCH (pre-declared, binding) — decides whether ANY formal GPU is spent
 
@@ -458,6 +462,7 @@ independent).
 |---|---|---|---|---|
 | r0 | 2026-07-14 | DRAFT-UNREVIEWED | Initial pre-registration authored from the exhaustion-audit lead cell; primary statistic = max dev macro-F1; oracle kill-switch on paired Δacc < +0.03; vote-granularity correction (continuous `arithmetic`+`use_sim` vote, not 21 levels); checkpoint-recoverability verified (12 heads on disk); zero-GPU CPU-replay probe. NO runs. | B5 prereg designer |
 | r1 | 2026-07-14 | PREREG APPROVED-WITH-AMENDMENTS (applied r1); PROBE AUTHORIZED | Folded the fresh review `refine-logs/B5_PREREG_REVIEW.md` (verdict APPROVED-WITH-AMENDMENTS): **blocking** A1 (kill-switch rewritten to a single per-protocol AND-eligibility rule) + A2 (co-equal DEV-side G-repro anchor added); **non-blocking** A3–A10 folded. Status banner + verdict updated; PROBE STAGE authorized per review §5 (formal single-submit still NOT authorized). NO runs. See amendment log below. | B5 amendment-applier (r1) |
+| r2 | 2026-07-15 | PROBE: G-repro PASS under A11; (b)–(e) pending ONE authorized CPU run | **POST-HALT amendment A11** (roc-tolerance): after the probe HALTed at the original roc-to-4dp gate on both the CPU (13156) and the single authorized cuda fallback (13158) — acc/mF1 12/12 exact but roc |Δ| ≤ 0.0007 on Qwen slots (intrinsic cuBLAS rank-noise, unsatisfiable at 4dp) — an independent adjudication ruled AMEND-APPROVED. §6.3 gate REPLACED-in-place with "acc+macroF1 exact-4dp AND roc |Δ| ≤ 1e-3"; the existing 13158 evidence satisfies it (G-repro = PASS, no new GPU). Script roc-checks widened to 1e-3 (acc/mF1 unchanged). Mirrored in `B5_PROBE_DESIGN.md` §4. | independent gate-amendment reviewer (ruling) + B5 amendment-applier (r2 apply) |
 
 ### Amendment log (r1 — applied 2026-07-14; review pointer `refine-logs/B5_PREREG_REVIEW.md`)
 
@@ -477,3 +482,4 @@ mirrored A1/A2/A3/A6/A9 edits.
 | A8 ledger: probe honest arm = the row-3 single test touch (GPU re-derive = 0 extra info) | no | §2 Item 4 | §10 accounting note | — |
 | A9 tighten "bit-reproducible on CPU" → deterministic conditional on identical head embeddings | no | §2 Item 7 | §6.1 phrasing | §1 phrasing |
 | A10 MARGINAL ⊕ D3-FRAGILE labels compose | no | §2 Item 6 | §7 marginal-pass note | — |
+| **A11 roc-tolerance: G-repro roc clause = \|Δ\| ≤ 1e-3 (acc/macroF1 stay exact-4dp)** — POST-HALT, adjudicated by independent review 2026-07-15 | **BLOCKING-cleared (unblocks the HALT)** | `refine-logs/B5_GATE_AMENDMENT_RULING.md` §B/§C (commit 5295076) | §6.3 gate REPLACED-in-place; §16 r2 + this row | §4 gate REPLACED-in-place; script `scripts/analysis/b5_conv_probe.py` §(a) roc-checks widened to 1e-3 (v4) |

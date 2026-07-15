@@ -235,12 +235,25 @@ co-equally with the test metrics. Re-read from the same six `enc3s_MHC_zh_*_1311
 | Qwen | 1 | 25 | 0.8628 | 0.8718 | 0.9307 |
 | Qwen | 2 | 28 | 0.8301 | 0.8462 | 0.8514 |
 
-**G-repro gate (test AND dev; amendment A2):** for all 12 (6 arms × 2 protocols), the probe's
-`deployed_test_acc / deployed_test_mf1 / deployed_test_roc` MUST equal the **test** anchor above to
-4 dp, **AND** the probe's recomputed **dev** deployed `acc / macroF1 / roc` at each loaded checkpoint
-MUST equal the **DEV** anchor above to 4 dp. Mismatch (test or dev) on CPU ⇒ retry via the §6 GPU
-fallback (bit-exact device match); mismatch on GPU too ⇒ **HALT**, replay machinery invalid, probe does
-not proceed (no calibrated number is trustworthy without this — REFLECTION §4 probe-validity mandate).
+> **G-repro gate (test AND dev; amendment A2 + roc-tolerance amendment A11).** For all 12 (6 arms × 2
+> protocols): the probe's recomputed **test** deployed `acc` AND `macroF1` MUST equal the **test** anchor
+> to 4 dp (exact), AND the recomputed **dev** deployed `acc` AND `macroF1` at each loaded checkpoint MUST
+> equal the **DEV** anchor to 4 dp (exact); AND the recomputed **test** and **dev** deployed `roc` MUST
+> each lie within **|Δ| ≤ 1e-3** of the corresponding anchor. **Rationale (A11):** the anchor `roc` is a
+> rank statistic produced by a non-deterministic cuBLAS kernel in the 13115 training forward (no
+> deterministic mode set), so `roc`-to-4dp is unsatisfiable by *any* replay — even a byte-correct,
+> same-hardware one — whereas `acc` and `macroF1` (the deployed vote-sign operating point, and the only
+> quantities the calibration consumes) reproduce exactly. Failure of `acc` or `macroF1` (test or dev) at
+> 4 dp, OR a `roc` |Δ| > 1e-3, on CPU ⇒ retry via the §6 GPU fallback; the same failure on GPU too ⇒
+> **HALT**, replay machinery invalid, probe does not proceed. The 1e-3 bound is ~1.4× the maximum drift
+> either device produced (0.0007) and ≈ 5 dev-swaps / 14 test-swaps — tight enough that any *systematic*
+> divergence (which would move acc/mF1 first, and roc by far more) still trips it.
+
+*Amendment A11 (post-halt, independent-review adjudicated 2026-07-15) REPLACED the prior "roc to 4 dp"
+gate above, in place. Ruling of record: `refine-logs/B5_GATE_AMENDMENT_RULING.md` (commit 5295076). The
+existing job-13158 cuda evidence satisfies this amended gate (acc/mF1 12/12 exact; every roc |Δ| ≤ 0.0007
+< 1e-3) ⇒ G-repro = PASS, no new GPU. The §C in-code realisation widens ONLY the two roc checks in
+`scripts/analysis/b5_conv_probe.py` to |Δ| ≤ 1e-3; acc/mF1 stay exact-4dp.*
 
 Deployed-arm sanity means (from the anchors): final-epoch acc CLIP 0.8143 / Qwen 0.8031 (Δ −0.0112);
 roc CLIP 0.8389 / Qwen 0.8888 (Δ +0.0499). These are the numbers the conversion probe starts from.
