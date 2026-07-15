@@ -37,7 +37,7 @@ GATES (prereg §4; K-numbers = §12 what-would-kill table)
           branch cos are LOGGED DIAGNOSTICS, never HALT (r1 Amdt 4/6).
   3 (K3)  placebo — grd recomputed with a cross-video MISMATCHED (length-comparable) transcript must
           MOVE grd (median cos(grd, grd_placebo) < 0.999 over a >=50-video subset). >= 0.999 -> VOID
-          (r1 Amdt 3). Within-video token-shuffle kept as a secondary diagnostic.
+          (r1 Amdt 3). Within-video token-shuffle deferred (non-gating secondary; not implemented).
   4       length/parity — last_hidden.shape[0] == input_ids.numel() (banked preflight), both forwards;
           the M-RoPE vision-position offset (tokens before the first vision token) is logged.
 
@@ -316,21 +316,24 @@ def load_banked_imgfeats(dataset, outname):
 # Placebo pairing (deterministic, length-comparable, drawn from the FULL split gt).
 # ----------------------------------------------------------------------------
 def build_placebo_partners(items):
-    """For every present-transcript item, assign a length-comparable partner id (its neighbour in
-    the char-length-sorted order; j != i). Deterministic. Returns {id: (partner_id, partner_text)}."""
+    """For every present-transcript item, assign a length-comparable partner id: the NEAREST neighbour
+    by |Δ char-length| among the ADJACENT ranks in the length-sorted order (NON-cyclic — code-review
+    fix C: no wrap, so the longest transcript is never paired with the shortest). j != i (adjacent
+    ranks are distinct entries). Deterministic. Returns {id: (partner_id, partner_text)}."""
     present = [(str(it["id"]), str(it.get("text") or "")) for it in items
                if str(it.get("text") or "").strip()]
     if len(present) < 2:
         return {}
     order = sorted(range(len(present)), key=lambda k: (len(present[k][1]), present[k][0]))
-    partner = {}
+    lens = [len(present[k][1]) for k in order]
     m = len(order)
-    for rank, k in enumerate(order):
-        vid = present[k][0]
-        # successor in sorted order (cyclic); guaranteed distinct id because m >= 2.
-        pk = order[(rank + 1) % m]
-        if present[pk][0] == vid:
-            pk = order[(rank - 1) % m]
+    partner = {}
+    for rank in range(m):
+        vid = present[order[rank]][0]
+        cands = ([rank - 1] if rank - 1 >= 0 else []) + ([rank + 1] if rank + 1 < m else [])
+        # nearest by |Δlen|; tie -> the later rank (successor) for determinism.
+        best = min(cands, key=lambda rr: (abs(lens[rr] - lens[rank]), -rr))
+        pk = order[best]
         partner[vid] = (present[pk][0], present[pk][1])
     return partner
 

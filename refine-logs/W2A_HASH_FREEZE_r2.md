@@ -9,13 +9,29 @@ on purpose: editing `exp-w2a-grounded.md` would change its own hash and break th
 hashes" verification below (the exp doc must still hash to the r1 pin `076bfa5e…`). The r1 §16 pre-declared
 CONSTANTS table remains the authority; this file records the code freeze against it.
 
-## Frozen artifacts (r2 → r2b)
+## Frozen artifacts (r2 → r2b → r2c)
 
 | artifact | sha256 | freeze |
 |---|---|---|
-| `scripts/analysis/w2a_extract.py`    | `2e79599a92d227d9f15366ee17a6644c2f6c77c71f36aa61c76a6274ac9402a9` | **r2 (UNCHANGED)** |
+| `scripts/analysis/w2a_extract.py`    | `9e984d61e2bf91d58f15af5e54f14d45a3fabe4e0701ce4492645399d810fa31` | **r2c (extractor fixes C+D)** |
 | `scripts/slurm/w2a_extract.sbatch`   | `9ed04c14d16799d24e196f1d956698017373e597fd13e0cb2df6919087315153` | **r2 (UNCHANGED)** |
 | `scripts/analysis/w2a_probe.py`      | `af4a2f9f5b35461173fd82c176bd52c6fc84bf8fc0d09736f938d38d8f6fe06d` | **r2b (probe fixes A+B)** |
+
+**r2c (extractor-only, post-green-SMOKE re-freeze, 2026-07-16).** The two deferred code-review items,
+applied to `w2a_extract.py` ONLY (sbatch `9ed04c14…` + probe `af4a2f9f…` byte-UNCHANGED):
+- **C — placebo pairing** (`build_placebo_partners`): replaced the cyclic-successor partner (which wrapped
+  the longest transcript to the shortest) with the NEAREST-by-|Δ char-length| ADJACENT partner (non-cyclic),
+  for a clean length control. Behavioural only on the real-run gate-3 placebo (≥50 subset); grd/grd_pfx/
+  img_recon/ungrd_vis and gates 0/1/4 are byte-identical.
+- **D — comment** (module docstring gate-3 line): "kept as a secondary diagnostic" → "deferred (non-gating
+  secondary; not implemented)" to match the code (the within-video token-shuffle placebo is not implemented).
+
+The extractor `2e79599a…` frozen at r2/r2b is superseded by `9e984d61…`. **The green SMOKE (job 13166) ran
+the r2 extractor `2e79599a…` and validated gates 0/1/4 + G-recon-IMG; r2c changes NEITHER those code paths
+NOR the produced keys — only the gate-3 placebo partner selection (a real-run-only gate not exercised by the
+`--limit 1` smoke)** — so the smoke result carries over and no re-smoke is required. Re-validated after r2c:
+py_compile OK, CPU self-test PASS, Fix-C non-cyclic nearest-length pairing unit-checked. Diff routed to the
+independent code reviewer; Stage-E' single-submit remains a SEPARATE grant after CLEARED.
 
 **r2b (probe-only, 2026-07-15).** Applied the two code-review NON-BLOCKING fixes that must land before
 probe execution, in `w2a_probe.py` ONLY:
