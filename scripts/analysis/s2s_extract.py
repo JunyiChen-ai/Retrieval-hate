@@ -236,20 +236,67 @@ def encode_frameset(frames, processor, model, device, banked_vec=None):
 
 
 # ----------------------------------------------------------------------------
-# (r1: A1) Temporal-structure positive control — gate 0a, HALT.
+# (amend-0a') Causal-prefix ONSET-INVARIANCE positive control — gate 0a', HALT.
+# REPLACES the old permutation-equivariance/argmax "temporal positive control", which was
+# invalid BY CONSTRUCTION: g_t are cumulative-causal (last-LLM-layer states under the Qwen
+# causal mask condition on frames 0..t), not frame-local, so permuting input frames does not
+# permute {g_t} — smoke 13169 failed it scientifically. Ruling: replace with a control that
+# is VALID under cumulation AND discriminative — refine-logs/S2S_GATE0A_AMENDMENT_RULING.md
+# §D.1 (ruling commit 20c0bf2). A causal-prefix summary is invariant to any change strictly
+# AFTER it: two clips sharing frames 0-3 must have identical groups {0,1} and divergent {2,3}.
 # ----------------------------------------------------------------------------
 def _solid(color, size=336):
     return Image.new("RGB", (size, size), color)
 
 
-def temporal_positive_control(processor, model, device):
-    """Synthesise two 8-frame clips = 4 distinct solid-colour PAIRS in different orders;
-    verify each g_t reflects its temporal slab and that permuting the input pair order
-    permutes {g_t} by the SAME permutation. HALT on failure. (S2S_PROBE_DESIGN.md §3/§4.)
+def _assert_onset_invariance(gp, gq):
+    """Pure-tensor onset-invariance assertions (CPU-testable, no model). `gp`,`gq` = [4,D]
+    L2-normed per-group tensors for clips P/Q that share frames 0-3 and differ at 4-7. Raises
+    RuntimeError on any violation (HALT); returns the per-group cross-cos list on pass.
+    Implements S2S_GATE0A_AMENDMENT_RULING.md §D.1 assertions 1-3 verbatim.
+    """
+    cross = (gp * gq).sum(dim=1)            # [4]  cos(ĝ^P_k, ĝ^Q_k) per group k
+    c = [float(x) for x in cross.tolist()]
+    # (1) PREFIX-INVARIANCE (load-bearing): shared groups {0,1} must be invariant (cos >= 0.999).
+    for k in (0, 1):
+        if c[k] < 0.999:
+            raise RuntimeError(
+                "[gate 0a'] PREFIX-INVARIANCE FAILED: shared group {} cos(P,Q)={:.6f} < 0.999 "
+                "(a differing later frame leaked into an early group -> spatial-major/reversed/"
+                "scrambled temporal grouping). per-group cross-cos={}".format(
+                    k, c[k], [round(v, 4) for v in c]))
+    # (2) ONSET-DIVERGENCE: changed groups {2,3} detectably less identical than prefix {0,1}.
+    onset = max(c[2], c[3])
+    prefix_min = min(c[0], c[1])
+    if not (onset < prefix_min - 0.002):
+        raise RuntimeError(
+            "[gate 0a'] ONSET-DIVERGENCE FAILED: max changed-group cos {:.6f} not < "
+            "min prefix-group cos {:.6f} - 0.002 (later frames did not route into groups 2/3, "
+            "or the stimulus is degenerate). per-group cross-cos={}".format(
+                onset, prefix_min, [round(v, 4) for v in c]))
+    # (3) WITHIN-CLIP DISTINCTNESS (retained from old 0a): the four groups are distinct.
+    for tag, gn in (("P", gp), ("Q", gq)):
+        off = (gn @ gn.t()) - torch.eye(4, device=gn.device) * 2.0  # suppress the diagonal
+        if float(off.max().item()) > 0.999:
+            raise RuntimeError(
+                "[gate 0a'] WITHIN-CLIP DISTINCTNESS FAILED (clip {}): max off-diagonal group "
+                "cosine {:.4f} > 0.999 (groups collapsed)".format(tag, float(off.max().item())))
+    return c
+
+
+def causal_prefix_control(processor, model, device):
+    """Gate 0a' — causal-prefix onset-invariance control. Two 8-frame clips built from the
+    same palette: P pairs = [R,G,B,Y] (order [0,1,2,3]); Q pairs = [R,G,Y,B] (order [0,1,3,2])
+    — IDENTICAL to P for frames 0-3 (groups 0,1), differing for frames 4-7 (groups 2,3). Under
+    the Qwen causal mask a group's tokens attend only to earlier positions, so the shared
+    prefix groups MUST be invariant while the changed groups diverge. Valid under cumulation
+    (a correct extraction cannot fail it -> no false-KILL from the cumulative structure) AND
+    discriminative (spatial-major/reversed/interleaved grouping breaks the invariance). HALT on
+    failure. (refine-logs/S2S_GATE0A_AMENDMENT_RULING.md §D.1.)
     """
     colours = [(220, 30, 30), (30, 200, 30), (30, 30, 220), (230, 210, 30)]  # R G B Y
-    order_a = [0, 1, 2, 3]
-    sigma = [2, 0, 3, 1]  # clip B's group j carries clip A's colour sigma[j]
+    order_p = [0, 1, 2, 3]  # clip P pairs: R,G,B,Y
+    order_q = [0, 1, 3, 2]  # clip Q pairs: R,G,Y,B  (== P for groups 0,1; differs at groups 2,3)
 
     def clip(order):
         frames = []
@@ -258,32 +305,19 @@ def temporal_positive_control(processor, model, device):
             frames.append(_solid(colours[c]))
         return frames
 
-    _log("[gate 0a] temporal positive control: encoding 2 synthetic 4-pair clips ...")
-    ra = encode_frameset(clip(order_a), processor, model, device, banked_vec=None)
-    rb = encode_frameset([f for c in sigma for f in (_solid(colours[c]), _solid(colours[c]))],
-                         processor, model, device, banked_vec=None)
-    if ra["T"] != 4 or rb["T"] != 4:
-        raise RuntimeError("[gate 0a] expected T=4 for an 8-frame synthetic clip, got "
-                           "{}/{}".format(ra["T"], rb["T"]))
-    ga = F.normalize(ra["g"], p=2, dim=1)  # [4, D]
-    gb = F.normalize(rb["g"], p=2, dim=1)  # [4, D]
-    M = ga @ gb.t()                        # M[i, j] = cos(A_i, B_j)
-    # B's group j must match A's group sigma[j] (that shares its colour).
-    match = M.argmax(dim=0).tolist()       # for each B-group j -> best A-group i
-    if match != sigma:
-        raise RuntimeError(
-            "[gate 0a] temporal assignment FAILED: argmax match {} != expected sigma {}. "
-            "Cross-clip cosine matrix:\n{}".format(match, sigma, np.array2string(
-                M.numpy(), precision=3))
-        )
-    # Within-clip distinctness: each group's best-other-group cosine must be < 1 - eps.
-    Maa = ga @ ga.t()
-    off = Maa - torch.eye(4) * 2.0  # suppress the diagonal
-    if float(off.max().item()) > 0.999:
-        raise RuntimeError("[gate 0a] synthetic groups not distinct: max off-diagonal "
-                           "cosine {:.4f} > 0.999".format(float(off.max().item())))
-    _log("[gate 0a] PASS: g_t assignment tracks the input pair order (match={}); groups "
-         "distinct (max off-diag {:.3f}).".format(match, float(off.max().item())))
+    _log("[gate 0a'] causal-prefix onset-invariance control: encoding 2 synthetic clips "
+         "(shared frames 0-3, differing frames 4-7) ...")
+    rp = encode_frameset(clip(order_p), processor, model, device, banked_vec=None)
+    rq = encode_frameset(clip(order_q), processor, model, device, banked_vec=None)
+    if rp["T"] != 4 or rq["T"] != 4:
+        raise RuntimeError("[gate 0a'] expected T=4 for an 8-frame synthetic clip, got "
+                           "{}/{}".format(rp["T"], rq["T"]))
+    gp = F.normalize(rp["g"], p=2, dim=1)  # [4, D]
+    gq = F.normalize(rq["g"], p=2, dim=1)  # [4, D]
+    c = _assert_onset_invariance(gp, gq)
+    _log("[gate 0a'] PASS: prefix groups invariant (cos {:.4f}/{:.4f} >= 0.999); changed groups "
+         "diverge (max {:.4f} < {:.4f}-0.002); groups distinct.".format(
+             c[0], c[1], max(c[2], c[3]), min(c[0], c[1])))
 
 
 # ----------------------------------------------------------------------------
@@ -503,8 +537,8 @@ def main():
     model.to(device).eval()
     processor = AutoProcessor.from_pretrained(MODEL, max_pixels=MAX_PIXELS)
 
-    # Gate 0a — temporal positive control (HALT before touching any real video).
-    temporal_positive_control(processor, model, device)
+    # Gate 0a' — causal-prefix onset-invariance control (HALT before touching any real video).
+    causal_prefix_control(processor, model, device)
 
     splits = [s.strip() for s in args.splits.split(",") if s.strip()]
     t0 = time.time()

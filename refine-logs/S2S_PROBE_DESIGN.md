@@ -66,7 +66,8 @@ HateMM train has **1 zero-img guard row** (undecodable video).
 | zero-guard | undecodable → zeros | same policy → zero frame set | **must** |
 
 **The only additions** vs the banked script: after `last_hidden`/`input_ids` are computed, (a) locate
-the vision-pad tokens and partition them into T temporal groups; (b) pool each group → `g_t`; (c) pool
+the vision-pad tokens and partition them into T temporal groups; (b) pool each group → `g_t` (these
+last-layer states are **cumulative-causal**: each conditions on frames 0..t — amend-0a′); (c) pool
 the non-vision prefix tokens → `p_S`, `|S|`; (d) run the **A1 HARD grid-consistency gate** + G-decomp +
 G-recon; (e) save the frame-set cache. **No change to any forward-affecting knob** → the forward is
 byte-identical → G-recon is expected near-bit-exact.
@@ -149,13 +150,19 @@ assert decomp_res <= 1e-5, f"G-decomp FAIL {decomp_res}"    # HALT
 save g (fp16), n_t, p_S (fp16), S, end   # per video
 ```
 
-**(r1: A1) Temporal-structure positive control (HALT gate, runs once at start of Stage E).** Before any
-real video, the extractor synthesises **one** 8-frame clip = **4 distinct solid-colour frame-pairs**
-(frames 0-1 colour C0, 2-3 C1, 4-5 C2, 6-7 C3), runs the identical forward, and asserts (i) each `g_t`
-is nearest (max cosine) its own intended temporal slab's colour prototype and strictly farther from the
-other three, and (ii) permuting the input frame-pair order permutes `{g_t}` by the same permutation.
-This is the **only** check that actually exercises the token→temporal-group assignment (G-decomp and
-G-recon are grouping-invariant — §4). HALT on failure; the real run does not start unless it is green.
+**(amend-0a′, ruling 20c0bf2) Causal-prefix onset-invariance control (HALT gate, runs once at start of
+Stage E).** Before any real video, the extractor synthesises **two** 8-frame clips from one palette — P
+pairs `[R,G,B,Y]`, Q pairs `[R,G,Y,B]` (identical for frames 0–3 / groups {0,1}, differing at frames
+4–7 / groups {2,3}) — runs the identical forward, and asserts (i) **prefix-invariance**: shared groups
+`k∈{0,1}` have `cos(ĝ^P_k,ĝ^Q_k) ≥ 0.999`; (ii) **onset-divergence**:
+`max(cos_2,cos_3) < min(cos_0,cos_1) − 0.002`; (iii) **within-clip distinctness**: each clip's max
+off-diagonal group cosine `< 0.999`. This is the **only** check that actually exercises the
+token→temporal-group assignment (G-decomp and G-recon are grouping-invariant — §4), and — unlike the old
+permutation-equivariance/argmax control, which was **invalid by construction** because `g_t` are
+cumulative-causal (smoke 13169 failed it scientifically) — it is **valid under cumulation** (a causal
+prefix summary is invariant to any later frame, so a correct extraction cannot fail it) while still
+**discriminating** spatial-major/reversed/interleaved grouping (which leaks the changed frames into an
+early group and breaks the invariance). HALT on failure; the real run does not start unless it is green.
 
 **sbatch** (`scripts/slurm/s2s_extract.sbatch`, house ceremony): `conda activate HateVideo`; NO
 `--time`; single submit; `PENDING (JobHeldUser)` → wait for auto-release, never force. Two invocations
@@ -175,8 +182,8 @@ the banked extraction (no response forward — `text_feats` already banked).
 ## 4. Extraction-correctness anchors (the adapted gate — REPLACES "mean-of-frames == pooled")
 
 The naive gate is **invalid**: the banked pooled vector is not a mean over per-frame vectors (§1). Three
-anchors replace it: a **grid-consistency gate** and a **temporal positive control** (both actually gate
-the frame set), plus G-decomp and G-recon (which gate the *aggregate*).
+anchors replace it: a **grid-consistency gate** and a **causal-prefix onset-invariance control (0a′)**
+(both actually gate the frame set), plus G-decomp and G-recon (which gate the *aggregate*).
 
 > **(r1: A1) What G-decomp does and does NOT prove — correction of the v1 overclaim.** By construction
 > `vis_pos` and `nonvis_pos` are **complementary within `[0:end]`**, so
@@ -197,11 +204,16 @@ From the model's own `video_grid_thw` and `spatial_merge_size` (=2): assert
 HALT on violation. This is what actually pins the vision/non-vision boundary and the equal partition —
 the checks G-decomp cannot make.
 
-### (r1: A1) Temporal positive control (MANDATORY, HALT) — the token→temporal-group assignment
-On ≥1 synthetic clip (8 frames = 4 distinct solid-colour pairs) verify each `g_t` is nearest its
-intended temporal slab and that permuting the input frame-pair order permutes `{g_t}` identically
-(§3). This is the **only** check that exercises the grouping itself. The temporal-major contiguity it
-confirms is proved by the modeling source: `modeling_qwen2_5_vl.py:466-505` (`get_window_index` builds
+### (amend-0a′) Causal-prefix onset-invariance control (MANDATORY, HALT) — the token→temporal-group assignment
+On two synthetic clips sharing frames 0–3 and differing at frames 4–7 (§3), assert the shared prefix
+groups {0,1} are invariant (`cos ≥ 0.999`), the changed groups {2,3} diverge, and the four groups are
+distinct. This is the **only** check that exercises the grouping itself, and — unlike the retired
+permutation-equivariance/argmax control, which was invalid by construction because `g_t` are
+**cumulative-causal** (each conditions on frames 0..t; smoke 13169 failed it scientifically,
+`S2S_GATE0A_AMENDMENT_RULING.md`) — it is valid under cumulation (a prefix summary is invariant to later
+frames) yet still discriminates spatial-major/reversed/interleaved grouping. The temporal-major
+contiguity it confirms is proved by the modeling source: `modeling_qwen2_5_vl.py:466-505`
+(`get_window_index` builds
 `index = arange(grid_t·llm_grid_h·llm_grid_w).reshape(grid_t, llm_grid_h, llm_grid_w)` — (t,h,w)
 row-major), and `:529-534` (tokens are reordered for window attention) then `:560-562`
 (`hidden_states = self.merger(...)`; `reverse_indices = argsort(window_index)`;
@@ -219,8 +231,8 @@ arithmetic (e.g. a dropped token, wrong `end`, incomplete partition) ⇒ **HALT*
 shard + `decomp_res_max` in the gatelog); an *offline* recompute from the saved `{g, p_S}` lands only to
 ~1e-3 because those tensors are stored **fp16** (§6) — so an offline check verifies the decomposition to
 fp16 precision, not to the 1e-5 gate, which is the inline f32 number. **NB (r1: A1):** a green G-decomp
-is *necessary but not sufficient* — it is the grid-consistency gate + temporal control above that certify
-the frame set; G-decomp only certifies the aggregate arithmetic.
+is *necessary but not sufficient* — it is the grid-consistency gate + causal-prefix control (0a′) above
+that certify the frame set; G-decomp only certifies the aggregate arithmetic.
 
 ### G-recon (banked-cache parity anchor, tolerance-based) — fresh forward == banked forward
 The fresh `banked_formula_vec` vs the **banked** `img_feats[v]` (`data/CLIP_Embedding/<ds>/<split>_
@@ -409,7 +421,7 @@ negligible → **~80–110 MB** total (8 frames). 16-frame arm (`frameset_qwen7b
 | anchor | check | tolerance | HALT? |
 |---|---|---|---|
 | **grid gate (r1: A1)** | `n_vis == grid_t·(grid_h//2)·(grid_w//2)` AND `n_vis//T == (grid_h//2)·(grid_w//2)` (vision/text boundary + per-group size) | exact | yes |
-| **temporal control (r1: A1)** | synthetic 4-pair clip: each `g_t` nearest its slab; input-order permutation permutes `{g_t}` | exact | yes |
+| **causal-prefix control 0a′ (amend)** | 2 clips sharing frames 0–3: shared groups {0,1} `cos≥0.999`, changed groups {2,3} diverge, groups distinct | thresholds | yes |
 | G-decomp | `L2norm((Σ n_t g_t + p_S)/end)` == this-forward banked-formula pooled (aggregate arithmetic only — grouping-invariant, r1: A1) | max-abs ≤ 1e-5 | yes |
 | G-recon | fresh banked-formula vec vs **banked** `img_feats[v]` | cos ≥ 0.9999 AND max-abs ≤ 1e-3 | yes |
 | Fano (r1: N2) | ±1 gold-label-key LOO vote acc | ≥ 0.99 both datasets | probe VOID if fail |
@@ -522,6 +534,23 @@ sbatch, probe, and both prereg/design docs are **UNCHANGED from r3**. Re-verify 
 | `refine-logs/S2S_PROBE_DESIGN.md` (this file) | recorded in the r3a commit message (a file cannot embed its own hash) | changed (§10/§11) |
 <!-- S2S-R3A-HASH-TABLE-END -->
 
+**r4 hash table (re-pinned 2026-07-16 after the gate-0a→0a′ amendment ruling `S2S_GATE0A_AMENDMENT_RULING.md`
+commit 20c0bf2; SUPERSEDES r3a).** The extractor's `temporal_positive_control` was rewritten to the
+causal-prefix onset-invariance control `causal_prefix_control` (0a′) and both docs reworded (§2/§4 premise
++ gate tables); **the sbatch is byte-identical to r3a and `s2s_probe.py` is byte-identical to r3** (their
+hashes are restated UNCHANGED). Re-verify these at submit time; still AWAITING the reviewer's diff-only
+re-check of the single rewritten function.
+
+<!-- S2S-R4-HASH-TABLE-START -->
+| artifact | sha256 (r4, 2026-07-16) | vs r3a |
+|---|---|---|
+| `scripts/analysis/s2s_extract.py` | `ce23dfe6810ee74a7311606b6992a747a7267e8754fc0554cd8c1f43d83ff677` | **changed** (0a′ control) |
+| `scripts/slurm/s2s_extract.sbatch` | `2dc0f90b03a44f45945cab3194f78ec97012fe7b157727cd50f64d88d56665dc` | UNCHANGED (r2=r3=r3a=r4) |
+| `scripts/analysis/s2s_probe.py` | `141a0441845d6175646d642a57b4534f78a48d96521ef3dc3a2d9fcf0f2301b3` | UNCHANGED (r3) |
+| `research-wiki/experiments/exp-s2s-r3.md` | `64a489f2a17dfc05ea4004f18dd3533719bdfe79fadb5e2def480730da765276` | **changed** (§2/§4/§7/§13/§16) |
+| `refine-logs/S2S_PROBE_DESIGN.md` (this file) | recorded in the r4 commit message (a file cannot embed its own hash) | changed (§2/§3/§4/§7/§10/§11) |
+<!-- S2S-R4-HASH-TABLE-END -->
+
 ---
 
 ## 11. Revision history
@@ -589,6 +618,19 @@ sbatch, probe, and both prereg/design docs are **UNCHANGED from r3**. Re-verify 
   from r3; only `s2s_extract.py` (+ this §10/§11) re-hashed (r3a table). The bug was GPU-only (the CPU
   synthetic test structurally could not surface it); the smoke did its job. Banked caches untouched (crash
   was in the synthetic control, pre-data). Awaiting the reviewer's diff-only re-check before any resubmit.
+- **r4 (2026-07-16) GATE 0a → 0a′ (causal-prefix onset-invariance control) + premise reword — POST-FAILURE
+  amendment (`S2S_GATE0A_AMENDMENT_RULING.md`, commit 20c0bf2, verdict (B)-REPLACE).** Smoke 13169 failed
+  old gate 0a as a *scientific* gate (not a crash — the r3a device fix held): the control assumed frame-local
+  permutation-equivariance, invalid **by construction** for cumulative-causal `g_t` (Qwen LLM `is_causal=True`;
+  `match=[1,0,3,3]≠σ`, `S2S_GATE0A_POSTMORTEM.md`). Per the ruling §D.1, `temporal_positive_control` was
+  rewritten → `causal_prefix_control`: two clips P=[R,G,B,Y]/Q=[R,G,Y,B] sharing frames 0–3 — (1)
+  prefix-invariance `cos(ĝ^P_k,ĝ^Q_k)≥0.999` for `k∈{0,1}`, (2) onset-divergence `max(cos_2,cos_3) <
+  min(cos_0,cos_1)−0.002`, (3) within-clip distinctness — valid under cumulation, still discriminative
+  (§D.1 verbatim). §2/§4 premise reworded to "cumulative causal group summaries" (§D.2/§D.3); §3/§4 control
+  bullets, §7 anchor table, and (in the prereg) §7 gate-0 + §13 K0 + gate table → 0a′. **No Stage-P bar,
+  arm, or threshold changed** (evidence-driven, not outcome-driven). Extractor-only code change; sbatch +
+  `s2s_probe.py` UNCHANGED (r4 table restates their hashes). Re-smoke REQUIRED (ONE submission) after the
+  reviewer's diff-only re-check; Stage-E full extraction is a separate downstream grant.
 
 ---
 

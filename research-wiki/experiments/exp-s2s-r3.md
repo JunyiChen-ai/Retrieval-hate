@@ -68,8 +68,16 @@ vectors).
 frame vectors, NOT all spatial tokens) for every video. Retrieval distance becomes a **set-matching**
 score (MaxSim / late interaction) instead of cosine between two pooled vectors. The kNN vote (top-20,
 rank-weighted signed cosine — `metrics.py`) is UNCHANGED; only the retrieval object and the pairwise
-score change. Two hateful videos that share a hateful *segment* but differ globally now match on that
-segment, whereas pooled cosine averages the match away.
+score change. **(amend-0a′, ruling 20c0bf2)** Each set element `g_t` is a **cumulative causal group
+summary** — the mean of the last-LLM-layer states over temporal group `t`, conditioned on frames `0..t`
+(the Qwen LLM is **causal** over the video-first token stream, so a group's tokens attend only to earlier
+positions; verified `modeling_qwen2_5_vl.py:723,:1244,:1371-1380`), **not** a frame-local segment
+descriptor. Two videos that pass through **similar cumulative visual states** at some temporal stage now
+match via MeanMaxSim on the aligned states, whereas pooled cosine collapses the whole trajectory to one
+vector before matching. Whether set-MaxSim over these cumulative states beats the pooled vector is the
+empirical question Stage P adjudicates under the oracle kill-switch (§6.4); a synthetic-stimulus probe
+found content weakly encoded relative to context-depth in these reps (a prior-lowering, not
+disqualifying, signal — `S2S_GATE0A_AMENDMENT_RULING.md` §B).
 
 **Frame granularity is fixed by Qwen, and we state it honestly.** Qwen2.5-VL-7B has
 `temporal_patch_size = 2` and `spatial_merge_size = 2` (config verified 2026-07-14). With the banked
@@ -142,9 +150,10 @@ as a set; it is a single vector, reused as-is for the pipeline anchor / with-tex
 
 **Adapted extraction-correctness gate (replaces the naive gate; full spec + tolerances in
 `S2S_PROBE_DESIGN.md` §4).** We define the frame-group vector `g_t` = mean of the last-layer hidden
-states over the vision tokens in temporal group `t`, and gate the frame set with **four** checks. Two of
-them (the grid gate and the temporal control) actually certify the frame set; the other two (G-decomp,
-G-recon) certify the *aggregate*.
+states over the vision tokens in temporal group `t` (these last-layer states are **cumulative-causal**:
+each conditions on frames `0..t`), and gate the frame set with **four** checks. Two of them (the grid gate
+and the causal-prefix control) actually certify the frame set; the other two (G-decomp, G-recon) certify
+the *aggregate*.
 
 > **(r1: A1) Correction of the v1 overclaim — G-decomp and G-recon are grouping-INVARIANT.** Because
 > `vis_pos` and `nonvis_pos` are complementary within `[0:end]` by construction,
@@ -154,20 +163,23 @@ G-recon) certify the *aggregate*.
 > (spatial-major misread). The v1 statements "any residual > 1e-5 means the token→frame assignment …
 > is wrong" and "G-decomp proves the frame set is a faithful decomposition" are **retracted**; those
 > gates prove only span-`end` match, partition completeness, and arithmetic self-consistency. The frame
-> set itself is certified by the grid gate + temporal control below.
+> set itself is certified by the grid gate + causal-prefix control below.
 
 - **(r1: A1) Grid-consistency gate (mandatory, exact, free).** From the model's own `video_grid_thw` and
   `spatial_merge_size` (=2): assert `n_vis == grid_t·(grid_h//2)·(grid_w//2)` (catches a wrong
   `video_pad_id`) **and** `T == grid_t` and `(n_vis // T) == (grid_h//2)·(grid_w//2)` (catches a wrong
   per-group size). This is the check that actually pins the vision/text boundary and the equal partition.
   **HALT** on violation.
-- **(r1: A1) Temporal positive control (mandatory, HALT).** On a synthetic 8-frame clip = 4 distinct
-  solid-colour pairs, verify each `g_t` is nearest its intended temporal slab and that permuting the
-  input frame-pair order permutes `{g_t}` identically — the only check that exercises the grouping. The
-  temporal-major contiguity it confirms is proved by the modeling source
-  (`modeling_qwen2_5_vl.py:466-505` `get_window_index` builds `arange(...).reshape(grid_t, llm_grid_h,
-  llm_grid_w)` (t,h,w) row-major; `:529-534` reorder; `:560-562` `merger` then
-  `hidden_states[argsort(window_index)]` restores the original order).
+- **(amend-0a′) Causal-prefix positive control (mandatory, HALT).** Two 8-frame clips sharing frames
+  0–3 (groups 0,1) and differing at frames 4–7 (groups 2,3): assert the **shared prefix groups are
+  invariant** (`cos(ĝ^P_k,ĝ^Q_k) ≥ 0.999`, `k∈{0,1}`) and the **changed groups diverge** (onset), plus
+  within-clip distinctness — the only check that exercises the token→temporal-group assignment, and one
+  that is **valid under causal cumulation** (a prefix summary is invariant to later frames; the old
+  permutation-equivariance/argmax control was invalid by construction — smoke 13169 failed it
+  scientifically, `S2S_GATE0A_AMENDMENT_RULING.md`). Temporal-major contiguity remains proved by the
+  modeling source (`modeling_qwen2_5_vl.py:466-505` `get_window_index` builds
+  `arange(...).reshape(grid_t, llm_grid_h, llm_grid_w)` (t,h,w) row-major; `:529-534` reorder;
+  `:560-562` `merger` then `hidden_states[argsort(window_index)]` restores the original order).
 - **G-decomp (mandatory, exact, free) — aggregate arithmetic only.** With `n_t` = #vision-tokens in
   group `t`, `p_S` = sum of hidden states over the **non-vision** prefix tokens, `|S|` their count, and
   `end = Σ_t n_t + |S|`:
@@ -350,8 +362,9 @@ enough to price the probe→train pessimism**:
 
 ## 7. Gate order (what runs, in order)
 
-0. **(r1: A1) Grid-consistency gate + temporal positive control** (Stage E) — HALT if the vision/text
-   boundary or per-group size mismatches the grid, or the synthetic-clip `g_t` assignment fails.
+0. **(r1: A1 / amend-0a′) Grid-consistency gate + causal-prefix onset-invariance control (0a′)** (Stage
+   E) — HALT if the vision/text boundary or per-group size mismatches the grid, or the two shared-prefix
+   clips' groups {0,1} are not invariant / changed groups {2,3} do not diverge / groups collapse.
 1. **G-decomp** (exact, per video) — HALT on any residual > 1e-5 (aggregate arithmetic; grouping-
    invariant — necessary not sufficient, per A1).
 2. **G-recon** (banked-cache parity) — HALT on cosine < 0.9999 or max-abs-diff > 1e-3.
@@ -435,7 +448,7 @@ need only the prefix/visual forward, since `text_feats` is already banked).
 
 | # | killer | where |
 |---|---|---|
-| K0 | (r1: A1) grid gate: `n_vis` ≠ grid count (wrong video_pad_id) or per-group size ≠ grid; or temporal control fails (g_t not nearest its slab / permutation not tracked) | §4, §7 gate 0 → HALT |
+| K0 | (r1: A1 / amend-0a′) grid gate: `n_vis` ≠ grid count (wrong video_pad_id) or per-group size ≠ grid; or causal-prefix control 0a′ fails (shared-prefix groups {0,1} not invariant / changed groups {2,3} do not diverge / groups collapse) | §4, §7 gate 0 → HALT |
 | K1 | G-decomp residual > 1e-5 (decomposition arithmetic bug — dropped token / wrong `end` / incomplete partition; **NB (r1: A1)** grouping-invariant, so this does NOT catch a wrong video_pad_id or grouping — K0 does) | §4, §7 gate 1 → HALT |
 | K2 | G-recon cosine < 0.9999 or max-abs > 1e-3 (fresh forward ≠ banked) | §4, §7 gate 2 → HALT |
 | K3 | Fano ±1 gold-label-key acc < 0.99 (vote machine void) | §6.3, §7 gate 3 → probe void |
@@ -518,3 +531,19 @@ data-limited, not dilution-limited). The most likely *informative* outcomes are 
   + both docs are re-hashed (r3 table in `S2S_PROBE_DESIGN.md` §10). The queued smoke 13159 (extractor,
   r2 pins) is untouched. Awaiting the code reviewer's diff-only re-check before Stage P; Stage P is anyway
   gated on extraction.
+- **2026-07-16 — r4 POST-FAILURE AMENDMENT: gate 0a → 0a′ (causal-prefix onset-invariance control) +
+  premise reword.** Binding independent amendment ruling `refine-logs/S2S_GATE0A_AMENDMENT_RULING.md`
+  (commit 20c0bf2, verdict **(B)-REPLACE**), triggered by smoke 13169 failing old gate 0a as a *scientific*
+  gate (`S2S_GATE0A_POSTMORTEM.md`). Old gate 0a assumed frame-local permutation-equivariance, which is
+  invalid **by construction** for cumulative-causal group vectors (Qwen LLM `is_causal=True`; smoke 13169
+  `match=[1,0,3,3]≠σ`). Replaced with the causal-prefix **onset-invariance** control (0a′): two clips
+  P=[R,G,B,Y]/Q=[R,G,Y,B] sharing frames 0–3 — shared groups {0,1} invariant (`cos≥0.999`), changed groups
+  {2,3} diverge, within-clip distinct — a check **valid under cumulation and still discriminative** of
+  spatial-major/reversed/interleaved grouping (§D.1). §2/§4 premise reworded to "cumulative causal group
+  summaries" (§D.2/§D.3); gate table → 0a′; §7 gate-0 + §13 K0 reworded. **This is evidence-driven, not
+  outcome-driven: no Stage-P bar moved** — oracle +0.04, raw +0.05/+0.05, rank-only corroboration,
+  permutation null, bootstrap, dataset rule all stand verbatim; the premise is honestly weakened, not the
+  gate softened. Extractor-only code change (`temporal_positive_control` → `causal_prefix_control`);
+  sbatch + `s2s_probe.py` UNCHANGED. Re-smoke REQUIRED (gates 0b/1/2 never reached on a real video);
+  authorized submissions: ONE, after the reviewer's diff-only re-check. r4 hash table in
+  `S2S_PROBE_DESIGN.md` §10.
