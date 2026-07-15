@@ -46,6 +46,7 @@ processing is an independent fresh agent — review §5 condition 6).
 |---|---|---|---|---|---|
 | 1 | 13156 (`b5probe`) | CPU (`CUDA_VISIBLE_DEVICES=""`) | CPU replay | FAILED exit 2 (by-design HALT) | G-repro: acc+mF1 12/12 PASS 4dp; **roc mismatch (≤7e-4) on 5 Qwen slots** → HALT per strict order |
 | 2 | 13158 (`b5probeC`) | **cuda A100-80GB confirmed** (`sacct` AllocTRES `gres/gpu=1`; log `device=cuda` + `nvidia-smi`), `Faiss_GPU=False` | AUTHORIZED G-repro fallback (review §5) — single submission, **cuda spend CONSUMED** | FAILED exit 2 (by-design HALT) | G-repro: acc+mF1 12/12 PASS 4dp; **roc mismatch (≤7e-4) on 4 Qwen slots** (a DIFFERENT set than 13156) → HALT per strict order |
+| 3 | 13170 (`b5probe`) | CPU (`CUDA_VISIBLE_DEVICES=""`), `Faiss_GPU=False`; script **v4** (A11 gate) | ONE authorized zero-GPU CPU (b)–(e) continuation (ruling §C; team-lead GO) | **COMPLETED exit 0** (elapsed 00:01:16) | **G-repro 12/12 PASS under A11**; strict order (b)–(e) computed — see below |
 
 The CPU→cuda escalation is the pre-authorized fallback (review §5 cond. 3; prereg §6.3; design §6): a
 4-dp CPU G-repro mismatch → ONE `device='cuda'`, `Faiss_GPU=False` eval. **The prereg/review premise
@@ -169,24 +170,124 @@ An independent, fresh, zero-context amendment reviewer adjudicated the escalated
 
 ---
 
-## (b) FROZEN dev-selected thresholds τ — **PENDING the ONE authorized CPU run**
+All (b)–(e) numbers below are the RAW output of job **13170** (CPU, script v4, G-repro 12/12 PASS under
+A11), transcribed verbatim from `slurm/logs/b5probe_13170.out` and cross-checked against
+`refine-logs/b5_probe_out/b5_conv_probe_results.json`. **No pass/fail interpretation is applied here**
+(the KILL-SWITCH / ELIGIBLE / clears / D3-fragile flags are the script's pre-declared mechanical rule
+outputs, not the executor's judgement); independent verdict processing is separate.
 
-G-repro now **PASSES** under amendment A11 (above). (b)–(e) are authorized under **ONE zero-GPU CPU
-SLURM submission** of the frozen v4 probe (ruling §C), strict order preserved (freeze dev-τ → A1 oracle
-kill-switch → honest preview → D3). Not yet run: the run is gated on the team-lead's diff re-check GO of
-the v4 script edit + doc amendments. τ is NOT frozen until that run (the script computes it from DEV
-ONLY, before any test evaluation, and only after the 12/12 amended-gate pass).
+### (a) G-REPRO GATE under A11 (job 13170, CPU) — 12/12 PASS
 
-## (c) ORACLE kill-switch (amended A1) — **PENDING the ONE authorized CPU run** (post-GO)
+All 12 slots PASS: test+dev acc/macroF1 exact-4dp AND roc |Δ| ≤ 1e-3. (The CPU roc drifts match the
+13156 pattern, all ≤ 7e-4 < 1e-3; the 13158 cuda evidence independently passes the same amended gate.)
+Deployed roc read from the run: Qwen s0-valsel test 0.8840 / dev 0.8693; s1-final test 0.8949; s1-valsel
+dev 0.9300; s2-final dev 0.8443; s2-valsel test 0.8938 — all within 1e-3 of anchor. G-REPRO = **PASS**.
 
-## (d) VAL-CALIBRATED honest preview — **PENDING the ONE authorized CPU run** (post-GO)
+## (b) FROZEN dev-selected thresholds τ (argmax dev macro-F1; A3 lower-median plateau; DEV ONLY, before any test eval)
 
-## (e) D3 GUARDS — **PENDING the ONE authorized CPU run** (post-GO)
+| arm·seed·proto | τ\*(dev-macroF1) | dev macroF1@τ | τ(dev balanced-acc, secondary) |
+|---|---|---|---|
+| CLIP s0 final  | +0.06163 | 0.8106 | +0.06163 |
+| CLIP s0 valsel | +0.06163 | 0.8106 | +0.06163 |
+| CLIP s1 final  | −0.66502 | 0.7956 | −0.99868 |
+| CLIP s1 valsel | −0.79554 | 0.8126 | −0.79554 |
+| CLIP s2 final  | +0.22164 | 0.7970 | −0.70602 |
+| CLIP s2 valsel | −0.01476 | 0.7894 | −0.53520 |
+| Qwen s0 final  | −0.53315 | 0.8022 | −0.53315 |
+| Qwen s0 valsel | −0.13331 | 0.8017 | −0.13331 |
+| Qwen s1 final  | −0.18573 | 0.8501 | −0.18573 |
+| Qwen s1 valsel | +0.11897 | 0.8756 | +0.11897 |
+| Qwen s2 final  | −0.13818 | 0.8079 | −0.69454 |
+| Qwen s2 valsel | +0.01900 | 0.8301 | +0.01900 |
 
-No further GPU/cuda is authorized (gate PASS on existing evidence). After the CPU run produces (b)–(e),
-independent verdict processing (A7 hand-check of one honest cell + A2 dev anchor) validates the
-calibration machine before any formal-stage consideration. This ruling unblocks the HALT only; NO formal
-stage is authorized.
+## (c) ORACLE kill-switch (amended A1; each arm its OWN test-optimal τ; paired Qwen−CLIP)
+
+**final-epoch:**
+
+| seed | Qacc | Cacc | ΔAcc | QmF1 | CmF1 | ΔmF1 |
+|---|---|---|---|---|---|---|
+| 0 | 0.8389 | 0.8188 | +0.0201 | 0.8065 | 0.7837 | +0.0228 |
+| 1 | 0.8188 | 0.8121 | +0.0067 | 0.8047 | 0.7677 | +0.0370 |
+| 2 | 0.8121 | 0.8322 | −0.0201 | 0.7983 | 0.7943 | +0.0040 |
+
+mean paired ΔAcc_oracle = **+0.0022** (2/3 +); mean paired ΔmF1_oracle = **+0.0213** (3/3 +);
+**ELIGIBLE (AND ≥ +0.03) = False.**
+
+**val-selected:**
+
+| seed | Qacc | Cacc | ΔAcc | QmF1 | CmF1 | ΔmF1 |
+|---|---|---|---|---|---|---|
+| 0 | 0.8054 | 0.8188 | −0.0134 | 0.7828 | 0.7837 | −0.0009 |
+| 1 | 0.8121 | 0.8188 | −0.0067 | 0.7960 | 0.7778 | +0.0182 |
+| 2 | 0.8389 | 0.8188 | +0.0201 | 0.8039 | 0.7808 | +0.0230 |
+
+mean paired ΔAcc_oracle = **−0.0000** (1/3 +); mean paired ΔmF1_oracle = **+0.0134** (2/3 +);
+**ELIGIBLE (AND ≥ +0.03) = False.**
+
+**KILL-SWITCH (A1 per-protocol AND-eligibility): `B5 DEAD (neither protocol eligible) = True`** (script
+output; oracle numbers are an upper bound, never a result).
+
+## (d) VAL-CALIBRATED honest preview (frozen dev-τ applied to test; paired Qwen−CLIP) — computed regardless of (c), labeled
+
+**final-epoch:**
+
+| seed | Qacc | Cacc | ΔAcc | QmF1 | CmF1 | ΔmF1 |
+|---|---|---|---|---|---|---|
+| 0 | 0.7517 | 0.8121 | −0.0604 | 0.7380 | 0.7771 | −0.0391 |
+| 1 | 0.7987 | 0.7785 | +0.0201 | 0.7764 | 0.7504 | +0.0260 |
+| 2 | 0.8054 | 0.8121 | −0.0067 | 0.7807 | 0.7608 | +0.0199 |
+
+mean paired ΔAcc = **−0.0157** (1/3 +); mean paired ΔmF1 = **+0.0023** (2/3 +);
+clears +0.03/+0.03 & 3/3 = **False**.
+
+**val-selected:**
+
+| seed | Qacc | Cacc | ΔAcc | QmF1 | CmF1 | ΔmF1 |
+|---|---|---|---|---|---|---|
+| 0 | 0.7852 | 0.8121 | −0.0268 | 0.7484 | 0.7771 | −0.0287 |
+| 1 | 0.7785 | 0.7517 | +0.0268 | 0.7245 | 0.7302 | −0.0058 |
+| 2 | 0.7987 | 0.8054 | −0.0067 | 0.7669 | 0.7677 | −0.0008 |
+
+mean paired ΔAcc = **−0.0022** (1/3 +); mean paired ΔmF1 = **−0.0118** (0/3 +);
+clears +0.03/+0.03 & 3/3 = **False**.
+
+**Calibration tax (oracle − honest) + secondary balanced-acc arm (sensitivity only):**
+
+| arm·seed·proto | honAcc | honmF1 | orcAcc | orcmF1 | taxAcc | taxmF1 | balAcc | balmF1 |
+|---|---|---|---|---|---|---|---|---|
+| CLIP s0 final  | 0.8121 | 0.7771 | 0.8188 | 0.7837 | 0.0067 | 0.0066 | 0.8121 | 0.7771 |
+| CLIP s0 valsel | 0.8121 | 0.7771 | 0.8188 | 0.7837 | 0.0067 | 0.0066 | 0.8121 | 0.7771 |
+| CLIP s1 final  | 0.7785 | 0.7504 | 0.8121 | 0.7677 | 0.0336 | 0.0173 | 0.6711 | 0.6624 |
+| CLIP s1 valsel | 0.7517 | 0.7302 | 0.8188 | 0.7778 | 0.0671 | 0.0476 | 0.7517 | 0.7302 |
+| CLIP s2 final  | 0.8121 | 0.7608 | 0.8322 | 0.7943 | 0.0201 | 0.0335 | 0.7919 | 0.7605 |
+| CLIP s2 valsel | 0.8054 | 0.7677 | 0.8188 | 0.7808 | 0.0134 | 0.0131 | 0.7584 | 0.7263 |
+| Qwen s0 final  | 0.7517 | 0.7380 | 0.8389 | 0.8065 | 0.0872 | 0.0685 | 0.7517 | 0.7380 |
+| Qwen s0 valsel | 0.7852 | 0.7484 | 0.8054 | 0.7828 | 0.0201 | 0.0344 | 0.7852 | 0.7484 |
+| Qwen s1 final  | 0.7987 | 0.7764 | 0.8188 | 0.8047 | 0.0201 | 0.0283 | 0.7987 | 0.7764 |
+| Qwen s1 valsel | 0.7785 | 0.7245 | 0.8121 | 0.7960 | 0.0336 | 0.0715 | 0.7785 | 0.7245 |
+| Qwen s2 final  | 0.8054 | 0.7807 | 0.8121 | 0.7983 | 0.0067 | 0.0176 | 0.7919 | 0.7819 |
+| Qwen s2 valsel | 0.7987 | 0.7669 | 0.8389 | 0.8039 | 0.0403 | 0.0370 | 0.7987 | 0.7669 |
+
+## (e) D3 GUARDS (≥1000 paired bootstrap, common dev-resample index A6; 3-seed-mean paired Δ; τ stability)
+
+**final-epoch** (1000 resamples, common idx):
+- ΔAcc 5/50/95 pct = **−0.0291 / +0.0022 / +0.0604**; 5th ≤ 0 (D3-fragile) = **True**.
+- ΔmF1 5/50/95 pct = **−0.0108 / +0.0144 / +0.0606**; 5th ≤ 0 (D3-fragile) = **True**.
+- τ stability: Qwen τ by seed = [−0.5332, −0.1857, −0.1382] (std 0.1761); CLIP τ = [+0.0616, −0.6650, +0.2216] (std 0.3858).
+
+**val-selected** (1000 resamples, common idx):
+- ΔAcc 5/50/95 pct = **−0.0201 / +0.0067 / +0.0403**; 5th ≤ 0 (D3-fragile) = **True**.
+- ΔmF1 5/50/95 pct = **−0.0282 / +0.0006 / +0.0358**; 5th ≤ 0 (D3-fragile) = **True**.
+- τ stability: Qwen τ by seed = [−0.1333, +0.1190, +0.0190] (std 0.1037); CLIP τ = [+0.0616, −0.7955, −0.0148] (std 0.3873).
+
+## Handoff to independent verdict processing
+
+Raw numbers only above; the executor applies no scientific interpretation. Independent verdict
+processing performs the A7 hand-recomputation of one honest cell from the dumped
+`refine-logs/b5_probe_out/{arm}_s{seed}_{proto}.npz` (`votes_*`/`labels_*`, 12 files present) together
+with the A2 dev anchor, to validate the calibration machine. The A1 oracle kill-switch and §6.5 honest
+preview gates are the pre-declared governors of whether any formal stage is ever spent. **No formal
+stage is authorized by this record.**
 
 ---
 
