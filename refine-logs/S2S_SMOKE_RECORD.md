@@ -49,8 +49,39 @@ beyond one held-then-13s run, banked caches untouched.
 | `scripts/slurm/s2s_extract.sbatch` sha256 | `2dc0f90b03a44f45945cab3194f78ec97012fe7b157727cd50f64d88d56665dc` (UNCHANGED) |
 | status | fix committed (r3a); **NOT resubmitted** — awaiting the team-lead's GO after the reviewer's diff re-check |
 
-## Attempt 2 — (pending GO)
+## Attempt 2 — job 13169 (r3a fix; reviewer CLEARED §7, team-lead GO)
 
-_Not yet submitted. On GO: one `SMOKE=1 sbatch`, record new job id + waiter, then transcribe RAW gates
-0a (`match==σ`, σ=[2,0,3,1]), 0b (`n_vis == grid_t·(grid_h//2)·(grid_w//2)`), 1 (`decomp_res_max` ≤ 1e-5),
-2 (`grecon_cos_min` ≥ 0.9999 AND `grecon_maxabs_max` ≤ 1e-3), confirm sha echo + no real-path artifact._
+| field | value |
+|---|---|
+| job id | **13169** |
+| submit ts (cluster UTC) | 2026-07-14T23:49:52Z |
+| command | `SMOKE=1 sbatch scripts/slurm/s2s_extract.sbatch` |
+| out_root (throwaway) | `/data/jehc223/RGCL/slurm/logs/s2s_smoke_out_13169` |
+| log | `/data/jehc223/RGCL/slurm/logs/s2s_extract_13169.log` |
+| `s2s_extract.py` sha256 (r3a, pre-submit verified on-disk) | `07fd162196a7e61e8e83f1a181408fe7b8080cf475cb59ecd58a1dc035b3740a` |
+| `s2s_extract.sbatch` sha256 (verified on-disk) | `2dc0f90b03a44f45945cab3194f78ec97012fe7b157727cd50f64d88d56665dc` |
+| initial state | `PENDING (JobHeldUser)` — waiting for auto-release (never force) |
+| waiter | background `bavwhxjrj` (120s sacct poll to terminal) |
+
+### TERMINAL RESULT (RAW)
+
+**FAILED**, ExitCode 1:0, Elapsed 00:00:18. NOT a crash — the r3a device fix held (execution passed the
+old line-199 site). Gate 0a failed as a **scientific gate** (`s2s_extract.py:274`):
+
+| gate | expected | observed (raw) |
+|---|---|---|
+| 0a temporal positive control | `match==σ` with σ=[2,0,3,1] | **FAIL** — `match=[1,0,3,3]` (matrix position-dominated 0.61–0.94; see postmortem) |
+| 0b grid-consistency | `n_vis == grid_t·(grid_h//2)·(grid_w//2)` | not reached (0a HALTs first; 0a is pre-real-video) |
+| 1 G-decomp | `decomp_res_max` ≤ 1e-5 | not reached |
+| 2 G-recon | `grecon_cos_min` ≥ 0.9999 AND `grecon_maxabs_max` ≤ 1e-3 | not reached |
+
+Config echo + sha256 (`07fd1621…`/`2dc0f90b…`) match the r3a pins: **YES**. Model loaded fine.
+No artifact under the real `data/CLIP_Embedding/<ds>/frameset_qwen7b_8f/`: **CONFIRMED ABSENT** (0a runs
+before any real video; nothing written to the throwaway either).
+
+**Disposition:** zero-GPU forensic postmortem in `refine-logs/S2S_GATE0A_POSTMORTEM.md`. Verdict
+hypothesis: **CONTROL-DESIGN FLAW (invalid by construction) + PREMISE-REFRAME (not falsification)** —
+`g_t` are cumulative causal-prefix summaries (Qwen LLM `is_causal=True`), so the control's frame-local
+permutation-equivariance assumption cannot hold for ANY stimulus; orientation-bug REFUTED
+(`match ≠ σ⁻¹=[1,3,0,2]`, and `match` isn't even a permutation). NO patch-and-resubmit; awaiting
+independent review before any amendment/resubmit/kill.
