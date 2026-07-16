@@ -1,0 +1,41 @@
+[HateMM|flat] Zdim=8960 auxdim=14336 C_Z=0.01 accZ=0.8383 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [241s]
+   aux_pca_k8  accZA=0.8383 dacc=+0.0000 CI[-0.0031,+0.0031]
+   aux_pca_k16 accZA=0.8383 dacc=-0.0000 CI[-0.0042,+0.0040]
+   aux_pca_k32 accZA=0.8357 dacc=-0.0026 CI[-0.0085,+0.0033]
+   aux_pca_k64 accZA=0.8275 dacc=-0.0108 CI[-0.0197,-0.0019]
+   aux_full_cvC accZA=0.8228 dacc=-0.0155 CI[-0.0261,-0.0052]
+   shuffled(seed12345) k8=-0.0066 k16=-0.0047  real_max_over_kdec=+0.0000
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+[HateMM|delta] Zdim=8960 auxdim=3584 C_Z=0.01 accZ=0.8383 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [137s]
+   aux_pca_k8  accZA=0.8324 dacc=-0.0059 CI[-0.0141,+0.0019]
+   aux_pca_k16 accZA=0.8334 dacc=-0.0049 CI[-0.0136,+0.0038]
+   aux_pca_k32 accZA=0.8266 dacc=-0.0118 CI[-0.0221,-0.0019]
+   aux_pca_k64 accZA=0.8237 dacc=-0.0146 CI[-0.0263,-0.0028]
+   aux_full_cvC accZA=0.8353 dacc=-0.0031 CI[-0.0122,+0.0056]
+   shuffled(seed12345) k8=-0.0019 k16=-0.0078  real_max_over_kdec=-0.0049
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+[MHC|flat] Zdim=8960 auxdim=14336 C_Z=0.001 accZ=0.7971 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [115s]
+   aux_pca_k8  accZA=0.7943 dacc=-0.0029 CI[-0.0076,+0.0016]
+   aux_pca_k16 accZA=0.7895 dacc=-0.0076 CI[-0.0140,-0.0016]
+   aux_pca_k32 accZA=0.7825 dacc=-0.0146 CI[-0.0242,-0.0057]
+   aux_pca_k64 accZA=0.7669 dacc=-0.0302 CI[-0.0423,-0.0184]
+   aux_full_cvC accZA=0.7787 dacc=-0.0184 CI[-0.0315,-0.0051]
+   shuffled(seed12345) k8=-0.0124 k16=-0.0118  real_max_over_kdec=-0.0029
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+[MHC|delta] Zdim=8960 auxdim=3584 C_Z=0.001 accZ=0.7971 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [58s]
+   aux_pca_k8  accZA=0.7949 dacc=-0.0022 CI[-0.0095,+0.0051]
+   aux_pca_k16 accZA=0.7962 dacc=-0.0010 CI[-0.0127,+0.0111]
+   aux_pca_k32 accZA=0.7921 dacc=-0.0051 CI[-0.0188,+0.0079]
+   aux_pca_k64 accZA=0.7933 dacc=-0.0038 CI[-0.0216,+0.0137]
+   aux_full_cvC accZA=0.7952 dacc=-0.0019 CI[-0.0118,+0.0079]
+   shuffled(seed12345) k8=-0.0067 k16=-0.0178  real_max_over_kdec=-0.0010
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+
+==== CTF G0-cond gate — mechanical evaluation ====
+  HateMM|flat: bestk=8 dacc=+0.0000 CI[-0.0031,+0.0031] C1=False C2=False C3=None calib=True => KILL
+  HateMM|delta: bestk=16 dacc=-0.0049 CI[-0.0136,+0.0038] C1=False C2=False C3=None calib=True => KILL
+  MHC|flat: bestk=8 dacc=-0.0029 CI[-0.0076,+0.0016] C1=False C2=False C3=None calib=True => KILL
+  MHC|delta: bestk=16 dacc=-0.0010 CI[-0.0127,+0.0111] C1=False C2=False C3=None calib=True => KILL
+  BINDING (flat) per-dataset: {'HateMM': 'KILL', 'MHC': 'KILL'}  CTF_SURVIVES=False
+wrote /data/jehc223/RGCL/refine-logs/CTF_G0COND_GATE_OUT.json
+elapsed 550s
