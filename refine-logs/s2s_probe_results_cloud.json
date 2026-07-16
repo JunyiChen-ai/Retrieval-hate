@@ -1,0 +1,544 @@
+{
+  "meta": {
+    "topk": 20,
+    "frameset_dir": "frameset_qwen7b_8f",
+    "null_seeds": 100,
+    "n_boot": 1000,
+    "expected_mem": {
+      "HateMM": 851,
+      "MHC": 629
+    },
+    "raw_bar": 0.05,
+    "oracle_bar": 0.04,
+    "fano_bar": 0.99,
+    "near_dup_threshold": 0.995,
+    "note": "Executor writes RAW numbers. The mechanical_gate_check block is pre-registered threshold arithmetic ONLY and is NOT the binding verdict; an independent verdict reviewer renders the ruling."
+  },
+  "results": [
+    {
+      "dataset": "HateMM",
+      "N": 851,
+      "T": 4,
+      "zero_guard": 1,
+      "arms": {
+        "POOLED": {
+          "acc": 0.7661574618096357,
+          "macro_f1": 0.7552056154876908,
+          "roc": 0.8256971997009948
+        },
+        "SET": {
+          "acc": 0.7696827262044653,
+          "macro_f1": 0.7554941833192608,
+          "roc": 0.8296532689322064
+        },
+        "SET_CHAMFER": {
+          "acc": 0.7696827262044653,
+          "macro_f1": 0.7571940979864678,
+          "roc": 0.8316658041515727
+        },
+        "PIPELINE_ANCHOR": {
+          "acc": 0.7673325499412456,
+          "macro_f1": 0.7568122250574421,
+          "roc": 0.825932953826692
+        },
+        "WITH_TEXT_POOLED": {
+          "acc": 0.8072855464159812,
+          "macro_f1": 0.8048536304350258,
+          "roc": 0.8903858317520555
+        },
+        "WITH_TEXT_SET": {
+          "acc": 0.8072855464159812,
+          "macro_f1": 0.803950103950104,
+          "roc": 0.8897073198780977
+        },
+        "POOLED_RANKONLY": {
+          "acc": 0.7673325499412456,
+          "macro_f1": 0.7568122250574421,
+          "roc": 0.8252659421539879
+        },
+        "SET_RANKONLY": {
+          "acc": 0.7743830787309048,
+          "macro_f1": 0.7610529394559813,
+          "roc": 0.8284773733540337
+        },
+        "ASYM": {
+          "acc": 0.7602820211515864,
+          "macro_f1": 0.7464154250657318,
+          "roc": 0.821476625840952
+        },
+        "POOLED_NEARDUP_EXCL": {
+          "acc": 0.7661574618096357,
+          "macro_f1": 0.7549491590662112,
+          "roc": 0.8229457765510897
+        },
+        "SET_NEARDUP_EXCL": {
+          "acc": 0.7743830787309048,
+          "macro_f1": 0.7613321647677476,
+          "roc": 0.8273561037318153
+        }
+      },
+      "primary": {
+        "d_acc": 0.003525264394829586,
+        "d_f1": 0.00028856783156994137,
+        "rankonly_d_acc": 0.007050528789659283,
+        "rankonly_d_f1": 0.004240714398539236,
+        "rankonly_sign_ok": true,
+        "rankonly_null_ok": false,
+        "rankonly_boot_ok": false,
+        "rankonly_corroborates": false,
+        "rankonly_null_p95_acc": 0.018801410105757872,
+        "rankonly_obs_dacc": 0.007050528789659283,
+        "rankonly_boot_dacc_p5": -0.007050528789659172
+      },
+      "bootstrap_rankonly": {
+        "n_boot": 1000,
+        "dacc_p5": -0.007050528789659172,
+        "dacc_p50": 0.008225616921268997,
+        "dacc_p95": 0.0199764982373678,
+        "df1_p5": -0.010599983303390164,
+        "df1_p50": 0.004924122741734871,
+        "df1_p95": 0.01856413462471647,
+        "dacc_p5_gt0": false,
+        "df1_p5_gt0": false
+      },
+      "c2_asym": {
+        "asym_acc": 0.7602820211515864,
+        "asym_macro_f1": 0.7464154250657318,
+        "asym_roc": 0.821476625840952,
+        "asym_vs_set_d_acc": -0.009400705052878933,
+        "asym_vs_set_d_f1": -0.009078758253528996,
+        "asym_beats_set": false,
+        "asym_vs_set_obs_dacc": -0.009400705052878933,
+        "asym_vs_set_null_p95_acc": 0.021151586368977626,
+        "asym_vs_set_obs_gt_p95": false,
+        "asym_vs_set_boot_dacc_p5": -0.022326674500587562,
+        "asym_vs_pool_d_acc": -0.005875440658049347,
+        "asym_vs_pool_d_f1": -0.008790190421959054,
+        "asym_vs_pool_obs_gt_p95": false,
+        "asym_vs_pool_boot_dacc_p5": -0.018801410105757872
+      },
+      "fano_acc": 1.0,
+      "oracle": {
+        "acc": 0.8578143360752056,
+        "macro_f1": 0.8505190482204579,
+        "d_acc": 0.0916568742655699,
+        "d_f1": 0.09531343273276704
+      },
+      "near_dup": {
+        "threshold": 0.995,
+        "flagged_pairs": 120,
+        "distribution": {
+          "pooled>=0.980": 211,
+          "mms>=0.980": 144,
+          "maxframe>=0.980": 187,
+          "pooled>=0.990": 146,
+          "mms>=0.990": 116,
+          "maxframe>=0.990": 128,
+          "pooled>=0.995": 120,
+          "mms>=0.995": 109,
+          "maxframe>=0.995": 116
+        },
+        "excluded_d_acc": 0.008225616921269108,
+        "excluded_d_f1": 0.006383005701536382
+      },
+      "permutation_null": {
+        "n_seeds": 100,
+        "obs_dacc": 0.003525264394829586,
+        "null_dacc_p95": 0.018860164512338465,
+        "obs_dacc_gt_p95": false,
+        "obs_df1": 0.00028856783156994137,
+        "null_df1_p95": 0.029811159240363556,
+        "obs_df1_gt_p95": false,
+        "obs_dacc_rank": 0.007050528789659283,
+        "null_dacc_rank_p95": 0.018801410105757872,
+        "obs_dacc_rank_gt_p95": false,
+        "obs_df1_rank": 0.004240714398539236,
+        "null_df1_rank_p95": 0.02885853265340576,
+        "obs_df1_rank_gt_p95": false,
+        "obs_dacc_asym": -0.005875440658049347,
+        "null_dacc_asym_p95": 0.023501762632197387,
+        "obs_dacc_asym_gt_p95": false,
+        "obs_df1_asym": -0.008790190421959054,
+        "null_df1_asym_p95": 0.027160794855098935,
+        "obs_df1_asym_gt_p95": false,
+        "obs_dacc_asym_vs_set": -0.009400705052878933,
+        "null_dacc_asym_vs_set_p95": 0.021151586368977626,
+        "obs_dacc_asym_vs_set_gt_p95": false,
+        "obs_df1_asym_vs_set": -0.009078758253528996,
+        "null_df1_asym_vs_set_p95": 0.021852920043939062,
+        "obs_df1_asym_vs_set_gt_p95": false
+      },
+      "bootstrap": {
+        "n_boot": 1000,
+        "dacc_p5": -0.010575793184488763,
+        "dacc_p50": 0.003525264394829697,
+        "dacc_p95": 0.016451233842538215,
+        "df1_p5": -0.014475570692534894,
+        "df1_p50": 0.0008976256917284653,
+        "df1_p95": 0.014562965872358374,
+        "dacc_p5_gt0": false,
+        "df1_p5_gt0": false
+      },
+      "per_frame_null": {
+        "n_seeds": 100,
+        "dacc_p95": -0.18319623971797883,
+        "df1_p95": -0.24797085714138883,
+        "dacc_mean": -0.21106933019976498,
+        "df1_mean": -0.2818128470530407
+      },
+      "stage_e_gatelog": {
+        "train": {
+          "dataset": "HateMM",
+          "split": "train",
+          "outname": "train",
+          "N": 744,
+          "T": 4,
+          "zero_guard_count": 1,
+          "decomp_res_max": 5.960464477539063e-08,
+          "grecon_cos_min": 0.9999995231628418,
+          "grecon_maxabs_max": 0.0,
+          "grecon_n_checked": 743,
+          "out_path": "/data/jehc223/RGCL/data/CLIP_Embedding/HateMM/frameset_qwen7b_8f/train_frameset.pt"
+        },
+        "dev_seen": {
+          "dataset": "HateMM",
+          "split": "val",
+          "outname": "dev_seen",
+          "N": 107,
+          "T": 4,
+          "zero_guard_count": 0,
+          "decomp_res_max": 5.960464477539063e-08,
+          "grecon_cos_min": 0.9999997019767761,
+          "grecon_maxabs_max": 0.0,
+          "grecon_n_checked": 107,
+          "out_path": "/data/jehc223/RGCL/data/CLIP_Embedding/HateMM/frameset_qwen7b_8f/dev_seen_frameset.pt"
+        }
+      }
+    },
+    {
+      "dataset": "MHC",
+      "N": 629,
+      "T": 4,
+      "zero_guard": 0,
+      "arms": {
+        "POOLED": {
+          "acc": 0.7027027027027027,
+          "macro_f1": 0.5693689339937981,
+          "roc": 0.6600632219422922
+        },
+        "SET": {
+          "acc": 0.6629570747217806,
+          "macro_f1": 0.546250170137471,
+          "roc": 0.6735870133574179
+        },
+        "SET_CHAMFER": {
+          "acc": 0.6899841017488076,
+          "macro_f1": 0.5682454195047257,
+          "roc": 0.6827850929315017
+        },
+        "PIPELINE_ANCHOR": {
+          "acc": 0.7027027027027027,
+          "macro_f1": 0.5671439664086967,
+          "roc": 0.6614417454960309
+        },
+        "WITH_TEXT_POOLED": {
+          "acc": 0.7694753577106518,
+          "macro_f1": 0.7192698955014851,
+          "roc": 0.8226576983410182
+        },
+        "WITH_TEXT_SET": {
+          "acc": 0.7615262321144675,
+          "macro_f1": 0.725816013390989,
+          "roc": 0.8322004088035365
+        },
+        "POOLED_RANKONLY": {
+          "acc": 0.7027027027027027,
+          "macro_f1": 0.5693689339937981,
+          "roc": 0.6594749726672053
+        },
+        "SET_RANKONLY": {
+          "acc": 0.6629570747217806,
+          "macro_f1": 0.546250170137471,
+          "roc": 0.6720124067119836
+        },
+        "ASYM": {
+          "acc": 0.6772655007949125,
+          "macro_f1": 0.56070734350541,
+          "roc": 0.6546560821409897
+        },
+        "POOLED_NEARDUP_EXCL": {
+          "acc": 0.7027027027027027,
+          "macro_f1": 0.5693689339937981,
+          "roc": 0.6587441175072491
+        },
+        "SET_NEARDUP_EXCL": {
+          "acc": 0.6629570747217806,
+          "macro_f1": 0.546250170137471,
+          "roc": 0.6720777677425488
+        }
+      },
+      "primary": {
+        "d_acc": -0.03974562798092218,
+        "d_f1": -0.02311876385632705,
+        "rankonly_d_acc": -0.03974562798092218,
+        "rankonly_d_f1": -0.02311876385632705,
+        "rankonly_sign_ok": true,
+        "rankonly_null_ok": false,
+        "rankonly_boot_ok": false,
+        "rankonly_corroborates": false,
+        "rankonly_null_p95_acc": 0.01446740858505566,
+        "rankonly_obs_dacc": -0.03974562798092218,
+        "rankonly_boot_dacc_p5": -0.06359300476947538
+      },
+      "bootstrap_rankonly": {
+        "n_boot": 1000,
+        "dacc_p5": -0.06359300476947538,
+        "dacc_p50": -0.03974562798092207,
+        "dacc_p95": -0.01748807631160565,
+        "df1_p5": -0.05762015358554884,
+        "df1_p50": -0.023747144978538137,
+        "df1_p95": 0.010002075563508893,
+        "dacc_p5_gt0": false,
+        "df1_p5_gt0": false
+      },
+      "c2_asym": {
+        "asym_acc": 0.6772655007949125,
+        "asym_macro_f1": 0.56070734350541,
+        "asym_roc": 0.6546560821409897,
+        "asym_vs_set_d_acc": 0.014308426073131986,
+        "asym_vs_set_d_f1": 0.014457173367938947,
+        "asym_beats_set": true,
+        "asym_vs_set_obs_dacc": 0.014308426073131986,
+        "asym_vs_set_null_p95_acc": 0.015898251192368873,
+        "asym_vs_set_obs_gt_p95": false,
+        "asym_vs_set_boot_dacc_p5": -0.007949125596184436,
+        "asym_vs_pool_d_acc": -0.025437201907790197,
+        "asym_vs_pool_d_f1": -0.008661590488388105,
+        "asym_vs_pool_obs_gt_p95": false,
+        "asym_vs_pool_boot_dacc_p5": -0.05246422893481717
+      },
+      "fano_acc": 1.0,
+      "oracle": {
+        "acc": 0.8426073131955485,
+        "macro_f1": 0.7797626836902509,
+        "d_acc": 0.13990461049284575,
+        "d_f1": 0.21039374969645286
+      },
+      "near_dup": {
+        "threshold": 0.995,
+        "flagged_pairs": 2,
+        "distribution": {
+          "pooled>=0.980": 9,
+          "mms>=0.980": 5,
+          "maxframe>=0.980": 8,
+          "pooled>=0.990": 5,
+          "mms>=0.990": 1,
+          "maxframe>=0.990": 2,
+          "pooled>=0.995": 2,
+          "mms>=0.995": 0,
+          "maxframe>=0.995": 0
+        },
+        "excluded_d_acc": -0.03974562798092218,
+        "excluded_d_f1": -0.02311876385632705
+      },
+      "permutation_null": {
+        "n_seeds": 100,
+        "obs_dacc": -0.03974562798092218,
+        "null_dacc_p95": 0.012957074721780612,
+        "obs_dacc_gt_p95": false,
+        "obs_df1": -0.02311876385632705,
+        "null_df1_p95": 0.02669015255665945,
+        "obs_df1_gt_p95": false,
+        "obs_dacc_rank": -0.03974562798092218,
+        "null_dacc_rank_p95": 0.01446740858505566,
+        "obs_dacc_rank_gt_p95": false,
+        "obs_df1_rank": -0.02311876385632705,
+        "null_df1_rank_p95": 0.02782223118749167,
+        "obs_df1_rank_gt_p95": false,
+        "obs_dacc_asym": -0.025437201907790197,
+        "null_dacc_asym_p95": 0.015898251192368762,
+        "obs_dacc_asym_gt_p95": false,
+        "obs_df1_asym": -0.008661590488388105,
+        "null_df1_asym_p95": 0.03149898687685479,
+        "obs_df1_asym_gt_p95": false,
+        "obs_dacc_asym_vs_set": 0.014308426073131986,
+        "null_dacc_asym_vs_set_p95": 0.015898251192368873,
+        "obs_dacc_asym_vs_set_gt_p95": false,
+        "obs_df1_asym_vs_set": 0.014457173367938947,
+        "null_df1_asym_vs_set_p95": 0.022770328701510634,
+        "obs_df1_asym_vs_set_gt_p95": false
+      },
+      "bootstrap": {
+        "n_boot": 1000,
+        "dacc_p5": -0.06359300476947538,
+        "dacc_p50": -0.03974562798092207,
+        "dacc_p95": -0.01748807631160565,
+        "df1_p5": -0.05762015358554884,
+        "df1_p50": -0.023747144978538137,
+        "df1_p95": 0.010002075563508893,
+        "dacc_p5_gt0": false,
+        "df1_p5_gt0": false
+      },
+      "per_frame_null": {
+        "n_seeds": 100,
+        "dacc_p95": -0.012718600953895098,
+        "df1_p95": -0.09348959752005374,
+        "dacc_mean": -0.031351351351351406,
+        "df1_mean": -0.12841259849734182
+      },
+      "stage_e_gatelog": {
+        "train": {
+          "dataset": "MHC",
+          "split": "train",
+          "outname": "train",
+          "N": 549,
+          "T": 4,
+          "zero_guard_count": 0,
+          "decomp_res_max": 5.960464477539063e-08,
+          "grecon_cos_min": 0.9999995231628418,
+          "grecon_maxabs_max": 0.0,
+          "grecon_n_checked": 549,
+          "out_path": "/data/jehc223/RGCL/data/CLIP_Embedding/MHC/frameset_qwen7b_8f/train_frameset.pt"
+        },
+        "dev_seen": {
+          "dataset": "MHC",
+          "split": "val",
+          "outname": "dev_seen",
+          "N": 80,
+          "T": 4,
+          "zero_guard_count": 0,
+          "decomp_res_max": 5.960464477539063e-08,
+          "grecon_cos_min": 0.9999997019767761,
+          "grecon_maxabs_max": 0.0,
+          "grecon_n_checked": 80,
+          "out_path": "/data/jehc223/RGCL/data/CLIP_Embedding/MHC/frameset_qwen7b_8f/dev_seen_frameset.pt"
+        }
+      }
+    }
+  ],
+  "mechanical_gate_check": [
+    {
+      "gate": "Fano[HateMM]",
+      "value": 1.0,
+      "threshold": 0.99,
+      "op": ">=",
+      "result": "ABOVE",
+      "note": "vote machine valid if ABOVE"
+    },
+    {
+      "gate": "Fano[MHC]",
+      "value": 1.0,
+      "threshold": 0.99,
+      "op": ">=",
+      "result": "ABOVE",
+      "note": "vote machine valid if ABOVE"
+    },
+    {
+      "gate": "OracleDacc[HateMM]",
+      "value": 0.0916568742655699,
+      "threshold": 0.04,
+      "op": ">=",
+      "result": "ABOVE",
+      "note": "headroom if ABOVE (kill-switch: DEAD only if ALL datasets BELOW)"
+    },
+    {
+      "gate": "OracleDacc[MHC]",
+      "value": 0.13990461049284575,
+      "threshold": 0.04,
+      "op": ">=",
+      "result": "ABOVE",
+      "note": "headroom if ABOVE (kill-switch: DEAD only if ALL datasets BELOW)"
+    },
+    {
+      "gate": "OracleKillSwitch(all-datasets)",
+      "value": false,
+      "threshold": "all < 0.04",
+      "result": "SURVIVES",
+      "note": "DEAD -> zero head GPU"
+    },
+    {
+      "gate": "RawDacc[HateMM]",
+      "value": 0.003525264394829586,
+      "threshold": 0.05,
+      "op": ">=",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "RawDmF1[HateMM]",
+      "value": 0.00028856783156994137,
+      "threshold": 0.05,
+      "op": ">=",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "RankOnlyCorroborates[HateMM] (A2)",
+      "value": false,
+      "threshold": true,
+      "result": "BELOW",
+      "note": "sign_ok=True null_ok=False boot_ok=False; primary credited only if corroborated"
+    },
+    {
+      "gate": "RankOnlyObsDacc>null95[HateMM] (A2)",
+      "value": 0.007050528789659283,
+      "threshold": 0.018801410105757872,
+      "op": ">",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "RankOnlyBoot5th>0[HateMM] (A2)",
+      "value": -0.007050528789659172,
+      "threshold": 0.0,
+      "op": ">",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "ObsDacc>null95[HateMM]",
+      "value": 0.003525264394829586,
+      "threshold": 0.018860164512338465,
+      "op": ">",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "Bootstrap5th>0[HateMM]",
+      "value": -0.010575793184488763,
+      "threshold": 0.0,
+      "op": ">",
+      "result": "BELOW",
+      "note": ""
+    },
+    {
+      "gate": "NearDupExclSurvives[HateMM] (A3)",
+      "value": 0.008225616921269108,
+      "threshold": 0.0,
+      "op": ">",
+      "result": "ABOVE",
+      "note": ""
+    },
+    {
+      "gate": "C2 ASYM beats SET (acc AND mF1) [HateMM]",
+      "value": false,
+      "threshold": true,
+      "result": "BELOW",
+      "note": "\u0394acc=-0.0094 \u0394mF1=-0.0091 (paired ASYM-SET)"
+    },
+    {
+      "gate": "C2 ASYM beats SET (acc AND mF1) [MHC]",
+      "value": true,
+      "threshold": true,
+      "result": "ABOVE",
+      "note": "\u0394acc=+0.0143 \u0394mF1=+0.0145 (paired ASYM-SET)"
+    },
+    {
+      "gate": "C2 route adjudication (ASYM beats SET on >=1 dataset)",
+      "value": true,
+      "threshold": true,
+      "result": "SURVIVES(escalate-to-\u00a711-asym)",
+      "note": "if BELOW: asymmetric memory adds nothing over symmetric SET"
+    }
+  ]
+}
