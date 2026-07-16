@@ -1,0 +1,472 @@
+{
+  "config": {
+    "topk": 20,
+    "bar": 0.02,
+    "rng": 20260717,
+    "fusion": "align",
+    "vote": "arithmetic_signed_cosine",
+    "protocol": "final-epoch e29"
+  },
+  "script_sha256": "d4adf545125a5a08d78ec9198947dc44f6c6abeec158ed308e138fc9d3d96a5d",
+  "ckpt_sha": {
+    "HateMM_CLIP_s0_e29.pt": "87651250082588ded935182ff5daa6781be86b65112ced4717428e019ff254f9",
+    "HateMM_CLIP_s1_e29.pt": "277cecddf1dd5a4258f0e3f85bccf4dcb25754f835368f35d11f9607b269c2fd",
+    "HateMM_CLIP_s2_e29.pt": "e02c5b36d4cfb772cebed6cc6c64153994f4bc16eeb97d7cc588c1af080bc8f0",
+    "HateMM_Qwen_s0_e29.pt": "d68969d953c22650697a485fabebf71aafbdaa3484ebec0903a2a89c96cd04f0",
+    "HateMM_Qwen_s1_e29.pt": "fbd44f6b8c3fda43b54c4b374ff4ea017b4fc721f6bd3faefc945268614dec1a",
+    "HateMM_Qwen_s2_e29.pt": "6db29db3694e7ff7437118ae45eb0be0e9498cd9858b6a25036042dbd521ae8c",
+    "MHC_CLIP_s0_e29.pt": "37dfc55a1fdb7ecddde0c919a351fe24862272d55bc912cba004bb42ba3699bf",
+    "MHC_CLIP_s1_e29.pt": "326fb82f1b5efb649983053a6e9b8719aa213915bc4fdc4589a60f28c228dba2",
+    "MHC_CLIP_s2_e29.pt": "c538a8863ca06b096a964c8a21288c754d3e3c0a8a1f4a58507e1e279e60c124",
+    "MHC_Qwen_s0_e29.pt": "9426ec320074676b5571c9484635e5783e9c45d7b0bf42bf33fe6b4bbffeccdc",
+    "MHC_Qwen_s1_e29.pt": "2c53744ce3308f4db3503c76656695e68b45466ce09dc289b27bd965ebc31dc2",
+    "MHC_Qwen_s2_e29.pt": "2700f8d98a2e5b688a2653f45015e06a86a13aa9fec7856af53b4e4dd8dc2b01"
+  },
+  "machinery_validation": {
+    "HateMM_CLIP_s0": {
+      "acc": 0.7944,
+      "anchor": 0.7944,
+      "match": true
+    },
+    "HateMM_CLIP_s1": {
+      "acc": 0.8131,
+      "anchor": 0.8131,
+      "match": true
+    },
+    "HateMM_CLIP_s2": {
+      "acc": 0.8224,
+      "anchor": 0.8224,
+      "match": true
+    },
+    "HateMM_Qwen_s0": {
+      "acc": 0.8505,
+      "anchor": 0.8505,
+      "match": true
+    },
+    "HateMM_Qwen_s1": {
+      "acc": 0.8224,
+      "anchor": 0.8224,
+      "match": true
+    },
+    "HateMM_Qwen_s2": {
+      "acc": 0.8505,
+      "anchor": 0.8505,
+      "match": true
+    },
+    "MHC_CLIP_s0": {
+      "acc": 0.7375,
+      "anchor": 0.7375,
+      "match": true
+    },
+    "MHC_CLIP_s1": {
+      "acc": 0.75,
+      "anchor": 0.75,
+      "match": true
+    },
+    "MHC_CLIP_s2": {
+      "acc": 0.7,
+      "anchor": 0.7,
+      "match": true
+    },
+    "MHC_Qwen_s0": {
+      "acc": 0.7625,
+      "anchor": 0.7625,
+      "match": true
+    },
+    "MHC_Qwen_s1": {
+      "acc": 0.7875,
+      "anchor": 0.7875,
+      "match": true
+    },
+    "MHC_Qwen_s2": {
+      "acc": 0.775,
+      "anchor": 0.775,
+      "match": true
+    }
+  },
+  "machinery_all_match": true,
+  "oracle_headroom": {
+    "MHC": {
+      "mean_gain": 0.1083,
+      "per_seed": [
+        0.1125,
+        0.125,
+        0.0875
+      ],
+      "detail": [
+        {
+          "seed": 0,
+          "oracle_acc": 0.875,
+          "best": 0.7625,
+          "gain": 0.1125,
+          "n_dev_disagree": 20
+        },
+        {
+          "seed": 1,
+          "oracle_acc": 0.9125,
+          "best": 0.7875,
+          "gain": 0.125,
+          "n_dev_disagree": 23
+        },
+        {
+          "seed": 2,
+          "oracle_acc": 0.8625,
+          "best": 0.775,
+          "gain": 0.0875,
+          "n_dev_disagree": 20
+        }
+      ]
+    },
+    "HateMM": {
+      "mean_gain": 0.0498,
+      "per_seed": [
+        0.0374,
+        0.0654,
+        0.0467
+      ],
+      "detail": [
+        {
+          "seed": 0,
+          "oracle_acc": 0.8879,
+          "best": 0.8505,
+          "gain": 0.0374,
+          "n_dev_disagree": 14
+        },
+        {
+          "seed": 1,
+          "oracle_acc": 0.8879,
+          "best": 0.8224,
+          "gain": 0.0654,
+          "n_dev_disagree": 15
+        },
+        {
+          "seed": 2,
+          "oracle_acc": 0.8972,
+          "best": 0.8505,
+          "gain": 0.0467,
+          "n_dev_disagree": 13
+        }
+      ]
+    }
+  },
+  "router": {
+    "gbm": {
+      "MHC": {
+        "seeds": [
+          {
+            "seed": 0,
+            "dev_acc_CLIP": 0.7375,
+            "dev_acc_Qwen": 0.7625,
+            "best_chan": "Qwen",
+            "best_acc": 0.7625,
+            "routed_acc": 0.7625,
+            "gain": 0.0,
+            "n_dev": 80,
+            "n_dev_disagree": 20,
+            "n_train_disagree": 109,
+            "dev_disagree_qwen_correct_rate": 0.55
+          },
+          {
+            "seed": 1,
+            "dev_acc_CLIP": 0.75,
+            "dev_acc_Qwen": 0.7875,
+            "best_chan": "Qwen",
+            "best_acc": 0.7875,
+            "routed_acc": 0.7875,
+            "gain": 0.0,
+            "n_dev": 80,
+            "n_dev_disagree": 23,
+            "n_train_disagree": 102,
+            "dev_disagree_qwen_correct_rate": 0.5652
+          },
+          {
+            "seed": 2,
+            "dev_acc_CLIP": 0.7,
+            "dev_acc_Qwen": 0.775,
+            "best_chan": "Qwen",
+            "best_acc": 0.775,
+            "routed_acc": 0.775,
+            "gain": 0.0,
+            "n_dev": 80,
+            "n_dev_disagree": 20,
+            "n_train_disagree": 92,
+            "dev_disagree_qwen_correct_rate": 0.65
+          }
+        ],
+        "mean_gain": 0.0,
+        "per_seed_gain": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "boot_ci95": [
+          0.0,
+          0.0
+        ],
+        "boot_ci_low": 0.0,
+        "keys_n": 27
+      },
+      "HateMM": {
+        "seeds": [
+          {
+            "seed": 0,
+            "dev_acc_CLIP": 0.7944,
+            "dev_acc_Qwen": 0.8505,
+            "best_chan": "Qwen",
+            "best_acc": 0.8505,
+            "routed_acc": 0.8505,
+            "gain": 0.0,
+            "n_dev": 107,
+            "n_dev_disagree": 14,
+            "n_train_disagree": 61,
+            "dev_disagree_qwen_correct_rate": 0.7143
+          },
+          {
+            "seed": 1,
+            "dev_acc_CLIP": 0.8131,
+            "dev_acc_Qwen": 0.8224,
+            "best_chan": "Qwen",
+            "best_acc": 0.8224,
+            "routed_acc": 0.8224,
+            "gain": 0.0,
+            "n_dev": 107,
+            "n_dev_disagree": 15,
+            "n_train_disagree": 68,
+            "dev_disagree_qwen_correct_rate": 0.5333
+          },
+          {
+            "seed": 2,
+            "dev_acc_CLIP": 0.8224,
+            "dev_acc_Qwen": 0.8505,
+            "best_chan": "Qwen",
+            "best_acc": 0.8505,
+            "routed_acc": 0.8505,
+            "gain": 0.0,
+            "n_dev": 107,
+            "n_dev_disagree": 13,
+            "n_train_disagree": 78,
+            "dev_disagree_qwen_correct_rate": 0.6154
+          }
+        ],
+        "mean_gain": 0.0,
+        "per_seed_gain": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "boot_ci95": [
+          0.0,
+          0.0
+        ],
+        "boot_ci_low": 0.0,
+        "keys_n": 27
+      },
+      "devcv": {
+        "MHC": {
+          "mean_gain": -0.0458,
+          "per_seed": [
+            -0.05,
+            -0.075,
+            -0.0125
+          ],
+          "boot_ci95": [
+            -0.0875,
+            0.0
+          ],
+          "boot_ci_low": -0.0875
+        },
+        "HateMM": {
+          "mean_gain": -0.0094,
+          "per_seed": [
+            -0.0374,
+            0.0093,
+            0.0
+          ],
+          "boot_ci95": [
+            -0.0312,
+            0.0125
+          ],
+          "boot_ci_low": -0.0312
+        }
+      },
+      "oracle_calib_accZA": {
+        "MHC": 1.0,
+        "HateMM": 0.6813
+      },
+      "perm_null_MHC_devcv": {
+        "null_mean": -0.0153,
+        "null_p95": 0.0042,
+        "observed": -0.0458,
+        "exceeds_p95": false,
+        "p_value": 0.9703
+      }
+    },
+    "linear": {
+      "MHC": {
+        "seeds": [
+          {
+            "seed": 0,
+            "dev_acc_CLIP": 0.7375,
+            "dev_acc_Qwen": 0.7625,
+            "best_chan": "Qwen",
+            "best_acc": 0.7625,
+            "routed_acc": 0.7625,
+            "gain": 0.0,
+            "n_dev": 80,
+            "n_dev_disagree": 20,
+            "n_train_disagree": 109,
+            "dev_disagree_qwen_correct_rate": 0.55
+          },
+          {
+            "seed": 1,
+            "dev_acc_CLIP": 0.75,
+            "dev_acc_Qwen": 0.7875,
+            "best_chan": "Qwen",
+            "best_acc": 0.7875,
+            "routed_acc": 0.7875,
+            "gain": 0.0,
+            "n_dev": 80,
+            "n_dev_disagree": 23,
+            "n_train_disagree": 102,
+            "dev_disagree_qwen_correct_rate": 0.5652
+          },
+          {
+            "seed": 2,
+            "dev_acc_CLIP": 0.7,
+            "dev_acc_Qwen": 0.775,
+            "best_chan": "Qwen",
+            "best_acc": 0.775,
+            "routed_acc": 0.775,
+            "gain": 0.0,
+            "n_dev": 80,
+            "n_dev_disagree": 20,
+            "n_train_disagree": 92,
+            "dev_disagree_qwen_correct_rate": 0.65
+          }
+        ],
+        "mean_gain": 0.0,
+        "per_seed_gain": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "boot_ci95": [
+          0.0,
+          0.0
+        ],
+        "boot_ci_low": 0.0,
+        "keys_n": 27
+      },
+      "HateMM": {
+        "seeds": [
+          {
+            "seed": 0,
+            "dev_acc_CLIP": 0.7944,
+            "dev_acc_Qwen": 0.8505,
+            "best_chan": "Qwen",
+            "best_acc": 0.8505,
+            "routed_acc": 0.8505,
+            "gain": 0.0,
+            "n_dev": 107,
+            "n_dev_disagree": 14,
+            "n_train_disagree": 61,
+            "dev_disagree_qwen_correct_rate": 0.7143
+          },
+          {
+            "seed": 1,
+            "dev_acc_CLIP": 0.8131,
+            "dev_acc_Qwen": 0.8224,
+            "best_chan": "Qwen",
+            "best_acc": 0.8224,
+            "routed_acc": 0.8224,
+            "gain": 0.0,
+            "n_dev": 107,
+            "n_dev_disagree": 15,
+            "n_train_disagree": 68,
+            "dev_disagree_qwen_correct_rate": 0.5333
+          },
+          {
+            "seed": 2,
+            "dev_acc_CLIP": 0.8224,
+            "dev_acc_Qwen": 0.8505,
+            "best_chan": "Qwen",
+            "best_acc": 0.8505,
+            "routed_acc": 0.8505,
+            "gain": 0.0,
+            "n_dev": 107,
+            "n_dev_disagree": 13,
+            "n_train_disagree": 78,
+            "dev_disagree_qwen_correct_rate": 0.6154
+          }
+        ],
+        "mean_gain": 0.0,
+        "per_seed_gain": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "boot_ci95": [
+          0.0,
+          0.0
+        ],
+        "boot_ci_low": 0.0,
+        "keys_n": 27
+      },
+      "devcv": {
+        "MHC": {
+          "mean_gain": -0.0333,
+          "per_seed": [
+            -0.0625,
+            -0.0375,
+            0.0
+          ],
+          "boot_ci95": [
+            -0.075,
+            0.0125
+          ],
+          "boot_ci_low": -0.075
+        },
+        "HateMM": {
+          "mean_gain": -0.0093,
+          "per_seed": [
+            -0.0093,
+            0.0,
+            -0.0187
+          ],
+          "boot_ci95": [
+            -0.0312,
+            0.0093
+          ],
+          "boot_ci_low": -0.0312
+        }
+      },
+      "oracle_calib_accZA": {
+        "MHC": 0.9065,
+        "HateMM": 0.6673
+      },
+      "perm_null_MHC_devcv": {
+        "null_mean": -0.018,
+        "null_p95": 0.0042,
+        "observed": -0.0333,
+        "exceeds_p95": false,
+        "p_value": 0.8317
+      }
+    }
+  },
+  "mechanical": {
+    "BAR": 0.02,
+    "mhc_primary_gain": 0.0,
+    "mhc_primary_ci_low": 0.0,
+    "oracle_headroom_MHC": 0.1083,
+    "devcv_gain_MHC": -0.0458,
+    "devcv_ci_low_MHC": -0.0875,
+    "hatemm_primary_gain": 0.0,
+    "K_R2_oracle_accZA": 1.0,
+    "K_R2_valid": true,
+    "K_R1_kill": true,
+    "devcv_ceiling_kill": true,
+    "K_R3_devcv_survives_null": false,
+    "hatemm_sanity_ok": true
+  },
+  "label": "KILL"
+}
