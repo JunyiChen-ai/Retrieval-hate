@@ -1,7 +1,7 @@
-# TERMINUS ASSESSMENT — round 3 (DRAFT, for the user) — constraint-space exhaustion + relaxation options
+# TERMINUS ASSESSMENT — round 3 (FINAL, for the user) — constraint-space exhaustion + relaxation options
 
-**Author:** wave3-recon (ZERO GPU; reading + forensic synthesis only). **Date:** 2026-07-16 (drafted in parallel with the in-flight GIR gate).
-**Status:** **DRAFT — content-complete (GIR slot now FILLED).** GIR landed **DEAD** (F43, record `b64a85b`, orchestrator-spot-checked), so the wave-3 pool is empty and every in-box axis is closed by a binding verdict or a calibrated-zero gate; the terminus claim below is now **unconditional**. Filename kept as `_DRAFT` pending team-lead promotion to final / hand-off to the user.
+**Author:** wave3-recon (ZERO GPU; reading + forensic synthesis only). **Date:** 2026-07-16 (finalized 2026-07-17 after the GIR gate closed, F43).
+**Status:** **FINAL.** GIR landed **DEAD** (F43, record `b64a85b`, orchestrator-spot-checked), so the wave-3 pool is empty and every in-box axis is closed by a binding verdict or a calibrated-zero gate; the terminus claim below is **unconditional**. Promoted to `TERMINUS_round3.md` and marked FINAL for hand-off to the user (team-lead authorized).
 **This is not a decision.** Every option below is framed as a **user ruling with evidence attached** (§4). The loop cannot self-authorize any of the relaxations; they lift constraints only the user set.
 
 **The goal being assessed (frozen, user-set).** An MLLM **meaningfully AND novelly** (D7) integrated into the retrieval-contrastive method, delivering **substantial performance improvement** — the user's loop framing: **+0.03 acc AND +0.03 macro-F1 on ≥2 of the 3 datasets** (HateMM, MHC-EN, MHC-ZH). Pipeline core (unchanged all campaign): frozen encoder → triplet+BCE alignment head → top-20 kNN rank-weighted signed-cosine vote.
@@ -139,4 +139,4 @@ The goal is unmet, but a rigorous campaign of **robust negatives with mechanism-
 - Positives: encoder-swap `040adb8` + erratum `66012e9`; B3 ZH LoRA (positives bank + MEMORY numeric-provenance); P6/P10b (CAMPAIGN_mllm_method_role, novelty-scope memory); D7 user ruling F24.
 - Wave-3 candidate designs + kill-switch definitions: `refine-logs/WAVE3_CANDIDATES.md` `0ee06df`.
 - REFLECTION D1/D2/D3 + G0-cond mandate: `research-wiki/REFLECTION_mllm_integration_failures.md`.
-- **RESOLVED:** GIR verdict landed **DEAD** (F43, record `b64a85b`, `GIR_G0COND_GATE_OUT.json`, orchestrator-spot-checked) — folded into §0 (terminus condition now met), §1 Axis-F (KILL both datasets, exact subsumption), and §3 ledger item 4. The terminus claim is now unconditional; filename kept `_DRAFT` pending team-lead promotion to the user-facing final.
+- **RESOLVED:** GIR verdict landed **DEAD** (F43, record `b64a85b`, `GIR_G0COND_GATE_OUT.json`, orchestrator-spot-checked) — folded into §0 (terminus condition now met), §1 Axis-F (KILL both datasets, exact subsumption), and §3 ledger item 4. The terminus claim is now unconditional; document promoted from `TERMINUS_round3_DRAFT.md` to `TERMINUS_round3.md` and marked **FINAL** (team-lead authorized) for hand-off to the user.
