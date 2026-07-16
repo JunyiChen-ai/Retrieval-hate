@@ -1,0 +1,14 @@
+[HateMM] Zdim=8960 auxdim=88 C_Z=0.01 accZ=0.8383 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [154s]
+   audio_pca_k8  accZA=0.8345 dacc=-0.0038 CI[-0.0113,+0.0033]
+   audio_pca_k16 accZA=0.8294 dacc=-0.0089 CI[-0.0174,-0.0007]
+   audio_pca_k32 accZA=0.8249 dacc=-0.0134 CI[-0.0254,-0.0012]
+   audio_pca_k64 accZA=0.8066 dacc=-0.0317 CI[-0.0479,-0.0153]
+   audio_full_cvC accZA=0.8388 dacc=+0.0005 CI[-0.0031,+0.0042]
+   shuffled(seed12345) k8=-0.0080 k16=-0.0101  real_max_over_kdec=-0.0038
+   -> GATE(point) C1=False C2=False calib=True verdict=KILL
+
+==== APX G0-cond audio gate — mechanical evaluation (HateMM) ====
+  best-k=8 dacc=-0.0038 CI[-0.0113,+0.0033] C1=False C2=False C3=None calib=True => KILL
+  APX acoustic axis: prior_slashed_no_download_escalation
+wrote /data/jehc223/RGCL/refine-logs/APX_G0COND_GATE_OUT.json
+elapsed 154s

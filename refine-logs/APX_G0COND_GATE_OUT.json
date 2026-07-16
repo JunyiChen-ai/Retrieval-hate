@@ -1,0 +1,124 @@
+{
+ "design": {
+  "gate": "APX G0-cond audio (Wave-3 #3)",
+  "aux": "openSMILE eGeMAPSv02 88-d whole-video prosody",
+  "Z_best": "concat(CLIP img+text, Qwen img+text)=8960d",
+  "dataset": "HateMM (primary)",
+  "ks_decision": [
+   8,
+   16
+  ],
+  "ks_report": [
+   8,
+   16,
+   32,
+   64
+  ],
+  "bar": 0.04,
+  "scale_A": 50.0,
+  "n_splits": 5,
+  "n_repeats": 5,
+  "B_boot": 5000,
+  "nseed_perm": 150,
+  "kill_switch": "K-APX-0: point<+0.040 OR CI-lower<=0 -> KILL; K-APX-1: calib accZA<0.99 -> MACHINERY_INVALID",
+  "machinery": "VERBATIM c3_fusion_probe.py",
+  "NON_BINDING": true
+ },
+ "cell": {
+  "point": {
+   "ds": "HateMM",
+   "n": 851,
+   "n_pos": 341,
+   "meta": {
+    "N": 851,
+    "n_pos": 341,
+    "n_zero_audio_rows": 0,
+    "opensmile_version": "2.6.0",
+    "feature_set": "eGeMAPSv02"
+   },
+   "Z_dim": 8960,
+   "aux_dim": 88,
+   "C_Z": 0.01,
+   "C_Z_cv_acc": 0.8413140694874441,
+   "C_full": 0.01,
+   "C_full_cv_acc": 0.8401375988992088,
+   "baseline_accZ": 0.8383078730904819,
+   "calibration": {
+    "label_accZA": 1.0,
+    "headroom_1_minus_accZ": 0.16169212690951806,
+    "label_dacc": 0.16169212690951823,
+    "headroom_fraction": 1.000000000000001,
+    "PASS": true
+   },
+   "arms": {
+    "audio_pca_k8": {
+     "accZA": 0.8345475910693303,
+     "dacc": -0.0037602820211515868,
+     "ci": [
+      -0.011280846063454761,
+      0.003290246768507637
+     ]
+    },
+    "audio_pca_k16": {
+     "accZA": 0.8293772032902469,
+     "dacc": -0.008930669800235018,
+     "ci": [
+      -0.017391304347826087,
+      -0.0007050528789659228
+     ]
+    },
+    "audio_pca_k32": {
+     "accZA": 0.8249118683901293,
+     "dacc": -0.013396004700352526,
+     "ci": [
+      -0.025387779083431258,
+      -0.0011750881316098714
+     ]
+    },
+    "audio_pca_k64": {
+     "accZA": 0.8065804935370152,
+     "dacc": -0.03172737955346651,
+     "ci": [
+      -0.04794947121034078,
+      -0.01527614571092832
+     ]
+    },
+    "audio_full_cvC": {
+     "accZA": 0.8387779083431257,
+     "dacc": 0.00047003525264394845,
+     "ci": [
+      -0.003055229142185664,
+      0.004230317273795534
+     ]
+    },
+    "shuffled_audio_k8": {
+     "dacc": -0.007990599294947122
+    },
+    "shuffled_audio_k16": {
+     "dacc": -0.010105757931844888
+    }
+   },
+   "real_max_over_kdec": -0.0037602820211515868,
+   "_cache": {
+    "C_Z": 0.01
+   }
+  }
+ },
+ "gate_eval": {
+  "calib_pass": true,
+  "best_decision_k": 8,
+  "best_dacc": -0.0037602820211515868,
+  "best_ci": [
+   -0.011280846063454761,
+   0.003290246768507637
+  ],
+  "C1_point_ge_040": false,
+  "C2_ci_low_gt_0": false,
+  "C3_real_beats_all_permmax": null,
+  "verdict": "KILL"
+ },
+ "apx_verdict": {
+  "K_APX_0_verdict": "KILL",
+  "acoustic_axis": "prior_slashed_no_download_escalation"
+ }
+}
