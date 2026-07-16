@@ -1,0 +1,483 @@
+{
+ "design": {
+  "gate": "GIR G0-cond (Wave-3 #2)",
+  "binding_object": "r_cache = grd - Qwen_img (residual)",
+  "Z_best_incl_grd": "concat(CLIP img+text, Qwen img+text, grd)=12544d",
+  "sources": {
+   "r_cache": "grd - img_feats (BINDING; ungrd=standard Qwen img cache => exact subsumption)",
+   "r_field": "grd - ungrd_vis field (robustness; same-forward video-first control, ~subsumed)"
+  },
+  "masks": {
+   "full": "all rows (N=851/629, = W2-A K9 N)",
+   "covered": "~empty_transcript & ~zero_guard (HateMM n=802; dilution-control, non-binding)"
+  },
+  "binding_cells": [
+   [
+    "HateMM",
+    "r_cache",
+    "full"
+   ],
+   [
+    "MHC",
+    "r_cache",
+    "full"
+   ]
+  ],
+  "ks_decision": [
+   8,
+   16
+  ],
+  "ks_report": [
+   8,
+   16,
+   32,
+   64
+  ],
+  "bar": 0.04,
+  "scale_A": 50.0,
+  "n_splits": 5,
+  "n_repeats": 5,
+  "B_boot": 5000,
+  "nseed_perm": 150,
+  "machinery": "VERBATIM c3_fusion_probe.py; Z std alone @ C_Z; aux std x s=50 unpenalized; aux via train-fold PCA",
+  "expected_prior": "KILL by subsumption (r_cache is exact linear fn of {grd, Qwen_img} both in baseline; K9 null)",
+  "NON_BINDING": true
+ },
+ "cells": {
+  "HateMM|r_cache|full": {
+   "point": {
+    "ds": "HateMM",
+    "source": "r_cache",
+    "mask": "full",
+    "n": 851,
+    "n_pos": 341,
+    "Z_dim": 12544,
+    "aux_dim": 3584,
+    "C_Z": 0.01,
+    "C_Z_cv_acc": 0.8377915376676986,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.8389542483660131,
+    "baseline_accZ": 0.8350176263219742,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.16498237367802582,
+     "label_dacc": 0.16498237367802585,
+     "headroom_fraction": 1.0000000000000002,
+     "PASS": true
+    },
+    "arms": {
+     "aux_pca_k8": {
+      "accZA": 0.8361927144535839,
+      "dacc": 0.0011750881316098707,
+      "ci": [
+       -0.003995299647473561,
+       0.006586368977673241
+      ]
+     },
+     "aux_pca_k16": {
+      "accZA": 0.8307873090481787,
+      "dacc": -0.004230317273795535,
+      "ci": [
+       -0.010340775558166863,
+       0.0016451233842538194
+      ]
+     },
+     "aux_pca_k32": {
+      "accZA": 0.8293772032902467,
+      "dacc": -0.00564042303172738,
+      "ci": [
+       -0.013396004700352527,
+       0.002115158636897768
+      ]
+     },
+     "aux_pca_k64": {
+      "accZA": 0.8293772032902467,
+      "dacc": -0.005640423031727377,
+      "ci": [
+       -0.018331374853113983,
+       0.007050528789659226
+      ]
+     },
+     "aux_full_cvC": {
+      "accZA": 0.8397179788484137,
+      "dacc": 0.004700352526439483,
+      "ci": [
+       -0.0037602820211515876,
+       0.012925969447708578
+      ]
+     },
+     "shuffled_aux_k8": {
+      "dacc": -0.007285546415981198
+     },
+     "shuffled_aux_k16": {
+      "dacc": -0.006580493537015276
+     }
+    },
+    "real_max_over_kdec": 0.0011750881316098707
+   }
+  },
+  "MHC|r_cache|full": {
+   "point": {
+    "ds": "MHC",
+    "source": "r_cache",
+    "mask": "full",
+    "n": 629,
+    "n_pos": 193,
+    "Z_dim": 12544,
+    "aux_dim": 3584,
+    "C_Z": 0.001,
+    "C_Z_cv_acc": 0.7980571428571428,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.8075936507936508,
+    "baseline_accZ": 0.7965023847376789,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.20349761526232113,
+     "label_dacc": 0.20349761526232116,
+     "headroom_fraction": 1.0000000000000002,
+     "PASS": true
+    },
+    "arms": {
+     "aux_pca_k8": {
+      "accZA": 0.7914149443561208,
+      "dacc": -0.005087440381558029,
+      "ci": [
+       -0.014308426073131956,
+       0.0038235294117645925
+      ]
+     },
+     "aux_pca_k16": {
+      "accZA": 0.7875993640699522,
+      "dacc": -0.008903020667726549,
+      "ci": [
+       -0.021303656597774244,
+       0.0034976152623211448
+      ]
+     },
+     "aux_pca_k32": {
+      "accZA": 0.788235294117647,
+      "dacc": -0.008267090620031796,
+      "ci": [
+       -0.024165341812400636,
+       0.007631160572337044
+      ]
+     },
+     "aux_pca_k64": {
+      "accZA": 0.784737678855326,
+      "dacc": -0.011764705882352941,
+      "ci": [
+       -0.02988871224165342,
+       0.0057233704292527846
+      ]
+     },
+     "aux_full_cvC": {
+      "accZA": 0.7910969793322735,
+      "dacc": -0.005405405405405405,
+      "ci": [
+       -0.014308426073131956,
+       0.0034976152623211448
+      ]
+     },
+     "shuffled_aux_k8": {
+      "dacc": -0.002225755166931637
+     },
+     "shuffled_aux_k16": {
+      "dacc": -0.008267090620031795
+     }
+    },
+    "real_max_over_kdec": -0.005087440381558029
+   }
+  },
+  "HateMM|r_field|full": {
+   "point": {
+    "ds": "HateMM",
+    "source": "r_field",
+    "mask": "full",
+    "n": 851,
+    "n_pos": 341,
+    "Z_dim": 12544,
+    "aux_dim": 3584,
+    "C_Z": 0.01,
+    "C_Z_cv_acc": 0.8377915376676986,
+    "C_full": 1.0,
+    "C_full_cv_acc": 0.8413140694874441,
+    "baseline_accZ": 0.8350176263219742,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.16498237367802582,
+     "label_dacc": 0.16498237367802585,
+     "headroom_fraction": 1.0000000000000002,
+     "PASS": true
+    },
+    "arms": {
+     "aux_pca_k8": {
+      "accZA": 0.8350176263219742,
+      "dacc": 0.0,
+      "ci": [
+       -0.005405405405405405,
+       0.005640423031727381
+      ]
+     },
+     "aux_pca_k16": {
+      "accZA": 0.8310223266745006,
+      "dacc": -0.003995299647473561,
+      "ci": [
+       -0.01010575793184489,
+       0.0018801410105757934
+      ]
+     },
+     "aux_pca_k32": {
+      "accZA": 0.8300822561692127,
+      "dacc": -0.004935370152761458,
+      "ci": [
+       -0.012925969447708578,
+       0.003055229142185664
+      ]
+     },
+     "aux_pca_k64": {
+      "accZA": 0.8291421856639247,
+      "dacc": -0.005875440658049352,
+      "ci": [
+       -0.018331374853113983,
+       0.006580493537015274
+      ]
+     },
+     "aux_full_cvC": {
+      "accZA": 0.835252643948296,
+      "dacc": 0.00023501762632197488,
+      "ci": [
+       -0.007520564042303172,
+       0.007755581668625148
+      ]
+     },
+     "shuffled_aux_k8": {
+      "dacc": -0.007285546415981197
+     },
+     "shuffled_aux_k16": {
+      "dacc": -0.007050528789659224
+     }
+    },
+    "real_max_over_kdec": 0.0
+   }
+  },
+  "MHC|r_field|full": {
+   "point": {
+    "ds": "MHC",
+    "source": "r_field",
+    "mask": "full",
+    "n": 629,
+    "n_pos": 193,
+    "Z_dim": 12544,
+    "aux_dim": 3584,
+    "C_Z": 0.001,
+    "C_Z_cv_acc": 0.7980571428571428,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.8060063492063492,
+    "baseline_accZ": 0.7965023847376789,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.20349761526232113,
+     "label_dacc": 0.20349761526232116,
+     "headroom_fraction": 1.0000000000000002,
+     "PASS": true
+    },
+    "arms": {
+     "aux_pca_k8": {
+      "accZA": 0.7901430842607313,
+      "dacc": -0.006359300476947536,
+      "ci": [
+       -0.01589825119236884,
+       0.0028616852146263914
+      ]
+     },
+     "aux_pca_k16": {
+      "accZA": 0.7866454689984101,
+      "dacc": -0.00985691573926868,
+      "ci": [
+       -0.022257551669316374,
+       0.002225755166931637
+      ]
+     },
+     "aux_pca_k32": {
+      "accZA": 0.7856915739268681,
+      "dacc": -0.01081081081081081,
+      "ci": [
+       -0.02702702702702702,
+       0.004769475357710653
+      ]
+     },
+     "aux_pca_k64": {
+      "accZA": 0.7860095389507155,
+      "dacc": -0.010492845786963434,
+      "ci": [
+       -0.028616852146263912,
+       0.0069952305246422895
+      ]
+     },
+     "aux_full_cvC": {
+      "accZA": 0.7910969793322735,
+      "dacc": -0.005405405405405405,
+      "ci": [
+       -0.014316375198728137,
+       0.0038155802861685206
+      ]
+     },
+     "shuffled_aux_k8": {
+      "dacc": -0.0022257551669316363
+     },
+     "shuffled_aux_k16": {
+      "dacc": -0.00985691573926868
+     }
+    },
+    "real_max_over_kdec": -0.006359300476947536
+   }
+  },
+  "HateMM|r_cache|covered": {
+   "point": {
+    "ds": "HateMM",
+    "source": "r_cache",
+    "mask": "covered",
+    "n": 802,
+    "n_pos": 337,
+    "Z_dim": 12544,
+    "aux_dim": 3584,
+    "C_Z": 0.1,
+    "C_Z_cv_acc": 0.8267313664596273,
+    "C_full": 0.01,
+    "C_full_cv_acc": 0.8304347826086957,
+    "baseline_accZ": 0.8259351620947633,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.17406483790523675,
+     "label_dacc": 0.17406483790523694,
+     "headroom_fraction": 1.000000000000001,
+     "PASS": true
+    },
+    "arms": {
+     "aux_pca_k8": {
+      "accZA": 0.8224438902743142,
+      "dacc": -0.0034912718204488788,
+      "ci": [
+       -0.008478802992518705,
+       0.0014962593516209476
+      ]
+     },
+     "aux_pca_k16": {
+      "accZA": 0.8184538653366583,
+      "dacc": -0.007481296758104738,
+      "ci": [
+       -0.014713216957605984,
+       -0.0007481296758104734
+      ]
+     },
+     "aux_pca_k32": {
+      "accZA": 0.8194513715710724,
+      "dacc": -0.006483790523690774,
+      "ci": [
+       -0.016209476309226933,
+       0.003241895261845386
+      ]
+     },
+     "aux_pca_k64": {
+      "accZA": 0.8246882793017457,
+      "dacc": -0.0012468827930174552,
+      "ci": [
+       -0.013466334164588527,
+       0.010729426433915126
+      ]
+     },
+     "aux_full_cvC": {
+      "accZA": 0.8356608478802993,
+      "dacc": 0.009725685785536158,
+      "ci": [
+       0.0022443890274314203,
+       0.017462593516209383
+      ]
+     },
+     "shuffled_aux_k8": {
+      "dacc": -0.006982543640897755
+     },
+     "shuffled_aux_k16": {
+      "dacc": -0.004738154613466332
+     }
+    },
+    "real_max_over_kdec": -0.0034912718204488788
+   }
+  }
+ },
+ "gate_eval": {
+  "HateMM|r_cache|full": {
+   "calib_pass": true,
+   "best_decision_k": 8,
+   "best_dacc": 0.0011750881316098707,
+   "best_ci": [
+    -0.003995299647473561,
+    0.006586368977673241
+   ],
+   "C1_point_ge_040": false,
+   "C2_ci_low_gt_0": false,
+   "C3_real_beats_all_permmax": null,
+   "verdict": "KILL"
+  },
+  "MHC|r_cache|full": {
+   "calib_pass": true,
+   "best_decision_k": 8,
+   "best_dacc": -0.005087440381558029,
+   "best_ci": [
+    -0.014308426073131956,
+    0.0038235294117645925
+   ],
+   "C1_point_ge_040": false,
+   "C2_ci_low_gt_0": false,
+   "C3_real_beats_all_permmax": null,
+   "verdict": "KILL"
+  },
+  "HateMM|r_field|full": {
+   "calib_pass": true,
+   "best_decision_k": 8,
+   "best_dacc": 0.0,
+   "best_ci": [
+    -0.005405405405405405,
+    0.005640423031727381
+   ],
+   "C1_point_ge_040": false,
+   "C2_ci_low_gt_0": false,
+   "C3_real_beats_all_permmax": null,
+   "verdict": "KILL"
+  },
+  "MHC|r_field|full": {
+   "calib_pass": true,
+   "best_decision_k": 8,
+   "best_dacc": -0.006359300476947536,
+   "best_ci": [
+    -0.01589825119236884,
+    0.0028616852146263914
+   ],
+   "C1_point_ge_040": false,
+   "C2_ci_low_gt_0": false,
+   "C3_real_beats_all_permmax": null,
+   "verdict": "KILL"
+  },
+  "HateMM|r_cache|covered": {
+   "calib_pass": true,
+   "best_decision_k": 8,
+   "best_dacc": -0.0034912718204488788,
+   "best_ci": [
+    -0.008478802992518705,
+    0.0014962593516209476
+   ],
+   "C1_point_ge_040": false,
+   "C2_ci_low_gt_0": false,
+   "C3_real_beats_all_permmax": null,
+   "verdict": "KILL"
+  }
+ },
+ "gir_binding_verdict": {
+  "binding_per_cell": {
+   "HateMM|r_cache|full": "KILL",
+   "MHC|r_cache|full": "KILL"
+  },
+  "GIR_SURVIVES": false,
+  "any_machinery_invalid": false
+ }
+}

@@ -1,0 +1,50 @@
+[HateMM|r_cache|full] Zdim=12544 auxdim=3584 n=851 C_Z=0.01 accZ=0.8350 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [250s]
+   aux_pca_k8  accZA=0.8362 dacc=+0.0012 CI[-0.0040,+0.0066]
+   aux_pca_k16 accZA=0.8308 dacc=-0.0042 CI[-0.0103,+0.0016]
+   aux_pca_k32 accZA=0.8294 dacc=-0.0056 CI[-0.0134,+0.0021]
+   aux_pca_k64 accZA=0.8294 dacc=-0.0056 CI[-0.0183,+0.0071]
+   aux_full_cvC accZA=0.8397 dacc=+0.0047 CI[-0.0038,+0.0129]
+   shuffled(seed12345) k8=-0.0073 k16=-0.0066  real_max_over_kdec=+0.0012
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+[MHC|r_cache|full] Zdim=12544 auxdim=3584 n=629 C_Z=0.001 accZ=0.7965 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [122s]
+   aux_pca_k8  accZA=0.7914 dacc=-0.0051 CI[-0.0143,+0.0038]
+   aux_pca_k16 accZA=0.7876 dacc=-0.0089 CI[-0.0213,+0.0035]
+   aux_pca_k32 accZA=0.7882 dacc=-0.0083 CI[-0.0242,+0.0076]
+   aux_pca_k64 accZA=0.7847 dacc=-0.0118 CI[-0.0299,+0.0057]
+   aux_full_cvC accZA=0.7911 dacc=-0.0054 CI[-0.0143,+0.0035]
+   shuffled(seed12345) k8=-0.0022 k16=-0.0083  real_max_over_kdec=-0.0051
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+[HateMM|r_field|full] Zdim=12544 auxdim=3584 n=851 C_Z=0.01 accZ=0.8350 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [227s]
+   aux_pca_k8  accZA=0.8350 dacc=+0.0000 CI[-0.0054,+0.0056]
+   aux_pca_k16 accZA=0.8310 dacc=-0.0040 CI[-0.0101,+0.0019]
+   aux_pca_k32 accZA=0.8301 dacc=-0.0049 CI[-0.0129,+0.0031]
+   aux_pca_k64 accZA=0.8291 dacc=-0.0059 CI[-0.0183,+0.0066]
+   aux_full_cvC accZA=0.8353 dacc=+0.0002 CI[-0.0075,+0.0078]
+   shuffled(seed12345) k8=-0.0073 k16=-0.0071  real_max_over_kdec=+0.0000
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+[MHC|r_field|full] Zdim=12544 auxdim=3584 n=629 C_Z=0.001 accZ=0.7965 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [101s]
+   aux_pca_k8  accZA=0.7901 dacc=-0.0064 CI[-0.0159,+0.0029]
+   aux_pca_k16 accZA=0.7866 dacc=-0.0099 CI[-0.0223,+0.0022]
+   aux_pca_k32 accZA=0.7857 dacc=-0.0108 CI[-0.0270,+0.0048]
+   aux_pca_k64 accZA=0.7860 dacc=-0.0105 CI[-0.0286,+0.0070]
+   aux_full_cvC accZA=0.7911 dacc=-0.0054 CI[-0.0143,+0.0038]
+   shuffled(seed12345) k8=-0.0022 k16=-0.0099  real_max_over_kdec=-0.0064
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+[HateMM|r_cache|covered] Zdim=12544 auxdim=3584 n=802 C_Z=0.1 accZ=0.8259 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [257s]
+   aux_pca_k8  accZA=0.8224 dacc=-0.0035 CI[-0.0085,+0.0015]
+   aux_pca_k16 accZA=0.8185 dacc=-0.0075 CI[-0.0147,-0.0007]
+   aux_pca_k32 accZA=0.8195 dacc=-0.0065 CI[-0.0162,+0.0032]
+   aux_pca_k64 accZA=0.8247 dacc=-0.0012 CI[-0.0135,+0.0107]
+   aux_full_cvC accZA=0.8357 dacc=+0.0097 CI[+0.0022,+0.0175]
+   shuffled(seed12345) k8=-0.0070 k16=-0.0047  real_max_over_kdec=-0.0035
+   -> GATE(point) C1=False C2=False calib=True verdict_so_far=KILL
+
+==== GIR G0-cond gate — mechanical evaluation ====
+  [BINDING] HateMM|r_cache|full: bestk=8 dacc=+0.0012 CI[-0.0040,+0.0066] C1=False C2=False C3=None calib=True => KILL
+  [BINDING] MHC|r_cache|full: bestk=8 dacc=-0.0051 CI[-0.0143,+0.0038] C1=False C2=False C3=None calib=True => KILL
+  [robust ] HateMM|r_field|full: bestk=8 dacc=+0.0000 CI[-0.0054,+0.0056] C1=False C2=False C3=None calib=True => KILL
+  [robust ] MHC|r_field|full: bestk=8 dacc=-0.0064 CI[-0.0159,+0.0029] C1=False C2=False C3=None calib=True => KILL
+  [robust ] HateMM|r_cache|covered: bestk=8 dacc=-0.0035 CI[-0.0085,+0.0015] C1=False C2=False C3=None calib=True => KILL
+  BINDING (r_cache/full) per-cell: {'HateMM|r_cache|full': 'KILL', 'MHC|r_cache|full': 'KILL'}  GIR_SURVIVES=False
+wrote /data/jehc223/RGCL/refine-logs/GIR_G0COND_GATE_OUT.json
+elapsed 957s
