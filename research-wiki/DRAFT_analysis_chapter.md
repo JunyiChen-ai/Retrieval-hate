@@ -17,7 +17,9 @@ The question this chapter answers is stronger and was fixed as a user mandate be
 role** — a component whose deletion measurably costs main-table accuracy? We treat a role as earned
 only if removing the MLLM costs more than the noise floor of our ~150-video test sets (1 accuracy
 point ≈ 1.6 videos; MHClip-EN n=161, MHClip-ZH n=149, HateMM clean n=215). To answer it we ran a
-**thirteen-route pre-registered campaign** [DOC:CAMPAIGN_mllm_method_role.md]. Eleven routes give the
+**thirteen-route pre-registered campaign** [DOC:CAMPAIGN_mllm_method_role.md], later extended by two
+further pre-registered sprints (rounds 2–3, §3.6–3.7) that closed every remaining injection point in
+the constraint box. Eleven routes give the
 MLLM a distinct non-encoder job aimed at main-table accuracy (label-noise repair, prior
 recalibration, neighbour reranking, evidence-density pooling, schema distillation, counterfactual
 mining, score-level fusion, semantic speech compression, and decision-level LMM fine-tuning); two
@@ -26,8 +28,8 @@ thread). The verdict is uniform and, we will argue, mechanistically legible:
 **the main-table-accuracy role is refuted across all eleven routes**, while the MLLM earns three
 genuinely removable roles — encoder, localization scorer, and guard-rail/audit — none of which is a
 main-table-accuracy role. This chapter is the analysis: the discipline that makes the negative
-result trustworthy (§2), the five mechanisms that explain it (§3), what survives with ablation
-evidence (§4), and the implications (§5).
+result trustworthy (§2), the five mechanisms that explain it and the two structural laws that rounds
+2–3 crystallised them into (§3), what survives with ablation evidence (§4), and the implications (§5).
 
 ## 2. Methodology: how a negative result earns trust
 
@@ -66,7 +68,7 @@ bit-for-bit sanity check, or probe, so a null is attributable to mechanism rathe
 artefact. When a *confounded* literal gate passed but the *matched* gate did not, we killed the
 route (P11, §3.5) — the conservative direction.
 
-## 3. Five mechanisms
+## 3. Five mechanisms — and two structural laws (rounds 2–3)
 
 ### 3.1 Semantic competence is orthogonal to the decision variable
 
@@ -172,6 +174,92 @@ what the MLLM weak label would teach** [DOC:EXP_p11_weaksup_localization.md]. Th
 real and large **versus memory** (A-fuse − memory +0.0996, CI [+0.0635, +0.1366]) but not versus a
 trivially-supervised MIL head — which sharpens, rather than removes, its role (§4).
 
+### 3.6 Structural law I — better signal without conversion (four instances; F44 the mechanism)
+
+Beyond the thirteen-route campaign, two further pre-registered sprints (rounds 2 and 3,
+[DOC:TERMINUS_round2_mllm_plus3.md, DOC:TERMINUS_round3_mllm_plus3.md]) hardened §3.1 and §3.3 into a
+single law that now has **four independent instances**: a candidate signal is demonstrably *richer*
+than the pipeline already has, and yet the best in-constraint operator converts **none** of it into
+main-table accuracy. The first three share a sharp form — a **gold/label oracle proves the convertible
+headroom is present**, but no unsupervised, frozen, or even supervised operator inside the constraint
+box recovers it:
+
+- **P3** (evidence-density pooling, §3.3): the no-head probe passes on all three datasets — HateMM the
+  cleanest at +0.0108 — yet training is flat (val −0.0041 / final +0.0004) because the learned
+  alignment-fusion head absorbs the input-space reweight [DOC:EXP_p3_evidence_pooling.md].
+- **S2S** (Qwen frame-group set-matching): a gold membership oracle shows **+0.0917 acc (HateMM) /
+  +0.1399 (MHC)** of headroom, but the realizable MeanMaxSim operator delivers **+0.0035 acc / +0.0003
+  macro-F1 on HateMM and −0.0397 acc on MHC-EN** — inside the permutation null on every sub-condition —
+  so the retrieval-object / "don't-pool" family is dead across both encoders
+  [DOC:S2S_PROBE_VERDICT_REVIEW.md, commit `2c96ab6`].
+- **W2-A** (transcript-grounded vision key): the same-shaped oracle survives at **+0.0635 (HateMM) /
+  +0.0970 (MHC)**, yet the sole binding conditional-info gate finds **Δacc −0.0000 (HateMM, CI
+  [−0.0052, +0.0049]) / −0.0038 (MHC, CI [−0.0099, +0.0019])** over the 8960-dimensional best
+  representation — "a clean CLIP-redundancy null," the reviewer's phrase, because the joint
+  frames+transcript forward already banks the interaction the grounded key claims to add
+  [DOC:W2A_PROBE_VERDICT_REVIEW.md, commit `7228373`].
+
+The **fourth instance is the encoder swap itself**, and it is the one that turns the campaign's central
+positive result from an anomaly into a mechanism. A zero-GPU geometry diagnosis on banked train/dev
+caches shows Qwen's representation upgrade is **real and roughly equal on all three datasets** — top-20
+neighbourhood purity rises **+0.023 / +0.023 / +0.021** and the text-stream AUC rises **+0.041 / +0.054
+/ +0.045** on HateMM / MHC-EN / MHC-ZH — and yet it converts to accuracy on **HateMM only**
+[DOC:ENCODER_SWAP_DIAGNOSIS.md, commit `8a48938`]. The mechanism has two legs, both *dataset*
+properties rather than method-fixable ones:
+
+1. **Modality-locus × equal-weight fusion.** HateMM's hate is visually grounded (image-only train-LOO
+   AUC 0.826), so Qwen's uniformly better text stream rides on a neutral-strong image stream and the
+   fused gain is a clean Pareto move (hate-recall +0.116 at **zero** non-hate cost). On MHC-EN the Qwen
+   **image stream collapses to near-chance (0.734 → 0.599)**, and because the head fuses image and text
+   as equal-weight L2-normed blocks, that collapse **cancels** the +0.054 text gain (net dev −0.012).
+   The collapse persists at 32B (image AUC 0.608), which is exactly why *scale regresses* rather than
+   rescues — the diagnosis retro-predicts B2 (§3.2).
+2. **Representation-limited vs label-limited errors.** HateMM's residual errors are
+   representation-limited, so a better encoder Pareto-fixes them; MHC's are a hard/label-limited core,
+   so the same encoder only **rotates** the ranking (hate-recall +0.040 bought with non-hate −0.036;
+   net +5 videos fixed on HateMM vs −1 on MHC-EN) — an AUC gain that B5 already proved unconvertible to
+   accuracy at any operating point, including the label-oracle cut [DOC:B5_VERDICT_REVIEW.md, commit
+   `50f01b9`].
+
+This account **unifies three prior verdicts** the paper previously left disconnected — SAV (MHC-EN is
+data/label-limited; the dilution hypothesis is falsified), B5 (the ZH/MHC ranking edge is
+easy-example ordering), and B2 (scale regresses on MHC) — and, read alongside P3 / S2S / W2-A, states
+the law in its general form: **a signal being measurably better is necessary but not sufficient for a
+main-table gain; what decides conversion is where the gain lands — which modality, which error type —
+and whether the decision metric can absorb it, not how much better the signal is.** The design-time
+corollary sharpens §3.3's dual-protocol rule into a question to ask of any auxiliary-signal proposal:
+not "is the signal richer?" (it usually is) but "is its advantage in the modality and the error type
+the decision boundary is actually limited by?"
+
+### 3.7 Structural law II — the cumulative-causal three-level closure
+
+The second law is narrower but methodologically transferable, and it explains why every temporal /
+"don't-pool" / per-frame route failed at once. Qwen2.5-VL's language backbone is **fully causal**
+(`is_causal=True`, verified at the transformers-4.49 source level), so a per-frame-group vector g_t is
+a **cumulative causal prefix summary, not a frame-local state**. Round 3 closed this at all three
+operator levels simultaneously — the most complete closure in the campaign:
+
+- **Structural (F35, postmortem commit `4358ca1`).** The groups *are* prefixes: a permutation-based
+  temporal control is unsatisfiable by construction (a diff-colour-same-position stimulus pair scores
+  cos 0.939 against a same-colour-diff-position pair at 0.674 — position dominates content), so
+  frame-local order semantics are simply unavailable in these representations. The gate-0a control was
+  accordingly replaced with a causal-consistent onset-invariance control [DOC:S2S_GATE0A_AMENDMENT_RULING.md,
+  commit `20c0bf2`].
+- **Unsupervised operator (F37).** Set-to-set MeanMaxSim over the groups adds nothing the pooled key
+  does not already carry (§3.6): pooling is effectively lossless on cumulative-causal vectors.
+- **Supervised operator (F39, CTF gate commit `0eb6d33`).** Even a **label-supervised** conditional-info
+  probe over the flat [g_1 … g_T] tensor and the arc increment g_T − g_1 finds **exactly zero** beyond
+  the pooled key (HateMM +0.0000, CI [−0.0031, +0.0031]; MHC −0.0029; arc −0.0049 / −0.0010), with
+  label-oracle calibration accZA = 1.0 crediting the null as genuine rather than machinery-dead
+  [DOC:CTF_GATE_RECORD.md].
+
+The contribution generalises beyond hateful video: **anyone building set-matching or temporal-order
+retrieval over decoder-VLM token summaries is operating on prefix summaries, not frame states, so the
+"extra" temporal structure they hope to exploit is already integrated into each token** — a concrete,
+transferable caution, established structurally and then confirmed at both the unsupervised and the
+supervised operator level. (The same causal cumulation is why W2-A's grounded key was architecturally
+real yet redundant in §3.6: the joint forward integrates the transcript into every vision token.)
+
 ## 4. What survives
 
 Three MLLM roles survive with removable-ablation evidence; none is a main-table-accuracy role.
@@ -179,7 +267,12 @@ Three MLLM roles survive with removable-ablation evidence; none is a main-table-
 **Encoder.** Qwen2.5-VL features beat CLIP \cite{clip} on HateMM by +4.2 macro-F1 and cross the 0.85
 threshold (frozen-Qwen 0.870 / 0.861 vs the CLIP floor) [DOC:PAPER_MASTER_TABLES.md T1.1]. Removing
 the MLLM here means reverting to CLIP and losing the crossing — a genuine cost — but this is the
-frozen-encoder identity, not the new method role the mandate sought.
+frozen-encoder identity, not the new method role the mandate sought. The swap's HateMM-specificity is
+**no longer an unexplained anomaly**: §3.6 shows it converts precisely when hate is visually grounded
+*and* the residual errors are representation-limited, and merely rotates the ranking otherwise. The
+role is therefore earned *and* mechanistically bounded — it will not generalise to MHC, whose visual
+channel is uninformative to the VLM (image AUC collapses 0.734 → 0.599) and whose error core is
+label-limited [DOC:ENCODER_SWAP_DIAGNOSIS.md, commit `8a48938`].
 
 **Localization scorer.** The per-window scorer is a removable component: delete it and localization
 falls to the memory read-out (0.5140) or random (0.5088); keep it and P6/P10-b rank hate windows
@@ -215,9 +308,13 @@ the key that unlocks it [DOC:EXP_p2_neighbor_rerank.md, DOC:EXP_p2b_stronger_jud
 ## 5. Implications
 
 **For practitioners.** Reach for an MLLM where its semantic output *is* the evaluated quantity, and
-be sceptical where it is merely correlated with it. As an encoder it pays off on visually-carried hate
-(the HateMM crossing); as a localization scorer it pays off because per-window saliency is the target
-itself, and there — and only there — **scale converts** (monotone A-fuse 7B → 72B). It does **not**
+be sceptical where it is merely correlated with it. As an encoder it pays off precisely — and only —
+where hate is visually grounded *and* the residual errors are representation-limited (the HateMM
+crossing); the same swap merely rotates the ranking on MHC, whose visual channel is uninformative to
+the VLM and whose error core is label-limited, so no encoder upgrade converts there and scale regresses
+rather than rescues (§3.6) [DOC:ENCODER_SWAP_DIAGNOSIS.md]. As a localization scorer it pays off because
+per-window saliency is the target itself, and there — and only there — **scale converts** (monotone
+A-fuse 7B → 72B). It does **not**
 pay off as a main-table component in a retrieval-memory detector whose decision boundary is already
 directly supervised: comparability, priors, distilled schema fields, sanitized counterfactuals, and a
 late-fusion semantic channel each turn out orthogonal to or redundant with that boundary. The

@@ -201,6 +201,63 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 
 ---
 
+## T5 — 轮次 2–3 预注册负结果扩展(novelty-first;与 T1–T4 严格隔离,纯转录)
+
+> **本节 append 于 2026-07-17,遵循与文首相同的纯转录纪律**(不跑实验、不提交 SLURM、不重算任何数)。
+> T4 的 **13 条 campaign 路线计数保持不变**;本节是其后两轮(round-2 终结 2026-07-14、round-3 终结
+> 2026-07-16/17)在 **D7-收紧 novelty 门**下的预注册负结果**扩展**,不改 T1–T4 任何数、不并入主表。
+> 计数纪律(见文末张力清单 #7):**13 = campaign 路线粒度**(T4);本节 #15–22(round-2)+ round-3 六向是
+> **负结果账**上的续接,两个计数轴**不可混淆**。用户 D7 裁决(encoder-class 杠杆不满足 novelty)见
+> `research-wiki/TERMINUS_round2_mllm_plus3.md` §8。每行数字转录自命名的判决/记录文档,commit 内联。
+
+### T5.1 Round-2 负结果(冲刺 7 条 #15–21 + B4 预-GPU 关闭 #22)
+
+来源:`research-wiki/TERMINUS_round2_mllm_plus3.md` §1/§7。
+
+| # | 路线 | 死因(一行) | 判决 · 记录 |
+|---|---|---|---|
+| 15 | A 线 `lb_scgp_global`(标签盲证书 → 全局 Gram) | G0-cond 探针预-GPU 关闭:缓存 91–93% 单一常数,oracle@覆盖率低于 +0.040 线一个量级,v3 否决(parse-ok 部分即噪声);省 264 GPU-h | A_LINE_PAUSE_DECISION.md |
+| 16 | C1 RA-HMD 两阶段顺序 QLoRA | 锚论文消融把未测格定价仅 +0.7;实测 DEV kNN ≈ −0.02 vs 冻结 floor(job 13039) | C1_KILL_REVIEW.md |
+| 17 | C3-target(真 Qwen-7B target 预测器作条件通道) | oracle 天花板 +0.0487 marginal,真预测器 ≈0(最佳 +0.0094 < +0.040),MHC 反信息;校准机器 | C3_REAL_PREDICTOR_PROBE.md |
+| 18 | C2-SAV 稀疏注意力头挖掘(784 图像流头,冻结 7B) | F-G1 KILL 于修正机器下确认;MHC 格=压塌基线假象,HateMM 伤害真实;**稀释假说证伪**(MHC-EN 数据/标签受限) | SAV_F1_VERDICT_REVIEW.md |
+| 19 | C3-nontarget 密集推理文本通道(最优配置融合) | DEAD_AT_FUSION:三条预声明融合规则在校准+置换-null 仪器上全败;CLIP-only 增益=编码器冗余(信息已在 Qwen 通路) | C3_FUSION_PROBE_RECORD.md |
+| 20 | B1 frozen-Qwen 编码器 × MHC-ZH(3 seed 配对) | 双协议 FAIL(final-epoch 均值 −0.0112 acc,1/3 seed 同号;gates 干净);ZH 0.8537 系 LoRA 杠杆非冻结编码器 | B1_VERDICT_REVIEW.md |
+| 21 | B2 Qwen2.5-VL-32B 冻结编码器(scale 轴) | goal FAIL:HateMM 上 32B 介于 CLIP 与 7B(**scale 退步**),MHC-EN/ZH 低于 CLIP,32B-vs-7B 全败——scale 非转换杠杆 | B2_VERDICT_REVIEW.md |
+| 22 | B4 LoRA-Qwen 编码器 × MHC-EN(3 seed 配对) | 取证侦察预-GPU 关闭:已入账 seed0 负结果(val-sel −0.0310 acc vs CLIP,低于两个冻结 floor;final +0.0062 ≈ 门 1/5);2 分钟正式 3-seed 闭合留作用户论文选项 | B4_FORENSIC_RECON.md |
+
+**B3(唯一 marginal 正例,pending novelty 裁决,不并入主表):** LoRA-Qwen vs frozen-CLIP,MHC-ZH,3-seed
+配对——**final-epoch +0.0313 acc / +0.0453 mF1,3/3 同号 → PASS(MARGINAL)**;**val-selected +0.0246 acc
+FAIL** +0.030 AND 门。绑定语言逐字:`final-epoch: PASS (MARGINAL); val-selected: FAIL`。三条敏感度:门上
+余量仅 +0.0013(≈门 4%);seed2 +0.0201 低于逐种子门;+0.0013 余量 ≈ 种子间散布 0.0201 的 1/15。分解:ZH
+增益全部来自 LoRA 适配而非编码器身份(frozen-Qwen ZH −0.0112)⇒ 无单一 MLLM-encoder 机制跨 ≥2 库过线。
+详见本文件 **PUR-1 / PUR-2 与 PUR-banner**(pending 用户 novelty / family-headline / :58 覆盖裁决)。
+来源:`refine-logs/B3_VERDICT_REVIEW.md`(job 13150)· PUR-1。
+
+### T5.2 Round-3 负结果(novelty-first;每轴以绑定判决或校准-零 $0 gate 关闭)
+
+来源:`refine-logs/TERMINUS_round3_mllm_plus3.md` §0/§1;findings F37/F39/F41/F42/F43。**核心科学产出 = 两条
+结构律**(见 `DRAFT_analysis_chapter.md` §3.6–3.7):law-I「better-signal-without-conversion」四实例
+(P3 / S2S / W2-A / 编码器交换,F44 机制为收束);law-II「累积因果三层闭合」(F35 结构 / F37 无监督 / F39 监督)。
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **S2S** — Qwen 帧组集合匹配(检索对象 / don't-pool) | KILL 双库:HateMM SET−POOLED +0.0035 acc / +0.0003 mF1 六条子条件全败于 +0.05 门,MHC-EN −0.0397;gold oracle 头空间 +0.0917 / +0.1399 而 MeanMaxSim 兑不出;跨双编码器关闭检索对象族 | S2S_PROBE_VERDICT_REVIEW.md · `2c96ab6` |
+| **CTF** — 因果前缀帧组张量的监督时序池化 / arc 增量 | $0 条件信息 gate,四格全 kill,校准有效:[g_1…g_T] over 池化键 +0.0000(HateMM)/ −0.0029(MHC),arc −0.0049 / −0.0010;累积因果闭合的监督腿(§3.7) | CTF_GATE_RECORD.md · `0eb6d33` |
+| **APX** — 整段古典韵律(eGeMAPS 88-d)辅助通道 | $0 gate 双条件全触发,校准有效:最佳臂 −0.0038,最严 raw-88-d 臂 +0.0005 = over Z_best 恰好零条件信息;ASR 转写已银行化口播仇恨内容,古典韵律条件冗余 | APX_GATE_RECORD.md · `9c54faf` |
+| **AVC** — 韵律 × 视觉片段对应 | 未启动:门控于 APX 之后,随之而死;音频轴 parked | (门控于 APX;APX_GATE_RECORD.md) |
+| **W2-A** — 转写优先 grounded 视觉键 | 双库 DEAD 于绑定条件信息 gate K9:Δacc −0.0000(HateMM)/ −0.0038(MHC)over 8960-d Z_best;咨询 kNN grounded 键劣于 concat(−0.0259 / −0.0509);"clean CLIP-redundancy null"(§3.6),第三个 oracle-exists-but-unconvertible | W2A_PROBE_VERDICT_REVIEW.md · `7228373` |
+| **GIR** — 孤立 grounded-incongruity 残差(grd − ungrd) | $0 gate 五格全 kill:r_cache +0.0012(HateMM)/ −0.0051(MHC),r_field +0.0000 / −0.0064;残差为基线的**精确线性子集**(残差范数 0),W2-A K9 零在数学上包含它;池中最后一个候选 | GIR_GATE_RECORD.md · `b64a85b` |
+
+**Round-3 recon/triage 关联关闭(6 项,喂给上表轴闭合):** W2-B(frozen-CLIP 子片段集合匹配,cloud-triage
+判决 (d),`0f43bdd`)、W2-E(原型记忆,预仪式关闭)随 S2S 关闭检索对象 / 记忆重组族;W2-C(时序 order-kernel)在
+S2S 死亡时熄灭(唯一授权载体);C5(7B 关系 CRD)、R3-C3geo(frozen-Qwen 几何硬负挖掘)为 D7 下 encoder-class /
+冻结重组预仪式 no-go;**B5**(逐编码器阈值校准)证明 frozen-Qwen ZH 排序边在任何操作点(含 label-oracle 切点)
+不可兑现(`50f01b9`)——性能/诊断线,回答 B1 之谜并支撑 §3.6 的 rotation-not-Pareto 读法。至 GIR,wave-3 池空、
+冻结约束盒内每个注入点均由绑定判决或校准-零 gate 关闭;余下皆用户裁决,非继续搜索
+(`TERMINUS_round3_mllm_plus3.md` §1/§4)。
+
+---
+
 ## 骨架段 — 一页纸论文章节骨架
 
 每节标注三终局选项 **(a) 接受现状定稿 / (b) 闭源 API 攻定位 / (c) 换方法族** 下需要改什么。

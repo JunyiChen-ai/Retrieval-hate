@@ -155,7 +155,14 @@ head-code change (feature dims are read from cache), which is exactly what makes
 swappable, run-once front-end rather than part of the trainable recipe. This is the MLLM's
 **encoder role** — earned and removable (reverting to CLIP loses the HateMM crossing) — and we label
 it as the encoder identity rather than the accuracy-bearing method role the campaign's mandate
-sought (§4, and the analysis chapter's non-role result) [DOC:PAPER_MASTER_TABLES.md T1.1].
+sought (§4, and the analysis chapter's non-role result) [DOC:PAPER_MASTER_TABLES.md T1.1]. Why the
+swap carries HateMM but not MHClip is now **mechanistically characterised rather than left open**: the
+Qwen representation upgrade is uniform across all three datasets (top-20 neighbourhood purity +0.021–
+0.023, text-stream AUC +0.041–0.054), but it converts to accuracy only where hate is visually grounded
+and the residual errors are representation-limited. On MHC-EN the Qwen image stream collapses to
+near-chance (train-LOO AUC 0.734 → 0.599) and the equal-weight L2-normed concat cancels the text gain
+(net dev −0.012), which is also why 32B scale regresses rather than rescues (image AUC still 0.608)
+[DOC:ENCODER_SWAP_DIAGNOSIS.md, commit `8a48938`; analysis chapter §3.6].
 
 ---
 
@@ -367,8 +374,82 @@ leaderboard (14 comparisons) and the exploratory re-aggregation ceiling
 
 ---
 
-*Consistency note: all numbers above are transcribed from `PAPER_MASTER_TABLES.md` (T1–T3) and its
-source documents; no discrepancy against the master tables was found during drafting. The two known
-tensions carried forward — the ZH/EN "our best" single-config vs multi-seed sourcing in Table 2 (‡),
-and the ZH ≥ 0.85 dual-calibration headline (D2) — are surfaced in-text rather than silently
-resolved, per the master-table tension list #1–2.*
+## 7. Rounds 2–3: the novelty-first extension (constraint-space closure)
+
+The thirteen-route campaign of §4 and T4 answered the original mandate; a user ruling then **tightened
+the goal to require a *novel* MLLM mechanism** (D7: an encoder-class lever, however well it performs,
+does not by itself satisfy novelty) and the search was re-run under that stricter bar across two further
+sprints. These sprints add **pre-registered negatives** to the ledger; they do **not** revise the
+campaign's 13-route accounting (T4), and are reported here as a clearly-labelled extension. The two
+structural laws that crystallised from them are analysed in the analysis chapter §3.6–3.7; this section
+is the results ledger.
+
+**Count discipline.** T4's thirteen routes are unchanged: at route-family granularity, ten main-table
+accuracy rows plus three localization rows (P6 / P10 / P11); the analysis chapter's finer count instead
+splits P9/P9b to report eleven main-table routes — the same thirteen results under two granularities,
+as the master-table tension list #7 documents. Round 2 adds seven sprint negatives (#15–21) plus a
+pre-GPU forensic close (#22, B4) and one *marginal positive* held pending a user novelty ruling (B3);
+round 3 adds six directions, every one closed at a binding verdict or a calibrated-zero conditional-info
+gate, with no surviving candidate left in the box [DOC:TERMINUS_round2_mllm_plus3.md,
+DOC:TERMINUS_round3_mllm_plus3.md]. No number below is new: each is transcribed from its committed
+verdict/record with the commit cited inline.
+
+**Table 4. Round-2 negatives (novelty-first sprint; #15–22).**
+
+| # | Direction | Epitaph (one line) | Verdict · record |
+|---|---|---|---|
+| 15 | A-line `lb_scgp_global` (label-blind certificates → global Gram) | killed pre-GPU by the G0-cond probe: cache 91–93% one literal constant, oracle@coverage an order of magnitude under the +0.040 bar, v3 rejected (parsed certs are noise-quality); 264 GPU-h saved | A_LINE_PAUSE_DECISION.md |
+| 16 | C1 RA-HMD two-stage sequential QLoRA | anchor-paper ablation prices the untested cell at only +0.7; measured DEV kNN ≈ −0.02 vs the frozen floor (job 13039) | C1_KILL_REVIEW.md |
+| 17 | C3-target (real Qwen-7B target predictor as conditional channel) | oracle ceiling +0.0487 marginal, real predictor ≈ 0 (best +0.0094 < +0.040), MHC anti-informative; calibrated machinery | C3_REAL_PREDICTOR_PROBE.md |
+| 18 | C2-SAV sparse attention-head mining (784 image-stream heads, frozen 7B) | F-G1 KILL confirmed under corrected machinery; the MHC cell was a crushed-baseline artefact, the HateMM harm real; **the dilution hypothesis is falsified** (MHC-EN is data/label-limited) | SAV_F1_VERDICT_REVIEW.md |
+| 19 | C3-nontarget dense reasoning-text channel (late fusion on best config) | DEAD_AT_FUSION: all three pre-declared fusion rules fail on a calibrated + permutation-null instrument; the CLIP-only gain is encoder redundancy (info already banked in the Qwen pathway) | C3_FUSION_PROBE_RECORD.md |
+| 20 | B1 frozen-Qwen encoder on MHC-ZH (3-seed paired) | FAIL both protocols (final-epoch mean −0.0112 acc, 1/3 seeds same-sign; gates clean); the ZH 0.8537 is a LoRA lever, not a frozen-encoder one | B1_VERDICT_REVIEW.md |
+| 21 | B2 Qwen2.5-VL-32B frozen encoder (scale axis) | goal FAIL: on HateMM 32B sits *between* CLIP and 7B (**scale regresses**), below CLIP on MHC-EN/ZH, 32B-vs-7B fails everywhere — scale is not the conversion lever | B2_VERDICT_REVIEW.md |
+| 22 | B4 LoRA-Qwen encoder on MHC-EN (3-seed paired) | closed pre-GPU by forensic recon: a banked seed-0 negative (val-sel −0.0310 acc vs CLIP, below both frozen floors; final +0.0062 ≈ 1/5 of bar); optional 2-min formal 3-seed closure left as a user paper option | B4_FORENSIC_RECON.md |
+
+**B3 — the one marginal positive, held pending a novelty ruling.** LoRA-adapting Qwen on MHC-ZH is the
+only rounds-2/3 result that clears the performance clause on any protocol: 3-seed paired vs frozen-CLIP,
+**final-epoch +0.0313 acc / +0.0453 macro-F1, 3/3 same-sign → PASS (MARGINAL)**, while **val-selected
++0.0246 acc FAILS** the +0.030 AND-rule (binding language verbatim: `final-epoch: PASS (MARGINAL);
+val-selected: FAIL`) [DOC:B3_VERDICT_REVIEW.md (job 13150); DOC:PAPER_MASTER_TABLES.md PUR-1]. Three
+mandatory sensitivity facts travel with it: the +0.0313 mean clears the bar by only +0.0013 (≈ 4% of
+the bar); seed-2 alone is +0.0201, below the per-seed bar; and that +0.0013 margin is ≈ 15× smaller
+than the +0.0201 across-seed spread. A same-runner decomposition attributes the entire ZH gain to LoRA
+*adaptation*, not encoder identity (frozen-Qwen is −0.0112 on ZH), so B3 does **not** establish a single
+MLLM-encoder mechanism clearing ≥ 2 datasets — HateMM's positive is the frozen swap, ZH's is LoRA, two
+different levers. Whether B3 counts toward the goal's *novel* clause is an explicit user ruling; it is
+not folded into any main table [DOC:PAPER_MASTER_TABLES.md PUR-banner].
+
+**Table 5. Round-3 negatives (novelty-first; every axis closed at a binding verdict or a $0 gate).**
+
+| Direction | Epitaph (one line) | Verdict · commit |
+|---|---|---|
+| **S2S** — Qwen frame-group set-matching (retrieval-object / don't-pool) | KILL both datasets: HateMM SET−POOLED +0.0035 acc / +0.0003 mF1 fails the +0.05 bar on all six sub-conditions, MHC-EN −0.0397; a gold oracle shows +0.0917 / +0.1399 headroom that MeanMaxSim cannot convert (§3.6); closes the retrieval-object family across both encoders | S2S_PROBE_VERDICT_REVIEW.md · `2c96ab6` |
+| **CTF** — supervised temporal-pool / arc-increment of the causal-prefix frameset | $0 conditional-info gate, kill-side on all four cells with valid calibration: [g_1…g_T] adds +0.0000 (HateMM) / −0.0029 (MHC), arc −0.0049 / −0.0010 over the pooled key; the supervised leg of the cumulative-causal closure (§3.7) | CTF_GATE_RECORD.md · `0eb6d33` |
+| **APX** — whole-video classical prosody (eGeMAPS 88-d) auxiliary channel | $0 gate, both conditions fire, calibration valid: best arm −0.0038, strictest raw-88-d arm +0.0005 = exactly zero conditional info over Z_best; the ASR transcript already banks the spoken-hate content, so classical prosody is conditionally redundant | APX_GATE_RECORD.md · `9c54faf` |
+| **AVC** — prosody × visual-segment correspondence | never started: gated behind APX, dies with it; the audio axis is parked | (gated behind APX; APX_GATE_RECORD.md) |
+| **W2-A** — transcript-first grounded vision key | DEAD both datasets at the binding conditional-info gate K9: Δacc −0.0000 (HateMM) / −0.0038 (MHC) over the 8960-d best rep; the advisory kNN grounded key is *worse* than concat (−0.0259 / −0.0509); "a clean CLIP-redundancy null" (§3.6), the third oracle-exists-but-unconvertible instance | W2A_PROBE_VERDICT_REVIEW.md · `7228373` |
+| **GIR** — isolated grounded-incongruity residual (grd − ungrd) | $0 gate, kill-side on all five cells: r_cache +0.0012 (HateMM) / −0.0051 (MHC), r_field +0.0000 / −0.0064; the residual is an **exact linear subset** of the baseline (verified residual-norm 0), so the W2-A K9 null mathematically subsumes it — the last candidate in the pool | GIR_GATE_RECORD.md · `b64a85b` |
+
+Round 3 also retired six recon-/triage-stage companions that fed the axis closures: **W2-B** (frozen-CLIP
+subclip set-matching, cloud-triage verdict (d), commit `0f43bdd`) and **W2-E** (prototype memory, killed
+pre-ceremony) closed the retrieval-object and memory-reorganisation families alongside S2S; **W2-C**
+(temporal order-kernel) was extinguished when S2S died — its sole authorised vehicle — atop a
+prior-lowering CLIP-K4 pre-check; **C5** (7B relational CRD) and **R3-C3geo** (frozen-Qwen geometry
+hard-negative mining) were pre-ceremony no-gos as encoder-class / frozen-reorganisation levers under
+D7; and **B5** (per-encoder threshold calibration) proved the frozen-Qwen ZH ranking edge unconvertible
+at any operating point, including the label-oracle cut [DOC:B5_VERDICT_REVIEW.md, commit `50f01b9`] — a
+performance/diagnosis line that answers the B1 mystery and underpins §3.6's rotation-not-Pareto reading.
+With GIR the wave-3 pool is empty and every injection point in the frozen constraint box is closed by a
+binding verdict or a calibrated-zero gate; the remaining moves are user rulings, not further search
+[DOC:TERMINUS_round3_mllm_plus3.md §1, §4].
+
+---
+
+*Consistency note: all numbers in §1–§6 are transcribed from `PAPER_MASTER_TABLES.md` (T1–T3) and its
+source documents; §7 is transcribed from the round-2/3 terminus maps and the individual verdict/record
+files cited inline (numeric-provenance discipline). No discrepancy against the master tables was found
+during drafting. The two known tensions carried forward — the ZH/EN "our best" single-config vs
+multi-seed sourcing in Table 2 (‡), and the ZH ≥ 0.85 dual-calibration headline (D2) — are surfaced
+in-text rather than silently resolved, per the master-table tension list #1–2. The rounds-2/3 extension
+adds pre-registered negatives without revising the 13-route campaign count (§7 count-discipline note).*
