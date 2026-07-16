@@ -27,7 +27,11 @@ from pathlib import Path
 
 import modal
 
-APP_NAME = "rgcl-probe"
+# App name defaults to the shared "rgcl-probe"; a caller can set MODAL_PROBE_APP_NAME
+# in the LOCAL shell before `modal run` to give its app a DISTINCT name so a sibling
+# agent's name-based "rgcl-probe" cleanup sweep cannot collect it (F38 incident). Read
+# locally at app-build; unaffected for any caller that does not set it.
+APP_NAME = os.environ.get("MODAL_PROBE_APP_NAME", "rgcl-probe")
 VOLUME_NAME = "rgcl-features"
 # scripts/cloud/modal_probe_runner.py -> repo root is two levels up when this
 # file runs locally (sync + image build use it). Inside a Modal container the
@@ -72,6 +76,14 @@ image = (
 
 app = modal.App(APP_NAME, image=image)
 features = modal.Volume.from_name(VOLUME_NAME, create_if_missing=True)
+
+# Function timeout (seconds). Default 1800 keeps existing probes byte-for-byte
+# unchanged; a caller with a genuinely long CPU stage (e.g. the W2-A K9 permutation
+# null, multi-hour) sets MODAL_PROBE_TIMEOUT in the LOCAL shell before `modal run`
+# so the value is baked into the function spec at decoration time. Read locally at
+# app-build; never affects a caller that does not set it. Modal bills actual runtime,
+# so a larger ceiling never costs a short job.
+_PROBE_TIMEOUT = int(os.environ.get("MODAL_PROBE_TIMEOUT", "1800"))
 
 # ---------------------------------------------------------------------------
 # Fail-loud video/media upload guard (defense-in-depth on top of the allowlist)
@@ -153,7 +165,9 @@ def sync(dataset: str = "HateMM"):
 # ---------------------------------------------------------------------------
 # run_probe: execute an arbitrary repo script against the volume-mounted caches
 # ---------------------------------------------------------------------------
-def _execute(script: str, script_args: str) -> dict:
+def _execute(script: str, script_args: str, chunk_budget: int = 0,
+             requested_timeout=None) -> dict:
+    import time as _time
     env = os.environ.copy()
     # run_rac.py imports are src/-relative (`from model...`, `from data_loader...`)
     env["PYTHONPATH"] = ":".join(["/root/src", "/root", env.get("PYTHONPATH", "")])
@@ -162,30 +176,78 @@ def _execute(script: str, script_args: str) -> dict:
     except Exception as exc:  # noqa: BLE001
         print(f"[run_probe] volume reload skipped: {exc}")
     cmd = [sys.executable, f"/root/{script}"] + shlex.split(script_args)
-    print(f"[run_probe] cwd=/root exec: {' '.join(cmd)}")
-    result = subprocess.run(cmd, cwd="/root", env=env)
-    # Plumbing: persist any /root/data writes (e.g. a probe's --out_md/--out_json landed on the mounted
-    # volume) so they survive the container and can be retrieved with `modal volume get`. Without this the
-    # in-container writes are discarded on exit. Probe logic is untouched.
+    print(f"[run_probe][banner] requested_function_timeout={requested_timeout}s "
+          f"chunk_budget={chunk_budget}s cwd=/root exec: {' '.join(cmd)}", flush=True)
+
+    timed_out = False
+    if chunk_budget and chunk_budget > 0:
+        # Chunked resumable mode (workaround for a hard server-side function-timeout cap that
+        # kills the container before a genuinely multi-hour probe can finish). Run the probe under
+        # a SOFT budget well below the cap; periodically commit the volume so a resumable --ci_ckpt
+        # written by the probe survives; at the budget, terminate the probe cleanly and commit, then
+        # the local client relaunches to RESUME. Touches ONLY launch plumbing, never the probe.
+        commit_every = int(os.environ.get("MODAL_COMMIT_EVERY", "240"))
+        p = subprocess.Popen(cmd, cwd="/root", env=env)
+        start = last = _time.time()
+        while True:
+            try:
+                rc = p.wait(timeout=5)
+                break
+            except subprocess.TimeoutExpired:
+                now = _time.time()
+                if now - last >= commit_every:
+                    try:
+                        features.commit()
+                        last = now
+                        print(f"[run_probe] periodic volume commit at t={int(now - start)}s", flush=True)
+                    except Exception as exc:  # noqa: BLE001
+                        print(f"[run_probe] periodic commit skipped: {exc}", flush=True)
+                if now - start >= chunk_budget:
+                    print(f"[run_probe] SOFT BUDGET {chunk_budget}s reached -> terminating probe "
+                          f"(resumable checkpoint committed to volume; client will relaunch to resume)",
+                          flush=True)
+                    p.terminate()
+                    try:
+                        p.wait(timeout=30)
+                    except subprocess.TimeoutExpired:
+                        p.kill()
+                        p.wait()
+                    rc = p.returncode
+                    timed_out = True
+                    break
+    else:
+        result = subprocess.run(cmd, cwd="/root", env=env)
+        rc = result.returncode
+    # Plumbing: persist any /root/data writes (probe --out_md/--out_json + --ci_ckpt landed on the
+    # mounted volume) so they survive the container and can be retrieved with `modal volume get`.
+    # Without this the in-container writes are discarded on exit. Probe logic is untouched.
     try:
         features.commit()
     except Exception as exc:  # noqa: BLE001
         print(f"[run_probe] volume commit skipped: {exc}")
-    return {"script": script, "returncode": result.returncode}
+    return {"script": script, "returncode": rc, "timed_out": timed_out}
 
 
-@app.function(volumes={"/root/data": features}, timeout=1800)
-def run_probe_cpu(script: str, script_args: str = "") -> dict:
-    return _execute(script, script_args)
+@app.function(volumes={"/root/data": features}, timeout=_PROBE_TIMEOUT)
+def run_probe_cpu(script: str, script_args: str = "", chunk_budget: int = 0,
+                  requested_timeout=None) -> dict:
+    return _execute(script, script_args, chunk_budget, requested_timeout)
 
 
-@app.function(gpu="T4", volumes={"/root/data": features}, timeout=1800)
-def run_probe_gpu(script: str, script_args: str = "") -> dict:
-    return _execute(script, script_args)
+@app.function(gpu="T4", volumes={"/root/data": features}, timeout=_PROBE_TIMEOUT)
+def run_probe_gpu(script: str, script_args: str = "", chunk_budget: int = 0,
+                  requested_timeout=None) -> dict:
+    return _execute(script, script_args, chunk_budget, requested_timeout)
 
 
 @app.local_entrypoint()
-def run(script: str, args: str = "", gpu: bool = False):
+def run(script: str, args: str = "", gpu: bool = False, chunk_budget: int = 0):
+    # Effective function timeout is set at DEPLOY time from the local env (below); print it so a
+    # caller can verify the value actually reached the decorator (Modal may still clamp it to a
+    # lower plan cap server-side — verify against observed container lifetime).
+    print(f"[run] EFFECTIVE requested function timeout = {_PROBE_TIMEOUT}s "
+          f"(MODAL_PROBE_TIMEOUT={os.environ.get('MODAL_PROBE_TIMEOUT')!r}); "
+          f"app={APP_NAME!r}; chunk_budget={chunk_budget}s")
     # Refuse to launch a probe whose args point at a raw media file.
     for tok in shlex.split(args):
         if Path(tok).suffix.lower() in _MEDIA_EXTS:
@@ -194,4 +256,4 @@ def run(script: str, args: str = "", gpu: bool = False):
             )
     fn = run_probe_gpu if gpu else run_probe_cpu
     print(f"[run] dispatching {script} on {'T4' if gpu else 'CPU'} ...")
-    print(fn.remote(script, args))
+    print(fn.remote(script, args, chunk_budget, _PROBE_TIMEOUT))
