@@ -414,11 +414,18 @@ only rounds-2/3 result that clears the performance clause on any protocol: 3-see
 val-selected: FAIL`) [DOC:B3_VERDICT_REVIEW.md (job 13150); DOC:PAPER_MASTER_TABLES.md PUR-1]. Three
 mandatory sensitivity facts travel with it: the +0.0313 mean clears the bar by only +0.0013 (≈ 4% of
 the bar); seed-2 alone is +0.0201, below the per-seed bar; and that +0.0013 margin is ≈ 15× smaller
-than the +0.0201 across-seed spread. A same-runner decomposition attributes the entire ZH gain to LoRA
-*adaptation*, not encoder identity (frozen-Qwen is −0.0112 on ZH), so B3 does **not** establish a single
-MLLM-encoder mechanism clearing ≥ 2 datasets — HateMM's positive is the frozen swap, ZH's is LoRA, two
-different levers. Whether B3 counts toward the goal's *novel* clause is an explicit user ruling; it is
-not folded into any main table [DOC:PAPER_MASTER_TABLES.md PUR-banner].
+than the +0.0201 across-seed spread. A zero-GPU decomposition locates the entire +0.0313: it lives in
+the **text stream** (train-LOO AUC 0.802 → 0.847 → 0.925 for CLIP → frozen-Qwen → LoRA, image stream
+untouched), and on test it converts as a genuine **Pareto** minority-recall gain (hate-recall +0.1111
+at −0.0032 non-hate — the HateMM encoder-swap signature) rather than the frozen-Qwen **rotation**
+(+0.0741 hate bought with −0.0481 non-hate, net −0.0112); the val-selected FAIL is a 78-sample-dev
+selection-noise artefact (LoRA's dev-acc plateaus by ~epoch 19 while test keeps climbing to 29), not
+mechanism fragility [DOC:B3_ZH_LORA_DECOMPOSITION.md, commit `d76e407`]. This answers the *performance*
+half of the novelty question yes-but-thin; the gain is still LoRA *adaptation*, not encoder identity
+(frozen-Qwen is −0.0112 on ZH), and single-dataset, so B3 does **not** establish a single MLLM-encoder
+mechanism clearing ≥ 2 datasets — HateMM's positive is the frozen swap, ZH's is LoRA, two different
+levers. Whether B3 counts toward the goal's *novel* clause is an explicit user ruling; it is not folded
+into any main table [DOC:PAPER_MASTER_TABLES.md PUR-banner].
 
 **Table 5. Round-3 negatives (novelty-first; every axis closed at a binding verdict or a $0 gate).**
 

@@ -209,7 +209,10 @@ DOC:experiments/exp-archive-knn-seeds.md].
 at ≈ 0.78–0.80 and does **not** cross acc ≥ 0.85 under any configuration or protocol; we report it as
 a near-ceiling result (same-arena MoRE only 0.69–0.72; CRAVE's published 79.81 macro-F1 is the highest
 on that split but on the full split, not directly comparable) rather than as an absolute-SOTA claim
-`[TODO-D3]` [DOC:MORNING_REPORT.md §1]. MHClip-ZH crosses 0.85 only under the selection-free
+`[TODO-D3]` [DOC:MORNING_REPORT.md §1]. This ceiling is now mechanistically attributed rather than
+merely observed — a collapsed Qwen image stream under equal-weight fusion plus a label-limited error
+core, so no encoder upgrade converts there (§3.6 of the analysis)
+[DOC:ENCODER_SWAP_DIAGNOSIS.md, commit `8a48938`, DOC:DRAFT_analysis_chapter.md §3.6]. MHClip-ZH crosses 0.85 only under the selection-free
 final-epoch protocol (0.854 vs 0.827 validation-selected); adopting that calibration *because* it
 crosses would be post-hoc rule-shopping, so the ZH headline is left to an explicit protocol decision
 [DOC:DECISION_MEMO_pending.md D2].
