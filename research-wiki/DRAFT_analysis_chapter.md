@@ -23,8 +23,9 @@ the constraint box. Eleven routes give the
 MLLM a distinct non-encoder job aimed at main-table accuracy (label-noise repair, prior
 recalibration, neighbour reranking, evidence-density pooling, schema distillation, counterfactual
 mining, score-level fusion, semantic speech compression, and decision-level LMM fine-tuning); two
-target temporal localization (the P6 scorer and its P10/P11 amplification-and-weak-supervision
-thread). The verdict is uniform and, we will argue, mechanistically legible:
+localization threads (the P6 scorer and its P10/P11 escalation thread) — three routes at per-route
+granularity (P6, P10, P11; cf. master-tables tension #7). The verdict is uniform and, we will argue,
+mechanistically legible:
 **the main-table-accuracy role is refuted across all eleven routes**, while the MLLM earns three
 genuinely removable roles — encoder, localization scorer, and guard-rail/audit — none of which is a
 main-table-accuracy role. This chapter is the analysis: the discipline that makes the negative
@@ -209,17 +210,19 @@ properties rather than method-fixable ones:
 
 1. **Modality-locus × equal-weight fusion.** HateMM's hate is visually grounded (image-only train-LOO
    AUC 0.826), so Qwen's uniformly better text stream rides on a neutral-strong image stream and the
-   fused gain is a clean Pareto move (hate-recall +0.116 at **zero** non-hate cost). On MHC-EN the Qwen
+   fused gain is a clean Pareto move (hate-recall +0.116 (dev) at **zero** non-hate cost). On MHC-EN the Qwen
    **image stream collapses to near-chance (0.734 → 0.599)**, and because the head fuses image and text
    as equal-weight L2-normed blocks, that collapse **cancels** the +0.054 text gain (net dev −0.012).
    The collapse persists at 32B (image AUC 0.608), which is exactly why *scale regresses* rather than
    rescues — the diagnosis retro-predicts B2 (§3.2).
 2. **Representation-limited vs label-limited errors.** HateMM's residual errors are
    representation-limited, so a better encoder Pareto-fixes them; MHC's are a hard/label-limited core,
-   so the same encoder only **rotates** the ranking (hate-recall +0.040 bought with non-hate −0.036;
+   so the same encoder only **rotates** the ranking (hate-recall +0.040 / non-hate −0.036 (dev);
    net +5 videos fixed on HateMM vs −1 on MHC-EN) — an AUC gain that B5 already proved unconvertible to
    accuracy at any operating point, including the label-oracle cut [DOC:B5_VERDICT_REVIEW.md, commit
-   `50f01b9`].
+   `50f01b9`]. The companion figure (fig_pareto_rotation) shows the same phenomenon on the binding test
+   footing (final-epoch, 3-seed: HateMM +0.128 / +0.008; MHC-EN +0.095 / −0.033) — the MHC-EN minority
+   gain is larger on test but remains a rotation.
 
 This account **unifies three prior verdicts** the paper previously left disconnected — SAV (MHC-EN is
 data/label-limited; the dilution hypothesis is falsified), B5 (the ZH/MHC ranking edge is
@@ -264,8 +267,8 @@ real yet redundant in §3.6: the joint forward integrates the transcript into ev
 
 Three MLLM roles survive with removable-ablation evidence; none is a main-table-accuracy role.
 
-**Encoder.** Qwen2.5-VL features beat CLIP \cite{clip} on HateMM by +4.2 macro-F1 and cross the 0.85
-threshold (frozen-Qwen 0.870 / 0.861 vs the CLIP floor) [DOC:PAPER_MASTER_TABLES.md T1.1]. Removing
+**Encoder.** Qwen2.5-VL features beat CLIP \cite{clip} on HateMM by +4.2 accuracy (+4.4 macro-F1) and
+cross the 0.85 threshold (frozen-Qwen 0.870 / 0.861 vs the CLIP floor) [DOC:PAPER_MASTER_TABLES.md T1.1]. Removing
 the MLLM here means reverting to CLIP and losing the crossing — a genuine cost — but this is the
 frozen-encoder identity, not the new method role the mandate sought. The swap's HateMM-specificity is
 **no longer an unexplained anomaly**: §3.6 shows it converts precisely when hate is visually grounded
