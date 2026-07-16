@@ -160,9 +160,12 @@ swap carries HateMM but not MHClip is now **mechanistically characterised rather
 Qwen representation upgrade is uniform across all three datasets (top-20 neighbourhood purity +0.021–
 0.023, text-stream AUC +0.041–0.054), but it converts to accuracy only where hate is visually grounded
 and the residual errors are representation-limited. On MHC-EN the Qwen image stream collapses to
-near-chance (train-LOO AUC 0.734 → 0.599) and the equal-weight L2-normed concat cancels the text gain
-(net dev −0.012), which is also why 32B scale regresses rather than rescues (image AUC still 0.608)
-[DOC:ENCODER_SWAP_DIAGNOSIS.md, commit `8a48938`; analysis chapter §3.6].
+near-chance (train-LOO AUC 0.734 → 0.599) and the deployed align head's element-wise (Hadamard) fusion
+(`fusion_mode='align'`, `src/model/classifier.py:110–122`) corrupts the fused key multiplicatively,
+cancelling the text gain (net dev −0.012); the round-4 FA gate measures this cell and confirms no
+modality reweight converts (analysis §3.6 erratum) — which is also why 32B scale regresses rather than
+rescues (image AUC still 0.608) [DOC:ENCODER_SWAP_DIAGNOSIS.md, commit `8a48938`;
+DOC:FA_GATE_RECORD.md, commit `e0877c9`; analysis chapter §3.6].
 
 ---
 
@@ -378,21 +381,29 @@ leaderboard (14 comparisons) and the exploratory re-aggregation ceiling
 
 The thirteen-route campaign of §4 and T4 answered the original mandate; a user ruling then **tightened
 the goal to require a *novel* MLLM mechanism** (D7: an encoder-class lever, however well it performs,
-does not by itself satisfy novelty) and the search was re-run under that stricter bar across two further
-sprints. These sprints add **pre-registered negatives** to the ledger; they do **not** revise the
-campaign's 13-route accounting (T4), and are reported here as a clearly-labelled extension. The two
-structural laws that crystallised from them are analysed in the analysis chapter §3.6–3.7; this section
+does not by itself satisfy novelty) and the search was re-run under that stricter bar across three
+further sprints. These sprints add **pre-registered negatives** to the ledger; they do **not** revise the
+campaign's 13-route accounting (T4), and are reported here as a clearly-labelled extension. The three
+structural laws that crystallised from them are analysed in the analysis chapter §3.6–3.8; this section
 is the results ledger.
 
 **Count discipline.** T4's thirteen routes are unchanged: at route-family granularity, ten main-table
 accuracy rows plus three localization rows (P6 / P10 / P11); the analysis chapter's finer count instead
 splits P9/P9b to report eleven main-table routes — the same thirteen results under two granularities,
-as the master-table tension list #7 documents. Round 2 adds seven sprint negatives (#15–21) plus a
-pre-GPU forensic close (#22, B4) and one *marginal positive* held pending a user novelty ruling (B3);
-round 3 adds six directions, every one closed at a binding verdict or a calibrated-zero conditional-info
-gate, with no surviving candidate left in the box [DOC:TERMINUS_round2_mllm_plus3.md,
-DOC:TERMINUS_round3_mllm_plus3.md]. No number below is new: each is transcribed from its committed
-verdict/record with the commit cited inline.
+as the master-table tension list #7 documents. **This 13-route campaign count is the load-bearing
+accounting and is untouched by every sprint below.** On the separate novelty-first negative ledger:
+round 2 adds seven sprint negatives (#15–21) plus a pre-GPU forensic close (#22, B4) and one *marginal
+positive* held pending a user novelty ruling (B3); round 3 adds six directions, every one closed at a
+binding verdict or a calibrated-zero conditional-info gate; and round 4 adds two further pre-registered
+negatives — the per-item cross-channel router (F47) and the fusion/composition FA gate (F50) — plus a
+pre-GPU arithmetic kill (MJ, F49) and a wave-5 adaptation-family structural closure (F51). With round 4
+no surviving candidate remains in the frozen constraint box [DOC:TERMINUS_round2_mllm_plus3.md,
+DOC:TERMINUS_round3_mllm_plus3.md, DOC:ROUTER_GATE_RECORD.md, DOC:FA_GATE_RECORD.md]. (A ledger-ordinal
+note: the round-4 records label F47 / F50 the "22nd / 23rd pre-registered negative," an ordinal
+continued from the round-2 *terminus* count that does not line up with this section's sprint numbering,
+where #22 already denotes B4; the paper uses the round-by-round framing above and the master-table
+tension list #9 records the discrepancy rather than minting a contested grand total.) No number below is
+new: each is transcribed from its committed verdict/record with the commit cited inline.
 
 **Table 4. Round-2 negatives (novelty-first sprint; #15–22).**
 
@@ -451,12 +462,33 @@ With GIR the wave-3 pool is empty and every injection point in the frozen constr
 binding verdict or a calibrated-zero gate; the remaining moves are user rulings, not further search
 [DOC:TERMINUS_round3_mllm_plus3.md §1, §4].
 
+**Table 6. Round-4 negatives (novelty-first; wave-4 selection/fusion levers).**
+
+| Direction | Epitaph (one line) | Verdict · commit |
+|---|---|---|
+| **Router** — per-item cross-channel routing (CLIP-arm vs Qwen-arm) over decision-level meta-features | $0 gate, KILL at the deployable read AND the realizable ceiling: oracle headroom is real (**+0.1083 MHC-EN / +0.0498 HateMM**) but the train→dev router yields **+0.0000** on every seed (the CLIP head memorises train — LOO 0.998 vs Qwen 0.800 — degenerating the routing target, "Qwen-correct" 0/109·0/102·0/92), and the dev-CV ceiling is **−0.0458** (CI [−0.0875, 0]) below the perm-null p95 +0.0042; per-item channel-selection now closed at all three supervision sources (analysis §3.8), machinery 12/12 bit-exact, oracle-calib accZA 1.000 | ROUTER_GATE_RECORD.md · `30d0ee1` |
+| **MJ** — MLLM modality-reliability judgment as a *new* router input (the carve-out F47 left ajar) | NO-GO pre-GPU on arithmetic alone: clearing the +0.020 gate needs which-arm-wins accuracy **q ≥ 0.663**, but the modality-locus alignment ceiling is **≤ 0.588** (≈0.50–0.41 as F44/F47 measured), so **even a perfect judge fails** (gain ≈ 0 to −0.046); the judgment is already **banked** (archive `modality_cues`, `d0f9e7b`, full dev coverage), so no generation is owed and the $0 closure probe was **declined** per the ceiling-below-bar precedent | MJ_FORENSIC_RECON.md · `d57d05d` |
+| **FA** — modality-reweighted / cross-encoder fusion: does the F44-cancelled Qwen-text gain convert on MHC-EN? | $0 gate, KILL: within-Qwen reweight is a **pure rotation** at every weight (F44-exact +0.040 hate / −0.036 non-hate at 50/50); cross-encoder `CLIP-imĝ ⊕ Qwen-text̂` lifts the MHC-EN dev AUC to **0.898 — the highest measured in the campaign** — yet unconvertible: the sole point-Pareto config (Δacc +0.050) fails the bootstrap CI ([−0.0625, +0.150]) and the selection-null (p=0.766), and its **label-oracle-threshold** edge is **+0.025 < +0.03** (ported B5 kill-switch fires); calibrated (HateMM positive control +0.0467 passes). Fifth "better-signal / no-conversion" datum; corrects the F44 concat→align(Hadamard) erratum (F44 numbers stand via the sign-faithful proxy) | FA_GATE_RECORD.md · `e0877c9` |
+
+The round-4 recon that framed these gates is itself part of the closure: the **wave-4 candidate
+enumeration** found the frozen pool empty of goal-hitting candidates and surfaced the F44 concat→align
+erratum that made the FA cell measurable (`6032d32`), and the **wave-5 adaptation-family recon**
+established a two-object closure — an adaptation touches either the encoder (generic LoRA, D7-encoder-
+class) or the joint encoder+decision (the retrieval loss into the LoRA, which is exactly the killed
+P9b object), with no third adapted object, so the one fresh member (a retrieval-mined hard-negative SFT
+curriculum) opens no new dataset and is held behind a user D7 sub-ruling (`7166232`)
+[DOC:TERMINUS_round3_mllm_plus3.md]. The **round-4 line-A** measurement — a generic LoRA-HateMM
+3-seed encoder run — is **in flight** (pre-registration frozen for single-submit, `8de0991`); its cell
+is left **pending** here and is an encoder-class lever regardless of outcome (D7), so it does not alter
+the 13-route campaign accounting or the novelty verdict.
+
 ---
 
 *Consistency note: all numbers in §1–§6 are transcribed from `PAPER_MASTER_TABLES.md` (T1–T3) and its
-source documents; §7 is transcribed from the round-2/3 terminus maps and the individual verdict/record
+source documents; §7 is transcribed from the round-2/3/4 terminus maps and the individual verdict/record
 files cited inline (numeric-provenance discipline). No discrepancy against the master tables was found
-during drafting. The two known tensions carried forward — the ZH/EN "our best" single-config vs
-multi-seed sourcing in Table 2 (‡), and the ZH ≥ 0.85 dual-calibration headline (D2) — are surfaced
-in-text rather than silently resolved, per the master-table tension list #1–2. The rounds-2/3 extension
-adds pre-registered negatives without revising the 13-route campaign count (§7 count-discipline note).*
+during drafting. The three known tensions carried forward — the ZH/EN "our best" single-config vs
+multi-seed sourcing in Table 2 (‡), the ZH ≥ 0.85 dual-calibration headline (D2), and the round-4
+ledger-ordinal discrepancy (master-table tension list #9) — are surfaced in-text rather than silently
+resolved, per the master-table tension list #1–2, #9. The rounds-2/3/4 extension adds pre-registered
+negatives without revising the 13-route campaign count (§7 count-discipline note).*

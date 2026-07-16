@@ -204,11 +204,14 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 ## T5 — 轮次 2–3 预注册负结果扩展(novelty-first;与 T1–T4 严格隔离,纯转录)
 
 > **本节 append 于 2026-07-17,遵循与文首相同的纯转录纪律**(不跑实验、不提交 SLURM、不重算任何数)。
-> T4 的 **13 条 campaign 路线计数保持不变**;本节是其后两轮(round-2 终结 2026-07-14、round-3 终结
-> 2026-07-16/17)在 **D7-收紧 novelty 门**下的预注册负结果**扩展**,不改 T1–T4 任何数、不并入主表。
-> 计数纪律(见文末张力清单 #7):**13 = campaign 路线粒度**(T4);本节 #15–22(round-2)+ round-3 六向是
-> **负结果账**上的续接,两个计数轴**不可混淆**。用户 D7 裁决(encoder-class 杠杆不满足 novelty)见
-> `research-wiki/TERMINUS_round2_mllm_plus3.md` §8。每行数字转录自命名的判决/记录文档,commit 内联。
+> T4 的 **13 条 campaign 路线计数保持不变**;本节是其后三轮(round-2 终结 2026-07-14、round-3 终结
+> 2026-07-16/17、round-4 2026-07-17)在 **D7-收紧 novelty 门**下的预注册负结果**扩展**,不改 T1–T4 任何数、
+> 不并入主表。计数纪律(见文末张力清单 #7):**13 = campaign 路线粒度**(T4);本节 #15–22(round-2)+
+> round-3 六向 + round-4(T5.3)是 **负结果账**上的续接,两个计数轴**不可混淆**。**round-4 的 ordinal 张力
+> 见文末张力清单 #9**(findings.jsonl 把 F47/F50 记为「22nd/23rd pre-registered negative」,该 ordinal 从
+> round-2 *终结* 计数续接、与本节 #22=B4 的冲刺编号不对齐——本汇编不据此铸造有争议的总数,只逐轮记账)。用户 D7
+> 裁决(encoder-class 杠杆不满足 novelty)见 `research-wiki/TERMINUS_round2_mllm_plus3.md` §8。每行数字转录自
+> 命名的判决/记录文档,commit 内联。
 
 ### T5.1 Round-2 负结果(冲刺 7 条 #15–21 + B4 预-GPU 关闭 #22)
 
@@ -255,6 +258,27 @@ S2S 死亡时熄灭(唯一授权载体);C5(7B 关系 CRD)、R3-C3geo(frozen-Qwen
 不可兑现(`50f01b9`)——性能/诊断线,回答 B1 之谜并支撑 §3.6 的 rotation-not-Pareto 读法。至 GIR,wave-3 池空、
 冻结约束盒内每个注入点均由绑定判决或校准-零 gate 关闭;余下皆用户裁决,非继续搜索
 (`TERMINUS_round3_mllm_plus3.md` §1/§4)。
+
+### T5.3 Round-4 负结果(novelty-first;wave-4 选择/融合杠杆;$0 gate)
+
+来源:`refine-logs/ROUTER_GATE_RECORD.md`(F47)· `refine-logs/MJ_FORENSIC_RECON.md`(F49)·
+`refine-logs/FA_GATE_RECORD.md`(F50)· `refine-logs/WAVE4_CANDIDATES.md`(F48 correction, `6032d32`)·
+`refine-logs/WAVE5_CANDIDATES.md`(F51, `7166232`)。**核心科学产出 = law-I 增至第五实例(FA AUC 0.898 =
+全 campaign 最尖锐的 better-signal-no-conversion)+ 新增 law-III「per-item selection 三监督源全闭」**
+(见 `DRAFT_analysis_chapter.md` §3.6 / §3.8)。
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **Router** — 逐项跨通道路由(CLIP 臂 vs Qwen 臂),决策级 meta-feature | $0 gate,可部署读与可实现天花板双 KILL:oracle 头空间真实(**+0.1083 MHC-EN / +0.0498 HateMM**),但 train→dev router 每 seed **+0.0000**(CLIP 头记忆化 train,LOO 0.998 vs Qwen 0.800 ⇒ 路由目标退化,「Qwen-correct」0/109·0/102·0/92 = dev 基率 0.55–0.65 的逆);dev-CV 天花板 **−0.0458** CI[−0.0875,0] 低于 perm-null p95 +0.0042(p=0.97);per-item 通道选择于**三监督源全闭**(§3.8);机器 12/12 逐位一致,oracle-calib accZA 1.000 | ROUTER_GATE_RECORD.md · `30d0ee1` |
+| **MJ** — MLLM 模态可靠性判断作**新** router 输入(F47 明留的 carve-out) | 纯算术 pre-GPU NO-GO:清 +0.020 门需 which-arm-wins 精度 **q ≥ 0.663**,而模态-locus 对齐天花板 **≤ 0.588**(F44/F47 实测 ≈0.50–0.41)⇒ **完美判据也失败**(增益 ≈ 0 到 −0.046);判断已 **banked**(archive `modality_cues`,`d0f9e7b`,dev 全覆盖)⇒ 无需生成;$0 closure probe 依「ceiling-below-bar = kill 已完成」先例(A-line/G0-cond)**declined** | MJ_FORENSIC_RECON.md · `d57d05d` |
+| **FA** — 模态重加权 / 跨编码器融合:F44 被抵消的 Qwen-text 增益在 MHC-EN 可兑现否? | $0 gate,KILL:within-Qwen 重加权在每个权重都是**纯 rotation**(w=0.5 时 F44-exact +0.040 hate / −0.036 non-hate);跨编码器 `CLIP-imĝ ⊕ Qwen-text̂` 把 MHC-EN dev AUC 抬到 **0.898 = 全 campaign 最高**却不可兑现:唯一点-Pareto 配置(Δacc +0.050)败于 bootstrap CI([−0.0625,+0.150])与 selection-null(p=0.766),label-oracle 阈值边仅 **+0.025 < +0.03**(移植 B5 kill-switch 触发);校准有效(HateMM 正对照 +0.0467 过)。**第五个 better-signal/no-conversion 实例**;修正 F44 concat→align(Hadamard)勘误(F44 数字经 sign-faithful 代理仍立) | FA_GATE_RECORD.md · `e0877c9` |
+
+**Round-4 recon 关联关闭 + line-A 在飞:** **wave-4 候选枚举**(`6032d32`)判定冻结池空于 goal-hitting 候选,
+并提出使 FA 格可测的 F44 concat→align 勘误;**wave-5 适配族 recon**(`7166232`)确立两-adapted-object 闭合——
+适配只能触及**编码器**(通用 LoRA,D7-encoder-class)或**联合 encoder+decision**(检索损失进 LoRA = 已杀的 P9b
+对象),无第三 adapted object,故唯一新成员(检索挖掘 hard-negative SFT curriculum)不开新数据集、门控于用户 D7
+子裁决。**round-4 line-A**(通用 LoRA-HateMM 3-seed 编码器跑)**在飞**(单提交 prereg 冻结 `8de0991`),其格
+**pending**;无论结果均为 encoder-class 杠杆(D7),不改 13 路线 campaign 账目或 novelty 结论。
 
 ---
 
@@ -344,6 +368,17 @@ S2S 死亡时熄灭(唯一授权载体);C5(7B 关系 CRD)、R3-C3geo(frozen-Qwen
    **修正:上述我方 4 处文档已全部改为 0.8279/0.8172 并更正出处(见本次勘误 commit);TARGET_STATE.json 属用户 loop
    状态,未改,需用户自行同步 L62-63 及其 hard_target/audit_note。** 附:frozen-Qwen 0.870/0.861 经同轮交叉核对
    (`1029175` ep28 val-selected test 0.8698/0.8606 ≈ 0.870/0.861)确认无误,保留不动。
+9. **【张力,非硬矛盾;round-4 集成时发现】负结果 ordinal 两套计数不对齐,不铸造总数。** 两个 committed loop-state
+   文件对「第 N 个 pre-registered negative」用**不同**计数轴:(i)`state/directions_tried.json` 的 epitaph ordinal
+   把 round-2 冲刺记为 15th–22nd,**终于 B4=22nd**(A-line 15 / C1 16 / C3-target 17 / SAV 18 / C3-nontarget 19 /
+   B1 20 / B2 21 / B4 22),round-3/4 条目**无 ordinal**;(ii)`state/findings.jsonl` 把 round-4 的 **F47(router)记为
+   「22nd」、F50(FA)记为「23rd」pre-registered negative**——该 ordinal 从 round-2 *终结* 计数(memory「21 pre-reg
+   negatives」,B2=21st)+1/+2 续接,**未计 B4、亦未计 round-3 五个实测负结果(S2S/CTF/APX/W2-A/GIR)**,故与 (i) 在
+   「22nd」处**冲突且低计**。`directions_tried.dead` 数组实有 **34 条**(含 campaign P-路线 + TARC + auto-repair +
+   round-2/3/4 + recon/triage companion),wave-5 provenance 的「23 dead」是**近似口径**、非数组长度。**处置(本汇编):**
+   载重计数轴仍是 **T4 = 13 campaign 路线(不变)**;round-2/3/4 走**逐轮记账**(T5.1 #15–22 / T5.2 六向 / T5.3
+   router+MJ+FA),**不把 findings 的 22nd/23rd ordinal 传入论文**(会与 B4=#22 冲突并低计 round-3),亦**不铸造有争议的
+   累计总数**。论文 §7 与本节均采逐轮框架;此 ordinal 差异记录于此,不静默修改任一 loop-state 文件。
 
 ---
 

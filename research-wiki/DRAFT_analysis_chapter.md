@@ -17,8 +17,8 @@ The question this chapter answers is stronger and was fixed as a user mandate be
 role** — a component whose deletion measurably costs main-table accuracy? We treat a role as earned
 only if removing the MLLM costs more than the noise floor of our ~150-video test sets (1 accuracy
 point ≈ 1.6 videos; MHClip-EN n=161, MHClip-ZH n=149, HateMM clean n=215). To answer it we ran a
-**thirteen-route pre-registered campaign** [DOC:CAMPAIGN_mllm_method_role.md], later extended by two
-further pre-registered sprints (rounds 2–3, §3.6–3.7) that closed every remaining injection point in
+**thirteen-route pre-registered campaign** [DOC:CAMPAIGN_mllm_method_role.md], later extended by three
+further pre-registered sprints (rounds 2–4, §3.6–3.8) that closed every remaining injection point in
 the constraint box. Eleven routes give the
 MLLM a distinct non-encoder job aimed at main-table accuracy (label-noise repair, prior
 recalibration, neighbour reranking, evidence-density pooling, schema distillation, counterfactual
@@ -29,8 +29,8 @@ mechanistically legible:
 **the main-table-accuracy role is refuted across all eleven routes**, while the MLLM earns three
 genuinely removable roles — encoder, localization scorer, and guard-rail/audit — none of which is a
 main-table-accuracy role. This chapter is the analysis: the discipline that makes the negative
-result trustworthy (§2), the five mechanisms that explain it and the two structural laws that rounds
-2–3 crystallised them into (§3), what survives with ablation evidence (§4), and the implications (§5).
+result trustworthy (§2), the five mechanisms that explain it and the three structural laws that rounds
+2–4 crystallised them into (§3), what survives with ablation evidence (§4), and the implications (§5).
 
 ## 2. Methodology: how a negative result earns trust
 
@@ -175,13 +175,14 @@ what the MLLM weak label would teach** [DOC:EXP_p11_weaksup_localization.md]. Th
 real and large **versus memory** (A-fuse − memory +0.0996, CI [+0.0635, +0.1366]) but not versus a
 trivially-supervised MIL head — which sharpens, rather than removes, its role (§4).
 
-### 3.6 Structural law I — better signal without conversion (four instances; F44 the mechanism)
+### 3.6 Structural law I — better signal without conversion (five instances; F44 the mechanism)
 
-Beyond the thirteen-route campaign, two further pre-registered sprints (rounds 2 and 3,
-[DOC:TERMINUS_round2_mllm_plus3.md, DOC:TERMINUS_round3_mllm_plus3.md]) hardened §3.1 and §3.3 into a
-single law that now has **four independent instances**: a candidate signal is demonstrably *richer*
+Beyond the thirteen-route campaign, three further pre-registered sprints (rounds 2–4,
+[DOC:TERMINUS_round2_mllm_plus3.md, DOC:TERMINUS_round3_mllm_plus3.md, DOC:ROUTER_GATE_RECORD.md,
+DOC:FA_GATE_RECORD.md]) hardened §3.1 and §3.3 into a
+single law that now has **five independent instances**: a candidate signal is demonstrably *richer*
 than the pipeline already has, and yet the best in-constraint operator converts **none** of it into
-main-table accuracy. The first three share a sharp form — a **gold/label oracle proves the convertible
+main-table accuracy. Each shares a sharp form — a **gold/label oracle proves the convertible
 headroom is present**, but no unsupervised, frozen, or even supervised operator inside the constraint
 box recovers it:
 
@@ -199,21 +200,46 @@ box recovers it:
   representation — "a clean CLIP-redundancy null," the reviewer's phrase, because the joint
   frames+transcript forward already banks the interaction the grounded key claims to add
   [DOC:W2A_PROBE_VERDICT_REVIEW.md, commit `7228373`].
+- **Router** (per-item cross-channel selection, round 4): a *perfect* per-item router that sends every
+  channel-disagreement video to the arm that is actually correct would gain **+0.1083 (MHC-EN) /
+  +0.0498 (HateMM)**, yet the realizable router converts **+0.0000** at the deployable read and
+  **−0.0458** at the maximally-favorable dev-CV ceiling (below the permutation null p95 of +0.0042) —
+  the decision-level meta-features carry no per-item routing signal (developed as its own closure in
+  §3.8) [DOC:ROUTER_GATE_RECORD.md, commit `30d0ee1`].
+- **FA** (modality-fusion / cross-encoder composition, round 4) — **the sharpest statement of the
+  law.** A cross-encoder key that composes CLIP's image stream with Qwen's better text stream
+  (`CLIP-imĝ ⊕ Qwen-text̂`) lifts the MHC-EN dev AUC to **0.898 — the highest value measured anywhere
+  in the campaign** — i.e. it improves the *exact quantity* (ranking / AUC) that B5 proved
+  unconvertible. And it still buys **no accuracy**: the only grid point that even *looks* Pareto
+  (Δacc +0.050) fails the bootstrap CI ([−0.0625, +0.150]), fails the selection-null (p = 0.766, below
+  the noise median), and its **label-oracle-threshold** edge is only **+0.025 < +0.03** (the ported B5
+  kill-switch fires), while the identical test passes on HateMM's genuine win (+0.0467). A within-Qwen
+  reweight is a pure **rotation** at every mixing weight (F44-exact +0.040 hate / −0.036 non-hate at
+  50/50). The best possible ranking, and zero accuracy — better-signal-without-conversion made
+  literal [DOC:FA_GATE_RECORD.md, commit `e0877c9`].
 
-The **fourth instance is the encoder swap itself**, and it is the one that turns the campaign's central
-positive result from an anomaly into a mechanism. A zero-GPU geometry diagnosis on banked train/dev
-caches shows Qwen's representation upgrade is **real and roughly equal on all three datasets** — top-20
-neighbourhood purity rises **+0.023 / +0.023 / +0.021** and the text-stream AUC rises **+0.041 / +0.054
-/ +0.045** on HateMM / MHC-EN / MHC-ZH — and yet it converts to accuracy on **HateMM only**
-[DOC:ENCODER_SWAP_DIAGNOSIS.md, commit `8a48938`]. The mechanism has two legs, both *dataset*
-properties rather than method-fixable ones:
+These five instances are unified by a single **mechanism**, surfaced by the encoder swap itself — the
+result that turns the campaign's central positive from an anomaly into a law. A zero-GPU geometry
+diagnosis on banked train/dev caches shows Qwen's representation upgrade is **real and roughly equal on
+all three datasets** — top-20 neighbourhood purity rises **+0.023 / +0.023 / +0.021** and the
+text-stream AUC rises **+0.041 / +0.054 / +0.045** on HateMM / MHC-EN / MHC-ZH — and yet it converts to
+accuracy on **HateMM only** [DOC:ENCODER_SWAP_DIAGNOSIS.md, commit `8a48938`]. The mechanism has two
+legs, both *dataset* properties rather than method-fixable ones:
 
-1. **Modality-locus × equal-weight fusion.** HateMM's hate is visually grounded (image-only train-LOO
+1. **Modality-locus × multiplicative fusion.** HateMM's hate is visually grounded (image-only train-LOO
    AUC 0.826), so Qwen's uniformly better text stream rides on a neutral-strong image stream and the
    fused gain is a clean Pareto move (hate-recall +0.116 (dev) at **zero** non-hate cost). On MHC-EN the Qwen
-   **image stream collapses to near-chance (0.734 → 0.599)**, and because the head fuses image and text
-   as equal-weight L2-normed blocks, that collapse **cancels** the +0.054 text gain (net dev −0.012).
-   The collapse persists at 32B (image AUC 0.608), which is exactly why *scale regresses* rather than
+   **image stream collapses to near-chance (0.734 → 0.599)**, and because the deployed head fuses the two
+   L2-normed projections by an **element-wise (Hadamard) product** (`fusion_mode='align'`,
+   `src/model/classifier.py:110–122`), that collapse **corrupts the fused key multiplicatively** and
+   cancels the +0.054 text gain (net dev −0.012). *(Erratum, F48/F50, commits `6032d32` / `e0877c9`:
+   F44's earlier prose described this fusion as an equal-weight L2-normed **concat**. The diagnosis
+   **numbers stand** — F44's concat-kNN read-out is a sign-faithful proxy, and the FA gate reproduces
+   the deployed dev sign to −0.0125 vs F44's −0.012 — but the deployed fusion is **align/Hadamard**, so
+   the corruption is **multiplicative, not a cancelling 50/50 block**, and the head has* less *attenuation
+   capacity than a concat, because a linear projection cannot zero a modality inside a Hadamard product;
+   FA then measures the cell F44 had only asserted and confirms no reweight converts.)* The collapse
+   persists at 32B (image AUC 0.608), which is exactly why *scale regresses* rather than
    rescues — the diagnosis retro-predicts B2 (§3.2).
 2. **Representation-limited vs label-limited errors.** HateMM's residual errors are
    representation-limited, so a better encoder Pareto-fixes them; MHC's are a hard/label-limited core,
@@ -226,13 +252,15 @@ properties rather than method-fixable ones:
 
 This account **unifies three prior verdicts** the paper previously left disconnected — SAV (MHC-EN is
 data/label-limited; the dilution hypothesis is falsified), B5 (the ZH/MHC ranking edge is
-easy-example ordering), and B2 (scale regresses on MHC) — and, read alongside P3 / S2S / W2-A, states
-the law in its general form: **a signal being measurably better is necessary but not sufficient for a
-main-table gain; what decides conversion is where the gain lands — which modality, which error type —
-and whether the decision metric can absorb it, not how much better the signal is.** The design-time
-corollary sharpens §3.3's dual-protocol rule into a question to ask of any auxiliary-signal proposal:
-not "is the signal richer?" (it usually is) but "is its advantage in the modality and the error type
-the decision boundary is actually limited by?"
+easy-example ordering), and B2 (scale regresses on MHC) — and, read alongside P3 / S2S / W2-A / router /
+FA, states the law in its general form: **a signal being measurably better is necessary but not
+sufficient for a main-table gain; what decides conversion is where the gain lands — which modality,
+which error type — and whether the decision metric can absorb it, not how much better the signal is.**
+FA is the clean edge case: it drives the ranking to its campaign maximum and converts nothing, because
+the MHC-EN core is label-limited and the AUC it improves is exactly the quantity the accuracy metric
+cannot absorb. The design-time corollary sharpens §3.3's dual-protocol rule into a question to ask of
+any auxiliary-signal proposal: not "is the signal richer?" (it usually is) but "is its advantage in the
+modality and the error type the decision boundary is actually limited by?"
 
 ### 3.7 Structural law II — the cumulative-causal three-level closure
 
@@ -262,6 +290,53 @@ retrieval over decoder-VLM token summaries is operating on prefix summaries, not
 transferable caution, established structurally and then confirmed at both the unsupervised and the
 supervised operator level. (The same causal cumulation is why W2-A's grounded key was architecturally
 real yet redundant in §3.6: the joint forward integrates the transcript into every vision token.)
+
+### 3.8 Structural law III — per-item selection is closed at all three supervision sources
+
+Rounds 2–3 closed *global* levers (a single operating point, a fixed fusion, a pooled key). Round 4
+asked the last structurally-distinct question. The encoder swap only **rotates** the MHC-EN ranking
+(§3.6), and that rotation has real per-item content — Qwen fixes some videos while breaking others. So
+can a **per-item** selector route each video to whichever channel — the CLIP-encoder arm or the
+Qwen-encoder arm — is right for *it*, converting the rotation into a Pareto gain? The answer is a clean
+**no**, and it is a no at *all three* places supervision could come from — the most complete closure of
+a selection family in the campaign [DOC:ROUTER_GATE_RECORD.md, commit `30d0ee1`].
+
+The oracle headroom is real and large (the §3.6 instance): a perfect per-item router — send every
+channel-disagreement video to the arm that is actually correct — would gain **+0.1083 on MHC-EN /
++0.0498 on HateMM**. Yet no realizable router recovers any of it, and the three failures are
+mechanistically distinct:
+
+- **Unsupervised / feature-conditional.** The conditional-information probes already zeroed the
+  frozen feature space (K9: W2-A, CTF, GIR, §3.7) — there is no linear signal in `Z_best` to select on.
+- **Train-supervised.** Fitting the selector on the training disagreement subset **degenerates**,
+  because the retrieval head **memorises its own training bank**: CLIP leave-one-out train accuracy is
+  **0.998** (vs Qwen 0.800), so on the *train* disagreement subset "Qwen is the correct arm" holds for
+  **0 / 109, 0 / 102, 0 / 92** items across seeds — the exact inverse of the *dev* base rate
+  (0.55–0.65). A train-fit selector therefore has **no dev-transferable supervision** and collapses to
+  always-pick-the-majority-channel (routed − best-single = **+0.0000** on every seed, both datasets).
+  This is a new obstacle specific to the frozen-artifact setting: the memorised bank makes the routing
+  *target* non-transferable before per-item predictability is even in question.
+- **Dev-supervised.** Even fitting the router *within* dev by cross-validation — an optimistic
+  realizable ceiling that peeks dev labels — is **negative**: MHC-EN gradient-boosted −0.0458
+  (CI [−0.0875, 0]), linear −0.0333, both below the permutation-null p95 of +0.0042 (observed p = 0.97).
+  The decision-level meta-features (vote margins, neighbour purity, per-modality sub-votes, confidence
+  differential, transcript indicators) carry **no per-item routing signal**, with or without
+  nonlinearity, with or without in-distribution supervision.
+
+A companion arithmetic recon fixes the **quantitative bar** any future router input must clear before it
+earns a gate [DOC:MJ_FORENSIC_RECON.md, commit `d57d05d`]. On the 80-item MHC-EN dev split (disagreement
+sizes 20 / 23 / 20, always-Qwen prior 0.588), clearing the +0.020 gate requires the selector to pick the
+winning arm on a fraction **q ≥ 0.663** of disagreement items. But the *alignment ceiling* — how well the
+true modality locus predicts which arm wins — is at most **0.588** (the global prior itself), and F44's
+"no coherent subgroup" / F47's realizable read place it nearer **0.50–0.41**; a **perfect** modality
+judge (which the archive already banks as a per-video `modality_cues` field, so no MLLM generation is
+even owed) therefore yields a gain of ≈ 0 to −0.046 and **cannot** reach +0.020. This is the same
+comparability ⊥ vote-correctness orthogonality that killed P2 (§3.1), now hardened into a
+pre-measurement bar: **a per-item selector is admissible only if its input can be shown, from banked
+evidence, to align with which-arm-wins above q = 0.663** — a threshold no signal in the constraint box
+meets. The transferable caution generalises §3.1 to the selection setting: *richer per-item
+side-information does not imply per-item routability; the binding quantity is the alignment between the
+side-signal and the decision the router must make, and that alignment is measurable in advance.*
 
 ## 4. What survives
 
