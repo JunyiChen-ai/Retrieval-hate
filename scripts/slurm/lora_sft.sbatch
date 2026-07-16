@@ -8,7 +8,7 @@
 # NOTE: intentionally NO --time limit (jobs may run unbounded).
 #
 # Usage: sbatch scripts/slurm/lora_sft.sbatch [DATASET]
-#   DATASET in {MHC, MHC_zh}; defaults to MHC.
+#   DATASET in {MHC, MHC_zh, HateMM}; defaults to MHC.
 #   1) builds LLaMA-Factory multi-image ShareGPT data (8-frame JPGs + train/val.json)
 #      via src/utils/build_lora_sft_data.py (idempotent; CPU pre-step)
 #   2) LoRA-SFT of Qwen2.5-VL-7B-Instruct via LLaMA-Factory (python src/train.py).
@@ -28,8 +28,12 @@ case "${DATASET}" in
     CONFIG=${LF_ROOT}/my_configs/hatevideo/mhc_zh_qwen25vl_lora_sft.yaml
     OUTDIR=${RGCL_ROOT}/logging/lora/MHC_zh
     ;;
+  HateMM)
+    CONFIG=${LF_ROOT}/my_configs/hatevideo/hatemm_qwen25vl_lora_sft.yaml
+    OUTDIR=${RGCL_ROOT}/logging/lora/HateMM
+    ;;
   *)
-    echo "[lora_sft] unknown DATASET='${DATASET}' (expected MHC or MHC_zh)"; exit 2 ;;
+    echo "[lora_sft] unknown DATASET='${DATASET}' (expected MHC, MHC_zh or HateMM)"; exit 2 ;;
 esac
 echo "[lora_sft] DATASET=${DATASET} CONFIG=${CONFIG} OUTDIR=${OUTDIR}"
 
