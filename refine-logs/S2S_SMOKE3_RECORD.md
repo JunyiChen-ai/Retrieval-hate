@@ -134,9 +134,10 @@ Frozen-spec configuration submitted (single sbatch, both datasets sequential, `S
 `out_root=data/CLIP_Embedding`, `NUM_FRAMES=8`). Hashes re-verified == frozen r4 immediately before
 submit.
 
-- **Submitted job id: `<PENDING-SUBMIT>`** — `sbatch scripts/slurm/s2s_extract.sbatch` (no `--time`;
-  `SMOKE` default 0, `NUM_FRAMES` default 8). Expected initial state `PENDING (JobHeldUser)` → wait for
-  auto-release, never force. (Filled in by the amend commit after submission.)
+- **Submitted job id: 13189** — `sbatch scripts/slurm/s2s_extract.sbatch` (no `--time`; `SMOKE` default 0,
+  `NUM_FRAMES` default 8). Hashes re-verified `HASH-VERIFY: PASS (both == frozen r4)` immediately before
+  the `sbatch`. Job auto-released and is **RUNNING** (no manual intervention). Writes to the real cache
+  `data/CLIP_Embedding/{HateMM,MHC}/frameset_qwen7b_8f/` per split.
 
 ### 16-frame sensitivity arm — DELIBERATELY NOT SUBMITTED (reported ambiguity)
 
