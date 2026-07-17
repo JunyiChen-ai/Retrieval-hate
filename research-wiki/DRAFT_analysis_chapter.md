@@ -18,7 +18,7 @@ role** — a component whose deletion measurably costs main-table accuracy? We t
 only if removing the MLLM costs more than the noise floor of our ~150-video test sets (1 accuracy
 point ≈ 1.6 videos; MHClip-EN n=161, MHClip-ZH n=149, HateMM clean n=215). To answer it we ran a
 **thirteen-route pre-registered campaign** [DOC:CAMPAIGN_mllm_method_role.md], later extended by three
-further pre-registered sprints (rounds 2–4, §3.6–3.8) that closed every remaining injection point in
+further pre-registered sprints (rounds 2–4, §3.6–3.9) that closed every remaining injection point in
 the constraint box. Eleven routes give the
 MLLM a distinct non-encoder job aimed at main-table accuracy (label-noise repair, prior
 recalibration, neighbour reranking, evidence-density pooling, schema distillation, counterfactual
@@ -29,7 +29,7 @@ mechanistically legible:
 **the main-table-accuracy role is refuted across all eleven routes**, while the MLLM earns three
 genuinely removable roles — encoder, localization scorer, and guard-rail/audit — none of which is a
 main-table-accuracy role. This chapter is the analysis: the discipline that makes the negative
-result trustworthy (§2), the five mechanisms that explain it and the three structural laws that rounds
+result trustworthy (§2), the five mechanisms that explain it and the four structural laws that rounds
 2–4 crystallised them into (§3), what survives with ablation evidence (§4), and the implications (§5).
 
 ## 2. Methodology: how a negative result earns trust
@@ -69,7 +69,7 @@ bit-for-bit sanity check, or probe, so a null is attributable to mechanism rathe
 artefact. When a *confounded* literal gate passed but the *matched* gate did not, we killed the
 route (P11, §3.5) — the conservative direction.
 
-## 3. Five mechanisms — and two structural laws (rounds 2–3)
+## 3. Five mechanisms — and four structural laws (rounds 2–4)
 
 ### 3.1 Semantic competence is orthogonal to the decision variable
 
@@ -337,6 +337,54 @@ evidence, to align with which-arm-wins above q = 0.663** — a threshold no sign
 meets. The transferable caution generalises §3.1 to the selection setting: *richer per-item
 side-information does not imply per-item routability; the binding quantity is the alignment between the
 side-signal and the decision the router must make, and that alignment is measurable in advance.*
+
+### 3.9 Structural law IV — the convertibility line runs through adaptation, not encoder identity
+
+The first three laws concern *frozen* representations: a signal is richer but does not convert (§3.6), a
+pooled causal key already carries the temporal structure (§3.7), a per-item selector has no signal to
+route on (§3.8). The fourth law is the positive counterpart, and it is the one place a signal reliably
+*does* convert. It concerns what changes when the encoder is **adapted** rather than swapped. Across the
+three classification datasets the encoder *identity* swap (frozen CLIP → frozen Qwen) converts to
+accuracy on HateMM only (§3.6), but *adapting* that same encoder with a small encoder-level LoRA-SFT
+(r16/α32, generative word-label supervision on the dataset's own train split, vision tower and projector
+frozen so only the language backbone moves — distinct from the §3.4 decision-level fine-tune, where the
+whole VLM becomes its own classifier; here the adapted encoder feeds the *unchanged* retrieval head)
+converts where the frozen swap could not.
+
+The decisive contrast is ZH. The frozen Qwen swap **fails** on ZH (−0.0112 acc, 1/3 seeds — the round-2
+B1 negative), merely rotating the ranking; the *same* encoder under LoRA **passes** the final-epoch
+conjunct (+0.0313 acc / +0.0453 mF1, 3/3, marginal) [DOC:B3_VERDICT_REVIEW.md, job 13150]. A zero-GPU
+decomposition locates the whole gain in the text stream (train-LOO text AUC 0.802 → 0.847 → 0.925 for
+CLIP → frozen-Qwen → LoRA, image stream flat) and shows it converts as a genuine Pareto minority-recall
+move (hate-recall +0.1111 at −0.0032 non-hate) rather than the frozen swap's rotation (+0.0741 hate
+bought with −0.0481 non-hate) — LoRA crosses from re-rank to re-decide exactly where ZH hate lives, in
+the language representation [DOC:B3_ZH_LORA_DECOMPOSITION.md, commit `d76e407`]. The convertibility line
+therefore runs through *adaptation*, not encoder identity.
+
+The round-4 LoRA-HateMM measurement is this law's **strongest confirmation** and completes the
+three-dataset adaptation map [DOC:LORA_HATEMM_VERDICT_REVIEW.md, commit `6b8f634`, job 13235].
+Encoder-level LoRA **passes HateMM under both protocols, solidly** — val-selected +0.0419 acc / +0.0460
+mF1, final-epoch +0.0573 / +0.0682, 3/3 sign each, the val-sel acc cushion ≈ 9× B3's — while EN stays
+**closed**: the bundled EN LoRA-encoder cell FAILs both protocols (val-selected −0.0021 acc, final-epoch
++0.0000), because EN is label-limited with a collapsed image stream (§3.6, F44) that no encoder move
+converts. The three-dataset map is thus **HateMM solid-pass / ZH marginal-pass / EN closed**, and the
+**performance-conjunct ledger now reads, with its protocol qualifier: under the final-epoch protocol one
+lever — encoder-level LoRA — clears +0.03/+0.03 on two datasets (HateMM and ZH); under val-selection,
+HateMM only** (ZH's val-selected pass is lost to the 78-dev selection tax, §2). This is the first single
+lever to clear ≥ 2 datasets in the campaign — but it is one lever with two mechanisms, not one mechanism.
+
+That last distinction is where the LoRA-HateMM family-coherence flag (KS-2) earns a sentence. Despite
+adapting **only** the text-generative pathway — the vision tower and projector are frozen, so LoRA never
+touches the image stream — LoRA on HateMM **matches** the frozen-Qwen encoder (final-epoch LoRA 0.8698 ≥
+frozen-Qwen 0.8682; val-selected within the 0.014 seed band), so the honesty flag does not trip. Read
+through §3.6's modality mechanics this is exactly what F44/F45 predict, not a coincidence: HateMM
+*decides* on the image stream (image-only train-LOO AUC 0.826), which LoRA leaves intact, so LoRA
+inherits and preserves frozen-Qwen's image-borne Pareto conversion; the text stream it does sharpen is
+HateMM's *secondary* modality, so it adds ≈ 0 on top. The two passes of the one lever therefore convert
+through **different modalities** — ZH's text-borne and LoRA-specific (frozen-Qwen fails there), HateMM's
+image-borne and inherited from the frozen swap (LoRA ≈ frozen-Qwen there). Whether an encoder-class
+adaptation lever, however it performs, satisfies the goal's *novelty* clause is the standing D7 user
+ruling; the mechanism analysis fixes only what the lever does, not whether it counts.
 
 ## 4. What survives
 

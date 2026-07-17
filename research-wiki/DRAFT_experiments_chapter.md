@@ -382,9 +382,10 @@ leaderboard (14 comparisons) and the exploratory re-aggregation ceiling
 The thirteen-route campaign of §4 and T4 answered the original mandate; a user ruling then **tightened
 the goal to require a *novel* MLLM mechanism** (D7: an encoder-class lever, however well it performs,
 does not by itself satisfy novelty) and the search was re-run under that stricter bar across three
-further sprints. These sprints add **pre-registered negatives** to the ledger; they do **not** revise the
-campaign's 13-route accounting (T4), and are reported here as a clearly-labelled extension. The three
-structural laws that crystallised from them are analysed in the analysis chapter §3.6–3.8; this section
+further sprints. These sprints add **pre-registered negatives** to the ledger (and one round-4 performance
+positive, LoRA-HateMM); they do **not** revise the
+campaign's 13-route accounting (T4), and are reported here as a clearly-labelled extension. The four
+structural laws that crystallised from them are analysed in the analysis chapter §3.6–3.9; this section
 is the results ledger.
 
 **Count discipline.** T4's thirteen routes are unchanged: at route-family granularity, ten main-table
@@ -392,11 +393,15 @@ accuracy rows plus three localization rows (P6 / P10 / P11); the analysis chapte
 splits P9/P9b to report eleven main-table routes — the same thirteen results under two granularities,
 as the master-table tension list #7 documents. **This 13-route campaign count is the load-bearing
 accounting and is untouched by every sprint below.** On the separate novelty-first negative ledger:
-round 2 adds seven sprint negatives (#15–21) plus a pre-GPU forensic close (#22, B4) and one *marginal
-positive* held pending a user novelty ruling (B3); round 3 adds six directions, every one closed at a
-binding verdict or a calibrated-zero conditional-info gate; and round 4 adds two further pre-registered
+round 2 adds seven sprint negatives (#15–21) plus the B4 EN-LoRA-encoder cell (#22) — closed pre-GPU
+then, now formally measured as a FAIL under round 4's line-A run (F53) — and one *marginal positive*
+held pending a user novelty ruling (B3); round 3 adds six directions, every one closed at a binding
+verdict or a calibrated-zero conditional-info gate; and round 4 adds two further pre-registered
 negatives — the per-item cross-channel router (F47) and the fusion/composition FA gate (F50) — plus a
-pre-GPU arithmetic kill (MJ, F49) and a wave-5 adaptation-family structural closure (F51). With round 4
+pre-GPU arithmetic kill (MJ, F49), a wave-5 adaptation-family structural closure (F51), and the line-A
+LoRA-HateMM measurement (F53): an encoder-level LoRA **HateMM PASS under both protocols** (a *second*
+performance positive alongside B3, held pending the same user D7 novelty ruling) that also formally
+measures the bundled B4 EN cell (#22) as a FAIL. With round 4
 no surviving candidate remains in the frozen constraint box [DOC:TERMINUS_round2_mllm_plus3.md,
 DOC:TERMINUS_round3_mllm_plus3.md, DOC:ROUTER_GATE_RECORD.md, DOC:FA_GATE_RECORD.md]. (A ledger-ordinal
 note: the round-4 records label F47 / F50 the "22nd / 23rd pre-registered negative," an ordinal
@@ -416,7 +421,7 @@ new: each is transcribed from its committed verdict/record with the commit cited
 | 19 | C3-nontarget dense reasoning-text channel (late fusion on best config) | DEAD_AT_FUSION: all three pre-declared fusion rules fail on a calibrated + permutation-null instrument; the CLIP-only gain is encoder redundancy (info already banked in the Qwen pathway) | C3_FUSION_PROBE_RECORD.md |
 | 20 | B1 frozen-Qwen encoder on MHC-ZH (3-seed paired) | FAIL both protocols (final-epoch mean −0.0112 acc, 1/3 seeds same-sign; gates clean); the ZH 0.8537 is a LoRA lever, not a frozen-encoder one | B1_VERDICT_REVIEW.md |
 | 21 | B2 Qwen2.5-VL-32B frozen encoder (scale axis) | goal FAIL: on HateMM 32B sits *between* CLIP and 7B (**scale regresses**), below CLIP on MHC-EN/ZH, 32B-vs-7B fails everywhere — scale is not the conversion lever | B2_VERDICT_REVIEW.md |
-| 22 | B4 LoRA-Qwen encoder on MHC-EN (3-seed paired) | closed pre-GPU by forensic recon: a banked seed-0 negative (val-sel −0.0310 acc vs CLIP, below both frozen floors; final +0.0062 ≈ 1/5 of bar); optional 2-min formal 3-seed closure left as a user paper option | B4_FORENSIC_RECON.md |
+| 22 | B4 LoRA-Qwen encoder on MHC-EN (3-seed paired) | **now formally measured** (job 13235, bundled with the LoRA-HateMM run, F53): FAIL both protocols — val-sel mean Δacc −0.0021 (acc 2/3 seeds), final-ep +0.0000 (acc 1/3 seeds), each ≪ the +0.030 bar; the seed-0 anchor reproduces the pre-GPU forensic value exactly (val-sel −0.0310 acc vs CLIP, below both frozen floors); the EN LoRA-encoder cell is closed | B4_FORENSIC_RECON.md → LORA_HATEMM_VERDICT_REVIEW.md |
 
 **B3 — the one marginal positive, held pending a novelty ruling.** LoRA-adapting Qwen on MHC-ZH is the
 only rounds-2/3 result that clears the performance clause on any protocol: 3-seed paired vs frozen-CLIP,
@@ -433,10 +438,13 @@ at −0.0032 non-hate — the HateMM encoder-swap signature) rather than the fro
 selection-noise artefact (LoRA's dev-acc plateaus by ~epoch 19 while test keeps climbing to 29), not
 mechanism fragility [DOC:B3_ZH_LORA_DECOMPOSITION.md, commit `d76e407`]. This answers the *performance*
 half of the novelty question yes-but-thin; the gain is still LoRA *adaptation*, not encoder identity
-(frozen-Qwen is −0.0112 on ZH), and single-dataset, so B3 does **not** establish a single MLLM-encoder
-mechanism clearing ≥ 2 datasets — HateMM's positive is the frozen swap, ZH's is LoRA, two different
-levers. Whether B3 counts toward the goal's *novel* clause is an explicit user ruling; it is not folded
-into any main table [DOC:PAPER_MASTER_TABLES.md PUR-banner].
+(frozen-Qwen is −0.0112 on ZH). B3 alone is single-dataset, but the round-4 LoRA-HateMM run (below)
+closes the gap it left open: the *same* encoder-level LoRA lever also passes HateMM, so under the
+final-epoch protocol one lever now clears the +0.03/+0.03 conjunct on two datasets — with the honest
+caveat that the two passes convert via **different modalities** (ZH text-borne and LoRA-specific;
+HateMM image-borne and inherited from the frozen swap, analysis §3.9). Whether either LoRA pass counts
+toward the goal's *novel* clause is an explicit user ruling; neither is folded into any main table
+[DOC:PAPER_MASTER_TABLES.md PUR-banner].
 
 **Table 5. Round-3 negatives (novelty-first; every axis closed at a binding verdict or a $0 gate).**
 
@@ -477,10 +485,72 @@ established a two-object closure — an adaptation touches either the encoder (g
 class) or the joint encoder+decision (the retrieval loss into the LoRA, which is exactly the killed
 P9b object), with no third adapted object, so the one fresh member (a retrieval-mined hard-negative SFT
 curriculum) opens no new dataset and is held behind a user D7 sub-ruling (`7166232`)
-[DOC:TERMINUS_round3_mllm_plus3.md]. The **round-4 line-A** measurement — a generic LoRA-HateMM
-3-seed encoder run — is **in flight** (pre-registration frozen for single-submit, `8de0991`); its cell
-is left **pending** here and is an encoder-class lever regardless of outcome (D7), so it does not alter
-the 13-route campaign accounting or the novelty verdict.
+[DOC:TERMINUS_round3_mllm_plus3.md]. The **round-4 line-A** measurement — a generic encoder-level
+LoRA-HateMM 3-seed encoder run — has now **completed** (job chain 13233→13234→13235; verdict `6b8f634`);
+it is an encoder-class lever regardless of outcome (D7), so it does not alter the 13-route campaign
+accounting or the novelty verdict, but its performance result is material and is reported next.
+
+**LoRA-HateMM (round-4 line-A) — encoder-level LoRA passes on HateMM under both protocols.** The line-A
+cell replaces the frozen-CLIP front-end with an encoder-level LoRA-SFT-adapted Qwen2.5-VL-7B encoder on
+HateMM (r16/α32, generative word-label SFT on HateMM's own 743-video train split, vision tower and
+projector frozen so only the language backbone moves), features read by the unchanged archive-OFF RGCL
+align-fusion head + top-20 kNN, 3 head-seeds paired vs the banked frozen-CLIP floor — the same protocol
+as B3. It was measured (job chain 13233→13234→13235) and **PASSES the +0.03/+0.03 conjunct under both
+protocols with 3/3 sign** [DOC:LORA_HATEMM_VERDICT_REVIEW.md, commit `6b8f634`; provenance chain
+`edeaedc`→`3ebd880`→`2e41332`→`8de0991`→`56a732a`→`6b8f634`].
+
+**Table 7. LoRA-HateMM 3-seed paired (LoRA-Qwen − frozen-CLIP; both protocols).**
+
+| seed | protocol | LoRA acc / mF1 | CLIP floor acc / mF1 | Δacc | ΔmF1 |
+|---|---|---|---|---|---|
+| 0 | val-sel | 0.8605 / 0.8521 (e19) | 0.8279 / 0.8172 | +0.0326 | +0.0349 |
+| 1 | val-sel | 0.8698 / 0.8620 (e14) | 0.8279 / 0.8163 | +0.0419 | +0.0457 |
+| 2 | val-sel | 0.8558 / 0.8495 (e22) | 0.8047 / 0.7920 | +0.0511 | +0.0575 |
+| **mean** | **val-sel** | **0.8620 / 0.8545** | **0.8202 / 0.8085** | **+0.0419** | **+0.0460** |
+| 0 | final-ep | 0.8651 / 0.8580 | 0.8186 / 0.7997 | +0.0465 | +0.0583 |
+| 1 | final-ep | 0.8744 / 0.8660 | 0.8047 / 0.7822 | +0.0697 | +0.0838 |
+| 2 | final-ep | 0.8698 / 0.8613 | 0.8140 / 0.7988 | +0.0558 | +0.0625 |
+| **mean** | **final-ep** | **0.8698 / 0.8618** | **0.8124 / 0.7936** | **+0.0573** | **+0.0682** |
+
+Source: LORA_HATEMM_VERDICT_REVIEW.md §1–§2 (job 13235 LoRA head trainlogs; floors re-parsed from the
+banked 12850 frozen-CLIP logs), commit `6b8f634`.
+
+**Kill-switch rulings and compliance.** Both KS-1 conjuncts (mean Δacc AND mean ΔmF1 ≥ +0.030) clear on
+each protocol independently with 3/3 sign — val-selected +0.0419 acc / +0.0460 mF1 (cushion +0.0119 /
++0.0160 over the bar), final-epoch +0.0573 / +0.0682 (cushion +0.0273 / +0.0382) — so, unlike B3, this
+is **not** a marginal pass (the val-sel acc cushion is ≈ 9× B3's +0.0013). The two honesty flags do not
+fire: **KS-2** (family-coherence) is **not tripped** — at final-epoch LoRA 0.8698 ≥ frozen-Qwen 0.8682
+(+0.0015 acc / +0.0026 mF1), and at val-selected LoRA 0.8620 sits inside the 0.014 seed band below
+frozen-Qwen 0.8729 — so the LoRA pass is not a below-frozen degradation; **KS-3** (P9 regime echo) does
+**not** fire, LoRA landing far above the CLIP floor rather than below it, confirming the encoder-level
+regime converts on HateMM where P9's decision-level C3-knn regressed −4.7. Compliance is clean:
+hash-freeze matched byte-for-byte at submit time; the head runner's `run_rac.py` argv is byte-identical
+to the 12850 CLIP control (only `--model` and a fresh group changed); one budgeted test-touch per
+dataset; single encoder draw as pre-declared (the ±band is head-seed variance, not SFT-draw variance,
+symmetric with the single-draw CLIP control). One non-material deviation is flagged honestly: the LoRA
+head ran under a newer `run_rac.py` carrying seven additional TARC/oracle argparse fields absent in the
+12850 code, all set to their inert OFF values (provably no-op, and the identical condition under which
+the already-accepted B3 verdict was rendered), plus one benign SFT-loss note (eval_loss 0.1084, a
+slightly tighter generative fit than the MHC anchor's 0.1620); neither affects any kill-switch
+[DOC:LORA_HATEMM_VERDICT_REVIEW.md §3–§4].
+
+**Consequence for the goal (protocol-qualified, D7 still open).** The measurement's reach is bounded and
+stated with its protocol qualifier: **under the final-epoch protocol, one lever — encoder-level LoRA —
+now clears the +0.03/+0.03 conjunct on two datasets (HateMM +0.0573 / +0.0682 solid; MHC-ZH B3 +0.0313 /
++0.0453 marginal); under the val-selected protocol the same lever clears HateMM only (ZH val-selected
+FAILs)**. This is the first time a *single* encoder lever passes ≥ 2 datasets — B3 alone was ZH-only, and
+HateMM's *frozen*-Qwen pass is a different lever — but the two passes convert via **different
+modalities**, so the conjunction is one lever with two mechanisms, not one mechanism (analysis §3.9): on
+ZH the gain is text-borne and LoRA-specific (frozen-Qwen −0.0112), while on HateMM the KS-2 result shows
+LoRA ≈ frozen-Qwen, so the gain over CLIP is substantially the frozen-Qwen image-modality conversion
+that LoRA inherits and preserves. The bundled **B4-EN closure arm** (same job 13235) formally measures
+the EN LoRA-encoder cell and **FAILs both protocols** — val-selected mean Δacc −0.0021, final-epoch
++0.0000, each ≪ the bar, its seed-0 anchor reproducing the pre-GPU forensic value exactly — upgrading the
+round-2 #22 negative from a pre-GPU forensic close to a measured one and leaving EN's only formal encoder
+pass the frozen swap. Whether the encoder-level LoRA performance conjunct counts toward the goal's
+*novel* clause is the pending user D7 ruling; the LoRA-HateMM cell is an encoder-class lever regardless
+of outcome and is **not** folded into any main table
+[DOC:LORA_HATEMM_VERDICT_REVIEW.md; DOC:PAPER_MASTER_TABLES.md PUR-3, PUR-banner].
 
 ---
 
@@ -491,4 +561,6 @@ during drafting. The three known tensions carried forward — the ZH/EN "our bes
 multi-seed sourcing in Table 2 (‡), the ZH ≥ 0.85 dual-calibration headline (D2), and the round-4
 ledger-ordinal discrepancy (master-table tension list #9) — are surfaced in-text rather than silently
 resolved, per the master-table tension list #1–2, #9. The rounds-2/3/4 extension adds pre-registered
-negatives without revising the 13-route campaign count (§7 count-discipline note).*
+negatives and one round-4 performance positive (LoRA-HateMM, F53) without revising the 13-route campaign
+count (§7 count-discipline note); the LoRA-HateMM per-seed numbers and floors are transcribed from
+`refine-logs/LORA_HATEMM_VERDICT_REVIEW.md` (`6b8f634`) and re-checked against the job 13235 trainlogs.*
