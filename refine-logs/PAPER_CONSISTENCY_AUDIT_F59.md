@@ -24,11 +24,13 @@ primary verdict/gate records; five numbers spot-checked all the way to the raw t
 
 - **Number mismatches (pure-typo, all-fidelity): 0.** Every number in the audited draft sections matches
   its primary source to 4dp, including five spot-checked all the way down to the raw trainlogs.
-- **Fixes applied: 2** — the two pre-authorized single-draw→pooled-weakly-hardened phrasing fixes in
+- **Fixes applied: 4** — (i) the two pre-authorized single-draw→pooled-weakly-hardened phrasing fixes in
   `DRAFT_analysis_chapter.md` (lines 415 and 429), + a companion citation extension so the introduced
-  rep2 claim is sourced.
-- **Flags left (judgmental, not fixed): 2** — surviving F58 locus phrasing in
-  `experiments/exp-cand2-curriculum.md` (lines 56, 119) that the `87520fb` errata did not propagate.
+  rep2 claim is sourced; (ii) the two F58 locus fixes in `experiments/exp-cand2-curriculum.md`
+  (lines 56, 119), applied in the errata follow-through commit after the orchestrator authorized them
+  (2026-07-18, same scope as `87520fb`).
+- **Flags left (judgmental, not fixed): 0** — the two locus leftovers below were flagged in the first
+  pass, then authorized and fixed in the follow-through commit.
 - **Claim consistency (b)/(c)/(d): PASS.** Verbatim F56 verdict blocks preserved; protocol qualifiers
   (final-epoch + ZH-marginal) present at every 2-dataset performance statement; T4 13-route count
   untouched; extension counts and the tension ledger self-consistent.
@@ -43,8 +45,8 @@ primary verdict/gate records; five numbers spot-checked all the way to the raw t
 |---|---|---|---|---|
 | 1 | `research-wiki/DRAFT_analysis_chapter.md:415` | §3.9 own-voice: HateMM K-C2-2 add described as "a single curriculum draw" — pre-rep2 status, now superseded by F59 pooled-weakly-hardened. | medium | **FIXED** (pre-authorized) — → "3/3 on the draw-1 curriculum; pooled weakly-hardened across two draws, 5/6 sign, per-draw 3/3 gate not met"; +F59 citation on L416. |
 | 2 | `research-wiki/DRAFT_analysis_chapter.md:429` | Phase-diagram bullet: cand-2 add "on HateMM val-selected only (single-draw)" — pre-rep2 status. | medium | **FIXED** (pre-authorized) — → "(pooled weakly-hardened across two draws, 5/6 sign; per-draw 3/3 gate not met)". |
-| 3 | `research-wiki/experiments/exp-cand2-curriculum.md:56` | §0 own-voice locus claim: "can add only HateMM **(image-borne, inherited)**". F58 (`51eb95b`) REFUTED the image-borne locus (HateMM's convertible signal is **text-carried**, frozen-swap-sufficient). Contradicts the errata'd analysis §3.9 L430–431 ("HateMM is inherited (frozen-swap-sufficient, its convertible signal text-carried)"). | medium | **FLAG** (judgmental — line transcribes the pre-declared F0.4 framing; errata-scope decision). Recommend: "(inherited, frozen-swap-sufficient; convertible signal text-carried per F58)". |
-| 4 | `research-wiki/experiments/exp-cand2-curriculum.md:119` | §3 own-voice: HateMM K-C2-2 pass lands "on the **hold/image-inherited leg** (F0.4)". "image-inherited" is the F58-refuted locus term (the inheritance is real; its *image* attribution is not). | medium | **FLAG** (judgmental — echoes F56 wording via F0.4 reference). Recommend: "hold/inherited leg (F0.4, frozen-swap-sufficient)". |
+| 3 | `research-wiki/experiments/exp-cand2-curriculum.md:56` | §0 own-voice locus claim: "can add only HateMM **(image-borne, inherited)**". F58 (`51eb95b`) REFUTED the image-borne locus (HateMM's convertible signal is **text-carried**, frozen-swap-sufficient). Contradicts the errata'd analysis §3.9 L430–431 ("HateMM is inherited (frozen-swap-sufficient, its convertible signal text-carried)"). | medium | **FIXED** (flagged first pass → authorized 2026-07-18 → follow-through commit): → "(inherited, frozen-swap-sufficient; its convertible signal is text-carried, not image-borne — F58, `51eb95b`)". |
+| 4 | `research-wiki/experiments/exp-cand2-curriculum.md:119` | §3 own-voice: HateMM K-C2-2 pass lands "on the **hold/image-inherited leg** (F0.4)". "image-inherited" is the F58-refuted locus term (the inheritance is real; its *image* attribution is not). | medium | **FIXED** (flagged first pass → authorized 2026-07-18 → follow-through commit): → "hold/inherited leg (F0.4; frozen-swap-sufficient, convertible signal text-carried — F58, `51eb95b`)". |
 
 **Notes on the two flags (§ claim-consistency 2a).** The `87520fb` F58 errata correctly scrubbed the
 image-borne / image-inherited / secondary-modality locus phrasing from every *primary paper* section it
@@ -53,9 +55,12 @@ touched — `DRAFT_analysis_chapter.md` §3.9 (all cross-refs), `DRAFT_experimen
 method / abstract drafts (grep-clean). The **only** research-wiki survivors are the two lines above, in the
 one exp-note the errata commit did not open (`exp-cand2-curriculum.md`, later touched by `a31c80b` for the
 rep2 fold but not for the locus errata). Both are the note's own analytical voice, not `​`​`-fenced verbatim
-verdict blocks, so correcting them is defensible; they are FLAGGED (not fixed) only because the errata-scope
-call — whether the F0.4-pre-declared framing in a per-experiment note must be retro-corrected — is
-judgmental, not a pure-typo mismatch. The refine-logs records that retain "image-borne" (`CAND2_*_PREREG`,
+verdict blocks, so correcting them is defensible; they were FLAGGED in the first pass (not fixed) because the
+errata-scope call — whether the F0.4-pre-declared framing in a per-experiment note must be retro-corrected —
+was judgmental, not a pure-typo mismatch. **The orchestrator then authorized both (2026-07-18, same scope as
+`87520fb`); they are now FIXED in the errata follow-through commit, citing `51eb95b`, with the pre-declared
+"By F44/F45 modality-locus arithmetic" basis preserved and the two `​`​`-fenced F56 verdict blocks untouched.**
+The refine-logs records that retain "image-borne" (`CAND2_*_PREREG`,
 `*_RECON`, `WAVE5/6_*`, `LORA_HATEMM_PREREG/FORENSIC_RECON`, `TIE_BRANCH_RECON`, and the F53
 `LORA_HATEMM_VERDICT_REVIEW.md` itself) are **correctly** left as-is: they are pre-F58 historical records,
 not paper drafts, and F58's own synthesis names them as the framing it supersedes.
@@ -161,6 +166,8 @@ sha + RNG).
 ## 6. AUDITOR STATEMENTS
 
 No GPU / Modal / SLURM / test-touch spent; only banked records, drafts, and completed-run trainlogs read.
-Nothing pushed. The only mutations are the two pre-authorized single-draw phrasing fixes (+ their companion
-rep2 citation) in `DRAFT_analysis_chapter.md` and this audit file. Two locus-phrasing leftovers flagged for the
-orchestrator's errata-scope call; no judgmental change made.
+Nothing pushed. Mutations across the two commits: (1) audit commit `734c389` — the two pre-authorized
+single-draw phrasing fixes (+ their companion rep2 citation) in `DRAFT_analysis_chapter.md` and this audit
+file; (2) errata follow-through commit — the two authorized F58 locus fixes in
+`experiments/exp-cand2-curriculum.md` (lines 56, 119) + this report's disposition update. No number was
+altered; no verbatim F56 verdict block was touched.

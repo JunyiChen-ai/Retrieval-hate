@@ -53,7 +53,8 @@ floor (K-C2-1) and the banked generic-LoRA arm (K-C2-2), dual protocol.
   can only exploit existing separation; the curriculum is the only lever that makes the encoder *allocate*
   r16/3-epoch capacity to the confusable region.
 - **Opens NO new dataset (pre-declared F0.4).** By F44/F45 modality-locus arithmetic a text/curriculum lever
-  holds ZH and can add only HateMM (image-borne, inherited) or EN (label-limited, dead) — so cand-2's realistic
+  holds ZH and can add only HateMM (inherited, frozen-swap-sufficient; its convertible signal is text-carried,
+  not image-borne — F58, `refine-logs/HATEMM_LORA_STREAM_DECOMP.md`, `51eb95b`) or EN (label-limited, dead) — so cand-2's realistic
   best case is a cleaner/robuster story on datasets generic LoRA already passes, not a new performance route.
 - **Single-curriculum-draw limitation (pre-declared, F0.2, CRITICAL for K-C2-2).** All 3 head-seeds read ONE
   curriculum-SFT encoder draw per dataset; the +-band is head-seed variance, NOT curriculum-SFT-draw variance.
@@ -116,8 +117,8 @@ TIE (= NO novelty, the F0.7 outcome) = mean |Delta-acc| < +0.010 OR sign not 3/3
 - **K-C2-2 (add-over-generic, novelty bar): ZH = TIE both protocols (NO NOVELTY on ZH, the F0.7 outcome on the
   a-priori-most-likely leg); HateMM = PASS via val-sel only (+0.0155 acc, 3/3, ΔmF1 +0.0166), final-ep TIE
   (+0.0093).** Novelty signal "K-C2-2 PASS on >=1 dataset" MET on HateMM only — carrying the F0.2
-  single-curriculum-draw caveat and a protocol-split (val-sel-only) caveat, on the hold/image-inherited leg
-  (F0.4), NOT on ZH.
+  single-curriculum-draw caveat and a protocol-split (val-sel-only) caveat, on the hold/inherited leg
+  (F0.4; frozen-swap-sufficient, convertible signal text-carried — F58, `51eb95b`), NOT on ZH.
 - **KS-regression (below-generic KILL, mean Delta-acc(curric-generic) <= -0.014 on a held leg): NOT triggered**
   (most-negative leg-mean = ZH val-sel -0.0067 > -0.014).
 - **KS-below-floor (curric below CLIP floor on ZH): NOT triggered** (ZH-curric above CLIP floor both protocols).
