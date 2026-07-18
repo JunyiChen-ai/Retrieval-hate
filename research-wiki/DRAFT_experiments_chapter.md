@@ -449,8 +449,9 @@ half of the novelty question yes-but-thin; the gain is still LoRA *adaptation*, 
 (frozen-Qwen is −0.0112 on ZH). B3 alone is single-dataset, but the round-4 LoRA-HateMM run (below)
 closes the gap it left open: the *same* encoder-level LoRA lever also passes HateMM, so under the
 final-epoch protocol one lever now clears the +0.03/+0.03 conjunct on two datasets — with the honest
-caveat that the two passes convert via **different modalities** (ZH text-borne and LoRA-specific;
-HateMM image-borne and inherited from the frozen swap, analysis §3.9). Whether either LoRA pass counts
+caveat that the two passes convert via the **same decisive modality (text) but different levers** (ZH
+text-borne and LoRA-specific; HateMM text-carried on a swap-neutral image base and inherited from the
+frozen swap, analysis §3.9). Whether either LoRA pass counts
 toward the goal's *novel* clause is an explicit user ruling; neither is folded into any main table
 [DOC:PAPER_MASTER_TABLES.md PUR-banner].
 
@@ -547,11 +548,13 @@ stated with its protocol qualifier: **under the final-epoch protocol, one lever 
 now clears the +0.03/+0.03 conjunct on two datasets (HateMM +0.0573 / +0.0682 solid; MHC-ZH B3 +0.0313 /
 +0.0453 marginal); under the val-selected protocol the same lever clears HateMM only (ZH val-selected
 FAILs)**. This is the first time a *single* encoder lever passes ≥ 2 datasets — B3 alone was ZH-only, and
-HateMM's *frozen*-Qwen pass is a different lever — but the two passes convert via **different
-modalities**, so the conjunction is one lever with two mechanisms, not one mechanism (analysis §3.9): on
-ZH the gain is text-borne and LoRA-specific (frozen-Qwen −0.0112), while on HateMM the KS-2 result shows
-LoRA ≈ frozen-Qwen, so the gain over CLIP is substantially the frozen-Qwen image-modality conversion
-that LoRA inherits and preserves. The bundled **B4-EN closure arm** (same job 13235) formally measures
+HateMM's *frozen*-Qwen pass is a different lever — but the two passes convert via the **same decisive
+modality (text) through different levers**, so the conjunction is one lever with two mechanisms, not one
+mechanism (analysis §3.9): on ZH the gain is text-borne and LoRA-specific (frozen-Qwen −0.0112), while on
+HateMM the KS-2 result shows LoRA ≈ frozen-Qwen, so the gain over CLIP is substantially the frozen-Qwen
+conversion that LoRA inherits and preserves — a per-stream decomposition measures that conversion as
+text-carried on a swap-neutral image base, the frozen swap already converting HateMM's text signal to a
+Pareto so LoRA's further text-sharpening adds ≈ 0 [DOC:HATEMM_LORA_STREAM_DECOMP.md, commit `51eb95b`]. The bundled **B4-EN closure arm** (same job 13235) formally measures
 the EN LoRA-encoder cell and **FAILs both protocols** — val-selected mean Δacc −0.0021, final-epoch
 +0.0000, each ≪ the bar, its seed-0 anchor reproducing the pre-GPU forensic value exactly — upgrading the
 round-2 #22 negative from a pre-GPU forensic close to a measured one and leaving EN's only formal encoder

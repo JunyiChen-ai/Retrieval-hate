@@ -390,14 +390,20 @@ That last distinction is where the LoRA-HateMM family-coherence flag (KS-2) earn
 adapting **only** the text-generative pathway — the vision tower and projector are frozen, so LoRA never
 touches the image stream — LoRA on HateMM **matches** the frozen-Qwen encoder (final-epoch LoRA 0.8698 ≥
 frozen-Qwen 0.8682; val-selected within the 0.014 seed band), so the honesty flag does not trip. Read
-through §3.6's modality mechanics this is exactly what F44/F45 predict, not a coincidence: HateMM
-*decides* on the image stream (image-only train-LOO AUC 0.826), which LoRA leaves intact, so LoRA
-inherits and preserves frozen-Qwen's image-borne Pareto conversion; the text stream it does sharpen is
-HateMM's *secondary* modality, so it adds ≈ 0 on top. The two passes of the one lever therefore convert
-through **different modalities** — ZH's text-borne and LoRA-specific (frozen-Qwen fails there), HateMM's
-image-borne and inherited from the frozen swap (LoRA ≈ frozen-Qwen there). Whether an encoder-class
-adaptation lever, however it performs, satisfies the goal's *novelty* clause is the standing D7 user
-ruling; the mechanism analysis fixes only what the lever does, not whether it counts.
+through §3.6's modality mechanics this is exactly what F44/F45 predict, not a coincidence, and a zero-GPU
+per-stream decomposition of the passing cell now measures it directly [DOC:HATEMM_LORA_STREAM_DECOMP.md,
+commit `51eb95b`]: HateMM's image stream is strong and swap-neutral (image-only train-LOO AUC in the 0.82
+band, uncollapsed unlike MHC-EN's 0.599), and LoRA leaves it flat (ΔAUC +0.0045 train-LOO / +0.0062 dev);
+the decisive single stream is actually **text** (text-only ≥ image-only for CLIP, frozen-Qwen, and LoRA
+on both footings). LoRA does sharpen that text stream (train-LOO 0.888 → 0.920, the ZH signature), but it
+adds ≈ 0 downstream (+0.0015 acc final / −0.0108 val-selected) **because the frozen swap already
+converted HateMM's text signal to a Pareto** (frozen-Qwen − CLIP +0.0558 acc) — there is no further
+boundary for the sharpening to move. The two passes of the one lever therefore convert through the
+**same** decisive modality — text — but by different levers: ZH's is text-borne and LoRA-specific
+(frozen-Qwen fails there, so adaptation is the necessary lever), HateMM's is text-carried on a
+swap-neutral image base and frozen-swap-sufficient, inherited by LoRA (LoRA ≈ frozen-Qwen there). Whether
+an encoder-class adaptation lever, however it performs, satisfies the goal's *novelty* clause is the
+standing D7 user ruling; the mechanism analysis fixes only what the lever does, not whether it counts.
 
 The round-4 **curriculum coupling probe** completes the map. One question the frozen-vs-adapted contrast
 leaves open is whether *coupling the retrieval memory into the adaptation objective* — rather than a
@@ -421,7 +427,8 @@ adaptation converts:
   (marginal), EN FAIL both;
 - **memory-coupled curriculum LoRA (cand-2)** — ties generic on ZH (both protocols), adds over generic
   on HateMM val-selected only (single-draw), and structurally opens no new dataset (a text/curriculum
-  lever can only hold ZH and add HateMM-or-EN; HateMM is inherited image-borne, EN is label-limited);
+  lever can only hold ZH and add HateMM-or-EN; HateMM is inherited (frozen-swap-sufficient, its
+  convertible signal text-carried), EN is label-limited);
 - **retrieval-loss-coupled decision-level fine-tune (P9b)** — dead: a head↔memory redistribution of
   ≈ ±1.8 points, not a net gain, 0/12 cells above floor (§3.4);
 - **the EN composition family** — closed at every level: frozen swap (B1/F44), generic LoRA (B4/F53),
@@ -429,12 +436,16 @@ adaptation converts:
   (premise-(d), §3.6).
 
 Read across the diagram, **adaptation converts exactly where the dataset's decisive modality is the one
-the adaptation reaches and the residual error core is representation-limited; it ties or fails everywhere
-else.** ZH's text-borne LoRA gain is the one place adaptation *itself* is the converting lever (the
-language pathway is where ZH hate lives, and frozen-Qwen fails there); HateMM's pass is inherited
-image-borne (LoRA ≈ frozen-Qwen, the adapted text stream is HateMM's secondary modality); and EN, which
-is label-limited with a collapsed image stream, is unreachable by every adaptation the box permits —
-generic, memory-coupled, or composed with a healthy foreign image stream.
+the adaptation reaches and the residual error core is representation-limited — with the qualifier that on
+a dataset where the frozen *identity* swap already converts that same modality (HateMM), adaptation only
+inherits the conversion rather than being the necessary lever; it ties or fails everywhere else.** ZH's
+text-borne LoRA gain is the one place adaptation *itself* is the converting lever (the language pathway
+is where ZH hate lives, and frozen-Qwen fails there); HateMM's pass is inherited from the frozen swap
+(LoRA ≈ frozen-Qwen), its convertible signal likewise **text-carried** (text is the decisive single
+stream) but fused with a strong swap-neutral image stream that the frozen swap already converts, so
+LoRA's further text-sharpening adds ≈ 0 [DOC:HATEMM_LORA_STREAM_DECOMP.md, commit `51eb95b`]; and EN,
+which is label-limited with a collapsed image stream, is unreachable by every adaptation the box
+permits — generic, memory-coupled, or composed with a healthy foreign image stream.
 
 A **scoping correction** travels with this map, for honesty about the mechanism prose. The decompositions
 above describe the ZH LoRA gain as living "in the text stream, image stream flat," and read HateMM's KS-2

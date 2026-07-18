@@ -128,10 +128,15 @@ confirming the honest expected-FAIL prior. The EN LoRA-encoder cell is **formall
 - **KS-2 (family-coherence honesty flag; trips iff LoRA < frozen-Qwen − 0.014): NOT tripped.** final-ep
   LoRA 0.8698/0.8618 ≥ frozen-Qwen 0.8682/0.8591 (LoRA − Qwen **+0.0015 acc / +0.0026 mF1** →
   STRENGTHENS the single-lever narrative); val-sel LoRA 0.8620 ≥ frozen-Qwen 0.8729 − 0.014 = 0.8589
-  (within the seed band). The data are nonetheless consistent with the pre-declared F0.4
-  image-inheritance framing — **LoRA ≈ frozen-Qwen** (adds ≈ 0 over the frozen encoder), so the HateMM
-  gain over CLIP is substantially the image-modality frozen-Qwen conversion, distinct from B3's
-  text-borne LoRA-specific ZH gain. This nuance travels to D7 (does not change KS-1).
+  (within the seed band). **LoRA ≈ frozen-Qwen** (adds ≈ 0 over the frozen encoder), so the HateMM gain
+  over CLIP is substantially the frozen-Qwen conversion inherited — but the F58 per-stream decomposition
+  (`refine-logs/HATEMM_LORA_STREAM_DECOMP.md`, `51eb95b`) corrects the pre-declared F0.4
+  "image-inheritance" gloss: the decisive single stream on HateMM is **text** (text-only kNN AUC ≥
+  image-only for all three encoders, both footings), and the pass is **text-carried on a swap-neutral
+  image base and frozen-swap-sufficient** — the frozen swap already converts HateMM's text signal to a
+  Pareto (frozen−CLIP +0.0558 acc), so LoRA's further text-sharpening (train-LOO 0.888→0.920) adds ≈ 0.
+  It is inherited (LoRA ≈ frozen-Qwen), distinct from B3's text-borne **LoRA-specific** ZH gain (where
+  frozen-Qwen fails, −0.0112). This nuance travels to D7 (does not change KS-1).
 - **KS-3 (P9 regime echo; fires iff LoRA below CLIP floor): NOT fired.** LoRA far above the CLIP floor →
   the encoder-level regime converts on HateMM (opposite P9's decision-level C3-knn −4.7), re-confirming
   the two-regime disambiguation.
@@ -160,8 +165,10 @@ Performance-conjunct ledger, with the protocol qualifier:
 
 This is the first single encoder lever to clear ≥ 2 datasets — but it is **one lever with two
 mechanisms**, not one mechanism: ZH's gain is text-borne and LoRA-specific (frozen-Qwen −0.0112 on ZH),
-HateMM's is image-borne and inherited from the frozen swap (KS-2 not tripped, LoRA ≈ frozen-Qwen; the
-adapted text stream is HateMM's secondary modality). EN stays closed (label-limited, image-collapsed,
+HateMM's is text-carried on a swap-neutral image base and inherited from the frozen swap (KS-2 not
+tripped, LoRA ≈ frozen-Qwen; the frozen swap already converts HateMM's text signal, so LoRA's further
+text-sharpening adds ≈ 0 — F58, `refine-logs/HATEMM_LORA_STREAM_DECOMP.md`, `51eb95b`). EN stays closed
+(label-limited, image-collapsed,
 F44). Whether an encoder-class adaptation lever satisfies the goal's "novel" clause is the pending user
 **D7 ruling**; this cell is an encoder-class lever regardless of outcome and is not folded into any main
 table.
@@ -172,7 +179,7 @@ table.
 - contrasts-with → `exp:exp-encoder-3seed` (HateMM frozen-Qwen swap PASS both protocols; here LoRA ≈ frozen-Qwen on HateMM, KS-2 not tripped)
 - distinct-regime-from → `EXP_p9_lmm_rgcl_video` (decision-level LoRA-SFT; C3-knn HateMM −4.7 below floor — non-isomorphic to this encoder-level cell)
 - reuses-control-arm-of → `exp:exp-encoder-3seed` (12850 frozen-CLIP seeds 0/1/2 = the paired floor, not re-run)
-- mechanism → `refine-logs/ENCODER_SWAP_DIAGNOSIS.md` (F44, image-borne HateMM conversion) + `refine-logs/B3_ZH_LORA_DECOMPOSITION.md` (F45, text-borne ZH LoRA gain); analysed as the adaptation law in `DRAFT_analysis_chapter.md` §3.9
+- mechanism → `refine-logs/ENCODER_SWAP_DIAGNOSIS.md` (F44, HateMM Pareto conversion on a swap-neutral image base) + `refine-logs/B3_ZH_LORA_DECOMPOSITION.md` (F45, text-borne ZH LoRA gain) + `refine-logs/HATEMM_LORA_STREAM_DECOMP.md` (F58, HateMM pass measured text-carried / frozen-swap-sufficient / LoRA-inherited); analysed as the adaptation law in `DRAFT_analysis_chapter.md` §3.9
 - scoped-by → `refine-logs/LORA_HATEMM_FORENSIC_RECON.md` (GO recon, regime disambiguation), `refine-logs/LORA_HATEMM_PREREG.md` (frozen prereg), `refine-logs/LORA_HATEMM_VERDICT_REVIEW.md` (binding verdict)
 - novelty-clause → PENDING USER D7 RULING (`PAPER_MASTER_TABLES.md` PUR-3 / PUR-banner)
 

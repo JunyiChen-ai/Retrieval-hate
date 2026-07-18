@@ -314,3 +314,46 @@ consistent with the banked ledger. No option is recommended.*
 
 *End of dossier. This document organizes evidence for the D7 ruling and deliberately stops before any
 recommendation; the ruling is the user's.*
+
+---
+
+## 7. FACTUAL ADDENDUM — F58 stream-decomposition mechanism nuance (appended 2026-07-18, after close)
+
+*Appended after the original sign-off; no existing section (§1–§6) is altered. Evidence-only, no
+advocacy, no recommendation. All numbers from `refine-logs/HATEMM_LORA_STREAM_DECOMP.md` (commit
+`51eb95b`, F58) — a zero-GPU per-stream kNN decomposition of banked HateMM train/dev caches and
+completed-run trainlogs; no new GPU / Modal / test-touch.*
+
+F58 **measures** (rather than infers from F44/F45) *where* the HateMM LoRA pass lives. It changes **no
+performance number** in §2.2; it refines the mechanism gloss those sections carry.
+
+1. **HateMM's convertible signal is text-carried, not image-borne.** The decisive single stream is
+   **text** on all three encoders and both footings (text-only kNN AUC ≥ image-only: CLIP 0.847/0.837,
+   frozen-Qwen 0.888/0.875, LoRA 0.920/0.899). The image stream is strong-but-**swap-neutral** and LoRA
+   leaves it flat (ΔAUC +0.0045 train-LOO / +0.0062 dev, sub-threshold). This corrects the earlier
+   "HateMM decides on the image stream (AUC 0.826)" reading — 0.826 is CLIP's *image* AUC, below CLIP's
+   *text* AUC 0.847 (the analysis chapter §3.9 and the master-table PUR rows are corrected to
+   text-carried by the F58 errata).
+
+2. **The HateMM conversion originates in the frozen encoder swap; LoRA inherits it.** frozen-Qwen − CLIP
+   is already a clean Pareto (+0.0558 acc; hate-recall +0.128 at +0.008 non-hate), and LoRA over
+   frozen-Qwen is a nil rotation (+0.0015 acc final-epoch / −0.0108 val-selected). So on HateMM the
+   converting lever is the **frozen identity swap** — a D7-class encoder-identity lever (§1.2) — and
+   adaptation (LoRA) only inherits it. This is consistent with §2.2's KS-2 arithmetic: LoRA ≥ frozen-Qwen
+   (does not fall *below* it, so the honesty flag does not trip); F58 adds that it does not rise
+   materially *above* it either (+0.0015 final).
+
+3. **ZH remains the leg where adaptation itself is the necessary lever.** frozen-Qwen fails on ZH
+   (−0.0112, an unconvertible rotation) and only LoRA crosses it to a Pareto text-stream conversion
+   (F45, `d76e407`). The two legs are mirror images: HateMM = frozen-swap-sufficient + LoRA-inherited;
+   ZH = LoRA-specific. Both convert through the same decisive modality (text); they differ in the lever.
+
+**Bearing on the ruling (no side taken).** The measured *performance* ledger of §2.2 is unchanged — the
+encoder-level LoRA arm still passes HateMM (both protocols) and ZH (final-epoch, marginal), clearing the
++0.03/+0.03 conjunct on 2 datasets under the final-epoch protocol. What F58 sharpens is a mechanism fact
+already latent in §4.5's "different mechanisms" observation: the HateMM leg's conversion is carried by
+the **frozen swap** (the lever D7's standing language names as non-novel standalone, §1.2), with
+adaptation inheriting; adaptation is the *necessary* converting lever only on the ZH leg (marginal,
+final-epoch only). This addendum records the fact and does not weigh it. [source:
+`refine-logs/HATEMM_LORA_STREAM_DECOMP.md`, `51eb95b`; cross-ref `ENCODER_SWAP_DIAGNOSIS.md` `8a48938`
+(F44), `B3_ZH_LORA_DECOMPOSITION.md` `d76e407` (F45)]

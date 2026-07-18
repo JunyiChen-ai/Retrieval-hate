@@ -519,9 +519,12 @@ HateMM 过线**(ZH val-sel FAIL,78-dev 选点税)。这是 campaign 首个单一
 - **ZH:** frozen-Qwen 交换 **−0.0112**(B1 第 20 条,FAIL)vs LoRA **+0.0313** ⇒ ZH 增益全部来自 LoRA 任务/语言适配
   (text-borne,LoRA-specific);缓解 English-centric CLIP 文本塔处理中文 byte-fragment 的记录劣势(PMT:188,237)。
 - **HateMM:** KS-2 honesty flag **未触发** —— final-ep LoRA 0.8698 ≥ frozen-Qwen 0.8682(+0.0015 acc),val-sel 落在
-  0.014 种子带内 —— 即 **LoRA ≈ frozen-Qwen**;LoRA 只动语言 backbone(vision tower/projector 冻结),而 HateMM 由
-  image 流决策(image train-LOO AUC 0.826,F44),故 LoRA **继承并保住** frozen-Qwen 的 image-borne Pareto 转换,text
-  流增益在 image-dominated HateMM 上加 ≈0 ⇒ HateMM 过线是 **image-inherited**,非 LoRA-specific。
+  0.014 种子带内 —— 即 **LoRA ≈ frozen-Qwen**;LoRA 只动语言 backbone(vision tower/projector 冻结)。零-GPU 逐流分解
+  (`HATEMM_LORA_STREAM_DECOMP.md`,`51eb95b`,F58)实测:HateMM 的**决定性单流是 text**(text-only kNN AUC ≥ image-only,
+  CLIP/frozen/LoRA 三编码器双 footing),image 流 strong 但 **swap-neutral**(LoRA 仅 +0.0045 train / +0.0062 dev,flat,
+  未塌陷,不同于 MHC-EN 的 0.599);LoRA 把 text 流 sharpen(train-LOO 0.888→0.920)但**加 ≈0**(final +0.0015 acc /
+  val-sel −0.0108),因为 **frozen swap 已把 HateMM 的 text 信号转成 Pareto**(frozen−CLIP +0.0558 acc)—— 无 boundary 可再动。
+  ⇒ HateMM 过线是 **text-carried / frozen-swap-sufficient / LoRA-inherited**,非 LoRA-specific。
 - **MHC-EN:** 549 样本 LoRA-SFT 退化编码器,落到两个 frozen floor 之下(label-limited + image 塌陷,F44)⇒ 任何编码器
   移动都不转换,fail 双协议。
 
@@ -559,8 +562,10 @@ final-ep +0.0273 / +0.0382 —— **非 marginal**(val-sel acc 余量 ≈9× B3 
 **KS 诚实旗(均未触发):**
 - **KS-2(family-coherence,非性能 kill):** final-ep LoRA 0.8698/0.8618 vs frozen-Qwen 0.8682/0.8591 ⇒ LoRA − Qwen
   **+0.0015 acc / +0.0026 mF1**(LoRA ≥ frozen-Qwen ⇒ **未触发,STRENGTHENS** 单杠杆叙事);val-sel LoRA 0.8620 vs
-  frozen-Qwen 0.8729,阈值 0.8729−0.014=0.8589,LoRA 0.8620 ≥ 0.8589 ⇒ 落在 0.014 种子带内,**未触发**。数据同时与
-  F0.4 image-inheritance 框架一致(LoRA ≈ frozen-Qwen,over-CLIP 增益主要是 image 模态的 frozen-Qwen 转换),此 nuance
+  frozen-Qwen 0.8729,阈值 0.8729−0.014=0.8589,LoRA 0.8620 ≥ 0.8589 ⇒ 落在 0.014 种子带内,**未触发**。数据表明
+  **LoRA ≈ frozen-Qwen**(over-CLIP 增益主要是 frozen-Qwen 转换的继承);逐流分解(`HATEMM_LORA_STREAM_DECOMP.md`,
+  `51eb95b`,F58)校正了预声明 F0.4 的「image-inheritance」措辞 —— HateMM 决定性单流是 **text**(text-only AUC ≥ image-only,
+  三编码器双 footing),过线是 **text-carried / frozen-swap-sufficient**(frozen swap 已转换,LoRA text-sharpen 加 ≈0),此 nuance
   travels to D7(见 PUR-2 解释行、`DRAFT_analysis_chapter.md` §3.9)。
 - **KS-3(P9-echo):** LoRA(val-sel 0.8620 / final 0.8698)远高于 CLIP floor(0.8202 / 0.8124),**未触发** ⇒ encoder-level
   regime 在 HateMM 转换(与 decision-level P9 C3-knn −4.7 相反),重申两-regime 区分。
@@ -597,10 +602,12 @@ single-curriculum-draw caveat F0.2;final-ep tie +0.0093),**ZH-robustness NOT str
 > (`query_pack.md:44`;`B1_PREREG_REVIEW.md:64`)。一个 LoRA-encoder 性能 pass 是否计入 goal 的 "novel" 子句,
 > 是 pending 用户裁决,本节不判。
 > **(ii) 单杠杆-两机制 headline。** round-4 line-A(F53)后,**单一杠杆 encoder-level LoRA 在 final-epoch 协议下跨
-> 2 库过线**(HateMM solid + ZH marginal),不再需要 frozen+LoRA 的 "family" 拼接。但这是**一个杠杆两种机制**:ZH
-> 过线是 text-borne / LoRA-specific,HateMM 过线是 image-borne / inherited(KS-2 未触发,LoRA ≈ frozen-Qwen)。
-> 是否接受"一个杠杆、两种模态机制"作 ≥2-数据集 headline —— 抑或要求**单一机制(单一模态)**跨 ≥2 库(此时 text 机制
-> 仅 ZH、image 机制 HateMM+EN 中 EN 又 fail)—— 是用户裁决;且 val-selected 协议下同一杠杆仅 HateMM 过线(协议依赖)。
+> 2 库过线**(HateMM solid + ZH marginal),不再需要 frozen+LoRA 的 "family" 拼接。逐流分解
+> (`HATEMM_LORA_STREAM_DECOMP.md`,`51eb95b`,F58)实测:两次过线的**决定性模态相同(均 text-carried)**,区别在**适配杠杆**——ZH
+> 过线是 text-borne / **LoRA-specific**(frozen-Qwen 在 ZH FAIL,故适配是必需杠杆),HateMM 过线是 text-carried /
+> **frozen-swap-sufficient**(frozen swap 已转换,LoRA ≈ frozen-Qwen 只是继承;KS-2 未触发)。是否接受"一个杠杆、同一决定性
+> 模态(text)、两种适配角色"作 ≥2-数据集 headline —— 抑或要求**单一杠杆-单一角色**跨 ≥2 库(此时 LoRA-specific 转换仅
+> ZH、frozen-sufficient 继承仅 HateMM,EN 又 fail)—— 是用户裁决;且 val-selected 协议下同一杠杆仅 HateMM 过线(协议依赖)。
 > **(iii) :58 barred-comparison 注**未在此解决。B3 的同 runner 同种子配对是现存最干净的配对读数并已在 PUR-1
 > 记录,但它是否**覆盖** `PAPER_MASTER_TABLES.md:58` 的"不可直接同格并比"记账注以支撑一个论文主张,是**用户的
 > override 决定**——本节**不编辑、不重解释 :58 本身**,亦不据此把任何行并入主表 T1–T4。
