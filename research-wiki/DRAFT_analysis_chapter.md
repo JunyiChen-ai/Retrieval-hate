@@ -412,8 +412,10 @@ confusion-weighted SFT curriculum, whose only manipulated variable is how often 
 (weighted by the memory's leave-one-out confusability, cost-neutral to generic), **ties** generic LoRA
 on the primary ZH leg under both protocols — the pre-declared most-likely outcome, "generic LoRA with
 reshuffled data" — and **adds** over generic on exactly one cell, HateMM val-selected
-(+0.0155 acc / +0.0166 mF1, 3/3, a single curriculum draw), tying on HateMM final-epoch by 0.0007; it
-does **not** strengthen the marginal ZH leg [DOC:CAND2_VERDICT_REVIEW.md, commit `546acc5`, job 13241].
+(+0.0155 acc / +0.0166 mF1, 3/3 on the draw-1 curriculum; pooled weakly-hardened across two draws,
+5/6 sign, per-draw 3/3 gate not met), tying on HateMM final-epoch by 0.0007; it
+does **not** strengthen the marginal ZH leg [DOC:CAND2_VERDICT_REVIEW.md, commit `546acc5`, job 13241;
+DOC:CAND2_REP2_VERDICT_REVIEW.md, commit `aa48275`, job 13246].
 Read honestly, the memory→adaptation coupling's measurable effect over generic LoRA is **dataset- and
 protocol-local**: the RGCL head already re-mines the confusable boundary per-epoch from the frozen
 extracted features, so on the primary leg it has already extracted what the curriculum tried to inject
@@ -426,7 +428,8 @@ adaptation converts:
 - **generic encoder-level LoRA** — HateMM PASS both protocols (solid), ZH PASS final-epoch only
   (marginal), EN FAIL both;
 - **memory-coupled curriculum LoRA (cand-2)** — ties generic on ZH (both protocols), adds over generic
-  on HateMM val-selected only (single-draw), and structurally opens no new dataset (a text/curriculum
+  on HateMM val-selected only (pooled weakly-hardened across two draws, 5/6 sign; per-draw 3/3 gate
+  not met), and structurally opens no new dataset (a text/curriculum
   lever can only hold ZH and add HateMM-or-EN; HateMM is inherited (frozen-swap-sufficient, its
   convertible signal text-carried), EN is label-limited);
 - **retrieval-loss-coupled decision-level fine-tune (P9b)** — dead: a head↔memory redistribution of
