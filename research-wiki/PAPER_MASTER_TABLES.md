@@ -284,6 +284,57 @@ law-III「per-item selection 三监督源全闭」+ line-A(F53)确认 law-IV「c
 一行),无论 novelty 如何均为 encoder-class 杠杆(D7),**不并入主表 T1–T4**,不改 13 路线 campaign 账目或 novelty
 结论;确认 `DRAFT_analysis_chapter.md` §3.9 的 adaptation law(convertibility 经由适配而非编码器身份)。
 
+### T5.4 Round-4 收尾(closing:cand-2 curriculum coupling probe + premise-(d) EN composition gate)
+
+来源:`refine-logs/CAND2_VERDICT_REVIEW.md`(F56,`546acc5`,job 13241,独立 0-context 判决,hash-verified vs
+frozen prereg `76ef0e2`)· `refine-logs/PREMISE_D_GATE_RECORD.md`(F55,`6e6061b`,$0 CPU gate)·
+`refine-logs/TIE_BRANCH_RECON.md`(F54,`6b9985a`,TIE-branch recon,premise 修正 + premise-(d) 识别)·
+`research-wiki/experiments/exp-cand2-curriculum.md` · `research-wiki/experiments/exp-premise-d.md`。**这两项均**
+**不并入主表 T1–T4、不改 13 路线 campaign 账目;cand-2 = tie(held pending D7 sub-ruling),premise-(d) = 第 6 个**
+**better-signal/no-conversion 的 $0-gate 负结果。**
+
+**(a) cand-2 curriculum —— confusion-weighted 单视频 SFT curriculum(唯一 manipulated variable = 样本重数,cost-neutral)**
+**vs 通用 LoRA(K-C2-2)与 frozen-CLIP(K-C2-1),ZH + HateMM,3 head-seed 配对,两协议:**
+
+| 数据集 | 协议 | curric mean acc/mF1 | Δ vs CLIP acc/mF1(K-C2-1) | Δacc vs generic(sign,K-C2-2) | K-C2-2 |
+|---|---|---|---|---|---|
+| **MHC-ZH** | val-sel | 0.8255/0.7947 | +0.0179/+0.0271 | −0.0067(1/3) | **tie** |
+| **MHC-ZH** | final-ep | 0.8523/0.8249 | +0.0380/+0.0529 | +0.0067(2/3) | **tie** |
+| **HateMM** | val-sel | 0.8775/0.8711 | +0.0573/+0.0626 | **+0.0155(3/3)** | **pass** |
+| **HateMM** | final-ep | 0.8791/0.8726 | +0.0667/+0.0790 | +0.0093(3/3) | **tie** |
+
+**判决(绑定,`CAND2_VERDICT_REVIEW.md` §5,frozen prereg §7.3 逐字):**
+
+```
+ZH:     final-epoch: PASS (K-C2-1, MARGINAL) · K-C2-2: tie · ZH-robustness: not strengthened.
+        val-selected: FAIL (K-C2-1)          · K-C2-2: tie.
+HateMM: final-epoch: PASS (K-C2-1, hold)     · K-C2-2: tie.
+        val-selected: PASS (K-C2-1, hold)     · K-C2-2: pass (single-draw caveat, F0.2).
+```
+
+K-C2-1:ZH final-ep PASS(marginal)/ val-sel FAIL;HateMM 双协议 PASS(held)。K-C2-2:**ZH = tie 双协议**
+(NO novelty on ZH,预声明 F0.7「generic LoRA with reshuffled data」),**HateMM = pass 仅 val-sel**(+0.0155 acc /
++0.0166 mF1,3/3,**single-curriculum-draw caveat F0.2**;final-ep tie,+0.0093 < +0.010 门 0.0007)。
+**ZH-robustness = NOT strengthened**(§3.7(a) val-sel 不过 + (b) final-ep 未变 non-marginal,ZH final +0.0380 <
++0.040、seed2 +0.0134 < 逐种子门;≈ B3 现状)。**KS-regression / KS-below-floor 均未触发,无 kill;合规干净**
+(same-code 76/80 fields,单次 test-touch/库,F0.8 class-balance shift 预声明)。**载重读法:memory→adaptation
+coupling 相对通用 LoRA 的可测效应是 dataset- 与 protocol-local**——仅 HateMM val-sel(single-draw)有,主 ZH 腿无;
+cand-2 **不开新数据集**(F0.4)、**不并入主表**;是否足够支撑 D7 memory-coupling 子裁决 = 用户裁决(见 PUR-4 /
+PUR-banner + `refine-logs/D7_RULING_DOSSIER.md` `def6ce3`)。
+
+**(b) premise-(d) gate —— CLIP-img ⊕ LoRA-EN-Qwen-text(F50 的 adaptation carve-out):MHC-EN 转换否?**
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **premise-(d)** — F50 ban 明留的 carve-out「conversion requires adaptation」:把 frozen Qwen-text 换成 **LoRA-EN-adapted** Qwen-text,保留 healthy CLIP-img | $0 CPU gate,KILL:FA 机器逐位复现 FA-A2(max\|diff\| **0.000000**,peak AUC 0.8982);LoRA-text swap **不闭合** +0.005 oracle 缺口(grid 上 max `d_oracle` 仍 **+0.0250 < +0.03**,移植 B5/K-D-1 kill-switch 触发),且 adapted text **恶化**合成:peak dev AUC **0.8982 → 0.8698(−0.0284)**(ZH 的镜像,F45 是 0.847→0.925 升);唯一点-Δacc 配置(+0.050)非 Pareto(Δnon-hate −0.0545),败 bootstrap CI([−0.0503,+0.1625])与 selection-null(p=0.7532);HateMM 正对照 +0.0467 过 ⇒ 校准。**第 6 个 better-signal/no-conversion**;EN 于 frozen(F50)/ collapsed-adapted(B4/F53)/ healthy-img⊕adapted-text(premise-(d))**三个 composition level 同时关闭** | PREMISE_D_GATE_RECORD.md · `6e6061b` |
+
+**premise 修正(F54,`6b9985a`,honest scoping,记录于此):** F45「LoRA 只动 text 流、image 流 flat」是**经验**(SFT
+target 属性)而**非架构**壁垒——vision tower / projector 冻结,但 LLM backbone(`lora_target: all`)re-contextualize
+vision-pad tokens,banked `img_feats` 池化自穿过该 adapted backbone 的 forward,故 image 流**架构上可被** vision-obligatory
+SFT target 移动;此处保持 flat 仅因 campaign 所有 SFT target 都是 transcript-present 的 text-decodable yes/no。相位图不变
+(F50/premise-(d) 已把 EN 的 healthy image 流定价于 oracle 门下),但「text-only」应读作「text-only *for these targets*」。
+详见 `DRAFT_analysis_chapter.md` §3.9 scoping note。
+
 ---
 
 ## 骨架段 — 一页纸论文章节骨架
@@ -388,6 +439,13 @@ law-III「per-item selection 三监督源全闭」+ line-A(F53)确认 law-IV「c
    §3/§5 与本汇编一致把 EN 闭合记为 **B4 = 第 22 条**(round-by-round 轴,现从预-GPU 升级为实测,同一 cell 同一 ordinal)。
    **论文不采 findings 的「24th」**(会与 B4=#22 冲突);LoRA-HateMM 的 **HateMM cell 是性能正例、不入负结果账**(不占 ordinal)。
    处置同上:逐轮框架,不铸造总数,不改 loop-state 文件。
+   **【2026-07-18 补充2,F55/F56 round-4 closing 集成时】** round-4 收尾两项同样**不铸造总数**:(i)**premise-(d)**
+   (`PREMISE_D_GATE_RECORD.md` F55,`6e6061b`)是 **$0-gate 负结果**,记录 §5 明记为 **non-binding executor label**
+   (binding close = orchestrator's),自认「第 6 个 better-signal/no-conversion 实例」;它是 FA(F50)carve-out 的 $0
+   follow-on,与 GIR/CTF/APX(round-3 $0 gates)同类,**采逐轮框架(T5.4(b))、不分配 grand-total ordinal**。(ii)**cand-2**
+   (`CAND2_VERDICT_REVIEW.md` F56,`546acc5`)是 **tie / coupling probe**,非 clean negative 亦非 clean positive:ZH
+   K-C2-2 tie 双协议、HateMM K-C2-2 pass 仅 val-sel(single-draw)、no kill fired——**held pending D7 sub-ruling
+   (PUR-4),不入负结果账、不占 ordinal、不并入主表**。两项均记于 T5.4,遵循逐轮框架,不改任一 loop-state 文件。
 
 ---
 
@@ -518,6 +576,20 @@ argparse 字段,全为 inert OFF 值(可证 no-op,且与已接受的 B3 判决�
 来源:`refine-logs/LORA_HATEMM_VERDICT_REVIEW.md`(commit `6b8f634`,job 13235,独立 0-context 判决复核)·
 `research-wiki/experiments/exp-lora-hatemm.md`。
 
+### PUR-4 — cand-2 curriculum coupling probe:memory→adaptation coupling 是否升级 LoRA 腿(更窄的 D7 sub-ruling)
+
+cand-2(confusion-weighted 单视频 SFT curriculum,唯一 manipulated variable = 样本重数,cost-neutral)预注册测试
+「memory→adaptation coupling 是否 add-over-generic LoRA」以支撑一个比 D7 更窄、更强的子裁决。**结果(见 T5.4(a) /
+`research-wiki/experiments/exp-cand2-curriculum.md`,job 13241,`546acc5`):ZH K-C2-2 tie 双协议**(NO novelty on
+a-priori-most-likely 主腿,预声明 F0.7),**HateMM K-C2-2 pass 仅 val-sel**(+0.0155 acc / +0.0166 mF1,3/3,
+single-curriculum-draw caveat F0.2;final-ep tie +0.0093),**ZH-robustness NOT strengthened**。故 `D7_RULING_DOSSIER.md`
+§5 的 **(B) 分支**条件(「K-C2-2 PASS ≥1 dataset **AND** ZH-robustness strengthened」——prereg §8 要求 BOTH)**只满足**
+**一半**:add-over-generic 在一个 dataset(HateMM,val-sel,single-draw)成立,ZH-robustness 半条未达。coupling 的可测
+效应 **dataset/protocol-local**,**不开新数据集**(F0.4)。是否据此把 LoRA 腿从「generic encoder-class」升为
+「memory-coupled adaptation curriculum」并主张 coupling novel-in-field = 用户 D7 sub-ruling,本节不判、**不并入主表**。
+来源:`refine-logs/CAND2_VERDICT_REVIEW.md`(`546acc5`,job 13241)· `research-wiki/experiments/exp-cand2-curriculum.md`
+· `refine-logs/D7_RULING_DOSSIER.md`(`def6ce3`,evidence-only,零 advocacy)。
+
 ### PUR-banner — 本节全部行 PENDING 以下用户裁决(逐条,未在此解决)
 
 > **EVERY ROW IN THIS SECTION IS PENDING USER RULINGS:**
@@ -532,3 +604,7 @@ argparse 字段,全为 inert OFF 值(可证 no-op,且与已接受的 B3 判决�
 > **(iii) :58 barred-comparison 注**未在此解决。B3 的同 runner 同种子配对是现存最干净的配对读数并已在 PUR-1
 > 记录,但它是否**覆盖** `PAPER_MASTER_TABLES.md:58` 的"不可直接同格并比"记账注以支撑一个论文主张,是**用户的
 > override 决定**——本节**不编辑、不重解释 :58 本身**,亦不据此把任何行并入主表 T1–T4。
+> **(iv) memory→adaptation coupling 子裁决(cand-2,round-4 closing,PUR-4)。** cand-2 是否把 LoRA 腿从
+> "generic encoder-class" 升为 "memory-coupled" 并计入 novelty = 用户 D7 sub-ruling。measured 结果:D7 dossier
+> (B) 分支只满足一半(HateMM val-sel single-draw add;ZH-robustness NOT strengthened;ZH K-C2-2 tie 双协议),
+> coupling 效应 dataset/protocol-local、不开新数据集——本节不判、不并入主表。

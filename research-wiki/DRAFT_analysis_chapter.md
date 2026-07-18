@@ -175,12 +175,12 @@ what the MLLM weak label would teach** [DOC:EXP_p11_weaksup_localization.md]. Th
 real and large **versus memory** (A-fuse − memory +0.0996, CI [+0.0635, +0.1366]) but not versus a
 trivially-supervised MIL head — which sharpens, rather than removes, its role (§4).
 
-### 3.6 Structural law I — better signal without conversion (five instances; F44 the mechanism)
+### 3.6 Structural law I — better signal without conversion (six instances; F44 the mechanism)
 
 Beyond the thirteen-route campaign, three further pre-registered sprints (rounds 2–4,
 [DOC:TERMINUS_round2_mllm_plus3.md, DOC:TERMINUS_round3_mllm_plus3.md, DOC:ROUTER_GATE_RECORD.md,
-DOC:FA_GATE_RECORD.md]) hardened §3.1 and §3.3 into a
-single law that now has **five independent instances**: a candidate signal is demonstrably *richer*
+DOC:FA_GATE_RECORD.md, DOC:PREMISE_D_GATE_RECORD.md]) hardened §3.1 and §3.3 into a
+single law that now has **six independent instances**: a candidate signal is demonstrably *richer*
 than the pipeline already has, and yet the best in-constraint operator converts **none** of it into
 main-table accuracy. Each shares a sharp form — a **gold/label oracle proves the convertible
 headroom is present**, but no unsupervised, frozen, or even supervised operator inside the constraint
@@ -217,8 +217,20 @@ box recovers it:
   reweight is a pure **rotation** at every mixing weight (F44-exact +0.040 hate / −0.036 non-hate at
   50/50). The best possible ranking, and zero accuracy — better-signal-without-conversion made
   literal [DOC:FA_GATE_RECORD.md, commit `e0877c9`].
+- **Premise-(d)** (healthy-image ⊕ *adapted*-text composition, round-4 closing) — **the law tested
+  against its own escape clause.** FA closed EN's *frozen* composition, but its ban carved out one
+  untested cell: "conversion requires adaptation," i.e. compose CLIP's healthy image stream with the
+  LoRA-*adapted* Qwen text stream instead of the frozen one — the exact lever that converts on ZH (F45,
+  §3.9). A $0 gate reusing the FA machinery bit-exact (the frozen control reproduces FA-A2 to
+  **0.000000** absolute error, peak AUC 0.8982) measures it: the adapted text stream does **not** close
+  the +0.005 oracle gap (the max label-oracle `d_oracle` anywhere on the grid stays **+0.0250 < +0.03**,
+  the ported B5 kill-switch fires) and in fact **degrades** the composite — peak dev AUC **0.8982 →
+  0.8698 (−0.0284)**, the mirror image of the ZH conversion. So even the adaptation the ban itself names
+  as the conversion mechanism converts none of it; this **sixth** instance completes the F50 story by
+  closing EN at *every* composition level — frozen, collapsed-adapted, and healthy-image ⊕ adapted-text
+  [DOC:PREMISE_D_GATE_RECORD.md, commit `6e6061b`].
 
-These five instances are unified by a single **mechanism**, surfaced by the encoder swap itself — the
+These six instances are unified by a single **mechanism**, surfaced by the encoder swap itself — the
 result that turns the campaign's central positive from an anomaly into a law. A zero-GPU geometry
 diagnosis on banked train/dev caches shows Qwen's representation upgrade is **real and roughly equal on
 all three datasets** — top-20 neighbourhood purity rises **+0.023 / +0.023 / +0.021** and the
@@ -253,12 +265,13 @@ legs, both *dataset* properties rather than method-fixable ones:
 This account **unifies three prior verdicts** the paper previously left disconnected — SAV (MHC-EN is
 data/label-limited; the dilution hypothesis is falsified), B5 (the ZH/MHC ranking edge is
 easy-example ordering), and B2 (scale regresses on MHC) — and, read alongside P3 / S2S / W2-A / router /
-FA, states the law in its general form: **a signal being measurably better is necessary but not
+FA / premise-(d), states the law in its general form: **a signal being measurably better is necessary but not
 sufficient for a main-table gain; what decides conversion is where the gain lands — which modality,
 which error type — and whether the decision metric can absorb it, not how much better the signal is.**
 FA is the clean edge case: it drives the ranking to its campaign maximum and converts nothing, because
 the MHC-EN core is label-limited and the AUC it improves is exactly the quantity the accuracy metric
-cannot absorb. The design-time corollary sharpens §3.3's dual-protocol rule into a question to ask of
+cannot absorb; premise-(d) then shows that *adapting* the text stream of that same composition does not
+rescue it either — it lowers the ranking rather than converting it (§3.9). The design-time corollary sharpens §3.3's dual-protocol rule into a question to ask of
 any auxiliary-signal proposal: not "is the signal richer?" (it usually is) but "is its advantage in the
 modality and the error type the decision boundary is actually limited by?"
 
@@ -385,6 +398,56 @@ through **different modalities** — ZH's text-borne and LoRA-specific (frozen-Q
 image-borne and inherited from the frozen swap (LoRA ≈ frozen-Qwen there). Whether an encoder-class
 adaptation lever, however it performs, satisfies the goal's *novelty* clause is the standing D7 user
 ruling; the mechanism analysis fixes only what the lever does, not whether it counts.
+
+The round-4 **curriculum coupling probe** completes the map. One question the frozen-vs-adapted contrast
+leaves open is whether *coupling the retrieval memory into the adaptation objective* — rather than a
+generic word-label SFT — converts where generic LoRA ties or fails. The cand-2 probe answers it: a
+confusion-weighted SFT curriculum, whose only manipulated variable is how often each train video appears
+(weighted by the memory's leave-one-out confusability, cost-neutral to generic), **ties** generic LoRA
+on the primary ZH leg under both protocols — the pre-declared most-likely outcome, "generic LoRA with
+reshuffled data" — and **adds** over generic on exactly one cell, HateMM val-selected
+(+0.0155 acc / +0.0166 mF1, 3/3, a single curriculum draw), tying on HateMM final-epoch by 0.0007; it
+does **not** strengthen the marginal ZH leg [DOC:CAND2_VERDICT_REVIEW.md, commit `546acc5`, job 13241].
+Read honestly, the memory→adaptation coupling's measurable effect over generic LoRA is **dataset- and
+protocol-local**: the RGCL head already re-mines the confusable boundary per-epoch from the frozen
+extracted features, so on the primary leg it has already extracted what the curriculum tried to inject
+into the encoder — the §3.3 "the objective already sees the hard structure, curriculum is redundant"
+pattern, one level up on the encoder.
+
+With cand-2 the adaptation family is **completely mapped**, and the map reads as a phase diagram of where
+adaptation converts:
+
+- **generic encoder-level LoRA** — HateMM PASS both protocols (solid), ZH PASS final-epoch only
+  (marginal), EN FAIL both;
+- **memory-coupled curriculum LoRA (cand-2)** — ties generic on ZH (both protocols), adds over generic
+  on HateMM val-selected only (single-draw), and structurally opens no new dataset (a text/curriculum
+  lever can only hold ZH and add HateMM-or-EN; HateMM is inherited image-borne, EN is label-limited);
+- **retrieval-loss-coupled decision-level fine-tune (P9b)** — dead: a head↔memory redistribution of
+  ≈ ±1.8 points, not a net gain, 0/12 cells above floor (§3.4);
+- **the EN composition family** — closed at every level: frozen swap (B1/F44), generic LoRA (B4/F53),
+  curriculum (opens no new dataset), and even the healthy-CLIP-image ⊕ *adapted*-Qwen-text composition
+  (premise-(d), §3.6).
+
+Read across the diagram, **adaptation converts exactly where the dataset's decisive modality is the one
+the adaptation reaches and the residual error core is representation-limited; it ties or fails everywhere
+else.** ZH's text-borne LoRA gain is the one place adaptation *itself* is the converting lever (the
+language pathway is where ZH hate lives, and frozen-Qwen fails there); HateMM's pass is inherited
+image-borne (LoRA ≈ frozen-Qwen, the adapted text stream is HateMM's secondary modality); and EN, which
+is label-limited with a collapsed image stream, is unreachable by every adaptation the box permits —
+generic, memory-coupled, or composed with a healthy foreign image stream.
+
+A **scoping correction** travels with this map, for honesty about the mechanism prose. The decompositions
+above describe the ZH LoRA gain as living "in the text stream, image stream flat," and read HateMM's KS-2
+result as LoRA "never touching the image stream." A source-level recon (F54) sharpens these into an
+empirical, not architectural, claim: the vision tower and multimodal projector are indeed frozen, but the
+LLM backbone that re-contextualises the vision-pad tokens *is* LoRA-adapted (`lora_target: all`), and the
+banked `img_feats` are pooled from the vision-token span of a forward that passes **through** that adapted
+backbone — so the image stream is architecturally *movable* by an SFT target that routes gradient through
+the vision tokens. It stays flat only because every SFT target in this campaign is a text-decodable
+yes/no with the transcript present, which routes gradient into the language pathway. Nothing in the phase
+diagram changes — F50/premise-(d) already price EN's *healthy* image stream out below the oracle bar, and
+HateMM/ZH already pass — but the "text-only" phrasing should be read as "text-only *for these targets*,"
+not as a claim that the vision path is unadaptable [DOC:TIE_BRANCH_RECON.md, commit `6b9985a`].
 
 ## 4. What survives
 

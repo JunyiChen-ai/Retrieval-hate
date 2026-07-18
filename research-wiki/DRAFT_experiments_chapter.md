@@ -383,10 +383,12 @@ The thirteen-route campaign of §4 and T4 answered the original mandate; a user 
 the goal to require a *novel* MLLM mechanism** (D7: an encoder-class lever, however well it performs,
 does not by itself satisfy novelty) and the search was re-run under that stricter bar across three
 further sprints. These sprints add **pre-registered negatives** to the ledger (and one round-4 performance
-positive, LoRA-HateMM); they do **not** revise the
-campaign's 13-route accounting (T4), and are reported here as a clearly-labelled extension. The four
-structural laws that crystallised from them are analysed in the analysis chapter §3.6–3.9; this section
-is the results ledger.
+positive, LoRA-HateMM), plus a round-4 **closing** pair — a memory→adaptation-coupling curriculum probe
+(cand-2, which ties generic LoRA on the primary ZH leg and adds over generic on HateMM val-selected only)
+and the premise-(d) EN-composition gate (which closes MHC-EN at the last untested composition level);
+they do **not** revise the campaign's 13-route accounting (T4), and are reported here as a
+clearly-labelled extension. The four structural laws that crystallised from them are analysed in the
+analysis chapter §3.6–3.9; this section is the results ledger.
 
 **Count discipline.** T4's thirteen routes are unchanged: at route-family granularity, ten main-table
 accuracy rows plus three localization rows (P6 / P10 / P11); the analysis chapter's finer count instead
@@ -396,14 +398,20 @@ accounting and is untouched by every sprint below.** On the separate novelty-fir
 round 2 adds seven sprint negatives (#15–21) plus the B4 EN-LoRA-encoder cell (#22) — closed pre-GPU
 then, now formally measured as a FAIL under round 4's line-A run (F53) — and one *marginal positive*
 held pending a user novelty ruling (B3); round 3 adds six directions, every one closed at a binding
-verdict or a calibrated-zero conditional-info gate; and round 4 adds two further pre-registered
+verdict or a calibrated-zero conditional-info gate; round 4 adds two further pre-registered
 negatives — the per-item cross-channel router (F47) and the fusion/composition FA gate (F50) — plus a
 pre-GPU arithmetic kill (MJ, F49), a wave-5 adaptation-family structural closure (F51), and the line-A
 LoRA-HateMM measurement (F53): an encoder-level LoRA **HateMM PASS under both protocols** (a *second*
 performance positive alongside B3, held pending the same user D7 novelty ruling) that also formally
-measures the bundled B4 EN cell (#22) as a FAIL. With round 4
+measures the bundled B4 EN cell (#22) as a FAIL; and a round-4 **closing** pair — the cand-2 curriculum
+coupling probe (F56, a tie on ZH / one-cell add on HateMM, no kill fired, held pending the same D7
+sub-ruling, opens no new dataset) and the premise-(d) EN-composition gate (F55, a $0 CPU KILL that is the
+sixth "better-signal / no-conversion" datum). None of these five round-4 items is a main-table-accuracy
+route, and none revises the 13-route campaign accounting (T4); the two closing items add one extension
+negative (premise-(d)) and one pending-ruling coupling probe (cand-2). With round 4
 no surviving candidate remains in the frozen constraint box [DOC:TERMINUS_round2_mllm_plus3.md,
-DOC:TERMINUS_round3_mllm_plus3.md, DOC:ROUTER_GATE_RECORD.md, DOC:FA_GATE_RECORD.md]. (A ledger-ordinal
+DOC:TERMINUS_round3_mllm_plus3.md, DOC:ROUTER_GATE_RECORD.md, DOC:FA_GATE_RECORD.md,
+DOC:CAND2_VERDICT_REVIEW.md, DOC:PREMISE_D_GATE_RECORD.md]. (A ledger-ordinal
 note: the round-4 records label F47 / F50 the "22nd / 23rd pre-registered negative," an ordinal
 continued from the round-2 *terminus* count that does not line up with this section's sprint numbering,
 where #22 already denotes B4; the paper uses the round-by-round framing above and the master-table
@@ -552,6 +560,83 @@ pass the frozen swap. Whether the encoder-level LoRA performance conjunct counts
 of outcome and is **not** folded into any main table
 [DOC:LORA_HATEMM_VERDICT_REVIEW.md; DOC:PAPER_MASTER_TABLES.md PUR-3, PUR-banner].
 
+**Curriculum coupling probe (cand-2) — a memory-mined SFT curriculum ties generic LoRA on ZH and adds
+over generic on HateMM val-selected only.** The round-4 closing probe asks whether *coupling the
+retrieval memory into the adaptation objective* upgrades the generic LoRA leg from "encoder-class" to
+"memory-coupled." The cell is a **confusion-weighted single-video SFT curriculum**: the RGCL memory's
+leave-one-out kNN vote over the banked frozen-Qwen train features assigns each train video a
+confusability weight, and that weight **reweights how often each SFT record appears** — the SFT records
+are byte-identical to the generic-LoRA arm (same 8 frames, instruction, and word target), the **single
+manipulated variable is example multiplicity**, and the reweighted multiset is capped to N_train so the
+3-epoch step count is identical to generic (cost-neutral). Trained on each dataset's own train split only
+(ZH the primary leg — strengthen B3's marginal pass; HateMM the hold leg — inherit its both-protocol
+pass), the features feed the unchanged archive-OFF RGCL head + top-20 kNN, 3 head-seeds paired vs both
+the frozen-CLIP floor (K-C2-1) and the generic-LoRA arm (K-C2-2), dual protocol
+[DOC:CAND2_CURRICULUM_PREREG.md, commit `76ef0e2`; DOC:experiments/exp-cand2-curriculum.md].
+
+Table 8 gives the outcome. Against the frozen-CLIP floor the curriculum **holds** every inherited pass —
+ZH final-epoch (marginal), HateMM both protocols — but the add-over-generic bar (K-C2-2: mean Δacc ≥
++0.010 AND sign 3/3 AND ΔmF1 ≥ 0) is met on **exactly one cell**: HateMM val-selected (+0.0155 acc /
++0.0166 mF1, 3/3). That pass carries a **single-curriculum-draw caveat** — one SFT draw read by three
+head-seeds cannot separate the curriculum effect from SFT-draw luck (pre-declared F0.2) — and a
+protocol-split caveat (HateMM final-epoch **ties** at +0.0093 acc, 0.0007 below the +0.010 bar), and it
+lands off the a-priori-favoured leg. ZH **ties** generic on both protocols — the prereg's own
+pre-declared most-likely outcome (F0.7: "generic LoRA with reshuffled data"). No kill-switch fired
+(KS-regression and KS-below-floor both untriggered); compliance was clean (same-code pairing
+76/80 Namespace fields identical, single test-touch per dataset, the confusion-weighting class-balance
+shift pre-declared F0.8).
+
+**Table 8. cand-2 curriculum (curric 3-seed mean; Δ vs frozen-CLIP = K-C2-1; Δacc vs generic-LoRA =
+K-C2-2; both protocols).**
+
+| Dataset | protocol | curric acc / mF1 | Δ vs CLIP acc / mF1 | Δacc vs generic (sign) | K-C2-2 |
+|---|---|---|---|---|---|
+| MHC-ZH | val-sel | 0.8255 / 0.7947 | +0.0179 / +0.0271 | −0.0067 (1/3) | tie |
+| MHC-ZH | final-ep | 0.8523 / 0.8249 | +0.0380 / +0.0529 | +0.0067 (2/3) | tie |
+| HateMM | val-sel | 0.8775 / 0.8711 | +0.0573 / +0.0626 | +0.0155 (3/3) | **pass** |
+| HateMM | final-ep | 0.8791 / 0.8726 | +0.0667 / +0.0790 | +0.0093 (3/3) | tie |
+
+Source: T5.4 [DOC:PAPER_MASTER_TABLES.md], from CAND2_VERDICT_REVIEW.md (job 13241), commit `546acc5`.
+Comparison floors/generic arms re-derived to 4dp against the prereg (ZH generic-LoRA job 13150, HateMM
+generic-LoRA job 13235, frozen-CLIP 13115/12850).
+
+**Verdict (binding, per the frozen prereg §7.3, verbatim).**
+
+```
+ZH:     final-epoch: PASS (K-C2-1, MARGINAL) · K-C2-2: tie · ZH-robustness: not strengthened.
+        val-selected: FAIL (K-C2-1)          · K-C2-2: tie.
+HateMM: final-epoch: PASS (K-C2-1, hold)     · K-C2-2: tie.
+        val-selected: PASS (K-C2-1, hold)     · K-C2-2: pass (single-draw caveat, F0.2).
+```
+
+The pre-declared **ZH-robustness** clause — the primary declared purpose of cand-2, to strengthen the
+marginal ZH leg — is **not** met: neither does the val-selected conjunct pass, nor does final-epoch
+become non-marginal (ZH final-epoch curric +0.0380 acc is below the +0.040 non-marginal bar, seed-2
++0.0134 below the per-seed bar — essentially B3's status). The memory→adaptation coupling's measurable
+effect over generic LoRA is therefore **dataset- and protocol-local**: present only on HateMM
+val-selected (single-draw), absent on the primary ZH leg. cand-2 opens **no new dataset** (pre-declared
+F0.4) and is **not folded into any main table**; whether its one-cell add-over-generic suffices for the
+D7 memory→adaptation-coupling novelty sub-ruling is the user's decision, not this experiment's
+[DOC:D7_RULING_DOSSIER.md, commit `def6ce3`; DOC:PAPER_MASTER_TABLES.md PUR-4, PUR-banner].
+
+**Premise-(d) gate — even an *adapted* text stream does not convert MHC-EN.** The FA gate (F50) closed
+EN's *frozen* cross-encoder composition but carved out one untested cell in its own ban language —
+"conversion requires adaptation" — namely CLIP's healthy image stream composed with the **LoRA-adapted**
+(not frozen) Qwen text stream (`CLIP-imĝ ⊕ LoRA-Qwen-text̂`). A $0 CPU gate measured it, reusing the FA
+oracle machinery verbatim: the frozen-text control arm reproduces FA-A2 **bit-exact** (max absolute
+difference 0.000000, peak AUC 0.8982). Swapping the frozen Qwen-text block for the LoRA-EN-adapted block
+does **not** close the +0.005 oracle gap — the maximum label-oracle `d_oracle` anywhere on the grid
+stays pinned at **+0.0250** (identical to frozen, below the +0.03 bar, so the ported B5 kill-switch
+fires) — and the adapted text stream actively **degrades** the composition: peak dev AUC drops **0.8982 →
+0.8698 (−0.0284)**, the mirror image of ZH, where the same LoRA lifts the text stream (F45: 0.847 →
+0.925). The single point-Δacc config (+0.050) is non-Pareto (a −0.0545 non-hate cost), fails the
+bootstrap CI ([−0.0503, +0.1625]) and the selection-null (p = 0.7532); the identical test passes on
+HateMM's genuine win (+0.0467), so the kill is calibrated. This closes MHC-EN at **all three composition
+levels — frozen (F50), collapsed-adapted (B4/F53), and healthy-image ⊕ adapted-text (premise-(d)) — and
+is the campaign's sixth "better-signal / no-conversion" datum** [DOC:PREMISE_D_GATE_RECORD.md, commit
+`6e6061b`; DOC:experiments/exp-premise-d.md; analysis §3.6]. It spends no GPU and no test-touch (train +
+dev features/labels only) and does not revise the 13-route campaign accounting (T4).
+
 ---
 
 *Consistency note: all numbers in §1–§6 are transcribed from `PAPER_MASTER_TABLES.md` (T1–T3) and its
@@ -563,4 +648,9 @@ ledger-ordinal discrepancy (master-table tension list #9) — are surfaced in-te
 resolved, per the master-table tension list #1–2, #9. The rounds-2/3/4 extension adds pre-registered
 negatives and one round-4 performance positive (LoRA-HateMM, F53) without revising the 13-route campaign
 count (§7 count-discipline note); the LoRA-HateMM per-seed numbers and floors are transcribed from
-`refine-logs/LORA_HATEMM_VERDICT_REVIEW.md` (`6b8f634`) and re-checked against the job 13235 trainlogs.*
+`refine-logs/LORA_HATEMM_VERDICT_REVIEW.md` (`6b8f634`) and re-checked against the job 13235 trainlogs.
+The round-4 closing pair — the cand-2 curriculum verdict (Table 8) and the premise-(d) EN-composition
+gate — are transcribed from `refine-logs/CAND2_VERDICT_REVIEW.md` (`546acc5`, job 13241, hash-verified
+vs the frozen prereg `76ef0e2`) and `refine-logs/PREMISE_D_GATE_RECORD.md` (`6e6061b`) respectively;
+cand-2 is a coupling probe held pending the D7 sub-ruling (opens no new dataset), and premise-(d) is a
+$0-gate negative (sixth "better-signal / no-conversion" datum), neither folded into any main table.*
