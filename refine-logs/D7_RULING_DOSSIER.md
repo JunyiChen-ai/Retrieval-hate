@@ -357,3 +357,53 @@ adaptation inheriting; adaptation is the *necessary* converting lever only on th
 final-epoch only). This addendum records the fact and does not weigh it. [source:
 `refine-logs/HATEMM_LORA_STREAM_DECOMP.md`, `51eb95b`; cross-ref `ENCODER_SWAP_DIAGNOSIS.md` `8a48938`
 (F44), `B3_ZH_LORA_DECOMPOSITION.md` `d76e407` (F45)]
+
+---
+
+## 8. FACTUAL ADDENDUM — F59 cand-2 rep2 (draw-2 replication) verdict (appended 2026-07-18, after close)
+
+*Appended after §7; no existing section (§1–§7) is altered. Evidence-only, no advocacy, no
+recommendation. All numbers from `refine-logs/CAND2_REP2_VERDICT_REVIEW.md` (commit `aa48275`, F59) —
+an independent 0-context verdict rendered strictly against the frozen rep2 pre-registration
+`refine-logs/CAND2_REP2_PREREG.md` (`2d15ffb`); every comparison re-derived from raw trainlogs with a
+from-scratch parser that reproduces the banked arms bit-exact. No new GPU / Modal / test-touch beyond
+the single budgeted draw-2 head evaluation (job 13246).*
+
+cand-2's draw-1 verdict (§6 item 1; F56, `546acc5`) left the HateMM val-selected add-over-generic pass
+carrying a **single-curriculum-draw caveat** (one SFT draw read by three head-seeds). The rep2
+pre-registration ran **exactly one** independent second SFT draw — seed = 1 the single manipulated
+variable (draw-1 was the HF default 42), curriculum multiset bit-exact to draw-1 (sha `73307ef2…82b`) —
+on **HateMM only**, to test whether that pass replicates. It is measured now; this changes **no**
+performance number in §2.2 and does **not** decide D7 (that remains the USER's, prereg F-R0.4).
+
+**Draw-2 measured reads (job 13246; val-selected add-over-generic vs the banked generic-LoRA arm 13235):**
+- per-seed Δacc **[+0.0139, −0.0047, +0.0233]**, mean **+0.0108**, mean ΔmF1 +0.0120. The point bar
+  (mean Δacc ≥ +0.010) is **cleared**, but the **3/3 sign gate failed** (seed1 = −0.0047 → 2/3). ⇒
+  **K-REP-1 (PRIMARY, BINDING) does NOT PASS.**
+- **KS-REP (retirement kill) did NOT fire** (fires iff draw-2 mean Δacc ≤ −0.014; observed +0.0108, far
+  positive) — the effect did not reverse and is not ruled draw-noise.
+- **K-REP-2 (pooled 6-pt, SECONDARY): HARDENED.** draw-1 per-seed [+0.0186, +0.0046, +0.0233] + draw-2
+  [+0.0139, −0.0047, +0.0233] → pooled mean **+0.01317** with **5/6** positive sign (only draw-2 seed1
+  negative), clearing the pre-declared ≥ +0.010 AND ≥ 5/6 rule.
+- Non-binding final-epoch add-over-generic read: mean **+0.0140** acc, sign **3/3** (reported, not
+  decision-bearing).
+- **Seed compliance verified**: the pickled `training_args.bin` reads seed = 1 (not 42). The single
+  draw-2 attempt is **binding and consumed** — no further draws are possible under the frozen prereg.
+
+**VERDICT (verbatim, `CAND2_REP2_VERDICT_REVIEW.md` §6): *F56 HateMM val-sel add-over-generic =
+WEAKLY-HARDENED*** — it did not fully replicate on the binding val-selected protocol (per-draw 3/3 gate
+missed on seed1), did not reverse, and the pooled two-draw read is HARDENED (5/6, +0.0132), so draw-2
+agreed in direction; the effect is "not a single-draw cherry-pick" but "weaker than a clean
+replication," and remains a **2-draw** estimate (F-R0.9).
+
+**What changed for the §5 decision-matrix branch (B) — stated plainly, no side taken.** Branch (B)'s
+condition is "K-C2-2 PASS on ≥1 dataset **AND** ZH-robustness strengthened" (both required, prereg §8).
+Its **first half** — the K-C2-2 add-over-generic leg, delivered by HateMM val-selected — moves from
+**"single-draw caveat"** (its status as of F56) to **"pooled weakly-hardened (not draw-noise, not fully
+per-draw replicable)"**: i.e. the HateMM add-over-generic half now stands more firmly than a single draw
+would carry, but short of a clean per-draw replication. The **ZH-robustness half remains unmet** — rep2
+measured HateMM only and opens no ZH read, so nothing changes the F56 finding that the ZH leg was not
+strengthened. Branch (B) therefore still turns on a **half-met** condition; the only movement is in how
+firmly the HateMM add-over-generic half is now supported. This addendum records the fact and does not
+weigh it. [source: `refine-logs/CAND2_REP2_VERDICT_REVIEW.md`, `aa48275`; frozen rep2 prereg
+`CAND2_REP2_PREREG.md`, `2d15ffb`; cross-ref F56 `CAND2_VERDICT_REVIEW.md` `546acc5` (§6 item 1).]

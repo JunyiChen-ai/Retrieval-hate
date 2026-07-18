@@ -314,13 +314,32 @@ HateMM: final-epoch: PASS (K-C2-1, hold)     · K-C2-2: tie.
 
 K-C2-1:ZH final-ep PASS(marginal)/ val-sel FAIL;HateMM 双协议 PASS(held)。K-C2-2:**ZH = tie 双协议**
 (NO novelty on ZH,预声明 F0.7「generic LoRA with reshuffled data」),**HateMM = pass 仅 val-sel**(+0.0155 acc /
-+0.0166 mF1,3/3,**single-curriculum-draw caveat F0.2**;final-ep tie,+0.0093 < +0.010 门 0.0007)。
++0.0166 mF1,3/3;draw-1 单 SFT draw F0.2,rep2 后为 **pooled weakly-hardened across two draws(5/6 sign),
+per-draw 3/3 gate not met**,见 (a-rep2);final-ep tie,+0.0093 < +0.010 门 0.0007)。
 **ZH-robustness = NOT strengthened**(§3.7(a) val-sel 不过 + (b) final-ep 未变 non-marginal,ZH final +0.0380 <
 +0.040、seed2 +0.0134 < 逐种子门;≈ B3 现状)。**KS-regression / KS-below-floor 均未触发,无 kill;合规干净**
 (same-code 76/80 fields,单次 test-touch/库,F0.8 class-balance shift 预声明)。**载重读法:memory→adaptation
-coupling 相对通用 LoRA 的可测效应是 dataset- 与 protocol-local**——仅 HateMM val-sel(single-draw)有,主 ZH 腿无;
+coupling 相对通用 LoRA 的可测效应是 dataset- 与 protocol-local**——仅 HateMM val-sel(rep2 后 pooled
+weakly-hardened across two draws,5/6 sign;per-draw 3/3 gate not met,见 (a-rep2))有,主 ZH 腿无;
 cand-2 **不开新数据集**(F0.4)、**不并入主表**;是否足够支撑 D7 memory-coupling 子裁决 = 用户裁决(见 PUR-4 /
 PUR-banner + `refine-logs/D7_RULING_DOSSIER.md` `def6ce3`)。
+
+**(a-rep2) cand-2 draw-2 replication(F59,`aa48275`,job 13246,独立 0-context 判决 vs frozen rep2 prereg**
+**`2d15ffb`,banked arms 逐位复现)—— HateMM add-over-generic 复现读:**
+
+draw-1 的 HateMM K-C2-2 val-sel PASS(+0.0155,3/3)只有单 curriculum SFT draw(F0.2),故预注册跑**恰一**独立
+第二 draw(seed=1 为唯一 manipulated variable;draw-1 = HF default 42;curriculum multiset 与 draw-1 逐位一致,
+sha `73307ef2…82b`)**仅 HateMM**。draw-2 val-sel add-over-generic 逐种子 **[+0.0139,−0.0047,+0.0233]**,mean
+**+0.0108** acc(ΔmF1 +0.0120):点 bar(≥ +0.010)过,但 **3/3 sign gate 败**(seed1 −0.0047 → 2/3)⇒
+**K-REP-1(主/绑定)NOT-PASS**;**KS-REP**(退休 kill,mean Δacc ≤ −0.014 才触发)**未触发**。pooled 两-draw
+(K-REP-2:draw-1 [+0.0186,+0.0046,+0.0233] + draw-2 [+0.0139,−0.0047,+0.0233])mean **+0.01317**、sign
+**5/6** ⇒ **HARDENED**。非绑定 final-ep add-over-generic:mean **+0.0140**,3/3。**判决(verbatim,
+`CAND2_REP2_VERDICT_REVIEW.md` §6):F56 HateMM val-sel add-over-generic = WEAKLY-HARDENED** —— 未完全复现
+(seed1 翻负 −0.0047、per-draw 3/3 gate 未过)、未反转、pooled 方向一致,仍是 **2-draw** 估计;单次 draw-2 attempt
+**绑定且已消耗**(无更多 draw;`training_args.bin` seed=1 已核)。rep2 仅测 HateMM,**ZH-robustness 仍 NOT**
+**strengthened**。故 `D7_RULING_DOSSIER.md` §5 (B) 分支第一半(HateMM add-over-generic)从「single-draw caveat」
+升为「pooled weakly-hardened across two draws(5/6 sign),per-draw 3/3 gate not met」,ZH-robustness 半条仍未达。
+Novelty 仍 = 用户 D7 sub-ruling,**不并入主表**。provenance:`2d15ffb`→`e2aee03`→`6c11988`→`d06ad07`→`aa48275`。
 
 **(b) premise-(d) gate —— CLIP-img ⊕ LoRA-EN-Qwen-text(F50 的 adaptation carve-out):MHC-EN 转换否?**
 
@@ -444,7 +463,7 @@ SFT target 移动;此处保持 flat 仅因 campaign 所有 SFT target 都是 tra
    (binding close = orchestrator's),自认「第 6 个 better-signal/no-conversion 实例」;它是 FA(F50)carve-out 的 $0
    follow-on,与 GIR/CTF/APX(round-3 $0 gates)同类,**采逐轮框架(T5.4(b))、不分配 grand-total ordinal**。(ii)**cand-2**
    (`CAND2_VERDICT_REVIEW.md` F56,`546acc5`)是 **tie / coupling probe**,非 clean negative 亦非 clean positive:ZH
-   K-C2-2 tie 双协议、HateMM K-C2-2 pass 仅 val-sel(single-draw)、no kill fired——**held pending D7 sub-ruling
+   K-C2-2 tie 双协议、HateMM K-C2-2 pass 仅 val-sel(rep2 后 pooled weakly-hardened,5/6 sign,per-draw 3/3 gate not met)、no kill fired——**held pending D7 sub-ruling
    (PUR-4),不入负结果账、不占 ordinal、不并入主表**。两项均记于 T5.4,遵循逐轮框架,不改任一 loop-state 文件。
 
 ---
@@ -587,9 +606,10 @@ cand-2(confusion-weighted 单视频 SFT curriculum,唯一 manipulated variable =
 「memory→adaptation coupling 是否 add-over-generic LoRA」以支撑一个比 D7 更窄、更强的子裁决。**结果(见 T5.4(a) /
 `research-wiki/experiments/exp-cand2-curriculum.md`,job 13241,`546acc5`):ZH K-C2-2 tie 双协议**(NO novelty on
 a-priori-most-likely 主腿,预声明 F0.7),**HateMM K-C2-2 pass 仅 val-sel**(+0.0155 acc / +0.0166 mF1,3/3,
-single-curriculum-draw caveat F0.2;final-ep tie +0.0093),**ZH-robustness NOT strengthened**。故 `D7_RULING_DOSSIER.md`
+rep2 后 pooled weakly-hardened across two draws,5/6 sign,per-draw 3/3 gate not met——见 T5.4(a-rep2);
+final-ep tie +0.0093),**ZH-robustness NOT strengthened**。故 `D7_RULING_DOSSIER.md`
 §5 的 **(B) 分支**条件(「K-C2-2 PASS ≥1 dataset **AND** ZH-robustness strengthened」——prereg §8 要求 BOTH)**只满足**
-**一半**:add-over-generic 在一个 dataset(HateMM,val-sel,single-draw)成立,ZH-robustness 半条未达。coupling 的可测
+**一半**:add-over-generic 在一个 dataset(HateMM,val-sel;rep2 后 pooled weakly-hardened,5/6 sign,per-draw 3/3 gate not met)成立,ZH-robustness 半条未达。coupling 的可测
 效应 **dataset/protocol-local**,**不开新数据集**(F0.4)。是否据此把 LoRA 腿从「generic encoder-class」升为
 「memory-coupled adaptation curriculum」并主张 coupling novel-in-field = 用户 D7 sub-ruling,本节不判、**不并入主表**。
 来源:`refine-logs/CAND2_VERDICT_REVIEW.md`(`546acc5`,job 13241)· `research-wiki/experiments/exp-cand2-curriculum.md`
@@ -613,5 +633,5 @@ single-curriculum-draw caveat F0.2;final-ep tie +0.0093),**ZH-robustness NOT str
 > override 决定**——本节**不编辑、不重解释 :58 本身**,亦不据此把任何行并入主表 T1–T4。
 > **(iv) memory→adaptation coupling 子裁决(cand-2,round-4 closing,PUR-4)。** cand-2 是否把 LoRA 腿从
 > "generic encoder-class" 升为 "memory-coupled" 并计入 novelty = 用户 D7 sub-ruling。measured 结果:D7 dossier
-> (B) 分支只满足一半(HateMM val-sel single-draw add;ZH-robustness NOT strengthened;ZH K-C2-2 tie 双协议),
+> (B) 分支只满足一半(HateMM val-sel add,rep2 后 pooled weakly-hardened、5/6 sign、per-draw 3/3 gate not met;ZH-robustness NOT strengthened;ZH K-C2-2 tie 双协议),
 > coupling 效应 dataset/protocol-local、不开新数据集——本节不判、不并入主表。

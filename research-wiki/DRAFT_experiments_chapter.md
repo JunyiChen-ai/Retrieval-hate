@@ -580,9 +580,10 @@ the frozen-CLIP floor (K-C2-1) and the generic-LoRA arm (K-C2-2), dual protocol
 Table 8 gives the outcome. Against the frozen-CLIP floor the curriculum **holds** every inherited pass —
 ZH final-epoch (marginal), HateMM both protocols — but the add-over-generic bar (K-C2-2: mean Δacc ≥
 +0.010 AND sign 3/3 AND ΔmF1 ≥ 0) is met on **exactly one cell**: HateMM val-selected (+0.0155 acc /
-+0.0166 mF1, 3/3). That pass carries a **single-curriculum-draw caveat** — one SFT draw read by three
-head-seeds cannot separate the curriculum effect from SFT-draw luck (pre-declared F0.2) — and a
-protocol-split caveat (HateMM final-epoch **ties** at +0.0093 acc, 0.0007 below the +0.010 bar), and it
++0.0166 mF1, 3/3). That pass rested on a single curriculum SFT draw (pre-declared F0.2); a pre-registered
+second draw (rep2, F59 — see the draw-2 paragraph below) now makes the HateMM val-selected add-over-generic
+**pooled weakly-hardened across two draws (5/6 sign), per-draw 3/3 gate not met** — and a protocol-split
+caveat travels with it (HateMM final-epoch **ties** at +0.0093 acc, 0.0007 below the +0.010 bar), and it
 lands off the a-priori-favoured leg. ZH **ties** generic on both protocols — the prereg's own
 pre-declared most-likely outcome (F0.7: "generic LoRA with reshuffled data"). No kill-switch fired
 (KS-regression and KS-below-floor both untriggered); compliance was clean (same-code pairing
@@ -617,10 +618,36 @@ marginal ZH leg — is **not** met: neither does the val-selected conjunct pass,
 become non-marginal (ZH final-epoch curric +0.0380 acc is below the +0.040 non-marginal bar, seed-2
 +0.0134 below the per-seed bar — essentially B3's status). The memory→adaptation coupling's measurable
 effect over generic LoRA is therefore **dataset- and protocol-local**: present only on HateMM
-val-selected (single-draw), absent on the primary ZH leg. cand-2 opens **no new dataset** (pre-declared
+val-selected (pooled weakly-hardened across two draws, 5/6 sign; per-draw 3/3 gate not met — see the
+draw-2 paragraph below), absent on the primary ZH leg. cand-2 opens **no new dataset** (pre-declared
 F0.4) and is **not folded into any main table**; whether its one-cell add-over-generic suffices for the
 D7 memory→adaptation-coupling novelty sub-ruling is the user's decision, not this experiment's
 [DOC:D7_RULING_DOSSIER.md, commit `def6ce3`; DOC:PAPER_MASTER_TABLES.md PUR-4, PUR-banner].
+
+**Curriculum coupling probe — draw-2 replication (rep2, F59): the HateMM add-over-generic is pooled
+weakly-hardened, not a clean replication.** Because the draw-1 K-C2-2 HateMM val-selected pass rested on a
+single curriculum SFT draw (pre-declared F0.2), a pre-registered second draw (rep2) was run on **HateMM
+only** — seed = 1 the single manipulated variable (draw-1 was the HF default 42), curriculum multiset
+bit-exact to draw-1 — to test whether it replicates. Draw-2 val-selected add-over-generic is per-seed
+[+0.0139, −0.0047, +0.0233], mean **+0.0108** acc (ΔmF1 +0.0120): the point bar (mean Δacc ≥ +0.010) is
+cleared but the **3/3 sign gate fails** (seed1 −0.0047 → 2/3), so the binding primary bar (K-REP-1) does
+**not** pass, and the retirement kill (KS-REP; fires iff mean Δacc ≤ −0.014) does **not** fire. The pooled
+two-draw read (K-REP-2: draw-1 [+0.0186, +0.0046, +0.0233] + draw-2 [+0.0139, −0.0047, +0.0233]) is mean
+**+0.01317** acc at **5/6** positive sign → **HARDENED**. The binding verdict is therefore *F56 HateMM
+val-selected add-over-generic = **WEAKLY-HARDENED*** — it did not fully replicate (per-draw 3/3 gate missed
+on seed1), did not reverse, agreed in direction pooled, and remains a 2-draw estimate; the single draw-2
+attempt is binding and consumed (no further draws). Non-binding final-epoch add-over-generic replicated
+cleanly (mean +0.0140 acc, 3/3). rep2 measured HateMM only, so the ZH leg is unchanged and
+**ZH-robustness remains not strengthened**; novelty stays the pending user D7 sub-ruling, not folded into
+any main table [DOC:CAND2_REP2_VERDICT_REVIEW.md, commit `aa48275`, job 13246; frozen rep2 prereg
+`2d15ffb`; provenance `2d15ffb`→`e2aee03`→`6c11988`→`d06ad07`→`aa48275`].
+
+```
+HateMM draw-2: K-REP-1 (val-sel add-over-generic): NOT-PASS (mean +0.0108 acc, sign 2/3, ΔmF1 +0.0120).
+               K-REP-2 (pooled 6-pt): HARDENED (pooled mean +0.01317 acc, sign 5/6).
+               KS-REP: NOT fired.  final-ep add-over-generic (non-binding): mean +0.0140 acc, sign 3/3.
+VERDICT: F56 HateMM val-sel add-over-generic = WEAKLY-HARDENED.
+```
 
 **Premise-(d) gate — even an *adapted* text stream does not convert MHC-EN.** The FA gate (F50) closed
 EN's *frozen* cross-encoder composition but carved out one untested cell in its own ban language —

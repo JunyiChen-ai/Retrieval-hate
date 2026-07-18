@@ -12,7 +12,7 @@ duration: "job chain 13237/13238 (curric lora_sft ZH/HateMM) -> 13239/13240 (gen
 novelty_clause: "PENDING USER D7 SUB-RULING. This cell decides the PERFORMANCE clause only (K-C2-0/1/2, KS-regression, KS-below-floor, ZH-robustness, per the frozen prereg). The lever is a memory->adaptation-coupling SFT curriculum; whether it counts as distinct from generic encoder LoRA (i.e. clears the narrower D7 memory-coupling sub-ruling) is the USER's ruling, NOT decided here (prereg F0.3). Not folded into any main table (PAPER_MASTER_TABLES.md PUR-banner / PUR-4)."
 provenance: "CLOSED under full single-submit ceremony. Recon (GO-IF, design (i) only) refine-logs/CAND2_CURRICULUM_RECON.md (7087b5a); prereg refine-logs/CAND2_CURRICULUM_PREREG.md (76ef0e2, sha256 e5a689d9...f939790e); independent 0-context prereg review refine-logs/CAND2_PREREG_REVIEW.md (c1315cb, APPROVED-WITH-NOTES); hash-freeze refine-logs/CAND2_FREEZE.md (7804324, freeze PASS + K-C2-0 PASS both); single-submit record refine-logs/CAND2_SUBMIT_RECORD.md (1ea3c13, job chain 13237/13238->13239/13240->13241); independent 0-context verdict refine-logs/CAND2_VERDICT_REVIEW.md (546acc5). Comparison arms re-parsed with the byte-identical enc3seed parser: ZH generic-LoRA 13150, ZH frozen-CLIP 13115, HateMM generic-LoRA 13235, HateMM frozen-CLIP 12850; every floor/generic mean matches the prereg s2.1/s2.2 to 4dp."
 added: 2026-07-18T00:00:00Z
-tags: ["hateful-video", "MLLM-encoder", "LoRA-SFT", "curriculum", "confusion-weighting", "hard-example-mining", "memory-adaptation-coupling", "RA-HMD", "frozen-CLIP", "multi-seed", "paired-test", "MHC-ZH", "HateMM", "dual-protocol", "pre-registered", "CLOSED", "tie", "F56", "novelty-pending", "D7"]
+tags: ["hateful-video", "MLLM-encoder", "LoRA-SFT", "curriculum", "confusion-weighting", "hard-example-mining", "memory-adaptation-coupling", "RA-HMD", "frozen-CLIP", "multi-seed", "paired-test", "MHC-ZH", "HateMM", "dual-protocol", "pre-registered", "CLOSED", "tie", "F56", "novelty-pending", "D7", "rep2", "F59", "weakly-hardened"]
 ---
 
 # cand-2 curriculum LoRA-SFT (round-4 closing) — memory-mined confusion-weighted SFT curriculum vs generic LoRA
@@ -172,8 +172,65 @@ add-over-generic suffices for the D7 memory->adaptation-coupling novelty sub-rul
 - decision-support -> `refine-logs/D7_RULING_DOSSIER.md` (`def6ce3`, D7 ruling — evidence-only)
 - novelty-clause -> PENDING USER D7 SUB-RULING (`PAPER_MASTER_TABLES.md` PUR-4 / PUR-banner)
 
+## 8. Draw-2 replication (rep2, F59) — WEAKLY-HARDENED
+
+> **STATUS: rep2 draw-2 CLOSED 2026-07-18 — VERDICT (`refine-logs/CAND2_REP2_VERDICT_REVIEW.md`, commit
+> `aa48275`; job 13246, independent 0-context reviewer, hash-verified vs the frozen rep2 prereg `2d15ffb`):**
+>
+> ```
+> HateMM draw-2: K-REP-1 (val-sel add-over-generic): NOT-PASS (mean +0.0108 acc, sign 2/3, ΔmF1 +0.0120).
+>                K-REP-2 (pooled 6-pt): HARDENED (pooled mean +0.01317 acc, sign 5/6).
+>                KS-REP: NOT fired.  final-ep add-over-generic (non-binding): mean +0.0140 acc, sign 3/3.
+> VERDICT: F56 HateMM val-sel add-over-generic = WEAKLY-HARDENED.
+> (D7 novelty + goal satisfaction remain the USER's — not decided here.)
+> ```
+
+The §2.2 HateMM K-C2-2 val-selected PASS (draw-1: +0.0155 acc / +0.0166 mF1, 3/3, single-curriculum-draw
+caveat F0.2) was the one live novelty-bearing positive. rep2 ran **exactly one** independent second SFT
+draw — seed = 1 the single manipulated variable (draw-1 was HF default 42), curriculum multiset bit-exact
+to draw-1 (sha `73307ef2…82b`) — on **HateMM only**, to test whether it replicates.
+
+### 8.1 Draw-2 val-selected add-over-generic (K-REP-1, PRIMARY/BINDING; vs banked generic-LoRA 13235)
+
+| seed | rep2 acc/mF1 | generic acc/mF1 | Δacc | ΔmF1 |
+|---|---|---|---|---|
+| 0 | 0.8744/0.8678 | 0.8605/0.8521 | +0.0139 | +0.0157 |
+| 1 | 0.8651/0.8574 | 0.8698/0.8620 | −0.0047 | −0.0046 |
+| 2 | 0.8791/0.8745 | 0.8558/0.8495 | +0.0233 | +0.0250 |
+| **mean** | 0.8729/0.8666 | 0.8620/0.8545 | **+0.0108** | **+0.0120** |
+
+Point bar (mean Δacc ≥ +0.010) **cleared** (+0.0108), but the **3/3 sign gate failed** (seed1 −0.0047 →
+2/3) ⇒ **K-REP-1 does NOT PASS.** Non-binding final-epoch add-over-generic: per-seed [+0.0186, +0.0140,
++0.0093], mean **+0.0140**, sign **3/3**, ΔmF1 +0.0162 (reported, not decision-bearing).
+
+### 8.2 Pooled 2-draw read (K-REP-2, SECONDARY)
+
+| draw | s0 Δacc | s1 Δacc | s2 Δacc | draw sign |
+|---|---|---|---|---|
+| draw-1 (re-derived) | +0.0186 | +0.0046 | +0.0233 | 3/3 |
+| draw-2 (measured) | +0.0139 | −0.0047 | +0.0233 | 2/3 |
+
+Pooled mean = **+0.01317** (sum +0.0790 / 6), sign **5/6** positive → clears ≥ +0.010 AND ≥ 5/6 ⇒
+**K-REP-2 = HARDENED.** **KS-REP** (retirement kill; fires iff draw-2 mean Δacc ≤ −0.014) **NOT fired**
+(observed +0.0108).
+
+### 8.3 What it means (D7 boundary — this cell does NOT decide)
+
+The HateMM val-selected add-over-generic is now **pooled weakly-hardened across two draws (5/6 sign),
+per-draw 3/3 gate not met** — it did not fully replicate on the binding protocol (seed1 flipped −0.0047),
+did not reverse, and the pooled read agreed in direction, so it is **not** a single-draw cherry-pick but
+is **weaker than a clean replication**, and remains a 2-draw estimate (F-R0.9). Seed compliance verified
+(`training_args.bin` seed = 1); the single draw-2 attempt is **binding and consumed** — no further draws
+are possible. rep2 measured HateMM only, so the ZH leg is untouched and **ZH-robustness remains not
+strengthened** (§3, F56). Novelty stays **PENDING USER D7 SUB-RULING**; not folded into any main table.
+
+**Provenance (rep2 ceremony chain):** prereg `2d15ffb` → independent 0-context prereg review `e2aee03`
+(APPROVED-WITH-NOTES) → hash-freeze `6c11988` → single-submit record `d06ad07` → independent 0-context
+verdict `aa48275` (job 13246).
+
 ## 7. Revision history
 
 | rev | date | status | change | authority |
 |---|---|---|---|---|
 | r0 | 2026-07-18 | CLOSED | Initial per-experiment note, authored at paper-integration time from the committed ceremony chain (recon `7087b5a` -> prereg `76ef0e2` -> review `c1315cb` -> freeze `7804324` -> submit `1ea3c13` -> verdict `546acc5`, job chain 13237/13238->13239/13240->13241). ZH K-C2-2 TIE both protocols (F0.7 outcome), ZH-robustness NOT strengthened; HateMM K-C2-1 held both, K-C2-2 PASS val-sel only (+0.0155 acc/+0.0166 F1, 3/3, single-draw; final-ep tie by 0.0007). No kill fired; compliance clean. Novelty = PENDING USER D7 SUB-RULING; not folded into any main table. | paper integrator |
+| r1 | 2026-07-18 | CLOSED | Appended §8 draw-2 replication (rep2, F59, verdict `aa48275`, job 13246; prereg chain `2d15ffb`->`e2aee03`->`6c11988`->`d06ad07`->`aa48275`). HateMM-only second SFT draw (seed=1): K-REP-1 NOT-PASS (val-sel mean +0.0108 acc, sign 2/3, seed1 −0.0047), KS-REP NOT fired, K-REP-2 pooled 6-pt HARDENED (+0.01317, 5/6). VERDICT: F56 HateMM val-sel add-over-generic = WEAKLY-HARDENED (pooled weakly-hardened across two draws, per-draw 3/3 gate not met; 2-draw estimate, binding attempt consumed). ZH untouched, ZH-robustness still not strengthened. Novelty PENDING USER D7 SUB-RULING; not folded into any main table. Draw-1 sections §0–§7-r0 byte-unchanged. | F59 addendum clerk |
