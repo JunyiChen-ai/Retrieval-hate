@@ -61,18 +61,53 @@ Environment prerequisites verified: `mhc_lora_train`/`hatemm_lora_train` (+`_val
 `Qwen/Qwen2.5-VL-7B-Instruct` present locally (HF offline cache); `.cuda_home_shim` present; disk free 672G
 (>20G guard).
 
-## 3. SFT smoke (prereg §4.4.1 / §4.1a) — SUBMITTED, PENDING
+## 3. SFT smoke (prereg §4.4.1 / §4.1a) — PASS (all 3 LOAD-BEARING checks), cleaned up
 
 - **Job 13299** (`lora_sft_smoke_vis`): throwaway smoke config (scratchpad `smoke_vis_sft.yaml` = frozen MHC vis
   config A with `max_steps: 20`, `save_strategy: steps` + `save_steps: 20`, `eval_strategy: "no"`,
   `output_dir: logging/lora/_smoke_vis`) via a throwaway smoke sbatch mirroring `lora_sft_vis.sbatch`'s env
   block (conda HateVideo, HF offline, `CUDA_HOME` shim, `DISABLE_VERSION_CHECK`). Submitted with `sbatch`
-  (NO `--time`). State at submit: **PENDING (JobHeldUser)** — awaiting auto-release, NEVER forced.
-- LOAD-BEARING checks pending on completion: loss finite (no NaN) + decreasing; checkpoint written;
-  **`n_visual_lora_tensors > 0`** in the smoke adapter safetensors (ABORT the whole chain if zero — the arm
-  would equal generic). Smoke artifacts deleted after (so §2 collision stays clean).
+  (NO `--time`); auto-released from `JobHeldUser` (never forced); **COMPLETED** (train_runtime 1958.9 s over 20
+  steps; the ViT-unfreeze backward makes each step ~98 s — expected).
+- **(1) Loss finite + decreasing (raw `trainer_log.jsonl` / stdout):** step5 `0.3401` → step10 `0.1409` →
+  step15 `0.1387` → step20 `0.1561`; `train_loss 0.19394605`. No NaN/inf/traceback/OOM (clean scan). Downtrend
+  with a normal final-step wiggle; lands in the §3.7b ~0.10–0.18 band for the trained-step region.
+- **(2) Checkpoint written:** `logging/lora/_smoke_vis/checkpoint-20/adapter_model.safetensors` (206 MB) +
+  `optimizer.pt` etc., and the final root adapter `logging/lora/_smoke_vis/adapter_model.safetensors` (206 MB;
+  vs the generic adapter's 161 MB — the +44.6 MB ≈ 11.15M fp32 ViT-LoRA params).
+- **(3) LOAD-BEARING ViT-LoRA-present census (prereg §4.1a exact command, on the root smoke adapter):**
+  - **`n_visual_lora_tensors = 320` (> 0 ⇒ PASS; the arm genuinely reaches the ViT, is NOT degenerate-to-generic).**
+  - Structure: 320 visual = 32 ViT blocks (indices 0..31) × 5 Linears
+    {`attn.qkv`, `attn.proj`, `mlp.gate_proj`, `mlp.up_proj`, `mlp.down_proj`} × {lora_A, lora_B}.
+  - `n_llm_lora_tensors = 392` (byte-identical count to the banked generic adapter's 392 tensors ⇒ clean-superset
+    premise confirmed: vis = generic ⊕ ViT-LoRA; total 712).
+  - `n_merger_lora_tensors = 0` (projector frozen ✓); `n_patchembed_lora_tensors = 0` (Conv3d / lora_conflict ✓).
+- **Cleanup:** `logging/lora/_smoke_vis` **deleted** (prereg §4.4); §2 collision targets re-verified ABSENT after
+  deletion. Throwaway `smoke_vis_sft.yaml` + `lora_sft_smoke_vis.sbatch` live only in the session scratchpad;
+  smoke slurm log retained at `logging/slurm/lora_sft_smoke_vis_13299.out` as evidence.
+- **Step-2 head smoke: SKIPPED** — prereg §4.4 step 2 permits skipping; `run_one` is byte-identical to the banked
+  controls (freeze §4.2) and cache dims are CPU-verified. Not run to avoid needless queue contention.
 
-## 4. Chain (not yet submitted — pending smoke pass)
+## 4. Real chain — single-submitted (prereg §6; NO `--time`; afterok-wired)
 
-Per prereg §6: SFT(MHC) + SFT(HateMM) → afterok extracts → EN image-MOVED $0 gate (§3.4) → arg-driven head job
-(`DATASETS="HateMM MHC"` if EN gate MOVED, else `"HateMM"`). Job IDs + dependency graph recorded here on submit.
+| job | id | script + args | dependency | GPU | ~cost |
+|---|---|---|---|---|---|
+| J1 SFT MHC (EN) | **13301** | `lora_sft_vis.sbatch MHC` → `logging/lora/MHC_vis` | (none) | 1×A100 | ~4–5.5 h |
+| J2 extract MHC | **13302** | `gen_embed_lora.sbatch MHC logging/lora/MHC_vis Qwen2.5-VL-7B-Instruct-LoRA-vis_HF` | `afterok:13301` | 1×A100 | ~0.4 h |
+| J3 SFT HateMM | **13303** | `lora_sft_vis.sbatch HateMM` → `logging/lora/HateMM_vis` | (none) | 1×A100 | ~4–5.5 h |
+| J4 extract HateMM | **13304** | `gen_embed_lora.sbatch HateMM logging/lora/HateMM_vis Qwen2.5-VL-7B-Instruct-LoRA-vis_HF` | `afterok:13303` | 1×A100 | ~0.4 h |
+
+Dependency graph (squeue-verified): `13301 → 13302`, `13303 → 13304`. Peak concurrent GPU = 2 (J1+J3), within
+the 2-GPU user cap. All submitted `sbatch --parsable` (recipe sbatch carry NO `--time`).
+
+**Deferred (submitted after the EN image-MOVED $0 gate read + both extracts):**
+- **EN image-MOVED gate (§3.4):** `python scripts/analysis/vis_image_moved_probe.py --dataset MHC --context`
+  ($0 CPU, after J2). Records `en_head_proceeds`; BRANCH POINT: MOVED → EN head rows IN; FLAT/DEGRADED → EN head
+  CANCELLED (bank raw gate output), head job runs `"HateMM"` only.
+- **J5 head:** `enc3seed_lora_vis.sbatch "$DSLIST"` (`"HateMM MHC"` if gate MOVED, else `"HateMM"`), after J2 AND
+  J4. Arg-driven DATASETS = NO frozen-file edit.
+
+## 5. Queue state at submit
+
+J1 = **13301 RUNNING** (auto-released immediately, node foscsmlprd01); J2/J3/J4 **PENDING (JobHeldUser)** or
+dependency-held (normal per CLAUDE.md; holds NEVER forced). J3 (2nd SFT) auto-releases when the 2nd GPU frees.
