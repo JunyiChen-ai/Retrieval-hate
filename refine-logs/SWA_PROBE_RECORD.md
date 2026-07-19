@@ -21,18 +21,25 @@ over a window of one seed's per-epoch checkpoints → one model, one inference c
 
 | Dataset | Status | Verdict |
 |---|---|---|
-| **MHC_zh (ZH)** — the *primary* F45 target | **BLOCKED** — no per-epoch checkpoints on disk (ckpt dir empty) | cannot probe |
+| **MHC_zh (ZH)** — the *primary* F45 target | **regenerated** (job 13294, G-repro **bit-exact** vs banked 13150) — see §7 | **KILL** (0/3 seeds; dev is underpowered) |
 | **HateMM** (curriculum-LoRA rep2, the ONLY group with live checkpoints) | measured | **KILL** (1/3 seeds promote, and that seed is degenerate) |
 
-**Bottom line: KILL on the available evidence; the primary target (ZH) is BLOCKED.**
-On the one dataset whose checkpoints survive (HateMM curriculum-LoRA rep2, job 13246, 3 seeds),
-every SWA window lands **0.9–6.6 dev-acc points BELOW** the val-selected single-epoch max on the
-two seeds that actually have a selection gap. SWA fails *precisely where it is needed* and only
-"passes" on the one seed where val-selection already picked the final epoch (nothing to fix). The
-mechanistic reason: HateMM's dev curve **peaks mid-training (ep14–18) and settles onto a lower
-late plateau**, so trajectory weight-averaging pulls the model *below* the dev peak. SWA would only
-pay off if the dev optimum were a late/flat plateau (the ZH F45 shape) — and **ZH is exactly the
-dataset with no checkpoints on disk.**
+> **§7 update (ZH leg completed).** The ZH BLOCKED status was lifted under a one-job authorization:
+> the B3/13150 generic-LoRA per-epoch checkpoints were regenerated (job 13294, group
+> `RAC_video_lora_swaregen`, run_one byte-identical) and reproduce the banked 13150 dev curve
+> **bit-exact** (all 3 seeds × 30 epochs, 4dp diff = 0.0000). SWA on the ZH checkpoints is **KILL
+> (0/3 seeds)** — full ZH section in §7. Both datasets now KILL.
+
+**Bottom line: KILL on both datasets.** On **HateMM** (curriculum-LoRA rep2, job 13246, 3 seeds),
+every SWA window lands **0.9–6.6 dev-acc points BELOW** the val-selected single-epoch max on the two
+seeds with a real selection gap — SWA fails precisely where it is needed and only "passes" on the one
+degenerate seed where val-selection already picked the final epoch. On **ZH** (job 13294, the true
+F45 target), the dev curve is so **flat and jittery** (all epochs 64–68/78, the "dev saturates"
+regime) that SWA windows cluster **at or 1–3 items below** the flat dev ceiling: the best window
+matches the ceiling on 2/3 seeds but **no single pre-declared window is uniformly at-ceiling across
+seeds**, so cond_A (every window within 0.005 of max) fails 0/3. The dev jitter (2–4 items) is the
+same size as the effect being measured, so **dev has no power to promote SWA** — and a test-touch is
+not authorized by the dev-only gate.
 
 ---
 
@@ -158,10 +165,11 @@ dataset does not promote.** No test-touch is authorized; do not draft the SWA pr
    *test* climbs to ep29). HateMM's dev curve has the *opposite* shape (mid-peak, late-decline),
    which is structurally adverse to trajectory averaging. This probe is therefore **not** a test of
    SWA against F45's actual mechanism — it is a test against the only checkpoints that exist.
-3. The clean way to actually test Family C against F45 is on **ZH**, which is **BLOCKED** pending a
-   (user-submitted, GPU/SLURM) regeneration of the ZH curriculum-LoRA per-epoch checkpoints
-   (~20–25 s/run on cached features). Until then Family C is **unfalsified on its true target** and
-   **killed on the one dataset it could be measured on.**
+3. The clean way to actually test Family C against F45 is on **ZH** — this was **completed in §7**
+   under a one-job authorization (regen job 13294, G-repro bit-exact). ZH SWA is **KILL (0/3)**, but
+   as a *dev-underpowered* KILL: the 78-item dev is too noisy to discriminate SWA from val-selection.
+   Family C is now measured and killed on both datasets. *(This §4 caveat, written for the
+   HateMM-only leg, is superseded by §7 on the ZH point.)*
 
 ---
 
@@ -172,8 +180,8 @@ dataset does not promote.** No test-touch is authorized; do not draft the SWA pr
 > any SWA number enters a claims table. The probe itself is measurement, not a claim.
 
 This record reports measurement only. No SWA number here is entered into any claims table, paper
-draft, or `state/` artifact. Even though the HateMM verdict is KILL (so the question is moot for
-now), the flag stands for any future ZH-unblocked re-run.
+draft, or `state/` artifact. Both datasets KILL (HateMM §3, ZH §7), so the question is moot for now,
+but the flag stands verbatim for any future SWA re-run.
 
 ---
 
@@ -187,5 +195,73 @@ now), the flag stands for any future ZH-unblocked re-run.
   (`use_sim=True`, arithmetic top-20 vote), mirroring `run_rac.py:659–676` and the rep2 sbatch args
   (`fusion_mode=align`, `topk=20`, `majority_voting=arithmetic`, `metric=cos`, `batch_norm=False`,
   `warmup=5`, `Faiss_GPU=False`).
-- Deliverables: `scripts/analysis/swa_probe.py`, `refine-logs/SWA_PROBE_RECORD.md`,
+- Deliverables (HateMM leg): `scripts/analysis/swa_probe.py`, `refine-logs/SWA_PROBE_RECORD.md`,
   `refine-logs/SWA_PROBE_OUT.json`. Local commit only; never pushed.
+- Deliverables (ZH leg, §7): `scripts/slurm/swaregen_zh.sbatch`, `refine-logs/SWA_PROBE_ZH_OUT.json`,
+  and the `zh` config path of `scripts/analysis/swa_probe.py`. Local commit only; never pushed.
+- ZH no-test-read: only `data/CLIP_Embedding/MHC_zh/{train,dev_seen}_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt`
+  and the **Val_** lines of the banked 13150 trainlogs (for G-repro) were read; the new job-13294
+  trainlogs' Test_* lines and every `test_seen_*.pt` were never opened.
+
+---
+
+## 7. ZH LEG — checkpoint regeneration + SWA on the TRUE F45 target (job 13294)
+
+**Authorization.** A one-job override of the STEP-0 no-submission rule was granted specifically to
+complete Family C on ZH, where F45's val-selection tax was actually measured. Scope: regenerate the
+per-epoch head checkpoints only; the no-test-read rule stands absolutely.
+
+**Regeneration.** `scripts/slurm/swaregen_zh.sbatch` (job **13294**, COMPLETED, exit 0) clones the
+B3/13150 arm — model `Qwen2.5-VL-7B-Instruct-LoRA_HF`, MHC_zh, seeds 0/1/2, `run_one` byte-identical,
+`--force False` — changing **only** `--group_name` to a fresh `RAC_video_lora_swaregen` (collision
+pre-checked: neither the output group nor matching trainlogs existed). The training code path is
+unchanged since before 13150 (last touch of `run_rac.py`/loss/eval/metrics/consensus/dataloader =
+commit `5fa01ab`, 2026-07-13, predating 13150's 2026-07-14 run), so the run is deterministic.
+Result: 3 seeds × 30 per-epoch checkpoints (90 files) on disk. ZH dev n = **78** (F45's "78-item dev").
+
+**G-repro sanity — PASS (bit-exact).** Regenerated per-epoch DEV curve (ckpt filename `select_acc`)
+vs the banked 13150 `Val_Retrieval` dev acc (parsed from the trainlog **Val_** lines only; no Test_
+line read): **max |regen − banked| dev acc (4dp) = 0.0000 on all 3 seeds, all 30 epochs** (0/30
+epochs differ per seed). The regeneration is a perfect reproduction of the banked run; the
+checkpoints are trustworthy.
+
+**SWA results (§2 design UNCHANGED; dev n=78, CPU $0).** Recomputed-vs-filename dev-acc drift is
+≤1 item/78 (seeds 0/2) and 3 items/78 (seed 1) — GPU-vs-CPU float drift on borderline signed-sim
+votes (note this is *only* the CPU recompute; the GPU-vs-GPU G-repro above is bit-exact). Every SWA
+arm uses the identical CPU path, so the SWA-vs-single comparison is internally exact.
+
+| seed | val-sel ep | val-sel dev acc (=max single) | final ep29 | SWA ep5–29 | SWA ep20–29 | SWA ep25–29 | best SWA | cond_A | cond_B | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 20 | **0.8718** (68/78) | 0.8462 | **0.8718** | 0.8590 | 0.8462 | 0.8718 (=ceiling) | ✗ | ✓ | **KILL** |
+| 1 | 26 | **0.8718** | 0.8590 | 0.8590 | **0.8718** | 0.8590 | 0.8718 (=ceiling) | ✗ | ✓ | **KILL** |
+| 2 | 19 | **0.8718** | 0.8462 | 0.8590 | 0.8333 | 0.8333 | 0.8590 (<ceiling) | ✗ | ✓ | **KILL** |
+
+**DATASET VERDICT (ZH): KILL (0/3 seeds promote).** cond_A (every SWA window ≥ max single − 0.005)
+fails on all three seeds; cond_B (SWA spread < single-epoch spread) passes on all three.
+
+**Why it fails — and why this is a dev-underpowered KILL, not a "SWA hurts" KILL.** The ZH dev curve
+is **flat and jittery**: every post-warmup epoch sits in 0.821–0.872 (64–68/78), with the ceiling
+0.8718 touched at scattered epochs and no trend — the textbook F45 "dev saturates" regime. SWA
+windows therefore cluster *at or 1–3 items below* the flat ceiling: on 2/3 seeds the **best** SWA
+window exactly **matches** the dev ceiling (seed0 ep5–29, seed1 ep20–29), and cond_B passes (SWA is
+flatter than the single-epoch curve). What kills it is that **no single pre-declared window is
+uniformly at-ceiling across seeds** (ep5–29 wins seed0, ep20–29 wins seed1, neither wins seed2), so
+some window always drops 1–3 items and cond_A fails. Critically, the post-warmup dev **spread is
+0.038–0.051 (3–4 items) and the last-10 jitter is 2–4 items — the same magnitude as the SWA-vs-max
+differences.** The 78-item dev simply **has no power to discriminate** SWA from val-selection: this is
+the very uninformativeness F45 blames for ZH losing its val-selected pass. Free diagnostics confirm a
+real (non-degenerate) selection gap on all three seeds — val-sel epoch ≠ final on every seed, and
+L2(val-sel, final) = 4.93 / 1.77 / 4.37 — so unlike HateMM seed2 there is always a tax being paid;
+SWA just cannot be *shown* on dev to fix it.
+
+**Decision.** **KILL.** The pre-declared dev-only gate is not met (cond_A 0/3), so **no test-touch is
+authorized** and no ZH SWA prereg is drafted. The honest characterization is *dev-underpowered*: on
+its true target, SWA neither clearly helps nor clearly hurts dev, and the dev split is too small/noisy
+to license spending the single ZH test-touch on it. Family C is now **measured and killed on both
+datasets** (HateMM decisively; ZH on an underpowered dev), closing the Family-C opening that
+`REDTEAM_EXTERNAL_FAMILIES.md` §3 left as the one $0-testable shot at the F45 tax.
+
+**Governance (carried verbatim, still binding).** Single-trajectory weight averaging is one model at
+inference from one seed → plain-text NOT the cross-seed-ensemble ban, but a user micro-ruling is
+required before any SWA number enters a claims table. Moot given the KILL, but it stands. No SWA
+number here enters any claims table, paper draft, or `state/` artifact; `state/` was not modified.

@@ -61,9 +61,41 @@ from utils.metrics import compute_metrics_retrieval           # noqa: E402
 # ONLY the HateMM curriculum-LoRA rep2 group has live per-epoch checkpoints; every
 # other banked group's ckpt dir was cleaned (empty on disk) -> ZH is BLOCKED.
 # ----------------------------------------------------------------------------
-DATASET = "HateMM"
-MODEL = "Qwen2.5-VL-7B-Instruct-LoRA-curric-rep2_HF"
-GROUP = "RAC_video_lora_curric_rep2"
+# Two legs share the IDENTICAL §2 SWA design; only this config block differs.
+# Select with argv[1] in {"hatemm","zh"} (default "hatemm").
+CONFIGS = {
+    "hatemm": {
+        "dataset": "HateMM",
+        "model": "Qwen2.5-VL-7B-Instruct-LoRA-curric-rep2_HF",
+        "group": "RAC_video_lora_curric_rep2",
+        "dev_n": 107,
+        "grepro_ref": None,   # HateMM leg: filename cross-check only
+        "out": "refine-logs/SWA_PROBE_OUT.json",
+        "note": "curriculum-LoRA rep2 (job 13246) -- the only group with live ckpts",
+    },
+    "zh": {
+        "dataset": "MHC_zh",
+        "model": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+        "group": "RAC_video_lora_swaregen",
+        "dev_n": 78,
+        # G-repro reference: the banked B3/13150 Val_Retrieval DEV curve (dev acc
+        # per epoch), parsed from the trainlog Val_ lines ONLY (never a Test_ line).
+        "grepro_ref": {
+            "job": 13150,
+            "trainlog": ("slurm/logs/enc3s_MHC_zh_Qwen2.5-VL-7B-Instruct-"
+                         "LoRA_HF_seed{seed}_13150.trainlog"),
+        },
+        "out": "refine-logs/SWA_PROBE_ZH_OUT.json",
+        "note": ("generic-LoRA regen (job 13294) of the B3/13150 arm where F45's "
+                 "val-selection tax was measured"),
+    },
+}
+LEG = sys.argv[1] if len(sys.argv) > 1 else "hatemm"
+assert LEG in CONFIGS, f"unknown leg {LEG!r} (use hatemm|zh)"
+CFG = CONFIGS[LEG]
+DATASET = CFG["dataset"]
+MODEL = CFG["model"]
+GROUP = CFG["group"]
 DATA_PATH = os.path.join(REPO, "data")
 CKPT_ROOT = os.path.join(REPO, "logging", "Retrieval", DATASET, GROUP)
 SEEDS = [0, 1, 2]
@@ -86,7 +118,8 @@ ARGS = SimpleNamespace(
     metric="cos",
     save_embed=False,
     output_path=os.path.join(REPO, "scratchpad"),  # unused (save_embed=False)
-    dataset=DATASET,
+    dataset=DATASET,  # HateMM & MHC_zh both hit the else-branch -> binary 1-logit head
+
     batch_norm=False,
     num_layers=3,
     proj_dim=1024,
@@ -101,9 +134,10 @@ ARGS = SimpleNamespace(
 
 
 def seed_ckpt_dir(seed):
+    # exp_name = ..._hybrid_loss + exp_comment("_{MODEL}"); MODEL already ends _HF.
     exp = ("RAC_lr0.0001_Bz64_Ep30_cosSim_triplet_drop[0.2, 0.4, 0.1]_topK20"
-           "__PseudoGold_positive_1_hard_negative_1_seed{}_hybrid_loss_"
-           "{}_HF".format(seed, "Qwen2.5-VL-7B-Instruct-LoRA-curric-rep2"))
+           "__PseudoGold_positive_1_hard_negative_1_seed{}_hybrid_loss_{}"
+           .format(seed, MODEL))
     return os.path.join(CKPT_ROOT, exp, "ckpt")
 
 
@@ -257,7 +291,71 @@ def run_seed(seed):
     }
 
 
+def grepro_ref(seed):
+    """G-repro sanity for the ZH leg: parse the banked reference run's
+    Val_Retrieval DEV acc per epoch (legacy line, acc==select_acc) from the
+    trainlog Val_ lines ONLY, and compare to the regenerated ckpt filenames'
+    select_acc (both GPU-computed 4dp; bit-identical run => exact match)."""
+    ref_path = os.path.join(REPO, CFG["grepro_ref"]["trainlog"].format(seed=seed))
+    ref = {}
+    with open(ref_path) as f:
+        for line in f:
+            # legacy line "Val_Retrieval Epoch  {e} acc: {:.4f} roc: ..." only;
+            # the macroF1 line has "Epoch {e} macroF1:" so it does NOT match here,
+            # and NO Test_ line is ever read.
+            m = re.search(r"Val_Retrieval Epoch\s+(\d+) acc: ([0-9.]+)", line)
+            if m:
+                ref[int(m.group(1))] = float(m.group(2))
+    ckpts = list_epoch_ckpts(seed)
+    per_epoch = {}
+    for e in range(EPOCHS):
+        new4 = round(ckpts[e][1], 4)
+        per_epoch[e] = {"regen": new4, "banked": ref.get(e)}
+    diffs = [abs(per_epoch[e]["regen"] - per_epoch[e]["banked"])
+             for e in range(EPOCHS) if per_epoch[e]["banked"] is not None]
+    return {
+        "seed": seed,
+        "ref_job": CFG["grepro_ref"]["job"],
+        "max_abs_diff_4dp": max(diffs) if diffs else None,
+        "n_epoch_mismatch": sum(1 for d in diffs if d > 1e-9),
+        "per_epoch": per_epoch,
+    }
+
+
 def main():
+    # ZH leg: run the G-repro sanity gate BEFORE the SWA design.
+    grepro = None
+    grepro_pass = None
+    if CFG["grepro_ref"] is not None:
+        grepro = [grepro_ref(s) for s in SEEDS]
+        gmax = max(g["max_abs_diff_4dp"] for g in grepro)
+        # bit-exact expected (same seed/code/features, deterministic config).
+        # Tolerance: accept isolated <=1-item/dev_n drift; STOP on anything larger.
+        one_item = 1.0 / CFG["dev_n"] + 1e-9
+        grepro_pass = gmax <= one_item
+        print("=" * 78)
+        print(f"G-REPRO SANITY (regen job 13294 vs banked job "
+              f"{CFG['grepro_ref']['job']}) -- DEV curve, 4dp")
+        print("=" * 78)
+        for g in grepro:
+            print(f"  seed {g['seed']}: max|regen-banked| dev acc (4dp) = "
+                  f"{g['max_abs_diff_4dp']:.4f}   epochs differing = "
+                  f"{g['n_epoch_mismatch']}/{EPOCHS}")
+        print(f"  overall max abs diff = {gmax:.4f}   "
+              f"(<= 1 item = {one_item:.4f} ?)  -> "
+              f"{'PASS' if grepro_pass else 'FAIL/STOP'}")
+        if not grepro_pass:
+            print("\nG-REPRO FAILED: regenerated dev curve does not match the "
+                  "banked run beyond 1-item tolerance. STOPPING before SWA "
+                  "(do not trust these checkpoints).")
+            outpath = os.path.join(REPO, CFG["out"])
+            with open(outpath, "w") as f:
+                json.dump({"leg": LEG, "grepro": grepro,
+                           "grepro_pass": False,
+                           "status": "STOP_GREPRO_FAIL"}, f, indent=2)
+            print(f"OUT.json -> {outpath}")
+            return
+
     results = [run_seed(s) for s in SEEDS]
 
     # aggregate verdict: PROMOTE only if the criterion holds (mission says
@@ -269,30 +367,34 @@ def main():
 
     out = {
         "probe": "single-trajectory SWA of RGCL head checkpoints ($0, CPU)",
+        "leg": LEG,
+        "leg_note": CFG["note"],
         "dataset": DATASET,
+        "dev_n": CFG["dev_n"],
         "group": GROUP,
         "model": MODEL,
         "seeds": SEEDS,
         "warmup": WARMUP,
         "windows": [{"name": n, "e0": e0, "e1": e1} for n, e0, e1 in WINDOWS],
         "promote_tol": PROMOTE_TOL,
+        "grepro": grepro,
+        "grepro_pass": grepro_pass,
         "per_seed": results,
         "n_seeds_promote": n_promote,
         "dataset_verdict": dataset_verdict,
-        "zh_status": "BLOCKED (no per-epoch checkpoints on disk; ckpt dir empty)",
         "governance_flag": ("single-trajectory weight averaging is ONE model "
                             "from ONE seed; plain-text NOT the cross-seed-ensemble "
                             "ban, but requires a user micro-ruling before any SWA "
                             "number enters a claims table"),
     }
 
-    outpath = os.path.join(REPO, "refine-logs", "SWA_PROBE_OUT.json")
+    outpath = os.path.join(REPO, CFG["out"])
     with open(outpath, "w") as f:
         json.dump(out, f, indent=2)
 
     # human-readable console table
     print("=" * 78)
-    print("SWA PROBE -- HateMM curriculum-LoRA rep2 (job 13246), dev n=107, CPU $0")
+    print(f"SWA PROBE [{LEG}] -- {DATASET} / {GROUP}, dev n={CFG['dev_n']}, CPU $0")
     print("=" * 78)
     for r in results:
         print(f"\n--- seed {r['seed']} ---")
@@ -319,9 +421,10 @@ def main():
               f"{r['cond_b_swa_spread_lt_single_spread']}")
         print(f"  SEED VERDICT: {r['seed_verdict']}")
     print("\n" + "=" * 78)
-    print(f"DATASET VERDICT (HateMM): {dataset_verdict}  "
+    print(f"DATASET VERDICT ({DATASET}): {dataset_verdict}  "
           f"({n_promote}/{len(SEEDS)} seeds promote)")
-    print("ZH: BLOCKED (no checkpoints on disk)")
+    if grepro_pass is not None:
+        print(f"G-repro: {'PASS' if grepro_pass else 'FAIL'}")
     print(f"OUT.json -> {outpath}")
     print("=" * 78)
 
