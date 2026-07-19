@@ -1,0 +1,405 @@
+{
+  "config": {
+    "topk": 20,
+    "alphas": [
+      0.5,
+      0.9
+    ],
+    "nperm": 200,
+    "bar": 0.03,
+    "rng": 20260720,
+    "key": "fused L2(img)+L2(txt) concat renorm 7168d",
+    "vote": "rank-weighted signed-cosine top-20 (router_gate:73-79 verbatim)",
+    "lp": "LLGC F=(1-a)(I-aS)^-1 Y, relu-cosine kNN affinity, sym-norm, diag0",
+    "inductive": "train-graph only; query->train edges; NO dev-dev, NO test"
+  },
+  "script_sha256": "cc12004403bd93cef3d743b7549b83f8700b95e9a6e06153987b8c81bd010a61",
+  "cells": [
+    {
+      "dataset": "HateMM",
+      "key_space": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+      "n_train": 744,
+      "n_dev": 107,
+      "dev_pos": 43,
+      "train_pos": 298,
+      "baseline_dev_acc": 0.8505,
+      "train_cache_sha": "5e80f39327a74314",
+      "dev_cache_sha": "46ee4fd9fcaec80b",
+      "grid": {
+        "alpha_0.5": {
+          "dev_acc": 0.8131,
+          "delta": -0.0374,
+          "fixed": 0,
+          "broken": 4,
+          "net": -4
+        },
+        "alpha_0.9": {
+          "dev_acc": 0.8037,
+          "delta": -0.0467,
+          "fixed": 3,
+          "broken": 8,
+          "net": -5
+        }
+      },
+      "best_alpha": 0.5,
+      "best_delta": -0.0374,
+      "sanity_alpha0": {
+        "delta": 0.0,
+        "n_disagree": 0,
+        "OK": true
+      },
+      "oracle_headroom": {
+        "oracle_acc": 0.8785,
+        "headroom": 0.028
+      },
+      "perm_null": {
+        "nperm": 200,
+        "mean": 0.0485,
+        "p95": 0.122,
+        "p05": -0.0187,
+        "max": 0.1682,
+        "real_exceeds_p95": false
+      },
+      "machinery": {
+        "planted_pca1_recovery": 0.9261,
+        "planted_fiedler_recovery": 0.9449,
+        "valid": false,
+        "train_loo_onehop": 0.8495,
+        "train_loo_lp_a09": 0.8414
+      },
+      "cell_verdict": "KILL",
+      "role": "deployed-best"
+    },
+    {
+      "dataset": "HateMM",
+      "key_space": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+      "n_train": 744,
+      "n_dev": 107,
+      "dev_pos": 43,
+      "train_pos": 298,
+      "baseline_dev_acc": 0.8411,
+      "train_cache_sha": "31bcc402147c56a0",
+      "dev_cache_sha": "5147120df9cf50b1",
+      "grid": {
+        "alpha_0.5": {
+          "dev_acc": 0.8224,
+          "delta": -0.0187,
+          "fixed": 0,
+          "broken": 2,
+          "net": -2
+        },
+        "alpha_0.9": {
+          "dev_acc": 0.7664,
+          "delta": -0.0748,
+          "fixed": 1,
+          "broken": 9,
+          "net": -8
+        }
+      },
+      "best_alpha": 0.5,
+      "best_delta": -0.0187,
+      "sanity_alpha0": {
+        "delta": 0.0,
+        "n_disagree": 0,
+        "OK": true
+      },
+      "oracle_headroom": {
+        "oracle_acc": 0.8505,
+        "headroom": 0.0093
+      },
+      "perm_null": {
+        "nperm": 200,
+        "mean": 0.0476,
+        "p95": 0.1308,
+        "p05": -0.0187,
+        "max": 0.1682,
+        "real_exceeds_p95": false
+      },
+      "machinery": {
+        "planted_pca1_recovery": 0.9288,
+        "planted_fiedler_recovery": 0.9516,
+        "valid": false,
+        "train_loo_onehop": 0.8293,
+        "train_loo_lp_a09": 0.8266
+      },
+      "cell_verdict": "KILL",
+      "role": "adaptation"
+    },
+    {
+      "dataset": "HateMM",
+      "key_space": "Qwen2.5-VL-7B-Instruct_HF",
+      "n_train": 744,
+      "n_dev": 107,
+      "dev_pos": 43,
+      "train_pos": 298,
+      "baseline_dev_acc": 0.8505,
+      "train_cache_sha": "ba52bc0da3fa14fe",
+      "dev_cache_sha": "1b219e12a5a03d77",
+      "grid": {
+        "alpha_0.5": {
+          "dev_acc": 0.8037,
+          "delta": -0.0467,
+          "fixed": 2,
+          "broken": 7,
+          "net": -5
+        },
+        "alpha_0.9": {
+          "dev_acc": 0.7757,
+          "delta": -0.0748,
+          "fixed": 4,
+          "broken": 12,
+          "net": -8
+        }
+      },
+      "best_alpha": 0.5,
+      "best_delta": -0.0467,
+      "sanity_alpha0": {
+        "delta": 0.0,
+        "n_disagree": 0,
+        "OK": true
+      },
+      "oracle_headroom": {
+        "oracle_acc": 0.8879,
+        "headroom": 0.0374
+      },
+      "perm_null": {
+        "nperm": 200,
+        "mean": 0.0493,
+        "p95": 0.122,
+        "p05": -0.0187,
+        "max": 0.1682,
+        "real_exceeds_p95": false
+      },
+      "machinery": {
+        "planted_pca1_recovery": 0.9261,
+        "planted_fiedler_recovery": 0.9462,
+        "valid": false,
+        "train_loo_onehop": 0.8065,
+        "train_loo_lp_a09": 0.8132
+      },
+      "cell_verdict": "KILL",
+      "role": "frozen"
+    },
+    {
+      "dataset": "MHC_zh",
+      "key_space": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+      "n_train": 579,
+      "n_dev": 78,
+      "dev_pos": 28,
+      "train_pos": 180,
+      "baseline_dev_acc": 0.859,
+      "train_cache_sha": "b2e8e78d19c71d2c",
+      "dev_cache_sha": "4c07af75098391c9",
+      "grid": {
+        "alpha_0.5": {
+          "dev_acc": 0.8205,
+          "delta": -0.0385,
+          "fixed": 1,
+          "broken": 4,
+          "net": -3
+        },
+        "alpha_0.9": {
+          "dev_acc": 0.6667,
+          "delta": -0.1923,
+          "fixed": 8,
+          "broken": 23,
+          "net": -15
+        }
+      },
+      "best_alpha": 0.5,
+      "best_delta": -0.0385,
+      "sanity_alpha0": {
+        "delta": 0.0,
+        "n_disagree": 0,
+        "OK": true
+      },
+      "oracle_headroom": {
+        "oracle_acc": 0.9615,
+        "headroom": 0.1026
+      },
+      "perm_null": {
+        "nperm": 200,
+        "mean": 0.0174,
+        "p95": 0.0641,
+        "p05": -0.0256,
+        "max": 0.1154,
+        "real_exceeds_p95": false
+      },
+      "machinery": {
+        "planted_pca1_recovery": 0.8877,
+        "planted_fiedler_recovery": 0.9775,
+        "valid": false,
+        "train_loo_onehop": 0.848,
+        "train_loo_lp_a09": 0.7202
+      },
+      "cell_verdict": "KILL",
+      "role": "deployed"
+    },
+    {
+      "dataset": "MHC_zh",
+      "key_space": "Qwen2.5-VL-7B-Instruct_HF",
+      "n_train": 579,
+      "n_dev": 78,
+      "dev_pos": 28,
+      "train_pos": 180,
+      "baseline_dev_acc": 0.8718,
+      "train_cache_sha": "135a6e243761fa83",
+      "dev_cache_sha": "1f2536c692d75e2e",
+      "grid": {
+        "alpha_0.5": {
+          "dev_acc": 0.8333,
+          "delta": -0.0385,
+          "fixed": 1,
+          "broken": 4,
+          "net": -3
+        },
+        "alpha_0.9": {
+          "dev_acc": 0.6538,
+          "delta": -0.2179,
+          "fixed": 6,
+          "broken": 23,
+          "net": -17
+        }
+      },
+      "best_alpha": 0.5,
+      "best_delta": -0.0385,
+      "sanity_alpha0": {
+        "delta": 0.0,
+        "n_disagree": 0,
+        "OK": true
+      },
+      "oracle_headroom": {
+        "oracle_acc": 0.9487,
+        "headroom": 0.0769
+      },
+      "perm_null": {
+        "nperm": 200,
+        "mean": 0.0158,
+        "p95": 0.0641,
+        "p05": -0.0256,
+        "max": 0.1154,
+        "real_exceeds_p95": false
+      },
+      "machinery": {
+        "planted_pca1_recovery": 0.867,
+        "planted_fiedler_recovery": 0.9845,
+        "valid": false,
+        "train_loo_onehop": 0.7927,
+        "train_loo_lp_a09": 0.7081
+      },
+      "cell_verdict": "KILL",
+      "role": "frozen"
+    },
+    {
+      "dataset": "MHC",
+      "key_space": "Qwen2.5-VL-7B-Instruct_HF",
+      "n_train": 549,
+      "n_dev": 80,
+      "dev_pos": 25,
+      "train_pos": 168,
+      "baseline_dev_acc": 0.75,
+      "train_cache_sha": "05a9b2def2923025",
+      "dev_cache_sha": "cd5d4c7dc08311f8",
+      "grid": {
+        "alpha_0.5": {
+          "dev_acc": 0.7625,
+          "delta": 0.0125,
+          "fixed": 4,
+          "broken": 3,
+          "net": 1
+        },
+        "alpha_0.9": {
+          "dev_acc": 0.6875,
+          "delta": -0.0625,
+          "fixed": 10,
+          "broken": 15,
+          "net": -5
+        }
+      },
+      "best_alpha": 0.5,
+      "best_delta": 0.0125,
+      "sanity_alpha0": {
+        "delta": 0.0,
+        "n_disagree": 0,
+        "OK": true
+      },
+      "oracle_headroom": {
+        "oracle_acc": 0.875,
+        "headroom": 0.125
+      },
+      "perm_null": {
+        "nperm": 200,
+        "mean": 0.0206,
+        "p95": 0.0631,
+        "p05": -0.025,
+        "max": 0.125,
+        "real_exceeds_p95": false
+      },
+      "machinery": {
+        "planted_pca1_recovery": 0.8761,
+        "planted_fiedler_recovery": 0.8852,
+        "valid": false,
+        "train_loo_onehop": 0.7687,
+        "train_loo_lp_a09": 0.694
+      },
+      "cell_verdict": "KILL",
+      "role": "deployed=frozen"
+    }
+  ],
+  "deployed_number_sanity": {
+    "HateMM": {
+      "seed0": {
+        "head_dev_acc": 0.8505,
+        "anchor": 0.8505,
+        "match": true
+      },
+      "seed1": {
+        "head_dev_acc": 0.8224,
+        "anchor": 0.8224,
+        "match": true
+      },
+      "seed2": {
+        "head_dev_acc": 0.8505,
+        "anchor": 0.8505,
+        "match": true
+      }
+    },
+    "MHC_EN": {
+      "seed0": {
+        "head_dev_acc": 0.7625,
+        "anchor": 0.7625,
+        "match": true
+      },
+      "seed1": {
+        "head_dev_acc": 0.7875,
+        "anchor": 0.7875,
+        "match": true
+      },
+      "seed2": {
+        "head_dev_acc": 0.775,
+        "anchor": 0.775,
+        "match": true
+      }
+    }
+  },
+  "dataset_verdict": {
+    "HateMM": {
+      "verdict": "KILL",
+      "best_key_space": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+      "best_delta": -0.0187,
+      "baseline_dev_acc": 0.8411
+    },
+    "MHC_zh": {
+      "verdict": "KILL",
+      "best_key_space": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+      "best_delta": -0.0385,
+      "baseline_dev_acc": 0.859
+    },
+    "MHC": {
+      "verdict": "KILL",
+      "best_key_space": "Qwen2.5-VL-7B-Instruct_HF",
+      "best_delta": 0.0125,
+      "baseline_dev_acc": 0.75
+    }
+  }
+}
