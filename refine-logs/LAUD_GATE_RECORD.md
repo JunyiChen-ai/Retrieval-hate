@@ -96,16 +96,75 @@ No other tasking/recon conflict encountered.
 
 ---
 
-## 2. Stage B — extraction results  *(APPENDED AFTER JOB COMPLETES — placeholder)*
+## 2. Stage B — extraction results (job 13295)
 
-_job id, runtime, per-dataset counts (851/629/657), n_zero_rows, NaN check, 3 example norms, cache sha256._
+SLURM **13295** (`laud_extract`) COMPLETED `0:0`, **elapsed 00:24:23** wall (extraction compute 663 s),
+1×A100 GPU-light, 8 CPU / 48 G, `HF_HUB_OFFLINE=1`, MaxRSS 4.94 G. Log `slurm/logs/laud_extract_13295.log`.
+Model `openai/whisper-large-v3` (`d_model=1280` → **pooled 2560-d**). All three caches
+`data/audio/<DS>/whisper_whisper-large-v3_trainval.pt` (+ `..._manifest.json`, per-video `.npz` shards):
 
-## 3. Stage C — gate results  *(APPENDED AFTER THE SINGLE GATE READ — placeholder)*
+| dataset | N (exp) | n_pos | emb | seg | n_zero rows | n_nan | status | 3 example norms | cache sha256 |
+|---|---|---|---|---|---|---|---|---|---|
+| HateMM | **851** (851 ✓) | 341 | (851, 2560) f32 | (851, 4, 2560) | 0 | 0 | ok:851 | 72.51 / 65.68 / 71.50 | `4a6b0bb2fe4b26f6d16a7f1a4d6ff2680fad306593758eb3072eeb96e3214070` |
+| MHC (EN) | **629** (629 ✓) | 193 | (629, 2560) f32 | (629, 4, 2560) | 0 | 0 | ok:629 | 69.01 / 71.57 / 71.58 | `203b67343c82082c295742d4ca4517f155cf0ca29fa9a7064eef2b396ede9d54` |
+| MHC_zh (ZH) | **657** (657 ✓) | 208 | (657, 2560) f32 | (657, 4, 2560) | 0 | 0 | ok:657 | 61.14 / 72.35 / 69.50 | `e2b046276797c8b402d5cab546311411e1c0bb752c29ca6a4c785984b9d22c9e` |
 
-_per dataset × Z arm: baseline accZ, label-oracle accZA (K-LAUD-1), best-decision-k Δacc + bootstrap CI,
-perm-null max band (if a would-be pass), K-LAUD-0 ruling, per-dataset combined ruling
-(KILL / HONEST-PARTIAL / PASS), promote_head_gpu._
+Audio coverage 100% as the recon promised — **no `no_audio` rows, no decode failures, no NaN** anywhere.
 
-## 4. Verdict  *(APPENDED — placeholder)*
+## 3. Stage C — gate results (single read; verbatim from `LAUD_GATE_OUT.json`, run `LAUD_GATE_run.log`)
 
-_HateMM anchor ruling + EN (K-LAUD-2) + ZH; whether the axis survives the $0 screen or the prior is slashed._
+Gate `laud_g0cond_gate.py` on local login-node CPU, **elapsed 530 s**, `LAUD_GATE_OUT.json` sha256
+`353bba844faf9cfb373709b138b47153c4a82c1a2d9ac714f0f6fd97ccacae98`. **K-LAUD-1 VALID for all 6 cells**
+(label-oracle `accZA = 1.0000`, headroom-fraction 1.000 everywhere → genuine nulls, not machinery
+artifacts). **No perm-null was computed on any cell** — correct per the pre-declared spec: perm-null runs
+only to confirm a would-be pass, and **no arm cleared C1&C2**, so C3 is `None` throughout.
+
+Binding decision = best of the decision family {k8, k16}. Numbers below are copied verbatim (run-log lines
+cited).
+
+| dataset | Z arm | accZ | best-k Δacc | bootstrap CI | full-2560 Δacc | K-LAUD-0 |
+|---|---|---|---|---|---|---|
+| HateMM | deployed_7168 | 0.8712 | **+0.0014** (k16) | [−0.0075, +0.0103] | +0.0063 | **KILL** (L1-7) |
+| HateMM | strict_8960 | 0.8383 | **+0.0014** (k8) | [−0.0073, +0.0106] | +0.0052 | **KILL** (L8-14) |
+| MHC (EN) | deployed_7168 | 0.7847 | **+0.0041** (k8) | [−0.0079, +0.0159] | +0.0038 | **KILL** (L15-21) |
+| MHC (EN) | strict_8960 | 0.7971 | **−0.0013** (k8) | [−0.0130, +0.0102] | −0.0032 | **KILL** (L22-28) |
+| MHC_zh (ZH) | deployed_7168 | 0.8770 | **−0.0052** (k16) | [−0.0155, +0.0052] | −0.0018 | **KILL** (L29-35) |
+| MHC_zh (ZH) | strict_8960 | 0.8228 | **−0.0082** (k8) | [−0.0180, +0.0009] | −0.0094 | **KILL** (L36-42) |
+
+**Every** decision-family point estimate is an **order of magnitude under the +0.040 bar** (global max
+across all 6 cells × {k8,k16} = **+0.0041**, EN/deployed), **every** bootstrap CI straddles 0 (or is
+entirely negative), and no cell reaches even the +0.030 honest-partial band. The higher-capacity context
+arms trend **negative** (k32/k64 down to −0.0298/−0.0320 on ZH; audio adds noise, not signal, as capacity
+grows) and the shuffled-audio controls sit at ≈0 (−0.0149…+0.0060) — a clean null, not an under-powered
+one. Per-dataset combined ruling (a PASS must clear BOTH Z arms): **HateMM KILL, EN KILL, ZH KILL**.
+
+## 4. Verdict — KILL (all three datasets, both Z arms)
+
+**The learned Whisper-large-v3-ENCODER audio stream carries no conditional label information over the
+deployed encoder (7168-d) OR the strict W2-A/APX `Z_best` (8960-d), on any of the three datasets.**
+K-LAUD-0 fires on every arm; **`promote_head_gpu = False`** → the acoustic-axis prior is slashed at ~$0,
+**no head GPU is spent**. K-LAUD-2 (the EN blank-cell fill) is now measured: EN audio conditional-info is
+**also null** (best +0.0041 deployed / −0.0013 strict) — the F44 label-limited-EN wall was not the obstacle
+here; the audio simply adds nothing over the deployed multimodal representation. This is the **6th
+no-conversion audio datum** and closes the eGeMAPS→learned-encoder gap the APX record flagged: a *learned*
+Whisper encoder confirms the *classical* eGeMAPS null rather than overturning it. The mechanism matches the
+recon's F31 hazard — the large-v3 **transcript** already banks spoken hate into the deployed `text_feats`,
+leaving no non-lexical residual the Whisper encoder can add.
+
+**SCOPE — this closes only the WHISPER realization, not the learned-audio axis (recon §0.2, binding).**
+Whisper is a **speech-ASR** encoder, optimized to transcribe speech and therefore **weakest exactly on the
+non-speech events** (music, chants, screams, gunshots, tone) that motivated the axis. A Whisper-encoder null
+must **not** close the whole learned-audio axis: a **general-audio encoder (AST / BEATs / wav2vec2)** is the
+proper closer. Per K-LAUD-0, that download escalation is **not** licensed *from this Whisper evidence alone*
+— it proceeds only if the loop judges the non-speech caveat decisive. **D7 novelty was thin regardless**
+(learned-audio = catch-up to SOTA inputs; all three baselines already fuse audio), so even a gain would have
+been a performance/ablation row, never a novelty win.
+
+The K=4 segment-level variant (`seg_emb [N,4,2560]`) is banked in the caches, unused by this gate, and
+remains available for a future localization tie-in without re-extraction.
+
+---
+**Discipline honored:** ZERO test-touch (train∪val only, test split never enumerated); single gate read
+(no bar adjustment after seeing numbers — bars frozen at commit 7ff217f before any dev-label read); no
+`state/` mutation; no model download (`HF_HUB_OFFLINE=1`, weights on disk); no Modal (raw media stayed
+local). Local commits only, not pushed.

@@ -1,0 +1,57 @@
+[HateMM|deployed_7168] Zdim=7168 auxdim=2560 C_Z=1.0 accZ=0.8712 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [160s]
+   audio_pca_k8  accZA=0.8712 dacc=-0.0000 CI[-0.0071,+0.0071]
+   audio_pca_k16 accZA=0.8726 dacc=+0.0014 CI[-0.0075,+0.0103]
+   audio_pca_k32 accZA=0.8632 dacc=-0.0080 CI[-0.0183,+0.0019]
+   audio_pca_k64 accZA=0.8691 dacc=-0.0021 CI[-0.0143,+0.0101]
+   audio_full_cvC accZA=0.8776 dacc=+0.0063 CI[-0.0012,+0.0139]
+   shuffled(seed12345) k8=-0.0021 k16=-0.0045  real_max_over_kdec=+0.0014
+[HateMM|strict_8960] Zdim=8960 auxdim=2560 C_Z=0.01 accZ=0.8383 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [146s]
+   audio_pca_k8  accZA=0.8397 dacc=+0.0014 CI[-0.0073,+0.0106]
+   audio_pca_k16 accZA=0.8376 dacc=-0.0007 CI[-0.0113,+0.0099]
+   audio_pca_k32 accZA=0.8353 dacc=-0.0031 CI[-0.0150,+0.0085]
+   audio_pca_k64 accZA=0.8355 dacc=-0.0028 CI[-0.0172,+0.0118]
+   audio_full_cvC accZA=0.8435 dacc=+0.0052 CI[-0.0045,+0.0146]
+   shuffled(seed12345) k8=-0.0016 k16=-0.0082  real_max_over_kdec=+0.0014
+[MHC|deployed_7168] Zdim=7168 auxdim=2560 C_Z=0.001 accZ=0.7847 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [43s]
+   audio_pca_k8  accZA=0.7889 dacc=+0.0041 CI[-0.0079,+0.0159]
+   audio_pca_k16 accZA=0.7841 dacc=-0.0006 CI[-0.0140,+0.0130]
+   audio_pca_k32 accZA=0.7762 dacc=-0.0086 CI[-0.0242,+0.0064]
+   audio_pca_k64 accZA=0.7679 dacc=-0.0169 CI[-0.0334,+0.0003]
+   audio_full_cvC accZA=0.7886 dacc=+0.0038 CI[-0.0057,+0.0137]
+   shuffled(seed12345) k8=+0.0060 k16=+0.0010  real_max_over_kdec=+0.0041
+[MHC|strict_8960] Zdim=8960 auxdim=2560 C_Z=0.001 accZ=0.7971 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [68s]
+   audio_pca_k8  accZA=0.7959 dacc=-0.0013 CI[-0.0130,+0.0102]
+   audio_pca_k16 accZA=0.7911 dacc=-0.0060 CI[-0.0184,+0.0064]
+   audio_pca_k32 accZA=0.7806 dacc=-0.0165 CI[-0.0324,-0.0010]
+   audio_pca_k64 accZA=0.7723 dacc=-0.0248 CI[-0.0417,-0.0073]
+   audio_full_cvC accZA=0.7940 dacc=-0.0032 CI[-0.0114,+0.0051]
+   shuffled(seed12345) k8=+0.0003 k16=-0.0095  real_max_over_kdec=-0.0013
+[MHC_zh|deployed_7168] Zdim=7168 auxdim=2560 C_Z=0.001 accZ=0.8770 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [47s]
+   audio_pca_k8  accZA=0.8706 dacc=-0.0064 CI[-0.0143,+0.0015]
+   audio_pca_k16 accZA=0.8718 dacc=-0.0052 CI[-0.0155,+0.0052]
+   audio_pca_k32 accZA=0.8606 dacc=-0.0164 CI[-0.0280,-0.0052]
+   audio_pca_k64 accZA=0.8472 dacc=-0.0298 CI[-0.0432,-0.0170]
+   audio_full_cvC accZA=0.8752 dacc=-0.0018 CI[-0.0085,+0.0046]
+   shuffled(seed12345) k8=-0.0009 k16=-0.0018  real_max_over_kdec=-0.0052
+[MHC_zh|strict_8960] Zdim=8960 auxdim=2560 C_Z=0.001 accZ=0.8228 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [66s]
+   audio_pca_k8  accZA=0.8146 dacc=-0.0082 CI[-0.0180,+0.0009]
+   audio_pca_k16 accZA=0.8119 dacc=-0.0110 CI[-0.0237,+0.0018]
+   audio_pca_k32 accZA=0.8070 dacc=-0.0158 CI[-0.0307,-0.0009]
+   audio_pca_k64 accZA=0.7909 dacc=-0.0320 CI[-0.0502,-0.0143]
+   audio_full_cvC accZA=0.8134 dacc=-0.0094 CI[-0.0180,-0.0009]
+   shuffled(seed12345) k8=-0.0149 k16=-0.0037  real_max_over_kdec=-0.0082
+
+==== LEARNED-AUDIO G0-cond gate — mechanical evaluation ====
+  [HateMM]  RULING = KILL
+      deployed_7168  verdict=KILL              best-k16 dacc=+0.0014 CI[-0.0075,+0.0103] honest_partial=False C3=None
+      strict_8960    verdict=KILL              best-k8 dacc=+0.0014 CI[-0.0073,+0.0106] honest_partial=False C3=None
+  [MHC]  RULING = KILL
+      deployed_7168  verdict=KILL              best-k8 dacc=+0.0041 CI[-0.0079,+0.0159] honest_partial=False C3=None
+      strict_8960    verdict=KILL              best-k8 dacc=-0.0013 CI[-0.0130,+0.0102] honest_partial=False C3=None
+  [MHC_zh]  RULING = KILL
+      deployed_7168  verdict=KILL              best-k16 dacc=-0.0052 CI[-0.0155,+0.0052] honest_partial=False C3=None
+      strict_8960    verdict=KILL              best-k8 dacc=-0.0082 CI[-0.0180,+0.0009] honest_partial=False C3=None
+
+  HateMM(anchor)=KILL  EN(K-LAUD-2)=KILL  ZH=KILL  => promote_head_gpu=False
+wrote /data/jehc223/RGCL/refine-logs/LAUD_GATE_OUT.json
+elapsed 530s

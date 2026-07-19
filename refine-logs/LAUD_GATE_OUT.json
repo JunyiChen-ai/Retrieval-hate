@@ -1,0 +1,700 @@
+{
+ "design": {
+  "gate": "LEARNED-AUDIO G0-cond (recon 166f9e2b)",
+  "aux": "Whisper whisper-large-v3 encoder mean(+)max video vector (2*d_model)",
+  "z_arms": {
+   "deployed_7168": "per-dataset deployed encoder img+text",
+   "strict_8960": "CLIP img+text (+) frozen-Qwen img+text (== W2-A/APX Z_best)"
+  },
+  "deploy": {
+   "HateMM": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+   "MHC": "Qwen2.5-VL-7B-Instruct_HF",
+   "MHC_zh": "Qwen2.5-VL-7B-Instruct-LoRA_HF"
+  },
+  "datasets": [
+   "HateMM",
+   "MHC",
+   "MHC_zh"
+  ],
+  "ks_decision": [
+   8,
+   16
+  ],
+  "ks_report": [
+   8,
+   16,
+   32,
+   64
+  ],
+  "bar": 0.04,
+  "honest_partial_low": 0.03,
+  "scale_A": 50.0,
+  "n_splits": 5,
+  "n_repeats": 5,
+  "B_boot": 5000,
+  "nseed_perm": 150,
+  "kill_switch": "K-LAUD-0: best-decision-k point<+0.040 OR CI-lower<=0 -> KILL (would-be pass also needs real>all >=150 perm maxima); K-LAUD-1: calib accZA<0.99 -> MACHINERY_INVALID; K-LAUD-2: identical EN blank-cell screen. PASS clears BOTH Z arms.",
+  "machinery": "VERBATIM c3_fusion_probe.py / apx_g0cond_gate.py"
+ },
+ "cells": {
+  "HateMM|deployed_7168": {
+   "point": {
+    "ds": "HateMM",
+    "z_arm": "deployed_7168",
+    "n": 851,
+    "n_pos": 341,
+    "meta": {
+     "N": 851,
+     "n_pos": 341,
+     "n_zero_audio_rows": 0,
+     "aux_dim": 2560,
+     "Z_dim": 7168,
+     "model_tag": "whisper-large-v3",
+     "pool": "mean_cat_max",
+     "d_model": 1280
+    },
+    "Z_dim": 7168,
+    "aux_dim": 2560,
+    "C_Z": 1.0,
+    "C_Z_cv_acc": 0.877750257997936,
+    "C_full": 0.1,
+    "C_full_cv_acc": 0.8765806673546612,
+    "baseline_accZ": 0.8712103407755583,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.12878965922444174,
+     "label_dacc": 0.12878965922444185,
+     "headroom_fraction": 1.0000000000000009,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.8712103407755581,
+      "dacc": -1.4350708896447381e-18,
+      "ci": [
+       -0.007050528789659225,
+       0.007050528789659222
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.87262044653349,
+      "dacc": 0.001410105757931844,
+      "ci": [
+       -0.0075264394829612224,
+       0.010340775558166862
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.8632197414806111,
+      "dacc": -0.007990599294947122,
+      "ci": [
+       -0.018331374853113987,
+       0.001880141010575793
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.8690951821386604,
+      "dacc": -0.002115158636897768,
+      "ci": [
+       -0.014336075205640422,
+       0.01010575793184489
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.8775558166862514,
+      "dacc": 0.0063454759106933,
+      "ci": [
+       -0.0011750881316098729,
+       0.013866039952996474
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": -0.002115158636897769
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.004465334900117509
+     }
+    },
+    "real_max_over_kdec": 0.001410105757931844
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 16,
+    "best_dacc": 0.001410105757931844,
+    "best_ci": [
+     -0.0075264394829612224,
+     0.010340775558166862
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  },
+  "HateMM|strict_8960": {
+   "point": {
+    "ds": "HateMM",
+    "z_arm": "strict_8960",
+    "n": 851,
+    "n_pos": 341,
+    "meta": {
+     "N": 851,
+     "n_pos": 341,
+     "n_zero_audio_rows": 0,
+     "aux_dim": 2560,
+     "Z_dim": 8960,
+     "model_tag": "whisper-large-v3",
+     "pool": "mean_cat_max",
+     "d_model": 1280
+    },
+    "Z_dim": 8960,
+    "aux_dim": 2560,
+    "C_Z": 0.01,
+    "C_Z_cv_acc": 0.8413140694874441,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.843687650498796,
+    "baseline_accZ": 0.8383078730904819,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.16169212690951806,
+     "label_dacc": 0.16169212690951823,
+     "headroom_fraction": 1.000000000000001,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.8397179788484135,
+      "dacc": 0.0014101057579318445,
+      "ci": [
+       -0.0072855464159811995,
+       0.010575793184488834
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.8376028202115158,
+      "dacc": -0.0007050528789659228,
+      "ci": [
+       -0.011280846063454761,
+       0.009870740305522912
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.835252643948296,
+      "dacc": -0.003055229142185663,
+      "ci": [
+       -0.015041128084606347,
+       0.008460634547591071
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.8354876615746181,
+      "dacc": -0.0028202115158636886,
+      "ci": [
+       -0.01715628672150411,
+       0.011750881316098707
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.8434782608695651,
+      "dacc": 0.005170387779083431,
+      "ci": [
+       -0.004465334900117509,
+       0.014571092831962396
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": -0.0016451233842538194
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.008225616921269096
+     }
+    },
+    "real_max_over_kdec": 0.0014101057579318445
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 8,
+    "best_dacc": 0.0014101057579318445,
+    "best_ci": [
+     -0.0072855464159811995,
+     0.010575793184488834
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  },
+  "MHC|deployed_7168": {
+   "point": {
+    "ds": "MHC",
+    "z_arm": "deployed_7168",
+    "n": 629,
+    "n_pos": 193,
+    "meta": {
+     "N": 629,
+     "n_pos": 193,
+     "n_zero_audio_rows": 0,
+     "aux_dim": 2560,
+     "Z_dim": 7168,
+     "model_tag": "whisper-large-v3",
+     "pool": "mean_cat_max",
+     "d_model": 1280
+    },
+    "Z_dim": 7168,
+    "aux_dim": 2560,
+    "C_Z": 0.001,
+    "C_Z_cv_acc": 0.7901206349206349,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.7853079365079365,
+    "baseline_accZ": 0.784737678855326,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.21526232114467403,
+     "label_dacc": 0.21526232114467406,
+     "headroom_fraction": 1.0000000000000002,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.7888712241653418,
+      "dacc": 0.004133545310015898,
+      "ci": [
+       -0.007949125596184421,
+       0.01589825119236884
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.7841017488076312,
+      "dacc": -0.0006359300476947538,
+      "ci": [
+       -0.013990461049284579,
+       0.013036565977742448
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.7761526232114468,
+      "dacc": -0.008585055643879173,
+      "ci": [
+       -0.024165341812400636,
+       0.006359300476947536
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.7678855325914149,
+      "dacc": -0.01685214626391097,
+      "ci": [
+       -0.033386327503974564,
+       0.00031796502384737565
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.7885532591414944,
+      "dacc": 0.0038155802861685206,
+      "ci": [
+       -0.005723370429252783,
+       0.013672496025437198
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": 0.00604133545310016
+     },
+     "shuffled_audio_k16": {
+      "dacc": 0.0009538950715421309
+     }
+    },
+    "real_max_over_kdec": 0.004133545310015898
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 8,
+    "best_dacc": 0.004133545310015898,
+    "best_ci": [
+     -0.007949125596184421,
+     0.01589825119236884
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  },
+  "MHC|strict_8960": {
+   "point": {
+    "ds": "MHC",
+    "z_arm": "strict_8960",
+    "n": 629,
+    "n_pos": 193,
+    "meta": {
+     "N": 629,
+     "n_pos": 193,
+     "n_zero_audio_rows": 0,
+     "aux_dim": 2560,
+     "Z_dim": 8960,
+     "model_tag": "whisper-large-v3",
+     "pool": "mean_cat_max",
+     "d_model": 1280
+    },
+    "Z_dim": 8960,
+    "aux_dim": 2560,
+    "C_Z": 0.001,
+    "C_Z_cv_acc": 0.8028190476190475,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.7900571428571428,
+    "baseline_accZ": 0.7971383147853737,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.20286168521462633,
+     "label_dacc": 0.2028616852146264,
+     "headroom_fraction": 1.0000000000000004,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.7958664546899842,
+      "dacc": -0.001271860095389508,
+      "ci": [
+       -0.013036565977742448,
+       0.010174880763116055
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.7910969793322735,
+      "dacc": -0.006041335453100159,
+      "ci": [
+       -0.01844197138314785,
+       0.006359300476947536
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.78060413354531,
+      "dacc": -0.01653418124006359,
+      "ci": [
+       -0.03243243243243243,
+       -0.0009538950715421309
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.7723370429252783,
+      "dacc": -0.02480127186009539,
+      "ci": [
+       -0.041653418124006365,
+       -0.007313195548489664
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.7939586645468998,
+      "dacc": -0.0031796502384737685,
+      "ci": [
+       -0.011446740858505564,
+       0.005087440381558029
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": 0.00031796502384737706
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.009538950715421301
+     }
+    },
+    "real_max_over_kdec": -0.001271860095389508
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 8,
+    "best_dacc": -0.001271860095389508,
+    "best_ci": [
+     -0.013036565977742448,
+     0.010174880763116055
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  },
+  "MHC_zh|deployed_7168": {
+   "point": {
+    "ds": "MHC_zh",
+    "z_arm": "deployed_7168",
+    "n": 657,
+    "n_pos": 208,
+    "meta": {
+     "N": 657,
+     "n_pos": 208,
+     "n_zero_audio_rows": 0,
+     "aux_dim": 2560,
+     "Z_dim": 7168,
+     "model_tag": "whisper-large-v3",
+     "pool": "mean_cat_max",
+     "d_model": 1280
+    },
+    "Z_dim": 7168,
+    "aux_dim": 2560,
+    "C_Z": 0.001,
+    "C_Z_cv_acc": 0.8767175572519085,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.8767406893361092,
+    "baseline_accZ": 0.8770167427701675,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.1229832572298325,
+     "label_dacc": 0.1229832572298326,
+     "headroom_fraction": 1.0000000000000009,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.8706240487062404,
+      "dacc": -0.006392694063926939,
+      "ci": [
+       -0.014307458143074585,
+       0.0015220700152207
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.8718417047184169,
+      "dacc": -0.005175038051750381,
+      "ci": [
+       -0.015525114155251143,
+       0.005175038051750381
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.860578386605784,
+      "dacc": -0.01643835616438356,
+      "ci": [
+       -0.02800608828006088,
+       -0.005167427701674388
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.8471841704718417,
+      "dacc": -0.029832572298325727,
+      "ci": [
+       -0.04322678843226788,
+       -0.01704718417047184
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.8751902587519026,
+      "dacc": -0.0018264840182648408,
+      "ci": [
+       -0.00852359208523592,
+       0.0045662100456621
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": -0.0009132420091324195
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.0018264840182648419
+     }
+    },
+    "real_max_over_kdec": -0.005175038051750381
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 16,
+    "best_dacc": -0.005175038051750381,
+    "best_ci": [
+     -0.015525114155251143,
+     0.005175038051750381
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  },
+  "MHC_zh|strict_8960": {
+   "point": {
+    "ds": "MHC_zh",
+    "z_arm": "strict_8960",
+    "n": 657,
+    "n_pos": 208,
+    "meta": {
+     "N": 657,
+     "n_pos": 208,
+     "n_zero_audio_rows": 0,
+     "aux_dim": 2560,
+     "Z_dim": 8960,
+     "model_tag": "whisper-large-v3",
+     "pool": "mean_cat_max",
+     "d_model": 1280
+    },
+    "Z_dim": 8960,
+    "aux_dim": 2560,
+    "C_Z": 0.001,
+    "C_Z_cv_acc": 0.8128730048577376,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.8143881563728892,
+    "baseline_accZ": 0.8228310502283104,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.17716894977168962,
+     "label_dacc": 0.1771689497716895,
+     "headroom_fraction": 0.9999999999999993,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.8146118721461187,
+      "dacc": -0.008219178082191782,
+      "ci": [
+       -0.017960426179604264,
+       0.0009132420091324209
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.8118721461187214,
+      "dacc": -0.010958904109589043,
+      "ci": [
+       -0.023744292237442923,
+       0.0018264840182648406
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.8070015220700153,
+      "dacc": -0.01582952815829528,
+      "ci": [
+       -0.030745814307458142,
+       -0.0009056316590564265
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.7908675799086756,
+      "dacc": -0.0319634703196347,
+      "ci": [
+       -0.0502283105022831,
+       -0.014307458143074579
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.8133942161339421,
+      "dacc": -0.009436834094368341,
+      "ci": [
+       -0.017960426179604264,
+       -0.0009132420091324201
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": -0.014916286149162863
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.0036529680365296816
+     }
+    },
+    "real_max_over_kdec": -0.008219178082191782
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 8,
+    "best_dacc": -0.008219178082191782,
+    "best_ci": [
+     -0.017960426179604264,
+     0.0009132420091324209
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  }
+ },
+ "rulings": {
+  "HateMM": {
+   "ruling": "KILL",
+   "arms": {
+    "deployed_7168": {
+     "verdict": "KILL",
+     "best_decision_k": 16,
+     "best_dacc": 0.001410105757931844,
+     "best_ci": [
+      -0.0075264394829612224,
+      0.010340775558166862
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    },
+    "strict_8960": {
+     "verdict": "KILL",
+     "best_decision_k": 8,
+     "best_dacc": 0.0014101057579318445,
+     "best_ci": [
+      -0.0072855464159811995,
+      0.010575793184488834
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    }
+   }
+  },
+  "MHC": {
+   "ruling": "KILL",
+   "arms": {
+    "deployed_7168": {
+     "verdict": "KILL",
+     "best_decision_k": 8,
+     "best_dacc": 0.004133545310015898,
+     "best_ci": [
+      -0.007949125596184421,
+      0.01589825119236884
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    },
+    "strict_8960": {
+     "verdict": "KILL",
+     "best_decision_k": 8,
+     "best_dacc": -0.001271860095389508,
+     "best_ci": [
+      -0.013036565977742448,
+      0.010174880763116055
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    }
+   }
+  },
+  "MHC_zh": {
+   "ruling": "KILL",
+   "arms": {
+    "deployed_7168": {
+     "verdict": "KILL",
+     "best_decision_k": 16,
+     "best_dacc": -0.005175038051750381,
+     "best_ci": [
+      -0.015525114155251143,
+      0.005175038051750381
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    },
+    "strict_8960": {
+     "verdict": "KILL",
+     "best_decision_k": 8,
+     "best_dacc": -0.008219178082191782,
+     "best_ci": [
+      -0.017960426179604264,
+      0.0009132420091324209
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    }
+   }
+  }
+ },
+ "laud_verdict": {
+  "HateMM_anchor": "KILL",
+  "MHC_EN_K_LAUD_2": "KILL",
+  "MHC_zh_third_leg": "KILL",
+  "promote_head_gpu": false
+ }
+}
