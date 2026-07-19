@@ -111,3 +111,11 @@ the 2-GPU user cap. All submitted `sbatch --parsable` (recipe sbatch carry NO `-
 
 J1 = **13301 RUNNING** (auto-released immediately, node foscsmlprd01); J2/J3/J4 **PENDING (JobHeldUser)** or
 dependency-held (normal per CLAUDE.md; holds NEVER forced). J3 (2nd SFT) auto-releases when the 2nd GPU frees.
+
+## 6. Status — PENDING-JOB (SFTs ~4–5.5 h each)
+
+Chain running; no executor action possible until the first SFT+extract completes. Next actionable milestone =
+**J2 (EN extract 13302) terminal**, which triggers: (a) J1 SFT G-repro (eval_loss band §3.7b + real-adapter
+ViT-tensor census §4.1a), (b) J2 cache sanity (shapes/counts/NaN), (c) the **EN image-MOVED $0 gate** (§3.4) →
+`DSLIST` branch. J4 (HateMM extract) G-repro follows; then the **J5 head** submit. A background poller is armed on
+13302; the orchestrator also monitors. No test metric read; RAW-ONLY discipline holds; nothing pushed.
