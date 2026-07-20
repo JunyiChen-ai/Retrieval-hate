@@ -112,10 +112,57 @@ the 2-GPU user cap. All submitted `sbatch --parsable` (recipe sbatch carry NO `-
 J1 = **13301 RUNNING** (auto-released immediately, node foscsmlprd01); J2/J3/J4 **PENDING (JobHeldUser)** or
 dependency-held (normal per CLAUDE.md; holds NEVER forced). J3 (2nd SFT) auto-releases when the 2nd GPU frees.
 
-## 6. Status — PENDING-JOB (SFTs ~4–5.5 h each)
+## 6. EN leg COMPLETE — G-repro + cache sanity + image-MOVED gate (raw)
 
-Chain running; no executor action possible until the first SFT+extract completes. Next actionable milestone =
-**J2 (EN extract 13302) terminal**, which triggers: (a) J1 SFT G-repro (eval_loss band §3.7b + real-adapter
-ViT-tensor census §4.1a), (b) J2 cache sanity (shapes/counts/NaN), (c) the **EN image-MOVED $0 gate** (§3.4) →
-`DSLIST` branch. J4 (HateMM extract) G-repro follows; then the **J5 head** submit. A background poller is armed on
-13302; the orchestrator also monitors. No test metric read; RAW-ONLY discipline holds; nothing pushed.
+**Job states (sacct):** J1 13301 SFT-EN **COMPLETED** (06:21:10, exit 0:0); J2 13302 extract-EN **COMPLETED**
+(00:34:37, exit 0:0). J3 13303 SFT-HateMM PENDING (JobHeldUser — waiting, never forced); J4 13304 extract-HateMM
+PENDING (dependency).
+
+### 6.1 J1 (MHC_vis) SFT G-repro — PASS
+- **eval_loss = 0.17310** (`logging/lora/MHC_vis/all_results.json`) — inside the §3.7b **0.10–0.18** band
+  (generic MHC anchor 0.1620). It is HIGHER, not much-lower, so the §3.7b overfit tripwire (much-lower
+  eval_loss + widening gap) does NOT fire. train_loss 0.10396; train_runtime 20773 s.
+- **Real-adapter ViT-tensor census** (`logging/lora/MHC_vis/adapter_model.safetensors`, 206 MB):
+  **n_visual_lora_tensors = 320** (32 ViT blocks 0..31 × 5 Linears × {A,B}), **n_llm = 392** (== generic ⇒
+  clean-superset), **n_merger = 0**, **n_patchembed = 0**. Total 712. Matches the smoke census bit-for-bit.
+
+### 6.2 J2 (MHC_vis extract) cache sanity — PASS (tag `Qwen2.5-VL-7B-Instruct-LoRA-vis_HF`)
+| split | N | img_feats | text_feats | labels | img NaN | text NaN | N/dim == generic | ids == generic |
+|---|---|---|---|---|---|---|---|---|
+| train | 549 | (549, 3584) | (549, 3584) | 549 | 0 | 0 | yes | yes |
+| dev_seen | 80 | (80, 3584) | (80, 3584) | 80 | 0 | 0 | yes | yes |
+| test_seen | 161 | (161, 3584) | (161, 3584) | 161 | 0 | 0 | yes | yes |
+
+Dual-stream 3584-d (§1.3); zero NaN; N and ids identical to the banked generic-LoRA EN cache (the id alignment
+the gate asserts). Frozen / `-LoRA_HF` / `-LoRA-curric_HF` caches untouched (distinct tag). (test_seen inspected
+for STRUCTURE only — shape/count/NaN/id — no test metric, no `Test_*` line read; RAW-ONLY holds.)
+
+### 6.3 EN image-MOVED $0 gate (§3.4) — MOVED → EN-HEAD-PROCEEDS (raw; committed F58 operator, train+dev only)
+`python scripts/analysis/vis_image_moved_probe.py --dataset MHC --context` (CUDA_VISIBLE_DEVICES="", K=20);
+JSON `scripts/analysis/vis_image_moved_MHC_out.json`.
+
+| footing | generic-LoRA img AUC | vis-LoRA img AUC | dAUC(vis−gen) | threshold | same-sign? |
+|---|---|---|---|---|---|
+| train-LOO | 0.6236 | 0.6556 | **+0.0320** | ≥ +0.010 | ✓ |
+| dev | 0.6756 | 0.6822 | **+0.0065** | ≥ +0.005 | ✓ |
+
+- generic-LoRA anchor **reproduces the frozen §2.3 value exactly** (0.6236 / 0.6756). Context (image-only):
+  CLIP 0.7338 / 0.7367, frozen-Qwen 0.5992 / 0.6865. Text-stream dAUC(vis−gen): trLOO −0.0102, dev +0.0051.
+- **IMG MOVED** (both footings clear the F58 thresholds, same positive sign) ⇒ **EN-HEAD-PROCEEDS**; gate exit
+  code 0. This is the pre-declared mechanical branch point (train+dev only, zero test-touch), NOT a
+  head-accuracy verdict.
+- **DSLIST decision: `"HateMM MHC"`** (both legs; EN head rows retained).
+
+### 6.4 Head job J5 submitted (arg-driven; NO frozen-file edit)
+- First submit **13306** used `--dependency=afterok:13302:13304`; since 13302 had already COMPLETED and was
+  ~4 min from the 300-s MinJobAge purge (a `DependencyNeverSatisfied` race), it was cancelled and resubmitted.
+- **J5 = 13307** `enc3seed_lora_vis.sbatch "HateMM MHC"`, `--dependency=afterok:13304` (the EN vis cache is
+  already on disk + verified §6.2, so the head keys only on the pending HateMM extract). Runs 6 head rows
+  (HateMM seeds 0/1/2 + MHC-EN seeds 0/1/2), `--model Qwen2.5-VL-7B-Instruct-LoRA-vis_HF`,
+  `--group_name RAC_video_lora_vis`. PENDING behind 13303→13304.
+
+### 6.5 Status — PENDING-JOB (HateMM leg)
+Remaining chain: **13303 (SFT-HateMM) → 13304 (extract-HateMM) → 13307 (head)**. On 13303 COMPLETE: HateMM_vis
+SFT G-repro (eval_loss band; anchor 0.1084) + adapter census. On 13304 COMPLETE: HateMM vis cache sanity. On
+13307 COMPLETE: transcribe RAW per-seed both-protocol numbers (line-numbered, NO gates) for the independent
+verdict reviewer. No test metric read by the executor; nothing pushed.

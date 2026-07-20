@@ -1,0 +1,61 @@
+{
+ "dataset": "MHC",
+ "K": 20,
+ "thresholds": {
+  "MOVE_TR": 0.01,
+  "MOVE_DV": 0.005
+ },
+ "generic": {
+  "n_train": 549,
+  "n_dev": 80,
+  "train_pos_frac": 0.30601092896174864,
+  "dev_pos_frac": 0.3125,
+  "img": {
+   "train_loo_auc": 0.6236095488063992,
+   "dev_auc": 0.6756363636363636
+  },
+  "text": {
+   "train_loo_auc": 0.9232908386451694,
+   "dev_auc": 0.8458181818181818
+  },
+  "concat": {
+   "train_loo_auc": 0.9064804399450068,
+   "dev_auc": 0.8341818181818181
+  }
+ },
+ "vis": {
+  "n_train": 549,
+  "n_dev": 80,
+  "train_pos_frac": 0.30601092896174864,
+  "dev_pos_frac": 0.3125,
+  "img": {
+   "train_loo_auc": 0.6556055493063367,
+   "dev_auc": 0.6821818181818182
+  },
+  "text": {
+   "train_loo_auc": 0.9131358580177478,
+   "dev_auc": 0.850909090909091
+  },
+  "concat": {
+   "train_loo_auc": 0.8942163479565054,
+   "dev_auc": 0.8538181818181818
+  }
+ },
+ "context": {
+  "CLIP": {
+   "img_train_loo": 0.7337989001374828,
+   "img_dev": 0.7367272727272727
+  },
+  "frozen-Qwen": {
+   "img_train_loo": 0.5991594800649919,
+   "img_dev": 0.6865454545454546
+  }
+ },
+ "d_img_train_loo": 0.03199600049993756,
+ "d_img_dev": 0.006545454545454632,
+ "d_text_train_loo": -0.010154980627421595,
+ "d_text_dev": 0.005090909090909146,
+ "img_move": "MOVED",
+ "en_head_proceeds": true,
+ "verdict": "EN-HEAD-PROCEEDS (image stream MOVED)"
+}
