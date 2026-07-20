@@ -166,3 +166,43 @@ Remaining chain: **13303 (SFT-HateMM) → 13304 (extract-HateMM) → 13307 (head
 SFT G-repro (eval_loss band; anchor 0.1084) + adapter census. On 13304 COMPLETE: HateMM vis cache sanity. On
 13307 COMPLETE: transcribe RAW per-seed both-protocol numbers (line-numbered, NO gates) for the independent
 verdict reviewer. No test metric read by the executor; nothing pushed.
+
+## 7. HateMM leg WEDGED then RESUBMITTED — aggregate CPU/mem cap diagnosis (2026-07-21)
+
+**Diagnosis (orchestrator + USER-CONFIRMED).** J3 13303 (SFT-HateMM) sat `PENDING (JobHeldUser)` ~29 h and never
+released. Root cause = an **AGGREGATE per-user resource-cap violation checked ONCE AT SUBMIT TIME**: 13303
+(16 CPU / 120 G) was submitted while J1 13301 (16 CPU / 120 G) was still starting ⇒ combined **32 CPU / 240 G >
+the per-user 16 CPU / 128 G cap**. The approval daemon evaluates the aggregate at submit and evidently never
+revisits, so 13303 stayed held even though our running aggregate dropped to **ZERO ~22.5 h before** (13301
+finished, 13302 finished) — later same-shaped jobs from other users were approved in the interim. GPU peak was 2
+(within the 2-GPU cap), which §5 noted — but the binding limit that wedged us was the **CPU/mem aggregate**, not
+GPU. **LESSON (institutionalized): parallel SLURM submission for this project is bounded by the CPU/mem aggregate
+(16 CPU / 128 G), NOT just GPU=2. NEVER submit two 16-CPU/120G SFT jobs without a dependency edge between them —
+chain them `afterok` so only ONE 16-CPU job is ever in flight.** (My original chain submitted J1+J3 as two
+independent 16-CPU SFTs to exploit "peak GPU=2"; that is the exact anti-pattern.)
+
+**Authorized user-driven unblock (executed 2026-07-21).**
+- **Cancelled (our own held/dependency jobs — NOT an admin hold):** `scancel 13303 13304 13307`. Queue emptied.
+- **Sha re-verify before resubmit — ALL MATCH:** `lora_sft_vis.sbatch` C `3e895420…`, `enc3seed_lora_vis.sbatch`
+  D `ca774914…`, `gen_embed_lora.sbatch` `c76bb422…`, HateMM config B `634bd0bb…`, HateMM `train.json`
+  `93c6d3d1…` / `val.json` `9e103ed3…`. Authorization intact.
+- **HateMM-leg collision re-check — CLEAN:** `logging/lora/HateMM_vis`, `data/CLIP_Embedding/HateMM/*LoRA-vis*.pt`,
+  `logging/Retrieval/HateMM/RAC_video_lora_vis*`, `slurm/logs/enc3s_*LoRA-vis*.trainlog` — all ABSENT (13303 never
+  ran). EN-leg artifacts intact (`logging/lora/MHC_vis/adapter_model.safetensors`, EN vis caches persist).
+- **Resubmitted SEQUENTIALLY (single 16-CPU job in flight):**
+
+| job | id | script + args | dependency | CPU/mem |
+|---|---|---|---|---|
+| J3' SFT HateMM | **13328** | `lora_sft_vis.sbatch HateMM` → `logging/lora/HateMM_vis` | (none) | 16 CPU / 120 G |
+| J4' extract HateMM | **13329** | `gen_embed_lora.sbatch HateMM logging/lora/HateMM_vis Qwen2.5-VL-7B-Instruct-LoRA-vis_HF` | `afterok:13328` | 8 CPU / 64 G |
+| J5' head | **13330** | `enc3seed_lora_vis.sbatch "HateMM MHC"` (DSLIST from the PASSED EN gate — gate NOT re-run) | `afterok:13329` | 8 CPU / 64 G |
+
+Dependency graph (scontrol-verified): `13328 → 13329 → 13330`. Only ONE 16-CPU job (13328); J4'/J5' are 8-CPU and
+afterok-chained ⇒ aggregate never exceeds 16 CPU / 120 G. Since our running aggregate is now ZERO, 13328's initial
+`JobHeldUser` is the normal per-CLAUDE.md hold (13299/13301 both auto-released from it); **watching for
+auto-release** — if 13328 stays wedged with zero aggregate running, that falsifies the aggregate theory and the
+next lever is the user's HPC-support email (reported to orchestrator).
+
+### 7.1 Status — PENDING-JOB (HateMM leg, resubmitted)
+Chain: **13328 (SFT-HateMM) → 13329 (extract) → 13330 (head, "HateMM MHC")**. Same downstream plan as §6.5
+(HateMM SFT G-repro → cache sanity → RAW head transcription). EN leg (§6) unchanged and complete. Nothing pushed.
