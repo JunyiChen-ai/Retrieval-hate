@@ -115,6 +115,73 @@ Running aggregate ZERO at submit ⇒ favorable for auto-release (the smoke 13349
 Per CLAUDE.md the `JobHeldUser` hold is **waited out, NEVER forced**. If J1 stays held > 2 h, a status line is
 committed and the turn ends PENDING-JOB (orchestrator resumes).
 
-**On J1 (13352) COMPLETE:** cache sanity (train 744 / dev 107 / test 215 counts, dim 3584, 0 NaN, distinct
-`…_HF-16f` tag; 8f caches untouched by mtime). **On J2 (13353) COMPLETE:** transcribe RAW per-seed both-protocol
-numbers (line-numbered) into §6 — NO gates, NO deltas, NO pass/fail (independent 0-context verdict reviewer rules).
+**On J1 (13352) COMPLETE:** cache sanity (§6). **On J2 (13353) COMPLETE:** transcribe RAW per-seed both-protocol
+numbers (line-numbered) into §7 — NO gates, NO deltas, NO pass/fail (independent 0-context verdict reviewer rules).
+
+## 5.1 Chain outcome — both COMPLETED (exit 0:0)
+
+Both jobs auto-released from `JobHeldUser` (never forced; running aggregate was zero) and ran sequentially:
+- **J1 13352 mllm_embed_16f (extract):** COMPLETED, exit 0:0, Elapsed 00:59:57.
+- **J2 13353 enc3seed_fb16 (head):** COMPLETED, exit 0:0, Elapsed 00:04:13.
+
+## 6. Extraction cache sanity (prereg §4.1c) — PASS; banked 8f UNTOUCHED
+
+New `…_HF-16f` caches written (distinct tag; `data/CLIP_Embedding/HateMM/`):
+`train_…_HF-16f.pt` 21358808 B @ 2026-07-21 20:35:23, `dev_seen_…_HF-16f.pt` 3073261 B @ 20:41:19,
+`test_seen_…_HF-16f.pt` 6173300 B @ 20:53:07.
+
+| split | N | img_feats | text_feats | labels | img NaN/Inf | text NaN/Inf | ids == 8f id-order |
+|---|---|---|---|---|---|---|---|
+| train | 744 | (744, 3584) | (744, 3584) | 744 | 0 / 0 | 0 / 0 | yes |
+| dev_seen | 107 | (107, 3584) | (107, 3584) | 107 | 0 / 0 | 0 / 0 | yes |
+| test_seen | 215 | (215, 3584) | (215, 3584) | 215 | 0 / 0 | 0 / 0 | yes |
+
+Counts 744/107/215 as expected; dual-stream 3584-d; zero NaN/Inf; the `ids` (length-1-list-wrapped inner list)
+match the banked 8f cache id-order **exactly** for all three splits ⇒ the within-seed pairing is on identical
+cache membership + order.
+
+**Banked 8f caches re-checked AFTER the run — mtimes bit-identical to the §2 pre-run table (UNTOUCHED):**
+`train_…_HF.pt` 21358780 B @ 2026-07-02 00:11:19.293608963; `dev_seen_…_HF.pt` 3073233 B @ 00:13:44.933286504;
+`test_seen_…_HF.pt` 6173272 B @ 00:18:33.187669051. The distinct `-16f` out-tag did not clobber the 8f floor.
+
+## 7. RAW head numbers — frozen-Qwen-16f per-seed both-protocol (job 13353) — TRANSCRIPTION ONLY
+
+**RAW-ONLY.** Verbatim from the frozen embedded parser readout in `slurm/logs/enc3seed_fb16_13353.out` (the
+`run_one…PY` block is byte-identical to `enc3seed.sbatch`, verified at freeze — same parser that produced the
+banked 8f floor); each value cross-checked against the underlying `Test_Retrieval … macroF1 … acc … roc` line in
+the per-run `enc3s_HateMM_Qwen2.5-VL-7B-Instruct_HF-16f_seed{0,1,2}_13353.trainlog`. val-sel = epoch ≥ warmup 5
+with max `Val_Retrieval` acc (roc tie-break); final = max epoch (29). **NO Δ-vs-8f-floor, NO KS-16f-dead, NO
+CONTINUE gate, NO FORMAL bar, NO mean, NO sign count, NO pass/fail — every gate + the 3-seed aggregation is left
+to the independent 0-context verdict reviewer, who re-parses the raw logs itself against the prereg VERBATIM.**
+
+### 7.1 HateMM — frozen-Qwen-16f (model `Qwen2.5-VL-7B-Instruct_HF-16f`, group `RAC_video_fb16`)
+| seed | protocol | epoch | acc | macroF1 | roc | `enc3seed_fb16_13353.out` ln | trainlog macroF1 ln |
+|---|---|---|---|---|---|---|---|
+| 0 | val-sel | 23 | 0.8698 | 0.8606 | 0.9247 | 330 | seed0:250 |
+| 0 | final-ep | 29 | 0.8605 | 0.8514 | 0.9136 | 331 | seed0:305 |
+| 1 | val-sel | 28 | 0.8651 | 0.8567 | 0.9228 | 641 | seed1:292 |
+| 1 | final-ep | 29 | 0.8744 | 0.8666 | 0.9312 | 642 | seed1:302 |
+| 2 | val-sel | 20 | 0.8605 | 0.8514 | 0.9282 | 953 | seed2:221 |
+| 2 | final-ep | 29 | 0.8744 | 0.8653 | 0.9307 | 954 | seed2:303 |
+
+RESULT_ROW lines (verbatim, tab-separated `…\tvalsel\t<ep>\t<F1>\t<acc>\t<roc>\tfinal\t<ep>\t<F1>\t<acc>\t<roc>`),
+`enc3seed_fb16_13353.out` ln 332 (seed0) / 643 (seed1) / 955 (seed2):
+```
+RESULT_ROW  enc3s_…_HF-16f_seed0_13353.trainlog  valsel 23 0.8606 0.8698 0.9247  final 29 0.8514 0.8605 0.9136
+RESULT_ROW  enc3s_…_HF-16f_seed1_13353.trainlog  valsel 28 0.8567 0.8651 0.9228  final 29 0.8666 0.8744 0.9312
+RESULT_ROW  enc3s_…_HF-16f_seed2_13353.trainlog  valsel 20 0.8514 0.8605 0.9282  final 29 0.8653 0.8744 0.9307
+```
+
+The banked frozen-Qwen-8f floor for the paired comparison lives in prereg §2.1 (re-derived from the 12850
+trainlogs); the executor does **not** compute the pairing — that is the verdict reviewer's step.
+
+## 8. Closeout — CHAIN COMPLETE
+
+Sha re-verify (submit + submit-instant) ALL MATCH; 16f extraction smoke PASS (shapes (3,3584) img+text, 0 NaN,
+L2 norms 1.0, no OOM, L283 assert held), smoke artifacts deleted; collisions CLEAN throughout; chain submitted
+sequential afterok (13352 → 13353), both COMPLETED exit 0:0; extraction cache sanity PASS (744/107/215, 3584-d,
+0 NaN/Inf, ids == 8f id-order); banked 8f caches UNTOUCHED (mtimes bit-identical before/after); 3 head runs
+COMPLETED; raw both-protocol per-seed numbers transcribed (§7). The verdict (G-repro → single test-touch →
+KS-16f-dead → CONTINUE gate → FORMAL bar, both protocols) is rendered by a fresh independent 0-context reviewer
+against the frozen prereg VERBATIM — the executor applied NO gates and NO pass/fail language. No `state/`
+mutation. Nothing pushed.
