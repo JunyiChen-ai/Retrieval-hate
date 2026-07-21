@@ -1,0 +1,186 @@
+{
+  "meta": {
+    "date": "2026-07-21",
+    "cpu_only": true,
+    "topk": 20,
+    "null_seeds": 100,
+    "n_boot": 1000,
+    "promote_bar": 0.03,
+    "recon_ladder": {
+      "HateMM": 0.05,
+      "MHC": 0.03
+    },
+    "binding_skeleton": "refine-logs/SEG_REENCODE_FORENSIC_RECON.md@31bcd03 \u00a73/\u00a75",
+    "expected_mem_primary": {
+      "HateMM": 851,
+      "MHC": 629
+    },
+    "expected_train": {
+      "HateMM": 744,
+      "MHC": 549
+    },
+    "expected_dev": {
+      "HateMM": 107,
+      "MHC": 80
+    },
+    "note": "op#4 = uniform-mean of frozen per-segment votes; vote NOT reimplemented (parity-checked vs w2b_probe._single_query_vote_margins)."
+  },
+  "gate_alpha_primary_LOO": [
+    {
+      "dataset": "HateMM",
+      "arm": "PRIMARY_LOO_train+dev",
+      "V": 851,
+      "K": 4,
+      "vote_parity_maxabs": 0.0,
+      "pooled": {
+        "acc": 0.7567567567567568,
+        "macro_f1": 0.7518219895435481,
+        "roc": 0.8300960266804669
+      },
+      "op4": {
+        "acc": 0.7579318448883666,
+        "macro_f1": 0.7479932148812605,
+        "d_acc": 0.001175088131609825,
+        "d_f1": -0.003828774662287593
+      },
+      "oracle_same_family_selection": {
+        "acc": 0.8343125734430082,
+        "d_acc": 0.07755581668625144
+      },
+      "oracle_maxsim_banked_style": {
+        "acc": 0.8343125734430082,
+        "macro_f1": 0.8272558834580783,
+        "d_acc": 0.07755581668625144
+      },
+      "fano_acc": 1.0,
+      "perm_null": {
+        "n_seeds": 100,
+        "obs_d_acc": 0.001175088131609825,
+        "null_p95": 0.02820211515863691,
+        "obs_gt_p95": false
+      },
+      "bootstrap": {
+        "d_acc_p5": -0.01527614571092828,
+        "d_acc_p50": 0.001175088131609825,
+        "d_acc_p95": 0.01762632197414815,
+        "p5_gt0": false
+      }
+    },
+    {
+      "dataset": "MHC",
+      "arm": "PRIMARY_LOO_train+dev",
+      "V": 629,
+      "K": 4,
+      "vote_parity_maxabs": 0.0,
+      "pooled": {
+        "acc": 0.7186009538950715,
+        "macro_f1": 0.6080996884735203,
+        "roc": 0.753565147121738
+      },
+      "op4": {
+        "acc": 0.7217806041335453,
+        "macro_f1": 0.6069325563042555,
+        "d_acc": 0.0031796502384737746,
+        "d_f1": -0.001167132169264784
+      },
+      "oracle_same_family_selection": {
+        "acc": 0.7885532591414944,
+        "d_acc": 0.06995230524642293
+      },
+      "oracle_maxsim_banked_style": {
+        "acc": 0.7885532591414944,
+        "macro_f1": 0.7095817841607737,
+        "d_acc": 0.06995230524642293
+      },
+      "fano_acc": 1.0,
+      "perm_null": {
+        "n_seeds": 100,
+        "obs_d_acc": 0.0031796502384737746,
+        "null_p95": 0.0238473767885532,
+        "obs_gt_p95": false
+      },
+      "bootstrap": {
+        "d_acc_p5": -0.011128775834658211,
+        "d_acc_p50": 0.0031796502384737746,
+        "d_acc_p95": 0.017567567567567527,
+        "p5_gt0": false
+      }
+    }
+  ],
+  "gate_alpha_corrob_dev_vs_train": [
+    {
+      "dataset": "HateMM",
+      "arm": "CORROB_dev_query->train_mem",
+      "Vdev": 107,
+      "Vtrain": 744,
+      "K": 4,
+      "pooled": {
+        "acc": 0.7102803738317757,
+        "macro_f1": 0.7086517347386913
+      },
+      "op4": {
+        "acc": 0.719626168224299,
+        "macro_f1": 0.7140057020669992,
+        "d_acc": 0.009345794392523366,
+        "d_f1": 0.005353967328307951
+      }
+    },
+    {
+      "dataset": "MHC",
+      "arm": "CORROB_dev_query->train_mem",
+      "Vdev": 80,
+      "Vtrain": 549,
+      "K": 4,
+      "pooled": {
+        "acc": 0.725,
+        "macro_f1": 0.6057347670250897
+      },
+      "op4": {
+        "acc": 0.725,
+        "macro_f1": 0.6057347670250897,
+        "d_acc": 0.0,
+        "d_f1": 0.0
+      }
+    }
+  ],
+  "machinery_sanity": {
+    "all_identical_maxabs_vs_pooled": 2.2110484887427617e-07,
+    "K1_maxabs_vs_pooled": 0.0,
+    "A_recovers_baseline": true,
+    "B_recovers_baseline": true
+  },
+  "gate_beta_selection_ceiling": {
+    "source": "/data/jehc223/RGCL/refine-logs/w2b_probe_results.json",
+    "per_dataset": {
+      "HateMM": {
+        "banked_POOLED_acc": 0.7567567567567568,
+        "banked_SET_d_acc": -0.004700352526439522,
+        "banked_ASYM_d_acc": -0.005875440658049347,
+        "fresh_op4_d_acc": 0.001175088131609825,
+        "oracle_headroom_d_acc": 0.07755581668625144,
+        "symmetric_slice (legal uniform, best of SET/ASYM/op4)": 0.001175088131609825,
+        "selection_slice (banned per-item selection only)": 0.07638072855464162,
+        "selection_locked": true
+      },
+      "MHC": {
+        "banked_POOLED_acc": 0.7186009538950715,
+        "banked_SET_d_acc": 0.0015898251192368873,
+        "banked_ASYM_d_acc": 0.006359300476947549,
+        "fresh_op4_d_acc": 0.0031796502384737746,
+        "oracle_headroom_d_acc": 0.06995230524642293,
+        "symmetric_slice (legal uniform, best of SET/ASYM/op4)": 0.006359300476947549,
+        "selection_slice (banned per-item selection only)": 0.06359300476947538,
+        "selection_locked": true
+      }
+    }
+  },
+  "decision": {
+    "promote_bar_d_acc": 0.03,
+    "fano_ok_both": true,
+    "alpha_primary_datasets_clearing_bar": [],
+    "alpha_corrob_datasets_clearing_bar": [],
+    "alpha_promotes": false,
+    "beta_selection_locked_all": true,
+    "VERDICT": "NO-GO"
+  }
+}
