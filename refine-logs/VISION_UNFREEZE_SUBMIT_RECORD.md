@@ -203,6 +203,73 @@ afterok-chained ⇒ aggregate never exceeds 16 CPU / 120 G. Since our running ag
 auto-release** — if 13328 stays wedged with zero aggregate running, that falsifies the aggregate theory and the
 next lever is the user's HPC-support email (reported to orchestrator).
 
-### 7.1 Status — PENDING-JOB (HateMM leg, resubmitted)
-Chain: **13328 (SFT-HateMM) → 13329 (extract) → 13330 (head, "HateMM MHC")**. Same downstream plan as §6.5
-(HateMM SFT G-repro → cache sanity → RAW head transcription). EN leg (§6) unchanged and complete. Nothing pushed.
+### 7.1 Resubmit outcome — 13328 auto-released, chain COMPLETE
+13328 auto-released from `JobHeldUser` to RUNNING within ~1 min of submit (node foscsmlprd01) — with our running
+aggregate at ZERO, the fresh single 16-CPU SFT released immediately, **confirming the aggregate-cap diagnosis**
+(no re-wedge; no HPC-support escalation). Chain: **13328 (SFT-HateMM) COMPLETED (07:28:44, 0:0) → 13329 (extract)
+COMPLETED (00:27:18, 0:0) → 13330 (head, "HateMM MHC") COMPLETED (00:05:49, 0:0)**.
+
+## 8. HateMM leg G-repro + cache sanity — PASS
+
+### 8.1 J3' (HateMM_vis) SFT G-repro
+- **eval_loss = 0.10360** (`logging/lora/HateMM_vis/all_results.json`) — inside the §3.7b **0.10–0.18** band
+  (generic HateMM anchor 0.1084); not much-lower ⇒ overfit tripwire does NOT fire. train_loss 0.11094;
+  train_runtime 25680 s.
+- **Real-adapter ViT-tensor census** (`logging/lora/HateMM_vis/adapter_model.safetensors`):
+  **n_visual = 320**, **n_llm = 392** (== generic ⇒ clean-superset), **n_merger = 0**, **n_patchembed = 0**,
+  total 712, ViT blocks 0..31. Identical to the EN + smoke census.
+
+### 8.2 J4' (HateMM_vis extract) cache sanity — tag `Qwen2.5-VL-7B-Instruct-LoRA-vis_HF`
+| split | N | img_feats | text_feats | labels | img NaN | text NaN | N/dim == generic | ids == generic |
+|---|---|---|---|---|---|---|---|---|
+| train | 744 | (744, 3584) | (744, 3584) | 744 | 0 | 0 | yes | yes |
+| dev_seen | 107 | (107, 3584) | (107, 3584) | 107 | 0 | 0 | yes | yes |
+| test_seen | 215 | (215, 3584) | (215, 3584) | 215 | 0 | 0 | yes | yes |
+
+Dual-stream 3584-d; zero NaN; N and ids identical to the banked generic-LoRA HateMM cache. **NOTE (benign,
+pre-existing):** train cache N = **744** vs the SFT train split N = **743** — the known one-cache-only train video
+(`CAND2_SUBMIT_RECORD.md` §5 / verdict NOTE: `n_anchor_missing_from_cache = 0`, all 743 SFT anchors present; the
+extra video is a potential LOO neighbor only, train-only, no leakage, predates this cell). The vis cache N matches
+the generic cache N exactly (both 744), so the vis vs generic comparison is on identical cache membership.
+
+## 9. RAW head numbers — vis-LoRA per-seed both-protocol (job 13330) — TRANSCRIPTION ONLY
+
+**RAW-ONLY.** Verbatim from the frozen embedded parser readout in `slurm/logs/enc3seed_13330.out` (the
+`run_one…PY` block is byte-identical to `enc3seed.sbatch`, verified at freeze); each value cross-checked against
+the underlying `Test_Retrieval … macroF1 … acc` line in the per-run `enc3s_<DS>_…-LoRA-vis_HF_seed<S>_13330.trainlog`.
+val-sel = epoch ≥ warmup 5 with max `Val_Retrieval` acc (roc tie-break); final = max epoch (29). **NO Δ-vs-floor,
+NO K-V1/K-V2, NO frozen-Qwen honesty, NO KS-regression, NO mean, NO pass/fail — every gate + the 3-seed
+aggregation is deliberately left to the independent 0-context verdict reviewer, who re-parses the raw logs itself.**
+
+### 9.1 HateMM — vis-LoRA (model `Qwen2.5-VL-7B-Instruct-LoRA-vis_HF`, group `RAC_video_lora_vis`)
+| seed | protocol | epoch | acc | macroF1 | `enc3seed_13330.out` ln | trainlog macroF1 ln |
+|---|---|---|---|---|---|---|
+| 0 | val-sel | 12 | 0.8558 | 0.8469 | 327 | seed0:148 |
+| 0 | final-ep | 29 | 0.8791 | 0.8706 | 328 | seed0:302 |
+| 1 | val-sel | 22 | 0.8698 | 0.8620 | 640 | seed1:240 |
+| 1 | final-ep | 29 | 0.8744 | 0.8653 | 641 | seed1:304 |
+| 2 | val-sel | 22 | 0.8558 | 0.8453 | 952 | seed2:239 |
+| 2 | final-ep | 29 | 0.8558 | 0.8461 | 953 | seed2:303 |
+
+### 9.2 MHC-EN — vis-LoRA (EN head rows retained: EN image-MOVED gate PASSED, §6.3)
+| seed | protocol | epoch | acc | macroF1 | `enc3seed_13330.out` ln | trainlog macroF1 ln |
+|---|---|---|---|---|---|---|
+| 0 | val-sel | 26 | 0.7888 | 0.7561 | 1235 | seed0:249 |
+| 0 | final-ep | 29 | 0.7826 | 0.7448 | 1236 | seed0:274 |
+| 1 | val-sel | 9 | 0.7888 | 0.7342 | 1514 | seed1:109 |
+| 1 | final-ep | 29 | 0.7702 | 0.7302 | 1515 | seed1:270 |
+| 2 | val-sel | 24 | 0.7826 | 0.7448 | 1794 | seed2:230 |
+| 2 | final-ep | 29 | 0.7640 | 0.7274 | 1795 | seed2:271 |
+
+RESULT_ROW lines (verbatim, tab-separated `…\tvalsel\t<ep>\t<F1>\t<acc>\t<roc>\tfinal\t<ep>\t<F1>\t<acc>\t<roc>`):
+HateMM `enc3seed_13330.out` ln 329/642/954; MHC ln 1237/1516/1796.
+
+## 10. Closeout — CHAIN COMPLETE
+
+All stages executed and verified: sha re-verify (submit + resubmit) ALL MATCH; smoke ViT-present PASS
+(n_visual=320); collision CLEAN throughout; EN + HateMM SFT G-repro PASS (eval_loss in band; adapter census
+320/392/0/0 both); both extract caches sane (3584-d, 0 NaN, ids==generic); EN image-MOVED gate MOVED (§6.3) →
+EN head rows retained; 6 head runs COMPLETED; raw both-protocol per-seed numbers transcribed (§9). The verdict
+(G-repro → ViT-present → Namespace-diff → EN image-MOVED → K-V1/K-V2 → EN-honesty → KS-regression) is rendered
+by a fresh independent 0-context reviewer against the frozen prereg VERBATIM — the executor applied NO gates and
+NO pass/fail language. Nothing pushed.
