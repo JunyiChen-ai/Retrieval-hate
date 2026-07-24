@@ -547,6 +547,32 @@ def parse_args():
         help="Per-sample probability of dropping exactly one stream "
              "(only active when --mod_dropout True).")
 
+    # <----------------- NCA / soft-kNN head-loss family ----------------->
+    # Additive, no-op-by-default flags (NCA_PREREG.md, litsweep2 wave-3). head_loss
+    # default 'triplet' => the deployed triplet+BCE assembly runs BYTE-IDENTICALLY;
+    # 'nca'/'supcon' swap ONLY the head contrastive term for the deployed-vote-aligned
+    # surrogate (0.5*BCE kept); mixup regularises the BCE path only (triplet untouched).
+    # Flags absent/default => the Namespace gains inert keys but the behaviour is
+    # identical to the banked floors (13150 ZH LoRA, 13241 HateMM LoRA-curric) -> the
+    # floors need NO re-run. Same additive-flag pattern as --sam / --mod_dropout / --cf_negs.
+    arg_parser.add_argument(
+        "--head_loss", type=str, default="triplet",
+        choices=["triplet", "nca", "supcon"],
+        help="Head contrastive objective: 'triplet' (default, deployed) | 'nca' "
+             "(soft-kNN LOO-vote surrogate) | 'supcon' (neighborhood-SupCon).")
+    arg_parser.add_argument(
+        "--nca_tau", type=float, default=0.1,
+        help="Cosine-softmax temperature for --head_loss nca/supcon "
+             "(only active when head_loss != 'triplet').")
+    arg_parser.add_argument(
+        "--mixup", type=lambda x: (str(x).lower() == "true"), default=False,
+        help="A3 manifold mixup at the fused post-projection rep (BCE path only). "
+             "No-op when False (default).")
+    arg_parser.add_argument(
+        "--mixup_alpha", type=float, default=0.0,
+        help="Beta(alpha,alpha) parameter for --mixup (active only when --mixup True "
+             "and mixup_alpha > 0).")
+
     args = arg_parser.parse_args()
 
     return args
@@ -578,6 +604,39 @@ def _sam_restore(eps_list):
     with torch.no_grad():
         for p, e in eps_list:
             p.sub_(e)
+
+
+def _build_nca_bank(train_dl, model, args):
+    """Build the DETACHED per-epoch NCA memory bank in the CURRENT embedding space
+    (NCA_PREREG.md §2.1). A model.eval() + no_grad forward over the whole train set,
+    mirroring the once-per-epoch FAISS reindex cadence (reused all epoch while the model
+    updates, exactly like the deployed triplet bank / the vote's per-epoch key semantics).
+    Returns
+        (bank_feats [N, proj_dim] detached torch tensor,
+         bank_labels [N] long,
+         id_to_row dict {train_id -> bank row})
+    id_to_row is used for LOO self-exclusion BY ID in the NCA loss. The model is restored
+    to its prior train/eval mode. Called only when head_loss == 'nca' (supcon is in-batch;
+    mixup keeps the triplet+FAISS path)."""
+    was_training = model.training
+    model.eval()
+    feats_list, label_list, ids_all = [], [], []
+    with torch.no_grad():
+        for batch in train_dl:
+            image_feats = batch["image_feats"].to(args.device)
+            text_feats = batch["text_feats"].to(args.device)
+            _, f = model(image_feats, text_feats, return_embed=True)
+            feats_list.append(f.detach())
+            label_list.append(batch["labels"].to(args.device))
+            ids_all.extend(list(batch["ids"]))
+    if was_training:
+        model.train()
+    bank_feats = torch.cat(feats_list, dim=0)
+    bank_labels = torch.cat(label_list, dim=0).long()
+    id_to_row = {vid: r for r, vid in enumerate(ids_all)}
+    assert len(id_to_row) == bank_feats.shape[0], (
+        "NCA bank: train ids are not unique -> LOO self-exclusion by id would be ambiguous")
+    return bank_feats, bank_labels, id_to_row
 
 
 def model_pass(
@@ -630,6 +689,13 @@ def model_pass(
         # After every epoch, we reindex the dense vector embeddings
         train_feats = None
         train_labels = None
+        # NCA family (NCA_PREREG.md §2.1): build the DETACHED per-epoch memory bank in the
+        # current embedding space, mirroring the once-per-epoch FAISS reindex cadence. Only
+        # head_loss=='nca' needs the full bank (supcon is in-batch; mixup keeps the triplet
+        # path). At head_loss=='triplet' (default) nca_bank stays None -> byte-identical floor.
+        nca_bank = None
+        if getattr(args, "head_loss", "triplet") == "nca":
+            nca_bank = _build_nca_bank(train_dl, model, args)
         for step, batch in enumerate(train_dl):
             # Reindex the dense vector embeddings,
             # If we force reindex every step or if it is the first 3 epochs
@@ -660,6 +726,7 @@ def model_pass(
                 aux_pack=aux_pack,
                 cf_pack=cf_pack,
                 target_pack=target_pack,
+                nca_bank=nca_bank,
             )
             """if args.sparse_dictionary is None and (args.no_hard_negatives != 0 and args.no_pseudo_gold_positives != 0):
                 # Only for dense retrieval
@@ -700,6 +767,7 @@ def model_pass(
                     aux_pack=aux_pack,
                     cf_pack=cf_pack,
                     target_pack=target_pack,
+                    nca_bank=nca_bank,
                 )[0]
                 optimizer.zero_grad()
                 total_loss_perturbed.backward()

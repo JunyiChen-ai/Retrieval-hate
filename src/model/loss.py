@@ -21,6 +21,7 @@ def compute_loss(batch,
                 aux_pack=None,
                 cf_pack=None,
                 target_pack=None,
+                nca_bank=None,
                 ):
     ids = batch["ids"]
     batch_size = len(ids)
@@ -29,6 +30,38 @@ def compute_loss(batch,
     labels = batch["labels"].to(args.device)
     model.train()
     output, feats = model(image_feats, text_feats, return_embed=True)
+
+    # ----------------- NCA / soft-kNN head-loss family (NCA_PREREG.md) -----------------
+    # Flag-gated (head_loss default 'triplet'). When 'nca'/'supcon', the deployed-vote-
+    # aligned surrogate REPLACES the triplet contrastive term (0.5*BCE kept); the FAISS
+    # mining path below is NOT entered, and train_feats/train_labels pass through
+    # unchanged (the run_rac loop keeps them None all epoch -> no mining forward). At
+    # head_loss=='triplet' this block is skipped entirely and the original assembly runs
+    # byte-identically (F73 additive-gating precedent). Mixup is handled in the hybrid
+    # block below (it keeps head_loss=='triplet' and only rewrites the BCE target).
+    head_loss = getattr(args, "head_loss", "triplet")
+    if head_loss in ("nca", "supcon"):
+        if head_loss == "nca":
+            assert nca_bank is not None, (
+                "head_loss='nca' requires the per-epoch detached NCA bank "
+                "(built in run_rac.model_pass); got None")
+            contrastive = _nca_head_loss(feats, labels, nca_bank, ids, args)
+        else:
+            contrastive = _supcon_head_loss(feats, labels, args)
+        total_loss = contrastive
+        if args.hybrid_loss:
+            if args.pos_weight_value is not None:
+                lossFn_classifier = nn.BCEWithLogitsLoss(
+                    pos_weight=torch.tensor([args.pos_weight_value], device=args.device))
+            else:
+                lossFn_classifier = nn.BCEWithLogitsLoss()
+            loss_classifier = lossFn_classifier(output, labels.float().reshape(-1, 1))
+            total_loss = total_loss * (1 - args.ce_weight) + loss_classifier * args.ce_weight
+        else:
+            loss_classifier = 0
+        _zero = torch.tensor(0.0, device=args.device)
+        return (total_loss, _zero, _zero, _zero, loss_classifier,
+                train_feats, train_labels)
 
     # We construct a matrix for label coincidences (Mask matrix for later loss computation)
     # 1 if the labels are the same (positive), 0 otherwise (negative)
@@ -543,13 +576,22 @@ def compute_loss(batch,
 
         total_loss = torch.mean(loss)
     if args.hybrid_loss:
-        if args.pos_weight_value != None:
-            lossFn_classifier = nn.BCEWithLogitsLoss(
-                pos_weight=torch.tensor([args.pos_weight_value], device=args.device))
+        # A3 manifold mixup (NCA_PREREG.md §2.3): when enabled, the BCE is computed on
+        # the MIXED fused rep against the mixed soft label; the triplet term above is
+        # untouched (reads REAL feats), so the kNN memory stays real and mixup regularises
+        # ONLY the classifier path. mixup off (default) => the else-branch is the deployed
+        # BCE, byte-identical to the floor.
+        if getattr(args, "mixup", False) and float(getattr(args, "mixup_alpha", 0.0)) > 0:
+            loss_classifier, _ = _manifold_mixup_bce(
+                model, image_feats, text_feats, labels, args)
         else:
-            lossFn_classifier = nn.BCEWithLogitsLoss()
-        loss_classifier = lossFn_classifier(
-                output, labels.float().reshape(-1, 1))
+            if args.pos_weight_value != None:
+                lossFn_classifier = nn.BCEWithLogitsLoss(
+                    pos_weight=torch.tensor([args.pos_weight_value], device=args.device))
+            else:
+                lossFn_classifier = nn.BCEWithLogitsLoss()
+            loss_classifier = lossFn_classifier(
+                    output, labels.float().reshape(-1, 1))
         #total_loss = (total_loss + loss_classifier * args.ce_weight) / (1 + args.ce_weight)
         total_loss = total_loss * (1-args.ce_weight) + loss_classifier * args.ce_weight
     else:
@@ -588,6 +630,99 @@ def compute_loss(batch,
         total_loss = total_loss + lambda_tarc * tarc_loss
 
     return total_loss, torch.mean(in_batch_loss), torch.mean(hard_loss), torch.mean(pseudo_gold_loss), loss_classifier, train_feats, train_labels
+
+
+def _nca_head_loss(feats, labels, nca_bank, batch_ids, args):
+    """A1: deployed-vote-aligned NCA / soft-kNN surrogate (NCA_PREREG.md §2.1).
+
+    L_NCA = -mean_i log P_i, where P_i is the same-class softmax mass of anchor i over
+    the DETACHED per-epoch train bank in the CURRENT embedding space (cosine logits / tau).
+    LOO self-exclusion is BY ID: the anchor's own bank row is masked to -inf so it can
+    never be its own neighbour (classic NCA j != i; deployment self-excludes because the
+    dev/test queries are disjoint from the train bank). Anchor grad-on; bank stop-grad
+    (the bank is built detached in run_rac -> the memory-bank / ProxyNCA-style soft-NN
+    variant, no O(N^2) grad, no in-epoch bank drift).
+    """
+    device = args.device
+    tau = float(getattr(args, "nca_tau", 0.1))
+    bank_feats, bank_labels, id_to_row = nca_bank
+    # Stop-grad on the bank, guaranteed locally (the bank is also built detached in
+    # run_rac): anchor grad-on, bank stop-grad -> no O(N^2) grad, no in-epoch bank drift.
+    bank_feats = bank_feats.detach()
+    q = nn.functional.normalize(feats, p=2, dim=1)                 # [B, D] grad-on
+    k = nn.functional.normalize(bank_feats, p=2, dim=1)           # [N, D] detached
+    logits = torch.matmul(q, k.t()) / tau                        # [B, N]
+    B = q.shape[0]
+    own_rows = torch.as_tensor(
+        [id_to_row[v] for v in batch_ids], dtype=torch.long, device=device)
+    # LOO self-exclusion: mask the anchor's own bank row (-inf => 0 softmax mass).
+    logits[torch.arange(B, device=device), own_rows] = float("-inf")
+    logp = torch.log_softmax(logits, dim=1)                      # [B, N]
+    same_class = labels.view(-1, 1).long() == bank_labels.view(1, -1).long()
+    logp_same = torch.where(
+        same_class, logp, torch.full_like(logp, float("-inf")))
+    logP = torch.logsumexp(logp_same, dim=1)                     # [B]
+    # Numerical guard (never reached at N>>1 with binary labels: every anchor has same-
+    # class bank neighbours after LOO; protects the tiny synthetic smoke case only).
+    logP = torch.clamp(logP, min=-30.0)
+    return -logP.mean()
+
+
+def _supcon_head_loss(feats, labels, args):
+    """A2: neighborhood-SupCon in-batch variant (NCA_PREREG.md §2.2; Khosla NeurIPS'20).
+
+    Log-softmax over ALL in-batch same-class positives (self excluded), cosine logits / tau;
+    L = mean_i ( -1/|P_i| sum_{p in P_i} log softmax_ip ). Anchors with no in-batch
+    same-class positive contribute nothing. tau pinned via --nca_tau (0.1 for this arm).
+    """
+    device = args.device
+    tau = float(getattr(args, "nca_tau", 0.1))
+    z = nn.functional.normalize(feats, p=2, dim=1)               # [B, D]
+    B = z.shape[0]
+    sim = torch.matmul(z, z.t()) / tau                          # [B, B]
+    self_mask = torch.eye(B, dtype=torch.bool, device=device)
+    sim = sim.masked_fill(self_mask, float("-inf"))
+    logp = torch.log_softmax(sim, dim=1)                        # [B, B]
+    pos_mask = (labels.view(-1, 1).long() == labels.view(1, -1).long()) & (~self_mask)
+    pos_counts = pos_mask.sum(dim=1)                            # [B]
+    logp_pos_sum = torch.where(
+        pos_mask, logp, torch.zeros_like(logp)).sum(dim=1)     # [B]
+    valid = pos_counts > 0
+    if not bool(valid.any()):
+        return torch.zeros((), device=device)
+    per = -logp_pos_sum[valid] / pos_counts[valid].float()
+    return per.mean()
+
+
+def _manifold_mixup_bce(model, image_feats, text_feats, labels, args):
+    """A3: manifold mixup at the fused post-projection representation (NCA_PREREG.md §2.3).
+
+    Re-derives the deployed align (Hadamard) fused rep x = norm(img_proj(img)) *
+    norm(text_proj(text)) EXACTLY as classifier_hateClipper.forward does (mod_dropout OFF),
+    interpolates (x, y) with a single per-batch Beta(alpha, alpha) lambda and a random
+    permutation, forwards the MIXED rep through the SAME mlp + output_layer, and returns
+    (BCEWithLogits on the mixed logit vs the mixed soft label, lambda). The caller keeps
+    the triplet term on the REAL un-mixed feats, so the kNN memory reads real neighbours;
+    mixup only regularises the classifier path. Pinned to fusion_mode == 'align'.
+    """
+    assert model.fusion_mode == "align", "A3 mixup is pinned to align (Hadamard) fusion"
+    img = nn.functional.normalize(model.img_proj(image_feats), p=2, dim=1)
+    txt = nn.functional.normalize(model.text_proj(text_feats), p=2, dim=1)
+    x = torch.mul(img, txt)                                      # fused post-projection rep
+    B = x.shape[0]
+    alpha = float(args.mixup_alpha)
+    lam = float(torch.distributions.Beta(alpha, alpha).sample().item())
+    perm = torch.randperm(B, device=x.device)
+    x_mix = lam * x + (1.0 - lam) * x[perm]
+    logit = model.output_layer(model.mlp(x_mix))                # [B, 1]
+    y = labels.float().reshape(-1, 1)
+    y_mix = lam * y + (1.0 - lam) * y[perm]
+    if getattr(args, "pos_weight_value", None) is not None:
+        bce = nn.BCEWithLogitsLoss(
+            pos_weight=torch.tensor([args.pos_weight_value], device=args.device))
+    else:
+        bce = nn.BCEWithLogitsLoss()
+    return bce(logit, y_mix), lam
 
 
 def compute_aux_loss(feats, batch_ids, aux_pack, args):
