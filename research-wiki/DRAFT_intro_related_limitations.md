@@ -136,7 +136,11 @@ detectors are **reasoning VLMs** that prompt a large multimodal model to reason 
 always-on: MARS (dual-hypothesis reasoning), HVGuard (chain-of-thought for puns and homophones), IARE
 (rationale supervision), and RAMF (multi-perspective reasoning) \cite{mars,hvguard,iare,ramf}, with
 MM-HSD \cite{mmhsd} the video-level accuracy leader on HateMM. These are accurate but computationally
-heavy and produce a per-clip verdict rather than a reusable, editable memory. At the other end sit
+heavy and produce a per-clip verdict rather than a reusable, editable memory. MM-HSD's published 0.878
+macro-F1 doubles as an **external calibration of our constraint box**: its lead rests on an on-screen-text
+OCR channel we veto, and *without* OCR it falls to 0.845 — inside the band of our best HateMM configuration
+(0.8775–0.8791, experiments §7), so the field's SOTA over our detector on HateMM is the vetoed channel, not
+a stronger core [DOC:LITSWEEP2_FRESH_2026.md]. At the other end sit
 light multimodal fusion baselines (HateMM's own fusion, CMFusion, MultiHateGNN)
 \cite{das2023hatemm}. *Our delta:* we occupy a distinct point in this space — a **run-once frozen /
 LoRA encoder + a few-million-parameter head + a kNN memory read-out** — matching or beating heavier
@@ -185,9 +189,31 @@ and SafeLens produces structured evidence that is *discarded* after the decision
 that is audited and human-edited, not a transient reasoning log — so where SafeLens uses "auditable"
 for its (discarded) evidence trace, our audit object is the **retained memory bank itself**, and we
 scope our wording accordingly to avoid the clash [DOC:novelty-scope-and-plan.md,
-DOC:AUDIT_archive_faithfulness.md]. To our knowledge no hateful-video method offers a memory that is
-simultaneously swappable, temporally recalibratable, auditable, and surgically editable at inference
+DOC:AUDIT_archive_faithfulness.md]. We further position the archive within the **model-editing** lineage
+— SERAC's external edit-cache with a scope classifier, GRACE's key-value adaptors, and WISE's side-memory
+for lifelong edits \cite{serac,grace,wise} — which supplies a principled reliability / generality /
+**locality** vocabulary for what our human-in-the-loop deletions do (fix the target queries without moving
+unrelated ones); our archive is a *discriminative* instance of that program, edited at inference with no
+weight change [DOC:LITSURVEY_RETRIEVAL_MEMORY.md]. To our knowledge no hateful-video method offers a memory
+that is simultaneously swappable, temporally recalibratable, auditable, and surgically editable at inference
 with zero retraining.
+
+**(f) Usable information, annotator disagreement, and modality imbalance — positioning the negative-results
+and mechanism contributions.** Three adjacent literatures name phenomena our campaign measures. First,
+**V-usable information** (Xu et al. \cite{xu2020vinfo}; Ethayarajh et al. \cite{ethayarajh2022vinfo}, whose
+pointwise-V-information quantifies per-instance difficulty) is the exact formalization of our Law I — an
+oracle proves the convertible headroom is present, yet no operator in the model family recovers it, i.e. a
+gap between information *present* and information *usable* (analysis §3.6). Second, our Chinese consensus-
+denoising pillar (C3) is an instance of the **learning-with-disagreement** program crystallised in the
+LeWiDi-2025 shared task \cite{lewidi2025}, where soft-label / distributional supervision beats collapsed
+majority-vote gold on subjective phenomena including toxicity — a citation lineage the pillar previously
+lacked. Third, our MHClip-EN image-collapse analysis (a Qwen image stream that drops to near-chance under
+Hadamard fusion, §3.6 of the analysis) is the documented **modality-imbalance / text-dominance** signature
+\cite{balancebench}, which lets us frame F65's "image moved, converted nothing" as the signature of a
+*label-limited* rather than *imbalance-curable* collapse. Relatedly, the current SOTA video-MLLM-embedding
+works (VLM2Vec-V2, VidVec) use **no special temporal operator** — they read a single pooled embedding — which
+independently corroborates our F35 / F37 / F67 finding that temporal-pooling and frame density are not the
+lever [DOC:LITSURVEY_NOVEL_MECHANISMS.md, DOC:LITSURVEY_MLLM_EMBEDDING.md].
 
 ---
 
@@ -262,5 +288,11 @@ source documents cited inline; no discrepancy against the master tables was intr
 reuse the method / experiments / analysis chapters where they already exist (`more`, `rgcl`, `rahmd`,
 `das2023hatemm`, `multihateclip`, `rehman2025implihatevid`, `hateclipseg`, `qwen25vl`, `clip`,
 `whisper`) and extend consistently for related-work-only methods (`mars`, `hvguard`, `iare`, `ramf`,
-`mmhsd`, `multihateloc`, `crave`, `safelens`, `tandem`, `lela`); the shared bibliography is a
-`\bibliography` placeholder pending assembly.*
+`mmhsd`, `multihateloc`, `crave`, `safelens`, `tandem`, `lela`) and for the round-5/6 audit's
+mechanism/positioning citations (`xu2020vinfo` = Xu et al. ICLR 2020; `ethayarajh2022vinfo` = Ethayarajh
+et al. ICML 2022; `lewidi2025` = LeWiDi-2025 shared task; `serac`, `grace`, `wise` = model-editing lineage;
+`balancebench` = modality-imbalance / text-dominance diagnosis; and, in the analysis/experiments chapters,
+`llm2vec` = LLM2Vec for the bidirectional-attention baseline), all verified against the litsurvey
+PAPER-VALUE lists [DOC:LITSURVEY_NOVEL_MECHANISMS.md, DOC:LITSURVEY_RETRIEVAL_MEMORY.md,
+DOC:LITSURVEY_MLLM_EMBEDDING.md]; the shared bibliography is a `\bibliography` placeholder pending
+assembly.*

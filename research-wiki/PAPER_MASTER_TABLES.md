@@ -380,6 +380,32 @@ SFT target 移动;此处保持 flat 仅因 campaign 所有 SFT target 都是 tra
 | **ISR** — 独立 per-segment 重编码 + uniform per-segment-kNN vote-mean(最后一个聚合对象) | $0 pre-gate,NO-GO:合法 uniform 算子 flat(HateMM +0.0012 / EN +0.0032,低于 perm-null,boot-5th < 0,vote bit-exact Fano 1.0);决定性 β-分解证明 oracle 头空间 **selection-locked**——HateMM +0.0776 = +0.0012 legal + +0.0764 banned,EN +0.0700 = +0.0064 + +0.0636(91–98% 仅 banned-selection)⇒ **law-I 现为算术命题**;Qwen per-segment 提取从不发生,0 GPU-h | ISR_PREGATE_RECORD.md · `a6e41f8` |
 | **Frame-16** — 视觉采样 8→16 帧(冻结编码器) | 3-seed 判决 vs banked 8f floor,~0.6 GPU-h:val-sel mean −0.0077 acc(0/3),final +0.0015(1/3);KS-16f-dead 双协议 KILLED ⇒ cell 关闭,昂贵 LoRA-16f stage-2 **AUTO-DEAD**(预声明 spend 判决);8 帧非瓶颈,池化表征在 8f 已饱和 | FRAME16_VERDICT_REVIEW.md · `32c2e6f` |
 
+### T6.2 Round-6 文献扫审计(可借操作,全数实测关闭 / parked)
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **Grad-norm selection** — 最小 head-gradient-norm 的 validation-free 选点(arXiv 2601.16874;攻 F45 ZH 选点税) | $0 probe,MECHANISM REFUTED:论文前提(Spearman(‖g‖, acc) ≈ −0.85…−0.98)在我们微型 head 上**反号**(+0.61/+0.72/+0.62,3/3 seed);scale-normalized grad 随 accuracy 单调升,argmin 落最差 epoch;F68-P2 于 $0 killed(可晋级 ZH/HateMM-curric ckpt 已 disk-prune 到 B2,鉴于反号 restore 无意义) | GRADNORM_SELECT_PROBE_RECORD.md · `ada5849` |
+| **Readout axis** — intermediate-layer / one-word-prompt / last-token 提取变体(MLLM-embedding 范式内唯一未枚举轴) | $0 CPU screen,KS-readout-dead(~2 GPU-h 仅提取):ZH 最佳 +0.0128 dev-query,HateMM 最佳 +0.0093 LOO——均落 perm-null 带内(p95 +0.0769 / +0.0939,boot-5th < 0);one-word readout 令 HateMM 退步(−0.056/−0.065);部署 final-layer mean-pool 已在局部最优,无 head,零 test-touch | READOUT_SUBMIT_RECORD.md · `a60f6cf` |
+| **MCR** — modality-competition rebalancing / data-remixing SFT schedule(逼 collapsed EN image 流在适配中承载) | forensic recon,PARKED(无 GPU):honest transplant 存在(EN-only masked-SFT schedule,~4–6 GPU-h)但 F65 已 nulled 同轴(image 动、零兑现)且 F55 把 EN 流-rebalance oracle 封在 +0.025 < +0.030 门 ⇒ 算术封顶,prior ~5–8%;作 user-gated paper-closure null 保留,非性能 bet | MCR_FORENSIC_RECON.md · `6d0495b` |
+| **Bidir mask-flip** — training-free causal→bidirectional attention(LLM2Vec / NV-Embed;最高 novelty) | 3-seed 判决,~1.2 GPU-h:**DEGRADE 双库**——ZH mean −0.1163(val)/ −0.1409(final)acc,HateMM −0.1210 / −0.1256,0/12 逐种子 delta 正,至 −0.28 macro-F1;"Llama-pattern" 塌方(≈7–10× −0.014 线)直接确认部署表征依赖 causal prefix(§3.7);Stage-2 MNTP 路由用户 funding 决定,非 auto-defund | BIDIR_STAGE1_VERDICT_REVIEW.md · `f733bbe` |
+| **Head-recipe** — align head 上 SAM flat-minima 优化器 + modality-dropout | 3-seed 判决,< 0.15 GPU-h:4 个 arm×dataset cell 全 KS-arm-dead、FORMAL-FAIL 双协议——SAM×ZH −0.0246/−0.0424(伤),SAM×HateMM +0.0047/+0.0046(within-noise,非 3/3),mod×ZH 0.0000/−0.0313,mod×HateMM −0.0201/−0.0062;两 disclosed headwind(F69 反号 SAM、F45/F58 text-carried mod-dropout)兑现 | HEADRECIPE_VERDICT_REVIEW.md · `8e60f42` |
+
+**within-noise 观察(非主张,不入任何主表):** SAM×HateMM 在 val-sel 把均值抬 **+0.0047 acc**(≈+0.5 点),
+其**单 seed 最高 0.8884 val-sel = 全项目 HateMM 单值最高**,但均值远低于 +0.030 门、acc sign 非 3/3
+(KS-arm-dead)⇒ 记为 **within-noise,永不作主张**。
+
+**外部验证(round-6 lit-sweep,triage-only,不与本地 G-repro 数混表):** 已发表 HateMM 榜首 **MM-HSD 0.878
+macro-F1** 仅经**我方否决的 OCR 通道**超过 cand-2——去 OCR 后 **0.845**,落在我方 0.8775/0.8791 带内;SOTA
+视频-embedding 工作(VLM2Vec-V2 / VidVec)**不用任何时序算子**,独立佐证 F35/F37/F67 时序闭合。约束盒被外部
+佐证,而非被击破 [DOC:LITSWEEP2_FRESH_2026.md;DOC:LITSURVEY_MLLM_EMBEDDING.md]。
+
+**来源(T6.1+T6.2):** round-5 = `refine-logs/{LP_GATE_RECORD, SWA_PROBE_RECORD, LAUD_GATE_RECORD,
+VISION_UNFREEZE_VERDICT_REVIEW, ISR_PREGATE_RECORD, FRAME16_VERDICT_REVIEW}.md`;round-6 =
+`refine-logs/{GRADNORM_SELECT_PROBE_RECORD, READOUT_SUBMIT_RECORD, MCR_FORENSIC_RECON,
+BIDIR_STAGE1_VERDICT_REVIEW, HEADRECIPE_VERDICT_REVIEW}.md` + 综述 `LITSURVEY_{RETRIEVAL_MEMORY,
+MLLM_EMBEDDING, NOVEL_MECHANISMS}.md` / `LITSWEEP2_{HEAD_OBJECTIVES, INPUT_FIDELITY, FRESH_2026}.md`。
+findings F61–F74(`state/findings.jsonl`)。**不入负结果 ordinal 账、不铸造总数(逐轮框架,同文末张力清单 #9)。**
+
 ---
 
 ## 骨架段 — 一页纸论文章节骨架

@@ -318,6 +318,18 @@ eight cells and becomes an **arithmetic statement** about where the headroom liv
 operator can access only the symmetric slice, which every legal operator measures at ≈ 0
 [DOC:ISR_PREGATE_RECORD.md, commit `a6e41f8`].
 
+This has a name in the literature, which sharpens the claim from a campaign idiosyncrasy to a recognised
+phenomenon. Law I is a **usable-information** ceiling in the sense of *V-usable information* (Xu et al.
+\cite{xu2020vinfo}; Ethayarajh et al. \cite{ethayarajh2022vinfo}, whose pointwise-V-information formalises
+exactly the gap between *information present* in a representation and *information a fixed model family can
+extract from it*): the oracle proves the bits are present — so this is **not** a Shannon-information gap — but
+they are not usable by any operator in the constraint box. In that framing the frozen-feature ceiling is a
+V-usable-information ceiling, closable only by **expanding the model family**, which is precisely what
+adaptation does and precisely where the campaign's one reliable conversion lives (§3.9); the same cached
+features admit a $0 pointwise-V-information measurement that would quantify the gap per dataset, should the
+paper want Law I stated quantitatively rather than by its eight instances [DOC:LITSURVEY_NOVEL_MECHANISMS.md
+§3.1].
+
 ### 3.7 Structural law II — the cumulative-causal three-level closure
 
 The second law is narrower but methodologically transferable, and it explains why every temporal /
@@ -339,6 +351,19 @@ operator levels simultaneously — the most complete closure in the campaign:
   the pooled key (HateMM +0.0000, CI [−0.0031, +0.0031]; MHC −0.0029; arc −0.0049 / −0.0010), with
   label-oracle calibration accZA = 1.0 crediting the null as genuine rather than machinery-dead
   [DOC:CTF_GATE_RECORD.md].
+- **Direct causal-mask attack (F72, round-6 audit).** The sharpest confirmation is adversarial rather than
+  observational. Flip the LoRA-Qwen decoder's attention from causal to **bidirectional** at inference — the
+  LLM2Vec / NV-Embed recipe \cite{llm2vec}, on the *same* banked adapters, same prefix-mean readout, same
+  8 frames — and the head does not merely fail to gain, it **craters**: paired within head-seed, MHC-ZH mean
+  **−0.1163** (val-sel) / **−0.1409** (final) acc and up to **−0.2802** macro-F1; HateMM **−0.1210** /
+  **−0.1256** acc; **0/12 per-seed deltas positive**, a maximally concordant regression. This is *not* the
+  flat Law-I null — it is the pre-declared DEGRADE / "Llama-pattern" branch, every mean ≈ 7–10× past the
+  −0.014 line, exactly the failure LLM2Vec documents for causally-trained Llama weights under a naked mask
+  flip. Removing the causal structure destroys the representation the deployed head reads, which is direct
+  causal evidence that the pipeline's signal *lives in* the cumulative causal-prefix summary of this section
+  rather than in any recoverable frame-local state [DOC:BIDIR_STAGE1_VERDICT_REVIEW.md, commit `f733bbe`].
+  (Whether a Stage-2 MNTP repair recovers the loss is a user-gated funding question the DEGRADE branch routes
+  to the user, not a closed result.)
 
 The contribution generalises beyond hateful video: **anyone building set-matching or temporal-order
 retrieval over decoder-VLM token summaries is operating on prefix summaries, not frame states, so the
@@ -519,6 +544,38 @@ The F51 closure is thus correct in its *phase-diagram conclusion* (no adaptation
 and wrong only in its enumeration ("two adapted objects"): capacity/reach was a third object, and it too
 fails — the eighth better-signal-without-conversion instance [DOC:VISION_UNFREEZE_VERDICT_REVIEW.md,
 commit `09d02f8`].
+
+### 3.10 The post-terminus audit — the mechanism picture holds, with two small-head optimization notes
+
+The four laws were crystallised on rounds 2–4; a post-terminus red-team (round 5) and a literature-driven
+sweep (round 6) then re-opened every prose-argued gap the laws rested on and measured each one dead, at ~16 +
+~3.5 GPU-h, with the project's best numbers unchanged (the experiments chapter §8 is the ledger). None
+reopened a law: the decision-aggregation *topology* (label propagation, F63) over-smooths and is closed at
+$0; the last aggregation object (ISR, F66) is arithmetically selection-locked (§3.6); the representation cell
+(vision-unfreeze, F65) moves the image and converts nothing (§3.6, §3.9); the causal-mask attack (F72)
+craters (§3.7); and the input-fidelity levers — denser frames (F67), readout-layer/prompt variants (F70),
+learned audio (F64) — each add nothing. **Two** of the round-6 nulls, however, sharpen the
+*optimization-landscape* picture of the tiny retrieval head itself and are worth recording as mechanism, not
+merely as kills.
+
+**The head's gradient geometry is non-standard (F69).** A validation-free checkpoint selector that picks the
+epoch minimising the head-gradient norm (arXiv 2601.16874) rests on that norm being *negatively* correlated
+with accuracy — the paper reports Spearman ρ ≈ −0.85…−0.98, so argmin(‖g‖) lands on a high-accuracy epoch. On
+our head the correlation **inverts**: Spearman(‖g‖, dev-acc) = **+0.61 / +0.72 / +0.62** across seeds, the
+scale-normalised gradient rising *monotonically with* accuracy (≈ 0.003 → 0.010) as the tiny head specialises,
+so an unrestricted argmin lands at the worst (earliest) epoch and the tail-window "pass" is a left-edge
+boundary artefact. The generalisation mechanism the method assumes for large vision heads simply does not hold
+for a 12-tensor head over frozen features — a concrete caution against importing flat-minima *selection* to a
+small retrieval head [DOC:GRADNORM_SELECT_PROBE_RECORD.md, commit `ada5849`].
+
+**Flat-minima *training* does not help the head either (F73).** Consistent with F69, a SAM optimiser (ρ = 0.05)
+on the same head is a KS-arm-dead null on both datasets and both protocols: a material regression on the
+marginal MHC-ZH leg (val-sel −0.0246 / final −0.0424 acc, 0/3 sign) and only a within-noise +0.0047 nudge on
+the near-ceiling HateMM leg (not 3/3-signed — its best single seed, 0.8884 val-sel, is the highest single
+HateMM value observed anywhere, but the mean sits far below the bar and is **never** claimed). Modality-dropout
+on the head regresses text-carried ZH and HateMM exactly as F45/F58 predict. The two remaining
+head-training-dynamics escape hatches are closed at < 0.15 GPU-h, both disclosed headwinds borne out
+[DOC:HEADRECIPE_VERDICT_REVIEW.md, commit `8e60f42`].
 
 ## 4. What survives
 

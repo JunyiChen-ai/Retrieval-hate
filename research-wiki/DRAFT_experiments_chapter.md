@@ -719,3 +719,32 @@ committed verdict/record with the commit cited inline and re-checked against the
 | **Vision-unfreeze LoRA** — unfreeze the ViT tower + projector inside LoRA-SFT (the un-enumerated representation cell) | 3-seed verdict, ~15 GPU-h: EN image stream **MOVED** (+0.0320 train-LOO / +0.0065 dev, reviewer bit-for-bit — first lever to move it, refutes the F51/GAP-5b "no vision lever" wording) but K-V2 = **TIE** both datasets both protocols (HateMM val-sel −0.0016 acc 0/3, final +0.0000 1/3; MHC-EN val-sel +0.0269 acc sign 2/3, final −0.0062 1/3) — image moved, head converted zero (Law I 8th) | VISION_UNFREEZE_VERDICT_REVIEW.md · `09d02f8` |
 | **ISR** — independent per-segment re-encode read by a uniform per-segment-kNN vote-mean (last aggregation object) | $0 pre-gate, NO-GO: legal uniform operator flat (HateMM +0.0012 / MHC-EN +0.0032, under perm-null, boot-5th < 0, vote bit-exact Fano 1.0); decisive β-decomposition proves the oracle headroom **selection-locked** — HateMM +0.0776 = +0.0012 legal + +0.0764 banned, MHC-EN +0.0700 = +0.0064 + +0.0636 (91–98% banned-selection-only) ⇒ Law I is now arithmetic; Qwen per-segment extraction never happens, 0 GPU-h | ISR_PREGATE_RECORD.md · `a6e41f8` |
 | **Frame-16** — double visual sampling 8→16 frames through the frozen encoder | 3-seed verdict vs banked 8f floor, ~0.6 GPU-h: val-sel mean −0.0077 acc (0/3), final +0.0015 (1/3); KS-16f-dead KILLED both protocols ⇒ cell CLOSED and the expensive LoRA-16f stage-2 AUTO-DEAD (pre-declared spend verdict); 8 frames is not the bottleneck — the pooled representation saturates at 8f | FRAME16_VERDICT_REVIEW.md · `32c2e6f` |
+
+**Table 10. Round-6 literature-sweep audit (borrowable operators, all measured dead or parked).**
+
+| Direction | Epitaph (one line) | Verdict · record |
+|---|---|---|
+| **Grad-norm selection** — validation-free checkpoint selection by minimum head-gradient norm (arXiv 2601.16874; attacks the F45 ZH selection tax) | $0 probe, MECHANISM REFUTED: the paper's premise (Spearman(‖g‖, acc) ≈ −0.85…−0.98) **inverts** on our tiny head (+0.61/+0.72/+0.62, 3/3 seeds); scale-normalised grad rises monotonically *with* accuracy, argmin lands at the worst epoch; F68-P2 killed at $0 (the promotable ZH/HateMM-curric ckpts were disk-pruned to B2, and a restore is pointless given the sign flip) | GRADNORM_SELECT_PROBE_RECORD.md · `ada5849` |
+| **Readout axis** — intermediate-layer / one-word-prompt / last-token extraction variants (the one un-enumerated axis inside the MLLM-embedding paradigm) | $0 CPU screen, KS-readout-dead (~2 GPU-h extraction only): MHC-ZH best +0.0128 dev-query, HateMM best +0.0093 LOO — both inside the perm-null band (p95 +0.0769 / +0.0939, boot-5th < 0); one-word readout actively regresses HateMM (−0.056/−0.065); the deployed final-layer mean-pool is already at the local optimum, no head, zero test-touch | READOUT_SUBMIT_RECORD.md · `a60f6cf` |
+| **MCR** — modality-competition rebalancing / data-remixing SFT schedule (force the collapsed EN image stream to carry load during adaptation) | forensic recon, PARKED (no GPU): an honest transplant exists (EN-only masked-SFT schedule, ~4–6 GPU-h) but F65 already nulled the same axis (image moved, zero conversion) and F55 caps the EN stream-rebalancing oracle at +0.025 < the +0.030 bar ⇒ arithmetic-capped, prior ~5–8%; available as a user-gated paper-closure null, not a performance bet | MCR_FORENSIC_RECON.md · `6d0495b` |
+| **Bidir mask-flip** — training-free causal→bidirectional attention on the LoRA-Qwen decoder (LLM2Vec / NV-Embed recipe; highest-novelty candidate) | 3-seed verdict, ~1.2 GPU-h: **DEGRADE both datasets** — MHC-ZH mean −0.1163 (val) / −0.1409 (final) acc, HateMM −0.1210 / −0.1256, 0/12 per-seed deltas positive, up to −0.28 macro-F1; the "Llama-pattern" crater (≈7–10× the −0.014 line) directly confirms the deployed reps exploit the causal prefix (analysis §3.7); Stage-2 MNTP routed to a user funding decision, not auto-defunded | BIDIR_STAGE1_VERDICT_REVIEW.md · `f733bbe` |
+| **Head-recipe** — SAM flat-minima optimiser + modality-dropout on the align head | 3-seed verdict, < 0.15 GPU-h: all 4 arm×dataset cells KS-arm-dead, FORMAL-FAIL both protocols — SAM×ZH −0.0246/−0.0424 (hurts), SAM×HateMM +0.0047/+0.0046 (within-noise, not 3/3), mod×ZH 0.0000/−0.0313, mod×HateMM −0.0201/−0.0062; both disclosed headwinds (F69 wrong-sign SAM, F45/F58 text-carried mod-dropout) borne out | HEADRECIPE_VERDICT_REVIEW.md · `8e60f42` |
+
+Two round-6 recon-stage companions round out the ledger at zero GPU. The merged three-agent lit-survey (F68)
+and the round-2 sweep (F74) both concluded, independently across six agents, that **no borrowable operator
+carries a strong prior on a new dataset** and that the binding walls are the MHClip label limit, the F66
+arithmetic, and the HateMM ceiling — what could clear the goal is a user ruling (ZH protocol, goal
+renegotiation, or a model download), not an operator [DOC:LITSURVEY_NOVEL_MECHANISMS.md;
+DOC:LITSWEEP2_FRESH_2026.md]. A within-noise observation to record (never a claim): the SAM×HateMM cell nudges
+the val-sel mean up +0.0047 acc and its best single seed reaches **0.8884** val-sel — the highest single
+HateMM value seen anywhere — but the mean is far below the bar and not 3/3-signed, so it is not folded into any
+table. External validation from the same sweep is corroborative rather than competitive: the published HateMM
+leader **MM-HSD** \cite{mmhsd} reaches 0.878 macro-F1 but only through the OCR channel we veto — 0.845 without
+it, inside the band of our 0.8775 / 0.8791 — so its lead is entirely the vetoed channel, and the SOTA
+video-embedding works (VLM2Vec-V2, VidVec) use **no temporal operator at all**, independently corroborating the
+F35 / F37 / F67 temporal closure [DOC:LITSWEEP2_FRESH_2026.md; DOC:LITSURVEY_MLLM_EMBEDDING.md].
+
+*Consistency note (§8): every number is transcribed from the named round-5/6 verdict/record files
+(numeric-provenance discipline) and re-checked against the primary logs; none revises T1–T4, and the 13-route
+campaign count is untouched — these are post-terminus audit rounds, not new campaign routes, banked as findings
+F61–F74 and deliberately kept off the negative-result ordinal (master-table tension list #9).*
