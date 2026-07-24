@@ -99,3 +99,59 @@ non-readout behavior." All 7 requested invariants confirmed with source citation
 Both the executor's own read and Codex agree — **no P1s; gate CLEARED**. The extractor was **NOT edited**
 (sha `ef05f3d4…` still matches the frozen block; authorization intact). Cleared for GPU.
 Full transcript: session scratchpad `codex_readout_review.txt`.
+
+## 4. Readout extraction smoke (prereg §4.4.1) — PASS (all load-bearing checks), cleaned up
+
+Throwaway smoke sbatch (session scratchpad `smoke_readout.sbatch`, mirroring `gen_embed_readout.sbatch`'s
+env block: conda HateVideo, HF/TRANSFORMERS offline; disk_guard OMITTED as it is a throwaway — the frozen
+artifact B keeps it) running the prereg §4.4.1 command verbatim:
+`generate_VideoMLLM_embedding_readout_HF.py --dataset HateMM --lora_dir logging/lora/HateMM_curric
+--out_model_base_tag Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --splits test --limit 3 --EXP_FOLDER
+logging/_smoke_ro --device cuda`.
+
+- **Smoke job 13467** (`smoke_readout`): `sbatch` (NO `--time`); auto-released from `JobHeldUser` (never
+  forced; running aggregate was zero); **COMPLETED** exit 0:0, Elapsed 00:00:48 (A100-SXM4-80GB).
+- **Namespace (echoed):** `dataset='HateMM', lora_dir='logging/lora/HateMM_curric',
+  out_model_base_tag='Qwen2.5-VL-7B-Instruct-LoRA-curric_HF', num_frames=8, splits='test', limit=3,
+  device='cuda'` — extractor code unedited; distinct `-ro_*` tags + throwaway EXP_FOLDER.
+- **4 caches written** to `logging/_smoke_ro/HateMM/test_seen_..-ro_{L28,L24,ow_L28,ow_L24}.pt`, each
+  `Saved ... N=3, Dv=3584, Dt=3584, zero-vector videos=0` (redirected EXP_FOLDER ⇒ never wrote into
+  `data/CLIP_Embedding/`).
+- **(1) Shapes:** all 4 cells `img (3,3584)` + `text (3,3584)`, ids `[hate_video_1, non_hate_video_4,
+  non_hate_video_8]` (first 3 test items in gt order).
+- **(2) Finite:** every cell img NaN=0/Inf=0, text NaN=0/Inf=0; zero-vector videos=0.
+- **(3) One-word prompts tokenized:** Pass B ran and produced the `ow_L28`/`ow_L24` caches (last-token span)
+  with finite (3,3584) tensors — the one-word img/text prompts tokenized as pinned; no exception.
+- **(4) No OOM / no assert:** clean scan — no `OOM`/`CUDA error`/`Traceback`/`AssertionError`; the
+  L360 masked-scatter invariant (`last_hidden.shape[0]==input_ids.numel()`) held at 8 frames × 4 forwards.
+- **(5) R0 BIT-EXACT vs banked (the G-repro anchor):** the `ro_L28` 3-row slice reproduces the **banked
+  deployed HateMM cache** rows for those 3 videos **bit-exact** — `img max|Δ| = 0.0`, `text max|Δ| = 0.0`,
+  id-order match — on this exact GPU/library stack. R0_BIT_EXACT = **True** (the DEV-5 banked-R0 pairing
+  basis + F0.2 determinism gate hold in the smoke).
+- **Cleanup:** `logging/_smoke_ro` **deleted**; collision targets (§2) re-verified ABSENT after deletion;
+  banked ZH + HateMM caches re-checked UNTOUCHED (sha16 + mtimes bit-identical to the §2 pre-run table).
+  Throwaway `smoke_readout.sbatch` lives only in the session scratchpad; smoke slurm log retained at
+  `slurm/logs/smoke_readout_13467.out`.
+
+**SMOKE_VERDICT: PASS.** Cleared to submit the real combined extraction job.
+
+## 5. Real extraction — single-submitted (prereg §6 / DEV-2; NO `--time`; combined ZH+HateMM)
+
+Final `sha256sum` re-verified at the submit instant — A `ef05f3d4…`, B `948db851…`, C `f56badb6…` [MATCH];
+`bash -n` B = SYNTAX_OK; authorization intact.
+
+| job | id | script | cells | CPU/mem/GPU | ~cost |
+|---|---|---|---|---|---|
+| extract R0–R3 | **13468** | `gen_embed_readout.sbatch` (ZH then HateMM sequential, hardcoded CONFIGS) → `data/CLIP_Embedding/{MHC_zh,HateMM}/{train,dev_seen,test_seen}_<BASE>-ro_{L28,L24,ow_L28,ow_L24}.pt` | 4 grid caches/dataset | 8 CPU / 64 G / 1×A100 | ~2 GPU-h |
+
+Peak footprint 8 CPU / 64 G / 1 GPU (within the 16/128/2 cap; never two 16-CPU jobs). The readout chain
+submits BEFORE the bidirectional-encoder chain (prereg §6). Queue was EMPTY at submit (running aggregate
+zero ⇒ favorable for auto-release; the smoke 13467 auto-released from the same hold).
+
+## 5.1 Queue state at submit — PENDING (JobHeldUser); WAIT never force
+
+- **13468 PENDING (JobHeldUser)** (no dependency).
+
+Per CLAUDE.md the hold is **waited out, NEVER forced**. If held > 2 h, a status line is committed and the
+turn ends PENDING-JOB (orchestrator resumes). **On COMPLETE:** cache sanity (§6 — row counts/dims/NaN, R0
+full-cache bit-exact vs banked, banked mtimes unchanged), then the `$0` CPU screen (§7).
