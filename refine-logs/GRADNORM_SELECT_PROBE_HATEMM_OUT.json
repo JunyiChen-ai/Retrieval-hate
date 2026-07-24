@@ -1,0 +1,15 @@
+{
+  "probe": "grad-norm validation-free checkpoint selection ($0, CPU, dev-only)",
+  "leg": "hatemm_curric",
+  "dataset": "HateMM",
+  "group": "RAC_video_lora_curric_rep2",
+  "model": "Qwen2.5-VL-7B-Instruct-LoRA-curric-rep2_HF",
+  "promotable_target": true,
+  "census": {
+    "0": 0,
+    "1": 0,
+    "2": 0
+  },
+  "status": "BLOCKED",
+  "reason": "per-epoch head checkpoints missing/incomplete (pruned to B2 by disk_guard); STOP per the STEP-0 rule"
+}
