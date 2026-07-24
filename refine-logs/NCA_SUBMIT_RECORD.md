@@ -149,19 +149,95 @@ mode before the mixup forward — e.g. `model.train()` at the top of `_manifold_
 `model.train()` in `compute_loss` after the mining call and before the hybrid block. Either changes
 sha A and mandates a re-freeze + a re-run of this codex gate.
 
-## 3. Collision-safety re-check at submit — NOT REACHED (submission halted at the codex gate)
+---
 
-## 4. Smoke (prereg §4.4) — NOT REACHED (submission halted at the codex gate)
+## RESUME (REFREEZE-1) — team-lead authorized 2026-07-25; codex STOP confirmed correct
 
-## 5. Real family — single-submit — NOT SUBMITTED (blocked by the codex gate)
+The blocking A3 finding (§2.1) was fixed (commit `8f08e9f`, `refine-logs/NCA_REFREEZE_FIX.md`),
+re-frozen (`NCA_FREEZE.md` REFREEZE-1, new sha A), and independently re-reviewed APPROVED (commit
+`467a6f4`, `refine-logs/NCA_REFREEZE_REVIEW.md`, R1-R7 all PASS). Resuming the §4 chain from the top
+against REFREEZE-1 values. Two non-blocking re-review notes travel to this gate/executor:
+(a) the mixup mode-restore is a plain sequential block, NOT `try/finally` — harmless (an exception on
+that path is a fatal per-seed `run_rac` crash that kills the process; there is no in-process recovery
+that could silently reuse a train-mode-leaked model);
+(b) `NCA_REFREEZE_FIX.md` E2/E3 evidence harness used `num_layers=2` (5 dropouts) vs the deployed
+`num_layers=3` (6 dropouts); the fix enumerates dropouts dynamically (count-agnostic) and R3 re-verified
+all 6 toggle ON + restore at the true config.
 
-## 6. RAW per-seed both-protocol numbers — NONE (no job submitted; zero test-touch spent)
+### 2.2 Sha re-verification at RESUME — ALL MATCH REFREEZE-1 (authorization intact)
 
-## 7. Closeout — HALTED PENDING FIX + RE-FREEZE
+```
+FROZEN 7607863c15bef1d40c1f1f0a5b980123dd84aba260ced6db1fa993f277db5591  refine-logs/NCA_PREREG.md               [MATCH, prereg NOT modified]
+A      2ae7a73f6df4008186e5200f851e16902f567ec93f2c3681d03743c909dd0c9b  src/model/loss.py                       [MATCH REFREEZE-1 new sha A]
+B      b85eb72a690bc8fccc2ff5d5358fd6523359bf6596d2b2a0d6d0701bec9e53e3  src/run_rac.py                          [MATCH original frozen B]
+C      baf41be8a1264445d6bbc63d2eb54966abed6da33c52176ae62d93bf79c14b94  scripts/slurm/ncafam_family.sbatch      [MATCH original frozen C]
+reused e7b61df485b97eb683279398746090c2d4b3d446fc4c53b5c85e14d366c23378  src/model/classifier.py                 [MATCH]
+reused d43e3bc417f775175021283c4bd4aa25c0df98aa4c4b34a90f8c696e195bcf57  src/utils/retrieval.py                  [MATCH]
+anchor 00d9e9956549bdf97c6b8913d42d87811f4a2f150e9f459e8b8b86978b306f02  scripts/slurm/enc3seed_lora_curric.sbatch [MATCH]
+```
 
-Sha re-verification PASS (§1, all A/B/C + reused hashes MATCH — authorization was intact at gate
-time). Mandatory codex gate (§2): NO P1; A1/A2 clean; **one BLOCKING A3 finding** (mixup BCE forward
-runs with classifier dropout disabled due to the mining eval-mode leak). Per §4.5 the executor STOPS
-and reports; the fix requires editing frozen artifact A (loss.py) and therefore a re-issued freeze
-block + a re-run codex gate before any submission. **Zero GPU/SLURM spent. No job submitted. No
-`state/` mutation. Zero test-touch. Nothing pushed.**
+### 2.3 MANDATORY CODEX RE-GATE (prereg §4.5; code changed ⇒ FULL gate) — CLEARED (no P1; 2 P2 inactive under deployed config)
+
+Ran the house `codex-code-review` pattern (`codex exec`, model `gpt-5.4`, `xhigh`, `--full-auto`),
+FULL gate (not a delta) on the patched `loss.py` — session `019f95fa-803c-79f1-9ef5-75c45c643b23`.
+Codex was given the diff context (the 18-line REFREEZE-1 mixup dropout-mode guard), the two travel
+notes, the exact deployed flags, and instructed to (A) vet the fix, (B) confirm floor/A1/A2 unbroken,
+(C) re-confirm the original A1/A2 invariants, (D) confirm count-agnosticism. It READ the actual source
+and RAN a runtime probe in the pinned env. Transcript: session scratchpad `codex_nca_regate.txt`.
+
+**VERDICT: NO P1 blocker remains.** Codex verbatim: *"No P1 blocker remains. Under the stated deployed
+flags, this fix cleanly repairs the prior A3 dropout-off bug without breaking the floor or A1/A2."* and
+*"I agree the A3 fix resolves the prior blocker with no new blocking issue for this unattended job."*
+
+Codex's independently VERIFIED list (citations):
+- **The fix does exactly what it claims** (loss.py:708 assert align; :721 enumerate all `nn.Dropout`;
+  :722 snapshot prior `.training`; :723 force-train Dropout only; :725/:726/:733 the dropout-bearing
+  forward; :734 restore each Dropout's EXACT prior mode; restore point AFTER the last dropout op and
+  BEFORE the BCE math at :736).
+- **Runtime probe on the ACTUAL `_manifold_mixup_bce`** on `classifier_hateClipper(align,
+  batch_norm=False, num_layers=3)` forced into eval mode (post-mining leak): **all 6 dropout hooks
+  `training=True` DURING the mixup forward, all 6 restored to `False` after**, loss finite,
+  `lambda=0.6748 in [0,1]`, grads reach the first MLP linear + `output_layer`.
+- **A4**: triplet term still reads REAL un-mixed feats (loss.py:31/32 → mining :285/:310 → triplet
+  :486); mixup only rewrites the BCE side (:578/:585/:596); no detach between `x_mix` and mlp/output.
+- **A5 (try/finally note)**: acceptable, NOT blocking — `set -euo pipefail` (sbatch:26), each arm a
+  separate `python ./src/run_rac.py` process (sbatch:79), one process at a time (sbatch:117) ⇒ any
+  exception in the enable/restore window is a fatal process exit, no in-process reuse of a leaked model.
+- **B1/B2**: floor (mixup=False) + A1/A2 (early-return at loss.py:43/63 BEFORE mining and the mixup
+  hook) NEVER call `_manifold_mixup_bce` ⇒ the 18-line fix cannot touch their mode/RNG; flag-off BCE
+  still uses the train-mode `output` from loss.py:32.
+- **C**: original A1/A2 invariants all re-confirmed — `_build_nca_bank` once/epoch gated `head_loss=='nca'`
+  + mode-restore + unique-id assert; `_nca_head_loss` bank-detach + id→row `-inf` self-mask (KeyError on
+  missing id; hostile `requires_grad` bank got zero grad in the probe); `_supcon_head_loss` sound;
+  eval/selection routes through `retrieve_evaluate_RAC_`, not the training-only mask.
+- **D**: fix is count-agnostic (`model.modules()` enumeration), so the fix-record harness's
+  `num_layers=2` under-count does not weaken correctness at the deployed `num_layers=3`.
+
+**Two P2s — BOTH inactive/latent under this family's frozen config (codex-agreed; NOT blocking; NOT
+fixed — fixing would edit frozen artifact A and force another re-freeze, and neither changes behaviour
+here):**
+1. *P2 (whole-model eval not restored — only Dropout is)*: the fix restores `nn.Dropout` submodules
+   but not the model's global `.training` flag. **Inactive**: `--batch_norm False` (sbatch:86) ⇒ no
+   `nn.BatchNorm1d` is constructed (classifier.py:100 branch), so Dropout is the only mode-sensitive
+   module; and the global flag is reset by `model.train()` at loss.py:31 at the next step's
+   `compute_loss` (no forward runs between the mixup hook and that reset). The Dropout-only variant is
+   deliberately chosen (fix record §2.1) as strictly robust even if `--batch_norm` were flipped.
+2. *P2 (nca|supcon + mixup combo silently bypasses mixup via the early return)*: latent only — the
+   frozen sbatch never combines `--head_loss nca|supcon` with `--mixup True` (A1/A2 rows set no
+   `--mixup`; the A3 row sets no `--head_loss`). Cannot fire under this family.
+
+**Both sides reviewed the final (REFREEZE-1, unchanged) code; codex reports no P1; I agree (no P1
+missed, no false dismissal); the fix is verified to resolve the prior blocker; both P2s accepted as
+inactive-under-deployed-config with documented justification. Per prereg §4.5 there are NO blocking
+findings ⇒ no code fix ⇒ no re-freeze ⇒ RE-GATE CLEARED.** Artifacts A/B/C shas UNCHANGED by the gate
+(A still `2ae7a73f…`, B/C original; authorization intact).
+
+## 3. Collision-safety re-check at submit — pending
+
+## 4. Smoke (prereg §4.4, + A3 dropout-ON assertion) — pending
+
+## 5. Real family — single-submit — pending
+
+## 6. RAW per-seed both-protocol numbers — pending
+
+## 7. Closeout — pending
