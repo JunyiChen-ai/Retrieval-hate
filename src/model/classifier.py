@@ -71,7 +71,12 @@ class classifier_hateClipper(nn.Module):
     def __init__(self, image_dim, text_dim, num_layers, proj_dim, map_dim, fusion_mode, dropout=None, batch_norm=False, args=None) -> None:
         super(classifier_hateClipper, self).__init__()
         self.fusion_mode = fusion_mode
-        
+        # ARM B -- modality-dropout (HEADRECIPE_PREREG.md). Off by default; when set it is
+        # gated in forward() to align (Hadamard) fusion + self.training only, so eval and
+        # every other config are byte-identical.
+        self.mod_dropout = getattr(args, 'mod_dropout', False)
+        self.mod_dropout_p = getattr(args, 'mod_dropout_p', 0.3)
+
         # Projection layers prior to modality fusion
         self.img_proj = nn.Sequential(nn.Linear(image_dim, map_dim), nn.Dropout(dropout[0]))
         self.text_proj = nn.Sequential(nn.Linear(text_dim, map_dim), nn.Dropout(dropout[0]))
@@ -113,7 +118,23 @@ class classifier_hateClipper(nn.Module):
         
         img_feats = nn.functional.normalize(img_feats, p=2, dim=1)
         text_feats = nn.functional.normalize(text_feats, p=2, dim=1)
-        
+
+        # ARM B -- modality-dropout with IDENTITY-fill (ones), NOT zero-fill. Under align
+        # (Hadamard) fusion x = img * text, zero-filling a dropped stream would zero the
+        # ENTIRE fused vector (img * 0 = 0); ones-fill passes the surviving stream through
+        # unchanged (img * 1 = img). Per sample, with prob p drop EXACTLY ONE stream (fair
+        # img/text coin). Gated to training + align only, so eval/other fusions are byte-
+        # identical. This draws torch.rand => the treatment's RNG stream diverges from the
+        # floor (expected, confined to this arm); the flag-off path draws NOTHING.
+        if self.training and getattr(self, 'mod_dropout', False) and self.fusion_mode == 'align':
+            B = img_feats.shape[0]
+            drop = torch.rand(B, device=img_feats.device) < self.mod_dropout_p
+            coin = torch.rand(B, device=img_feats.device) < 0.5
+            drop_img = (drop & coin).unsqueeze(1)
+            drop_text = (drop & ~coin).unsqueeze(1)
+            img_feats = torch.where(drop_img, torch.ones_like(img_feats), img_feats)
+            text_feats = torch.where(drop_text, torch.ones_like(text_feats), text_feats)
+
         if self.fusion_mode == 'concat':
             x = torch.cat((img_feats, text_feats), dim=1)
         elif self.fusion_mode == 'align':

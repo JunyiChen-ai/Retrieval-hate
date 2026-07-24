@@ -525,9 +525,59 @@ def parse_args():
              "<path>/CLIP_Embedding/<dataset>/train_subclipK<K>_mm_<model>.pt. "
              "Only loaded when --consensus_space mm.")
 
+    # <----------------- head-recipe family (SAM + modality-dropout) ----------------->
+    # Additive, no-op-by-default flags (HEADRECIPE_PREREG.md, F68 wave-2). Every path
+    # is gated behind getattr(args, <flag>, <default>); with the flags absent/False the
+    # Namespace gains four inert keys but the BEHAVIOUR is byte-identical to the banked
+    # floors (13150 ZH LoRA, 13241 HateMM LoRA-curric) -> the floors need NO re-run. This
+    # is the established additive-flag pattern (cf. --tarc_vote_gamma).
+    arg_parser.add_argument(
+        "--sam", type=lambda x: (str(x).lower() == "true"), default=False,
+        help="ARM A: sharpness-aware minimization (Foret et al., ICLR 2021) two-step "
+             "wrapping the base AdamW. No-op when False (default).")
+    arg_parser.add_argument(
+        "--sam_rho", type=float, default=0.05,
+        help="SAM neighbourhood radius rho (only active when --sam True).")
+    arg_parser.add_argument(
+        "--mod_dropout", type=lambda x: (str(x).lower() == "true"), default=False,
+        help="ARM B: per-sample modality-dropout with identity/ones-fill under align "
+             "(Hadamard) fusion. No-op when False (default).")
+    arg_parser.add_argument(
+        "--mod_dropout_p", type=float, default=0.3,
+        help="Per-sample probability of dropping exactly one stream "
+             "(only active when --mod_dropout True).")
+
     args = arg_parser.parse_args()
 
     return args
+
+
+def _sam_ascend(model, rho):
+    """SAM ascend step (Foret et al., ICLR 2021). Perturb params in-place to w+eps
+    along the normalized gradient: eps = rho * g / (||g||_2 + 1e-12), where ||g||_2 is
+    the GLOBAL 2-norm over all params with a grad. Requires loss.backward() to have run
+    first. Returns the [(param, eps)] list so _sam_restore can undo it EXACTLY (w+eps -> w).
+    Deterministic given the grads (no RNG drawn) => the arm's RNG stream matches the floor
+    except for the weight trajectory. In-place ops are wrapped in torch.no_grad() because the
+    params are grad-requiring leaves."""
+    params = [p for p in model.parameters() if p.grad is not None]
+    grad_norm = torch.norm(
+        torch.stack([p.grad.detach().norm(p=2) for p in params]), p=2)
+    scale = rho / (grad_norm + 1e-12)
+    eps_list = []
+    with torch.no_grad():
+        for p in params:
+            e = p.grad.detach() * scale
+            p.add_(e)
+            eps_list.append((p, e))
+    return eps_list
+
+
+def _sam_restore(eps_list):
+    """Undo the SAM ascend perturbation EXACTLY (w+eps -> w)."""
+    with torch.no_grad():
+        for p, e in eps_list:
+            p.sub_(e)
 
 
 def model_pass(
@@ -622,11 +672,47 @@ def model_pass(
                     train_feats = train_feats.detach()
                 if torch.is_tensor(train_labels):
                     train_labels = train_labels.detach()
-            optimizer.zero_grad()
-            total_loss.backward()
-            torch.nn.utils.clip_grad_norm_(
-                model.parameters(), args.grad_clip)
-            optimizer.step()
+            if getattr(args, "sam", False):
+                # ARM A -- SAM (Foret et al., ICLR 2021). Two-step: (1) grad at w, ascend to
+                # w+eps; (2) grad at w+eps; restore to w; AdamW update at w with the w+eps grad.
+                # G-REPRO INVARIANT (SAM re-mine-reuse): the SECOND compute_loss MUST reuse the
+                # SAME train_feats/train_labels returned by the FIRST call, so the FAISS retrieval
+                # index is NOT rebuilt at the perturbed weights (retrieval.py:341 gate stays False).
+                # A re-mine here would build a DIFFERENT train index at w+eps and break byte-
+                # consistency with the once-per-epoch (reindex_every_step=False) baseline semantics.
+                assert train_feats is not None and train_labels is not None, (
+                    "SAM re-mine-reuse invariant: the first pass must have mined "
+                    "train_feats/train_labels before perturbation (else the second "
+                    "compute_loss would re-mine at w+eps).")
+                optimizer.zero_grad()
+                total_loss.backward()
+                _sam_eps = _sam_ascend(model, args.sam_rho)
+                total_loss_perturbed = compute_loss(
+                    batch,
+                    train_dl,
+                    model,
+                    args,
+                    train_set=train_set,
+                    sparse_retrieval_dictionary=sparse_dict,
+                    train_feats=train_feats,
+                    train_labels=train_labels,
+                    segment_cache=segment_cache,
+                    aux_pack=aux_pack,
+                    cf_pack=cf_pack,
+                    target_pack=target_pack,
+                )[0]
+                optimizer.zero_grad()
+                total_loss_perturbed.backward()
+                _sam_restore(_sam_eps)
+                torch.nn.utils.clip_grad_norm_(
+                    model.parameters(), args.grad_clip)
+                optimizer.step()
+            else:
+                optimizer.zero_grad()
+                total_loss.backward()
+                torch.nn.utils.clip_grad_norm_(
+                    model.parameters(), args.grad_clip)
+                optimizer.step()
             if args.lr_scheduler:
                 scheduler.step()
             if step % log_interval == 0:
