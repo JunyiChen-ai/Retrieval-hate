@@ -3,7 +3,7 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "ROUND-6 wave-3 (litsweep2-derived): NCA/soft-kNN head-loss family recon in flight; resolution probe queued; Molmo2-8B download + MNTP stage-2 = user-gated. Convergent 3-agent verdict: in-box >=+3-on-2-datasets unreachable; goal-clearing levers are user rulings.",
+  "phase": "ROUND-6 wave-3: NCA family DEAD (F75, verdict f03cae0). Next: resolution probe forensic recon (last litsweep2 batch-3 candidate). If it dies: batch-3 fully dead -> litsweep-3 (lit round 4 of 5 per goal hook + 2026-07-25 oracle-queue ruling; after round 5 fails -> oracle-ranked queue ZH +0.1026 > HateMM +0.0776 > EN +0.0700 via trained selectors). Molmo2/MNTP/multi-prompt/ZH-protocol remain user-gated.",
   "stale_count": 0,
   "last_seen": "2026-07-24T23:35:17Z",
   "total_findings": 74,

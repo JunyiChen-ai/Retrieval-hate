@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-24T19:27:26Z",
+  "updated": "2026-07-24T23:58:00Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -297,6 +297,14 @@
       "record": "refine-logs/HEADRECIPE_{SUBMIT_RECORD ca5f8f9, VERDICT_REVIEW 8e60f42}; prereg frozen 5cbbf36",
       "finding": "F73",
       "ban_scope": "SAM (rho 0.05) on the retrieval head: hurts ZH, ~+0.5pt-not-3/3 on HateMM — flat-minima premise refuted at this head scale (consistent with F69 wrong-sign). Modality-dropout (p 0.3, ones-fill) on Hadamard head: flat-to-harmful on text-carried datasets. Do not re-tune knobs (one-bite family consumed)."
+    },
+    {
+      "name": "NCA/soft-kNN head-loss family: nca t0.1/t0.2 + supcon t0.1 + manifold-mixup a2.0 (litsweep2 batch-3 lead)",
+      "status": "KILL family (0/8 FORMAL, 7/8 KS-arm-dead; ~0.33 GPU-h; job 13482)",
+      "killed": "2026-07-24T23:52:00Z",
+      "record": "refine-logs/NCA_{PREREG 9a9f4fe frozen 7607863c + REFREEZE-1 2ae7a73f, SUBMIT_RECORD cdaec83, REFREEZE_FIX 8f08e9f, REFREEZE_REVIEW 467a6f4, VERDICT_REVIEW f03cae0}",
+      "finding": "F75",
+      "ban_scope": "head-loss swaps of the triplet+BCE hybrid toward vote-consistent (NCA/soft-kNN), contrastive (SupCon), or mixup-BCE objectives at 7B frozen-encoder feature scale; tau/alpha retunes = tactics, banned; sole KS survivor A1a-nca-t0.1 x ZH val-sel +0.0112 3/3 = within-noise measured-not-promoted (D7-DEAD limbo, may cite as observation only). First measured negative for trained-reshaping-unlocks-oracle-headroom; F66 selection-locked pools untouched."
     }
   ],
   "banned_constraints": [
