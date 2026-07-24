@@ -109,5 +109,56 @@ one GPU job:
 - **Cleanup** — `rm -rf logging/_smoke_bidir`; then re-verify collision targets ABSENT and banked caches
   UNTOUCHED.
 
-**Smoke job 13469: PENDING (JobHeldUser)** at write time (no dependency). Waited out, never forced. Results
-transcribed below once it completes.
+**Smoke job 13469: COMPLETED exit 0:0, Elapsed 00:01:03** (A100-SXM4-80GB, `foscsmlprd01`; auto-released from
+`JobHeldUser`, never forced; running aggregate was zero). Full log `slurm/logs/smoke_bidir_13469.out`.
+
+- **Namespace (echoed):** `dataset='HateMM', lora_dir='logging/lora/HateMM_curric', out_model_tag='_smoke_bidir',
+  EXP_FOLDER='logging/_smoke_bidir', num_frames=8, max_pixels=151200, splits='test', limit=2, device='cuda'` —
+  frozen runner unedited; distinct `_smoke_bidir` tag + throwaway EXP_FOLDER (never wrote `data/CLIP_Embedding/`).
+- **Part A (apply_bidir_mask on the real merged 7B, review note 4 coverage):**
+  `[BIDIR] mask-flip patch installed on model.model; is_causal=False on 28 decoder attention module(s);
+  attention is now bidirectional.` — the sdpa assert PASSED (no AssertionError) and the `is_causal=False` loop
+  ran over all **28** decoder attention modules. Extraction: `Saved 'test_seen': N=2, Dv=3584, Dt=3584,
+  zero-vector videos=0`; no OOM, no traceback, the L306 masked-scatter invariant held at 8 frames.
+- **Part B (shape/finite/norm + bidir ≠ causal DIFFER):** smoke ids `['hate_video_1','non_hate_video_4']`,
+  img/text shape `(2,3584)`, L2 norms `[1.0,1.0]`/`[1.0,1.0]`, NaN/Inf=0. **DIFFER PASS** — id-matched vs the
+  banked HateMM-curric causal cache: `hate_video_1` (banked row 0) img max|Δ|=2.452e-01, text max|Δ|=3.166e-01;
+  `non_hate_video_4` (row 1) img max|Δ|=1.315e-01, text max|Δ|=2.592e-01. **No row bit-identical to causal ⇒ the
+  mask flip genuinely changed the representation end-to-end (patch did NOT silently fail).**
+- **Part C (real-model non-causality belt):** `TYPE_CHECK: model.model is Qwen2_5_VLModel`;
+  `MASK_CHECK: non-None all-zeros mask shape=(1, 1, 10, 10) max|mask|=0.0`; `BELT: PASS` — the merge preserves
+  `model.model` as the decoder and the bound `_update_causal_mask` returns the NON-None all-zeros mask.
+- **Cleanup:** `logging/_smoke_bidir` **deleted**; collision targets re-verified ABSENT after deletion; banked
+  causal caches re-checked UNTOUCHED (sha16 + mtimes bit-identical to the §2 pre-run table for all 6).
+
+**SMOKE_VERDICT: PASS.** Cleared to submit the real chain.
+
+## 5. Real chain — single-submitted (prereg §6; NO `--time`; SEQUENTIAL, afterok-wired)
+
+Final `sha256sum` re-verified at the submit instant — prereg `3c532e53…`, A `36cedbac…`, A2 `03f39e09…`,
+B `0f17fce6…`, C `82a69e74…` [ALL MATCH]; `bash -n` B and C = SYNTAX_OK; authorization intact.
+
+| job | id | script + args | dependency | CPU/mem/GPU | ~cost |
+|---|---|---|---|---|---|
+| J1 extract bidir | **13470** | `gen_embed_mllm_bidir.sbatch` (ZH `logging/lora/MHC_zh`→`-LoRA-bidir_HF`, then HateMM `logging/lora/HateMM_curric`→`-LoRA-curric-bidir_HF`; 8 frames) → `data/CLIP_Embedding/{MHC_zh,HateMM}/{train,dev_seen,test_seen}_…-bidir…_HF.pt` | (none) | 8 CPU / 64 G / 1×A100 | ~0.5–0.7 GPU-h |
+| J2 head 3-seed | **13471** | `enc3seed_bidir.sbatch` (ZH-bidir + HateMM-curric-bidir seeds 0/1/2, group `RAC_video_bidir`) | `afterok:13470` | 8 CPU / 64 G / 1×A100 | ~2 min |
+
+**Dependency graph (scontrol-verified):** `13470 → 13471` (J2 `Dependency=afterok:13470(unfulfilled)`). The head
+cannot start until extraction succeeds ⇒ the two jobs **never run concurrently**; peak footprint 8 CPU / 64 G /
+1 GPU (within 16/128/2 cap; never two 16-CPU jobs). Both submitted `sbatch --parsable`, carry NO `--time`. The
+readout chain had already cleared the queue (prereg §6 sequencing satisfied).
+
+## 5.1 Queue state at submit — both PENDING (JobHeldUser); WAIT never force
+
+- J1 **13470 PENDING (JobHeldUser)** (Dependency null).
+- J2 **13471 PENDING (JobHeldUser)** + `afterok:13470(unfulfilled)`.
+
+Running aggregate ZERO at submit ⇒ favorable for auto-release (the smoke 13469 auto-released from the same hold).
+Per CLAUDE.md the `JobHeldUser` hold is **waited out, NEVER forced**. If J1 stays held > 2 h, a status line is
+committed and the turn ends PENDING-JOB (orchestrator resumes).
+
+**Expected split sizes for §6 cache sanity:** ZH 579/78/149, HateMM 744/107/215 (gt line counts + banked causal
+cache dims, both re-confirmed this submit). **On J1 (13470) COMPLETE:** cache sanity (§6 — counts/dims/NaN,
+bidir caches DIFFER from causal, banked untouched by mtime). **On J2 (13471) COMPLETE:** transcribe RAW per-seed
+both-protocol numbers (line-numbered) into §7 — NO gates, NO deltas, NO pass/fail (independent 0-context verdict
+reviewer rules).
