@@ -1,0 +1,402 @@
+{
+  "topk": 20,
+  "advance_bar": 0.02,
+  "n_perm": 200,
+  "n_boot": 1000,
+  "rng": 20260725,
+  "datasets": {
+    "MHC_zh": {
+      "dataset": "MHC_zh",
+      "base_tag": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+      "cells": {
+        "ro_L28": {
+          "sha_train": "cf1dba903d22b96e",
+          "sha_dev": "9444097735d4addf",
+          "arms": {
+            "loo": {
+              "fused": {
+                "acc": 0.8717948717948718,
+                "dacc": 0.0,
+                "fix": 0,
+                "brk": 0,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.782051282051282
+              },
+              "text": {
+                "acc": 0.8717948717948718
+              }
+            },
+            "devtrain": {
+              "fused": {
+                "acc": 0.8589743589743589,
+                "dacc": 0.0,
+                "fix": 0,
+                "brk": 0,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.7435897435897436
+              },
+              "text": {
+                "acc": 0.8461538461538461
+              }
+            }
+          }
+        },
+        "ro_L24": {
+          "sha_train": "1d33fe5d69083479",
+          "sha_dev": "a4cf072837e6fe6b",
+          "arms": {
+            "loo": {
+              "fused": {
+                "acc": 0.8717948717948718,
+                "dacc": 0.0,
+                "fix": 3,
+                "brk": 3,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.7948717948717948
+              },
+              "text": {
+                "acc": 0.8589743589743589
+              }
+            },
+            "devtrain": {
+              "fused": {
+                "acc": 0.8589743589743589,
+                "dacc": 0.0,
+                "fix": 3,
+                "brk": 3,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.782051282051282
+              },
+              "text": {
+                "acc": 0.8717948717948718
+              }
+            }
+          }
+        },
+        "ro_ow_L28": {
+          "sha_train": "203d2860fa62efd6",
+          "sha_dev": "5f55c6259e6535ca",
+          "arms": {
+            "loo": {
+              "fused": {
+                "acc": 0.8717948717948718,
+                "dacc": 0.0,
+                "fix": 4,
+                "brk": 4,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.7435897435897436
+              },
+              "text": {
+                "acc": 0.8461538461538461
+              }
+            },
+            "devtrain": {
+              "fused": {
+                "acc": 0.8717948717948718,
+                "dacc": 0.012820512820512886,
+                "fix": 4,
+                "brk": 3,
+                "net": 1
+              },
+              "img": {
+                "acc": 0.7435897435897436
+              },
+              "text": {
+                "acc": 0.8589743589743589
+              }
+            }
+          }
+        },
+        "ro_ow_L24": {
+          "sha_train": "3ad1309dc7500182",
+          "sha_dev": "17c4efb2f7a0c2c0",
+          "arms": {
+            "loo": {
+              "fused": {
+                "acc": 0.8846153846153846,
+                "dacc": 0.012820512820512775,
+                "fix": 4,
+                "brk": 3,
+                "net": 1
+              },
+              "img": {
+                "acc": 0.7435897435897436
+              },
+              "text": {
+                "acc": 0.8461538461538461
+              }
+            },
+            "devtrain": {
+              "fused": {
+                "acc": 0.8589743589743589,
+                "dacc": 0.0,
+                "fix": 3,
+                "brk": 3,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.6923076923076923
+              },
+              "text": {
+                "acc": 0.8589743589743589
+              }
+            }
+          }
+        }
+      },
+      "arms": {
+        "loo": {
+          "R0_acc": 0.8717948717948718
+        },
+        "devtrain": {
+          "R0_acc": 0.8589743589743589
+        }
+      },
+      "guards": {
+        "R0_bit_exact": {
+          "train": {
+            "img_maxabs": 0.0,
+            "text_maxabs": 0.0,
+            "exact": true,
+            "banked_sha": "b2e8e78d19c71d2c",
+            "recompute_sha": "cf1dba903d22b96e"
+          },
+          "dev_seen": {
+            "img_maxabs": 0.0,
+            "text_maxabs": 0.0,
+            "exact": true,
+            "banked_sha": "4c07af75098391c9",
+            "recompute_sha": "9444097735d4addf"
+          }
+        },
+        "R0_bit_exact_pass": true,
+        "perm_null": {
+          "p5": -0.0641025641025641,
+          "p95": 0.07692307692307687,
+          "maxv": 0.10256410256410264,
+          "obs": 0.012820512820512886,
+          "obs_gt_p95": false
+        },
+        "bootstrap": {
+          "dacc_p5": -0.03846153846153855,
+          "dacc_mean": 0.013474358974358974
+        }
+      },
+      "n_dev": 78,
+      "n_train": 579,
+      "winner": {
+        "suffix": "ro_ow_L28",
+        "arm": "devtrain",
+        "dacc": 0.012820512820512886
+      },
+      "advance": false
+    },
+    "HateMM": {
+      "dataset": "HateMM",
+      "base_tag": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+      "cells": {
+        "ro_L28": {
+          "sha_train": "d5a6796733f1fd56",
+          "sha_dev": "a5af3687688d89d5",
+          "arms": {
+            "loo": {
+              "fused": {
+                "acc": 0.8317757009345794,
+                "dacc": 0.0,
+                "fix": 0,
+                "brk": 0,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.7383177570093458
+              },
+              "text": {
+                "acc": 0.822429906542056
+              }
+            },
+            "devtrain": {
+              "fused": {
+                "acc": 0.8504672897196262,
+                "dacc": 0.0,
+                "fix": 0,
+                "brk": 0,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.7570093457943925
+              },
+              "text": {
+                "acc": 0.8037383177570093
+              }
+            }
+          }
+        },
+        "ro_L24": {
+          "sha_train": "6a44cce4f65d4a60",
+          "sha_dev": "92a17d42627cb4b1",
+          "arms": {
+            "loo": {
+              "fused": {
+                "acc": 0.8411214953271028,
+                "dacc": 0.009345794392523366,
+                "fix": 4,
+                "brk": 3,
+                "net": 1
+              },
+              "img": {
+                "acc": 0.7476635514018691
+              },
+              "text": {
+                "acc": 0.8317757009345794
+              }
+            },
+            "devtrain": {
+              "fused": {
+                "acc": 0.8411214953271028,
+                "dacc": -0.009345794392523366,
+                "fix": 3,
+                "brk": 4,
+                "net": -1
+              },
+              "img": {
+                "acc": 0.7570093457943925
+              },
+              "text": {
+                "acc": 0.8317757009345794
+              }
+            }
+          }
+        },
+        "ro_ow_L28": {
+          "sha_train": "1747cb2750e757cf",
+          "sha_dev": "f4e740e01ebd2d95",
+          "arms": {
+            "loo": {
+              "fused": {
+                "acc": 0.7757009345794392,
+                "dacc": -0.05607476635514019,
+                "fix": 4,
+                "brk": 10,
+                "net": -6
+              },
+              "img": {
+                "acc": 0.7289719626168224
+              },
+              "text": {
+                "acc": 0.822429906542056
+              }
+            },
+            "devtrain": {
+              "fused": {
+                "acc": 0.7850467289719626,
+                "dacc": -0.06542056074766356,
+                "fix": 2,
+                "brk": 9,
+                "net": -7
+              },
+              "img": {
+                "acc": 0.7289719626168224
+              },
+              "text": {
+                "acc": 0.8130841121495327
+              }
+            }
+          }
+        },
+        "ro_ow_L24": {
+          "sha_train": "60054f3be1204ca7",
+          "sha_dev": "07c19096a054845a",
+          "arms": {
+            "loo": {
+              "fused": {
+                "acc": 0.8317757009345794,
+                "dacc": 0.0,
+                "fix": 5,
+                "brk": 5,
+                "net": 0
+              },
+              "img": {
+                "acc": 0.7383177570093458
+              },
+              "text": {
+                "acc": 0.8411214953271028
+              }
+            },
+            "devtrain": {
+              "fused": {
+                "acc": 0.8411214953271028,
+                "dacc": -0.009345794392523366,
+                "fix": 3,
+                "brk": 4,
+                "net": -1
+              },
+              "img": {
+                "acc": 0.7383177570093458
+              },
+              "text": {
+                "acc": 0.8411214953271028
+              }
+            }
+          }
+        }
+      },
+      "arms": {
+        "loo": {
+          "R0_acc": 0.8317757009345794
+        },
+        "devtrain": {
+          "R0_acc": 0.8504672897196262
+        }
+      },
+      "guards": {
+        "R0_bit_exact": {
+          "train": {
+            "img_maxabs": 0.0,
+            "text_maxabs": 0.0,
+            "exact": true,
+            "banked_sha": "5e80f39327a74314",
+            "recompute_sha": "d5a6796733f1fd56"
+          },
+          "dev_seen": {
+            "img_maxabs": 0.0,
+            "text_maxabs": 0.0,
+            "exact": true,
+            "banked_sha": "46ee4fd9fcaec80b",
+            "recompute_sha": "a5af3687688d89d5"
+          }
+        },
+        "R0_bit_exact_pass": true,
+        "perm_null": {
+          "p5": -0.04672897196261683,
+          "p95": 0.09392523364485966,
+          "maxv": 0.14953271028037385,
+          "obs": 0.009345794392523366,
+          "obs_gt_p95": false
+        },
+        "bootstrap": {
+          "dacc_p5": -0.028037383177570097,
+          "dacc_mean": 0.009289719626168225
+        }
+      },
+      "n_dev": 107,
+      "n_train": 744,
+      "winner": {
+        "suffix": "ro_L24",
+        "arm": "loo",
+        "dacc": 0.009345794392523366
+      },
+      "advance": false
+    }
+  },
+  "verdict": "KS-readout-dead"
+}

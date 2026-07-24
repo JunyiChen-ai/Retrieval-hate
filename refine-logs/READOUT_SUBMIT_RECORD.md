@@ -185,3 +185,62 @@ CPU-only load of all 24 `-ro_*` caches:
   for all 6 (distinct `-ro_*` suffix did not clobber the deployed floor).
 
 `SANITY_VERDICT: PASS.` Cleared to run the $0 CPU screen.
+
+## 7. $0 CPU dev screen (prereg §1.2 / §3) — **KS-readout-dead** (all cells ≤ +0.020; no test-touch)
+
+`CUDA_VISIBLE_DEVICES="" OMP_NUM_THREADS=4 python scripts/analysis/readout_screen.py` (artifact C, sha
+`f56badb6…`), CPU-only, test split hard-blocked (`assert split ∈ {train, dev_seen}` + `CUDA_VISIBLE_DEVICES==""`
+assert both held). Output: `refine-logs/READOUT_SCREEN_OUT.json` (topk 20, advance_bar 0.020, n_perm 200,
+n_boot 1000, rng 20260725). Fused key = decision object; per prereg the screen decides KS-dead vs promote.
+
+**Machinery-validity guards (both datasets):** R0 bit-exact PASS (train+dev `img/text max|Δ| == 0`);
+R0-vs-R0 degenerate recovery `Δacc = 0.0000` in both arms both datasets.
+
+### 7.1 Per-cell dev screen (fused key; §3.1 advance bar = +0.020)
+
+**ZH `MHC_zh`** — n_dev = 78; R0 abs acc: LOO 0.8718 / dev-query 0.8590; R0 bit-exact PASS.
+
+| cell | LOO Δacc (fix/brk/net) | dev-query Δacc (fix/brk/net) | best Δacc |
+|---|---|---|---|
+| R1 `ro_L24` | +0.0000 (3/3/0) | +0.0000 (3/3/0) | +0.0000 |
+| R2 `ro_ow_L28` | +0.0000 (4/4/0) | **+0.0128** (4/3/1) | +0.0128 |
+| R3 `ro_ow_L24` | +0.0128 (4/3/1) | +0.0000 (3/3/0) | +0.0128 |
+
+Winner `ro_ow_L28` / dev-query, best Δacc **+0.0128** (< +0.020). perm-null(200): p95 = +0.0769,
+obs +0.0128 **not > p95** (winner sits INSIDE the null band). bootstrap(1000): Δ p5 = −0.0385, mean +0.0135.
+`advance = False`.
+
+**HateMM** — n_dev = 107; R0 abs acc: LOO 0.8318 / dev-query 0.8505; R0 bit-exact PASS.
+
+| cell | LOO Δacc (fix/brk/net) | dev-query Δacc (fix/brk/net) | best Δacc |
+|---|---|---|---|
+| R1 `ro_L24` | **+0.0093** (4/3/1) | −0.0093 (3/4/−1) | +0.0093 |
+| R2 `ro_ow_L28` | −0.0561 (4/10/−6) | −0.0654 (2/9/−7) | −0.0561 |
+| R3 `ro_ow_L24` | +0.0000 (5/5/0) | −0.0093 (3/4/−1) | +0.0000 |
+
+Winner `ro_L24` / LOO, best Δacc **+0.0093** (< +0.020). perm-null(200): p95 = +0.0939, obs +0.0093 **not >
+p95** (INSIDE the null band). bootstrap(1000): Δ p5 = −0.0280, mean +0.0093. `advance = False`. (The one-word
+readout `ro_ow_L28` actively regresses HateMM, net −6/−7.)
+
+### 7.2 Decision (prereg §3.2 / §3.5)
+
+`R0 bit-exact: PASS both splits both datasets. Winner: ZH ro_ow_L28 dev-query +0.0128 / HateMM ro_L24 LOO
++0.0093 — both below the +0.020 advance bar. Verdict: KS-readout-dead.`
+
+**KS-readout-dead** — ALL grid cells ≤ +0.020 over R0 on the $0 dev screen (no cell clears +0.020 on either
+dataset in either arm). Both sub-threshold winners sit **inside** the permutation-null band (obs < p95) with
+**negative** bootstrap 5th-pct Δ ⇒ indistinguishable from label-shuffle noise, not near-misses. Per prereg
+§3.2 / the freeze §6 the axis is **CLOSED at ~2 GPU-h (extraction only); NO verdict GPU, ZERO test-touch,
+NO head job.** The chain ends here. (The negative is a candidate F-finding — the orchestrator's call; this
+executor mutated no `state/`.)
+
+`READOUT_SCREEN_OUT.json` retained as the machine-readable record.
+
+## 8. Closeout — CHAIN COMPLETE (KS-readout-dead)
+
+Sha re-verify (submit + submit-instant) ALL MATCH; codex-review gate CLEARED (no P1/P2/P3); extraction smoke
+PASS (4 cells (3,3584), 0 NaN, R0 bit-exact vs banked, one-word tokenized, no OOM), smoke artifacts deleted;
+collisions CLEAN throughout; combined extraction 13468 COMPLETED exit 0:0 (02:00:08); cache sanity PASS
+(row counts, dims, 0 NaN/Inf, HateMM train row 355 guard, R0 full-cache bit-exact 6/6, banked UNTOUCHED);
+$0 CPU screen **KS-readout-dead** (all cells ≤ +0.020, both winners inside perm-null band). **NO 3-seed head
+job submitted; ZERO test-touch.** No `state/` mutation. Nothing pushed.
