@@ -65,6 +65,37 @@ All banked sha16 MATCH. mtimes to be re-checked after the run (§6).
 ## 3. Codex review of the extractor (prereg §6 step 0 / freeze obligation #1) — reads model internals
 
 Artifact A reads model internals (hidden-state layer index + generation-position token), so per CLAUDE.md /
-the prereg's own step 0 it is codex-review-gated BEFORE any GPU. `gpt-5.4` `xhigh` via CLI.
+the prereg's own step 0 it is codex-review-gated BEFORE any GPU. `codex exec -m gpt-5.4 -c model_reasoning_effort=xhigh`
+via CLI (session `019f9454-…`; 122,924 tokens). Codex read the installed transformers 4.49.0 Qwen2.5-VL
+modeling + processing source and the local tokenizer snapshot; it did NOT run a full forward (source-based
+review + offline tokenizer/template spot-check).
 
-_(filled below on completion)_
+**VERDICT: NO P1/P2/P3 findings** — "I do not see a readout-grid change that breaks the deployed extractor's
+non-readout behavior." All 7 requested invariants confirmed with source citations:
+
+1. **Layer indexing CORRECT.** `Qwen2_5_VLModel` appends embeddings once, per-layer states in the decoder
+   loop, then the final post-`self.norm` state ⇒ a 28-layer model yields 29 hidden-state entries, so
+   `hidden_states[28] == hidden_states[-1]` (the deployed read) and `hidden_states[24]` is a real intermediate.
+   `model.config.num_hidden_layers` is the LLM depth (vision_config uses `depth` separately); the
+   `assert num_hidden_layers == 28` guard is correctly placed after load/merge, before extraction.
+2. **R0 bit-exact.** `_pool_span()` matches the deployed `_encode()` math for both spans (last-`<|im_start|>`
+   boundary, `.float()`, `F.normalize(dim=0)`, `.detach().cpu()`); baseline prompts + Title/Transcript/(none)
+   assembly identical; only the one-word passes + `-ro_*` suffix differ.
+3. **Masked-scatter invariant valid.** The processor expands each `<|video_pad|>` into
+   `video_grid_thw.prod()//merge_size**2` token slots before tokenization; forward checks
+   `n_video_tokens == n_video_features` before `masked_scatter` ⇒ decoder seq length == `input_ids` length, so
+   `last_hidden.shape[0] == input_ids.numel()` holds at 8 frames.
+4. **`last_token` reads a sane deterministic prompt-EOL position** (assistant-header newline after
+   `add_generation_prompt=True`; processor default `padding=False`; single example) — not a pad token.
+5. **Determinism matches the deployed path** (load kwargs, LoRA merge, bf16/sdpa, `device_map=None`, processor
+   `max_pixels`, `np.linspace` sampling, `output_hidden_states=True/use_cache=False`). 4 sequential forwards/item
+   (~2× wall time) but peak memory ~1 deployed forward (layers 24/28 harvested from one forward; prompt passes
+   not concurrent).
+6. **Clobber-safe:** every save uses `out_tag = base_tag + "-" + suffix`, every `CELLS` suffix is `ro_*` ⇒ the
+   un-suffixed deployed cache is never written.
+7. No other variant-specific crash / silent-corruption path; cache keys + `(N,3584)` shape aligned with the
+   deployed contract.
+
+Both the executor's own read and Codex agree — **no P1s; gate CLEARED**. The extractor was **NOT edited**
+(sha `ef05f3d4…` still matches the frozen block; authorization intact). Cleared for GPU.
+Full transcript: session scratchpad `codex_readout_review.txt`.
