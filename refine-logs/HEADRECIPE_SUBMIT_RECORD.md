@@ -118,3 +118,60 @@ all cosmetic / out-of-config; none affect the deployed head-recipe result.
 falsely dismissed); both P2s explicitly accepted as inactive-under-deployed-config with documented
 justification. Per prereg §4.5 there are NO blocking findings ⇒ no code fix ⇒ no re-freeze ⇒ gate CLEARED.**
 Artifacts A/B/C shas UNCHANGED by the gate (still `1012c9e3…`/`e7b61df4…`/`c88f685f…`; authorization intact).
+
+## 4. Smoke (prereg §4.4) — PASS
+
+### 4.1 $0-CPU checks (login-node, CUDA_VISIBLE_DEVICES="", seconds) — PASS
+
+Script: session scratchpad `hr_cpu_smoke.py` (imports the CURRENT frozen `run_rac.parse_args`; replicates the
+`classifier.py:129-136` masking exactly).
+
+- **(A) mod-dropout mask-rate (§4.4.2b), training mode, p=0.3, n=200000:** `drop-rate=0.2965`,
+  `img=0.1487`, `text=0.1478`, **BOTH-dropped=0** (at-most-one-stream invariant holds), fill-applied to the
+  dropped rows (ones), tensors changed in training. **Eval-mode gate (self.training=False) ⇒ NO fill**
+  (any-change=False). Matches the prereg reference draw (0.2953 / 0.1525 / 0.1427 / 0) within stochastic
+  tolerance (review Note 3: reference is one seed's draw, not a fixed target). `MASK_RATE_SMOKE: PASS`.
+- **(B) no-flag Namespace equivalence (§4.4.3 / §4.1b):**
+  - (B1) headrecipe with `ARM_FLAGS=""` vs the floor command, BOTH parsed by the current `run_rac`: differ
+    ONLY in `{group_name, exp_comment}`; the 4 new keys are inert-default in both
+    (`sam=False, sam_rho=0.05, mod_dropout=False, mod_dropout_p=0.3`).
+  - (B2) headrecipe no-flag (current code) vs the BANKED 13150 seed0 Namespace (old code, no new keys):
+    the ONLY keys present now but absent in banked are EXACTLY the 4 inert keys
+    `{sam, sam_rho, mod_dropout, mod_dropout_p}`; every other shared arg is byte-identical; the sole residual
+    shared-key difference is `output_path` (a path string DERIVED in `main()`, captured pre-derivation at
+    parse time — inert, not a training knob). `NO_FLAG_NAMESPACE_EQUIV: PASS`.
+
+  This confirms F0.7: flags-off ⇒ Namespace byte-identical to the banked floor modulo the 4 inert keys +
+  derived-inert `group_name`/`exp_comment`/`output_path` ⇒ the banked floors need NO re-run.
+
+### 4.2 GPU smoke (prereg §4.4.1 / §4.4.2a) — PASS; artifacts deleted
+
+Throwaway smoke sbatch (session scratchpad `hr_smoke.sbatch`, mirroring the family env block; `--epochs 3`,
+seed 0, `--group_name _smoke_hr`, on the ZH LoRA cache; 3 runs = no-flag baseline + ARM A `--sam` + ARM B
+`--mod_dropout`). **Job 13477** (`hr_smoke`): `sbatch` (NO `--time`); auto-released from `JobHeldUser` (never
+forced; running aggregate was zero); **COMPLETED** exit 0:0, Elapsed 00:00:31 (A100).
+
+| arm (flags) | per-epoch tqdm (3/3) | loss lines w/ NaN·Inf | assert-hits | tracebacks | epochs done |
+|---|---|---|---|---|---|
+| baseline (none) | `1.19 it/s` (≈0.84 s/epoch) | 0 | 0 | 0 | 3 ✓ |
+| ARM A (`--sam True --sam_rho 0.05`) | **`1.19 s/it`** (≈1.19 s/epoch) | 0 | 0 | 0 | 3 ✓ |
+| ARM B (`--mod_dropout True --mod_dropout_p 0.3`) | `1.17 it/s` (≈0.85 s/epoch) | 0 | 0 | 0 | 3 ✓ |
+
+- **(i) loss finite:** every loss line finite across all 3 epochs for all 3 arms (0 NaN/Inf; sample baseline
+  0.878880 → 0.813780 → 0.621143).
+- **(ii) completes / re-mine-reuse assert does NOT trip:** ARM A ran to completion with **0 AssertionError**
+  and **0 Traceback** — the SAM re-mine-reuse `assert` (F0.6) executed on the SAM path and did NOT trip; FAISS
+  re-mine fired once/epoch (reindex_every_step=False) with no crash.
+- **(iii) SAM double-step VISIBLE:** ARM A per-epoch wall is `1.19 s/it` vs the flag-off baseline `1.19 it/s`
+  (= 0.84 s/it) — tqdm flips from `it/s` to `s/it` exactly at the 1-second boundary; SAM's per-epoch time is
+  **≈1.42× the baseline**, the signature of the second forward-backward. ARM B (`1.17 it/s`) ≈ baseline (no
+  extra optimizer step; only the in-forward mask), as expected.
+
+**Cleanup:** `logging/Retrieval/MHC_zh/_smoke_hr` + `slurm/logs/hr_smoke_*` (3 trainlogs + `.out`) **deleted**;
+§4.3 collision targets re-verified ABSENT after deletion (RAC_video_headrecipe / hr_*.trainlog / _smoke_hr /
+hr_smoke_* all 0); banked ZH + HateMM caches re-checked UNTOUCHED (4/4 spot-check sha16 MATCH freeze §5.2 — the
+distinct `_smoke_hr` group never clobbered the deployed tag). Throwaway `hr_smoke.sbatch` + `hr_cpu_smoke.py`
+live only in the session scratchpad.
+
+**SMOKE_VERDICT: PASS.** Cleared to submit the real family job.
+
