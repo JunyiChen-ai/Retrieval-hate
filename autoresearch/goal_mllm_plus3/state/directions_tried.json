@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-14T13:03:32Z",
+  "updated": "2026-07-24T19:27:26Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -101,6 +101,202 @@
       "id": "R3-C3geo",
       "dir": "Qwen-embedding-geometry hard-negative mining for triplet head",
       "epitaph": "killed pre-ceremony by forensic recon (C3GEO_FORENSIC_RECON.md): pipeline already mines global hardest-opposite-label in head's evolving space; frozen-space swap = textbook 2024-25 trick, cannot clear D7-tightened novelty bar; performance prior near-zero (frozen source weaker or encoder-swap-by-backdoor, B1/B2/B4 negative); 0 GPU"
+    },
+    {
+      "direction": "W2-B frozen-CLIP subclip set-matching (K=4, MeanMaxSim family, zero-training retrieval-metric swap)",
+      "killed": "2026-07-14 cloud-triage probe, verdict (d) NEGATIVE (W2B_VERDICT_REVIEW.md 0f43bdd)",
+      "why": "HateMM raw bar FAIL (neg delta, 0/4 corroboration legs); MHC-EN survival bar FAIL (~20x under); oracle survived both => metric cannot realize existing headroom on frozen CLIP",
+      "ban_scope": "mechanism-level: zero-training frozen-CLIP sub-clip set-matching as accuracy lever on HateMM/MHC-EN; S2S (Qwen per-frame) NOT covered; prior update = weak-negative for don't-pool family"
+    },
+    {
+      "direction": "W2-E prototype memory (k-means/class prototypes over banked pooled vectors; prototype-as-key or mode-local kNN)",
+      "killed": "2026-07-14 NO-GO at forensic recon, pre-ceremony (W2E_FORENSIC_RECON.md 954b0cb)",
+      "why": "zero new signal (deterministic lossy fn of same pooled vector); textbook trick fails D7 standalone+composite; no admissible non-vacuous oracle; prior LOW worsened by W2-B kill",
+      "ban_scope": "recon-level: zero-training unsupervised reorganisation of frozen pooled features as accuracy lever (same meta-family as C3geo); $0 CPU negative-footnote fallback allowed as batch companion only, never GPU"
+    },
+    {
+      "direction": "round-3 C5 (= old-C4 7B relational CRD): distil banked frozen-Qwen-7B geometry into head training (CRD/relational-KD term added to triplet+BCE hybrid)",
+      "killed": "2026-07-14 NO-GO at forensic recon, pre-ceremony (C5_FORENSIC_RECON.md 8468c5e)",
+      "why": "textbook feature-KD fails D7 (distilled geometry = the D7-dead encoder-swap representation; outcome-class-isomorphic to C3geo); oracle ceiling = banked encoder-swap/B1 result (HateMM-only pass, EN fail, ZH -0.0112) already fails >=2-dataset goal; teacher=student-scale 7B => no distillation gap",
+      "ban_scope": "recon-level: frozen-Qwen-geometry-as-head-training-signal family (C3geo + C5 both retired); NOT the data-veto '(C5)' external-pool candidate (different item, separately banned). 72B-teacher variant remains conditional on user download ruling (old C4 deferral logic)"
+    },
+    {
+      "direction": "B5 ZH per-encoder threshold calibration (fixed class-blind threshold -> dev-mF1-calibrated tau, convert frozen-Qwen AUC edge)",
+      "killed": "2026-07-15 probe DEAD K1 (B5_VERDICT_REVIEW.md 50f01b9; oracle kill-switch both protocols; A11 gate amendment chain 5295076/a08deed/0f8b3e9)",
+      "why": "oracle ceiling itself under +0.03 AND-bar both protocols: the ZH roc +0.050 ranking edge is easy-example ordering, unconvertible at ANY threshold incl. label-oracle; honest preview negative, D3-fragile",
+      "ban_scope": "performance-lever level: per-encoder threshold/operating-point calibration as conversion lever on ZH (and by the oracle logic, any dataset where the AUC edge is easy-example-ordering); diagnosis value banked: B1 mystery answered. D7/novelty untouched"
+    },
+    {
+      "direction": "S2S segment-set frameset retrieval (Qwen2.5-VL per-frame-group causal-prefix representations; symmetric SET/MeanMaxSim + C2/ASYM cell; incl. cancelled 16f sensitivity arm)",
+      "killed": "2026-07-16 probe KILL both datasets (S2S_PROBE_VERDICT_REVIEW.md 2c96ab6; raw record c939c13, Modal app ap-iE3OEkUra7f37UuzDk2uz3)",
+      "why": "HateMM primary +0.0035 acc fails +0.05 bar on all six sub-conditions (K5/K5b/K6/K7 fire); MHC-EN NEGATIVE (-0.0397, SET worse than POOLED); prereg SS6.6 outcome (d) = retrieval-object family DEAD; escalation tag refuted 3x (precondition false, no SS11 stage under (d), MHC beat non-sig + within-drift + ASYM below POOLED); oracle headroom real (+0.0917/+0.1399) but MeanMaxSim cannot convert it = P3-graveyard pattern (ceiling exists, operator can't recover it); pooling effectively lossless on these representations",
+      "ban_scope": "family-level: retrieval-object/don't-pool family CLOSED across encoders (W2-B frozen-CLIP + S2S Qwen both dead); no SS11 downstream, no head GPU, no ASYM standalone; 16f arm CANCELLED unrun; frozen caches + untouched test framesets retained for audit only"
+    },
+    {
+      "direction": "CTF supervised temporal-pool / arc-increment of causal-prefix frameset as ONE key (Wave-3 #1; realizations 1a arc + 1b learned-pool)",
+      "killed": "2026-07-16 $0 G0-cond conditional-info gate, kill-side all 4 cells with VALID calibration (CTF_GATE_RECORD.md 0eb6d33, F39; non-binding-by-design but calibrated-zero => retired per G0-cond doctrine, A-line precedent)",
+      "why": "flat [g_1..g_T] and arc Delta carry ZERO conditional label info over Z_best (HateMM +0.0000, MHC -0.0029; higher-k monotone-negative = redundant-and-diluting); label-oracle calibration 1.0000 proves machinery could have seen a signal",
+      "ban_scope": "meta-family closure: cumulative-causal frame-group tensor as ANY key ingredient (unsupervised set-matching F37 + supervised pool/arc F39 + structural F35 = three-level confirmation); no GPU ever spent; do not re-propose temporal structure over Qwen framesets in any operator class"
+    },
+    {
+      "direction": "W2-A transcript-first grounded retrieval key (joint forward [transcript][frames][instruction] through Qwen2.5-VL-7B, vision-span pool as grounded key; deliberately exploited causal cumulation)",
+      "killed": "2026-07-16 probe DEAD both datasets at binding K9, outcome (d) (W2A_PROBE_VERDICT_REVIEW.md 7228373; raw record 688ef87; chunked lineage ruled ADMISSIBLE)",
+      "why": "grounded transcript-first Qwen vision key: conditional-info Dacc ~= 0 vs Z_best(8960-d) on both datasets (HateMM -0.0000, MHC -0.0038; calib valid; covered-rows view also dead); advisory kNN grounded key WORSE than concat (-0.026/-0.051); oracle-survives (+0.0635/+0.0970) necessary-not-sufficient — CLIP/marginal-redundant, C3-style null",
+      "ban_scope": "cross-modal-grounding cell CLOSED; SS11 head-training never triggered; no GPU/SLURM/Modal on this route; test grounded keys stranded at 0 test-touch (audit-only); W2 wave now fully dead (W2-A/B/C/E + S2S); third oracle-exists-unconvertible instance (P3/S2S/W2A) — any future per-item channel-selection proposal must first explain how it beats the K9 calibrated-zero"
+    },
+    {
+      "direction": "APX prosody-transcript incongruity (Wave-3 #3; classical eGeMAPS 88-d whole-video prosody as auxiliary channel, HateMM-primary) + AVC (#4, prosody x visual-segment correspondence, gated behind APX — never started)",
+      "killed": "2026-07-16 $0 G0-cond gate K-APX-0 OR-kill, both conditions fire, calibration VALID (APX_GATE_RECORD.md 9c54faf, F41)",
+      "why": "best arm -0.0038 CI[-0.0113,+0.0033]; strictest raw-88d arm +0.0005 = exactly zero (rules out PCA underpowering); F31 hazard confirmed: ASR transcript already banks spoken-hate content, prosody conditionally redundant over Z_best",
+      "ban_scope": "classical whole-video prosody as auxiliary channel on HateMM; AVC correspondence variant dies with its gate; audio axis PARKED — any future audio proposal (incl. W2-D Qwen-Omni download) must first explain how it beats a zero-information classical baseline through the same conditional screen"
+    },
+    {
+      "direction": "GIR grounded-incongruity residual grd−ungrd as thin channel (Wave-3 #2; activated by pre-registered branch raw-FAIL+oracle-SURVIVE after W2-A verdict)",
+      "killed": "2026-07-16 $0 G0-cond gate K-GIR-1 OR-kill ALL 5 cells, calibration VALID everywhere (GIR_GATE_RECORD.md b64a85b, F43)",
+      "why": "binding r_cache HateMM +0.0012 / MHC −0.0051 (CI straddle 0); r_cache PROVEN exact linear function of two baseline columns (residual norm 0) — W2-A K9 zero mathematically covered it, gate confirmed the prediction; design-canonical r_field (+0.0000/−0.0064) and covered-rows control also null",
+      "ban_scope": "grounded-residual family closed; with this the Wave-3 pool is EMPTY and round-3 constraint space is EXHAUSTED — no surviving candidate inside {no gold in-method, no OCR, single-dataset train, 7B-local, D7 encoder-exclusion}; further moves = user rulings per TERMINUS_round3"
+    },
+    {
+      "direction": "W2-C temporal order-kernel arm (DTW/transition kernels over frameset; was queued as fold-into-S2S-prereg-only-if-S2S-shows-life)",
+      "killed": "2026-07-16 condition extinguished by S2S KILL (2c96ab6) — never reached ceremony; priors already lowered twice (F30 pre-check ad48dcc: DTW edge = kernel artifact within order-shuffle null; F35/F36: cumulative-causal groups make frame-local order semantics unavailable)",
+      "why": "its sole authorized vehicle (S2S prereg order-kernel arm) is dead; standalone re-proposal would be a new direction requiring non-isomorphism vs the closed don't-pool family AND vs the cumulative-causal structural finding",
+      "ban_scope": "as-posed: temporal order-kernel over Qwen frameset representations; any revival must first defeat F35 (groups are cumulative prefixes, not frame-local states) with a different representation object"
+    },
+    {
+      "name": "router_cross_channel_per_item (round-4 line B)",
+      "status": "DEAD",
+      "killed": "2026-07-16T16:15:46Z",
+      "record": "refine-logs/ROUTER_GATE_RECORD.md (30d0ee1)",
+      "finding": "F47",
+      "ban_scope": "Per-item cross-channel selection/routing over banked channels: CLOSED at all three supervision sources (unsupervised=K9 zeros; train-supervised=memorization-degenerate target, CLIP LOO 0.998; dev-supervised=negative at CV ceiling -0.046 < perm-null). Decision-level meta-features (vote margins, purity, sub-votes, confidence differential, transcript stats) carry NO per-item routing signal, GBM or linear. Do NOT re-propose per-item selectors over frozen channels regardless of feature family or nonlinearity unless the selector input is a genuinely NEW information source not derivable from banked features/votes."
+    },
+    {
+      "name": "MJ modality-reliability router input (wave-4 #2)",
+      "status": "DEAD (pre-GPU, arithmetic)",
+      "killed": "2026-07-16T16:38:32Z",
+      "record": "refine-logs/MJ_FORENSIC_RECON.md (d57d05d)",
+      "finding": "F49",
+      "ban_scope": "Modality-locus judgments (MLLM or otherwise) as router inputs: dead at alignment ceiling (a<=0.588 < q_req 0.663). F47 carve-out now requires demonstrated alignment>0.663 from banked evidence BEFORE any gate. Structural twin of P2."
+    },
+    {
+      "name": "FA fusion/composition reweight + cross-encoder concat (wave-4 #1)",
+      "status": "DEAD",
+      "killed": "2026-07-16T16:45:23Z",
+      "record": "refine-logs/FA_GATE_RECORD.md (e0877c9)",
+      "finding": "F50",
+      "ban_scope": "Modality-fusion levers over frozen encoders: CLOSED. Within-Qwen reweighting = rotation at every w (incl. undoing Hadamard attenuation). Cross-encoder composition (CLIP-img + Qwen-text): best-ever MHC-EN AUC 0.898 but unconvertible at oracle threshold (+0.025 < +0.03 B5 bar) — do not re-propose fixed compositions, reweights, or per-modality temperatures over banked frozen features; conversion requires adaptation (F45) or a new information source with alignment>0.663 (F49 bar)."
+    },
+    {
+      "name": "retrieval-loss-coupled LoRA (wave-5 cand 1)",
+      "status": "PRE-KILLED",
+      "killed": "2026-07-16T16:54:24Z",
+      "record": "refine-logs/WAVE5_CANDIDATES.md (7166232)",
+      "finding": "F51",
+      "ban_scope": "= P9b's adapted object (retrieval loss into LoRA'd MLLM); governed by P9b redistribution law; do not re-propose. TARC clarification recorded: RGCL-loss-into-encoder is P9b primary-loss territory, not TARC aux-loss territory."
+    },
+    {
+      "name": "premise-(d) CLIP-img x LoRA-EN-text composition",
+      "status": "DEAD",
+      "killed": "2026-07-18T00:09:18Z",
+      "record": "refine-logs/PREMISE_D_GATE_RECORD.md (6e6061b)",
+      "finding": "F55",
+      "ban_scope": "Cross-encoder composition with ADAPTED text on EN: dead (oracle pinned +0.025; adaptation degrades EN AUC). F50 ban now covers frozen AND adapted feature compositions on EN. EN closed at all three levels."
+    },
+    {
+      "name": "AUG MLLM train-data augmentation (generator role)",
+      "status": "NO-GO (pre-kill, dominated)",
+      "killed": "2026-07-18T10:02:33Z",
+      "record": "refine-logs/AUG_FORENSIC_RECON.md (f1abd28)",
+      "finding": "F60",
+      "ban_scope": "MLLM-generated train-data augmentation for encoder adaptation: dominated by cand-2's measured ZH tie (same object/leg/split, weaker hook); val-sel = dev-selection noise unreachable from train side; no promoting cheap gate. Do not re-propose without D7 generator-role sub-ruling."
+    },
+    {
+      "name": "LP graph-diffusion decision topology (redteam Family A)",
+      "status": "KILL ($0 gate, all 3 datasets)",
+      "killed": "2026-07-19T15:53:57Z",
+      "record": "refine-logs/LP_GATE_RECORD.md + LP_GATE_OUT.json (7be6e3f)",
+      "finding": "F63",
+      "ban_scope": "Multi-hop label propagation / graph diffusion over the frozen fused-key kNN memory graph (inductive, train-graph-only, LLGC closed-form, alpha in {0.5,0.9}, k=20): monotone-negative in alpha, all datasets at/below one-hop, EN positive inside perm-null. Scope = diffusion-smoothing of the TRAIN LABEL FIELD read through the deployed vote. Does NOT price: learned graph weights trained end-to-end (P9b-object territory), transductive test-graph variants (out-of-box regardless)."
+    },
+    {
+      "name": "Single-trajectory SWA of head checkpoints (redteam Family C) — HateMM leg",
+      "status": "KILL both datasets (HateMM decisive; ZH dev-underpowered, 0/3 cond_A)",
+      "killed": "2026-07-19T15:53:57Z",
+      "record": "refine-logs/SWA_PROBE_RECORD.md + OUT.json (5a40bb1 + 17db531)",
+      "finding": "F62+F62b",
+      "ban_scope": "SWA weight-averaging of per-epoch head checkpoints: HateMM (mid-peak dev shape) loses 0.9-6.6 dev pts on tax-bearing seeds; ZH (flat/jittery F45 shape) 0/3 pre-declared windows uniformly at ceiling, dev too underpowered to authorize the test-touch. Do not re-propose at head level; a re-open requires either a bigger dev or a user ruling to spend test on an unlicensed comparison."
+    },
+    {
+      "name": "Learned-audio Whisper-encoder third stream (redteam GAP-1)",
+      "status": "KILL ($0 K-LAUD gate, all 3 datasets, both conditioning arms)",
+      "killed": "2026-07-19T16:38:52Z",
+      "record": "refine-logs/LAUD_GATE_RECORD.md + LAUD_GATE_OUT.json (3573f82); recon AUDIO_AXIS_FORENSIC_RECON.md (166f9e2b)",
+      "finding": "F64",
+      "ban_scope": "Whisper-encoder hidden-state audio embeddings (mean+max pooled, video- or 4-segment-level) as auxiliary channel over any current representation: zero conditional info at K-LAUD bars on HateMM/EN/ZH. Does NOT close: general-audio encoders (AST/BEATs) = download-gated user relaxation, prior now lowered by this null."
+    },
+    {
+      "name": "Vision-tower LoRA adaptation (redteam #2 / GAP-5b)",
+      "status": "CLOSED — image moved, zero head conversion (K-V2 TIE everywhere)",
+      "killed": "2026-07-21T06:36:16Z",
+      "record": "VISION_UNFREEZE_{FORENSIC_RECON fe9639a, PREREG c1592bb, PREREG_REVIEW b93a4be, FREEZE 2a203bd, SUBMIT_RECORD f1364d3, VERDICT_REVIEW 09d02f8}",
+      "finding": "F65",
+      "ban_scope": "LoRA-on-vision+LLM (r16, lora_target all, projector frozen) on EN and HateMM: moves EN image AUC (+0.032 trLOO) but adds nothing over LLM-only LoRA at the head on either dataset/protocol. Does NOT price: higher-rank/full-FT vision (overfit-risky, unmeasured), vision adaptation on ZH (off-mechanism, F0.4-style low prior), 32B/72B vision adaptation (download-gated). F51 two-object closure now empirically upgraded: vision object measured, converts nothing."
+    },
+    {
+      "name": "ISR independent-segment re-encode (redteam #5 / GAP-3)",
+      "status": "NO-GO ($0 pre-gate: alpha flat + beta selection-locked)",
+      "killed": "2026-07-21T07:00:16Z",
+      "record": "refine-logs/ISR_PREGATE_RECORD.md + OUT.json (a6e41f8); recon SEG_REENCODE_FORENSIC_RECON.md (31bcd03)",
+      "finding": "F66",
+      "ban_scope": "Independently re-encoded per-segment features feeding any NON-selecting aggregation: symmetric slice measured ~0 on the third representation object in the family (CLIP frame-local / prefix-Qwen / now the legal-operator slice quantified). Selection operators remain banned by law-III/F49/P11. Re-open requires an operator that converts symmetric structure — the beta decomposition proves none of the tried classes can."
+    },
+    {
+      "name": "Frame budget 16f (redteam #6)",
+      "status": "KILL (KS both protocols; LoRA-16f auto-dead)",
+      "killed": "2026-07-21T09:06:12Z",
+      "record": "refine-logs/FRAME16_{FORENSIC_RECON ec601a6, PREREG 0b5cbb5, PREREG_REVIEW 7164cbb, FREEZE 74968e2, SUBMIT_RECORD 65d7c62, VERDICT_REVIEW 32c2e6f}",
+      "finding": "F67",
+      "ban_scope": "Denser frame sampling (16f) into the pooled dual-stream object on HateMM: ties/regresses the 8f floor at every gate. LoRA-16f defunded by pre-declared spend rule (frozen null -> no stage-2; recorded as spend verdict not inertness proof). 32f not run (multiplicity; strictly dominated by the 16f null prior). Sampling density is not the bottleneck at 7B."
+    },
+    {
+      "name": "Grad-norm validation-free checkpoint selection (F68-P2)",
+      "status": "KILL ($0, mechanism sign-inverted on our head)",
+      "killed": "2026-07-24T13:04:16Z",
+      "record": "refine-logs/GRADNORM_SELECT_PROBE_RECORD.md (ada5849)",
+      "finding": "F69",
+      "ban_scope": "Head-gradient-norm epoch selection on the small retrieval head: correlation sign inverted vs paper (3/3). Do not re-propose gradient-magnitude-based selection at this head scale; other validation-free selection criteria (e.g. flatness/SAM-style) are separate objects."
+    },
+    {
+      "name": "Readout grid: intermediate-layer / one-word-prompt / last-token (F68-P1)",
+      "status": "KILL ($0 screen after 2 GPU-h mandatory extraction)",
+      "killed": "2026-07-24T15:58:01Z",
+      "record": "refine-logs/READOUT_SUBMIT_RECORD.md + READOUT_SCREEN_OUT.json (a60f6cf); prereg frozen 395b94d",
+      "finding": "F70",
+      "ban_scope": "Extraction readout variants (hidden layer L24, one-word prompts, last-token span) over the adapted encoders on ZH/HateMM: all inside perm-null; one-word regresses HateMM. Does NOT price: readout under a BIDIRECTIONAL mask (separate cell, in flight), multi-prompt ensembling (unconsumed micro-ruling), other layers (L24 was the literature-motivated pick; a layer sweep would be forking-paths without new theory)."
+    },
+    {
+      "name": "MCR modality-competition rebalancing SFT (F68-P4)",
+      "status": "PARKED (NO-GO as perf bet: F55 oracle ceiling +0.025 < bar; F65 same-axis null)",
+      "killed": "2026-07-24T16:07:17Z",
+      "record": "refine-logs/MCR_FORENSIC_RECON.md (6d0495b)",
+      "finding": "F71",
+      "ban_scope": "Modality-rebalancing objectives/schedules during encoder SFT as an ACCURACY lever on EN: arithmetic-capped. Re-openable only as user-gated paper-closure (label-limit confirmation) with D7 sub-ruling."
+    },
+    {
+      "name": "Bidir attention surgery stage-1 training-free (F68-P3)",
+      "status": "DEAD stage-1 (DEGRADE/Llama-pattern); stage-2 MNTP user-gated, not auto-defunded",
+      "killed": "2026-07-24T17:26:52Z",
+      "record": "refine-logs/BIDIR_STAGE1_{SUBMIT_RECORD 31700ec, VERDICT_REVIEW f733bbe}; prereg frozen 9b75e99",
+      "finding": "F72",
+      "ban_scope": "Training-free causal-mask removal at extraction on Qwen2.5-VL adapted encoders: -10..-14pt both datasets. Do not re-run without adaptation. MNTP stage-2 = open user decision (separate object)."
+    },
+    {
+      "name": "Head-recipe family: SAM optimizer + modality-dropout regularizer (F68 wave-2)",
+      "status": "KILL all 4 cells (<0.15 GPU-h)",
+      "killed": "2026-07-24T19:27:26Z",
+      "record": "refine-logs/HEADRECIPE_{SUBMIT_RECORD ca5f8f9, VERDICT_REVIEW 8e60f42}; prereg frozen 5cbbf36",
+      "finding": "F73",
+      "ban_scope": "SAM (rho 0.05) on the retrieval head: hurts ZH, ~+0.5pt-not-3/3 on HateMM — flat-minima premise refuted at this head scale (consistent with F69 wrong-sign). Modality-dropout (p 0.3, ones-fill) on Hadamard head: flat-to-harmful on text-carried datasets. Do not re-tune knobs (one-bite family consumed)."
     }
   ],
   "banned_constraints": [
@@ -117,7 +313,7 @@
   "positives_bank": [
     {
       "id": "encoder-swap",
-      "note": "+5.3-5.6 acc HateMM 3/3 seeds both protocols; FAILS MHC-EN (SAV tests the dilution hypothesis for this)"
+      "note": "+5.3-5.6 acc HateMM 3/3 seeds both protocols; FAILS MHC-EN. MECHANISM ATTRIBUTED 2026-07-16 (F44, 8a48938): converts iff hate is visually grounded AND errors are representation-limited — Qwen upgrade real+equal on all 3 datasets (purity/text-AUC uniform) but MHC-EN Qwen image stream collapses to near-chance and equal-weight concat cancels the text gain; MHC errors label-limited (rotation not Pareto). Retro-predicts B2 32B regression; unifies SAV/B5/B2; dilution falsified, this is locus+error-type. No new axis (Axis B, D7-dead); paper analysis-chapter material"
     },
     {
       "id": "P6+P10b",
@@ -125,9 +321,34 @@
     },
     {
       "id": "B3-lora-zh",
-      "note": "LoRA-Qwen vs CLIP, MHC-ZH paired 3-seed: final-epoch +0.0313/+0.0453 3/3 = PASS (MARGINAL, binding language); val-sel FAIL (+0.0246 acc); single encoder draw; gain = LoRA adaptation not encoder identity; usable only pending user novelty ruling"
+      "note": "LoRA-Qwen vs CLIP, MHC-ZH paired 3-seed: final-epoch +0.0313/+0.0453 3/3 = PASS (MARGINAL); val-sel FAIL (+0.0246). DECOMPOSED 2026-07-16 (F45, d76e407): gain lives ENTIRELY in text stream (LoRA text AUC 0.925 vs frozen 0.847 vs CLIP 0.802, image flat) and is a genuine PARETO conversion (hate +0.1111 at non-hate −0.0032, HateMM-encoder-swap signature) vs frozen-Qwen's unconvertible ROTATION; val-sel kill = 78-dev selection noise (LoRA = most stable arm, dev plateaus while test climbs); convertibility line runs through ADAPTATION not encoder identity. Performance half = YES-but-thin (single dataset, marginal, single-draw); novelty half = user D7 ruling"
+    },
+    {
+      "name": "LoRA-HateMM encoder-level (round-4 line A)",
+      "ts": "2026-07-17T16:26:45Z",
+      "finding": "F53",
+      "note": "HateMM PASS both protocols 3/3 w/ KS-2 clean (not image-inherited); EN closed FAIL; performance conjunct = 2 datasets under final-epoch (w/ ZH B3 marginal); verdict 6b8f634"
+    },
+    {
+      "name": "cand-2 HateMM val-sel add-over-generic",
+      "ts": "2026-07-18T00:57:22Z",
+      "finding": "F56",
+      "note": "cand-2: HateMM-curric val-sel 0.8775/0.8711 (+0.0155 over generic 3/3; +0.0573 over CLIP); final 0.8791/0.8726; single-draw caveat; ZH tied"
+    },
+    {
+      "name": "cand-2 HateMM add-over-generic (pooled)",
+      "ts": "2026-07-18T07:38:41Z",
+      "finding": "F59",
+      "note": "rep2 F59: pooled 6-pt +0.01317 (5/6) WEAKLY-HARDENED; per-draw K-REP-1 fails sign 2/3; final-ep draw-2 +0.0140 3/3 non-binding; no further draws (binding)"
     }
   ],
   "active": [],
-  "queued": []
+  "queued": {
+    "FA": "DEAD F50 (KILL on 3 locked rules; AUC 0.898 unconvertible)",
+    "MJ": "DEAD F49 (arithmetic ceiling; GO-IF closure probe declined per G0-cond precedent)",
+    "CC": "NOT PROMOTED (FA killed; relaxation-f D7-composition sub-ruling moot)",
+    "cand2_hardneg_sft_curriculum": "MEASURED F56 (546acc5): ZH TIE (primary leg, F0.7), HateMM hold+val-sel add +0.0155 single-draw; no kill; do NOT re-run curriculum variants (tactics) without new structural premise",
+    "premise_d_clip_img_lora_text_EN": "DEAD F55 (K-D-1 calibrated kill; EN closed at all 3 levels)",
+    "cand2_rep2": "MEASURED F59 (weakly-hardened; single-attempt binding consumed — no re-draws ever)"
+  }
 }

@@ -3,22 +3,21 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "round3 PARALLEL-PROBE MODE (user directive 2026-07-15): concurrent cloud probes + queue-on-pass + fast-kill; S2S smoke 13159 + B5 13158 queued local; C2 recon + wave-2 ideation + CLAUDE.md mode amendment in flight",
+  "phase": "ROUND-6 wave-3 (litsweep2-derived): NCA/soft-kNN head-loss family recon in flight; resolution probe queued; Molmo2-8B download + MNTP stage-2 = user-gated. Convergent 3-agent verdict: in-box >=+3-on-2-datasets unreachable; goal-clearing levers are user rulings.",
   "stale_count": 0,
-  "last_seen": "2026-07-14T13:21:48Z",
-  "total_findings": 26,
-  "active_line": "PARALLEL: S2S (novelty lead, smoke 13159 queued, +ASYM r3) | W2-A grounded-key (design) | W2-B subclip set-match (cloud probe chain) | B5 calibration (13158 queued)",
+  "last_seen": "2026-07-24T23:35:17Z",
+  "total_findings": 74,
+  "active_line": "F60 AUG pre-killed (dominance, f1abd28) — the last un-enumerated MLLM role (generator) is closed. Ledger F27-F60. Landscape fully mapped at role level: encoder+adaptation (works, D7-collision), localizer (works, side-task), guard-rail (works, no acc), ALL decision/feature/score/loss/distribution/generation roles measured or dominated dead. LIVE DECISIONS = USER: D7 sub-ruling / ZH protocol / 5 relaxations. Monitoring mode, wakeups armed.",
   "queued_lines": [
-    "W2-C temporal kernel (rides S2S frameset, post-Stage-E)",
-    "W2-E prototype memory (LOW, banked-cache probe)",
-    "W2-D acoustic (only if 1-3 stall)",
-    "C5 7B-CRD (LOW)"
+    "POOL EMPTY (F43): W2-C extinguished (S2S dead, F37); W2-D record-only near-zero prior (F41); all Wave-3 consumed (CTF F39, APX+AVC F41, GIR F43); see directions_tried.json + TERMINUS_round3_mllm_plus3.md"
   ],
   "conditional_lines": [
-    "B2 32B encoder (download ruling)",
-    "C4 72B CRD KD (download ruling)"
+    "ALL user-ruling-gated per TERMINUS_round3_mllm_plus3.md §2: (a) 32B/72B encoder download [B2 counter-evidence: scale regresses], (b) Qwen2.5-Omni download [F41 counter-evidence: classical prosody zero], (c) D7 LoRA novelty boundary [F45 evidence upgrade: text-stream Pareto conversion], (d) goal renegotiation [earned roles + robust-negative ledger], (e) closed-model API [data-export ruling]"
   ],
-  "gpu_state": "idle",
+  "gpu_state": "idle - litsweep2 (3 agents) running",
   "orchestrator": "main session (ScheduleWakeup business loop L2 + session cron hourly patrol L1)",
-  "notes": "single-submit ceremony + G0-cond gate override any shortcut; zero interaction; TRAINING DATA = single-dataset train split ONLY (user veto 2026-07-14); no OCR; no gold annotations | PENDING(task#35): after Modal flow proven, update CLAUDE.md — probes on cloud, formal validation local GPU only (user directive 2026-07-14, deferred until flow works) | PARALLEL-PROBE MODE: probes run concurrently on Modal; on probe pass -> immediate prereg/freeze/submit to local queue (queue time overlaps); kill fast; recon pre-done for every queued candidate"
+  "notes": "single-submit ceremony + G0-cond gate override any shortcut; zero interaction; TRAINING DATA = single-dataset train split ONLY (user veto 2026-07-14); no OCR; no gold annotations | CLAUDE.md Modal-probe policy DONE (0a1ac88; task#35 closed) | MONITORING MODE: any user ruling on the 5 terminus options reopens the corresponding axis via full ceremony (recon→prereg→0-context review→freeze→single-submit); any NEW direction must defeat the banked meta-patterns (K9 calibrated-zero, oracle-unconvertible x3, cumulative-causal x3, adaptation-not-identity F45) in its non-isomorphism argument | infra playbook: Modal 3600s clamp → chunk-loop + hash-pinned ci_ckpt + CPU-SLURM driver (F40); liveness-peek detached runs; agents never stop others' apps (F38)",
+  "user_rulings": {
+    "2026-07-25_oracle_ranked_queue": "USER RULING: if 5 rounds of literature-search+attempts fail to reach the goal, switch to oracle-ranked queue — attack directions in DESCENDING oracle-headroom order, one by one to the end of the list, until a method converts to real gains. Lit-round count at ruling time: 3 (2026-07-13 C-line sweep, F68 litsurvey, F74 litsweep2). Legal attack on selection-locked pools = trained selector/reshaper on train labels only (F66 binds only fixed-map phi0); dead conversion attempts (P3 pooling, P11 weak-sup, MIL-implicit) not to be re-burned verbatim."
+  }
 }
