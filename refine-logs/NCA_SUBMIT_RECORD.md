@@ -327,6 +327,93 @@ Peak footprint 8 CPU / 64 G / 1 GPU (within the 16/128/2 cap; never two 16-CPU j
 submit). ONE sbatch = ONE family = ONE multiplicity bite. `PENDING (JobHeldUser)` → waited out, NEVER
 forced (per CLAUDE.md); if held > 2 h a status line is committed and the turn ends PENDING-JOB.
 
-## 6. RAW per-seed both-protocol numbers — pending (13482 running)
+## 6. RAW per-seed both-protocol numbers (executor transcription — NO gates / NO deltas / NO pass-fail)
 
-## 7. Closeout — pending (awaiting 13482 COMPLETE)
+**13482 COMPLETED exit 0:0, elapsed 00:19:19; 24/24 trainlogs written; 0 AssertionError / 0 Traceback
+across all 24.** Val-selected = epoch ≥ warmup 5 with max `Val_Retrieval` acc (roc tie-break) → that
+epoch's `Test_Retrieval` line; final-epoch = max epoch (29). acc AND macroF1 are read from the SAME raw
+`Test_Retrieval` line (no companion-metric fabrication). Each `(:N)` is the 1-based **grep -n / sed
+compatible** (`\n`-counted) line number of that `Test_Retrieval` line in the named trainlog.
+**Cross-verified two ways: (i) an independent `\n`-line parser (session `nca_transcribe.py`), (ii) the
+sbatch's OWN embedded `RESULT_ROW` parser in `slurm/logs/ncafam_13482.out` — bit-identical (epoch, F1,
+acc) for all 24 runs, both protocols; (iii) `grep -n` sed spot-checks of cited lines.** The executor
+applies NO gates/deltas/interpretation; the independent 0-context reviewer renders the verdict against the
+prereg VERBATIM (and re-parses the trainlogs itself). Floor values (prereg §2.1 ZH / §2.2 HateMM) are the
+reviewer's inputs, shown here for reference only — the executor computes NO Δ.
+
+Trainlogs: `slurm/logs/nca_{ARM}_{MHC_zh,HateMM}_<MODEL>_seed{0,1,2}_13482.trainlog`
+(ZH `<MODEL>`=`Qwen2.5-VL-7B-Instruct-LoRA_HF`; HateMM `<MODEL>`=`Qwen2.5-VL-7B-Instruct-LoRA-curric_HF`).
+
+### 6.1 A1a — NCA τ=0.1 (`--head_loss nca --nca_tau 0.1`)
+
+| dataset | seed | val-sel ep | val-sel acc/mF1 (Test line) | final ep | final acc/mF1 (Test line) |
+|---|---|---|---|---|---|
+| MHC_zh | 0 | 11 | 0.8389 / 0.8090 (:125) | 29 | 0.8322 / 0.8023 (:270) |
+| MHC_zh | 1 | 9 | 0.8322 / 0.7997 (:109) | 29 | 0.8456 / 0.8158 (:270) |
+| MHC_zh | 2 | 15 | 0.8591 / 0.8295 (:157) | 29 | 0.8389 / 0.8090 (:270) |
+| MHC_zh | **mean** | | **0.8434 / 0.8127** | | **0.8389 / 0.8090** |
+| HateMM | 0 | 17 | 0.8884 / 0.8823 (:192) | 29 | 0.8837 / 0.8765 (:301) |
+| HateMM | 1 | 27 | 0.8744 / 0.8678 (:280) | 29 | 0.8837 / 0.8771 (:299) |
+| HateMM | 2 | 23 | 0.8605 / 0.8547 (:247) | 29 | 0.8744 / 0.8684 (:302) |
+| HateMM | **mean** | | **0.8744 / 0.8683** | | **0.8806 / 0.8740** |
+
+### 6.2 A1b — NCA τ=0.2 (`--head_loss nca --nca_tau 0.2`)
+
+| dataset | seed | val-sel ep | val-sel acc/mF1 (Test line) | final ep | final acc/mF1 (Test line) |
+|---|---|---|---|---|---|
+| MHC_zh | 0 | 12 | 0.8322 / 0.8023 (:133) | 29 | 0.8322 / 0.8023 (:270) |
+| MHC_zh | 1 | 10 | 0.8255 / 0.7931 (:118) | 29 | 0.8389 / 0.8090 (:271) |
+| MHC_zh | 2 | 15 | 0.8523 / 0.8226 (:156) | 29 | 0.8389 / 0.8113 (:269) |
+| MHC_zh | **mean** | | **0.8367 / 0.8060** | | **0.8367 / 0.8075** |
+| HateMM | 0 | 28 | 0.8744 / 0.8672 (:290) | 29 | 0.8744 / 0.8666 (:300) |
+| HateMM | 1 | 29 | 0.8744 / 0.8678 (:301) | 29 | 0.8744 / 0.8678 (:301) |
+| HateMM | 2 | 8 | 0.8837 / 0.8776 (:108) | 29 | 0.8791 / 0.8730 (:298) |
+| HateMM | **mean** | | **0.8775 / 0.8709** | | **0.8760 / 0.8691** |
+
+### 6.3 A2 — neighborhood-SupCon τ=0.1 (`--head_loss supcon --nca_tau 0.1`)
+
+| dataset | seed | val-sel ep | val-sel acc/mF1 (Test line) | final ep | final acc/mF1 (Test line) |
+|---|---|---|---|---|---|
+| MHC_zh | 0 | 9 | 0.8255 / 0.7956 (:109) | 29 | 0.8725 / 0.8436 (:270) |
+| MHC_zh | 1 | 12 | 0.8322 / 0.8023 (:132) | 29 | 0.8389 / 0.8113 (:269) |
+| MHC_zh | 2 | 13 | 0.8523 / 0.8226 (:141) | 29 | 0.8456 / 0.8158 (:270) |
+| MHC_zh | **mean** | | **0.8367 / 0.8068** | | **0.8523 / 0.8236** |
+| HateMM | 0 | 15 | 0.8791 / 0.8730 (:175) | 29 | 0.8837 / 0.8776 (:302) |
+| HateMM | 1 | 22 | 0.8791 / 0.8724 (:238) | 29 | 0.8791 / 0.8724 (:302) |
+| HateMM | 2 | 14 | 0.8791 / 0.8724 (:166) | 29 | 0.8744 / 0.8660 (:302) |
+| HateMM | **mean** | | **0.8791 / 0.8726** | | **0.8791 / 0.8720** |
+
+### 6.4 A3 — manifold mixup α=2.0 (`--mixup True --mixup_alpha 2.0`)
+
+| dataset | seed | val-sel ep | val-sel acc/mF1 (Test line) | final ep | final acc/mF1 (Test line) |
+|---|---|---|---|---|---|
+| MHC_zh | 0 | 20 | 0.8322 / 0.8023 (:199) | 29 | 0.8725 / 0.8458 (:272) |
+| MHC_zh | 1 | 21 | 0.8255 / 0.7931 (:206) | 29 | 0.8523 / 0.8226 (:271) |
+| MHC_zh | 2 | 29 | 0.8523 / 0.8202 (:269) | 29 | 0.8523 / 0.8202 (:269) |
+| MHC_zh | **mean** | | **0.8367 / 0.8052** | | **0.8590 / 0.8295** |
+| HateMM | 0 | 15 | 0.8651 / 0.8580 (:174) | 29 | 0.8791 / 0.8730 (:301) |
+| HateMM | 1 | 24 | 0.8837 / 0.8781 (:256) | 29 | 0.8791 / 0.8730 (:302) |
+| HateMM | 2 | 10 | 0.8744 / 0.8678 (:129) | 29 | 0.8791 / 0.8730 (:301) |
+| HateMM | **mean** | | **0.8744 / 0.8680** | | **0.8791 / 0.8730** |
+
+**3-seed means are raw arithmetic summaries of the transcribed per-seed values only** (as in the prereg §2
+floor tables); the executor computes NO Δ-vs-floor, applies NO promote/kill bar, and renders NO pass/fail
+or KILLED language. Floors (reviewer inputs, prereg §2): ZH val-sel `0.8322/0.8015`, final `0.8456/0.8173`;
+HateMM val-sel `0.8775/0.8711`, final `0.8791/0.8726`. The §3 bars + the verdict are the independent
+0-context reviewer's job.
+
+## 7. Closeout — CHAIN COMPLETE (raw numbers transcribed; verdict deferred to independent reviewer)
+
+STOP→fix→re-freeze→resume executed cleanly. Sha re-verify at every stage MATCH (initial freeze, then
+REFREEZE-1 A `2ae7a73f…`, B/C/reused unchanged, submit-instant re-verify MATCH). Codex STOP (§2.1) confirmed
+correct by the team lead; REFREEZE-1 fix + independent re-review APPROVED; **codex re-gate CLEARED** (no P1;
+runtime probe confirms the A3 mixup forward now runs with all 6 head dropouts train-on + restored; 2 P2
+inactive under config). Collision CLEAN throughout. **CPU smoke PASS** (inert defaults / no-flag Namespace
+floor-identical mod group_name / additive-gating). **GPU smoke 13480 PASS** (5 runs finite+complete;
+harness C1 A3-dropout-ON, C2 LOO self-mass 0, C3 bank stop-grad 0, C4 mining-inert — all PASS; artifacts
+deleted). **Family 13482 COMPLETED exit 0:0** (00:19:19), 24/24 trainlogs, 0 assert/traceback; RAW
+both-protocol per-seed numbers transcribed line-numbered for all 8 arm×dataset cells (§6), cross-verified
+two ways (independent `\n`-parser == embedded `RESULT_ROW`) + grep -n spot-checks. **NO gates/deltas/pass-fail
+applied; NO `state/` mutation; nothing pushed. Zero test-touch beyond the 24 budgeted head reads.** The
+independent 0-context reviewer renders the verdict (KS-arm-dead → FORMAL +0.030/+0.030 both-protocol, per
+arm×dataset) against `NCA_PREREG.md` VERBATIM.
