@@ -175,3 +175,23 @@ live only in the session scratchpad.
 
 **SMOKE_VERDICT: PASS.** Cleared to submit the real family job.
 
+## 5. Real family — single-submitted (prereg §6 / §1.1; NO `--time`; 12 head runs sequential)
+
+Final `sha256sum` re-verified at the submit instant — A `1012c9e3…`, B `e7b61df4…`, C `c88f685f…`,
+loss.py `48796638…`, retrieval.py `d43e3bc4…`, prereg `68be61ac…` [ALL MATCH]; `bash -n` C = SYNTAX_OK;
+queue EMPTY; authorization intact.
+
+| job | id | script | runs | CPU/mem/GPU | ~cost |
+|---|---|---|---|---|---|
+| headrecipe family | **13478** | `headrecipe_family.sbatch` (2 arms × 2 datasets × 3 seeds = 12 head runs sequential, hardcoded CONFIGS) → `slurm/logs/hr_{SAM_rho0.05,MODDROP_p0.3}_{MHC_zh,HateMM}_<MODEL>_seed{0,1,2}_13478.trainlog` | 12 | 8 CPU / 64 G / 1×A100 | < 0.15 GPU-h |
+
+Peak footprint 8 CPU / 64 G / 1 GPU (within the 16/128/2 cap; never two 16-CPU jobs — queue was EMPTY at
+submit). ONE sbatch = ONE family = ONE multiplicity bite.
+
+### 5.1 Queue state at submit — PENDING (JobHeldUser); WAIT never force
+
+- **13478 PENDING (JobHeldUser)** (no dependency). Per CLAUDE.md the hold is **waited out, NEVER forced**
+  (the smoke 13477 auto-released from the identical hold in seconds; aggregate was zero). If held > 2 h a
+  status line is committed and the turn ends PENDING-JOB (orchestrator resumes). **On COMPLETE:** transcribe
+  RAW both-protocol per-seed numbers (line-numbered) for all 12 runs — NO gates/deltas/pass-fail.
+
