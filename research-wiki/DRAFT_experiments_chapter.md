@@ -684,3 +684,38 @@ gate — are transcribed from `refine-logs/CAND2_VERDICT_REVIEW.md` (`546acc5`, 
 vs the frozen prereg `76ef0e2`) and `refine-logs/PREMISE_D_GATE_RECORD.md` (`6e6061b`) respectively;
 cand-2 is a coupling probe held pending the D7 sub-ruling (opens no new dataset), and premise-(d) is a
 $0-gate negative (sixth "better-signal / no-conversion" datum), neither folded into any main table.*
+
+---
+
+## 8. Rounds 5–6: post-terminus robustness audit (constraint-box unchanged)
+
+After round 4 emptied the frozen constraint box (§7), two further **post-terminus** rounds re-opened every
+gap that the four structural laws had closed by *prose* rather than by measurement, on a standing user
+directive to keep auditing. Round 5 was a three-agent red-team that refuted the exhaustion claim at the
+**enumeration** level — six cells had been argued-down but never measured [DOC:REDTEAM_UNTESTED_CELLS.md,
+commit `adb8bc2`; DOC:REDTEAM_EXTERNAL_FAMILIES.md, commit `d0f91a5`; DOC:REDTEAM_BAN_SCOPE_AUDIT.md, commit
+`5dd23e4`] — and then measured all six dead. Round 6 was a two-wave literature sweep that surfaced a handful
+of borrowable operators and measured each one dead or parked. **These rounds add no route to the 13-route
+campaign count (T4) and revise no number in T1–T4**: they are labelled post-terminus audit/robustness rounds,
+not new campaign routes, and the project's best numbers (HateMM cand-2 0.8775 / 0.8791, §7) are **unchanged**
+after ~16 GPU-h (round 5) + ~3.5 GPU-h (round 6). The scientific yield is confirmatory — every law survived a
+direct attack — plus three mechanism sharpenings folded into the analysis chapter: the ISR β-decomposition
+that makes Law I arithmetic (analysis §3.6), the bidirectional-attention crater that directly confirms the
+causal-prefix closure (analysis §3.7), and two small-head optimization-landscape notes (analysis §3.10).
+
+**Count discipline (carried).** T4's thirteen routes are the load-bearing campaign accounting and are
+untouched here; the round-5/6 cells below are **audit measurements of prose-argued gaps**, banked as findings
+F61–F74, and are deliberately kept off the campaign-route count and off the negative-result ordinal (per the
+master-table tension list #9 round-by-round framing). No number below is new — each is transcribed from its
+committed verdict/record with the commit cited inline and re-checked against the primary logs.
+
+**Table 9. Round-5 red-team audit (six prose-argued gaps, all measured dead).**
+
+| Direction | Epitaph (one line) | Verdict · record |
+|---|---|---|
+| **LP** — label propagation / graph diffusion over the kNN memory graph (decision *topology*) | $0 gate, KILL all 3 datasets: multi-hop LLGC over the same frozen keys is monotone-negative in diffusion strength (HateMM best −0.0187, MHC-ZH −0.0385 / α=0.9 catastrophic −0.19/−0.22, MHC-EN +0.0125 = net +1 item inside the perm-null p95 +0.063 whose centre is *positive*); one-hop already at the 1-hop-separable ceiling; MHC-ZH oracle headroom +0.1026 unconverted (Law I 7th) | LP_GATE_RECORD.md · `7be6e3f` |
+| **SWA** — single-trajectory stochastic weight-averaging of per-epoch head checkpoints (attacks the F45 dev-selection tax) | $0 probe, KILL both datasets: HateMM SWA lands 0.9–6.6 dev-acc pts below the val-sel max on the two seeds with a real selection gap (mid-peak dev curve, averaging cannot recover it); MHC-ZH regen (job 13294, G-repro bit-exact) is a *dev-underpowered* KILL (cond_A 0/3; 78-item dev jitter = the effect size). Governance: single-trajectory weight-avg needs a user micro-ruling vs the cross-seed-ensemble veto before any claims-table entry | SWA_PROBE_RECORD.md · `5a40bb1`/`17db531` |
+| **Learned audio** — Whisper-large-v3 encoder hidden-state stream (the never-screened MHC-EN audio blank cell) | $0 gate, KILL all 3 datasets both Z-arms: mean⊕max 2560-d video vectors add zero conditional info (HateMM +0.0014; MHC-EN +0.0041 deployed / −0.0013 strict; MHC-ZH −0.0052/−0.0082; all CIs straddle 0, calibration accZA=1.0); the ASR transcript already banks the spoken-hate content, so **no oracle surplus — signal itself absent, not a Law I datum**. Closes the EN audio blank cell; Whisper realization only (AST/BEATs stay download-gated) | LAUD_GATE_RECORD.md · `3573f82` |
+| **Vision-unfreeze LoRA** — unfreeze the ViT tower + projector inside LoRA-SFT (the un-enumerated representation cell) | 3-seed verdict, ~15 GPU-h: EN image stream **MOVED** (+0.0320 train-LOO / +0.0065 dev, reviewer bit-for-bit — first lever to move it, refutes the F51/GAP-5b "no vision lever" wording) but K-V2 = **TIE** both datasets both protocols (HateMM val-sel −0.0016 acc 0/3, final +0.0000 1/3; MHC-EN val-sel +0.0269 acc sign 2/3, final −0.0062 1/3) — image moved, head converted zero (Law I 8th) | VISION_UNFREEZE_VERDICT_REVIEW.md · `09d02f8` |
+| **ISR** — independent per-segment re-encode read by a uniform per-segment-kNN vote-mean (last aggregation object) | $0 pre-gate, NO-GO: legal uniform operator flat (HateMM +0.0012 / MHC-EN +0.0032, under perm-null, boot-5th < 0, vote bit-exact Fano 1.0); decisive β-decomposition proves the oracle headroom **selection-locked** — HateMM +0.0776 = +0.0012 legal + +0.0764 banned, MHC-EN +0.0700 = +0.0064 + +0.0636 (91–98% banned-selection-only) ⇒ Law I is now arithmetic; Qwen per-segment extraction never happens, 0 GPU-h | ISR_PREGATE_RECORD.md · `a6e41f8` |
+| **Frame-16** — double visual sampling 8→16 frames through the frozen encoder | 3-seed verdict vs banked 8f floor, ~0.6 GPU-h: val-sel mean −0.0077 acc (0/3), final +0.0015 (1/3); KS-16f-dead KILLED both protocols ⇒ cell CLOSED and the expensive LoRA-16f stage-2 AUTO-DEAD (pre-declared spend verdict); 8 frames is not the bottleneck — the pooled representation saturates at 8f | FRAME16_VERDICT_REVIEW.md · `32c2e6f` |

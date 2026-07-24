@@ -356,6 +356,32 @@ SFT target 移动;此处保持 flat 仅因 campaign 所有 SFT target 都是 tra
 
 ---
 
+## T6 — 轮次 5–6 后终结审计(post-terminus robustness audit;与 T1–T4 严格隔离,纯转录)
+
+> **本节 append 于 2026-07-25,遵循与文首相同的纯转录纪律**(不跑实验、不提交 SLURM、不重算任何数)。
+> round-4 清空冻结约束盒后,用户指令下继续审计:**round-5 三-agent 红队**在**枚举**层面反驳穷尽 claim
+> (6 个 cell 曾以 prose 论证但从未实测,`REDTEAM_UNTESTED_CELLS.md` `adb8bc2` / `REDTEAM_EXTERNAL_FAMILIES.md`
+> `d0f91a5` / `REDTEAM_BAN_SCOPE_AUDIT.md` `5dd23e4`)并逐一实测关闭;**round-6 两波文献扫**提出若干可借操作并
+> 逐一实测关闭 / parked。**这两轮不增 T4 的 13 路线 campaign 计数、不改 T1–T4 任何数**;项目最优数(HateMM
+> cand-2 0.8775/0.8791)在 ~16(round-5)+ ~3.5(round-6)GPU-h 后**不变**。科学产出为确认性:四条结构律各经
+> 一次直接攻击后存活,three mechanism sharpenings 折入分析章(`DRAFT_analysis_chapter.md` §3.6 arithmetic-Law-I /
+> §3.7 causal-mask attack / §3.10 small-head 优化注)。**这两轮的 cell 记为 findings F61–F74,刻意不入
+> campaign-route 计数、不占负结果 ordinal(逐轮框架,同文末张力清单 #9)。** 每行数字转录自命名的判决/记录文档,
+> commit 内联(numeric-provenance discipline)。
+
+### T6.1 Round-5 红队审计(6 个 prose-argued gap,全数实测关闭)
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **LP** — kNN 记忆图上的标签传播 / 图扩散(决策 topology) | $0 gate,三库 KILL:多跳 LLGC 在同一冻结键上随扩散强度单调变负(HateMM 最佳 −0.0187,ZH −0.0385 / α=0.9 塌方 −0.19/−0.22,EN +0.0125 = net +1 item 落 perm-null p95 +0.063 内、null 中心为正);one-hop 已在 1-hop-separable 天花板;ZH oracle 头空间 +0.1026 未兑现(law-I 第 7 实例) | LP_GATE_RECORD.md · `7be6e3f` |
+| **SWA** — per-epoch head ckpt 单轨迹权重平均(攻 F45 dev 选点税) | $0 probe,双库 KILL:HateMM SWA 在有真选点 gap 的两 seed 落 val-sel max 下 0.9–6.6 dev-acc 点(mid-peak dev 曲线,平均收不回);ZH regen(job 13294,G-repro bit-exact)= dev-underpowered KILL(cond_A 0/3;78-item dev jitter = 效应量级)。治理:单轨迹权重平均需用户 micro-ruling vs cross-seed-ensemble 否决,方可入 claims 表 | SWA_PROBE_RECORD.md · `5a40bb1`/`17db531` |
+| **Learned-audio** — Whisper-large-v3 encoder 隐状态流(从未筛的 MHC-EN 音频空 cell) | $0 gate,三库双 Z-arm KILL:mean⊕max 2560-d 视频向量对部署表征加零条件信息(HateMM +0.0014,EN +0.0041 deployed / −0.0013 strict,ZH −0.0052/−0.0082;CI 全跨 0,accZA=1.0);ASR 转写已银行化口播仇恨 ⇒ **无 oracle 盈余——信号本身缺失,非 law-I**。关闭 EN 音频空 cell;仅 Whisper realization(AST/BEATs 仍 download-gated) | LAUD_GATE_RECORD.md · `3573f82` |
+| **Vision-unfreeze LoRA** — LoRA-SFT 内解冻 ViT tower + projector(未枚举的表征 cell) | 3-seed 判决,~15 GPU-h:EN image 流 **MOVED**(+0.0320 train-LOO / +0.0065 dev,reviewer bit-for-bit——首个移动它的杠杆,反驳 F51/GAP-5b 措辞)但 K-V2 = **TIE** 双库双协议(HateMM val-sel −0.0016 acc 0/3,final +0.0000 1/3;EN val-sel +0.0269 acc sign 2/3,final −0.0062 1/3)——image 动、head 兑零(law-I 第 8 实例) | VISION_UNFREEZE_VERDICT_REVIEW.md · `09d02f8` |
+| **ISR** — 独立 per-segment 重编码 + uniform per-segment-kNN vote-mean(最后一个聚合对象) | $0 pre-gate,NO-GO:合法 uniform 算子 flat(HateMM +0.0012 / EN +0.0032,低于 perm-null,boot-5th < 0,vote bit-exact Fano 1.0);决定性 β-分解证明 oracle 头空间 **selection-locked**——HateMM +0.0776 = +0.0012 legal + +0.0764 banned,EN +0.0700 = +0.0064 + +0.0636(91–98% 仅 banned-selection)⇒ **law-I 现为算术命题**;Qwen per-segment 提取从不发生,0 GPU-h | ISR_PREGATE_RECORD.md · `a6e41f8` |
+| **Frame-16** — 视觉采样 8→16 帧(冻结编码器) | 3-seed 判决 vs banked 8f floor,~0.6 GPU-h:val-sel mean −0.0077 acc(0/3),final +0.0015(1/3);KS-16f-dead 双协议 KILLED ⇒ cell 关闭,昂贵 LoRA-16f stage-2 **AUTO-DEAD**(预声明 spend 判决);8 帧非瓶颈,池化表征在 8f 已饱和 | FRAME16_VERDICT_REVIEW.md · `32c2e6f` |
+
+---
+
 ## 骨架段 — 一页纸论文章节骨架
 
 每节标注三终局选项 **(a) 接受现状定稿 / (b) 闭源 API 攻定位 / (c) 换方法族** 下需要改什么。

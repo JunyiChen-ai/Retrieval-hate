@@ -175,16 +175,18 @@ what the MLLM weak label would teach** [DOC:EXP_p11_weaksup_localization.md]. Th
 real and large **versus memory** (A-fuse − memory +0.0996, CI [+0.0635, +0.1366]) but not versus a
 trivially-supervised MIL head — which sharpens, rather than removes, its role (§4).
 
-### 3.6 Structural law I — better signal without conversion (six instances; F44 the mechanism)
+### 3.6 Structural law I — better signal without conversion (eight instances, now arithmetic; F44 the mechanism)
 
 Beyond the thirteen-route campaign, three further pre-registered sprints (rounds 2–4,
 [DOC:TERMINUS_round2_mllm_plus3.md, DOC:TERMINUS_round3_mllm_plus3.md, DOC:ROUTER_GATE_RECORD.md,
 DOC:FA_GATE_RECORD.md, DOC:PREMISE_D_GATE_RECORD.md]) hardened §3.1 and §3.3 into a
-single law that now has **six independent instances**: a candidate signal is demonstrably *richer*
-than the pipeline already has, and yet the best in-constraint operator converts **none** of it into
-main-table accuracy. Each shares a sharp form — a **gold/label oracle proves the convertible
-headroom is present**, but no unsupervised, frozen, or even supervised operator inside the constraint
-box recovers it:
+single law with **six independent instances**, and a post-terminus red-team audit (round 5, §3.10)
+added **two more** — bringing the total to **eight** — and, decisively, made the law *arithmetic*
+rather than merely repeated (the F66 decomposition below). In each instance a candidate signal is
+demonstrably *richer* than the pipeline already has, and yet the best in-constraint operator converts
+**none** of it into main-table accuracy. Each shares a sharp form — a **gold/label oracle proves the
+convertible headroom is present**, but no unsupervised, frozen, or even supervised operator inside the
+constraint box recovers it:
 
 - **P3** (evidence-density pooling, §3.3): the no-head probe passes on all three datasets — HateMM the
   cleanest at +0.0108 — yet training is flat (val −0.0041 / final +0.0004) because the learned
@@ -229,8 +231,33 @@ box recovers it:
   as the conversion mechanism converts none of it; this **sixth** instance completes the F50 story by
   closing EN at *every* composition level — frozen, collapsed-adapted, and healthy-image ⊕ adapted-text
   [DOC:PREMISE_D_GATE_RECORD.md, commit `6e6061b`].
+- **LP** (label propagation / graph diffusion over the kNN memory graph, round-5 audit) — the
+  decision-*aggregation topology* opening, the one un-enumerated in-box decision operator (multi-hop LLGC
+  over the *same* frozen fused keys, escaping the F46 named-operator list and the F47 per-item selection
+  closure). It converts nothing and actively degrades: on dev the gain is **monotone-negative** in
+  diffusion strength — HateMM best **−0.0187**, MHC-ZH **−0.0385** (α = 0.9 catastrophic, −0.19 / −0.22
+  breaking 23 of 78 items), MHC-EN **+0.0125** = net +1 item on n = 80, deep inside a permutation null
+  (p95 **+0.063**) whose centre is *positive* (diffusion helps random labels *more* than real ones). The
+  one-hop head already sits at the 1-hop-separable ceiling, so the MHC-ZH oracle headroom of **+0.1026**
+  stays entirely unconverted — the **seventh** instance, closed at $0 with zero test-touch
+  [DOC:LP_GATE_RECORD.md, commit `7be6e3f`].
+- **Vision-unfreeze LoRA** (round-5 audit) — the **representation-level** instance, and the one that
+  refutes law I's *own* escape wording. Unfreezing the ViT tower and projector inside the LoRA-SFT
+  (320 ViT-LoRA tensors, census-verified) is the **first lever ever to *move* the collapsed MHC-EN image
+  stream** — image-only train-LOO AUC **+0.0320**, dev **+0.0065**, reviewer-reproduced bit-for-bit —
+  refuting the F51 / GAP-5b "no vision lever was ever tried / EN is closed to the entire representation
+  family" wording at the mechanism level (§3.9). Yet the decisive add-over-generic bar (K-V2) is a **TIE
+  on both datasets and both protocols** (HateMM val-sel −0.0016 acc 0/3, final +0.0000 1/3; MHC-EN val-sel
+  +0.0269 acc but sign only 2/3, a wide-between-seed-spread artefact, final −0.0062 1/3): the upstream image
+  representation genuinely improved and the head converted **zero** of it. The **eighth** instance,
+  ~15 GPU-h [DOC:VISION_UNFREEZE_VERDICT_REVIEW.md, commit `09d02f8`].
 
-These six instances are unified by a single **mechanism**, surfaced by the encoder swap itself — the
+*(The round-5 learned-audio gate is deliberately **not** an instance: the Whisper-encoder stream added no
+conditional information on any dataset [DOC:LAUD_GATE_RECORD.md, commit `3573f82`], but with **no oracle
+surplus** — the signal itself is absent, exhausted by the ASR transcript — so it is a redundancy null, not a
+better-signal-without-conversion datum.)*
+
+These eight instances are unified by a single **mechanism**, surfaced by the encoder swap itself — the
 result that turns the campaign's central positive from an anomaly into a law. A zero-GPU geometry
 diagnosis on banked train/dev caches shows Qwen's representation upgrade is **real and roughly equal on
 all three datasets** — top-20 neighbourhood purity rises **+0.023 / +0.023 / +0.021** and the
@@ -274,6 +301,22 @@ cannot absorb; premise-(d) then shows that *adapting* the text stream of that sa
 rescue it either — it lowers the ranking rather than converting it (§3.9). The design-time corollary sharpens §3.3's dual-protocol rule into a question to ask of
 any auxiliary-signal proposal: not "is the signal richer?" (it usually is) but "is its advantage in the
 modality and the error type the decision boundary is actually limited by?"
+
+**Law I is now arithmetic, not merely eight-times-repeated (F66).** The round-5 ISR pre-gate closes the
+last aggregation object — an independent per-segment re-encode read by a *uniform* per-segment-kNN
+vote-mean, the sole operator that survives both the pooling ban and the per-item-selection ban — and in
+doing so it *proves* the law rather than adding a ninth anecdote. On the banked CLIP sub-clip caches the
+legal uniform operator is flat (HateMM **+0.0012** / MHC-EN **+0.0032**, both under the permutation null,
+bootstrap 5th-pct < 0, ΔmF1 negative), while the vote machinery is bit-exact to the deployed one (Fano
+= 1.0). The decisive step is the decomposition of the oracle headroom into a **legal symmetric slice**
+(reachable by any non-selecting operator) and a **banned selection slice** (reachable only by the
+law-III-forbidden per-item selector): HateMM's **+0.0776** of oracle headroom splits into **+0.0012**
+legal + **+0.0764** banned, and MHC-EN's **+0.0700** splits into **+0.0064** legal + **+0.0636** banned —
+so **91–98 % of the convertible headroom is formally disjoint from every legal operator**. The convertible
+slice and the reachable slice do not intersect. Law I therefore stops being an observation repeated across
+eight cells and becomes an **arithmetic statement** about where the headroom lives: the frozen-feature
+operator can access only the symmetric slice, which every legal operator measures at ≈ 0
+[DOC:ISR_PREGATE_RECORD.md, commit `a6e41f8`].
 
 ### 3.7 Structural law II — the cumulative-causal three-level closure
 
@@ -462,6 +505,20 @@ yes/no with the transcript present, which routes gradient into the language path
 diagram changes — F50/premise-(d) already price EN's *healthy* image stream out below the oracle bar, and
 HateMM/ZH already pass — but the "text-only" phrasing should be read as "text-only *for these targets*,"
 not as a claim that the vision path is unadaptable [DOC:TIE_BRANCH_RECON.md, commit `6b9985a`].
+
+The round-5 **vision-unfreeze** measurement (F65, §3.6) then closes this correction empirically. Where F54
+argued the image stream was *architecturally* movable, F65 unfroze the ViT tower and projector inside the
+LoRA-SFT and *measured* the movement: the MHC-EN image stream did move (image-only train-LOO AUC **+0.0320**,
+dev +0.0065, reviewer-reproduced bit-for-bit — the first lever ever to move it). This refutes the F51 /
+GAP-5b "two-object closure" *wording* ("EN is closed to the entire representation family / no vision lever
+was ever tried") at the mechanism level — the vision object was un-enumerated, and it is reachable. But the
+movement converted **zero** head accuracy (K-V2 tie on both datasets and both protocols), so the phase
+diagram is unchanged in substance: EN's image stream is now shown to be *movable and still unconvertible*,
+exactly the F50/premise-(d) label-limit reading, confirmed at the representation level rather than assumed.
+The F51 closure is thus correct in its *phase-diagram conclusion* (no adaptation the box permits converts EN)
+and wrong only in its enumeration ("two adapted objects"): capacity/reach was a third object, and it too
+fails — the eighth better-signal-without-conversion instance [DOC:VISION_UNFREEZE_VERDICT_REVIEW.md,
+commit `09d02f8`].
 
 ## 4. What survives
 
