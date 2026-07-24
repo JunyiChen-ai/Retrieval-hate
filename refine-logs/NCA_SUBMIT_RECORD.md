@@ -232,9 +232,48 @@ inactive-under-deployed-config with documented justification. Per prereg §4.5 t
 findings ⇒ no code fix ⇒ no re-freeze ⇒ RE-GATE CLEARED.** Artifacts A/B/C shas UNCHANGED by the gate
 (A still `2ae7a73f…`, B/C original; authorization intact).
 
-## 3. Collision-safety re-check at submit — pending
+## 3. Collision-safety re-check at RESUME — CLEAN (all ABSENT); banked inputs PRESENT
 
-## 4. Smoke (prereg §4.4, + A3 dropout-ON assertion) — pending
+- `logging/Retrieval/{MHC_zh,HateMM}/RAC_video_ncafam*` — ABSENT ⇒ fresh verdict group.
+- `slurm/logs/nca_*.trainlog` — ABSENT (0) ⇒ no trainlog collision.
+- `_smoke_nca` groups / `nca_smoke_*` logs — ABSENT (0) ⇒ no smoke residue at re-check time.
+- Banked ZH cache `data/CLIP_Embedding/MHC_zh/{train,dev_seen,test_seen}_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt`
+  — PRESENT (3/3), read-only paired input.
+- Banked HateMM cache
+  `data/CLIP_Embedding/HateMM/{train,dev_seen,test_seen}_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF.pt` —
+  PRESENT (3/3), read-only paired input.
+- Floor trainlogs (13150 ZH generic-LoRA, 13241 HateMM curric-LoRA) — PRESENT (6/6), read-only.
+
+`--force False` would hard-abort (never overwrite) if a `RAC_video_ncafam` path ever pre-existed; the
+`nca_${ARM}_…` prefix + arm-tagged `exp_comment` keep the four arms (same dataset/seed) distinct.
+
+## 4. Smoke (prereg §4.4, + A3 dropout-ON assertion) — CPU PASS; GPU in progress
+
+### 4.1 $0-CPU checks (login node, `CUDA_VISIBLE_DEVICES=""`) — PASS
+
+Script: session scratchpad `nca_smoke_cpu.py` (imports the CURRENT frozen `run_rac.parse_args`).
+- **`python -m py_compile src/model/loss.py src/run_rac.py` = COMPILE_OK.**
+- **(1) 4 new argparse keys INERT by default** on the ncafam base command (ARM_FLAGS=""):
+  `head_loss='triplet'`, `nca_tau=0.1`, `mixup=False`, `mixup_alpha=0.0`. PASS.
+- **(2) no-flag Namespace equivalence (§4.1b / §4.4.2):** ncafam base vs the `enc3seed_lora_curric`
+  floor command (same model/seed) differ in **ONLY** `{group_name}` (`RAC_video_lora_curric` →
+  `RAC_video_ncafam`); every other arg byte-identical, the 4 new keys present at inert defaults in
+  both ⇒ flags-off Namespace is floor-identical ⇒ banked floors need NO re-run. PASS.
+- **(3) additive-gating:** each arm's flags flip EXACTLY the intended keys and nothing else —
+  A1a `head_loss→nca`; A1b `head_loss→nca, nca_tau→0.2`; A2 `head_loss→supcon`; A3
+  `mixup→True, mixup_alpha→2.0`. PASS.
+
+`CPU_SMOKE: PASS`.
+
+### 4.2 GPU smoke (prereg §4.4.1 + the added A3 dropout-ON assertion) — pending (job 13480 RUNNING)
+
+Throwaway smoke sbatch (session scratchpad `nca_smoke.sbatch`; group `_smoke_nca`, `--epochs 3`, seed 0,
+ZH cache; 5 runs = no-flag baseline + the 4 arms) → then the targeted harness (`nca_smoke_harness.py`,
+temporary forward-hooks NEVER in frozen code): C1 A3 Dropout `training=True` DURING the mixup forward +
+restored after (the REFREEZE-1 finding class), C2 LOO self-mass `<1e-6` at max self-similarity, C3
+hostile-bank stop-grad = zero grad, C4 mining-inert (`head_loss=nca` returns before FAISS mining;
+`train_feats/train_labels` None), + loss finite/λ∈[0,1]. Job **13480** submitted (queue EMPTY at submit;
+auto-released from `JobHeldUser`, never forced). Results transcribed on completion.
 
 ## 5. Real family — single-submit — pending
 
