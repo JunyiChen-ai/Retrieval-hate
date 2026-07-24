@@ -155,3 +155,33 @@ zero ⇒ favorable for auto-release; the smoke 13467 auto-released from the same
 Per CLAUDE.md the hold is **waited out, NEVER forced**. If held > 2 h, a status line is committed and the
 turn ends PENDING-JOB (orchestrator resumes). **On COMPLETE:** cache sanity (§6 — row counts/dims/NaN, R0
 full-cache bit-exact vs banked, banked mtimes unchanged), then the `$0` CPU screen (§7).
+
+## 5.2 Chain outcome — 13468 COMPLETED (exit 0:0)
+
+**13468 gen_embed_readout (extract):** auto-released from `JobHeldUser` (never forced), RUNNING on
+`foscsmlprd01`, **COMPLETED** exit 0:0, Elapsed 02:00:08. All 24 caches written (4 cells × 3 splits ×
+2 datasets); `======== gen_embed_readout ALL DONE (13468) ========`; derived `.pt` B2-pushed (videos never
+left the node).
+
+## 6. Extraction cache sanity (prereg §4.1d + §1.2c/§4.1a) — PASS; banked UNTOUCHED
+
+CPU-only load of all 24 `-ro_*` caches:
+
+| dataset | cell | train N | dev N | test N | dims | NaN/Inf | zero-vec guard row |
+|---|---|---|---|---|---|---|---|
+| ZH | ro_L28 / ro_L24 / ro_ow_L28 / ro_ow_L24 | 579 | 78 | 149 | 3584 | 0 / 0 | none |
+| HateMM | ro_L28 / ro_L24 / ro_ow_L28 / ro_ow_L24 | 744 | 107 | 215 | 3584 | 0 / 0 | **train row 355** (all 4 cells) |
+
+- Row counts match the expected split sizes (ZH 579/78/149; HateMM 744/107/215); labels present all splits;
+  dual-stream 3584-d; zero NaN/Inf everywhere.
+- **Zero-vector guard = HateMM train row 355** in all four cells (one undecodable video; ZH has none) — the
+  single guard the orchestrator flagged. Because R0 is bit-exact to the banked deployed cache (below), row
+  355 is a **pre-existing** guard in the deployed cache too, shared identically by every cell (R0 and R1/R2/R3),
+  so it is neutral to the screen Δ (all cells and R0 vote identically on it).
+- **R0 (`ro_L28`) FULL-CACHE bit-exact vs banked deployed** — the G-repro anchor — on **all 3 splits × both
+  datasets**: `img max|Δ| = 0.0`, `text max|Δ| = 0.0`, id-order match, EXACT = True (6/6). This validates the
+  DEV-5 winner-vs-banked-R0 pairing basis (a fresh R0 head would reproduce 13150/13241 seed-for-seed).
+- **Banked ZH + HateMM caches UNTOUCHED after the run:** sha16 + mtimes bit-identical to the §2 pre-run table
+  for all 6 (distinct `-ro_*` suffix did not clobber the deployed floor).
+
+`SANITY_VERDICT: PASS.` Cleared to run the $0 CPU screen.
