@@ -265,18 +265,68 @@ Script: session scratchpad `nca_smoke_cpu.py` (imports the CURRENT frozen `run_r
 
 `CPU_SMOKE: PASS`.
 
-### 4.2 GPU smoke (prereg §4.4.1 + the added A3 dropout-ON assertion) — pending (job 13480 RUNNING)
+### 4.2 GPU smoke (prereg §4.4.1 + the added A3 dropout-ON assertion) — PASS; artifacts deleted
 
 Throwaway smoke sbatch (session scratchpad `nca_smoke.sbatch`; group `_smoke_nca`, `--epochs 3`, seed 0,
-ZH cache; 5 runs = no-flag baseline + the 4 arms) → then the targeted harness (`nca_smoke_harness.py`,
-temporary forward-hooks NEVER in frozen code): C1 A3 Dropout `training=True` DURING the mixup forward +
-restored after (the REFREEZE-1 finding class), C2 LOO self-mass `<1e-6` at max self-similarity, C3
-hostile-bank stop-grad = zero grad, C4 mining-inert (`head_loss=nca` returns before FAISS mining;
-`train_feats/train_labels` None), + loss finite/λ∈[0,1]. Job **13480** submitted (queue EMPTY at submit;
-auto-released from `JobHeldUser`, never forced). Results transcribed on completion.
+ZH cache; 5 runs = no-flag baseline + the 4 arms) + the targeted harness (`nca_smoke_harness.py`,
+temporary forward-hooks NEVER in frozen code). Job **13480** (`nca_smoke`): auto-released from
+`JobHeldUser` (never forced; queue empty), **COMPLETED exit 0:0**, elapsed 01:13:04 — of which the 5 NCA
+runs took ~2 s each (tqdm) and the ~70-min wall was `disk_guard.sh` housekeeping (usage 272G > 250G
+threshold ⇒ push-verify-prune of 417 old checkpoints to B2, each ~10 s; derived artifacts only, videos
+never leave). `======== nca_smoke ALL DONE (13480) ========`.
 
-## 5. Real family — single-submit — pending
+**Run-level (§4.4.1 i/ii), all 5 runs — finite, complete, 0 NaN/Inf, 0 Traceback/Assert (3 epochs each,
+6 Test_Retrieval evals each):**
 
-## 6. RAW per-seed both-protocol numbers — pending
+| arm (flags) | Train Loss ep0→ep1→ep2 (step-0 snapshots) | NaN/Inf | Err | completes |
+|---|---|---|---|---|
+| baseline (none) | 0.878880 → … → 0.621143 | 0 | 0 | ✓ |
+| A1a nca_tau0.1 | 0.639782 → 0.620198 → 0.664219 | 0 | 0 | ✓ |
+| A1b nca_tau0.2 | 0.639783 → … → 0.664206 | 0 | 0 | ✓ |
+| A2 supcon_tau0.1 | 2.418714 → … → 2.410412 | 0 | 0 | ✓ |
+| A3 mixup_a2.0 | 0.878757 → … → 0.624600 | 0 | 0 | ✓ |
 
-## 7. Closeout — pending
+baseline/mixup decrease clearly (BCE-driven); the NCA/SupCon contrastive terms are finite and
+non-diverging in a narrow band at the sparse per-epoch step-0 prints (only ~9 batches/epoch, log_interval
+10 ⇒ one print/epoch on a per-epoch-rebuilt-bank moving-target loss). The head IS training: nca_tau0.1
+Val_Retrieval acc 0.8205→0.8205→0.8333, Test_Retrieval 0.8121→0.8523→0.8054 (metrics move across the 3
+epochs). A1/A2 build the per-epoch bank and do NOT enter FAISS mining (harness C4); A3 runs the
+triplet+mining path and completes.
+
+**Targeted harness (§4.4.1 iii + §4.4 asserts + the team-lead A3 dropout-ON add) — HARNESS_VERDICT: PASS.**
+Real model `classifier_hateClipper(align, batch_norm=False, num_layers=3)` (6 Dropout), real ZH batch,
+REAL frozen `_manifold_mixup_bce` / `_nca_head_loss` / `compute_loss`:
+- **C1 A3-dropout (the REFREEZE-1 fix, in the real function):** `training_DURING_mixup_forward=[True×6]`,
+  `restored_to_eval_after=True (after=[False×6])`, `mixup_loss=0.692520 finite`, `lam=0.721763 in[0,1]`.
+  **PASS.**
+- **C2 NCA-LOO:** `max_retained_self_softmax_mass=0.000e+00 (<1e-6)` at max self-similarity (anchor==own
+  row); real nca loss 0.710227 finite. **PASS.**
+- **C3 NCA bank stop-grad:** `hostile_bank.grad=None` (zero); `anchor.grad_sum=0.1218 (>0)`. **PASS.**
+- **C4 mining-inert:** `dense_retrieve calls under head_loss=nca=0`; `train_feats=None train_labels=None`;
+  total_loss 0.701431 finite. **PASS.**
+
+**Cleanup:** `logging/Retrieval/MHC_zh/_smoke_nca` + `slurm/logs/nca_smoke_*_13480.trainlog` + the `.out`
+**deleted**; §4.3 collision targets re-verified ABSENT after deletion (`_smoke_nca` / `nca_smoke_*` /
+`RAC_video_ncafam` / `nca_*.trainlog` all 0); banked ZH + HateMM caches re-checked PRESENT (6/6, read-only
+inputs — the smoke read them, never wrote). Throwaway `nca_smoke.sbatch` / `nca_smoke_harness.py` /
+`nca_smoke_cpu.py` live only in the session scratchpad.
+
+**SMOKE_VERDICT: PASS.** No C1-C4 failure. Cleared to submit the real family job.
+
+## 5. Real family — single-submitted (prereg §6 / §1.1; NO `--time`; 24 head runs sequential)
+
+Submit-instant `sha256sum` re-verified — prereg `7607863c…`, A `2ae7a73f…` (REFREEZE-1), B `b85eb72a…`,
+C `baf41be8…`, classifier.py `e7b61df4…`, retrieval.py `d43e3bc4…` [ALL MATCH]; `bash -n` C = SYNTAX_OK;
+queue EMPTY (0 jobs — no 16-CPU conflict, standing infra rule satisfied); authorization intact.
+
+| job | id | script | runs | CPU/mem/GPU | ~cost |
+|---|---|---|---|---|---|
+| ncafam family | **13482** | `ncafam_family.sbatch` (4 arms × 2 datasets × 3 seeds = 24 head runs sequential, hardcoded CONFIGS, group `RAC_video_ncafam`) → `slurm/logs/nca_{nca_tau0.1,nca_tau0.2,supcon_tau0.1,mixup_a2.0}_{MHC_zh,HateMM}_<MODEL>_seed{0,1,2}_13482.trainlog` | 24 | 8 CPU / 64 G / 1×A100 | ~0.33 GPU-h |
+
+Peak footprint 8 CPU / 64 G / 1 GPU (within the 16/128/2 cap; never two 16-CPU jobs — queue EMPTY at
+submit). ONE sbatch = ONE family = ONE multiplicity bite. `PENDING (JobHeldUser)` → waited out, NEVER
+forced (per CLAUDE.md); if held > 2 h a status line is committed and the turn ends PENDING-JOB.
+
+## 6. RAW per-seed both-protocol numbers — pending (13482 running)
+
+## 7. Closeout — pending (awaiting 13482 COMPLETE)
