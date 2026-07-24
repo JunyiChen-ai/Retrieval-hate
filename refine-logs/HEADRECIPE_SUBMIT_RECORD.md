@@ -195,3 +195,80 @@ submit). ONE sbatch = ONE family = ONE multiplicity bite.
   status line is committed and the turn ends PENDING-JOB (orchestrator resumes). **On COMPLETE:** transcribe
   RAW both-protocol per-seed numbers (line-numbered) for all 12 runs — NO gates/deltas/pass-fail.
 
+### 5.2 Chain outcome — 13478 COMPLETED (exit 0:0)
+
+**13478 headrecipe (12 head runs):** auto-released from `JobHeldUser` (never forced), RUNNING on
+`foscsmlprd01`, **COMPLETED** exit 0:0, Elapsed 00:51:33; `======== headrecipe ALL DONE (13478) ========`.
+All 12 trainlogs written; **0 AssertionError / 0 Traceback** across all 12 (the SAM re-mine-reuse assert did
+NOT trip in any real run); derived logs B2-pushed (videos never left the node).
+
+## 6. RAW per-seed both-protocol numbers (executor transcription — NO gates / NO deltas / NO pass-fail)
+
+Val-selected protocol = epoch ≥ warmup 5 with max `Val_Retrieval` acc (roc tie-break) → that epoch's
+`Test_Retrieval` line; final-epoch = max epoch (29). Values are the **macroF1-format** `Test_Retrieval` line
+(the protocol's macro-F1 line, same regex the sbatch's embedded parser uses). Each `(:N)` is the 1-based line
+number (grep -n / sed compatible) of that `Test_Retrieval Epoch` line in the named trainlog. **Cross-checked
+three ways: (i) an independent parser, (ii) the sbatch's OWN embedded RESULT_ROW parser — bit-identical
+values, (iii) direct `sed` at each cited line.** The executor applies NO gates/deltas/interpretation; the
+independent 0-context reviewer renders the verdict against the prereg VERBATIM (and will re-parse the
+trainlogs itself).
+
+Trainlogs: `slurm/logs/hr_{SAM_rho0.05,MODDROP_p0.3}_{MHC_zh,HateMM}_<MODEL>_seed{0,1,2}_13478.trainlog`
+(ZH `<MODEL>`=`Qwen2.5-VL-7B-Instruct-LoRA_HF`; HateMM `<MODEL>`=`Qwen2.5-VL-7B-Instruct-LoRA-curric_HF`).
+
+### 6.1 ARM A — SAM (`--sam True --sam_rho 0.05`)
+
+**MHC_zh** (`hr_SAM_rho0.05_MHC_zh_Qwen2.5-VL-7B-Instruct-LoRA_HF_seed{0,1,2}_13478.trainlog`):
+
+| seed | val-sel ep | val-sel acc/mF1 | (Test line) | final ep | final acc/mF1 | (Test line) |
+|---|---|---|---|---|---|---|
+| 0 | 7 | 0.7852 / 0.7385 | :92 | 29 | 0.7987 / 0.7612 | :269 |
+| 1 | 8 | 0.8255 / 0.8002 | :100 | 29 | 0.8054 / 0.7646 | :269 |
+| 2 | 5 | 0.8121 / 0.7893 | :74 | 29 | 0.8054 / 0.7784 | :267 |
+| **mean** | | **0.8076 / 0.7760** | | | **0.8032 / 0.7681** | |
+
+**HateMM** (`hr_SAM_rho0.05_HateMM_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF_seed{0,1,2}_13478.trainlog`):
+
+| seed | val-sel ep | val-sel acc/mF1 | (Test line) | final ep | final acc/mF1 | (Test line) |
+|---|---|---|---|---|---|---|
+| 0 | 25 | 0.8791 / 0.8735 | :262 | 29 | 0.8884 / 0.8828 | :299 |
+| 1 | 28 | 0.8884 / 0.8828 | :294 | 29 | 0.8837 / 0.8776 | :304 |
+| 2 | 29 | 0.8791 / 0.8724 | :300 | 29 | 0.8791 / 0.8724 | :300 |
+| **mean** | | **0.8822 / 0.8762** | | | **0.8837 / 0.8776** | |
+
+### 6.2 ARM B — modality-dropout (`--mod_dropout True --mod_dropout_p 0.3`)
+
+**MHC_zh** (`hr_MODDROP_p0.3_MHC_zh_Qwen2.5-VL-7B-Instruct-LoRA_HF_seed{0,1,2}_13478.trainlog`):
+
+| seed | val-sel ep | val-sel acc/mF1 | (Test line) | final ep | final acc/mF1 | (Test line) |
+|---|---|---|---|---|---|---|
+| 0 | 24 | 0.8322 / 0.8023 | :229 | 29 | 0.7919 / 0.7577 | :270 |
+| 1 | 6 | 0.8523 / 0.8202 | :83 | 29 | 0.8389 / 0.8090 | :268 |
+| 2 | 29 | 0.8121 / 0.7771 | :275 | 29 | 0.8121 / 0.7771 | :275 |
+| **mean** | | **0.8322 / 0.7999** | | | **0.8143 / 0.7813** | |
+
+**HateMM** (`hr_MODDROP_p0.3_HateMM_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF_seed{0,1,2}_13478.trainlog`):
+
+| seed | val-sel ep | val-sel acc/mF1 | (Test line) | final ep | final acc/mF1 | (Test line) |
+|---|---|---|---|---|---|---|
+| 0 | 5 | 0.8512 / 0.8450 | :80 | 29 | 0.8651 / 0.8567 | :297 |
+| 1 | 5 | 0.8512 / 0.8476 | :80 | 29 | 0.8837 / 0.8776 | :297 |
+| 2 | 29 | 0.8698 / 0.8620 | :299 | 29 | 0.8698 / 0.8620 | :299 |
+| **mean** | | **0.8574 / 0.8515** | | | **0.8729 / 0.8654** | |
+
+**3-seed means are raw arithmetic summaries of the transcribed per-seed values only** (as in the prereg §2
+floor tables); the executor computes NO Δ-vs-floor, applies NO promote/kill bar, and renders NO pass/fail or
+KILLED language. The banked floors (prereg §2.1 ZH / §2.2 HateMM; freeze table) and the §3 bars are the
+independent reviewer's inputs.
+
+## 7. Closeout — CHAIN COMPLETE (raw numbers transcribed; verdict deferred to independent reviewer)
+
+Sha re-verify (submit + submit-instant) ALL MATCH; codex gate CLEARED (no P1; 2 P2 inactive under deployed
+config, freeze preserved); $0-CPU smoke PASS (mask-rate 0.2965 / both-dropped 0 / no-flag Namespace adds
+exactly the 4 inert keys); GPU smoke 13477 PASS (exit 0:0, SAM double-step visible, artifacts deleted);
+collisions CLEAN throughout; family 13478 COMPLETED exit 0:0 (00:51:33), 12/12 trainlogs, 0 assert/traceback;
+RAW both-protocol per-seed numbers transcribed line-numbered for all 4 arm×dataset cells (§6),
+cross-verified three ways. **NO gates/deltas/pass-fail applied; NO `state/` mutation; nothing pushed.** The
+independent 0-context reviewer renders the verdict (KS-arm-dead → FORMAL +0.030/+0.030 both-protocol, per
+arm×dataset) against the prereg VERBATIM.
+
