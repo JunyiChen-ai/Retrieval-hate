@@ -706,6 +706,22 @@ def _manifold_mixup_bce(model, image_feats, text_feats, labels, args):
     mixup only regularises the classifier path. Pinned to fusion_mode == 'align'.
     """
     assert model.fusion_mode == "align", "A3 mixup is pinned to align (Hadamard) fusion"
+    # REFREEZE-1 (codex STOP; NCA_SUBMIT_RECORD.md §2.1): the upstream FAISS mining call
+    # (dense_retrieve_hard_negatives_pseudo_positive) put the model in EVAL mode via
+    # model.eval() (retrieval.py:330) and never restored it. Without the guard below this
+    # SECOND head forward would run with the head's Dropout submodules DISABLED
+    # (img_proj/text_proj/mlp; classifier.py:81-82,96,103), confounding the mixup BCE with
+    # dropout-off and contradicting the prereg's "reproduce the deployed align forward"
+    # (dropout ON) claim. Fix: restore train mode on EXACTLY the nn.Dropout submodules
+    # reachable by this forward, run the forward, then restore each module's exact prior
+    # mode. The head carries NO BatchNorm/running-stat module (frozen --batch_norm False;
+    # ncafam_family.sbatch:86), so touching only Dropout has zero running-stat side effect.
+    # This function is entered ONLY by A3 (mixup=True); the floor and A1/A2 never call it,
+    # so their model mode AND RNG streams are byte-untouched by this fix.
+    _mixup_dropouts = [m for m in model.modules() if isinstance(m, nn.Dropout)]
+    _mixup_prev_modes = [m.training for m in _mixup_dropouts]
+    for _m in _mixup_dropouts:
+        _m.train()
     img = nn.functional.normalize(model.img_proj(image_feats), p=2, dim=1)
     txt = nn.functional.normalize(model.text_proj(text_feats), p=2, dim=1)
     x = torch.mul(img, txt)                                      # fused post-projection rep
@@ -715,6 +731,8 @@ def _manifold_mixup_bce(model, image_feats, text_feats, labels, args):
     perm = torch.randperm(B, device=x.device)
     x_mix = lam * x + (1.0 - lam) * x[perm]
     logit = model.output_layer(model.mlp(x_mix))                # [B, 1]
+    for _m, _mode in zip(_mixup_dropouts, _mixup_prev_modes):
+        _m.train(_mode)
     y = labels.float().reshape(-1, 1)
     y_mix = lam * y + (1.0 - lam) * y[perm]
     if getattr(args, "pos_weight_value", None) is not None:
