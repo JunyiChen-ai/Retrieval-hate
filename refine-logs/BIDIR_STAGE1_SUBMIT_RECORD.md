@@ -158,7 +158,103 @@ Per CLAUDE.md the `JobHeldUser` hold is **waited out, NEVER forced**. If J1 stay
 committed and the turn ends PENDING-JOB (orchestrator resumes).
 
 **Expected split sizes for §6 cache sanity:** ZH 579/78/149, HateMM 744/107/215 (gt line counts + banked causal
-cache dims, both re-confirmed this submit). **On J1 (13470) COMPLETE:** cache sanity (§6 — counts/dims/NaN,
-bidir caches DIFFER from causal, banked untouched by mtime). **On J2 (13471) COMPLETE:** transcribe RAW per-seed
-both-protocol numbers (line-numbered) into §7 — NO gates, NO deltas, NO pass/fail (independent 0-context verdict
-reviewer rules).
+cache dims, both re-confirmed this submit).
+
+## 5.2 Chain outcome — 13470 → 13471 both COMPLETED (exit 0:0)
+
+Both auto-released from `JobHeldUser` (never forced) and ran sequentially (sacct-verified):
+- **J1 13470 mllm_embed_bidir (extract):** COMPLETED exit 0:0, Elapsed 01:01:44 (Start 04:07:48 → End 05:09:32;
+  the ~1 h includes the disk_guard B2 backup/prune phase at sbatch start, `|| true`, benign; the extraction
+  proper is ~0.5 GPU-h). Both BIDIR installs printed `[BIDIR] … installed on model.model; is_causal=False on 28
+  decoder attention module(s)`; `[mllm_embed_bidir] ALL DONE`. No OOM / no Traceback / no AssertionError. The 41
+  `decord failed → trying PyAV` warnings are benign (identical fallback to the banked causal arm on the same
+  MHC_zh videos; zero-vector guards stayed 0 through those). Saved lines: ZH train N=579 / dev N=78 / test N=149
+  (zero-vec 0/0/0); HateMM train N=744 (zero-vec **1** — the single undecodable HateMM-train video, a pre-existing
+  guard shared by the banked causal cache) / dev N=107 / test N=215 (zero-vec 0/0). Derived `.pt` B2-pushed
+  (videos never left the node).
+- **J2 13471 enc3seed_bidir (head):** COMPLETED exit 0:0, Elapsed 00:06:43 (Start 05:09:33 → End 05:16:16, after
+  J1 ended). 6 head runs (ZH-bidir + HateMM-curric-bidir seeds 0/1/2), group `RAC_video_bidir`.
+
+## 6. Extraction cache sanity (prereg §4.1d + §1.2c) — PASS; bidir ≠ causal every split; banked UNTOUCHED
+
+CPU-only load of all 6 `-bidir` caches, id-paired against the banked causal caches (ZH `-LoRA_HF`, HateMM
+`-LoRA-curric_HF`):
+
+| dataset | split | N (exp) | dims | NaN/Inf | labels | ids==causal | bidir≠causal img/text max\|Δ\| | rows differing |
+|---|---|---|---|---|---|---|---|---|
+| ZH | train | 579 (579) | 3584 | 0 / 0 | 579 | yes | 4.561e-01 / 4.067e-01 | 579/579 |
+| ZH | dev_seen | 78 (78) | 3584 | 0 / 0 | 78 | yes | 4.301e-01 / 4.021e-01 | 78/78 |
+| ZH | test_seen | 149 (149) | 3584 | 0 / 0 | 149 | yes | 4.267e-01 / 3.956e-01 | 149/149 |
+| HateMM | train | 744 (744) | 3584 | 0 / 0 | 744 | yes | 4.231e-01 / 4.066e-01 | 743/744 |
+| HateMM | dev_seen | 107 (107) | 3584 | 0 / 0 | 107 | yes | 3.503e-01 / 3.915e-01 | 107/107 |
+| HateMM | test_seen | 215 (215) | 3584 | 0 / 0 | 215 | yes | 4.022e-01 / 3.688e-01 | 215/215 |
+
+- Row counts match expected (ZH 579/78/149; HateMM 744/107/215); dual-stream 3584-d; zero NaN/Inf; labels present.
+- **ids match the banked causal caches exactly** for every split ⇒ the within-seed pairing is on identical cache
+  membership + order.
+- **bidir ≠ causal on every split** (full-cache max|Δ| ~0.35–0.46). All rows differ except HateMM train
+  **743/744** — the single non-differing row is exactly the undecodable HateMM-train video (all-zeros in BOTH
+  bidir and causal, so identical there); every decodable video's representation changed under the mask flip. This
+  confirms the mask patch took effect end-to-end (not a silent no-op).
+- **Banked causal caches UNTOUCHED after the chain:** sha16 + mtimes bit-identical to the §2 pre-run table for all
+  6 (ZH `-LoRA_HF` Jul 2; HateMM `-LoRA-curric_HF` Jul 18). Distinct `-bidir` out-tags did not clobber the floor.
+
+`SANITY_VERDICT: PASS.`
+
+## 7. RAW head numbers — bidir per-seed both-protocol (job 13471) — TRANSCRIPTION ONLY
+
+**RAW-ONLY.** Verbatim from the frozen embedded parser readout in `slurm/logs/enc3seed_bidir_13471.out` (the
+`run_one…PY` block byte-identical to `enc3seed.sbatch`, block sha `13e34e4e…` — the same parser that produced the
+banked causal floors); each value cross-checked bit-exactly against the underlying `Test_Retrieval … macroF1 …
+acc … roc` line in the per-run `enc3s_*bidir*_seed{0,1,2}_13471.trainlog`. val-sel = epoch ≥ warmup 5 with max
+`Val_Retrieval` acc (roc tie-break); final = max epoch (29). **NO Δ-vs-causal-floor, NO KS-bidir-dead, NO DEGRADE
+branch, NO CONTINUE gate, NO FORMAL bar, NO mean, NO sign count, NO pass/fail — every gate + the 3-seed
+aggregation is left to the independent 0-context verdict reviewer, who re-parses the raw logs itself against the
+prereg VERBATIM.**
+
+### 7.1 ZH — bidir (model `Qwen2.5-VL-7B-Instruct-LoRA-bidir_HF`, group `RAC_video_bidir`)
+| seed | protocol | epoch | acc | macroF1 | roc | `enc3seed_bidir_13471.out` ln | trainlog macroF1 ln |
+|---|---|---|---|---|---|---|---|
+| 0 | val-sel | 19 | 0.6980 | 0.5362 | 0.7214 | 295 | seed0:189 |
+| 0 | final-ep | 29 | 0.6711 | 0.5379 | 0.6979 | 296 | seed0:270 |
+| 1 | val-sel | 26 | 0.7181 | 0.6079 | 0.7254 | 574 | seed1:245 |
+| 1 | final-ep | 29 | 0.7315 | 0.6337 | 0.7479 | 575 | seed1:270 |
+| 2 | val-sel | 17 | 0.7315 | 0.6108 | 0.7778 | 852 | seed2:172 |
+| 2 | final-ep | 29 | 0.7114 | 0.6025 | 0.7491 | 853 | seed2:269 |
+
+### 7.2 HateMM — bidir (model `Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir_HF`, group `RAC_video_bidir`)
+| seed | protocol | epoch | acc | macroF1 | roc | `enc3seed_bidir_13471.out` ln | trainlog macroF1 ln |
+|---|---|---|---|---|---|---|---|
+| 0 | val-sel | 22 | 0.7349 | 0.7244 | 0.8328 | 1163 | seed0:238 |
+| 0 | final-ep | 29 | 0.7581 | 0.7471 | 0.8304 | 1164 | seed0:302 |
+| 1 | val-sel | 23 | 0.7767 | 0.7674 | 0.8344 | 1474 | seed1:247 |
+| 1 | final-ep | 29 | 0.7488 | 0.7339 | 0.8353 | 1475 | seed1:302 |
+| 2 | val-sel | 21 | 0.7581 | 0.7490 | 0.8303 | 1786 | seed2:230 |
+| 2 | final-ep | 29 | 0.7535 | 0.7406 | 0.8413 | 1787 | seed2:303 |
+
+RESULT_ROW lines (verbatim, tab-separated `…\tvalsel\t<ep>\t<F1>\t<acc>\t<roc>\tfinal\t<ep>\t<F1>\t<acc>\t<roc>`),
+`enc3seed_bidir_13471.out` ln 297 / 576 / 854 (ZH s0/s1/s2), 1165 / 1476 / 1788 (HateMM s0/s1/s2):
+```
+RESULT_ROW  enc3s_MHC_zh_…-LoRA-bidir_HF_seed0_13471.trainlog          valsel 19 0.5362 0.6980 0.7214  final 29 0.5379 0.6711 0.6979
+RESULT_ROW  enc3s_MHC_zh_…-LoRA-bidir_HF_seed1_13471.trainlog          valsel 26 0.6079 0.7181 0.7254  final 29 0.6337 0.7315 0.7479
+RESULT_ROW  enc3s_MHC_zh_…-LoRA-bidir_HF_seed2_13471.trainlog          valsel 17 0.6108 0.7315 0.7778  final 29 0.6025 0.7114 0.7491
+RESULT_ROW  enc3s_HateMM_…-LoRA-curric-bidir_HF_seed0_13471.trainlog   valsel 22 0.7244 0.7349 0.8328  final 29 0.7471 0.7581 0.8304
+RESULT_ROW  enc3s_HateMM_…-LoRA-curric-bidir_HF_seed1_13471.trainlog   valsel 23 0.7674 0.7767 0.8344  final 29 0.7339 0.7488 0.8353
+RESULT_ROW  enc3s_HateMM_…-LoRA-curric-bidir_HF_seed2_13471.trainlog   valsel 21 0.7490 0.7581 0.8303  final 29 0.7406 0.7535 0.8413
+```
+
+The banked causal floors for the paired comparison live in prereg §2.1 (ZH 13150) / §2.2 (HateMM curric 13241);
+the executor does **not** compute the pairing or any gate — that is the independent verdict reviewer's step.
+
+## 8. Closeout — CHAIN COMPLETE
+
+Sha re-verify (submit + submit-instant) ALL MATCH; same-code head block `13e34e4e…` byte-identical across all
+three sbatch; CPU non-causality self-test PASS (`d_causal(pos0)=0`, `d_bidir(pos0)=6.4e-02`); GPU smoke 13469 PASS
+(28-module install, shapes (2,3584), norms 1.0, bidir≠causal DIFFER, real-model type+mask belt), smoke artifacts
+deleted; collisions CLEAN throughout; chain submitted sequential afterok (13470 → 13471), both COMPLETED exit 0:0;
+extraction cache sanity PASS (counts 579/78/149 · 744/107/215, 3584-d, 0 NaN/Inf, ids == banked causal, bidir ≠
+causal every split, HateMM-train zero-vec guard shared); banked causal caches UNTOUCHED (sha16 + mtimes bit-
+identical before/after); 6 head runs COMPLETED; raw both-protocol per-seed numbers transcribed (§7). The verdict
+(G-repro → single test-touch → KS-bidir-dead + DEGRADE branch → CONTINUE gate → FORMAL bar, both protocols) is
+rendered by a fresh independent 0-context reviewer against the frozen prereg VERBATIM — the executor applied NO
+gates and NO pass/fail language. No `state/` mutation. Nothing pushed.
