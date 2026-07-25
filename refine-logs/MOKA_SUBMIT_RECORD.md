@@ -474,3 +474,101 @@ Frozen shas A–G + prereg re-verified **MATCH** at the resubmit instant; `bash 
 sbatch itself was never at fault and is unchanged); all collision surfaces ABSENT; queue empty of any
 other job of this account (13531 was **CANCELLED by its owner at 03:26:03 having never started**, so
 the 16-CPU aggregate is now free for job 1 once the smoke passes).
+
+### S3'-b RESULT — job `13551` **COMPLETED, ExitCode 0:0, elapsed `00:31:55`. ALL 5 LEGS PASS.**
+
+Log: `slurm/logs/moka_smoke_13551.out`, closing line
+`======== MOKA GPU SMOKE ALL LEGS PASS (13551) ========`.
+
+**LEG 1 — 10-step MokA SFT on the REAL production wrapper** (log l.260-261, 274-373, 521-530):
+
+```
+[moka] routed 196 lora.Linear layers -> MokaLinear (A_v added, B shared)
+[moka] trainable params: {'trainable_total': 58490880, 'lora_A_t': 18120704,
+                          'lora_A_v': 18120704, 'lora_B': 22249472}
+```
+`18,120,704 + 18,120,704 + 22,249,472 = 58,490,880` ✔ (= the frozen §F0.7 figure, 1.448864×).
+
+| step | grad-norm `A_t` | grad-norm `A_v` | grad-norm shared `B` | `fallback_calls` |
+|---|---|---|---|---|
+| 1 | 0.000000e+00 | 0.000000e+00 | 9.999997e-01 | 0 |
+| 2 | 0.000000e+00 | 0.000000e+00 | 9.999996e-01 | 0 |
+| 3 | 1.876191e-01 | 4.481185e-03 | 9.822312e-01 | 0 |
+| 4 | 1.986559e-01 | 1.330844e-02 | 9.799784e-01 | 0 |
+| 5 | 1.084415e-01 | 5.173314e-03 | 4.651682e-01 | 0 |
+| 6 | 4.611471e-01 | 1.070130e-02 | 8.872584e-01 | 0 |
+| 7 | 2.273781e-01 | 1.926310e-02 | 9.736151e-01 | 0 |
+| 8 | 4.622498e-01 | 1.180384e-02 | 8.866705e-01 | 0 |
+| 9 | 2.516530e-01 | 1.442473e-02 | 7.600222e-01 | 0 |
+| 10 | 5.297920e-01 | 1.297502e-02 | 8.480275e-01 | 0 |
+
+`max A_t 5.297920e-01`, `max A_v 1.926310e-02`, `max B 9.999997e-01` — **all three > 0 ⇒ grad flow
+reaches `A_t` AND `A_v` AND the shared `B`.** The two leading zeros at steps 1-2 are the
+**pre-declared** prereg §3.2 S4 behaviour (PEFT zero-inits `lora_B`, so `dL/dA ≡ 0` until `B` has
+moved), not a defect. Losses `[0.2373, 0.1737]`, **all finite**. 10 optimizer steps, **3 eval loops**
+completed. Final `moka_stats = {'impl': 'dense', 'hook_calls': 314, 'routed_calls': 77224,
+'fallback_calls': 0, 'strict': True}` — **`fallback_calls == 0` at every single readout, across both
+the training and the eval call surfaces, on the real `PeftModelForCausalLM` under `MOKA_STRICT=1`.**
+This is the runtime discharge of round-1's P1-A on the deployed path.
+
+*Raw observation, no interpretation:* `A_v`'s grad-norm runs ~25-40× below `A_t`'s throughout,
+despite vision tokens being 94.6 % of positions (§F0.6).
+
+**LEG 1b — job-1 STEP-3 post-run block rehearsal** (l.532-535):
+`lora_A 196 | lora_A_v 196 | lora_B 196 | tensors 588 | params 58490880` ✔ (both frozen asserts pass).
+`KS-MOKA-2 (smoke, 10 steps only) min 1.4046 median 1.4140 max 1.4242`;
+`median expression check: statistics.median == (v97+v98)/2 -> True` ⇒ **the amended P1-B expression is
+correct on a real 196-layer adapter.** *(This smoke median is ~1.41, i.e. still at the two-independent-
+Kaiming-draws value after only 10 steps — it is **not** the cell's KS-MOKA-2, which job 1 emits after
+the full 3-epoch run. Per **N1** it is a non-degeneracy floor either way.)*
+
+**LEG 2 — `--moka` 2-video extraction** (l.542-547):
+`[moka] routed layers: 196 | lora_A_v tensors loaded: 196` — the silent-drop trap is defeated in
+practice. `shapes img (2, 3584) text (2, 3584)`, all finite, both rows non-zero.
+
+**LEG 3 — KS-parity, the HALT gate** (l.557-560):
+```
+KS-parity img_feats  max|delta| = 0.000000e+00  over N=8
+KS-parity text_feats max|delta| = 0.000000e+00  over N=8
+KS-parity BIT-EXACT (both streams max|delta| == 0.0) ? True
+```
+**PASS.** The edited extractor with **no** new flags reproduces the banked generic-LoRA cache
+**bit-exactly** ⇒ §F0.8's default==identity claim is now runtime-confirmed, and there is no stack
+drift between the banked floor and this cell.
+
+**LEG 4 — merge-drift machinery rehearsal** (l.570-572): path works; see the flag below.
+
+**Cleanup verified:** `logging/_smoke_moka removed: YES`; no stray `*moka*`, `*-um*`, `_parity`,
+`_umsmoke`, `_mokasmoke` caches in `data/CLIP_Embedding/MHC_zh`; `RAC_video_moka*` absent;
+`MOKA_KS2_routing_report.json` absent; frozen artifacts **git-clean**. Disk 463 G avail / 97 %.
+
+### ⚠ MATERIAL FORECAST from LEG 4 — the §3.4 `KS-MOKA-0b` contingency looks likely to FIRE
+
+```
+merge-drift(8 items) img_feats  mean cos 0.99976921  min cos 0.99947494
+merge-drift(8 items) text_feats mean cos 0.99945784  min cos 0.99917126
+```
+The pre-registered `KS-MOKA-0b` bar (§3.4) is **mean per-item cosine ≥ 0.9999 on ALL 6 (split ×
+stream) cells**. On this 8-item rehearsal **both** streams sit **below** it (`0.99977` and
+`0.99946`). This is **not** a leg failure — LEG 4 was declared machinery-only and the machinery works
+— and it is **not** the pre-registered measurement, which job 2 Stage A0 produces over all 3 splits
+at full N. But the drift is a property of **bf16 accumulation order** (merged `W+BA` in one matmul vs
+unmerged `Wx + B(Ax)`), not of sample size, so the forecast is robust.
+
+**If it fires, §3.4 is already pre-declared and pre-budgeted:** a same-path **unmerged** floor head
+run (3 seeds, **+0.05 GPU-h, +3 test evaluations** — the contingent budget reserved in §F0.1) becomes
+**MANDATORY before any verdict**, and the arm is paired against **that** floor **instead of 13150**.
+Note the frozen job-2 sbatch (**F**) does **not** contain that run, so it would need a separate
+submission on the `-um` caches Stage A0 leaves behind. **Flagged now for planning; no action taken,
+and this does not gate job 1.** This is exactly the scenario recon §3.6 / prereg §3.4 anticipated
+("a routing-OFF MokA **cannot** reproduce the floor cache bit-exactly").
+
+### Budget disclosure (honest)
+
+GPU smoke actual **`00:31:55` = 0.532 GPU-h** (plus 13537's 11 s) against a planned **0.2**.
+**Overrun +0.33 GPU-h**, cause identified: the executor's own throwaway `eval_strategy: steps` /
+`eval_steps: 5` deviation triggered **3 full 78-item eval passes at ~4:57 each ≈ 15 min**, i.e. about
+half the runtime. It bought the evidence that the amended hook fires on the **eval** surface too
+(`fallback_calls == 0` across all 3 eval loops), which is a surface the frozen job 1 exercises every
+epoch. Projected family total ≈ **4.98 GPU-h** vs the **4.7 cap** (≈ 5.03 if the §3.4 contingency
+fires). Per standing instruction the cap is a planning figure: **recorded, and execution continues.**
