@@ -11,3 +11,6 @@ test
 artifacts
 *.out
 .aris/
+
+# external baseline clones (survey/repro reference, not our code)
+external/
