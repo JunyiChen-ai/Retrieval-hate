@@ -779,3 +779,61 @@ content-rich, and its wall is 78-dev selection noise plus representation saturat
 not a degenerate transcript. (ii) The litsweep2 resolution "~6.5×" downscale figure is superseded everywhere by
 the ffprobe-measured **HateMM 2.71× / EN 10.55× / ZH 13.71×** multipliers in Table 11
 [DOC:LITSWEEP3_ZH_SPECIFIC.md, commit `d4af64b`; DOC:RESOLUTION_FORENSIC_RECON.md, commit `5c6075b`].
+
+**Wave 5 — the datasets themselves at the published frontier (F81).** The final literature sweep treated the
+datasets, not the pipeline, as the object and produced a load-bearing external calibration. On *legal* channels
+we already sit at the 2025–2026 published HateMM frontier and at/above it on MHClip-EN. Table 12 lists each
+method on its own protocol (5-fold CV or a custom split) — **ordering and channel-legality only, never a paired
+4dp comparison** with our n = 215 clean test.
+
+**Table 12. Published HateMM frontier vs the house configuration (each method's own protocol; ordering and
+channel-legality only).**
+
+| Method (year) | Channels | HateMM acc / mF1 | In our box? |
+|---|---|---|---|
+| Das 2023 (dataset paper) | text + audio(MFCC) + video | 0.798 / 0.790 | audio download-gated |
+| Wang 2025b (Vid+RM-FT) | text + audio + video | 0.820 / 0.820 | audio download-gated |
+| CMFusion \cite{cmfusion} | Whisper-text + MFCC + ViT, gated add-fusion | 0.823 / 0.860 | no OCR; MFCC audio = our F41-killed eGeMAPS class |
+| Xiong 2024 (TCE-DBF) | text + audio + video | 0.849 / 0.840 | audio download-gated |
+| Koushik HCC1 \cite{koushik} | HateXplain-text + CLIP + CLAP-audio, late concat | 0.854 / 0.848 | legal iff CLAP download user-gated; no OCR; ablation +2.9 mF1 from a base below us |
+| RAMF \cite{ramf} (Dec-2025) | text + audio + video + Qwen2.5-VL-32B counterfactual reasoning | 0.856 / 0.851 | 32B local = B2-dead, method = our P5/P10-dead; no OCR |
+| MM-HSD \cite{mmhsd} (ACMMM-25) | transcript + audio(wav2vec2-xlsr) + video + **OCR** + cross-modal attn | 0.878 / 0.874 | **OUT — uses OCR** (ablation: drop any modality → mF1 0.815–0.845 ⇒ OCR load-bearing) |
+| MultiHateGNN (BMVC-25) | multimodal GNN | – / 0.771 | below field |
+| **HOUSE (curric-LoRA, ours)** | LoRA-Qwen dual-stream + RGCL + kNN, no OCR / no audio | **0.879 / 0.873** | in-box |
+
+Every published method that is legal-in-box (Koushik 0.848, CMFusion 0.860, RAMF 0.851, Xiong 0.840, Wang 0.820
+macro-F1) sits at or below our 0.873; the single method above us — MM-HSD 0.874 — buys its edge with the vetoed
+OCR channel, and its own ablation proves that channel load-bearing (dropping any modality costs 0.03–0.06 mF1).
+There is thus **no legal, published route to HateMM > 0.88**: HateMM is near-ceiling for our channel set, and the
+OCR veto — not method weakness — is the 0.874 gap. The same reading holds on MHClip-EN, where the published
+frontier (RAMF 0.740 / 0.717, coarse video-level 0.684 / 0.644 per yang et al. \cite{yang2025}, GPT-4V multiclass
+0.63 mF1) sits *below* our ≈ 0.79–0.81 — confirming EN is label-limited at the *field* ceiling, not
+method-limited [DOC:LITSWEEP5_HATEMM_EN.md, commit `36d833e`]. Concurrent temporal work corroborates the closure:
+TANDEM \cite{tandem} (arXiv 2601.11178, May-2026) adds scene-change keyframe selection + RL over optional gold
+temporal/target-identity annotations and reaches HateMM 0.78 / 0.79 and MHClip 0.67 / 0.38 — below us and
+out-of-box on several constraints [DOC:LITSWEEP5_TEMPORAL.md, commit `ad81ffb`]. (HOUSE 0.879 / 0.873 are the
+curric-LoRA final-epoch numbers 0.8791 / 0.8726 at the external-paper 3dp convention; they revise nothing in
+T1–T4.)
+
+Two wave-5 companions round out the ledger at zero GPU. **F82 (graded 3-class soft-label)**, the sweep's
+top EN-revival longshot, is measured PARK by a $0 pre-gate (§3.10 of the analysis): the fully gold-cheating
+oracle for any monotone Offensive reweighting reaches only EN +0.0250 / ZH +0.0256, both below +0.030, the
+honest proxy is monotone-negative at every τ, and the true-Offensive effect does not beat its F63 permutation
+null — the F44 within-positive wall on the label axis, at 0 GPU-h with bit-exact machinery parity
+[DOC:GRADEDLBL_PREGATE_RECORD.md, commit `c4333ce`]. **F81's adversarial completeness audit** (the F61 job redone)
+finds enumeration is *not literally* exhausted — ≥ 7 never-/under-measured in-box cells plus two ban-scope
+letter-overreaches survive an adversarial read — but every surviving cell is D7-novelty-dead, F66-arithmetic-capped,
+or park-priced < 3 %, and the goal's remaining upside lives only behind user gates (ZH val-selection retirement,
+which would make ZH a second passing dataset under a single final-epoch protocol, ranked far above any operator or
+download) [DOC:LITSWEEP5_COMPLETENESS.md, commit `4e3b09a`]. A data-level limitation surfaced by the same sweep:
+MultiHateClip releases only the aggregated majority-vote label with **no per-annotator votes** (unlike HateXplain),
+so the learning-with-disagreement lineage is foreclosed at the data level (limitations §3).
+
+*Consistency note (waves 3–5): every number above is transcribed from the named litsweep2/-3/-5 verdict/record
+files (numeric-provenance discipline) and re-checked against the primary logs; none revises T1–T4, and the
+13-route campaign count is untouched — these remain post-terminus audit rounds, banked as findings F75–F82 and
+kept off the negative-result ordinal (master-table tension list #9). Three inherited premises are corrected with
+provenance (median-4-words → ~106 Chinese chars; 6.5× → 2.71×/10.55×/13.71×; test sizes EN 161 / ZH 149 / HateMM
+215 verified against the wiki, which was already correct — the litsweep-5 correction was to the task prompt, not
+these tables). External frontier numbers are each paper's own protocol and are kept strictly out of any 4dp
+house comparison.*

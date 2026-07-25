@@ -428,6 +428,32 @@ findings F61–F74(`state/findings.jsonl`)。**不入负结果 ordinal 账、不
 | **ELR / noise-robust head** — additive early-learning 正则(lead)+ co-teaching(contrast)于 FAISS-mined pairs(在 F75 ban letter 外) | $0 forensic recon,PARK:mined pairs 由 *gold label 过滤* ⇒「mined-pair noise」≡ gold-label noise(pillar-3 之对象);ELR 挂 BCE 腿而部署 kNN vote 不读它(二阶);noise proxy 13–17% raw-space 上界、boundary-hardness 主导;**Wall-C 量化**(HateMM test 峰 ep18/21/24,+4/+7/+14 于 dev 饱和后;ZH final−valsel = +0.0134 ×3 seed)令 early-target pull 反向;≥+1 ~5–8%,+3 ~1–2%;0.16 GPU-h probe 未跑 | ELR_FORENSIC_RECON.md · `9e41447` |
 | **ZH 中文指令重提取** — 把部署英文提取 instruction/scaffolding 译成中文(ZH-path 唯一未变轴;测 SFT 训练/推理 language-mismatch 假设) | 3-seed 判决,~1.1 GPU-h(job 13487,KS-parity bit-exact):**双臂双协议 KS-dead**——LoRA −0.0358 val-sel / −0.0112 final acc,frozen −0.0336 / −0.0045;两 val-sel 腿过 −0.014(中文 prompt *伤*);mismatch 假设 **REFUTED**(双臂近等幅回退)⇒ extraction-instruction-language 轴 CLOSED、D7-dead | ZHPROMPT_VERDICT_REVIEW.md · `1a8c5fe` |
 
+**T6.3-b 波次 5(F81–F82)**
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **Graded 3-class soft-label** — 给合并进正类的 Offensive 一个更软的正 target(MHC 3-class {Normal,Offensive,Hateful},部署合 Offensive+Hateful→1;EN-revival longshot) | $0 pre-gate,PARK:label-independent 检索 ⇒ vote 对 Offensive 权重线性、τ 栅格与 oracle 精确;Offensive 是正类多数(EN 73%/ZH 63%),下压把真阳拖向 Normal——honest proxy 双库每 τ 单调负(ZH loo τ0.25 −0.1538),完全 gold-cheat oracle 顶棚仅 **EN +0.0250 / ZH +0.0256(均 < +0.030)**,无臂过 F63 perm-null(真 Offensive 下压 ≯ 随机等量正子集)⇒ F44 within-positive 墙的 label 轴算术化;机器 parity bit-exact,0 GPU-h | GRADEDLBL_PREGATE_RECORD.md · `c4333ce` |
+
+**外部前沿综合(litsweep-5 S2,triage-only,不与本地 G-repro 混表):** 2023–2026 HateMM 已发表前沿——合法通道
+CMFusion 0.823/0.860、Koushik(CLAP)0.854/0.848、RAMF(32B)0.856/0.851、Xiong 0.849/0.840、Wang 0.820——**全
+≤ HOUSE 0.879/0.873**;唯一超我方的 MM-HSD 0.878/0.874 靠**否决的 OCR**(ablation 掉任一模态 → mF1 0.815–0.845,
+OCR load-bearing)⇒ **无合法已发表路径到 HateMM > 0.88**。MHC-EN 前沿(RAMF 0.740/0.717、coarse-video
+0.684/0.644、GPT-4V 0.63 mF1)全 ≤ 我方 ~0.79–0.81 ⇒ EN 是 field-ceiling label-limited、非 method-limited。TANDEM
+(2601.11178)HateMM 0.78/0.79、MHC 0.67/0.38,在我方之下且多重越界(gold+RL),佐证时序闭合。HOUSE 0.879/0.873 =
+curric-LoRA final-epoch 0.8791/0.8726 的外部论文 3dp 口径,**不改 T1–T4**。[DOC:LITSWEEP5_HATEMM_EN.md `36d833e`;
+LITSWEEP5_TEMPORAL.md `ad81ffb`]
+
+**per-annotator 票不存在(limitations 硬约束):** MultiHateClip 仅释出聚合 majority-vote 3-class label(2 标注者→
+分歧第 3→专家升级),**无 per-annotator 票/票数**(不同于 HateXplain),in-repo 与公开版皆无 ⇒ LeWiDi /
+annotator-distribution soft-label 谱系在**数据层**被封,annotator-level 建模不可行。[DOC:LITSWEEP5_HATEMM_EN.md §1;
+arXiv 2408.03468]
+
+**来源(T6.3):** 波次 3–4 = `refine-logs/{NCA_VERDICT_REVIEW(+NCA_REFREEZE_FIX/REVIEW), RESOLUTION_FORENSIC_RECON,
+CURATION_FORENSIC_RECON, ELR_FORENSIC_RECON, ZHPROMPT_VERDICT_REVIEW}.md` + lit-sweep
+`LITSWEEP3_{SELECTOR_CONVERSION, ZH_SPECIFIC, DATA_CENTRIC}.md`;波次 5 = `LITSWEEP5_{TEMPORAL, HATEMM_EN,
+COMPLETENESS}.md` + `GRADEDLBL_PREGATE_RECORD.md`(+`OUT.json`)。findings F75–F82(`state/findings.jsonl`)。
+**不入负结果 ordinal、不铸总数(逐轮框架,同文末张力清单 #9)。**
+
 ---
 
 ## 骨架段 — 一页纸论文章节骨架

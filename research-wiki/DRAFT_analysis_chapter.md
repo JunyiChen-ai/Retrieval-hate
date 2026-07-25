@@ -372,6 +372,27 @@ transferable caution, established structurally and then confirmed at both the un
 supervised operator level. (The same causal cumulation is why W2-A's grounded key was architecturally
 real yet redundant in §3.6: the joint forward integrates the transcript into every vision token.)
 
+**The temporal closure is now externally named and in-domain grounded (F81).** A final literature sweep
+re-audited the temporal axis and confirmed the opposite of the "never varied" framing: temporal structure is
+among the *most* heavily attacked axes, closed at four independent operator levels — an order-constrained
+soft-DTW kernel (W2-C: observed Δ = the order-shuffle null's 95th percentile exactly), a set-to-set retrieval
+object over the frame groups (S2S/F37/F38), the causal-prefix tensor (CTF/F39), and independent-segment
+aggregation (ISR/F66) — plus frame count (F67), all unified by F35 (cumulative-causal prefixes) and F66's
+symmetric-vs-selection arithmetic. Two external anchors sharpen this into a stated negative result. First, the
+in-domain temporal-label-noise study (yang et al., arXiv 2508.04900) reports that HateMM / MHClip-EN hateful
+videos contain **33 % / 35 % non-hateful segments** ("systematic, not random contamination") and that trimming
+to the **gold** hateful spans reaches ~98 % macro-F1 — i.e. temporal burstiness converts to accuracy *only*
+through timestamp selection, exactly the law-III-banned per-item gold selection: the in-domain confirmation that
+F66's selection-lock is temporal as well as segmental. Second, the extraction path is verified **pacing-blind**
+— Qwen2.5-VL receives monotonic frame *order* via mRoPE over T = 4 temporal-patch groups but no fps/timestamp,
+and CTF measured that group tensor at exactly +0.0000 / −0.0029 conditional information — pinning that the
+pipeline exploits the cumulative-causal *semantics*, not a recoverable temporal-dynamics signal (consistent with
+the F72 bidirectional crater, §3.7 above). The genuinely virgin temporal sub-cells that remain (raw
+optical-flow as a new modality; mRoPE absolute-time injection) each require raw-video re-extraction and inherit
+the conditional-redundancy null that already zeroed audio (F64) and prosody (F41); a W2-C forensic even finds
+the hateful class is *more static* (within-class cosine 0.899 > 0.874), inverting the reveal/escalation premise
+[DOC:LITSWEEP5_TEMPORAL.md, commit `ad81ffb`].
+
 ### 3.8 Structural law III — per-item selection is closed at all three supervision sources
 
 Rounds 2–3 closed *global* levers (a single operating point, a fixed fusion, a pooled key). Round 4
@@ -642,6 +663,23 @@ mismatch when read with English prompts — is **KS-dead on both arms and both p
 val-selection). The mismatch hypothesis is thus *refuted*, not merely unconfirmed — the LoRA and frozen arms
 regress by near-identical margins, so English prompting is not a ZH liability; a native-bilingual encoder reads
 the Chinese body regardless of instruction language [DOC:ZHPROMPT_VERDICT_REVIEW.md, commit `1a8c5fe`].
+
+**The discarded label granularity does not sharpen the deployed boundary (F82, wave 5).** MultiHateClip ships a
+3-class {Normal, Offensive, Hateful} annotation that the deployed task collapses to {Offensive, Hateful} = 1; a
+natural EN-revival longshot gives the merged-in Offensive class a *softer* positive target in head training. A
+$0 pre-gate closes it before any GPU: because retrieval on the fused key is label-independent, the vote is
+exactly *linear* in the Offensive weight, so the τ grid and the gold-cheat oracle are exact, not sampled.
+Offensive is the *majority* of the positive class (EN 73 % / ZH 63 %), so down-weighting it drags true positives
+toward Normal — the honest proxy is monotone-negative on both datasets at every τ (ZH loo τ=0.25 = −0.1538), and
+the fully gold-cheating oracle ceiling, with dev labels choosing *both* the weight and the threshold, reaches
+only **EN +0.0250 / ZH +0.0256, both below the +0.030 bar**, with no arm's observed Δ exceeding its F63
+permutation null (down-weighting the *true* Offensive set is no better than a random equal-size positive subset).
+This is the §3.6 within-positive label-limit made arithmetic on the label axis: the 3-class split refines the
+Hateful-vs-Offensive structure the binary task merges, not the harmful-vs-Normal boundary it is scored on
+[DOC:GRADEDLBL_PREGATE_RECORD.md, commit `c4333ce`]. (This is also the *only* released finer label granularity:
+MultiHateClip publishes an aggregated majority-vote label with no per-annotator votes, so the
+learning-with-disagreement / soft-label-from-annotators lineage of the related work is foreclosed at the data
+level — see limitations [DOC:LITSWEEP5_HATEMM_EN.md, commit `36d833e`].)
 
 ## 4. What survives
 

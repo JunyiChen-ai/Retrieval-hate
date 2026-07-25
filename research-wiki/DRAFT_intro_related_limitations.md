@@ -140,7 +140,11 @@ heavy and produce a per-clip verdict rather than a reusable, editable memory. MM
 macro-F1 doubles as an **external calibration of our constraint box**: its lead rests on an on-screen-text
 OCR channel we veto, and *without* OCR it falls to 0.845 — inside the band of our best HateMM configuration
 (0.8775–0.8791, experiments §7), so the field's SOTA over our detector on HateMM is the vetoed channel, not
-a stronger core [DOC:LITSWEEP2_FRESH_2026.md]. At the other end sit
+a stronger core [DOC:LITSWEEP2_FRESH_2026.md]. This calibration holds across the full 2023–2026 HateMM
+frontier: every published method on *legal* channels — CMFusion's gated MFCC-audio fusion \cite{cmfusion},
+Koushik's CLAP general-audio late-concat \cite{koushik}, and RAMF's Qwen2.5-VL-32B counterfactual reasoning
+\cite{ramf} — sits at or below our macro-F1, and only OCR-using MM-HSD edges us (experiments §8)
+[DOC:LITSWEEP5_HATEMM_EN.md]. At the other end sit
 light multimodal fusion baselines (HateMM's own fusion, CMFusion, MultiHateGNN)
 \cite{das2023hatemm}. *Our delta:* we occupy a distinct point in this space — a **run-once frozen /
 LoRA encoder + a few-million-parameter head + a kNN memory read-out** — matching or beating heavier
@@ -281,6 +285,16 @@ papers, and every reported delta is on identical test videos, but the absolute c
 target that future re-runs on freshly-downloaded data may not reproduce exactly
 [DOC:DRAFT_experiments_chapter.md §1.1, DOC:experiments/exp-baseline-reproduction.md].
 
+**Per-annotator labels are unavailable.** MultiHateClip releases only the aggregated majority-vote 3-class
+label — two annotators, a third on disagreement, expert escalation — with no per-annotator votes or vote counts
+(unlike HateXplain), neither in-repo nor in the public release [DOC:LITSWEEP5_HATEMM_EN.md §1, arXiv 2408.03468].
+This forecloses at the *data* level the learning-with-disagreement / soft-label-from-annotator-distribution
+lineage of §2(f): our consensus-denoising pillar operates on model-vote consensus, not on a released
+human-disagreement distribution, and no annotator-level modelling is possible on these datasets. The one legal
+finer granularity that *is* released — the 3-class {Normal, Offensive, Hateful} label the deployed task merges —
+carries no boundary-sharpening signal under any monotone reweighting, gold-cheat oracle included
+(EN +0.0250 / ZH +0.0256, both < +0.030; analysis §3.10, F82).
+
 ---
 
 *Provenance note: all numbers are transcribed from `PAPER_MASTER_TABLES.md` (T1–T4) and the committed
@@ -291,8 +305,11 @@ reuse the method / experiments / analysis chapters where they already exist (`mo
 `mmhsd`, `multihateloc`, `crave`, `safelens`, `tandem`, `lela`) and for the round-5/6 audit's
 mechanism/positioning citations (`xu2020vinfo` = Xu et al. ICLR 2020; `ethayarajh2022vinfo` = Ethayarajh
 et al. ICML 2022; `lewidi2025` = LeWiDi-2025 shared task; `serac`, `grace`, `wise` = model-editing lineage;
-`balancebench` = modality-imbalance / text-dominance diagnosis; and, in the analysis/experiments chapters,
-`llm2vec` = LLM2Vec for the bidirectional-attention baseline), all verified against the litsurvey
-PAPER-VALUE lists [DOC:LITSURVEY_NOVEL_MECHANISMS.md, DOC:LITSURVEY_RETRIEVAL_MEMORY.md,
-DOC:LITSURVEY_MLLM_EMBEDDING.md]; the shared bibliography is a `\bibliography` placeholder pending
-assembly.*
+`balancebench` = modality-imbalance / text-dominance diagnosis; `llm2vec` = LLM2Vec for the
+bidirectional-attention baseline; and, for the wave-5 HateMM/EN frontier positioning, `cmfusion` = CMFusion
+(arXiv 2505.12051), `koushik` = Koushik HCC1 CLAP-audio (arXiv 2502.07138), `yang2025` = temporal-label-noise
+/ segment-contamination (arXiv 2508.04900), plus arXiv IDs registered for the already-used keys `tandem`
+(2601.11178) and `ramf` (2512.02743)), all verified against the litsurvey and litsweep-5 PAPER-VALUE lists
+[DOC:LITSURVEY_NOVEL_MECHANISMS.md, DOC:LITSURVEY_RETRIEVAL_MEMORY.md, DOC:LITSURVEY_MLLM_EMBEDDING.md,
+DOC:LITSWEEP5_HATEMM_EN.md, DOC:LITSWEEP5_TEMPORAL.md]; the shared bibliography is a `\bibliography` placeholder
+pending assembly.*
