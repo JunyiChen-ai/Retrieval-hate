@@ -113,4 +113,35 @@ Run under `conda activate HateVideo` (CPU-only, $0 GPU).
 
 **S2 verdict: PASS. Proceed to S3 GPU smoke (KS-parity + N1 repro + Chinese-shape).**
 
+Commit: `ac23920` (S2 CPU smoke record).
+
+---
+
+## S3 — GPU smoke (ONE throwaway job; KS-parity + N1 repro + Chinese-shape) — SUBMITTED
+
+**Smoke sbatch (throwaway, NOT a frozen artifact):** `scratchpad/zhprompt_smoke.sbatch` — 8 CPU / 64 G / 1 A100,
+NO `--time`, no disk_guard (throwaway). All artifacts under `logging/_smoke_zhp` + `logging/Retrieval/MHC_zh/
+_smoke_zhp`, `rm -rf`'d at end; extractions write to `--EXP_FOLDER logging/_smoke_zhp` (NOT data/CLIP_Embedding),
+so no `-zhp`/parity cache ever lands in the real §4.3 surface. `bash -n` = SMOKE_BASH_N_OK.
+
+Three checks in ONE job:
+- **(i) KS-parity bit-exact** — BOTH extractors run with **English defaults** (no overrides), `--splits test
+  --limit 8`, compared against the banked `test_seen_Qwen2.5-VL-7B-Instruct_HF.pt` (frozen) /
+  `…-LoRA_HF.pt` (LoRA), first-8 rows matched by id order. Asserts `img max|Δ|==0.0 AND text max|Δ|==0.0` per
+  arm (READOUT 13468 R0 precedent). Prints `KS_PARITY_OVERALL_PASS/FAIL`.
+- **(ii) N1 (mandatory) 13150-seed0 head repro** — head command flags VERBATIM from `enc3seed_zh_b3` run_one
+  (byte-identical to zhprompt run_one), `--model Qwen2.5-VL-7B-Instruct-LoRA_HF` (BANKED English LoRA cache,
+  read-only), `--seed 0`, throwaway `--group_name _smoke_zhp`. Expect 4dp match vs 13150 seed0 (val-sel ep20
+  acc 0.8322 mF1 0.8023; final ep29 acc 0.8456 mF1 0.8181). Prints `N1_REPRO_PASS_4DP_MATCH/FAIL_MISMATCH`.
+  Closes the run_rac.py/loss.py additive-drift confound directly (review N1, now mandatory).
+- **(iii) Chinese-override 2-video shape/finite** — both extractors with the frozen Chinese overrides,
+  `--splits test --limit 2`; asserts shape `(2,3584)` img+text, all finite; prints one assembled Chinese
+  `text_prompt`. Prints `ZH_SHAPE_OVERALL_PASS/FAIL`.
+
+**Queue collision check at submit:** `squeue -u jehc223` = EMPTY (0 CPUs in flight) ⇒ 8-CPU smoke trivially clears
+never-2×16-CPU. **Submitted: job `13486` → `PENDING (JobHeldUser)`** (expected; waiting for auto-release, never
+forced). ANY smoke FAIL ⇒ STOP.
+
+_Awaiting smoke terminal state → transcribe (i)/(ii)/(iii) results below._
+
 ---
