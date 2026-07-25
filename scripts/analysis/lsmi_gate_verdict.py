@@ -20,6 +20,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 P = os.path.join(ROOT, "refine-logs", "LSMI_GATE_OUT.json")
 R = json.load(open(P))
 PRIMARY = sys.argv[1] if len(sys.argv) > 1 else "A1"
+ARM_DIM = sys.argv[2] if len(sys.argv) > 2 else None   # M1 must be read at the ARM's dimension
 READ = "train_crossfit"
 
 V = {"primary_arm": PRIMARY, "primary_read": READ, "rule_source": "LSMI_GATE_RECORD.md 2.5/2.6"}
@@ -34,7 +35,12 @@ for k, v in R.get("controls", {}).items():
              "acc_joint_oof": d["acc_joint"], "acc_img_oof": d["acc_img"], "acc_text_oof": d["acc_text"],
              "pass": bool(d["S"] >= 0.30 and (d["S_share"] is not None and d["S_share"] >= 0.50))}
 V["M1_power"] = m1
-at_our_n = {k: x for k, x in m1.items() if k.startswith("G1_xor_") or k.startswith("G1f_")}
+if ARM_DIM:
+    at_our_n = {k: x for k, x in m1.items() if f"_d{ARM_DIM}_" in k and "_n8000" not in k
+                and "_n2000" not in k and "_n600_" not in k}
+else:
+    at_our_n = {k: x for k, x in m1.items() if k.startswith("G1_xor_")}
+V["M1_cells_used"] = sorted(at_our_n)
 V["M1_pass_at_our_n"] = bool(at_our_n) and all(x["pass"] for x in at_our_n.values())
 
 # ---- M2 specificity ------------------------------------------------------------------

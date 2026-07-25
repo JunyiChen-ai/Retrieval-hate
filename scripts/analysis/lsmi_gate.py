@@ -210,8 +210,14 @@ def run_cell(key, Ptr, Pdv, ytr, ydv, shipped=False, seed=42, nperm=0, cf_knife=
 
     if nperm > 0:
         rng = np.random.default_rng(90000)
-        nul = {"train_crossfit": [], "dev": []}
-        for b in range(nperm):
+        pck = ck + ".perm.json"
+        nul = json.load(open(pck)) if os.path.exists(pck) else {"train_crossfit": [], "dev": []}
+        start = len(nul["train_crossfit"])
+        for _ in range(start):            # replay consumed draws AT THE SAME SIZES -> bit-identical
+            rng.permutation(len(ytr)); rng.permutation(len(ydv))
+        if start:
+            log(f"    [perm ckpt] resuming at {start}/{nperm}")
+        for b in range(start, nperm):
             ytr_p = ytr[torch.from_numpy(rng.permutation(len(ytr)))]
             ydv_p = ydv[torch.from_numpy(rng.permutation(len(ydv)))]
             pk = {k: torch.zeros(len(ytr), dtype=torch.float64) for k in ("I1", "I2", "I12", "H1", "H2")}
@@ -228,6 +234,7 @@ def run_cell(key, Ptr, Pdv, ytr, ydv, shipped=False, seed=42, nperm=0, cf_knife=
             rd = decompose(read_pointwise(Pdv, ydv_p, dp, ent_f, cfg))
             nul["dev"].append(dict(S=float(rd["s"].mean()), R=float(rd["r"].mean()),
                                    I12=float(rd["I12"].mean())))
+            json.dump(nul, open(pck, "w"))
             if (b + 1) % 10 == 0: log(f"    perm {b+1}/{nperm}")
         for nm, lst in nul.items():
             arr = {k: np.array([x[k] for x in lst]) for k in ("S", "R", "I12")}
@@ -314,7 +321,7 @@ def main():
     global OUTP
     if a.stage == "merge":
         out = {}
-        for st in ("gates", "main", "raw"):
+        for st in ("gates", "main", "power", "raw"):
             f = os.path.join(ROOT, "refine-logs", f".lsmi_out_{st}.json")
             if not os.path.exists(f): continue
             part = json.load(open(f))
