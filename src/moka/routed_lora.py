@@ -184,7 +184,15 @@ class MokaLinear(_PeftLoraLinear):
 
     # -- forward --------------------------------------------------------------------------------
     def forward(self, x: torch.Tensor, *args, **kwargs) -> torch.Tensor:  # noqa: ANN002, ANN003
-        if self.disable_adapters or self.merged or kwargs.get("adapter_names") is not None:
+        # `adapter_names` is POPPED (upstream peft/tuners/lora/layer.py:598 does the same) so an
+        # explicitly passed `adapter_names=None` cannot reach `self.base_layer(...)` at the routed
+        # path below and TypeError out of `nn.Linear`.  It is re-inserted verbatim when it is not
+        # None, so the mixed-batch delegation to upstream is unchanged.  No deployed call site
+        # passes the kwarg at all, so this is inert for both jobs.
+        adapter_names = kwargs.pop("adapter_names", None)
+        if self.disable_adapters or self.merged or adapter_names is not None:
+            if adapter_names is not None:
+                kwargs["adapter_names"] = adapter_names
             return super().forward(x, *args, **kwargs)
 
         mask = _STASH.mask
@@ -284,9 +292,24 @@ def install_moka(peft_model, strict: Optional[bool] = None, require_zero_dropout
     if n == 0:
         raise RuntimeError("MokA install: found ZERO peft lora.Linear layers to route.")
 
-    base = peft_model.get_base_model() if hasattr(peft_model, "get_base_model") else peft_model
-    if getattr(base, "_moka_hook", None) is None:
-        base._moka_hook = base.register_forward_pre_hook(_mask_pre_hook, with_kwargs=True)
+    # -- modality-mask pre-hook: registered on the OUTERMOST module the caller actually invokes ---
+    # `nn.Module` forward-PRE hooks fire inside `Module.__call__` ONLY.  Registering on
+    # `peft_model.get_base_model()` does NOT work on the production wrapper: with
+    # `task_type=CAUSAL_LM` (both deployed paths) `PeftModelForCausalLM.forward` calls
+    # `self.base_model(...)` = `LoraModel.__call__` -> `BaseTuner.forward`
+    # (peft/tuners/tuners_utils.py:196-197) -> `self.model.forward(*args, **kwargs)` — a DIRECT
+    # `.forward()` call that bypasses the base model's `__call__` and therefore every hook on it
+    # (measured pre-fix: hook_calls == 0, fallback_calls == 1, MOKA_STRICT raise on batch 1).
+    # BOTH deployed call sites invoke THIS wrapper through `__call__`, so one registration covers
+    # both:  job 1 = transformers `Trainer.compute_loss` `outputs = model(**inputs)`
+    # (trainer.py:3759) and the eval loop (trainer.py:4525 / trainer_seq2seq.py:352;
+    # `predict_with_generate` is OFF in the frozen yaml, so no `.generate()` surface exists);
+    # job 2 = `src/utils/generate_VideoMLLM_embedding_lora_HF.py:360` `model(**inputs, ...)`.
+    # The idempotence check reads `__dict__` rather than `getattr`, because PeftModel/LoraModel
+    # forward missing attributes down to the wrapped model (peft_model.py:821-828,
+    # tuners_utils.py:368-375) and would otherwise report a hook that is not on THIS module.
+    if "_moka_hook" not in peft_model.__dict__:
+        peft_model._moka_hook = peft_model.register_forward_pre_hook(_mask_pre_hook, with_kwargs=True)
     return n
 
 

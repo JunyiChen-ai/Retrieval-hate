@@ -80,7 +80,7 @@ python ${RGCL_ROOT}/src/moka/train_moka.py "${CONFIG}"
 # ---- STEP 3: $0 post-run asserts + KS-MOKA-2 routing readout ----------------
 cd ${RGCL_ROOT}
 python - "${OUTDIR}" <<'PY'
-import json, os, sys
+import json, os, statistics, sys
 import torch
 from safetensors.torch import load_file
 out = sys.argv[1]
@@ -102,7 +102,10 @@ for k in sorted(sd):
     den = torch.linalg.norm(a_t).item()
     rows.append({"module": k, "rel_fro_diff": (torch.linalg.norm(a_v - a_t).item() / den) if den else float("nan")})
 vals = sorted(r["rel_fro_diff"] for r in rows)
-med = vals[len(vals) // 2]
+# TRUE median: n == 196 is EVEN, so the median is (vals[97] + vals[98]) / 2, not vals[98].
+# `statistics.median` implements exactly that (mean of the two middle order statistics for even n,
+# the middle element for odd n) on the already-sorted list.
+med = statistics.median(vals)
 print("[moka_sft] KS-MOKA-2 rel ||A_v-A_t||_F/||A_t||_F : min {:.4f} median {:.4f} max {:.4f}".format(
     vals[0], med, vals[-1]))
 print("[moka_sft] KS-MOKA-2 median >= 0.05 ? {}".format(med >= 0.05))

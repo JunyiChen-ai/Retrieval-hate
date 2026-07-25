@@ -22,6 +22,12 @@ Checks (all must PASS before any SLURM submission):
   S8  mask correctness on a REAL tokenized ZH SFT sample: `(input_ids==151655)|(input_ids==151656)`
       count must equal the processor's grid_thw arithmetic `sum(prod(grid_thw_i) // merge_size**2)`,
       and vision|text must cover the sequence exactly once.
+  S9  DEPLOYED WRAPPER CLASS: the same machinery on a REAL `PeftModelForCausalLM`
+      (`task_type=CAUSAL_LM`, the class BOTH production paths build) called the way the trainer and
+      the extractor call it — `model(**inputs)`: the hook must fire, every routed layer must route,
+      `fallback_calls == 0`, and the tied-`A_v` forward must equal upstream PEFT bit-exactly.
+      S1-S8 run on the GENERIC `PeftModel` (no `task_type`) and are structurally blind to any
+      defect that lives in the production wrapper's call chain — this is the check that closes it.
 """
 
 import argparse
@@ -99,8 +105,13 @@ def s1_s3_install_identity_strict():
                           if isinstance(mod, PeftLoraLinear)), "")
     check("S1.A_v-present", all(set(mod.lora_A_v.keys()) == set(mod.lora_A.keys())
                                 for mod in m.modules() if isinstance(mod, MokaLinear)), "")
-    base = m.get_base_model()
-    check("S1.hook", getattr(base, "_moka_hook", None) is not None, "")
+    # The hook MUST sit on the OUTERMOST module (the one the trainer / extractor call via
+    # `__call__`), never on `get_base_model()` — see routed_lora.install_moka and S9.  `__dict__`
+    # is read directly because PeftModel forwards missing attributes down to the wrapped model,
+    # so plain `getattr` cannot tell WHICH module owns the handle.
+    check("S1.hook-on-outermost", "_moka_hook" in m.__dict__ and m._moka_hook is not None,
+          "registered on {}".format(type(m).__name__))
+    check("S1.hook-not-on-base", "_moka_hook" not in m.get_base_model().__dict__, "")
     check("S1.A_v-differs-from-A_t",
           all(not torch.equal(mod.lora_A_v["default"].weight, mod.lora_A["default"].weight)
               for mod in m.modules() if isinstance(mod, MokaLinear)),
@@ -305,6 +316,92 @@ def s8_real_mask(model_id="Qwen/Qwen2.5-VL-7B-Instruct"):
               "unique = {}".format(sorted(set(ids[mask].unique().tolist()))))
 
 
+def s9_production_wrapper_class():
+    """S9 — the DEPLOYED PEFT wrapper class (`PeftModelForCausalLM`), CPU + offline.
+
+    THE BLIND SPOT THIS CLOSES (codex gate 2026-07-26, P1-A). S1–S8 build their `LoraConfig`
+    WITHOUT `task_type`, so `get_peft_model` returns the GENERIC `PeftModel`, whose `forward`
+    reaches the base model through `__call__` (peft/peft_model.py:843-849) — a forward-pre hook
+    registered anywhere in that chain fires. BOTH deployed paths instead set
+    `task_type=CAUSAL_LM` (llamafactory/model/adapter.py:300-303 for job 1; the banked
+    `adapter_config.json` `"task_type": "CAUSAL_LM"` for job 2), which dispatches to
+    `PeftModelForCausalLM`, whose `forward` calls `self.base_model(...)` = `LoraModel.__call__`
+    -> `BaseTuner.forward` -> `self.model.forward(*args, **kwargs)` (peft/tuners/tuners_utils.py:
+    196-197) — a DIRECT `.forward()` that fires NO hook on the base model. A hook on
+    `get_base_model()` is therefore dead on the production class while S1–S8 stay green.
+
+    S9 instantiates that exact class over a tiny offline causal LM and asserts, through the
+    trainer/extractor call shape `model(**inputs)`:  hook fires, every routed layer routes,
+    `fallback_calls == 0`, and (with `lora_A_v` tied to `lora_A`) the wrapper's logits equal the
+    plain-PEFT reference BIT-EXACTLY. It also probes the raw `.forward()` surface and asserts the
+    no-silent-null-op invariant holds there too.
+    """
+    print("S9 — DEPLOYED PeftModelForCausalLM wrapper class (closes the P1-A blind spot)")
+    from peft import TaskType  # noqa: PLC0415
+    from peft.peft_model import PeftModelForCausalLM  # noqa: PLC0415
+    from transformers import GPT2Config, GPT2LMHeadModel  # noqa: PLC0415
+
+    torch.manual_seed(0)
+    cfg = GPT2Config(vocab_size=151700, n_layer=2, n_embd=32, n_head=2, n_positions=64)
+    lcfg = LoraConfig(
+        task_type=TaskType.CAUSAL_LM, r=16, lora_alpha=32, lora_dropout=0.0, bias="none",
+        target_modules=["c_attn"], init_lora_weights=True,
+    )
+    m = get_peft_model(GPT2LMHeadModel(cfg).to(torch.float32).eval(), lcfg)
+    check("S9.class-is-PeftModelForCausalLM", isinstance(m, PeftModelForCausalLM), type(m).__name__)
+
+    for mod in m.modules():  # non-trivial B so the LoRA delta is not identically zero
+        if isinstance(mod, PeftLoraLinear):
+            nn.init.normal_(mod.lora_B["default"].weight, std=0.02)
+
+    torch.manual_seed(7)
+    ids = torch.randint(0, 50000, (1, 12))
+    ids[:, 3:8] = IMAGE_PAD_ID
+    ids[0, 9] = VIDEO_PAD_ID
+    inputs = {"input_ids": ids, "attention_mask": torch.ones_like(ids)}
+
+    with torch.no_grad():                      # reference: upstream PEFT, MokA not yet installed
+        ref = m(**inputs).logits.clone()
+
+    n = install_moka(m, strict=True)
+    check("S9.install-count", n == 2, "routed {} lora.Linear layers".format(n))
+    check("S9.hook-on-wrapper", "_moka_hook" in m.__dict__,
+          "hook owner = {} (NOT get_base_model() = {})".format(
+              type(m).__name__, type(m.get_base_model()).__name__))
+    for mod in m.modules():                    # tie A_v := A_t -> routed == plain PEFT, exactly
+        if isinstance(mod, MokaLinear):
+            mod.lora_A_v["default"].weight.data.copy_(mod.lora_A["default"].weight.data)
+
+    # --- the surface job 1 (Trainer.compute_loss) and job 2 (extractor:360) actually call ---
+    _STASH.mask = None
+    reset_moka_stats()
+    with torch.no_grad():
+        out = m(**inputs).logits
+    st = moka_stats()
+    check("S9.hook-fires-on-model(**inputs)", st["hook_calls"] > 0, str(st))
+    check("S9.routed-calls", st["routed_calls"] == n, str(st))
+    check("S9.no-fallback", st["fallback_calls"] == 0, str(st))
+    d = (out - ref).abs().max().item()
+    check("S9.identity-vs-plain-PEFT", d == 0.0, "max|delta| = {:.3e}".format(d))
+
+    # --- raw `.forward()` surface (no `__call__`, so no hook can fire): must never silently
+    # degrade to plain LoRA. With a clean stash it must RAISE under strict. ---
+    _STASH.mask = None
+    reset_moka_stats()
+    try:
+        with torch.no_grad():
+            m.forward(**inputs)
+        st2 = moka_stats()
+        loud = st2["hook_calls"] > 0 and st2["fallback_calls"] == 0
+        check("S9.direct-forward-no-silent-nullop", loud, "routed without raising: {}".format(st2))
+    except RuntimeError as e:
+        st2 = moka_stats()
+        check("S9.direct-forward-no-silent-nullop",
+              "modality mask absent" in str(e) and st2["routed_calls"] == 0,
+              "raises (strict) instead of a silent plain-LoRA fallback: {}".format(st2))
+    _STASH.mask = None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--skip-mask", action="store_true", help="skip S8 (needs the local processor)")
@@ -314,6 +411,7 @@ def main():
     s4_grad_flow()
     s5_s6_roundtrip_merge()
     s7_param_budget()
+    s9_production_wrapper_class()
     if not a.skip_mask:
         s8_real_mask()
     print("\n==== {} ====".format("ALL SMOKE CHECKS PASS" if not FAILS else "FAILURES: " + ", ".join(FAILS)))

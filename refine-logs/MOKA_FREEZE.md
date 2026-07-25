@@ -15,6 +15,12 @@ test-touch budget.
 
 ## VERDICT: **FROZEN** — all 8 objects re-hashed on disk at freeze time, 8/8 MATCH
 
+> **⚠ SUPERSEDED 2026-07-25 — see §7 REFREEZE-1 at the end of this file. The §4.6 clause FIRED
+> (codex gate `GATE: BLOCK`, 2 P1s); artifacts **A**, **D**, **E** were amended, so the freeze block
+> in §1 no longer matches disk and THIS AUTHORIZATION IS VOID pending an independent 0-context
+> re-review + a codex re-gate. Nothing below §1–§6 was rewritten; it stands as the record of the
+> original freeze.**
+
 ---
 
 ## 1. Freeze block (prereg §5.3, row **P** filled here)
@@ -164,3 +170,61 @@ text — which binds the write-up — is correct. Fixing the comment edits artif
 **FREEZE OUTCOME: PASS.** Authorization to proceed to the §3.11 gate order stands, subject to §4.6
 and to the §5 conditions above. No mismatch found. No GPU / SLURM / Modal spent at review or freeze.
 Not pushed.
+
+---
+
+# 7. REFREEZE-1 — §4.6 FIRED, AUTHORIZATION VOID (appended 2026-07-25, `date -u` `Sat Jul 25 14:06:20 UTC 2026`)
+
+*Appended by the re-freeze fix executor (not by the original reviewer). §1–§6 above are unmodified
+apart from the banner under the VERDICT line.*
+
+**Trigger.** The mandatory §4.5 codex gate returned **`GATE: BLOCK`** with **2 P1 findings**, both
+runtime-confirmed by the submit executor — `refine-logs/MOKA_SUBMIT_RECORD.md`, commit `9c4adba`
+(**zero GPU, zero jobs submitted**):
+
+- **P1-A** — the modality-mask forward-pre-hook was registered on `peft_model.get_base_model()`, which
+  **never fires** on the production `PeftModelForCausalLM` (its chain reaches the base model through a
+  direct `.forward()`; `nn.Module` hooks fire in `__call__` only) ⇒ `hook_calls=0`, `fallback_calls=1`,
+  `MOKA_STRICT` raise on the first batch of both jobs.
+- **P1-B** — `KS-MOKA-2` reported `vals[len(vals)//2]` over 196 values (= `vals[98]`), not the median.
+
+Both are fixed; the CPU smoke (**D**) is extended with **S9**, which exercises the deployed
+`PeftModelForCausalLM` class and **fails on the frozen code** — the blind spot that let P1-A past
+`KS-MOKA-0`. Full finding recap, fix design, verbatim evidence (E1–E5), diffs and the P2/P3
+dispositions: **`refine-logs/MOKA_REFREEZE_FIX.md`**.
+
+## 7.1 Amended freeze block (on disk after the fix)
+
+```
+FROZEN dc3f1078a89fc2e1de30c870103c2b7f2986fd419698d6c49b5b9ec0966c53f8  refine-logs/MOKA_PREREG.md          (unchanged)
+A      6b7bdb6c13262cbfce81f212fcf2ed596a8b466f9ae928ba340ac0eee37c85be  src/moka/routed_lora.py             (was 9b0fc502…19a8386)
+B      fae40487263fd7f65e2d0566205e57d3a2caf1b9d1477c693c7cdfdc891c9749  src/moka/train_moka.py              (unchanged)
+C      75bb8156705bff3c9bbce97542b90135c8f206f5bac30455f6987b0c48612399  src/utils/generate_VideoMLLM_embedding_lora_HF.py (unchanged)
+D      bd2585536e7982e021ead4974910fb7df32498eee57625cbe4331d7bbf46c4ef  scripts/analysis/moka_smoke.py      (was 843dace4…d559d7793)
+E      020dd10bd7cfcabb381d76ea44441cbd9607d2db0b98ef92e2388e71482745e6  scripts/slurm/lora_sft_moka.sbatch  (was df3c9a6a…eaf70e38b)
+F      fd1b7f295cdb7106e0e64629cb1a2391355f9daad4ab0f2ad773292f48b31bde  scripts/slurm/moka_extract_head.sbatch (unchanged)
+G      51b883e9f0a78c26d9b4af185b54a4703a250a3cab4c947756782c6c8fe49764  RA-HMD/…/mhc_zh_qwen25vl_lora_moka_sft.yaml (unchanged)
+```
+
+**These shas are recorded, NOT authorised.** All 4 §2 reused-unchanged pins re-hashed post-fix and
+**MATCH**; the §3 collision surfaces are re-verified **ABSENT**; the LLaMA-Factory gitlink is
+untouched (zero vendored lines edited); `bash -n` both sbatch **SYNTAX_OK**, `py_compile` all four
+Python artifacts **PASS**; `python scripts/analysis/moka_smoke.py` → **ALL SMOKE CHECKS PASS** with
+the S2 identity control still `0.000e+00` in all 6 cells.
+
+## 7.2 Status of the authorization: **VOID**
+
+Per §4.6 (unmodified), **this freeze block's authorization is VOID** and no submission may occur
+until, in order:
+
+1. an **independent 0-context re-review** of the amended **A**, **D**, **E** (with `MOKA_REFREEZE_FIX.md`)
+   that also rules on the one prereg-text divergence recorded there (§4.5 item 2 describes the hook
+   as sitting on the base `Qwen2_5_VLForConditionalGeneration`; the amendment registers it on the
+   outer `PeftModelForCausalLM` — no bar, threshold, gate order or test-touch budget is affected),
+   and a **re-issued freeze block**;
+2. a **codex re-gate** (§4.5, all 7 items) on the amended files returning `GATE: PASS`;
+3. the still-owed **§4.4 GPU smoke**, including the KS-parity bit-exact leg.
+
+The §5 conditions N1–N6 and the documentation-only P3 note carry forward unchanged. **No GPU / SLURM /
+Modal spent on the fix pass. No job submitted. No test metric read. No `state/` or `research-wiki/`
+mutation. Not pushed.**
