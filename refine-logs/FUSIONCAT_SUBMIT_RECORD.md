@@ -104,3 +104,39 @@ S2 verdict: **PASS** on every declared assert (branch-taken both datasets, finit
 error, throwaways removed, banked inputs untouched) ⇒ authorized to proceed to S3 real submission.
 
 ---
+
+## S3 — REAL SUBMISSION — job `13514`
+
+**Submit-instant gates (all re-run immediately before `sbatch`; ALL PASS):**
+
+```
+c88332b8972e3270081600d0a8cb892a8d24afefbc73e378a5a3104a433c0830  refine-logs/FUSIONCAT_PREREG.md      ✓ freeze
+62bfb773beeec325096362c86bae1aca8b90c94804ba3798973bbc88e82517fc  scripts/slurm/fusioncat_family.sbatch ✓ freeze
+e7b61df485b97eb683279398746090c2d4b3d446fc4c53b5c85e14d366c23378  src/model/classifier.py              ✓ freeze
+b85eb72a690bc8fccc2ff5d5358fd6523359bf6596d2b2a0d6d0701bec9e53e3  src/run_rac.py                       ✓ freeze
+2ae7a73f6df4008186e5200f851e16902f567ec93f2c3681d03743c909dd0c9b  src/model/loss.py                    ✓ freeze
+d43e3bc417f775175021283c4bd4aa25c0df98aa4c4b34a90f8c696e195bcf57  src/utils/retrieval.py               ✓ freeze
+git status --porcelain src/  → empty (CLEAN)                                                           ✓
+```
+
+- **Never-two-16-CPU (DEV-F):** `squeue -u jehc223` at submit instant = **EMPTY** (zero jobs queued/running). This
+  job is **8-CPU** ⇒ the submit-time aggregate wedge rule clears trivially.
+- **Collision (DEV-D) re-check at submit instant:** `logging/Retrieval/*/RAC_video_fuscat*` **ABSENT**,
+  `slurm/logs/*fuscat*` **ABSENT** (smoke residue fully removed) ⇒ `--force False` cannot trip the
+  `run_rac.py:1059-1062` hard-abort, and nothing banked can be overwritten.
+
+**Command (ONE bite, UNMODIFIED frozen artifact, exactly one `sbatch`):**
+
+```
+$ sbatch scripts/slurm/fusioncat_family.sbatch
+Submitted batch job 13514
+$ squeue -u jehc223
+     13514  fuscat  PENDING  8  (JobHeldUser)
+```
+
+**JOB ID = `13514`.** 6 head runs = {ZH `Qwen2.5-VL-7B-Instruct-LoRA_HF`, HateMM
+`Qwen2.5-VL-7B-Instruct-LoRA-curric_HF`} × seed{0,1,2}, `--fusion_mode concat`, group `RAC_video_fuscat`, ~0.1 GPU-h.
+Initial `PENDING (JobHeldUser)` = expected (DEV-B) → **waiting for auto-release, never forced**.
+No second submission will be made under this prereg (§3.6 one bite).
+
+---
