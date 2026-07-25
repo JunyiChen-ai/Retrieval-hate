@@ -80,12 +80,37 @@ rows byte-match the enc3seed precedent.
   before any head run. Chinese literals valid UTF-8, no CR, no active metachars. `--num_frames 8`/`--device cuda`
   both arms; omitted `--max_pixels` keeps floor default `360*420=151200`.
 
-**Codex FINAL: NO FINDINGS (no P1/P2/P3).**
+**Codex FINAL: NO FINDINGS (no P1/P2/P3).** _(record continues below)_
 
 **Claude independent cross-check (agree):** read all three files in full; git diff `546518a~1..546518a` shows the
 edit is ADDITIVE-ONLY (5 argparse keys defaulting to the English constants + the process_split assembly swap) in
 BOTH extractors, math/pooling/forward untouched; my own `diff` of run_one vs enc3seed_zh_b3 = EMPTY
 (RUN_ONE_DIFF_EMPTY_BYTE_IDENTICAL). Claude + Codex AGREE → **S1 gate PASS**. No code fix ⇒ §4.6 re-freeze NOT
 triggered; frozen shas stand. Proceed to S2.
+
+Commit: `ae036ec` (S1 codex gate record).
+
+---
+
+## S2 — CPU smoke (py_compile / argparse identity / bash -n / collision + inputs) — PASS
+
+Run under `conda activate HateVideo` (CPU-only, $0 GPU).
+
+- **py_compile** both extractors → `PY_COMPILE_PASS`.
+- **bash -n** `zhprompt_extract_head.sbatch` → `BASH_N_SYNTAX_OK`; `CONFIGS` word-split = **6 rows** (2 arms × 3 seeds).
+- **argparse default==identity, byte-wise** (`parse_args_sys([])`, both extractors): all 5 args equal the deployed
+  constants/literals (`img==IMG_INSTRUCTION`, `text==TEXT_INSTRUCTION`, `title_label=='Title: '`,
+  `transcript_label=='Transcript: '`, `none_placeholder=='(none)'`); the assembled `text_prompt` **byte-matches**
+  the pre-edit deployed literal (utf-8 byte compare) across **7 cases** (both empty, title-only, transcript-only,
+  both present, literal "(none)" strings, embedded-newline strings, whitespace-only) → `text_assembly
+  byte-identical: True` both; `img_default==IMG_INSTRUCTION: True` both. **`OVERALL_IDENTITY_OK`.**
+- **Chinese-override sanity (CPU):** override `parse_args_sys([...])` assembles `<TEXT_ZH>\n标题:(无)\n文字记录:<body>`
+  and `img==IMG_ZH` for both extractors → True.
+- **Collision re-check (this instant):** `*-zhp.pt` **ABSENT**, `RAC_video_zhp*` group **ABSENT**, `*zhp*.trainlog`
+  **ABSENT**.
+- **Input presence (this instant):** all 6 banked caches (Arm-F/Arm-L × {train,dev_seen,test_seen}) **PRESENT**;
+  LoRA adapter `logging/lora/MHC_zh/{adapter_config.json,adapter_model.safetensors}` **PRESENT**.
+
+**S2 verdict: PASS. Proceed to S3 GPU smoke (KS-parity + N1 repro + Chinese-shape).**
 
 ---
