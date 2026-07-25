@@ -39,7 +39,7 @@ from sklearn.model_selection import StratifiedKFold           # noqa: E402
 
 DEV, KFOLD = "cpu", 5
 CKPT = os.path.join(ROOT, "refine-logs", ".lsmi_ckpt")
-OUTP = os.path.join(ROOT, "refine-logs", "LSMI_GATE_OUT.json")
+OUTP = os.path.join(ROOT, "refine-logs", "LSMI_GATE_OUT.json")   # overridden per stage in main()
 os.makedirs(CKPT, exist_ok=True)
 
 
@@ -151,7 +151,7 @@ def summarize(res, y, K=2, accs=None):
     d["I12_minus_maxI"] = d["I12"] - max(d["I1"], d["I2"])
     d["R_gt_U1U2"] = bool(d["R"] > d["U1"] + d["U2"])
     yy = y.numpy(); p = np.array([(yy == k).mean() for k in range(K)])
-    delta = torch.tensor(-math.log(K) - np.log(p[yy]), dtype=torch.float32)
+    delta = torch.tensor(-math.log(K) - np.log(p[yy]), dtype=res["I1"].dtype)
     r_e = torch.minimum(res["H1"], res["H2"]) - torch.minimum(res["H1"] - res["I1"] - delta,
                                                               res["H2"] - res["I2"] - delta)
     d["R_emp_prior_preadj"] = float(r_e.mean())
@@ -166,14 +166,14 @@ def summarize(res, y, K=2, accs=None):
 def crossfit(P, y, cfg, seed, shipped, fit_knife=True, full_ent=None, K=KFOLD):
     """AMD-1: K-fold stratified cross-fitted pointwise read. Returns (pw, per-fold models, accs)."""
     n = y.shape[0]
-    parts = {k: torch.zeros(n) for k in ("I1", "I2", "I12", "H1", "H2")}
+    parts = {k: torch.zeros(n, dtype=torch.float64) for k in ("I1", "I2", "I12", "H1", "H2")}
     models, a = [], {"acc_img": [], "acc_text": [], "acc_joint": []}
     for f, (tri, tei) in enumerate(StratifiedKFold(K, shuffle=True, random_state=seed).split(np.zeros(n), y.numpy())):
         Pin, Pout = (P[0][tri], P[1][tri]), (P[0][tei], P[1][tei])
         disc, ent = fit_models(Pin, y[tri], cfg, seed + 100 + f, shipped, fit_knife=fit_knife)
         if ent is None: ent = full_ent
         pw = read_pointwise(Pout, y[tei], disc, ent, cfg)
-        for k in parts: parts[k][torch.from_numpy(tei)] = pw[k]
+        for k in parts: parts[k][torch.from_numpy(tei)] = pw[k].double()
         models.append((disc, ent, tri, tei))
         a["acc_img"].append(acc(disc[0], Pout[0], y[tei]))
         a["acc_text"].append(acc(disc[1], Pout[1], y[tei]))
@@ -214,13 +214,13 @@ def run_cell(key, Ptr, Pdv, ytr, ydv, shipped=False, seed=42, nperm=0, cf_knife=
         for b in range(nperm):
             ytr_p = ytr[torch.from_numpy(rng.permutation(len(ytr)))]
             ydv_p = ydv[torch.from_numpy(rng.permutation(len(ydv)))]
-            pk = {k: torch.zeros(len(ytr)) for k in ("I1", "I2", "I12", "H1", "H2")}
+            pk = {k: torch.zeros(len(ytr), dtype=torch.float64) for k in ("I1", "I2", "I12", "H1", "H2")}
             for f, (dsc, ent, tri, tei) in enumerate(fmods):        # KNIFE reused: it is LABEL-FREE
                 cfgf = cfg
                 dp, _ = fit_models((Ptr[0][tri], Ptr[1][tri]), ytr_p[tri], cfgf, seed + 5000 + 7 * b + f,
                                    shipped, fit_knife=False)
                 q = read_pointwise((Ptr[0][tei], Ptr[1][tei]), ytr_p[tei], dp, ent, cfgf)
-                for k in pk: pk[k][torch.from_numpy(tei)] = q[k]
+                for k in pk: pk[k][torch.from_numpy(tei)] = q[k].double()
             for nm, res, yy in (("train_crossfit", decompose(pk), ytr_p),):
                 nul[nm].append(dict(S=float(res["s"].mean()), R=float(res["r"].mean()),
                                     I12=float(res["I12"].mean())))
@@ -307,10 +307,24 @@ def xor_control(n_tr, n_dv, dim=64, margin=3.0, seed=7):
 # -------------------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", default="main", choices=["main", "raw", "gates"])
+    ap.add_argument("--stage", default="main", choices=["main", "raw", "gates", "merge"])
     ap.add_argument("--nperm", type=int, default=50)
     a = ap.parse_args()
     torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "16")))
+    global OUTP
+    if a.stage == "merge":
+        out = {}
+        for st in ("gates", "main", "raw"):
+            f = os.path.join(ROOT, "refine-logs", f".lsmi_out_{st}.json")
+            if not os.path.exists(f): continue
+            part = json.load(open(f))
+            out["meta"] = part.get("meta", out.get("meta", {}))
+            for sec in ("controls", "datasets"):
+                if sec in part:
+                    for k, v in part[sec].items():
+                        out.setdefault(sec, {}).setdefault(k, {}).update(v) if isinstance(v, dict) else None
+        json.dump(out, open(OUTP, "w"), indent=1); log("MERGED -> " + OUTP); return
+    OUTP = os.path.join(ROOT, "refine-logs", f".lsmi_out_{a.stage}.json")
     R = json.load(open(OUTP)) if os.path.exists(OUTP) else {}
     R["meta"] = dict(lsmi_repo_head="13e4db2e033a3721d5ea7c0e31c540b3445a5532", torch=torch.__version__,
                      numpy=np.__version__, device=DEV, pregate_commit="d4b06f0", crossfit_K=KFOLD,

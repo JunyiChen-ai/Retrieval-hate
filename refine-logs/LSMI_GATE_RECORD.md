@@ -265,8 +265,31 @@ keeps the readout pre-registered.
   (the ratio is meaningless when there is no total task-relevant information to take a share of).
   In that case the decision rule falls back to `S` vs `S_floor` alone.
 
+- **AMD-4 (power gate: separate `n` from optimisation budget).** The released recipe trains the
+  discriminators for a **fixed 30 epochs**, so the number of gradient steps is proportional to `n`
+  (≈570 steps at n≈600 vs ≈7500 at n=8000). AMD-2's `n`-ladder therefore confounds *sample size*
+  with *training budget*, and a null at n≈600 could be either. AMD-4 adds **matched-budget XOR
+  arms at our own n** (`--epochs 400`, ≈7400 steps, i.e. G1b's step count at n≈600) plus a
+  matched-budget `n=600` reference. **If and only if the matched budget restores XOR detection**,
+  the three real datasets are re-read on the primary arm at the same budget (**arm A6**) with a
+  fresh 50-draw permutation null and a fresh duplicate-stream control, and **A6 replaces A1 as the
+  primary decision arm**; otherwise A6 is not run and A1 stands. Runner:
+  `scripts/analysis/lsmi_gate_power.py` (imports `lsmi_gate.py`, edits nothing in it).
+
 No other element of §2.1–§2.5 is changed: same caches, same arms, same controls, same thresholds,
 same verdict labels.
+
+### 2.7 Where it ran (infrastructure note, no GPU)
+
+The gate is CPU-only. It was first attempted on the login node (the precedent of the prior $0
+gates), but the login-node reaper **SIGTERMed every process past ~2 min of CPU** — 12 × `exit=143`
+across three concurrent stages, and no per-cell checkpoint can survive a cell that never finishes.
+The whole gate was therefore moved to a **CPU-only SLURM job**
+(`scripts/slurm/lsmi_gate_cpu.sbatch`, job **13522**): `--cpus-per-task=16 --mem=64G`,
+**no `#SBATCH --gres` line at all** (`scontrol show job` reports no `Gres`; the job log records
+`nvidia-smi -L` → `No devices found`). **Zero GPU requested, zero GPU consumed, no Modal.** All
+partial state from the login-node attempts was deleted before submission so every number below
+comes from a single job under identical thread settings.
 
 ---
 
