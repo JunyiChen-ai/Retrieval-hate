@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-25T05:56:00Z",
+  "updated": "2026-07-25T07:56:00Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -337,6 +337,14 @@
       "record": "refine-logs/ZHPROMPT_{FORENSIC_RECON 47a4e30, PREREG 546518a frozen 07df7c71, PREREG_REVIEW+FREEZE 6eb953c, SUBMIT_RECORD d1034dc, VERDICT_REVIEW 1a8c5fe}",
       "finding": "F80",
       "ban_scope": "extraction-instruction language variations (any language, any stream, either encoder arm) on MHC_zh; prompt-language axis measured null-to-negative; do NOT re-propose prompt-language matching elsewhere without new mechanism (HateMM/EN are English-content = no mismatch exists); multi-prompt ensembling remains a SEPARATE user-gated item"
+    },
+    {
+      "name": "Graded 3-class soft-label (Offensive reweighting, EN+ZH; litsweep-5 S2 #1)",
+      "status": "PARKED at $0 pregate (oracle EN +0.0250 / ZH +0.0256 < +0.030; proxy flat-negative under null; orchestrator spot-check bit-exact)",
+      "killed": "2026-07-25T07:50:00Z",
+      "record": "refine-logs/GRADEDLBL_PREGATE_{RECORD.md,OUT.json} c4333ce",
+      "finding": "F82",
+      "ban_scope": "vote-side Offensive reweighting closed both datasets (any monotone weighting, any tau); head-side graded auxiliary = F44-capped + admissibility-gated, only revivable by user ruling WITH a new mechanism argument; HateMM out of scope (no Offensive class)"
     }
   ],
   "banned_constraints": [
