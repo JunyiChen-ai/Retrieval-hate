@@ -330,6 +330,12 @@ def main():
                 if sec in part:
                     for k, v in part[sec].items():
                         out.setdefault(sec, {}).setdefault(k, {}).update(v) if isinstance(v, dict) else None
+        if os.path.exists(OUTP):        # never clobber a computed verdict block
+            prev = json.load(open(OUTP))
+            if "verdict" in prev:
+                out["verdict"] = prev["verdict"]
+                out["verdict"]["STALE_AFTER_MERGE"] = ("re-run scripts/analysis/lsmi_gate_verdict.py "
+                                                       "if new arms were merged")
         json.dump(out, open(OUTP, "w"), indent=1); log("MERGED -> " + OUTP); return
     OUTP = os.path.join(ROOT, "refine-logs", f".lsmi_out_{a.stage}.json")
     R = json.load(open(OUTP)) if os.path.exists(OUTP) else {}

@@ -8111,6 +8111,7 @@
    }
   },
   "VERDICT": "INDETERMINATE",
-  "VERDICT_REASON": "{\"MHC_zh\": \"INDETERMINATE\", \"HateMM\": \"INDETERMINATE\", \"MHC_en\": \"FUSION_CAPPED\"}"
+  "VERDICT_REASON": "{\"MHC_zh\": \"INDETERMINATE\", \"HateMM\": \"INDETERMINATE\", \"MHC_en\": \"FUSION_CAPPED\"}",
+  "STALE_AFTER_MERGE": "re-run scripts/analysis/lsmi_gate_verdict.py if new arms were merged"
  }
 }
