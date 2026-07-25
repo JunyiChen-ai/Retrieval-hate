@@ -3,9 +3,9 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "ROUND-6 continuation cell-1: fusion-concat family in ceremony (F83; prereg author in flight; 6 runs ~0.1 GPU-h, zero code diff, one bite). Queue: LoRA-recipe knobs recon (DoRA/rsLoRA/PiSSA), frame-selection policy. User decision menu STILL PENDING (ZH val-sel retirement $0 >> Molmo2 > MNTP > CLAP).",
+  "phase": "NEW USER DIRECTIVE 2026-07-25 (goal hook cleared, verbatim): reproduction-driven inspiration campaign — survey hateful-video-detection works up to 2025 WITH open-source code, download + reproduce locally, extract components applicable to our (admittedly simple) LoRA-encoder + RGCL-head + kNN pipeline. Stage-1 survey+repo-triage agent in flight (deliverable REPRO_SURVEY_2025.md + external/baselines/ clones). In parallel: fusion-concat family chain still finishing (smoke 13496). Constraint box unchanged (OCR veto etc.) for OUR method; reproducing external baselines that use illegal channels is allowed as reference. Codeless works NOT reimplemented (standing rule). Big weight downloads (>10GB) flagged before pulling.",
   "stale_count": 0,
-  "last_seen": "2026-07-25T06:25:28Z",
+  "last_seen": "2026-07-25T07:39:16Z",
   "total_findings": 74,
   "active_line": "F60 AUG pre-killed (dominance, f1abd28) — the last un-enumerated MLLM role (generator) is closed. Ledger F27-F60. Landscape fully mapped at role level: encoder+adaptation (works, D7-collision), localizer (works, side-task), guard-rail (works, no acc), ALL decision/feature/score/loss/distribution/generation roles measured or dominated dead. LIVE DECISIONS = USER: D7 sub-ruling / ZH protocol / 5 relaxations. Monitoring mode, wakeups armed.",
   "queued_lines": [
