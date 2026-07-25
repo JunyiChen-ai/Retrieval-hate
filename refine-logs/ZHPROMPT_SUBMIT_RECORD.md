@@ -183,4 +183,29 @@ regex): re-derives banked floors exactly — 13150 s0 val-sel ep20 0.8322/0.8023
 
 **S3 verdict: ALL SMOKE CHECKS PASS. Proceed to S4 real submission.**
 
+Commit: `083138e` (S3 smoke results).
+
+---
+
+## S4 — Real submission (ONE frozen sbatch, UNMODIFIED) — SUBMITTED
+
+**Submit-instant G-repro re-verify (§4.1a) — all MATCH freeze block, git-clean:**
+```
+07df7c7…  refine-logs/ZHPROMPT_PREREG.md      MATCH
+1c83d43…  generate_VideoMLLM_embedding_HF.py            (A)  MATCH
+8d9bfd43… generate_VideoMLLM_embedding_lora_HF.py       (B)  MATCH
+f69b1ae…  scripts/slurm/zhprompt_extract_head.sbatch    (C)  MATCH
+b85eb72…  src/run_rac.py         MATCH   4379224…  enc3seed_zh_b3.sbatch  MATCH
+2ae7a73…  loss.py  MATCH   e7b61df4… classifier.py  MATCH   d43e3bc4… retrieval.py  MATCH
+```
+`git status --porcelain` (frozen + core) = EMPTY (clean). No post-freeze edit ⇒ authorization stands.
+
+**Queue collision check at submit:** `squeue -u jehc223` = EMPTY, `sum_cpus_in_flight=0` ⇒ 8-CPU single job
+trivially clears never-2×16-CPU (smoke 13486 already terminal). 
+
+**Command (verbatim, UNMODIFIED):** `sbatch scripts/slurm/zhprompt_extract_head.sbatch`.
+**Submitted: job `13487` → `PENDING (JobHeldUser)`** (expected; will wait for auto-release, never force). ONE bite.
+
+_Poll to terminal → S5 RAW transcription (6 head runs, both protocols, line-numbered) below._
+
 ---
