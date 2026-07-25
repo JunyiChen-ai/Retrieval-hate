@@ -139,9 +139,48 @@ Three checks in ONE job:
   `text_prompt`. Prints `ZH_SHAPE_OVERALL_PASS/FAIL`.
 
 **Queue collision check at submit:** `squeue -u jehc223` = EMPTY (0 CPUs in flight) ⇒ 8-CPU smoke trivially clears
-never-2×16-CPU. **Submitted: job `13486` → `PENDING (JobHeldUser)`** (expected; waiting for auto-release, never
-forced). ANY smoke FAIL ⇒ STOP.
+never-2×16-CPU. **Submitted: job `13486` → `PENDING (JobHeldUser)`** (expected; auto-released ~13:12, never forced).
 
-_Awaiting smoke terminal state → transcribe (i)/(ii)/(iii) results below._
+### S3 RESULTS — job 13486 `COMPLETED`, ExitCode `0:0`, Elapsed `00:02:48` (log `slurm/logs/zhpsmoke_13486.out`)
+
+**(i) KS-parity bit-exact — PASS** (log L17-19):
+```
+[KS-PARITY frozen] n=8 id_order_match=True img_max|Δ|=0.0 text_max|Δ|=0.0 -> PASS
+[KS-PARITY LoRA]   n=8 id_order_match=True img_max|Δ|=0.0 text_max|Δ|=0.0 -> PASS
+KS_PARITY_OVERALL_PASS
+```
+Default-arg English re-extraction of BOTH extractors reproduces the banked cache bit-exact (img AND text
+max|Δ|==0.0, 8 rows, id order matched) — the machinery/parity guard holds; default == identity confirmed at
+RUNTIME (not just code-level).
+
+**(ii) N1 13150-seed0 head repro (mandatory) — PASS, 4dp bit-match** (log L298-301):
+```
+N1 VALSEL epoch 20: TEST F1 0.8023 acc 0.8322 roc 0.8825
+N1 FINAL  epoch 29: TEST F1 0.8181 acc 0.8456 roc 0.9036
+N1_REPRO_PASS_4DP_MATCH
+```
+Current `run_rac.py b85eb72…` / `loss.py 2ae7a73…` on the flags-off (triplet+hybrid) path reproduces 13150 seed0
+EXACTLY to 4dp (val-sel ep20 0.8322/0.8023; final ep29 0.8456/0.8181). The pre-NCA→current head-code additive
+drift confound is CLOSED directly (not by inheritance) — pairing the `-zhp` heads vs 13150 is sound.
+
+**(iii) Chinese-override 2-video shape/finite — PASS** (log L318-322):
+```
+[ZH-SHAPE frozen] N=2 img=(2, 3584) text=(2, 3584) finite=True -> PASS
+[ZH-SHAPE LoRA]   N=2 img=(2, 3584) text=(2, 3584) finite=True -> PASS
+ZH_SHAPE_OVERALL_PASS
+```
+Assembled ZH text_prompt (log L321) confirms the Chinese instruction + `\n标题:(无)\n文字记录:<Chinese body>`
+scaffold reaches the tokenizer with no mojibake/byte-fallback:
+`'你正在分析一段…有害意图。\n标题:(无)\n文字记录:比<em…>妈宝男</em>更可怕的人… .🎼…'`.
+
+**Cleanup verified (post-smoke §4.3 surface re-check):** `*-zhp.pt`/`*parity*.pt` in data/CLIP_Embedding = NONE;
+`RAC_video_zhp*` + `logging/_smoke_zhp` + `logging/Retrieval/MHC_zh/_smoke_zhp` = NONE; `*zhp*.trainlog` = NONE.
+Banked Arm-F/Arm-L caches intact (mtime still 2026-07-02, sizes unchanged). Smoke left NO residue.
+
+**Independent parser validated** (`scratchpad/indep_parse_zhp.py`, split-tokenizer + line numbers, NOT the sbatch
+regex): re-derives banked floors exactly — 13150 s0 val-sel ep20 0.8322/0.8023 @L220, final ep29 0.8456/0.8181
+@L302; 13115 s0 val-sel ep22 0.7919/0.7412 @L241, final ep29 0.8188/0.7864 @L305. Ready for S5 cross-verify.
+
+**S3 verdict: ALL SMOKE CHECKS PASS. Proceed to S4 real submission.**
 
 ---
