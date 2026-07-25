@@ -3,9 +3,9 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "ROUND-6 batch-4: curation PARK (F78) + ELR PARK (F79) at recon, $0 spent; SOLE LIVE = ZH Chinese-prompt probe (prereg author in flight; LoRA arm primary removes measured train/inference language mismatch; ~1.1 GPU-h; prior 8-12%). If ZH-prompt dies too: batch-4 settled 0-for-3 -> litsweep round 5 (last before oracle-queue ruling activates, with F77/L1 structural caveat). User-gated: ZH val-sel retirement (STRENGTHENED by L2), Molmo2, MNTP, multi-prompt, resolution/curation/ELR door-closers.",
+  "phase": "ROUND-6 batch-4 SETTLED 0-for-3 (F78 PARK, F79 PARK, F80 DEAD). Lit round 5 of 5 LAUNCHED (last before 2026-07-25 oracle-queue ruling activates, F77/L1 caveat): S1 temporal-structure axis (order/motion never varied; frame16 was count), S2 HateMM-push + EN-revival longshots, S3 adversarial completeness audit (F61-style enumeration of remaining in-box axes) + fresh-2026 delta since litsweep2. If round-5 batch dies: goal-hook fallback = oracle-ranked queue (needs new channel past F49 or non-selection mechanism per F77) + user-gated levers (ZH val-sel retirement STRENGTHENED, Molmo2, MNTP, multi-prompt, door-closers F76/F78/F79).",
   "stale_count": 0,
-  "last_seen": "2026-07-24T23:35:17Z",
+  "last_seen": "2026-07-25T05:19:10Z",
   "total_findings": 74,
   "active_line": "F60 AUG pre-killed (dominance, f1abd28) — the last un-enumerated MLLM role (generator) is closed. Ledger F27-F60. Landscape fully mapped at role level: encoder+adaptation (works, D7-collision), localizer (works, side-task), guard-rail (works, no acc), ALL decision/feature/score/loss/distribution/generation roles measured or dominated dead. LIVE DECISIONS = USER: D7 sub-ruling / ZH protocol / 5 relaxations. Monitoring mode, wakeups armed.",
   "queued_lines": [

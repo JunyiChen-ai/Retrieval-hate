@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-25T03:06:00Z",
+  "updated": "2026-07-25T05:56:00Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -329,6 +329,14 @@
       "record": "refine-logs/ELR_FORENSIC_RECON.md 9e41447",
       "finding": "F79",
       "ban_scope": "no ELR/co-teaching GPU without user invoking the §7 diagnostic (0.16 GPU-h, expected KILL); co-teaching arm dropped outright; noise-robust-training family on the head now priced by measured proxy (boundary-dominated 13-17% upper bound, single-digit fixable) — new noise-robust proposals must beat this arithmetic first"
+    },
+    {
+      "name": "ZH extraction-instruction language (Chinese prompts, frozen+LoRA arms; litsweep-3 L2-C1)",
+      "status": "KILL both arms (KS-dead + KS-regression val-sel; 0/6 seeds positive; ~1.1 GPU-h job 13487)",
+      "killed": "2026-07-25T05:50:00Z",
+      "record": "refine-logs/ZHPROMPT_{FORENSIC_RECON 47a4e30, PREREG 546518a frozen 07df7c71, PREREG_REVIEW+FREEZE 6eb953c, SUBMIT_RECORD d1034dc, VERDICT_REVIEW 1a8c5fe}",
+      "finding": "F80",
+      "ban_scope": "extraction-instruction language variations (any language, any stream, either encoder arm) on MHC_zh; prompt-language axis measured null-to-negative; do NOT re-propose prompt-language matching elsewhere without new mechanism (HateMM/EN are English-content = no mismatch exists); multi-prompt ensembling remains a SEPARATE user-gated item"
     }
   ],
   "banned_constraints": [
