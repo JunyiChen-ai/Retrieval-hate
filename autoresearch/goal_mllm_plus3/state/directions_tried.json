@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-25T07:56:00Z",
+  "updated": "2026-07-25T13:12:00Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -345,6 +345,14 @@
       "record": "refine-logs/GRADEDLBL_PREGATE_{RECORD.md,OUT.json} c4333ce",
       "finding": "F82",
       "ban_scope": "vote-side Offensive reweighting closed both datasets (any monotone weighting, any tau); head-side graded auxiliary = F44-capped + admissibility-gated, only revivable by user ruling WITH a new mechanism argument; HateMM out of scope (no Offensive class)"
+    },
+    {
+      "name": "Trained fusion-mode swap: concat head (S3 live-cell #1; F50 letter-gap cell)",
+      "status": "KILL both datasets (KS-arm-dead; 0/2 FORMAL; ~0.1 GPU-h job 13514)",
+      "killed": "2026-07-25T13:05:00Z",
+      "record": "refine-logs/FUSIONCAT_{PREREG 511e74c frozen c88332b8, REVIEW+FREEZE aa132f9, SUBMIT_RECORD d9e4ba2, VERDICT_REVIEW 129fe2e}",
+      "finding": "F85",
+      "ban_scope": "trained concat fusion on the align head closed both datasets; gated/cross-attn variants remain parked (need new code + F85 lowers prior); the null covers the concat+2x-param bundle, NOT a pure capacity claim; do not re-propose fusion-operator swaps without a mechanism argument that survives F85+LSMI"
     }
   ],
   "banned_constraints": [
