@@ -748,3 +748,34 @@ F35 / F37 / F67 temporal closure [DOC:LITSWEEP2_FRESH_2026.md; DOC:LITSURVEY_MLL
 (numeric-provenance discipline) and re-checked against the primary logs; none revises T1–T4, and the 13-route
 campaign count is untouched — these are post-terminus audit rounds, not new campaign routes, banked as findings
 F61–F74 and deliberately kept off the negative-result ordinal (master-table tension list #9).*
+
+The audit then ran three further round-6 waves (litsweep2 batch-3, litsweep-3 batch-4, litsweep-5) as findings
+F75–F82, on the same discipline. Every cell below is again a null, a $0-recon PARK, or a $0 pre-gate PARK; none
+revises T1–T4, none adds to the 13-route count, and the project's best numbers (HateMM 0.8775 / 0.8791, ZH final
+0.8456 / 0.8173) are unchanged.
+
+**Table 11. Round-6 waves 3–4 audit (F75–F80: measured cells + $0 recon-parks, all null or park).**
+
+| Direction | Epitaph (one line) | Verdict · record |
+|---|---|---|
+| **NCA / soft-kNN head-loss family** — swap the head's triplet+BCE toward a vote-consistent (NCA τ0.1/0.2), contrastive (SupCon), or mixup-BCE objective (4 arms — the losses that most directly optimise the deployed kNN vote) | 1-bite 3-seed verdict, ~0.33 GPU-h (job 13482): **0/8 FORMAL, 7/8 KS-arm-dead**; family-max A3-mixup ZH final +0.0134 (2/3), sole KS survivor NCA τ0.1×ZH val-sel +0.0112/+0.0113 (3/3 sign) *below* the ±0.014 band = within-noise hardening, D7-dead; **first measured negative for trained-reshaping-unlocks-oracle-headroom** ⇒ Law I holds against a trained operator (analysis §3.10). Codex gate caught + re-freeze fixed an A3-only dropout-mode confound pre-spend | NCA_VERDICT_REVIEW.md · `f03cae0` (+ REFREEZE `8f08e9f`/`467a6f4`) |
+| **Spatial resolution** — raise the per-frame `max_pixels` cap (151200 px) toward native source resolution (the last virgin input-fidelity axis) | $0 forensic recon, PARK: the litsweep2 "~6.5×" downscale premise is a fabricated 720p figure — ffprobe on raw sources gives **HateMM 2.71× (480p) / MHC-EN 10.55× / MHC-ZH 13.71× (1080p)**; headroom is *anti-correlated with conversion* (HateMM, the only image-converting dataset, is nearly native; EN-collapsed / ZH-marginal have the pixels), mean-pool attenuates, F65 law-I + F70 readout-null both bind, and extraction is raw-video-bound ⇒ **no Modal-triage path**; ≥+1 HateMM ~5–10%, ≥+3-on-2 <3%; a ~1 GPU-h HateMM@410k door-closer is spec'd, unrun | RESOLUTION_FORENSIC_RECON.md · `5c6075b` |
+| **Memory-bank curation** — train-label-only prune / prototype-select / class-balance of the deployed kNN bank (LOO-influence / Data-OOB; automates the banked human-2-entry-EN deletion) | $0 forensic recon, PARK: the "$0 on banked keys" premise is **false** — the deployed vote indexes the *trained head embedding* and all 6 floor head ckpts (13150/13241 × 3 seeds) are disk-deleted, so a faithful multi-seed pregate needs a ~0.3 GPU-h re-mint; the only $0 object (raw fused key) is seed-independent → single-draw = the withdrawn archive-as-key failure class; F63 (1-hop-separable, positive perm-null) + W2-E (prototype dead) + Wall-C cap the prior; ≥+1 ~5–8%, +3 ~1% | CURATION_FORENSIC_RECON.md · `7025391` |
+| **ELR / noise-robust head** — additive early-learning regulariser (lead) + co-teaching (contrast) on the FAISS-mined pairs (outside the F75 ban letter) | $0 forensic recon, PARK: mined pairs are *gold-label-filtered* ⇒ "mined-pair noise" ≡ gold-label noise (pillar-3's object); ELR attaches to the BCE leg the kNN vote doesn't read (second-order); noise proxy 13–17% raw-space upper bound is boundary-hardness-dominated; **Wall-C quantified** (HateMM test peaks ep18/21/24, +4/+7/+14 after dev saturates; ZH final−valsel = +0.0134 ×3 seeds) makes early-target pulls anti-aligned; ≥+1 ~5–8%, +3 ~1–2%; 0.16 GPU-h probe unrun | ELR_FORENSIC_RECON.md · `9e41447` |
+| **ZH Chinese-instruction re-extraction** — translate the deployed English extraction instruction/scaffolding to Chinese (the un-varied ZH-path axis; tests the SFT train/inference language-mismatch hypothesis) | 3-seed verdict, ~1.1 GPU-h (job 13487, KS-parity bit-exact): **both arms KS-dead both protocols** — LoRA −0.0358 val-sel / −0.0112 final acc, frozen −0.0336 / −0.0045; both val-sel legs past −0.014 (Chinese prompt *hurts*); mismatch hypothesis **refuted** (arms regress near-identically) ⇒ extraction-instruction-language axis CLOSED, D7-dead | ZHPROMPT_VERDICT_REVIEW.md · `1a8c5fe` |
+
+Two zero-GPU lit-sweeps frame these cells. The three-agent litsweep-3 (F77) enumerated the selector-conversion,
+ZH-specific, and training-data-centric lenses and converged — a fourth independent time after F68/F74 — on no
+in-box operator carrying a defensible ≥+3-on-2-datasets prior, the binding walls being F66's arithmetic, the EN
+label-limit, and the memorised-bank data-generating-process obstacle (CLIP LOO 0.998 makes every train-supervised
+selector/reshaper target degenerate) [DOC:LITSWEEP3_SELECTOR_CONVERSION.md, commit `e103d54`;
+DOC:LITSWEEP3_ZH_SPECIFIC.md, commit `d4af64b`; DOC:LITSWEEP3_DATA_CENTRIC.md, commit `8629188`]. The same sweep
+**corrected two inherited premises** that bear on the paper's framing (both provenance-noted). (i) The ledger's
+"ZH transcripts median ~4 words / degenerate" figure is a **whitespace-split artefact** — Chinese has no
+inter-word spaces, so `text.split()` is meaningless; the deployed ZH text stream is a median **~106 Chinese
+characters** (train 106 / val 108.5 / test 105) of Bilibili *description* metadata (not the near-empty Whisper
+ASR), with the search-keyword slur often surfaced un-obfuscated in `<em>` markup — so the ZH stream is
+content-rich, and its wall is 78-dev selection noise plus representation saturation (LoRA-Qwen ZH text-AUC 0.925),
+not a degenerate transcript. (ii) The litsweep2 resolution "~6.5×" downscale figure is superseded everywhere by
+the ffprobe-measured **HateMM 2.71× / EN 10.55× / ZH 13.71×** multipliers in Table 11
+[DOC:LITSWEEP3_ZH_SPECIFIC.md, commit `d4af64b`; DOC:RESOLUTION_FORENSIC_RECON.md, commit `5c6075b`].

@@ -406,6 +406,28 @@ BIDIR_STAGE1_VERDICT_REVIEW, HEADRECIPE_VERDICT_REVIEW}.md` + 综述 `LITSURVEY_
 MLLM_EMBEDDING, NOVEL_MECHANISMS}.md` / `LITSWEEP2_{HEAD_OBJECTIVES, INPUT_FIDELITY, FRESH_2026}.md`。
 findings F61–F74(`state/findings.jsonl`)。**不入负结果 ordinal 账、不铸造总数(逐轮框架,同文末张力清单 #9)。**
 
+### T6.3 Round-6 波次 3–5 审计(litsweep2 batch-3 / litsweep-3 batch-4 / litsweep-5;实测 + $0 recon-park,全 null/park)
+
+> **续 append 2026-07-25**(同纯转录纪律)。波次 3–4 = F75–F80,波次 5 = F81–F82。measured-dead:NCA(F75)、
+> ZH-prompt(F80);$0 recon-PARK:resolution(F76)、curation(F78)、ELR(F79)、graded-label(F82);lit-sweep
+> companion:litsweep-3(F77,3 agent)、litsweep-5(F81,3 agent)。**不改 T1–T4 任何数、不增 13 路线计数、不占
+> 负结果 ordinal**;项目最优数(HateMM 0.8775/0.8791;ZH final 0.8456/0.8173)不变。**premise 修正三则(全部
+> provenance-noted):** (1)litsweep2「~6.5× 下采样」= 捏造 720p 前提 → ffprobe 实测 **HateMM 2.71×(源 480p)/
+> EN 10.55× / ZH 13.71×(源 1080p)**;(2)「ZH transcript median ~4 words / 退化」= whitespace-split 伪影(中文
+> 无词间空格)→ 部署 ZH 文本 = median **~106 汉字**(train 106/val 108.5/test 105)Bilibili 描述元数据(非
+> Whisper ASR);(3)test-set size **EN=161 / ZH=149 / HateMM clean=215** 与 wiki 既有一致(litsweep-5 纠的是
+> task-prompt 的 ~2k/500/430,非 wiki)。
+
+**T6.3-a 波次 3–4(F75–F80)**
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **NCA / soft-kNN head-loss 族** — head 的 triplet+BCE 换成 vote-consistent(NCA τ0.1/0.2)/ contrastive(SupCon)/ mixup-BCE(4 臂,最直接优化部署 kNN vote 的损失) | 1-bite 3-seed 判决,~0.33 GPU-h(job 13482):**0/8 FORMAL、7/8 KS-arm-dead**;族内最大 A3-mixup ZH final +0.0134(2/3),唯一 KS 存活 NCA τ0.1×ZH val-sel +0.0112/+0.0113(3/3 sign)落 ±0.014 带下 = within-noise hardening、D7-dead;**首个「trained-reshaping 兑现 oracle 头空间」的实测负例** ⇒ law-I 对 trained 算子亦成立(§3.10);codex gate 捕获 + re-freeze 修 A3-only dropout-mode confound(预 spend) | NCA_VERDICT_REVIEW.md · `f03cae0`(+REFREEZE `8f08e9f`/`467a6f4`) |
+| **Spatial resolution** — 抬 per-frame `max_pixels`(151200px)向源生分辨率(最后一个 virgin input-fidelity 轴) | $0 forensic recon,PARK:litsweep2「~6.5×」前提 = 捏造 720p → ffprobe 实测 **HateMM 2.71×(480p)/ EN 10.55× / ZH 13.71×(1080p)**;headroom 与 conversion **反相关**(唯一转换的 HateMM 近生;有 headroom 的 EN 塌陷/ZH marginal),mean-pool 衰减,F65 law-I + F70 readout-null 双约束,提取 raw-video-bound ⇒ **无 Modal-triage 路径**;≥+1 HateMM ~5–10%,≥+3-on-2 <3%;~1 GPU-h HateMM@410k door-closer 已 spec、未跑 | RESOLUTION_FORENSIC_RECON.md · `5c6075b` |
+| **Memory-bank curation** — train-label-only 剪枝 / prototype-select / class-balance 部署 kNN bank(LOO-influence / Data-OOB;自动化 human-2-entry-EN 删除) | $0 forensic recon,PARK:「$0 on banked keys」前提 **FALSE**——部署 vote 索引 *trained head embedding*,6 个 floor head ckpt(13150/13241×3 seed)已 disk-删,faithful multi-seed pregate 需 ~0.3 GPU-h re-mint;唯一 $0 对象(raw fused key)seed-independent → single-draw = 已撤回的 archive-as-key 失败类;F63(1-hop-separable、正 perm-null)+ W2-E(prototype 已死)+ Wall-C 封 prior;≥+1 ~5–8%,+3 ~1% | CURATION_FORENSIC_RECON.md · `7025391` |
+| **ELR / noise-robust head** — additive early-learning 正则(lead)+ co-teaching(contrast)于 FAISS-mined pairs(在 F75 ban letter 外) | $0 forensic recon,PARK:mined pairs 由 *gold label 过滤* ⇒「mined-pair noise」≡ gold-label noise(pillar-3 之对象);ELR 挂 BCE 腿而部署 kNN vote 不读它(二阶);noise proxy 13–17% raw-space 上界、boundary-hardness 主导;**Wall-C 量化**(HateMM test 峰 ep18/21/24,+4/+7/+14 于 dev 饱和后;ZH final−valsel = +0.0134 ×3 seed)令 early-target pull 反向;≥+1 ~5–8%,+3 ~1–2%;0.16 GPU-h probe 未跑 | ELR_FORENSIC_RECON.md · `9e41447` |
+| **ZH 中文指令重提取** — 把部署英文提取 instruction/scaffolding 译成中文(ZH-path 唯一未变轴;测 SFT 训练/推理 language-mismatch 假设) | 3-seed 判决,~1.1 GPU-h(job 13487,KS-parity bit-exact):**双臂双协议 KS-dead**——LoRA −0.0358 val-sel / −0.0112 final acc,frozen −0.0336 / −0.0045;两 val-sel 腿过 −0.014(中文 prompt *伤*);mismatch 假设 **REFUTED**(双臂近等幅回退)⇒ extraction-instruction-language 轴 CLOSED、D7-dead | ZHPROMPT_VERDICT_REVIEW.md · `1a8c5fe` |
+
 ---
 
 ## 骨架段 — 一页纸论文章节骨架

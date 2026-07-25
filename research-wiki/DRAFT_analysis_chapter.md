@@ -577,6 +577,72 @@ on the head regresses text-carried ZH and HateMM exactly as F45/F58 predict. The
 head-training-dynamics escape hatches are closed at < 0.15 GPU-h, both disclosed headwinds borne out
 [DOC:HEADRECIPE_VERDICT_REVIEW.md, commit `8e60f42`].
 
+The audit then continued through three further round-6 waves (litsweep2 batch-3, litsweep-3 batch-4,
+litsweep-5), each re-opening a prose-argued gap and measuring or $0-recon-pricing it dead; none moved a
+law or the project's best numbers, and one of them closed the last hatch the arithmetic of §3.6 had left
+formally open.
+
+**The trained-reshaping escape hatch is now measured shut (F75).** §3.6's arithmetic proved the frozen-feature
+*symmetric* operator can reach only the tiny legal slice, but it left one hatch open — a loss that *reshapes
+the embedding by training* rather than operating over fixed features, and specifically one that directly
+optimises the deployed top-20 kNN vote (F66 measured non-selecting operators over *frozen* features, not a
+trained reshaper). A one-bite family that swaps the head's triplet+BCE for a vote-consistent soft-kNN (NCA,
+τ ∈ {0.1, 0.2}), a neighbourhood-SupCon, or a manifold-mixup-BCE objective — the four operators that most
+directly train *toward* the deployed vote — went **0/8 on the FORMAL bar and 7/8 KS-arm-dead** at ~0.33 GPU-h
+(job 13482): no arm×dataset cell cleared +0.030/+0.030 3/3 both protocols, the family-max mean was A3-mixup ZH
+final +0.0134 (2/3 sign), and the sole KS survivor (NCA τ=0.1 × ZH val-sel, +0.0112 acc / +0.0113 mF1, clean
+3/3 sign) sits *below* the ±0.014 head-seed band — a measured-not-promoted within-noise hardening, still
+D7-dead. This is the **first measured negative for "trained reshaping unlocks the oracle headroom"**: the one
+training objective built to convert the selection-locked pool converts none of it on either dataset, so Law I
+now holds against a *trained* operator, not only frozen ones [DOC:NCA_VERDICT_REVIEW.md, commit `f03cae0`]. (A
+process note worth the record: the mandatory external code gate caught, and a surgical re-freeze fixed, an
+A3-only confound — the manifold-mixup BCE forward inheriting the mining call's leaked eval-mode, which would
+have disabled the head's dropout and conflated the mixup delta with a dropout-off delta — *before* any GPU
+spend; the fix is an 18-line, Dropout-submodule-scoped restore, floor-path bit-exact
+[DOC:NCA_REFREEZE_FIX.md, commit `8f08e9f`; DOC:NCA_REFREEZE_REVIEW.md, commit `467a6f4`].)
+
+This closure was reached under an independent enumeration of the *entire training-data-centric family*
+(litsweep-3), which found every sub-axis — feature-space augmentation, noise-robust head training, memory-bank
+curation, class-imbalance/mF1 operators, SFT-example selection — pre-priced dead, dominated, or banned by the
+same three walls: F66's arithmetic (91–98 % of the ZH/EN oracle headroom is per-item-selection-only, legal
+slice +0.001–0.006), the EN label-limit, and the fact that the ZH miss is a *dev-selection* failure a train-side
+operator cannot touch. The deepest obstacle is a data-generating-process one, not a capacity one: the retrieval
+head **memorises its own training bank** (CLIP leave-one-out train accuracy 0.998), so any selector or reshaper
+trained on the train split sees a degenerate, base-rate-inverted target (train-disagreement "Qwen correct" =
+0/109, 0/102, 0/92) — the mechanism that killed the F47 router (§3.8) generalises to the whole
+train-supervised-conversion family [DOC:LITSWEEP3_DATA_CENTRIC.md, commit `8629188`;
+DOC:LITSWEEP3_SELECTOR_CONVERSION.md, commit `e103d54`].
+
+**Wall-C is a protocol-shape, not a representation gap (F79 quantified).** The data-centric door-closers that
+were run to recon rather than to verdict all PARK, and one measured the shape of the ZH/HateMM ceiling
+precisely enough to record as mechanism. On both deployed floors, **test accuracy peaks late**: HateMM
+test-optimal epochs are **18 / 21 / 24** (0.8884 / 0.8930 / 0.8884), +4 / +7 / +14 epochs *after* the
+78/107-item dev saturates, so the val-selected and final checkpoints sit below a late test peak the dev set
+cannot see; on ZH the **final epoch beats the val-selected checkpoint by exactly +0.0134 on all three seeds**.
+This is the same late-climb shape that killed single-trajectory SWA (F62), and it makes every "stop trusting the
+noisy tail" operator — noise-robust regularisation, early-target pulls, weight-averaging — *anti-aligned* with
+the data by construction. It is also why the ZH headline is a protocol decision, not an operator problem: the
+residual ZH gap is 78-dev selection variance over a late-climbing test curve, not an encoder or head deficiency
+[DOC:ELR_FORENSIC_RECON.md, commit `9e41447`; DOC:CURATION_FORENSIC_RECON.md, commit `7025391`]. The ELR
+noise-robust probe is further undercut at the mechanism level — the head's FAISS-mined pairs are
+*gold-label-filtered*, so "mined-pair noise" is definitionally the gold-video-label noise the ZH-validated
+consensus-denoising pillar already addresses, and the regulariser attaches to the BCE leg the deployed kNN vote
+does not read. (The curation recon adds a machinery caveat that also matters for pillar-4: the deployed vote
+indexes the *trained head embedding*, whose six floor checkpoints are disk-deleted, so a faithful multi-seed
+bank-curation pregate is not the $0 operation it was costed as — it needs a ~0.3 GPU-h head re-mint, and the
+only $0 object, the raw fused key, is seed-independent and thus single-draw, the withdrawn archive-as-key
+failure class.)
+
+**The extraction-instruction language is not the ZH lever either (F80).** A faithful Chinese re-extraction of
+the deployed English instruction/scaffolding — the one un-varied axis on the ZH path, and the natural test of
+the hypothesis that the ZH-LoRA (SFT-trained under a Chinese instruction) suffers a train/inference language
+mismatch when read with English prompts — is **KS-dead on both arms and both protocols** at ~1.1 GPU-h
+(job 13487, KS-parity bit-exact): the LoRA arm regresses −0.0358 val-sel / −0.0112 final acc and the frozen arm
+−0.0336 / −0.0045, both val-sel legs past the −0.014 degrade line (the Chinese prompt *hurts* under
+val-selection). The mismatch hypothesis is thus *refuted*, not merely unconfirmed — the LoRA and frozen arms
+regress by near-identical margins, so English prompting is not a ZH liability; a native-bilingual encoder reads
+the Chinese body regardless of instruction language [DOC:ZHPROMPT_VERDICT_REVIEW.md, commit `1a8c5fe`].
+
 ## 4. What survives
 
 Three MLLM roles survive with removable-ablation evidence; none is a main-table-accuracy role.
