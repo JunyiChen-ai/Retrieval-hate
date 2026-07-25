@@ -5,7 +5,13 @@
 **Prereg:** `refine-logs/MOKA_PREREG.md` (843 L), FROZEN sha `dc3f1078…0966c53f8`.
 **Chain executed:** S0 authorization → S1 codex gate → S2 CPU smoke. **HALTED AT S1/S2 BOUNDARY.**
 
-## OUTCOME: **STOP — prereg §4.6 FIRES.** The mandatory codex gate returned `GATE: BLOCK` with **2 P1 findings**, both **independently confirmed at runtime by the executor**. Per §4.6 the affected artifact shas must change, the freeze block must be re-issued, and a new independent 0-context review must be re-run against the amended files **before submit**.
+> **⚠ ROUND 1 (below) IS SUPERSEDED — see `## ROUND 2 — REFREEZE-1` at the end of this file.**
+> Round 1's STOP was adjudicated correct; the code was amended (`72a947b`), re-frozen
+> (`MOKA_FREEZE.md §7` REFREEZE-1) and independently re-reviewed (`cf29665`), and the executor was
+> **RESUME-AUTHORIZED** to re-run the chain from the top against the REFREEZE-1 values. Round 1 is
+> retained verbatim as the provenance of the two P1 defects.
+
+## ROUND-1 OUTCOME: **STOP — prereg §4.6 FIRES.** The mandatory codex gate returned `GATE: BLOCK` with **2 P1 findings**, both **independently confirmed at runtime by the executor**. Per §4.6 the affected artifact shas must change, the freeze block must be re-issued, and a new independent 0-context review must be re-run against the amended files **before submit**.
 
 **NO GPU spent. NO SLURM job submitted. NO GPU smoke run. NO test metric read. NO frozen file edited.
 NO `state/` mutation. NO push.** Cost of this stage: pure CPU login-node work (sha256sum, `bash -n`,
@@ -238,3 +244,123 @@ deployed `task_type=CAUSAL_LM` wrapper, since the present S1–S8 cannot see thi
 
 **Required statements:** ZERO GPU / SLURM / Modal spent. NO job submitted. No held-out test metric
 produced. No `state/` mutated. No `research-wiki/` mutated. No frozen artifact edited. Not pushed.
+
+---
+---
+
+# ROUND 2 — REFREEZE-1
+
+**Resume authorization.** Round 1's `GATE: BLOCK` was adjudicated **correct**. The fix
+(`72a947b`), the re-issued freeze (`MOKA_FREEZE.md §7` REFREEZE-1) and the independent 0-context
+re-review (`cf29665`, `MOKA_REFREEZE_REVIEW.md`, **APPROVED**) are complete, and the executor was
+instructed to re-run the chain **from the top** against the REFREEZE-1 values.
+
+**Binding condition N7** (from `MOKA_REFREEZE_REVIEW.md`, carried into this record): the codex
+re-gate was pointed **explicitly at the AMENDED hook site**. Prereg §4.5 item 2's original wording —
+"registered on the base `Qwen2_5_VLForConditionalGeneration`" — **describes the defect round 1
+invalidated and is obsolete**. Everywhere in this record, and in any restatement of item 2:
+**the mask forward-pre-hook sits on the OUTER `PeftModel` wrapper** (`install_moka`'s own
+`peft_model` argument), which is the object both deployed paths invoke via `__call__`. The
+prereg-wording divergence was ruled covered by the REFREEZE-1 note; no bar, threshold, gate order or
+test-touch budget is affected.
+
+## S0' — Authorization re-verify vs REFREEZE-1: **PASS**
+
+`sha256sum` re-run at execution time; **3 amended + 5 unchanged, 8/8 as recorded in §7.1**:
+
+```
+A  6b7bdb6c13262cbfce81f212fcf2ed596a8b466f9ae928ba340ac0eee37c85be  src/moka/routed_lora.py       (AMENDED, was 9b0fc502…)
+D  bd2585536e7982e021ead4974910fb7df32498eee57625cbe4331d7bbf46c4ef  scripts/analysis/moka_smoke.py (AMENDED, was 843dace4…)
+E  020dd10bd7cfcabb381d76ea44441cbd9607d2db0b98ef92e2388e71482745e6  scripts/slurm/lora_sft_moka.sbatch (AMENDED, was df3c9a6a…)
+FROZEN dc3f1078a89fc2e1de30c870103c2b7f2986fd419698d6c49b5b9ec0966c53f8  refine-logs/MOKA_PREREG.md  (unchanged)
+B  fae40487263fd7f65e2d0566205e57d3a2caf1b9d1477c693c7cdfdc891c9749  src/moka/train_moka.py        (unchanged)
+C  75bb8156705bff3c9bbce97542b90135c8f206f5bac30455f6987b0c48612399  src/utils/generate_VideoMLLM_embedding_lora_HF.py (unchanged)
+F  fd1b7f295cdb7106e0e64629cb1a2391355f9daad4ab0f2ad773292f48b31bde  scripts/slurm/moka_extract_head.sbatch (unchanged)
+G  51b883e9f0a78c26d9b4af185b54a4703a250a3cab4c947756782c6c8fe49764  RA-HMD/…/mhc_zh_qwen25vl_lora_moka_sft.yaml (unchanged)
+```
+
+All 4 reused-unchanged pins re-hashed and **MATCH** (`run_rac.py b85eb72a…`,
+`enc3seed_zh_b3.sbatch 4379224671…`, `lora_sft.sbatch e767eba0…`, deployed ZH yaml `2f2429fb…`).
+`src/run_rac.py`, `loss.py`, `classifier.py`, `retrieval.py` **git-clean**. LF gitlink still
+`160000 a912747c408b3c661b4029ecf1d88b9d91c7f1a8`, inner tree carries **zero modified tracked files**
+(`git diff --stat HEAD` empty; only `?? .cuda_home_shim/` + `?? …_moka_sft.yaml`) ⇒ **zero vendored
+lines edited**. `run_one()` block `diff` **empty**, sha `286a9e44953ff2b2f17af3821f3ed3e254569cb68893fefe6b451b04d6ab9101`.
+§4.7 collision surfaces **all ABSENT** (incl. `MOKA_KS2_routing_report.json`). Disk **511 G avail /
+97 % used** (job-1 bar ≥ 25 G).
+
+## S1' — MANDATORY CODEX RE-GATE (full, all 7 items): **GATE: PASS**
+
+**Reviewer:** codex MCP, model `gpt-5.6-sol`, `model_reasoning_effort=xhigh`, sandbox `read-only`,
+cwd `/data/jehc223/RGCL`. Thread `019f99b0-2f8d-73e0-8840-16aa829c3774`. Given the `72a947b` diff,
+`MOKA_REFREEZE_FIX.md`, round 1's findings, the N7 scoping condition, and the accepted-not-fixed
+P2-1/P2-3/P2-4/P2-5/P3 justifications as context.
+
+| §4.5 item | round 1 | round 2 |
+|---|---|---|
+| 1 routing algebra (+ new `adapter_names` pop) | FINDING 2×P2 | **PASS** |
+| 2 monkey-patch scope + **amended outer-wrapper hook site** | PASS | **PASS** |
+| 3 save/load round-trip of `lora_A_v` | FINDING 1×P2 | **PASS** |
+| 4 extractor `--moka`/`--no_merge` gating | **P1 BLOCKING** | **PASS** |
+| 5 RNG neutrality | FINDING 1×P2 | **PASS** |
+| 6 merge guard | PASS | **PASS** |
+| 7 grad flow + both sbatch (+ median, + S9 audit) | **2× P1 BLOCKING** | **PASS** |
+
+**Verbatim closing line: `GATE: PASS`. Zero new P1 / P2 / P3 findings.** Load-bearing confirmations
+codex reached by reading source (not by taking the fix record's word):
+
+- **Item 2 — the amended hook covers every surface these two jobs use.** The hook is on the outer
+  `PeftModel` with `with_kwargs=True`, so it observes the original `input_ids` kwargs before dispatch,
+  avoiding PEFT's inner direct-`.forward()` bypass (`peft/tuners/tuners_utils.py:196-197`). Job 1
+  training + eval both go through `model(**inputs)` (`transformers/trainer.py:3744-3759,4513-4525`;
+  `llamafactory/train/sft/trainer.py:115-139`). The **frozen yaml enables no generation, DeepSpeed,
+  FSDP or compilation**, so `predict_with_generate` stays false ⇒ **no `.generate()` surface exists**;
+  the 1-GPU launch introduces no DDP; **accelerate patches the same instance's `forward`, leaving its
+  outer `__call__` hooks intact**; gradient checkpointing replays decoder layers, not the outer
+  wrapper. Job 2 keeps the `PeftModel`, installs on it, and calls `model(**inputs, …)`
+  (`generate_VideoMLLM_embedding_lora_HF.py:360,500-518`). The `"_moka_hook" not in
+  peft_model.__dict__` ownership check is correct despite PEFT attribute forwarding.
+- **Item 1 — the new `adapter_names` pop matches upstream for all three cases** (absent / explicit
+  `None` / non-`None`); the non-`None` path still delegates to upstream mixed-batch handling.
+- **Item 7 — `statistics.median` on the sorted 196-element list yields the true even-sample median
+  `(vals[97]+vals[98])/2`**, and nothing else in that heredoc regressed. **S9 genuinely detects the
+  old defect**: it builds the production `PeftModelForCausalLM`, makes `B` nonzero, captures the
+  reference *before* installation, then ties `A_v := A_t` — and with the pre-fix base-model hook site
+  the cleared stash stays empty and strict mode exits nonzero.
+- The five accepted-not-fixed justifications were each re-checked and **none was found wrong**.
+
+## S2' — CPU smoke S1–S9, fresh: **ALL SMOKE CHECKS PASS, exit 0**
+
+- **S9 (the new check that closes the P1-A blind spot)** — all green on the real deployed class:
+  `S9.class-is-PeftModelForCausalLM`; `S9.hook-on-wrapper` → *hook owner =
+  `PeftModelForCausalLM` (NOT `get_base_model()` = `GPT2LMHeadModel`)*;
+  `S9.hook-fires-on-model(**inputs)` → `{'hook_calls': 1, 'routed_calls': 2, 'fallback_calls': 0}`;
+  `S9.identity-vs-plain-PEFT max|Δ| = 0.000e+00`; `S9.direct-forward-no-silent-nullop` → raises under
+  strict rather than degrading to plain LoRA (`{'hook_calls': 0, 'routed_calls': 0,
+  'fallback_calls': 1}`).
+- **S1** strengthened: `S1.hook-on-outermost` PASS and `S1.hook-not-on-base` PASS.
+- **S2** identity control still `0.000e+00` in all 6 cells; dense-vs-gather `0.000e+00` (all-text,
+  all-vision) / `1.192e-07`, `5.960e-08` (mixed).
+- **S4** grads non-zero on `lora_A`, `lora_A_v` and shared `lora_B` at both modules, `dead=[]`.
+- **S5/S6** round-trip + silent-drop + generic-adapter refusal + all three merge raises.
+- **S7** `40,370,176 → 58,490,880 = 1.448864×`. **S8** `2688 == 2688`, `seq 2823 = 2688 + 135`
+  (95.2 % vision), ids `[151655]`; processor-default `21528 == 21528`, `21663 = 21528 + 135`.
+- `bash -n` both frozen sbatch **SYNTAX_OK**.
+
+### Executor's own independent re-confirmation (round-1 harness, unmodified)
+
+The **same executor-written probe that detected P1-A in round 1** was re-run against the amended
+code. On a real `PeftModelForCausalLM` it now reports:
+
+| | round 1 (pre-fix) | round 2 (post-fix) |
+|---|---|---|
+| `hook_calls` | **0** | **1** |
+| `routed_calls` | **0** | **2** |
+| `fallback_calls` | **1** | **0** |
+| forward | **RuntimeError** (strict raise) | **OK** |
+
+i.e. the defect-detector flipped. (The probe's own console label "hook registered on:
+`GPT2LMHeadModel`" is a **stale string in the round-1 script** — it prints
+`type(pm.get_base_model()).__name__`, naming the base model, not the hook's owner. The authoritative
+ownership assertion is smoke `S9.hook-on-wrapper`, which reads `__dict__` and reports
+`PeftModelForCausalLM`.) The generic-`PeftModel` contrast leg is unchanged
+(`hook_calls: 1`) — consistent with round 1's blind-spot diagnosis.
