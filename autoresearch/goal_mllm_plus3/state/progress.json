@@ -3,7 +3,7 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "ROUND-6 wave-3: NCA family DEAD (F75, verdict f03cae0). Next: resolution probe forensic recon (last litsweep2 batch-3 candidate). If it dies: batch-3 fully dead -> litsweep-3 (lit round 4 of 5 per goal hook + 2026-07-25 oracle-queue ruling; after round 5 fails -> oracle-ranked queue ZH +0.1026 > HateMM +0.0776 > EN +0.0700 via trained selectors). Molmo2/MNTP/multi-prompt/ZH-protocol remain user-gated.",
+  "phase": "ROUND-6: litsweep2 batch-3 SETTLED 0-for-2 (NCA F75 dead, resolution F76 parked with corrected multipliers). NOW: litsweep-3 = lit round 4 of 5 (goal hook re-survey clause), 3 lenses: (L1) learned per-item selector/deferral/routing literature to convert F66 selection-locked oracle pools with train labels only (front-loads the 2026-07-25 oracle-queue ruling); (L2) ZH-specific levers (largest oracle pool +0.1026, 1080p sources, 4-word transcripts, marginal-positive LoRA); (L3) training-data-centric (augmentation/label-noise/semi-sup own-split; never swept). After round 5 fails -> oracle-ranked queue. Molmo2/MNTP/multi-prompt/ZH-protocol/resolution-door-closer = user-gated.",
   "stale_count": 0,
   "last_seen": "2026-07-24T23:35:17Z",
   "total_findings": 74,

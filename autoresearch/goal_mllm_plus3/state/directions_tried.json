@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-24T23:58:00Z",
+  "updated": "2026-07-25T00:36:00Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -305,6 +305,14 @@
       "record": "refine-logs/NCA_{PREREG 9a9f4fe frozen 7607863c + REFREEZE-1 2ae7a73f, SUBMIT_RECORD cdaec83, REFREEZE_FIX 8f08e9f, REFREEZE_REVIEW 467a6f4, VERDICT_REVIEW f03cae0}",
       "finding": "F75",
       "ban_scope": "head-loss swaps of the triplet+BCE hybrid toward vote-consistent (NCA/soft-kNN), contrastive (SupCon), or mixup-BCE objectives at 7B frozen-encoder feature scale; tau/alpha retunes = tactics, banned; sole KS survivor A1a-nca-t0.1 x ZH val-sel +0.0112 3/3 = within-noise measured-not-promoted (D7-DEAD limbo, may cite as observation only). First measured negative for trained-reshaping-unlocks-oracle-headroom; F66 selection-locked pools untouched."
+    },
+    {
+      "name": "Spatial-resolution re-extraction probe (litsweep2 batch-3, input-fidelity axis)",
+      "status": "PARKED at recon, $0 (prior <3% goal-level; not a hard kill)",
+      "killed": "2026-07-25T00:35:00Z",
+      "record": "refine-logs/RESOLUTION_FORENSIC_RECON.md 5c6075b",
+      "finding": "F76",
+      "ban_scope": "no resolution re-extraction GPU without new structural premise OR user invoking the door-closer cell (recon §4, ~1 GPU-h HateMM 409920px). Corrected multipliers HateMM 2.71x / EN 10.55x / ZH 13.71x supersede litsweep2's 6.5x everywhere; Modal extraction path = impossible (raw-video hard block)."
     }
   ],
   "banned_constraints": [
