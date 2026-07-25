@@ -87,6 +87,47 @@ def parse_args_sys(args_list=None):
         default="Qwen2.5-VL-7B-Instruct_HF",
         help="Tag used in the output filename: {split}_{out_model_tag}.pt",
     )
+    # --- Instruction-language override (ZHPROMPT probe; refine-logs/ZHPROMPT_PREREG.md).
+    # These 5 args parameterise EVERY string this script injects into the prompt. They
+    # DEFAULT to the byte-identical deployed English constants, so a run with none of
+    # them set reproduces the banked cache BIT-EXACT (default == identity == the
+    # KS-parity guard). Chinese strings are passed ONLY via the frozen sbatch
+    # (scripts/slurm/zhprompt_extract_head.sbatch), never edited in code.
+    arg_parser.add_argument(
+        "--img_instruction",
+        type=str,
+        default=IMG_INSTRUCTION,
+        help="Instruction injected into the IMG stream (span=prefix). Default = the "
+        "byte-identical deployed English IMG_INSTRUCTION (identity/parity guard).",
+    )
+    arg_parser.add_argument(
+        "--text_instruction",
+        type=str,
+        default=TEXT_INSTRUCTION,
+        help="Instruction injected into the TEXT stream (span=response). Default = the "
+        "byte-identical deployed English TEXT_INSTRUCTION (identity/parity guard).",
+    )
+    arg_parser.add_argument(
+        "--title_label",
+        type=str,
+        default="Title: ",
+        help="Scaffolding label emitted after a literal newline before the title in the "
+        "TEXT prompt. Default = deployed English 'Title: ' (identity/parity guard).",
+    )
+    arg_parser.add_argument(
+        "--transcript_label",
+        type=str,
+        default="Transcript: ",
+        help="Scaffolding label emitted after a literal newline before the transcript in "
+        "the TEXT prompt. Default = deployed English 'Transcript: ' (identity/parity guard).",
+    )
+    arg_parser.add_argument(
+        "--none_placeholder",
+        type=str,
+        default="(none)",
+        help="Placeholder substituted for an empty title/transcript. Default = deployed "
+        "English '(none)' (identity/parity guard).",
+    )
     arg_parser.add_argument(
         "--num_frames",
         type=int,
@@ -343,15 +384,20 @@ def process_split(items, split_name, args, processor, model, device):
         frames, ok = load_video_frames(video_path, args.num_frames)
         if ok:
             img_vec = _encode(
-                frames, IMG_INSTRUCTION, processor, model, device,
+                frames, args.img_instruction, processor, model, device,
                 args.max_pixels, span="prefix",
             )
             title = item.get("title", "")
             transcript = item.get("text", "")
+            # Identity when args carry the English defaults:
+            #   "\n" + "Title: "      == "\nTitle: "
+            #   "\n" + "Transcript: " == "\nTranscript: "
+            #   args.none_placeholder == "(none)"
+            # so the assembled text_prompt is byte-identical to the deployed literal.
             text_prompt = (
-                TEXT_INSTRUCTION
-                + "\nTitle: " + (title if title else "(none)")
-                + "\nTranscript: " + (transcript if transcript else "(none)")
+                args.text_instruction
+                + "\n" + args.title_label + (title if title else args.none_placeholder)
+                + "\n" + args.transcript_label + (transcript if transcript else args.none_placeholder)
             )
             text_vec = _encode(
                 frames, text_prompt, processor, model, device,
