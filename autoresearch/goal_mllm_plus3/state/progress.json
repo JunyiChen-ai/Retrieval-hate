@@ -3,7 +3,7 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "ROUND-6 batch-4 (litsweep-3 F77): (1) memory-bank curation $0 CPU pregate (LEAD, recon in flight), (2) ZH Chinese-instruction re-extraction probe ~0.5 GPU-h (recon in flight), (3) ELR noise-robust head queued. Lit rounds used: 4 of 5. If batch-4 0-for-3 -> litsweep round 5 -> then oracle-queue ruling (with F77/L1 caveat: selection attacks need new channel past F49 or non-selection mechanism). User-gated: ZH val-sel protocol retirement (L2: final-epoch already 3/3 PASS -- STRENGTHENED), Molmo2, MNTP, multi-prompt, resolution door-closer.",
+  "phase": "ROUND-6 batch-4: curation PARKED (F78). Live: ZH Chinese-prompt probe in ceremony (prereg author in flight; GO prior 8-12%, LoRA arm primary = removes measured train/inference language mismatch; ~1.1 GPU-h one bite) + ELR noise-robust head recon starting (~0.3 GPU-h if GO). Lit rounds 4/5 used. Batch-4 0-for-3 -> litsweep round 5 -> oracle-queue ruling (F77/L1 caveat). User-gated: ZH val-sel retirement (STRENGTHENED), Molmo2, MNTP, multi-prompt, resolution + curation door-closers.",
   "stale_count": 0,
   "last_seen": "2026-07-24T23:35:17Z",
   "total_findings": 74,

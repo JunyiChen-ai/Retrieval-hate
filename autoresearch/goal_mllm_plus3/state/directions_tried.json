@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-25T00:36:00Z",
+  "updated": "2026-07-25T02:21:00Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -313,6 +313,14 @@
       "record": "refine-logs/RESOLUTION_FORENSIC_RECON.md 5c6075b",
       "finding": "F76",
       "ban_scope": "no resolution re-extraction GPU without new structural premise OR user invoking the door-closer cell (recon §4, ~1 GPU-h HateMM 409920px). Corrected multipliers HateMM 2.71x / EN 10.55x / ZH 13.71x supersede litsweep2's 6.5x everywhere; Modal extraction path = impossible (raw-video hard block)."
+    },
+    {
+      "name": "Memory-bank curation via train-label influence/prototype pruning (litsweep-3 L3 lead)",
+      "status": "PARKED at recon, $0 (P(+3)~1%; '$0 banked keys' premise false — head space never persisted)",
+      "killed": "2026-07-25T02:20:00Z",
+      "record": "refine-logs/CURATION_FORENSIC_RECON.md 7025391",
+      "finding": "F78",
+      "ban_scope": "no curation GPU without user invoking the door-closer (0.3 GPU-h floor-head re-mint + CPU pregate, K-CUR-0 parity vs trainlog anchors mandatory); raw-fused-key single-draw diagnostics may run as paper-value only, never as floor verdicts; W2-E prototype-select ban stands"
     }
   ],
   "banned_constraints": [
