@@ -276,6 +276,32 @@ keeps the readout pre-registered.
   primary decision arm**; otherwise A6 is not run and A1 stands. Runner:
   `scripts/analysis/lsmi_gate_power.py` (imports `lsmi_gate.py`, edits nothing in it).
 
+- **AMD-5 (certified-dimension arm).** The AMD-2 `G1` ladder (job 13522, gates stage) returned:
+
+  | XOR cell | joint out-of-fold acc | S (truth 0.6931) | S_share (truth 1.0) |
+  |---|---|---|---|
+  | d'=64, n=579 / 744 / 549 | 0.513 / 0.530 / 0.508 | — (I12 < 0) | undefined |
+  | d'=64, n=2000 | 0.823 | 2.3264 | 10.97 (I12 = 0.212) |
+  | d'=64, n=8000 | 0.995 | 1.9129 | 2.82 |
+  | **d'=8, n=579** | **0.998** | **0.7077** | **1.097** |
+  | d'=8, n=8000 | 0.995 | 0.7179 | 1.060 |
+
+  So the **LSMI machinery is accurate at our sample size** — at d'=8, n=579 it recovers a known
+  synergy to 0.708 vs a truth of 0.6931 — and what fails at d'=64 is the *discriminator* learning
+  a joint function from 128 input dimensions in ~570 gradient steps. The wall is **dimension**,
+  not (only) n. Therefore: walk `d' ∈ {8,16,32,64}` with the XOR control **at our own n**, define
+  **d\* = the largest d' at which M1 passes for all three of our sample sizes**, and re-read the
+  three real datasets at d\* (**arm A7**) with a fresh 50-draw permutation null, duplicate-stream
+  control and split-half control. **A7 supersedes A1 as the primary decision arm**; A1/A2 are
+  retained in the record but carry **no evidential weight**, because the power gate certifies that
+  they cannot detect even a maximal synergy at our n.
+  **Disclosed limitation of A7, stated before it is run:** a null at d\* bounds synergy *within
+  the top-d\* principal components of each stream*, not in the discarded directions. The XOR
+  control places its bit in a random direction of the retained subspace, so it certifies detection
+  **inside** that subspace only. This is the honest price of the only regime in which the
+  estimator demonstrably works at n≈600, and it is why the raw arm A4 and the d'=64 arms are still
+  reported.
+
 No other element of §2.1–§2.5 is changed: same caches, same arms, same controls, same thresholds,
 same verdict labels.
 
@@ -294,3 +320,68 @@ comes from a single job under identical thread settings.
 ---
 
 ## 3. RESULTS
+
+<!-- FILLED AFTER JOB 13522 -->
+
+---
+
+## 5. HONEST WALLS — what this gate can and cannot bound
+
+These are stated independently of the numbers, so they cannot be tuned to the outcome.
+
+### 5.1 Estimator brittleness that is intrinsic to LSMI (not to our port)
+
+1. **Differential entropy of L2-normalised features is not well defined.** Both deployed streams
+   are unit-norm 3584-d vectors: they live on a measure-zero sphere, and with n ≤ 744 < d the
+   empirical support is inside an ≤(n−1)-dimensional affine subspace. `MargKernel` fits a density
+   on `R^d` regardless. Any raw-dim `h` it reports is a number, not an entropy. The PCA arms make
+   the object well posed at the cost of discarding variance — which is exactly why the F41
+   discipline (a reduced arm *and* a raw arm) is mandatory here and why the raw arm is reported
+   even though it is expected to be degenerate.
+2. **The R/S split is convention-dependent.** §1.4 property 4: only a *common* rescaling of the
+   two streams leaves `r` (hence `s`) invariant. Whitening each stream separately, or PCA'ing them
+   separately, is a choice about what "equally surprising" means across two different feature
+   spaces. Arms A1 (whitened) and A3 (common-scale) bracket that choice; if they disagree, the
+   split — not the total — is what is unstable. **`S − R` is immune to all of this** (§1.4
+   property 2), which is why it is reported everywhere as the estimator-free cross-check.
+3. **The min-rule degenerates at large `d`.** §1.4 property 5: `h` grows like `d` while pointwise
+   MI is bounded by `log(1/p(y)) ≈ 1.2` nats, so once `|h1 − h2| ≫ 1` the redundancy rule collapses
+   to `r = i_{argmin h}` and one uniqueness is pinned to 0. This is a property of the *definition*,
+   not of our data.
+4. **PID estimators disagree with each other in the literature.** "Synergy" is not a single
+   quantity: the choice of redundancy axiom (Williams–Beer `I_min`, Bertschinger et al.'s
+   `Ĩ`/broadcast-invariant PID, Ince's `I_ccs`, Griffith–Koch, LSMI's information-flow/min rule)
+   changes the numbers and can change their sign, and pointwise PIDs additionally admit negative
+   atoms — which is why LSMI ships `RUS_adjustment`, a **post-hoc shift** that moves mass between
+   `r` and `s` to force non-negative means. Everything reported here is *LSMI's* decomposition
+   under *LSMI's* axiom. A different PID could return a different split of the same `I12`.
+5. **`RUS_adjustment` is not neutral.** It preserves the four sums (§1.4 property 3) but it can
+   move `S` upward by exactly the amount needed to make `R` or `S` non-negative. Pre-adjustment
+   raws are therefore reported alongside every adjusted number.
+6. **Two defects in the released code** (§1.5), one of which (`zero_grad`) is a real training bug.
+   Both variants are run so the effect is measured rather than assumed.
+
+### 5.2 Scope — what a null here does NOT close (the F66-style caveat, stated first)
+
+- **This gate cannot kill trained reshaping.** Everything measured here is a property of the
+  **banked features as they are**. It says nothing about whether an *encoder* trained differently
+  (MokA-style modality-aware LoRA, MNTP stage-2, a different tower) would produce a *different*
+  pair of streams with different synergy. F66 made the same distinction for the selection bound;
+  it applies verbatim here. A "no synergy" reading prices the **fusion-architecture family over
+  these features**, not the adaptation axis.
+- **It cannot price a third stream.** Audio, OCR, frame-level tokens: the decomposition is over
+  the two deployed streams only. Synergy that would exist between (img, text, audio) is outside
+  the object measured.
+- **It is a train/dev measurement.** No held-out test claim, no accuracy claim, no benchmark
+  number. The discriminator accuracies quoted are diagnostics of the estimator, not results.
+- **It cannot license a positive.** A `SYNERGY_PRESENT` reading would only *name a target*; it
+  would not predict that any particular fusion block converts it. The information is an upper
+  bound on what a perfect fusion could exploit, not a promise that a trainable one will.
+- **Sample size is the binding practical constraint.** n = 549–744 train items, ≈600 effective for
+  a decomposition with four estimated atoms; the power gate (§2.4 G1 / AMD-4) exists precisely to
+  decide whether that is enough, and its answer governs how much any real-data number here is
+  allowed to carry.
+
+---
+
+## 3b. (placeholder — verdict section follows the results table)

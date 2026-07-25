@@ -1,85 +1,112 @@
 #!/usr/bin/env python
 """
-AMD-4 follow-up for the LSMI $0 gate: disentangle SAMPLE SIZE from OPTIMISATION BUDGET in the
-G1 XOR power gate, and (only if the budget fix restores power) re-read the real datasets under
-the matched budget.
+AMD-4 / AMD-5 follow-up for the LSMI $0 gate.
 
-Why: the released recipe trains the discriminators for a FIXED 30 EPOCHS, so the number of
-gradient steps is proportional to n. G1b (n=8000) and G1 (n~600) therefore differ in BOTH n and
-step count (~7500 vs ~570 steps) -- a null at n~600 could be a sample-size wall or merely an
-under-trained head. This script adds equal-STEP arms at our n.
+AMD-2's G1 ladder (job 13522, gates stage) showed:
+  d'=64, n=579/744/549 : joint out-of-fold acc 0.513 / 0.530 / 0.508  -> NO detection
+  d'=64, n=8000        : joint OOF acc 0.995                          -> detection
+  d'= 8, n=579         : joint OOF acc 0.998, S = 0.7077 (truth 0.6931), share 1.097 -> EXACT
+  d'= 8, n=8000        : joint OOF acc 0.995, S = 0.7179, share 1.060
+i.e. the LSMI machinery is accurate at OUR sample size; what fails at d'=64 is the *discriminator*
+learning a joint function from 128 input dims and ~570 gradient steps.
 
-Imports lsmi_gate.py as a module; touches nothing else. CPU-only, read-only on caches,
+This script therefore (a) walks the projection dimension d' in {8,16,32,64} at our own n to find
+the largest CERTIFIED dimension (AMD-5), (b) walks the optimisation budget at d'=64 to separate
+sample size from step count (AMD-4), and (c) re-reads the three real datasets at the certified
+dimension with the full control set.
+
+Imports lsmi_gate.py as a module and edits nothing in it. CPU-only, read-only on banked caches,
 train+dev only, no test split.
 """
-import os, sys, json, time, math, argparse
+import os, sys, json, argparse, types
 import numpy as np
 import torch
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lsmi_gate as LG                                             # noqa: E402
+from sklearn.decomposition import PCA                              # noqa: E402
 
-ROOT = LG.ROOT
-OUTP = os.path.join(ROOT, "refine-logs", ".lsmi_out_power.json")
+OUTP = os.path.join(LG.ROOT, "refine-logs", ".lsmi_out_power.json")
 
 
 def patch_epochs(ep):
-    """Override the released 30-epoch budget for BOTH sub-estimators."""
-    def mk(d1, d2, n_classes=2, ep_=ep, bs=32):
-        c = LG.make_cfg.__wrapped__(d1, d2, n_classes, 30, bs) if hasattr(LG.make_cfg, "__wrapped__") else None
-        import types as _t
-        c = _t.SimpleNamespace()
+    def mk(d1, d2, n_classes=2, bs=32):
+        c = types.SimpleNamespace()
         c.device, c.batch_size = LG.DEV, bs
         c.input_size_1, c.input_size_2 = int(d1), int(d2)
         c.embed_size, c.n_classes = 64, n_classes
-        c.num_epochs_discriminator = c.num_epochs_entropy_estimator = ep_
+        c.num_epochs_discriminator = c.num_epochs_entropy_estimator = ep
         return c
     LG.make_cfg = mk
 
 
+def evr(X, dim):
+    return float(PCA(n_components=dim, random_state=0, svd_solver="full")
+                 .fit(X.numpy().astype(np.float64)).explained_variance_ratio_.sum())
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--epochs", type=int, default=400)     # ~= G1b's 7500 steps at n~600
+    ap.add_argument("--stage", required=True, choices=["dimladder", "budget", "data"])
+    ap.add_argument("--dims", default="8,16,32")
+    ap.add_argument("--epochs", type=int, default=30)
     ap.add_argument("--nperm", type=int, default=50)
-    ap.add_argument("--stage", default="power", choices=["power", "data"])
     a = ap.parse_args()
     torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "16")))
     R = json.load(open(OUTP)) if os.path.exists(OUTP) else {}
     save = lambda: json.dump(R, open(OUTP, "w"), indent=1)
+    dims = [int(x) for x in a.dims.split(",")]
     patch_epochs(a.epochs)
-    tag = f"ep{a.epochs}"
 
-    if a.stage == "power":
+    if a.stage == "dimladder":       # AMD-5: XOR at OUR n, across projection dimension
         R.setdefault("controls", {})
-        LG.log(f"=== AMD-4 G1f: XOR at OUR n with MATCHED optimisation budget ({a.epochs} epochs) ===")
+        for ds in LG.DATASETS:
+            d, _ = LG.load_ds(ds)
+            ntr, ndv = d["train"][0].shape[0], d["dev"][0].shape[0]
+            for dim in dims:
+                (x1, x2, y), (v1, v2, vy) = LG.xor_control(ntr, ndv, dim=dim)
+                P, Q = LG.project((x1, x2), (v1, v2), "pca", dim, True)
+                k = f"G1dim_xor_{ds}_n{ntr}_d{dim}_ep{a.epochs}"
+                R["controls"][k] = LG.run_cell("v3_" + k, P, Q, y, vy); save()
+        LG.log("WROTE " + OUTP); return
+
+    if a.stage == "budget":          # AMD-4: XOR at OUR n, d'=64, matched gradient-step budget
+        R.setdefault("controls", {})
         for ds in LG.DATASETS:
             d, _ = LG.load_ds(ds)
             ntr, ndv = d["train"][0].shape[0], d["dev"][0].shape[0]
             (x1, x2, y), (v1, v2, vy) = LG.xor_control(ntr, ndv, dim=64)
             P, Q = LG.project((x1, x2), (v1, v2), "pca", 64, True)
-            k = f"G1f_xor_{ds}_n{ntr}_d64_{tag}"
-            R["controls"][k] = LG.run_cell("v2_" + k, P, Q, y, vy); save()
-        LG.log("=== AMD-4 G1g: XOR n=8000 d=64 at 30 epochs is the reference; add n=8000 matched-n control ===")
-        (x1, x2, y), (v1, v2, vy) = LG.xor_control(600, 150, dim=64)
-        P, Q = LG.project((x1, x2), (v1, v2), "pca", 64, True)
-        R["controls"][f"G1h_xor_n600_d64_{tag}"] = LG.run_cell(f"v2_G1h_xor_n600_{tag}", P, Q, y, vy); save()
+            k = f"G1f_xor_{ds}_n{ntr}_d64_ep{a.epochs}"
+            R["controls"][k] = LG.run_cell("v3_" + k, P, Q, y, vy); save()
         LG.log("WROTE " + OUTP); return
 
-    # stage == data : re-read the three real datasets on the PRIMARY arm at the matched budget
+    # stage == data : real datasets at the certified dimension(s), full control set
     R.setdefault("datasets", {})
     for ds in LG.DATASETS:
         d, shas = LG.load_ds(ds)
         e = R["datasets"].setdefault(ds, {})
+        e["sha256"], e["lineage"] = shas, LG.DATASETS[ds]["lineage"]
         tr, dv = (d["train"][0], d["train"][1]), (d["dev"][0], d["dev"][1])
         ytr, ydv = d["train"][2], d["dev"][2]
-        LG.log(f"=== {ds} / A6 = A1 at {a.epochs} epochs (matched-budget primary) ===")
-        P, Q = LG.project(tr, dv, "pca", 64, True)
-        e[f"A6_{tag}"] = LG.run_cell(f"v2_{ds}_A6_{tag}", P, Q, ytr, ydv, nperm=a.nperm)
-        e[f"A6_{tag}"]["arm_label"] = f"d'=64 PCA-whitened, {a.epochs} epochs (AMD-4 matched budget)"
-        save()
-        LG.log(f"=== {ds} / C1 duplicate-stream control at {a.epochs} epochs ===")
-        P, Q = LG.project((tr[0], tr[0]), (dv[0], dv[0]), "pca", 64, True)
-        e[f"C1_dup_img_{tag}"] = LG.run_cell(f"v2_{ds}_C1dup_{tag}", P, Q, ytr, ydv); save()
+        for dim in dims:
+            tag = f"d{dim}_ep{a.epochs}"
+            e[f"evr_{tag}"] = {"img": evr(tr[0], dim), "text": evr(tr[1], dim)}
+            LG.log(f"=== {ds} / A7_{tag} (certified-dimension primary) ===")
+            P, Q = LG.project(tr, dv, "pca", dim, True)
+            e[f"A7_{tag}"] = LG.run_cell(f"v3_{ds}_A7_{tag}", P, Q, ytr, ydv, nperm=a.nperm,
+                                         fidelity=True)
+            e[f"A7_{tag}"]["arm_label"] = (f"d'={dim} PCA-whitened, {a.epochs} ep "
+                                           f"(AMD-5 certified-dimension PRIMARY)")
+            save()
+            LG.log(f"=== {ds} / C1 duplicate-stream at {tag} ===")
+            P, Q = LG.project((tr[0], tr[0]), (dv[0], dv[0]), "pca", dim, True)
+            e[f"C1_dup_img_{tag}"] = LG.run_cell(f"v3_{ds}_C1dup_{tag}", P, Q, ytr, ydv); save()
+            LG.log(f"=== {ds} / C2 split-half at {tag} ===")
+            h = tr[0].shape[1] // 2
+            P, Q = LG.project((tr[0][:, :h], tr[0][:, h:]), (dv[0][:, :h], dv[0][:, h:]),
+                              "pca", dim, True)
+            e[f"C2_splithalf_img_{tag}"] = LG.run_cell(f"v3_{ds}_C2half_{tag}", P, Q, ytr, ydv); save()
     LG.log("WROTE " + OUTP)
 
 
