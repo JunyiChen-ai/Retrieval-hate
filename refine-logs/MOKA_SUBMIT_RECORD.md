@@ -364,3 +364,61 @@ i.e. the defect-detector flipped. (The probe's own console label "hook registere
 ownership assertion is smoke `S9.hook-on-wrapper`, which reads `__dict__` and reports
 `PeftModelForCausalLM`.) The generic-`PeftModel` contrast leg is unchanged
 (`hook_calls: 1`) — consistent with round 1's blind-spot diagnosis.
+
+## S3' — GPU smoke (prereg §4.4): **SUBMITTED, job `13537`**
+
+Throwaway artifacts live in the executor scratchpad (**nothing added to the repo**); the only
+on-disk product is `logging/_smoke_moka`, which the job deletes at the end (§4.7).
+
+**Resource choice — 8 CPU, and why.** `sacct` forensics settle the standing infra rule precisely:
+job **13303** (`lora_sft_vis`, **16 CPU**) was co-submitted at `2026-07-20T05:21:10` with **13301**
+(`lora_sft_vis`, **16 CPU**); 13301 started immediately, **13303 never started at all**
+(`Start=None`) and sat until it was cancelled `2026-07-21T10:19:47` — **the 29 h wedge, caused by
+two 16-CPU jobs**. At that same submit instant **13302** (`lora_embed`, **8 CPU**) was also queued
+and ran fine right after 13301; the same 16+8 pattern repeats at 13328/13329/13330. So the rule is
+literally *never two 16-CPU jobs*, and an 8-CPU job alongside a pending 16-CPU job is
+demonstrated-safe. Every smoke in this campaign is 8 CPU (`smoke_readout`, `nca_smoke`, `zhpsmoke`,
+`fuscat_smoke`, `hr_smoke`, `smoke_bidir`, `smoke_fb16`). **Job 1 (16 CPU) still waits for 13531.**
+
+**Legs.** (1) 10-step MokA SFT through the **frozen** `src/moka/train_moka.py`, imported as a module
+so its monkey-patch applies verbatim, with `run_exp(callbacks=[…])` — `run_exp` accepts `callbacks`
+(`llamafactory/train/tuner.py:126`), so the probe only **observes**; zero frozen bytes touched.
+Asserts loss finite, grad norms > 0 for `A_t` **and** `A_v` **and** shared `B` (measured at
+`on_pre_optimizer_step`, before grads are zeroed; the A-side bar is max-over-steps because PEFT
+zero-inits `B` ⇒ `dL/dA ≡ 0` at step 0, prereg §3.2 S4), and `fallback_calls == 0`.
+(2) job-1 STEP-3 post-run rehearsal on the smoke adapter (196/196/196, 58,490,880, the amended
+`statistics.median`). (3) `--moka` 2-video extraction: `(2,3584)`, finite, non-zero.
+(4) **KS-parity**: no-flag extraction on the **banked generic** adapter must reproduce the banked
+cache with `max|Δ| == 0.0` on **both** streams — fail ⇒ HALT. (5) merge-drift machinery rehearsal.
+
+**Throwaway-yaml deviations from the frozen recipe (smoke only, documented):** `output_dir` →
+`logging/_smoke_moka`; `max_steps: 10`; `save_strategy: "no"` (the final `trainer.save_model()` at
+`llamafactory/train/sft/workflow.py:97` is unconditional under `do_train`, so the smoke adapter is
+still written); and `eval_strategy: epoch` → `steps` / `eval_steps: 5` **deliberately**, so the smoke
+exercises the **eval** call surface as well as the training one — 10 steps would never reach an
+epoch boundary otherwise, and the eval loop is the second surface the amended hook must cover.
+
+**Deviation on `KS-MOKA-0b`.** The resume message lists merge-drift under the GPU smoke, but the
+**pre-registered** `KS-MOKA-0b` is Stage A0 of **job 2** (frozen artifact **F**, all 3 splits, the
+`-um` tag, bar mean per-item cosine ≥ 0.9999). Running the full probe twice would cost an extra
+~0.6 GPU-h and would pre-create the `-um` caches that job 2 then rewrites (P2-5: job 2 has no
+output-cache collision guard). The smoke therefore runs an **8-item machinery rehearsal to a
+throwaway tag** only; **the pre-registered KS-MOKA-0b number is the one job 2 Stage A0 produces.**
+
+## S5' tooling — validated in advance ($0, zero test-touch)
+
+- **Independent trainlog cross-parser** (scratchpad; deliberately a different implementation from
+  the parser embedded in artifact **F** — token-splitting instead of one regex, and it records the
+  1-based source line of every value). Validated against the **banked floor 13150**: it reproduces
+  **all 12 numbers** of prereg §2.1 bit-exactly —
+  seed 0 val-sel ep 20 `0.8322/0.8023` (line 220) / final ep 29 `0.8456/0.8181` (line 302);
+  seed 1 val-sel ep 26 `0.8255/0.7956` (line 275) / final ep 29 `0.8389/0.8113` (line 303);
+  seed 2 val-sel ep 19 `0.8389/0.8065` (line 207) / final ep 29 `0.8523/0.8226` (line 298).
+  30 val + 30 test epochs parsed per seed.
+- **`KS-MOKA-3` stream-decomposition readout** (scratchpad; imports
+  `scripts/analysis/encoder_swap_geometry.py` verbatim as a library and applies the MOVED/FLAT rule
+  transcribed from `hatemm_lora_stream_decomp.py:232-237`, `MOVE_TR 0.010` / `MOVE_DV 0.005`).
+  Dry-run on a **banked** ZH LoRA variant confirms the machinery and the provenance: it reads
+  `n_train 579`, `n_dev 78` (the 78-item dev wall) and a floor **text train-LOO AUC 0.9254**, which
+  matches **F45's published ZH text train-LOO 0.925**. Opens **train + dev_seen only** — `test_seen`
+  is never touched.
