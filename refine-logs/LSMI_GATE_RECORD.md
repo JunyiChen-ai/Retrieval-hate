@@ -226,4 +226,48 @@ exactly and let the numbers decide.
 Script: `scripts/analysis/lsmi_gate.py` (CPU-only, per-cell checkpointed against the login-node
 reaper). Results: `refine-logs/LSMI_GATE_OUT.json` + `refine-logs/LSMI_GATE_run.log`.
 
-<!-- RESULTS APPENDED BELOW AFTER THE RUN -->
+### 2.6 AMENDMENT AMD-1 / AMD-2 — declared after the MACHINERY GATES fired, before ANY real-data cell
+
+**Trigger (a control, not a decision number).** The §2.4 gates were run first, on synthetic data
+only. `G1` (XOR at our n, d'=64) returned, on the **released in-sample protocol**:
+
+```
+train acc  img 1.000 / text 1.000 / joint 1.000     <-- on a construction where img and text
+dev   acc  img 0.477 / text 0.533 / joint 0.505         provably carry ZERO information about y
+train I1 0.653  I2 0.656  I12 0.690  (log 2 = 0.6931)
+```
+
+i.e. at n≈600 the `cls_network` discriminators **memorise the train split completely**, so all
+three pointwise MIs saturate at `log 2` and the in-sample decomposition is arithmetically
+determined by memorisation rather than by information. This is a demonstrated pathology of the
+*released reading protocol* at our sample size, found on a synthetic control **before a single
+number was computed on any RGCL cache**. Amending now (rather than after seeing our data) is what
+keeps the readout pre-registered.
+
+- **AMD-1 (protocol).** Add a **K=5 stratified cross-fitted read**: for each fold the three
+  discriminators *and* the two KNIFE kernels are fitted on the 4/5 in-fold part and the pointwise
+  `i` / `h` are read on the held-out 1/5; the per-sample vectors are reassembled in original order.
+  **`train_crossfit` becomes the PRIMARY read.** The released in-sample read (`train_insample`)
+  and the held-out `dev` read are still computed and reported for every cell. For the raw arm A4
+  only the discriminators are cross-fitted (a 5× KNIFE refit at d=3584 is ~7 h of CPU); the
+  full-train KNIFE is reused there and this is flagged in the output (`crossfit_knife=false`).
+  The **permutation null N1 is computed on the cross-fitted read** with the *same* per-fold KNIFE
+  kernels reused (they are label-free, so this is the correct null), plus a full-train-fitted
+  null for the dev read.
+- **AMD-2 (power gate).** `G1` is extended to localise whether the power wall is **n** or **d**:
+  XOR cells at `(n=579,d'=64)`, `(n=744,d'=64)`, `(n=549,d'=64)`, `(n=2000,d'=64)`,
+  `(n=8000,d'=64)`, `(n=579,d'=8)`, `(n=8000,d'=8)`. **M1 is re-evaluated on the cross-fitted
+  read.** If XOR is recovered at large n but not at n≈600, the honest conclusion is *"our datasets
+  are too small to estimate PID"* — an outcome `REPRO_SURVEY_2025.md` §5 #1 explicitly
+  pre-accepted ("If the estimator is unstable at n≈600, that itself is the finding … and it
+  retires the synergy line at $0").
+- **AMD-3 (guard).** `S_share = S/I12` is reported as **undefined** whenever `I12 < 0.05` nats
+  (the ratio is meaningless when there is no total task-relevant information to take a share of).
+  In that case the decision rule falls back to `S` vs `S_floor` alone.
+
+No other element of §2.1–§2.5 is changed: same caches, same arms, same controls, same thresholds,
+same verdict labels.
+
+---
+
+## 3. RESULTS
