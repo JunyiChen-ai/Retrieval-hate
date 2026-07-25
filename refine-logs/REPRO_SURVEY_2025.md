@@ -410,3 +410,7 @@ of the 2025-H2→2026 adjacent literature. Areas most likely still under-covered
 misinformation 2026, deepfake/AIGC-video fusion, noisy/subjective-label video learning, long-tail
 multimodal, and test-time adaptation. A follow-up sweep with fresh search budget should target
 exactly those five.
+
+---
+## ERRATUM (2026-07-25, orchestrator, post SYNIB_PORT_FORENSIC_RECON 9e638ea)
+§4.1/§6 mischaracterize SynIB's core as "masked-consistency **symmetric KL** between intact and masked predictions". Source-level reading (synib_mask_model.py) shows: the intact prediction never enters any KL; live variants are (i) Gaussian KL(N(mu_masked,e^logvar)||N(0,I)) :1089-1097/:634-636, (ii) Dirichlet KL :638-652, (iii) FORWARD KL to detached unimodal anchors :1101-1106 (the HM-config variant); the only symmetric logit-KL helper is commented out (:668-673). Additional upstream flags: mask fill zeros|noise|ema = dead code (batch-permutation fill is the live path), config "p" key dead (p_min=0.30 binds), HM anchor heads have zero gradient path (untrained random init). Any prereg/paper sentence must use the recon's characterization, not §4.1's. Transplant design (PORT-A Bernoulli-entropy analogue) + conditional GO/PARK live in SYNIB_PORT_FORENSIC_RECON.md.
