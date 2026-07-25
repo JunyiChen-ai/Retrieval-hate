@@ -3,7 +3,7 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "ROUND-6 batch-4: curation PARKED (F78). Live: ZH Chinese-prompt probe in ceremony (prereg author in flight; GO prior 8-12%, LoRA arm primary = removes measured train/inference language mismatch; ~1.1 GPU-h one bite) + ELR noise-robust head recon starting (~0.3 GPU-h if GO). Lit rounds 4/5 used. Batch-4 0-for-3 -> litsweep round 5 -> oracle-queue ruling (F77/L1 caveat). User-gated: ZH val-sel retirement (STRENGTHENED), Molmo2, MNTP, multi-prompt, resolution + curation door-closers.",
+  "phase": "ROUND-6 batch-4: curation PARK (F78) + ELR PARK (F79) at recon, $0 spent; SOLE LIVE = ZH Chinese-prompt probe (prereg author in flight; LoRA arm primary removes measured train/inference language mismatch; ~1.1 GPU-h; prior 8-12%). If ZH-prompt dies too: batch-4 settled 0-for-3 -> litsweep round 5 (last before oracle-queue ruling activates, with F77/L1 structural caveat). User-gated: ZH val-sel retirement (STRENGTHENED by L2), Molmo2, MNTP, multi-prompt, resolution/curation/ELR door-closers.",
   "stale_count": 0,
   "last_seen": "2026-07-24T23:35:17Z",
   "total_findings": 74,

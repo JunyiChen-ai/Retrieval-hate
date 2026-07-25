@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-25T02:21:00Z",
+  "updated": "2026-07-25T03:06:00Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -321,6 +321,14 @@
       "record": "refine-logs/CURATION_FORENSIC_RECON.md 7025391",
       "finding": "F78",
       "ban_scope": "no curation GPU without user invoking the door-closer (0.3 GPU-h floor-head re-mint + CPU pregate, K-CUR-0 parity vs trainlog anchors mandatory); raw-fused-key single-draw diagnostics may run as paper-value only, never as floor verdicts; W2-E prototype-select ban stands"
+    },
+    {
+      "name": "ELR noise-robust head (additive early-learning regularization on BCE leg; litsweep-3 L3 #2)",
+      "status": "PARKED at recon, $0 (P(+3)~1-2%; mined-noise premise collapsed to gold-noise = pillar-3's object; Wall-C anti-aligned quantified)",
+      "killed": "2026-07-25T03:05:00Z",
+      "record": "refine-logs/ELR_FORENSIC_RECON.md 9e41447",
+      "finding": "F79",
+      "ban_scope": "no ELR/co-teaching GPU without user invoking the §7 diagnostic (0.16 GPU-h, expected KILL); co-teaching arm dropped outright; noise-robust-training family on the head now priced by measured proxy (boundary-dominated 13-17% upper bound, single-digit fixable) — new noise-robust proposals must beat this arithmetic first"
     }
   ],
   "banned_constraints": [
