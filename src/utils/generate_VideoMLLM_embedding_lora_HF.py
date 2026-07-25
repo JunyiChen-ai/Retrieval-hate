@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import sys
 
 import numpy as np
 import torch
@@ -109,6 +110,23 @@ def parse_args_sys(args_list=None):
         default="Qwen2.5-VL-7B-Instruct-LoRA_HF",
         help="Tag used in the output filename: {split}_{out_model_tag}.pt. "
         "Defaults to a LoRA-distinct tag so it never clobbers the frozen cache.",
+    )
+    # --- Unmerged-adapter extraction (MOKA cell; refine-logs/MOKA_PREREG.md). Both flags DEFAULT
+    # OFF, so a run without them takes the byte-identical deployed merge_and_unload() path (parity
+    # guard, the ZHPROMPT default==identity precedent).
+    arg_parser.add_argument(
+        "--no_merge",
+        action="store_true",
+        help="Keep the LoRA adapter LIVE (skip merge_and_unload) and run the plain unmerged PEFT "
+        "forward. Used by KS-MOKA-0b to price merged-vs-unmerged bf16 accumulation drift on the "
+        "already-banked generic adapter. Default OFF = deployed merged path.",
+    )
+    arg_parser.add_argument(
+        "--moka",
+        action="store_true",
+        help="Load the adapter as a MokA modality-routed LoRA (implies --no_merge; MokA has no "
+        "merged form). Installs src/moka/routed_lora.py MokaLinear layers + the input_ids modality "
+        "pre-hook, then explicitly loads the lora_A_v tensors. Default OFF = deployed merged path.",
     )
     # --- Instruction-language override (ZHPROMPT probe; refine-logs/ZHPROMPT_PREREG.md).
     # These 5 args parameterise EVERY string this script injects into the prompt. They
@@ -483,8 +501,21 @@ def main(args):
 
         print("Attaching LoRA adapter from: {}".format(lora_dir), flush=True)
         model = PeftModel.from_pretrained(model, lora_dir)
-        print("Merging LoRA adapter into base weights (merge_and_unload) ...", flush=True)
-        model = model.merge_and_unload()
+        if args.moka or args.no_merge:
+            print("Keeping LoRA adapter UNMERGED (--moka={}, --no_merge={}).".format(
+                args.moka, args.no_merge), flush=True)
+            if args.moka:
+                sys.path.insert(0, os.path.join(
+                    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "moka"))
+                from routed_lora import install_moka, load_moka_a_v, moka_stats
+
+                n_layers = install_moka(model)
+                n_av = load_moka_a_v(model, lora_dir)
+                print("[moka] routed layers: {} | lora_A_v tensors loaded: {} | stats: {}".format(
+                    n_layers, n_av, moka_stats()), flush=True)
+        else:
+            print("Merging LoRA adapter into base weights (merge_and_unload) ...", flush=True)
+            model = model.merge_and_unload()
     else:
         print("No --lora_dir given; using FROZEN base model (original behavior).", flush=True)
 
