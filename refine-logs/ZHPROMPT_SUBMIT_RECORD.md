@@ -273,4 +273,46 @@ Banked English floors `…_HF.pt` / `…-LoRA_HF.pt` intact (mtime 2026-07-02, u
 **S5: raw transcription complete. Verdict (KS-parity → KS-dead → FORMAL, per arm) is NOT rendered here — it is
 rendered by an independent 0-context reviewer against `ZHPROMPT_PREREG.md` VERBATIM.**
 
+Commit: `e03bd25` (S5 raw transcription).
+
 ---
+
+## S6 — Closeout
+
+### Frozen sha chain (S0 == submit-instant, all MATCH `ZHPROMPT_FREEZE.md`, no post-freeze edit)
+```
+FROZEN 07df7c7…  refine-logs/ZHPROMPT_PREREG.md
+A      1c83d43…  src/utils/generate_VideoMLLM_embedding_HF.py
+B      8d9bfd43… src/utils/generate_VideoMLLM_embedding_lora_HF.py
+C      f69b1ae…  scripts/slurm/zhprompt_extract_head.sbatch
+reused b85eb72…  src/run_rac.py     4379224…  enc3seed_zh_b3.sbatch
+       2ae7a73…  loss.py   e7b61df4… classifier.py   d43e3bc4… retrieval.py
+```
+
+### Job IDs
+- **Smoke (throwaway):** `13486` — COMPLETED 0:0, 00:02:48. KS-parity bit-exact PASS (both arms, img+text
+  max|Δ|=0.0), N1 13150-seed0 repro PASS (4dp bit-match), Chinese-shape PASS; cleanup left no residue.
+- **Real bite:** `13487` — COMPLETED 0:0, 03:43:05 (long wall = disk_guard B2-push, DEV-C). Extraction (zero-vec=0
+  all 6 caches) + shape-sanity OK + 6 head runs.
+
+### RAW head table (per-seed, both protocols; NO deltas/gates/verdict — reviewer's job)
+Arm-L (LoRA, PRIMARY): val-sel s0/s1/s2 acc 0.7852/0.8255/0.7785 mF1 0.7541/0.8002/0.7450 (mean 0.7964/0.7664);
+final s0/s1/s2 acc 0.8389/0.8255/0.8389 mF1 0.8065/0.7904/0.8065 (mean 0.8344/0.8011).
+Arm-F (frozen, control): val-sel s0/s1/s2 acc 0.7785/0.7718/0.7584 mF1 0.7203/0.7327/0.7058 (mean 0.7696/0.7196);
+final s0/s1/s2 acc 0.8121/0.8054/0.7785 mF1 0.7608/0.7613/0.7158 (mean 0.7987/0.7460).
+(Reference floors, prereg §2: Arm-L=13150 val-sel 0.8322/0.8015 final 0.8456/0.8173; Arm-F=13115 val-sel
+0.8031/0.7681 final 0.8031/0.7712. Delta/verdict deferred to the independent 0-context reviewer.)
+
+### Deviations from the task chain
+**NONE material.** Notes: (1) codex gate ran on the account's configured model `gpt-5.6-sol` xhigh (the
+`gpt-5.2*` model ids the task suggested are not available to this ChatGPT-account Codex; `gpt-5.6-sol` is a
+gpt-5.x-class model at xhigh, satisfying the gate mandate) — verdict NO FINDINGS, cross-checked by Claude. (2)
+KS-parity ran BOTH extractors × BOTH streams (stricter than the task's "one stream"), per prereg §3.3/§4.4.1. (3)
+N1 (review note, orchestrator-made-mandatory) executed inside the smoke and PASSED 4dp. No frozen file edited; no
+`state/` mutation; commits local only (not pushed).
+
+### Local commit chain (this record; NOT pushed)
+`fa75776` (S0) → `ac23920`… see per-stage. Final closeout commit below.
+
+**S6: chain complete through the single budgeted test-touch. Handoff to the independent 0-context verdict reviewer.**
+
