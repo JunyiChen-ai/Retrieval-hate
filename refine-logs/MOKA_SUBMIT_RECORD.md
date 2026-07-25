@@ -572,3 +572,33 @@ half the runtime. It bought the evidence that the amended hook fires on the **ev
 (`fallback_calls == 0` across all 3 eval loops), which is a surface the frozen job 1 exercises every
 epoch. Projected family total ≈ **4.98 GPU-h** vs the **4.7 cap** (≈ 5.03 if the §3.4 contingency
 fires). Per standing instruction the cap is a planning figure: **recorded, and execution continues.**
+
+## S4' — REAL SUBMISSION, job 1 of 2: `sbatch scripts/slurm/lora_sft_moka.sbatch` → **job `13552`**
+
+Gate order §3.11 satisfied in full before this submit: G-repro sha (S0') → **codex gate `GATE: PASS`**
+(S1') → **CPU smoke S1-S9 all-PASS** (S2') → **GPU smoke incl. KS-parity bit-exact `0.000000e+00`**
+(S3'-b, job 13551) → `logging/_smoke_moka` deleted.
+
+**Submit-instant re-verification (all MATCH / CLEAN):** frozen A–G + prereg re-hashed at the instant
+of `sbatch` — `A 6b7bdb6c…`, `B fae40487…`, `C 75bb8156…`, `D bd258553…`, `E 020dd10b…`,
+`F fd1b7f29…`, `G 51b883e9…`, `FROZEN dc3f1078…`; `src/run_rac.py b85eb72a…`; `loss.py` /
+`classifier.py` / `retrieval.py` **git-clean**; LF gitlink still `160000
+a912747c408b3c661b4029ecf1d88b9d91c7f1a8`; `logging/lora/MHC_zh_moka` **ABSENT** (job 1's `exit 4`
+collision guard clear); disk **463 G** avail (bar ≥ 25 G).
+
+**Resource / infra-rule compliance:** `NumCPUs=16`, `ReqTRES=cpu=16,mem=120G,gres/gpu=1`, **no
+`--time`**. The account's queue was **completely empty** at submit — 13531 was cancelled by its owner
+at 03:26:03 and the smoke 13551 had already reached terminal — so **exactly one job of this family is
+in flight and there is no second 16-CPU job anywhere.** The 13303-wedge condition cannot arise.
+Job 2 (8 CPU) is **not** submitted until `sacct` reports 13552 terminal (prereg §1.0 / DEV-4:
+sequential, never `--dependency=afterok`).
+
+Initial state `PENDING (JobHeldUser)` — **expected; awaiting auto-release, never forced** (CLAUDE.md,
+prereg §10 DEV-D). Watcher armed on 13552.
+
+**Expected products:** `logging/lora/MHC_zh_moka/{adapter_config.json, adapter_model.safetensors,
+checkpoint-*}` (196 `lora_A` + 196 `lora_A_v` + 196 `lora_B`, 58,490,880 params), the job-1 STEP-3
+asserts, and the **`KS-MOKA-2`** readout → `refine-logs/MOKA_KS2_routing_report.json`. Per **N1** that
+median is reported as a **non-degeneracy floor only** — never as evidence that routing is active;
+the routing-activity claim rests on `fallback_calls == 0` (already discharged at LEG 1) and on
+`KS-MOKA-3`.
