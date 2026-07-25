@@ -324,7 +324,7 @@ deleted before submission.
 |---|---|---|
 | §3.1 G2, §3.2 G1 ladder, §3.3 the whole d'=64/256 layer + C1/C2 at d'=64 | **CPU-only SLURM job 13522** | `OMP_NUM_THREADS=16`; cancelled at the start of the raw arm to free the 16-CPU slot for the decision arm; all completed cells preserved by `refine-logs/.lsmi_ckpt/` |
 | §3.4 AMD-5 dimension ladder, §3.5 **A7 decision arm** + C1/C2 at d'=8/16 | **login node, CPU-only** | `OMP_NUM_THREADS=2–4`, retry loop + per-cell **and per-permutation-draw** checkpointing (added mid-run so the 50-draw nulls could survive the reaper; on resume the RNG replays the consumed draws **at identical sizes**, so the draw sequence is bit-identical to an uninterrupted run) |
-| §4.5 A4 raw arm, AMD-4 budget arm | **queued, not yet run** | `scripts/slurm/lsmi_gate_power_cpu.sbatch` → job **13531**, `PENDING (JobHeldUser)` since 00:48, never forced |
+| §4.5 A4 raw arm, AMD-4 budget arm | **NOT RUN — withdrawn** | `scripts/slurm/lsmi_gate_power_cpu.sbatch` → job **13531**, held ~2.5 h, then `scancel`-ed **by this executor** (own job) at 03:05 on 2026-07-26 because it was blocking the campaign's only live GPU cell under the never-2×16-CPU cap. Disclosure-only arms; §4.5 gives the on-the-merits ruling |
 
 The follow-up SLURM job (13531) was submitted first and left queued; the A7 cells were computed on
 the login node only because the hold persisted for hours and A7 is the decision arm. Every cell is
@@ -629,20 +629,42 @@ adjudicated here.
   dominant is a *modality-imbalance* statement, which is the axis §4.3's MokA targets, and it is
   an adaptation-side object that §5.2 explicitly says this gate cannot bound.
 
-### 4.5 Arms still queued (disclosure-only; cannot move the verdict)
+### 4.5 Arms NOT RUN (disclosure-only; job 13531 cancelled by this executor)
 
-- **A4 raw arm (d = 3584), the F41 precedent arm** — queued in CPU-only job **13531**, which has
-  been `PENDING (JobHeldUser)` since 00:48 and was not forced. It cannot change the verdict: the
-  rule is defined on the *certified* arm, and the ladder already shows detection failing at d'=32
-  and d'=64, so d = 3584 is far past the wall (§1.4 property 5 predicts the degeneracy
-  analytically; §3.3 shows it empirically). Its purpose was to close the "the projection destroyed
-  the signal" objection — and §3.4 closes that objection in the *informative* direction: the
-  signal appears as `d'` **falls**, not as it rises.
-- **AMD-4 matched-budget arm (d'=64, 400 epochs)** — same job, same status. AMD-5 superseded its
-  purpose: the dimension ladder localised the wall directly, and d'=8/16 pass M1 at the released
-  30-epoch budget, so no budget correction is needed to obtain a certified read.
+Both remaining arms were **withdrawn**, not deferred. Job **13531** (CPU-only, 16 CPU, no `--gres`)
+sat in `PENDING (JobHeldUser)` for ~2.5 h and, under the standing **never-2×16-CPU** submit-time
+aggregate cap, was blocking the campaign's only live GPU cell (the MokA-ZH encoder SFT).
+**This executor `scancel`-ed its own job 13531 at 03:05 on 2026-07-26** — an own-job cancellation,
+**not** a forced release of anyone's hold, and no other job was touched.
 
-Both remain queued; this record should be amended with their numbers when job 13531 lands.
+The ruling, on the merits rather than on the queue pressure:
+
+- **A4 raw arm (d = 3584), the F41 precedent arm — NOT RUN, and it is not a gap.** F41's rule
+  exists to stop a null being explained away by "the down-projection destroyed the signal you were
+  trying to measure". **§3.4 answers that objection more decisively than A4 could**, because it
+  measures detection *as a function of* `d'` at our own n rather than at one extra point:
+  joint out-of-fold accuracy on a known-maximal synergy runs **0.998 → 0.903 → 0.632 → 0.513** at
+  `d' = 8 → 16 → 32 → 64`. Power is **monotone decreasing in dimension**; the signal appears as the
+  projection gets *tighter*, not as it gets looser. A4 sits 56× beyond the last point that already
+  fails M1, so it is a strictly-worse extrapolation of an established trend, and by the
+  pre-declared M1 gate its output would be `LSMI_MEASUREMENT_INVALID` **by construction** — it
+  could not have moved the verdict in either direction. §1.4 property 5 predicts that degeneracy
+  analytically and §3.3 exhibits it empirically at d'=64 (`h ≈ 10³–10⁴` nats against pointwise MI
+  bounded by ≈1.2 nats, so the min-rule collapses).
+- **AMD-4 matched-budget arm (d'=64, 400 epochs) — NOT RUN, purpose superseded.** AMD-4 existed to
+  separate sample size from gradient-step count. AMD-5's dimension ladder localised the wall
+  directly, and `d'=8/16` clear M1 **at the released 30-epoch budget**, so no budget correction is
+  needed to obtain a certified read.
+
+**Re-queueing, if ever wanted:** `sbatch scripts/slurm/lsmi_gate_power_cpu.sbatch` reproduces both
+arms; it should be resubmitted with `--cpus-per-task=8` (they are small jobs) so it never again
+contends for the 16-CPU cap. All completed cells are checkpointed in `refine-logs/.lsmi_ckpt/`, so
+a rerun computes only the missing arms. If they are ever run, `scripts/analysis/lsmi_gate_verdict.py`
+must be re-run afterwards (the merge step flags the stored verdict `STALE_AFTER_MERGE`).
+
+**Nothing in §4.1–§4.4 depends on either arm.** The verdict is defined on the certified arm A7, and
+its inputs — the M1/M2 gates, the A7 reads at d'=8 and d'=16, the dev replication, the 50-draw
+permutation nulls, and the two truth-zero controls — are all complete.
 
 ---
 
@@ -724,8 +746,10 @@ These are stated independently of the numbers, so they cannot be tuned to the ou
 - **Compute:** CPU only. **No `#SBATCH --gres` line in either sbatch** → **zero GPU requested,
   zero GPU consumed, zero Modal, zero network.** See §2.7 for the per-block breakdown of which
   numbers came from SLURM job **13522** and which from the login-node run of the same code.
-  Jobs 13522 and 13531 both began as `PENDING (JobHeldUser)`; neither was forced. Job 13531
-  (AMD-4 budget ladder + A4 raw arm + merge) was still held at the time of writing.
+  Jobs 13522 and 13531 both began as `PENDING (JobHeldUser)`; **neither hold was ever forced.**
+  13522 was cancelled by this executor after its `main` stage to free the 16-CPU slot for the
+  decision arm; 13531 was cancelled by this executor while still held (§4.5), so its two
+  disclosure-only arms are **unrun**. Total GPU consumed by this gate: **zero**.
 - **Data (read-only, sha256 verified at load — §2.1):** the six banked
   `{train,dev_seen}` caches of the three deployed lineages. **No `test_seen_*` file is opened by
   any script in this gate** (`grep test_seen scripts/analysis/lsmi_gate*.py` → no match).
@@ -738,9 +762,10 @@ These are stated independently of the numbers, so they cannot be tuned to the ou
   `n_classes 2`, `batch_size 32`, Adam lr 1e-3, `StepLR(15,0.1)` discriminators /
   `StepLR(20,0.1)` KNIFE, 30 epochs each (AMD-4 budget arm: 400 epochs, declared).
 - **Outputs:** `refine-logs/LSMI_GATE_OUT.json` (merged; per-stage parts in
-  `refine-logs/.lsmi_out_{gates,main,power,raw}.json`), run logs
-  `refine-logs/LSMI_GATE_run_*.log` and `slurm/logs/lsmi_gate_cpu_13522.out` /
-  `slurm/logs/lsmi_power_cpu_13531.out`.
+  `refine-logs/.lsmi_out_{gates,main,power}.json`; there is no `.lsmi_out_raw.json` because A4 was
+  never run), run logs `refine-logs/LSMI_GATE_run_{gates,main,power_dimladder,power_data}.log` and
+  `slurm/logs/lsmi_gate_cpu_13522.out`. Job 13531 produced no log — it was cancelled while still
+  held, so it never started.
 
 ## 7. REQUIRED STATEMENTS
 
