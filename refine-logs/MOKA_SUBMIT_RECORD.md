@@ -422,3 +422,55 @@ throwaway tag** only; **the pre-registered KS-MOKA-0b number is the one job 2 St
   `n_train 579`, `n_dev 78` (the 78-item dev wall) and a floor **text train-LOO AUC 0.9254**, which
   matches **F45's published ZH text train-LOO 0.925**. Opens **train + dev_seen only** — `test_seen`
   is never touched.
+
+### S3'-a — job `13537` **FAILED in 11 s** (`ExitCode 1:0`). Root cause: **the throwaway harness, NOT a frozen artifact.**
+
+```
+yaml.constructor.ConstructorError: while constructing a mapping
+  in ".../scratchpad/moka_smoke_gpu.yaml", line 2, column 1
+found duplicate key save_strategy
+  in ".../scratchpad/moka_smoke_gpu.yaml", line 51, column 1
+```
+Raised at `llamafactory/hparams/parser.py:75` (`OmegaConf.load`), reached from
+`tuner.py:127 read_args` — i.e. **before any model was constructed**. `slurm/logs/moka_smoke_13537.out`.
+
+**Diagnosis.** The frozen ZH recipe already carries `save_strategy: epoch` (frozen yaml line 29).
+The executor's scratchpad build step **appended** a second `save_strategy: "no"` instead of
+substituting, and OmegaConf rejects duplicate top-level keys. **The defect is 100 % in the executor's
+own throwaway yaml.** Frozen artifact **G** re-hashed immediately after the failure:
+`51b883e9f0a78c26d9b4af185b54a4703a250a3cab4c947756782c6c8fe49764` — **UNCHANGED**, as were A–F and
+the prereg. **No frozen artifact is implicated, so §4.6 does NOT fire**; the throwaway was repaired
+under the standing "throwaways are not frozen artifacts" rule.
+
+**Cost:** 11 s wall, GPU allocated but idle (the crash preceded model load) ⇒ **~0 GPU-h**, budget
+unaffected. `set -euo pipefail` aborted at LEG 1 exactly as designed — the harness failed safe and
+wrote nothing: `logging/_smoke_moka` absent afterwards, all collision surfaces still ABSENT.
+
+**Fix (throwaway only).** The `save_strategy` override was **removed entirely** rather than
+de-duplicated: 579 train rows ÷ grad-accum 8 = **72 optimizer steps per epoch**, and `max_steps: 10`
+never reaches an epoch boundary, so the frozen `save_strategy: epoch` can never fire and writes no
+mid-training checkpoint. The final `trainer.save_model()`
+(`llamafactory/train/sft/workflow.py:97`) is unconditional under `do_train`, so the smoke adapter is
+still produced. The rebuilt throwaway yaml is now **3 clean substitution hunks** off the frozen
+recipe — `output_dir` → `logging/_smoke_moka`, `num_train_epochs: 3.0` → `max_steps: 10`,
+`eval_strategy: epoch` → `steps` + `eval_steps: 5` — with **no appended keys at all**.
+
+**Process fix — the pre-flight whose absence caused this.** Before resubmitting, the throwaway yaml
+is now validated locally by (a) a duplicate-top-level-key scan, (b) `OmegaConf.load` (the exact call
+at `parser.py:75`), and (c) **the real `run_exp` argument path** `read_args()` → `get_train_args()`.
+All three pass. (c) additionally **runtime-confirms on the parsed arguments** three properties codex
+had asserted from source at item 2: **`predict_with_generate = False`** ⇒ **no `.generate()`
+surface**, **`deepspeed = None` / `fsdp = []`** ⇒ no wrapper interposition, and
+**`lora_dropout = 0.0`** ⇒ `install_moka`'s `require_zero_dropout` guard is satisfied. Also
+confirmed: `max_steps 10`, `eval_strategy STEPS`/`eval_steps 5`, `save_strategy EPOCH` (inert here),
+`load_best_model_at_end False`, `freeze_vision_tower True`, `lora rank/alpha 16/32`.
+*(The parser must see exactly one visible GPU — `parser.py:296` raises `ParallelMode.NOT_DISTRIBUTED`
+otherwise. That is a login-node artifact only; `--gres=gpu:a100:1` gives the job a single device,
+which is how the banked floor job 12143 ran.)*
+
+### S3'-b — resubmitted as job **`13551`** (8 CPU/64 G/1 A100, no `--time`)
+
+Frozen shas A–G + prereg re-verified **MATCH** at the resubmit instant; `bash -n` SYNTAX_OK (the
+sbatch itself was never at fault and is unchanged); all collision surfaces ABSENT; queue empty of any
+other job of this account (13531 was **CANCELLED by its owner at 03:26:03 having never started**, so
+the 16-CPU aggregate is now free for job 1 once the smoke passes).
