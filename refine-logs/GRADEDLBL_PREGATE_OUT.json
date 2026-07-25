@@ -1,0 +1,421 @@
+{
+  "meta": {
+    "topk": 20,
+    "kill_oracle": 0.03,
+    "n_perm": 500,
+    "rng": 20260725,
+    "tau_grid": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "woff_sweep_step": 0.05,
+    "parity_anchor": {
+      "dataset": "MHC_zh",
+      "tag": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+      "loo": 0.8717948717948718,
+      "devtrain": 0.8589743589743589,
+      "src": "refine-logs/READOUT_SCREEN_OUT.json ro_L28"
+    },
+    "note": "READ-ONLY on train+dev own-split 3-class labels; test split never opened. Oracle bounds the VOTE-side (label-reweighting) mechanism only; the head's representation-reshaping is a residual the raw-key proxy cannot see."
+  },
+  "results": {
+    "MHC::Qwen2.5-VL-7B-Instruct_HF": {
+      "dataset": "MHC",
+      "tag": "Qwen2.5-VL-7B-Instruct_HF",
+      "n_train": 549,
+      "n_dev": 80,
+      "cls_train": {
+        "Normal": 381,
+        "Offensive": 123,
+        "Hateful": 45
+      },
+      "cls_dev": {
+        "Normal": 55,
+        "Offensive": 18,
+        "Hateful": 7
+      },
+      "bin_pos_train": 168,
+      "bin_pos_dev": 25,
+      "bin_consistent": true,
+      "sha256_train": "05a9b2def29230259d7dca0e75b096edcbb483db98ea1c21d89d25c8a4940409",
+      "sha256_dev": "cd5d4c7dc08311f84df89c2841aa89ce4b6a0a4be4860422fbd4cc06974cd50c",
+      "arms": {
+        "loo": {
+          "acc_binary": 0.75,
+          "binary_best_cutoff_acc": 0.7625,
+          "binary_best_cutoff": 0.2921786708491189,
+          "proxy_tau": {
+            "tau=0.25": {
+              "w_off": -0.5,
+              "acc": 0.7,
+              "dacc": -0.050000000000000044,
+              "fix": 11,
+              "brk": 15,
+              "net": -4
+            },
+            "tau=0.50": {
+              "w_off": 0.0,
+              "acc": 0.725,
+              "dacc": -0.025000000000000022,
+              "fix": 10,
+              "brk": 12,
+              "net": -2
+            },
+            "tau=0.75": {
+              "w_off": 0.5,
+              "acc": 0.725,
+              "dacc": -0.025000000000000022,
+              "fix": 5,
+              "brk": 7,
+              "net": -2
+            }
+          },
+          "oracle": {
+            "dop_ceiling": 0.0,
+            "dop_best_woff": 1.0,
+            "dop_best_acc": 0.75,
+            "b5_ceiling": 0.025000000000000022,
+            "b5_best_woff": -0.5,
+            "b5_best_acc": 0.7875,
+            "binding_ceiling": 0.025000000000000022
+          },
+          "degenerate_recovery_ok": true,
+          "perm_null": {
+            "best_tau": "tau=0.50",
+            "w_off": 0.0,
+            "obs_dacc": -0.025000000000000022,
+            "n_perm": 500,
+            "null_p95": -0.012499999999999956,
+            "null_mean": -0.0379,
+            "null_max": 0.0,
+            "obs_gt_p95": false
+          }
+        },
+        "devtrain": {
+          "acc_binary": 0.75,
+          "binary_best_cutoff_acc": 0.7875,
+          "binary_best_cutoff": -0.077628807084901,
+          "proxy_tau": {
+            "tau=0.25": {
+              "w_off": -0.5,
+              "acc": 0.7,
+              "dacc": -0.050000000000000044,
+              "fix": 10,
+              "brk": 14,
+              "net": -4
+            },
+            "tau=0.50": {
+              "w_off": 0.0,
+              "acc": 0.7375,
+              "dacc": -0.012499999999999956,
+              "fix": 9,
+              "brk": 10,
+              "net": -1
+            },
+            "tau=0.75": {
+              "w_off": 0.5,
+              "acc": 0.75,
+              "dacc": 0.0,
+              "fix": 4,
+              "brk": 4,
+              "net": 0
+            }
+          },
+          "oracle": {
+            "dop_ceiling": 0.0,
+            "dop_best_woff": -0.1,
+            "dop_best_acc": 0.75,
+            "b5_ceiling": 0.0,
+            "b5_best_woff": -0.7,
+            "b5_best_acc": 0.7875,
+            "binding_ceiling": 0.0
+          },
+          "degenerate_recovery_ok": true,
+          "perm_null": {
+            "best_tau": "tau=0.75",
+            "w_off": 0.5,
+            "obs_dacc": 0.0,
+            "n_perm": 500,
+            "null_p95": 0.025000000000000022,
+            "null_mean": -0.003874999999999996,
+            "null_max": 0.03749999999999998,
+            "obs_gt_p95": false
+          }
+        }
+      },
+      "role": "primary"
+    },
+    "MHC_zh::Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+      "dataset": "MHC_zh",
+      "tag": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+      "n_train": 579,
+      "n_dev": 78,
+      "cls_train": {
+        "Normal": 399,
+        "Offensive": 113,
+        "Hateful": 67
+      },
+      "cls_dev": {
+        "Normal": 50,
+        "Offensive": 18,
+        "Hateful": 10
+      },
+      "bin_pos_train": 180,
+      "bin_pos_dev": 28,
+      "bin_consistent": true,
+      "sha256_train": "b2e8e78d19c71d2ca674903586d53ca171c33a539956ee37c1c61f44a5e01f1d",
+      "sha256_dev": "4c07af75098391c999013e1cf6fb7ffe8fac29546d9ce329d51004a37e4f5d3c",
+      "arms": {
+        "loo": {
+          "acc_binary": 0.8717948717948718,
+          "binary_best_cutoff_acc": 0.8974358974358975,
+          "binary_best_cutoff": 0.05794328550497693,
+          "proxy_tau": {
+            "tau=0.25": {
+              "w_off": -0.5,
+              "acc": 0.717948717948718,
+              "dacc": -0.15384615384615385,
+              "fix": 7,
+              "brk": 19,
+              "net": -12
+            },
+            "tau=0.50": {
+              "w_off": 0.0,
+              "acc": 0.8205128205128205,
+              "dacc": -0.05128205128205132,
+              "fix": 6,
+              "brk": 10,
+              "net": -4
+            },
+            "tau=0.75": {
+              "w_off": 0.5,
+              "acc": 0.8589743589743589,
+              "dacc": -0.012820512820512886,
+              "fix": 4,
+              "brk": 5,
+              "net": -1
+            }
+          },
+          "oracle": {
+            "dop_ceiling": 0.02564102564102566,
+            "dop_best_woff": 0.7,
+            "dop_best_acc": 0.8974358974358975,
+            "b5_ceiling": 0.0,
+            "b5_best_woff": 0.45,
+            "b5_best_acc": 0.8974358974358975,
+            "binding_ceiling": 0.02564102564102566
+          },
+          "degenerate_recovery_ok": true,
+          "perm_null": {
+            "best_tau": "tau=0.75",
+            "w_off": 0.5,
+            "obs_dacc": -0.012820512820512886,
+            "n_perm": 500,
+            "null_p95": 0.02564102564102566,
+            "null_mean": 0.004641025641025619,
+            "null_max": 0.038461538461538436,
+            "obs_gt_p95": false
+          }
+        },
+        "devtrain": {
+          "acc_binary": 0.8589743589743589,
+          "binary_best_cutoff_acc": 0.8717948717948718,
+          "binary_best_cutoff": -0.11421811850298019,
+          "proxy_tau": {
+            "tau=0.25": {
+              "w_off": -0.5,
+              "acc": 0.717948717948718,
+              "dacc": -0.14102564102564097,
+              "fix": 7,
+              "brk": 18,
+              "net": -11
+            },
+            "tau=0.50": {
+              "w_off": 0.0,
+              "acc": 0.8205128205128205,
+              "dacc": -0.038461538461538436,
+              "fix": 7,
+              "brk": 10,
+              "net": -3
+            },
+            "tau=0.75": {
+              "w_off": 0.5,
+              "acc": 0.8461538461538461,
+              "dacc": -0.012820512820512775,
+              "fix": 3,
+              "brk": 4,
+              "net": -1
+            }
+          },
+          "oracle": {
+            "dop_ceiling": 0.012820512820512886,
+            "dop_best_woff": 0.3,
+            "dop_best_acc": 0.8717948717948718,
+            "b5_ceiling": 0.012820512820512775,
+            "b5_best_woff": -0.2,
+            "b5_best_acc": 0.8846153846153846,
+            "binding_ceiling": 0.012820512820512886
+          },
+          "degenerate_recovery_ok": true,
+          "perm_null": {
+            "best_tau": "tau=0.75",
+            "w_off": 0.5,
+            "obs_dacc": -0.012820512820512775,
+            "n_perm": 500,
+            "null_p95": 0.012820512820512886,
+            "null_mean": -0.00520512820512817,
+            "null_max": 0.03846153846153855,
+            "obs_gt_p95": false
+          }
+        }
+      },
+      "role": "primary"
+    },
+    "MHC::Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+      "dataset": "MHC",
+      "tag": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+      "n_train": 549,
+      "n_dev": 80,
+      "cls_train": {
+        "Normal": 381,
+        "Offensive": 123,
+        "Hateful": 45
+      },
+      "cls_dev": {
+        "Normal": 55,
+        "Offensive": 18,
+        "Hateful": 7
+      },
+      "bin_pos_train": 168,
+      "bin_pos_dev": 25,
+      "bin_consistent": true,
+      "sha256_train": "50293e9a71aa1cb6d96225dfe6e2c2c061ce0f7677f2e6a73ccb8033208e73b0",
+      "sha256_dev": "404a3a07cbdae9730b602ac14c47b92e47ea23424380b80cafc795a423df8983",
+      "arms": {
+        "loo": {
+          "acc_binary": 0.725,
+          "binary_best_cutoff_acc": 0.7875,
+          "binary_best_cutoff": -0.1022426087231863,
+          "proxy_tau": {
+            "tau=0.25": {
+              "w_off": -0.5,
+              "acc": 0.7,
+              "dacc": -0.025000000000000022,
+              "fix": 13,
+              "brk": 15,
+              "net": -2
+            },
+            "tau=0.50": {
+              "w_off": 0.0,
+              "acc": 0.6875,
+              "dacc": -0.03749999999999998,
+              "fix": 8,
+              "brk": 11,
+              "net": -3
+            },
+            "tau=0.75": {
+              "w_off": 0.5,
+              "acc": 0.7375,
+              "dacc": 0.012500000000000067,
+              "fix": 6,
+              "brk": 5,
+              "net": 1
+            }
+          },
+          "oracle": {
+            "dop_ceiling": 0.025000000000000022,
+            "dop_best_woff": 0.55,
+            "dop_best_acc": 0.75,
+            "b5_ceiling": 0.012500000000000067,
+            "b5_best_woff": -0.7,
+            "b5_best_acc": 0.8,
+            "binding_ceiling": 0.025000000000000022
+          },
+          "degenerate_recovery_ok": true,
+          "perm_null": {
+            "best_tau": "tau=0.75",
+            "w_off": 0.5,
+            "obs_dacc": 0.012500000000000067,
+            "n_perm": 500,
+            "null_p95": 0.03749999999999998,
+            "null_mean": 0.01872500000000003,
+            "null_max": 0.03749999999999998,
+            "obs_gt_p95": false
+          }
+        },
+        "devtrain": {
+          "acc_binary": 0.7625,
+          "binary_best_cutoff_acc": 0.7875,
+          "binary_best_cutoff": -0.1195268997124263,
+          "proxy_tau": {
+            "tau=0.25": {
+              "w_off": -0.5,
+              "acc": 0.6875,
+              "dacc": -0.07499999999999996,
+              "fix": 10,
+              "brk": 16,
+              "net": -6
+            },
+            "tau=0.50": {
+              "w_off": 0.0,
+              "acc": 0.675,
+              "dacc": -0.08749999999999991,
+              "fix": 6,
+              "brk": 13,
+              "net": -7
+            },
+            "tau=0.75": {
+              "w_off": 0.5,
+              "acc": 0.75,
+              "dacc": -0.012499999999999956,
+              "fix": 5,
+              "brk": 6,
+              "net": -1
+            }
+          },
+          "oracle": {
+            "dop_ceiling": 0.0,
+            "dop_best_woff": 1.0,
+            "dop_best_acc": 0.7625,
+            "b5_ceiling": 0.025000000000000022,
+            "b5_best_woff": -0.85,
+            "b5_best_acc": 0.8125,
+            "binding_ceiling": 0.025000000000000022
+          },
+          "degenerate_recovery_ok": true,
+          "perm_null": {
+            "best_tau": "tau=0.75",
+            "w_off": 0.5,
+            "obs_dacc": -0.012499999999999956,
+            "n_perm": 500,
+            "null_p95": -0.012499999999999956,
+            "null_mean": -0.02097499999999994,
+            "null_max": 0.0,
+            "obs_gt_p95": false
+          }
+        }
+      },
+      "role": "sensitivity"
+    }
+  },
+  "parity_check": {
+    "loo_match": true,
+    "devtrain_match": true,
+    "loo": 0.8717948717948718,
+    "devtrain": 0.8589743589743589
+  },
+  "verdict": {
+    "per_dataset_binding_oracle_ceiling": {
+      "MHC": 0.025000000000000022,
+      "MHC_zh": 0.02564102564102566
+    },
+    "per_dataset_proxy_alive": {
+      "MHC": false,
+      "MHC_zh": false
+    },
+    "oracle_all_below_kill": true,
+    "any_proxy_alive": false,
+    "recommendation": "PARK"
+  }
+}
