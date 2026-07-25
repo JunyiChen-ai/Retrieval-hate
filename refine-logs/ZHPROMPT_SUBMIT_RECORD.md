@@ -48,4 +48,44 @@ the sbatch, enc3seed_zh_b3.sbatch, ZHPROMPT_PREREG.md = **EMPTY (all clean, work
 
 **S0 verdict: authorization VERIFIED (not trusted). No mismatch. Proceed to S1 codex gate.**
 
+Commit: `fa75776` (S0 authorization record).
+
+---
+
+## S1 — Mandatory codex gate (frozen extractor diffs + sbatch) — PASS, NO FINDINGS
+
+**Reviewer:** codex `gpt-5.6-sol`, reasoning `xhigh`, sandbox read-only, cwd /data/jehc223/RGCL.
+**Thread:** `019f96c8-3758-7a92-a671-b712a8eecaef`.
+**Focus (task S1 a-d):** (a) default==identity byte-exact on every path incl. edge cases; (b) no Chinese-override
+leakage into English-default runs; (c) `-zhp` cache-naming collision safety + LoRA adapter path; (d) head config
+rows byte-match the enc3seed precedent.
+
+**Codex verdict per area (line-cited against source):**
+- **(a) CLEAN** — defaults are exactly `IMG_INSTRUCTION`/`TEXT_INSTRUCTION`/`"Title: "`/`"Transcript: "`/`"(none)"`
+  (HF.py:96-124, lora_HF.py:119-153); the new assembly (HF.py:397-401, lora_HF.py:420-424) reduces byte-for-byte
+  to the old literal. All edge cases match: missing title→"" (HF.py:177), empty transcript→"(none)" (HF.py:176),
+  one-slot-empty substitutes only that slot, and inputs equal to "(none)"/whitespace/newline are truthy and
+  preserved identically. NO divergent input exists.
+- **(b) CLEAN** — each `parse_args_sys()` builds a fresh parser/namespace; constants never reassigned at runtime;
+  Arm-F/Arm-L are separate processes (sbatch:58-67 / 75-85); Chinese strings are UNEXPORTED shell vars
+  (sbatch:42-46), exported env (sbatch:32-35) carries no prompt text; saved caches store only ids/feats/labels
+  (HF.py:476-484). No channel carries Chinese text into a default/parity run.
+- **(c) CLEAN** — tags distinct (sbatch:48-51); output `{split}_{tag}.pt` ends `_HF-zhp.pt`/`-LoRA_HF-zhp.pt`,
+  cannot equal banked `_HF.pt`/`-LoRA_HF.pt`; two arms cannot collide. Arm-L validates `logging/lora/MHC_zh`
+  (`exit 2` if missing), extractor does `PeftModel.from_pretrained`+`merge_and_unload` (lora_HF.py:472-493).
+- **(d) CLEAN** — run_one (sbatch:131-172) vs enc3seed_zh_b3 (L42-83): **empty diff, both 2198 bytes, identical
+  SHA-256 `286a9e44953ff2b2f17af3821f3ed3e254569cb68893fefe6b451b04d6ab9101`** (codex's independent hash). Only
+  per-arm var = `--model`/`--exp_comment "_${MODEL}"`; head loads cache via `--model` (run_rac.py:1083-1085,
+  dataset.py:499-503/605-609). Shape-sanity block (sbatch:90-110) asserts `(N,3584)` all 6 caches + `exit 3`
+  before any head run. Chinese literals valid UTF-8, no CR, no active metachars. `--num_frames 8`/`--device cuda`
+  both arms; omitted `--max_pixels` keeps floor default `360*420=151200`.
+
+**Codex FINAL: NO FINDINGS (no P1/P2/P3).**
+
+**Claude independent cross-check (agree):** read all three files in full; git diff `546518a~1..546518a` shows the
+edit is ADDITIVE-ONLY (5 argparse keys defaulting to the English constants + the process_split assembly swap) in
+BOTH extractors, math/pooling/forward untouched; my own `diff` of run_one vs enc3seed_zh_b3 = EMPTY
+(RUN_ONE_DIFF_EMPTY_BYTE_IDENTICAL). Claude + Codex AGREE → **S1 gate PASS**. No code fix ⇒ §4.6 re-freeze NOT
+triggered; frozen shas stand. Proceed to S2.
+
 ---
