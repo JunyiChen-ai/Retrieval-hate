@@ -3,7 +3,7 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "NEW USER DIRECTIVE 2026-07-25 (goal hook cleared, verbatim): reproduction-driven inspiration campaign — survey hateful-video-detection works up to 2025 WITH open-source code, download + reproduce locally, extract components applicable to our (admittedly simple) LoRA-encoder + RGCL-head + kNN pipeline. Stage-1 survey+repo-triage agent in flight (deliverable REPRO_SURVEY_2025.md + external/baselines/ clones). In parallel: fusion-concat family chain still finishing (smoke 13496). Constraint box unchanged (OCR veto etc.) for OUR method; reproducing external baselines that use illegal channels is allowed as reference. Codeless works NOT reimplemented (standing rule). Big weight downloads (>10GB) flagged before pulling.",
+  "phase": "REPRO-INSPIRATION CAMPAIGN (user directive 2026-07-25, CORRECTED same day): hunt window = 2025-H2 -> now; mining target = NEIGHBORING fields (retrieval/kNN-augmented classification, memory-augmented models, multimodal fusion in other domains, VLM-feature heads, metric-learning advances) with open code — reproduce locally, transplant into our pipeline for novelty (direct hate-video works = reference only, reviewer-novelty reasoning). Stage-1 survey agent corrected mid-flight. Fusion-concat chain finishing in parallel (smoke 13496). OUR-method constraint box unchanged.",
   "stale_count": 0,
   "last_seen": "2026-07-25T07:39:16Z",
   "total_findings": 74,
