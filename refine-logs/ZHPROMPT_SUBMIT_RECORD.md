@@ -204,8 +204,73 @@ b85eb72…  src/run_rac.py         MATCH   4379224…  enc3seed_zh_b3.sbatch  MA
 trivially clears never-2×16-CPU (smoke 13486 already terminal). 
 
 **Command (verbatim, UNMODIFIED):** `sbatch scripts/slurm/zhprompt_extract_head.sbatch`.
-**Submitted: job `13487` → `PENDING (JobHeldUser)`** (expected; will wait for auto-release, never force). ONE bite.
+**Submitted: job `13487` → `PENDING (JobHeldUser)`** (expected; auto-released ~13:16, never forced). ONE bite.
 
-_Poll to terminal → S5 RAW transcription (6 head runs, both protocols, line-numbered) below._
+---
+
+## S5 — RAW transcription (job 13487 terminal) — RAW FACTS ONLY (no gates/deltas/verdict)
+
+**Terminal state:** job `13487` `COMPLETED`, ExitCode `0:0`, Elapsed `03:43:05` (long wall = disk_guard B2-push
+phases, DEV-C; extraction + all 6 heads ran; log ends with b2_push done). Job `.out`: `slurm/logs/zhprompt_13487.out`.
+
+### S5.1 KS-parity evidence (from the S3 smoke job 13486; the machinery guard)
+`img max|Δ| == 0.0 AND text max|Δ| == 0.0` for BOTH extractors (English-default re-extraction vs banked cache,
+n=8, id order matched): `[KS-PARITY frozen] … img_max|Δ|=0.0 text_max|Δ|=0.0 -> PASS` /
+`[KS-PARITY LoRA] … img_max|Δ|=0.0 text_max|Δ|=0.0 -> PASS` → `KS_PARITY_OVERALL_PASS` (smoke .out L17-19).
+N1 13150-seed0 head repro: `N1_REPRO_PASS_4DP_MATCH` (val-sel ep20 0.8322/0.8023, final ep29 0.8456/0.8181).
+
+### S5.2 Stage-A extraction stats (job 13487 .out; Dv=Dt=3584 all)
+
+| arm | split | N | zero-vector videos | .out line |
+|---|---|---|---|---|
+| Arm-F `…_HF-zhp` | train | 579 | **0** | L5220 |
+| Arm-F `…_HF-zhp` | dev_seen | 78 | **0** | L5226 |
+| Arm-F `…_HF-zhp` | test_seen | 149 | **0** | L5235 |
+| Arm-L `…-LoRA_HF-zhp` | train | 579 | **0** | L5311 |
+| Arm-L `…-LoRA_HF-zhp` | dev_seen | 78 | **0** | L5317 |
+| Arm-L `…-LoRA_HF-zhp` | test_seen | 149 | **0** | L5326 |
+
+Stage-A shape sanity (.out L5328-5334): all 6 `-zhp` caches `img=text=(N,3584)`, `ids==N`, `N>0` → `SHAPE_SANITY_OK`.
+(Split counts train 579 / val 78 / test 149 = 806 match prereg §1 Stage 0.)
+
+### S5.3 Six head runs — RAW per-seed, BOTH protocols, re-read from PRIMARY trainlogs with line numbers
+
+Two independent parses agree on every value: **[P1]** = independent split-tokenizer parser
+`scratchpad/indep_parse_zhp.py` (VAL/TEST line numbers cited from the primary `.trainlog`); **[P2]** = the sbatch's
+embedded regex parser output in `zhprompt_13487.out`. Protocol rule (both parsers): val-sel = epoch≥warmup5 with
+max Val_Retrieval acc (roc tie-break); final = max epoch (29). **[P1]==[P2] EXACT, all 6 runs, all metrics.**
+
+**Arm-L (LoRA Chinese-prompt) — trainlogs `enc3s_MHC_zh_Qwen2.5-VL-7B-Instruct-LoRA_HF-zhp_seed{0,1,2}_13487.trainlog`:**
+
+| seed | val-sel ep | val-sel acc / mF1 | [P1] VAL/TEST line | final ep | final acc / mF1 | [P1] TEST line | [P2] .out line |
+|---|---|---|---|---|---|---|---|
+| 0 | 7 | 0.7852 / 0.7541 | L99/L100 | 29 | 0.8389 / 0.8065 | L299 | .out L6535-6537 |
+| 1 | 8 | 0.8255 / 0.8002 | L108/L109 | 29 | 0.8255 / 0.7904 | L299 | .out L6813-6815 |
+| 2 | 5 | 0.7785 / 0.7450 | L79/L80 | 29 | 0.8389 / 0.8065 | L297 | .out L7089-7091 |
+| **mean** | | **0.7964 / 0.7664** | | | **0.8344 / 0.8011** | | |
+
+**Arm-F (frozen Chinese-prompt) — trainlogs `enc3s_MHC_zh_Qwen2.5-VL-7B-Instruct_HF-zhp_seed{0,1,2}_13487.trainlog`:**
+
+| seed | val-sel ep | val-sel acc / mF1 | [P1] VAL/TEST line | final ep | final acc / mF1 | [P1] TEST line | [P2] .out line |
+|---|---|---|---|---|---|---|---|
+| 0 | 25 | 0.7785 / 0.7203 | L261/L262 | 29 | 0.8121 / 0.7608 | L299 | .out L5703-5705 |
+| 1 | 7 | 0.7718 / 0.7327 | L99/L100 | 29 | 0.8054 / 0.7613 | L299 | .out L5981-5983 |
+| 2 | 5 | 0.7584 / 0.7058 | L79/L80 | 29 | 0.7785 / 0.7158 | L297 | .out L6257-6259 |
+| **mean** | | **0.7696 / 0.7196** | | | **0.7987 / 0.7460** | | |
+
+(Per-seed roc, from [P1]/[P2], for completeness — Arm-L val-sel roc s0/s1/s2 = 0.8594/0.8981/0.8712, final =
+0.9083/0.8818/0.9028; Arm-F val-sel roc = 0.8929/0.8417/0.8494, final = 0.8915/0.8880/0.8675.)
+
+**Reference floors (VERBATIM from prereg §2, pre-existing facts; NO delta computed here — the independent
+0-context reviewer applies §3 against the prereg):** Arm-L floor = 13150 (val-sel mean 0.8322/0.8015, final mean
+0.8456/0.8173); Arm-F floor = 13115 (val-sel mean 0.8031/0.7681, final mean 0.8031/0.7712).
+
+### S5.4 Post-run disk state
+Six `-zhp` caches now PRESENT in `data/CLIP_Embedding/MHC_zh/` (the real extraction outputs, expected to persist).
+Banked English floors `…_HF.pt` / `…-LoRA_HF.pt` intact (mtime 2026-07-02, unchanged). New head dirs live under
+`logging/Retrieval/MHC_zh/RAC_video_zhp/`.
+
+**S5: raw transcription complete. Verdict (KS-parity → KS-dead → FORMAL, per arm) is NOT rendered here — it is
+rendered by an independent 0-context reviewer against `ZHPROMPT_PREREG.md` VERBATIM.**
 
 ---
