@@ -3,7 +3,7 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "ROUND-6: litsweep2 batch-3 SETTLED 0-for-2 (NCA F75 dead, resolution F76 parked with corrected multipliers). NOW: litsweep-3 = lit round 4 of 5 (goal hook re-survey clause), 3 lenses: (L1) learned per-item selector/deferral/routing literature to convert F66 selection-locked oracle pools with train labels only (front-loads the 2026-07-25 oracle-queue ruling); (L2) ZH-specific levers (largest oracle pool +0.1026, 1080p sources, 4-word transcripts, marginal-positive LoRA); (L3) training-data-centric (augmentation/label-noise/semi-sup own-split; never swept). After round 5 fails -> oracle-ranked queue. Molmo2/MNTP/multi-prompt/ZH-protocol/resolution-door-closer = user-gated.",
+  "phase": "ROUND-6 batch-4 (litsweep-3 F77): (1) memory-bank curation $0 CPU pregate (LEAD, recon in flight), (2) ZH Chinese-instruction re-extraction probe ~0.5 GPU-h (recon in flight), (3) ELR noise-robust head queued. Lit rounds used: 4 of 5. If batch-4 0-for-3 -> litsweep round 5 -> then oracle-queue ruling (with F77/L1 caveat: selection attacks need new channel past F49 or non-selection mechanism). User-gated: ZH val-sel protocol retirement (L2: final-epoch already 3/3 PASS -- STRENGTHENED), Molmo2, MNTP, multi-prompt, resolution door-closer.",
   "stale_count": 0,
   "last_seen": "2026-07-24T23:35:17Z",
   "total_findings": 74,
