@@ -3,9 +3,9 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "REPRO-INSPIRATION stage-2: fusion-concat DEAD (F85). LSMI synergy gate computing (pre-decl d4b06f0) — its S/R/U verdict routes SynIB port (branches in SYNIB_PORT_FORENSIC_RECON 9e638ea; default PARK; F85 adds weight to synergy~0 world). User-gated: SynIB faithful repro, MokA, + older menu (ZH val-sel retirement etc.). Disk watch: 256G/290G.",
+  "phase": "REPRO-INSPIRATION stage-2 (user-accelerated 2026-07-26): MokA integration recon LAUNCHED (modality-routed LoRA A_v/A_t shared-B into our SFT stack; target = encoder-adaptation axis, the only +3-converting lever; dataset order per recon). LSMI gate job 13522 queued — routes SynIB PORT-A (faithful repro cancelled per ruling). Fusion-concat dead F85. Older menu items (ZH val-sel retirement, Molmo2, MNTP, CLAP) still open.",
   "stale_count": 0,
-  "last_seen": "2026-07-25T07:39:16Z",
+  "last_seen": "2026-07-25T12:04:14Z",
   "total_findings": 74,
   "active_line": "F60 AUG pre-killed (dominance, f1abd28) — the last un-enumerated MLLM role (generator) is closed. Ledger F27-F60. Landscape fully mapped at role level: encoder+adaptation (works, D7-collision), localizer (works, side-task), guard-rail (works, no acc), ALL decision/feature/score/loss/distribution/generation roles measured or dominated dead. LIVE DECISIONS = USER: D7 sub-ruling / ZH protocol / 5 relaxations. Monitoring mode, wakeups armed.",
   "queued_lines": [
@@ -18,6 +18,7 @@
   "orchestrator": "main session (ScheduleWakeup business loop L2 + session cron hourly patrol L1)",
   "notes": "single-submit ceremony + G0-cond gate override any shortcut; zero interaction; TRAINING DATA = single-dataset train split ONLY (user veto 2026-07-14); no OCR; no gold annotations | CLAUDE.md Modal-probe policy DONE (0a1ac88; task#35 closed) | MONITORING MODE: any user ruling on the 5 terminus options reopens the corresponding axis via full ceremony (recon→prereg→0-context review→freeze→single-submit); any NEW direction must defeat the banked meta-patterns (K9 calibrated-zero, oracle-unconvertible x3, cumulative-causal x3, adaptation-not-identity F45) in its non-isomorphism argument | infra playbook: Modal 3600s clamp → chunk-loop + hash-pinned ci_ckpt + CPU-SLURM driver (F40); liveness-peek detached runs; agents never stop others' apps (F38)",
   "user_rulings": {
-    "2026-07-25_oracle_ranked_queue": "USER RULING: if 5 rounds of literature-search+attempts fail to reach the goal, switch to oracle-ranked queue — attack directions in DESCENDING oracle-headroom order, one by one to the end of the list, until a method converts to real gains. Lit-round count at ruling time: 3 (2026-07-13 C-line sweep, F68 litsurvey, F74 litsweep2). Legal attack on selection-locked pools = trained selector/reshaper on train labels only (F66 binds only fixed-map phi0); dead conversion attempts (P3 pooling, P11 weak-sup, MIL-implicit) not to be re-burned verbatim."
+    "2026-07-25_oracle_ranked_queue": "USER RULING: if 5 rounds of literature-search+attempts fail to reach the goal, switch to oracle-ranked queue — attack directions in DESCENDING oracle-headroom order, one by one to the end of the list, until a method converts to real gains. Lit-round count at ruling time: 3 (2026-07-13 C-line sweep, F68 litsurvey, F74 litsweep2). Legal attack on selection-locked pools = trained selector/reshaper on train labels only (F66 binds only fixed-map phi0); dead conversion attempts (P3 pooling, P11 weak-sup, MIL-implicit) not to be re-burned verbatim.",
+    "2026-07-26_moka_synib": "USER RULING: (1) MokA license concern waived — use directly, will acknowledge+credit in paper; integration UNGATED, proceed. (2) SynIB: working-first pragmatism — faithful 12-24 GPU-h reproduction CANCELLED, PORT-A transplant is the path; LSMI gate still routes (synergy>0 anywhere => run port there immediately; ~0 everywhere => park with evidence and report)."
   }
 }
