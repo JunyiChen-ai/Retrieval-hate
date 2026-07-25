@@ -3,7 +3,7 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "ROUND-6 batch-4 SETTLED 0-for-3 (F78 PARK, F79 PARK, F80 DEAD). Lit round 5 of 5 LAUNCHED (last before 2026-07-25 oracle-queue ruling activates, F77/L1 caveat): S1 temporal-structure axis (order/motion never varied; frame16 was count), S2 HateMM-push + EN-revival longshots, S3 adversarial completeness audit (F61-style enumeration of remaining in-box axes) + fresh-2026 delta since litsweep2. If round-5 batch dies: goal-hook fallback = oracle-ranked queue (needs new channel past F49 or non-selection mechanism per F77) + user-gated levers (ZH val-sel retirement STRENGTHENED, Molmo2, MNTP, multi-prompt, door-closers F76/F78/F79).",
+  "phase": "ROUND-6 lit round 5 COMPLETE (F81): temporal closed, frontier confirmed (we are legal SOTA on HateMM+EN), oracle-queue self-contradicted, zero in-box goal-level priors. AUTONOMOUS TAIL: 3-class graded-soft-label $0 label-oracle pregate (recon in flight; admissibility micro-ruling flagged but pregate is read-only own-split labels). ALL remaining upside = user gates, EV order: ZH val-sel protocol retirement (>> all; $0, makes ZH the 2nd passing dataset under final-epoch) > Molmo2-8B download > MNTP stage-2 > CLAP download (HateMM-only) > door-closers (F78 curation 0.3GPUh / F79 ELR 0.16 / F76 resolution 1.0 / S1 optical-flow 0.3) > multi-prompt. Settlement delivered to user 2026-07-25.",
   "stale_count": 0,
   "last_seen": "2026-07-25T05:19:10Z",
   "total_findings": 74,
