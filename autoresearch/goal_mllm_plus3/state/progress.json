@@ -3,9 +3,9 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "SETTLED ON USER GATES (2026-07-25, F81+F82): 5 lit rounds consumed, batch-4 0-for-3, temporal/selector/data-centric/graded axes closed, oracle-queue ruling self-contradicted by F47/F75 (no $0 F49 channel). We are at/above the legal published frontier on HateMM (0.879/0.873 vs MM-HSD 0.878-with-vetoed-OCR) and EN. Best numbers unchanged: HateMM curric 0.8775/0.8791, ZH final-epoch already 3/3 PASS +0.0313/+0.0453 (val-sel is the binding wall). LOOP = monitoring cadence; NO new candidates/GPU without user ruling. Decision menu EV: (1) ZH val-sel protocol retirement $0 -> ZH becomes 2nd passing dataset; (2) Molmo2-8B download; (3) MNTP stage-2; (4) CLAP download; (5) door-closers F78/F79/F76/optical-flow; (6) multi-prompt; or goal renegotiation on frontier evidence.",
+  "phase": "ROUND-6 continuation (stop-hook enforced, goal unmet): resuming iteration on S3's live-cell list per goal hook (一个一个试到最后). Cell-1 IN RECON: trained fusion-mode swap (concat/gated/cross-attn head arms vs Hadamard floor; S3 adjudged OUTSIDE F50 ban letter which covers only fixed compositions; ~0.2-0.3 GPU-h). Queue: LoRA-recipe knobs (DoRA/rsLoRA/PiSSA), frame-selection policy. Expected low prior (head-side band ±0.014, F73/F75 precedents) — honest fast-kill ceremony each. User decision menu STILL PENDING and remains highest-EV (ZH val-sel retirement $0 >> Molmo2 > MNTP > CLAP > door-closers).",
   "stale_count": 0,
-  "last_seen": "2026-07-25T05:19:10Z",
+  "last_seen": "2026-07-25T06:25:28Z",
   "total_findings": 74,
   "active_line": "F60 AUG pre-killed (dominance, f1abd28) — the last un-enumerated MLLM role (generator) is closed. Ledger F27-F60. Landscape fully mapped at role level: encoder+adaptation (works, D7-collision), localizer (works, side-task), guard-rail (works, no acc), ALL decision/feature/score/loss/distribution/generation roles measured or dominated dead. LIVE DECISIONS = USER: D7 sub-ruling / ZH protocol / 5 relaxations. Monitoring mode, wakeups armed.",
   "queued_lines": [
