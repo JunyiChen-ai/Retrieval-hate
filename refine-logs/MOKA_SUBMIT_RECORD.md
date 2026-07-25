@@ -1,0 +1,240 @@
+# MOKA-ZH — SUBMIT EXECUTION RECORD
+
+**Executor:** MOKA-ZH submit executor (`/data/jehc223/RGCL`, conda `HateVideo`).
+**Authorization:** `refine-logs/MOKA_FREEZE.md` (APPROVED-WITH-NOTES), freeze commit `0ed3807`.
+**Prereg:** `refine-logs/MOKA_PREREG.md` (843 L), FROZEN sha `dc3f1078…0966c53f8`.
+**Chain executed:** S0 authorization → S1 codex gate → S2 CPU smoke. **HALTED AT S1/S2 BOUNDARY.**
+
+## OUTCOME: **STOP — prereg §4.6 FIRES.** The mandatory codex gate returned `GATE: BLOCK` with **2 P1 findings**, both **independently confirmed at runtime by the executor**. Per §4.6 the affected artifact shas must change, the freeze block must be re-issued, and a new independent 0-context review must be re-run against the amended files **before submit**.
+
+**NO GPU spent. NO SLURM job submitted. NO GPU smoke run. NO test metric read. NO frozen file edited.
+NO `state/` mutation. NO push.** Cost of this stage: pure CPU login-node work (sha256sum, `bash -n`,
+`diff`, the CPU smoke, one ~1-minute CPU confirmation script, read-only `squeue`/`df`/`sacct`).
+
+---
+
+## S0 — Authorization re-verify: **PASS (12/12 sha MATCH)**
+
+`sha256sum` re-run at execution time. All 8 frozen objects (P + A–G) and the 4 reused-unchanged
+pins MATCH `MOKA_FREEZE.md §1`/`§2` byte-for-byte:
+
+```
+dc3f1078a89fc2e1de30c870103c2b7f2986fd419698d6c49b5b9ec0966c53f8  refine-logs/MOKA_PREREG.md          (P)
+9b0fc502193b0521f1359978f85b35b6ce98034d1371f174315c8f1a219a8386  src/moka/routed_lora.py             (A)
+fae40487263fd7f65e2d0566205e57d3a2caf1b9d1477c693c7cdfdc891c9749  src/moka/train_moka.py              (B)
+75bb8156705bff3c9bbce97542b90135c8f206f5bac30455f6987b0c48612399  src/utils/generate_VideoMLLM_embedding_lora_HF.py (C)
+843dace46611d3a2f5e6942a5f0e780fe8b2fb623a3c969949c142bd559d7793  scripts/analysis/moka_smoke.py      (D)
+df3c9a6a8721f5d97935e4b87137732726329877c14ee8635902976eaf70e38b  scripts/slurm/lora_sft_moka.sbatch  (E)
+fd1b7f295cdb7106e0e64629cb1a2391355f9daad4ab0f2ad773292f48b31bde  scripts/slurm/moka_extract_head.sbatch (F)
+51b883e9f0a78c26d9b4af185b54a4703a250a3cab4c947756782c6c8fe49764  RA-HMD/…/mhc_zh_qwen25vl_lora_moka_sft.yaml (G)
+b85eb72a690bc8fccc2ff5d5358fd6523359bf6596d2b2a0d6d0701bec9e53e3  src/run_rac.py
+4379224671defe7dafb638c4f0c8b69295a27d11646b685912a249e2385e29ad  scripts/slurm/enc3seed_zh_b3.sbatch
+e767eba0ca6ff40679857e5efb759d72aa985629a9ece6584ea424ac2baba62f  scripts/slurm/lora_sft.sbatch
+2f2429fbd8f6b0b82fba173a4efc5f12ae75cf5e5bce791c3819663c5f1439ea  RA-HMD/…/mhc_zh_qwen25vl_lora_sft.yaml
+```
+
+Additional §4 VOID-ON-EDIT conditions, all confirmed:
+
+| gate | result |
+|---|---|
+| `git status --porcelain src/run_rac.py src/model/loss.py src/model/classifier.py src/utils/retrieval.py` | **empty (CLEAN)** |
+| LF gitlink | `git ls-files -s` → `160000 a912747c408b3c661b4029ecf1d88b9d91c7f1a8` — **unchanged** |
+| gitlink inner tree | `git -C … status --porcelain` → only `?? .cuda_home_shim/` + `?? my_configs/hatevideo/mhc_zh_qwen25vl_lora_moka_sft.yaml`; `git diff --stat HEAD` **empty** ⇒ **zero modified tracked files, zero vendored lines edited** |
+| `run_one()` byte-identity | `sed -n '42,83p' enc3seed_zh_b3.sbatch` vs `sed -n '112,153p' moka_extract_head.sbatch` → `diff` **empty**, both blocks sha `286a9e44953ff2b2f17af3821f3ed3e254569cb68893fefe6b451b04d6ab9101` — **MATCH** |
+| §4.7 collision surfaces | `logging/lora/MHC_zh_moka` ✗ · `logging/_smoke_moka` ✗ · `logging/Retrieval/MHC_zh/RAC_video_moka*` ✗ · `data/CLIP_Embedding/MHC_zh/*moka*` ✗ · `*-um*` ✗ · `slurm/logs/*moka*` ✗ — **all ABSENT** |
+| banked read-only inputs | `logging/lora/MHC_zh/adapter_model.safetensors` (161,533,192 B, 2026-07-02) and all 3 `…_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt` caches present, untouched |
+| disk preflight | `df -h /data/jehc223/RGCL` → **517 G avail / 97 % used** at S0; **514 G avail / 97 %** at S2 re-check (job-1 bar is ≥ 25 G ⇒ satisfied) |
+
+Environment pins read at execution time: `peft 0.14.0`, `torch 2.6.0+cu124`, `transformers 4.49.0`.
+
+---
+
+## S1 — MANDATORY CODEX GATE (prereg §4.5): **GATE: BLOCK**
+
+**Reviewer:** codex MCP, model `gpt-5.6-sol`, `model_reasoning_effort=xhigh`, sandbox `read-only`,
+`approval-policy never`, cwd `/data/jehc223/RGCL`. Thread `019f997a-1a50-72d1-9e01-11e6462bd949`.
+All 7 §4.5 items reviewed. Verbatim closing line: **`GATE: BLOCK`**.
+
+| §4.5 item | codex result |
+|---|---|
+| 1 `MokaLinear.forward` routing algebra | FINDING (2× **P2**) |
+| 2 monkey-patch scope / no global leak | **PASS** |
+| 3 save/load round-trip of `lora_A_v` | FINDING (1× **P2**) |
+| 4 extractor `--moka`/`--no_merge` gating | FINDING (**1× P1 BLOCKING**) |
+| 5 RNG neutrality of `install_moka` | FINDING (1× **P2**) |
+| 6 merge guard | **PASS** |
+| 7 grad flow + both sbatch | FINDING (**2× P1 BLOCKING**, 1× P2) |
+
+### P1-A (items 4 + 7) — the modality-mask forward-pre-hook NEVER FIRES on the production PEFT class
+
+**Codex's claim.** `install_moka` registers the mask hook on the module returned by
+`peft_model.get_base_model()` (`src/moka/routed_lora.py:287-290`). The production wrapper is
+`PeftModelForCausalLM`, whose `forward` calls `self.base_model(...)` = `LoraModel.__call__` →
+`BaseTuner.forward` → **`self.model.forward(*args, **kwargs)`** — a *direct* `.forward()` call that
+bypasses the wrapped model's `Module.__call__` and therefore all of its forward-pre-hooks. Hence
+`_STASH.mask` stays `None` and, under `MOKA_STRICT=1`, the first routed decoder projection raises.
+
+**Executor's independent confirmation — 4 separate legs, all reproduced:**
+
+1. **torch semantics.** A registered `forward_pre_hook` fires on `mod(x)` and does **not** fire on
+   `mod.forward(x)` (hook counter 1 → 1). Measured.
+2. **PEFT source.** `peft/tuners/tuners_utils.py:196-197`:
+   `def forward(self, *args, **kwargs): return self.model.forward(*args, **kwargs)` — the direct call.
+   `peft/peft_model.py:912-920` `get_base_model()` returns `self.base_model.model` for LoRA, i.e. the
+   hook is registered on exactly the module reached by that direct `.forward()`.
+   Contrast `peft/peft_model.py:843-849` (generic `PeftModel.forward`): `self.get_base_model()(*args,
+   **kwargs)` — via `__call__`, so the hook *does* fire there.
+3. **Both production paths really are the causal wrapper.** *Job 1 (SFT):*
+   `RA-HMD/LLAMA-FACTORY-Ver202512/src/llamafactory/model/adapter.py:300-303` constructs
+   `LoraConfig(task_type=TaskType.CAUSAL_LM, …)`, and `peft/mapping.py:211-224` dispatches a set
+   `task_type` to `MODEL_TYPE_TO_PEFT_MODEL_MAPPING[...]` ⇒ `PeftModelForCausalLM`.
+   *Job 2 (extraction):* the banked `logging/lora/MHC_zh/adapter_config.json:115` carries
+   `"task_type": "CAUSAL_LM"`, and `peft/peft_model.py:564-573` dispatches `from_pretrained` on that
+   field ⇒ `PeftModelForCausalLM` again (and job 1's saved MokA adapter would carry the same field).
+4. **End-to-end runtime reproduction** (CPU, offline, `GPT2LMHeadModel(n_layer=2, n_embd=32)`,
+   `target_modules=["c_attn"]`, `MOKA_STRICT=1`, frozen `routed_lora.py` imported unmodified):
+
+   ```
+   class returned by get_peft_model(task_type=CAUSAL_LM): PeftModelForCausalLM
+   install_moka routed layers: 2 ; hook registered on: GPT2LMHeadModel
+   peft_model.base_model: LoraModel | base_model.model: GPT2LMHeadModel
+   forward RAISED RuntimeError: MokA: modality mask absent or shape-mismatched at a routed layer
+                                (x=(1, 12, 32), mask=None). Refusing to fall back to plain LoRA …
+   moka_stats: {'impl':'dense','hook_calls':0,'routed_calls':0,'fallback_calls':1,'strict':True}
+   ```
+
+   `hook_calls == 0`, `routed_calls == 0`, `fallback_calls == 1`. **CONFIRMED.**
+
+**Consequence as measured, stated without embellishment.** `MOKA_STRICT=1` (exported by both sbatch:
+`lora_sft_moka.sbatch:67`, `moka_extract_head.sbatch:33`) converts the defect into a hard raise, so it
+would **not** silently produce generic-LoRA features — but job 1 would die on its first training batch
+*after* base-model + vision GPU work, and job 2's Stage A1 likewise. `fallback_calls` would be ≥ 1, not
+`0`, so the §4.4 GPU-smoke assertion `fallback_calls == 0` was the designed backstop; the codex gate
+caught it first, at zero GPU cost.
+
+**Why the CPU smoke could not see it (executor-confirmed blind spot).**
+`scripts/analysis/moka_smoke.py:82-89` builds its `LoraConfig` **without `task_type`** over a bare
+`nn.Module` toy, so `get_peft_model` returns the *generic* `PeftModel`, whose `forward` reaches the base
+through `__call__`. Reproduced side by side in the same script: with `task_type=None` the same frozen
+`install_moka` yields `{'hook_calls': 1, 'routed_calls': 2, 'fallback_calls': 0}` and the forward
+succeeds. The smoke's S1–S8 therefore **PASS while the production class path fails** — the PASS is real
+but does not cover the deployed wrapper class.
+
+### P1-B (item 7) — `KS-MOKA-2` computes a non-median statistic
+
+`scripts/slurm/lora_sft_moka.sbatch:104-105` takes `vals = sorted(...)` over the **196** per-layer
+`‖A_v−A_t‖_F/‖A_t‖_F` values (asserted `n_a == n_av == n_b == 196` at `:94`) and reports
+`med = vals[len(vals) // 2]` = `vals[98]`. For even *n* = 196 the median is `(vals[97]+vals[98])/2`.
+
+Executor confirmation on a 196-element control sequence: `vals[len(vals)//2] = 98.0` vs true median
+`97.5` — **not identical**. The pre-registered `KS-MOKA-2` bar (`median < 0.05` ⇒ NULL-OP,
+prereg §3.6) is therefore evaluated against an upper-neighbour order statistic rather than the median.
+Note: the same quantity computed by `src/moka/routed_lora.py:361-372` (`moka_routing_report`) returns
+raw rows and is not implicated; the defect is in job 1's inline post-run block only.
+(Reviewer note **N1** already restricts what `KS-MOKA-2` may be claimed to show — it is a
+non-degeneracy floor, never a routing-is-real claim — but the statistic itself is still mis-specified.)
+
+### P2 / P3 findings (recorded, non-blocking; carried to whoever amends the code)
+
+| # | item | finding | cite |
+|---|---|---|---|
+| P2-1 | 1 | the `ok` guard validates `x` and `mask` shape but not that `result` is 3-D with `[B,S]` leading dims; the final reshape could reinterpret a nonstandard base-layer result. Frozen Qwen linear targets preserve the shape. | `routed_lora.py:190-197,212-218,248` |
+| P2-2 | 1 | an **explicitly passed** `adapter_names=None` is not popped and reaches `nn.Linear` ⇒ `TypeError`. Executor-confirmed upstream contrast: `peft/tuners/lora/layer.py:598` does `kwargs.pop("adapter_names", None)`; `routed_lora.py:187` uses `kwargs.get(...)` and forwards `kwargs` intact at `:212`. Deployed call sites omit the kwarg. | `routed_lora.py:186-188,211-212` |
+| P2-3 | 3 | prereg §3.2/§10 DEV-C's "every checkpoint tensor was consumed" is **not enforced**: `load_moka_a_v` filters only `.lora_A_v.` keys and never inspects PEFT's `strict=False` load result, so non-A_v tensors can go unconsumed; the key-suffix parse also admits malformed keys mapping to one destination. | `routed_lora.py:306-331`; `peft/utils/save_and_load.py:441-451` |
+| P2-4 | 5 | RNG neutrality is **CPU-only**, not process-global: `fork_rng(devices=[])` restores CPU state but no CUDA state, while `torch.manual_seed` also reseeds CUDA. Trainer reseeding after model construction makes this non-blocking. Seeds `MOKA_INIT_SEED + 8n`, n=0…195 — codex confirmed **no collisions**. | `routed_lora.py:154-160`; `torch/random.py:32-60` |
+| P2-5 | 7 | job 2 guards its adapter *inputs* but has **no collision guard on either feature-cache output family**; a repeat execution can overwrite existing `-um` / `-moka_HF` caches. | `moka_extract_head.sbatch:41-83` |
+| P3 | — | pre-existing, already flagged by the freeze doc §5: `routed_lora.py:34-35` still says "FLOPs are IDENTICAL", contradicting §F0.7/DEV-1 ("rank identical, compute ≈ +1 %"). | `routed_lora.py:34-35` |
+
+**Confirmed-PASS items (codex, with executor spot-checks):** item 2 — only
+`llamafactory.model.adapter.get_peft_model` is rebound, `peft.get_peft_model` / `peft.mapping.get_peft_model`
+untouched, patch lands at `adapter.py:312` i.e. **before** the fp32 trainable cast at `:314-316`.
+Item 6 — `merge()` / `get_delta_weight()` always raise, `unmerge()` no-ops while unmerged, and PEFT
+0.14's `merge_and_unload` (incl. `safe_merge`) dispatches through the guarded `merge()`. Item 1's core
+algebra — `vision ∪ ~vision` partitions exactly once, `[B*S,1]` broadcasts over the rank axis, tied
+dense-select is **bit-exact** vs upstream on the frozen 3-D/zero-dropout path, gather/scatter is
+semantically equivalent with unique replacement indices, dtype restore / shared `B` / scaling match
+upstream. Item 7's gradient algebra — one shared `B`, no `B_v`, no dead parameters; `set -euo pipefail`
+does propagate heredoc and `tee`-pipeline failures; Stage S precedes all 3 budgeted reads; exit codes
+and the 196/196/196 + 58,490,880 arithmetic are correct.
+
+---
+
+## S2 — CPU smoke + static gates: **PASS (and shown to be blind to P1-A)**
+
+Run fresh at execution time, unmodified frozen `scripts/analysis/moka_smoke.py`:
+
+- `python scripts/analysis/moka_smoke.py` → **`==== ALL SMOKE CHECKS PASS ====`, exit 0**, S1–S8.
+  - **S2 identity control** `max|Δ| = 0.000e+00` in all 6 cells (2 modules × all-text/all-vision/mixed);
+    dense-vs-gather cross-impl agreement `0.000e+00` (all-text, all-vision) and
+    `1.192e-07 / 5.960e-08` (mixed) — reproduces the freeze doc's numbers.
+  - **S4** `hook-fired {'hook_calls': 1, 'routed_calls': 2, 'fallback_calls': 0}`; grads non-zero on
+    `lora_A`, `lora_A_v` **and** shared `lora_B` at both modules; `dead=[]`;
+    routing report `rel_fro_diff = [1.4145, 1.484]`.
+  - **S5/S6** state-dict keeps `A_v`; plain reload **drops** it; `load_moka_a_v` restores 2/2
+    bit-exactly; generic-adapter refusal fires; `merge_and_unload` / `merge` / `get_delta_weight`
+    all raise.
+  - **S7** `40,370,176 → 58,490,880 = 1.448864×`.
+  - **S8** deployed 262,144-px cap: mask `2688 == 2688` grid arithmetic, `seq 2823 = 2688 + 135`
+    (95.2 % vision), masked ids `[151655]`; processor-default: `21528 == 21528`,
+    `21663 = 21528 + 135` (99.4 % vision).
+- `bash -n scripts/slurm/lora_sft_moka.sbatch` → **SYNTAX_OK**;
+  `bash -n scripts/slurm/moka_extract_head.sbatch` → **SYNTAX_OK**.
+- Collision surfaces re-checked at S2: **all still ABSENT** (list above).
+- Disk: **514 G avail / 97 % used** (`/dev/mapper/data-data`, 14 T).
+
+**The S1–S8 PASS is recorded as genuine but non-covering:** §S1's P1-A blind-spot leg shows the smoke
+instantiates a generic `PeftModel`, not the deployed `PeftModelForCausalLM`.
+
+---
+
+## S3 — GPU smoke: **NOT RUN** (blocked by §4.6). S4 — real submission: **NOT SUBMITTED**.
+
+Zero GPU-h of the 4.7 GPU-h cap consumed. **Job IDs: none — no `sbatch` was issued.**
+`refine-logs/MOKA_KS2_routing_report.json` was not created (job 1 never ran).
+
+**Queue state observed throughout (read-only `squeue`), relevant to the standing infra rule.** The only
+job under this account is **`13531 lsmi_power_cpu` — 16 CPU, `PENDING (JobHeldUser)`** (another
+executor's CPU job). Job 1 needs 16 CPU, so `13531 + job-1 = 32 CPU` of submit-time aggregate demand
+against a 16-CPU user cap ⇒ **job 1 was in any case not submittable at this instant** and the executor
+would have had to poll for `13531` to clear first. This is recorded for the next executor: the CPU
+budget is fully occupied by `13531`, and the §4.6 STOP is the *primary* reason for non-submission, the
+queue is secondary. **No other executor's job was cancelled or altered.**
+
+---
+
+## S5 — RAW transcription: **N/A — no run produced any number.**
+
+Nothing to transcribe: no SFT trainlog, no extraction stats, no head runs, no `KS-MOKA-0b` cosines, no
+`KS-MOKA-2` readout, no `KS-MOKA-3` decomposition. **Zero test-touch. The 3 budgeted test evaluations
+remain unspent.** The §7 outcome table stays empty.
+
+## Reviewer notes N1–N6 status
+
+Carried, unconsumed — all six are **write-up-binding at verdict time** and no verdict exists. N1 is the
+only one that interacted with this stage: it already forbids reading `KS-MOKA-2` as "routing is real"
+(non-degeneracy floor only), which is orthogonal to P1-B's separate finding that the statistic as coded
+is not the median.
+
+## Deviations from the task script
+
+1. **Chain terminated at S1/S2 instead of running S3–S6.** Mandated: prereg §4.6 + the executor
+   instruction "codex/smoke finds a defect ⇒ STOP and report, do NOT edit frozen files."
+2. **S2 was run despite S1 already blocking.** Deliberate and zero-cost: the fresh CPU smoke is the
+   direct evidence that S1's P1-A is invisible to the frozen `KS-MOKA-0` gate, which is the single
+   most useful fact for the amendment round. It touched nothing and created no artifact.
+3. **No frozen file was edited**, so **all 8 freeze shas are still intact at this commit** — the
+   authorization is *not* voided by anything the executor did; it is suspended by §4.6 pending a code
+   amendment that the executor is not permitted to make.
+4. Codex model is `gpt-5.6-sol` xhigh (the account's available model; the `gpt-5.x` family requested).
+   Same substitution and rationale as `ZHPROMPT_SUBMIT_RECORD.md:307-308`.
+
+## What §4.6 now requires (not performed here)
+
+A code amendment (at minimum: the hook-registration site in artifact **A** and the median expression in
+artifact **E**), which changes shas **A** and **E** ⇒ **the freeze block MUST be re-issued and a new
+independent 0-context review re-run against the amended files before any submit.** A re-run of the
+full CPU smoke is additionally required, and — per DEV-C — it should be extended to exercise the
+deployed `task_type=CAUSAL_LM` wrapper, since the present S1–S8 cannot see this class of defect.
+
+**Required statements:** ZERO GPU / SLURM / Modal spent. NO job submitted. No held-out test metric
+produced. No `state/` mutated. No `research-wiki/` mutated. No frozen artifact edited. Not pushed.
