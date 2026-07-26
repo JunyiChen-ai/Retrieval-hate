@@ -793,3 +793,185 @@ before any budgeted test read** (asserts all 3 `-um` caches are `(N,3584)`, fini
 non-zero) so a malformed cache aborts the job *before* spending test evaluations;
 `RAC_video_moka_umfloor*` verified **ABSENT** ⇒ fresh group, `--force False` cannot trip
 `run_rac.py:1059-1062`; `bash -n` **SYNTAX_OK**; no `--time`; 8 CPU / 64 G / 1 A100.
+
+---
+
+# S5' — RAW TRANSCRIPTION (executor applies **NO** gates; prereg §3.10)
+
+**Every number below was re-read from the raw trainlogs at transcription time and carries its source
+line. No number is copied from a summary. No verdict, pass/fail, KS-MOKA-1 determination, or FORMAL-bar
+comparison is made here — those belong to the independent 0-context verdict reviewer.**
+
+Two parsers were run over every log: the parser **embedded in the frozen sbatch** (`RESULT_ROW` lines)
+and an **independent executor-written cross-parser** (different implementation: token-splitting rather
+than one regex, independent val-selection). **They agree on all 24 arm+floor values.** The cross-parser
+was pre-validated by reproducing all 12 numbers of prereg §2.1 from the banked floor 13150.
+
+## S5'.1 — Job inventory
+
+| job | what | state | elapsed |
+|---|---|---|---|
+| 13537 | GPU smoke (throwaway harness defect) | FAILED 1:0 | 00:00:11 |
+| 13551 | GPU smoke, 5 legs | COMPLETED 0:0 | 00:31:55 |
+| 13552 | **job 1** — MokA-ZH LoRA-SFT | COMPLETED 0:0 | 03:24:49 |
+| 13566 | **job 2** — KS-MOKA-0b + `--moka` extraction + 3 arm head-seeds | COMPLETED 0:0 | 01:12:42 |
+| 13573 | **§3.4 contingency** — 3 unmerged-floor head-seeds | COMPLETED 0:0 | 00:24:46 |
+
+## S5'.2 — Extraction stats + zero-vector guards (job 13566)
+
+`[moka] routed layers: 196 | lora_A_v tensors loaded: 196` (l.169) — the silent-drop trap defeated.
+
+| split | N | Dv | Dt | zero-vector videos | Stage-S nonzero img / txt |
+|---|---|---|---|---|---|
+| train | 579 | 3584 | 3584 | **0** | 579 / 579 |
+| dev_seen | 78 | 3584 | 3584 | **0** | 78 / 78 |
+| test_seen | 149 | 3584 | 3584 | **0** | 149 / 149 |
+
+(l.239/245/254 saves; l.255-257 Stage-S.) The `-um` caches (job 13566 Stage A0, l.139/145/154) and the
+umfloor job's own Stage-S-equivalent (13573 l.669-671) report the same N and **zero-vector videos=0**.
+
+## S5'.3 — PER-SEED DUAL-PROTOCOL READOUT (line-numbered, cross-parsed)
+
+**MokA arm** — `slurm/logs/enc3s_MHC_zh_Qwen2.5-VL-7B-Instruct-LoRA-moka_HF_seed{s}_13566.trainlog`
+
+| seed | val-sel ep | val-sel acc / mF1 | line | final ep | final acc / mF1 | line |
+|---|---|---|---|---|---|---|
+| 0 | 23 | 0.8121 / 0.7679 | 244 | 29 | 0.8456 / 0.8107 | 299 |
+| 1 | 27 | 0.8389 / 0.8039 | 286 | 29 | 0.8456 / 0.8080 | 305 |
+| 2 | 28 | 0.8456 / 0.8107 | 289 | 29 | 0.8456 / 0.8107 | 299 |
+
+**UNMERGED floor (§3.4 contingency, the BINDING pairing)** —
+`enc3s_MHC_zh_Qwen2.5-VL-7B-Instruct-LoRA_HF-um_seed{s}_13573.trainlog`
+
+| seed | val-sel ep | val-sel acc / mF1 | line | final ep | final acc / mF1 | line |
+|---|---|---|---|---|---|---|
+| 0 | 5 | 0.7718 / 0.7259 | 80 | 29 | 0.8456 / 0.8181 | 297 |
+| 1 | 25 | 0.8121 / 0.7742 | 267 | 29 | 0.8255 / 0.7956 | 304 |
+| 2 | 26 | 0.8322 / 0.8023 | 271 | 29 | 0.8456 / 0.8181 | 299 |
+
+*Raw note (no interpretation): umfloor seed 0 selected **epoch 5**, the earliest epoch the warmup rule
+admits, on Val acc 0.8718 / roc 0.9207 (l.79).*
+
+**MERGED floor 13150** (the prereg §2.1 floor; **secondary and non-binding after §3.4**) —
+
+| seed | val-sel ep | val-sel acc / mF1 | line | final ep | final acc / mF1 | line |
+|---|---|---|---|---|---|---|
+| 0 | 20 | 0.8322 / 0.8023 | 220 | 29 | 0.8456 / 0.8181 | 302 |
+| 1 | 26 | 0.8255 / 0.7956 | 275 | 29 | 0.8389 / 0.8113 | 303 |
+| 2 | 19 | 0.8389 / 0.8065 | 207 | 29 | 0.8523 / 0.8226 | 298 |
+
+## S5'.4 — PAIRED DELTAS, arm − UNMERGED floor (§3.4 binding pairing)
+
+| protocol | seed | arm acc/mF1 | floor acc/mF1 | Δacc | ΔmF1 |
+|---|---|---|---|---|---|
+| val-sel | 0 | 0.8121 / 0.7679 | 0.7718 / 0.7259 | **+0.0403** | **+0.0420** |
+| val-sel | 1 | 0.8389 / 0.8039 | 0.8121 / 0.7742 | **+0.0268** | **+0.0297** |
+| val-sel | 2 | 0.8456 / 0.8107 | 0.8322 / 0.8023 | **+0.0134** | **+0.0084** |
+| **val-sel** | **mean** | | | **+0.0268** (sd 0.0135) | **+0.0267** (sd 0.0170) |
+| | *sign +* | | | *3/3* | *3/3* |
+| final-ep | 0 | 0.8456 / 0.8107 | 0.8456 / 0.8181 | **+0.0000** | **−0.0074** |
+| final-ep | 1 | 0.8456 / 0.8080 | 0.8255 / 0.7956 | **+0.0201** | **+0.0124** |
+| final-ep | 2 | 0.8456 / 0.8107 | 0.8456 / 0.8181 | **+0.0000** | **−0.0074** |
+| **final-ep** | **mean** | | | **+0.0067** (sd 0.0116) | **−0.0008** (sd 0.0114) |
+| | *sign +* | | | *1/3* | *1/3* |
+
+## S5'.5 — PAIRED DELTAS, arm − merged floor 13150 (secondary, non-binding)
+
+| protocol | Δacc mean (sd) | ΔmF1 mean (sd) | sign + acc | sign + mF1 | per-seed Δacc |
+|---|---|---|---|---|---|
+| val-sel | **+0.0000** (0.0177) | **−0.0073** (0.0236) | 2/3 | 2/3 | −0.0201, +0.0134, +0.0067 |
+| final-ep | **+0.0000** (0.0067) | **−0.0075** (0.0043) | 1/3 | 0/3 | +0.0000, +0.0067, −0.0067 |
+
+## S5'.6 — FLOOR-vs-FLOOR: unmerged 13573 − merged 13150 (the merge-drift's own downstream size)
+
+| protocol | Δacc mean | ΔmF1 mean | per-seed Δacc |
+|---|---|---|---|
+| val-sel | **−0.0268** | **−0.0340** | −0.0604, −0.0134, −0.0067 |
+| final-ep | **−0.0067** | **−0.0067** | 0.0000, −0.0134, −0.0067 |
+
+**Flagged for the verdict reviewer, stated as arithmetic only:** at val-sel the unmerged floor sits
+**−0.0268** acc below the merged floor, and the arm sits **+0.0268** acc above the unmerged floor —
+the same magnitude. Both facts are measured; their relationship is the reviewer's to weigh. The
+floor-vs-floor gap is produced with **routing entirely absent** (same banked generic adapter, merged
+vs unmerged forward only).
+
+## S5'.7 — `KS-MOKA-0b` (job 13566 Stage A0), verbatim, all 6 cells
+
+| split | stream | mean per-item cos | min per-item cos | ≥ 0.9999 ? |
+|---|---|---|---|---|
+| train (579) | img | 0.99984443 | 0.99894041 | **NO** |
+| train | text | 0.99957055 | 0.99807644 | **NO** |
+| dev_seen (78) | img | 0.99987048 | 0.99896044 | **NO** |
+| dev_seen | text | **0.99954879** | 0.99750400 | **NO** |
+| test_seen (149) | img | 0.99983090 | 0.99933851 | **NO** |
+| test_seen | text | 0.99955094 | 0.99884427 | **NO** |
+
+`WORST mean per-item cosine over all 6 (split × stream) = 0.99954879`; `>= 0.9999 ? False`
+(`slurm/logs/moka_eh_13566.out:155-162`). **0 test-touch** — the probe reads no labels.
+
+**NON-BINDING STRUCTURAL NOTE (recorded at coordinator request, for the verdict reviewer and any
+paper text):** the **text** stream drifts ≈**3× further** from the merged reference than the **image**
+stream — text means ≈0.99955 vs image means ≈0.99985, and text holds the worst per-item minima
+(0.99750 on dev_seen vs 0.99894 for image). Measured on the **banked generic adapter with routing
+entirely absent**, so it is a property of merged-vs-unmerged **bf16 accumulation order**, not of MokA.
+The GPU-smoke 8-item rehearsal predicted both magnitude and ordering (img 0.99977 > text 0.99946).
+**This note is non-binding and carries no pre-registered threshold.**
+
+## S5'.8 — `KS-MOKA-2` — reported as a **NON-DEGENERACY FLOOR ONLY** (reviewer note **N1**)
+
+`min 1.4039 | median 1.4170 | max 1.4292` over **196** layers, true even-sample median
+(`logging/slurm/lora_sft_moka_13552.out:1994-1995`; `refine-logs/MOKA_KS2_routing_report.json`).
+
+**N1 applied verbatim: this is NOT evidence that routing is real and must never be reported as such.**
+N1 measured at freeze that two *independent Kaiming draws* at the deployed `A` shape already sit at
+**1.4136**, while a *trained* `lora_A`'s total 3-epoch displacement is median **0.0506** / max
+**0.1267**. The measured 1.4170 is therefore indistinguishable from the independent-draws value; the
+check establishes only that the two down-projections did **not** collapse onto each other.
+**Routing-activity evidence is `fallback_calls == 0` and `KS-MOKA-3`, not this number.**
+
+Supporting `fallback_calls` evidence: GPU-smoke LEG 1 on the real `PeftModelForCausalLM` —
+`hook_calls 314`, `routed_calls 77,224`, **`fallback_calls 0`** across 10 optimizer steps *and* 3 eval
+loops; and job 13552 ran the full 3 epochs under `MOKA_STRICT=1` **without a single strict raise**.
+
+## S5'.9 — `KS-MOKA-3` stream decomposition (CPU, $0, **train + dev_seen only, ZERO test-touch**)
+
+Machinery: `scripts/analysis/encoder_swap_geometry.py` imported verbatim; movement rule transcribed
+from `hatemm_lora_stream_decomp.py:232-237` (**MOVED** iff dAUC ≥ +0.010 train-LOO **and** ≥ +0.005 dev,
+same sign; **FLAT** iff |dAUC| < 0.010 train-LOO). K=20. n_train 579, n_dev 78, id/label alignment
+**EXACT**. Reported against **both** floors because §3.4 switched the pairing.
+
+**(A) vs UNMERGED floor (§3.4 same-path pairing)** — `MOKA_KS3_stream_decomp_vs_unmerged.json`
+
+| stream | floor trLOO | moka trLOO | Δ trLOO | floor dev | moka dev | Δ dev | mechanical label |
+|---|---|---|---|---|---|---|---|
+| img | 0.7124 | 0.7261 | **+0.0137** | 0.8307 | 0.8186 | **−0.0121** | **AMBIGUOUS** |
+| text | 0.9280 | 0.9272 | **−0.0007** | 0.9279 | 0.9386 | **+0.0107** | **FLAT** |
+| concat | 0.9137 | 0.9137 | +0.0000 | 0.9086 | 0.9229 | +0.0143 | FLAT |
+
+**(B) vs MERGED floor (§3.7 literal wording)** — `MOKA_KS3_stream_decomp_vs_merged.json`
+
+| stream | floor trLOO | moka trLOO | Δ trLOO | floor dev | moka dev | Δ dev | mechanical label |
+|---|---|---|---|---|---|---|---|
+| img | 0.7141 | 0.7261 | **+0.0120** | 0.8143 | 0.8186 | **+0.0043** | **AMBIGUOUS** |
+| text | 0.9254 | 0.9272 | **+0.0018** | 0.9314 | 0.9386 | **+0.0071** | **FLAT** |
+| concat | 0.9131 | 0.9137 | +0.0006 | 0.9086 | 0.9229 | +0.0143 | FLAT |
+
+Under **both** floors the image stream is **AMBIGUOUS** (train-LOO clears +0.010 but the dev leg fails
+the +0.005 same-sign requirement — marginally under (B), with opposite sign under (A)) and the text
+stream is **FLAT**. **These are the mechanical rule labels only.** §3.7's three pre-declared readings
+("text moved" / "image moved, head flat" / "neither moved") are the **independent reviewer's** to
+apply; the executor does not select among them. Provenance cross-check: the merged floor's text
+train-LOO AUC **0.9254** reproduces F45's published ZH value **0.925**.
+
+## S5'.10 — Test-touch ledger
+
+| item | budgeted | spent |
+|---|---|---|
+| arm head-seeds (job 13566 Stage B) | 3 | **3** |
+| §3.4 contingent unmerged-floor head-seeds (job 13573) | +3 (F0.1 reservation, coordinator-ACKed) | **3** |
+| `KS-MOKA-0b` | 0 | **0** |
+| `KS-MOKA-3` | 0 | **0** |
+| **total** | **6** | **6** |
+
+**No unbudgeted test evaluation occurred.** `--force False` throughout; groups `RAC_video_moka` and
+`RAC_video_moka_umfloor` were both fresh.
