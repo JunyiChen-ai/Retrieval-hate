@@ -602,3 +602,85 @@ asserts, and the **`KS-MOKA-2`** readout → `refine-logs/MOKA_KS2_routing_repor
 median is reported as a **non-degeneracy floor only** — never as evidence that routing is active;
 the routing-activity claim rests on `fallback_calls == 0` (already discharged at LEG 1) and on
 `KS-MOKA-3`.
+
+### S4' job-1 RESULT — `13552` **COMPLETED, ExitCode `0:0`**, wall `03:24:49` (11:02:37 → 14:27:26 UTC)
+
+Log `logging/slurm/lora_sft_moka_13552.out`; closing line
+`[moka_sft] DONE DATASET=MHC_zh -> /data/jehc223/RGCL/logging/lora/MHC_zh_moka` (l.1996).
+
+**Routing installed on the real deployed path** (l.1348, 1604-1605):
+```
+[moka] patched llamafactory.model.adapter.get_peft_model; cwd=.../LLAMA-FACTORY-Ver202512
+[moka] routed 196 lora.Linear layers -> MokaLinear (A_v added, B shared)
+[moka] trainable params: {'trainable_total': 58490880, 'lora_A_t': 18120704,
+                          'lora_A_v': 18120704, 'lora_B': 22249472}
+```
+`MOKA_STRICT=1` was exported for the whole run and **no strict raise occurred over the full 3 epochs**
+⇒ every routed layer saw a valid modality mask at every step (the mask-hook invariant held on both
+the training and the per-epoch eval surface).
+
+**Train-loss curve endpoints** (43 logged points, `logging_steps: 5`):
+
+| point | epoch | loss |
+|---|---|---|
+| first logged | 0.07 | **0.2488** |
+| second | 0.14 | 0.1868 |
+| third | 0.21 | 0.1378 |
+| … | … | … |
+| third-last | 2.82 | 0.0115 |
+| second-last | 2.88 | 0.0256 |
+| **last logged** | **2.95** | **0.0160** |
+
+**Per-epoch eval loss** (`eval_strategy: epoch`, the frozen recipe): epoch 1.0 → **0.11615663766860962**
+(l.1714); epoch 2.0 → **0.09505169838666916** (l.1824); epoch 2.97 → **0.10931766778230667** (l.1942).
+
+**`all_results.json`** (`logging/lora/MHC_zh_moka/all_results.json`, verbatim):
+`epoch 2.9671848013816926`, `train_loss 0.11931405959788847`, `train_runtime 8784.611`,
+`train_samples_per_second 0.198`, `train_steps_per_second 0.025`, `eval_loss 0.10931766778230667`,
+`eval_runtime 301.5816`, `total_flos 2.28718331744256e+17`.
+
+**Runtime vs the banked floor:** MokA `train_runtime` **8,784.611 s** vs floor job 12143's
+**8,635.9986 s** (`logging/lora/MHC_zh/all_results.json`) ⇒ **ratio 1.0172, i.e. +1.72 %**. The prereg
+budgeted "× ~1.2 routing/eval overhead" (§1.1); the measured routing overhead is **an order of
+magnitude smaller than budgeted**, consistent with §F0.7/DEV-1's amended "compute ≈ +1 %".
+
+**Job-1 STEP-3 post-run asserts — both PASS** (l.1993):
+`[moka_sft] adapter keys: lora_A 196 | lora_A_v 196 | lora_B 196 | total tensors 588 | params 58490880`
+⇒ `n_a == n_av == n_b == 196` ✔ and `tot == 58,490,880` ✔.
+
+**Artifacts on disk:** `logging/lora/MHC_zh_moka/adapter_model.safetensors` = **234,042,880 B (234 MB)**
+— matching the prereg's ~234 MB/save prediction (1.4489× the deployed 161,533,192 B) — plus
+`adapter_config.json` and 3 epoch checkpoints (`checkpoint-73`, `-146`, `-216`).
+
+#### `KS-MOKA-2` (l.1994-1995) — reported as a **NON-DEGENERACY FLOOR ONLY**, per reviewer note **N1**
+
+```
+[moka_sft] KS-MOKA-2 rel ||A_v-A_t||_F/||A_t||_F : min 1.4039 median 1.4170 max 1.4292
+[moka_sft] KS-MOKA-2 median >= 0.05 ? True
+```
+`refine-logs/MOKA_KS2_routing_report.json`: **196 rows**, min **1.4039**, **median 1.4170**, max **1.4292**
+(computed with the amended `statistics.median`, i.e. the true even-sample median).
+
+**N1 is binding and is applied here verbatim.** This number is **NOT** evidence that routing is real
+and must never be reported as such. N1 measured at freeze that two independent Kaiming draws at the
+deployed `A` shape (16 × 3584) already sit at **1.4136**, while a *trained* `lora_A`'s **total**
+displacement across a real 3-epoch deployed ZH SFT is median **0.0506** / max **0.1267**. The measured
+median **1.4170** is therefore statistically indistinguishable from the two-independent-draws value —
+i.e. the check confirms only that the two down-projections did **not** collapse onto each other; it
+carries **no** information about whether routing did anything. **The routing-activity claim rests
+entirely on `fallback_calls == 0` (discharged at GPU-smoke LEG 1 on the real wrapper: 10 optimizer
+steps + 3 eval loops, `hook_calls 314`, `routed_calls 77,224`, zero fallbacks) and on `KS-MOKA-3`.**
+
+#### Budget running total (honest)
+
+| item | planned | actual |
+|---|---|---|
+| GPU smoke | 0.20 | **0.535** (13537 11 s + 13551 `00:31:55`) |
+| MokA-ZH SFT | 3.10 | **3.414** (`03:24:49`) |
+| KS-MOKA-0b + extraction + heads | 1.35 | pending |
+| **total** | **4.65** (cap 4.7) | **projected ≈ 5.30** |
+
+Over the 4.7 planning cap. Per standing instruction the cap is a planning figure — **recorded, and
+execution continues; no healthy run was killed.** Note the SFT overrun is *not* routing compute (that
+was +1.72 %); the wall/`train_runtime` gap (`03:24:49` vs `2:26:24`) is dominated by the three
+~301 s per-epoch eval passes plus model build/load, all of which the frozen recipe prescribes.
