@@ -684,3 +684,36 @@ Over the 4.7 planning cap. Per standing instruction the cap is a planning figure
 execution continues; no healthy run was killed.** Note the SFT overrun is *not* routing compute (that
 was +1.72 %); the wall/`train_runtime` gap (`03:24:49` vs `2:26:24`) is dominated by the three
 ~301 s per-epoch eval passes plus model build/load, all of which the frozen recipe prescribes.
+
+## S4' — job 2 of 2: `sbatch scripts/slurm/moka_extract_head.sbatch` → **job `13566`** (8 CPU / 64 G / 1 A100)
+
+Submitted **only after** `sacct` reported 13552 terminal (`COMPLETED 0:0`) — sequential per §1.0 /
+DEV-4, never `--dependency=afterok`. At submit the account queue was **empty**, so peak footprint of
+this family is 8 CPU / 64 G / 1 GPU and the never-two-16-CPU rule is satisfied by construction.
+
+**Submit-instant re-verification (all MATCH / CLEAN / ABSENT):**
+- frozen A–G + prereg re-hashed: `A 6b7bdb6c…`, `B fae40487…`, `C 75bb8156…`, `D bd258553…`,
+  `E 020dd10b…`, `F fd1b7f29…`, `G 51b883e9…`, `FROZEN dc3f1078…` — **MATCH**;
+  `src/run_rac.py b85eb72a…` — **MATCH**.
+- §4 condition 4 — `run_one()` block still **byte-identical** to `enc3seed_zh_b3.sbatch:42-83`
+  (`diff` empty, block sha `286a9e44953ff2b2f17af3821f3ed3e254569cb68893fefe6b451b04d6ab9101`).
+- `loss.py` / `classifier.py` / `retrieval.py` **git-clean**; LF gitlink `a912747c…` unchanged.
+- **DEV-J input asserts** both satisfied: `logging/lora/MHC_zh/adapter_model.safetensors` (banked
+  generic, the `KS-MOKA-0b` input) and `logging/lora/MHC_zh_moka/adapter_model.safetensors` (job 1's
+  MokA adapter) both present ⇒ job 2's `exit 2` guard is clear.
+- **Output surfaces ABSENT:** no `*-moka_HF*` / `*-um*` caches, no `RAC_video_moka*` group, no
+  `*moka_HF*.trainlog` ⇒ `--force False` cannot trip `run_rac.py:1059-1062` and nothing can clobber.
+- Disk **1,570 G** avail (disk_guard pruning during job 1 freed a large amount).
+
+**Stage order this job will execute:** A0 `KS-MOKA-0b` merge-drift (3 splits × 2 streams, **0
+test-touch** — features carry no labels) → A1 MokA extraction (`--moka`, 3 splits) → **Stage S shape
+sanity, which aborts BEFORE any budgeted test read** → Stage B 3 head-seeds (`RAC_video_moka`,
+seeds 0/1/2) = **the 3 and only 3 budgeted test evaluations**.
+
+**Pre-committed handling of the §3.4 branch.** Per the coordinator's standing instruction, if
+`KS-MOKA-0b`'s full-N measurement puts **any** of the 6 (split × stream) cells below the **0.9999**
+bar, the executor will **report before making any further submission**: the same-path unmerged-floor
+head run is a separate **+3 test-evaluation** spend against the §F0.1 reservation and requires
+explicit coordinator acknowledgement. The GPU-smoke LEG-4 rehearsal (8 items) already forecasts this
+will fire (`img 0.99977`, `text 0.99946`). **No extra job will be submitted on the executor's own
+authority.**
