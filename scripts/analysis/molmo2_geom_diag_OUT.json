@@ -1,0 +1,144 @@
+{
+  "meta": {
+    "dataset": "HateMM",
+    "cpu_only": true,
+    "gpu_jobs": 0,
+    "note": "RAW pre-head encoder geometry; no head, no training, no selection",
+    "vol_mode": "words",
+    "topk": 20
+  },
+  "arms": {
+    "A_molmo2": {
+      "tag": "Molmo2-8B_HF",
+      "dim": 4096,
+      "n_train": 744,
+      "n_test": 215,
+      "views": {
+        "img": {
+          "raw_knn_acc": 0.7814,
+          "raw_knn_mF1": 0.7689,
+          "top1_cos": 0.996,
+          "mean_top20_cos": 0.9941,
+          "participation_ratio": 13.632,
+          "leading_var_share": 0.2234,
+          "length_organisation_rho": 0.4856
+        },
+        "text": {
+          "raw_knn_acc": 0.8,
+          "raw_knn_mF1": 0.797,
+          "top1_cos": 0.9881,
+          "mean_top20_cos": 0.9845,
+          "participation_ratio": 27.87,
+          "leading_var_share": 0.1419,
+          "length_organisation_rho": 0.9052
+        },
+        "concat": {
+          "raw_knn_acc": 0.8186,
+          "raw_knn_mF1": 0.8145,
+          "top1_cos": 0.9904,
+          "mean_top20_cos": 0.9876,
+          "participation_ratio": 33.607,
+          "leading_var_share": 0.1126,
+          "length_organisation_rho": 0.8507
+        },
+        "hadamard": {
+          "raw_knn_acc": 0.5628,
+          "raw_knn_mF1": 0.5463,
+          "top1_cos": 0.9999,
+          "mean_top20_cos": 0.9997,
+          "participation_ratio": 3.069,
+          "leading_var_share": 0.4613,
+          "length_organisation_rho": 0.4733
+        }
+      }
+    },
+    "B_lora_curric": {
+      "tag": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+      "dim": 3584,
+      "n_train": 744,
+      "n_test": 215,
+      "views": {
+        "img": {
+          "raw_knn_acc": 0.7256,
+          "raw_knn_mF1": 0.7112,
+          "top1_cos": 0.9537,
+          "mean_top20_cos": 0.9275,
+          "participation_ratio": 12.551,
+          "leading_var_share": 0.2329,
+          "length_organisation_rho": 0.4122
+        },
+        "text": {
+          "raw_knn_acc": 0.8233,
+          "raw_knn_mF1": 0.8208,
+          "top1_cos": 0.9554,
+          "mean_top20_cos": 0.9413,
+          "participation_ratio": 23.071,
+          "leading_var_share": 0.1565,
+          "length_organisation_rho": 0.9432
+        },
+        "concat": {
+          "raw_knn_acc": 0.814,
+          "raw_knn_mF1": 0.8118,
+          "top1_cos": 0.9439,
+          "mean_top20_cos": 0.9234,
+          "participation_ratio": 22.337,
+          "leading_var_share": 0.167,
+          "length_organisation_rho": 0.8617
+        },
+        "hadamard": {
+          "raw_knn_acc": 0.7535,
+          "raw_knn_mF1": 0.7437,
+          "top1_cos": 0.9686,
+          "mean_top20_cos": 0.9478,
+          "participation_ratio": 8.635,
+          "leading_var_share": 0.2341,
+          "length_organisation_rho": 0.5533
+        }
+      }
+    },
+    "C_frozen_qwen": {
+      "tag": "Qwen2.5-VL-7B-Instruct_HF",
+      "dim": 3584,
+      "n_train": 744,
+      "n_test": 215,
+      "views": {
+        "img": {
+          "raw_knn_acc": 0.7163,
+          "raw_knn_mF1": 0.7014,
+          "top1_cos": 0.9536,
+          "mean_top20_cos": 0.9274,
+          "participation_ratio": 12.713,
+          "leading_var_share": 0.2297,
+          "length_organisation_rho": 0.4275
+        },
+        "text": {
+          "raw_knn_acc": 0.8186,
+          "raw_knn_mF1": 0.8159,
+          "top1_cos": 0.9627,
+          "mean_top20_cos": 0.9505,
+          "participation_ratio": 20.701,
+          "leading_var_share": 0.1661,
+          "length_organisation_rho": 0.953
+        },
+        "concat": {
+          "raw_knn_acc": 0.8,
+          "raw_knn_mF1": 0.7983,
+          "top1_cos": 0.9477,
+          "mean_top20_cos": 0.9281,
+          "participation_ratio": 21.436,
+          "leading_var_share": 0.1716,
+          "length_organisation_rho": 0.8524
+        },
+        "hadamard": {
+          "raw_knn_acc": 0.7116,
+          "raw_knn_mF1": 0.6972,
+          "top1_cos": 0.968,
+          "mean_top20_cos": 0.9476,
+          "participation_ratio": 8.746,
+          "leading_var_share": 0.2283,
+          "length_organisation_rho": 0.5834
+        }
+      }
+    }
+  }
+}
