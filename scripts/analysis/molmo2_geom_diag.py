@@ -97,11 +97,8 @@ def spectrum_stats(keys):
     return round(pr, 3), round(float(ev[0] / ev.sum()), 4)
 
 
-def length_org(bank, query, tr_vol, te_vol):
-    B = M._norm32(bank.astype("float32"))
-    Q = M._norm32(query.astype("float32"))
-    sims = Q @ B.T
-    I = np.argsort(-sims, axis=1)[:, : M.TOPK]
+def length_org(I, tr_vol, te_vol):
+    """rho(query volume, median volume of its top-20 retrieved bank neighbours)."""
     return round(float(spearmanr(te_vol, np.median(tr_vol[I], axis=1))[0]), 4)
 
 
@@ -134,8 +131,7 @@ def main():
         TRV, TEV = views(tr_img, tr_txt), views(te_img, te_txt)
         for v in TRV:
             bank, query = TRV[v], TEV[v]
-            vote = M.deployed_vote(bank, tr_lab, query)
-            pred = (np.asarray(vote) >= 0).astype(int) if np.ndim(vote) == 1 else np.asarray(vote[1])
+            _votes, pred, I, _sim = M.deployed_vote(bank, tr_lab, query)
             top1, top20 = cone_stats(bank, query)
             pr, lead = spectrum_stats(bank)
             arm_out["views"][v] = {
@@ -145,7 +141,7 @@ def main():
                 "mean_top20_cos": round(top20, 4),
                 "participation_ratio": pr,
                 "leading_var_share": lead,
-                "length_organisation_rho": length_org(bank, query, tr_vol, te_vol),
+                "length_organisation_rho": length_org(I, tr_vol, te_vol),
             }
             print("[{}] {:9s} acc {:.4f} mF1 {:.4f} | top1cos {:.4f} top20 {:.4f} | PR {:8.3f} "
                   "lead {:.4f} | rho {:+.4f}".format(
