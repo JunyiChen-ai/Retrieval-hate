@@ -149,6 +149,19 @@ comparable in parameters and carries **fewer** vision tokens (648 vs ~1540), off
 
 CPU-head probe: **52 s/seed on 8 CPUs**, 3 seeds per arm, **$0 GPU** (ERRPAT §8 infra finding).
 
+**Measured (job 13648, added after the fact; the estimate above stands).** Extraction proper ran
+at **60 videos/min** (clean 60 s window; cross-check 360 train items in the 351 s after the
+"extraction START" marker, less ~50 s model load + smoke). 1066 videos therefore cost **~18 min
+of GPU**, inside the 1 GPU-h ceiling. `float32_attention` is real but not materially costly.
+
+A rate alarm was raised mid-run from 34 min wall / 180 items and projected ~3 GPU-h. That
+projection double-counted a **30 min 45 s `disk_guard` phase** (08:36:08 -> 09:06:53) that runs
+before extraction: `/data` was already at 270 G against the guard's 250 G threshold *before* this
+lane's download, so the guard would have fired on whichever job submitted first that day. It
+pruned only under `logging/` (B2-verified before each delete; `data/CLIP_Embedding` is
+unreachable by the only destructive stage) and exhausted its candidate pool rather than reaching
+target. No deviation to record against §5.
+
 ---
 
 ## 6. PROBE DESIGN

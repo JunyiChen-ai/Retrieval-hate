@@ -94,6 +94,11 @@ for arm in "${ARMS[@]}"; do
 done
 
 echo ""
+echo "-------- RAW pre-head encoder geometry (all 3 arms) --------"
+python ./scripts/analysis/molmo2_geom_diag.py --dataset HateMM \
+    --out ./scripts/analysis/molmo2_geom_diag_OUT.json
+
+echo ""
 echo "======== molmo2 CPU probe ALL DONE ($SLURM_JOB_ID) ========"
 echo "-------- collected PROBE_ROWs --------"
-grep -h "^PROBE_ROW" "$OUT_ROOT"/../molmo2_probe*.out 2>/dev/null || true
+grep -h "^PROBE_ROW" "/data/jehc223/RGCL/slurm/logs/molmo2_probe_${SLURM_JOB_ID}.out" 2>/dev/null || true
