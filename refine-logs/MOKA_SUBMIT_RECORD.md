@@ -717,3 +717,41 @@ head run is a separate **+3 test-evaluation** spend against the §F0.1 reservati
 explicit coordinator acknowledgement. The GPU-smoke LEG-4 rehearsal (8 items) already forecasts this
 will fire (`img 0.99977`, `text 0.99946`). **No extra job will be submitted on the executor's own
 authority.**
+
+### ⚠ `KS-MOKA-0b` (job 2 Stage A0) — **FIRES. All 6 (split × stream) cells are below the 0.9999 bar.**
+
+Raw, from `slurm/logs/moka_eh_13566.out:155-162`:
+
+| split | stream | mean per-item cos | min per-item cos | ≥ 0.9999 ? |
+|---|---|---|---|---|
+| train (N=579) | `img_feats` | **0.99984443** | 0.99894041 | **NO** |
+| train | `text_feats` | **0.99957055** | 0.99807644 | **NO** |
+| dev_seen (N=78) | `img_feats` | **0.99987048** | 0.99896044 | **NO** |
+| dev_seen | `text_feats` | **0.99954879** | 0.99750400 | **NO** |
+| test_seen (N=149) | `img_feats` | **0.99983090** | 0.99933851 | **NO** |
+| test_seen | `text_feats` | **0.99955094** | 0.99884427 | **NO** |
+
+```
+[KS-MOKA-0b] WORST mean per-item cosine over all 6 (split x stream) = 0.99954879
+[KS-MOKA-0b] >= 0.9999 ? False
+```
+`-um` caches written for all 3 splits with `zero-vector videos=0` in each (l.139/145/154).
+**This probe reads no labels ⇒ 0 test-touch, as pre-declared.**
+
+**The pre-declared §3.4 consequence, transcribed verbatim:** *"If ANY cell < 0.9999, a same-path
+unmerged floor head run (3 seeds, +0.05 GPU-h, +3 test evaluations) becomes MANDATORY before any
+verdict, and the arm is then paired against THAT floor instead of 13150."* The trigger is "ANY cell";
+here **all six** fail, so the branch is not marginal.
+
+Structure of the drift (raw observation, no interpretation): the **text** stream drifts ~3× further
+from merged than the **image** stream (text means ~0.99955, image means ~0.99985) and carries the
+worst per-item minima (0.99750 on dev). The GPU-smoke LEG-4 8-item rehearsal predicted both the
+magnitude and the ordering (`img 0.99977` > `text 0.99946`). This is the merged-vs-unmerged bf16
+accumulation-order effect recon §3.6 / prereg §3.4 anticipated — **not** a MokA effect: it is measured
+on the **banked generic adapter** with routing entirely absent.
+
+**EXECUTOR ACTION: NONE. HOLDING for coordinator acknowledgement.** Per the coordinator's standing
+instruction and the executor's own pre-commitment recorded above, the same-path unmerged-floor head
+run is a **separate +3 test-evaluation spend** against the §F0.1 reservation and **will not be
+submitted on executor authority**. Job 2 itself continues unmodified — it is the frozen,
+pre-registered bite (Stage A1 → Stage S → Stage B's 3 budgeted reads) and needs no further approval.
