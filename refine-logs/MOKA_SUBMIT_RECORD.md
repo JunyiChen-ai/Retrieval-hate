@@ -755,3 +755,41 @@ instruction and the executor's own pre-commitment recorded above, the same-path 
 run is a **separate +3 test-evaluation spend** against the §F0.1 reservation and **will not be
 submitted on executor authority**. Job 2 itself continues unmodified — it is the frozen,
 pre-registered bite (Stage A1 → Stage S → Stage B's 3 budgeted reads) and needs no further approval.
+
+### §3.4 contingency — coordinator **ACK GRANTED**; throwaway runner built and verified (NOT submitted yet)
+
+Authorized against the §F0.1 contingent reservation: 3 head-seeds on tag
+`Qwen2.5-VL-7B-Instruct-LoRA_HF-um`, ≈0.05 GPU-h, **+3 test evaluations**. Pairing switches to the
+unmerged floor per §3.4 verbatim. This is the **frozen contingency executing on its own
+pre-registered terms — not a scope expansion**; the verdict reviewer is to be instructed accordingly.
+
+**Condition (1) — `run_one()` byte-identity: satisfied at the STRONGEST level.** The block was not
+re-typed or adapted; it is `sed -n '112,153p'`-lifted from frozen artifact **F** at build time. Both
+`diff`s are **empty** and all three shas agree:
+
+```
+286a9e44953ff2b2f17af3821f3ed3e254569cb68893fefe6b451b04d6ab9101  enc3seed_zh_b3.sbatch:42-83   (anchor, produced floor 13150)
+286a9e44953ff2b2f17af3821f3ed3e254569cb68893fefe6b451b04d6ab9101  moka_extract_head.sbatch:112-153  (FROZEN artifact F, the arm)
+286a9e44953ff2b2f17af3821f3ed3e254569cb68893fefe6b451b04d6ab9101  moka_umfloor.sbatch:61-102        (THROWAWAY, this contingency)
+```
+The condition allowed the block to differ in the model tag and group_name; it does **not** — those
+two differences live entirely in the **surrounding variables**, so the executed block is byte-identical
+to the one that produced the banked floor:
+
+| | arm (frozen **F**) | unmerged floor (throwaway) |
+|---|---|---|
+| `LORA` | `Qwen2.5-VL-7B-Instruct-LoRA-moka_HF` | `Qwen2.5-VL-7B-Instruct-LoRA_HF-um` |
+| `GROUP_NAME` | `RAC_video_moka` | `RAC_video_moka_umfloor` |
+| `DS` / `WARMUP` | `MHC_zh` / `5` | `MHC_zh` / `5` (same) |
+
+**Conditions (2)-(4).** (2) The runner lives **only** in the executor scratchpad and is **never
+committed as a frozen artifact** — it is reproduced in this record by provenance (lift command + block
+sha), not vendored. (3) It is submitted **only after `13566` reaches terminal**, sequentially, even
+though 8 + 8 CPU would coexist safely — sequential keeps the ledger clean. (4) Its RAW transcription
+will carry the **same per-seed dual-protocol readout as the arm**, with **no verdict language**.
+
+Additional guards carried over from the frozen job: a **Stage-S-equivalent shape-sanity block runs
+before any budgeted test read** (asserts all 3 `-um` caches are `(N,3584)`, finite, id-aligned,
+non-zero) so a malformed cache aborts the job *before* spending test evaluations;
+`RAC_video_moka_umfloor*` verified **ABSENT** ⇒ fresh group, `--force False` cannot trip
+`run_rac.py:1059-1062`; `bash -n` **SYNTAX_OK**; no `--time`; 8 CPU / 64 G / 1 A100.
