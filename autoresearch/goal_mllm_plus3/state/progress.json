@@ -3,9 +3,9 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "REPRO-INSPIRATION: LSMI gate SETTLED (F86: no synergy, text-uniqueness-dominated, U1=0; SynIB PARKED by own kill-switch). SOLE LIVE GPU CELL = MokA-ZH round-2 (codex re-gate PASS 7/7; GPU smoke 13537 8-CPU held; SFT 16-CPU waits for 13531 to clear). 13531 (LSMI leftover disclosure arms A4/AMD-4, cannot move verdict) still JobHeldUser — once it runs/clears, MokA SFT proceeds. User menu unchanged. Disk 511G free local.",
+  "phase": "REPRO CAMPAIGN SETTLED (F84-F87): survey 9367338 -> SynIB PARK $0 / LSMI mechanism-gate BANKED (no synergy, U1=0, text-uniqueness-dominated) / MokA MEASURED NULL 5.6 GPU-h (gain = merge-drift recovery; F0.6 regime inversion = economical explanation). Durable outputs: LSMI mechanism claims + upstream zero_grad bug, MokA routed-LoRA machinery + merge-drift discipline (same-path floors default), codex gate 3-for-3 on real pre-GPU defects. OPEN: stray websweep agents never returned (WebSearch quota); under-covered survey areas re-sweepable with fresh quota; user menu unchanged (ZH val-sel retirement / OCR / Molmo2 / MNTP / CLAP). Wiki fold F83-F87 delegated. Loop = monitoring cadence pending user direction.",
   "stale_count": 0,
-  "last_seen": "2026-07-25T14:29:13Z",
+  "last_seen": "2026-07-26T05:14:12Z",
   "total_findings": 74,
   "active_line": "F60 AUG pre-killed (dominance, f1abd28) — the last un-enumerated MLLM role (generator) is closed. Ledger F27-F60. Landscape fully mapped at role level: encoder+adaptation (works, D7-collision), localizer (works, side-task), guard-rail (works, no acc), ALL decision/feature/score/loss/distribution/generation roles measured or dominated dead. LIVE DECISIONS = USER: D7 sub-ruling / ZH protocol / 5 relaxations. Monitoring mode, wakeups armed.",
   "queued_lines": [

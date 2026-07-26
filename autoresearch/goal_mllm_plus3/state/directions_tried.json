@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-25T15:42:00Z",
+  "updated": "2026-07-26T06:22:00Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -361,6 +361,14 @@
       "record": "refine-logs/SYNIB_PORT_FORENSIC_RECON.md 9e638ea + LSMI_GATE_RECORD.md a8905ac",
       "finding": "F86",
       "ban_scope": "synergy-preserving/consistency-regularizer transplants on the frozen-feature head require a measured S>0 premise that now measurably does not exist (certified-dim LSMI, XOR-validated machinery); revivable only if the feature substrate changes (new encoder/adaptation) AND a fresh certified-dim LSMI read shows S>floor"
+    },
+    {
+      "name": "MokA modality-routed LoRA (per-modality A, shared B; NeurIPS25 Oral transplant; repro-campaign rank-3)",
+      "status": "MEASURED NOT PROMOTED (FORMAL fail both protocols; gain = merge-drift recovery, not routing; 5.573 GPU-h jobs 13552/13566/13573)",
+      "killed": "2026-07-26T06:15:00Z",
+      "record": "refine-logs/MOKA_{FORENSIC_RECON dbf30f1, PREREG 7c4a22e frozen dc3f1078, REVIEW+FREEZE 0ed3807, REFREEZE_FIX 72a947b, REFREEZE_REVIEW cf29665, SUBMIT_RECORD ed609eb, VERDICT_REVIEW 91f64a6}",
+      "finding": "F87",
+      "ban_scope": "adapter-structure routing (per-modality A/B splits) on ZH closed; HateMM stage-2 auto-defunded per KS-MOKA-1... wait no — defund clause: not authorized absent ZH survival; F0.6 regime argument (94.6% vision tokens starve text A_t) applies to ALL our datasets = transplant premise structurally inverted; do NOT re-propose modality-routed adaptation without changing the token regime (e.g. lower image_max_pixels in SFT = a DIFFERENT cell needing fresh recon); merge-drift lesson binds: any adapter-comparison prereg must use same-path floors"
     }
   ],
   "banned_constraints": [
