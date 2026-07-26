@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-26T06:22:00Z",
+  "updated": "2026-07-26T13:10:19Z",
   "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
   "dead": [
     {
@@ -369,6 +369,14 @@
       "record": "refine-logs/MOKA_{FORENSIC_RECON dbf30f1, PREREG 7c4a22e frozen dc3f1078, REVIEW+FREEZE 0ed3807, REFREEZE_FIX 72a947b, REFREEZE_REVIEW cf29665, SUBMIT_RECORD ed609eb, VERDICT_REVIEW 91f64a6}",
       "finding": "F87",
       "ban_scope": "adapter-structure routing (per-modality A/B splits) on ZH closed; HateMM stage-2 auto-defunded per KS-MOKA-1... wait no — defund clause: not authorized absent ZH survival; F0.6 regime argument (94.6% vision tokens starve text A_t) applies to ALL our datasets = transplant premise structurally inverted; do NOT re-propose modality-routed adaptation without changing the token regime (e.g. lower image_max_pixels in SFT = a DIFFERENT cell needing fresh recon); merge-drift lesson binds: any adapter-comparison prereg must use same-path floors"
+    },
+    {
+      "name": "mechfix-vote-operators: eval-time decision-operator replacements for the deployed top-20 kNN vote (T1 class-balanced quota, T2a CSLS hubness, T2b Ledoit-Wolf whitening, T3 exact 1-D length-direction excision, T4 whiten+balanced)",
+      "status": "0/5 PROMOTABLE — axis CLOSED as measured null ($0 CPU pregate, zero GPU/SLURM/Modal; paired same-head, 15/15 floor-parity PASS at 4dp; best = T4 on MHC-ZH +0.0067 acc / +0.0052 mF1 = 4.5× under the +0.030 bar, inside the ±0.014 seed band, not 3/3 on mF1). T1 degenerate (identical predictions 215/215 HateMM, 149/149 ZH), T2a/T3 inert, T2b negative on all 3 datasets",
+      "killed": "2026-07-26T13:10:19Z",
+      "record": "refine-logs/MECHFIX_PREGATE_2026-07-27.md (commit 110dff8; ops sha256 635c13124e79ba1a299bc13fc1175a03aa11e09924f5413ce51061793c83fc8d; outputs scripts/analysis/mechfix_{hatemm,zh,en,diag}_OUT.json)",
+      "finding": "F89",
+      "ban_scope": "eval-time symmetric vote/retrieval operators on deployed head keys: class-balanced quota, CSLS hubness, LW whitening, 1-D linear nuisance excision, and their combos — do not re-run these five frozen configs; new variants (ridge/multi-dim excision, other whiteners) need fresh recon + freeze, and must be priced against the two mechanism facts this pregate established: the local class prior is not separable from the retrieval signal in the cone-collapsed space (F89a), and retrieval's length organisation is not carried by any single linear direction while whitening AMPLIFIES it (F89c/F89d). Retrieval-level closure; the score-level versions (global thresholds, train-LOO logistic recalibration, length-logistic score de-bias) were already dead"
     }
   ],
   "banned_constraints": [
