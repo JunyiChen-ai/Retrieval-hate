@@ -1,0 +1,680 @@
+{
+ "design": {
+  "gate": "CLAP general-audio G0-cond (spec CLAP_GATE_SPEC_2026-07-27.md, 6c8929d)",
+  "model": "laion/larger_clap_general",
+  "aux_blocks": {
+   "proj": "BINDING PRIMARY \u2014 mean(+)max over 10s windows of the L2-normalised projected joint-space embedding (1024-d)",
+   "hidden": "SECONDARY (spec sec 4.4) \u2014 pre-projection HTSAT pooler_output mean(+)max (2048-d); CANNOT produce a PASS"
+  },
+  "z_arms": {
+   "deployed_7168": "LoRA-curric Qwen img+text (deployed)",
+   "strict_8960": "CLIP img+text (+) frozen-Qwen img+text (== W2-A/APX/LAUD Z_best)"
+  },
+  "dataset": "HateMM",
+  "ks_decision": [
+   8,
+   16
+  ],
+  "ks_report": [
+   8,
+   16,
+   32,
+   64
+  ],
+  "bar": 0.04,
+  "honest_partial_low": 0.03,
+  "scale_A": 50.0,
+  "n_splits": 5,
+  "n_repeats": 5,
+  "B_boot": 5000,
+  "nseed_perm": 150,
+  "kill_switch": "K-CLAP-0: best-decision-k point<+0.040 OR CI-lower<=0 -> KILL (would-be pass also needs real>all >=150 perm maxima); K-CLAP-1: calib accZA<0.99 -> MACHINERY_INVALID; K-CLAP-2: +0.030..0.040 with CI-low>0 = HONEST-PARTIAL (not a promote); K-CLAP-3: FN1 stratum AUC read (spec sec 5). PASS clears BOTH Z arms, on the proj block only.",
+  "machinery": "VERBATIM c3_fusion_probe.py / apx_g0cond_gate.py / laud_g0cond_gate.py",
+  "test_touch": "NONE \u2014 only the _trainval cache is opened; no test label read; no test-set metric computed anywhere in this lane."
+ },
+ "cells": {
+  "proj|deployed_7168": {
+   "point": {
+    "ds": "HateMM",
+    "z_arm": "deployed_7168",
+    "aux_block": "proj",
+    "n": 851,
+    "n_pos": 341,
+    "meta": {
+     "N": 851,
+     "n_pos": 341,
+     "n_zero_audio_rows": 0,
+     "aux_block": "proj",
+     "aux_dim": 1024,
+     "Z_dim": 7168,
+     "model": "laion/larger_clap_general",
+     "model_tag": "larger_clap_general",
+     "pool": "mean_cat_max_over_windows",
+     "window_s": 10.0,
+     "sample_rate": 48000
+    },
+    "Z_dim": 7168,
+    "aux_dim": 1024,
+    "C_Z": 1.0,
+    "C_Z_cv_acc": 0.877750257997936,
+    "C_full": 0.01,
+    "C_full_cv_acc": 0.8800894392844857,
+    "baseline_accZ": 0.8712103407755583,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.12878965922444174,
+     "label_dacc": 0.12878965922444185,
+     "headroom_fraction": 1.0000000000000009,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.8702702702702702,
+      "dacc": -0.0009400705052878961,
+      "ci": [
+       -0.007520564042303171,
+       0.00564042303172738
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.8679200940070504,
+      "dacc": -0.0032902467685076383,
+      "ci": [
+       -0.01081081081081081,
+       0.003995299647473561
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.8648648648648649,
+      "dacc": -0.006345475910693304,
+      "ci": [
+       -0.015981198589894243,
+       0.003290246768507638
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.8554641598119859,
+      "dacc": -0.01574618096357227,
+      "ci": [
+       -0.028437132784958876,
+       -0.0025851938895417176
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.8801410105757932,
+      "dacc": 0.008930669800235016,
+      "ci": [
+       0.000705052878965922,
+       0.017391304347826087
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": -0.015746180963572266
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.012925969447708578
+     }
+    },
+    "real_max_over_kdec": -0.0009400705052878961
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 8,
+    "best_dacc": -0.0009400705052878961,
+    "best_ci": [
+     -0.007520564042303171,
+     0.00564042303172738
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  },
+  "proj|strict_8960": {
+   "point": {
+    "ds": "HateMM",
+    "z_arm": "strict_8960",
+    "aux_block": "proj",
+    "n": 851,
+    "n_pos": 341,
+    "meta": {
+     "N": 851,
+     "n_pos": 341,
+     "n_zero_audio_rows": 0,
+     "aux_block": "proj",
+     "aux_dim": 1024,
+     "Z_dim": 8960,
+     "model": "laion/larger_clap_general",
+     "model_tag": "larger_clap_general",
+     "pool": "mean_cat_max_over_windows",
+     "window_s": 10.0,
+     "sample_rate": 48000
+    },
+    "Z_dim": 8960,
+    "aux_dim": 1024,
+    "C_Z": 0.01,
+    "C_Z_cv_acc": 0.8413140694874441,
+    "C_full": 0.001,
+    "C_full_cv_acc": 0.8425042999656004,
+    "baseline_accZ": 0.8383078730904819,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.16169212690951806,
+     "label_dacc": 0.16169212690951823,
+     "headroom_fraction": 1.000000000000001,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.8345475910693303,
+      "dacc": -0.0037602820211515868,
+      "ci": [
+       -0.011750881316098707,
+       0.004465334900117509
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.827027027027027,
+      "dacc": -0.01128084606345476,
+      "ci": [
+       -0.0209165687426557,
+       -0.0018801410105757925
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.8251468860164513,
+      "dacc": -0.013160987074030552,
+      "ci": [
+       -0.02491186839012926,
+       -0.0014101057579318456
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.8190364277320799,
+      "dacc": -0.01927144535840188,
+      "ci": [
+       -0.034782608695652174,
+       -0.004459459459459541
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.8408930669800234,
+      "dacc": 0.002585193889541714,
+      "ci": [
+       -0.005875440658049355,
+       0.011045828437132785
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": -0.0035252643948296123
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.00963572267920094
+     }
+    },
+    "real_max_over_kdec": -0.0037602820211515868
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 8,
+    "best_dacc": -0.0037602820211515868,
+    "best_ci": [
+     -0.011750881316098707,
+     0.004465334900117509
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  },
+  "hidden|deployed_7168": {
+   "point": {
+    "ds": "HateMM",
+    "z_arm": "deployed_7168",
+    "aux_block": "hidden",
+    "n": 851,
+    "n_pos": 341,
+    "meta": {
+     "N": 851,
+     "n_pos": 341,
+     "n_zero_audio_rows": 0,
+     "aux_block": "hidden",
+     "aux_dim": 2048,
+     "Z_dim": 7168,
+     "model": "laion/larger_clap_general",
+     "model_tag": "larger_clap_general",
+     "pool": "mean_cat_max_over_windows",
+     "window_s": 10.0,
+     "sample_rate": 48000
+    },
+    "Z_dim": 7168,
+    "aux_dim": 2048,
+    "C_Z": 1.0,
+    "C_Z_cv_acc": 0.877750257997936,
+    "C_full": 0.01,
+    "C_full_cv_acc": 0.8800963192294462,
+    "baseline_accZ": 0.8712103407755583,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.12878965922444174,
+     "label_dacc": 0.12878965922444185,
+     "headroom_fraction": 1.0000000000000009,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.8719153936545241,
+      "dacc": 0.0007050528789659227,
+      "ci": [
+       -0.004935370152761458,
+       0.006110458284371328
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.872150411280846,
+      "dacc": 0.0009400705052878961,
+      "ci": [
+       -0.0077555816686251475,
+       0.00963572267920094
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.8683901292596945,
+      "dacc": -0.002820211515863691,
+      "ci": [
+       -0.013160987074030552,
+       0.007755581668625147
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.854289071680376,
+      "dacc": -0.016921269095182136,
+      "ci": [
+       -0.02914218566392479,
+       -0.0044653349001175105
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.8770857814336075,
+      "dacc": 0.005875440658049354,
+      "ci": [
+       -0.0030552291421856647,
+       0.01480611045828437
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": -0.011045828437132784
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.00446533490011751
+     }
+    },
+    "real_max_over_kdec": 0.0009400705052878961
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 16,
+    "best_dacc": 0.0009400705052878961,
+    "best_ci": [
+     -0.0077555816686251475,
+     0.00963572267920094
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  },
+  "hidden|strict_8960": {
+   "point": {
+    "ds": "HateMM",
+    "z_arm": "strict_8960",
+    "aux_block": "hidden",
+    "n": 851,
+    "n_pos": 341,
+    "meta": {
+     "N": 851,
+     "n_pos": 341,
+     "n_zero_audio_rows": 0,
+     "aux_block": "hidden",
+     "aux_dim": 2048,
+     "Z_dim": 8960,
+     "model": "laion/larger_clap_general",
+     "model_tag": "larger_clap_general",
+     "pool": "mean_cat_max_over_windows",
+     "window_s": 10.0,
+     "sample_rate": 48000
+    },
+    "Z_dim": 8960,
+    "aux_dim": 2048,
+    "C_Z": 0.01,
+    "C_Z_cv_acc": 0.8413140694874441,
+    "C_full": 0.01,
+    "C_full_cv_acc": 0.8436601307189543,
+    "baseline_accZ": 0.8383078730904819,
+    "calibration": {
+     "label_accZA": 1.0,
+     "headroom_1_minus_accZ": 0.16169212690951806,
+     "label_dacc": 0.16169212690951823,
+     "headroom_fraction": 1.000000000000001,
+     "PASS": true
+    },
+    "arms": {
+     "audio_pca_k8": {
+      "accZA": 0.8378378378378378,
+      "dacc": -0.0004700352526439495,
+      "ci": [
+       -0.008225616921269096,
+       0.007520564042303172
+      ]
+     },
+     "audio_pca_k16": {
+      "accZA": 0.8373678025851938,
+      "dacc": -0.0009400705052878967,
+      "ci": [
+       -0.011750881316098707,
+       0.010340775558166863
+      ]
+     },
+     "audio_pca_k32": {
+      "accZA": 0.8305522914218566,
+      "dacc": -0.007755581668625147,
+      "ci": [
+       -0.0199764982373678,
+       0.004465334900117509
+      ]
+     },
+     "audio_pca_k64": {
+      "accZA": 0.8195064629847238,
+      "dacc": -0.01880141010575793,
+      "ci": [
+       -0.03337250293772033,
+       -0.0037544065804936194
+      ]
+     },
+     "audio_full_cvC": {
+      "accZA": 0.8415981198589895,
+      "dacc": 0.0032902467685076374,
+      "ci": [
+       -0.006345475910693302,
+       0.012925969447708578
+      ]
+     },
+     "shuffled_audio_k8": {
+      "dacc": -0.003995299647473561
+     },
+     "shuffled_audio_k16": {
+      "dacc": -0.008695652173913044
+     }
+    },
+    "real_max_over_kdec": -0.0004700352526439495
+   },
+   "arm_eval": {
+    "calib_pass": true,
+    "best_decision_k": 8,
+    "best_dacc": -0.0004700352526439495,
+    "best_ci": [
+     -0.008225616921269096,
+     0.007520564042303172
+    ],
+    "C1_point_ge_040": false,
+    "C2_ci_low_gt_0": false,
+    "C3_real_beats_all_permmax": null,
+    "honest_partial_flag": false,
+    "verdict": "KILL"
+   }
+  }
+ },
+ "rulings": {
+  "proj": {
+   "ruling": "KILL",
+   "arms": {
+    "deployed_7168": {
+     "verdict": "KILL",
+     "best_decision_k": 8,
+     "best_dacc": -0.0009400705052878961,
+     "best_ci": [
+      -0.007520564042303171,
+      0.00564042303172738
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    },
+    "strict_8960": {
+     "verdict": "KILL",
+     "best_decision_k": 8,
+     "best_dacc": -0.0037602820211515868,
+     "best_ci": [
+      -0.011750881316098707,
+      0.004465334900117509
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    }
+   }
+  },
+  "hidden": {
+   "ruling": "KILL",
+   "arms": {
+    "deployed_7168": {
+     "verdict": "KILL",
+     "best_decision_k": 16,
+     "best_dacc": 0.0009400705052878961,
+     "best_ci": [
+      -0.0077555816686251475,
+      0.00963572267920094
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    },
+    "strict_8960": {
+     "verdict": "KILL",
+     "best_decision_k": 8,
+     "best_dacc": -0.0004700352526439495,
+     "best_ci": [
+      -0.008225616921269096,
+      0.007520564042303172
+     ],
+     "honest_partial_flag": false,
+     "C3": null
+    }
+   }
+  }
+ },
+ "stratum": {
+  "n_all": 851,
+  "n_pos_all": 341,
+  "whisper_cache": "data/audio/HateMM/whisper_whisper-large-v3_trainval.pt",
+  "strata": {
+   "le25_FN1_rule": {
+    "threshold_words": 25,
+    "n": 232,
+    "n_pos": 42,
+    "base_rate": 0.1810344827586207,
+    "binding": true,
+    "a_marginal_clap": {
+     "auc": 0.8411027568922306,
+     "ci": [
+      0.7640463797287875,
+      0.907267404909892
+     ],
+     "C": 0.01,
+     "n_boot_valid": 5000
+    },
+    "b_head_to_head": {
+     "whisper_auc": 0.8482456140350878,
+     "whisper_ci": [
+      0.7843729241397636,
+      0.9052757268783292
+     ],
+     "whisper_C": 0.1,
+     "clap_minus_whisper": -0.0071428571428572285,
+     "diff_ci": [
+      -0.07013340718282093,
+      0.052361046404725144
+     ]
+    },
+    "c_conditional": {
+     "Z_alone_auc": 0.8937343358395989,
+     "Z_alone_ci": [
+      0.8355213957696185,
+      0.9426649806383937
+     ],
+     "C_Z": 0.01,
+     "per_k": {
+      "k8": {
+       "auc": 0.900125313283208,
+       "auc_ci": [
+        0.8446613387028531,
+        0.9446343561348082
+       ],
+       "dauc_vs_Z": 0.006390977443609058,
+       "dauc_ci": [
+        -0.01760301946004603,
+        0.03215725124221128
+       ]
+      },
+      "k16": {
+       "auc": 0.9050125313283208,
+       "auc_ci": [
+        0.8607794383185671,
+        0.9456054920645687
+       ],
+       "dauc_vs_Z": 0.011278195488721887,
+       "dauc_ci": [
+        -0.028346082472259688,
+        0.05327961131069518
+       ]
+      }
+     },
+     "best_k": 16,
+     "best_dauc_vs_Z": 0.011278195488721887,
+     "best_dauc_ci": [
+      -0.028346082472259688,
+      0.05327961131069518
+     ]
+    },
+    "confound_spearman_clapscore_vs_nwords": {
+     "rho": 0.37286245724384015,
+     "p": 4.591712042387011e-09
+    },
+    "K_CLAP_3": {
+     "C1_auc_ge_065_and_cilow_gt_055": true,
+     "C2_beats_whisper_by_005": false,
+     "C3_conditional_dauc_gt_0_cilow_gt_0": false,
+     "kill_side": false,
+     "verdict": "INCONCLUSIVE_NARROW"
+    }
+   },
+   "le1_empty_context": {
+    "threshold_words": 1,
+    "n": 87,
+    "n_pos": 8,
+    "base_rate": 0.09195402298850575,
+    "binding": false,
+    "a_marginal_clap": {
+     "auc": 0.8180379746835443,
+     "ci": [
+      0.6780626780626781,
+      0.9354189669979143
+     ],
+     "C": 1.0,
+     "n_boot_valid": 5000
+    },
+    "b_head_to_head": {
+     "whisper_auc": 0.6914556962025317,
+     "whisper_ci": [
+      0.40598290598290593,
+      0.9402705627705628
+     ],
+     "whisper_C": 0.001,
+     "clap_minus_whisper": 0.12658227848101267,
+     "diff_ci": [
+      -0.1169088032220943,
+      0.4300249287749287
+     ]
+    },
+    "c_conditional": {
+     "Z_alone_auc": 0.865506329113924,
+     "Z_alone_ci": [
+      0.7703195488721805,
+      0.9465208967986746
+     ],
+     "C_Z": 0.001,
+     "per_k": {
+      "k8": {
+       "auc": 0.8971518987341772,
+       "auc_ci": [
+        0.8217532467532467,
+        0.9588235294117646
+       ],
+       "dauc_vs_Z": 0.03164556962025322,
+       "dauc_ci": [
+        -0.07502259036144575,
+        0.14962013295346618
+       ]
+      },
+      "k16": {
+       "auc": 0.9240506329113924,
+       "auc_ci": [
+        0.8476731250123063,
+        0.9831271360218728
+       ],
+       "dauc_vs_Z": 0.058544303797468444,
+       "dauc_ci": [
+        -0.05722891566265065,
+        0.18301718451572258
+       ]
+      }
+     },
+     "best_k": 16,
+     "best_dauc_vs_Z": 0.058544303797468444,
+     "best_dauc_ci": [
+      -0.05722891566265065,
+      0.18301718451572258
+     ]
+    },
+    "confound_spearman_clapscore_vs_nwords": {
+     "rho": -0.09203375445228805,
+     "p": 0.39653881893161086
+    }
+   }
+  },
+  "diagnostics": {
+   "global_marginal": {
+    "clap_alone_auc": 0.8496521189120809,
+    "clap_alone_auc_ci": [
+     0.8228102591339518,
+     0.8751949382714277
+    ],
+    "clap_C": 0.01,
+    "whisper_alone_auc": 0.8954229199010983,
+    "whisper_alone_auc_ci": [
+     0.8733793609357225,
+     0.9163956741414716
+    ],
+    "whisper_C": 0.01,
+    "clap_minus_whisper_auc": -0.045770800989017424,
+    "spearman_clapscore_vs_nwords": {
+     "rho": 0.44301841475751497,
+     "p": 3.230104931431732e-42
+    },
+    "note": "DIAGNOSTIC ONLY (spec sec 5.1) \u2014 moves no bar."
+   }
+  },
+  "elapsed_s": 117.8
+ },
+ "clap_verdict": {
+  "primary_proj": "KILL",
+  "secondary_hidden": "KILL",
+  "DISCORDANT": false,
+  "K_CLAP_3_stratum": "INCONCLUSIVE_NARROW",
+  "promote_head_gpu": false,
+  "narrow_prereg_draft_authorized": false
+ }
+}

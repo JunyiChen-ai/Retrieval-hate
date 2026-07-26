@@ -1,0 +1,110 @@
+{
+ "dataset": "HateMM",
+ "model_tag": "larger_clap_general",
+ "checks": {
+  "trainval_test_disjoint": true,
+  "n_overlap": 0,
+  "clap_whisper_id_order_identical": true
+ },
+ "caches": {
+  "trainval": {
+   "path": "/data/jehc223/RGCL/data/audio/HateMM/clap_larger_clap_general_trainval.pt",
+   "md5": "13b0b289f6f78d5a5b4ad92a02e41ca5",
+   "sha256": "c0e8e14386674ac4f5d241f85bb5948729ac4ced424ccbe753492ad379e33f02",
+   "N": 851,
+   "n_pos": 341,
+   "model": "laion/larger_clap_general",
+   "pool": "mean_cat_max_over_windows",
+   "window_s": 10.0,
+   "sample_rate": 48000,
+   "n_windows": {
+    "min": 1,
+    "median": 11,
+    "max": 581,
+    "total": 13052
+   },
+   "elapsed_s": 3065.1,
+   "proj_norm_examples": {
+    "hate_video_98": 1.6559457778930664,
+    "hate_video_97": 1.4955312013626099,
+    "hate_video_353": 1.4820759296417236
+   },
+   "checks": {
+    "id_order_matches_gt": true,
+    "proj_shape": [
+     851,
+     1024
+    ],
+    "hidden_shape": [
+     851,
+     2048
+    ],
+    "proj_dim_ok": true,
+    "hidden_dim_ok": true,
+    "n_matches_gt": true,
+    "labels_match_gt": true,
+    "no_nan": true,
+    "no_zero_rows": true,
+    "manifest_status": {
+     "ok": 851
+    },
+    "manifest_n_zero": 0,
+    "manifest_n_nan": 0,
+    "manifest_clean": true,
+    "labels_agree_openai_clip-vit-large-patch14-336_HF": true,
+    "labels_agree_Qwen2.5-VL-7B-Instruct_HF": true,
+    "labels_agree_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF": true
+   }
+  },
+  "test": {
+   "path": "/data/jehc223/RGCL/data/audio/HateMM/clap_larger_clap_general_test.pt",
+   "md5": "3d7d3e6df6cd827a333ef5b0a03bb9ad",
+   "sha256": "fa6025d4ae9f9a022e3eec2f21d36e08220fb9e684d6cdfdfe7c9a4b8761b6a9",
+   "N": 215,
+   "n_pos": 86,
+   "model": "laion/larger_clap_general",
+   "pool": "mean_cat_max_over_windows",
+   "window_s": 10.0,
+   "sample_rate": 48000,
+   "n_windows": {
+    "min": 1,
+    "median": 12,
+    "max": 100,
+    "total": 3034
+   },
+   "elapsed_s": 771.3,
+   "proj_norm_examples": {
+    "hate_video_1": 1.401912808418274,
+    "hate_video_220": 1.464669108390808,
+    "non_hate_video_642": 1.622038722038269
+   },
+   "checks": {
+    "id_order_matches_gt": true,
+    "proj_shape": [
+     215,
+     1024
+    ],
+    "hidden_shape": [
+     215,
+     2048
+    ],
+    "proj_dim_ok": true,
+    "hidden_dim_ok": true,
+    "n_matches_gt": true,
+    "labels_match_gt": true,
+    "no_nan": true,
+    "no_zero_rows": true,
+    "manifest_status": {
+     "ok": 215
+    },
+    "manifest_n_zero": 0,
+    "manifest_n_nan": 0,
+    "manifest_clean": true,
+    "labels_agree_openai_clip-vit-large-patch14-336_HF": true,
+    "labels_agree_Qwen2.5-VL-7B-Instruct_HF": true,
+    "labels_agree_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF": true
+   }
+  }
+ },
+ "ALL_CHECKS_PASS": true
+}

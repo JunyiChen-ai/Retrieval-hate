@@ -1,0 +1,55 @@
+[proj|deployed_7168] Zdim=7168 auxdim=1024 C_Z=1.0 accZ=0.8712 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [142s]
+   clap_pca_k8  accZA=0.8703 dacc=-0.0009 CI[-0.0075,+0.0056]
+   clap_pca_k16 accZA=0.8679 dacc=-0.0033 CI[-0.0108,+0.0040]
+   clap_pca_k32 accZA=0.8649 dacc=-0.0063 CI[-0.0160,+0.0033]
+   clap_pca_k64 accZA=0.8555 dacc=-0.0157 CI[-0.0284,-0.0026]
+   clap_full_cvC accZA=0.8801 dacc=+0.0089 CI[+0.0007,+0.0174]
+   shuffled(seed12345) k8=-0.0157 k16=-0.0129  real_max_over_kdec=-0.0009
+[proj|strict_8960] Zdim=8960 auxdim=1024 C_Z=0.01 accZ=0.8383 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [130s]
+   clap_pca_k8  accZA=0.8345 dacc=-0.0038 CI[-0.0118,+0.0045]
+   clap_pca_k16 accZA=0.8270 dacc=-0.0113 CI[-0.0209,-0.0019]
+   clap_pca_k32 accZA=0.8251 dacc=-0.0132 CI[-0.0249,-0.0014]
+   clap_pca_k64 accZA=0.8190 dacc=-0.0193 CI[-0.0348,-0.0045]
+   clap_full_cvC accZA=0.8409 dacc=+0.0026 CI[-0.0059,+0.0110]
+   shuffled(seed12345) k8=-0.0035 k16=-0.0096  real_max_over_kdec=-0.0038
+[hidden|deployed_7168] Zdim=7168 auxdim=2048 C_Z=1.0 accZ=0.8712 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [148s]
+   clap_pca_k8  accZA=0.8719 dacc=+0.0007 CI[-0.0049,+0.0061]
+   clap_pca_k16 accZA=0.8722 dacc=+0.0009 CI[-0.0078,+0.0096]
+   clap_pca_k32 accZA=0.8684 dacc=-0.0028 CI[-0.0132,+0.0078]
+   clap_pca_k64 accZA=0.8543 dacc=-0.0169 CI[-0.0291,-0.0045]
+   clap_full_cvC accZA=0.8771 dacc=+0.0059 CI[-0.0031,+0.0148]
+   shuffled(seed12345) k8=-0.0110 k16=-0.0045  real_max_over_kdec=+0.0009
+[hidden|strict_8960] Zdim=8960 auxdim=2048 C_Z=0.01 accZ=0.8383 label_accZA=1.0000 (hfrac=1.000) CALIB_PASS=True  [143s]
+   clap_pca_k8  accZA=0.8378 dacc=-0.0005 CI[-0.0082,+0.0075]
+   clap_pca_k16 accZA=0.8374 dacc=-0.0009 CI[-0.0118,+0.0103]
+   clap_pca_k32 accZA=0.8306 dacc=-0.0078 CI[-0.0200,+0.0045]
+   clap_pca_k64 accZA=0.8195 dacc=-0.0188 CI[-0.0334,-0.0038]
+   clap_full_cvC accZA=0.8416 dacc=+0.0033 CI[-0.0063,+0.0129]
+   shuffled(seed12345) k8=-0.0040 k16=-0.0087  real_max_over_kdec=-0.0005
+
+==== K-CLAP-3 — FN1-targeted stratum read (spec sec 5) ====
+[diag/global] CLAP-alone AUC=0.8497 CI[0.8228,0.8752]  Whisper-alone AUC=0.8954 CI[0.8734,0.9164]  diff=-0.0458  rho(score,nwords)=+0.4430 (p=3.23e-42)
+[K-CLAP-3/le25_FN1_rule] n=232 pos=42 base=0.1810
+    (a) CLAP-alone   AUC=0.8411 CI[0.7640,0.9073]
+    (b) Whisper      AUC=0.8482 CI[0.7844,0.9053]  CLAP-Whisper=-0.0071 CI[-0.0701,+0.0524]
+    (c) Z_alone      AUC=0.8937  best-k16 dAUC=+0.0113 CI[-0.0283,+0.0533]
+    rho(clap_score,nwords)=+0.3729 (p=4.59e-09)
+    K-CLAP-3 verdict = INCONCLUSIVE_NARROW
+[K-CLAP-3/le1_empty_context] n=87 pos=8 base=0.0920
+    (a) CLAP-alone   AUC=0.8180 CI[0.6781,0.9354]
+    (b) Whisper      AUC=0.6915 CI[0.4060,0.9403]  CLAP-Whisper=+0.1266 CI[-0.1169,+0.4300]
+    (c) Z_alone      AUC=0.8655  best-k16 dAUC=+0.0585 CI[-0.0572,+0.1830]
+    rho(clap_score,nwords)=-0.0920 (p=0.397)
+
+==== CLAP general-audio G0-cond gate — mechanical evaluation ====
+  [proj]  BINDING PRIMARY  RULING = KILL
+      deployed_7168  verdict=KILL              best-k8 dacc=-0.0009 CI[-0.0075,+0.0056] honest_partial=False C3=None
+      strict_8960    verdict=KILL              best-k8 dacc=-0.0038 CI[-0.0118,+0.0045] honest_partial=False C3=None
+  [hidden]  SECONDARY (cannot PASS)  RULING = KILL
+      deployed_7168  verdict=KILL              best-k16 dacc=+0.0009 CI[-0.0078,+0.0096] honest_partial=False C3=None
+      strict_8960    verdict=KILL              best-k8 dacc=-0.0005 CI[-0.0082,+0.0075] honest_partial=False C3=None
+
+  primary(proj)=KILL  secondary(hidden)=KILL  DISCORDANT=False  K-CLAP-3=INCONCLUSIVE_NARROW
+  => promote_head_gpu=False  narrow_prereg_draft_authorized=False
+wrote /data/jehc223/RGCL/refine-logs/CLAP_G0COND_GATE_OUT.json
+elapsed 681s
