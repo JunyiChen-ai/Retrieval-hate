@@ -697,7 +697,8 @@ KS-arm-dead**: MHClip-ZH is +0.0067 acc val-selected (2/3 sign) but **−0.0045 
 **−0.0031 on both protocols** (0/3 sign on every leg), no cell is anywhere near the FORMAL +0.030/+0.030
 conjunct, and no KS-regression fires (worst mean −0.0045, above the −0.014 line). The effect sizes read most
 honestly in test items: HateMM's entire effect is **≤ 2 flipped predictions on any seed** (n = 215, one flip =
-0.00465; four of its six Δacc values are exactly 0.0000) and the ZH val-selected mean is **+1 item per seed**
+0.00465; three of its six Δacc values are exactly 0.0000, the other three being −1, −1 and −2 items) and the ZH
+val-selected mean is **+1 item per seed**
 (n = 149, one flip = 0.00671). The fusion-operator axis is therefore closed as a measured null, and the live
 reviewer question — *why Hadamard and not concat?* — is answered with a number instead of a preference
 [DOC:FUSIONCAT_VERDICT_REVIEW.md, commit `129fe2e`]. Two disciplines travel with it. First, the arm that failed
@@ -706,6 +707,139 @@ is evidence about the *bundle* and may never be upgraded into "extra head capaci
 param-matched control that would separate them was placed outside the family by the frozen scope. Second, the
 val-selected legs were again decided by `roc` tie-breaks over up to six Val-tied epochs (selected epochs ranged
 5 → 26): the F45/F63 78-item dev wall, visible directly in the selection trace.
+
+**A measurement-discipline lesson: the merged and unmerged adapter paths are not a null channel (F87).** The
+round-7 transplant cell — modality-routed LoRA (a per-modality down-projection `A` with a shared `B`, `r_v =
+r_t = 16`) inside the deployed ZH encoder-SFT, i.e. the **PEFT-adapter-structure axis no banked adapter in this
+campaign had ever varied** — is a measured null: **final-epoch: fail; val-selected: fail** against both floors,
+landing at **+0.0000 acc** on both protocols against the banked generic-LoRA floor 13150, at 5.573 GPU-h. What
+makes it worth a mechanism paragraph rather than a table row is *how* it failed. A pre-registered drift gate
+fired on all six (split × stream) cells of the banked cache (worst mean per-item cosine **0.99954879** against a
+0.9999 bar), which made a **same-path unmerged floor mandatory** and switched the binding pairing to it. Against
+that same-path floor the arm reads **+0.0268 val-selected acc, 3/3 seeds** — the family's only above-noise
+number. It is not a result: with routing **entirely absent**, the unmerged path loses **−0.0268 acc / −0.0340
+macro-F1 (0/3)** against the merged path, and the three seed-paired comparisons are one identity,
+**+0.0000 = +0.0268 + (−0.0268)**. The manipulation that produced the −0.0268 is the *same* banked adapter, the
+same frames, prompts and head code, differing only in `merge_and_unload()`'s folded `W+BA` single matmul versus
+the unmerged `Wx + B(Ax)` — a **bf16 accumulation-order** difference, method-null by construction — and it is
+carried almost entirely by one seed at **−0.0604 = −9 of 149 test items**, whose val-selection collapsed to
+epoch 5 (two epochs tied at Val acc 0.8718; the `roc` tie-break took the earlier). The no-selection final-epoch
+protocol shows the same manipulation at only **−0.0067**, one test item. The transferable lesson is a rule about
+channels, not about routing: **a measurement channel whose sensitivity to a demonstrably method-null manipulation
+exceeds both the ±0.014 house seed band and the effect it is being asked to certify carries no discriminating
+power about the manipulated variable** — so a same-path floor is the *default cost* of any adapter-structure
+comparison, not a contingency, and the drift is not even symmetric across streams (the text stream drifts ≈ 3×
+further than the image, means ≈ 0.99955 vs ≈ 0.99985 — the more drifted stream is the one both measured passes
+ride on) [DOC:MOKA_VERDICT_REVIEW.md, commit `91f64a6`; DOC:MOKA_SUBMIT_RECORD.md, commit `ed609eb`]. Three
+further readings are fixed by the frozen clauses and must travel with any citation of this cell. (i) The
+stream-level decomposition is a **null-op**: the text stream is FLAT under both floors (Δ train-LOO AUC −0.0007 /
++0.0018), which **refutes the prereg's own text-side bet** that an undiluted `A_t` would sharpen the dominant
+stream. (ii) The image stream is **AMBIGUOUS, not MOVED** (train-LOO +0.0137 but dev −0.0121 under the binding
+floor; +0.0120 / +0.0043 under the merged floor, missing the +0.005 dev leg by 0.0007), so although the head is
+flat, **this is not the ninth instance of law I — the count in §3.6 stays at eight** and the cell is recorded as
+law-I-*shaped* but not law-I-*certified*; MokA's advertised visual-modality-protection narration is barred
+outright. (iii) The most economical explanation of the null is a **regime inversion**, priced before the run: our
+SFT records are **94.6 % vision tokens** (median 2,688 vision + 153 text) against MokA's own shipped regime of
+**98.4 % text** (16,128 vs 256), so routing gives the text stream its own undiluted down-projection while
+*starving* it — from 100 % of positions to ≈ 5.4 %, ≈ 18× fewer token-gradients — and `A_v`'s gradient norm ran
+25–40× *below* `A_t`'s despite vision dominating the token count. A standing caveat binds all of it: there was
+**one** SFT draw and `--seed` varied only the head, so encoder-draw noise is not separable from the routing
+effect within this budget (limitations §3). (Process value, alongside wave 3's dropout-mode catch: the mandatory
+external code gate blocked this family pre-spend on two P1 defects — a modality-mask hook registered on
+`get_base_model()` that **never fires** on the production `PeftModelForCausalLM`, because that call chain reaches
+the base model through a direct `.forward()` while `nn.Module` hooks fire only in `__call__`, and a `median`
+computed as `vals[len(vals)//2]` over 196 layers, an upper-neighbour order statistic. After the fix and a
+re-freeze, routing was runtime-verified live — `hook_calls` 314, `routed_calls` 77,224, **`fallback_calls` 0** —
+so the null is functional, not mechanical [DOC:MOKA_REFREEZE_FIX.md, commit `72a947b`].)
+
+### 3.11 The information structure of the deployed pair — no synergy to fuse, and no unique image information (F86)
+
+The audit's last mechanism result is a **measurement rather than a lever**, and it is the one that converts a
+list of fusion nulls into an arithmetic statement. Using a sample-level **partial-information decomposition**
+(PID) as implemented by the **LSMI** estimator \cite{lsmi} (ICML 2025), the
+task-relevant information the two deployed streams carry about the label is decomposed, per sample, into
+**redundancy `R`**, **per-stream uniqueness `U1` (image) / `U2` (text)** and **synergy `S`**, on the banked
+train/dev caches of all three deployed lineages (MHClip-ZH generic-LoRA 13150, HateMM curric-LoRA 13241,
+MHClip-EN frozen Qwen). The gate is CPU-only, reads no test split, and produced **zero GPU-hours**. Its stake is
+stated before its numbers: a fusion block can only recombine `R`, `U1` and `U2`, so if `S ≈ 0` then *every*
+richer fusion operator — attention, gating, bilinear, concat-versus-Hadamard — is mechanistically capped, and the
+"the method is too crude" objection is answered by a measurement instead of an opinion.
+
+**The machinery had to be certified before it could be believed, and at the released settings it fails.** A
+pre-declared XOR positive control at our own sample sizes — a label that is a *deterministic* function of the
+pair, with zero unimodal information — is read at **chance** by the joint discriminator at the released
+projection dimension (out-of-fold accuracy **0.513 / 0.530 / 0.508** at `d' = 64`, n = 579 / 744 / 549), so the
+pre-declared power gate **fails** and the whole `d' = 64/256` layer is declared measurement-invalid and carries
+no evidential weight. Walking the dimension down localises the wall: joint out-of-fold accuracy on the same known
+synergy runs **0.998 → 0.903 → 0.632 → 0.513** at `d' = 8 → 16 → 32 → 64`, so power is *monotone decreasing in
+dimension* and **`d* = 16`** is the largest certified dimension (replicated at `d' = 8`, where the estimator
+recovers the maximal synergy of `log 2 = 0.6931` nats as **0.7077 / 0.7321 / 0.7105** — a ≈ 2 % error at
+n ≈ 600). Specificity certifies with it: a duplicate-stream control (`x2 := x1`, ground-truth `S = 0`) returns
+**exactly 0.0000** at both certified dimensions against **+0.0838 / +0.1516 / +0.2240** for the same control at
+the uncertified `d' = 64`.
+
+**Read at the certified dimensions, the shape is the same on all three datasets.** Total task-relevant
+information `I12` is a real, well-estimated **0.149–0.359 nats**; redundancy `R` is **0.069–0.178**; **text
+uniqueness `U2` is the largest atom on 5 of 6 certified cells (0.076–0.237)**; **image uniqueness `U1` is pinned
+at exactly 0.0000 on 5 of 6 cells** (range −0.084–0.000); and **synergy `S` is −0.0747 (ZH) / −0.0802 (HateMM) /
+−0.0000 (EN)** at `d* = 16`, ≤ 0 on 5 of 6 certified cells, with the largest positive reading anywhere in the
+certified layer being **+0.0031 on ZH at `d' = 8` — 0.9 % of that cell's `I12`**. A fresh 50-draw permutation
+null gives `q95 = 0` on every certified cross-fitted cell, so the false-synergy floor is zero to within 4 × 10⁻¹⁷,
+and the held-out dev read replicates (−0.0004 / −0.0575 / −0.1041). The mechanical verdict is reported
+unrounded: **INDETERMINATE** at `d* = 16` (per-dataset ZH / HateMM INDETERMINATE, MHClip-EN FUSION_CAPPED) — but
+only because the pre-declared clause *conjoined* "no synergy" with "redundancy-dominated". The synergy half fired
+on **3/3 datasets × 2 certified dimensions, plus dev**; the dominance half failed because the pair turns out to
+be **uniqueness-dominated on the text side**, not redundancy-dominated — the clause was written for the wrong
+dominant atom, not left inconclusive about synergy [DOC:LSMI_GATE_RECORD.md, commit `a8905ac`; pre-declaration
+chain `d4b06f0` → `362a60e`, every threshold committed before the numbers it governs].
+
+**The supported sentence, and what it explains.** Within the certified subspace, essentially all task-relevant
+information in the deployed pair is carried by the **text** stream — as text-unique information plus a smaller
+redundant component shared with the image — the **image stream contributes no unique information**, and the two
+streams contribute **no synergy**. That is the mechanism under §3.6's F44 (the MHClip-EN image stream collapsing:
+here `U1 = 0` on EN, whose `I12` is also the smallest of the three at 0.149 nats) and under F50 (a fixed
+composition is "a rotation at every mixing weight" — with `S = 0` there is nothing off the `R`/`U1`/`U2` simplex
+for any operator to reach), and it is what the F85 concat null looks like from the information side: `concat` has
+strictly more capacity than `align` to exploit `U1` and `U2`, and `U1` is measured at zero. The two results are
+*consistent*, not derived from one another — the gate explicitly refuses to predict the fusion family's numbers,
+and F85's verdict stands on its own measurement.
+
+**Walls, stated as the gate stated them — before its numbers.** (i) It **cannot bound trained reshaping**:
+everything here is a property of the banked features *as they are*, and says nothing about whether a differently
+trained encoder would produce a differently structured pair — the same F66-style distinction that keeps the
+adaptation axis (§3.9) alive. (ii) It **cannot price a third stream**: audio, OCR and frame-level tokens are
+outside the decomposed object. (iii) It is a **train/dev measurement** with no held-out claim; the discriminator
+accuracies quoted are estimator diagnostics, not results. (iv) A null at `d*` bounds synergy **inside the
+retained principal subspace** (per-stream retained variance: `d' = 16` image 0.668–0.739 / text 0.528–0.580;
+`d' = 8` image 0.523–0.629 / text 0.404–0.466), which is the honest price of the only regime where the estimator
+demonstrably works at n ≈ 600. (v) **PID is axiom-dependent**: redundancy is defined differently across the
+Williams–Beer, Bertschinger et al., Ince and Griffith–Koch families, and pointwise decompositions additionally
+admit negative atoms, so everything reported is *LSMI's* decomposition under *LSMI's* min-rule.
+
+**A methods note the paper should carry, because it nearly produced a false result.** Two properties of the
+released estimator matter to anyone reproducing this. Its entropy-estimator loop **never calls
+`optimizer.zero_grad()`**, so kernel gradients accumulate across the whole run; that defect is invisible in the
+authors' own 2-dimensional demo (identical to 4 dp) but not at our dimensions — holding the discriminators
+bit-identical, the fixed and as-shipped loops move the entropy estimates (ZH `H1` 1130.19 → 710.62) and **flip
+the sign of `S` on 2 of 3 datasets** (ZH +0.2345 → −0.0672; HateMM −0.1517 → +0.1152). More consequential, the
+**released in-sample reading protocol saturates at our sample size** — all three discriminators reach 0.99–1.00
+accuracy and all three pointwise mutual informations collapse to ≈ `log 2` — and then reports "redundancy-
+dominated, `S ≈ 0.02`, share ≈ 0.03" *identically* for the real pair **and** for the duplicate-stream and
+split-half controls whose ground truths are different. Run as shipped, the code would have handed us a clean,
+quotable "no synergy, redundancy-dominated" paper sentence that its own truth-known controls contradict; the
+cross-fitted read that caught it was declared *after the synthetic controls fired but before any cell on our
+data*, which is the only reason the readout stayed pre-registered. The conclusion we do bank is the *narrower*
+one the certified arm supports — no synergy, uniqueness-dominated, text-side — and the discarded one is recorded
+as the near-miss.
+
+**Consequence for the transplant queue.** The survey's first *executed* item is discharged by this measurement,
+and the second dies by its own hand: the SynIB port had pre-declared "the LSMI reading" as its kill-switch, and the
+branch that fired (`s ≈ 0` on all datasets) prescribes **PARK at $0** — an objective built to push a head onto
+*synergistic* structure has no structure to push onto here — while the conditional BalanceBenchmark screen never
+unlocks, being conditional on synergy existing to balance [DOC:SYNIB_PORT_FORENSIC_RECON.md, commit `9e638ea`;
+DOC:REPRO_SURVEY_2025.md, commit `9367338`]. Where the numbers *do* point is the adaptation side — `U1 = 0.0000`
+with `U2` dominant is a modality-imbalance statement — which is exactly the object the round-7 routed-LoRA cell
+went on to measure, and to null (§3.10).
 
 ## 4. What survives
 

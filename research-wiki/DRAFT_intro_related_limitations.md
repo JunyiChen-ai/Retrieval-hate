@@ -219,6 +219,25 @@ works (VLM2Vec-V2, VidVec) use **no special temporal operator** — they read a 
 independently corroborates our F35 / F37 / F67 finding that temporal-pooling and frame density are not the
 lever [DOC:LITSURVEY_NOVEL_MECHANISMS.md, DOC:LITSURVEY_MLLM_EMBEDDING.md].
 
+**(g) Three adjacent-field methods enter this paper as credited transplant sources, not as baselines.** Our final
+audit round mined *neighbouring* fields for techniques with runnable code rather than mining hateful-video work,
+on the explicit ground that being first to bring an adjacent-field technique into hateful-video detection is the
+defensible contribution while lifting from a direct competitor is not [DOC:REPRO_SURVEY_2025.md]. Three sources
+survived triage, and each is credited where it is used. **LSMI** \cite{lsmi} (ICML 2025) supplies the
+sample-level partial-information decomposition — redundancy / per-stream uniqueness / synergy — that we
+re-implement *for measurement only* and run on our own banked features; the resulting information-structure
+result (no image×text synergy on any dataset, image uniqueness pinned at zero, text-uniqueness dominant) is the
+mechanism under our fusion nulls (analysis §3.11), and we additionally report a defect in the released estimator
+that would have produced the opposite-flavoured, false conclusion. **MokA** \cite{moka} (NeurIPS 2025 Oral)
+supplies modality-routed LoRA — a per-modality down-projection with a shared up-projection — which we transplant
+into our encoder-SFT and measure (experiments §8); any claim from that cell is bounded, by pre-registration, to
+*first application of modality-routed PEFT to hateful-video encoders*, with MokA credited, and no phrasing may
+imply we invented modality-routed adaptation. **SynIB** \cite{synib} (arXiv 2606.09853) supplies a masked-branch
+information-bottleneck objective that we priced, pre-registered a kill-switch for, and **parked at zero cost**
+once the PID measurement returned no synergy for it to exploit. None of the three is a baseline: two are
+instruments, one is an unrun transplant, and the honest overall read of the survey is that the neighbouring-field
+hunt surfaced no technique with a defensible prior at our goal bar.
+
 ---
 
 ## 3. Limitations
@@ -295,6 +314,29 @@ finer granularity that *is* released — the 3-class {Normal, Offensive, Hateful
 carries no boundary-sharpening signal under any monotone reweighting, gold-cheat oracle included
 (EN +0.0250 / ZH +0.0256, both < +0.030; analysis §3.10, F82).
 
+**Every encoder-adaptation result rests on a single SFT draw.** In each LoRA-SFT cell in this paper — the ZH and
+HateMM adaptations, the curriculum variant, the bidirectional stage-1 arm, and the round-7 modality-routed
+adapter — **one** encoder is trained and `--seed` varies only the head (initialisation and data shuffling), with
+pairing done per head seed. Encoder-draw variance is therefore never estimated, and in any comparison whose
+treatment arm carries its *own* SFT draw it is **confounded with the manipulated variable and not separable**;
+disentangling would need an SFT seed sweep (≈ 9 GPU-h per cell) that no cell's budget held. The consequence is
+asymmetric and worth stating plainly: it does not threaten the *negative* verdicts (an effect that fails a bar
+fails it with the confound included), but it means no sub-bar adaptation-side delta may be causally attributed to
+the adaptation change — the explicit ground on which the round-7 routed-LoRA cell's residual +0.0268 was refused
+(analysis §3.10) [DOC:MOKA_VERDICT_REVIEW.md §D8.3].
+
+**The merged and unmerged adapter paths are not numerically interchangeable.** Folding a LoRA adapter into the
+base weights (`merge_and_unload()`, a single `W+BA` matmul) and running it unmerged (`Wx + B(Ax)`) are the same
+model in method space and differ only in bf16 accumulation order — measured on the banked ZH cache at mean
+per-item cosine **0.99955–0.99987** across all six (split × stream) cells, with the **text** stream drifting
+≈ 3× further than the image. Yet through the 78-item ZH dev wall that numerically-null difference moved the
+**val-selected** test readout by **−0.0268 acc / −0.0340 macro-F1 (0/3 seeds)** — larger than our ±0.014
+head-seed band — while the no-selection **final-epoch** protocol moved by only **−0.0067**, a single test item.
+Two limits follow: any comparison pairing a merged-path floor with an unmerged-path arm needs a **same-path
+floor** as a default cost rather than a contingency, and val-selected deltas on these splits must be read as
+protocol-conditioned quantities whose sensitivity to method-null perturbations can exceed the effects they are
+asked to certify [DOC:MOKA_VERDICT_REVIEW.md §D7, §D8.4].
+
 ---
 
 *Provenance note: all numbers are transcribed from `PAPER_MASTER_TABLES.md` (T1–T4) and the committed
@@ -309,7 +351,11 @@ et al. ICML 2022; `lewidi2025` = LeWiDi-2025 shared task; `serac`, `grace`, `wis
 bidirectional-attention baseline; and, for the wave-5 HateMM/EN frontier positioning, `cmfusion` = CMFusion
 (arXiv 2505.12051), `koushik` = Koushik HCC1 CLAP-audio (arXiv 2502.07138), `yang2025` = temporal-label-noise
 / segment-contamination (arXiv 2508.04900), plus arXiv IDs registered for the already-used keys `tandem`
-(2601.11178) and `ramf` (2512.02743)), all verified against the litsurvey and litsweep-5 PAPER-VALUE lists
+(2601.11178) and `ramf` (2512.02743); and, for the round-7 transplant sources of §2(g), `lsmi` = LSMI
+sample-level multimodal-interaction estimator (ICML 2025, `GeWu-Lab/LSMI_Estimator` — **venue verified, arXiv ID
+not established in-record, so none is registered here**), `moka` = MokA modality-routed LoRA (NeurIPS 2025 Oral,
+arXiv 2506.05191), `synib` = SynIB synergy information bottleneck (arXiv 2606.09853)), all verified against the
+litsurvey, litsweep-5 and repro-survey PAPER-VALUE lists
 [DOC:LITSURVEY_NOVEL_MECHANISMS.md, DOC:LITSURVEY_RETRIEVAL_MEMORY.md, DOC:LITSURVEY_MLLM_EMBEDDING.md,
-DOC:LITSWEEP5_HATEMM_EN.md, DOC:LITSWEEP5_TEMPORAL.md]; the shared bibliography is a `\bibliography` placeholder
+DOC:LITSWEEP5_HATEMM_EN.md, DOC:LITSWEEP5_TEMPORAL.md, DOC:REPRO_SURVEY_2025.md]; the shared bibliography is a `\bibliography` placeholder
 pending assembly.*

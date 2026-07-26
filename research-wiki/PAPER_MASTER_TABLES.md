@@ -456,16 +456,17 @@ COMPLETENESS}.md` + `GRADEDLBL_PREGATE_RECORD.md`(+`OUT.json`)。findings F75–
 
 ### T6.4 Round-7 融合门闩 + 代码复现启发战役(F83–F87;实测 null + $0 survey/gate/park)
 
-> **续 append 2026-07-26**(同纯转录纪律)。measured-dead:fusion-concat(F85,~0.1 GPU-h);$0:repro-survey
-> (F84)。**不改 T1–T4 任何数、不增 13 路线计数、不占负结果 ordinal**;项目最优数(HateMM 0.8775/0.8791;
-> ZH final 0.8456/0.8173)不变。
+> **续 append 2026-07-26**(同纯转录纪律)。measured-dead:fusion-concat(F85,~0.1 GPU-h)、MokA-ZH(F87,
+> 5.573 GPU-h,measured-not-promoted);$0:repro-survey(F84)、LSMI PID gate(F86)、SynIB port(F86 kill-switch
+> 触发 → PARK)。**不改 T1–T4 任何数、不增 13 路线计数、不占负结果 ordinal**;项目最优数(HateMM 0.8775/0.8791;
+> ZH final 0.8456/0.8173)不变。**law-I 实例计数仍为 8 ——F87 的第 9 例明确未获认证**(见 T6.4-b)。
 
 **T6.4-a 融合门闩 + 复现调研(F83–F85)**
 
 | 路线 | 死因(一行) | 判决 · commit |
 |---|---|---|
-| **Trained fusion operator** — 把部署的 `align`/Hadamard 换成 head 内**训练过的** `concat`+MLP(唯一一个从未在视频上跑过的 first-class `fusion_mode` 分支;recon 证实 F50 只禁 *fixed* composition、F75 只禁 *loss* swap,双 ban letter 均 over-reach) | 1-bite 3-seed × 2-dataset 判决,~0.1 GPU-h,**零代码 diff**(job 13514;branch-assert 6/6、3 个独立 parser 48/48 一致、prereg re-hash 匹配):**两个 cell 全 KS-arm-dead**——ZH val-sel +0.0067(2/3)但 final −0.0045(1/3);HateMM −0.0031 / −0.0031(每条腿 0/3);4 条腿无一接近 FORMAL +0.030/+0.030;无 KS-regression(最差 −0.0045 > −0.014)。HateMM 全部效应 ≤ **2 个翻转样本**/seed(n=215,6 个 Δacc 中 4 个恰为 0.0000);ZH val-sel 均值 = **+1 样本/seed**(n=149)⇒ **fusion-operator 轴 CLOSED,为实测 null**;该 null 属于 **concat + 2.0× first-Linear 捆绑**(2,098,176 vs 1,049,600 参数),**不得**升格为「加 head 容量没用」 | FUSIONCAT_VERDICT_REVIEW.md · `129fe2e`(recon FUSIONSWAP_FORENSIC_RECON.md · `934bc9a`) |
-| **Repro-survey** — 邻域(**非**仇恨视频)2025-H2→2026 **带可运行代码**工作,按 file-tree + `py_compile` 而非 README 分诊 | $0(无 GPU / SLURM / 权重下载):clone 8 个 repo(91 MB,gitignored);shortlist **LSMI(ICML 2025)> SynIB(arXiv 2606.09853)> MokA(NeurIPS 2025 Oral)**;UniME-V2 于源头排除(MLLM-as-a-judge 软标签 = 被禁的 P11/P2 监督源),VLM2Vec 无我方没有的 pooling(仅 `last\|mean\|cls`),**VidVec `main` 分支为空**(无代码),**RASR 被作者撤稿**(v2,2026-06-30);HateMM 数据集论文自带 baseline 代码**按发布状态无法编译**(`Codes/1.FastTextEmb_and_LASEREmbExtraction.py:45` SyntaxError),而 LSMI/SynIB/UniME-v2/BalanceBenchmark/MokA/VLM2Vec 分别 4/4、99/99、95/95、55/55、214/214、271/271 编译干净。**覆盖度自陈:** WebSearch 配额 200/200 用尽 ⇒ 这是 **8 个仓库的深度分诊,不是穷举枚举** | REPRO_SURVEY_2025.md · `9367338`(+ ERRATUM `81e2eaf`) |
+| **Trained fusion operator** — 把部署的 `align`/Hadamard 换成 head 内**训练过的** `concat`+MLP(唯一一个从未在视频上跑过的 first-class `fusion_mode` 分支;recon 证实 F50 只禁 *fixed* composition、F75 只禁 *loss* swap,双 ban letter 均 over-reach) | 1-bite 3-seed × 2-dataset 判决,~0.1 GPU-h,**零代码 diff**(job 13514;branch-assert 6/6、3 个独立 parser 48/48 一致、prereg re-hash 匹配):**两个 cell 全 KS-arm-dead**——ZH val-sel +0.0067(2/3)但 final −0.0045(1/3);HateMM −0.0031 / −0.0031(每条腿 0/3);4 条腿无一接近 FORMAL +0.030/+0.030;无 KS-regression(最差 −0.0045 > −0.014)。HateMM 全部效应 ≤ **2 个翻转样本**/seed(n=215;6 个 Δacc 中 **3 个**恰为 0.0000,其余为 −1/−1/−2 样本——**更正**源记录 NB-3 的「4 个」,该数与其自身 D5(a) 表及本次重读的原始 `RESULT_ROW` 均不符);ZH val-sel 均值 = **+1 样本/seed**(n=149)⇒ **fusion-operator 轴 CLOSED,为实测 null**;该 null 属于 **concat + 2.0× first-Linear 捆绑**(2,098,176 vs 1,049,600 参数),**不得**升格为「加 head 容量没用」 | FUSIONCAT_VERDICT_REVIEW.md · `129fe2e`(recon FUSIONSWAP_FORENSIC_RECON.md · `934bc9a`) |
+| **Repro-survey** — 邻域(**非**仇恨视频)2025-H2→2026 **带可运行代码**工作,按 file-tree + `py_compile` 而非 README 分诊 | $0(无 GPU / SLURM / 权重下载):clone 8 个 repo(91 MB,gitignored);按启发价值排序为 **SynIB(arXiv 2606.09853)> LSMI(ICML 2025)> MokA(NeurIPS 2025 Oral)**,但**执行顺序**以 **LSMI 优先**(它是 gate 住 SynIB port 的 $0 诊断);UniME-V2 于源头排除(MLLM-as-a-judge 软标签 = 被禁的 P11/P2 监督源),VLM2Vec 无我方没有的 pooling(仅 `last\|mean\|cls`),**VidVec `main` 分支为空**(无代码),**RASR 被作者撤稿**(v2,2026-06-30);HateMM 数据集论文自带 baseline 代码**按发布状态无法编译**(`Codes/1.FastTextEmb_and_LASEREmbExtraction.py:45` SyntaxError),而 LSMI/SynIB/UniME-v2/BalanceBenchmark/MokA/VLM2Vec 分别 4/4、99/99、95/95、55/55、214/214、271/271 编译干净。**覆盖度自陈:** WebSearch 配额 200/200 用尽 ⇒ 这是 **8 个仓库的深度分诊,不是穷举枚举** | REPRO_SURVEY_2025.md · `9367338`(+ ERRATUM `81e2eaf`) |
 
 **SynIB 刻画勘误(F84,进入论文框架):** survey §4.1/§6 把 SynIB 目标写成「intact 与 masked 预测之间的
 symmetric KL」——**源码层为假**,一律以 port recon 对 `synib_mask_model.py` 的读法为准:intact 预测**从不**进入
@@ -474,6 +475,35 @@ KL(Hateful-Memes 配置);唯一的 symmetric logit-KL helper 在仓库里是**�
 `zeros | noise | ema` 三种 mask fill 是死代码(live 路径为 batch-permutation fill)、config `p` 键失效
 (`p_min = 0.30` 生效)、HM anchor head **无梯度路径**(未训练随机初始化)。[DOC:REPRO_SURVEY_2025.md ERRATUM
 `81e2eaf`;SYNIB_PORT_FORENSIC_RECON.md `9e638ea`]
+
+**T6.4-b 复现启发战役 —— shortlist 自上而下执行(F86–F87)**
+
+| 条目(survey §5 执行序) | 结果(一行) | 成本 | 判决 · commit |
+|---|---|---|---|
+| **LSMI**(#1)—— 对部署双流在 banked train+dev 缓存上做 sample-level PID(`R`/`U1`/`U2`/`S`),三条 lineage 全测 | **先认证机器再信数**:released `d'=64` 配方把**确定性** XOR 读成随机(joint out-of-fold 0.513/0.530/0.508)⇒ 该层 `LSMI_MEASUREMENT_INVALID`;认证维 **`d*=16`**(`d'=8` 复现:最大 synergy 0.6931 被还原为 0.7077/0.7321/0.7105,误差 ≈2%);duplicate-stream 真值-0 控制在认证维 **恰为 0.0000**,而在 `d'=64` 为 +0.0838/+0.1516/+0.2240。认证维结果:`S` = **−0.0747(ZH)/ −0.0802(HateMM)/ −0.0000(EN)**,6 个 cell 中 5 个 ≤ 0,perm-null q95 = 0,dev 复现(−0.0004/−0.0575/−0.1041);`U2`(text)为 5/6 cell 最大 atom(0.076–0.237),**`U1`(image)在 5/6 cell 恰为 0.0000**;`I12` 0.149–0.359 nats。机械标签 INDETERMINATE(ZH/HateMM)+ FUSION_CAPPED(EN)——**synergy 半边处处触发**,dominance 半边因该对是 **uniqueness-dominated(text 侧)** 而非 redundancy-dominated 而不触发 ⇒ 支撑句:**fusion 只能重组 `R`/`U1`/`U2`,没有 `S` 可捕获**(F50 rotation + F44 EN image collapse 的机制层解释,与 F85 concat null 一致但**不**互相推导) | **0 GPU-h**(纯 CPU,零 test-touch) | LSMI_GATE_RECORD.md · `a8905ac`(预声明链 `d4b06f0`→`362a60e`;撤回记 `915a60d`) |
+| **SynIB**(#2)—— masked-branch 信息瓶颈项,**加**在 triplet+BCE 之上(非替换) | **PARK,未跑。** port recon 预声明「LSMI 读数」为 kill-switch,触发的是分支 (a)(`s ≈ 0` 全数据集)⇒ 一个为把 head 推向 *synergistic* 结构而设计的目标,在这里没有结构可推(recon 对 goal 门的 prior 1–2%)。条件项 BalanceBenchmark(survey #4)因「有 synergy 才需平衡」而**不解锁** | **0 GPU-h** | SYNIB_PORT_FORENSIC_RECON.md · `9e638ea`(park 随 gate 记录于 `a8905ac`) |
+| **MokA**(#3)—— modality-routed LoRA(per-modality 下投影 `A`、共享 `B`、`r_v=r_t=16`)进部署 ZH encoder-SFT;**本战役从未变过的 PEFT-adapter-structure 轴** | **MEASURED — NOT PROMOTED。** `final-epoch: fail; val-selected: fail`(对两个 floor 皆然);对 banked merged floor 13150 **双协议 +0.0000 acc**。drift 门 6/6 触发(最差 mean per-item cos **0.99954879** < 0.9999)⇒ same-path **unmerged** floor 强制且 binding;对之 arm 读 **+0.0268 val-sel(3/3)**——D7 裁定**不可归因于 routing**:routing **完全缺席**时 unmerged 路径自身丢 **−0.0268 / −0.0340(0/3)**,三比较为同一恒等式 **+0.0000 = +0.0268 + (−0.0268)**;主导 seed −0.0604 = **−9/149 样本**,其 val-selection 塌到 ep5(两 epoch 并列 Val 0.8718,roc tie-break 取早者),而**无选点**的 final-epoch 协议同一操作只 −0.0067(1 样本)。`KS-MOKA-3` = **NULL-OP**:text **FLAT**(Δ train-LOO −0.0007/+0.0018)⇒ prereg 自己的 text-side 赌注**被证伪**;image **AMBIGUOUS 非 MOVED** ⇒ **第 9 个 law-I 实例未获认证**(计数仍为 8);visual-modality-protection 叙事**被禁**。经济解释 = F0.6 regime 反转:我方 SFT **94.6% vision token**(median 2,688 vision + 153 text)vs MokA 自家 **98.4% TEXT**(16,128 vs 256)⇒ routing 让 `A_t` 不被稀释却**被饿**(占位 100%→≈5.4%,token-gradient ≈18× 少),`A_v` 梯度范数比 `A_t` **低 25–40×**。test-touch 6 花 / 6 预算 | **5.573 GPU-h**(job 13537/13551/13552/13566/13573 = 0.003/0.532/3.414/1.212/0.413;cap 4.70 ⇒ +0.87,**+18.6% 已披露**,逐项映射到预注册条目) | MOKA_VERDICT_REVIEW.md · `91f64a6`(submit `ed609eb`,re-freeze `72a947b`) |
+
+**methods-note(F86,进论文方法/附录):** released LSMI 的 entropy-estimator 循环**从不调用 `optimizer.zero_grad()`**
+(`main_lsmi.py:174-187`),KNIFE 梯度全程累积;该缺陷在作者 2 维 demo 中 4dp 不可见,在我方维度下**改变结论**——
+判别器逐位相同而熵估计移动(ZH `H1` 1130.19 → 710.62)、**`S` 符号在 3 个数据集中 2 个翻转**(ZH +0.2345 → −0.0672;
+HateMM −0.1517 → +0.1152)。更关键:**released in-sample 读法在我方 n 下饱和**(三判别器 acc 0.99–1.00,三 pointwise
+MI ≈ log 2),对**真实对**与**真值不同的两个控制**(duplicate-stream、split-half)**给出同一句**「redundancy-dominated,
+`S ≈ 0.02`」⇒ 按发布状态跑会产出一个干净、可引用且**错误**的论文结论;cross-fitted 读法(在合成控制触发后、任何
+RGCL cache cell 之前声明)是抓到它的原因。
+
+**D7 裁定(F87,写作纪律,binding):** 把 +0.0268 报成 routing 增益属于 `0.8732` 纪律要针对的同类 numeric-provenance
+违规;正确的一句是「modality-routed LoRA 把 ZH encoder 落在 shared-`A` floor 上」,**不是**「+0.027 val-sel 增益」。
+同一 cell 产出两条可迁移方法学:(i) **同路径 floor 是任何 adapter-structure 比较的默认成本**,非 contingency;
+(ii) merged/unmerged 的 bf16 漂移**不对称**——text 流比 image 流远 ≈3×(均值 ≈0.99955 vs ≈0.99985),而两个被测协议
+都骑在 text 流上。F0.2 同时 binding:**仅一次 SFT draw**,`--seed` 只变 head ⇒ encoder-draw 噪声与 routing 效应
+**不可分离**(limitations)。
+
+**来源(T6.4):** `refine-logs/{FUSIONSWAP_FORENSIC_RECON, FUSIONCAT_VERDICT_REVIEW, REPRO_SURVEY_2025(+ERRATUM),
+SYNIB_PORT_FORENSIC_RECON, LSMI_GATE_RECORD(+LSMI_GATE_OUT.json), MOKA_VERDICT_REVIEW, MOKA_SUBMIT_RECORD,
+MOKA_REFREEZE_FIX}.md`。findings F83–F87(`state/findings.jsonl`)。round-7 总 GPU ≈ **5.7 GPU-h**
+(MokA 5.573 + fusion-concat ~0.1;survey / PID gate / SynIB park 皆 $0)。**不入负结果 ordinal、不铸总数
+(逐轮框架,同文末张力清单 #9);law-I 实例计数保持 8。**
 
 ---
 
