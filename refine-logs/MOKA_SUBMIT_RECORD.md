@@ -975,3 +975,88 @@ train-LOO AUC **0.9254** reproduces F45's published ZH value **0.925**.
 
 **No unbudgeted test evaluation occurred.** `--force False` throughout; groups `RAC_video_moka` and
 `RAC_video_moka_umfloor` were both fresh.
+
+---
+
+# S6' — CLOSEOUT
+
+## Chain outcome (round 2, REFREEZE-1)
+
+| stage | outcome |
+|---|---|
+| S0' sha re-verify vs REFREEZE-1 | **PASS** (A/D/E amended, prereg+B/C/F/G+4 reused pins unchanged) |
+| S1' mandatory codex RE-GATE, all 7 items | **GATE: PASS**, zero new findings |
+| S2' CPU smoke S1–S9 | **ALL PASS**, exit 0 |
+| S3' GPU smoke | 13537 FAILED (throwaway defect, fixed) → **13551 ALL 5 LEGS PASS** |
+| S4' job 1 — MokA-ZH SFT | **13552 COMPLETED 0:0** |
+| S4' job 2 — 0b + extraction + 3 arm heads | **13566 COMPLETED 0:0** |
+| §3.4 contingency — 3 unmerged-floor heads | **13573 COMPLETED 0:0** (coordinator-ACKed) |
+| S5' RAW transcription | **committed** (`e5a145a`) |
+
+## Integrity statement — verified at closeout
+
+- **REFREEZE-1 shas ALL still intact after every run**: `A 6b7bdb6c…`, `B fae40487…`, `C 75bb8156…`,
+  `D bd258553…`, `E 020dd10b…`, `F fd1b7f29…`, `G 51b883e9…`, `FROZEN dc3f1078…`,
+  `src/run_rac.py b85eb72a…`. **No frozen artifact was edited at any point in either round.**
+- LF gitlink still `160000 a912747c408b3c661b4029ecf1d88b9d91c7f1a8`; **zero vendored lines edited**.
+- `run_rac.py`, `loss.py`, `classifier.py`, `retrieval.py`, `src/moka/`, both frozen sbatch and the
+  smoke — **all git-clean**.
+- **No `state/` or `research-wiki/` mutation by this executor.** The two entries git reports there
+  (`M autoresearch/goal_mllm_plus3/state/progress.json`, `?? research-wiki/CLOUD_GPU_FEASIBILITY_2026-07-14.md`)
+  were **already present in the session-start git status, before the executor ran anything**.
+- **Not pushed.** All commits are local.
+- Throwaway harnesses (GPU-smoke sbatch/driver/yaml, umfloor runner, cross-parser, KS-3 readout) live
+  **only** in the executor scratchpad and were **never committed as artifacts**; they are reproduced in
+  this record by provenance (lift commands, block shas, diffs).
+
+## Final GPU-h ledger
+
+| job | what | elapsed | GPU-h |
+|---|---|---|---|
+| 13537 | smoke (throwaway defect, crashed pre-model-load) | 00:00:11 | 0.003 |
+| 13551 | GPU smoke, 5 legs | 00:31:55 | 0.532 |
+| 13552 | MokA-ZH SFT | 03:24:49 | 3.414 |
+| 13566 | KS-MOKA-0b + `--moka` extraction + 3 arm heads | 01:12:42 | 1.212 |
+| 13573 | §3.4 unmerged-floor, 3 heads | 00:24:46 | 0.413 |
+| **TOTAL** | | | **5.573** |
+
+Against the planning cap **4.70** (4.65 stage-1 + 0.05 contingent) ⇒ **+0.87 GPU-h (+18.6 %)**.
+Attribution, honestly: **+0.33** GPU smoke (the executor's own `eval_strategy: steps` deviation, 3
+full eval passes — it bought the eval-surface `fallback_calls == 0` evidence); **+0.31** SFT (the
+frozen recipe's 3 per-epoch eval passes plus build/load — **not** routing compute, which measured
+**+1.72 %**); **+0.61** job 2 (0b + extraction ran longer than the `lora_embed`-derived estimate);
+**+0.36** the contingent floor run above its 0.05 estimate. **No healthy run was killed**, per
+standing instruction. Disk ended at **1.6 T free / 90 %** (disk_guard pruned during job 1).
+
+## Deviations from the frozen plan (complete list)
+
+1. **Round 1 STOP** under §4.6 on 2 runtime-confirmed P1s — adjudicated correct; fix + re-freeze +
+   independent re-review completed by others; executor re-ran the chain from the top.
+2. **GPU-smoke throwaway yaml** carried `eval_strategy: steps` / `eval_steps: 5` (frozen recipe uses
+   `epoch`) so the smoke would exercise the **eval** call surface; and job 13537 failed on a duplicate
+   `save_strategy` key in that same throwaway. Both are executor-harness only; **frozen artifact G was
+   never touched** (sha re-verified immediately after the failure). Pre-flight validation added.
+3. **`KS-MOKA-0b` in the GPU smoke was an 8-item machinery rehearsal**, not the full probe — the
+   pre-registered number came from job 2 Stage A0 over all 3 splits, as frozen. Rationale recorded:
+   avoids double-spending ~0.6 GPU-h and avoids pre-creating the `-um` caches job 2 writes (P2-5).
+4. **`KS-MOKA-3` reported against BOTH floors** (merged, per §3.7's literal wording; and unmerged, per
+   §3.4's switched pairing) rather than one. Both are $0, train+dev only, zero test-touch. Labels agree
+   under both.
+5. **§3.4 contingency executed** — pre-declared, coordinator-ACKed, +3 test evals against the §F0.1
+   reservation. Runner was a throwaway whose `run_one()` block is **byte-identical** (sha `286a9e44…`)
+   to the frozen block and to the anchor that produced floor 13150.
+
+## Open items for the independent 0-context verdict reviewer
+
+- **Pairing is against the UNMERGED floor 13573**, per §3.4 verbatim, because `KS-MOKA-0b` failed on
+  **all 6** cells. The merged-floor 13150 comparison is recorded as **secondary and non-binding**.
+- **N1 binds `KS-MOKA-2`**: non-degeneracy floor only, never "routing is real".
+- **N2 must be restated at verdict time**: F0.2 (single encoder draw; encoder-seed noise **not
+  separable** from the routing effect) and F0.6 (94.6 % vision tokens here vs MokA's own 98.4 % text
+  regime).
+- **N4**: state which parse of `KS-MOKA-1`'s quantifier was applied. **N5**: report per protocol.
+- **§3.7's three readings** are unapplied by design — the executor recorded only the mechanical
+  MOVED/FLAT/AMBIGUOUS labels.
+- **F0.3** bounds any novelty claim to *first application of modality-routed PEFT to hateful-video
+  encoders*, with MokA credited.
+- The **floor-vs-floor** arithmetic in §S5'.6 is offered as measured context, unweighted.
