@@ -1,0 +1,41 @@
+{
+ "dataset": "MHC_zh",
+ "floor_tag": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+ "moka_tag": "Qwen2.5-VL-7B-Instruct-LoRA-moka_HF",
+ "K": 20,
+ "move_thresholds": {
+  "train_loo": 0.01,
+  "dev": 0.005
+ },
+ "n_train": 579,
+ "n_dev": 78,
+ "streams": {
+  "img": {
+   "floor_train_loo_auc": 0.7140907825118351,
+   "moka_train_loo_auc": 0.7261069340016708,
+   "d_train_loo_auc": 0.012016151489835702,
+   "floor_dev_auc": 0.8142857142857143,
+   "moka_dev_auc": 0.8185714285714286,
+   "d_dev_auc": 0.004285714285714337,
+   "label": "AMBIGUOUS"
+  },
+  "text": {
+   "floor_train_loo_auc": 0.9254246727930938,
+   "moka_train_loo_auc": 0.9272486772486772,
+   "d_train_loo_auc": 0.0018240044555833945,
+   "floor_dev_auc": 0.9314285714285714,
+   "moka_dev_auc": 0.9385714285714286,
+   "d_dev_auc": 0.0071428571428572285,
+   "label": "FLAT"
+  },
+  "concat": {
+   "floor_train_loo_auc": 0.913088276246171,
+   "moka_train_loo_auc": 0.9137009189640769,
+   "d_train_loo_auc": 0.0006126427179059535,
+   "floor_dev_auc": 0.9085714285714286,
+   "moka_dev_auc": 0.9228571428571428,
+   "d_dev_auc": 0.014285714285714235,
+   "label": "FLAT"
+  }
+ }
+}
