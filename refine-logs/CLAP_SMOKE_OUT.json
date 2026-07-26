@@ -1,0 +1,244 @@
+{
+ "model": "laion/larger_clap_general",
+ "n_smoke": 20,
+ "d_proj": 512,
+ "d_hidden": 1024,
+ "fe": {
+  "sr": 48000,
+  "nb_max_samples": 480000,
+  "mels": 64,
+  "truncation": "rand_trunc",
+  "padding": "repeatpad"
+ },
+ "D1_determinism_all": true,
+ "D2_sanity_all": true,
+ "D3_discriminative": true,
+ "proj_cos_offdiag": {
+  "min": 0.1828,
+  "mean": 0.5455,
+  "max": 0.8512
+ },
+ "records": [
+  {
+   "id": "hate_video_98",
+   "dur_s": 684.92,
+   "n_win": 69,
+   "n_win_expected": 69,
+   "D1_deterministic": true,
+   "proj_norm": 1.6559,
+   "hid_norm": 17.4199,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_80",
+   "dur_s": 90.53,
+   "n_win": 10,
+   "n_win_expected": 10,
+   "D1_deterministic": true,
+   "proj_norm": 1.4556,
+   "hid_norm": 27.0984,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "hate_video_344",
+   "dur_s": 250.88,
+   "n_win": 26,
+   "n_win_expected": 26,
+   "D1_deterministic": true,
+   "proj_norm": 1.5326,
+   "hid_norm": 25.6574,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_129",
+   "dur_s": 50.11,
+   "n_win": 6,
+   "n_win_expected": 6,
+   "D1_deterministic": true,
+   "proj_norm": 1.3985,
+   "hid_norm": 24.8684,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_43",
+   "dur_s": 66.73,
+   "n_win": 7,
+   "n_win_expected": 7,
+   "D1_deterministic": true,
+   "proj_norm": 1.437,
+   "hid_norm": 21.0231,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_297",
+   "dur_s": 111.37,
+   "n_win": 12,
+   "n_win_expected": 12,
+   "D1_deterministic": true,
+   "proj_norm": 1.41,
+   "hid_norm": 21.637,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_104",
+   "dur_s": 83.92,
+   "n_win": 9,
+   "n_win_expected": 9,
+   "D1_deterministic": true,
+   "proj_norm": 1.4788,
+   "hid_norm": 21.8316,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "hate_video_83",
+   "dur_s": 219.52,
+   "n_win": 22,
+   "n_win_expected": 22,
+   "D1_deterministic": true,
+   "proj_norm": 1.4594,
+   "hid_norm": 22.8396,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "hate_video_48",
+   "dur_s": 28.89,
+   "n_win": 3,
+   "n_win_expected": 3,
+   "D1_deterministic": true,
+   "proj_norm": 1.353,
+   "hid_norm": 12.3548,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "hate_video_225",
+   "dur_s": 141.12,
+   "n_win": 15,
+   "n_win_expected": 15,
+   "D1_deterministic": true,
+   "proj_norm": 1.5391,
+   "hid_norm": 23.3398,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "hate_video_271",
+   "dur_s": 72.01,
+   "n_win": 8,
+   "n_win_expected": 8,
+   "D1_deterministic": true,
+   "proj_norm": 1.4838,
+   "hid_norm": 16.4314,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_534",
+   "dur_s": 75.74,
+   "n_win": 8,
+   "n_win_expected": 8,
+   "D1_deterministic": true,
+   "proj_norm": 1.4127,
+   "hid_norm": 19.1485,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "hate_video_160",
+   "dur_s": 182.44,
+   "n_win": 19,
+   "n_win_expected": 19,
+   "D1_deterministic": true,
+   "proj_norm": 1.5273,
+   "hid_norm": 25.431,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_87",
+   "dur_s": 12.99,
+   "n_win": 2,
+   "n_win_expected": 2,
+   "D1_deterministic": true,
+   "proj_norm": 1.3763,
+   "hid_norm": 24.1142,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_477",
+   "dur_s": 92.1,
+   "n_win": 10,
+   "n_win_expected": 10,
+   "D1_deterministic": true,
+   "proj_norm": 1.4906,
+   "hid_norm": 21.027,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "hate_video_333",
+   "dur_s": 145.02,
+   "n_win": 15,
+   "n_win_expected": 15,
+   "D1_deterministic": true,
+   "proj_norm": 1.4937,
+   "hid_norm": 21.5813,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "hate_video_185",
+   "dur_s": 216.77,
+   "n_win": 22,
+   "n_win_expected": 22,
+   "D1_deterministic": true,
+   "proj_norm": 1.5571,
+   "hid_norm": 20.4926,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_536",
+   "dur_s": 201.04,
+   "n_win": 21,
+   "n_win_expected": 21,
+   "D1_deterministic": true,
+   "proj_norm": 1.531,
+   "hid_norm": 19.1405,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_34",
+   "dur_s": 32.67,
+   "n_win": 4,
+   "n_win_expected": 4,
+   "D1_deterministic": true,
+   "proj_norm": 1.3888,
+   "hid_norm": 19.4995,
+   "nan": false,
+   "allzero": false
+  },
+  {
+   "id": "non_hate_video_493",
+   "dur_s": 15.05,
+   "n_win": 2,
+   "n_win_expected": 2,
+   "D1_deterministic": true,
+   "proj_norm": 1.3784,
+   "hid_norm": 17.9806,
+   "nan": false,
+   "allzero": false
+  }
+ ],
+ "SMOKE_PASS": true
+}
