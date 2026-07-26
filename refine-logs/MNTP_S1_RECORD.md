@@ -386,6 +386,98 @@ Primary outputs: `scripts/analysis/mntp_s1_devscreen_OUT.json`,
 
 ---
 
+## 6b. AMENDMENT — S1b: TEXT-POSITIONS-ONLY MEAN POOL (declared BEFORE building)
+
+**Status at declaration:** funded by main-loop ruling after S1 reported. Still S1-family
+(readout hypothesis, **zero training**, no adapter, no corpus ruling, no download). S2a transplant
+stays parked. **This section was written and committed BEFORE the S1b fork was built**, per the
+project's freeze discipline; nothing below was chosen after seeing an S1b number.
+
+### 6b.1 Why S1b exists
+
+S1 refuted the *naive* form of H2 but did not test the real one: it pooled **all** ~900 positions,
+of which ~80 % are vision tokens from the same 8 frames the img stream pools, so the "text" vector
+collapsed onto the img vector (cos 0.93) and stopped being a text readout. LLM2Vec mean-pools
+sequences that are **pure text**. The faithful multimodal analogue pools **text positions only**.
+That is S1b, and it is the clean test of H2.
+
+### 6b.2 The manipulated readout — exact rule
+
+Text positions are selected by **token id**, not by span arithmetic:
+
+```
+keep[i]  ==  attention_mask[i] == 1              (non-padding; all-ones at bsz=1 unpadded)
+         AND input_ids[i] != <|video_pad|>       (id 151656 — vision CONTENT positions)
+         AND input_ids[i] != <|image_pad|>       (id 151655 — defensive; we pass videos, not images)
+text_feats = L2( mean_{i : keep[i]} last_hidden[i] )
+```
+
+Verified on CPU with the deployed processor (`max_pixels=151200`, `num_frames=8`) before writing
+this section:
+
+| token | id | role | disposition |
+|---|---|---|---|
+| `<|video_pad|>` | 151656 | the vision content positions | **EXCLUDED** |
+| `<|image_pad|>` | 151655 | image content (unused on this path) | **EXCLUDED** (defensive) |
+| `<|vision_start|>` / `<|vision_end|>` | 151652 / 151653 | **one each**, structural markers, not content | **KEPT** (chat-format text) |
+| `<|im_start|>` / `<|im_end|>` | 151644 / 151645 | 3 / 2 per sequence, chat format | **KEPT** |
+| all instruction / title / transcript / system wordpieces | — | the actual text | **KEPT** |
+
+Decoding the kept positions reproduces the full prompt intact — system turn, user turn, the
+vision markers with the video content elided, the analytic instruction, title, transcript, and the
+trailing assistant header. That is exactly the object LLM2Vec mean-pools.
+
+**Example span decomposition** (deployed processor, 8 frames at `max_pixels=151200`, 60 real train
+prompts per dataset):
+
+| dataset | seq median | vision positions | text positions (median / min / max) | vision share |
+|---|---|---|---|---|
+| HateMM | 908.5 | 720, constant | 188.5 / 70 / 2994 | 79.3 % |
+| MHC_zh | 847.5 | 720, constant | 127.5 / 83 / 328 | 85.0 % |
+
+*Provenance note:* the recon §1.5 reports 768 constant vision tokens; measured here at the deployed
+`max_pixels` the count is **720**. The count is a function of the frame geometry the sampler hands
+the processor (both are "4 temporal groups × N merged tokens"), so it is **not** a fixed constant
+across differently-shaped source videos. **This does not affect the rule, which masks by token id
+and never by count.** The S1b extractor will log the *actual* per-item decomposition over the real
+run, and those measured numbers — not these dummy-frame estimates — go in the S1b results table.
+
+The **img readout is unchanged**: still the frozen causal prefix-mean, still delegated to the
+frozen `_encode` function object. Expected to remain an exact null-op; the belt is retained.
+
+### 6b.3 Gates — bars do NOT move
+
+1. **`KS-MNTP-1`**, identical frozen bars: HateMM text ≥ **0.7804** (50 %), floor **0.7687** (25 %);
+   MHC_zh ≥ **0.7372**, floor **0.6827**; and the same sign-consistency clause for the partial band.
+2. **NEW mandatory belt — stream-collapse.** Mean per-item cos(text_S1b, img) must stay in the
+   causal regime, **< 0.60** (causal is 0.3105-0.3523; S1 was 0.9273-0.9320). **If it collapses
+   toward img again the arm SELF-REFUTES regardless of accuracy** — record and stop. This bar is
+   declared here, before any S1b number exists.
+3. Carried belts: `KS-MNTP-0a`; smoke with 4-item cosine checks against the banked arms (img must
+   be an exact null-op, text must differ); clobber and test-touch guards; **the zero-norm-row
+   exclusion fix carries over** to every cosine in this arm.
+4. Pre-GPU external review pass on the fork diff (model-internals code).
+5. **train+dev only, both datasets, HateMM first.** ZERO test-touch.
+6. If `KS-MNTP-1` CONTINUEs → `KS-MNTP-2` CPU screen against the **banked** 13652/13655 floors
+   (HateMM causal 0.8287 / bidir 0.7850; ZH causal 0.8419 / bidir 0.6923), CPU-to-CPU.
+
+Cache tags: `HateMM → Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-textpool_HF`,
+`MHC_zh → Qwen2.5-VL-7B-Instruct-LoRA-bidir-textpool_HF`. Budget ~1.0 GPU-h.
+
+### 6b.4 What S1b can and cannot conclude — declared in advance
+
+- **CONTINUE** (≥50 % recovery on ≥1 dataset **and** collapse belt < 0.60) ⇒ H2 is live: the crater
+  is substantially a readout mismatch, and the S1 result was an artifact of a bad pooling choice.
+- **Collapse belt ≥ 0.60** ⇒ arm self-refutes; the multimodal readout cannot be de-confounded this
+  way and the readout route is exhausted at zero training.
+- **Partial with inconsistent sign, or <25 % on both, with the collapse belt passing** ⇒ **H2 is
+  refuted on its strongest available test.** The readout is not the story, H1's weaker form stands,
+  and the campaign routes to S2a (transplant) or stops.
+- Under **no** outcome does S1b advance the goal clause: recovery to the causal floor is a
+  mechanism result (`KS-MNTP-3`), and every arm so far sits below that floor.
+
+---
+
 ## 7. GATE-BY-GATE SUMMARY
 
 | gate | outcome |
