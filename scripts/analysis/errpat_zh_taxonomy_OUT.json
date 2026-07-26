@@ -1,0 +1,8418 @@
+{
+ "summary": {
+  "A_inventory": {
+   "n_test": 149,
+   "n_pos": 45,
+   "n_neg": 104,
+   "per_seed": {
+    "seed0": {
+     "acc": 0.8456,
+     "n_errors": 23,
+     "n_FP": 11,
+     "n_FN": 12
+    },
+    "seed1": {
+     "acc": 0.8389,
+     "n_errors": 24,
+     "n_FP": 12,
+     "n_FN": 12
+    },
+    "seed2": {
+     "acc": 0.8523,
+     "n_errors": 22,
+     "n_FP": 10,
+     "n_FN": 12
+    }
+   },
+   "consensus": {
+    "wrong_3of3": 22,
+    "wrong_2of3": 0,
+    "wrong_1of3": 3,
+    "wrong_0of3": 124,
+    "union_any_seed": 25
+   },
+   "consensus_by_direction": {
+    "FN_3of3": 12,
+    "FP_3of3": 10,
+    "FN_any": 12,
+    "FP_any": 13
+   }
+  },
+  "B_vote_structure": {
+   "abs_margin_errors": {
+    "n": 69,
+    "median": 0.71374,
+    "mean": 0.63671,
+    "p90": 0.96946
+   },
+   "abs_margin_correct": {
+    "n": 378,
+    "median": 0.99988,
+    "mean": 0.8867,
+    "p90": 0.99999
+   },
+   "abs_margin_all_p25": 0.78087,
+   "abs_margin_all_median": 0.97112,
+   "purity_errors_median": 0.15,
+   "purity_correct_median": 1.0
+  },
+  "B_threshold_oracle": {
+   "seed0": {
+    "deployed_threshold_acc": 0.8456,
+    "best_global_threshold": 0.323607,
+    "best_global_threshold_acc": 0.8591,
+    "gain_from_global_recalibration": 0.0134,
+    "n_errors_with_collateral_le_1": 4,
+    "n_errors": 23
+   },
+   "seed1": {
+    "deployed_threshold_acc": 0.8389,
+    "best_global_threshold": 0.30411,
+    "best_global_threshold_acc": 0.8725,
+    "gain_from_global_recalibration": 0.0336,
+    "n_errors_with_collateral_le_1": 8,
+    "n_errors": 24
+   },
+   "seed2": {
+    "deployed_threshold_acc": 0.8523,
+    "best_global_threshold": -0.209241,
+    "best_global_threshold_acc": 0.8658,
+    "gain_from_global_recalibration": 0.0134,
+    "n_errors_with_collateral_le_1": 3,
+    "n_errors": 22
+   }
+  },
+  "C_protocol_flips": {
+   "seed0": {
+    "banked_valsel_epoch": 20,
+    "final_epoch": 29,
+    "remint_valsel_acc": 0.8456,
+    "remint_final_acc": 0.8456,
+    "banked_valsel_acc": 0.8322,
+    "banked_final_acc": 0.8456,
+    "n_items_changing_prediction": 10,
+    "n_fixed_by_final": 5,
+    "n_broken_by_final": 5,
+    "net_items": 0,
+    "fixed_ids": [
+     "BV1R4411v7Z8",
+     "BV1VJ411378e",
+     "BV1p14y1D7da",
+     "BV1da411c76p",
+     "BV1yu41137bC"
+    ],
+    "broken_ids": [
+     "BV1694y1N7xU",
+     "BV1aT4y1j73u",
+     "BV1MU4y1D7Ks",
+     "BV1WF411r7Sn",
+     "BV1ch411L7VP"
+    ]
+   },
+   "seed1": {
+    "banked_valsel_epoch": 26,
+    "final_epoch": 29,
+    "remint_valsel_acc": 0.8456,
+    "remint_final_acc": 0.8389,
+    "banked_valsel_acc": 0.8255,
+    "banked_final_acc": 0.8389,
+    "n_items_changing_prediction": 1,
+    "n_fixed_by_final": 0,
+    "n_broken_by_final": 1,
+    "net_items": -1,
+    "fixed_ids": [],
+    "broken_ids": [
+     "BV1VJ411378e"
+    ]
+   },
+   "seed2": {
+    "banked_valsel_epoch": 19,
+    "final_epoch": 29,
+    "remint_valsel_acc": 0.8255,
+    "remint_final_acc": 0.8523,
+    "banked_valsel_acc": 0.8389,
+    "banked_final_acc": 0.8523,
+    "n_items_changing_prediction": 12,
+    "n_fixed_by_final": 8,
+    "n_broken_by_final": 4,
+    "net_items": 4,
+    "fixed_ids": [
+     "BV1i24y1K7iC",
+     "BV1R4411v7Z8",
+     "BV1VJ411378e",
+     "BV1Rg411T7eN",
+     "BV1p14y1D7da",
+     "BV1R8411N7m6",
+     "BV1da411c76p",
+     "BV1yu41137bC"
+    ],
+    "broken_ids": [
+     "BV12B4y1x7eK",
+     "BV1694y1N7xU",
+     "BV1WF411r7Sn",
+     "BV1ch411L7VP"
+    ]
+   }
+  },
+  "C_protocol_flip_pool": {
+   "n_distinct_items_ever_flipping": 14,
+   "pct_of_test": 9.4,
+   "flips_by_item": {
+    "BV1VJ411378e": 3,
+    "BV1R4411v7Z8": 2,
+    "BV1p14y1D7da": 2,
+    "BV1694y1N7xU": 2,
+    "BV1da411c76p": 2,
+    "BV1yu41137bC": 2,
+    "BV1WF411r7Sn": 2,
+    "BV1ch411L7VP": 2,
+    "BV1aT4y1j73u": 1,
+    "BV1MU4y1D7Ks": 1,
+    "BV12B4y1x7eK": 1,
+    "BV1i24y1K7iC": 1,
+    "BV1Rg411T7eN": 1,
+    "BV1R8411N7m6": 1
+   }
+  },
+  "C_epoch_sensitivity": {
+   "seed0": {
+    "n_items_not_constant_over_legal_epochs": 35,
+    "pct": 23.5,
+    "n_always_correct": 104,
+    "n_always_wrong": 10
+   },
+   "seed1": {
+    "n_items_not_constant_over_legal_epochs": 38,
+    "pct": 25.5,
+    "n_always_correct": 102,
+    "n_always_wrong": 9
+   },
+   "seed2": {
+    "n_items_not_constant_over_legal_epochs": 42,
+    "pct": 28.2,
+    "n_always_correct": 98,
+    "n_always_wrong": 9
+   }
+  },
+  "D_stream_raw_space": {
+   "NOTE": "PRE-HEAD raw banked LoRA features; NOT the deployed head space. Deployed fusion is a trained Hadamard align, so no head-space single-stream vote exists.",
+   "streams": {
+    "image_only": {
+     "acc": 0.7047,
+     "auc": 0.6981,
+     "n_FP": 17,
+     "n_FN": 27
+    },
+    "text_only": {
+     "acc": 0.8523,
+     "auc": 0.9171,
+     "n_FP": 16,
+     "n_FN": 6
+    },
+    "fused_concat_l2n": {
+     "acc": 0.8456,
+     "auc": 0.9194,
+     "n_FP": 15,
+     "n_FN": 8
+    }
+   }
+  },
+  "D_stream_crosstab_on_deployed_errors": {
+   "img=N,txt=N": 24,
+   "img=N,txt=Y": 18,
+   "img=Y,txt=N": 18,
+   "img=Y,txt=Y": 9
+  },
+  "D_stream_crosstab_on_3of3_errors": {
+   "img=N,txt=N": 8,
+   "img=N,txt=Y": 6,
+   "img=Y,txt=N": 6,
+   "img=Y,txt=Y": 2
+  },
+  "E_covariates": {
+   "label3_distribution": {
+    "Hateful": 17,
+    "Normal": 104,
+    "Offensive": 28
+   },
+   "by_label3": [
+    {
+     "label": "3class=Normal",
+     "n": 104,
+     "err_rate_per_seed": 0.1058,
+     "n_wrong_3of3": 10,
+     "n_wrong_any": 13
+    },
+    {
+     "label": "3class=Offensive",
+     "n": 28,
+     "err_rate_per_seed": 0.25,
+     "n_wrong_3of3": 7,
+     "n_wrong_any": 7
+    },
+    {
+     "label": "3class=Hateful",
+     "n": 17,
+     "err_rate_per_seed": 0.2941,
+     "n_wrong_3of3": 5,
+     "n_wrong_any": 5
+    }
+   ],
+   "by_em_markup": [
+    {
+     "label": "has <em> keyword markup",
+     "n": 63,
+     "err_rate_per_seed": 0.1799,
+     "n_wrong_3of3": 11,
+     "n_wrong_any": 12
+    },
+    {
+     "label": "no <em> markup",
+     "n": 86,
+     "err_rate_per_seed": 0.1357,
+     "n_wrong_3of3": 11,
+     "n_wrong_any": 13
+    }
+   ],
+   "gt_text_chars_quartiles": [
+    49.0,
+    96.0,
+    183.0
+   ],
+   "by_text_len": [
+    {
+     "label": "gt_text_chars [0,49)",
+     "n": 37,
+     "err_rate_per_seed": 0.0901,
+     "n_wrong_3of3": 3,
+     "n_wrong_any": 4
+    },
+    {
+     "label": "gt_text_chars [49,96)",
+     "n": 37,
+     "err_rate_per_seed": 0.3243,
+     "n_wrong_3of3": 12,
+     "n_wrong_any": 12
+    },
+    {
+     "label": "gt_text_chars [96,183)",
+     "n": 37,
+     "err_rate_per_seed": 0.1261,
+     "n_wrong_3of3": 4,
+     "n_wrong_any": 6
+    },
+    {
+     "label": "gt_text_chars [183,1000000000)",
+     "n": 38,
+     "err_rate_per_seed": 0.0789,
+     "n_wrong_3of3": 3,
+     "n_wrong_any": 3
+    }
+   ],
+   "by_short_text": [
+    {
+     "label": "gt_text <= 40 chars",
+     "n": 27,
+     "err_rate_per_seed": 0.0494,
+     "n_wrong_3of3": 1,
+     "n_wrong_any": 2
+    },
+    {
+     "label": "gt_text > 40 chars",
+     "n": 122,
+     "err_rate_per_seed": 0.1776,
+     "n_wrong_3of3": 21,
+     "n_wrong_any": 23
+    }
+   ],
+   "by_asr_empty": [
+    null,
+    {
+     "label": "Whisper ASR non-empty",
+     "n": 149,
+     "err_rate_per_seed": 0.1544,
+     "n_wrong_3of3": 22,
+     "n_wrong_any": 25
+    }
+   ],
+   "asr_empty_count": 0,
+   "asr_chars_median": 72.0,
+   "gt_text_chars_median": 96.0,
+   "duration_median_s": 30.83,
+   "by_duration": [
+    {
+     "label": "duration [0,16)s",
+     "n": 37,
+     "err_rate_per_seed": 0.1351,
+     "n_wrong_3of3": 5,
+     "n_wrong_any": 5
+    },
+    {
+     "label": "duration [16,31)s",
+     "n": 37,
+     "err_rate_per_seed": 0.1892,
+     "n_wrong_3of3": 7,
+     "n_wrong_any": 7
+    },
+    {
+     "label": "duration [31,41)s",
+     "n": 37,
+     "err_rate_per_seed": 0.1532,
+     "n_wrong_3of3": 5,
+     "n_wrong_any": 7
+    },
+    {
+     "label": "duration [41,1000000000)s",
+     "n": 38,
+     "err_rate_per_seed": 0.1404,
+     "n_wrong_3of3": 5,
+     "n_wrong_any": 6
+    }
+   ],
+   "asr_language_dist": {
+    "zh": 149
+   }
+  },
+  "E_within_positive": {
+   "Offensive": {
+    "label": "positive & Offensive",
+    "n": 28,
+    "err_rate_per_seed": 0.25,
+    "n_wrong_3of3": 7,
+    "n_wrong_any": 7
+   },
+   "Hateful": {
+    "label": "positive & Hateful",
+    "n": 17,
+    "err_rate_per_seed": 0.2941,
+    "n_wrong_3of3": 5,
+    "n_wrong_any": 5
+   }
+  }
+ },
+ "per_item": {
+  "BV12B4y1x7eK": {
+   "id": "BV12B4y1x7eK",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.836618,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.836618,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9995,
+    "collateral_broken": 17,
+    "collateral_also_fixed": 9
+   },
+   "seed1": {
+    "vote": -0.971205,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.971205,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 30,
+    "collateral_also_fixed": 11
+   },
+   "seed2": {
+    "vote": -0.99737,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.99737,
+    "top20_purity_vs_gold": 0.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 40,
+    "collateral_also_fixed": 11
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 61,
+    "has_em_markup": true,
+    "em_terms": [
+     "妈宝男"
+    ],
+    "asr_chars": 25,
+    "asr_empty": false,
+    "duration_s": 9.98,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1G24y187Fh": {
+   "id": "BV1G24y187Fh",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.990404,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.990404,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 25,
+    "collateral_also_fixed": 10
+   },
+   "seed1": {
+    "vote": 0.971124,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.971124,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 22,
+    "collateral_also_fixed": 10
+   },
+   "seed2": {
+    "vote": 0.885599,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.885599,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 20,
+    "collateral_also_fixed": 8
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 156,
+    "has_em_markup": true,
+    "em_terms": [
+     "公主病"
+    ],
+    "asr_chars": 143,
+    "asr_empty": false,
+    "duration_s": 56.1,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1i24y1K7iC": {
+   "id": "BV1i24y1K7iC",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.740558,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.740558,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.808502,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.808502,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.862767,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.862767,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 118,
+    "has_em_markup": true,
+    "em_terms": [
+     "公主病"
+    ],
+    "asr_chars": 108,
+    "asr_empty": false,
+    "duration_s": 45.23,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Km4y1u7ri": {
+   "id": "BV1Km4y1u7ri",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.657105,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.657105,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 18,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 8,
+    "collateral_also_fixed": 6
+   },
+   "seed1": {
+    "vote": 0.647535,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.647535,
+    "top20_purity_vs_gold": 0.15,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 11,
+    "collateral_also_fixed": 7
+   },
+   "seed2": {
+    "vote": 0.761836,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.761836,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 12,
+    "collateral_also_fixed": 6
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 64,
+    "has_em_markup": true,
+    "em_terms": [
+     "妈宝男"
+    ],
+    "asr_chars": 47,
+    "asr_empty": false,
+    "duration_s": 9.38,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1jh411F7HB": {
+   "id": "BV1jh411F7HB",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999985,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999985,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999971,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999971,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 109,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 89,
+    "asr_empty": false,
+    "duration_s": 27.79,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Lj411D76g": {
+   "id": "BV1Lj411D76g",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.732425,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.732425,
+    "top20_purity_vs_gold": 0.15,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9997,
+    "collateral_broken": 6,
+    "collateral_also_fixed": 3
+   },
+   "seed1": {
+    "vote": -0.599927,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.599927,
+    "top20_purity_vs_gold": 0.15,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 4,
+    "collateral_also_fixed": 3
+   },
+   "seed2": {
+    "vote": -0.837581,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.837581,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9997,
+    "collateral_broken": 19,
+    "collateral_also_fixed": 8
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 41,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 532,
+    "asr_empty": false,
+    "duration_s": 50.57,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1pr4y1H7fx": {
+   "id": "BV1pr4y1H7fx",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.904702,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.904702,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.876037,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.876037,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.828481,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.828481,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 232,
+    "has_em_markup": true,
+    "em_terms": [
+     "娘炮"
+    ],
+    "asr_chars": 202,
+    "asr_empty": false,
+    "duration_s": 40.94,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Cc411k7sw": {
+   "id": "BV1Cc411k7sw",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.999931,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999931,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999892,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999892,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999912,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999912,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 24,
+    "has_em_markup": true,
+    "em_terms": [
+     "娘炮"
+    ],
+    "asr_chars": 7,
+    "asr_empty": false,
+    "duration_s": 20.67,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1ZV4y1a7uV": {
+   "id": "BV1ZV4y1a7uV",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.857088,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.857088,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999987,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999987,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999961,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999961,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 144,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 105,
+    "asr_empty": false,
+    "duration_s": 49.09,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV16U4y1m7Vb": {
+   "id": "BV16U4y1m7Vb",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999988,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999988,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.895224,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.895224,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 37,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 27,
+    "asr_empty": false,
+    "duration_s": 10.1,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Dm4y1J7Pj": {
+   "id": "BV1Dm4y1J7Pj",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.809414,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.809414,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.656891,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.656891,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.837893,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.837893,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 12,
+    "has_em_markup": true,
+    "em_terms": [
+     "贱人"
+    ],
+    "asr_chars": 15,
+    "asr_empty": false,
+    "duration_s": 30.12,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1QT41127um": {
+   "id": "BV1QT41127um",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999998,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999998,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 225,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 157,
+    "asr_empty": false,
+    "duration_s": 37.38,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1JL411z7TM": {
+   "id": "BV1JL411z7TM",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999998,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999998,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 186,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 155,
+    "asr_empty": false,
+    "duration_s": 32.34,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1sg411i7Ft": {
+   "id": "BV1sg411i7Ft",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999998,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999998,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 173,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 138,
+    "asr_empty": false,
+    "duration_s": 29.37,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1vK41177zi": {
+   "id": "BV1vK41177zi",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.804283,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.804283,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.589574,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.589574,
+    "top20_purity_vs_gold": 0.8,
+    "top20_n_hate": 4,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.330444,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.330444,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 6,
+    "top1_label": 1,
+    "top1_sim": 0.9994,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 80,
+    "has_em_markup": true,
+    "em_terms": [
+     "贱人"
+    ],
+    "asr_chars": 47,
+    "asr_empty": false,
+    "duration_s": 33.99,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1ov4y1b7Yb": {
+   "id": "BV1ov4y1b7Yb",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999973,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999973,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999986,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999986,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999961,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999961,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 28,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 15,
+    "asr_empty": false,
+    "duration_s": 8.03,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV12C4y1m7ic": {
+   "id": "BV12C4y1m7ic",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999858,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999858,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999941,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999941,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.923577,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.923577,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 214,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 113,
+    "asr_empty": false,
+    "duration_s": 37.24,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV15w411U7DR": {
+   "id": "BV15w411U7DR",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999959,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999959,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999989,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999989,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999968,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999968,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 175,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 139,
+    "asr_empty": false,
+    "duration_s": 30.12,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1m8411z7mV": {
+   "id": "BV1m8411z7mV",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.39971,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.39971,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 5,
+    "collateral_also_fixed": 4
+   },
+   "seed1": {
+    "vote": 0.779607,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.779607,
+    "top20_purity_vs_gold": 0.2,
+    "top20_n_hate": 16,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 15,
+    "collateral_also_fixed": 9
+   },
+   "seed2": {
+    "vote": 0.771197,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.771197,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 12,
+    "collateral_also_fixed": 7
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 63,
+    "has_em_markup": true,
+    "em_terms": [
+     "花痴"
+    ],
+    "asr_chars": 65,
+    "asr_empty": false,
+    "duration_s": 19.32,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV11v411t7vP": {
+   "id": "BV11v411t7vP",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999964,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999964,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999978,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999978,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.857057,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.857057,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 306,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 251,
+    "asr_empty": false,
+    "duration_s": 52.13,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1mL411U7jj": {
+   "id": "BV1mL411U7jj",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999984,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999984,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.904745,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.904745,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 151,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 119,
+    "asr_empty": false,
+    "duration_s": 36.76,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Lz4y1T7rn": {
+   "id": "BV1Lz4y1T7rn",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999932,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999932,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.933314,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.933314,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.92374,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.92374,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 161,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 82,
+    "asr_empty": false,
+    "duration_s": 30.23,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1KT4y127UC": {
+   "id": "BV1KT4y127UC",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.99998,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99998,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999977,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999977,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 41,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 6,
+    "asr_empty": false,
+    "duration_s": 6.89,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV15B4y1Q7JM": {
+   "id": "BV15B4y1Q7JM",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999914,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999914,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999976,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999976,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.828479,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.828479,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 184,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 157,
+    "asr_empty": false,
+    "duration_s": 30.6,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Yo4y1o7Wn": {
+   "id": "BV1Yo4y1o7Wn",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.81761,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.81761,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.866475,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.866475,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.912374,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.912374,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 231,
+    "has_em_markup": true,
+    "em_terms": [
+     "妓院"
+    ],
+    "asr_chars": 191,
+    "asr_empty": false,
+    "duration_s": 46.46,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1R4411v7Z8": {
+   "id": "BV1R4411v7Z8",
+   "gold": 0,
+   "n_seeds_wrong": 1,
+   "seed0": {
+    "vote": -0.339267,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.339267,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 6,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.103798,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.103798,
+    "top20_purity_vs_gold": 0.35,
+    "top20_n_hate": 13,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 1
+   },
+   "seed2": {
+    "vote": -0.142366,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.142366,
+    "top20_purity_vs_gold": 0.55,
+    "top20_n_hate": 9,
+    "top1_label": 1,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 125,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 88,
+    "asr_empty": false,
+    "duration_s": 54.8,
+    "asr_language": "zh",
+    "n_seeds_wrong": 1
+   }
+  },
+  "BV19e411q7UE": {
+   "id": "BV19e411q7UE",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.961573,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.961573,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.828436,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.828436,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.723576,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.723576,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 69,
+    "has_em_markup": true,
+    "em_terms": [
+     "他妈的"
+    ],
+    "asr_chars": 29,
+    "asr_empty": false,
+    "duration_s": 41.33,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV19C4y177iH": {
+   "id": "BV19C4y177iH",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.713743,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.713743,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 4,
+    "collateral_also_fixed": 2
+   },
+   "seed1": {
+    "vote": -0.847491,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.847491,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 13,
+    "collateral_also_fixed": 6
+   },
+   "seed2": {
+    "vote": -0.675926,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.675926,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 7,
+    "collateral_also_fixed": 4
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 10,
+    "has_em_markup": true,
+    "em_terms": [
+     "他妈的"
+    ],
+    "asr_chars": 7,
+    "asr_empty": false,
+    "duration_s": 21.23,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1Xz4y1N77w": {
+   "id": "BV1Xz4y1N77w",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.904751,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.904751,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999986,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999986,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 110,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 63,
+    "asr_empty": false,
+    "duration_s": 31.25,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1tr4y1Q79T": {
+   "id": "BV1tr4y1Q79T",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.999929,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999929,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999906,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999906,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999919,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999919,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 163,
+    "has_em_markup": true,
+    "em_terms": [
+     "泼妇"
+    ],
+    "asr_chars": 115,
+    "asr_empty": false,
+    "duration_s": 30.08,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1St421E7Rm": {
+   "id": "BV1St421E7Rm",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.904751,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.904751,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.86665,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.86665,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 157,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 117,
+    "asr_empty": false,
+    "duration_s": 28.37,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Wm4y1S7xc": {
+   "id": "BV1Wm4y1S7xc",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999977,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999977,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999989,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999989,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999968,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999968,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 50,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 14,
+    "asr_empty": false,
+    "duration_s": 43.61,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1wP411z7P9": {
+   "id": "BV1wP411z7P9",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999985,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999985,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999992,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999992,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999983,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999983,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 116,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 90,
+    "asr_empty": false,
+    "duration_s": 19.25,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1VG4y177A5": {
+   "id": "BV1VG4y177A5",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.799504,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.799504,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.904695,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.904695,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.913811,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.913811,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 270,
+    "has_em_markup": true,
+    "em_terms": [
+     "虐待"
+    ],
+    "asr_chars": 75,
+    "asr_empty": false,
+    "duration_s": 40.68,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1324y1L7jj": {
+   "id": "BV1324y1L7jj",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999997,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999997,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 169,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 131,
+    "asr_empty": false,
+    "duration_s": 25.29,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Ss41167Ga": {
+   "id": "BV1Ss41167Ga",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.817546,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.817546,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.388009,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.388009,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.597893,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.597893,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 96,
+    "has_em_markup": true,
+    "em_terms": [
+     "公主病"
+    ],
+    "asr_chars": 719,
+    "asr_empty": false,
+    "duration_s": 59.35,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1VJ411378e": {
+   "id": "BV1VJ411378e",
+   "gold": 0,
+   "n_seeds_wrong": 1,
+   "seed0": {
+    "vote": -0.823574,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.823574,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9993,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.029291,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.029291,
+    "top20_purity_vs_gold": 0.55,
+    "top20_n_hate": 9,
+    "top1_label": 0,
+    "top1_sim": 0.9991,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 0
+   },
+   "seed2": {
+    "vote": -0.217565,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.217565,
+    "top20_purity_vs_gold": 0.65,
+    "top20_n_hate": 7,
+    "top1_label": 1,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 29,
+    "has_em_markup": true,
+    "em_terms": [
+     "傻屌"
+    ],
+    "asr_chars": 32,
+    "asr_empty": false,
+    "duration_s": 37.57,
+    "asr_language": "zh",
+    "n_seeds_wrong": 1
+   }
+  },
+  "BV15E411a7Jd": {
+   "id": "BV15E411a7Jd",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.885595,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.885595,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.951926,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.951926,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.980765,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.980765,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 21,
+    "has_em_markup": true,
+    "em_terms": [
+     "泼妇"
+    ],
+    "asr_chars": 5,
+    "asr_empty": false,
+    "duration_s": 11.1,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1RC4y1Q7KU": {
+   "id": "BV1RC4y1Q7KU",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999951,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999951,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.99998,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99998,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999945,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999945,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 312,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 255,
+    "asr_empty": false,
+    "duration_s": 50.27,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Rg411T7eN": {
+   "id": "BV1Rg411T7eN",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.740598,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.740598,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.571373,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.571373,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 6,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.891454,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.891454,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 21,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 6,
+    "asr_empty": false,
+    "duration_s": 30.83,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1RW4y1D7rD": {
+   "id": "BV1RW4y1D7rD",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.999957,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999957,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999871,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999871,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999916,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999916,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 44,
+    "has_em_markup": true,
+    "em_terms": [
+     "娘炮"
+    ],
+    "asr_chars": 29,
+    "asr_empty": false,
+    "duration_s": 14.86,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1ij411H7xa": {
+   "id": "BV1ij411H7xa",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999992,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999992,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999992,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999992,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 193,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 105,
+    "asr_empty": false,
+    "duration_s": 20.15,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1mB421k7aq": {
+   "id": "BV1mB421k7aq",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.685617,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.685617,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.914228,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.914228,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.752081,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.752081,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 48,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 28,
+    "asr_empty": false,
+    "duration_s": 16.5,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Vy4y1p7x2": {
+   "id": "BV1Vy4y1p7x2",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.807635,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.807635,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9997,
+    "collateral_broken": 14,
+    "collateral_also_fixed": 7
+   },
+   "seed1": {
+    "vote": -0.971204,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.971204,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 30,
+    "collateral_also_fixed": 10
+   },
+   "seed2": {
+    "vote": -0.551814,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.551814,
+    "top20_purity_vs_gold": 0.2,
+    "top20_n_hate": 4,
+    "top1_label": 0,
+    "top1_sim": 0.9997,
+    "collateral_broken": 5,
+    "collateral_also_fixed": 3
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 96,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 54,
+    "asr_empty": false,
+    "duration_s": 34.71,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1to4y177df": {
+   "id": "BV1to4y177df",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.380642,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.380642,
+    "top20_purity_vs_gold": 0.3,
+    "top20_n_hate": 14,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 3,
+    "collateral_also_fixed": 3
+   },
+   "seed1": {
+    "vote": 0.512253,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.512253,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 8,
+    "collateral_also_fixed": 6
+   },
+   "seed2": {
+    "vote": 0.571054,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.571054,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 5,
+    "collateral_also_fixed": 3
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 90,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 72,
+    "asr_empty": false,
+    "duration_s": 32.25,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1bV4y1i74t": {
+   "id": "BV1bV4y1i74t",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999972,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999972,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999989,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999989,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999957,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999957,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 330,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 269,
+    "asr_empty": false,
+    "duration_s": 53.22,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1p14y1D7da": {
+   "id": "BV1p14y1D7da",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.342593,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.342593,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.397648,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.397648,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.313628,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.313628,
+    "top20_purity_vs_gold": 0.65,
+    "top20_n_hate": 13,
+    "top1_label": 1,
+    "top1_sim": 0.9992,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 45,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 21,
+    "asr_empty": false,
+    "duration_s": 16.42,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1s4411c7Xu": {
+   "id": "BV1s4411c7Xu",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.609407,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.609407,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.780864,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.780864,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.828413,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.828413,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 65,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 13,
+    "asr_empty": false,
+    "duration_s": 51.94,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1fh411K7kf": {
+   "id": "BV1fh411K7kf",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999879,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999879,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.895206,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.895206,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.818935,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.818935,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 249,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 206,
+    "asr_empty": false,
+    "duration_s": 53.15,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1kQ4y1k72V": {
+   "id": "BV1kQ4y1k72V",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.685676,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.685676,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999876,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999876,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.828492,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.828492,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 42,
+    "has_em_markup": true,
+    "em_terms": [
+     "荡妇"
+    ],
+    "asr_chars": 29,
+    "asr_empty": false,
+    "duration_s": 8.96,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV18u411N7U1": {
+   "id": "BV18u411N7U1",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999988,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999988,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999987,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999987,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 164,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 117,
+    "asr_empty": false,
+    "duration_s": 24.31,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1NZ421r7eh": {
+   "id": "BV1NZ421r7eh",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.390134,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.390134,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.607144,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.607144,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9994,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.58849,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.58849,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 96,
+    "has_em_markup": true,
+    "em_terms": [
+     "傻逼"
+    ],
+    "asr_chars": 66,
+    "asr_empty": false,
+    "duration_s": 23.59,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1GQ4y1w7P2": {
+   "id": "BV1GQ4y1w7P2",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999876,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999876,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.952353,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.952353,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.99028,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99028,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 250,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 202,
+    "asr_empty": false,
+    "duration_s": 42.61,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1va4y1m72C": {
+   "id": "BV1va4y1m72C",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.971416,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.971416,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999988,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999988,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 203,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 168,
+    "asr_empty": false,
+    "duration_s": 35.76,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1qZ4y1T71a": {
+   "id": "BV1qZ4y1T71a",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.942567,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.942567,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 27,
+    "collateral_also_fixed": 11
+   },
+   "seed1": {
+    "vote": -0.895178,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.895178,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 17,
+    "collateral_also_fixed": 9
+   },
+   "seed2": {
+    "vote": -0.942371,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.942371,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 35,
+    "collateral_also_fixed": 9
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 60,
+    "has_em_markup": true,
+    "em_terms": [
+     "花痴"
+    ],
+    "asr_chars": 50,
+    "asr_empty": false,
+    "duration_s": 23.2,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1kT411t7ax": {
+   "id": "BV1kT411t7ax",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.999921,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999921,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999873,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999873,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.923726,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.923726,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 11,
+    "has_em_markup": true,
+    "em_terms": [
+     "老鸨"
+    ],
+    "asr_chars": 23,
+    "asr_empty": false,
+    "duration_s": 9.06,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1kN4y1e7NX": {
+   "id": "BV1kN4y1e7NX",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999997,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999997,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 196,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 149,
+    "asr_empty": false,
+    "duration_s": 33.09,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1ia411m7Yy": {
+   "id": "BV1ia411m7Yy",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.846742,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.846742,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 19,
+    "collateral_also_fixed": 10
+   },
+   "seed1": {
+    "vote": -0.66659,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.66659,
+    "top20_purity_vs_gold": 0.15,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 5,
+    "collateral_also_fixed": 4
+   },
+   "seed2": {
+    "vote": -0.71386,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.71386,
+    "top20_purity_vs_gold": 0.2,
+    "top20_n_hate": 4,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 8,
+    "collateral_also_fixed": 5
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 54,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 53,
+    "asr_empty": false,
+    "duration_s": 12.0,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1f64y117V2": {
+   "id": "BV1f64y117V2",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999988,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999988,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999983,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999983,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 196,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 162,
+    "asr_empty": false,
+    "duration_s": 40.26,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV15W411C7FT": {
+   "id": "BV15W411C7FT",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.990153,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.990153,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.531277,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.531277,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999664,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999664,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 122,
+    "has_em_markup": true,
+    "em_terms": [
+     "小老婆"
+    ],
+    "asr_chars": 93,
+    "asr_empty": false,
+    "duration_s": 31.17,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1bp4y1n7FC": {
+   "id": "BV1bp4y1n7FC",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.999917,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999917,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999905,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999905,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999895,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999895,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 26,
+    "has_em_markup": true,
+    "em_terms": [
+     "傻逼"
+    ],
+    "asr_chars": 21,
+    "asr_empty": false,
+    "duration_s": 30.23,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1cC4y1J75j": {
+   "id": "BV1cC4y1J75j",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999983,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999983,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999985,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999985,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 60,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 27,
+    "asr_empty": false,
+    "duration_s": 12.05,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1X5411s76j": {
+   "id": "BV1X5411s76j",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 251,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 200,
+    "asr_empty": false,
+    "duration_s": 36.78,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1EW411o75g": {
+   "id": "BV1EW411o75g",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.999924,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999924,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999866,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999866,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999906,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999906,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 26,
+    "has_em_markup": true,
+    "em_terms": [
+     "娘炮"
+    ],
+    "asr_chars": 11,
+    "asr_empty": false,
+    "duration_s": 10.1,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1694y1N7xU": {
+   "id": "BV1694y1N7xU",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.723171,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.723171,
+    "top20_purity_vs_gold": 0.15,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 9,
+    "collateral_also_fixed": 7
+   },
+   "seed1": {
+    "vote": 0.114382,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.114382,
+    "top20_purity_vs_gold": 0.5,
+    "top20_n_hate": 10,
+    "top1_label": 0,
+    "top1_sim": 0.9991,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 2
+   },
+   "seed2": {
+    "vote": 0.569835,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.569835,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9993,
+    "collateral_broken": 5,
+    "collateral_also_fixed": 2
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 182,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 150,
+    "asr_empty": false,
+    "duration_s": 35.34,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1Sk4y1B7Cr": {
+   "id": "BV1Sk4y1B7Cr",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.730406,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.730406,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.627756,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.627756,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.910591,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.910591,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 60,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 46,
+    "asr_empty": false,
+    "duration_s": 12.53,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1jk4y1Q7JZ": {
+   "id": "BV1jk4y1Q7JZ",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.769397,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.769397,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 10,
+    "collateral_also_fixed": 5
+   },
+   "seed1": {
+    "vote": -0.85622,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.85622,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 14,
+    "collateral_also_fixed": 7
+   },
+   "seed2": {
+    "vote": -0.969039,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.969039,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9997,
+    "collateral_broken": 37,
+    "collateral_also_fixed": 10
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 64,
+    "has_em_markup": true,
+    "em_terms": [
+     "公交车"
+    ],
+    "asr_chars": 339,
+    "asr_empty": false,
+    "duration_s": 35.12,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV16p4y1H7rh": {
+   "id": "BV16p4y1H7rh",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.999942,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999942,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999884,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999884,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999914,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999914,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 183,
+    "has_em_markup": true,
+    "em_terms": [
+     "娘炮"
+    ],
+    "asr_chars": 124,
+    "asr_empty": false,
+    "duration_s": 39.8,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Yp4y1R7fS": {
+   "id": "BV1Yp4y1R7fS",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.847608,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.847608,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999992,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999992,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999982,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999982,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 53,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 19,
+    "asr_empty": false,
+    "duration_s": 14.84,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Ra4y1V7Ji": {
+   "id": "BV1Ra4y1V7Ji",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.780883,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.780883,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.952107,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.952107,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.809438,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.809438,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 86,
+    "has_em_markup": true,
+    "em_terms": [
+     "同性恋"
+    ],
+    "asr_chars": 67,
+    "asr_empty": false,
+    "duration_s": 16.73,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1U24y1n7kh": {
+   "id": "BV1U24y1n7kh",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.740645,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.740645,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.980562,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.980562,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.931213,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.931213,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 78,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 78,
+    "asr_empty": false,
+    "duration_s": 33.62,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Xg4y147aM": {
+   "id": "BV1Xg4y147aM",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999989,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999989,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999984,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999984,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 57,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 35,
+    "asr_empty": false,
+    "duration_s": 14.72,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1oJ411p7Hi": {
+   "id": "BV1oJ411p7Hi",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.90451,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.90451,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.789594,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.789594,
+    "top20_purity_vs_gold": 0.8,
+    "top20_n_hate": 16,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.837844,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.837844,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 28,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 12,
+    "asr_empty": false,
+    "duration_s": 12.79,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1kT411m7Lm": {
+   "id": "BV1kT411m7Lm",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.875039,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.875039,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.446625,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.446625,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.436957,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.436957,
+    "top20_purity_vs_gold": 0.65,
+    "top20_n_hate": 13,
+    "top1_label": 1,
+    "top1_sim": 0.9993,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 143,
+    "has_em_markup": true,
+    "em_terms": [
+     "母牛"
+    ],
+    "asr_chars": 137,
+    "asr_empty": false,
+    "duration_s": 33.13,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Lz4y1S7U5": {
+   "id": "BV1Lz4y1S7U5",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999967,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999967,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999986,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999986,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999929,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999929,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 74,
+    "has_em_markup": true,
+    "em_terms": [
+     "花痴"
+    ],
+    "asr_chars": 67,
+    "asr_empty": false,
+    "duration_s": 22.8,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV15h4y157Km": {
+   "id": "BV15h4y157Km",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.82835,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.82835,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 16,
+    "collateral_also_fixed": 8
+   },
+   "seed1": {
+    "vote": -0.876139,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.876139,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 16,
+    "collateral_also_fixed": 8
+   },
+   "seed2": {
+    "vote": -0.809162,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.809162,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 14,
+    "collateral_also_fixed": 7
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 213,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 177,
+    "asr_empty": false,
+    "duration_s": 26.15,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1bh4y1173w": {
+   "id": "BV1bh4y1173w",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.980671,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.980671,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 22,
+    "collateral_also_fixed": 9
+   },
+   "seed1": {
+    "vote": 0.989826,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.989826,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 22,
+    "collateral_also_fixed": 11
+   },
+   "seed2": {
+    "vote": 0.70452,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.70452,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 12,
+    "collateral_also_fixed": 5
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 46,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 41,
+    "asr_empty": false,
+    "duration_s": 22.61,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1MQ4y1K7Jb": {
+   "id": "BV1MQ4y1K7Jb",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.779828,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.779828,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.971159,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.971159,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.580524,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.580524,
+    "top20_purity_vs_gold": 0.8,
+    "top20_n_hate": 4,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 10,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 5,
+    "asr_empty": false,
+    "duration_s": 13.08,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1gC4y1R7KF": {
+   "id": "BV1gC4y1R7KF",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.589181,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.589181,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.670992,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.670992,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9991,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.616132,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.616132,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 0,
+    "top1_sim": 0.9992,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 17,
+    "has_em_markup": true,
+    "em_terms": [
+     "傻屌"
+    ],
+    "asr_chars": 23,
+    "asr_empty": false,
+    "duration_s": 12.07,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Ff4y1f7C4": {
+   "id": "BV1Ff4y1f7C4",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999894,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999894,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999924,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999924,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.89513,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.89513,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 42,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 29,
+    "asr_empty": false,
+    "duration_s": 22.55,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1ad4y1Q7eL": {
+   "id": "BV1ad4y1Q7eL",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999981,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999981,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999977,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999977,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 67,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 46,
+    "asr_empty": false,
+    "duration_s": 11.6,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1R8411N7m6": {
+   "id": "BV1R8411N7m6",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.856977,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.856977,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.83628,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.83628,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.828248,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.828248,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 158,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 86,
+    "asr_empty": false,
+    "duration_s": 37.99,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1414y1G7xq": {
+   "id": "BV1414y1G7xq",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999987,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999987,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 42,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 1,
+    "asr_empty": false,
+    "duration_s": 10.38,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1aT4y1j73u": {
+   "id": "BV1aT4y1j73u",
+   "gold": 0,
+   "n_seeds_wrong": 1,
+   "seed0": {
+    "vote": 0.369428,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.369428,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 3,
+    "collateral_also_fixed": 2
+   },
+   "seed1": {
+    "vote": -0.836952,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.836952,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.548856,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.548856,
+    "top20_purity_vs_gold": 0.8,
+    "top20_n_hate": 4,
+    "top1_label": 0,
+    "top1_sim": 0.9993,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 135,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 96,
+    "asr_empty": false,
+    "duration_s": 33.48,
+    "asr_language": "zh",
+    "n_seeds_wrong": 1
+   }
+  },
+  "BV19o4y1L7vD": {
+   "id": "BV19o4y1L7vD",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999988,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999988,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 56,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 41,
+    "asr_empty": false,
+    "duration_s": 34.04,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1uF411K7DZ": {
+   "id": "BV1uF411K7DZ",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999973,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999973,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999989,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999989,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999954,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999954,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 93,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 35,
+    "asr_empty": false,
+    "duration_s": 31.36,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Kh411T7FJ": {
+   "id": "BV1Kh411T7FJ",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.323607,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.323607,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.484146,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.484146,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.180204,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.180204,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 205,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 174,
+    "asr_empty": false,
+    "duration_s": 37.63,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1a14y1n712": {
+   "id": "BV1a14y1n712",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.775898,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.775898,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9994,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.561813,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.561813,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 6,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.358883,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.358883,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 6,
+    "top1_label": 1,
+    "top1_sim": 0.9991,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 66,
+    "has_em_markup": true,
+    "em_terms": [
+     "性虐待"
+    ],
+    "asr_chars": 23,
+    "asr_empty": false,
+    "duration_s": 12.12,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV19Q4y1j7nx": {
+   "id": "BV19Q4y1j7nx",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999989,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999989,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999981,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999981,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 221,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 187,
+    "asr_empty": false,
+    "duration_s": 36.27,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1xt4y1R7Kd": {
+   "id": "BV1xt4y1R7Kd",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.96183,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.96183,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999861,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999861,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.990372,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.990372,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 10,
+    "has_em_markup": true,
+    "em_terms": [
+     "傻逼"
+    ],
+    "asr_chars": 10,
+    "asr_empty": false,
+    "duration_s": 30.74,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1dh411A7p3": {
+   "id": "BV1dh411A7p3",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.837799,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.837799,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.809439,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.809439,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.799796,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.799796,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 8,
+    "has_em_markup": true,
+    "em_terms": [
+     "花痴"
+    ],
+    "asr_chars": 10,
+    "asr_empty": false,
+    "duration_s": 12.17,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV17N4y187LL": {
+   "id": "BV17N4y187LL",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 251,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 209,
+    "asr_empty": false,
+    "duration_s": 39.5,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Ts4y1A7XN": {
+   "id": "BV1Ts4y1A7XN",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.961799,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.961799,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.846989,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.846989,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999712,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999712,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 55,
+    "has_em_markup": true,
+    "em_terms": [
+     "小仙女"
+    ],
+    "asr_chars": 18,
+    "asr_empty": false,
+    "duration_s": 30.14,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Qk4y1g7PM": {
+   "id": "BV1Qk4y1g7PM",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.304564,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.304564,
+    "top20_purity_vs_gold": 0.3,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 1
+   },
+   "seed1": {
+    "vote": 0.483648,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.483648,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 6,
+    "collateral_also_fixed": 5
+   },
+   "seed2": {
+    "vote": 0.561399,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.561399,
+    "top20_purity_vs_gold": 0.2,
+    "top20_n_hate": 16,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 5,
+    "collateral_also_fixed": 1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 252,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 202,
+    "asr_empty": false,
+    "duration_s": 46.32,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1qT4y1B7xM": {
+   "id": "BV1qT4y1B7xM",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.475767,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.475767,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 5,
+    "collateral_also_fixed": 5
+   },
+   "seed1": {
+    "vote": 0.247032,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.247032,
+    "top20_purity_vs_gold": 0.35,
+    "top20_n_hate": 13,
+    "top1_label": 1,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 3
+   },
+   "seed2": {
+    "vote": 0.521629,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.521629,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9994,
+    "collateral_broken": 5,
+    "collateral_also_fixed": 0
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 78,
+    "has_em_markup": true,
+    "em_terms": [
+     "流氓"
+    ],
+    "asr_chars": 51,
+    "asr_empty": false,
+    "duration_s": 15.98,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1Us411K7va": {
+   "id": "BV1Us411K7va",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.818964,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.818964,
+    "top20_purity_vs_gold": 0.05,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 13,
+    "collateral_also_fixed": 8
+   },
+   "seed1": {
+    "vote": 0.675944,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.675944,
+    "top20_purity_vs_gold": 0.15,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 13,
+    "collateral_also_fixed": 8
+   },
+   "seed2": {
+    "vote": 0.895089,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.895089,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 20,
+    "collateral_also_fixed": 9
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 56,
+    "has_em_markup": true,
+    "em_terms": [
+     "绿帽"
+    ],
+    "asr_chars": 1,
+    "asr_empty": false,
+    "duration_s": 29.98,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1da411c76p": {
+   "id": "BV1da411c76p",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.769896,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.769896,
+    "top20_purity_vs_gold": 0.8,
+    "top20_n_hate": 16,
+    "top1_label": 1,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.427656,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.427656,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9994,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.313626,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.313626,
+    "top20_purity_vs_gold": 0.65,
+    "top20_n_hate": 13,
+    "top1_label": 1,
+    "top1_sim": 0.999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 20,
+    "has_em_markup": true,
+    "em_terms": [
+     "娘炮"
+    ],
+    "asr_chars": 889,
+    "asr_empty": false,
+    "duration_s": 14.63,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1aM41147V7": {
+   "id": "BV1aM41147V7",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999998,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999998,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 206,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 172,
+    "asr_empty": false,
+    "duration_s": 39.01,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV15V4y1k7tZ": {
+   "id": "BV15V4y1k7tZ",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.333117,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.333117,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.30411,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.30411,
+    "top20_purity_vs_gold": 0.65,
+    "top20_n_hate": 13,
+    "top1_label": 1,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.579314,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.579314,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 62,
+    "has_em_markup": true,
+    "em_terms": [
+     "造谣者"
+    ],
+    "asr_chars": 27,
+    "asr_empty": false,
+    "duration_s": 15.09,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1GL411G7SG": {
+   "id": "BV1GL411G7SG",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.980881,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.980881,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.799981,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.799981,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999926,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999926,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 16,
+    "has_em_markup": true,
+    "em_terms": [
+     "山羊"
+    ],
+    "asr_chars": 23,
+    "asr_empty": false,
+    "duration_s": 13.79,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1iP411B7fA": {
+   "id": "BV1iP411B7fA",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999934,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999934,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.980925,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.980925,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.952281,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.952281,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 114,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 146,
+    "asr_empty": false,
+    "duration_s": 53.03,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1m741167yf": {
+   "id": "BV1m741167yf",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.837624,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.837624,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.761824,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.761824,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.951874,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.951874,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 14,
+    "has_em_markup": true,
+    "em_terms": [
+     "傻屌"
+    ],
+    "asr_chars": 9,
+    "asr_empty": false,
+    "duration_s": 21.87,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1oi4y1g7fm": {
+   "id": "BV1oi4y1g7fm",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999998,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999998,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 269,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 220,
+    "asr_empty": false,
+    "duration_s": 51.22,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1iy4y1G7aD": {
+   "id": "BV1iy4y1G7aD",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.942798,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.942798,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.74274,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.74274,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.828506,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.828506,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 49,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 32,
+    "asr_empty": false,
+    "duration_s": 12.79,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1q5411w7fX": {
+   "id": "BV1q5411w7fX",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.99999,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99999,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 41,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 48,
+    "asr_empty": false,
+    "duration_s": 29.42,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1mL411x7dS": {
+   "id": "BV1mL411x7dS",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999995,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999995,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999997,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999997,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 291,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 316,
+    "asr_empty": false,
+    "duration_s": 55.85,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV11S4y1n72U": {
+   "id": "BV11S4y1n72U",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.933319,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.933319,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999983,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999983,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 107,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 147,
+    "asr_empty": false,
+    "duration_s": 31.88,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1iQ4y197ww": {
+   "id": "BV1iQ4y197ww",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.570921,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.570921,
+    "top20_purity_vs_gold": 0.8,
+    "top20_n_hate": 16,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.484164,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.484164,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 0,
+    "top1_sim": 0.9997,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.151776,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.151776,
+    "top20_purity_vs_gold": 0.65,
+    "top20_n_hate": 13,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 207,
+    "has_em_markup": true,
+    "em_terms": [
+     "妓院"
+    ],
+    "asr_chars": 157,
+    "asr_empty": false,
+    "duration_s": 57.84,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1mX4y1Y79n": {
+   "id": "BV1mX4y1Y79n",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999997,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999997,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 254,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 212,
+    "asr_empty": false,
+    "duration_s": 47.51,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1q14y1M7ob": {
+   "id": "BV1q14y1M7ob",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.513809,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.513809,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.427857,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.427857,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.578247,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.578247,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 0,
+    "top1_sim": 0.9992,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 146,
+    "has_em_markup": true,
+    "em_terms": [
+     "母牛"
+    ],
+    "asr_chars": 95,
+    "asr_empty": false,
+    "duration_s": 38.51,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV16u4y1c7nA": {
+   "id": "BV16u4y1c7nA",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999997,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999997,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999992,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999992,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 264,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 29,
+    "asr_empty": false,
+    "duration_s": 44.61,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1tV4y1j7NZ": {
+   "id": "BV1tV4y1j7NZ",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.980879,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.980879,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.809387,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.809387,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.895143,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.895143,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 31,
+    "has_em_markup": true,
+    "em_terms": [
+     "巫婆"
+    ],
+    "asr_chars": 9,
+    "asr_empty": false,
+    "duration_s": 11.4,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1XN4y1U7fj": {
+   "id": "BV1XN4y1U7fj",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.961605,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.961605,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.866613,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.866613,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.790315,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.790315,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 58,
+    "has_em_markup": true,
+    "em_terms": [
+     "他妈的"
+    ],
+    "asr_chars": 33,
+    "asr_empty": false,
+    "duration_s": 14.35,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1me4y1S7Y1": {
+   "id": "BV1me4y1S7Y1",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.875399,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.875399,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.904637,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.904637,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.761469,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.761469,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 153,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 98,
+    "asr_empty": false,
+    "duration_s": 47.44,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1MU4y1D7Ks": {
+   "id": "BV1MU4y1D7Ks",
+   "gold": 0,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": 0.064293,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.064293,
+    "top20_purity_vs_gold": 0.35,
+    "top20_n_hate": 13,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 0
+   },
+   "seed1": {
+    "vote": 0.285178,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.285178,
+    "top20_purity_vs_gold": 0.35,
+    "top20_n_hate": 13,
+    "top1_label": 1,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 4
+   },
+   "seed2": {
+    "vote": 0.59816,
+    "pred": 1,
+    "wrong": true,
+    "abs_margin": 0.59816,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 10,
+    "collateral_also_fixed": 4
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 87,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 69,
+    "asr_empty": false,
+    "duration_s": 16.21,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1tB421r7sX": {
+   "id": "BV1tB421r7sX",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.885225,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.885225,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.885527,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.885527,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.694978,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.694978,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 23,
+    "has_em_markup": true,
+    "em_terms": [
+     "傻逼"
+    ],
+    "asr_chars": 12,
+    "asr_empty": false,
+    "duration_s": 10.18,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Le411f78S": {
+   "id": "BV1Le411f78S",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.874937,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.874937,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 17,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.616609,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.616609,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9993,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.598055,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.598055,
+    "top20_purity_vs_gold": 0.75,
+    "top20_n_hate": 15,
+    "top1_label": 1,
+    "top1_sim": 0.9993,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 98,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 122,
+    "asr_empty": false,
+    "duration_s": 37.53,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1So4y1c7cw": {
+   "id": "BV1So4y1c7cw",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999981,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999981,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.97142,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.97142,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999978,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999978,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 54,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 26,
+    "asr_empty": false,
+    "duration_s": 58.15,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1yu41137bC": {
+   "id": "BV1yu41137bC",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.730792,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.730792,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.150744,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.150744,
+    "top20_purity_vs_gold": 0.65,
+    "top20_n_hate": 7,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.66273,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.66273,
+    "top20_purity_vs_gold": 0.8,
+    "top20_n_hate": 4,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 18,
+    "has_em_markup": true,
+    "em_terms": [
+     "傻逼"
+    ],
+    "asr_chars": 7,
+    "asr_empty": false,
+    "duration_s": 12.42,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1aP4y1E7PF": {
+   "id": "BV1aP4y1E7PF",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.39018,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.39018,
+    "top20_purity_vs_gold": 0.7,
+    "top20_n_hate": 14,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.767858,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.767858,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 18,
+    "top1_label": 1,
+    "top1_sim": 0.9994,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.628176,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.628176,
+    "top20_purity_vs_gold": 0.8,
+    "top20_n_hate": 16,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 112,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 27,
+    "asr_empty": false,
+    "duration_s": 44.56,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1vv411z7sj": {
+   "id": "BV1vv411z7sj",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.99999,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99999,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999987,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999987,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 57,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 32,
+    "asr_empty": false,
+    "duration_s": 15.25,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1y541117g1": {
+   "id": "BV1y541117g1",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999914,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999914,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.8476,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.8476,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.818974,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.818974,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 273,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 180,
+    "asr_empty": false,
+    "duration_s": 55.7,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV11S4y1X7Qc": {
+   "id": "BV11S4y1X7Qc",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.766801,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.766801,
+    "top20_purity_vs_gold": 0.2,
+    "top20_n_hate": 4,
+    "top1_label": 0,
+    "top1_sim": 0.9994,
+    "collateral_broken": 10,
+    "collateral_also_fixed": 4
+   },
+   "seed1": {
+    "vote": -0.45623,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.45623,
+    "top20_purity_vs_gold": 0.2,
+    "top20_n_hate": 4,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 1,
+    "collateral_also_fixed": 2
+   },
+   "seed2": {
+    "vote": -0.19012,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.19012,
+    "top20_purity_vs_gold": 0.45,
+    "top20_n_hate": 9,
+    "top1_label": 0,
+    "top1_sim": 0.999,
+    "collateral_broken": 1,
+    "collateral_also_fixed": 1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 60,
+    "has_em_markup": true,
+    "em_terms": [
+     "妇女"
+    ],
+    "asr_chars": 47,
+    "asr_empty": false,
+    "duration_s": 45.7,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1kj41157Je": {
+   "id": "BV1kj41157Je",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999877,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999877,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999956,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999956,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.971336,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.971336,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 17,
+    "has_em_markup": true,
+    "em_terms": [
+     "小仙女"
+    ],
+    "asr_chars": 10,
+    "asr_empty": false,
+    "duration_s": 17.66,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV12G4y1S7mN": {
+   "id": "BV12G4y1S7mN",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.788347,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.788347,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 12,
+    "collateral_also_fixed": 6
+   },
+   "seed1": {
+    "vote": -0.80927,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.80927,
+    "top20_purity_vs_gold": 0.1,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 10,
+    "collateral_also_fixed": 5
+   },
+   "seed2": {
+    "vote": -0.808167,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.808167,
+    "top20_purity_vs_gold": 0.15,
+    "top20_n_hate": 3,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 14,
+    "collateral_also_fixed": 6
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 132,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 86,
+    "asr_empty": false,
+    "duration_s": 22.31,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1vM411p7jy": {
+   "id": "BV1vM411p7jy",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.999953,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999953,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999834,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999834,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.999917,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999917,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 73,
+    "has_em_markup": true,
+    "em_terms": [
+     "皮条客"
+    ],
+    "asr_chars": 60,
+    "asr_empty": false,
+    "duration_s": 17.02,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV15o4y1t7gw": {
+   "id": "BV15o4y1t7gw",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999905,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999905,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.952351,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.952351,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.885649,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.885649,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 79,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 464,
+    "asr_empty": false,
+    "duration_s": 45.08,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1cw41137uv": {
+   "id": "BV1cw41137uv",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999974,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999974,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.933326,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.933326,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999971,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999971,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 208,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 251,
+    "asr_empty": false,
+    "duration_s": 30.88,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Pe411Y7c5": {
+   "id": "BV1Pe411Y7c5",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999981,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999981,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.971423,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.971423,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999973,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999973,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 216,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 23,
+    "asr_empty": false,
+    "duration_s": 35.76,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1WF411r7Sn": {
+   "id": "BV1WF411r7Sn",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.310664,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.310664,
+    "top20_purity_vs_gold": 0.3,
+    "top20_n_hate": 6,
+    "top1_label": 0,
+    "top1_sim": 0.9995,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 0
+   },
+   "seed1": {
+    "vote": -0.313672,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.313672,
+    "top20_purity_vs_gold": 0.4,
+    "top20_n_hate": 8,
+    "top1_label": 0,
+    "top1_sim": 0.9996,
+    "collateral_broken": 1,
+    "collateral_also_fixed": 1
+   },
+   "seed2": {
+    "vote": -0.209241,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.209241,
+    "top20_purity_vs_gold": 0.45,
+    "top20_n_hate": 9,
+    "top1_label": 0,
+    "top1_sim": 0.9994,
+    "collateral_broken": 1,
+    "collateral_also_fixed": 2
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Offensive",
+    "gt_text_chars": 258,
+    "has_em_markup": true,
+    "em_terms": [
+     "破鞋"
+    ],
+    "asr_chars": 202,
+    "asr_empty": false,
+    "duration_s": 38.29,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  },
+  "BV1M34y1n7FT": {
+   "id": "BV1M34y1n7FT",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999988,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999988,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 142,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 116,
+    "asr_empty": false,
+    "duration_s": 42.47,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Fs4y1i7wM": {
+   "id": "BV1Fs4y1i7wM",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999982,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999982,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999974,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999974,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 296,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 237,
+    "asr_empty": false,
+    "duration_s": 45.12,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1z4411q7KK": {
+   "id": "BV1z4411q7KK",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.99998,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99998,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.99999,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99999,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999979,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999979,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 174,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 74,
+    "asr_empty": false,
+    "duration_s": 41.87,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1pE411A787": {
+   "id": "BV1pE411A787",
+   "gold": 1,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": 0.990326,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.990326,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": 0.999514,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.999514,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 20,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": 0.876012,
+    "pred": 1,
+    "wrong": false,
+    "abs_margin": 0.876012,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 19,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 27,
+    "has_em_markup": true,
+    "em_terms": [
+     "娘炮"
+    ],
+    "asr_chars": 11,
+    "asr_empty": false,
+    "duration_s": 10.24,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1yK4y1z7Wc": {
+   "id": "BV1yK4y1z7Wc",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.828507,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.828507,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.952354,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.952354,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.9047,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.9047,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 30,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 10,
+    "asr_empty": false,
+    "duration_s": 12.03,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Fa4y1B79W": {
+   "id": "BV1Fa4y1B79W",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999969,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999969,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999988,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999988,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999961,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999961,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 123,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 116,
+    "asr_empty": false,
+    "duration_s": 30.65,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1C84y1V7Rv": {
+   "id": "BV1C84y1V7Rv",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.761676,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.761676,
+    "top20_purity_vs_gold": 0.85,
+    "top20_n_hate": 3,
+    "top1_label": 1,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999932,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999932,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.837915,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.837915,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 14,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 86,
+    "asr_empty": false,
+    "duration_s": 57.31,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1Qe411Q7Dr": {
+   "id": "BV1Qe411Q7Dr",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999997,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999997,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999994,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999994,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 179,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 201,
+    "asr_empty": false,
+    "duration_s": 30.21,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1at4y1w7Yd": {
+   "id": "BV1at4y1w7Yd",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999982,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999982,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.904754,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.904754,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999972,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999972,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 169,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 3,
+    "asr_empty": false,
+    "duration_s": 17.97,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1tP41127dY": {
+   "id": "BV1tP41127dY",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999986,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999986,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999991,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999991,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999971,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999971,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 151,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 126,
+    "asr_empty": false,
+    "duration_s": 49.53,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1aF411x7Xt": {
+   "id": "BV1aF411x7Xt",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999993,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999993,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999997,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999997,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999992,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999992,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 179,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 152,
+    "asr_empty": false,
+    "duration_s": 36.97,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1AP4y1y7Wk": {
+   "id": "BV1AP4y1y7Wk",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.704142,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.704142,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 1,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.742767,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.742767,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.761605,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.761605,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9998,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 26,
+    "has_em_markup": true,
+    "em_terms": [
+     "母牛"
+    ],
+    "asr_chars": 5,
+    "asr_empty": false,
+    "duration_s": 12.8,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1sb4y1Q794": {
+   "id": "BV1sb4y1Q794",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.99997,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99997,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999989,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999989,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999962,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999962,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 214,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 185,
+    "asr_empty": false,
+    "duration_s": 44.37,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1XP411F7Bm": {
+   "id": "BV1XP411F7Bm",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999972,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999972,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999983,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999983,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999957,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999957,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 64,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 42,
+    "asr_empty": false,
+    "duration_s": 16.74,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1yC4y1T7Bm": {
+   "id": "BV1yC4y1T7Bm",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999992,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999992,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999996,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999996,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.99999,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.99999,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 193,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 152,
+    "asr_empty": false,
+    "duration_s": 39.17,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV19N4y1v7yG": {
+   "id": "BV19N4y1v7yG",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999843,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999843,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.895188,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.895188,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.980777,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.980777,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 336,
+    "has_em_markup": true,
+    "em_terms": [
+     "阴茎"
+    ],
+    "asr_chars": 280,
+    "asr_empty": false,
+    "duration_s": 52.11,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1aG411S72h": {
+   "id": "BV1aG411S72h",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.847366,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.847366,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.895181,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.895181,
+    "top20_purity_vs_gold": 0.95,
+    "top20_n_hate": 1,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.818689,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.818689,
+    "top20_purity_vs_gold": 0.9,
+    "top20_n_hate": 2,
+    "top1_label": 0,
+    "top1_sim": 0.9999,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 250,
+    "has_em_markup": true,
+    "em_terms": [
+     "巫婆"
+    ],
+    "asr_chars": 230,
+    "asr_empty": false,
+    "duration_s": 57.91,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1NJ41177A9": {
+   "id": "BV1NJ41177A9",
+   "gold": 0,
+   "n_seeds_wrong": 0,
+   "seed0": {
+    "vote": -0.999976,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999976,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed1": {
+    "vote": -0.999989,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999989,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "seed2": {
+    "vote": -0.999974,
+    "pred": 0,
+    "wrong": false,
+    "abs_margin": 0.999974,
+    "top20_purity_vs_gold": 1.0,
+    "top20_n_hate": 0,
+    "top1_label": 0,
+    "top1_sim": 1.0,
+    "collateral_broken": 0,
+    "collateral_also_fixed": -1
+   },
+   "cov": {
+    "gold": 0,
+    "label3": "Normal",
+    "gt_text_chars": 62,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 1,
+    "asr_empty": false,
+    "duration_s": 27.52,
+    "asr_language": "zh",
+    "n_seeds_wrong": 0
+   }
+  },
+  "BV1ch411L7VP": {
+   "id": "BV1ch411L7VP",
+   "gold": 1,
+   "n_seeds_wrong": 3,
+   "seed0": {
+    "vote": -0.539661,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.539661,
+    "top20_purity_vs_gold": 0.25,
+    "top20_n_hate": 5,
+    "top1_label": 1,
+    "top1_sim": 0.9997,
+    "collateral_broken": 1,
+    "collateral_also_fixed": 1
+   },
+   "seed1": {
+    "vote": -0.218411,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.218411,
+    "top20_purity_vs_gold": 0.4,
+    "top20_n_hate": 8,
+    "top1_label": 0,
+    "top1_sim": 0.9993,
+    "collateral_broken": 1,
+    "collateral_also_fixed": 0
+   },
+   "seed2": {
+    "vote": -0.019212,
+    "pred": 0,
+    "wrong": true,
+    "abs_margin": 0.019212,
+    "top20_purity_vs_gold": 0.5,
+    "top20_n_hate": 10,
+    "top1_label": 1,
+    "top1_sim": 0.9994,
+    "collateral_broken": 0,
+    "collateral_also_fixed": 0
+   },
+   "cov": {
+    "gold": 1,
+    "label3": "Hateful",
+    "gt_text_chars": 72,
+    "has_em_markup": false,
+    "em_terms": [],
+    "asr_chars": 48,
+    "asr_empty": false,
+    "duration_s": 49.99,
+    "asr_language": "zh",
+    "n_seeds_wrong": 3
+   }
+  }
+ }
+}

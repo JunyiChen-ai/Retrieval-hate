@@ -1,0 +1,50 @@
+{
+ "H1_thin_transcript_band": {
+  "band_chars": [
+   31,
+   76
+  ],
+  "test_all": {
+   "observed": 11,
+   "expected": 5.44,
+   "null_p95": 9.0,
+   "p_one_sided": 0.0048,
+   "pool_n": 149,
+   "mask_n": 37,
+   "n_perms": 50000
+  },
+  "test_neg": {
+   "observed": 5,
+   "expected": 2.31,
+   "null_p95": 5.0,
+   "p_one_sided": 0.0506,
+   "pool_n": 104,
+   "mask_n": 24,
+   "n_perms": 50000
+  },
+  "test_pos": {
+   "observed": 6,
+   "expected": 3.47,
+   "null_p95": 6.0,
+   "p_one_sided": 0.0668,
+   "pool_n": 45,
+   "mask_n": 13,
+   "n_perms": 50000
+  }
+ },
+ "H2_keyword_absent_positives": {
+  "n_pos_with_em": 32,
+  "n_pos_without_em": 13,
+  "FN_core_with_em": 6,
+  "FN_core_without_em": 6,
+  "test": {
+   "observed": 6,
+   "expected": 3.47,
+   "null_p95": 6.0,
+   "p_one_sided": 0.0681,
+   "pool_n": 45,
+   "mask_n": 13,
+   "n_perms": 50000
+  }
+ }
+}

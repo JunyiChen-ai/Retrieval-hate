@@ -1,0 +1,69 @@
+{
+ "note": "re-mint = same-recipe CPU re-run of job 13150; NOT bit-exact",
+ "seeds": {
+  "seed0": {
+   "remint_val_sel_epoch": 5,
+   "banked_val_sel_epoch": 20,
+   "remint_val_sel_test_acc": 0.7987,
+   "banked_val_sel_test_acc": 0.8322,
+   "remint_final_test_acc": 0.8456,
+   "banked_final_test_acc": 0.8456,
+   "remint_final_test_mF1": 0.8158,
+   "banked_final_test_mF1": 0.8181,
+   "remint_gap_final_minus_valsel_acc": 0.047,
+   "banked_gap_final_minus_valsel_acc": 0.0134,
+   "dev_curve_mean_abs_diff_items": 1.834,
+   "dev_curve_max_abs_diff_items": 4.0,
+   "test_curve_mean_abs_diff_items": 2.833,
+   "test_curve_max_abs_diff_items": 9.0,
+   "test_curve_spearman": 0.3434,
+   "dev_curve_spearman": -0.2021
+  },
+  "seed1": {
+   "remint_val_sel_epoch": 19,
+   "banked_val_sel_epoch": 26,
+   "remint_val_sel_test_acc": 0.8322,
+   "banked_val_sel_test_acc": 0.8255,
+   "remint_final_test_acc": 0.8389,
+   "banked_final_test_acc": 0.8389,
+   "remint_final_test_mF1": 0.809,
+   "banked_final_test_mF1": 0.8113,
+   "remint_gap_final_minus_valsel_acc": 0.0067,
+   "banked_gap_final_minus_valsel_acc": 0.0134,
+   "dev_curve_mean_abs_diff_items": 1.568,
+   "dev_curve_max_abs_diff_items": 4.0,
+   "test_curve_mean_abs_diff_items": 2.134,
+   "test_curve_max_abs_diff_items": 8.0,
+   "test_curve_spearman": 0.6054,
+   "dev_curve_spearman": -0.2626
+  },
+  "seed2": {
+   "remint_val_sel_epoch": 6,
+   "banked_val_sel_epoch": 19,
+   "remint_val_sel_test_acc": 0.8188,
+   "banked_val_sel_test_acc": 0.8389,
+   "remint_final_test_acc": 0.8523,
+   "banked_final_test_acc": 0.8523,
+   "remint_final_test_mF1": 0.8226,
+   "banked_final_test_mF1": 0.8226,
+   "remint_gap_final_minus_valsel_acc": 0.0336,
+   "banked_gap_final_minus_valsel_acc": 0.0134,
+   "dev_curve_mean_abs_diff_items": 1.669,
+   "dev_curve_max_abs_diff_items": 4.0,
+   "test_curve_mean_abs_diff_items": 2.133,
+   "test_curve_max_abs_diff_items": 5.0,
+   "test_curve_spearman": 0.3906,
+   "dev_curve_spearman": -0.5221
+  }
+ },
+ "3seed": {
+  "remint_val_sel_acc": 0.8166,
+  "banked_val_sel_acc": 0.8322,
+  "remint_final_acc": 0.8456,
+  "banked_final_acc": 0.8456,
+  "remint_final_mF1": 0.8158,
+  "banked_final_mF1": 0.8173,
+  "remint_gap": 0.0291,
+  "banked_gap": 0.0134
+ }
+}

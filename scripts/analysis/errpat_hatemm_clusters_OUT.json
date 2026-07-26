@@ -1,0 +1,532 @@
+{
+  "meta": {
+    "nature": "FORENSIC PROXY third pass",
+    "cpu_only": true,
+    "slur_lexicon_pattern": "\\b(nigger|nigga|nicker|niger|coon|jigaboo|spic|wetback|kike|jewburg|heeb|yid|raghead|towelhead|paki|chink|gook|tranny|faggot|fag|dyke|retard|subhuman|gorilla|monkey|ape)\\b",
+    "cluster_defs_are": "DESCRIPTIVE, post-hoc (not pre-registered)",
+    "inputs": {
+      "proxy_root": "/data/jehc223/home/tmp/claude-135258174/-data-jehc223-RGCL/e8f03e41-3e21-4cea-b12c-29207373bfca/scratchpad/errpat",
+      "gt": "/data/jehc223/RGCL/data/gt/HateMM/test.jsonl",
+      "spans": "/data/jehc223/RGCL/data/gt/HateMM/hate_spans.json",
+      "annot": "/data/jehc223/RGCL/data/gt/HateMM/HateMM_annotation.csv",
+      "features": [
+        "/data/jehc223/RGCL/data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF.pt",
+        "/data/jehc223/RGCL/data/CLIP_Embedding/HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF.pt",
+        "/data/jehc223/RGCL/data/CLIP_Embedding/HateMM/test_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF.pt"
+      ]
+    }
+  },
+  "empty_transcript_behaviour": {
+    "valsel": {
+      "n_empty_transcript": 30,
+      "n_empty_hate": 2,
+      "n_empty_nonhate": 28,
+      "pred_hate_count_over_3seeds": 0,
+      "n_empty_hate_caught_any_seed": 0,
+      "n_empty_nonhate_flagged_any_seed": 0,
+      "empty_hate_ids": [
+        "hate_video_1",
+        "hate_video_329"
+      ]
+    },
+    "final": {
+      "n_empty_transcript": 30,
+      "n_empty_hate": 2,
+      "n_empty_nonhate": 28,
+      "pred_hate_count_over_3seeds": 0,
+      "n_empty_hate_caught_any_seed": 0,
+      "n_empty_nonhate_flagged_any_seed": 0,
+      "empty_hate_ids": [
+        "hate_video_1",
+        "hate_video_329"
+      ]
+    }
+  },
+  "stratified_by_transcript_volume": {
+    "valsel": {
+      "words_0_1_hate": {
+        "n": 2,
+        "acc_3seed_mean": 0.0,
+        "per_seed": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "words_0_1_nonhate": {
+        "n": 28,
+        "acc_3seed_mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "words_2_50_hate": {
+        "n": 13,
+        "acc_3seed_mean": 0.6154,
+        "per_seed": [
+          0.6154,
+          0.6154,
+          0.6154
+        ]
+      },
+      "words_2_50_nonhate": {
+        "n": 34,
+        "acc_3seed_mean": 0.9804,
+        "per_seed": [
+          1.0,
+          0.9706,
+          0.9706
+        ]
+      },
+      "words_51_150_hate": {
+        "n": 22,
+        "acc_3seed_mean": 0.7727,
+        "per_seed": [
+          0.7727,
+          0.7727,
+          0.7727
+        ]
+      },
+      "words_51_150_nonhate": {
+        "n": 15,
+        "acc_3seed_mean": 0.8444,
+        "per_seed": [
+          0.8667,
+          0.8,
+          0.8667
+        ]
+      },
+      "words_151_400_hate": {
+        "n": 34,
+        "acc_3seed_mean": 0.9118,
+        "per_seed": [
+          0.9118,
+          0.9118,
+          0.9118
+        ]
+      },
+      "words_151_400_nonhate": {
+        "n": 33,
+        "acc_3seed_mean": 0.8384,
+        "per_seed": [
+          0.8182,
+          0.8485,
+          0.8485
+        ]
+      },
+      "words_401_999999_hate": {
+        "n": 15,
+        "acc_3seed_mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "words_401_999999_nonhate": {
+        "n": 19,
+        "acc_3seed_mean": 0.8421,
+        "per_seed": [
+          0.8421,
+          0.8421,
+          0.8421
+        ]
+      }
+    },
+    "final": {
+      "words_0_1_hate": {
+        "n": 2,
+        "acc_3seed_mean": 0.0,
+        "per_seed": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "words_0_1_nonhate": {
+        "n": 28,
+        "acc_3seed_mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "words_2_50_hate": {
+        "n": 13,
+        "acc_3seed_mean": 0.6154,
+        "per_seed": [
+          0.6154,
+          0.6154,
+          0.6154
+        ]
+      },
+      "words_2_50_nonhate": {
+        "n": 34,
+        "acc_3seed_mean": 0.9706,
+        "per_seed": [
+          0.9706,
+          0.9706,
+          0.9706
+        ]
+      },
+      "words_51_150_hate": {
+        "n": 22,
+        "acc_3seed_mean": 0.7576,
+        "per_seed": [
+          0.7273,
+          0.7727,
+          0.7727
+        ]
+      },
+      "words_51_150_nonhate": {
+        "n": 15,
+        "acc_3seed_mean": 0.8667,
+        "per_seed": [
+          0.8667,
+          0.8667,
+          0.8667
+        ]
+      },
+      "words_151_400_hate": {
+        "n": 34,
+        "acc_3seed_mean": 0.9216,
+        "per_seed": [
+          0.9118,
+          0.9412,
+          0.9118
+        ]
+      },
+      "words_151_400_nonhate": {
+        "n": 33,
+        "acc_3seed_mean": 0.8283,
+        "per_seed": [
+          0.8182,
+          0.8182,
+          0.8485
+        ]
+      },
+      "words_401_999999_hate": {
+        "n": 15,
+        "acc_3seed_mean": 1.0,
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "words_401_999999_nonhate": {
+        "n": 19,
+        "acc_3seed_mean": 0.8421,
+        "per_seed": [
+          0.8421,
+          0.8421,
+          0.8421
+        ]
+      }
+    }
+  },
+  "clusters": {
+    "valsel": {
+      "n_errors": 26,
+      "clusters": {
+        "FN1_speech_poor_visual_hate": {
+          "n": 7,
+          "pct_of_errors": 26.9,
+          "ids": [
+            "hate_video_1",
+            "hate_video_10",
+            "hate_video_36",
+            "hate_video_71",
+            "hate_video_276",
+            "hate_video_279",
+            "hate_video_329"
+          ],
+          "median_words": 6,
+          "median_duration_s": 24.41,
+          "median_span_frac": 0.6316,
+          "n_wrong_3of3": 7,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 2,
+          "n_img_stream_correct_any": 5,
+          "mean_abs_vote_3seed": 0.7616,
+          "mean_top20_purity_toward_true": 0.1167
+        },
+        "FN3_talky_hate_text_stream_miss": {
+          "n": 5,
+          "pct_of_errors": 19.2,
+          "ids": [
+            "hate_video_12",
+            "hate_video_143",
+            "hate_video_218",
+            "hate_video_295",
+            "hate_video_317"
+          ],
+          "median_words": 145,
+          "median_duration_s": 98.72,
+          "median_span_frac": 0.7634,
+          "n_wrong_3of3": 5,
+          "n_txt_stream_correct": 1,
+          "n_img_stream_correct_all3": 1,
+          "n_img_stream_correct_any": 2,
+          "mean_abs_vote_3seed": 0.6708,
+          "mean_top20_purity_toward_true": 0.18
+        },
+        "FP1_slur_bearing_nonhate": {
+          "n": 5,
+          "pct_of_errors": 19.2,
+          "ids": [
+            "non_hate_video_16",
+            "non_hate_video_32",
+            "non_hate_video_149",
+            "non_hate_video_314",
+            "non_hate_video_400"
+          ],
+          "median_words": 158,
+          "median_duration_s": 86.49,
+          "median_span_frac": 0.0,
+          "n_wrong_3of3": 5,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 3,
+          "n_img_stream_correct_any": 3,
+          "mean_abs_vote_3seed": 0.7902,
+          "mean_top20_purity_toward_true": 0.09
+        },
+        "FP2_longform_talky_nonhate": {
+          "n": 4,
+          "pct_of_errors": 15.4,
+          "ids": [
+            "non_hate_video_134",
+            "non_hate_video_140",
+            "non_hate_video_312",
+            "non_hate_video_642"
+          ],
+          "median_words": 405,
+          "median_duration_s": 275.26,
+          "median_span_frac": 0.0,
+          "n_wrong_3of3": 4,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 2,
+          "n_img_stream_correct_any": 2,
+          "mean_abs_vote_3seed": 0.5772,
+          "mean_top20_purity_toward_true": 0.2083
+        },
+        "FP3_residual_nonhate": {
+          "n": 2,
+          "pct_of_errors": 7.7,
+          "ids": [
+            "non_hate_video_167",
+            "non_hate_video_528"
+          ],
+          "median_words": 39,
+          "median_duration_s": 86.76,
+          "median_span_frac": 0.0,
+          "n_wrong_3of3": 1,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 0,
+          "n_img_stream_correct_any": 1,
+          "mean_abs_vote_3seed": 0.3392,
+          "mean_top20_purity_toward_true": 0.375
+        },
+        "FN2_needle_hate_diluted_pool": {
+          "n": 3,
+          "pct_of_errors": 11.5,
+          "ids": [
+            "hate_video_304",
+            "hate_video_365",
+            "hate_video_427"
+          ],
+          "median_words": 131,
+          "median_duration_s": 101.24,
+          "median_span_frac": 0.0847,
+          "n_wrong_3of3": 2,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 1,
+          "n_img_stream_correct_any": 2,
+          "mean_abs_vote_3seed": 0.7456,
+          "mean_top20_purity_toward_true": 0.1278
+        }
+      }
+    },
+    "final": {
+      "n_errors": 27,
+      "clusters": {
+        "FN1_speech_poor_visual_hate": {
+          "n": 7,
+          "pct_of_errors": 25.9,
+          "ids": [
+            "hate_video_1",
+            "hate_video_10",
+            "hate_video_36",
+            "hate_video_71",
+            "hate_video_276",
+            "hate_video_279",
+            "hate_video_329"
+          ],
+          "median_words": 6,
+          "median_duration_s": 24.41,
+          "median_span_frac": 0.6316,
+          "n_wrong_3of3": 7,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 2,
+          "n_img_stream_correct_any": 5,
+          "mean_abs_vote_3seed": 0.7575,
+          "mean_top20_purity_toward_true": 0.1119
+        },
+        "FN3_talky_hate_text_stream_miss": {
+          "n": 5,
+          "pct_of_errors": 18.5,
+          "ids": [
+            "hate_video_12",
+            "hate_video_143",
+            "hate_video_218",
+            "hate_video_295",
+            "hate_video_317"
+          ],
+          "median_words": 145,
+          "median_duration_s": 98.72,
+          "median_span_frac": 0.7634,
+          "n_wrong_3of3": 4,
+          "n_txt_stream_correct": 1,
+          "n_img_stream_correct_all3": 1,
+          "n_img_stream_correct_any": 2,
+          "mean_abs_vote_3seed": 0.6113,
+          "mean_top20_purity_toward_true": 0.1967
+        },
+        "FP1_slur_bearing_nonhate": {
+          "n": 5,
+          "pct_of_errors": 18.5,
+          "ids": [
+            "non_hate_video_16",
+            "non_hate_video_32",
+            "non_hate_video_149",
+            "non_hate_video_314",
+            "non_hate_video_400"
+          ],
+          "median_words": 158,
+          "median_duration_s": 86.49,
+          "median_span_frac": 0.0,
+          "n_wrong_3of3": 5,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 3,
+          "n_img_stream_correct_any": 3,
+          "mean_abs_vote_3seed": 0.7805,
+          "mean_top20_purity_toward_true": 0.1
+        },
+        "FP2_longform_talky_nonhate": {
+          "n": 5,
+          "pct_of_errors": 18.5,
+          "ids": [
+            "non_hate_video_121",
+            "non_hate_video_134",
+            "non_hate_video_140",
+            "non_hate_video_312",
+            "non_hate_video_642"
+          ],
+          "median_words": 232,
+          "median_duration_s": 263.43,
+          "median_span_frac": 0.0,
+          "n_wrong_3of3": 4,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 2,
+          "n_img_stream_correct_any": 2,
+          "mean_abs_vote_3seed": 0.5102,
+          "mean_top20_purity_toward_true": 0.2633
+        },
+        "FP3_residual_nonhate": {
+          "n": 2,
+          "pct_of_errors": 7.4,
+          "ids": [
+            "non_hate_video_167",
+            "non_hate_video_528"
+          ],
+          "median_words": 39,
+          "median_duration_s": 86.76,
+          "median_span_frac": 0.0,
+          "n_wrong_3of3": 2,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 0,
+          "n_img_stream_correct_any": 1,
+          "mean_abs_vote_3seed": 0.6063,
+          "mean_top20_purity_toward_true": 0.2417
+        },
+        "FN2_needle_hate_diluted_pool": {
+          "n": 3,
+          "pct_of_errors": 11.1,
+          "ids": [
+            "hate_video_304",
+            "hate_video_365",
+            "hate_video_427"
+          ],
+          "median_words": 131,
+          "median_duration_s": 101.24,
+          "median_span_frac": 0.0847,
+          "n_wrong_3of3": 3,
+          "n_txt_stream_correct": 0,
+          "n_img_stream_correct_all3": 1,
+          "n_img_stream_correct_any": 2,
+          "mean_abs_vote_3seed": 0.8672,
+          "mean_top20_purity_toward_true": 0.0833
+        }
+      }
+    }
+  },
+  "legal_calibration_final_epoch": {
+    "seed0": {
+      "acc_deployed": 0.8698,
+      "mf1_deployed": 0.8632,
+      "dev_acc_thr": -0.609355,
+      "dev_acc_devscore": 0.8505,
+      "dev_acc_test_acc": 0.8698,
+      "dev_acc_test_mf1": 0.8666,
+      "dev_acc_gain_acc": 0.0,
+      "dev_acc_gain_mf1": 0.0034,
+      "dev_mf1_thr": -0.609355,
+      "dev_mf1_devscore": 0.8489,
+      "dev_mf1_test_acc": 0.8698,
+      "dev_mf1_test_mf1": 0.8666,
+      "dev_mf1_gain_acc": 0.0,
+      "dev_mf1_gain_mf1": 0.0034
+    },
+    "seed1": {
+      "acc_deployed": 0.8791,
+      "mf1_deployed": 0.8735,
+      "dev_acc_thr": -0.580852,
+      "dev_acc_devscore": 0.8505,
+      "dev_acc_test_acc": 0.8837,
+      "dev_acc_test_mf1": 0.8796,
+      "dev_acc_gain_acc": 0.0047,
+      "dev_acc_gain_mf1": 0.006,
+      "dev_mf1_thr": -0.580852,
+      "dev_mf1_devscore": 0.8489,
+      "dev_mf1_test_acc": 0.8837,
+      "dev_mf1_test_mf1": 0.8796,
+      "dev_mf1_gain_acc": 0.0047,
+      "dev_mf1_gain_mf1": 0.006
+    },
+    "seed2": {
+      "acc_deployed": 0.8791,
+      "mf1_deployed": 0.873,
+      "dev_acc_thr": -0.038903,
+      "dev_acc_devscore": 0.8505,
+      "dev_acc_test_acc": 0.8791,
+      "dev_acc_test_mf1": 0.873,
+      "dev_acc_gain_acc": 0.0,
+      "dev_acc_gain_mf1": 0.0,
+      "dev_mf1_thr": -0.038903,
+      "dev_mf1_devscore": 0.8475,
+      "dev_mf1_test_acc": 0.8791,
+      "dev_mf1_test_mf1": 0.873,
+      "dev_mf1_gain_acc": 0.0,
+      "dev_mf1_gain_mf1": 0.0
+    },
+    "mean_gain": {
+      "dev_acc_fitted_acc": 0.0016,
+      "dev_acc_fitted_mf1": 0.0031,
+      "dev_mf1_fitted_acc": 0.0016,
+      "dev_mf1_fitted_mf1": 0.0031
+    }
+  }
+}

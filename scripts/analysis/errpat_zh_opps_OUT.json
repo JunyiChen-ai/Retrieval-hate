@@ -1,0 +1,120 @@
+{
+ "i_purity_prehead_vs_head": {
+  "deployed_head_space": {
+   "core_median_purity": 0.1167,
+   "core_mean_purity": 0.175,
+   "core_n_purity_gt_0.5": 0,
+   "correct_median_purity": 0.9833
+  },
+  "pre_head_raw": {
+   "raw_fused_l2n_concat": {
+    "core_median_purity": 0.45,
+    "core_mean_purity": 0.4477,
+    "core_n_purity_gt_0.5": 5,
+    "correct_median_purity": 0.85
+   },
+   "raw_text_only": {
+    "core_median_purity": 0.375,
+    "core_mean_purity": 0.3659,
+    "core_n_purity_gt_0.5": 7,
+    "correct_median_purity": 0.9
+   },
+   "raw_image_only": {
+    "core_median_purity": 0.5,
+    "core_mean_purity": 0.475,
+    "core_n_purity_gt_0.5": 8,
+    "correct_median_purity": 0.65
+   }
+  },
+  "READING": "if pre-head core purity is already <=0.5 the neighbourhood inversion is INHERITED from the encoder, not created by the trained head."
+ },
+ "ii_asr_redundancy": {
+  "NOTE": "fraction of Whisper-ASR character bigrams already present in the DEPLOYED gt text (Title + ' . ' + MultiHateClip Transcript).",
+  "all_test": {
+   "n": 149,
+   "median": 0.5227,
+   "mean": 0.5069,
+   "n_ge_0.80": 45,
+   "n_ge_0.50": 79,
+   "n_lt_0.25": 43
+  },
+  "core_errors": {
+   "n": 22,
+   "median": 0.5505,
+   "n_ge_0.80": 8,
+   "n_lt_0.25": 7
+  },
+  "asr_adds_new_content_ids": [
+   "BV11S4y1X7Qc",
+   "BV15o4y1t7gw",
+   "BV16U4y1m7Vb",
+   "BV16u4y1c7nA",
+   "BV19e411q7UE",
+   "BV1C84y1V7Rv",
+   "BV1Fa4y1B79W",
+   "BV1Ff4y1f7C4",
+   "BV1GL411G7SG",
+   "BV1Lj411D76g",
+   "BV1Pe411Y7c5",
+   "BV1Ss41167Ga",
+   "BV1U24y1n7kh",
+   "BV1XN4y1U7fj",
+   "BV1Xz4y1N77w",
+   "BV1a14y1n712",
+   "BV1ch411L7VP",
+   "BV1da411c76p",
+   "BV1gC4y1R7KF",
+   "BV1ia411m7Yy",
+   "BV1jh411F7HB",
+   "BV1jk4y1Q7JZ",
+   "BV1kT411t7ax",
+   "BV1p14y1D7da",
+   "BV1vv411z7sj"
+  ],
+  "n_asr_empty": 0
+ },
+ "iii_midlength_enrichment": {
+  "band_chars": [
+   49,
+   96
+  ],
+  "n_in_band": 37,
+  "observed_core_errors_in_band": 12,
+  "expected_under_null": 5.47,
+  "null_p95": 9,
+  "p_value_one_sided": 0.001,
+  "n_perms": 20000
+ },
+ "iv_ceilings": {
+  "n_test": 149,
+  "acc_per_item": 0.00671,
+  "current_final_epoch_3seed_acc": 0.8456,
+  "current_valsel_3seed_acc": 0.8322,
+  "protocol_retirement_gain_measured": 0.0134,
+  "core_error_pool_22_items_acc_value": 0.1477,
+  "stream_crosstab_3of3": {
+   "img=N,txt=N": 8,
+   "img=N,txt=Y": 6,
+   "img=Y,txt=N": 6,
+   "img=Y,txt=Y": 2
+  },
+  "no_channel_knows_subset": {
+   "n": 8,
+   "acc_if_all_fixed": 0.0537,
+   "interpretation": "irreducible under ANY reweighting of the two banked streams"
+  },
+  "one_channel_knows_subset": {
+   "n": 12,
+   "acc_if_all_fixed": 0.0805,
+   "interpretation": "per-item channel selection = F47-closed at all 3 supervision sources; F66 arithmetic applies"
+  },
+  "both_channels_know_subset": {
+   "n": 2,
+   "acc_if_all_fixed": 0.0134,
+   "interpretation": "head/fusion loses information both raw streams have; fusion-operator axis closed F85, fixed composition F50"
+  },
+  "global_threshold_oracle_gain_mean": 0.0201,
+  "protocol_flip_pool_size": 14,
+  "protocol_flip_pool_pct": 9.4
+ }
+}

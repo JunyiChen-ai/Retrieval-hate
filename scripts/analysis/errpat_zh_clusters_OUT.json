@@ -1,0 +1,948 @@
+{
+ "1_remint_vs_banked_convergence": {
+  "by_window": {
+   "ep5-19": {
+    "mean_abs_diff_items": 2.47,
+    "max_abs_diff_items": 9.0,
+    "n": 45
+   },
+   "ep20-24": {
+    "mean_abs_diff_items": 2.6,
+    "max_abs_diff_items": 5.99,
+    "n": 15
+   },
+   "ep25-29": {
+    "mean_abs_diff_items": 1.74,
+    "max_abs_diff_items": 4.0,
+    "n": 15
+   },
+   "ep29": {
+    "mean_abs_diff_items": 0.01,
+    "max_abs_diff_items": 0.01,
+    "n": 3
+   }
+  },
+  "late_epochs": {
+   "seed0": {
+    "ep20": {
+     "remint": 0.8456,
+     "banked": 0.8322,
+     "diff_items": 2.0
+    },
+    "ep21": {
+     "remint": 0.8255,
+     "banked": 0.8322,
+     "diff_items": -1.0
+    },
+    "ep22": {
+     "remint": 0.8322,
+     "banked": 0.8255,
+     "diff_items": 1.0
+    },
+    "ep23": {
+     "remint": 0.8389,
+     "banked": 0.7987,
+     "diff_items": 5.99
+    },
+    "ep24": {
+     "remint": 0.8456,
+     "banked": 0.8188,
+     "diff_items": 4.0
+    },
+    "ep25": {
+     "remint": 0.8591,
+     "banked": 0.8322,
+     "diff_items": 4.0
+    },
+    "ep26": {
+     "remint": 0.8523,
+     "banked": 0.8456,
+     "diff_items": 1.01
+    },
+    "ep27": {
+     "remint": 0.8523,
+     "banked": 0.8389,
+     "diff_items": 2.0
+    },
+    "ep28": {
+     "remint": 0.8523,
+     "banked": 0.8456,
+     "diff_items": 1.01
+    },
+    "ep29": {
+     "remint": 0.8456,
+     "banked": 0.8456,
+     "diff_items": 0.01
+    }
+   },
+   "seed1": {
+    "ep20": {
+     "remint": 0.8389,
+     "banked": 0.8255,
+     "diff_items": 2.0
+    },
+    "ep21": {
+     "remint": 0.8389,
+     "banked": 0.8121,
+     "diff_items": 4.0
+    },
+    "ep22": {
+     "remint": 0.8456,
+     "banked": 0.8322,
+     "diff_items": 2.0
+    },
+    "ep23": {
+     "remint": 0.8456,
+     "banked": 0.8322,
+     "diff_items": 2.0
+    },
+    "ep24": {
+     "remint": 0.8523,
+     "banked": 0.8389,
+     "diff_items": 2.0
+    },
+    "ep25": {
+     "remint": 0.8523,
+     "banked": 0.8255,
+     "diff_items": 4.0
+    },
+    "ep26": {
+     "remint": 0.8456,
+     "banked": 0.8255,
+     "diff_items": 3.0
+    },
+    "ep27": {
+     "remint": 0.8456,
+     "banked": 0.8322,
+     "diff_items": 2.0
+    },
+    "ep28": {
+     "remint": 0.8523,
+     "banked": 0.8322,
+     "diff_items": 3.0
+    },
+    "ep29": {
+     "remint": 0.8389,
+     "banked": 0.8389,
+     "diff_items": 0.0
+    }
+   },
+   "seed2": {
+    "ep20": {
+     "remint": 0.8121,
+     "banked": 0.8255,
+     "diff_items": -2.0
+    },
+    "ep21": {
+     "remint": 0.8188,
+     "banked": 0.8322,
+     "diff_items": -2.0
+    },
+    "ep22": {
+     "remint": 0.8255,
+     "banked": 0.8456,
+     "diff_items": -2.99
+    },
+    "ep23": {
+     "remint": 0.8255,
+     "banked": 0.8523,
+     "diff_items": -3.99
+    },
+    "ep24": {
+     "remint": 0.8322,
+     "banked": 0.8456,
+     "diff_items": -1.99
+    },
+    "ep25": {
+     "remint": 0.8389,
+     "banked": 0.8523,
+     "diff_items": -1.99
+    },
+    "ep26": {
+     "remint": 0.8322,
+     "banked": 0.8523,
+     "diff_items": -2.99
+    },
+    "ep27": {
+     "remint": 0.8591,
+     "banked": 0.8591,
+     "diff_items": -0.01
+    },
+    "ep28": {
+     "remint": 0.8591,
+     "banked": 0.8523,
+     "diff_items": 1.01
+    },
+    "ep29": {
+     "remint": 0.8523,
+     "banked": 0.8523,
+     "diff_items": 0.01
+    }
+   }
+  }
+ },
+ "2_core_error_profile": [
+  {
+   "id": "BV1G24y187Fh",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.05,
+   "mean_abs_margin": 0.949,
+   "mean_collateral": 22.33,
+   "gt_text_chars": 156,
+   "has_em": true,
+   "duration_s": 56.1,
+   "asr_chars": 143
+  },
+  {
+   "id": "BV1bh4y1173w",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.0667,
+   "mean_abs_margin": 0.8917,
+   "mean_collateral": 18.67,
+   "gt_text_chars": 46,
+   "has_em": false,
+   "duration_s": 22.61,
+   "asr_chars": 41
+  },
+  {
+   "id": "BV1Us411K7va",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.1,
+   "mean_abs_margin": 0.7967,
+   "mean_collateral": 15.33,
+   "gt_text_chars": 56,
+   "has_em": true,
+   "duration_s": 29.98,
+   "asr_chars": 1
+  },
+  {
+   "id": "BV1Km4y1u7ri",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.1167,
+   "mean_abs_margin": 0.6888,
+   "mean_collateral": 10.33,
+   "gt_text_chars": 64,
+   "has_em": true,
+   "duration_s": 9.38,
+   "asr_chars": 47
+  },
+  {
+   "id": "BV1m8411z7mV",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.1833,
+   "mean_abs_margin": 0.6502,
+   "mean_collateral": 10.67,
+   "gt_text_chars": 63,
+   "has_em": true,
+   "duration_s": 19.32,
+   "asr_chars": 65
+  },
+  {
+   "id": "BV1Qk4y1g7PM",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.25,
+   "mean_abs_margin": 0.4499,
+   "mean_collateral": 3.67,
+   "gt_text_chars": 252,
+   "has_em": false,
+   "duration_s": 46.32,
+   "asr_chars": 202
+  },
+  {
+   "id": "BV1to4y177df",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.2667,
+   "mean_abs_margin": 0.488,
+   "mean_collateral": 5.33,
+   "gt_text_chars": 90,
+   "has_em": false,
+   "duration_s": 32.25,
+   "asr_chars": 72
+  },
+  {
+   "id": "BV1qT4y1B7xM",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.2833,
+   "mean_abs_margin": 0.4148,
+   "mean_collateral": 3.33,
+   "gt_text_chars": 78,
+   "has_em": true,
+   "duration_s": 15.98,
+   "asr_chars": 51
+  },
+  {
+   "id": "BV1694y1N7xU",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.3,
+   "mean_abs_margin": 0.4691,
+   "mean_collateral": 4.67,
+   "gt_text_chars": 182,
+   "has_em": false,
+   "duration_s": 35.34,
+   "asr_chars": 150
+  },
+  {
+   "id": "BV1MU4y1D7Ks",
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.3167,
+   "mean_abs_margin": 0.3159,
+   "mean_collateral": 3.33,
+   "gt_text_chars": 87,
+   "has_em": false,
+   "duration_s": 16.21,
+   "asr_chars": 69
+  },
+  {
+   "id": "BV12B4y1x7eK",
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.05,
+   "mean_abs_margin": 0.9351,
+   "mean_collateral": 29.0,
+   "gt_text_chars": 61,
+   "has_em": true,
+   "duration_s": 9.98,
+   "asr_chars": 25
+  },
+  {
+   "id": "BV1qZ4y1T71a",
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.0667,
+   "mean_abs_margin": 0.9267,
+   "mean_collateral": 26.33,
+   "gt_text_chars": 60,
+   "has_em": true,
+   "duration_s": 23.2,
+   "asr_chars": 50
+  },
+  {
+   "id": "BV1jk4y1Q7JZ",
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.0667,
+   "mean_abs_margin": 0.8649,
+   "mean_collateral": 20.33,
+   "gt_text_chars": 64,
+   "has_em": true,
+   "duration_s": 35.12,
+   "asr_chars": 339
+  },
+  {
+   "id": "BV19C4y177iH",
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.0833,
+   "mean_abs_margin": 0.7457,
+   "mean_collateral": 8.0,
+   "gt_text_chars": 10,
+   "has_em": true,
+   "duration_s": 21.23,
+   "asr_chars": 7
+  },
+  {
+   "id": "BV15h4y157Km",
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.1,
+   "mean_abs_margin": 0.8379,
+   "mean_collateral": 15.33,
+   "gt_text_chars": 213,
+   "has_em": false,
+   "duration_s": 26.15,
+   "asr_chars": 177
+  },
+  {
+   "id": "BV1Lj411D76g",
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.1167,
+   "mean_abs_margin": 0.7233,
+   "mean_collateral": 9.67,
+   "gt_text_chars": 41,
+   "has_em": false,
+   "duration_s": 50.57,
+   "asr_chars": 532
+  },
+  {
+   "id": "BV1Vy4y1p7x2",
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.1167,
+   "mean_abs_margin": 0.7769,
+   "mean_collateral": 16.33,
+   "gt_text_chars": 96,
+   "has_em": false,
+   "duration_s": 34.71,
+   "asr_chars": 54
+  },
+  {
+   "id": "BV12G4y1S7mN",
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.1167,
+   "mean_abs_margin": 0.8019,
+   "mean_collateral": 12.0,
+   "gt_text_chars": 132,
+   "has_em": false,
+   "duration_s": 22.31,
+   "asr_chars": 86
+  },
+  {
+   "id": "BV1ia411m7Yy",
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.15,
+   "mean_abs_margin": 0.7424,
+   "mean_collateral": 10.67,
+   "gt_text_chars": 54,
+   "has_em": false,
+   "duration_s": 12.0,
+   "asr_chars": 53
+  },
+  {
+   "id": "BV11S4y1X7Qc",
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.2833,
+   "mean_abs_margin": 0.4711,
+   "mean_collateral": 4.0,
+   "gt_text_chars": 60,
+   "has_em": true,
+   "duration_s": 45.7,
+   "asr_chars": 47
+  },
+  {
+   "id": "BV1WF411r7Sn",
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.3833,
+   "mean_abs_margin": 0.2779,
+   "mean_collateral": 0.67,
+   "gt_text_chars": 258,
+   "has_em": true,
+   "duration_s": 38.29,
+   "asr_chars": 202
+  },
+  {
+   "id": "BV1ch411L7VP",
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.3833,
+   "mean_abs_margin": 0.2591,
+   "mean_collateral": 0.67,
+   "gt_text_chars": 72,
+   "has_em": false,
+   "duration_s": 49.99,
+   "asr_chars": 48
+  }
+ ],
+ "2_core_purity_bands": {
+  "purity_0.00_0.10": 8,
+  "purity_0.10_0.25": 7,
+  "purity_0.25_0.45": 7,
+  "purity_gt_0.45": 0,
+  "median": 0.1167
+ },
+ "2_confidently_wrong": {
+  "n_core": 22,
+  "n_margin_ge_0.5_and_purity_le_0.25": 14,
+  "n_margin_ge_0.9_and_purity_le_0.10": 3,
+  "n_low_margin_le_0.3": 2
+ },
+ "3_coverage_vs_ranking_prehead": {
+  "NOTE": "PRE-HEAD raw fused (l2n-concat) space over the full 579-row train bank; rank of the FIRST same-gold-class train neighbour.",
+  "core_errors": {
+   "median_rank_first_same_class": 1.5,
+   "n_rank_1": 11,
+   "n_rank_le_5": 20,
+   "n_rank_le_20": 22,
+   "n_rank_gt_20": 0,
+   "max_rank": 14
+  },
+  "correct_items": {
+   "median_rank_first_same_class": 1.0
+  }
+ },
+ "4_textlen_x_class": [
+  {
+   "class": "positive",
+   "len_band": "Q1",
+   "chars_range": [
+    0.0,
+    49.0
+   ],
+   "n": 17,
+   "err_rate_per_seed": 0.1176,
+   "n_3of3": 2
+  },
+  {
+   "class": "positive",
+   "len_band": "Q2",
+   "chars_range": [
+    49.0,
+    96.0
+   ],
+   "n": 11,
+   "err_rate_per_seed": 0.5455,
+   "n_3of3": 6
+  },
+  {
+   "class": "positive",
+   "len_band": "Q3",
+   "chars_range": [
+    96.0,
+    183.0
+   ],
+   "n": 11,
+   "err_rate_per_seed": 0.1818,
+   "n_3of3": 2
+  },
+  {
+   "class": "positive",
+   "len_band": "Q4",
+   "chars_range": [
+    183.0,
+    null
+   ],
+   "n": 6,
+   "err_rate_per_seed": 0.3333,
+   "n_3of3": 2
+  },
+  {
+   "class": "negative",
+   "len_band": "Q1",
+   "chars_range": [
+    0.0,
+    49.0
+   ],
+   "n": 20,
+   "err_rate_per_seed": 0.0667,
+   "n_3of3": 1
+  },
+  {
+   "class": "negative",
+   "len_band": "Q2",
+   "chars_range": [
+    49.0,
+    96.0
+   ],
+   "n": 26,
+   "err_rate_per_seed": 0.2308,
+   "n_3of3": 6
+  },
+  {
+   "class": "negative",
+   "len_band": "Q3",
+   "chars_range": [
+    96.0,
+    183.0
+   ],
+   "n": 26,
+   "err_rate_per_seed": 0.1026,
+   "n_3of3": 2
+  },
+  {
+   "class": "negative",
+   "len_band": "Q4",
+   "chars_range": [
+    183.0,
+    null
+   ],
+   "n": 32,
+   "err_rate_per_seed": 0.0312,
+   "n_3of3": 1
+  }
+ ],
+ "4_class_composition_by_len_band": [
+  {
+   "len_band": "Q1",
+   "n_pos": 17,
+   "n_neg": 20
+  },
+  {
+   "len_band": "Q2",
+   "n_pos": 11,
+   "n_neg": 26
+  },
+  {
+   "len_band": "Q3",
+   "n_pos": 11,
+   "n_neg": 26
+  },
+  {
+   "len_band": "Q4",
+   "n_pos": 6,
+   "n_neg": 32
+  }
+ ],
+ "5_flip_pool_vs_core": {
+  "n_flip_pool": 14,
+  "n_core_errors": 22,
+  "overlap": 5,
+  "flip_only": [
+   "BV1R4411v7Z8",
+   "BV1R8411N7m6",
+   "BV1Rg411T7eN",
+   "BV1VJ411378e",
+   "BV1aT4y1j73u",
+   "BV1da411c76p",
+   "BV1i24y1K7iC",
+   "BV1p14y1D7da",
+   "BV1yu41137bC"
+  ],
+  "core_and_flip": [
+   "BV12B4y1x7eK",
+   "BV1694y1N7xU",
+   "BV1MU4y1D7Ks",
+   "BV1WF411r7Sn",
+   "BV1ch411L7VP"
+  ],
+  "flip_pool_profile": [
+   {
+    "id": "BV12B4y1x7eK",
+    "gold": 1,
+    "label3": "Hateful",
+    "n_seeds_wrong_at_final": 3,
+    "mean_abs_margin": 0.9351,
+    "mean_purity": 0.05
+   },
+   {
+    "id": "BV1694y1N7xU",
+    "gold": 0,
+    "label3": "Normal",
+    "n_seeds_wrong_at_final": 3,
+    "mean_abs_margin": 0.4691,
+    "mean_purity": 0.3
+   },
+   {
+    "id": "BV1MU4y1D7Ks",
+    "gold": 0,
+    "label3": "Normal",
+    "n_seeds_wrong_at_final": 3,
+    "mean_abs_margin": 0.3159,
+    "mean_purity": 0.3167
+   },
+   {
+    "id": "BV1R4411v7Z8",
+    "gold": 0,
+    "label3": "Normal",
+    "n_seeds_wrong_at_final": 1,
+    "mean_abs_margin": 0.1951,
+    "mean_purity": 0.5333
+   },
+   {
+    "id": "BV1R8411N7m6",
+    "gold": 1,
+    "label3": "Hateful",
+    "n_seeds_wrong_at_final": 0,
+    "mean_abs_margin": 0.8405,
+    "mean_purity": 0.9
+   },
+   {
+    "id": "BV1Rg411T7eN",
+    "gold": 0,
+    "label3": "Normal",
+    "n_seeds_wrong_at_final": 0,
+    "mean_abs_margin": 0.7345,
+    "mean_purity": 0.85
+   },
+   {
+    "id": "BV1VJ411378e",
+    "gold": 0,
+    "label3": "Normal",
+    "n_seeds_wrong_at_final": 1,
+    "mean_abs_margin": 0.3568,
+    "mean_purity": 0.7
+   },
+   {
+    "id": "BV1WF411r7Sn",
+    "gold": 1,
+    "label3": "Offensive",
+    "n_seeds_wrong_at_final": 3,
+    "mean_abs_margin": 0.2779,
+    "mean_purity": 0.3833
+   },
+   {
+    "id": "BV1aT4y1j73u",
+    "gold": 0,
+    "label3": "Normal",
+    "n_seeds_wrong_at_final": 1,
+    "mean_abs_margin": 0.5851,
+    "mean_purity": 0.65
+   },
+   {
+    "id": "BV1ch411L7VP",
+    "gold": 1,
+    "label3": "Hateful",
+    "n_seeds_wrong_at_final": 3,
+    "mean_abs_margin": 0.2591,
+    "mean_purity": 0.3833
+   },
+   {
+    "id": "BV1da411c76p",
+    "gold": 1,
+    "label3": "Offensive",
+    "n_seeds_wrong_at_final": 0,
+    "mean_abs_margin": 0.5037,
+    "mean_purity": 0.7167
+   },
+   {
+    "id": "BV1i24y1K7iC",
+    "gold": 0,
+    "label3": "Normal",
+    "n_seeds_wrong_at_final": 0,
+    "mean_abs_margin": 0.8039,
+    "mean_purity": 0.9
+   },
+   {
+    "id": "BV1p14y1D7da",
+    "gold": 1,
+    "label3": "Offensive",
+    "n_seeds_wrong_at_final": 0,
+    "mean_abs_margin": 0.3513,
+    "mean_purity": 0.7
+   },
+   {
+    "id": "BV1yu41137bC",
+    "gold": 0,
+    "label3": "Normal",
+    "n_seeds_wrong_at_final": 0,
+    "mean_abs_margin": 0.5148,
+    "mean_purity": 0.7833
+   }
+  ]
+ },
+ "6_exemplars_core": {
+  "BV1G24y187Fh": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.05,
+   "mean_abs_margin": 0.949,
+   "gt_text_chars": 156,
+   "duration_s": 56.1,
+   "text_snippet": "[公主病]大战第一期 . 🎼前面的三个仆人快给本公主跪下，我爸爸可是百万富翁，不管怎么样，你们在我们这里永远是普通人，还敢对我开枪，我用钱砸死你。快点把他制服，你还这么做，我直接用…",
+   "asr_snippet": "前面的三个仆人快给本公主跪下我爸爸可是百万富翁信不信我用钱砸死你不管怎么样你们在我们这里永远是普通人还敢对我开枪我用钱砸死你快点把他制服你还"
+  },
+  "BV1bh4y1173w": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.0667,
+   "mean_abs_margin": 0.8917,
+   "gt_text_chars": 46,
+   "duration_s": 22.61,
+   "text_snippet": "傻 逼 二 次 元 . 我操傻逼二次元，好多傻逼二次元。哎，受不了了，到处都是傻逼二次元。😡",
+   "asr_snippet": "我操傻逼二次元好多傻逼二次元哎受不了了到处都是傻逼二次元哎师傅呢把这老王给我钱给他"
+  },
+  "BV1Us411K7va": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.1,
+   "mean_abs_margin": 0.7967,
+   "gt_text_chars": 56,
+   "duration_s": 29.98,
+   "text_snippet": "滚开 [绿帽]奴！ . 🎼에어컨 돌이 한씩 무렵 야우꼬시시고시닦!は!おちのお困りごとにようお困りごとには高だ。",
+   "asr_snippet": "啊"
+  },
+  "BV1Km4y1u7ri": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.1167,
+   "mean_abs_margin": 0.6888,
+   "gt_text_chars": 64,
+   "duration_s": 9.38,
+   "text_snippet": "[妈宝男]~ . 妈宝男妈，你听见了吗？人侮辱我，我天天自己吃，自己喝，自己能上桌，每天自行睡觉8小时独立拉屎，还不用拿纸跟谁俩。😡",
+   "asr_snippet": "妈宝能慢听见了吗人误入我我天天自己吃自己喝自己能上桌每天自行睡觉八小时独立拉屎还不用拿纸跟谁俩"
+  },
+  "BV1m8411z7mV": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.1833,
+   "mean_abs_margin": 0.6502,
+   "gt_text_chars": 63,
+   "duration_s": 19.32,
+   "text_snippet": "这[花痴]娘们 . 🎼不知道你看中我家哪位公子呢？有请贝公子。哎呀，这个老儿等了轻。儿雅，完全就是姑娘们喜欢的庆心女人的美男美。😊",
+   "asr_snippet": "不知道你看中我家哪位公子呢有请二公子哎呀 这个老儿长得清净绝合你脚蛋像玻璃娃娃玩的又不是姑娘们喜欢的清新女人的美男女啊这个 这个好"
+  },
+  "BV1Qk4y1g7PM": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.25,
+   "mean_abs_margin": 0.4499,
+   "gt_text_chars": 252,
+   "duration_s": 46.32,
+   "text_snippet": "一些无意识的厌女词汇 . 🎼大哥大哥，你帮帮我好不好？哎呦，你可真是个大爷啊。大姐，你没事吧，阿妈，你有病吧。哦，你好有男友力好man啊，这一看就是女司机吧。知道你这种日系双容的精…",
+   "asr_snippet": "大哥大哥你帮帮我好不好哎呦你可真是个大爷啊大姐你没事吧大妈你有病吧哦你好有男友力好慢啊这一看就女司机吧你知道你这种日式双胞的精髓代表什么吗娇"
+  },
+  "BV1to4y177df": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.2667,
+   "mean_abs_margin": 0.488,
+   "gt_text_chars": 90,
+   "duration_s": 32.25,
+   "text_snippet": "厌男厌女厌蠢？厌穷而已 . 🎼你干嘛偷拍我撕骗他啊，我没偷拍你啊，给我看你的相册第一张照片，原来你是死给。子感觉咱很有雅小。🎼快点儿，老板催了，姐姐先别不要卡的快行，你看我成吗？😊",
+   "asr_snippet": "你干嘛偷拍我死变态我没偷拍你啊给我看你的相册第一张照片原来你是私给小哥感觉咱们很有点他谁原来是俩小白脸快点老板催了你的性质不太好的看性你看我"
+  },
+  "BV1qT4y1B7xM": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.2833,
+   "mean_abs_margin": 0.4148,
+   "gt_text_chars": 78,
+   "duration_s": 15.98,
+   "text_snippet": "[流氓]在外要注意安全 . 🎼你在哪儿呢？这天又黑了，我害怕。哎呀，别乱他了吧，我给你揉揉，你干哈，你别整，把扫给我上来，你谁你我是流氓。流氓跟他们打的好友。😡",
+   "asr_snippet": "你干哪呢这天又黑了我害怕哎呀别乱跑了吧我给你揉揉你干啥你别走把手给我撒开你谁你恶是流氓流氓能咋的好有人"
+  },
+  "BV1694y1N7xU": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.3,
+   "mean_abs_margin": 0.4691,
+   "gt_text_chars": 182,
+   "duration_s": 35.34,
+   "text_snippet": "识人有术，奸门举枪 . 我们来看一下这张照片啊，这张照片它比较明显的一个特征，就是说它眼尾和眉尾的这块区域啊，这块区域有一条非常明显的竖纹，我画箭头这个地方啊，竖纹穿破这个特征在。…",
+   "asr_snippet": "我们来看一下这张照片这张照片它比较明显的一个特征就是说它眼尾和眉尾的这块区域这块区域有一条非常明显的竖纹我发箭头的一个地方竖纹穿破这个特征在"
+  },
+  "BV1MU4y1D7Ks": {
+   "gold": 0,
+   "label3": "Normal",
+   "mean_purity": 0.3167,
+   "mean_abs_margin": 0.3159,
+   "gt_text_chars": 87,
+   "duration_s": 16.21,
+   "text_snippet": "你知道无性恋吗？ . 🎼你知道无性恋吗？无性恋，他身上没有正常人都会表现出来的那种欲望。这种人最可怕了。我说的没错，在他身上，我看不到任何的口效，明明连神性都会有七情六欲的。",
+   "asr_snippet": "你知道吴姓恋吗?吴姓恋?他身上没有正常人都会表现出来的那种欲望这种人最可怕了你说的没错在他身上我看不到任何的可笑明明连实现都会有七千六一的"
+  },
+  "BV12B4y1x7eK": {
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.05,
+   "mean_abs_margin": 0.9351,
+   "gt_text_chars": 61,
+   "duration_s": 9.98,
+   "text_snippet": "比[妈宝男]更可怕的人... . 🎼人人讨厌妈宝男，妈宝女是什么样子？我妈说了，彩礼要20万，你还在等什么？赶紧点赞啊，我要。",
+   "asr_snippet": "人人讨厌妈保男妈保女是什么样子我妈说了彩礼要20万"
+  },
+  "BV1qZ4y1T71a": {
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.0667,
+   "mean_abs_margin": 0.9267,
+   "gt_text_chars": 60,
+   "duration_s": 23.2,
+   "text_snippet": "女人[花痴]起来，男人怎么样都是对的 . 🎼老可姐去看一下那个帅哥帅哥，一会叫我。月月，请问那个帅哥好看吗？有毛病吧喂。😊。",
+   "asr_snippet": "我可以借一下那个帅哥的扇子来一会儿叫我月月 前面那个帅哥好看吗你干嘛呢喂你这下 喂我告诉你我告诉你呀"
+  },
+  "BV1jk4y1Q7JZ": {
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.0667,
+   "mean_abs_margin": 0.8649,
+   "gt_text_chars": 64,
+   "duration_s": 35.12,
+   "text_snippet": "[公交车]女孩怒斥报警 男色狼当面打飞机 . 旁边搭子两走镜你搞清波睇我旁边搭子走。😊手做落睇我哋大鼻子真健康我仲多。这里就是监控。",
+   "asr_snippet": "在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭飛機在旁邊搭"
+  },
+  "BV19C4y177iH": {
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.0833,
+   "mean_abs_margin": 0.7457,
+   "gt_text_chars": 10,
+   "duration_s": 21.23,
+   "text_snippet": "英国火警，你[他妈的]！",
+   "asr_snippet": "by bwd6"
+  },
+  "BV15h4y157Km": {
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.1,
+   "mean_abs_margin": 0.8379,
+   "gt_text_chars": 213,
+   "duration_s": 26.15,
+   "text_snippet": "这是谁家太奶？呛死我了！ . 🎼不是你要不要看看你在干什么？日本现在出现了气球葬礼，就是把骨灰装进气球升空，自然爆炸，费用约1.2万人民币。网友蜡平那天风很大，谁家太奶迷糊了我的双…",
+   "asr_snippet": "不是你要不要看看你在干什么日本现在出现了气球葬礼就是把骨灰装进气球升空自然爆炸费用约1.2万人民币网友辣评那天风很大谁家太奶迷糊了我的双眼给"
+  },
+  "BV1Lj411D76g": {
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.1167,
+   "mean_abs_margin": 0.7233,
+   "gt_text_chars": 41,
+   "duration_s": 50.57,
+   "text_snippet": "【婊哥】辣妹被骂惨了，直接找大哥复仇 . .Where did?.How.I可6。",
+   "asr_snippet": "你不要這樣,你會被人家打死你不要這樣,你會被人家打死你不要這樣,你會被人家打死你不要這樣,你會被人家打死你不要這樣,你會被人家打死你不要這樣"
+  },
+  "BV1Vy4y1p7x2": {
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.1167,
+   "mean_abs_margin": 0.7769,
+   "gt_text_chars": 96,
+   "duration_s": 34.71,
+   "text_snippet": "日常欺负女同学 . 怎么会嘿你。😊说明一下，这是这是现在驯兽师驯兽的方式。对，驯兽师会以手部抓住闭嘴猎兽的脖子，然后进进行训。干有啊，表情表情表情。后现在叫杨康也不好使了，表情挂了…",
+   "asr_snippet": "聂寿博了我同意一下 这是现代信守师续寿的方式对 信守师会以手末抓住聂寿的脖子然后进行续寿有啊表兄表兄表兄表兄"
+  },
+  "BV12G4y1S7mN": {
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.1167,
+   "mean_abs_margin": 0.8019,
+   "gt_text_chars": 132,
+   "duration_s": 22.31,
+   "text_snippet": "女孩被卖进风月场所，立马成了抢手货，交出了18年的“秘密” . 🎼了，他赤裸着躺在桌子上，阿玉不顾女孩的意愿，帮女孩检查身体。两个男人在边上看得津津有味，女孩像待宰的羔羊一样，毫无…",
+   "asr_snippet": "她赤裸着躺在桌子上阿玉不顾女孩的意愿帮女孩检查身体两个男人在边上看得津津有味女孩像待宰的羔羊一样毫无尊严她痛苦万分觉得很丢脸但又无可奈何经过"
+  },
+  "BV1ia411m7Yy": {
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.15,
+   "mean_abs_margin": 0.7424,
+   "gt_text_chars": 54,
+   "duration_s": 12.0,
+   "text_snippet": "珍爱生命，远离公主病 . 🎼一想到你，我就我心心激心心到变我心到怀疑人生，我心到匆楚天际，我心到匆楚天际。😊",
+   "asr_snippet": "你想到你我就...郭鑫 郭鑫 記憶其人郭鑫 相當郭鑫郭鑫到別世 郭鑫到懷疑人生郭鑫到重重天際郭鑫到重重天際"
+  },
+  "BV11S4y1X7Qc": {
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.2833,
+   "mean_abs_margin": 0.4711,
+   "gt_text_chars": 60,
+   "duration_s": 45.7,
+   "text_snippet": "不能违背[妇女]意愿 . 🎼去哪儿啊，你们要干什么呀？小哥哥，穿的这性我们调。🎼哎呀不羞。我们男人从来就不被尊重，点赞必。😊",
+   "asr_snippet": "去哪啊你 你在干什么呀小哥哥你穿得正暴露肌肉又练得这么性感不就是想被我们挑衅吗小哥哥点赞 逼迫"
+  },
+  "BV1WF411r7Sn": {
+   "gold": 1,
+   "label3": "Offensive",
+   "mean_purity": 0.3833,
+   "mean_abs_margin": 0.2779,
+   "gt_text_chars": 258,
+   "duration_s": 38.29,
+   "text_snippet": "分手10年后，郭富城脱口而出的一句“[破鞋]”，一把扯下熊黛林的遮羞布 . 🎼分手十年后，看到熊黛林极尽风骚的卖弄身材，才知道为何郭富城会讽刺他是破切。模特出身的熊黛林身材不是一般…",
+   "asr_snippet": "分手十年后看到熊戴琳极尽风骚地卖弄身材才知道为何郭富城会讽刺她是破镜模特出身的熊戴琳身材不是一般的好靠着先天的优势走起性感路线来十分地得心应"
+  },
+  "BV1ch411L7VP": {
+   "gold": 1,
+   "label3": "Hateful",
+   "mean_purity": 0.3833,
+   "mean_abs_margin": 0.2591,
+   "gt_text_chars": 72,
+   "duration_s": 49.99,
+   "text_snippet": "奥黛丽赫本：“我是天下第一淫妇！” . 🎼我就是天下第一夫。道光。🎼把每个黑暗的地方全部都照亮，庞大时光像男儿的胸膛。😊用无穷的力量如此的坚强。",
+   "asr_snippet": "我就是天下第一夫优优独播剧场——YoYo Television Series Exclusive"
+  }
+ }
+}

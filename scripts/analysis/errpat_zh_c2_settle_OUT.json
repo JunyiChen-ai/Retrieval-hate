@@ -1,0 +1,23 @@
+{
+ "transcript_quartiles": [
+  31.0,
+  76.0,
+  162.0
+ ],
+ "C2_definition_A_quartile_band": {
+  "n_band": 37,
+  "observed": 11,
+  "expected": 5.44,
+  "null_p95": 9.0,
+  "p": 0.0048,
+  "err_rate": 0.2973
+ },
+ "C2_definition_B_round_3176": {
+  "n_band": 37,
+  "observed": 11,
+  "expected": 5.47,
+  "null_p95": 9.0,
+  "p": 0.0051,
+  "err_rate": 0.2973
+ }
+}
