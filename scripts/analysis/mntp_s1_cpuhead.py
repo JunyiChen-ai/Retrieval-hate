@@ -94,11 +94,13 @@ ARMS = {
         "causal": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
         "bidir": "Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir_HF",
         "meanpool": "Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-meanpool_HF",
+        "textpool": "Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-textpool_HF",
     },
     "MHC_zh": {
         "causal": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
         "bidir": "Qwen2.5-VL-7B-Instruct-LoRA-bidir_HF",
         "meanpool": "Qwen2.5-VL-7B-Instruct-LoRA-bidir-meanpool_HF",
+        "textpool": "Qwen2.5-VL-7B-Instruct-LoRA-bidir-textpool_HF",
     },
 }
 SEEDS = [0, 1, 2]
@@ -176,7 +178,7 @@ if __name__ == "__main__":
                 out[ds][arm][str(s)] = run_cell(ds, arm, model, s)
         # paired deltas vs the CPU-trained causal floor, per seed then averaged.
         # Skipped for any arm not yet measured (partial runs are resumable).
-        for arm in ("bidir", "meanpool"):
+        for arm in ("bidir", "meanpool", "textpool"):
             if arm not in out[ds] or "causal" not in out[ds] or not out[ds].get(arm):
                 continue
             d_fin = [out[ds][arm][str(s)]["final"]["acc"] - out[ds]["causal"][str(s)]["final"]["acc"]

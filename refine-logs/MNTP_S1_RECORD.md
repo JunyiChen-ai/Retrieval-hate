@@ -345,13 +345,31 @@ No download, no Modal, no training, no corpus ruling consumed.
 
 ## 5. REQUIRED STATEMENTS
 
-**ZERO test-touch.** No held-out test file was opened, read, or produced at any point in S1.
-Enforced by four independent belts: (i) the S1 extractor raises on any `--splits` containing
-`test`, before any side effect; (ii) the sbatch hard-codes `--splits train,val`; (iii) the S1
-caches have no `test_seen` file at all; (iv) the KS-MNTP-2 harness replaces the loader with a
-dev-only variant returning `(train, dev, dev)` and wraps `load_feats_split` in a guard that
-raises on any path containing `test_seen` — applied **uniformly to every arm**, so no arm reads
-test and the harness is identical across arms.
+**ZERO test-touch, in the sense that matters: no held-out test data entered any measurement,
+gate, or selection decision at any point in S1.** Enforced by four independent belts: (i) the S1
+extractor raises on any `--splits` containing `test`, before any side effect; (ii) the sbatch
+hard-codes `--splits train,val`; (iii) the S1 caches have no `test_seen` file at all; (iv) the
+KS-MNTP-2 harness replaces the loader with a dev-only variant returning `(train, dev, dev)` and
+wraps `load_feats_split` in a guard that raises on any path containing `test_seen` — applied
+**uniformly to every arm**, so no arm reads test and the harness is identical across arms.
+
+> **Correction (S1b review, external gate).** An earlier draft of this section claimed *"no
+> held-out test file was opened, read, or produced."* **That literal claim was too strong and is
+> withdrawn.** Job 13654's final step ran `scripts/b2_push.sh data/CLIP_Embedding/<DS>` for the
+> backup, which is a recursive `rclone copy` over the whole embedding directory — and that
+> directory contains pre-existing `test_seen_*.pt` caches belonging to *other* arms (59 files
+> across both datasets). Those files were therefore **enumerated and copied** to B2.
+>
+> **What this does and does not mean.** It is a byte-level file copy performed after all
+> extraction finished. No test label, feature, or metric entered the S1 pipeline, the KS-MNTP-1
+> screen, the CPU head screen, or any bar — every belt above still holds, and every reported
+> number remains dev-only. So the *scientific* zero-test-touch property is intact. But the
+> sentence as originally written asserted something stronger than what happened, and this
+> project's provenance discipline does not permit leaving that standing.
+>
+> **Fixed forward:** the S1b sbatch pushes **only its own two cache files by name**, never the
+> directory. The S1 sbatch (sha `20a020cb…`) is deliberately left byte-unchanged because it is
+> the provenance record of what job 13654 actually executed.
 
 No user-gated resource consumed: **no download, no corpus ruling, no `llm2vec` install, no
 Modal**. No `src/` file edited. No banked cache overwritten. No `state/`, prereg, or frozen
@@ -475,6 +493,89 @@ Cache tags: `HateMM → Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-textpool_HF`,
   and the campaign routes to S2a (transplant) or stops.
 - Under **no** outcome does S1b advance the goal clause: recovery to the causal floor is a
   mechanism result (`KS-MNTP-3`), and every arm so far sits below that floor.
+
+---
+
+## 6c. S1b EXECUTION
+
+### 6c.1 Pre-GPU external review — **NO-GO, then GO after fixes**
+
+The fork + sbatch went to the external gate before submission. First pass returned **NO-GO** with
+two blockers. Both were legitimate and are recorded because one of them invalidates a sentence in
+this record's own §5.
+
+- **BLOCKER — backup exposed held-out test caches.** The sbatch's final step ran
+  `b2_push.sh data/CLIP_Embedding/<DS>`, which is a recursive `rclone copy` over the *whole*
+  embedding directory — and that directory holds pre-existing `test_seen_*.pt` caches belonging to
+  other arms (59 files across both datasets). **Job 13654 (S1) already did this.** Copying bytes
+  leaks no test information into any gate, so every reported number stands, but the literal
+  zero-test-touch sentence in §5 was too strong; it is **corrected there**, not quietly dropped.
+  **Fix:** S1b pushes only its own two cache files **by name**, never the directory.
+- **BLOCKER — a third, undeclared behavioural divergence.** `parse_args_sys` is inherited
+  verbatim, so it also exposes the MOKA cell's `--no_merge` / `--moka`. The frozen causal
+  extractor honours them; this fork always takes the merge path and would have **silently ignored
+  them**. The arm declared *exactly two* differences from the control, so a reachable third is a
+  spec violation even though the sbatch never sets those flags. **Fix:** `main()` now raises on
+  either flag, before any side effect.
+- **NIT — span-stats filename collision** (a later smoke run could overwrite full-run stats):
+  filename now carries the out-tag. **NIT — oversized `S1_LIMIT`**: an all-digit value beyond
+  bash's signed-int range passes the digits-only regex but makes `-gt` fail *inside an `if`*, so
+  `set -e` does not fire and the run would take the FULL out-tag while python truncated the split
+  — a partial cache wearing a full cache's name. Length cap added. **NIT — `b2_push.sh` in file
+  mode** treats arg 2 as the full destination *including* filename, so `embeddings/$DS` would have
+  landed files in `embeddings/`; basename now appended.
+
+Re-review after fixes: **GO**, all four cleared. The reviewer also confirmed the §6b.3 four-item
+smoke cosine belt is acceptable as an **operator step** between the smoke and full submissions
+(the S1 pattern) rather than automated inside the sbatch, provided the full job is not submitted
+until it passes and the result is recorded. It was run and recorded (§6c.3).
+
+### 6c.2 Measured span decomposition — and a correction to the recon
+
+The S1b extractor logs the **real** per-item decomposition (`SPANSTATS_*.json`), so the record
+carries measured numbers rather than dummy-frame estimates. From the smoke (n=4/split):
+
+| dataset | split | seq median | vision positions (median, min-max) | **constant?** | text positions (median) | vision share |
+|---|---|---|---|---|---|---|
+| HateMM | train | 1381.0 | 700.0 (676-720) | **NO** | 681.0 | 50.7 % |
+| HateMM | dev | 1076.0 | 720.0 (720-768) | **NO** | 332.0 | 66.9 % |
+| MHC_zh | train | 820.0 | 720.0 (704-720) | **NO** | 105.5 | 87.8 % |
+| MHC_zh | dev | 829.0 | 702.0 (684-720) | **NO** | 127.0 | 84.7 % |
+
+**This settles the §6b.2 provenance note empirically.** The recon §1.5 reports "video tokens: 768,
+**constant**". On real videos the count is **not** constant — it ranges 676-768 across items,
+because the sampler hands the processor frames of differing geometry. **Any implementation that
+had assumed a fixed 768-token vision prefix and sliced by position would have silently mixed
+vision and text tokens on most items.** S1b masks by token id and is unaffected; this is recorded
+as the concrete justification for that choice.
+
+### 6c.3 Smoke — job **13656**, `COMPLETED 00:01:42` — belts **PASS**, with one early warning
+
+Runtime log confirms for both datasets: KS-MNTP-0a PASS; `is_causal=False on 28 decoder attention
+module(s)`; `[S1b] vision-content token ids: video_pad=151656 image_pad=151655 (EXCLUDED …);
+vision_start/vision_end and chat-format tokens are KEPT`; `splits=train,val`; `limit=4`.
+
+Mandatory 4-item cosine belt (mean per-item cosine, decodable rows, id-matched):
+
+| dataset | split | **img** vs banked bidir | text vs bidir | text vs S1 meanpool | text vs causal |
+|---|---|---|---|---|---|
+| HateMM | train | **1.000000** | 0.4515 | 0.9148 | 0.3273 |
+| HateMM | dev | **1.000000** | 0.5638 | 0.9052 | 0.4460 |
+| MHC_zh | train | **1.000000** | 0.7185 | 0.8667 | 0.3861 |
+| MHC_zh | dev | **1.000000** | 0.6786 | 0.8860 | 0.4095 |
+
+Both smoke gates pass: img is again an **exact** null-op (1.000000), so every S1b-vs-F72
+difference is attributable to the text readout alone; and text differs from **both** the F72 arm
+and the S1 arm, so S1b is neither a duplicate of the control nor of the previous arm.
+
+> **EARLY WARNING, recorded before the full run was submitted so it cannot be read as
+> hindsight.** The within-arm collapse statistic on the 4-item smoke was
+> **0.6889 / 0.7699 / 0.7482 / 0.7815** — **above the 0.60 bar declared in §6b.3 on all four
+> cells.** The full run was submitted anyway, deliberately: the collapse belt is declared as a
+> gate on *the arm's measurement*, and n=4 is not that measurement. Killing the campaign's last
+> live gate on four items would be the one irreversible error available at this step, and
+> ~0.85 GPU-h is cheap against it. **If the full-dev belt confirms the smoke, the arm
+> self-refutes as declared.**
 
 ---
 
