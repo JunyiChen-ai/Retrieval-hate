@@ -837,3 +837,28 @@ provenance (median-4-words → ~106 Chinese chars; 6.5× → 2.71×/10.55×/13.7
 215 verified against the wiki, which was already correct — the litsweep-5 correction was to the task prompt, not
 these tables). External frontier numbers are each paper's own protocol and are kept strictly out of any 4dp
 house comparison.*
+
+**Round 7 — the last un-run fusion flag, and a code-first reproduction survey (F83–F85).** The audit's final
+round changed instrument twice over. It spent the campaign's cheapest remaining GPU cell on the one first-class
+head flag that had never been run on video, and it replaced paper-reading with **cloning and execution-triaging
+the code** of adjacent-field 2025-H2 → 2026 work (the previous five sweeps opened no repository). Both cells
+below follow the F61–F82 discipline: neither revises T1–T4, neither adds to the 13-route count, and the
+project's best numbers (HateMM 0.8775 / 0.8791, ZH final 0.8456 / 0.8173) are unchanged.
+
+**Table 13. Round-7 fusion door-closer and reproduction survey (F83–F85).**
+
+| Direction | Epitaph (one line) | Verdict · record |
+|---|---|---|
+| **Trained fusion operator** — swap the deployed `align`/Hadamard fusion for a trained `concat`+MLP in the head (the only first-class `fusion_mode` branch never run on video; outside the F50 *fixed*-composition and F75 *loss*-swap ban letters, both over-reaches confirmed by recon) | 1-bite 3-seed × 2-dataset verdict, ~0.1 GPU-h, **zero code diff** (job 13514; branch-assert 6/6, 48/48 values agreed by three independent parsers, prereg re-hash match): **both cells KS-arm-dead** — ZH +0.0067 val-sel acc (2/3 sign) but −0.0045 final (1/3); HateMM −0.0031 / −0.0031 (0/3 on every leg); 0/4 legs near the FORMAL +0.030/+0.030 conjunct; no KS-regression (worst −0.0045 > −0.014). HateMM's whole effect ≤ **2 flipped items** on any seed (n = 215, 4 of 6 Δacc exactly 0.0000); ZH val-sel mean = **+1 item/seed** (n = 149) ⇒ fusion-operator axis **CLOSED as a measured null**; the null is about the **concat + 2.0× first-Linear bundle** (2,098,176 vs 1,049,600 params), never the operator alone, and never "capacity cannot help" | FUSIONCAT_VERDICT_REVIEW.md · `129fe2e` (recon FUSIONSWAP_FORENSIC_RECON.md · `934bc9a`) |
+| **Reproduction survey** — adjacent-field (deliberately *not* hateful-video) 2025-H2 → 2026 work **with runnable code**, triaged by file tree + `py_compile` rather than by README | $0 (no GPU, no SLURM, no weight downloads): 8 repos cloned (91 MB, gitignored); shortlist **LSMI (ICML 2025) > SynIB (arXiv 2606.09853) > MokA (NeurIPS 2025 Oral)**; UniME-V2 excluded at source (its MLLM-as-a-judge soft labels are exactly the banned P11/P2 supervision), VLM2Vec offers no pooling we lack (`last\|mean\|cls` only), **VidVec's `main` branch is empty** (no code exists) and **RASR was withdrawn by its authors** (v2, 2026-06-30); the HateMM dataset paper's own baseline code **does not compile as shipped** (`Codes/1.FastTextEmb_and_LASEREmbExtraction.py:45`, `SyntaxError`), while LSMI/SynIB/UniME-v2/BalanceBenchmark/MokA/VLM2Vec compile 4/4, 99/99, 95/95, 55/55, 214/214, 271/271. Coverage caveat stated in-record: the session's WebSearch quota exhausted at 200/200, so this is a **deep triage of 8 repositories, not an exhaustive enumeration** | REPRO_SURVEY_2025.md · `9367338` (+ ERRATUM `81e2eaf`) |
+
+*Erratum carried into the paper's framing (F84).* The survey's §4.1/§6 description of SynIB's objective as a
+"symmetric KL between the intact-input and the masked-input prediction" is **wrong at source level** and is
+superseded everywhere by the port recon's reading of `synib_mask_model.py`: the intact prediction never enters
+any KL; the live variants are a Gaussian KL to an uninformative N(0, I) prior, a Dirichlet KL, and a **forward**
+KL to detached unimodal anchors (the Hateful-Memes configuration), and the only symmetric logit-KL helper in the
+repository is commented out. The same reading finds three further upstream facts that any transplant claim must
+respect — the `zeros | noise | ema` mask fills are dead code (batch-permutation fill is the live path), the
+config `p` key is dead (`p_min = 0.30` binds), and the Hateful-Memes anchor heads carry **no gradient path**
+(untrained random init). No sentence about SynIB in this paper may use the survey's original characterization
+[DOC:REPRO_SURVEY_2025.md, ERRATUM commit `81e2eaf`; DOC:SYNIB_PORT_FORENSIC_RECON.md, commit `9e638ea`].

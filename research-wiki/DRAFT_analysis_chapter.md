@@ -681,6 +681,32 @@ MultiHateClip publishes an aggregated majority-vote label with no per-annotator 
 learning-with-disagreement / soft-label-from-annotators lineage of the related work is foreclosed at the data
 level — see limitations [DOC:LITSWEEP5_HATEMM_EN.md, commit `36d833e`].)
 
+**The fusion operator itself is a measured null (F83/F85, round 7).** §3.6's mechanism turns on the deployed head
+fusing the two L2-normed projections by an element-wise (Hadamard) product — yet `fusion_mode` has always been a
+first-class constructor argument with `concat` and `cross` branches already wired
+(`src/model/classifier.py:85–90, 138–143`), and **`align`/Hadamard is the only fusion this project ever ran on
+video**. A zero-GPU recon confirmed that both standing bans over-reach on the letter: F50 names *fixed*
+compositions, reweights and per-modality temperatures, and F75 names head-*loss* swaps, so a **trained** fusion
+operator — optimised end-to-end under the unchanged triplet+BCE hybrid, with the deployed top-20 kNN read-out
+untouched — is banned by neither, even though F50's conversion thesis, F75's trained-symmetric-reshaper mechanism
+and F66's arithmetic all predict ≈ 0 and the head-side base rate stood at 0-for-~20
+[DOC:FUSIONSWAP_FORENSIC_RECON.md, commit `934bc9a`]. Because the `concat` arm is a one-token, **zero-code-diff**
+swap at ~0.1 GPU-h, the gap was closed by measurement rather than by argument. A one-bite six-run family
+(job 13514; branch-assert 6/6, three independent parsers agreeing on all 48 values) leaves **both dataset cells
+KS-arm-dead**: MHClip-ZH is +0.0067 acc val-selected (2/3 sign) but **−0.0045 final-epoch** (1/3), HateMM is
+**−0.0031 on both protocols** (0/3 sign on every leg), no cell is anywhere near the FORMAL +0.030/+0.030
+conjunct, and no KS-regression fires (worst mean −0.0045, above the −0.014 line). The effect sizes read most
+honestly in test items: HateMM's entire effect is **≤ 2 flipped predictions on any seed** (n = 215, one flip =
+0.00465; four of its six Δacc values are exactly 0.0000) and the ZH val-selected mean is **+1 item per seed**
+(n = 149, one flip = 0.00671). The fusion-operator axis is therefore closed as a measured null, and the live
+reviewer question — *why Hadamard and not concat?* — is answered with a number instead of a preference
+[DOC:FUSIONCAT_VERDICT_REVIEW.md, commit `129fe2e`]. Two disciplines travel with it. First, the arm that failed
+was `concat` **bundled with a 2.0× first-Linear capacity bump** (2,098,176 vs 1,049,600 parameters), so the null
+is evidence about the *bundle* and may never be upgraded into "extra head capacity cannot help" — the
+param-matched control that would separate them was placed outside the family by the frozen scope. Second, the
+val-selected legs were again decided by `roc` tie-breaks over up to six Val-tied epochs (selected epochs ranged
+5 → 26): the F45/F63 78-item dev wall, visible directly in the selection trace.
+
 ## 4. What survives
 
 Three MLLM roles survive with removable-ablation evidence; none is a main-table-accuracy role.

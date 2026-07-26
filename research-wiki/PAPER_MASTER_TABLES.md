@@ -454,6 +454,27 @@ CURATION_FORENSIC_RECON, ELR_FORENSIC_RECON, ZHPROMPT_VERDICT_REVIEW}.md` + lit-
 COMPLETENESS}.md` + `GRADEDLBL_PREGATE_RECORD.md`(+`OUT.json`)。findings F75–F82(`state/findings.jsonl`)。
 **不入负结果 ordinal、不铸总数(逐轮框架,同文末张力清单 #9)。**
 
+### T6.4 Round-7 融合门闩 + 代码复现启发战役(F83–F87;实测 null + $0 survey/gate/park)
+
+> **续 append 2026-07-26**(同纯转录纪律)。measured-dead:fusion-concat(F85,~0.1 GPU-h);$0:repro-survey
+> (F84)。**不改 T1–T4 任何数、不增 13 路线计数、不占负结果 ordinal**;项目最优数(HateMM 0.8775/0.8791;
+> ZH final 0.8456/0.8173)不变。
+
+**T6.4-a 融合门闩 + 复现调研(F83–F85)**
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **Trained fusion operator** — 把部署的 `align`/Hadamard 换成 head 内**训练过的** `concat`+MLP(唯一一个从未在视频上跑过的 first-class `fusion_mode` 分支;recon 证实 F50 只禁 *fixed* composition、F75 只禁 *loss* swap,双 ban letter 均 over-reach) | 1-bite 3-seed × 2-dataset 判决,~0.1 GPU-h,**零代码 diff**(job 13514;branch-assert 6/6、3 个独立 parser 48/48 一致、prereg re-hash 匹配):**两个 cell 全 KS-arm-dead**——ZH val-sel +0.0067(2/3)但 final −0.0045(1/3);HateMM −0.0031 / −0.0031(每条腿 0/3);4 条腿无一接近 FORMAL +0.030/+0.030;无 KS-regression(最差 −0.0045 > −0.014)。HateMM 全部效应 ≤ **2 个翻转样本**/seed(n=215,6 个 Δacc 中 4 个恰为 0.0000);ZH val-sel 均值 = **+1 样本/seed**(n=149)⇒ **fusion-operator 轴 CLOSED,为实测 null**;该 null 属于 **concat + 2.0× first-Linear 捆绑**(2,098,176 vs 1,049,600 参数),**不得**升格为「加 head 容量没用」 | FUSIONCAT_VERDICT_REVIEW.md · `129fe2e`(recon FUSIONSWAP_FORENSIC_RECON.md · `934bc9a`) |
+| **Repro-survey** — 邻域(**非**仇恨视频)2025-H2→2026 **带可运行代码**工作,按 file-tree + `py_compile` 而非 README 分诊 | $0(无 GPU / SLURM / 权重下载):clone 8 个 repo(91 MB,gitignored);shortlist **LSMI(ICML 2025)> SynIB(arXiv 2606.09853)> MokA(NeurIPS 2025 Oral)**;UniME-V2 于源头排除(MLLM-as-a-judge 软标签 = 被禁的 P11/P2 监督源),VLM2Vec 无我方没有的 pooling(仅 `last\|mean\|cls`),**VidVec `main` 分支为空**(无代码),**RASR 被作者撤稿**(v2,2026-06-30);HateMM 数据集论文自带 baseline 代码**按发布状态无法编译**(`Codes/1.FastTextEmb_and_LASEREmbExtraction.py:45` SyntaxError),而 LSMI/SynIB/UniME-v2/BalanceBenchmark/MokA/VLM2Vec 分别 4/4、99/99、95/95、55/55、214/214、271/271 编译干净。**覆盖度自陈:** WebSearch 配额 200/200 用尽 ⇒ 这是 **8 个仓库的深度分诊,不是穷举枚举** | REPRO_SURVEY_2025.md · `9367338`(+ ERRATUM `81e2eaf`) |
+
+**SynIB 刻画勘误(F84,进入论文框架):** survey §4.1/§6 把 SynIB 目标写成「intact 与 masked 预测之间的
+symmetric KL」——**源码层为假**,一律以 port recon 对 `synib_mask_model.py` 的读法为准:intact 预测**从不**进入
+任何 KL;live 变体为 Gaussian KL→N(0, I) 无信息先验、Dirichlet KL、以及对 detached 单模态 anchor 的 **forward**
+KL(Hateful-Memes 配置);唯一的 symmetric logit-KL helper 在仓库里是**注释掉的**。同一读法另得三条上游事实:
+`zeros | noise | ema` 三种 mask fill 是死代码(live 路径为 batch-permutation fill)、config `p` 键失效
+(`p_min = 0.30` 生效)、HM anchor head **无梯度路径**(未训练随机初始化)。[DOC:REPRO_SURVEY_2025.md ERRATUM
+`81e2eaf`;SYNIB_PORT_FORENSIC_RECON.md `9e638ea`]
+
 ---
 
 ## 骨架段 — 一页纸论文章节骨架
