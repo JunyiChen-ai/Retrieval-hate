@@ -1,0 +1,58 @@
+{
+ "purpose": "K-CLAP-3 comparator + confound pre-check. NO CLAP data touched. Moves NO bar.",
+ "bars_frozen_at_commit": "6c8929d (spec 6c8929d / gate script 687ea82)",
+ "scope": {
+  "N_trainval": 851,
+  "n_pos": 341,
+  "stratum_rule": "n_words <= 25 (FN1 rule)",
+  "stratum_n": 232,
+  "stratum_pos": 42,
+  "stratum_base_rate": 0.1810344827586207
+ },
+ "comparators": {
+  "whisper_alone_stratum_auc": 0.8482456140350878,
+  "whisper_ci": [
+   0.7843729241397636,
+   0.9052757268783292
+  ],
+  "whisper_C": 0.1,
+  "Z_deployed_alone_stratum_auc": 0.8937343358395989,
+  "Z_ci": [
+   0.8355213957696185,
+   0.9426649806383937
+  ],
+  "Z_C": 0.01,
+  "n_boot_valid": 5000
+ },
+ "trivial_covariate_baselines_stratum": {
+  "n_words_alone_auc": 0.6610275689223057,
+  "duration_alone_auc": 0.5213659147869675
+ },
+ "confound_correlations_stratum": {
+  "rho_whisperscore_nwords": [
+   0.4765378399579317,
+   1.483498895291799e-14
+  ],
+  "rho_whisperscore_duration": [
+   0.004606189093070016,
+   0.9443681314396949
+  ],
+  "rho_label_nwords": [
+   0.21641673408070208,
+   0.0009067563113930353
+  ],
+  "rho_label_duration": [
+   0.02849958812326156,
+   0.6658607227284845
+  ]
+ },
+ "implied_narrow_go_thresholds": {
+  "C1_frozen_auc_ge": 0.65,
+  "C1_frozen_cilow_gt": 0.55,
+  "C1_is_slack_because": "the already-KILLED Whisper block scores 0.8482 and even the n_words-alone covariate scores 0.6610, both above the frozen 0.65 go-threshold",
+  "C2_effective_clap_auc_required": 0.8982456140350878,
+  "C3_baseline_Z_auc_to_beat": 0.8937343358395989,
+  "ruling": "bars NOT changed (changing them after measuring the comparator would be a relaxation); the operative NARROW-GO conditions are C2 and C3, both strict."
+ },
+ "elapsed_s": 13.3
+}
