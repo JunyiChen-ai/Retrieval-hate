@@ -1,0 +1,8 @@
+[hatemm] n=744 pos-rate 0.4005 dim=7168
+    fold 0: dep 0.7987 adj_max 0.7919 (14.8s)
+    fold 1: dep 0.8322 adj_max 0.8322 (13.3s)
+    fold 2: dep 0.8926 adj_max 0.8859 (13.3s)
+    fold 3: dep 0.8255 adj_max 0.8456 (13.2s)
+    fold 4: dep 0.8716 adj_max 0.8446 (12.7s)
+[hatemm] PARITY 26/26
+[hatemm] EMITTED -> scripts/analysis/vga_emit_hatemm_OUT.json

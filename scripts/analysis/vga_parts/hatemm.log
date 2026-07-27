@@ -1,0 +1,28 @@
+[hatemm] reading /data/jehc223/RGCL/scripts/analysis/vga_emit_hatemm_OUT.json
+    [hatemm/mlp_max (PRIMARY)] verifier:logistic        fired  48 prec 0.4375 dacc -0.0081 00-+-
+    [hatemm/mlp_max (PRIMARY)] verifier:gbm             fired  88 prec 0.5455 dacc +0.0108 0+0+0
+    [hatemm/mlp_max (PRIMARY)] f47ctrl:logistic         fired  71 prec 0.5634 dacc +0.0121 ++0+0
+    [hatemm/mlp_max (PRIMARY)] f47ctrl:gbm              fired  47 prec 0.6809 dacc +0.0228 ++++0
+    [hatemm/mlp_max (PRIMARY)] f47ctrl_full:logistic    fired  51 prec 0.6667 dacc +0.0228 +++++
+    [hatemm/mlp_max (PRIMARY)] f47ctrl_full:gbm         fired  52 prec 0.6923 dacc +0.0269 +++++
+    [hatemm/mlp_max (PRIMARY)] PERM verifier:logistic        obs -0.0081 null -0.0024+-0.0058 p=0.8706
+    [hatemm/mlp_max (PRIMARY)] PERM verifier:gbm             obs +0.0108 null -0.0026+-0.0060 p=0.01
+    [hatemm/mlp_max (PRIMARY)] PERM f47ctrl:logistic         obs +0.0121 null -0.0027+-0.0064 p=0.01
+    [hatemm/mlp_max (PRIMARY)] PERM f47ctrl:gbm              obs +0.0228 null -0.0033+-0.0060 p=0.005
+    [hatemm/mlp_max (PRIMARY)] PERM f47ctrl_full:logistic    obs +0.0228 null -0.0029+-0.0059 p=0.005
+    [hatemm/mlp_max (PRIMARY)] PERM f47ctrl_full:gbm         obs +0.0269 null -0.0025+-0.0057 p=0.005
+    [hatemm/mlp_mean3 (SECONDARY)] verifier:logistic        fired  70 prec 0.5286 dacc +0.0054 +-+++
+    [hatemm/mlp_mean3 (SECONDARY)] verifier:gbm             fired  57 prec 0.5088 dacc +0.0013 +0--+
+    [hatemm/mlp_mean3 (SECONDARY)] f47ctrl:logistic         fired  53 prec 0.6604 dacc +0.0228 ++0++
+    [hatemm/mlp_mean3 (SECONDARY)] f47ctrl:gbm              fired  64 prec 0.6719 dacc +0.0296 +++++
+    [hatemm/mlp_mean3 (SECONDARY)] f47ctrl_full:logistic    fired  38 prec 0.6842 dacc +0.0188 ++0++
+    [hatemm/mlp_mean3 (SECONDARY)] f47ctrl_full:gbm         fired  53 prec 0.6792 dacc +0.0255 +++++
+    [hatemm/mlp_mean3 (SECONDARY)] PERM verifier:logistic        obs +0.0054 null +0.0034+-0.0056 p=0.3284
+    [hatemm/mlp_mean3 (SECONDARY)] PERM verifier:gbm             obs +0.0013 null +0.0032+-0.0056 p=0.7313
+    [hatemm/mlp_mean3 (SECONDARY)] PERM f47ctrl:logistic         obs +0.0228 null +0.0032+-0.0063 p=0.005
+    [hatemm/mlp_mean3 (SECONDARY)] PERM f47ctrl:gbm              obs +0.0296 null +0.0034+-0.0052 p=0.005
+    [hatemm/mlp_mean3 (SECONDARY)] PERM f47ctrl_full:logistic    obs +0.0188 null +0.0034+-0.0060 p=0.01
+    [hatemm/mlp_mean3 (SECONDARY)] PERM f47ctrl_full:gbm         obs +0.0255 null +0.0037+-0.0057 p=0.005
+    [hatemm] VNQ vs knnue_fitted: dAUGRC -0.0029 ++---
+    [hatemm] VNQ vs vote_margin: dAUGRC +0.0007 ++--+
+[hatemm] CELL DONE -> /data/jehc223/RGCL/scripts/analysis/vga_parts/hatemm.json

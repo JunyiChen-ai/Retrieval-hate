@@ -1,0 +1,8 @@
+[zh] n=579 pos-rate 0.3109 dim=7168
+    fold 0: dep 0.8534 adj_max 0.8448 (10.1s)
+    fold 1: dep 0.8534 adj_max 0.8017 (9.0s)
+    fold 2: dep 0.9224 adj_max 0.8793 (9.2s)
+    fold 3: dep 0.8017 adj_max 0.7759 (9.3s)
+    fold 4: dep 0.8087 adj_max 0.7043 (10.3s)
+[zh] PARITY 26/26
+[zh] EMITTED -> scripts/analysis/vga_emit_zh_OUT.json

@@ -1,0 +1,28 @@
+[en] reading /data/jehc223/RGCL/scripts/analysis/vga_emit_en_OUT.json
+    [en/mlp_max (PRIMARY)] verifier:logistic        fired  46 prec 0.3696 dacc -0.0219 -----
+    [en/mlp_max (PRIMARY)] verifier:gbm             fired  45 prec 0.5111 dacc +0.0018 +-+-+
+    [en/mlp_max (PRIMARY)] f47ctrl:logistic         fired  13 prec 0.4615 dacc -0.0018 0+-0-
+    [en/mlp_max (PRIMARY)] f47ctrl:gbm              fired   4 prec 1.0 dacc +0.0073 ++000
+    [en/mlp_max (PRIMARY)] f47ctrl_full:logistic    fired  32 prec 0.6562 dacc +0.0182 +-+0+
+    [en/mlp_max (PRIMARY)] f47ctrl_full:gbm         fired  43 prec 0.4884 dacc -0.0018 +-+-0
+    [en/mlp_max (PRIMARY)] PERM verifier:logistic        obs -0.0219 null -0.0062+-0.0080 p=0.9751
+    [en/mlp_max (PRIMARY)] PERM verifier:gbm             obs +0.0018 null -0.0064+-0.0081 p=0.1841
+    [en/mlp_max (PRIMARY)] PERM f47ctrl:logistic         obs -0.0018 null -0.0061+-0.0081 p=0.2488
+    [en/mlp_max (PRIMARY)] PERM f47ctrl:gbm              obs +0.0073 null -0.0076+-0.0079 p=0.0249
+    [en/mlp_max (PRIMARY)] PERM f47ctrl_full:logistic    obs +0.0182 null -0.0054+-0.0087 p=0.01
+    [en/mlp_max (PRIMARY)] PERM f47ctrl_full:gbm         obs -0.0018 null -0.0072+-0.0085 p=0.2488
+    [en/mlp_mean3 (SECONDARY)] verifier:logistic        fired   8 prec 0.125 dacc -0.0109 -0-0-
+    [en/mlp_mean3 (SECONDARY)] verifier:gbm             fired  11 prec 0.6364 dacc +0.0055 00++0
+    [en/mlp_mean3 (SECONDARY)] f47ctrl:logistic         fired   9 prec 0.4444 dacc -0.0018 000-0
+    [en/mlp_mean3 (SECONDARY)] f47ctrl:gbm              fired   2 prec 0.5 dacc +0.0000 00000
+    [en/mlp_mean3 (SECONDARY)] f47ctrl_full:logistic    fired  24 prec 0.5833 dacc +0.0073 +-0+-
+    [en/mlp_mean3 (SECONDARY)] f47ctrl_full:gbm         fired  20 prec 0.4 dacc -0.0073 0++--
+    [en/mlp_mean3 (SECONDARY)] PERM verifier:logistic        obs -0.0109 null -0.0023+-0.0056 p=0.9055
+    [en/mlp_mean3 (SECONDARY)] PERM verifier:gbm             obs +0.0055 null -0.0042+-0.0060 p=0.0149
+    [en/mlp_mean3 (SECONDARY)] PERM f47ctrl:logistic         obs -0.0018 null -0.0032+-0.0054 p=0.4179
+    [en/mlp_mean3 (SECONDARY)] PERM f47ctrl:gbm              obs +0.0000 null -0.0032+-0.0049 p=0.3731
+    [en/mlp_mean3 (SECONDARY)] PERM f47ctrl_full:logistic    obs +0.0073 null -0.0034+-0.0056 p=0.005
+    [en/mlp_mean3 (SECONDARY)] PERM f47ctrl_full:gbm         obs -0.0073 null -0.0036+-0.0054 p=0.8308
+    [en] VNQ vs knnue_fitted: dAUGRC -0.0052 +----
+    [en] VNQ vs vote_margin: dAUGRC -0.0114 ++---
+[en] CELL DONE -> /data/jehc223/RGCL/scripts/analysis/vga_parts/en.json

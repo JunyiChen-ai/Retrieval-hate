@@ -1,0 +1,8 @@
+[en] n=549 pos-rate 0.3060 dim=7168
+    fold 0: dep 0.7091 adj_max 0.7455 (9.5s)
+    fold 1: dep 0.7545 adj_max 0.7182 (8.2s)
+    fold 2: dep 0.8091 adj_max 0.8182 (8.2s)
+    fold 3: dep 0.8182 adj_max 0.7545 (8.2s)
+    fold 4: dep 0.8073 adj_max 0.7890 (8.3s)
+[en] PARITY 26/26
+[en] EMITTED -> scripts/analysis/vga_emit_en_OUT.json
