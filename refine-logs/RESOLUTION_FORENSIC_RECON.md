@@ -121,10 +121,18 @@ VIRGIN axis; no prior negative binds it.** (Confirmed, litsweep2 §2.)
   features from a **FROZEN** backbone give +2.8 TextVQA, +5–8 V*, and — the pointed part — *image-scale keeps
   helping where model-scale plateaus/hurts.* Our F-line exhausted **model** scale (CLIP<32B<7B, scale
   regresses); we never touched **image** scale. Different lever.
-- **ZH has both headroom AND relative image weight.** ZH sources are 1080p (13.7× headroom) and ZH transcripts
+- **ZH has headroom** ~~AND relative image weight~~**.** ZH sources are 1080p (13.7× headroom); ~~and ZH transcripts
   are ~4 words median (`LITSWEEP2_INPUT_FIDELITY.md:64`), so the ZH **image** stream carries more relative
   weight than the "text-carried" label implies — the one place added pixels feed a stream that isn't drowned
-  by text.
+  by text.~~
+  > **ERRATUM 2026-07-28 (propagated from `LITSWEEP3_ZH_SPECIFIC.md:18-26,29-34`, F77 / commit `d4af64b`).**
+  > The struck half of this bullet is **withdrawn.** The "ZH transcripts ~4 words median" figure it rests on
+  > (`LITSWEEP2_INPUT_FIDELITY.md:64`) is a **whitespace-split artefact** — Chinese has no inter-word spaces.
+  > The deployed ZH text stream is a median **106 Chinese characters** (train 106 / val 108.5 / test 105) of
+  > **Bilibili description metadata** — *not* Whisper ASR, and **42 %** of ZH train rows carry literal
+  > `<em class="keyword">…</em>` markup inside the key. ZH's image stream therefore gets **no** extra relative
+  > weight from a thin text stream, and the "one place added pixels feed a stream that isn't drowned by text"
+  > argument does not hold. The 13.7× source-resolution headroom is measured separately (§ffprobe) and stands.
 - **Not the OCR channel (boundary, flagged honestly).** The user veto forbids a *separate OCR channel*. Higher
   input resolution adds **no channel** — it lets the *existing* frozen ViT resolve pixels it already receives
   (on-screen text, small symbols, faces). It is mechanistically distinct from OCR. **But flag the adjacency:**

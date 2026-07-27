@@ -283,13 +283,24 @@ risk ("MLLM may not beat CLIP") is **retired**.
 **Honesty caveats:** ">85% on BOTH HateMM AND MHClip simultaneously" is **not guaranteed** — MHC-EN
 still sits at 0.789 acc after the MLLM lever, and the multi-granularity delta did **NOT** close that
 gap (Phase-3: sign-flips by language, no config crosses 0.85). MHClip-ZH >0.85 is aspirational
-(ASR-bound), and frozen Qwen actually *lost* to CLIP on ZH — so the **remaining performance lever for
+(~~ASR-bound~~ — see erratum below), and frozen Qwen actually *lost* to CLIP on ZH — so the **remaining performance lever for
 the MHClip gap is LoRA-SFT of the encoder** (deferred to Iteration 2; in-flight as of 2026-07-02, see
 below). The **defensible spine**: beat MoRE on the binary protocol + approach MM-HSD on HateMM at a
 fraction of trainable/inference cost, resting on the **one validated mechanistic delta MoRE/RGCL
 lack** — a **test-time-updatable + cross-dataset-swappable** kNN memory (Phase-3b) — with multi-
 granularity reported as honest analysis, not a claimed win. Cross-paper numbers untrusted → re-run all
 baselines on our split.
+
+> **ERRATUM 2026-07-28 (propagated from `refine-logs/LITSWEEP3_ZH_SPECIFIC.md:18-37`, F77 / commit
+> `d4af64b`).** "MHClip-ZH >0.85 is aspirational (**ASR-bound**)" is **withdrawn.** The deployed ZH text
+> stream is **not** the Whisper ASR — it is the **Bilibili description/metadata** field (`gt["text"]`),
+> median **106 Chinese characters** (train 106 / val 108.5 / test 105), with 42 % of train rows carrying
+> literal `<em class="keyword">…</em>` markup. The Whisper ASR lives in a separate, **non-deployed** file
+> (`data/ASR/MHC_zh/*_asrK4_whisper-large-v3.jsonl`). The related ledger figure "ZH transcripts median 4
+> words" is a **whitespace-split artefact** (Chinese has no inter-word spaces, so `text.split()` is
+> meaningless). Measured ZH wall as of round 6: **78-dev val-selection noise** (+0.0246 vs the +0.030 bar)
+> plus representation saturation (LoRA-Qwen ZH text-AUC 0.925) — not a transcription ceiling. The
+> subsequent LoRA-SFT conclusion in this paragraph is unaffected and was independently confirmed (B3/F45).
 
 ---
 

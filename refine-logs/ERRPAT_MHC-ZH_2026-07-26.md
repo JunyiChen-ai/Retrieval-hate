@@ -369,7 +369,7 @@ The task flagged that Whisper ASR text was never measured on ZH (F64/LAUD tested
 states*, a different object, and killed it on ZH at −0.0052 / −0.0082). Confirmed unmeasured as a *text*
 channel. It is now priced without spending GPU (`errpat_zh_asr_ceiling.py`):
 
-- The deployed transcript is already ASR-derived, so our `whisper-large-v3` K4 run is a **re-run of the same
+- ~~The deployed transcript is already ASR-derived, so~~ our `whisper-large-v3` K4 run is a **re-run of the same
   channel, not a new modality**. Median character-bigram overlap between the two = **0.5227**; 45 of 149 items
   ≥ 0.80. The residual disagreement is homophone-level (e.g. deployed 妈宝男 vs ours 妈保男).
 - **Neither transcript is systematically more complete:** counting punctuation-stripped content characters,
@@ -381,6 +381,17 @@ channel. It is now priced without spending GPU (`errpat_zh_asr_ceiling.py`):
 - The thin-transcript cluster C2 is therefore a **speech-absence fact, not a transcription failure**: across
   its 11 core errors Whisper's length delta runs −45 to +12 chars on **10 of 11** (median −2), with
   `BV1jk4y1Q7JZ` the lone outlier at +296. The videos are quiet; no transcript can fill them.
+
+> **ERRATUM 2026-07-28 (propagated from `LITSWEEP3_ZH_SPECIFIC.md:29-37`, F77 / commit `d4af64b`).** The
+> struck premise above is wrong: the **deployed ZH text is the Bilibili DESCRIPTION/metadata, not the
+> Whisper ASR** (`gt["text"]`, median **106 Chinese characters**, 42 % of train rows carrying literal
+> `<em class="keyword">…</em>` markup). The Whisper ASR is a **separate, non-deployed** file
+> (`data/ASR/MHC_zh/*_asrK4_whisper-large-v3.jsonl`). **Every number in §7.1 stands** — the bigram overlap
+> 0.5227, the 66-of-149 length comparison, the 2-item recovery set and the +0.0134 ceiling were all
+> *measured* by comparing the two strings directly, never inferred from the premise. What changes is the
+> framing: the comparison is deployed-**description** vs Whisper-**ASR** (two different channels that happen
+> to overlap at 0.52), which if anything makes the +0.0134 ceiling *more* surprising, not less. The ruling
+> below is unaffected.
 
 **Ruling: ZH ASR re-channelling is arithmetically capped below the bar at $0. Do not spend GPU.**
 

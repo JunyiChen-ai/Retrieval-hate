@@ -61,15 +61,29 @@ extractor's `Title:` line is *always* `(none)` — no title is being lost, there
 |---|---|---|---|---|
 | HateMM train | 128 | 580 | **13 677** | heavy long tail |
 | MHC (EN) train | 69 | 184 | 273 | moderate |
-| MHC_zh train | **4** | 5 | 133 | **near-empty** |
+| MHC_zh train | **4** | 5 | 133 | ~~**near-empty**~~ — **WITHDRAWN, see erratum below** |
+
+> **ERRATUM 2026-07-28 (propagated from `LITSWEEP3_ZH_SPECIFIC.md:18-26,29-34`, F77 / commit `d4af64b`).**
+> The MHC_zh row of this table is a **whitespace-split artefact and is withdrawn.** Chinese has no
+> inter-word spaces, so `text.split()` returns ~1 token per punctuation-delimited run; the *character*
+> median of the deployed ZH text stream is **106 Chinese characters** (train 106 / val 108.5 / test 105).
+> Second correction in the same erratum: the deployed ZH "transcript" is **not** the Whisper ASR — it is the
+> **Bilibili description/metadata** field, and **42 %** of ZH train rows carry literal `<em class="keyword">…</em>`
+> HTML markup baked into the key. The Whisper ASR lives in a separate, **non-deployed** file
+> (`data/ASR/MHC_zh/*_asrK4_whisper-large-v3.jsonl`). Everything below that reasons from "ZH text ≈ 4 words /
+> near-empty" — items (ii) here and §5 — is superseded: the ZH stream is **content-rich**, and ZH's binding
+> wall is 78-dev val-selection noise plus representation saturation (LoRA-Qwen ZH text-AUC 0.925), not a
+> degenerate transcript. The HateMM and MHC(EN) rows are unaffected (space-delimited languages).
 
 No transcript hits any truncation limit (there is none in code; the longest ≈13.7 K-word HateMM item is
 ≈18 K tokens < Qwen's 32 K context, so even it is encoded whole). **Transcript quality/coverage is therefore
 NOT a live input-fidelity gap** — ASR is Whisper-large-v3 (`data/ASR/*/*_whisper-large-v3.jsonl`, ceiling),
 coverage is full, nothing is cut. Two real observations fall out, but neither is an input-fidelity fix:
 (i) HateMM's 13.7 K-word transcripts are compressed into a single **last-token** embedding — a *readout*
-bottleneck (belongs to the readout/head-recipe agents, not here); (ii) ZH text ≈4 words means the ZH image
-stream carries *more relative weight* than the "text-carried" label suggests (see §5).
+bottleneck (belongs to the readout/head-recipe agents, not here); (ii) ~~ZH text ≈4 words means the ZH image
+stream carries *more relative weight* than the "text-carried" label suggests (see §5)~~ — **WITHDRAWN by the
+2026-07-28 erratum above**: ZH text is a median **106 Chinese characters** of Bilibili description metadata,
+so ZH's image stream carries **no** extra relative weight on this argument.
 
 **(C) Frames are near-redundant at the pooled-feature level (corroborates F67; weakens frame-selection).**
 Mean pairwise cosine across the 4 temporal frame-groups per video (from the banked `g` tensor):
@@ -196,9 +210,12 @@ The binding constraint is the campaign's **text-carried finding** (F45/F58): the
 three datasets, so resolution and frame-selection — which improve the **image** stream — start behind. Mapping
 onto our own dataset roles: **EN is label-capped** (fidelity can't break a label ceiling), **HateMM is the one
 dataset whose image stream converts** (it already carries the project's cleanest encoder-level PASS), and **ZH
-is marginal** — though the `$0` audit adds a real nuance: **ZH text is only ~4 words median, so ZH's image
+is marginal** — ~~though the `$0` audit adds a real nuance: **ZH text is only ~4 words median, so ZH's image
 stream carries far more relative weight than "text-carried" implies**, making ZH a *secondary* place resolution
-could move a needle (from a low base). A +3 needs a gain on ≥2 datasets; the only two image-responsive
+could move a needle (from a low base)~~ **[WITHDRAWN 2026-07-28 — see the erratum at §(B): the 4-word figure is
+a whitespace-split artefact; deployed ZH text is a median 106 Chinese characters of Bilibili description
+metadata, so this "nuance" does not exist and ZH gets no relative-image-weight credit here]**. A +3 needs a
+gain on ≥2 datasets; the only two image-responsive
 candidates are HateMM (already passing — headroom to +3 more is the open question) and ZH (marginal, low base).
 That conjunction is a **long shot**.
 
