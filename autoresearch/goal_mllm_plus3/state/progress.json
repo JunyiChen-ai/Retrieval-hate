@@ -3,10 +3,10 @@
   "protocol": "dali_autoresearch",
   "iteration": 1,
   "status": "active",
-  "phase": "LITSWEEP6 menu measured: restrans F96 KILL, VGA/VNQ F97 KILL; aggnet C3 = final conditional-aggregation arm running; paradigm-level (3-way certified output) + ZH protocol + S2b corpus = pending user rulings.",
+  "phase": "2026-07-27 campaign closed F89-F98: every mechanism entry point + all 3 LITSWEEP6 accuracy candidates measured dead at $0; standing decisions = paradigm-level output-object move (3-way certified) + ZH protocol retirement + S2b corpus ruling + paper framing. Queue empty, monitoring.",
   "stale_count": 0,
-  "last_seen": "2026-07-27T09:09:10Z",
-  "total_findings": 98,
+  "last_seen": "2026-07-27T11:14:40Z",
+  "total_findings": 99,
   "active_line": "F60 AUG pre-killed (dominance, f1abd28) — the last un-enumerated MLLM role (generator) is closed. Ledger F27-F60. Landscape fully mapped at role level: encoder+adaptation (works, D7-collision), localizer (works, side-task), guard-rail (works, no acc), ALL decision/feature/score/loss/distribution/generation roles measured or dominated dead. LIVE DECISIONS = USER: D7 sub-ruling / ZH protocol / 5 relaxations. Monitoring mode, wakeups armed.",
   "queued_lines": [
     "POOL EMPTY (F43): W2-C extinguished (S2S dead, F37); W2-D record-only near-zero prior (F41); all Wave-3 consumed (CTF F39, APX+AVC F41, GIR F43); see directions_tried.json + TERMINUS_round3_mllm_plus3.md"
@@ -14,7 +14,7 @@
   "conditional_lines": [
     "ALL user-ruling-gated per TERMINUS_round3_mllm_plus3.md §2: (a) 32B/72B encoder download [B2 counter-evidence: scale regresses], (b) Qwen2.5-Omni download [F41 counter-evidence: classical prosody zero], (c) D7 LoRA novelty boundary [F45 evidence upgrade: text-stream Pareto conversion], (d) goal renegotiation [earned roles + robust-negative ledger], (e) closed-model API [data-export ruling]"
   ],
-  "gpu_state": "idle - all of LITSWEEP6 measured at $0 CPU (F96 restrans, F97 VGA/VNQ); membank C3 aggnet pregate running, also $0 CPU; no GPU legal until a bar is cleared or a user ruling reopens an axis",
+  "gpu_state": "idle - the entire LITSWEEP6 accuracy menu measured at $0 CPU and 0-for-3 (F96 restrans, F97 VGA/VNQ, F98 aggnet conditional-aggregation family closed); no GPU legal until a bar is cleared or a user ruling reopens an axis",
   "orchestrator": "main session (ScheduleWakeup business loop L2 + session cron hourly patrol L1)",
   "notes": "single-submit ceremony + G0-cond gate override any shortcut; zero interaction; TRAINING DATA = single-dataset train split ONLY (user veto 2026-07-14); no OCR; no gold annotations | CLAUDE.md Modal-probe policy DONE (0a1ac88; task#35 closed) | MONITORING MODE: any user ruling on the 5 terminus options reopens the corresponding axis via full ceremony (recon→prereg→0-context review→freeze→single-submit); any NEW direction must defeat the banked meta-patterns (K9 calibrated-zero, oracle-unconvertible x3, cumulative-causal x3, adaptation-not-identity F45) in its non-isomorphism argument | infra playbook: Modal 3600s clamp → chunk-loop + hash-pinned ci_ckpt + CPU-SLURM driver (F40); liveness-peek detached runs; agents never stop others' apps (F38)",
   "user_rulings": {
