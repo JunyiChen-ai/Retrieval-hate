@@ -14,3 +14,12 @@ artifacts
 
 # external baseline clones (survey/repro reference, not our code)
 external/
+
+# run byproducts that are NOT records: hidden job-id markers, driver logs and
+# probe scratch emitted next to the analysis scripts / records they belong to.
+# Records live in refine-logs/*.md and state/ — these are transient.
+scripts/analysis/.*
+refine-logs/.lsmi_*
+
+# session scratch (never a deliverable)
+scratchpad/
