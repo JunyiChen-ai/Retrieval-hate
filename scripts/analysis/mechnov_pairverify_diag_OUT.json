@@ -1,0 +1,461 @@
+{
+ "meta": {
+  "script": "/data/jehc223/RGCL/scripts/analysis/mechnov_pairverify_diag.py",
+  "script_sha256": "0be858058e98b75bbcf8fa9b16a17f99a11f6460f5779f5c57ad5a2d26ac0518",
+  "frozen_arms_sha256": "77b0defd8eaa3688e58b6d5d17202bd55d16cf1f4a5aaafbe4b2b98598b7240d",
+  "space": "fused (PRIMARY only)",
+  "status": "POST-HOC DIAGNOSTIC -- adds no arm, promotes nothing"
+ },
+ "datasets": {
+  "hatemm": {
+   "folds": [
+    {
+     "fold": 0,
+     "within_query_auc_cosine": 0.594,
+     "pooled_auc_cosine": 0.5753,
+     "vardecomp_cosine": {
+      "query_main": 0.1287,
+      "bank_main": 0.5848,
+      "interaction": 0.2864
+     },
+     "n_queries_scored": 149,
+     "within_query_auc_mlp": 0.7435,
+     "pooled_auc_mlp": 0.7589,
+     "vardecomp_mlp": {
+      "query_main": 0.0373,
+      "bank_main": 0.0255,
+      "interaction": 0.9372
+     },
+     "within_query_auc_logistic": 0.6923,
+     "pooled_auc_logistic": 0.7029,
+     "vardecomp_logistic": {
+      "query_main": 0.0633,
+      "bank_main": 0.092,
+      "interaction": 0.8447
+     }
+    },
+    {
+     "fold": 1,
+     "within_query_auc_cosine": 0.6086,
+     "pooled_auc_cosine": 0.5799,
+     "vardecomp_cosine": {
+      "query_main": 0.1914,
+      "bank_main": 0.5044,
+      "interaction": 0.3042
+     },
+     "n_queries_scored": 149,
+     "within_query_auc_mlp": 0.7514,
+     "pooled_auc_mlp": 0.761,
+     "vardecomp_mlp": {
+      "query_main": 0.0382,
+      "bank_main": 0.0338,
+      "interaction": 0.928
+     },
+     "within_query_auc_logistic": 0.7012,
+     "pooled_auc_logistic": 0.7009,
+     "vardecomp_logistic": {
+      "query_main": 0.0846,
+      "bank_main": 0.1095,
+      "interaction": 0.8059
+     }
+    },
+    {
+     "fold": 2,
+     "within_query_auc_cosine": 0.6265,
+     "pooled_auc_cosine": 0.5952,
+     "vardecomp_cosine": {
+      "query_main": 0.1681,
+      "bank_main": 0.5244,
+      "interaction": 0.3075
+     },
+     "n_queries_scored": 149,
+     "within_query_auc_mlp": 0.7886,
+     "pooled_auc_mlp": 0.8008,
+     "vardecomp_mlp": {
+      "query_main": 0.0351,
+      "bank_main": 0.0273,
+      "interaction": 0.9376
+     },
+     "within_query_auc_logistic": 0.7373,
+     "pooled_auc_logistic": 0.7448,
+     "vardecomp_logistic": {
+      "query_main": 0.0625,
+      "bank_main": 0.0833,
+      "interaction": 0.8543
+     }
+    },
+    {
+     "fold": 3,
+     "within_query_auc_cosine": 0.5996,
+     "pooled_auc_cosine": 0.5829,
+     "vardecomp_cosine": {
+      "query_main": 0.1764,
+      "bank_main": 0.5253,
+      "interaction": 0.2983
+     },
+     "n_queries_scored": 149,
+     "within_query_auc_mlp": 0.7554,
+     "pooled_auc_mlp": 0.766,
+     "vardecomp_mlp": {
+      "query_main": 0.0382,
+      "bank_main": 0.023,
+      "interaction": 0.9387
+     },
+     "within_query_auc_logistic": 0.6962,
+     "pooled_auc_logistic": 0.6967,
+     "vardecomp_logistic": {
+      "query_main": 0.0635,
+      "bank_main": 0.0723,
+      "interaction": 0.8642
+     }
+    },
+    {
+     "fold": 4,
+     "within_query_auc_cosine": 0.6048,
+     "pooled_auc_cosine": 0.5881,
+     "vardecomp_cosine": {
+      "query_main": 0.7848,
+      "bank_main": 0.0819,
+      "interaction": 0.1333
+     },
+     "n_queries_scored": 148,
+     "within_query_auc_mlp": 0.7804,
+     "pooled_auc_mlp": 0.7899,
+     "vardecomp_mlp": {
+      "query_main": 0.0492,
+      "bank_main": 0.0279,
+      "interaction": 0.923
+     },
+     "within_query_auc_logistic": 0.717,
+     "pooled_auc_logistic": 0.7222,
+     "vardecomp_logistic": {
+      "query_main": 0.0682,
+      "bank_main": 0.0947,
+      "interaction": 0.8372
+     }
+    }
+   ],
+   "fold_mean": {
+    "within_query_auc_cosine": 0.6067,
+    "pooled_auc_cosine": 0.5843,
+    "vardecomp_cosine_query_main": 0.2899,
+    "vardecomp_cosine_bank_main": 0.4442,
+    "vardecomp_cosine_interaction": 0.2659,
+    "within_query_auc_mlp": 0.7639,
+    "pooled_auc_mlp": 0.7753,
+    "vardecomp_mlp_query_main": 0.0396,
+    "vardecomp_mlp_bank_main": 0.0275,
+    "vardecomp_mlp_interaction": 0.9329,
+    "within_query_auc_logistic": 0.7088,
+    "pooled_auc_logistic": 0.7135,
+    "vardecomp_logistic_query_main": 0.0684,
+    "vardecomp_logistic_bank_main": 0.0904,
+    "vardecomp_logistic_interaction": 0.8413,
+    "d_within_query_auc_mlp": 0.1572,
+    "d_pooled_auc_mlp": 0.191,
+    "d_within_query_auc_logistic": 0.1021,
+    "d_pooled_auc_logistic": 0.1292
+   }
+  },
+  "zh": {
+   "folds": [
+    {
+     "fold": 0,
+     "within_query_auc_cosine": 0.5356,
+     "pooled_auc_cosine": 0.5203,
+     "vardecomp_cosine": {
+      "query_main": 0.2225,
+      "bank_main": 0.4934,
+      "interaction": 0.2841
+     },
+     "n_queries_scored": 116,
+     "within_query_auc_mlp": 0.7803,
+     "pooled_auc_mlp": 0.7908,
+     "vardecomp_mlp": {
+      "query_main": 0.0761,
+      "bank_main": 0.1301,
+      "interaction": 0.7938
+     },
+     "within_query_auc_logistic": 0.689,
+     "pooled_auc_logistic": 0.6844,
+     "vardecomp_logistic": {
+      "query_main": 0.2777,
+      "bank_main": 0.2541,
+      "interaction": 0.4682
+     }
+    },
+    {
+     "fold": 1,
+     "within_query_auc_cosine": 0.5354,
+     "pooled_auc_cosine": 0.5262,
+     "vardecomp_cosine": {
+      "query_main": 0.4555,
+      "bank_main": 0.2743,
+      "interaction": 0.2702
+     },
+     "n_queries_scored": 116,
+     "within_query_auc_mlp": 0.7563,
+     "pooled_auc_mlp": 0.7711,
+     "vardecomp_mlp": {
+      "query_main": 0.0613,
+      "bank_main": 0.18,
+      "interaction": 0.7586
+     },
+     "within_query_auc_logistic": 0.6928,
+     "pooled_auc_logistic": 0.6651,
+     "vardecomp_logistic": {
+      "query_main": 0.222,
+      "bank_main": 0.2871,
+      "interaction": 0.4908
+     }
+    },
+    {
+     "fold": 2,
+     "within_query_auc_cosine": 0.545,
+     "pooled_auc_cosine": 0.5125,
+     "vardecomp_cosine": {
+      "query_main": 0.3742,
+      "bank_main": 0.3176,
+      "interaction": 0.3082
+     },
+     "n_queries_scored": 116,
+     "within_query_auc_mlp": 0.7933,
+     "pooled_auc_mlp": 0.8,
+     "vardecomp_mlp": {
+      "query_main": 0.0692,
+      "bank_main": 0.1165,
+      "interaction": 0.8144
+     },
+     "within_query_auc_logistic": 0.7073,
+     "pooled_auc_logistic": 0.7018,
+     "vardecomp_logistic": {
+      "query_main": 0.2162,
+      "bank_main": 0.2762,
+      "interaction": 0.5077
+     }
+    },
+    {
+     "fold": 3,
+     "within_query_auc_cosine": 0.527,
+     "pooled_auc_cosine": 0.5042,
+     "vardecomp_cosine": {
+      "query_main": 0.3227,
+      "bank_main": 0.4164,
+      "interaction": 0.2609
+     },
+     "n_queries_scored": 116,
+     "within_query_auc_mlp": 0.7549,
+     "pooled_auc_mlp": 0.7612,
+     "vardecomp_mlp": {
+      "query_main": 0.0555,
+      "bank_main": 0.1476,
+      "interaction": 0.7969
+     },
+     "within_query_auc_logistic": 0.6967,
+     "pooled_auc_logistic": 0.6768,
+     "vardecomp_logistic": {
+      "query_main": 0.2475,
+      "bank_main": 0.2721,
+      "interaction": 0.4803
+     }
+    },
+    {
+     "fold": 4,
+     "within_query_auc_cosine": 0.5384,
+     "pooled_auc_cosine": 0.4984,
+     "vardecomp_cosine": {
+      "query_main": 0.3802,
+      "bank_main": 0.3267,
+      "interaction": 0.2931
+     },
+     "n_queries_scored": 115,
+     "within_query_auc_mlp": 0.7475,
+     "pooled_auc_mlp": 0.7511,
+     "vardecomp_mlp": {
+      "query_main": 0.0622,
+      "bank_main": 0.1538,
+      "interaction": 0.784
+     },
+     "within_query_auc_logistic": 0.6846,
+     "pooled_auc_logistic": 0.6769,
+     "vardecomp_logistic": {
+      "query_main": 0.2322,
+      "bank_main": 0.2809,
+      "interaction": 0.4869
+     }
+    }
+   ],
+   "fold_mean": {
+    "within_query_auc_cosine": 0.5363,
+    "pooled_auc_cosine": 0.5123,
+    "vardecomp_cosine_query_main": 0.351,
+    "vardecomp_cosine_bank_main": 0.3657,
+    "vardecomp_cosine_interaction": 0.2833,
+    "within_query_auc_mlp": 0.7665,
+    "pooled_auc_mlp": 0.7748,
+    "vardecomp_mlp_query_main": 0.0649,
+    "vardecomp_mlp_bank_main": 0.1456,
+    "vardecomp_mlp_interaction": 0.7895,
+    "within_query_auc_logistic": 0.6941,
+    "pooled_auc_logistic": 0.681,
+    "vardecomp_logistic_query_main": 0.2391,
+    "vardecomp_logistic_bank_main": 0.2741,
+    "vardecomp_logistic_interaction": 0.4868,
+    "d_within_query_auc_mlp": 0.2302,
+    "d_pooled_auc_mlp": 0.2625,
+    "d_within_query_auc_logistic": 0.1578,
+    "d_pooled_auc_logistic": 0.1687
+   }
+  },
+  "en": {
+   "folds": [
+    {
+     "fold": 0,
+     "within_query_auc_cosine": 0.5271,
+     "pooled_auc_cosine": 0.4945,
+     "vardecomp_cosine": {
+      "query_main": 0.318,
+      "bank_main": 0.301,
+      "interaction": 0.381
+     },
+     "n_queries_scored": 110,
+     "within_query_auc_mlp": 0.6921,
+     "pooled_auc_mlp": 0.69,
+     "vardecomp_mlp": {
+      "query_main": 0.0589,
+      "bank_main": 0.1259,
+      "interaction": 0.8153
+     },
+     "within_query_auc_logistic": 0.6611,
+     "pooled_auc_logistic": 0.6428,
+     "vardecomp_logistic": {
+      "query_main": 0.2467,
+      "bank_main": 0.3709,
+      "interaction": 0.3824
+     }
+    },
+    {
+     "fold": 1,
+     "within_query_auc_cosine": 0.5106,
+     "pooled_auc_cosine": 0.5142,
+     "vardecomp_cosine": {
+      "query_main": 0.2943,
+      "bank_main": 0.3238,
+      "interaction": 0.3819
+     },
+     "n_queries_scored": 110,
+     "within_query_auc_mlp": 0.6721,
+     "pooled_auc_mlp": 0.6706,
+     "vardecomp_mlp": {
+      "query_main": 0.0704,
+      "bank_main": 0.1426,
+      "interaction": 0.787
+     },
+     "within_query_auc_logistic": 0.6558,
+     "pooled_auc_logistic": 0.6311,
+     "vardecomp_logistic": {
+      "query_main": 0.2906,
+      "bank_main": 0.3253,
+      "interaction": 0.3841
+     }
+    },
+    {
+     "fold": 2,
+     "within_query_auc_cosine": 0.5321,
+     "pooled_auc_cosine": 0.5058,
+     "vardecomp_cosine": {
+      "query_main": 0.3652,
+      "bank_main": 0.281,
+      "interaction": 0.3538
+     },
+     "n_queries_scored": 110,
+     "within_query_auc_mlp": 0.7292,
+     "pooled_auc_mlp": 0.7231,
+     "vardecomp_mlp": {
+      "query_main": 0.0629,
+      "bank_main": 0.1724,
+      "interaction": 0.7647
+     },
+     "within_query_auc_logistic": 0.6705,
+     "pooled_auc_logistic": 0.6537,
+     "vardecomp_logistic": {
+      "query_main": 0.2669,
+      "bank_main": 0.3737,
+      "interaction": 0.3595
+     }
+    },
+    {
+     "fold": 3,
+     "within_query_auc_cosine": 0.5227,
+     "pooled_auc_cosine": 0.5062,
+     "vardecomp_cosine": {
+      "query_main": 0.2719,
+      "bank_main": 0.3431,
+      "interaction": 0.385
+     },
+     "n_queries_scored": 110,
+     "within_query_auc_mlp": 0.7165,
+     "pooled_auc_mlp": 0.7217,
+     "vardecomp_mlp": {
+      "query_main": 0.0536,
+      "bank_main": 0.1575,
+      "interaction": 0.7889
+     },
+     "within_query_auc_logistic": 0.6686,
+     "pooled_auc_logistic": 0.6611,
+     "vardecomp_logistic": {
+      "query_main": 0.2229,
+      "bank_main": 0.3579,
+      "interaction": 0.4191
+     }
+    },
+    {
+     "fold": 4,
+     "within_query_auc_cosine": 0.5215,
+     "pooled_auc_cosine": 0.5079,
+     "vardecomp_cosine": {
+      "query_main": 0.301,
+      "bank_main": 0.3156,
+      "interaction": 0.3834
+     },
+     "n_queries_scored": 109,
+     "within_query_auc_mlp": 0.6965,
+     "pooled_auc_mlp": 0.6993,
+     "vardecomp_mlp": {
+      "query_main": 0.0662,
+      "bank_main": 0.2171,
+      "interaction": 0.7167
+     },
+     "within_query_auc_logistic": 0.663,
+     "pooled_auc_logistic": 0.6447,
+     "vardecomp_logistic": {
+      "query_main": 0.2668,
+      "bank_main": 0.3787,
+      "interaction": 0.3546
+     }
+    }
+   ],
+   "fold_mean": {
+    "within_query_auc_cosine": 0.5228,
+    "pooled_auc_cosine": 0.5057,
+    "vardecomp_cosine_query_main": 0.3101,
+    "vardecomp_cosine_bank_main": 0.3129,
+    "vardecomp_cosine_interaction": 0.377,
+    "within_query_auc_mlp": 0.7013,
+    "pooled_auc_mlp": 0.7009,
+    "vardecomp_mlp_query_main": 0.0624,
+    "vardecomp_mlp_bank_main": 0.1631,
+    "vardecomp_mlp_interaction": 0.7745,
+    "within_query_auc_logistic": 0.6638,
+    "pooled_auc_logistic": 0.6467,
+    "vardecomp_logistic_query_main": 0.2588,
+    "vardecomp_logistic_bank_main": 0.3613,
+    "vardecomp_logistic_interaction": 0.3799,
+    "d_within_query_auc_mlp": 0.1785,
+    "d_pooled_auc_mlp": 0.1952,
+    "d_within_query_auc_logistic": 0.141,
+    "d_pooled_auc_logistic": 0.141
+   }
+  }
+ }
+}
