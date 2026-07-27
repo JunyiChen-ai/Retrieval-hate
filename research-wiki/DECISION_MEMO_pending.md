@@ -8,6 +8,143 @@
 
 ---
 
+# ★ 现行裁决单(2026-07-28 更新,round-8 / F88–F98 之后)
+
+> **读法:下面 S1–S4 是当前唯一在等用户的四项裁决**;原 D1–D12 一节整体降为**存档**(仍保留原文与证据链,
+> 逐项标注去向,见本节末「D1–D12 去向对照」)。四项都**不是实验**——它们要么是交付物定义,要么是报告口径,
+> 要么是资源/语料许可;任何一项在裁决前**都不排 GPU**。证据全部引用已 commit 的记录 + commit 号
+> (numeric-provenance:数字在写入时逐条从原始记录重读)。
+
+## S1 — 范式移动:是否把**输出对象**从「全覆盖二分类」换成「三路认证输出 + 策略化 operating point」
+
+- **问题:** round-8 把「用更好的**统一决策规则**去兑现排序优势」这条轴**从六个方向关闭**(vote 算子 F89 /
+  邻域深度 F94 / 阈值 F88 / 训练损失 F75 / pair verifier F95 / per-item 门 F97)。LITSWEEP-6 的 paradigm lane
+  因此不再推荐第七条规则,而推荐**换输出对象**:**R1** = 三路认证输出 {hate, non-hate, **⊥ refer**},
+  以**关系型 nonconformity**(复用 F95 冻结的 verifier)做 split-conformal,给出**分布无关的**「自动判定子集
+  错误率」上界;**R2** = 把 operating point 变成 **anytime-valid、drift-adaptive 的策略**(ACI 类更新,O(1)
+  标注预算),锚在我方自有的 W4 时间漂移测量上。**要不要走这条路,是交付物定义问题,不是实验问题。**
+- **为什么现在问:** 组织性事实已经四次独立测得——**排序质量 ≫ 决策质量**:F95(关系层 +0.13–0.27 pair-AUC,
+  18/18 cell,端到端 **0/36**)、W4(EN 时间切分 **ROC 0.8484** > 随机切分 0.7175,macro-F1 却 **−0.084**)、
+  F88(正确类比项在**中位 rank ~1.5** 却被压倒,误差 ~90% seed-invariant 的 confident inversion)、
+  F50/F48(dev AUC **0.898**「unconvertible」)。R1 正是**唯一把这条事实当前提而不是当障碍**的范式。
+- **代价与硬约束(必须与推荐一起读):** (i) **按构造**不满足「+3 acc on ≥2 数据集」的全覆盖目标——在
+  100% coverage 下它什么都不改;(ii) conformal 的 exchangeability 要求一个**未被选点消耗的**校准集 ⇒ 与 S2
+  **耦合**(retirement 让 dev 变成合法校准集);(iii) 我们**没有**人工审核成本/准确率数据,「referred = gold」
+  是 L2D 常规但会被读成 trick,须显式成本核算;(iv) 1 test item = 0.47–0.67% ⇒ risk-coverage 曲线是粗台阶,
+  必须打印每 bin 计数并以配对符号检验承载主张。
+- **我方推荐:** 若用户接受「交付物 = 可认证的审核流程」而非「更高的全覆盖 accuracy」,则**走 R1**(先跑
+  已完全银行化的 **$0 pregate**:关系型审计统计量 vs `|vote margin|` 的 risk-coverage 曲线,预注册
+  「B 须在 {0.70, 0.80, 0.90} 三个 coverage 点中 ≥2 个、在 ≥2 个数据集上、全 seed 同号地胜过 A」),R2 作为
+  第二篇/第二节;若用户坚持全覆盖 accuracy 目标,则**明确 S1 = 否**,并据此接受当前 box 为空的结论。
+- **来源:** `refine-logs/LITSWEEP6_PARADIGM.md` · `49e15ec`(R1 §(a)–(f)、R2 §(a)–(f)、PRE-KILLS §);
+  `LITSWEEP6_MEMBANK.md` · `62efd82`;`LITSWEEP6_RELGEN.md` · `f62e777`;`MECHNOV_PAIRVERIFY_PREGATE.md` ·
+  `0261b82`;`VGA_PREGATE_RECORD.md` · `db2eae8`;`AGGNET_PREGATE_RECORD.md` · `fa1e3b3`;
+  `research-wiki/EVAL_temporal_memory_W4.md`。
+
+## S2 — ZH 主表协议:是否**退休** 78-样本 val-selected 选点(承接原 D2,证据包已大幅加强)
+
+- **问题:** ZH 主表用 val-选点(3-seed **0.8322 / 0.8015**)还是 selection-free final-epoch
+  (**0.8456 / 0.8173**)?**退休 = 实测 +0.0134 acc / +0.0159 mF1,3/3 seed**(不是 oracle)。
+- **Tier-1 证据包(全部 bit-exact,来自 `ERRPAT_MHC-ZH_2026-07-26.md` §1,commit `ad56a62`;每条都只依赖
+  78 项 dev 的性质、与任何 ZH 结果无关):**
+  1. **差距恒为 2 个 test 样本**:三个 seed 的 dev argmax 都是 **0.8718 = 68/78**,ep29 只低 1–2 个 dev 样本;
+     协议因此丢弃 final epoch,每个 seed 各付 **+0.0134(+2 项 / 149)**,三次一致。
+  2. **dev 信号不是弱,是与目标反相关**:25 个合法 epoch 上 dev-acc 与 test-acc 的 Spearman 逐 seed
+     **−0.3457 / +0.0419 / −0.1531**,**pooled −0.2402,p = 0.0380(显著为负)**——读它的选择器指向反了。
+  3. **信息量近乎为零**:val-选点相对**均匀随机合法 epoch** 只多 **+0.65 个 test 样本**(0.8322 vs 0.8278),
+     而 final epoch 多 **+2.7 个**(0.8456),且落在 per-seed test-ORACLE epoch 的 **0.0023(0.34 项)** 内。
+  4. **把 dev 信号扩大 3× 反而更差**:pooled-dev argmax(234 个 dev 决策)选中 epoch 19 → 3-seed test
+     **0.8210**,在 25 个合法共享 epoch 中排 **19/25**;而 ep29 排 **1/25**(前五名 ep29/27/28/26/25 = 一个宽的
+     单调后期平台)⇒ **不是「dev 太小」,是判据在该区间失准**。
+  5. **决定性:val-选点读数在换设备后不可复现**——同配方 CPU re-mint 把它移动最多 **−0.0335 acc** 并把 argmax
+     从 epoch 20 挪到 epoch 5,而 final-epoch 读数在三个 seed 上**复现 banked test acc 到 4 位小数**
+     (ep29 平均曲线差 0.01 项)。**一个输出对浮点归约顺序都不稳定的协议,不是在测量模型。**
+- **⚠ rule-shopping 暴露(必须与证据一起披露,不得省略):** 退休恰好把**一个**判决转向我方有利
+  (ZH val-sel FAIL → not applicable)。缓解但**不消除**:退休在别处**零代价**——HateMM 双协议皆 PASS(F53)、
+  EN 双协议皆 FAIL(F55),**没有第二个判决因此移动**。**可辩护的表述是**「ZH dev 划分过小且与目标反向对齐
+  (证据 1–5),不能充当模型选择工具,故单协议 final-epoch 报告是方法学上正确的读法」,**不是**「丢掉
+  val-sel 后 ZH 就过线了」。
+- **我方推荐:** **退休 val-选点,单协议 final-epoch 报告**,并在方法学附录全文照登证据 1–5 **与本条
+  rule-shopping 暴露**;若用户更保守,则维持原 D2 的「两口径并排」。**与 S1 耦合**:退休后 dev 未被选点消耗,
+  才是 R1 conformal 校准的合法集合。
+- **来源:** `ERRPAT_MHC-ZH_2026-07-26.md` §1.1–§1.7 · `ad56a62`;原始 trainlog
+  `slurm/logs/enc3s_MHC_zh_*_13150.trainlog`(ep29 per-seed 0.8456 / 0.8389 / 0.8523,mF1 0.8181 / 0.8113 /
+  0.8226,本次重读确认);`PAPER_MASTER_TABLES.md` T1.1 脚注 + T6.5。
+
+## S3 — MNTP S2b 语料裁决:在**我方权重点**自训 MNTP 用什么语料(唯一还活着的文本侧假说)
+
+- **问题:** F92 关掉了 readout 路线,F93 证伪了**零训练移植捷径**却给出**全战役第一个真实 bidir 信号**
+  (HateMM text +0.0280 = **+0.6006 crater recovery**,首个越过冻结 50% 门;ZH +0.2941;**两侧同号**)。
+  唯一存活形式 = **S2b:在我方权重点自训 MNTP**。它卡在**语料许可**,不卡在证据。
+- **三个选项与 veto 分析(逐字承自 `MNTP_FORENSIC_RECON.md` §3,commit `ead9f5d`):**
+  - **(a′) 自有 train split,但用部署的多模态格式**(8 帧 + 标题 + 转写 + 指令,**只 mask 文本位置**,视觉
+    token 作冻结上下文)——**合法,无需任何裁决**(同数据、同划分、无标签)。优点:**分布对**(82.5% 视觉、
+    ~930 token 序列,正是抽取器真实运行的区间,wikitext 永远碰不到);缺点:**预算不变**——HateMM 自有
+    转写 **239,382** token = LLM2Vec 参考预算(1000×32×512 = 16,384,000)的 **1.46%**,ZH **52,351** = **0.32%**,
+    达到参考步数意味着在几百条转写上跑 ~68(HateMM)/ ~313(ZH)遍 = **背下记忆库自己的文本**,而 bank 就是
+    train split ⇒ 对 kNN 投票的污染方向最敏感。
+  - **(b) 通用无标注语料(wikitext-103)**——**需要用户放宽 veto**。`banned_constraints` 原文:*"TRAINING DATA
+    = single-dataset train split ONLY (user veto 2026-07-14): no cross-dataset split mixing (trivial trick, not
+    a contribution); conservatively also bans external unlabeled-pool training (C5)"* ⇒ **保守条款已经够到 (b)**。
+    **可供用户权衡的范围细节(recon 的原话,不是我方裁决):** veto 点名的 (C5) 是**外部无标注视频 + MLLM 伪标签**
+    的表征训练;**纯文本、零标签、只做架构适配**的语料是另一类对象,veto 的**理由**(「trivial trick」)是否
+    够到它**是用户的判断**。优点:**唯一解决预算问题**、唯一有可直接引用的已发表配方;缺点:分布反向缺口
+    (纯文本 512 token,永远不进 82.5% 视觉区间)。
+  - **(c) 已发表 MNTP 权重移植**——**已花掉**:这就是 F93/S2a,**STOP overdetermined**(collapse belt 触发、
+    融合由相加转相消 +0.0467 → −0.0467、每个数低于 causal floor、升级门不可能满足)。veto 分析上 (c) 从来
+    不是语料问题(**我方不在任何语料上训练**,它与 base encoder / CLIP 同类),它只需要**下载门**——那道门
+    已经开过并已用掉。
+- **我方推荐:** **先请用户就 (b) 表态**。若 (b) 获准:按 LLM2Vec 自己的顺序 **(b) → (a′)** 串行(通用语料做
+  架构适配,自有多模态划分做分布对齐),这是科学上最强的包;若 (b) 被否:**只跑 (a′)**,并在论文里如实写
+  「预算只有参考配方的 1.5% / 0.3%,因此是**分布修正而非预算修正**」;若用户判断两者都不值:**S3 = 关闭
+  文本侧**,MNTP 一条线以 F92 + F93 结案(两者都已是可写入论文的机制结果)。**任一分支在裁决前不排 GPU。**
+- **来源:** `MNTP_FORENSIC_RECON.md` §3.1–§3.6 · `ead9f5d`;`MNTP_S1_RECORD.md` §6d/§6e · `0663ab7` / `b328dc9`;
+  `autoresearch/goal_mllm_plus3/state/directions_tried.json` → `banned_constraints`。
+
+## S4 — 论文框架:是否把故事定为「**可维护的证据记忆**(maintainable evidence memory)」
+
+- **问题:** 现有素材的重心已经不在「更高的 accuracy」上。目前可支撑的四块:**①** 同场决定性胜出的检索-记忆
+  检测器(T1/T1.2,数字未变);**②** 一套**机制化的负结果地图**——四条结构律 + round-8 的六方向关闭,
+  每条都带机制而不只是 p 值;**③** 记忆的**可维护性**——换库(cross-dataset swap)、时间重校准
+  (W4:漂移是**校准漂移不是可分性损失**,ROC 反升 0.8484)、**可审计 + 可外科编辑**(pillar-④,**single-seed
+  capability demonstration**,见 F88 更正);**④** span-free 定位(P6 → P10-b 0.5755,modest-plus)。
+  **问题是:主线写「detector 涨点」还是写「一个可维护、可审计、可认证的证据记忆系统」?**
+- **代价:** 写成 ③ 主线意味着**主动放弃**「substantial 主表增益」这一 claim(它在冻结约束下已被 round 2–8
+  反复测死),换取一个**素材齐备、每条都可复现**的系统性贡献;写成 ① 主线则必须解释为什么 EN/ZH 不动,
+  而现在这个解释本身(label 语义天花板 + selection-lock 算术)已经比涨点更扎实。
+- **我方推荐:** **采用「可维护的证据记忆」主线**,①作为「我们确实是个有竞争力的检测器」的支点而非卖点,
+  ②作为方法学贡献单列,③为核心叙事,④为可移除角色;**pillar-④ 的措辞全线固定为**「human-in-the-loop
+  capability demonstration, single-seed; not an accuracy claim」(F88 更正已传播到方法章 §5、实验章 §5、
+  分析章 §4、intro §1(C4)/§2(e)、T3/T4/T6.5、DEMO/EXP/CAMPAIGN/TERMINUS/OPTION_KITS)。**若 S1 = 是**,
+  R1 的三路认证输出正是这条主线的自然终点(记忆 → 证据 → 认证判定),两项应一起裁决。
+- **来源:** `PAPER_MASTER_TABLES.md` T1/T3/T6.5;`DRAFT_analysis_chapter.md` §3.6/§3.12/§3.13/§4;
+  `DRAFT_experiments_chapter.md` §5/§9;`EVAL_temporal_memory_W4.md`;`ERRPAT_MHC-EN_2026-07-26.md` §6.5 ·
+  `ad56a62`;`LITSWEEP6_PARADIGM.md` · `49e15ec`。
+
+### D1–D12 去向对照(存档,不再单独等裁决)
+
+| 原项 | 去向 |
+|---|---|
+| **D1** MLLM campaign 终局三选项 | **并入 S4**(选项 (c)「换方法族」在 D7 裁定后已 DEAD;(b) 闭源 API 仍只是定位增量,不阻塞) |
+| **D2** ZH 主表协议 | **升级为 S2**(证据包由 ERRPAT-ZH §1 的五条 Tier-1 事实大幅加强,推荐随之从「两口径并排」改为「退休 + 全文披露 rule-shopping 暴露」) |
+| **D3** EN 近天花板定位 + 摘要措辞 | **并入 S4**;F88 新增机制支撑(EN 残差 = label-semantics 失配,9/22 = **40.9%** 的共识误差是无群体目标的 Offensive)⇒「near-ceiling, label-limited」现在是**测量**而非口径选择 |
+| **D4** 三件套 / 四支柱措辞 | **并入 S4**(pillar-④ 措辞已由 F88 固定;三角色框架不变) |
+| **D5** 杂项归档 | 存档,运维项,不影响论文 |
+| **D6** 投稿 venue + 截稿 | **仍悬置**,但与 S1–S4 正交(素材 venue-agnostic);S4 一旦拍板会影响 venue 偏好(负结果/方法学友好) |
+| **D7** encoder-swap 是否计入 novelty | **已裁决(RESOLVED-NEGATIVE,2026-07-14)**;F91(Molmo2)是该裁决下的又一条性能/诊断素材,不改 novelty 边界 |
+| **D8 / D9** family-headline / 并比脚注 | 存档:纯性能报告口径,D7 后对 novelty 已 moot |
+| **D10** EN-LoRA 形式化闭合跑(~2 min GPU) | 存档:仍是「用户请求项」,不推荐主动跑 |
+| **D11** 72B-AWQ scale 点 | 存档:dead-axis grinding,不推荐 |
+| **D12** 基建裁决(备份/配额/遗留 flag) | 存档:运维项,按原推荐执行 |
+
+---
+
+# ▽ 存档区(D1–D12,2026-07-09 / 2026-07-14 原文保留)
+
+> **状态(2026-07-28):本节整体为存档**,不再是「当前悬置清单」——当前清单是上面的 **S1–S4**。原文与证据链
+> 一字未删(可追溯性),每项去向见上节「D1–D12 去向对照」。**D6(venue)是本节唯一仍独立悬置的项**;
+> D7 已裁决;其余或并入 S1–S4,或降为运维/口径存档。
+
 ## D1 — MLLM campaign 战略终局(TERMINUS 三选项主裁决)
 
 - **问题:** 13 条预注册路线全结题后,论文的 MLLM 故事走 **(a) 定稿 / (b) 闭源 API 续攻定位(需数据外发批准)/ (c) 换方法族**?

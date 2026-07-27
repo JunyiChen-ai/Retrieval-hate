@@ -139,9 +139,13 @@ recurring failure modes catalogued; the label-blind audit independently re-disco
 noisy memory ids with correct reasons.
 
 **Editable (human-in-the-loop).** Semantic addressing + surgical deletion is pure-CPU and seconds-fast.
-Deleting **two** human-flagged noisy memory entries lifts MHClip-EN test accuracy 0.8075 → 0.8199
-with **zero retraining**, exceeding all five random-seed floors — the project's best single EN point,
-reported as a controllability demonstration, not a main-table row.
+Deleting **two** human-flagged noisy memory entries lifts MHClip-EN test accuracy 0.8075 → 0.8199 **at
+seed 0** with **zero retraining**, exceeding all five random-seed floors. **This is a human-in-the-loop
+capability demonstration, single-seed; it is not an accuracy claim.** The round-8 multi-seed replay (F88)
+finds +0.0124 on seed 0 and **zero vote flips on seeds 1–3** (four-seed mean +0.0031), with the 14-id rule
+list stronger but still sub-bar (+0.0093 acc / +0.0089 mF1, 3 of 4 seeds, 0 items broken), so the earlier
+"project's best single EN point" wording is withdrawn and the property claimed here is *editability*, not
+a gain [DOC:ERRPAT_MHC-EN_2026-07-26.md §6.5, commit `ad56a62`; experiments §5, analysis §4].
 
 **Guard-rail / semantic veto (automatic, bounded).** A two-vote AND rule for *automatic* repair does
 **not** reproduce the human gain (C − A = +0.0000, 0/4 EN seeds): it structurally cannot reach

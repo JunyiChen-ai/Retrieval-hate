@@ -154,7 +154,7 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 |---|---|---|---|
 | **跨数据集 memory swap** | 6 个 informative cross cell 中 **5/6 above-majority**;跨库落后 in-domain **~0.04–0.09 macro-F1**;**测试时换库零重训** | 换库=换一个配置项,trained-MoE 头**结构上不具备**此能力;headline novelty vs MoRE | exp-cross-dataset-transfer · `becfd91` |
 | **temporal threshold recal(时间协议)** | EN temporal split 掉 −0.084 F1(0.7113→**0.6273**);**k=20 新期标注样本阈值再校准 → 0.7336**(≥random floor 0.7113,全额收复);oracle 天花板 0.7646 / acc 0.8199;ZH 无漂移(负对照) | 掉点主成分=**校准漂移非可分性损失**(temporal ROC 0.8484 > random-split 0.7175);检索架构把 operating point 暴露为一等 O(1) 可逆旋钮,trained-MoE 藏在权重里。原始「加样本进记忆」机制 flat-to-negative(k=20 memory-aug 只 0.6180) | EVAL_temporal_memory_W4 · `8a746ad` |
-| **human-in-the-loop memory edit** | 删 2 条人工标记噪声记忆:EN test acc **0.8075 → 0.8199**(macro-F1 0.7626→0.7748),seed 0,**零重训**;超全部 5 随机 seed floor | 语义寻址 + 外科删除,纯 CPU 秒级;EN 全项目最高单点(能力演示,非主表) | DEMO_memory_editing / EXP_auto_memory_repair(复现门 PASS)· `d4e58aa` |
+| **human-in-the-loop memory edit** | 删 2 条人工标记噪声记忆:EN test acc **0.8075 → 0.8199**(macro-F1 0.7626→0.7748),seed 0,**零重训**;超全部 5 随机 seed floor。**⚠ F88 多 seed 更正(载重):该正结果为 SINGLE-SEED** —— 精确多 seed replay 给出 seed 0 +0.0124 而 **seed 1/2/3 各 0 次翻转**,4-seed 均值 **+0.0031**;14-id 规则表更强(+0.0093 acc / +0.0089 mF1,3/4 seed,6 修 **0 坏**)但仍 3× 低于门、落 ±0.014 带内、已 test-consumed | 语义寻址 + 外科删除,纯 CPU 秒级;**口径固定:human-in-the-loop capability demonstration, single-seed; not an accuracy claim**(不再写「EN 全项目最高单点」) | DEMO_memory_editing / EXP_auto_memory_repair(复现门 PASS)· `d4e58aa`;更正 ERRPAT_MHC-EN_2026-07-26.md §6.5 · `ad56a62`(见 T6.5) |
 | **guard-rail(auto-repair 语义否决)** | 两票 AND 规则 **C−A = +0.0000**(0/4 EN,不复现手工增益);但 **C−D = +0.47pt EN / +0.40pt ZH**(语义票否决 embedding-only 过删) | 语义票**否决** Cleanlab 式 embedding-only 对「真仇恨但 embedding-hard」记忆(虐待证词/性侵报道/含 slur)的过删,是 C>D 唯一来源;可审计(标签盲重找到人审 2 个噪声 id 且理由正确)。付费点=完整性/可控性,**非 raw acc** | EXP_auto_memory_repair · `d4e58aa` |
 | **span-free 定位(记忆键口径)** | 最强 cell(HateMM 子片段记忆,K=4)full AP 0.545 / AUC 0.588,对 random +0.088/+0.100;within-video wv-AUC 0.526(仅 1/4 cell 显著) | 视觉-only 键对 speech-carried 仇恨盲;池化指标主体=毒性密度视频间排序(broadcast 追平)→ 只作能力演示。**MLLM 打分器口径见 T2**(挣得的可移除角色) | EVAL_localization_hateclipseg · `ebc1988` |
 | **定位打分器(MLLM,挣得的可移除角色)** | 见 T2:P6-7B wv-AUC 0.5435 → P10-b 72B A-fuse 0.5755(对 memory/random/P6 均配对显著) | 唯一 scale 能移针的赛道;modest-plus,未达 substantial 0.60 | EXP_p6 / EXP_p10 · `c9e3bd8` / `74f0eac` |
@@ -176,7 +176,7 @@ bar(round-1/2):paired Δ ≥ +0.04 且 CI 排除 0(等价 wv-AUC ≥ 0.5787);rou
 
 | # | 路线(MLLM 方法职责) | 关键数字 | kill / 判定依据 | 文档 · commit |
 |---|---|---|---|---|
-| 0 | **auto-repair**:两票 AND 规则自动删噪记忆,复现手工 2-entry 增益 | C−A **+0.0000**(0/4 EN);手工删的 2 id embedding 反对率 0.50/0.60 < 0.80 阈值;C−D +0.47 EN/+0.40 ZH | **FAIL**:AND 规则结构性删不到「语义矛盾但非 embedding-outlier」的记忆;幸存=guard-rail(见 T3) | EXP_auto_memory_repair · `d4e58aa` |
+| 0 | **auto-repair**:两票 AND 规则自动删噪记忆,复现手工 2-entry 增益 | C−A **+0.0000**(0/4 EN);手工删的 2 id embedding 反对率 0.50/0.60 < 0.80 阈值;C−D +0.47 EN/+0.40 ZH。**F88 更正:被复现的「手工 2-entry 增益」本身是 single-seed**(seed 0 +0.0124,seed 1/2/3 零翻转,4-seed 均值 +0.0031)⇒ 本行的 kill 判定不变,但「未复现的目标」量级须按 single-seed 读 | **FAIL**:AND 规则结构性删不到「语义矛盾但非 embedding-outlier」的记忆;幸存=guard-rail(见 T3) | EXP_auto_memory_repair · `d4e58aa`;更正 ERRPAT_MHC-EN_2026-07-26.md §6.5 · `ad56a62` |
 | 1 | **P1** 零标注先验重校准:读档案→估先验 p̂→重设漂移门控阈值 | p̂ 误差 **0.22 EN / 0.18 ZH**(criterion ≤0.07);corrected recal 0.48 < static 0.63(EN);ZH forced −0.055 | **FAIL**:判据 FPR 在时间边界漂移(EN .372→.238),train 校正失真;机制成立(oracle 先验补回 EN 80% 缺口) | EXP_p1_zerolabel_recal · `2a69246` |
 | 2 | **P2** 7B 邻居重排:按可比性删 INCOMPARABLE 邻居再投票 | B−A **−0.002 EN / −0.020 ZH**;过判 INCOMPARABLE **83% EN / 70% ZH**;selectivity lift +1.1% / −3.2% | **FAIL**:删除与投票正确性无关,过删稀释;ZH 净伤 4/5 seed | EXP_p2_neighbor_rerank · `bc689e1` |
 | 3 | **P2b/P2c** 强判据 + train 端校准:7B/32B/72B × 证据 × prompt selectivity 榜 | 最佳 EN lift **+2.7pt**(bar +10);ZH 全 8 配置为负;drop-rate 随 scale 收敛 7B 72.5%→32B 64.6%→72B 30.9% | **FAIL(train 端即死)**:**comparability ⊥ vote-correctness at every open-source scale**;calibration 涨、selectivity 不涨 | EXP_p2b_stronger_judge · `cc4ca6e`,`aae1efe` |
@@ -460,6 +460,8 @@ COMPLETENESS}.md` + `GRADEDLBL_PREGATE_RECORD.md`(+`OUT.json`)。findings F75–
 > 5.573 GPU-h,measured-not-promoted);$0:repro-survey(F84)、LSMI PID gate(F86)、SynIB port(F86 kill-switch
 > 触发 → PARK)。**不改 T1–T4 任何数、不增 13 路线计数、不占负结果 ordinal**;项目最优数(HateMM 0.8775/0.8791;
 > ZH final 0.8456/0.8173)不变。**law-I 实例计数仍为 8 ——F87 的第 9 例明确未获认证**(见 T6.4-b)。
+> **⚠ 后续更新(round-8):F87 的「未认证」判定不变,但第 9 例已由 F91(Molmo2 编码器交换)另行认证,现行计数 = 9;
+> 全文口径见 T6.5 末「law-I 计数对账」。**
 
 **T6.4-a 融合门闩 + 复现调研(F83–F85)**
 
@@ -503,7 +505,104 @@ RGCL cache cell 之前声明)是抓到它的原因。
 SYNIB_PORT_FORENSIC_RECON, LSMI_GATE_RECORD(+LSMI_GATE_OUT.json), MOKA_VERDICT_REVIEW, MOKA_SUBMIT_RECORD,
 MOKA_REFREEZE_FIX}.md`。findings F83–F87(`state/findings.jsonl`)。round-7 总 GPU ≈ **5.7 GPU-h**
 (MokA 5.573 + fusion-concat ~0.1;survey / PID gate / SynIB park 皆 $0)。**不入负结果 ordinal、不铸总数
-(逐轮框架,同文末张力清单 #9);law-I 实例计数保持 8。**
+(逐轮框架,同文末张力清单 #9);law-I 实例计数保持 8**(round-8 更新为 9,见 T6.5 末对账)。
+
+---
+
+### T6.5 Round-8 误差取证 + $0 关闭链 + 最后两个 gated 通道(F88–F98)
+
+> **续 append 2026-07-28**(同纯转录纪律:不跑实验、不提交 SLURM、不重算任何数)。本轮四条线并行:
+> ①**三库误差取证**(F88,$0)——首次拿到 per-item 的失败结构;②**$0 in-box 关闭链**(F89 eval-time vote
+> operator / F94 top-k / F96·F97·F98 三条 LITSWEEP-6 pregate)——把「误差结构本身建议的修法」逐条实测掉;
+> ③**两个 user-gated 通道兑现**(F90 CLAP general-audio、F91 Molmo2-8B 编码器交换);④**MNTP 三臂**
+> (F92 S1/S1b readout、F93 S2a published-adapter transplant)。**不改 T1–T4 任何数、不增 13 路线计数、不占
+> 负结果 ordinal**;项目最优数(**HateMM 0.8775/0.8711 val-sel、0.8791/0.8726 final;ZH final 0.8456/0.8173**)
+> **不变**。round-8 GPU ≈ **3.0 GPU-h**(MNTP S1+S1b 1.691 + S2a 1.006 + Molmo2 抽取 ~18 min ≈ 0.3;F88/F89/
+> F94–F98 与 F90 的 gate 全为 $0 CPU)。**两条载重更正**:law-I 实例计数 **8 → 9**(F91);pillar-④ 的 EN
+> 2-entry 记忆编辑正结果为 **single-seed**(F88)。二者口径见本节末。
+
+**T6.5-a 误差取证与 $0 in-box 关闭(F88 / F89 / F94)**
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **ERRPAT** — 三库 per-item 误差取证(HateMM/MHC-EN/MHC-ZH),$0 GPU,CPU proxy 逐 cell 4dp 验证 | **不是 kill,是本轮的结构性发现 + 6 条新实测 null。** 误差集 **~90% seed-invariant**(HateMM 24–25 of 26–28 错在 3/3 seed;ZH 25 项并集中 22 项 3/3、无一项恰为 2/3;EN 4 seed 共识 22 项 + 20 项 seed-flip 噪声带 + 119 项从不错),且**每个错误都是 confident neighbourhood inversion**:HateMM 中位 top-20 真标签 rank-weighted purity **0.1667**、median \|vote\| **0.7267** vs 恒对项 0.9873、top-1 邻居带真标签仅 **7.4%**(恒对项 95.2%);ZH 中位 purity 0.15 / core **0.1167**(22 项 stable core **无一**邻域多数正确)、median \|vote\| 0.7137 vs 0.9999;EN 共识误差正确类占比 **0.2205** vs seed-flip 0.4781 vs 恒对 0.8738。**不是覆盖问题**:ZH raw fused 空间里首个同 gold-class train 邻居的**中位 rank = 1.5**(11/22 在 rank 1,22/22 在 rank 14 内)——正确类比项在场、排前,只是**被投票压倒**。6 条新 null 全为 door-closer:HateMM 全局阈值重校准(dev-fit acc **+0.0000**/+0.0016,train-LOO logistic −0.0016;test-fitted ORACLE 仅 +0.0078)、length de-bias(train-LOO −0.0016,dev-fit 系数**反号**)、LOO bank curation(+0.0016,**不敌**同量随机删除 +0.0031/+0.0000);ZH test-fitted 阈值 ORACLE 均值 **+0.0201**(低于门的 gold-cheat 上界)、Whisper-ASR 换文本通道 $0 天花板 **+0.0134**;EN dev-selected 阈值 **0/6 arm 改善**(Qwen −0.0083 acc / CLIP −0.0104)⇒ **三库 in-box $0 开放集 EMPTY** | ERRPAT_{HateMM,MHC-EN,MHC-ZH}_2026-07-26.md · `ad56a62` |
+| **MECHFIX** — 5 个 eval-time vote 算子替换部署 top-20 rank-weighted signed-cosine 投票(T1 class-balanced quota / T2a CSLS hubness / T2b Ledoit-Wolf whitening / T3 精确 1-D length 方向剔除 / T4 whiten+balanced),三库配对同 head | $0 pregate(零 GPU/SLURM/Modal/训练),15/15 test + 15/15 dev floor-parity 4dp PASS,**0/5 可晋级**:全局最好 = T4×MHC-ZH **+0.0067 acc / +0.0052 mF1**(4.5× 低于 +0.030 门、落 ±0.014 带内、mF1 非 3/3)。机制层三个 door-closer + 一条新结构事实:**T1 退化**(与部署投票在 HateMM 215/215、ZH 149/149 上预测完全相同,独立 float64 numpy 对照复核)⇒ **local class prior 在 cone-collapsed 空间里与检索信号是同一个统计量**;**T2a 惰性**(hubness r(x) IQR ~1e-4,无动态范围);**T3 惰性且信息量大**(1-D 剔除精确到残差 ≤8.6e-9,却令检索的 length 组织 **Δρ ≤ 0.004 于 9/9 cell**、9/9 cell 零预测变化)⇒ **length 组织不由任何单一线性方向承载**;**T2b 负**(把 cone 从 0.9999 打开到 0.5220,却把 length nuisance 轴 ρ 从 ~0.52 **抬到 ~0.87**,因 d>n 时 LW 收缩仅 0.00041–0.0027)。T2b/T4 是**首批真的够到 stable-core 错误的算子**(每 cell 修 1–5 个)却**至少同量地打坏原本正确项**(18 个 T2b/T4 cell 中 12 个净 ≤0)= F47/F66 的同一条 selection-lock 算术 ⇒ **eval-time vote-operator 轴 CLOSED as measured** | MECHFIX_PREGATE_2026-07-27.md · `110dff8`(ops sha256 `635c1312…c83fc8d`) |
+| **KSWEEP** — 部署 kNN 投票的 top-k 全扫(用户提问:有没有试过**减小** k 来削邻域噪声) | $0 forensic(只重放已银行化、已 test-consumed 的 per-item 邻居表;零 GPU/SLURM/重训/新 test 推理,~40 s CPU),19/19 cell 4dp parity + EN ARM-V k=20 投票 bit-exact 复现 banked floor:**k=20 已在平台上或之上(6/6 arm),平台自 k≈10–15 起**;**小 k 有害且不是更锐的投票——它就是 1-NN**(k∈{1,2,3} 的预测向量在 **19/19 cell** 与 top-1 标签向量逐元素相同,有闭式证明:cos 降序下 3·s₀ ≥ 2·s₁+1·s₂ 恒成立),代价 −0.0157…−0.0388 acc;**用户前提在 HateMM 上结构性为假**:rank 11–20 已被 rank 权重压成惰性(k=10 时 5/6 cell 预测变化数 **0/215**,第 6 个 cell 仅 1 项;k=15 时 6/6 为 0)⇒ 无尾部噪声可削,ERRPAT 说的噪声在 **rank 1–5**、且是**标签本身错**。deployment-legal 读数(dev 选 k)为**无用到有害**(HateMM final −0.0140,ZH final −0.0157,pooled ZH −0.0179/−0.0233;dev 一旦离开 k=20 通常跳到 k=3);**per-seed oracle-k 上界最大仅 +0.0145**(不到门的一半)⇒ **轴 CLOSED 双向** | KSWEEP_RECORD.md · `d5d78ad`(`scripts/analysis/ksweep_OUT.json`) |
+
+**T6.5-b user-gated 通道 + MNTP 三臂(F90–F93)**
+
+| 路线 | 死因(一行) | 成本 | 判决 · commit |
+|---|---|---|---|
+| **CLAP general-audio**(F88 排名第 1 的 gated 天花板:HateMM FN1 speech-poor 视觉仇恨 +0.0326,唯一「由信号缺席定义」的通道) | **G0-cond gate KILL**(spec 冻结于任何 CLAP 权重下载**之前**)。binding best-of{k8,k16} Δacc = **−0.0009**(deployed_7168)/ **−0.0038**(strict_8960),4 cell × {k8,k16} 全局最大 **+0.0009** ⇒ ~44× 低于 +0.040 门,且**低于 F64/LAUD 自己的全局最大 +0.0041**;全部决策 CI 跨 0;context arm 随 k 单调退化(k64 到 −0.0193)= 纯冗余稀释。K-CLAP-1 四 cell 全 VALID(label-oracle accZA = 1.0000)⇒ 是真 null 非机器伪影。FN1 层读数 INCONCLUSIVE_NARROW(预声明按 KILL 行动):CLAP-alone 0.8411 CI[0.7640,0.9073] **输给**已被杀的 Whisper 块 0.8482 CI[0.7844,0.9053](C2 = −0.0071 vs 要求 ≥+0.05),对 Z_deployed(0.8937)的条件 ΔAUC = +0.0113 CI[−0.0283,+0.0533] 跨 0。机制:音频信号**是真的存在但已被 Z 携带**——ρ(CLAP 分, n_words) = **+0.4430**(p=3.2e-42),即 ERRPAT §4.3 认定的**产生 FN1 的那条 length 偏置**,不是解药。**音频轴至此在三个表征层级全闭**:F41 经典韵律(eGeMAPSv02 88-d,−0.0038 strict)/ F64 学习语音-ASR(Whisper-large-v3 2560-d,+0.0014/+0.0014)/ F90 学习通用音频语义(1024-d,−0.0009/−0.0038)。诚实裂缝(预声明为 underpowered-context-only,不渲染判决):≤1 词层(n=87、8 正)CLAP 胜 Whisper +0.1266,但 CI[−0.1169,+0.4300] | 0.78 GB 下载 + ~1.7 h **CPU**(job 13647,无 gres)+ 681 s gate = **0 GPU-h** | CLAP_GATE_RECORD.md · `eee862c`(spec `6c8929d`) |
+| **Molmo2-8B 编码器交换**(allenai/Molmo2-8B = Qwen3-8B LLM + SigLIP2-so400m-patch14-384;2025 代、video-native,选在编码器身份**唯一转换过**的 HateMM 上) | **KILL,且方向信息量最大。** 对最强同路径 floor(LoRA-curric)**双协议双指标皆低**:val-sel **−0.0217 acc / −0.0249 mF1**(per-seed 符号 − − −),final **−0.0124 / −0.0151**(+ − −),对预声明门(≥+0.0200 双指标 3/3 双协议)**大幅未达且符号相反**;对 like-for-like frozen-Qwen 对照是 **TIE**(\|Δ\| ≤ 0.0068 ≈ 1–2 个 test 样本)⇒ **更好的 video-native 编码器 ≠ 对本任务更好的编码器**。几何解离才是结论:raw image kNN **0.7814/0.7689** vs floor 0.7256/0.7112、frozen-Qwen 0.7163/0.7014(**+0.0558 / +0.0651**,HateMM 有史以来最强 image 流),而 cone collapse **更糟**(top-1 cos 0.9881–0.9999 vs Qwen 0.9439–0.9686)、length nuisance 轴**原封不动**(ρ +0.9052 vs +0.9432/+0.9530)、raw Hadamard **退化**(acc 0.5628,PR 3.069)。**⇒ 第 9 个获认证 law-I 实例**(见本节末对账);编码器交换轴在**视觉侧 PARK**,若再开应在**文本侧**(Molmo2 把 raw text kNN 从 0.8233/0.8186 **降到** 0.8000)| 抽取 job 13648 **~18 min GPU ≈ 0.3 GPU-h**;probe job 13653 为 CPU-only($0) | MOLMO2_PROBE_RECORD.md · `3298e8e`(recon `c1d450c`/`997b227`,门在抽取前定死) |
+| **MNTP S1 + S1b** — bidir readout 路线(S1 = LLM2Vec 全非 padding 位置 mean pool;S1b = 仅文本位置 pool,**按 token id 选**而非 span 算术) | **ZERO-training 关闭该路线。** S1:HateMM text **0.7477** = 恢复 **−0.1999**(比 F72 crater 本身 0.7570 还低),ZH 0.7051 = +0.3529 partial ⇒ 无数据集达 50% 门**且符号相反**,sign-consistency 条款触发。S1 的真正发现是 **stream collapse**:arm 内 mean per-item cos(text, img) = **0.9273–0.9404**(HateMM)/ 0.9316–0.9320(ZH),对照 causal 0.3027–0.3523——「text」向量是 img 向量的 ~0.93 近拷贝,因为 S1 跨度 ~82.5% 是视觉 token ⇒ ZH 的「部分恢复」是 **stream substitution 而非 readout 修复**。S1b 随后在**预声明的 collapse belt 上自我证伪**(bar < 0.60,实测 0.7566/0.7624 HateMM、0.7565/0.7538 ZH)——**尽管这次 accuracy 门单独会说 CONTINUE**(HateMM +0.2003 / ZH +0.2941 且同号);冒烟在 HateMM 上 text 行与 img 行 acc/mF1 **数值完全相同**(0.7664/0.7540)= substitution 的直证。机制:双向注意下每个文本 token 都注意全部 ~720 视觉 token ⇒ **排除视觉 position ≠ 排除视觉 information**,readout 无法撤销由拓扑造成的信息混合;三种 pooling 跨度(F72 EOS-tail / S1 全位置 / S1b 仅文本)全部远低于 causal floor,collapse 随跨度**单调**(0.31–0.35 → 0.76 → 0.93)。H1 强形式**第三次被反驳**(img 流在 bare mask flip 下反而略好 +0.0093/+0.0128,三次独立抽取 cosine 1.000000)| **1.691 GPU-h**(budget ~2.0) | MNTP_S1_RECORD.md · `4a87836`/`f15dabc`/`12e2f18` |
+| **MNTP S2a** — 把**已发表的 McGill MNTP adapter** 移植到我方 merged Qwen2.5-VL trunk(零训练、零语料裁决、零 test-touch) | **STOP,但这是整场战役第一个真实的 bidir 信号。** HateMM text **0.7850** vs F72 bidir 0.7570 = **+0.0280 = +0.6006 crater recovery**,**首个越过冻结 50% 门(bar50 0.7804)的臂**;ZH 0.6923 vs 0.6282 = +0.0641 = +0.2941 partial,**两侧同号** ⇒ 权重适配做到了三种 readout 做不到的事,**支持 MNTP 方向**并佐证 S1b 的诊断(病灶在权重/拓扑而非 readout)。**STOP 由四条独立理由 overdetermined**(无单一门载重):(1) 预声明 collapse belt 触发(within-arm cos(text,img) 0.6494/0.6550 HateMM、0.6386/0.6433 ZH,均 ≥0.60 且规则是**无论 accuracy 如何**自我证伪);(2) **融合由相加转为相消**——causal 下 concat 比最好单流 **+0.0467**(HateMM)/+0.0128(ZH),S2a 下变成 **−0.0467 / −0.0256**,而部署系统**就是**一个融合 head;(3) 每个 S2a 数都低于自己的 causal floor(text −0.0187/−0.1538,img −0.0280/−0.0128,concat −0.1121/−0.1538);(4) KS-MNTP-3 不可能满足。机制:adapter 是拟合在 **Qwen2.5-7B-Instruct 权重点**上的低秩 delta,而 VL trunk 已漂移 ⇒ 在新权重点上是**大而钝的扰动**(mean per-item cos(S2a, plain-bidir) 仅 0.3639/0.3076)。**被证伪的是零训练移植捷径,不是 MNTP 假说**;唯一存活的活假说 = **S2b 在我方权重点自训 MNTP,卡在用户语料裁决**。外部 codex gate 再次救臂:PEFT 键深一层会**静默加载 0 权重**(S2a 会伪装成 F72 重跑),以及 suffix 匹配会绑上 292 模块含 96 个视觉塔模块(修后精确 196 = 28×7,零视觉) | **1.006 GPU-h**(budget ~1.0;S1+S1b+S2a 合计 2.697) | MNTP_S1_RECORD.md §6d/§6e · `0663ab7`(修正案先于分叉提交)/ `b328dc9` |
+
+**T6.5-c 关系型 / membank pregate 链(F95–F98)—— LITSWEEP-6 的 accuracy 菜单 $0 下 0-for-3**
+
+> 计数口径:**0-for-3 指 LITSWEEP-6 自己的菜单**(F96 restrans / F97 VGA·VNQ / F98 aggnet);**F95 是这条链的
+> 前置 cell**(它冻结的 `mechnov_pairverify.py` 被后三条 sha256-assert 复用),列在此处是为了让链条完整,
+> **不计入那个 3**。
+
+> 三条 lane 的文献扫记录已 commit:`LITSWEEP6_MEMBANK.md`(`62efd82`,5 个排序候选,**全部 $0/CPU pregate、完整版 0 GPU-h ——本战役首次**)、`LITSWEEP6_PARADIGM.md`(`49e15ec`)、`LITSWEEP6_RELGEN.md`(`f62e777`)。以下四个 cell 全部:CPU ≤8 线程、**零 GPU / SLURM / Modal / 任何部署臂的训练**、**test-split 接触 NONE**(仅 train split;dev_seen/test_seen 从未被任何脚本打开),且逐条 sha256-assert 复用 F89 冻结的 `mechfix_ops.py` 与 F95 冻结的 `mechnov_pairverify.py`。
+
+| 路线 | 死因(一行) | 判决 · commit |
+|---|---|---|
+| **MECHNOV pair-verify** — 用**训练过的 pair verifier** 取代部署 kNN **投票**(检索从「判决」降级为「提名」;n 个 item 标签 → ~n² 个 pair 标签) | **KILL,且是 SPLIT VERDICT ——两半都载重。CONTROL-1 以 4.3–8.8× 通过**(18/18 cell、5/5 fold 符号):fused pair-AUC HateMM cosine 0.5843 → MLP **0.7753**(+0.1910)、ZH 0.5123 → **0.7748**(+0.2625)、EN 0.5057 → **0.7009**(+0.1952)⇒ 关系型 n→n² 监督**确实**买到更好的关系打分器,**不是 cosine 的再推导**(且顺带给部署度量定价:ZH/EN 上部署检索 cosine 自身的 pair-AUC **距随机不到 0.02**)。**CONTROL-2 端到端 36 个 cell 无一通过(0/36)**:primary HateMM 0.8441→0.8401(−0.0040)、ZH 0.8480→0.8014(−0.0466)、EN 0.7796→0.7650(−0.0146);36 个 cell 中仅 3 个 5-fold 均值为正(最大 +0.0094),全在次要空间/聚合且全部未过 +0.010 门。**两条实测死因**:(i) **被丢掉的聚合本来在干活**——control-2b 用 cosine 跑**同一形状**规则,形状本身先付 −0.0417/−0.0293/−0.0437,verifier 再赚回 +0.0377/−0.0173/+0.0291,**赚回的少于形状毁掉的**;(ii) **更好的关系 ≠ 更好的决策**——verification 确实**够到**了 ERRPAT 诊断为不可达的 36.7–54.6% 错误(F89 各臂只够到 0–5 个),但 fix/break 兑换率 0.9474/0.5345/0.8596,全 battery 上限 1.1667,**无一 cell 到 1.2**;够到量 **10×** 增长而兑换率纹丝不动 | MECHNOV_PAIRVERIFY_PREGATE.md · `0261b82`(冻结臂 sha256 `77b0defd…b7240d`) |
+| **RESTRANS(membank-C1)** — 去偏**投票所搬运的标签场**(而非几何):保持检索、k=20、权重 [20..1]、阈值、键空间**完全不变**,只把 s_i = 2·lab_i−1 换成残差 r_i = s_i − (2·p̂_i−1),p̂_i = P(hate \| bank 项转写量),仅用 fitting fold 拟合 | **KILL,且 kill 是机制性的——退化对照(bar 3,预声明为 KILL 非 caveat)直接触发。** 21/21 cell 全负:primary(fused)HateMM B-a **−0.0188**(兑换率 0.4167,10 修 24 坏)、ZH **−0.0863**(0.3243)、EN **−0.1002**(0.4860);全 battery 最好 C1 数 = **−0.0013**(HateMM×img)。决定性一步:把 p̂_i 换成它自己的 **bank 均值**(= 纯全局阈值移动,一条三库皆已实测死的杠杆),两者预测在 **95.03% / 97.75% / 99.45%** 的 item 上一致 ⇒ **C1 是穿着 item-level 外衣的阈值移动**;闭式解释:cone-collapsed 空间里 cosine 近似均匀时 v_res = v_dep − (2·p̂−1) **精确成立**,而 item 项的离散度比常数项小 20–200×。C1 **够到了正确的人群**(改变的决策 34/34、98/98、158/159 落在「最近同类 bank 项 rank ≤5」的病理群)却**按 2.1–3.1× 打坏它** ⇒ LITSWEEP6 定律 (iii) 的第十个数据点:**够到病理不是难点**。机制层唯一值得留下的一句:**CP1(长度-条件类先验)是 HateMM 专属事实**——ρ(转写量, gold) = **+0.2842**(p=2.74e-15,HateMM)/ **−0.1152**(p=0.00553,ZH,**符号相反**)/ **−0.0050**(p=0.906,EN,**无**)⇒ 任何 C2 prereg 都不得再用 p̂ 做放置判据 | RESTRANS_PREGATE_RECORD.md · `bf6d03b`(冻结脚本 sha256 `99a770cd…2531`) |
+| **VGA / VNQ(relgen-C1/C2)** — C1:用 verifier profile 在「部署投票 ↔ F95 裁决**不一致**」的 item 上做 per-item **裁决门**(在一致项上按构造是 no-op,故 F95 的形状代价被结构性归零);C2:把同一 profile 读成**选择性预测**风险排序(AUGRC) | **两个都 KILL,6 条冻结门中 5 条判死,决定性的是 K-VGA-3。** K-VGA-1 FAIL 0/3(primary verifier 全局最好 **+0.0108**,差 3×);K-VGA-2 FAIL(p = **0.8706 / 0.5174 / 0.9751**)。**K-VGA-3(new-signal 对照,mandatory)FIRES**:只用 **F47 族特征**(投票 margin、purity、子投票,**无 verifier**)的门在**三库全部**打败 verifier 门 —— **+0.0269**(HateMM,p=0.0050,fold 符号 +++++)/ **+0.0104**(ZH,p=0.0050)/ **+0.0182**(EN,p=0.0100),分别高出 +0.0161/+0.0104/+0.0164,且**最悬殊处正是 verifier 统计学上已死的两个库** ⇒ 「genuinely new information source」这一**预注册可证伪主张被证伪**,该轴按测量关闭而非「未打开」。C2/VNQ 输给**最廉价的基线**:AUGRC(越低越好)HateMM 0.0458 vs kNN-UE 0.0429 vs **免费的 vote margin 0.0465**;ZH 0.0417 / 0.0393 / **0.0384**;EN 0.0810 / 0.0758 / **0.0696** ⇒ K-VNQ-1 0/3、K-VNQ-2 1/3 且那 1 个未过 fold 门。**唯一新正数据点(记录但明确不晋级)**:disagreement set 上**确实存在**置换验证过的门信号,但它由 F47 特征承载、三库全部低于 +0.030 门、且门的是一个**未门控时三库皆净负**的裁决器(族 oracle 上限仅 +0.0726/+0.0535/+0.0893)⇒ **analysis datum, not a lever**。**关系型资产至此结算为 analysis-grade only**(三次转换尝试 F95 替换投票 / C1 门控替换 / C2 读作风险,**全负**),LITSWEEP6_RELGEN §5 的预承诺兑现 | VGA_PREGATE_RECORD.md · `db2eae8`(冻结脚本 sha256 `a3a41ae7…7ce56` / `ea37c57b…4f4e34`) |
+| **AGGNET(membank-C3)** — **学习型聚合 profile 网络**:检索、键空间、k=20、候选集、阈值、标签场**全部不变**,只把固定 rank 权重 [20..1] 换成 per-query 的 g_θ(邻域 profile)(1316 参数,**部署锚定初始化**使 epoch 0 与 floor 逐位相同,λ 由内层 CV 选、λ→∞ 精确退回部署规则) | **KILL:决定性门差 2× 以上,且两条 mandatory 退化对照在唯一为正的库上同时触发 ⇒ conditional-aggregation 族 CLOSED。** 本 cell 的载重数字是**覆盖率**:非负权重能翻转 sign(v) 的前提是 top-20 类混合,占 0.8683/0.8290/0.9709,**可达的部署错误 111/116、88/88、120/121 = 96–100%**,**族 oracle Δacc = +0.1492/+0.1520/+0.2186**(是 F95/VGA 裁决门 oracle 的 2–4×、F94 per-seed oracle-k 的 10–15×)——**C3 带着本族史上最大的天花板入场**。实测:primary **+0.0134**(HateMM,fold 符号 −0+++,34 项改变中 22 修 12 坏,兑换率 1.8333)/ **−0.0069**(ZH)/ **+0.0000**(EN);45 个 cell **最大 +0.0134,0 个到 +0.030**。退化对照:**DEG-A**(与裸全局阈值移动的一致率)**0.9570**(HateMM)/ 0.9508(EN);**DEG-B**(与 F94 网格里单个固定 k 的一致率)**0.9610**(k=15,HateMM)/ **0.9964**(k=20,EN,即 C3 在那里**就是**部署规则);而 **THRESH_best 单独就有 +0.0188**(比 C3 还高,不用网络不用 profile),**DIRECT_logit**(同 profile 的无约束 logistic)**恰为 +0.0134** @ 0.9516 一致率 ⇒ 聚合**形式**没贡献任何两个退化孪生没给的东西。**因此 kill 是机制性而非预算性的**:标准替代解释「算子够不到错误」被 C3 消除,函数类近乎 profile 分类器全类(自检臂 B),而它仍收敛到**两条已关闭的杠杆**;**族内 delivery 与 ceiling 无关**(F94 上限 +0.0145→交付 −0.0140…+0.0041;F95/VGA 上限 +0.0726/+0.0535/+0.0893→交付 +0.0269/+0.0104/+0.0182;C3 上限 +0.1492/+0.1520/+0.2186→交付 +0.0134/−0.0069/+0.0000)。**F96 的勘误级锐化(须随该数一起走)**:F96 的「死亲戚」D1 在 HateMM 上给出本战役首批过 1.2 兑换率(+0.0215/1.8889 fused、+0.0282/2.2353 text),F96 归因于**长度协变量**;本记录里把协变量**拿掉**的同一算子(THRESH_best)测得 +0.0188/1.5833 与 +0.0242/1.7200 ⇒ 协变量只值 +0.0027/+0.0040(2–3 个样本),**D1 的正数 ~87% 是裸阈值移动**,该杠杆在部署 head 空间的 test 上仍**实测死**(+0.0000/+0.0016) | AGGNET_PREGATE_RECORD.md · `fa1e3b3`(冻结脚本 sha256 `8e95c2fc…e8a9`) |
+
+**读表须知 —— proxy floor 与 T1/T5 锚数的对账(避免被误读成矛盾):** 本节多处引用的 HateMM「同路径 floor」
+**0.8775 / 0.8715(val-sel)与 0.8760 / 0.8699(final)** 是 **errpat CPU proxy 头**的读数(6 个 floor head
+ckpt 已按 F78 disk-删,proxy 是同一 `run_rac.py` 命令在同一 banked 特征缓存上的重建);T1/T5 的 GPU 锚数是
+**0.8775 / 0.8711(val-sel)与 0.8791 / 0.8726(final)**。两者的差**恰是 F88 记录的 proxy-vs-floor 偏移**:
+val-sel **+0.0000 / +0.0004**(4dp 上精确)、final **−0.0031 / −0.0027**(0.67 个 test 样本/seed,残差 =
+CUDA-vs-CPU dropout RNG)。**所有 round-8 的 Δ 都是同路径配对量**(proxy 臂 vs proxy floor),偏移在 Δ 中抵消;
+**T1/T5 的锚数未被任何 round-8 cell 触碰**。绑定纪律(F87 → F88 → F91 一脉):**CPU 训练的臂只能配 CPU 训练的
+floor**,F91 因此在同一 job 里重跑 arm B/C 而不是引用银行化数字,并在 4/4 cell 上复现 proxy 到 4dp。
+
+**组织性事实(round-8 的科学产出,四次独立测量收敛):RANKING QUALITY ≫ DECISION QUALITY。**
+(i) **F95** —— verifier 在关系层比 cosine 高 **+0.13 到 +0.27 pair-AUC**(18/18 cell,4.3–8.8× 过门),端到端 **0/36**;
+(ii) **W4 temporal**(`EVAL_temporal_memory_W4.md`)—— EN 时间切分 **ROC 0.8484** 高于随机切分参照 0.7175,macro-F1 却
+**掉 −0.084**;(iii) **F88 ERRPAT** —— 正确类比项在**中位 rank ~1.5** 却被压倒,误差是 ~90% seed-invariant 的
+**confident inversion**;(iv) **F50/F48** —— dev AUC **0.898** 而「unconvertible」。**我们的系统排序远好于它决策**;
+而每一条已死方向都在试图用「对同一批分数的更好的**统一决策规则**」去合上这个缺口——vote 算子(F89)、k(F94)、
+阈值(F88)、损失(F75)、verifier(F95)、门(F97)——**该轴现已从六个方向关闭**。LITSWEEP6-PARADIGM 因此不再推荐
+第七条规则,而推荐**换输出对象**(三路认证输出 + 策略化 operating point),而这**先需要用户对交付物的裁决**(见
+`DECISION_MEMO_pending.md` 现行裁决单 S1)。
+
+**law-I 计数对账(一次说清,全文按此口径):**
+- **F63 = 第 7 例**(LP,ZH oracle 头空间 +0.1026 未兑现)、**F65 = 第 8 例**(vision-unfreeze,EN image 流 MOVED、head 兑零)。
+- **F87 的候选第 9 例(MokA image 流 AMBIGUOUS)明确未获认证**,该判定**不变**(T6.4-b 原文保留)。
+- **F91(Molmo2)= 第 9 个获认证实例**,且是**迄今最干净**的一例:此前的 law-I 数据是「image 流移动而兑现为零」,
+  这里是 **raw image 流真的变好**(+0.0558 / +0.0651,HateMM 有史以来最强 image 流)**而兑现为负**(−0.0217 val-sel /
+  −0.0124 final)。**现行计数 = 9。**
+- **F95 自述为「迄今最锐利的 law-I 实例」——本汇编不把它计入编号实例**(它是 train-split raw-space 的 $0 事后诊断,
+  不促成任何 arm、不动任何部署读数),而记为**该定律最锐利的一次测量**:law-I 首次在**决策所消费的那个量本身**上
+  双侧测得(关系分 +0.13–0.27 pooled / +0.16–0.23 within-query pair-AUC,端到端 0/36),中间隔着 F66 的 selection-lock。
+  **后续文档不得据此把计数写成 10。**
+
+**pillar-④ 更正(F88 §6.5,`ad56a62`,载重,已传播到全部引用点):** EN「删 2 条人工标记噪声记忆」的正结果是
+**single-seed**。banked top-60 邻居表上的精确多 seed replay(未编辑重放逐 seed 复现 floor 到 <1e-12):seed 0
+**+0.0124**(0.8074534161490683 → 0.8198757763975155,macro-F1 0.7625707625707625 → 0.7748468920287408,与
+`DEMO_memory_editing.md:52` 逐位一致),**seed 1/2/3 各 0 次投票翻转**,**4-seed 均值 +0.0031**;seed 0 翻的两项首次被
+点名(`cYQyH7hbNnw`、`xqilG4oMvvI`),**均为 C8 噪声带的低 margin FP,都不是硬错误**。14-id 规则表严格更强
+(**+0.0093 acc / +0.0089 mF1,3/4 seed 正,6 修 0 坏**),但 3× 低于 +0.030 门、落 ±0.014 带内、且已 test-consumed;
+合法的 dev 侧 pregate **算术上不可能**(dev n=80 ⇒ 1 项 = 0.0125,无法解析 +0.009 效应)。**统一措辞(所有引用点):
+"human-in-the-loop capability demonstration, single-seed; not an accuracy claim."** 附带两条账本更正:F78 的
+「$0 curation 前提为假」**对 EN 的纯删除编辑不成立**(4 seed 的 top-60 邻居表已银行化,支持精确 $0 多 seed 重放;
+F78 的限制只对 bank **新增**、键空间变更与重训成立),以及 HateMM align head 在 8 CPU 上 **52 s** 端到端训完 ⇒
+head 侧诊断/消融/校准变体现在都是 CPU-分钟级、可全 3-seed 纪律执行(**绑定 caveat:CPU-trained 臂只能配 CPU-trained
+floor**,final-epoch 上 −0.0031 的路径差不可忽略)。
+
+**来源(T6.5):** `refine-logs/{ERRPAT_HateMM_2026-07-26, ERRPAT_MHC-EN_2026-07-26, ERRPAT_MHC-ZH_2026-07-26,
+MECHFIX_PREGATE_2026-07-27, KSWEEP_RECORD, MECHNOV_PAIRVERIFY_PREGATE, CLAP_GATE_RECORD, MOLMO2_PROBE_RECORD,
+MOLMO2_FORENSIC_RECON, MNTP_S1_RECORD, MNTP_FORENSIC_RECON, RESTRANS_PREGATE_RECORD, VGA_PREGATE_RECORD,
+AGGNET_PREGATE_RECORD, LITSWEEP6_{MEMBANK,PARADIGM,RELGEN}}.md` + 机器可读输出 `scripts/analysis/{errpat_*,
+mechfix_*, ksweep_OUT, mechnov_pairverify_*, restrans_pregate_*, vga_pregate_*, aggnet_*}.json`。findings
+**F88–F98**(`state/findings.jsonl`)。**不入负结果 ordinal、不铸总数(逐轮框架,同文末张力清单 #9);law-I 实例
+计数 = 9。**
 
 ---
 

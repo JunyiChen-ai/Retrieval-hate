@@ -62,7 +62,9 @@
    → 32B +0.0437 → 72B +0.0526 单调)」是这套方法里**唯一** scale 能移针的赛道(与重排线「scale 改
    calibration 不改 selectivity」成对照)。
 3. **guard-rail / 审计(可控性,非 raw acc)。** auto-repair 语义票否决 embedding-only 过删(C>D);可编辑
-   档案(人审 2-entry 删除改善 EN);标签盲审计重找到人审噪声 id。付费点 = 完整性/可控性。
+   档案(人审 2-entry 删除改善 EN —— **⚠ F88 更正:SINGLE-SEED**,seed 0 +0.0124 / seed 1-3 零翻转 /
+   4-seed 均值 +0.0031,统一措辞 *capability demonstration, single-seed; not an accuracy claim*,
+   `ERRPAT_MHC-EN_2026-07-26.md` §6.5 · `ad56a62`);标签盲审计重找到人审噪声 id。付费点 = 完整性/可控性。
 4. **明确的非角色(强负结果 = ruled-out map)。** 主表 accuracy 角色被 11 路线机制级证伪;附**两条方法学
    定论**:`comparability ⊥ vote-correctness`(P2/P2b 7B→72B 规模梯,全 8 配置)与`probe 必要非充分`
    (P3-HateMM 最干净 probe / P8-EN 最强 probe 均训练不过)。此节是方法章的**负结果贡献**。

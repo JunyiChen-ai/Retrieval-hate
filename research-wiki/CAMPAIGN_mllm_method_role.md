@@ -116,6 +116,12 @@ and it is that boundary — already supervised directly — that the method need
 1. **Guard-rail / editable-memory role.** The auditable archive memory supports a *veto*: targeted
    deletion of MLLM-flagged noisy entries improves EN (auto-memory-repair). Removal cost shows up
    as **integrity/controllability**, not raw accuracy — a defensible contribution framing.
+   **⚠ F88 correction (2026-07-26, `refine-logs/ERRPAT_MHC-EN_2026-07-26.md` §6.5, commit `ad56a62`):
+   "improves EN" is a SINGLE-SEED reading** — the human 2-entry deletion is +0.0124 on seed 0 and
+   **zero vote flips on seeds 1–3** (four-seed mean +0.0031); the 14-id rule list is +0.0093 acc /
+   +0.0089 mF1, 3/4 seeds, 0 broken, still sub-bar. Cite as *human-in-the-loop capability
+   demonstration, single-seed; not an accuracy claim.* The integrity/controllability framing is
+   unchanged and is what this cell actually supports.
 2. **Human-in-the-loop audit.** The archive re-finds human-labeled noise → an auditable
    memory-hygiene tool, orthogonal to the accuracy claim.
 3. **Localization scorer — an EARNED, statistically-validated method role (P6).** The per-window

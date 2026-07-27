@@ -96,6 +96,10 @@ substantial(0.60)bar**,主表 accuracy 已被证伪的终局不变。MLLM 挣得
 3. **guard-rail / 审计(可控性,非 raw acc)。** auto-repair 的语义票**否决** embedding-only 对真仇恨记忆的过删(C>D);
    可编辑档案记忆支持定向删噪(人审 2-entry 删除改善 EN);标签盲档案审计重找到人审噪声 id —— 移除代价体现在
    **完整性/可控性**,是一条 defensible 的贡献口径,但**不是主表 accuracy**。
+   **⚠ F88 更正(2026-07-26,`refine-logs/ERRPAT_MHC-EN_2026-07-26.md` §6.5,commit `ad56a62`):
+   「人审 2-entry 删除改善 EN」为 SINGLE-SEED** —— seed 0 +0.0124,**seed 1/2/3 零翻转**,4-seed 均值 +0.0031;
+   14-id 规则表 +0.0093 acc / +0.0089 mF1(3/4 seed,6 修 0 坏)仍 sub-bar。统一措辞:*human-in-the-loop
+   capability demonstration, single-seed; not an accuracy claim.* 本条的「可控性而非 accuracy」结论不变。
 
 4. **A-fuse × scale 杠杆(P10-b 已兑现为 modest-plus)。** P10 round-1 中 coarse×fine(K4×K30)融合是唯一在标定集
    **显著移针**的放大器(7B +0.0305,CI 排除 0,p=7e-7),但低于 +0.04 promotion bar,round-1 未触 test。**P10-b

@@ -175,13 +175,14 @@ what the MLLM weak label would teach** [DOC:EXP_p11_weaksup_localization.md]. Th
 real and large **versus memory** (A-fuse − memory +0.0996, CI [+0.0635, +0.1366]) but not versus a
 trivially-supervised MIL head — which sharpens, rather than removes, its role (§4).
 
-### 3.6 Structural law I — better signal without conversion (eight instances, now arithmetic; F44 the mechanism)
+### 3.6 Structural law I — better signal without conversion (nine instances, now arithmetic; F44 the mechanism)
 
 Beyond the thirteen-route campaign, three further pre-registered sprints (rounds 2–4,
 [DOC:TERMINUS_round2_mllm_plus3.md, DOC:TERMINUS_round3_mllm_plus3.md, DOC:ROUTER_GATE_RECORD.md,
 DOC:FA_GATE_RECORD.md, DOC:PREMISE_D_GATE_RECORD.md]) hardened §3.1 and §3.3 into a
-single law with **six independent instances**, and a post-terminus red-team audit (round 5, §3.10)
-added **two more** — bringing the total to **eight** — and, decisively, made the law *arithmetic*
+single law with **six independent instances**, a post-terminus red-team audit (round 5, §3.10)
+added **two more**, and the round-8 encoder-swap probe (F91, below) added a **ninth**
+— bringing the total to **nine** — and, decisively, made the law *arithmetic*
 rather than merely repeated (the F66 decomposition below). In each instance a candidate signal is
 demonstrably *richer* than the pipeline already has, and yet the best in-constraint operator converts
 **none** of it into main-table accuracy. Each shares a sharp form — a **gold/label oracle proves the
@@ -251,13 +252,33 @@ constraint box recovers it:
   +0.0269 acc but sign only 2/3, a wide-between-seed-spread artefact, final −0.0062 1/3): the upstream image
   representation genuinely improved and the head converted **zero** of it. The **eighth** instance,
   ~15 GPU-h [DOC:VISION_UNFREEZE_VERDICT_REVIEW.md, commit `09d02f8`].
+- **Molmo2-8B encoder swap** (round-8 probe, F91) — the **ninth** instance, and the cleanest one recorded.
+  A 2025-generation, video-native encoder (Qwen3-8B LLM + SigLIP2-so400m-patch14-384) was swapped into the
+  one dataset where encoder identity had ever converted (HateMM, §3.9), and its **raw image stream genuinely
+  improved**: image-only kNN accuracy **0.7814** against the LoRA-curric floor's 0.7256 and the frozen-Qwen
+  control's 0.7163 (**+0.0558 / +0.0651**, the best image stream ever measured on HateMM). The deployed
+  metric then moved the *other way*: **−0.0217 acc / −0.0249 mF1** val-selected (per-seed signs − − −) and
+  **−0.0124 / −0.0151** final-epoch against the strongest same-path floor, against a pre-declared bar of
+  ≥ +0.0200 on both metrics, 3/3 sign-consistent, on both protocols. Every earlier instance showed a stream
+  moving with *zero* conversion; here the conversion is **negative**, which is why the swap is parked on the
+  vision side with a mechanism rather than with a null: the binding constraint is not the quality of the
+  visual representation. The geometry says the same thing — cone collapse got *worse* (top-1 cosine
+  0.9881–0.9999 vs Qwen's 0.9439–0.9686), the length-organisation nuisance axis was untouched (ρ +0.9052 vs
+  +0.9432 / +0.9530), and the raw Hadamard composition degenerates outright (acc 0.5628, participation ratio
+  3.069). Against the like-for-like frozen-Qwen control the swap is a **tie** (|Δ| ≤ 0.0068 ≈ 1–2 test items),
+  so the honest sentence is that *a better video-native encoder is not a better encoder for this task*
+  [DOC:MOLMO2_PROBE_RECORD.md, commit `3298e8e`; recon DOC:MOLMO2_FORENSIC_RECON.md, commits
+  `c1d450c` / `997b227`, bars fixed before extraction].
 
-*(The round-5 learned-audio gate is deliberately **not** an instance: the Whisper-encoder stream added no
-conditional information on any dataset [DOC:LAUD_GATE_RECORD.md, commit `3573f82`], but with **no oracle
-surplus** — the signal itself is absent, exhausted by the ASR transcript — so it is a redundancy null, not a
-better-signal-without-conversion datum.)*
+*(Two deliberate non-instances, so the count cannot drift. The round-5 learned-audio gate is **not** an
+instance: the Whisper-encoder stream added no conditional information on any dataset
+[DOC:LAUD_GATE_RECORD.md, commit `3573f82`], but with **no oracle surplus** — the signal itself is absent,
+exhausted by the ASR transcript — so it is a redundancy null; the round-8 CLAP gate joins it for the same
+reason (§3.13). And F87's candidate ninth is **not** certified — the MokA image stream read AMBIGUOUS, not
+MOVED (§3.10) — a ruling that stands unchanged; F91 is a separate cell that earns the ninth slot on its own
+measurement.)*
 
-These eight instances are unified by a single **mechanism**, surfaced by the encoder swap itself — the
+These nine instances are unified by a single **mechanism**, surfaced by the encoder swap itself — the
 result that turns the campaign's central positive from an anomaly into a law. A zero-GPU geometry
 diagnosis on banked train/dev caches shows Qwen's representation upgrade is **real and roughly equal on
 all three datasets** — top-20 neighbourhood purity rises **+0.023 / +0.023 / +0.021** and the
@@ -302,7 +323,7 @@ rescue it either — it lowers the ranking rather than converting it (§3.9). Th
 any auxiliary-signal proposal: not "is the signal richer?" (it usually is) but "is its advantage in the
 modality and the error type the decision boundary is actually limited by?"
 
-**Law I is now arithmetic, not merely eight-times-repeated (F66).** The round-5 ISR pre-gate closes the
+**Law I is now arithmetic, not merely nine-times-repeated (F66).** The round-5 ISR pre-gate closes the
 last aggregation object — an independent per-segment re-encode read by a *uniform* per-segment-kNN
 vote-mean, the sole operator that survives both the pooling ban and the per-item-selection ban — and in
 doing so it *proves* the law rather than adding a ninth anecdote. On the banked CLIP sub-clip caches the
@@ -314,7 +335,7 @@ law-III-forbidden per-item selector): HateMM's **+0.0776** of oracle headroom sp
 legal + **+0.0764** banned, and MHC-EN's **+0.0700** splits into **+0.0064** legal + **+0.0636** banned —
 so **91–98 % of the convertible headroom is formally disjoint from every legal operator**. The convertible
 slice and the reachable slice do not intersect. Law I therefore stops being an observation repeated across
-eight cells and becomes an **arithmetic statement** about where the headroom lives: the frozen-feature
+nine cells and becomes an **arithmetic statement** about where the headroom lives: the frozen-feature
 operator can access only the symmetric slice, which every legal operator measures at ≈ 0
 [DOC:ISR_PREGATE_RECORD.md, commit `a6e41f8`].
 
@@ -327,8 +348,12 @@ they are not usable by any operator in the constraint box. In that framing the f
 V-usable-information ceiling, closable only by **expanding the model family**, which is precisely what
 adaptation does and precisely where the campaign's one reliable conversion lives (§3.9); the same cached
 features admit a $0 pointwise-V-information measurement that would quantify the gap per dataset, should the
-paper want Law I stated quantitatively rather than by its eight instances [DOC:LITSURVEY_NOVEL_MECHANISMS.md
-§3.1].
+paper want Law I stated quantitatively rather than by its nine instances [DOC:LITSURVEY_NOVEL_MECHANISMS.md
+§3.1]. The sharpest *measurement* of the law is not one of the nine but the round-8 pair-verification pregate
+(F95, §3.13), which for the first time measures both ends of the chain on the same quantity the decision
+consumes — a trained relation scorer beats the deployed cosine by +0.13 to +0.27 pair-AUC and converts
+nothing — and which is deliberately **not** counted as a tenth instance, being a train-split, raw-space
+diagnostic that promotes no arm and moves no deployed read-out.
 
 ### 3.7 Structural law II — the cumulative-causal three-level closure
 
@@ -736,9 +761,13 @@ stream-level decomposition is a **null-op**: the text stream is FLAT under both 
 +0.0018), which **refutes the prereg's own text-side bet** that an undiluted `A_t` would sharpen the dominant
 stream. (ii) The image stream is **AMBIGUOUS, not MOVED** (train-LOO +0.0137 but dev −0.0121 under the binding
 floor; +0.0120 / +0.0043 under the merged floor, missing the +0.005 dev leg by 0.0007), so although the head is
-flat, **this is not the ninth instance of law I — the count in §3.6 stays at eight** and the cell is recorded as
-law-I-*shaped* but not law-I-*certified*; MokA's advertised visual-modality-protection narration is barred
-outright. (iii) The most economical explanation of the null is a **regime inversion**, priced before the run: our
+flat, **this cell does not certify an instance of law I** and is recorded as law-I-*shaped* but not
+law-I-*certified*; MokA's advertised visual-modality-protection narration is barred outright. *(Bookkeeping,
+so the two statements are never read as contradictory: at the time of writing this cell the count stood at
+eight and this was "not the ninth". That non-certification is unchanged. The ninth instance was certified
+separately by the round-8 Molmo2 probe (F91, §3.6), where the image stream measurably improved and the
+conversion was negative, so the current count is **nine** — see the count reconciliation in
+[DOC:PAPER_MASTER_TABLES.md T6.5].)* (iii) The most economical explanation of the null is a **regime inversion**, priced before the run: our
 SFT records are **94.6 % vision tokens** (median 2,688 vision + 153 text) against MokA's own shipped regime of
 **98.4 % text** (16,128 vs 256), so routing gives the text stream its own undiluted down-projection while
 *starving* it — from 100 % of positions to ≈ 5.4 %, ≈ 18× fewer token-gradients — and `A_v`'s gradient norm ran
@@ -841,6 +870,231 @@ DOC:REPRO_SURVEY_2025.md, commit `9367338`]. Where the numbers *do* point is the
 with `U2` dominant is a modality-imbalance statement — which is exactly the object the round-7 routed-LoRA cell
 went on to measure, and to null (§3.10).
 
+### 3.12 The per-item shape of the residual — seed-invariant cores of confident neighbourhood inversions (F88)
+
+Every mechanism above is a statement about aggregates. The round-8 forensics finally reads the residual
+**per item**, on all three datasets, at zero GPU cost, with CPU proxies validated cell-by-cell to 4 dp
+(HateMM proxy-vs-floor **+0.0000 / +0.0004** val-selected and **−0.0031 / −0.0027** final-epoch; MHC-ZH
+Tier-1 curves parsed bit-exactly from the three trainlogs; MHC-EN needs no proxy at all, its banked
+predictions recomputing the master-table row to the last digit). Two facts organise everything else. First,
+**the errors are ~90 % seed-invariant**: 24–25 of HateMM's 26–28 errors are wrong in 3/3 seeds, 22 of MHC-ZH's
+25-item error union are wrong in 3/3 (with *nothing* at exactly 2/3, and all 12 false negatives stable), and
+MHC-EN has a 22-item 4/4-seed consensus set against a 20-item seed-flip band and 119 items never wrong — so
+the residual is a property of the representation and the decision rule, not of training noise. Second, **the
+errors are confident inversions, not boundary cases**: HateMM's median rank-weighted top-20 purity toward the
+true label is **0.1667** with median |vote| **0.7267** against 0.9873 for the always-correct items, and the
+top-1 neighbour carries the true label on only **7.4 %** of errors against 95.2 % of correct items; MHC-ZH's
+stable core has median purity 0.15 (0.1167 on the core, with **not one** of the 22 having a majority-correct
+neighbourhood) and median |vote| 0.7137 against 0.9999; MHC-EN's consensus errors sit at a mean correct-class
+neighbour fraction of **0.2205**, against 0.4781 for the seed-flip band and 0.8738 for the always-right — a
+monotone ordering, which is precisely why per-item selection keeps *looking* promising and keeps failing.
+Decisively, this is **not a coverage problem**: on MHC-ZH the first same-gold-class training neighbour in the
+raw fused space sits at **median rank 1.5** for the core errors (11 of 22 at rank 1, all 22 within rank 14).
+The right analogue is present, is ranked at the top, and is out-voted — and the trained head *sharpens* an
+inversion that mostly already exists in the encoder features (raw fused core purity 0.400 with 5/22 still
+majority-correct → deployed head 0.1167 with 0/22, while correct items sharpen 0.85 → 0.9833)
+[DOC:ERRPAT_HateMM_2026-07-26.md, DOC:ERRPAT_MHC-EN_2026-07-26.md, DOC:ERRPAT_MHC-ZH_2026-07-26.md, commit
+`ad56a62`].
+
+**HateMM's dominant covariate is transcript volume, and it enters through the memory bank's class prior.**
+Pooled, the effect looks flat because the two classes move in opposite directions and cancel; split by class
+it is stark — missed hate has a median of 85 transcript words against 227 for caught hate (≈2.7× less
+speech), and flagged non-hate has 171.5 against 47 for correctly-passed non-hate (≈3.6× more). Accuracy is
+**monotone increasing** in words for hate (0.0000 at 0–1 words, then 0.6154 / 0.7576 / 0.9216 / 1.0000 at
+401+) and **monotone decreasing** for non-hate (1.0000 → 0.9706 / 0.8667 / 0.8283 / 0.8421), reproducing per
+seed; the empty-transcript behaviour is absolute — all 30 test items with ≤1 transcript word are predicted
+non-hate in **6 of 6** protocol × seed cells. The mechanism is a **length-conditional class prior in the
+bank**: training P(hate | word-count bin) runs 0.1096 / 0.2926 / 0.3824 / 0.5115 / 0.5538 against an overall
+0.4005, and retrieval is strongly length-organised (Spearman ρ = **0.5817** between a query's word count and
+the median word count of its top-20 retrieved rows, p = 7.4e-21, n = 215), so a speech-poor hateful video
+lands in a region whose hate base rate is 11–29 % and the signed-cosine sum goes negative before any content
+evidence is consulted. The scope is calibrated rather than overclaimed: length *alone* scores test AUC 0.6570
+and a length threshold gives 0.6279 accuracy against the deployed 0.9331 / 0.8760, so it is a **bias
+direction, not the signal** — but the within-class residual correlations are real (+0.3106, p = 0.0036 within
+hate; +0.2003, p = 0.0228 within non-hate) and they are what produce the two monotone curves. It is also
+**post-hoc uncorrectable**: the bias lives in the retrieval geometry rather than in a monotone miscalibration
+of the score, which is exactly what the round-8 operator battery then confirmed by measurement (§3.13).
+
+**The other two datasets fail for reasons that are not representational at all.** MHC-EN's residual is a
+**label-semantics mismatch**: the method implements group-targeted hateful-video retrieval, while the gold
+binary label is Hateful ∪ Offensive versus Normal, and Offensive covers sexual, abusive and vulgar harm with
+no protected-group target. Nine of the 22 consensus errors — **40.9 %** — are exactly that intersection, and
+they retrieve neighbourhoods that are 0–14 % correct-class because the positive side of the bank has nothing
+to match them to (one item has literally zero positive neighbours in its top-20). A second cross-cutting EN
+pattern is dilution rather than absence: the consensus error rate rises monotonically across transcript-word
+quartiles (9.52 % / 10.26 % / 12.50 % / 22.50 %) while *empty* transcripts drive only 1 of 11 errors — long
+transcripts dilute a mean-pooled text vector until the hateful span stops dominating, the opposite of the
+obvious hypothesis. MHC-ZH has exactly one real covariate cluster, a **thin-transcript band**: the [31, 76)
+character quartile holds 11 of the 22 core errors in 37 items (2.0× enrichment, permutation p = 0.0048 over
+50k draws) — enough text to dominate a text-dominant fused key, too little to individuate an item. The
+adjacent hypotheses are refuted rather than left open: no ZH test item has an empty text channel, none of the
+149 Whisper transcriptions is empty, the error rate is non-monotone in text length with both extreme
+quartiles the *best* groups, and the within-positive wall inverts EN's — Hateful items err at 0.2941 *above*
+Offensive at 0.2500, so there is no Offensive-specific error mass to reallocate (consistent with F82's ZH
+graded-label oracle of +0.0256, below bar). The paper-facing consequences are three: HateMM's slur-bearing
+false positives (song lyric, neo-Nazi text read aloud, archival segregationist footage — all five wrong 3/3,
+purity 0.100) are an **annotation-scheme boundary**, not a representation gap; MHC-EN carries a **label
+ceiling** that no encoder can move; and the campaign's honest text-only-versus-fused ablation reads are now
+measured rather than asserted (HateMM text-only 0.8822 / 0.8853 against the deployed 0.8775 / 0.8760, both
+inside the ±0.014 seed band, with the apparent image complementarity killed by its own error arithmetic —
+the image stream fixes 11–14 deployed errors and breaks 40–43 items the fusion gets right).
+
+### 3.13 The round-8 closure chain — six ways to a better decision rule, all measured shut (F89–F98)
+
+The forensics above suggested its own repairs, and round 8 measured them instead of arguing them, almost
+entirely at **zero GPU cost**. The three candidates the error structure itself proposed were run inside F88
+and all three came back null (threshold recalibration, length de-biasing, memory-bank curation with a
+random-deletion control), and the pre-registered statement that closed that report — *the genuinely open,
+in-box, $0 set is empty on all three datasets* — was then attacked from five further directions. What follows
+is a chain of closures, each with a mechanism rather than only a p-value.
+
+**The eval-time vote-operator axis (F89).** Five frozen operators replaced the deployed top-20 rank-weighted
+signed-cosine vote — class-balanced quota, CSLS hubness correction, Ledoit–Wolf whitening, exact 1-D
+length-direction excision, and whitening-plus-balancing — paired on the same head, same features, same bank
+and same similarity engine, with 15/15 test and 15/15 dev floor-parity asserts passing at 4 dp. **0 of 5 are
+promotable**, the best number anywhere being +0.0067 acc / +0.0052 mF1 (T4 on MHC-ZH, 4.5× under bar, inside
+the seed band). The mechanism is what the battery bought. Class balancing is **degenerate**, not merely null:
+it produces predictions identical to the deployed vote on 215/215 HateMM and 149/149 MHC-ZH items in every
+seed, confirmed by an independent float64 NumPy re-implementation — in this cone-collapsed geometry the local
+class prior and the retrieval signal are *the same statistic*, so there is no removable prior sitting on top
+of a good signal. Hubness correction is inert (r(x) has an inter-quartile range of ~1e-4: no dynamic range).
+The length excision is inert **and informative**: the direction is fitted exactly and removed exactly
+(residual ≤ 8.6e-9), yet the retrieval length-organisation statistic moves by ≤ 0.004 in 9 of 9 cells and not
+one prediction changes — so the length organisation of retrieval **is not carried by any single linear
+direction**, and F88's uncorrectability claim is now a measured structural fact rather than an inference.
+Whitening is actively negative with a measured cause: it de-collapses the cone (top-1 similarity 0.9999 →
+0.5220) but, because Ledoit–Wolf shrinkage is ≈ 0 at d > n, it amplifies near-null eigendirections ~1000×
+and the length nuisance axis is one of them (ρ 0.52 → 0.87) — the literature-default repair promotes exactly
+the nuisance the diagnosis flagged [DOC:MECHFIX_PREGATE_2026-07-27.md, commit `110dff8`].
+
+**The neighbourhood depth (F94).** The user's question — has anyone tried *reducing* k to cut neighbourhood
+noise? — was answered by a read-only replay of already-banked, already-test-consumed neighbour lists, with
+19/19 cells reproducing their recorded accuracies at 4 dp. k = 20 sits at or above the plateau on all six
+arms and the plateau begins at k ≈ 10–15; small k is not a sharper vote but **literally 1-NN** (with weights
+[k…1] and descending cosines, 3s₀ ≥ 2s₁ + s₂ always, and the k ∈ {1,2,3} prediction vectors are element-wise
+identical to the top-1-label vector in 19 of 19 cells), costing −0.0157 to −0.0388. The premise is
+structurally false on HateMM: ranks 11–20 are already inert, changing **zero** of 215 predictions at k = 10 in
+five of six cells and none at k = 15 in all six — the rank weighting has already discounted the tail, and the
+noise F88 found is at ranks 1–5, where the labels themselves are wrong. Even a per-seed oracle k, choosing
+on test labels, is worth at most +0.0145 [DOC:KSWEEP_RECORD.md, commit `d5d78ad`].
+
+**Replacing the vote with a trained relation scorer (F95) — the split verdict that reorganises the chapter.**
+If counting is the broken step, stop counting: let retrieval *nominate* and let a verifier trained on ~n²
+pair labels adjudicate each (query, candidate) relation. Control 1 passes by **4.3–8.8×** on 18 of 18 cells —
+fused pair-AUC rises from 0.5843 to 0.7753 on HateMM, 0.5123 to 0.7748 on MHC-ZH and 0.5057 to 0.7009 on
+MHC-EN — so relational supervision genuinely buys a better relation function, and the same measurement prices
+the deployed one: on ZH and EN the retrieval cosine's own pair-AUC is **within 0.02 of chance** at telling a
+same-class pair from a cross-class pair. Control 2 is then cleared by **0 of 36** end-to-end cells (primary
+deltas −0.0040 / −0.0466 / −0.0146; the three positives anywhere in the battery are all sub-bar and all on
+secondary spaces or aggregations). Two measured reasons, neither speculative. First, the aggregation the proposal
+discards was doing the work: running the identical rule *shape* scored by cosine instead of the verifier
+already costs −0.0417 / −0.0293 / −0.0437 before any verifier is involved, and the verifier recovers less
+than the shape destroyed — the rank-weighted averaging that out-votes the correct analogue on ~15 % of items
+is protecting the decision on the other ~85 %. Second, better relations do not become better decisions: the
+verifier **reaches** 36.7–54.6 % of exactly the errors F88 diagnosed as unreachable (where every F89 operator
+reached 0–5), and still pays for every fix, with exchange rates 0.9474 / 0.5345 / 0.8596 and a ceiling of
+1.1667 across the whole battery — a **10× increase in errors reached produced no improvement in the exchange
+rate**. The obvious escape, that the pooled gain is an item-level hubness offset cancelling inside a query,
+is measured false (within-query pair-AUC 0.6067 / 0.5363 / 0.5228 → 0.7639 / 0.7665 / 0.7013), and the
+two-way variance decomposition states it structurally: in the deployed key space only **26.6–37.7 %** of the
+cosine's score variance is query × bank *interaction* — the deployed similarity is mostly **not a relation** —
+while the trained verifier inverts this to **77–93 %**, is 2.5–3.5× more relational, and still does not decide
+better [DOC:MECHNOV_PAIRVERIFY_PREGATE.md, commit `0261b82`].
+
+**Three LITSWEEP-6 pregates, and two independent operators that degenerate to the same dead lever (F96, F97,
+F98).** The membank lane's C1 edited the *label field* the vote transports rather than the geometry, keeping
+retrieval, k, weights, threshold and key space identical: 21 of 21 cells negative, and killed not by its size
+but by its **degeneracy control** — replacing the per-item prior with its own bank mean, i.e. a pure global
+threshold shift, agrees with C1's predictions on **95.03 % / 97.75 % / 99.45 %** of items. C1 is a decision
+threshold move in an item-level costume, and the closed form says why: with a cone-collapsed cosine profile
+the residual vote reduces exactly to the deployed vote minus a constant, and C1's item-level content lives
+entirely in a dispersion 20–200× too small. Its durable by-product is that the length prior is a
+**HateMM-specific fact** — Spearman(volume, gold) = +0.2842 (p = 2.74e-15) on HateMM, **−0.1152** (p = 0.0055,
+sign-inverted) on MHC-ZH and −0.0050 (p = 0.906, nothing) on MHC-EN — so no future candidate may use it as a
+targeting signal [DOC:RESTRANS_PREGATE_RECORD.md, commit `bf6d03b`]. The relational lane then tried to rescue
+F95 by *gating* it, which structurally discharges the shape cost, and by reading the verifier profile as a
+selective-prediction risk ordering. Both die, and the decisive bar is the pre-registered new-signal control:
+a gate built from **F47 features only** (vote margin, purity, sub-votes — no verifier anywhere) does not merely
+match the verifier gate, it **beats it on 3 of 3 datasets with significance** (+0.0269, p = 0.0050, fold signs
++++++ on HateMM; +0.0104, p = 0.0050 on ZH; +0.0182, p = 0.0100 on EN), and the inversion is sharpest on the
+two datasets where the verifier gate is statistically dead (p = 0.5174, 0.9751). The candidate's entire
+licence to revisit F47 was that the verifier is a genuinely new information source; that claim is now
+**refuted by measurement**. Selective prediction loses to the cheapest possible baseline — the free vote
+margin beats the verifier profile on AUGRC on 2 of 3 datasets and the fitted kNN-uncertainty baseline beats it
+on all 3 — for the same reason F95 found: separating same-class from different-class pairs is a different
+question from knowing whether the vote is about to be wrong [DOC:VGA_PREGATE_RECORD.md, commit `db2eae8`].
+The membank lane's C3 then removed the last standing excuse. It learns the *weighting* per query, keeping
+everything else identical, and it enters with by far the largest ceiling any member of this family has had:
+96–100 % of every deployed error is reachable and the family oracle is **+0.1492 / +0.1520 / +0.2186**, two to
+four times the adjudication-gate oracle and ten to fifteen times F94's oracle-k. It delivers **+0.0134 /
+−0.0069 / +0.0000**, misses the decisive bar by more than a factor of two, lands *below* the +0.0269 cheap
+F47 gate it had to exceed, and both mandatory degeneracy controls fire on the only dataset where it is
+positive — 0.9570 agreement with a bare global threshold shift, 0.9610 with a single fixed k = 15 — while a
+bare threshold alone scores **+0.0188**, more than the 1316-parameter network, using no profile at all. The
+family-level statement is therefore arithmetic rather than rhetorical: **within this family delivery is
+uncorrelated with ceiling** (F94 +0.0145 → −0.0140…+0.0041; F95/VGA +0.0726/+0.0535/+0.0893 → +0.0269/+0.0104/
++0.0182; C3 +0.1492/+0.1520/+0.2186 → +0.0134/−0.0069/+0.0000), and what binds is neither reach nor capacity —
+**the local configuration does not carry a learnable signal about which neighbours to trust** at n = 549–744
+[DOC:AGGNET_PREGATE_RECORD.md, commit `fa1e3b3`].
+
+**The two gated channels, spent and closed.** CLAP general-audio was F88's top-ranked gated ceiling — the only
+channel defined by the *absence* of the signal every existing channel carries — and its G0-conditional gate
+(spec frozen before any weight was downloaded) returns a binding Δacc of **−0.0009 / −0.0038** with a global
+maximum of +0.0009 across all four cells, ~44× under bar and below the already-killed Whisper channel's own
+global maximum. The mechanism is the sharper finding: on the speech-poor stratum audio carries **real**
+marginal signal (CLAP AUC 0.8411, Whisper 0.8482, both far above the word-count baseline 0.6610), but Z alone
+already scores 0.8937 there and adding CLAP moves it +0.0113 with a CI spanning zero — the channel is
+**redundant, not uninformative**, and what remains of it is a length prior (ρ = +0.4430 with word count,
+p = 3.2e-42), i.e. the very bias §3.12 identified as *producing* those errors rather than curing them. The
+audio axis is now closed at all three representational levels — classical prosody (F41), learned speech-ASR
+(F64), learned general-audio semantics (F90) — at zero GPU-hours [DOC:CLAP_GATE_RECORD.md, commit `eee862c`].
+The encoder-swap channel closed the same week and is written up as law I's ninth instance (§3.6).
+
+**MNTP: the readout route closed at zero training, the transplant shortcut refuted, one hypothesis alive
+(F92, F93).** F72's bidirectional-attention crater had one standing escape — that the crater was a *readout*
+artefact — and two arms closed it. Mean-pooling over all non-padding positions (S1) returned HateMM text
+0.7477, **below the crater itself** (0.7570), against MHC-ZH's 0.7051 (+0.3529 partial): opposite signs,
+sign-consistency clause fired. The real discovery was **stream collapse** — within-arm cos(text, img) of
+0.9273–0.9404 on HateMM and 0.9316–0.9320 on ZH against 0.3027–0.3523 under causal attention, because ~82.5 %
+of the pooled span is vision tokens, so ZH's apparent recovery was the text channel being *replaced* by the
+image channel. Pooling text positions only (S1b, selected by token id, not span arithmetic) then self-refuted
+on its pre-declared collapse belt (bar < 0.60, measured 0.7566–0.7624 and 0.7538–0.7565) **even though the
+accuracy gate alone would have said continue** — the belt overrode the gate, which is exactly why it was
+declared before the arm was built — and the smoking gun is that on HateMM the S1b text row is numerically
+identical to its own image row (0.7664 / 0.7540). Under bidirectional attention every text token attends to
+all ~720 vision tokens, so excluding vision *positions* does not exclude vision *information*: a readout
+cannot undo an information mixture created by the topology, and collapse is monotone in pooled span across
+the three spans now measured (0.31–0.35 causal → 0.76 → 0.93). The published-adapter transplant (S2a) then
+produced **the campaign's first real bidirectional signal** — HateMM text 0.7850, a +0.6006 crater recovery
+and the first arm ever to clear the frozen 50 % bar, with MHC-ZH at +0.2941, both signs positive — which
+corroborates that the pathology lives in the weights rather than the readout. It is nonetheless a stop,
+overdetermined by four independent reasons so that no single gate is load-bearing: the collapse belt fires on
+both datasets; fusion inverts from additive to destructive (causal concat beats the best single stream by
++0.0467 / +0.0128, S2a concat is *worse* by −0.0467 / −0.0256, and the deployed system **is** a fusion head);
+every S2a number sits below its causal floor; and the escalation gate cannot be met. The mechanism is a
+weight-point mismatch — a low-rank delta fitted at Qwen2.5-7B-Instruct applied to a VL trunk that has since
+drifted acts as a large blunt perturbation — so what is refuted is the **zero-training shortcut**, not the
+MNTP hypothesis, whose only surviving form is training at our own weight point behind a user corpus ruling
+[DOC:MNTP_S1_RECORD.md, commits `4a87836` / `f15dabc` / `12e2f18` / `0663ab7` / `b328dc9`; recon
+DOC:MNTP_FORENSIC_RECON.md, commit `ead9f5d`].
+
+**The organizing fact, on four independent measurements: our system ranks much better than it decides.**
+F95 measures a relation scorer beating the deployed cosine by **+0.13 to +0.27 pair-AUC** (18/18 cells,
+4.3–8.8× over bar) and converting **0 of 36** end-to-end; the W4 temporal protocol measures MHC-EN's
+temporal-split **ROC rising to 0.8484** — above the random-split reference of 0.7175 — while macro-F1 *drops*
+0.084 [DOC:EVAL_temporal_memory_W4.md]; F88 finds the correct analogue at **median rank ~1.5** and then
+out-voted, with errors that are confident and ~90 % seed-invariant (§3.12); and F50/F48 recorded a dev AUC of
+**0.898** described at the time as simply "unconvertible" (§3.6). Every dead direction in this campaign tried
+to close that gap the same way — by finding a better *uniform decision rule* over the same scores: vote
+operators (F89), neighbourhood depth (F94), thresholds (F88), training losses (F75), verifiers (F95) and gates
+(F97). **That axis is now closed from six directions**, each with a mechanism attached, and the closures cost
+essentially no GPU. The consequence is a fork the measurements cannot resolve on their own: the remaining way
+to cash in ranking quality is to **change the output object** — a three-way certified output {hate, non-hate,
+refer} with a distribution-free risk budget, and an operating point that is a policy rather than a constant
+— and neither satisfies a full-coverage accuracy target by construction, so it is a deliverable ruling rather
+than an experiment [DOC:LITSWEEP6_PARADIGM.md, commit `49e15ec`; DOC:LITSWEEP6_MEMBANK.md, commit `62efd82`;
+DOC:LITSWEEP6_RELGEN.md, commit `f62e777`; the ruling itself is S1 in DOC:DECISION_MEMO_pending.md].
+
 ## 4. What survives
 
 Three MLLM roles survive with removable-ablation evidence; none is a main-table-accuracy role.
@@ -874,9 +1128,25 @@ genuinely-hateful-but-embedding-hard entries (abuse testimony, assault reporting
 worth C−D = +0.47pt EN / +0.40pt ZH [DOC:EXP_auto_memory_repair.md]. Separately, a human deleting two
 flagged noisy entries lifts EN from 0.8075 to 0.8199 with **zero retraining**
 [DOC:DEMO_memory_editing.md], and the label-blind archive audit independently re-finds those same
-human-flagged ids with correct reasons. Here removal cost surfaces as **integrity and
-controllability**, not raw accuracy — a defensible framing precisely because we do not dress it as an
-accuracy claim.
+human-flagged ids with correct reasons. **That edit is a human-in-the-loop capability demonstration,
+single-seed; it is not an accuracy claim** — the round-8 multi-seed correction (F88) replayed the deletion
+exactly on the banked top-60 neighbour lists of all four deployed seeds (the un-edited replay reproduces each
+seed's floor to < 1e-12) and finds **+0.0124 on seed 0 and exactly zero vote flips on seeds 1, 2 and 3**, a
+four-seed mean of **+0.0031**, with the two flipped items (`cYQyH7hbNnw`, `xqilG4oMvvI`) both low-margin false
+positives from the seed-flip noise band rather than hard errors; the 14-id rule-hit list is strictly stronger
+(**+0.0093 acc / +0.0089 mF1, 3 of 4 seeds positive, 6 items fixed and 0 broken on any seed**) yet still 3×
+under bar, inside the ±0.014 seed band, now test-consumed, and un-pregatable in principle because at dev
+n = 80 one item is 0.0125 and cannot resolve a +0.009 effect [DOC:ERRPAT_MHC-EN_2026-07-26.md §6.5, commit
+`ad56a62`]. Read correctly, the cell is *stronger* as a controllability claim than it was as a number:
+semantic addressing plus surgical deletion is a pure-CPU, seconds-fast, retraining-free operation that a
+weight-baked head cannot offer at all, and the correction is what licenses saying so without an accuracy
+overclaim. Round 8 adds one legal, unmeasured asset to the same pillar: the trained pair verifier of F95 is
+**analysis-grade only for accuracy** (§3.13) but is a legitimate **evidence ranker** for the audit
+surface — it scores (query, neighbour) relations 2.5–3.5× more relationally than the deployed cosine — and
+that use must carry F95's own binding wording, *never an accuracy claim*
+[DOC:MECHNOV_PAIRVERIFY_PREGATE.md, commit `0261b82`; DOC:VGA_PREGATE_RECORD.md, commit `db2eae8`]. Here
+removal cost surfaces as **integrity and controllability**, not raw accuracy — a defensible framing precisely
+because we do not dress it as an accuracy claim.
 
 **Explicit non-role.** For completeness and falsifiability: the MLLM earns **no main-table-accuracy
 role** in this retrieval-memory pipeline. Eleven pre-registered routes at 7B–72B scale are all honest

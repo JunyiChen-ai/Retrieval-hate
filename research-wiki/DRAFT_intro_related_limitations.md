@@ -90,10 +90,15 @@ pre-registered negative results honestly rather than hiding them.
 - **(C4) An auditable and human-editable archive memory.** MLLM-produced structured archive records
   make the memory auditable (a stratified audit finds it faithful on 77% of records; the label-blind
   audit re-discovers human-flagged noisy ids with correct reasons) and editable: deleting **two**
-  human-flagged noisy entries lifts MHClip-EN accuracy 0.8075 → 0.8199 with zero retraining. A
-  bounded automatic *guard-rail* survives as a semantic veto against embedding-only over-deletion; the
-  archive's payoff is **integrity and controllability, not raw accuracy** [DOC:AUDIT_archive_faithfulness.md,
-  DOC:DEMO_memory_editing.md, DOC:EXP_auto_memory_repair.md].
+  human-flagged noisy entries lifts MHClip-EN accuracy 0.8075 → 0.8199 with zero retraining **at seed 0
+  — a human-in-the-loop capability demonstration, single-seed, not an accuracy claim** (the round-8
+  multi-seed replay finds zero vote flips on seeds 1–3 and a four-seed mean of +0.0031; the 14-id rule
+  list reads +0.0093 acc / +0.0089 mF1, 3 of 4 seeds, 0 items broken, still sub-bar and dev-unresolvable)
+  [DOC:ERRPAT_MHC-EN_2026-07-26.md §6.5]. A bounded automatic *guard-rail* survives as a semantic veto
+  against embedding-only over-deletion; the archive's payoff is **integrity and controllability, not raw
+  accuracy** — a framing the correction strengthens rather than weakens, since the property being claimed
+  is the existence of a retraining-free, semantically addressed edit surface
+  [DOC:AUDIT_archive_faithfulness.md, DOC:DEMO_memory_editing.md, DOC:EXP_auto_memory_repair.md].
 - **(C5) The MLLM's three earned roles and one explicit non-role.** Fixed as a pre-registered
   mandate, the MLLM earns exactly three *removable* roles — **encoder** (frozen Qwen2.5-VL beats CLIP
   by +4.2 macro-F1 on HateMM and crosses 0.85), **span-free localization scorer** (below), and
@@ -200,7 +205,10 @@ for lifelong edits \cite{serac,grace,wise} — which supplies a principled relia
 unrelated ones); our archive is a *discriminative* instance of that program, edited at inference with no
 weight change [DOC:LITSURVEY_RETRIEVAL_MEMORY.md]. To our knowledge no hateful-video method offers a memory
 that is simultaneously swappable, temporally recalibratable, auditable, and surgically editable at inference
-with zero retraining.
+with zero retraining. *Wording boundary, binding on this paragraph:* the editing evidence is a **single-seed
+capability demonstration** (round-8 correction F88 — zero vote flips on three of four deployed seeds, four-seed
+mean +0.0031), so the editing lineage is invoked for **reliability / generality / locality vocabulary**, never
+to claim an accuracy improvement from editing [DOC:ERRPAT_MHC-EN_2026-07-26.md §6.5].
 
 **(f) Usable information, annotator disagreement, and modality imbalance — positioning the negative-results
 and mechanism contributions.** Three adjacent literatures name phenomena our campaign measures. First,
@@ -336,6 +344,38 @@ Two limits follow: any comparison pairing a merged-path floor with an unmerged-p
 floor** as a default cost rather than a contingency, and val-selected deltas on these splits must be read as
 protocol-conditioned quantities whose sensitivity to method-null perturbations can exceed the effects they are
 asked to certify [DOC:MOKA_VERDICT_REVIEW.md §D7, §D8.4].
+
+**The memory-editing evidence is a single-seed capability demonstration.** The pillar-4 human-in-the-loop edit
+(deleting two human-flagged noisy entries, MHClip-EN 0.8075 → 0.8199, zero retraining) holds **on seed 0 only**:
+an exact multi-seed replay on the four deployed seeds' banked neighbour lists finds **zero vote flips on seeds
+1, 2 and 3**, a four-seed mean of **+0.0031**, and the two items seed 0 flips are low-margin false positives from
+the seed-flip noise band rather than hard errors; a stronger 14-id rule list (+0.0093 acc / +0.0089 mF1, 3 of 4
+seeds, 0 items broken) is still 3× under bar, inside the ±0.014 band, test-consumed, and cannot be pregated
+because at dev n = 80 one item is 0.0125 [DOC:ERRPAT_MHC-EN_2026-07-26.md §6.5]. Every citation of this cell in
+this paper reads *human-in-the-loop capability demonstration, single-seed; not an accuracy claim*; the property
+claimed is the existence of a retraining-free, semantically addressed edit surface, which a weight-baked head
+does not have at all.
+
+**The residual is selection-locked at the item level, and we can now say so from per-item measurements.**
+Round-8 forensics show the errors are ~90 % seed-invariant across all three datasets and are *confident
+neighbourhood inversions* rather than boundary cases — the correct analogue is typically present at raw rank ~1.5
+and simply out-voted [DOC:ERRPAT_{HateMM,MHC-EN,MHC-ZH}_2026-07-26.md]. This limits the paper in a specific way:
+every uniform decision-rule repair we could construct over the same scores is now measured dead (vote operators,
+neighbourhood depth, thresholds, training losses, trained pair verifiers, and per-item gates — analysis §3.13),
+so we do **not** claim the residual is irreducible in principle, only that it is unreachable by any uniform rule
+over these representations at these sample sizes; reaching it would require either a different representation or
+a different output object, and the latter is a deliverable decision rather than an experimental one
+[DOC:LITSWEEP6_PARADIGM.md, DOC:DECISION_MEMO_pending.md S1].
+
+**The encoder-swap axis is parked on the vision side by measurement, not by exhaustion.** A 2025-generation,
+video-native encoder (Molmo2-8B, SigLIP2 tower) produces the best raw image stream ever measured on HateMM
+(+0.0558 over the deployed floor's) and still lands below that floor on both protocols and both metrics
+(−0.0217 / −0.0249 val-selected; −0.0124 / −0.0151 final-epoch), tying the like-for-like frozen control
+[DOC:MOLMO2_PROBE_RECORD.md]. We therefore state that *a better video-native encoder is not a better encoder for
+this task* on this dataset — not that no encoder could ever help; the untested direction the evidence points at
+is the **text** side, and the one live text-side hypothesis (masked-next-token adaptation trained at our own
+weight point) is blocked on a user corpus ruling rather than on evidence [DOC:MNTP_S1_RECORD.md,
+DOC:MNTP_FORENSIC_RECON.md §3].
 
 ---
 
