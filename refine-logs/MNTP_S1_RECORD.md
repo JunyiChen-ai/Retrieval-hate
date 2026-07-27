@@ -406,7 +406,17 @@ artifact mutated. Committed on `main`, **not pushed**.
 | `scripts/slurm/gen_embed_mllm_bidir_textpool.sbatch` | `e4e9701f7857cc63e99dd58166a359d3f8cc17ce90692d372d9adb14e47cd6b4` |
 | `scripts/analysis/mntp_s1b_devscreen.py` | `2ebd61ace902ad109dbee35283ac870ecf9dd504bd0e58933ac0a49aa6bd4380` |
 
-Primary outputs: `scripts/analysis/mntp_s1_devscreen_OUT.json`, `mntp_s1b_devscreen_OUT.json`,
+**S2a artifacts (amendment §6d/§6e):**
+
+| file | sha256 |
+|---|---|
+| `src/utils/generate_VideoMLLM_embedding_bidir_mntp_HF.py` | `c15bb95c3e6e36e2a50063cddd39a00696e9814806ee53096fa4b0dbc0af35e2` |
+| `scripts/slurm/gen_embed_mllm_bidir_mntp.sbatch` | `61b332fbfdd476ecaa2681c0b5c47510eb4a230ab45acb596fbeb4de695ae3d1` |
+| `scripts/slurm/gen_embed_nullop2merge.sbatch` | `d0c871fa7f15970724cae1ff32c307428f23253f6dc1c412fe1d37b6cef06f8c` |
+| `scripts/analysis/mntp_s2a_devscreen.py` | `4d6cfb1a223cceb4b6c9e368fcc4db8bbb086f0ead29bb7f04615d7ac4dbf5b8` |
+| McGill MNTP adapter (`adapter_model.safetensors`, downloaded) | `5e3fb47d2448ce3302261019fb40b9ba7b335740b23a45df2da9bf3a1e158feb` |
+
+Primary outputs: `scripts/analysis/mntp_s1_devscreen_OUT.json`, `mntp_s1b_devscreen_OUT.json`, `mntp_s2a_devscreen_OUT.json`,
 `scripts/analysis/mntp_s1_cpuhead_OUT.json`. S1 caches:
 `data/CLIP_Embedding/{HateMM,MHC_zh}/{train,dev_seen}_*-bidir-meanpool_HF.pt` (md5s in §2.1d).
 
@@ -827,6 +837,173 @@ Cache tags: `HateMM → Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-mntp_HF`,
 
 ---
 
+## 6e. S2a EXECUTION AND RESULT
+
+### 6e.1 Pre-GPU external review — **NO-GO ×2, then GO. It caught a silent-no-op blocker.**
+
+**This review prevented a wasted GPU-hour and an uninterpretable arm.** First pass returned
+**NO-GO** on a blocker I had not anticipated, which I then confirmed empirically on meta device
+before fixing:
+
+- **BLOCKER — the transplant would have loaded ZERO weights.** The McGill checkpoint ships keys
+  `base_model.model.layers.N…`. Wrapping the **outer** `Qwen2_5_VLForConditionalGeneration` yields
+  PEFT keys `base_model.model.**model**.layers.N…` — one `.model` deeper, because the outer
+  model's decoder sits at `.model`. **PEFT loads non-strictly: it warns and continues**, leaving
+  every `lora_B` at its zero init. The merge would then have been a no-op and S2a would have
+  silently duplicated F72 while *looking* like it ran.
+- **BLOCKER — undeclared vision-tower binding.** Suffix-matching the 7 target names on the outer
+  model hits **292** modules, **96 of them in the vision tower**
+  (`visual.blocks.N.mlp.{gate,up,down}_proj`) — a tower our SFT freezes. On `model.model` it hits
+  exactly **196 = 28 × 7, zero vision**.
+
+Both verified before fixing (meta-device enumeration). **Fix:** `_attach_second_adapter()` binds
+the adapter to `model.model` (the bare `Qwen2_5_VLModel`; `model.visual` and `lm_head` are
+siblings and untouched), merges, and assigns back.
+
+Further fixes: belt 1 now requires **all 5** probes found **and all 5 changed** (a partial delta
+must not pass); the parser handles `--mntp_dir=VALUE`, a trailing `--mntp_dir`, and a flag-shaped
+value; only the **two preregistered flag/tag combinations** are accepted, so a real MNTP run can
+never be banked under a `nullop` tag or vice versa; stale mean-pool provenance text removed from
+the sbatch. Re-review: **GO**.
+
+### 6e.2 Belts — all PASS
+
+| belt | result |
+|---|---|
+| `KS-MNTP-0a` self-test | **PASS** (`is_causal=False` on 28 modules, both datasets) |
+| CPU guard drills (combination, tag-coherence, parser, test-touch) | **PASS** (9/9) |
+| **Adapter scope** | **196** LoRA-wrapped modules (= 28×7), **0** vision-tower, **196** with non-zero `lora_B` |
+| **Belt 1 — weight-level transplant proof** | **5/5 probed tensors changed**, `max|Δ|` 1.96e-02 … 1.29e-01, rel 3.3 %-21 % |
+| **`KS-MNTP-0b` adapter-not-null-op** | **PASS** — cos(S2a text, plain-bidir text) = **0.3639** (HateMM) / **0.3076** (ZH), bar < 0.9999 |
+| **Belt 4 — same-path double-merge floor** (job 13659) | **PASS** |
+
+The `196/196 non-zero lora_B` line is the one that proves the fix worked: before it, that count
+would have read **0**. Combined with 5/5 weight probes changing, the transplant is certified to
+have landed at the weights, not merely to have opened a file.
+
+**Belt 4 detail (job 13659, `COMPLETED 00:08:55`, 60 items/split).** Fresh zero-init LoRA
+(`lora_B` all-zero confirmed: 0/196 non-zero, 0/5 weight probes changed ⇒ a true mathematical
+null-op), bidir OFF, double merge, vs the banked causal cache:
+
+| dataset | split | img mean cos | text mean cos | worst per-item |
+|---|---|---|---|---|
+| HateMM | train / dev | 1.00000000 / 1.00000012 | 1.00000000 / 1.00000012 | 0.99999952 |
+| MHC_zh | train / dev | 1.00000000 / 1.00000000 | 1.00000000 / 1.00000000 | 0.99999964 |
+
+**All 8 cells ≥ 0.9999. The extra merge is numerically inert**, so the banked causal cache remains
+a valid floor and **no same-path floor extraction was required** (saving ~0.85 GPU-h). This also
+refines the F87 lesson: F87's drift came from a merge-vs-**unmerged**-path difference, not from
+merge *count* — a second `merge_and_unload` of a zero delta costs nothing.
+
+### 6e.3 Full extraction — job **13660**, `COMPLETED 00:49:20` — cache sanity **PASS**
+
+1508 rows (744/107, 579/78), id order identical to causal on every split, **no `test_seen_*mntp*`
+file**. md5: HateMM train `cebf42d6e9bb0772504dcae4c157d4c6`, dev
+`77687475a690212d005a0a168764f07b`; MHC_zh train `fc2aeff17002965c1d8c7d31afdeee76`, dev
+`ab30cb9d12d44bfe8d0db2aaa334c6dc`.
+
+### 6e.4 `KS-MNTP-1` + collapse belt — **STOP (overdetermined)**
+
+**HateMM**
+
+| stream | causal | bidir-lasttoken | S1 meanpool | S1b textpool | **S2a MNTP** | vs bidir | vs causal |
+|---|---|---|---|---|---|---|---|
+| img | 0.7570/0.7491/0.8141 | 0.7664/0.7540/0.8127 | 0.7664 | 0.7664 | **0.7290/0.7170/0.8014** | **−0.0374** | **−0.0280** |
+| **text** | 0.8037/0.8003/0.8935 | 0.7570/0.7377/0.8368 | 0.7477 | 0.7664 | **0.7850/0.7667/0.8790** | **+0.0280** | **−0.0187** |
+| concat | 0.8505/0.8489/0.9052 | 0.7944/0.7862/0.8674 | 0.7570 | 0.8037 | **0.7383/0.7232/0.8605** | **−0.0561** | **−0.1121** |
+
+**MHC_zh**
+
+| stream | causal | bidir-lasttoken | S1 meanpool | S1b textpool | **S2a MNTP** | vs bidir | vs causal |
+|---|---|---|---|---|---|---|---|
+| img | 0.7436/0.7057/0.8379 | 0.7564/0.7173/0.8414 | 0.7564 | 0.7564 | **0.7308/0.6803/0.7621** | **−0.0256** | **−0.0128** |
+| **text** | 0.8462/0.8353/0.9407 | 0.6282/0.5203/0.6886 | 0.7051 | 0.6923 | **0.6923/0.5667/0.8157** | **+0.0641** | **−0.1538** |
+| concat | 0.8590/0.8519/0.9214 | 0.6410/0.5439/0.7400 | 0.7436 | 0.7051 | **0.7051/0.6408/0.7957** | **+0.0641** | **−0.1538** |
+
+**`KS-MNTP-1` against the frozen bars — the first CONTINUE of the entire campaign:**
+
+| dataset | S2a text acc | frozen bidir | floor25 | bar50 | recovery | cell verdict |
+|---|---|---|---|---|---|---|
+| **HateMM** | **0.7850** | 0.7570 | 0.7687 | 0.7804 | **+0.6006** | **CONTINUE (≥50 %)** |
+| MHC_zh | 0.6923 | 0.6282 | 0.6827 | 0.7372 | **+0.2941** | PARTIAL |
+
+**Collapse belt — FAIL on both:**
+
+| arm | HateMM train / dev | MHC_zh train / dev |
+|---|---|---|
+| causal | 0.3523 / 0.3499 | 0.3105 / 0.3027 |
+| bidir-lasttoken | 0.4314 / 0.4511 | 0.4977 / 0.4898 |
+| S1 meanpool | 0.9273 / 0.9404 | 0.9320 / 0.9316 |
+| S1b textpool | 0.7566 / 0.7624 | 0.7565 / 0.7538 |
+| **S2a MNTP** | **0.6494 / 0.6550** | **0.6386 / 0.6433** |
+
+Worst 0.6550 / 0.6433, both **≥ 0.60**. Declared rule: **self-refutes regardless of accuracy —
+record and stop.** `KS-MNTP-2` **NOT RUN**.
+
+**THE STOP IS OVERDETERMINED — four independent reasons, so the belt is not load-bearing alone:**
+
+1. **The collapse belt fires** (pre-declared, ≥0.60 on both datasets).
+2. **Fusion inverts from additive to destructive.** Under causal, concat *beats* the best single
+   stream (**+0.0467** HateMM, **+0.0128** ZH). Under S2a, concat is *worse* than the best single
+   stream (**−0.0467** HateMM, **−0.0256** ZH). The deployed system is a fusion head, so a
+   text-only gain that destroys fusion is not a usable gain. **This independently corroborates the
+   diversity loss the belt is designed to detect.**
+3. **Every S2a number is below its causal floor**, on both datasets and all three streams.
+4. **`KS-MNTP-3` is not met and cannot be**: escalation requires Δdev ≥ **+0.020** *over* the
+   causal floor; S2a text is **−0.0187** below it on HateMM and **−0.1538** on ZH.
+
+**Honest note on belt transferability, raised for the main loop and NOT resolved here.** The
+collapse belt was designed for a *readout* pathology (S1/S1b pooled vision tokens, so text became
+a copy of img). S2a is a *weights* arm with the readout untouched, and on **HateMM the text stream
+retains — indeed slightly widens — its margin over img** (S2a +0.0561 vs causal +0.0467), which is
+**not** the "text becomes a copy of img" signature the belt was written for. A reasonable reader
+could argue the belt is firing on a different phenomenon here. **I did not move the bar**: it was
+declared before the arm existed, and post-hoc reinterpretation of a pre-declared gate is exactly
+the failure mode the freeze discipline exists to prevent. It is recorded because reasons 2-4
+make the stop hold regardless, so nothing turns on it — but whether this belt should carry
+forward unchanged to future *weights* arms is a live design question for the main loop.
+
+### 6e.5 H1 vs H2 — UPDATED READING
+
+**The MNTP transplant produces the first real movement on the bidirectional text axis of the whole
+campaign, and simultaneously demonstrates why it is not usable.**
+
+- **The signal is real.** HateMM text +0.0280 over F72 bidir = **60 % of the crater recovered**,
+  the first time any arm cleared the 50 % bar. ZH +0.0641 (29 %). Both signs positive. Weight
+  adaptation moves the text stream in a way three different readouts could not — **which is
+  consistent with the S1b conclusion that the problem lives in the weights/topology, not the
+  readout.** To that extent the MNTP hypothesis is *supported in direction*.
+- **The cost is global.** The same perturbation **degrades the img stream on both datasets**
+  (−0.0374 / −0.0256 vs F72 bidir; also below causal), collapses stream diversity to ~0.64-0.66,
+  and **inverts fusion from additive to destructive**. Features move enormously: cos vs plain
+  bidir is 0.31-0.36 (text) and 0.65-0.72 (img).
+- **This is exactly the transplant risk declared in §6d.1**, now measured: a delta fitted to
+  `Qwen2.5-7B-Instruct`'s weight point is a **large, blunt perturbation** at the VL weight point,
+  which drifted during VL pretraining. It carries *some* of the bidirectional adaptation — enough
+  to move text 60 % of the way back — while damaging representations the VL trunk had learned.
+- **What is refuted:** the zero-training shortcut to MNTP. **What is NOT refuted:** the MNTP
+  hypothesis itself. §6d.5 declared this distinction in advance, and the result lands squarely on
+  it. A transplant under-delivering at a drifted weight point is weak evidence about what a
+  *correctly fitted* MNTP would do.
+
+**H1's strong form remains refuted** (img is fine under a bare mask flip, +0.0093/+0.0128, cosine
+1.000000 across three extractions). **H2 stays refuted** (S1b). The surviving live hypothesis is
+still **weight adaptation fitted to this model** — i.e. **S2b**, which needs the corpus ruling.
+
+### 6e.6 S2a cost
+
+| job | what | elapsed |
+|---|---|---|
+| 13658 | S2a smoke (`S1_LIMIT=4`) | 00:02:05 |
+| 13659 | belt-4 same-path double-merge floor probe | 00:08:55 |
+| 13660 | S2a full extraction, both datasets, train+dev | 00:49:20 |
+
+**S2a GPU: 01:00:20 = 1.006 GPU-h** (budget ~1.0). **Campaign total S1 + S1b + S2a = 2.697
+GPU-h.** Download gate spent (80 MB). No training, no corpus ruling, no Modal. `KS-MNTP-2` not
+run, so the banked 13652/13655 CPU floors remain unspent.
+
+---
+
 ## 7. GATE-BY-GATE SUMMARY
 
 | gate | outcome |
@@ -848,6 +1025,15 @@ Cache tags: `HateMM → Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-mntp_HF`,
 | `KS-MNTP-1` (S1b) | HateMM +0.2003 (KILL-side), ZH +0.2941 (partial); no dataset ≥50 % — **accuracy gate alone would have said CONTINUE; the belt overrode it** |
 | `KS-MNTP-2` CPU head (S1b arm) | **NOT RUN** — belt override |
 
+| — **S2a (amendment, §6d/§6e)** — | |
+| external pre-submission review | **NO-GO ×2 → GO** — caught that the transplant would have loaded **ZERO weights** (PEFT key one `.model` short, loads non-strictly ⇒ silent no-op) and would have bound **96 vision-tower modules** |
+| adapter scope + belt 1 | **PASS** — 196 modules (28×7), 0 vision, **196/196 non-zero `lora_B`**, 5/5 weight probes changed |
+| `KS-MNTP-0b` adapter-not-null-op | **PASS** — cos(S2a text, plain-bidir) 0.3639 / 0.3076 ≪ 0.9999 |
+| belt 4 same-path double-merge floor (13659) | **PASS** — all 8 cells ≥0.9999 (mean 1.00000000) ⇒ extra merge inert, **no binding floor**, ~0.85 GPU-h saved |
+| `KS-MNTP-1` (S2a) | **HateMM +0.6006 = CONTINUE (first ≥50 % of the campaign)**; ZH +0.2941 partial |
+| **collapse belt** | **FAIL — 0.6550 / 0.6433 ⇒ self-refutes** |
+| `KS-MNTP-2` (S2a arm) | **NOT RUN** — belt override; stop is **overdetermined** (see below) |
+
 **Verdict routing — the readout route is CLOSED.** Three pooling spans were tried across the full
 range of what a readout can select — EOS-class tail (F72), all positions (S1), text positions only
 (S1b) — and all three land far below the causal floor while the streams converge monotonically
@@ -858,8 +1044,24 @@ the text representations are saturated with visual content **before** any poolin
 strongest available test; H1's strong form stays refuted (img unharmed, +0.0093/+0.0128,
 reproduced at cosine 1.000000 on three independent extractions).
 
-**The live hypothesis that remains is weight adaptation — the actual MNTP claim — i.e. S2a
-(published McGill transplant, download-gated) or S2b (we train, corpus-ruling-gated).** Both are
-main-loop decisions. Nothing in S1 or S1b advances the goal clause, and neither arm's movement
-over F72 may be quoted as a method gain: it is the text channel being partially replaced by the
-image channel.
+**S2a then tested the surviving weight-adaptation hypothesis at zero training cost, and produced
+the campaign's first real signal — which is nonetheless not promotable.** The published MNTP
+transplant recovers **60 % of the HateMM crater** on the text stream (the first arm ever to clear
+the 50 % bar) and +29 % on ZH, confirming in direction that the problem lives in the weights
+rather than the readout. But the same perturbation degrades the img stream on both datasets,
+collapses stream diversity to ~0.65, and **inverts fusion from additive (+0.0467 over the best
+single stream under causal) to destructive (−0.0467 under S2a)**. Every S2a number sits below its
+causal floor, and `KS-MNTP-3` (Δdev ≥ +0.020 *over* the floor) is unreachable — S2a text is
+−0.0187 below it. The stop is **overdetermined**: pre-declared collapse belt, fusion inversion,
+sub-floor everywhere, and an unmeetable escalation bar.
+
+**What S2a refutes is the ZERO-TRAINING SHORTCUT, not the MNTP hypothesis** — a distinction
+declared in §6d.5 before the arm ran. A delta fitted to `Qwen2.5-7B-Instruct` is a large, blunt
+perturbation at the VL weight point (features move to cos 0.31-0.36), so it is weak evidence about
+what a correctly-fitted MNTP would do.
+
+**The one live hypothesis remaining in this lane is S2b — MNTP trained by us on this model.** It
+requires the user's corpus ruling (recon §3.4: wikitext needs the veto relaxation; own-split
+multimodal (a′) is legal without a ruling but supplies only ~1.5 % of the reference token budget).
+That is a main-loop/user decision, not this agent's. Nothing in S1, S1b, or S2a advances the goal
+clause, and no arm's movement over F72 may be quoted as a method gain.
