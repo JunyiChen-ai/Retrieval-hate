@@ -192,6 +192,7 @@ the slur is often surfaced un-obfuscated by the markup.
 | `refine-logs/RESOLUTION_FORENSIC_RECON.md:124-127` | "ZH transcripts are ~4 words median (`LITSWEEP2_INPUT_FIDELITY.md:64`), so the ZH **image** stream carries more relative weight" | half-bullet struck; erratum box inserted; the separately-measured 13.7× resolution headroom explicitly preserved |
 | `refine-logs/ERRPAT_MHC-ZH_2026-07-26.md:372` | "The deployed transcript is already ASR-derived" | erratum note inserted; **the section's measured numbers stand** (the bigram-overlap and length comparisons were measured directly, not inferred from the premise) |
 | `research-wiki/DESIGN_iter1.md:285-286` | "MHClip-ZH >0.85 is aspirational (**ASR-bound**)" | erratum note inserted |
+| `research-wiki/ITERATION_LOG.md:50` | "MHClip-ZH >0.85 is aspirational (MoRE 0.785, **ASR-bound**)" | erratum note inserted; the *conclusion* stands (ZH final-epoch floor 0.8456), the attributed **cause** was wrong |
 
 **Already correct, no action needed** (both carry the erratum in the house provenance style):
 `research-wiki/DRAFT_experiments_chapter.md:787-795` and `research-wiki/PAPER_MASTER_TABLES.md:410-419`.

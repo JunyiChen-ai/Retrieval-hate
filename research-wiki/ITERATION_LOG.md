@@ -47,7 +47,16 @@ NOT a novelty axis; temporal/audio/implicit are evaluation slices, not novelty.
   neutral-template / no-verdict-leak guard, and both carry more code + attribution risk.
 - **Performance realism (all variants):** ">85% on BOTH HateMM AND MHClip" is optimistic, not
   evidenced. HateMM binary >0.85 is credible (MM-HSD 0.874 proves reachable); MHClip-ZH >0.85 is
-  aspirational (MoRE 0.785, ASR-bound); 3-class 85% is impossible (field ceiling 0.63/0.50).
+  aspirational (MoRE 0.785, ~~ASR-bound~~ — see erratum); 3-class 85% is impossible (field ceiling 0.63/0.50).
+  > **ERRATUM 2026-07-28** (propagated from `refine-logs/LITSWEEP3_ZH_SPECIFIC.md:18-37`, F77 / commit
+  > `d4af64b`). "**ASR-bound**" is withdrawn: the deployed ZH text stream is **not** the Whisper ASR — it is
+  > the **Bilibili description/metadata** field, median **106 Chinese characters** (train 106 / val 108.5 /
+  > test 105), 42 % of train rows carrying literal `<em class="keyword">…</em>` markup. The companion ledger
+  > figure "ZH transcripts median 4 words" is a **whitespace-split artefact** (`text.split()` is meaningless
+  > for Chinese). The measured ZH wall as of round 6 is **78-dev val-selection noise** (+0.0246 vs the +0.030
+  > bar) plus representation saturation (LoRA-Qwen ZH text-AUC 0.925), not transcription. The *conclusion*
+  > that ZH >0.85 is aspirational stands — the ZH final-epoch floor is 0.8456 acc — but the attributed
+  > **cause** was wrong.
 
 **Decision.** MERGE: **`MLLM-RGCL-Frozen` (spine) + TREMR's segment-level retrieval memory (video
 delta)** = **SR-RGCL-Vid**. Take the cheapest, highest-confidence, HIGH-feasibility spine (frozen
