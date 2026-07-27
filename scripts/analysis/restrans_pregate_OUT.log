@@ -1,0 +1,74 @@
+worked example: {"config": "rank-1 same-class, ranks 2-20 wrong-class, w=[20..1], cos=1", "v_deployed": -0.8095, "phat_errpat_0_1word_bin_0.1096": -0.0287, "phat_2_50word_bin_0.2926": -0.3947, "phat_reproducing_minus_0.10": 0.1452, "identity_note": "with uniform cosines and a uniform-phat neighbourhood, v_res = v_dep - (2*phat-1) EXACTLY, i.e. a constant shift"}
+[hatemm] n=744 pos-rate=0.4005 vol(words) min/med/max 0/128/13677 duration=yes
+  [hatemm] fold 0 phat  sd(Ba)=0.1450 auc(Ba)=0.6703 sd(Bb)=0.1392 auc(Bb)=0.6437 sd(N1)=0.0176 sd(N2)=0.1450
+  [hatemm] fold 1 phat  sd(Ba)=0.1397 auc(Ba)=0.6607 sd(Bb)=0.1330 auc(Bb)=0.62 sd(N1)=0.0022 sd(N2)=0.1397
+  [hatemm] fold 2 phat  sd(Ba)=0.1352 auc(Ba)=0.657 sd(Bb)=0.1257 auc(Bb)=0.6112 sd(N1)=0.0392 sd(N2)=0.1352
+  [hatemm] fold 3 phat  sd(Ba)=0.1442 auc(Ba)=0.6665 sd(Bb)=0.1320 auc(Bb)=0.6225 sd(N1)=0.0081 sd(N2)=0.1442
+  [hatemm] fold 4 phat  sd(Ba)=0.1337 auc(Ba)=0.6495 sd(Bb)=0.1209 auc(Bb)=0.606 sd(N1)=0.0035 sd(N2)=0.1337
+    [hatemm/fused] fold 0 dep 0.7987  C1_Ba:+0.0067  C1_Bb:+0.0067  C1_Bc:+0.0067  D1_lenlogit:+0.0067  N1_permcov:-0.0269  N2_permphat:-0.0202  (0.5s)
+    [hatemm/fused] fold 1 dep 0.8322  C1_Ba:-0.0067  C1_Bb:-0.0067  C1_Bc:-0.0067  D1_lenlogit:+0.0269  N1_permcov:-0.0067  N2_permphat:-0.0067  (0.5s)
+    [hatemm/fused] fold 2 dep 0.8926  C1_Ba:-0.0335  C1_Bb:-0.0201  C1_Bc:-0.0403  D1_lenlogit:+0.0403  N1_permcov:-0.0201  N2_permphat:-0.0134  (0.5s)
+    [hatemm/fused] fold 3 dep 0.8255  C1_Ba:-0.0470  C1_Bb:-0.0470  C1_Bc:-0.0403  D1_lenlogit:+0.0403  N1_permcov:-0.0470  N2_permphat:-0.0470  (0.5s)
+    [hatemm/fused] fold 4 dep 0.8716  C1_Ba:-0.0135  C1_Bb:-0.0135  C1_Bc:-0.0135  D1_lenlogit:-0.0067  N1_permcov:-0.0405  N2_permphat:-0.0338  (0.5s)
+  [hatemm/fused] PARITY 4dp PASS  pooled 0.8441/0.8419  folds [0.7987, 0.8322, 0.8926, 0.8255, 0.8716]
+    [hatemm/text] fold 0 dep 0.8054  C1_Ba:-0.0135  C1_Bb:-0.0135  C1_Bc:-0.0202  D1_lenlogit:+0.0201  N1_permcov:-0.0067  N2_permphat:+0.0000  (0.2s)
+    [hatemm/text] fold 1 dep 0.8322  C1_Ba:+0.0067  C1_Bb:+0.0134  C1_Bc:+0.0134  D1_lenlogit:+0.0269  N1_permcov:+0.0000  N2_permphat:+0.0000  (0.2s)
+    [hatemm/text] fold 2 dep 0.8792  C1_Ba:-0.0537  C1_Bb:-0.0537  C1_Bc:-0.0537  D1_lenlogit:+0.0134  N1_permcov:-0.0336  N2_permphat:-0.0336  (0.2s)
+    [hatemm/text] fold 3 dep 0.8188  C1_Ba:-0.0470  C1_Bb:-0.0470  C1_Bc:-0.0336  D1_lenlogit:+0.0604  N1_permcov:-0.0604  N2_permphat:-0.0537  (0.1s)
+    [hatemm/text] fold 4 dep 0.8851  C1_Ba:-0.0743  C1_Bb:-0.0675  C1_Bc:-0.0675  D1_lenlogit:+0.0203  N1_permcov:-0.0675  N2_permphat:-0.0743  (0.2s)
+  [hatemm/text] PARITY 4dp PASS  pooled 0.8441/0.8422  folds [0.8054, 0.8322, 0.8792, 0.8188, 0.8851]
+    [hatemm/img] fold 0 dep 0.7315  C1_Ba:-0.0134  C1_Bb:-0.0067  C1_Bc:-0.0134  D1_lenlogit:-0.0268  N1_permcov:-0.0067  N2_permphat:+0.0068  (0.1s)
+    [hatemm/img] fold 1 dep 0.7718  C1_Ba:+0.0134  C1_Bb:+0.0269  C1_Bc:+0.0134  D1_lenlogit:-0.0134  N1_permcov:+0.0201  N2_permphat:+0.0134  (0.1s)
+    [hatemm/img] fold 2 dep 0.8389  C1_Ba:+0.0000  C1_Bb:+0.0067  C1_Bc:+0.0067  D1_lenlogit:+0.0202  N1_permcov:+0.0134  N2_permphat:+0.0202  (0.1s)
+    [hatemm/img] fold 3 dep 0.7450  C1_Ba:-0.0067  C1_Bb:+0.0000  C1_Bc:-0.0067  D1_lenlogit:+0.0335  N1_permcov:-0.0135  N2_permphat:-0.0067  (0.1s)
+    [hatemm/img] fold 4 dep 0.7568  C1_Ba:-0.0338  C1_Bb:-0.0338  C1_Bc:-0.0271  D1_lenlogit:-0.0271  N1_permcov:-0.0203  N2_permphat:-0.0338  (0.1s)
+  [hatemm/img] PARITY 4dp PASS  pooled 0.7688/0.7561  folds [0.7315, 0.7718, 0.8389, 0.745, 0.7568]
+[zh] n=579 pos-rate=0.3109 vol(chars) min/med/max 3/106/708 duration=NO -> B-c NOT RUN
+  [zh] fold 0 phat  sd(Ba)=0.0347 auc(Ba)=0.5268 sd(Bb)=0.0474 auc(Bb)=0.4715 sd(N1)=0.0032 sd(N2)=0.0347
+  [zh] fold 1 phat  sd(Ba)=0.0335 auc(Ba)=0.5303 sd(Bb)=0.0515 auc(Bb)=0.4807 sd(N1)=0.0224 sd(N2)=0.0335
+  [zh] fold 2 phat  sd(Ba)=0.0624 auc(Ba)=0.5752 sd(Bb)=0.0652 auc(Bb)=0.5441 sd(N1)=0.0546 sd(N2)=0.0624
+  [zh] fold 3 phat  sd(Ba)=0.0469 auc(Ba)=0.556 sd(Bb)=0.0619 auc(Bb)=0.4992 sd(N1)=0.0191 sd(N2)=0.0469
+  [zh] fold 4 phat  sd(Ba)=0.0439 auc(Ba)=0.5468 sd(Bb)=0.0619 auc(Bb)=0.5224 sd(N1)=0.0034 sd(N2)=0.0439
+    [zh/fused] fold 0 dep 0.8534  C1_Ba:-0.0948  C1_Bb:-0.1034  D1_lenlogit:-0.0086  N1_permcov:-0.1034  N2_permphat:-0.0948  (0.2s)
+    [zh/fused] fold 1 dep 0.8534  C1_Ba:-0.1120  C1_Bb:-0.0862  D1_lenlogit:+0.0173  N1_permcov:-0.0862  N2_permphat:-0.0948  (0.2s)
+    [zh/fused] fold 2 dep 0.9224  C1_Ba:-0.1552  C1_Bb:-0.1465  D1_lenlogit:-0.0172  N1_permcov:-0.1379  N2_permphat:-0.1465  (0.2s)
+    [zh/fused] fold 3 dep 0.8017  C1_Ba:-0.0258  C1_Bb:-0.0603  D1_lenlogit:-0.0086  N1_permcov:-0.0172  N2_permphat:-0.0086  (0.2s)
+    [zh/fused] fold 4 dep 0.8087  C1_Ba:-0.0435  C1_Bb:-0.0261  D1_lenlogit:-0.0174  N1_permcov:-0.0348  N2_permphat:-0.0522  (0.2s)
+  [zh/fused] PARITY 4dp PASS  pooled 0.8480/0.8281  folds [0.8534, 0.8534, 0.9224, 0.8017, 0.8087]
+    [zh/text] fold 0 dep 0.8621  C1_Ba:-0.0604  C1_Bb:-0.0604  D1_lenlogit:+0.0345  N1_permcov:-0.0518  N2_permphat:-0.0518  (0.1s)
+    [zh/text] fold 1 dep 0.8621  C1_Ba:-0.0345  C1_Bb:-0.0173  D1_lenlogit:+0.0172  N1_permcov:-0.0345  N2_permphat:-0.0345  (0.1s)
+    [zh/text] fold 2 dep 0.8966  C1_Ba:-0.1121  C1_Bb:-0.1121  D1_lenlogit:+0.0086  N1_permcov:-0.1207  N2_permphat:-0.1121  (0.1s)
+    [zh/text] fold 3 dep 0.8879  C1_Ba:-0.0603  C1_Bb:-0.0603  D1_lenlogit:+0.0000  N1_permcov:-0.0689  N2_permphat:-0.0776  (0.1s)
+    [zh/text] fold 4 dep 0.8087  C1_Ba:+0.0000  C1_Bb:+0.0000  D1_lenlogit:-0.0174  N1_permcov:+0.0000  N2_permphat:+0.0000  (0.1s)
+  [zh/text] PARITY 4dp PASS  pooled 0.8636/0.8442  folds [0.8621, 0.8621, 0.8966, 0.8879, 0.8087]
+    [zh/img] fold 0 dep 0.6552  C1_Ba:-0.0345  C1_Bb:-0.0431  D1_lenlogit:+0.0000  N1_permcov:-0.0259  N2_permphat:-0.0345  (0.1s)
+    [zh/img] fold 1 dep 0.7241  C1_Ba:-0.2413  C1_Bb:-0.2413  D1_lenlogit:+0.0259  N1_permcov:-0.2241  N2_permphat:-0.2069  (0.1s)
+    [zh/img] fold 2 dep 0.7672  C1_Ba:-0.1293  C1_Bb:-0.1034  D1_lenlogit:-0.0344  N1_permcov:-0.1120  N2_permphat:-0.1379  (0.1s)
+    [zh/img] fold 3 dep 0.6552  C1_Ba:-0.0173  C1_Bb:-0.0086  D1_lenlogit:+0.0431  N1_permcov:-0.0259  N2_permphat:-0.0259  (0.1s)
+    [zh/img] fold 4 dep 0.7043  C1_Ba:-0.1304  C1_Bb:-0.1217  D1_lenlogit:+0.0000  N1_permcov:-0.1478  N2_permphat:-0.1391  (0.1s)
+  [zh/img] PARITY 4dp PASS  pooled 0.7012/0.6083  folds [0.6552, 0.7241, 0.7672, 0.6552, 0.7043]
+[en] n=549 pos-rate=0.3060 vol(words) min/med/max 2/69/273 duration=NO -> B-c NOT RUN
+  [en] fold 0 phat  sd(Ba)=0.0024 auc(Ba)=0.0 sd(Bb)=0.0110 auc(Bb)=0.2988 sd(N1)=0.0076 sd(N2)=0.0024
+  [en] fold 1 phat  sd(Ba)=0.0068 auc(Ba)=0.3373 sd(Bb)=0.0221 auc(Bb)=0.383 sd(N1)=0.0540 sd(N2)=0.0068
+  [en] fold 2 phat  sd(Ba)=0.0151 auc(Ba)=0.424 sd(Bb)=0.0188 auc(Bb)=0.3569 sd(N1)=0.0189 sd(N2)=0.0151
+  [en] fold 3 phat  sd(Ba)=0.0154 auc(Ba)=0.4314 sd(Bb)=0.0081 auc(Bb)=0.2329 sd(N1)=0.0370 sd(N2)=0.0154
+  [en] fold 4 phat  sd(Ba)=0.0029 auc(Ba)=0.0 sd(Bb)=0.0155 auc(Bb)=0.3889 sd(N1)=0.0048 sd(N2)=0.0029
+    [en/fused] fold 0 dep 0.7091  C1_Ba:-0.0727  C1_Bb:-0.0727  D1_lenlogit:-0.0182  N1_permcov:-0.0727  N2_permphat:-0.0727  (0.2s)
+    [en/fused] fold 1 dep 0.7545  C1_Ba:-0.1636  C1_Bb:-0.1636  D1_lenlogit:+0.0091  N1_permcov:-0.1636  N2_permphat:-0.1545  (0.2s)
+    [en/fused] fold 2 dep 0.8091  C1_Ba:-0.1091  C1_Bb:-0.1273  D1_lenlogit:-0.0273  N1_permcov:-0.1182  N2_permphat:-0.1091  (0.2s)
+    [en/fused] fold 3 dep 0.8182  C1_Ba:-0.1182  C1_Bb:-0.1182  D1_lenlogit:+0.0091  N1_permcov:-0.1273  N2_permphat:-0.1091  (0.2s)
+    [en/fused] fold 4 dep 0.8073  C1_Ba:-0.0367  C1_Bb:-0.0642  D1_lenlogit:-0.0183  N1_permcov:-0.0367  N2_permphat:-0.0367  (0.2s)
+  [en/fused] PARITY 4dp PASS  pooled 0.7796/0.7286  folds [0.7091, 0.7545, 0.8091, 0.8182, 0.8073]
+    [en/text] fold 0 dep 0.8273  C1_Ba:-0.1273  C1_Bb:-0.1273  D1_lenlogit:-0.0091  N1_permcov:-0.1273  N2_permphat:-0.1273  (0.1s)
+    [en/text] fold 1 dep 0.7636  C1_Ba:-0.0818  C1_Bb:-0.0818  D1_lenlogit:+0.0000  N1_permcov:-0.0818  N2_permphat:-0.0909  (0.1s)
+    [en/text] fold 2 dep 0.8364  C1_Ba:-0.1182  C1_Bb:-0.1273  D1_lenlogit:-0.0091  N1_permcov:-0.1091  N2_permphat:-0.1182  (0.1s)
+    [en/text] fold 3 dep 0.8273  C1_Ba:-0.0546  C1_Bb:-0.0546  D1_lenlogit:-0.0182  N1_permcov:-0.0728  N2_permphat:-0.0637  (0.1s)
+    [en/text] fold 4 dep 0.7982  C1_Ba:-0.0367  C1_Bb:-0.0367  D1_lenlogit:+0.0000  N1_permcov:-0.0367  N2_permphat:-0.0367  (0.1s)
+  [en/text] PARITY 4dp PASS  pooled 0.8106/0.7785  folds [0.8273, 0.7636, 0.8364, 0.8273, 0.7982]
+    [en/img] fold 0 dep 0.7000  C1_Ba:-0.2091  C1_Bb:-0.2091  D1_lenlogit:+0.0455  N1_permcov:-0.2091  N2_permphat:-0.2091  (0.1s)
+    [en/img] fold 1 dep 0.7000  C1_Ba:-0.2182  C1_Bb:-0.2182  D1_lenlogit:+0.0273  N1_permcov:-0.2000  N2_permphat:-0.2182  (0.1s)
+    [en/img] fold 2 dep 0.6818  C1_Ba:-0.1636  C1_Bb:-0.1727  D1_lenlogit:+0.0182  N1_permcov:-0.1727  N2_permphat:-0.1636  (0.1s)
+    [en/img] fold 3 dep 0.7273  C1_Ba:-0.1728  C1_Bb:-0.1909  D1_lenlogit:-0.0364  N1_permcov:-0.1818  N2_permphat:-0.1728  (0.1s)
+    [en/img] fold 4 dep 0.6881  C1_Ba:-0.0642  C1_Bb:-0.0367  D1_lenlogit:-0.0092  N1_permcov:-0.0642  N2_permphat:-0.0642  (0.1s)
+  [en/img] PARITY 4dp PASS  pooled 0.6995/0.5561  folds [0.7, 0.7, 0.6818, 0.7273, 0.6881]
+DONE -> /data/jehc223/RGCL/scripts/analysis/restrans_pregate_OUT.json
