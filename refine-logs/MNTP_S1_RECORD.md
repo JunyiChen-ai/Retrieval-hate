@@ -713,6 +713,120 @@ banked 13652/13655 CPU floors remain unspent and reusable.
 
 ---
 
+## 6d. AMENDMENT — S2a: PUBLISHED MNTP ADAPTER TRANSPLANT (declared BEFORE building)
+
+**Status at declaration:** funded by main-loop ruling after S1b closed the readout route. Zero
+training, zero corpus ruling. The download gate is the only user-gated resource, and it is spent
+(§6d.2). **Written and committed BEFORE the S2a fork was built.**
+
+### 6d.1 Why S2a, and what it tests
+
+S1/S1b established that the F72 crater is **not** a readout problem — the vision/text mixture
+happens inside bidirectional attention, before any pooling. The surviving hypothesis is the actual
+MNTP claim: **bidirectional attention needs WEIGHT ADAPTATION**. S2a tests it at zero training cost
+by transplanting the published McGill MNTP LoRA onto our merged VL trunk.
+
+**This is a TRANSPLANT, and its main risk is stated up front:** the adapter is a low-rank delta
+fitted to `Qwen2.5-7B-Instruct`'s weight point. Qwen2.5-VL's trunk was *initialised* from Qwen2.5
+and then further trained during VL pretraining, so the base has drifted. The delta may carry the
+generic "use bidirectional context" adaptation, or it may be noise at the new weight point. That
+is the empirical question, and it costs ~1 GPU-h and no training to answer.
+
+### 6d.2 Download gate — SPENT and verified
+
+`McGill-NLP/LLM2Vec-Qwen25-7B-Instruct-mntp`, snapshot `2c7b5e8605db3caa2593d1ae8afb09c826c0d887`.
+`adapter_model.safetensors` = **80,790,528 bytes**, sha256
+`5e3fb47d2448ce3302261019fb40b9ba7b335740b23a45df2da9bf3a1e158feb`.
+
+`adapter_config.json` vs recon §3.5 — **exact match on every field**: `base_model_name_or_path =
+Qwen/Qwen2.5-7B-Instruct`, `r = 16`, `lora_alpha = 32`, `lora_dropout = 0.05`, `peft_type = LORA`,
+`task_type = None`, `bias = none`, `target_modules = [gate_proj, q_proj, down_proj, v_proj, k_proj,
+up_proj, o_proj]`.
+
+**Shape verification against the LOCAL VL trunk (tensors, not just the config table):** 392
+tensors = 28 layers × 7 modules × {lora_A, lora_B}; layers 0-27 complete; every shape correct for
+`hidden=3584, kv=4 (512), intermediate=18944`:
+
+| module | lora_A | lora_B | expected | |
+|---|---|---|---|---|
+| q_proj / o_proj | (16, 3584) | (3584, 16) | ✔ | |
+| k_proj / v_proj | (16, 3584) | (512, 16) | ✔ | GQA kv width |
+| gate_proj / up_proj | (16, 3584) | (18944, 16) | ✔ | |
+| down_proj | (16, 18944) | (3584, 16) | ✔ | |
+
+Same rank/alpha/target set as our own task LoRA (recon §2.3), and our SFT already freezes the
+vision tower and projector, so "MNTP scoped to the LLM trunk" is the scope the deployed adapter
+already has. **No new scoping argument is needed.**
+
+### 6d.3 Arm construction — adapter order DECLARED
+
+```
+base Qwen2.5-VL-7B  →  PeftModel(task LoRA)  → merge_and_unload      [unchanged, all arms]
+                    →  PeftModel(MNTP LoRA)  → merge_and_unload      [S2a ONLY]
+                    →  bidir_patch.apply_bidir_mask(model)           [POST-merge, PRE-forward]
+                    →  process_split(...)                            [imported VERBATIM]
+```
+
+**Declared order: the CHEAP order** (MNTP stacked on top of the merged task LoRA), per recon §4.2.
+This preserves the deployed encoder identity and costs no SFT. It is acknowledged that the
+scientifically faithful LLM2Vec order is MNTP-first-then-task-adaptation; per recon §4.2 that order
+is funded **only** if the cheap order shows partial recovery. **Both orders are not run blind.**
+
+**Readout = the DEPLOYED EOS-class tail, unchanged.** S1/S1b killed the readout route, so the
+crater-comparable readout is the deployed one — which also keeps the frozen KS-MNTP-1 bars valid
+without reinterpretation. The S2a runner is therefore the **F72 bidir fork plus one adapter
+load/merge**, and nothing else.
+
+Cache tags: `HateMM → Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-mntp_HF`,
+`MHC_zh → Qwen2.5-VL-7B-Instruct-LoRA-bidir-mntp_HF`.
+
+### 6d.4 Belts — declared in advance
+
+1. **Weight-level transplant proof (new, strongest, $0-ish).** Snapshot a sample of decoder weight
+   tensors immediately **before** the MNTP merge and re-read them **after**; they MUST change.
+   This proves the transplant took effect *at the weights*, independent of any downstream metric,
+   and it catches the PEFT-key-mismatch failure mode directly rather than inferring it. **Abort on
+   no-change.**
+2. **`KS-MNTP-0b` adapter-is-not-a-null-op (MANDATORY, F87 shape).** Mean per-item
+   cos(S2a text, plain-bidir text) must be **< 0.9999** on all cells. **≥ 0.9999 ⇒ the adapter
+   silently failed to load ⇒ ABORT before spending head time.**
+3. **Img stream is READ, not asserted.** Unlike S1/S1b — whose img readout was delegated and had to
+   be an exact null-op — the MNTP LoRA modifies the decoder, so **img MAY legitimately move.**
+   If it does, that is **data, not failure**, and it is recorded. (An unchanged img stream would
+   itself be suspicious here.)
+4. **`KS-MNTP-0b` symmetric — same-path double-merge floor (recon §4.3).** The arm now has **TWO**
+   merges, so it is strictly more exposed to the F87 bf16 merge-drift artifact (which manufactured
+   a −0.0268 phantom "method effect"). Probe: identical runner, identical double-`merge_and_unload`,
+   MNTP adapter replaced by a **freshly-initialised LoRA of identical shape** (PEFT inits `lora_B`
+   to zeros, so it is a mathematical null-op — only the merge *path* differs), **bidir OFF**, vs the
+   banked causal cache. Bar **≥ 0.9999**. **If it fails, the same-path double-merge causal floor
+   becomes BINDING and must be extracted before any accuracy is read.** Run on a subset (≥60
+   items/split) — merge drift is a numerical property of the path, not of particular items, so a
+   subset is sufficient to detect it at the 1e-4 level; a failure escalates to the full floor.
+5. Carried: `KS-MNTP-0a`; external review of the fork diff; smoke with 4-item cosine checks;
+   clobber + test-touch guards; zero-norm-row exclusion in every cosine; train+dev only; HateMM
+   first; **ZERO test-touch**.
+6. **Frozen `KS-MNTP-1` bars, UNCHANGED**: HateMM text ≥ **0.7804** (50 %), floor **0.7687**;
+   MHC_zh ≥ **0.7372**, floor **0.6827**; same sign-consistency clause.
+7. **Collapse belt carried, bar < 0.60.** Under the deployed readout this should sit near the F72
+   regime (~0.43-0.49). A rise toward 0.60+ is **reportable drift**, and ≥0.60 self-refutes as
+   before.
+8. If `KS-MNTP-1` CONTINUEs → `KS-MNTP-2` against the banked 13652/13655 CPU floors, **or** against
+   the double-merge floor if belt 4 makes it binding.
+
+### 6d.5 What S2a can and cannot conclude — declared in advance
+
+- **Adapter is a null-op (belt 2 fails)** ⇒ load failure, not a result. Abort and fix.
+- **CONTINUE** (≥50 % recovery on ≥1 dataset, collapse belt passing) ⇒ weight adaptation is the
+  right axis; routes to S2b (train our own MNTP) with the corpus ruling now live.
+- **<25 % on both, or partial with inconsistent sign** ⇒ the transplant is noise at the VL weight
+  point. That does **not** by itself refute the MNTP hypothesis — it refutes *this* zero-training
+  shortcut to it — and the honest routing is then S2b (needs the corpus ruling) or stop.
+- Under **no** outcome does S2a advance the goal clause; recovery to the causal floor is a
+  mechanism result (`KS-MNTP-3`), and every bidir arm so far sits below that floor.
+
+---
+
 ## 7. GATE-BY-GATE SUMMARY
 
 | gate | outcome |
