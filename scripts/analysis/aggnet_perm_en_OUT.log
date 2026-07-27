@@ -1,0 +1,13 @@
+[en] n=549 pos-rate=0.3060 vol(words) min/med/max 2/69/273
+    [en/fused] fold 0 dep 0.7091  C3_net:+0.0091  C3_metak:+0.0000  FIXBEST_mono:+0.0182  THRESH_best:+0.0091  DIRECT_logit:-0.0091  (57.9s)
+    [en/fused] fold 1 dep 0.7545  C3_net:-0.0090  C3_metak:-0.0090  FIXBEST_mono:-0.0272  THRESH_best:-0.0818  DIRECT_logit:-0.0272  (56.2s)
+    [en/fused] fold 2 dep 0.8091  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0000  THRESH_best:+0.0000  DIRECT_logit:+0.0545  (56.0s)
+    [en/fused] fold 3 dep 0.8182  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0273  THRESH_best:+0.0091  DIRECT_logit:-0.0091  (56.7s)
+    [en/fused] fold 4 dep 0.8073  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0000  THRESH_best:-0.0183  DIRECT_logit:-0.0275  (56.1s)
+  [en/fused] PARITY 4dp PASS  pooled 0.7796/0.7286  folds [0.7091, 0.7545, 0.8091, 0.8182, 0.8073]
+  [en] perm 25/100 (1403s, mean -0.0533)
+  [en] perm 50/100 (2801s, mean -0.0544)
+  [en] perm 75/100 (4199s, mean -0.0518)
+  [en] perm 100/100 (5595s, mean -0.0523)
+  [en] PERM obs +0.0000 null -0.0523+-0.0221 q95 -0.0181 p=0.0099
+DONE -> /data/jehc223/RGCL/scripts/analysis/aggnet_perm_en_OUT.json

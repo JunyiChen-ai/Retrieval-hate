@@ -1,0 +1,129 @@
+{
+ "note": "POST-HOC. Adds no arm, promotes nothing. Oracle ceilings only.",
+ "aggnet_script_sha256": "8e95c2fc796c7c94e6671d785f8e6d21d2b5edfdb4cfb0b376234d129c11e8a9",
+ "datasets": {
+  "hatemm": {
+   "n": 744,
+   "spaces": {
+    "fused": {
+     "acc_deployed": 0.8441,
+     "n_wrong": 116,
+     "n_class_mixed": 646,
+     "frac_class_mixed": 0.8683,
+     "n_wrong_and_mixed": 111,
+     "frac_wrong_reachable": 0.9569,
+     "ORACLE_dacc_C3_family": 0.1492,
+     "n_pathology": 88,
+     "n_pathology_mixed": 88,
+     "ORACLE_dacc_pathology_only": 0.1183
+    },
+    "text": {
+     "acc_deployed": 0.8441,
+     "n_wrong": 116,
+     "n_class_mixed": 606,
+     "frac_class_mixed": 0.8145,
+     "n_wrong_and_mixed": 114,
+     "frac_wrong_reachable": 0.9828,
+     "ORACLE_dacc_C3_family": 0.1532,
+     "n_pathology": 87,
+     "n_pathology_mixed": 87,
+     "ORACLE_dacc_pathology_only": 0.1169
+    },
+    "img": {
+     "acc_deployed": 0.7688,
+     "n_wrong": 172,
+     "n_class_mixed": 732,
+     "frac_class_mixed": 0.9839,
+     "n_wrong_and_mixed": 170,
+     "frac_wrong_reachable": 0.9884,
+     "ORACLE_dacc_C3_family": 0.2285,
+     "n_pathology": 136,
+     "n_pathology_mixed": 136,
+     "ORACLE_dacc_pathology_only": 0.1828
+    }
+   }
+  },
+  "zh": {
+   "n": 579,
+   "spaces": {
+    "fused": {
+     "acc_deployed": 0.848,
+     "n_wrong": 88,
+     "n_class_mixed": 480,
+     "frac_class_mixed": 0.829,
+     "n_wrong_and_mixed": 88,
+     "frac_wrong_reachable": 1.0,
+     "ORACLE_dacc_C3_family": 0.152,
+     "n_pathology": 79,
+     "n_pathology_mixed": 79,
+     "ORACLE_dacc_pathology_only": 0.1364
+    },
+    "text": {
+     "acc_deployed": 0.8636,
+     "n_wrong": 79,
+     "n_class_mixed": 450,
+     "frac_class_mixed": 0.7772,
+     "n_wrong_and_mixed": 78,
+     "frac_wrong_reachable": 0.9873,
+     "ORACLE_dacc_C3_family": 0.1347,
+     "n_pathology": 68,
+     "n_pathology_mixed": 68,
+     "ORACLE_dacc_pathology_only": 0.1174
+    },
+    "img": {
+     "acc_deployed": 0.7012,
+     "n_wrong": 173,
+     "n_class_mixed": 513,
+     "frac_class_mixed": 0.886,
+     "n_wrong_and_mixed": 173,
+     "frac_wrong_reachable": 1.0,
+     "ORACLE_dacc_C3_family": 0.2988,
+     "n_pathology": 158,
+     "n_pathology_mixed": 158,
+     "ORACLE_dacc_pathology_only": 0.2729
+    }
+   }
+  },
+  "en": {
+   "n": 549,
+   "spaces": {
+    "fused": {
+     "acc_deployed": 0.7796,
+     "n_wrong": 121,
+     "n_class_mixed": 533,
+     "frac_class_mixed": 0.9709,
+     "n_wrong_and_mixed": 120,
+     "frac_wrong_reachable": 0.9917,
+     "ORACLE_dacc_C3_family": 0.2186,
+     "n_pathology": 109,
+     "n_pathology_mixed": 109,
+     "ORACLE_dacc_pathology_only": 0.1985
+    },
+    "text": {
+     "acc_deployed": 0.8106,
+     "n_wrong": 104,
+     "n_class_mixed": 479,
+     "frac_class_mixed": 0.8725,
+     "n_wrong_and_mixed": 103,
+     "frac_wrong_reachable": 0.9904,
+     "ORACLE_dacc_C3_family": 0.1876,
+     "n_pathology": 84,
+     "n_pathology_mixed": 84,
+     "ORACLE_dacc_pathology_only": 0.153
+    },
+    "img": {
+     "acc_deployed": 0.6995,
+     "n_wrong": 165,
+     "n_class_mixed": 548,
+     "frac_class_mixed": 0.9982,
+     "n_wrong_and_mixed": 165,
+     "frac_wrong_reachable": 1.0,
+     "ORACLE_dacc_C3_family": 0.3005,
+     "n_pathology": 150,
+     "n_pathology_mixed": 150,
+     "ORACLE_dacc_pathology_only": 0.2732
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,20 @@
+[en] n=549 pos-rate=0.3060 vol(words) min/med/max 2/69/273
+    [en/fused] fold 0 dep 0.7091  C3_net:+0.0091  C3_metak:+0.0000  FIXBEST_mono:+0.0182  THRESH_best:+0.0091  DIRECT_logit:-0.0091  (56.4s)
+    [en/fused] fold 1 dep 0.7545  C3_net:-0.0090  C3_metak:-0.0090  FIXBEST_mono:-0.0272  THRESH_best:-0.0818  DIRECT_logit:-0.0272  (55.3s)
+    [en/fused] fold 2 dep 0.8091  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0000  THRESH_best:+0.0000  DIRECT_logit:+0.0545  (55.6s)
+    [en/fused] fold 3 dep 0.8182  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0273  THRESH_best:+0.0091  DIRECT_logit:-0.0091  (55.6s)
+    [en/fused] fold 4 dep 0.8073  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0000  THRESH_best:-0.0183  DIRECT_logit:-0.0275  (55.5s)
+  [en/fused] PARITY 4dp PASS  pooled 0.7796/0.7286  folds [0.7091, 0.7545, 0.8091, 0.8182, 0.8073]
+    [en/text] fold 0 dep 0.8273  C3_net:+0.0182  C3_metak:+0.0000  FIXBEST_mono:-0.0091  THRESH_best:-0.0091  DIRECT_logit:-0.0273  (55.6s)
+    [en/text] fold 1 dep 0.7636  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0000  THRESH_best:+0.0000  DIRECT_logit:+0.0182  (55.7s)
+    [en/text] fold 2 dep 0.8364  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0000  THRESH_best:+0.0091  DIRECT_logit:+0.0000  (55.5s)
+    [en/text] fold 3 dep 0.8273  C3_net:-0.0091  C3_metak:+0.0000  FIXBEST_mono:-0.0091  THRESH_best:+0.0000  DIRECT_logit:+0.0091  (55.8s)
+    [en/text] fold 4 dep 0.7982  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0091  THRESH_best:+0.0183  DIRECT_logit:-0.0367  (55.6s)
+  [en/text] PARITY 4dp PASS  pooled 0.8106/0.7785  folds [0.8273, 0.7636, 0.8364, 0.8273, 0.7982]
+    [en/img] fold 0 dep 0.7000  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0000  THRESH_best:+0.0182  DIRECT_logit:-0.0273  (55.9s)
+    [en/img] fold 1 dep 0.7000  C3_net:+0.0000  C3_metak:-0.0273  FIXBEST_mono:+0.0000  THRESH_best:+0.0364  DIRECT_logit:-0.0364  (55.7s)
+    [en/img] fold 2 dep 0.6818  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:-0.0454  THRESH_best:+0.0182  DIRECT_logit:-0.0363  (55.3s)
+    [en/img] fold 3 dep 0.7273  C3_net:-0.0364  C3_metak:+0.0000  FIXBEST_mono:-0.0637  THRESH_best:-0.0273  DIRECT_logit:-0.0273  (55.1s)
+    [en/img] fold 4 dep 0.6881  C3_net:+0.0000  C3_metak:+0.0458  FIXBEST_mono:-0.0092  THRESH_best:+0.0183  DIRECT_logit:-0.0275  (55.0s)
+  [en/img] PARITY 4dp PASS  pooled 0.6995/0.5561  folds [0.7, 0.7, 0.6818, 0.7273, 0.6881]
+DONE -> /data/jehc223/RGCL/scripts/analysis/aggnet_main_en_OUT.json

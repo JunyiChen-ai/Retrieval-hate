@@ -1,0 +1,20 @@
+[hatemm] n=744 pos-rate=0.4005 vol(words) min/med/max 0/128/13677
+    [hatemm/fused] fold 0 dep 0.7987  C3_net:-0.0068  C3_metak:+0.0268  FIXBEST_mono:-0.0202  THRESH_best:+0.0000  DIRECT_logit:+0.0201  (61.1s)
+    [hatemm/fused] fold 1 dep 0.8322  C3_net:+0.0000  C3_metak:-0.0067  FIXBEST_mono:-0.0134  THRESH_best:+0.0336  DIRECT_logit:-0.0134  (59.6s)
+    [hatemm/fused] fold 2 dep 0.8926  C3_net:+0.0269  C3_metak:+0.0067  FIXBEST_mono:+0.0134  THRESH_best:+0.0403  DIRECT_logit:+0.0134  (60.2s)
+    [hatemm/fused] fold 3 dep 0.8255  C3_net:+0.0268  C3_metak:+0.0067  FIXBEST_mono:+0.0000  THRESH_best:+0.0336  DIRECT_logit:+0.0336  (60.7s)
+    [hatemm/fused] fold 4 dep 0.8716  C3_net:+0.0203  C3_metak:-0.0135  FIXBEST_mono:+0.0068  THRESH_best:-0.0135  DIRECT_logit:+0.0135  (60.0s)
+  [hatemm/fused] PARITY 4dp PASS  pooled 0.8441/0.8419  folds [0.7987, 0.8322, 0.8926, 0.8255, 0.8716]
+    [hatemm/text] fold 0 dep 0.8054  C3_net:-0.0067  C3_metak:+0.0000  FIXBEST_mono:-0.0135  THRESH_best:+0.0201  DIRECT_logit:+0.0201  (59.7s)
+    [hatemm/text] fold 1 dep 0.8322  C3_net:+0.0067  C3_metak:+0.0000  FIXBEST_mono:+0.0067  THRESH_best:+0.0403  DIRECT_logit:+0.0269  (59.8s)
+    [hatemm/text] fold 2 dep 0.8792  C3_net:+0.0000  C3_metak:+0.0067  FIXBEST_mono:+0.0067  THRESH_best:+0.0000  DIRECT_logit:-0.0134  (59.7s)
+    [hatemm/text] fold 3 dep 0.8188  C3_net:+0.0268  C3_metak:+0.0201  FIXBEST_mono:+0.0134  THRESH_best:+0.0537  DIRECT_logit:+0.0067  (60.3s)
+    [hatemm/text] fold 4 dep 0.8851  C3_net:+0.0135  C3_metak:+0.0000  FIXBEST_mono:-0.0067  THRESH_best:+0.0068  DIRECT_logit:+0.0135  (60.3s)
+  [hatemm/text] PARITY 4dp PASS  pooled 0.8441/0.8422  folds [0.8054, 0.8322, 0.8792, 0.8188, 0.8851]
+    [hatemm/img] fold 0 dep 0.7315  C3_net:-0.0134  C3_metak:+0.0000  FIXBEST_mono:-0.0067  THRESH_best:+0.0000  DIRECT_logit:+0.0000  (60.2s)
+    [hatemm/img] fold 1 dep 0.7718  C3_net:+0.0067  C3_metak:+0.0000  FIXBEST_mono:+0.0134  THRESH_best:+0.0201  DIRECT_logit:+0.0201  (60.2s)
+    [hatemm/img] fold 2 dep 0.8389  C3_net:+0.0067  C3_metak:+0.0000  FIXBEST_mono:+0.0134  THRESH_best:+0.0202  DIRECT_logit:-0.0201  (59.5s)
+    [hatemm/img] fold 3 dep 0.7450  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:+0.0134  THRESH_best:+0.0000  DIRECT_logit:+0.0335  (59.3s)
+    [hatemm/img] fold 4 dep 0.7568  C3_net:+0.0000  C3_metak:+0.0000  FIXBEST_mono:-0.0136  THRESH_best:-0.0338  DIRECT_logit:-0.0203  (59.5s)
+  [hatemm/img] PARITY 4dp PASS  pooled 0.7688/0.7561  folds [0.7315, 0.7718, 0.8389, 0.745, 0.7568]
+DONE -> /data/jehc223/RGCL/scripts/analysis/aggnet_main_hatemm_OUT.json
