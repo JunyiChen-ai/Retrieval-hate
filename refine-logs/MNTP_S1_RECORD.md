@@ -395,10 +395,18 @@ artifact mutated. Committed on `main`, **not pushed**.
 | `src/utils/generate_VideoMLLM_embedding_bidir_meanpool_HF.py` | `8f2de58efc696f5146419cd3ea7c82ce5bdbdb5e7790174fc32487bf7c7f7200` |
 | `scripts/slurm/gen_embed_mllm_bidir_meanpool.sbatch` | `20a020cba578b33c0a3343941afb4d754dcf370b09191dc6ecac61d67ba0aaa4` |
 | `scripts/analysis/mntp_s1_devscreen.py` | `d4a4a9f3d79f174f5b08cd4e699166c63ffd47d758d2a8b9337b34401dfe5cc2` |
-| `scripts/analysis/mntp_s1_cpuhead.py` | `65bb1dcbc33dbe8b38cd498968d7b6924f1ec0262b92924f2c2bd64c24ffdd77` |
+| `scripts/analysis/mntp_s1_cpuhead.py` | `b42f6888f21ce1078046afe84e503b415305c4f734eeef2631e03ef5e1ad3a82` | *(sha updated: the S1b textpool arm was added to its ARMS map after the S1 commit; the 13652/13655 causal+bidir results are unaffected — those cells were already measured and are reloaded from the OUT json, not recomputed)*
 | `scripts/slurm/mntp_s1_cpuhead.sbatch` | `e71d5a95d204bdaccb11f17115fb2cb76b0e06c8f7559b69633c8ff0b160715b` |
 
-Primary outputs: `scripts/analysis/mntp_s1_devscreen_OUT.json`,
+**S1b artifacts (amendment §6b/§6c):**
+
+| file | sha256 |
+|---|---|
+| `src/utils/generate_VideoMLLM_embedding_bidir_textpool_HF.py` | `df3b8ee4ca501938d612ebb97576e26e015271de33843b0d943d1e8965924405` |
+| `scripts/slurm/gen_embed_mllm_bidir_textpool.sbatch` | `e4e9701f7857cc63e99dd58166a359d3f8cc17ce90692d372d9adb14e47cd6b4` |
+| `scripts/analysis/mntp_s1b_devscreen.py` | `2ebd61ace902ad109dbee35283ac870ecf9dd504bd0e58933ac0a49aa6bd4380` |
+
+Primary outputs: `scripts/analysis/mntp_s1_devscreen_OUT.json`, `mntp_s1b_devscreen_OUT.json`,
 `scripts/analysis/mntp_s1_cpuhead_OUT.json`. S1 caches:
 `data/CLIP_Embedding/{HateMM,MHC_zh}/{train,dev_seen}_*-bidir-meanpool_HF.pt` (md5s in §2.1d).
 
@@ -577,6 +585,132 @@ and the S1 arm, so S1b is neither a duplicate of the control nor of the previous
 > ~0.85 GPU-h is cheap against it. **If the full-dev belt confirms the smoke, the arm
 > self-refutes as declared.**
 
+### 6c.4 Full extraction — job **13657**, `COMPLETED 00:48:54` — cache sanity **PASS**
+
+1508 rows (744/107 HateMM, 579/78 MHC_zh), shapes (N, 3584) ×2, **id order identical to causal**
+on every split, **no `test_seen_*textpool*` file exists**. md5: HateMM train
+`261d13656d1493123bf94fa1686f41aa`, dev `16c3a4905601ee46ac5990cdc8922b67`; MHC_zh train
+`1ce3afc5541a871b1942cbf419fc4aff`, dev `2e7082e109bc51b2f0e9df11cb17857b`.
+
+**Measured span decomposition over the FULL run** (`SPANSTATS_*.json`; HateMM train n=743 because
+the undecodable `hate_video_95` takes the zero-guard path and never reaches the readout):
+
+| dataset | split | n | seq median | vision median (min-max) | **constant?** | text median | vision share |
+|---|---|---|---|---|---|---|---|
+| HateMM | train | 743 | 963.0 | 720.0 (**264-768**) | **NO** | 240.0 | 74.8 % |
+| HateMM | dev | 107 | 885.0 | 720.0 (**364-768**) | **NO** | 168.0 | 81.4 % |
+| MHC_zh | train | 579 | 867.0 | 720.0 (**120-768**) | **NO** | 145.0 | 83.0 % |
+| MHC_zh | dev | 78 | 875.0 | 720.0 (**676-768**) | **NO** | 146.0 | 82.3 % |
+
+The vision-token count ranges **120-768** on real data. The recon's "768, constant" is wrong on
+this corpus, and the deviation is large, not marginal. **A position-sliced implementation would
+have silently mixed vision and text tokens on a large fraction of items.** The id-based mask is
+what makes S1b correct.
+
+### 6c.5 `KS-MNTP-1` + collapse belt — **STOP: the arm SELF-REFUTES as declared**
+
+All values DEV, raw untrained key space, frozen vote operator. Format acc/mF1/roc.
+
+**HateMM**
+
+| stream | causal | bidir-lasttoken | S1 meanpool | **S1b textpool** | S1b vs bidir | vs causal | vs S1 |
+|---|---|---|---|---|---|---|---|
+| img | 0.7570/0.7491/0.8141 | 0.7664/0.7540/0.8127 | 0.7664/0.7540/0.8127 | **0.7664/0.7540/0.8127** | +0.0000 | +0.0093 | +0.0000 |
+| **text** | 0.8037/0.8003/0.8935 | 0.7570/0.7377/0.8368 | 0.7477/0.7318/0.8743 | **0.7664/0.7540/0.8390** | +0.0093 | **−0.0374** | +0.0187 |
+| concat | 0.8505/0.8489/0.9052 | 0.7944/0.7862/0.8674 | 0.7570/0.7405/0.8539 | **0.8037/0.7914/0.8735** | +0.0093 | **−0.0467** | +0.0467 |
+
+**MHC_zh**
+
+| stream | causal | bidir-lasttoken | S1 meanpool | **S1b textpool** | S1b vs bidir | vs causal | vs S1 |
+|---|---|---|---|---|---|---|---|
+| img | 0.7436/0.7057/0.8379 | 0.7564/0.7173/0.8414 | 0.7564/0.7173/0.8414 | **0.7564/0.7173/0.8414** | +0.0000 | +0.0128 | +0.0000 |
+| **text** | 0.8462/0.8353/0.9407 | 0.6282/0.5203/0.6886 | 0.7051/0.6578/0.8079 | **0.6923/0.5966/0.7364** | +0.0641 | **−0.1538** | −0.0128 |
+| concat | 0.8590/0.8519/0.9214 | 0.6410/0.5439/0.7400 | 0.7436/0.7168/0.8157 | **0.7051/0.6408/0.7600** | +0.0641 | **−0.1538** | −0.0385 |
+
+**Belt 1 — COLLAPSE (declared §6b.3 before the arm was built), bar < 0.60. Result: FAIL.**
+
+| arm | HateMM train | HateMM dev | MHC_zh train | MHC_zh dev |
+|---|---|---|---|---|
+| causal | 0.3523 | 0.3499 | 0.3105 | 0.3027 |
+| bidir-lasttoken | 0.4314 | 0.4511 | 0.4977 | 0.4898 |
+| S1 meanpool | 0.9273 | 0.9404 | 0.9320 | 0.9316 |
+| **S1b textpool** | **0.7566** | **0.7624** | **0.7565** | **0.7538** |
+
+Worst cell **0.7624** (HateMM) and **0.7565** (ZH), both **≫ 0.60**. Removing the vision positions
+cut collapse from ~0.93 to ~0.76 but **did not restore the causal regime (0.31-0.35)**. Per the
+pre-declared rule, **the arm self-refutes regardless of accuracy.** The full-dev result confirms
+the 4-item smoke warning (0.6889-0.7815) rather than overturning it.
+
+**Belt 2 — img null-op: PASS**, 1.000000 on all four cells. Every S1b-vs-F72 difference is the
+text readout alone.
+
+**KS-MNTP-1 against the frozen bars:**
+
+| dataset | S1b text acc | frozen bidir | floor25 | bar50 | recovery | cell verdict |
+|---|---|---|---|---|---|---|
+| HateMM | 0.7664 | 0.7570 | 0.7687 | 0.7804 | **+0.2003** | KILL-side (<25 %) |
+| MHC_zh | 0.6923 | 0.6282 | 0.6827 | 0.7372 | **+0.2941** | PARTIAL (25-50 %) |
+
+No dataset reached 50 %. **Note that the accuracy gate alone would have said CONTINUE this time**
+— unlike S1, both signs are positive (+0.2003, +0.2941), so the sign-consistency clause is
+satisfied. **The collapse belt is the binding constraint, and it is why it was declared in
+advance.** Without it, S1b's uniformly positive movement over F72 (+0.0093 HateMM, +0.0641 ZH on
+both text and concat) would have been read as partial readout repair and escalated.
+
+**The smoking gun.** On HateMM the S1b **text row is numerically identical to the S1b img row** in
+acc and macro-F1 — 0.7664/0.7540 for both, differing only in roc (0.8390 vs 0.8127). The text
+channel is returning the image channel's answers. That is substitution, not repair.
+
+**`KS-MNTP-2` NOT RUN for S1b.** The collapse belt is an overriding stop condition ("record and
+stop"), declared before the arm existed. Running the head screen after a self-refutation would be
+exactly the unfunded extra look the belt exists to prevent.
+
+### 6c.6 H1 vs H2 — UPDATED READING (S1b closes the readout route)
+
+**H2 is refuted on its strongest available test, and the mechanism is now identified.**
+
+S1b is the faithful multimodal analogue of the LLM2Vec recipe — the experiment S1 failed to be.
+It still does not recover: HateMM reaches 20 % of the crater, ZH 29 %, neither near the 50 % bar,
+and both remain far below their causal floors (−0.0374 / −0.1538 on text).
+
+**Why, mechanistically.** Under bidirectional attention **every text token attends to all ~720
+vision tokens**, so the text tokens' hidden states are *themselves* saturated with visual content.
+Excluding vision *positions* from the pool does not exclude vision *information* from the
+representations being pooled. That is why collapse only falls 0.93 → 0.76 and never approaches the
+causal 0.31-0.35. **The two streams converge under bidirectional attention regardless of which
+positions are pooled, because the convergence happens inside the attention, not in the readout.**
+Under causal attention the streams stay separated (0.31-0.35) precisely because the img readout
+pools a prefix that cannot see the text and the text readout pools a tail that can.
+
+**Consequence: the readout hypothesis is exhausted at zero training.** No choice of pooling span
+can undo an information mixture that the topology itself creates. Three spans were tried —
+EOS-class tail (F72), all positions (S1), text positions only (S1b) — spanning the full range of
+what a readout can select, and all three land far below the causal floor while the streams
+converge monotonically with how much of the sequence is pooled.
+
+**H1's strong form remains refuted**, unchanged and now on three independent extractions: the img
+stream is *better* under bidir (+0.0093 / +0.0128) and S1b reproduces it at cosine **1.000000**.
+The weights are not broken. **But the earlier framing — "the crater is a text-stream, readout-
+adjacent phenomenon" — is now sharpened: it is a text-stream phenomenon that a readout cannot
+fix.** The remaining live hypothesis is that bidirectional attention needs *weight adaptation*
+(the actual MNTP claim), which is S2a/S2b — not a readout change.
+
+**What this does NOT license.** No goal-clause progress: every S1b number is below its causal
+floor on both datasets. Per `KS-MNTP-3`, even full recovery would be a mechanism result. And the
+S1b "gains" over F72 must not be quoted as method gains — they are the text channel being
+partially replaced by the image channel.
+
+### 6c.7 S1b cost
+
+| job | what | elapsed | GPU |
+|---|---|---|---|
+| 13656 | S1b smoke (`S1_LIMIT=4`) | 00:01:42 | 1× A100 |
+| 13657 | S1b full extraction, both datasets, train+dev | 00:48:54 | 1× A100 |
+
+**S1b GPU: 00:50:36 = 0.843 GPU-h** (budget ~1.0). **S1 + S1b combined: 1.691 GPU-h.**
+No training, no download, no corpus ruling, no Modal. KS-MNTP-2 not run (belt override), so the
+banked 13652/13655 CPU floors remain unspent and reusable.
+
 ---
 
 ## 7. GATE-BY-GATE SUMMARY
@@ -591,10 +725,27 @@ and the S1 arm, so S1b is neither a duplicate of the control nor of the previous
 | **`KS-MNTP-1` raw-key dev screen** | **STOP** — HateMM −0.1999 (below crater), ZH +0.3529 (partial); no dataset ≥50 %, signs inconsistent |
 | `KS-MNTP-2` CPU head (S1 arm) | **NOT RUN** — gate said stop; controls banked (13652/13655) |
 | `KS-MNTP-3` escalation flag | **NOT REACHED** |
+| — **S1b (amendment, §6b/§6c)** — | |
+| external pre-submission review | **NO-GO → GO** — 2 blockers (test-cache backup exposure; undeclared `--no_merge`/`--moka` divergence) + 3 nits, all fixed |
+| `KS-MNTP-0a` + $0 belts (S1b) | **PASS** (incl. token-mask verification: 720 vision dropped, 0 `video_pad` survived, markers kept) |
+| smoke 13656 (img null-op / text differs from BOTH prior arms) | **PASS** (img cos 1.000000; text vs F72 0.45-0.72, vs S1 0.87-0.91) — with a recorded collapse early warning |
+| cache sanity 13657 | **PASS** (1508 rows, id order matches causal, no test file) |
+| **collapse belt (declared in advance, < 0.60)** | **FAIL — 0.7624 / 0.7565. ARM SELF-REFUTES.** |
+| `KS-MNTP-1` (S1b) | HateMM +0.2003 (KILL-side), ZH +0.2941 (partial); no dataset ≥50 % — **accuracy gate alone would have said CONTINUE; the belt overrode it** |
+| `KS-MNTP-2` CPU head (S1b arm) | **NOT RUN** — belt override |
 
-**Verdict routing:** S1 does not escalate. The naive mean-pool readout is dead; the *underlying*
-readout hypothesis is **untested**, because the S1 operator collapsed the two streams
-(cos 0.93). The cheapest remaining discriminator is a **text-positions-only** mean pool
-(exclude the 768 video-pad tokens) — same ~0.85 GPU-h, no ruling, no download. Whether to fund
-it, or to route instead to S2a (the published McGill MNTP transplant, download-gated), is the
-main loop's decision.
+**Verdict routing — the readout route is CLOSED.** Three pooling spans were tried across the full
+range of what a readout can select — EOS-class tail (F72), all positions (S1), text positions only
+(S1b) — and all three land far below the causal floor while the streams converge monotonically
+with how much of the sequence is pooled (causal 0.31-0.35 → S1b 0.76 → S1 0.93). The mechanism is
+identified: under bidirectional attention every text token attends to all ~720 vision tokens, so
+the text representations are saturated with visual content **before** any pooling happens.
+**A readout cannot undo an information mixture created by the topology.** H2 is refuted on its
+strongest available test; H1's strong form stays refuted (img unharmed, +0.0093/+0.0128,
+reproduced at cosine 1.000000 on three independent extractions).
+
+**The live hypothesis that remains is weight adaptation — the actual MNTP claim — i.e. S2a
+(published McGill transplant, download-gated) or S2b (we train, corpus-ruling-gated).** Both are
+main-loop decisions. Nothing in S1 or S1b advances the goal clause, and neither arm's movement
+over F72 may be quoted as a method gain: it is the text channel being partially replaced by the
+image channel.
