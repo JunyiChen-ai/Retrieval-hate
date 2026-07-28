@@ -177,8 +177,20 @@ surface novelty has repeatedly failed to imply conditional information in this p
 
 ### 2.4 Does the new text carry hate surface the transcript lacks? (descriptive, unconditional)
 
-A fixed slur/hate lexicon (36 EN terms, 26 ZH terms), train split, presence-only. **This is a
+A fixed slur/hate lexicon (~~36 EN terms, 26 ZH terms~~ — **miscounted, see erratum below**), train
+split, presence-only. **This is a
 prevalence statistic, NOT the G0-cond gate** — no `Z`, no classifier, no conditional read.
+
+> **ERRATUM 2026-07-28 (this document, cosmetic — no number, percentage or conclusion changes).**
+> The lexicon sizes stated above are wrong on both counts. Re-counted directly from the frozen
+> `ocr_lex.py` used to produce the table: `LEX_EN` holds **31** terms (not 36; 31 unique), and
+> `LEX_ZH` holds **26**. The per-dataset arms are also not "EN-only vs ZH-only" as the phrasing
+> implies — the script sets `lex = LEX_EN if lang == "en" else LEX_ZH + LEX_EN`, so the **MHC-ZH arm
+> was run against 26 ZH + 31 EN = 57 terms**, not 26. This is deliberate (ZH videos carry romanised
+> and English slurs too) and is what was actually measured; only the prose undercounted it.
+> Every cell in the table below is a *presence-only* count over whatever lexicon was in fact applied,
+> so the counts, the percentages and the pos−neg gaps are unaffected, and the §2.4 conclusion
+> ("new hate surface on HateMM only; the ≥2-dataset clause looks unreachable") stands verbatim.
 
 | dataset | lexicon hit in OCR **but not** in banked text: **negatives** | **positives** | pos−neg gap |
 |---|---|---|---|
@@ -220,8 +232,21 @@ Train-split census of the field:
 |---|---|---|---|---|
 | MHC-EN v1 | 552 | 182 (33.0%) | 10 | 40.7% of non-empty |
 | MHC-EN v2 | 549 | **136 (24.8%)** | 9 | 30.1% |
-| MHC-ZH v1 | 583 | 234 (40.1%) | 13 | 52.1% |
-| MHC-ZH v2 | 579 | **179 (30.9%)** | 4 | 41.9% |
+| MHC-ZH v1 | 583 | 234 (40.1%) | ~~13~~ (88 chars) | 52.1% |
+| MHC-ZH v2 | 579 | **179 (30.9%)** | ~~4~~ (52 chars) | 41.9% |
+
+> **ERRATUM 2026-07-28 (this document, cosmetic — no conclusion changes). The two MHC-ZH
+> `median words` cells are the whitespace-split-on-Chinese artefact corrected campaign-wide by
+> F77 / commit `298545e`** (same defect as the withdrawn "ZH transcripts median 4 words" row in
+> `LITSWEEP2_INPUT_FIDELITY.md:64`). Chinese has no inter-word spaces, so `str.split()` returns
+> roughly one token per punctuation-delimited run and systematically under-reports ZH volume.
+> Re-measured on the same rows, the **character** medians are **MHC-ZH v2 = 52 chars** (not 4) and
+> **MHC-ZH v1 = 88 chars** (not 13). The MHC-EN cells are *not* affected — English is
+> whitespace-delimited, and for the record their char medians are 42 (v2) / 60 (v1).
+> Nothing downstream moves: §2.6's "weak but real, strictly dominated" verdict rests on **coverage**
+> (24.8% / 30.9% vs real OCR's 65.2% / 90.3%), on title regurgitation, and on meta-prose rather than
+> literal strings — none of which is a length argument. Points 1–3 below and the §2.6 verdict stand
+> verbatim, as does the ruling that any gate should read §2.1 rather than this field.
 
 **Why this proxy is weak, measured three ways:**
 
