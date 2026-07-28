@@ -8,6 +8,31 @@ reads of `state/directions_tried.json`). Repo sha at writing `8a9d484` (working 
 **Lens.** Shaping, synthesising, subsampling, calibrating **the bank itself** — as opposed to the
 eval-time operators (F89), the vote depth (F94) and the decision rule (F95) that are now closed.
 
+> ### ▸ SUPERSESSION NOTE — appended 2026-07-28 by orchestrator ruling. READ BEFORE RUNNING ANY BAR BELOW.
+>
+> *Nothing in this record is rewritten. This note supersedes **one clause** of its frozen bars.*
+>
+> **The bar "exchange rate ≥ 1.2 on the pathology population" is REFUTED AS A SCREENING CRITERION** and
+> must not be used to license a run. It appears at **four** sites below — the frozen-bar blocks of C1,
+> C2, C3 and C5 — each marked in place with `[SUPERSEDED as a SCREEN 2026-07-28 …]`.
+>
+> **Why.** `refine-logs/VSW_PREGATE_RECORD.md` §6 measured **ER = 6.0000 on HateMM — 5× this bar — and
+> the arm still FAILED.** A rate is scale-free and cannot bound the quantity the goal is denominated
+> in: the rate is purchasable only by shrinking the population it acts on (HateMM precision
+> **0.8571 at 21 changed → 0.5696 at 79 changed**), and the product stays pinned.
+>
+> **The correct law and the replacement screen:**
+> ```
+> net = changed × (2·precision − 1)
+> ```
+> **Screen on NET ITEMS against 22.3 (HateMM) / 17.4 (MHC-ZH) / 16.5 (MHC-EN)**
+> (`refine-logs/LITSWEEP7_LANDING_SITE.md`). The exchange rate remains a **useful diagnostic to report**
+> — it is how the trade-off was found — but it is **not** a gate. Any candidate below whose screen is
+> phrased as a rate must be re-phrased as a net-item count before it is run.
+>
+> This note does **not** touch this record's other bars, its candidate list, or MEMBANK-C4, which
+> remains live and untouched.
+
 **Citation discipline.** Every paper below was verified by **fetching its arXiv abstract page or
 venue page during this sweep** and reading the abstract. §8 is the verification log, including which
 fields (venue, code URL) were and were not stated on the fetched page. Three sub-agents produced the
@@ -42,6 +67,10 @@ F95's learned verifier 31-54 fixed / 47-58 broken, exchange rate 0.53-0.95, neve
 in 36 cells. A 10× increase in core errors *reached* did not move the exchange rate. **Reaching the
 pathology is not the hard part and no candidate should be sold on reaching it.** The bar is the
 exchange rate, and every pregate below reports it.
+**[CORRECTED 2026-07-28 — the last sentence is wrong and is superseded. F105/VSW measured ER = 6.0000
+on HateMM and the arm still failed: the rate is NOT the bar. `net = changed × (2·precision − 1)`, and
+the bar is NET ITEMS ≥ 22.3 / 17.4 / 16.5. Reporting the rate stays useful as a diagnostic. See the
+supersession note at the top of this file.]**
 
 **(iv) The interaction-share fact (F95 §4.1), and what it does NOT license.** Only **26.6-37.7 %** of
 the deployed cosine's score variance is query×bank interaction; 62-73 % is item-level offsets. That
@@ -179,6 +208,7 @@ so the formal ceremony is a re-evaluation of existing checkpoints, not a retrain
    same-gold-class bank item is within rank 5) — set above F95's ceiling of 1.17 *on purpose*: a
    candidate that lands inside the band every symmetric operator has already occupied has told us
    nothing new.
+   **[SUPERSEDED as a SCREEN 2026-07-28 — see the supersession note at the top; screen on NET ITEMS 22.3/17.4/16.5, not on a rate]**
 3. **Degeneracy control (fires a KILL, not a caveat):** report `sd(p̂)` over the bank and the AUC of
    `p̂` against the gold train label. If `p̂` is near-constant, C1 is a global threshold shift in
    disguise and is dead by the existing ban regardless of its Δ.
@@ -307,7 +337,7 @@ budget ~0.3 GPU-h only if the ceremony requires a same-path floor re-mint, per t
 
 **Frozen bars:**
 1. Primary Δacc ≥ **+0.010**, 5/5 fold signs ≥ 0, ≥3/5 strictly positive, ≥1 dataset.
-2. **Exchange rate ≥ 1.2** on the pathology population.
+2. **Exchange rate ≥ 1.2** on the pathology population. **[SUPERSEDED as a SCREEN 2026-07-28 — see the supersession note at the top; screen on NET ITEMS 22.3/17.4/16.5, not on a rate]**
 3. **Retrieval-quality read (the mechanism check, and the paper's real deliverable):** median top-20
    true-label purity on the pathology population, **before vs after**, currently 0.12-0.22. If purity
    does not move, the synthesis did not land where CP1 says it must, and the accuracy read is
@@ -442,7 +472,7 @@ Same 5-fold item-disjoint harness; θ fitted on fitting-fold profiles only. 549-
 3. **Non-monotonicity read:** what fraction of held-out queries receive a **non-monotone** learned
    weight profile, and is the Δ concentrated on them? If the learned profile is monotone almost
    everywhere, C3 has collapsed into F94's family and is dead by that precedent.
-4. Exchange rate ≥ 1.2 on the pathology population; class-balance sanity.
+4. Exchange rate ≥ 1.2 on the pathology population; class-balance sanity. **[SUPERSEDED as a SCREEN 2026-07-28 — see the supersession note at the top; screen on NET ITEMS 22.3/17.4/16.5, not on a rate]**
 
 ### (f) Honest risk
 
@@ -527,7 +557,7 @@ are therefore **arms, not tuning**, and must be declared before the run.
 Same 5-fold item-disjoint harness; **training-free** (a least-squares projection). **$0, minutes.**
 Full version: **0 GPU-h**.
 
-**Frozen bars:** (1) Δacc ≥ +0.010, 5/5 fold signs, ≥3/5 positive; (2) exchange rate ≥ 1.2;
+**Frozen bars:** (1) Δacc ≥ +0.010, 5/5 fold signs, ≥3/5 positive; (2) exchange rate ≥ 1.2 **[SUPERSEDED as a SCREEN 2026-07-28 — see the supersession note at the top; screen on NET ITEMS 22.3/17.4/16.5, not on a rate]**;
 (3) **degeneracy control fired before anything else** — the distribution of `residual_0 − residual_1`
 must be non-degenerate at some declared `r`; if the two residuals are near-identical at every `r`,
 the arm is void and reports nothing about aggregate-then-compare; (4) class-balance sanity.

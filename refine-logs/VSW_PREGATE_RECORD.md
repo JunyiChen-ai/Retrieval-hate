@@ -586,6 +586,39 @@ the *same* session, and that floor is closed-form and reproduced bit-exactly (§
 §5-§9 is compared against a cross-session trained quantity. The one place a cross-record comparison
 appears is §7.4's benchmark table, and it is flagged there.
 
+> ### ▸ APPENDED 2026-07-28 by the closeout/hardening agent — §4.3's CAUSE is corrected; its NUMBERS stand
+>
+> *Nothing above this box is altered. The measured table in §4.3 is correct and reproduces. What is
+> corrected is the attributed **cause** and the **rule** drawn from it. Full evidence:*
+> **`refine-logs/PREGATE_DETERMINISM_CLAUSE.md`.**
+>
+> The drift is **not** oneDNN/MKL kernel selection and is **not** non-determinism. It is **one unpinned
+> environment variable**. `scripts/analysis/mechnov_drive.sh:9` exports
+> `OMP_NUM_THREADS=8 MKL_NUM_THREADS=8`; `scripts/analysis/vsw_drive.sh` exports nothing. Re-running the
+> frozen module unmodified today reproduces **the recorded F95 cell** at `OMP=8` and **this record's
+> `--stage anchor` cell** with the variable unset — **6 of 6 predicted fold-0 `auc_mlp` values hit**
+> (0.7589 / 0.7908 / 0.6900 vs 0.7584 / 0.7911 / 0.6902). Under `OMP_NUM_THREADS=8 MKL_NUM_THREADS=8`
+> the frozen `run_space` reproduces the recorded cell on **630 of 630** emitted quantities across all
+> three datasets — **including all 186 torch-trained ones** — and a fresh-process repeat is bit-exact on
+> the score array.
+>
+> The perturbation enters **upstream of the estimator**: `sha256(Phi_fit)` takes a distinct value at
+> every thread count, because `PCA(svd_solver="full")` → LAPACK/OpenBLAS blocks its reduction by thread
+> count. Closed-form quantities absorb it below 4 dp (hence "bit-exact"; they are 4-dp-exact, not
+> bit-exact) and the convex logistic arm absorbs it too (0 of 186 quantities moved); only the 4 500-step
+> Adam MLP amplifies it above 4 dp. §4.3's four diagnostics are all correct and all tested the wrong
+> knob — `torch.set_num_threads` does not reach the BLAS/LAPACK path.
+>
+> **Consequences.** (i) §4.3's rule *"must gate against a same-session re-run, never against the
+> recorded JSON"* is **withdrawn as a general rule** — with the environment pinned and recorded (clause
+> DET-1/DET-2) banked JSON is a valid anchor; the same-session rule survives only where the anchor's
+> environment is unknown. (ii) §4.3's and §10.5's *"F97's 78/78 parity … would not re-assert today"* is
+> **too strong**: F97's 48 trained cells matched F95's recorded values, which is only possible at
+> `OMP=8`, so F97 ran pinned and its parity **re-asserts whenever DET-1 is honoured**. (iii) F95's
+> *"0 of 36"* remains environment-conditioned and is exact under its own `OMP=8` configuration.
+> (iv) **No verdict in F95/F96/F97/F98/F105 moves** — blast-radius table in the clause file, banked as a
+> ledger erratum.
+
 ---
 
 ## §5. K-VSW-1 and K-VSW-0 — the λ-selected arms
@@ -1142,6 +1175,62 @@ stated plainly:
      fitting**. Recommend it as the first gate on anything in this family.
    * Its §7.2 proposes an **additive** amendment to F98 §7.1 clause (a) — placing it is the
      orchestrator's call, not this record's; the substance is recorded in this pregate's ban scope.
+
+### ▸ 10.9 ORCHESTRATOR RULING, 2026-07-28 — the §2.3 escalation resolves to **(i) ACCEPT CLOSURE ON THE NET**
+
+*This is an append, not a rewrite. Every frozen bar, every measured number and §9.3's honest
+"handed up rather than resolved here" stand exactly as written. What is added is the ruling §9.3
+explicitly reserved to the user/orchestrator.*
+
+**Ruling.** The §2.3 escalation clause fired on outcome (a) on 3/3 datasets and is recorded as fired.
+It resolves to **option (i): accept the closure on the net.** §6.3 is carried into the paper as
+analysis; the aggregation axis is **CLOSED**. **No prereg is written and no ceremony slot is spent.**
+
+**Rationale, entirely from this record's own measurements:**
+
+1. **A single-dataset HateMM prereg cannot serve the goal.** §5.3 measures the whole declared operator
+   space **with full hindsight** — 3 families × 48 λ — and gets **+0.0069 on MHC-ZH (23 % of the bar)
+   and +0.0164 on MHC-EN (55 %)**. The goal's conjunct requires ≥2 datasets. A ceremony that is
+   arithmetically incapable of clearing the conjunct **cannot serve the goal**, and therefore does not
+   warrant a ceremony slot regardless of how the HateMM cell reads.
+2. **The net is pinned, and the mechanism says why.** K-VSW-2's own measurement holds the net at
+   **+11 to +21 across a 16 384× λ range**, because precision decays monotonically with sharpness
+   (HateMM **0.8571 at 21 changed → 0.5696 at 79 changed**) and exactly cancels the rise in volume.
+   Against the requirement of **22.3 / 17.4 / 16.5 net items** (`LITSWEEP7_LANDING_SITE.md`), the
+   ceiling of the entire continuum is **below bar on every dataset at every λ**. There is no point on
+   the curve for a prereg to aim at.
+3. **Honouring the letter of (a) would test a mechanism this record has already bounded.** §9.3 says
+   this in the record's own words; the ruling simply accepts it.
+
+**What is NOT closed by this ruling.** §6.3's rate/volume trade-off is a **paper-grade correction** and
+is promoted, not buried — see 10.10. C3 (VEA) remains the one legal, unmeasured use of the verifier,
+still carrying F95's "NEVER an accuracy claim" verbatim. MEMBANK-C4 is untouched (see the naming
+collision box in item 7).
+
+### ▸ 10.10 SUPERSESSION, 2026-07-28 — the exchange-rate bar is REFUTED **as a screening criterion**
+
+*Propagated to every live record and queued candidate that screens on it.*
+
+**Refuted:** *"exchange rate ≥ 1.2 on the pathology population"* as a **screen**. This record measured
+**ER = 6.0000 on HateMM — 5× the bar — and the arm still FAILED.** A rate bar is scale-free and
+therefore cannot bound the quantity the goal is denominated in. It survives only as a **diagnostic**
+(reporting it remains useful; it is how §6.3 was found).
+
+**The correct law:**
+
+```
+net = changed × (2·precision − 1)
+```
+
+**The binding screen is NET ITEMS**, against the measured requirement of
+**22.3 (HateMM) / 17.4 (MHC-ZH) / 16.5 (MHC-EN)** net items
+(`refine-logs/LITSWEEP7_LANDING_SITE.md`). Any candidate whose screen is phrased as an exchange rate
+must be re-phrased as a net-item count before it is run; a rate bar passed does **not** license a run.
+
+**Records carrying the superseded screen** (supersession notes added / owners notified):
+`LITSWEEP6_MEMBANK.md` §2/§4/§6 frozen bars (four sites) — noted in place;
+`MEMBANK_C4_PREGATE_RECORD.md` — **in flight at the time of this ruling, not edited; its owner must be
+told** and is the orchestrator's action.
 
 ---
 
