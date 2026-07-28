@@ -1,0 +1,13 @@
+{
+  "dataset": "MHC",
+  "split": "test",
+  "outname": "test_seen",
+  "N": 1,
+  "T": 4,
+  "zero_guard_count": 0,
+  "decomp_res_max": 2.9802322387695312e-08,
+  "grecon_cos_min": 1.0,
+  "grecon_maxabs_max": 0.0,
+  "grecon_n_checked": 1,
+  "out_path": "/data/jehc223/RGCL/slurm/logs/s2s_smoke_out_13182/MHC/frameset_qwen7b_8f/test_seen_frameset.pt"
+}

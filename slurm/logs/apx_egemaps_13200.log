@@ -1,0 +1,12 @@
+================================================================================
+host=foscsmlprd01.its.auckland.ac.nz jobid=13200 start=2026-07-16T06:28:42Z
+ffmpeg=/data/jehc223/miniconda3/envs/ExMRD/bin/ffmpeg  python=/data/jehc223/miniconda3/envs/ExMRD/bin/python
+================================================================================
+[apx-extract] N=851 cached=0 todo=851 nproc=8
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/apx_extract_egemaps.py", line 131, in <module>
+    t = time.time(); main(); print(f'[apx-extract] elapsed {time.time()-t:.0f}s', flush=True)
+                     ^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/apx_extract_egemaps.py", line 89, in main
+    import opensmile
+ModuleNotFoundError: No module named 'opensmile'

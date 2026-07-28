@@ -1,0 +1,376 @@
+[2026-07-16 13:05:45] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-16 13:05:45] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-16 13:05:45] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-16 13:05:45] [disk_guard] current /data usage: 252G (threshold 250G, target 250G).
+[2026-07-16 13:05:45] [disk_guard] usage 252G > threshold 250G: starting reclaim.
+[2026-07-16 13:05:45] [disk_guard] Step (a): rclone VFS cache purge.
+[2026-07-16 13:05:45] [disk_guard]   no rclone vfs* cache dirs present (nothing to do).
+[2026-07-16 13:05:45] [disk_guard]   usage now 252G still > target 250G: continuing.
+[2026-07-16 13:05:45] [disk_guard] Step (b): HuggingFace cache.
+[2026-07-16 13:05:45] [disk_guard]   HF cache purge skipped (conservative); needs manual review. Set DISK_GUARD_HF_PURGE=1 to allow datasets--*/.locks removal (never models--*).
+[2026-07-16 13:05:45] [disk_guard]   usage now 252G still > target 250G: continuing.
+[2026-07-16 13:05:45] [disk_guard] Step (c): push-verify-prune oldest logging/ checkpoints (mirrored to B2 under logs/).
+[2026-07-16 13:05:45] [disk_guard]   no .pt checkpoints under logging/; nothing to prune.
+[2026-07-16 13:05:45] [disk_guard]   usage now 252G still > target 250G: continuing.
+[2026-07-16 13:05:45] [disk_guard] WARNING: still over target (usage=252G > target 250G) after all SAFE steps.
+[2026-07-16 13:05:45] [disk_guard] WARNING: MANUAL INTERVENTION required — an approved larger offload (e.g. raw datasets or another project) is needed.
+[2026-07-16 13:05:45] [disk_guard] WARNING: this guard will NOT touch raw datasets (Multihateclip/HateMM/ImpliHateVid) or non-project data. Stopping.
+[2026-07-16 13:05:45] [disk_guard] ==== disk_guard end ====
+================================================================================
+host=foscsmlprd01.its.auckland.ac.nz jobid=13180 start=2026-07-16T01:05:45Z
+[w2a_extract] script sha256:
+9e984d61e2bf91d58f15af5e54f14d45a3fabe4e0701ce4492645399d810fa31  scripts/analysis/w2a_extract.py
+9ed04c14d16799d24e196f1d956698017373e597fd13e0cb2df6919087315153  scripts/slurm/w2a_extract.sbatch
+[w2a_extract] parity-by-import source sha256:
+d89a912602d763aa055a54f50b0188e302e554b70ff6c0eb872f250bd454b67c  src/utils/generate_VideoMLLM_embedding_HF.py
+[w2a_extract] NUM_FRAMES=8 SMOKE=0
+NVIDIA A100-SXM4-80GB, 81920 MiB
+================================================================================
+[w2a_extract] === dataset HateMM ===
+==============================================================================
+[W2-A extract] script sha256 = 9e984d61e2bf91d58f15af5e54f14d45a3fabe4e0701ce4492645399d810fa31
+[W2-A extract] config: dataset=HateMM splits=train,val,test num_frames=8 device=cuda limit=0 out_root=/data/jehc223/RGCL/data/CLIP_Embedding
+[W2-A extract] model=Qwen/Qwen2.5-VL-7B-Instruct max_pixels=151200 dtype=bfloat16 attn=sdpa transformers=4.49.0
+[W2-A extract] parity-by-import from /data/jehc223/RGCL/src/utils/generate_VideoMLLM_embedding_HF.py (sha256 d89a912602d763aa055a54f50b0188e302e554b70ff6c0eb872f250bd454b67c)
+[W2-A extract] grounded transcript block: raw text | empty->'(none)' ; grd_pfx=[first_vis:end]
+==============================================================================
+[self_test] message-builder + span-indexing on synthetic tensors (no GPU/model) ...
+[self_test] PASS — builders, span indexing, pools, gate-0 raises, placebo pairing all OK.
+[W2-A extract] loading model ...
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.60it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.78it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  6.32it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  6.61it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  7.02it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.51it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+[W2-A extract] --- HateMM / train (outname train) ---
+  [train] 20/744 new (skip 0 done, 0 guard, 16 placebo); last grecon_cos=1.0 grounding_cos=0.9883
+  [train] 40/744 new (skip 0 done, 0 guard, 36 placebo); last grecon_cos=1.0 grounding_cos=0.8892
+  [train] 60/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999998211860657 grounding_cos=0.9633
+  [train] 80/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9403
+  [train] 100/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.7739
+  [train] 120/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.8242
+  [train] 140/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999996423721313 grounding_cos=0.9247
+  [train] 160/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999997615814209 grounding_cos=0.8076
+  [train] 180/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9513
+  [train] 200/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9342
+  [train] 220/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9456
+  [train] 240/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9935
+  [train] 260/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9741
+  [train] 280/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9498
+  [train] 300/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.8793
+  [train] 320/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9418
+  [train] 340/744 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9154
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0x1460e540] stream 0, offset 0x23cc8c9: partial file
+[WARN] decord failed for /data/jehc223/RGCL/data/video/HateMM/All/hate_video_95.mp4 (DECORDError('[13:15:23] /github/workspace/src/video/video_reader.cc:486: Error: av_read_frame failed with 1094995529')); trying PyAV.
+Invalid NAL unit size (1472 > 1168).
+missing picture in access unit with size 1172
+Invalid NAL unit size (1472 > 1168).
+Error splitting the input into NAL units.
+[WARN] PyAV failed for /data/jehc223/RGCL/data/video/HateMM/All/hate_video_95.mp4 (InvalidDataError(1094995529, 'Invalid data found when processing input', 'avcodec_send_packet()', (16, 'h264', 'Error splitting the input into NAL units.\n'))).
+[WARN] no decodable frames for /data/jehc223/RGCL/data/video/HateMM/All/hate_video_95.mp4.
+  [356/744] hate_video_95 ZERO-GUARD (undecodable) -> zero keys
+  [train] 360/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.7968
+  [train] 380/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=0.9999999403953552 grounding_cos=0.8992
+  [train] 400/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9867
+  [train] 420/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9544
+  [train] 440/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9280
+  [train] 460/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.8665
+  [train] 480/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9121
+  [train] 500/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9915
+  [train] 520/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9214
+  [train] 540/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9778
+  [train] 560/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9465
+  [train] 580/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.8976
+  [train] 600/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.7838
+  [train] 620/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=0.9999997615814209 grounding_cos=0.8817
+  [train] 640/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9716
+  [train] 660/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9702
+  [train] 680/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=0.9999997615814209 grounding_cos=0.9575
+  [train] 700/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9706
+  [train] 720/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9458
+  [train] 740/744 new (skip 0 done, 1 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9438
+[HateMM/train] saved N=744 guard=1 empty=39 grecon_cos_min=0.9999995231628418 grecon_maxabs_max=0.0 grounding_present_median=0.9368 grounding_VOID=False placebo_median=0.9804 placebo_VOID=False -> /data/jehc223/RGCL/data/CLIP_Embedding/HateMM/grounded_qwen7b_8f/train_grounded.pt
+[W2-A extract] --- HateMM / val (outname dev_seen) ---
+  [val] 20/107 new (skip 0 done, 0 guard, 18 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.8419
+  [val] 40/107 new (skip 0 done, 0 guard, 35 placebo); last grecon_cos=1.0 grounding_cos=0.9697
+  [val] 60/107 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9231
+  [val] 80/107 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9293
+  [val] 100/107 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9751
+[HateMM/dev_seen] saved N=107 guard=0 empty=9 grecon_cos_min=0.9999997019767761 grecon_maxabs_max=0.0 grounding_present_median=0.9475 grounding_VOID=False placebo_median=0.9812 placebo_VOID=False -> /data/jehc223/RGCL/data/CLIP_Embedding/HateMM/grounded_qwen7b_8f/dev_seen_grounded.pt
+[W2-A extract] --- HateMM / test (outname test_seen) ---
+  [test] 20/215 new (skip 0 done, 0 guard, 16 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.8845
+  [test] 40/215 new (skip 0 done, 0 guard, 34 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9944
+  [test] 60/215 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.8935
+  [test] 80/215 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9743
+  [test] 100/215 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9512
+  [test] 120/215 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9647
+  [test] 140/215 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9586
+  [test] 160/215 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9199
+  [test] 180/215 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9791
+  [test] 200/215 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9302
+[HateMM/test_seen] saved N=215 guard=0 empty=26 grecon_cos_min=0.9999996423721313 grecon_maxabs_max=0.0 grounding_present_median=0.9375 grounding_VOID=False placebo_median=0.9826 placebo_VOID=False -> /data/jehc223/RGCL/data/CLIP_Embedding/HateMM/grounded_qwen7b_8f/test_seen_grounded.pt
+[W2-A extract] DONE dataset=HateMM in 1686.4s
+[w2a_extract] === dataset MHC ===
+==============================================================================
+[W2-A extract] script sha256 = 9e984d61e2bf91d58f15af5e54f14d45a3fabe4e0701ce4492645399d810fa31
+[W2-A extract] config: dataset=MHC splits=train,val,test num_frames=8 device=cuda limit=0 out_root=/data/jehc223/RGCL/data/CLIP_Embedding
+[W2-A extract] model=Qwen/Qwen2.5-VL-7B-Instruct max_pixels=151200 dtype=bfloat16 attn=sdpa transformers=4.49.0
+[W2-A extract] parity-by-import from /data/jehc223/RGCL/src/utils/generate_VideoMLLM_embedding_HF.py (sha256 d89a912602d763aa055a54f50b0188e302e554b70ff6c0eb872f250bd454b67c)
+[W2-A extract] grounded transcript block: raw text | empty->'(none)' ; grd_pfx=[first_vis:end]
+==============================================================================
+[self_test] message-builder + span-indexing on synthetic tensors (no GPU/model) ...
+[self_test] PASS — builders, span indexing, pools, gate-0 raises, placebo pairing all OK.
+[W2-A extract] loading model ...
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.42it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.66it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  6.23it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  6.51it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.94it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.41it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+[W2-A extract] --- MHC / train (outname train) ---
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/LgPnUK567xg.mp4 (DECORDError('[13:34:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/4JUFqX-okGc.mp4 (DECORDError('[13:34:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/zK2fH9ZKCas.mp4 (DECORDError('[13:34:56] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/IbHu0XGqH6M.mp4 (DECORDError('[13:34:59] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/5lx44-lko-U.mp4 (DECORDError('[13:35:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 20/549 new (skip 0 done, 0 guard, 20 placebo); last grecon_cos=0.9999998807907104 grounding_cos=0.9721
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/uqnqHKANAqc.mp4 (DECORDError('[13:35:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/e-XqcRbBVi4.mp4 (DECORDError('[13:35:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 40/549 new (skip 0 done, 0 guard, 40 placebo); last grecon_cos=0.9999998807907104 grounding_cos=0.9544
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/hdwHZQck-a8.mp4 (DECORDError('[13:36:30] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/p1TRuS3zDa0.mp4 (DECORDError('[13:36:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/KkVOBnyy0v8.mp4 (DECORDError('[13:36:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/UZNQGQviDYI.mp4 (DECORDError('[13:36:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/EuGF6X7Jsb8.mp4 (DECORDError('[13:36:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/4BkwQWsVgGg.mp4 (DECORDError('[13:36:57] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/g-MEsUQ8CI4.mp4 (DECORDError('[13:37:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/XeROfeXGs_E.mp4 (DECORDError('[13:37:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/j-cUTF18bEg.mp4 (DECORDError('[13:37:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 60/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999998807907104 grounding_cos=0.9726
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/tuaHPvzQmgM.mp4 (DECORDError('[13:37:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/oPDUomtm2Zk.mp4 (DECORDError('[13:37:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/92uVzchnUSE.mp4 (DECORDError('[13:37:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/BvTG2iZplew.mp4 (DECORDError('[13:37:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/BvJmlxx4Tlc.mp4 (DECORDError('[13:37:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/9b1WF9eFPR8.mp4 (DECORDError('[13:38:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/7iWKZEvbwL8.mp4 (DECORDError('[13:38:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 80/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9674
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/MnLng0Sop2M.mp4 (DECORDError('[13:38:29] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 100/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999996423721313 grounding_cos=0.9403
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/BrtS_6vHPz4.mp4 (DECORDError('[13:39:03] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/7Gqgbj9mIH4.mp4 (DECORDError('[13:39:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/FpONjY0jWE0.mp4 (DECORDError('[13:39:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/1oEQlFqed8I.mp4 (DECORDError('[13:39:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/ISBGfgYfinI.mp4 (DECORDError('[13:39:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/11dBwxuAA_A.mp4 (DECORDError('[13:39:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/x5lljednNDU.mp4 (DECORDError('[13:39:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/1Dpv_CJsa-g.mp4 (DECORDError('[13:39:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 120/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9566
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/5zmsggoz9SU.mp4 (DECORDError('[13:40:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/k3z2jLnSaOo.mp4 (DECORDError('[13:40:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/THSCStmcjLE.mp4 (DECORDError('[13:40:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/NQV9x-Z92tQ.mp4 (DECORDError('[13:40:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Hd9ebI66Quw.mp4 (DECORDError('[13:40:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 140/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999997615814209 grounding_cos=0.8701
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/CWqz1PooWi4.mp4 (DECORDError('[13:41:01] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/w8F9Nma-gpg.mp4 (DECORDError('[13:41:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/PbAnl5hzhVw.mp4 (DECORDError('[13:41:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/hcT_icMFNDo.mp4 (DECORDError('[13:41:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/N7Lh2YB5Qk8.mp4 (DECORDError('[13:41:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 160/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9868
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/UWoGy468-m4.mp4 (DECORDError('[13:41:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/My5PVJLP6Bg.mp4 (DECORDError('[13:41:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/cdTnicui088.mp4 (DECORDError('[13:41:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/gU1kdxnJKdw.mp4 (DECORDError('[13:42:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/K7BfqS8_yAc.mp4 (DECORDError('[13:42:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/QvPp8Q7QhWE.mp4 (DECORDError('[13:42:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/JqFZcFDCZyQ.mp4 (DECORDError('[13:42:19] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/HWG0MQsBjIg.mp4 (DECORDError('[13:42:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 180/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9491
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/qtsXdG0wPyY.mp4 (DECORDError('[13:42:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/g3sjNzCJO74.mp4 (DECORDError('[13:42:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/de4NWDu3GeY.mp4 (DECORDError('[13:42:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/-wrkLbbsh3Y.mp4 (DECORDError('[13:43:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 200/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9525
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/PaPyby_xXFQ.mp4 (DECORDError('[13:43:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/M1keacZWdEo.mp4 (DECORDError('[13:44:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/b71aLLcyO-E.mp4 (DECORDError('[13:44:05] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/gnJ9_iricSo.mp4 (DECORDError('[13:44:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 220/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9727
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/uP_UT10_WHM.mp4 (DECORDError('[13:44:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/J16NDM-YPk4.mp4 (DECORDError('[13:44:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/uvgb_MVPmF4.mp4 (DECORDError('[13:44:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/6mZzB--pat4.mp4 (DECORDError('[13:44:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 240/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000003576278687 grounding_cos=0.9385
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/rWcNhEpJRag.mp4 (DECORDError('[13:45:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/MyrsHPvrBBY.mp4 (DECORDError('[13:45:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/NNeWDl7qxoQ.mp4 (DECORDError('[13:45:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/GF8FUKNuPLo.mp4 (DECORDError('[13:45:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/scJdG086bgg.mp4 (DECORDError('[13:45:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 260/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9765
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/IC03a8kvPhU.mp4 (DECORDError('[13:45:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/UBKG4daNAaQ.mp4 (DECORDError('[13:46:03] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/aeOm9oT0_qk.mp4 (DECORDError('[13:46:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/b7WbQg-4LCY.mp4 (DECORDError('[13:46:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Z7i6M38h3dU.mp4 (DECORDError('[13:46:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/qwa1Q4Qdyko.mp4 (DECORDError('[13:46:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/tCI-xwrr_gQ.mp4 (DECORDError('[13:46:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 280/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999999403953552 grounding_cos=0.9402
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/VUybGxIoxMM.mp4 (DECORDError('[13:46:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/ICw0Y6FSDVI.mp4 (DECORDError('[13:46:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/dUuRZuf5KFg.mp4 (DECORDError('[13:46:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/D0PmPDQpY1E.mp4 (DECORDError('[13:47:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/VBSUf12Wnog.mp4 (DECORDError('[13:47:08] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/TLpsP8pJehI.mp4 (DECORDError('[13:47:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 300/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9570
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/zrKWJc4elOQ.mp4 (DECORDError('[13:47:19] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/4ncG92uEVy4.mp4 (DECORDError('[13:47:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/vmomA2iKSIs.mp4 (DECORDError('[13:47:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/GddMPWUznpk.mp4 (DECORDError('[13:47:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/C46T6IWiFwo.mp4 (DECORDError('[13:47:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/T5RZVNRhUBo.mp4 (DECORDError('[13:47:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/ZvQHy3L7Ff4.mp4 (DECORDError('[13:47:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/ePAI0sI5Z-M.mp4 (DECORDError('[13:48:03] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 320/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9895
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/22_Ke43yIgU.mp4 (DECORDError('[13:48:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/zX1fn56DJHw.mp4 (DECORDError('[13:48:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Ri-ds6VKJg4.mp4 (DECORDError('[13:48:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/9op067bRp9A.mp4 (DECORDError('[13:48:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/dzpYgBJk_0s.mp4 (DECORDError('[13:48:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/wlzEd1F0S4Y.mp4 (DECORDError('[13:48:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 340/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9262
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/FrMkNOgVm-0.mp4 (DECORDError('[13:48:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/gLDz7IvH4HU.mp4 (DECORDError('[13:49:03] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/dF6ntZKChz4.mp4 (DECORDError('[13:49:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/KhKRln1vs9A.mp4 (DECORDError('[13:49:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/7w5xCkEiO6A.mp4 (DECORDError('[13:49:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/sPPxWVGU2Ro.mp4 (DECORDError('[13:49:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/lNCfDw80YSQ.mp4 (DECORDError('[13:49:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/SskF-2mpGCI.mp4 (DECORDError('[13:49:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/IM90prUQlqY.mp4 (DECORDError('[13:49:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/rwP8t2lQXI0.mp4 (DECORDError('[13:49:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 360/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9260
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/MfU-Eh52VFg.mp4 (DECORDError('[13:49:54] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/8S1OVYwoGBQ.mp4 (DECORDError('[13:49:57] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/-MkO3AEHK4Y.mp4 (DECORDError('[13:50:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/sbNdkr9KuIQ.mp4 (DECORDError('[13:50:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/ytkxeYhjup8.mp4 (DECORDError('[13:50:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/fG5oeqbh7_c.mp4 (DECORDError('[13:50:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/4rOegNB6CXg.mp4 (DECORDError('[13:50:59] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 380/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999998807907104 grounding_cos=0.9823
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/otf-f7km56U.mp4 (DECORDError('[13:51:13] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Xa0MscJaPTM.mp4 (DECORDError('[13:51:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Mx5TMVcZnzU.mp4 (DECORDError('[13:51:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 400/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9678
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/fYqGqmoy8qI.mp4 (DECORDError('[13:52:01] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/givOqgEF8Xw.mp4 (DECORDError('[13:52:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/IQhlEYCXDA4.mp4 (DECORDError('[13:52:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 420/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9156
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Npu3G0MWuSo.mp4 (DECORDError('[13:52:54] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/uvvZvLafwQ8.mp4 (DECORDError('[13:52:56] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/GSvTsPjX2D4.mp4 (DECORDError('[13:53:19] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 440/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000003576278687 grounding_cos=0.9464
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/7_-y8KAjfWs.mp4 (DECORDError('[13:53:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/mR5Z2DsedwA.mp4 (DECORDError('[13:53:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/pStxFSBkFDQ.mp4 (DECORDError('[13:53:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/O_i2jeFqsCQ.mp4 (DECORDError('[13:53:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/m_aR033m3kI.mp4 (DECORDError('[13:54:00] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 460/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999999403953552 grounding_cos=0.9803
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/HAplQvSs_hQ.mp4 (DECORDError('[13:54:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/pmlRRVUhRHM.mp4 (DECORDError('[13:54:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/CJs0SPOnRmg.mp4 (DECORDError('[13:54:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Kz3M_kw6oGQ.mp4 (DECORDError('[13:54:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 480/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9649
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/lv8elRv03u0.mp4 (DECORDError('[13:55:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/gTpQcw2IXtw.mp4 (DECORDError('[13:55:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 500/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9587
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/GIbu4VTCQF8.mp4 (DECORDError('[13:55:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/IET_tUu8u0Y.mp4 (DECORDError('[13:56:10] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/QUNmycJNpIE.mp4 (DECORDError('[13:56:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/TVw55EP9LYY.mp4 (DECORDError('[13:56:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/I0gPws4B-_4.mp4 (DECORDError('[13:56:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 520/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999997615814209 grounding_cos=0.9811
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/iKcETp5BbAo.mp4 (DECORDError('[13:56:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/iIXubV-fD5k.mp4 (DECORDError('[13:57:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Kg8GW7DhKeI.mp4 (DECORDError('[13:57:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/hUrk26CM-uc.mp4 (DECORDError('[13:57:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/fOzWzzN7sBQ.mp4 (DECORDError('[13:57:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [train] 540/549 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9208
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Y05AKSPwElU.mp4 (DECORDError('[13:57:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/2OrFHiDWxZ4.mp4 (DECORDError('[13:57:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[MHC/train] saved N=549 guard=0 empty=0 grecon_cos_min=0.9999995231628418 grecon_maxabs_max=0.0 grounding_present_median=0.9605 grounding_VOID=False placebo_median=0.9711 placebo_VOID=False -> /data/jehc223/RGCL/data/CLIP_Embedding/MHC/grounded_qwen7b_8f/train_grounded.pt
+[W2-A extract] --- MHC / val (outname dev_seen) ---
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/ZZOSLjm0LqE.mp4 (DECORDError('[13:58:01] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/0BqXuLbTxks.mp4 (DECORDError('[13:58:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/VFGkut1nqF0.mp4 (DECORDError('[13:58:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/RPf2D-N7sSs.mp4 (DECORDError('[13:58:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/T1fp3aNf93g.mp4 (DECORDError('[13:59:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [val] 20/80 new (skip 0 done, 0 guard, 20 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9428
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/vJ_kVd__NBo.mp4 (DECORDError('[13:59:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/MmqgRbGKWrM.mp4 (DECORDError('[13:59:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/BjWYvE7TWok.mp4 (DECORDError('[13:59:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/6YJlcoEadZ0.mp4 (DECORDError('[13:59:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/XWrKWANI2ZU.mp4 (DECORDError('[14:00:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [val] 40/80 new (skip 0 done, 0 guard, 40 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9703
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/_0W4cgpQDbY.mp4 (DECORDError('[14:00:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/LJZOcfIX4kk.mp4 (DECORDError('[14:00:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/1fglv1fiibc.mp4 (DECORDError('[14:00:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/cclrUXh1IBo.mp4 (DECORDError('[14:00:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/cME9naxSvoc.mp4 (DECORDError('[14:00:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/kec4e6w697w.mp4 (DECORDError('[14:01:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/6WSRaKFyeYI.mp4 (DECORDError('[14:01:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/lpH2cbkr82M.mp4 (DECORDError('[14:01:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [val] 60/80 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9022
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/JRHKZYFHVJ0.mp4 (DECORDError('[14:01:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/cLF-B7u3kNE.mp4 (DECORDError('[14:01:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/uw_doUh2HHE.mp4 (DECORDError('[14:01:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/AIqIN75NS-0.mp4 (DECORDError('[14:01:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [val] 80/80 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999998807907104 grounding_cos=0.9378
+[MHC/dev_seen] saved N=80 guard=0 empty=0 grecon_cos_min=0.9999997019767761 grecon_maxabs_max=0.0 grounding_present_median=0.9609 grounding_VOID=False placebo_median=0.9709 placebo_VOID=False -> /data/jehc223/RGCL/data/CLIP_Embedding/MHC/grounded_qwen7b_8f/dev_seen_grounded.pt
+[W2-A extract] --- MHC / test (outname test_seen) ---
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/WYJ3_pvq0aw.mp4 (DECORDError('[14:02:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/71zppfNBrMY.mp4 (DECORDError('[14:02:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/GM0X46DYdwU.mp4 (DECORDError('[14:02:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/klirgVzagPM.mp4 (DECORDError('[14:02:57] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] 20/161 new (skip 0 done, 0 guard, 20 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9289
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/YDEsYXYlB8o.mp4 (DECORDError('[14:03:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/dazAmRoS17Y.mp4 (DECORDError('[14:03:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/uye-VeVA3LY.mp4 (DECORDError('[14:03:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/1HYp_bfklBI.mp4 (DECORDError('[14:03:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/T9OlXnaLiTo.mp4 (DECORDError('[14:03:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/UeRqjzlI4jY.mp4 (DECORDError('[14:03:56] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] 40/161 new (skip 0 done, 0 guard, 40 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.8848
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/-cgm2EZcLC8.mp4 (DECORDError('[14:04:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Jocr_4Py5-U.mp4 (DECORDError('[14:04:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/WETQcPxy7y0.mp4 (DECORDError('[14:05:05] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/sYpThqzEIVE.mp4 (DECORDError('[14:05:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/yjNHjAZPs9Y.mp4 (DECORDError('[14:05:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] 60/161 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9310
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/rlJYN0JNSJs.mp4 (DECORDError('[14:05:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/8G6jryooPXY.mp4 (DECORDError('[14:05:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/90eY2NKYmzM.mp4 (DECORDError('[14:05:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/suVF3Skd0bo.mp4 (DECORDError('[14:06:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/01ygFLVdj8s.mp4 (DECORDError('[14:06:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] 80/161 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=0.9999999403953552 grounding_cos=0.9090
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/ltuGQ7RBmEU.mp4 (DECORDError('[14:06:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/IahCMMYyy4w.mp4 (DECORDError('[14:06:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/LMOHDiG5XQg.mp4 (DECORDError('[14:06:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/xqilG4oMvvI.mp4 (DECORDError('[14:06:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/zh8HoJ0IDUY.mp4 (DECORDError('[14:06:54] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/k9OtaMbK0Ac.mp4 (DECORDError('[14:07:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] 100/161 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9553
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/sVA-q76vNBo.mp4 (DECORDError('[14:07:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/j6tCb7d_py4.mp4 (DECORDError('[14:07:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/Kd_3R1H4YoU.mp4 (DECORDError('[14:07:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] 120/161 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0 grounding_cos=0.9781
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/hYyxxngdwRY.mp4 (DECORDError('[14:08:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/HO8ndDCRe_A.mp4 (DECORDError('[14:08:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/gnDhz9NQP7s.mp4 (DECORDError('[14:08:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[h264 @ 0x464daf80] mmco: unref short failure
+[h264 @ 0x464daf80] mmco: unref short failure
+[h264 @ 0x464daf80] mmco: unref short failure
+[h264 @ 0x464daf80] mmco: unref short failure
+  [test] 140/161 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.000000238418579 grounding_cos=0.9437
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/tjqpB_PPGPo.mp4 (DECORDError('[14:08:54] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/dK43yHIUMKA.mp4 (DECORDError('[14:09:00] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/pOV_1-vWVrE.mp4 (DECORDError('[14:09:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/msWtrZSVUis.mp4 (DECORDError('[14:09:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+[WARN] decord failed for /data/jehc223/RGCL/data/video/MHC/All/03qOelm_dK8.mp4 (DECORDError('[14:09:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot find video stream with wanted index: -1')); trying PyAV.
+  [test] 160/161 new (skip 0 done, 0 guard, 50 placebo); last grecon_cos=1.0000001192092896 grounding_cos=0.9687
+[MHC/test_seen] saved N=161 guard=0 empty=0 grecon_cos_min=0.9999997019767761 grecon_maxabs_max=0.0 grounding_present_median=0.9602 grounding_VOID=False placebo_median=0.9692 placebo_VOID=False -> /data/jehc223/RGCL/data/CLIP_Embedding/MHC/grounded_qwen7b_8f/test_seen_grounded.pt
+[W2-A extract] DONE dataset=MHC in 2133.5s
+[w2a_extract] real run complete for HateMM + MHC (8 frames).
+end=2026-07-16T02:09:48Z

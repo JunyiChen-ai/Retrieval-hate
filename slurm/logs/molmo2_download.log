@@ -1,0 +1,37 @@
+[molmo2] target: /data/jehc223/models/Molmo2-8B-bf16
+[molmo2] small file: config.json
+[molmo2] small file: configuration_molmo2.py
+[molmo2] small file: modeling_molmo2.py
+[molmo2] small file: processing_molmo2.py
+[molmo2] small file: image_processing_molmo2.py
+[molmo2] small file: video_processing_molmo2.py
+[molmo2] small file: preprocessor_config.json
+[molmo2] small file: processor_config.json
+[molmo2] small file: video_preprocessor_config.json
+[molmo2] small file: generation_config.json
+[molmo2] small file: chat_template.jinja
+[molmo2] small file: tokenizer.json
+[molmo2] small file: tokenizer_config.json
+[molmo2] small file: vocab.json
+[molmo2] small file: merges.txt
+[molmo2] small file: added_tokens.json
+[molmo2] small file: special_tokens_map.json
+[molmo2] small file: model.safetensors.index.json
+[molmo2] 8 shards to fetch
+[molmo2] [1/8] downloading model-00001-of-00008.safetensors ...
+[molmo2] [1/8] model-00001-of-00008.safetensors: 4.97 GB fp32 -> 2.49 GB bf16 (31 tensors cast)
+[molmo2] [2/8] downloading model-00002-of-00008.safetensors ...
+[molmo2] [2/8] model-00002-of-00008.safetensors: 4.63 GB fp32 -> 2.32 GB bf16 (48 tensors cast)
+[molmo2] [3/8] downloading model-00003-of-00008.safetensors ...
+[molmo2] [3/8] model-00003-of-00008.safetensors: 4.63 GB fp32 -> 2.32 GB bf16 (48 tensors cast)
+[molmo2] [4/8] downloading model-00004-of-00008.safetensors ...
+[molmo2] [4/8] model-00004-of-00008.safetensors: 4.63 GB fp32 -> 2.32 GB bf16 (48 tensors cast)
+[molmo2] [5/8] downloading model-00005-of-00008.safetensors ...
+[molmo2] [5/8] model-00005-of-00008.safetensors: 4.63 GB fp32 -> 2.32 GB bf16 (48 tensors cast)
+[molmo2] [6/8] downloading model-00006-of-00008.safetensors ...
+[molmo2] [6/8] model-00006-of-00008.safetensors: 4.63 GB fp32 -> 2.32 GB bf16 (48 tensors cast)
+[molmo2] [7/8] downloading model-00007-of-00008.safetensors ...
+[molmo2] [7/8] model-00007-of-00008.safetensors: 4.03 GB fp32 -> 2.01 GB bf16 (434 tensors cast)
+[molmo2] [8/8] downloading model-00008-of-00008.safetensors ...
+[molmo2] [8/8] model-00008-of-00008.safetensors: 2.49 GB fp32 -> 1.24 GB bf16 (1 tensors cast)
+[molmo2] DONE. bf16 model at /data/jehc223/models/Molmo2-8B-bf16 (17.32 GB)

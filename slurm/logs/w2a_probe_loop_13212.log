@@ -1,0 +1,19 @@
+================================================================================
+host=foscsmlprd01.its.auckland.ac.nz jobid=13212 start=2026-07-16T08:49:58Z
+[loop] app=rgcl-w2a-probe-e requested_timeout=3500s soft_budget=3200s
+[loop] https_proxy=http://squid.auckland.ac.nz:3128 http_proxy=http://squid.auckland.ac.nz:3128
+[loop] socks deps OK (python_socks + aiohttp_socks)
+[loop] modal client import OK
+[loop] frozen probe sha256:
+af4a2f9f5b35461173fd82c176bd52c6fc84bf8fc0d09736f938d38d8f6fe06d  scripts/analysis/w2a_probe.py
+================================================================================
+[loop] === chunk 1 launch 2026-07-16T08:49:58Z (budget=3200s) ===
+[loop] chunk 1 app=ap-DHOcJQWtHAVEU2g54M1xyq finished 2026-07-16T09:43:32Z
+[loop] chunk 1 perms-after=230 (prev=-1)
+[loop] === chunk 2 launch 2026-07-16T09:43:38Z (budget=3200s) ===
+[loop] chunk 2 app=ap-7SspMdpMBRJjtfzSWqvnUu finished 2026-07-16T10:37:10Z
+[loop] chunk 2 perms-after=310 (prev=230)
+[loop] === chunk 3 launch 2026-07-16T10:37:19Z (budget=3200s) ===
+[loop] chunk 3 app=ap-RPjOTBQsELsdyyltlbGTxp finished 2026-07-16T11:28:50Z
+[loop] COMPLETE — W2A_PROBE_RESULTS.md present on volume after chunk 3
+[loop] loop finished 2026-07-16T11:28:54Z

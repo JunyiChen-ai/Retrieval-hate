@@ -1,0 +1,20 @@
+================================================================================
+host=foscsmlprd01.its.auckland.ac.nz jobid=13203 start=2026-07-16T06:30:33Z
+ffmpeg=/data/jehc223/miniconda3/envs/ExMRD/bin/ffmpeg  python=/data/jehc223/miniconda3/envs/HateVideo/bin/python
+================================================================================
+preflight ok opensmile 2.6.0
+[apx-extract] N=851 cached=0 todo=851 nproc=8
+[apx-extract] opensmile=2.6.0 feature_set=eGeMAPSv02 level=Functionals n_feat=88
+[apx-extract]  100/851 [58s]
+[apx-extract]  200/851 [127s]
+[apx-extract]  300/851 [190s]
+[apx-extract]  400/851 [253s]
+[apx-extract]  500/851 [311s]
+[apx-extract]  600/851 [378s]
+[apx-extract]  700/851 [435s]
+[apx-extract]  800/851 [498s]
+[apx-extract]  851/851 [530s]
+[apx-extract] DONE feats=(851, 88) n_zero_rows=0 status={'ok': 851} -> /data/jehc223/RGCL/data/audio/HateMM/egemaps_v02_trainval.pt
+[apx-extract] wrote /data/jehc223/RGCL/data/audio/HateMM/egemaps_v02_manifest.json
+[apx-extract] elapsed 530s
+apx eGeMAPS extraction complete jobid=13203 end=2026-07-16T06:39:26Z

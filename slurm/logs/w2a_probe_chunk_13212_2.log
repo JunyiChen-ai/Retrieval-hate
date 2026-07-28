@@ -1,0 +1,46 @@
+✓ Initialized. View run at 
+https://modal.com/apps/jehc223/main/ap-7SspMdpMBRJjtfzSWqvnUu
+✓ Created objects.
+├── 🔨 Created mount /data/jehc223/RGCL/scripts/cloud/modal_probe_runner.py
+├── 🔨 Created mount /data/jehc223/RGCL/src
+├── 🔨 Created mount /data/jehc223/RGCL/scripts/analysis
+├── 🔨 Created function run_probe_cpu.
+└── 🔨 Created function run_probe_gpu.
+[run] EFFECTIVE requested function timeout = 3500s (MODAL_PROBE_TIMEOUT='3500'); app='rgcl-w2a-probe-e'; chunk_budget=3200s
+[run] dispatching scripts/analysis/w2a_probe_cloud_adapter.py on CPU ...
+[run_probe][banner] requested_function_timeout=3500s chunk_budget=3200s cwd=/root exec: /usr/local/bin/python /root/scripts/analysis/w2a_probe_cloud_adapter.py
+[adapter] frozen probe sha256 = af4a2f9f5b35461173fd82c176bd52c6fc84bf8fc0d09736f938d38d8f6fe06d
+[adapter] symlink /data/jehc223/RGCL/data -> /root/data (resolves: True)
+[adapter] symlink /data/jehc223/RGCL/src -> /root/src (resolves: True)
+[adapter] REAL run — CI_NSEED default (150)
+[adapter] exec probe argv: w2a_probe.py --datasets HateMM,MHC --num_frames 8 --n_boot 1000 --out_md /root/data/W2A_PROBE_RESULTS.md --out_json /root/data/w2a_probe_results.json --ci_ckpt /root/data/w2a_ci_ckpt.json
+==============================================================================
+[W2-A probe] datasets=HateMM,MHC topk=20 null_seeds=100 n_boot=1000 CI_NSEED=150 Z_best=8960
+[W2-A probe] N4 fail-closed: train+dev_seen ONLY; expected memory {'HateMM': 851, 'MHC': 629}
+==============================================================================
+[self-test] driving real vote + conditional-info machinery on synthetic data ...
+[self-test] noise-grd oracle Delta(acc) vs concat = +0.3750 (kill branch exercised)
+[self-test] PASS — vote(planted grd>concat), Fano=1.000, oracle>=concat, subset path, CI calib PASS + informative-A dacc=+0.5417, VERDICT=CONDINFO_PROCEED.
+[W2-A probe] resuming K9 checkpoint /root/data/w2a_ci_ckpt.json
+[W2-A probe] --- HateMM ---
+[HateMM] memory N=851 (train u val) D=3584 zero-guard=1 empty-transcript=48
+[run_probe] periodic volume commit at t=240s
+[run_probe] periodic volume commit at t=480s
+[run_probe] periodic volume commit at t=720s
+[run_probe] periodic volume commit at t=960s
+[run_probe] periodic volume commit at t=1200s
+[run_probe] periodic volume commit at t=1440s
+[run_probe] periodic volume commit at t=1680s
+[run_probe] periodic volume commit at t=1920s
+[run_probe] periodic volume commit at t=2160s
+[run_probe] periodic volume commit at t=2400s
+[run_probe] periodic volume commit at t=2640s
+[W2-A probe] --- MHC ---
+[MHC] memory N=629 (train u val) D=3584 zero-guard=0 empty-transcript=0
+[run_probe] periodic volume commit at t=2880s
+[run_probe] periodic volume commit at t=3120s
+[run_probe] SOFT BUDGET 3200s reached -> terminating probe (resumable checkpoint committed to volume; client will relaunch to resume)
+{'script': 'scripts/analysis/w2a_probe_cloud_adapter.py', 'returncode': -15, 'timed_out': True}
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/jehc223/main/ap-7SspMdpMBRJjtfzSWqvnUu

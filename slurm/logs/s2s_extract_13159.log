@@ -1,0 +1,52 @@
+[2026-07-15 11:37:58] [disk_guard] ==== disk_guard start (dry_run=0, sourced=0) ====
+[2026-07-15 11:37:58] [disk_guard] config: THRESHOLD=250G TARGET=250G RGCL_ROOT=/data/jehc223/RGCL B2_PREFIX=b2:junyi-data/RGCL_video
+[2026-07-15 11:37:58] [disk_guard] log file: /data/jehc223/RGCL/slurm/logs/disk_guard.log
+[2026-07-15 11:37:58] [disk_guard] current /data usage: 252G (threshold 250G, target 250G).
+[2026-07-15 11:37:58] [disk_guard] usage 252G > threshold 250G: starting reclaim.
+[2026-07-15 11:37:58] [disk_guard] Step (a): rclone VFS cache purge.
+[2026-07-15 11:37:58] [disk_guard]   no rclone vfs* cache dirs present (nothing to do).
+[2026-07-15 11:37:58] [disk_guard]   usage now 252G still > target 250G: continuing.
+[2026-07-15 11:37:58] [disk_guard] Step (b): HuggingFace cache.
+[2026-07-15 11:37:58] [disk_guard]   HF cache purge skipped (conservative); needs manual review. Set DISK_GUARD_HF_PURGE=1 to allow datasets--*/.locks removal (never models--*).
+[2026-07-15 11:37:58] [disk_guard]   usage now 252G still > target 250G: continuing.
+[2026-07-15 11:37:58] [disk_guard] Step (c): push-verify-prune oldest logging/ checkpoints (mirrored to B2 under logs/).
+[2026-07-15 11:37:58] [disk_guard]   no .pt checkpoints under logging/; nothing to prune.
+[2026-07-15 11:37:58] [disk_guard]   usage now 252G still > target 250G: continuing.
+[2026-07-15 11:37:58] [disk_guard] WARNING: still over target (usage=252G > target 250G) after all SAFE steps.
+[2026-07-15 11:37:58] [disk_guard] WARNING: MANUAL INTERVENTION required — an approved larger offload (e.g. raw datasets or another project) is needed.
+[2026-07-15 11:37:58] [disk_guard] WARNING: this guard will NOT touch raw datasets (Multihateclip/HateMM/ImpliHateVid) or non-project data. Stopping.
+[2026-07-15 11:37:58] [disk_guard] ==== disk_guard end ====
+================================================================================
+host=foscsmlprd01.its.auckland.ac.nz jobid=13159 start=2026-07-14T23:37:58Z
+[s2s_extract] script sha256:
+41979f6a41c95e38a3cd875e11dc54a5a48eac9a5b908f295bad4d8d051cd23a  scripts/analysis/s2s_extract.py
+2dc0f90b03a44f45945cab3194f78ec97012fe7b157727cd50f64d88d56665dc  scripts/slurm/s2s_extract.sbatch
+[s2s_extract] NUM_FRAMES=8 SMOKE=1
+NVIDIA A100-SXM4-80GB, 81920 MiB
+================================================================================
+[s2s_extract] SMOKE run: --limit 1 -> throwaway /data/jehc223/RGCL/slurm/logs/s2s_smoke_out_13159 (G-recon skipped)
+==============================================================================
+[S2S extract] script sha256 = 41979f6a41c95e38a3cd875e11dc54a5a48eac9a5b908f295bad4d8d051cd23a
+[S2S extract] config: dataset=HateMM splits=train,val,test num_frames=8 device=cuda limit=1 out_root=/data/jehc223/RGCL/slurm/logs/s2s_smoke_out_13159
+[S2S extract] model=Qwen/Qwen2.5-VL-7B-Instruct max_pixels=151200 dtype=bfloat16 attn=sdpa transformers=4.49.0
+[S2S extract] parity-by-import from /data/jehc223/RGCL/src/utils/generate_VideoMLLM_embedding_HF.py (sha256 d89a912602d763aa055a54f50b0188e302e554b70ff6c0eb872f250bd454b67c)
+==============================================================================
+[S2S extract] loading model ...
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:00,  4.55it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:00<00:00,  5.59it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:00<00:00,  5.93it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:00<00:00,  5.94it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.44it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:00<00:00,  6.05it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.48, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+[gate 0a] temporal positive control: encoding 2 synthetic 4-pair clips ...
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/s2s_extract.py", line 519, in <module>
+    main()
+  File "/data/jehc223/RGCL/scripts/analysis/s2s_extract.py", line 504, in main
+    temporal_positive_control(processor, model, device)
+  File "/data/jehc223/RGCL/scripts/analysis/s2s_extract.py", line 259, in temporal_positive_control
+    ra = encode_frameset(clip(order_a), processor, model, device, banked_vec=None)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/s2s_extract.py", line 199, in encode_frameset
+    recon_mean = (g * n_t_t[:, None]).sum(0).add(p_S).div(float(end))
+                  ~~^~~~~~~~~~~~~~~~
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!
