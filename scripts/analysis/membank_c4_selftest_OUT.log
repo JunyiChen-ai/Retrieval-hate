@@ -1,0 +1,22 @@
+    [synthA/synthetic] fold 0 dep 0.6071 sel=C4_pca_rfull d_sel +0.2358 best_cell C4_pca_r1 +0.2358 (0.5s)
+    [synthA/synthetic] fold 1 dep 0.6214 sel=C4_pca_rfull d_sel +0.2215 best_cell C4_pca_r2 +0.2357 (0.5s)
+    [synthA/synthetic] fold 2 dep 0.6143 sel=C4_pca_r3 d_sel +0.2000 best_cell C4_pca_r1 +0.2000 (0.5s)
+    [synthA/synthetic] fold 3 dep 0.6286 sel=C4_pca_r1 d_sel +0.1571 best_cell C4_pca_r1 +0.1571 (0.5s)
+    [synthA/synthetic] fold 4 dep 0.6187 sel=C4_ridge_g1.0 d_sel +0.2158 best_cell C4_pca_r2 +0.2374 (0.4s)
+  SELFTEST A: n 699 dep 0.6180  d_C4_sel +0.2060  best C4_ridge_g0.1 +0.2103  mixed 0.7454  sel ['C4_pca_rfull', 'C4_pca_rfull', 'C4_pca_r3', 'C4_pca_r1', 'C4_ridge_g1.0']
+    [synthB/synthetic] fold 0 dep 0.5500 sel=C4_pca_r2 d_sel -0.0143 best_cell C4_pca_r3 +0.0000 (0.6s)
+    [synthB/synthetic] fold 1 dep 0.5286 sel=C4_ridge_g0.1 d_sel +0.0071 best_cell C4_pca_r5 +0.0643 (0.6s)
+    [synthB/synthetic] fold 2 dep 0.6357 sel=C4_pca_r5 d_sel -0.0214 best_cell C4_ridge_g1.0 -0.0143 (0.6s)
+    [synthB/synthetic] fold 3 dep 0.5714 sel=C4_ridge_g1.0 d_sel -0.0571 best_cell C4_pca_r3 +0.0143 (0.6s)
+    [synthB/synthetic] fold 4 dep 0.5612 sel=C4_pca_r5 d_sel +0.0143 best_cell C4_pca_r5 +0.0143 (0.6s)
+  SELFTEST B: n 699 dep 0.5694  d_C4_sel -0.0143  best C4_pca_r5 +0.0143  mixed 1.0000  sel ['C4_pca_r2', 'C4_ridge_g0.1', 'C4_pca_r5', 'C4_ridge_g1.0', 'C4_pca_r5']
+    [synthC/synthetic] fold 0 dep 0.9071 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r2 -0.0214 (0.6s)
+    [synthC/synthetic] fold 1 dep 0.9071 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r5 -0.0214 (0.6s)
+    [synthC/synthetic] fold 2 dep 0.9286 sel=DEPLOYED d_sel -0.0000 best_cell C4_pca_r2 -0.0072 (0.6s)
+    [synthC/synthetic] fold 3 dep 0.8786 sel=DEPLOYED d_sel -0.0000 best_cell C4_ridge_g1.0 -0.0786 (0.6s)
+    [synthC/synthetic] fold 4 dep 0.9137 sel=DEPLOYED d_sel -0.0000 best_cell C4_pca_r5 -0.0432 (0.6s)
+  SELFTEST C: n 699 dep 0.9070  d_C4_sel +0.0000  best C4_pca_r5 -0.0386  mixed 0.9828  sel ['DEPLOYED', 'DEPLOYED', 'DEPLOYED', 'DEPLOYED', 'DEPLOYED']
+  SELFTEST D (rank discrimination): {'cos_class1_max': 0.7071, 'cos_class0_max': 0.8, 'deployed_pred': 0, 'magtwin_max_pred': 0, 'pred': {'C4_pca_r1': 0, 'C4_pca_r2': 1, 'C4_pca_r3': 1, 'C4_pca_r5': 1, 'C4_pca_rfull': 1, 'C4_ridge_g0.001': 1, 'C4_ridge_g0.01': 1, 'C4_ridge_g0.1': 1, 'C4_ridge_g1.0': 1}, 'gap': {'C4_pca_r1': -0.1071, 'C4_pca_r2': 0.5934, 'C4_pca_r3': 0.5934, 'C4_pca_r5': 0.6, 'C4_pca_rfull': 0.6, 'C4_ridge_g0.001': 0.5941, 'C4_ridge_g0.01': 0.5902, 'C4_ridge_g0.1': 0.5318, 'C4_ridge_g1.0': 0.2257}, 'PASS': True}
+  SELFTEST B permutation: {'n_perm': 100, 'observed': -0.0143, 'p': 0.7327, 'null_mean': -0.007969, 'null_sd': 0.012839, 'frac_null_ge_0': 0.39}
+  SELFTEST VERDICT {'A_clear_positive': True, 'B_honest_null': True, 'C_returns_floor_bit_exact': True, 'D_rank_discrimination': True}
+DONE -> scripts/analysis/membank_c4_selftest_OUT.json (110s)

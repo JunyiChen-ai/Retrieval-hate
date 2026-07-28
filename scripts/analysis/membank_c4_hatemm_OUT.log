@@ -1,0 +1,26 @@
+    [hatemm/fused] fold 0 dep 0.7987 sel=C4_ridge_g1.0 d_sel -0.0202 best_cell C4_ridge_g1.0 -0.0202 (0.6s)
+    [hatemm/fused] fold 1 dep 0.8322 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r2 -0.0872 (0.6s)
+    [hatemm/fused] fold 2 dep 0.8926 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r3 -0.0335 (0.6s)
+    [hatemm/fused] fold 3 dep 0.8255 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r1 +0.0201 (0.6s)
+    [hatemm/fused] fold 4 dep 0.8716 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r2 +0.0000 (0.6s)
+    [hatemm/fused] PARITY-ARENA 10/10
+    [hatemm/fused] PARITY-IMPL 5/5 folds bit-exact (max score |delta| 1.11e-16)
+    [hatemm/fused] PARITY-RECON (reported) declared>=0 0.8414/0.9973 | recon>0 0.8441/0.9973 | target 0.8427/0.996 | ties 2
+  [hatemm/fused] dep 0.8441  C4_sel -0.0040  oracle C4_ridge_g1.0 net -20 (need 8/23)
+    [hatemm/text] fold 0 dep 0.8054 sel=C4_ridge_g1.0 d_sel +0.0268 best_cell C4_pca_r2 +0.0335 (0.5s)
+    [hatemm/text] fold 1 dep 0.8322 sel=C4_ridge_g1.0 d_sel -0.0067 best_cell C4_pca_r1 +0.0067 (0.6s)
+    [hatemm/text] fold 2 dep 0.8792 sel=C4_pca_r5 d_sel -0.0067 best_cell C4_pca_rfull -0.0000 (0.6s)
+    [hatemm/text] fold 3 dep 0.8188 sel=C4_ridge_g1.0 d_sel +0.0201 best_cell C4_ridge_g1.0 +0.0201 (0.6s)
+    [hatemm/text] fold 4 dep 0.8851 sel=C4_ridge_g1.0 d_sel +0.0135 best_cell C4_pca_r3 +0.0203 (0.6s)
+    [hatemm/text] PARITY-ARENA 10/10
+    [hatemm/text] PARITY-IMPL 5/5 folds bit-exact (max score |delta| 1.11e-16)
+  [hatemm/text] dep 0.8441  C4_sel +0.0094  oracle C4_pca_r3 net 6 (need 8/23)
+    [hatemm/img] fold 0 dep 0.7315 sel=DEPLOYED d_sel +0.0000 best_cell C4_ridge_g1.0 -0.0067 (0.7s)
+    [hatemm/img] fold 1 dep 0.7718 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r5 +0.0336 (0.7s)
+    [hatemm/img] fold 2 dep 0.8389 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r5 -0.0268 (0.7s)
+    [hatemm/img] fold 3 dep 0.7450 sel=DEPLOYED d_sel -0.0000 best_cell C4_pca_r1 +0.0268 (0.6s)
+    [hatemm/img] fold 4 dep 0.7568 sel=DEPLOYED d_sel -0.0000 best_cell C4_pca_r2 -0.0406 (0.7s)
+    [hatemm/img] PARITY-ARENA 10/10
+    [hatemm/img] PARITY-IMPL 5/5 folds bit-exact (max score |delta| 1.11e-16)
+  [hatemm/img] dep 0.7688  C4_sel +0.0000  oracle C4_ridge_g1.0 net -12 (need 8/23)
+DONE -> scripts/analysis/membank_c4_hatemm_OUT.json (22s)

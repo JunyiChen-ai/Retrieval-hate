@@ -1,0 +1,26 @@
+    [en/fused] fold 0 dep 0.7091 sel=DEPLOYED d_sel -0.0000 best_cell C4_ridge_g0.1 +0.0364 (0.5s)
+    [en/fused] fold 1 dep 0.7545 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_rfull -0.0090 (0.5s)
+    [en/fused] fold 2 dep 0.8091 sel=C4_pca_r5 d_sel -0.0546 best_cell C4_ridge_g1.0 -0.0182 (0.5s)
+    [en/fused] fold 3 dep 0.8182 sel=DEPLOYED d_sel -0.0000 best_cell C4_pca_r2 -0.0455 (0.5s)
+    [en/fused] fold 4 dep 0.8073 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r1 -0.0183 (0.5s)
+    [en/fused] PARITY-ARENA 10/10
+    [en/fused] PARITY-IMPL 5/5 folds bit-exact (max score |delta| 1.11e-16)
+    [en/fused] PARITY-RECON (reported) declared>=0 0.776/0.9964 | recon>0 0.7778/0.9982 | target 0.7778/0.9982 | ties 3
+  [en/fused] dep 0.7796  C4_sel -0.0109  oracle C4_ridge_g0.1 net -13 (need 6/17)
+    [en/text] fold 0 dep 0.8273 sel=DEPLOYED d_sel -0.0000 best_cell C4_pca_r1 -0.0000 (0.5s)
+    [en/text] fold 1 dep 0.7636 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r1 -0.0272 (0.4s)
+    [en/text] fold 2 dep 0.8364 sel=DEPLOYED d_sel -0.0000 best_cell C4_ridge_g1.0 -0.0728 (0.4s)
+    [en/text] fold 3 dep 0.8273 sel=DEPLOYED d_sel -0.0000 best_cell C4_pca_r3 -0.0546 (0.4s)
+    [en/text] fold 4 dep 0.7982 sel=DEPLOYED d_sel -0.0000 best_cell C4_pca_rfull -0.0551 (0.4s)
+    [en/text] PARITY-ARENA 10/10
+    [en/text] PARITY-IMPL 5/5 folds bit-exact (max score |delta| 1.11e-16)
+  [en/text] dep 0.8106  C4_sel -0.0000  oracle C4_ridge_g1.0 net -25 (need 6/17)
+    [en/img] fold 0 dep 0.7000 sel=DEPLOYED d_sel +0.0000 best_cell C4_pca_r1 -0.0364 (0.5s)
+    [en/img] fold 1 dep 0.7000 sel=C4_pca_r3 d_sel -0.0091 best_cell C4_pca_r2 +0.0273 (0.5s)
+    [en/img] fold 2 dep 0.6818 sel=C4_pca_r1 d_sel -0.0363 best_cell C4_pca_rfull +0.0000 (0.5s)
+    [en/img] fold 3 dep 0.7273 sel=DEPLOYED d_sel -0.0000 best_cell C4_ridge_g0.1 -0.0455 (0.5s)
+    [en/img] fold 4 dep 0.6881 sel=C4_pca_r3 d_sel -0.0092 best_cell C4_pca_r1 +0.0091 (0.5s)
+    [en/img] PARITY-ARENA 10/10
+    [en/img] PARITY-IMPL 5/5 folds bit-exact (max score |delta| 1.11e-16)
+  [en/img] dep 0.6995  C4_sel -0.0110  oracle C4_ridge_g0.1 net -11 (need 6/17)
+DONE -> scripts/analysis/membank_c4_en_OUT.json (15s)
