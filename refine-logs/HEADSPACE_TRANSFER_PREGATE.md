@@ -31,9 +31,18 @@ read). Not opened this pass: `PROVENANCE_AUDIT_2026-07-28.md`, `MEMBANK_C4_PREGA
 
 Nearly every verdict of the last three days was rendered in the **banked RAW fused key space**
 (`l2n(concat(l2n(img), l2n(text)))`, 7168-d) under 5-fold item-disjoint train-LOO, via the F89-frozen
-`scripts/analysis/mechfix_ops.py:75-96` (`deployed_vote`): F94 KSWEEP, F95 MECHNOV, F96 RESTRANS,
-F97 VGA, F98 AGGNET, F105 VSW, F112 MEMBANK-C4. **The deployed system retrieves in the trained head's
-1024-d space, not in that one.**
+`scripts/analysis/mechfix_ops.py:75-96` (`deployed_vote`): **F95 MECHNOV, F96 RESTRANS, F97 VGA,
+F98 AGGNET, F105 VSW, F112 MEMBANK-C4** — six verdicts, each verified at source
+(`mechnov_pairverify.py:21-25`; `RESTRANS_PREGATE_RECORD.md:54-58`; `VGA_PREGATE_RECORD.md:80-81`;
+`AGGNET_PREGATE_RECORD.md:77`; `VSW_PREGATE_RECORD.md` §3.1; F112's own ledger row).
+**The deployed system retrieves in the trained head's 1024-d space, not in that one.**
+
+> **Correction to the commissioning brief, re-verified at source: F89/MECHFIX and F94/KSWEEP are NOT
+> raw-arena verdicts.** `scripts/analysis/mechfix_ops.py:16-17` names *the trained head's fused
+> embedding* as its key space, and `KSWEEP_RECORD.md:74-76` records that F94 replayed the **banked
+> ERRPAT proxy-head dumps on the test split**. Both are already head-space, held-out measurements.
+> That is useful rather than awkward: it gives this record two **independent head-space anchors** to
+> validate its new arena against (§4.10 rungs 3-4), and both agree with it cell for cell.
 
 The reason raw was used is real and is stated in the frozen module itself
 (`scripts/analysis/mechnov_pairverify.py:21-25`):
@@ -273,8 +282,8 @@ ladder of raw-space effect sizes put through the same head space**:
 |---|---|---|
 | **1** | **VSW `pow`** (F105) | **+0.0255** — PRIMARY |
 | 2 | F95 nominate-and-verify, `mlp_max` / `mlp_mean3` | −0.0040 / +0.0054 recorded, +0.0027 / +0.0107 same-session anchor (`VSW_PREGATE_RECORD.md` §4.3) |
-| 3 | F94 fixed-k profiles `k ∈ {1,2,3,5,7,10,15,20}` | the k-sweep F94 closed |
-| 4 | F89 MECHFIX eval-time operators T1 / T2a / T2b / T4, run through `mechfix_ops` unmodified | the calibration/geometry family |
+| 3 | the fixed-k profiles `k ∈ {1,2,3,5,7,10,15,20}` (F105's own DEG-B twins, computed in **both** arenas) | the k-sweep — with **F94's head-space TEST reads as an independent anchor** |
+| 4 | F89 MECHFIX eval-time operators T1 / T2a / T2b / T4, run through `mechfix_ops` unmodified | the calibration/geometry family — with **F89's head-space TEST reads as an independent anchor** |
 
 Rungs 2-4 are **secondary**, cannot carry a bar, and exist so the transfer question is answered with a
 monotone ladder rather than a single point.
@@ -650,14 +659,39 @@ that emitter). **Secondary — cannot carry a bar.**
    (`VSW_PREGATE_RECORD.md` §4.3: HateMM × MLP × mean-top-3, **+0.0107**) reads **−0.0641** in head
    space. The environment-conditioned "0 of 36" count debate (`PREGATE_DETERMINISM_CLAUSE.md` §3) is
    **moot in the space the system deploys in**.
-3. **Rung 4 is an independent validation of the fold-head arena itself.** `MECHFIX_PREGATE_2026-07-27.md`
+3. **Rungs 3 AND 4 are independent validations of the fold-head arena itself, against the two banked
+   verdicts that were already measured in head space on TEST.**
+
+   **Rung 3 — the k grid, 8 points.** `KSWEEP_RECORD.md` §3 (HateMM, 3 seeds, n = 215, ERRPAT proxy
+   heads, **test**) vs this record's head-space **train-fold** arena vs F105's **raw** arena:
+
+   | k | **F94 head-space TEST** (val-sel / final) | **HEAD-FOLD (here, 3-seed)** | **RAW (F105 DEG-B twins)** |
+   |---|---|---|---|
+   | 1 / 2 / 3 | **−0.0357 / −0.0388** | **−0.0332** | **−0.0430** |
+   | 5 | −0.0062 | −0.0040 | −0.0054 |
+   | 7 | +0.0000 | −0.0023 | **−0.0121** |
+   | 10 | **+0.0000** | **−0.0031** | **+0.0027** |
+   | 15 | **+0.0000** | **−0.0004** | **+0.0040** |
+   | 20 | — (incumbent) | 0.0000 | 0.0000 |
+
+   **The head-fold arena tracks F94's head-space test reads across the whole grid** (max discrepancy
+   0.0056 at k = 1-3, i.e. ~1 test item), while the **raw** arena is the outlier at exactly the two
+   points where a lead could have been claimed: it reports **+0.0027 / +0.0040** at k = 10/15 where
+   both head-space arenas report **0.0000 / −0.0031 / −0.0004**. This is a third, fully independent
+   demonstration of the same one-sidedness — on an operator family that has nothing to do with
+   verifiers.
+
+   **Rung 4 — the MECHFIX operators.** `MECHFIX_PREGATE_2026-07-27.md`
    §4.1 measured the same four operators in the deployed head space on the **test** split with proxy
    heads: HateMM T1 **+0.0000**, T2a **+0.0000**, T2b **−0.0078**, T4 **−0.0046**. This record's
    head-space *train-fold* arena reads **+0.0000 / −0.0004 / +0.0027 / +0.0054**. **T1 and T2a are
    inert in both; T2b and T4 are sub-0.008 and sign-unstable in both. The verdicts agree cell for
-   cell**, which is what a usable screen looks like — and note this is a **head→head** comparison,
-   which is the comparison that agrees, while the **raw→head** comparisons above are the ones that do
-   not.
+   cell.**
+
+   **The pattern across rungs 3 and 4 is the record's strongest single piece of evidence:
+   head → head agrees (12 of 12 cells at the verdict level, over two unrelated operator families and
+   two independent banked records); raw → head does not.** The new fold-head arena is validated
+   against measurements it did not produce and could not have been tuned to.
 
 **Correction to the tasking's premise, carried from §2.10:** F89/MECHFIX was **not** a raw-arena
 verdict. `mechfix_ops.py:16-17` names the trained head's fused embedding as its key space and
@@ -838,6 +872,13 @@ Measured, this session, on 2 datasets × 3 head seeds, over 21 operator cells (�
   and generalises **worse than the plain cosine** (`d_AUC` −0.064 / −0.129), inverting the raw arena's
   +0.157 / +0.230. Both legs make the raw arena systematically **more permissive** than head space.
 
+**Corroborated by two banked head-space records this arena did not produce** (§4.10 rungs 3-4): the
+F89/MECHFIX operators and the 8-point k grid read the same in this head-fold arena as they do in
+`MECHFIX_PREGATE_2026-07-27.md` §4.1 and `KSWEEP_RECORD.md` §3, which measured them in the deployed
+head space on **test**. **Head → head agrees on 12 of 12 cells across two unrelated operator families;
+raw → head does not** — and at k = 10/15 the raw arena is the lone reporter of a positive
+(+0.0027 / +0.0040) that neither head-space arena sees.
+
 **A screen that over-reports effect sizes cannot manufacture a false kill.** So the practical reading
 is that **every raw-space closure of the last three days is MORE secure than it was, not less** — and
 the campaign's raw-arena leads were the part that needed checking. There was exactly one, and it is
@@ -859,7 +900,7 @@ arena's *positives* do not survive, which is the direction the campaign was actu
 | **1** | **F105/VSW's `+0.0255` quoted as a NEAR-MISS** (*"1.2× under the +0.030 bar"*, *"permutation-validated p = 0.0050"*, *"the largest honest raw-arena effect the campaign has produced"*) | **Large.** In the deployed head space the same operator on the same items gives **+0.0009**, p = **0.0968**, below the null maximum, ceiling +0.0072. The near-miss framing is a **property of the raw arena, not of the method.** | **F105's VERDICT (KILL) is unchanged and is now over-determined.** K-VSW-1 was missed in raw and is missed by 33× in head space. K-VSW-2's outcome (b) — the aggregation axis closed across the sharpness continuum — holds a fortiori (§4.9). | **RE-SCOPE, do not re-open.** Wherever +0.0255 is quoted, add *"raw train-LOO arena; head-space transfer measured at +0.0009 (F113)"*. No GPU, no test touch, no new run. |
 | **2** | **F95's control-1 datum** *"the verifier carries ordering information the cosine does not: +0.1572 / +0.2302 / +0.1785, 5/5 fold signs, 18/18 cells"* — cited in `LITSWEEP6_RELGEN`, F97 and F105 as the reason the relational asset is real | **Large in scope, zero in verdict.** The quantity **inverts sign** in the deployed space on **2 of 2** datasets and **30 of 30** fold cells (−0.0643 / −0.1294), with the verifier at 0.9999 in-sample. The claim *"trained pair relations beat the cosine"* is **true in the raw encoder space and false in the deployed space.** | F95's KILL, F97's K-VGA-3 (a within-session **relative** comparison), and the *"analysis-grade only"* routing of the relational asset all stand — indeed K-VGA-3's conclusion is strengthened, since the verifier features get worse where the deployed system lives. | **RE-SCOPE.** Any paper sentence asserting the relation score is informative must say *"in the raw encoder key space"*. `$0`. |
 | **3** | **F89/MECHFIX T4 on MHC-ZH, +0.0067**, described by its own record as *"the best number in the battery"* | **Moderate.** A second, independent head-space arena (train-fold, 3 seeds) gives **−0.0063** — same magnitude, opposite sign. | Its own record already ruled it *"sub-bar positive, not a lead"*, *"inside the ±0.014 seed band"*, *"not 3/3 on mF1"*. The MECHFIX verdict (0 of 15 cells clears) is unchanged. | **ANNOTATE.** Add the second-arena sign disagreement as evidence that the +0.0067 is seed/arena noise. `$0`. |
-| **4** | **F94/KSWEEP's residual reading that k=10-15 is marginally better than k=20** (+0.0027 / +0.0040 raw) | **Small.** Head space: −0.0031 / −0.0004. The residual dies. | F94's kill of the k axis is unchanged and now measured in the deployed space too. | **ANNOTATE.** `$0`. |
+| **4** | **The raw arena's residual reading that k=10-15 beats k=20** (+0.0027 / +0.0040, F105's DEG-B twins) | **Small, and it was never F94's claim.** Head-fold arena −0.0031 / −0.0004; **F94's own head-space TEST reads are +0.0000 / +0.0000** (`KSWEEP_RECORD.md` §3). The raw arena is the outlier of the three. | **F94's verdict is untouched** — it was measured in head space on test, not in raw, and this record reproduces it (§4.10 rung 3). | **NO ACTION on F94.** Annotate the raw-arena k-profile numbers as arena-specific. `$0`. |
 | **5** | **F96/RESTRANS, F97/VGA, F98/AGGNET, F112/MEMBANK-C4** | **None identified.** All four rest on a kill, on a degeneracy control firing, or on a within-session relative comparison. F98's decisive bar was missed by >2×; the shrink direction measured here can only widen that. | everything | **DO NOT RE-OPEN.** |
 | **6** | **F108/STREAMCOMP's raw-arena stream deltas** (ZH +0.0156, EN +0.0310) | **Supported, not overturned.** This record is a third and fourth matched pair in the same direction and supplies the *mechanism* F108 could only observe. | F108's conclusion (the instrument is unvalidated) — now upgraded from "unvalidated" to "characterised, one-sided". | **CITE, no action.** |
 
