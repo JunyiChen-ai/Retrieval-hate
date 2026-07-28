@@ -505,3 +505,19 @@ affected. `scripts/slurm/train_{p4aux,p5cf,p8sum}.sbatch` already `find … -del
 Logic exercised standalone across 5 cases before commit (prune-30-keep-2; `--keep_epoch_ckpts
 True` restores old behaviour; selected == final; `best_epoch_path is None`; all-files-missing
 idempotence) — all passed, with `best_model_*`/`last_model_*` untouched in every case.
+
+### 9.5 Commit provenance (note)
+
+The three changes of §9.1–§9.4 (`refine-logs/DISK_FORENSICS_2026-07-28.md` §9,
+`scripts/disk_guard.sh`, `src/run_rac.py`) were staged individually but landed inside commit
+**`06c4719`** — a *different* agent's concurrent `ERRATUM (F109)` commit, which staged the whole
+working tree and absorbed them before this agent's own `git commit` ran (that commit then found
+an empty index and was a no-op). The content is intact and byte-identical to what was staged
+(93 + 7 + 50 lines); only the commit message attribution was lost. History was deliberately **not**
+rewritten, since other agents were committing concurrently and a rebase or amend would have
+endangered their work.
+
+**Infra lesson (repeat of a known hazard):** with multiple agents committing to one working tree,
+`git add -A` / `git commit -a` silently captures other agents' staged work. The house rule "stage
+only your own paths, never `git add -A`" is what prevents this, and it was not honoured by the
+concurrent commit.
