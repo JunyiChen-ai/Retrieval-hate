@@ -614,6 +614,49 @@ falsification test and it is the only experiment this sweep recommends.
 
 ---
 
+## §6b. POST-FREEZE ADDENDA (2026-07-28, after this record was first written and committed at `2e2805f`)
+
+Three pieces of evidence landed after §0-§7 were frozen. **Nothing above was edited**; the additions are
+recorded here so the ordering is auditable.
+
+**A1 — §2 Result A is confirmed in the DEPLOYED HEAD SPACE.** `refine-logs/HEADCOV_PREGATE_RECORD.md`
+(F107) ran the §5.3 falsification, with bars frozen before any treatment number. Result A's decision
+identity is **1.0000** on MHC-ZH dev (0/78 differing items in each of 3 seeds, final epoch; 0.9989 over all
+90 seed×epoch cells, min 0.9872), and Result B's coverage(20) is **0.9829**, bounding the pool-expansion
+oracle at **+0.0171** — so **§5.1's kill of CAND-A stands in the space the system actually retrieves in**,
+and the pre-registered falsifier K-HC-2 did not fire. Two honest scope notes: HateMM and MHC-EN are **out
+of scope by instrument availability** (all deployed head checkpoints are deleted — 97 empty `ckpt/` dirs,
+0 of 9 P2-era ckpts extant, which confirms and *extends* F78 beyond HateMM), and the head-space identity
+is **forced by collapse** (spread 1.95e-04 vs `M`'s smallest step 0.0095), so the *mechanism* evidence for
+"this is a property of the decision rule" remains the **raw**-arena measurement in §2, not the head-space one.
+
+**A2 — §2 Result A is independently corroborated in the raw arena.**
+`refine-logs/VSW_ASYMMETRY_RECON.md` §5 deletes the cosine magnitude from the deployed vote outright
+(`cos_i := 1`) and measures Δacc **−0.0013 / +0.0000 / −0.0018** at **99.60 / 99.65 / 99.82 %** agreement
+with the deployed decision. That is the same conclusion as §2 Result A, reached by a different agent with
+a different operator. **Three independent measurements across two arenas now support the kernel argument.**
+
+**A3 — §3.1's Samworth citation has become a measurement (F105/VSW, commit `e9a17fe`).** VSW's
+pre-declared door-closer, outcome (b) — "the exchange rate is bounded below 1 across the continuum" — was
+measured **FALSE**: the exchange rate reaches **6.0** on HateMM (against F95's best-of-36-cells 1.1667) and
+VSW *still* fails. The corrected law is **`net = changed × (2·precision − 1)`**, with precision decaying
+monotonically as sharpness rises (HateMM 0.8571 at 21 changed → 0.5696 at 79 changed), pinning the net to
+**+11…+21 items across a 16 384× λ range**. **This is §3.1's theorem at finite `n`.** VSW's λ-continuum is
+a search over exactly the weighted-NN family Samworth optimises analytically; Samworth says the family's
+best member beats uniform by an amount that vanishes as `d → ∞`, and VSW measures that the best member's
+*net* is capped below the bar at every point *even where its per-item exchange rate is excellent*. A high
+rate with a capped net is what a vanishing weighting advantage looks like when it can only be spent on a
+shrinking population. **Anyone citing "the exchange rate never exceeds ~1.2" as a law of this system must
+stop** — that was withdrawn by F105.
+
+**A4 — determinism scope.** A confirmed defect makes frozen modules reproduce closed-form quantities
+bit-exactly but drift on **trained** ones (44 of 48 in the F95 module; oneDNN/MKL kernel selection).
+**No number in §2 or §2.3 of this record comes from a trained estimator** — they are closed-form numpy
+over banked feature caches — so no tolerance caveat attaches to them. The same holds for every number in
+HEADCOV (F107), which re-fits nothing.
+
+---
+
 ## §7. PROVENANCE AND COMPLIANCE
 
 **In-repo sources read this sweep (all read-only):**
