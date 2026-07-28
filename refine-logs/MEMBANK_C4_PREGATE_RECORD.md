@@ -1007,3 +1007,61 @@ Adding to `AGGNET_PREGATE_RECORD.md` §7.1's list, on this neighbourhood object:
 7. **The MHC-ZH / img hindsight ceiling of +16 net (§4.7) is a real number in a space that cannot
    carry a bar**, on a floor 14.68 points below the deployed one. It is recorded so it is not
    re-discovered as news; it is not offered as a result.
+
+---
+
+## §9. POST-COMMIT UPDATES — two cited premises were superseded within minutes of this record's commit
+
+This record was committed at `4eea267`. Commits `d431782` and `7b466cf` landed immediately after and
+supersede two premises quoted above. Both are recorded here rather than silently left stale; **neither
+changes any number, gate or verdict in this record**, and the reasons are given rather than asserted.
+
+### 9.1 The determinism defect is RESOLVED — it was one unpinned environment variable
+
+§2.8(b) above described the drift as *"residual cause oneDNN/MKL kernel selection"*. That was the
+state of knowledge when §2.8 was written. `PREGATE_DETERMINISM_CLAUSE.md:30-44` (via
+`INSTRUMENT_VALIDATION_RECON.md:649-656`) identifies the actual cause as **`OMP_NUM_THREADS` /
+`MKL_NUM_THREADS` being unset in one driver script**, and reports **630/630 key-by-key parity restored**
+under `OMP_NUM_THREADS=8 MKL_NUM_THREADS=8`.
+
+**Effect on this record: nil, and it was already nil under the stronger prior account.** §2.8(b)'s
+argument was that the affected class — *trained* estimators — is **empty** here, because MEMBANK-C4 is
+training-free and every quantity in the record (eigendecomposition of a ≤ 20 × 20 Gram, residual
+comparison, faiss inner product, exact threshold enumeration, fixed-k votes, flip cost, sign vote) is
+closed-form. That argument survives a strictly weaker defect unchanged. **Disclosure of this record's
+own thread pinning, so it is checkable rather than assumed:** the environment variables were pinned on
+every invocation — `OMP_NUM_THREADS=MKL_NUM_THREADS=8` for the self-test, `=4` for the three main runs
+and `=2` for the three permutation runs (three concurrent processes, ≤ 8 threads aggregate per the
+tasking's constraint), with `torch.set_num_threads(8)` inside the script. They were pinned but at
+**4 and 2 rather than the canonical 8**, so had this record contained a trained estimator its numbers
+would have carried the tolerance. It contains none — which is why PARITY-ARENA (90/90) and
+PARITY-IMPL (45/45 bit-exact, max \|Δ\| 1.11e-16) could be asserted as hard aborts and passed.
+
+### 9.2 The "head memorises train at LOO ≈ 0.998" premise is a **CLIP** number — the arena
+justification in §1.1 and §8 is weaker than stated
+
+`INSTRUMENT_VALIDATION_RECON.md` §0.2 measures the *deployed Qwen* heads' own train-split LOO accuracy
+at **0.9406 / 0.8915 / 0.8154**, not 0.998; the 0.998 figure is F47's **CLIP** head
+(`directions_tried.json:171`), and it has been repeated verbatim in four sibling records including the
+two this pregate inherited from. §1.1 and §8 of this record repeat it too, and that repetition is
+**wrong and is corrected here**.
+
+**Effect on this record: the verdict is untouched, but one argument is downgraded and one is not.**
+
+* **Downgraded.** "A train-side screen in head space measures memorisation" is a weaker claim at
+  Qwen-head LOO 0.82–0.94 than at 0.998. It is not vacuous — 0.9406 on HateMM against a 0.8441 raw-space
+  floor still means the head reproduces its own train split far better than the deployed test behaviour
+  — but this record should not have leaned on 0.998, and does not need to.
+* **Not downgraded, and this is what actually justifies the arena.** The binding reason for running in
+  the F95 raw arena is **comparability, not memorisation**: MEMBANK-C4 was nominated by two records
+  (`AGGNET` §7.2, `RESTRANS` §7.2) whose numbers live in that arena, its PARITY-ARENA anchors are F95's
+  recorded cells, and its result is read against F95, F96, F97, F98 and F105 measurements all taken
+  there. Running it anywhere else would have made the comparison meaningless. **§8.1's asymmetry
+  argument is also untouched** — it turns on the head cone being ~250× more collapsed
+  (`VSW_ASYMMETRY_RECON.md` §1.4), which is a separate measurement from the LOO figure, and it says the
+  GATE-1 degeneracy read transfers *a fortiori* to head space while the accuracy result does not
+  transfer and was never claimed to.
+
+**Neither correction touches GATE 2**, which is the gate the kill is read on: a hindsight ceiling of
+−20 / −5 / −13 net items against a +8 / +6 / +6 requirement is arithmetic internal to this arena and
+does not depend on either superseded premise.
