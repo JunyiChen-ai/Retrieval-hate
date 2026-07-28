@@ -23,3 +23,10 @@ refine-logs/.lsmi_*
 
 # session scratch (never a deliverable)
 scratchpad/
+
+# quota-patrol byproduct, not a research record: an ~800k-line append-only stream
+# from scripts/disk_guard.sh. Ruled 不入库 by DECISION_MEMO_pending D5 — its
+# load-bearing sha1 / B2 reconciliation evidence is already written up in
+# MORNING_REPORT §6.3 and EXP_mm_segment_keys §1. Kept on disk, out of the ledger.
+# NOTE: every OTHER file under slurm/logs/ IS a record and stays tracked.
+slurm/logs/disk_guard.log
