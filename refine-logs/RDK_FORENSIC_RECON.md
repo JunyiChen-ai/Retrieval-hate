@@ -173,6 +173,42 @@ only by 0.0170 — 7 test items — against a **≥2-dataset** requirement. Even
 break-free re-ordering of an unchanged top-20, it cannot satisfy the goal. This is a *sufficient* pre-closure
 of the set-preserving channel on its own, independent of every ban in §1.
 
+> **ERRATUM 2026-07-28 (provenance audit, `PROVENANCE_AUDIT_2026-07-28.md` §7.1). Two corrections;
+> the pre-closure is unaffected and, on the second point, strengthened.**
+>
+> **(1) The ZH cap is not a strict upper bound as stated — it should be `≤ +0.0604`, not `≤ +0.0470`.**
+> The (0.25, 0.45] band of 7 is drawn from ZH's **22-item stable core**, i.e. the items wrong in
+> **3/3** seeds (`ERRPAT_MHC-ZH_2026-07-26.md:347`). But the per-seed error counts are **23 / 24 / 22**
+> (`:187-190`), so up to **2** errors per seed sit outside the banded core with *unmeasured* purity
+> while the denominator 149 covers the whole test set. The strict worst-case cap is
+> `≤ 9/149 = +0.0604`. **Nothing in the reading changes:** ZH already cleared +0.030 and HateMM's
+> `≤ +0.0279` — which *is* a proper per-cell bound (the 27 errors and the 21 below 0.25 come from the
+> same cell) — still does not, so the **≥2-dataset requirement still fails and the pre-closure stands.**
+>
+> **(2) "Assuming zero breaks" is doing an order of magnitude of work, and should be quantified
+> rather than left as a caveat.** With `f` reachable errors and a realised exchange rate `e`, the net
+> is `f(1 − 1/e)`. Against this campaign's own measured rates:
+>
+> | exchange rate | HateMM net (f = 6) | ZH net (f = 7) |
+> |---|---|---|
+> | zero-break oracle (as stated) | +0.0279 | +0.0470 |
+> | all-time maximum **1.17** | **+0.0041** | **+0.0068** |
+> | best primary **0.95** | −0.0015 | −0.0025 |
+> | worst primary **0.53** | −0.0247 | −0.0417 |
+>
+> So the best *achievable* figure under any rate ever measured here is **≈ 7× smaller** than the
+> quoted cap, and under every primary-cell rate it is **negative**. **A break-free oracle is not an
+> achievable ceiling and must never be quoted as one** — the number's only legitimate use is the one
+> §3.3 makes of it, as an upper bound that already fails.
+>
+> *Independently corroborated:* the derivation's premise — that the decision depends only on the
+> rank-weighted label signs, the cosines being inert — was re-measured in the raw fused train arena by
+> the provenance audit: replacing every cosine with the constant 1 changes accuracy by **+0.0000 on all
+> three datasets**, with decision agreement 0.9946 / 1.0000 / 1.0000. The flip thresholds themselves
+> (`m ≥ 6` for a hate query, `k ≥ 7` for a non-hate query, the asymmetry arising from the tie at exactly
+> `m(41−m) = 210` which `[s ≥ 0]` resolves toward hate) were re-derived by brute force over all
+> `m ∈ [0, 20]` and **reproduce exactly**.
+
 **Honest limitation of the arithmetic, stated plainly.** The bound is exact only for the set-preserving
 channel. A trained ψ can also *change membership* of the top-20 (pull a new item in from rank 21+). That
 channel is not bounded by §3.2. It is, however, (a) F98's family by another name once the new item is

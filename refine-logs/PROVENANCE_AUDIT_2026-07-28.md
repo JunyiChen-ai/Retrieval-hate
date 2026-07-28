@@ -26,20 +26,22 @@ fabricate companion metrics; consistency audits must spot-check primary logs* (t
 |---|---|---|
 | 1 | cand-2 curriculum: targeted train-LOO **−0.0538** HateMM / **−0.0402** ZH on the top-30 % confusable head, **0.0000** on the deprived tail | **numbers REPRODUCE bit-exact; the INTERPRETATION is RETRACTED.** The contrast is not curriculum-specific, the tail zero is a tautology, and the second draw of the same curriculum has the opposite sign. |
 | 1b | "…buying a deployed **+0.0132** / **0.0000**" | **+0.0132 VERIFIED. "0.0000" RETRACTED** — the ZH quantity is a *TIE adjudication* over −0.0067 / +0.0067, not a measured zero. |
-| 1c | "this is the campaign's **tenth law-I datum**" | **RETRACTED IN FULL.** It is not a law-I datum at all: on HateMM the train-side gain **did** convert. |
+| 1c | "this is the campaign's **tenth law-I datum**" | **RETRACTED IN FULL.** Neither conjunct of law I's form is present — and the cell is an *adaptation* cell, so it belongs to **structural law IV**, which law I explicitly excludes (§8). |
+| 1d | this audit's own first-pass claim that the gain "**converted**" | **AMENDED — that overstated it.** The train-arena side is **1 of 2 in sign** (+0.0202 / −0.0067); no conversion ratio is computable. §1.4, §1.6, §8.1. |
+| — | F99 pure-permutation oracle; F103 "MoRE 5.6-8.7 below us" | **both headlines PASS**; both records had a transcription defect, **corrected in place**. §7. |
 | 2 | certified law-I count | **NINE.** Enumerated in §2 with a source per entry. Paper docs already correct; one in-flight record says eight and is flagged. |
 | 3 | F97's "78/78 parity PASS" | **does not re-assert today** — cross-session CPU-training non-determinism, not a defect. **Zero verdicts move**; one headline *count* ("0 of 36") is session-dependent. §4. |
 | 4 | 13 load-bearing numbers in today's F99-F103 records and the reused campaign anchors | **11 PASS, 1 material FAIL** (the fabricated ZH "0.0000"), **1 cosmetic** (OCR char stats off by 1-2; coverage % exact). §5. |
 | 5 | litsweep-7: the numbers "co-occur only in an unrelated 2026-07-13 SAV table" | **substring-grep artefact** — neither number is in that table as a quantity. Not evidence of a misread. |
 
-**The one genuinely new result rescued from this audit:** the MAC computation, once the placebo arms
-are added, **discharges litsweep-7's own proposed candidate L4 / CURDIAG**
-(`LITSWEEP7_LANDING_SITE.md:509-566`) at $0 — with a **split** answer that neither the retracted
-framing nor the proposal anticipated. On the curriculum cell the $0 train arena is **valid** (outcome
-1: same sign, same dataset ordering, ~2× attenuating). On the encoder-adaptation axis it is
+**The one genuinely new result rescued from this audit:** the placebo arms answer litsweep-7's own
+proposed candidate **L4 / CURDIAG** (`LITSWEEP7_LANDING_SITE.md:509-566`) at $0 — and the answer is
+that **CURDIAG cannot be settled on the cell it names** (the curriculum's arena Δ is itself
+draw-unstable, +0.0202 / −0.0067, and a binding ruling forbids a third draw), while a **second axis it
+does not name gives a clean and unfavourable answer**: on encoder adaptation the arena is
 **anti-correlated across datasets** — MHC-EN shows the *largest* train-arena gain (+0.0729) and is the
 dataset closed at all three levels. **Arena negatives are informative; arena positives are not.** See
-§1.6-1.7.
+§1.6-1.7 and §8.
 
 ---
 
@@ -162,15 +164,23 @@ a single-draw −0.0538 with a +0.0090 replicate cannot be certified as anything
 Law I is *better signal without conversion* (`research-wiki/DRAFT_analysis_chapter.md:178`). Applying
 its own test to this cell, using the honest 2-draw figures on both sides:
 
-| dataset | train-arena Δacc (2-draw where available) | deployed Δacc | converted? |
-|---|---|---|---|
-| HateMM | **+0.0068** (2-draw; +0.0202 draw-1 alone) | **+0.0132** (F59 pooled 2×3, 5/6 sign) | **YES — fully, and then some.** The arena *understates* the test gain by ~2×. |
-| MHC-ZH | +0.0086 (single draw; below the campaign's own +0.010 bar) | TIE | there is no above-bar train-side gain to fail to convert |
+| dataset | train-arena Δacc | sign stability | deployed Δacc | sign stability |
+|---|---|---|---|---|
+| HateMM | **+0.0068** (2-draw mean; draws are **+0.0202 / −0.0067**) | **1 of 2** — the draws *disagree in sign*, spread 0.0269 | **+0.0132** (F59 pooled 2×3, sd 0.0112, sem 0.0046, ≈95 % CI **[+0.0014, +0.0249]**) | **5 of 6** |
+| MHC-ZH | +0.0086 (single draw; below the campaign's own +0.010 bar) | 1 draw only | TIE (−0.0067 val-sel / +0.0067 final-ep) | 1/3 and 2/3 |
 
-On HateMM the representation gain **converted**; on ZH there is no certifiable train-side gain in the
-first place. Neither leg is *better signal without conversion*. **The cell is not a law-I datum, and
-"tenth law-I datum" is retracted in full.** The certified count is nine (§2) and this cell does not
-change it.
+**The honest reading — and it is weaker than this audit's first pass claimed** (see §8, written after
+the coordinator asked the question directly). The *test* movement is real but thin: F59's own label is
+**"weakly-hardened"**, and the 95 % interval barely clears zero. The *train-arena* movement is **not
+established at all** — its only two draws have opposite signs. **We therefore cannot assert a conversion
+ratio, and the phrase "the gain converted" overstates the evidence.**
+
+What survives, and is sufficient for the retraction, is the **negative**: law I requires a
+*demonstrated* representational gain that then fails to convert. Here there is (i) **no stable
+demonstrated train-side gain** and (ii) a **positive**, not zero, test movement. Neither conjunct of
+law I's form is met. **The cell is not a law-I datum, and "tenth law-I datum" is retracted in full.**
+The certified count is nine (§2) and this cell does not change it. §8 gives the *principled* reason,
+which is stronger than this arithmetic one: the cell belongs to **structural law IV**, not law I.
 
 ### 1.5 A minor but real forensic by-product: a degenerate row is the curriculum's most-upweighted item
 
@@ -195,21 +205,25 @@ campaign reads its own kills) ≈ 30 %.**
 **That measurement has now been made** — by the MAC recon, before the proposal was written, and
 re-derived independently here. Litsweep-7's three declared outcomes and the answer:
 
-1. *Train-arena Δ positive and ordered like the test Δ (HateMM > ZH ≈ 0)* → **THIS IS THE OUTCOME.**
-   HateMM +0.0068 (2-draw) / +0.0202 (draw-1) train-arena, +0.0132 test; ZH +0.0086 train-arena, TIE
-   test. Same sign, same ordering, HateMM ≫ ZH on both sides.
-2. *Train-arena Δ ~0 while test Δ is +0.0132 — "the outcome that would reopen the box"* → **NOT
-   observed.** The arena sees the gain.
-3. *Train-arena Δ negative while test Δ positive* → **NOT observed** (this is what the retracted
-   framing asserted).
+1. *Train-arena Δ positive and ordered like the test Δ (HateMM > ZH ≈ 0)* → **the point estimates fit**
+   (HateMM +0.0068 arena / +0.0132 test; ZH +0.0086 arena / TIE test — same sign, same ordering)…
+2. *Train-arena Δ ~0 while test Δ is +0.0132 — "the outcome that would reopen the box"* → **not
+   excluded**, because HateMM's arena draws are **+0.0202 and −0.0067**: a 2-draw mean of +0.0068 with
+   *opposite signs* is statistically indistinguishable from 0.
+3. *Train-arena Δ negative while test Δ positive* → **not observed in the mean**, though draw-2 alone
+   is exactly this (−0.0067 arena, +0.0132 test).
 
-**Consequence, on the cell CURDIAG asked about: the instrument is valid, the campaign's $0-pregate
-base rate stands, and no confidence discount is owed on that ground** — but see §1.7, which finds the
-opposite on a second axis and is the half that matters more. CURDIAG's curriculum leg is
-**discharged at $0** and need not be run. One caveat travels with it: on the matched 2-draw comparison
-the arena reads **+0.0068** against a test **+0.0132**, so it **attenuates** by roughly 2× — valid in
-sign, conservative in magnitude. A kill decided by an arena margin under ~0.007 should not be treated
-as decisive on that ground alone.
+**So CURDIAG's curriculum leg is INCONCLUSIVE, not outcome-1.** *(This corrects this audit's own first
+pass, which read it as outcome 1. Amended after the coordinator asked for the seed spreads — §8.)* The
+diagnostic cannot be settled on this cell at all: the arena measurement inherits the curriculum's own
+draw instability, and there are only two draws, with a binding "no further draws" ruling (F59). Running
+CURDIAG as specified would not have resolved it either — it would have produced the same two numbers.
+
+**Consequence: CURDIAG's curriculum leg should be struck from the queue as UNRESOLVABLE, not as
+discharged-favourably.** The campaign's only training-side positive is too draw-unstable to serve as a
+calibration standard for the arena, and the "no further draws" ruling means it never will be. The
+question CURDIAG asks is good; **this cell cannot answer it**, and §1.7 — which does not depend on the
+curriculum at all — is where the answer actually lives.
 
 ### 1.7 …but a second axis, which CURDIAG did not ask about, inverts. This is the real caution.
 
@@ -491,13 +505,11 @@ not verification. Train split only.
 published 0.8415 as an EN "deployed" figure. Caught by spot-checking against a primary record before
 writing. Disclosed at §1.7.)*
 
-**Coverage, stated honestly.** Two of today's title-level numbers were **not reached** by this pass and
-remain **UNVERIFIED, not verified-clean**: F99/RDK's *"pure-permutation oracle"* arithmetic bound
-(`RDK_FORENSIC_RECON.md`) and F103's *"MoRE rerun lands 5.6-8.7 acc below us on all three datasets"*
-(`OCR_FORENSIC_RECON.md:428-432`), the latter resting on an external baseline tree
-(`/data/jehc223/baselines/MoRE/`) rather than on our own artefacts. Both sit in finding **titles**,
-which is the highest-risk position — titles are what get relayed. They should be the first two checks
-of the next pass.
+**Coverage.** Two title-level numbers were not reached by the first pass — F99/RDK's *"pure-permutation
+oracle"* bound and F103's *"MoRE lands 5.6-8.7 acc below us"*. **Both were closed in the second pass;
+see §7.** Both headlines PASS; both records carried a transcription defect underneath, now corrected in
+place. Net for §5: **13 of 15 checked numbers PASS, 1 material FAIL, 1 cosmetic**, plus the two §7
+record-level corrections.
 
 ---
 
@@ -535,7 +547,146 @@ bank.**
 
 ---
 
+---
+
+## 7. THE TWO UNVERIFIED TITLE NUMBERS — NOW CLOSED
+
+Both were declared UNVERIFIED in §5. Both have now been re-derived. **Both headline numbers PASS; both
+records had a transcription defect underneath, and both are now corrected in place.**
+
+### 7.1 F99 — the pure-permutation oracle: **derivation PASS, ZH cap CORRECTED, caveat re-priced**
+
+**Flip thresholds — reproduce exactly.** Brute-forced over all `m ∈ [0, 20]` with `w = [20…1]`,
+`Σw = 210`, best permutation putting the `m` true-class neighbours at the head so
+`Σwσ = 2W(m) − 210` where `W(m) = 21m − m(m+1)/2`:
+
+* **hate query** (needs `s ≥ 0`): first satisfied at **m = 6**, where `m(41−m) = 6·35 = 210` **exactly**
+  and `2W(6) − 210 = 0` — the tie, which `[s ≥ 0]` resolves toward hate. ⇒ purity ≥ **6/20**.
+* **non-hate query** (needs `s < 0` strictly): `k = 6` gives exactly 210 and **fails** the strict
+  inequality; first satisfied at **k = 7** (`7·34 = 238`). ⇒ purity ≥ **7/20**.
+
+**The asymmetry is entirely the tie at zero, exactly as claimed.** Independently, the derivation's
+premise — cosines inert, decision carried by the rank-weighted label signs — was re-measured in §1.8:
+replacing every cosine with the constant 1 moves accuracy by **+0.0000 on all three datasets**.
+
+**Cross against the ERRPAT bands.** HateMM: `ERRPAT_HateMM_2026-07-26.md:142-146` reads *"purity <0.5 for
+24-27 of 26-28 errors in every cell … with purity <0.25 for 21/27"* ⇒ ≤ 27 − 21 = **6**, and
+`6/215 = +0.0279` ✓. This is a **proper per-cell bound**. ZH: `ERRPAT_MHC-ZH_2026-07-26.md:222-223` gives
+`8 / 7 / 7 / 0` over the **22-item stable core**, ⇒ ≤ **7**, `7/149 = +0.0470` ✓ *arithmetically* —
+**but not a strict bound**, because `:347` defines that core as the items wrong in **3/3** seeds while
+the per-seed error counts at `:187-190` are **23 / 24 / 22**. Up to **2** errors per seed lie outside the
+banded core with unmeasured purity, against a denominator covering all 149. **Strict worst case:
+`≤ 9/149 = +0.0604`.**
+
+**Does the caveat do load-bearing work? YES — an order of magnitude.** With `f` reachable errors at a
+realised exchange rate `e`, net `= f(1 − 1/e)`:
+
+| exchange rate (source: `MECHNOV_PAIRVERIFY_PREGATE.md:458-459`) | HateMM (f = 6) | ZH (f = 7) |
+|---|---|---|
+| **zero-break oracle — as quoted** | **+0.0279** | **+0.0470** |
+| all-time maximum ever measured, **1.17** | **+0.0041** | **+0.0068** |
+| best primary cell, 0.95 | −0.0015 | −0.0025 |
+| worst primary cell, 0.53 | −0.0247 | −0.0417 |
+
+**A break-free oracle is not an achievable ceiling**, and the gap is ~7×. Under every *primary-cell*
+exchange rate ever measured, the achievable net is **negative**. The record states the caveat in prose
+(`:166-169`) and its ledger `body` carries the phrase *"the zero-break upper bound"* and prices the
+corner at 2-4 % — so the caveat does travel — but the number itself must never be quoted as headroom.
+
+**Verdict impact: NONE, and the pre-closure is strengthened.** Both corrections move in the safe
+direction: the ZH cap rises but ZH already cleared +0.030, HateMM's proper bound of ≤ +0.0279 still does
+not, so the **≥2-dataset requirement still fails**. **Erratum written in place at
+`refine-logs/RDK_FORENSIC_RECON.md` §3.3.** The F99 *title* quotes no number and needs no change.
+
+### 7.2 F103 — "MoRE lands 5.6-8.7 acc below us": **headline PASS, table CORRECTED**
+
+**Same arena — verified.** `BASELINE_MoRE_rerun.md:129-136` table 3.2 is the **clean-subset** head-to-head
+(215 / 161 / 149), explicitly *"test 完全同集"*. These are **not** MoRE's published full-split numbers —
+those are the separate sanity table 3.1 (`:120-124`), which the recon does not use. Training is disclosed
+and **conservative in our disfavour**: MoRE trains on the official-split labelled subset (EN 618 / ZH 633)
+against our clean train (EN 550 / ZH 579).
+
+**Our arm and protocol are stated in the source** (`:136`): *val-selected, warmup-consistent*;
+HateMM/EN = **frozen-Qwen**, ZH = **LoRA-SFT**. All three rows trace to primary:
+`ITERATION_LOG.md:397` (HateMM 0.870 / 0.861), `:398`+`:520` (EN 0.7888 / 0.7378), `:848`
+(ZH 0.8322 / 0.8023). **PASS.**
+
+**The defect.** The recon's transcription (`OCR_FORENSIC_RECON.md:425-429`) showed only MoRE's
+*as-released* column but carried the Δ column verbatim — and the source computes Δ against **the better
+of MoRE's two variants** (`:131`, header *"Δ(我们 − MoRE 两 variant 较优)"*). Three of six deltas
+therefore could not be reconstructed from the operands displayed:
+
+| | claimed Δ | recomputed vs *as-released* | recomputed vs *better variant* |
+|---|---|---|---|
+| HateMM acc / F1 | +5.6 / +6.2 | +5.6 / +6.2 ✓ | +5.6 / +6.2 ✓ |
+| MHC-EN acc / F1 | +8.7 / +22.9 | +9.9 / +29.4 ✗ | **+8.7 / +22.9 ✓** |
+| MHC-ZH acc / F1 | +6.7 / +9.7 | +6.7 / +11.4 ✗ | **+6.7 / +9.7 ✓** |
+
+**With the `bugfix` column restored, all six deltas reproduce exactly.** The source table is correct;
+only the transcription was lossy. **The "5.6-8.7 acc" headline is right and needs no rewording** — it is
+the acc range +5.6 / +8.7 / +6.7 against the *stronger* MoRE variant, i.e. the conservative choice.
+**Erratum and the restored column written in place at `refine-logs/OCR_FORENSIC_RECON.md:425-447`.**
+
+*(Note, not a defect: the source column is headed "our best config", and HateMM's 0.870 is below the
+project best 0.8775. That record is dated 2026-07-05, before cand-2 existed — correct at write time.)*
+
+---
+
+## 8. IS THE HateMM CELL A CONVERSION COUNTER-EXAMPLE TO LAW I?
+
+The coordinator asked, because this audit's first pass said the curriculum's train-side gain
+**converted** — which would make it the campaign's only conversion datum of its kind. **Two answers, and
+the first is a correction of this audit.**
+
+### 8.1 Is it robust? — **No. "Converted" overstates it, and §1.4/§1.6 are amended above.**
+
+| side | estimate | spread | sign stability |
+|---|---|---|---|
+| **train arena** (full-bank LOO acc vs generic) | **+0.0068** | draws **+0.0202** and **−0.0067**, spread 0.0269 | **1 of 2 — the two draws disagree in sign** |
+| **test** (val-sel Δacc vs generic, pooled 2×3) | **+0.01317** | sd 0.0112, sem 0.0046, ≈95 % CI **[+0.0014, +0.0249]** | 5 of 6 |
+
+The test effect is real but thin — F59 labels it **"weakly-hardened"** precisely because it misses the
+per-draw 3/3 bar, and the interval barely clears zero. The train-arena effect is **not established at
+all**: its only two draws have opposite signs, and a binding ruling forbids a third. **A conversion
+*ratio* cannot be computed from a numerator that is not sign-stable.** The correct sentence is the
+negative one: **neither conjunct of law I's form is present** — no stable demonstrated train-side gain,
+and a positive rather than zero test movement. That is enough to retract "tenth law-I datum" and is all
+the evidence supports.
+
+### 8.2 Has conversion happened elsewhere? — **Yes, repeatedly — and it already has a scoped home.**
+
+There is no missing exception clause, because the campaign's own framework already carries one.
+`research-wiki/DRAFT_analysis_chapter.md:468-478`, **Structural law IV**:
+
+> *"The first three laws concern **frozen** representations… The fourth law is the positive
+> counterpart, and it is **the one place a signal reliably does convert**. It concerns what changes when
+> the encoder is **adapted** rather than swapped… adapting that same encoder with a small encoder-level
+> LoRA-SFT… **converts where the frozen swap could not**."*
+
+**Law I is scoped to frozen representations by construction.** The cand-2 curriculum is a
+curriculum-weighted **LoRA-SFT**, i.e. an *adaptation* cell — so it was never eligible to be a law-I
+instance, whatever its numbers did. **This is the principled reason it is not the tenth datum, and it is
+stronger than §1.4's arithmetic one.** All nine certified instances (§2.1) are frozen-representation or
+frozen-operator cells; the enumeration is internally consistent on this point.
+
+Corroborating from this audit's own §1.7 measurements, the adaptation axis behaves exactly as law IV
+says — conversion is dataset-dependent, not automatic:
+
+| dataset | train-arena Δ (frozen → generic LoRA) | test-side conversion |
+|---|---|---|
+| HateMM | +0.0228 | frozen swap already converts; LoRA adds ≈ 0 downstream (F58) |
+| MHC-ZH | +0.0553 | **converts, and LoRA-specifically** — the frozen swap fails here (F45/F58) |
+| MHC-EN | **+0.0729** (largest) | **does not convert** — closed at all three levels (F55) |
+
+**Conclusion for the coordinator: law I needs no exception clause.** Conversions are law IV's subject,
+law I is explicitly about frozen representations, and the count of **nine** stands. The one thing that
+*does* need saying in the paper — and §1.7 is the sharp form of it — is that **a train-arena gain is not
+evidence of conversion**: EN shows the largest arena gain of the three and converts least.
+
+---
+
 *Audit performed 2026-07-28. Re-derivation scripts: `<session scratchpad>/audit_mac_rederive.py`,
 `audit_mac_diag.py`. Frozen operator `scripts/analysis/mechfix_ops.py` sha256
 `635c13124e79ba1a299bc13fc1175a03aa11e09924f5413ce51061793c83fc8d`, used unmodified. 0 GPU, $0,
-no test contact.*
+no test contact. §§7-8 added in a second pass at the coordinator's request; §1.4 and §1.6 amended by
+that pass and the amendments are marked in place.*

@@ -422,15 +422,31 @@ it costs HateMM mF1 0.8235 → 0.7355.
 **And we already have the head-to-head, on our clean splits** (`research-wiki/BASELINE_MoRE_rerun.md:99`,
 table 3.2):
 
-| dataset (clean test n) | MoRE as-released | **ours** | Δ |
-|---|---|---|---|
-| HateMM (215) | 0.8140 / 0.7988 | **0.870 / 0.861** | **+5.6 acc / +6.2 F1** |
-| MHC-EN (161) | 0.6894 / 0.4438 | **0.7888 / 0.7378** | +8.7 / +22.9 |
-| MHC-ZH (149) | 0.7651 / 0.6882 | **0.8322 / 0.8023** | +6.7 / +9.7 |
+| dataset (clean test n) | MoRE as-released | MoRE bugfix | **ours** (arm) | Δ vs the **better** MoRE variant |
+|---|---|---|---|---|
+| HateMM (215) | 0.8140 / 0.7988 | 0.8047 / 0.7899 | **0.870 / 0.861** (frozen-Qwen) | **+5.6 acc / +6.2 F1** |
+| MHC-EN (161) | 0.6894 / 0.4438 | 0.7019 / 0.5084 | **0.7888 / 0.7378** (frozen-Qwen) | +8.7 / +22.9 |
+| MHC-ZH (149) | 0.7651 / 0.6882 | 0.7584 / 0.7058 | **0.8322 / 0.8023** (LoRA-SFT) | +6.7 / +9.7 |
+
+*(acc / macro-F1. Our arm is **val-selected, warmup-consistent**, per `BASELINE_MoRE_rerun.md:136`;
+all three "ours" rows trace to `research-wiki/ITERATION_LOG.md:397, 398/520, 848`.)*
+
+> **ERRATUM 2026-07-28 (provenance audit, `PROVENANCE_AUDIT_2026-07-28.md` §7.2).** As first
+> transcribed, this table showed only the *as-released* MoRE column while carrying the Δ column
+> verbatim from the source — but the source computes Δ against **the better of MoRE's two variants**
+> (`BASELINE_MoRE_rerun.md:131`, header `Δ(我们 − MoRE 两 variant 较优)`). Three of the six deltas
+> therefore could not be reconstructed from the operands shown (EN +8.7/+22.9 and ZH F1 +9.7 read as
+> +9.9/+29.4 and +11.4 against as-released). The `bugfix` column and the arm labels are restored above;
+> **all six deltas then reproduce exactly**, and the 5.6–8.7 headline is unchanged.
 
 A published OCR-keyed retrieval method for hateful video exists, we ran it on our data with our
 own easyocr OCR, and it lands 5.6–8.7 acc **below** us. That is not an ablation of OCR (MoRE's
-whole architecture is weaker), but it is a hard fact about the novelty claim.
+whole architecture is weaker), but it is a hard fact about the novelty claim. **Same arena, verified:**
+identical clean test sets (215 / 161 / 149, *"test 完全同集"*), and MoRE trains on the official-split
+labelled subset (EN 618 / ZH 633) against our clean train (EN 550 / ZH 579) — i.e. MoRE holds a
+**nominal label advantage**, so the comparison is conservative in our disfavour
+(`BASELINE_MoRE_rerun.md:136`). These are *not* MoRE's published full-split numbers; those are the
+separate sanity table 3.1.
 
 **(c) MM-HSD uses OCR as a CMA *query*, i.e. fusion — genuinely a different operator** than
 retrieval keying (`research-wiki/papers/cspedessarrias2025_mmhsd_multimodal_hate.md`,
