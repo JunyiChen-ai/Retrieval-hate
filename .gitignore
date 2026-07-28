@@ -30,3 +30,7 @@ scratchpad/
 # MORNING_REPORT §6.3 and EXP_mm_segment_keys §1. Kept on disk, out of the ledger.
 # NOTE: every OTHER file under slurm/logs/ IS a record and stays tracked.
 slurm/logs/disk_guard.log
+
+# VSW pregate: per-fold/per-draw reap-resilience checkpoints (82 MB, 4710 files).
+# Reproducible intermediate state; every load-bearing number is in vsw_*_OUT.json.
+scripts/analysis/vsw_ckpt/

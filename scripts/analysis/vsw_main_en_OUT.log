@@ -1,0 +1,80 @@
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    fold 0 setup 2.4s (arena=True draws=0)
+    fold 0 setup 2.3s (arena=True draws=0)
+    fold 0 ARENA done 7.6s dep 0.7091
+    fold 0 ARENA done 8.8s dep 0.7091
+    fold 1 setup 2.3s (arena=True draws=0)
+    fold 1 setup 2.3s (arena=True draws=0)
+    fold 1 ARENA done 7.2s dep 0.7545
+    fold 2 setup 2.0s (arena=True draws=0)
+    fold 1 ARENA done 8.3s dep 0.7545
+    fold 2 setup 2.2s (arena=True draws=0)
+    fold 2 ARENA done 6.8s dep 0.8091
+    fold 3 setup 2.4s (arena=True draws=0)
+    fold 2 ARENA done 8.2s dep 0.8091
+    fold 3 setup 2.2s (arena=True draws=0)
+    fold 3 ARENA done 6.6s dep 0.8182
+    fold 4 setup 2.1s (arena=True draws=0)
+    fold 3 ARENA done 7.3s dep 0.8182
+    fold 4 setup 2.2s (arena=True draws=0)
+    fold 4 ARENA done 7.4s dep 0.8073
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+    fold 4 ARENA done 8.4s dep 0.8073
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+  [en] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 13/16 trained quantities
+[en] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_en_OUT.json
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+  [en] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 13/16 trained quantities
+[en] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_en_OUT.json
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+  [en] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 10980, 'min_cos': 0.84311, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [en] PARITY-lambda0 18/18
+  [en] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 13/16 trained quantities
+[en] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_en_OUT.json

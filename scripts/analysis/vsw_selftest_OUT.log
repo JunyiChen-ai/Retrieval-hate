@@ -1,0 +1,364 @@
+  multiplier check: monotone in p on 4x20 sorted probes and m(0)==1 EXACT, 48 (family x lambda) cells
+  [stA] PARITY-lambda0 18/18
+  [selftest A] dep 0.6143 dacc +0.2771 p=0.0164 nbr-AUC cos 0.5117 -> ver 0.8477 | null mean -0.0062 max +0.0143 frac>=0 0.45
+  [stB0] PARITY-lambda0 18/18
+  [selftest B0] dep 0.5171 dacc +0.0657 p=0.0164 nbr-AUC cos 0.4894 -> ver 0.529 | null mean +0.0056 max +0.0629 frac>=0 0.5833
+    [stB] fold 0 setup 0.2s (arena=True draws=60)
+    [stB] fold 0 ARENA done 3.3s dep 0.5571
+    [stB] fold 0 draw 0 2.2s
+    [stB] fold 0 draw 1 2.2s
+    [stB] fold 0 draw 2 2.2s
+    [stB] fold 0 draw 3 2.2s
+    [stB] fold 0 draw 4 2.2s
+    [stB] fold 0 draw 5 2.1s
+    [stB] fold 0 draw 6 2.0s
+    [stB] fold 0 draw 7 1.9s
+    [stB] fold 0 draw 8 1.9s
+    [stB] fold 0 draw 9 2.0s
+    [stB] fold 0 draw 10 2.2s
+    [stB] fold 0 draw 11 2.1s
+    [stB] fold 0 draw 12 2.1s
+    [stB] fold 0 draw 13 2.1s
+    [stB] fold 0 draw 14 2.1s
+  multiplier check: monotone in p on 4x20 sorted probes and m(0)==1 EXACT, 48 (family x lambda) cells
+  [stA] PARITY-lambda0 18/18
+  [selftest A] dep 0.6143 dacc +0.2771 p=0.0164 nbr-AUC cos 0.5117 -> ver 0.8477 | null mean -0.0062 max +0.0143 frac>=0 0.45
+  [stB0] PARITY-lambda0 18/18
+  [selftest B0] dep 0.5171 dacc +0.0657 p=0.0164 nbr-AUC cos 0.4894 -> ver 0.529 | null mean +0.0056 max +0.0629 frac>=0 0.5833
+    [stB] fold 0 setup 0.2s (arena=False draws=45)
+    [stB] fold 0 draw 15 3.2s
+    [stB] fold 0 draw 16 2.2s
+    [stB] fold 0 draw 17 2.2s
+    [stB] fold 0 draw 18 2.2s
+    [stB] fold 0 draw 19 2.2s
+    [stB] fold 0 draw 20 2.1s
+    [stB] fold 0 draw 21 1.9s
+    [stB] fold 0 draw 22 2.0s
+    [stB] fold 0 draw 23 1.9s
+    [stB] fold 0 draw 24 1.9s
+    [stB] fold 0 draw 25 1.9s
+    [stB] fold 0 draw 26 1.9s
+    [stB] fold 0 draw 27 1.9s
+    [stB] fold 0 draw 28 1.9s
+    [stB] fold 0 draw 29 1.9s
+    [stB] fold 0 draw 30 1.9s
+    [stB] fold 0 draw 31 1.9s
+    [stB] fold 0 draw 32 1.9s
+    [stB] fold 0 draw 33 1.9s
+    [stB] fold 0 draw 34 2.1s
+    [stB] fold 0 draw 35 2.2s
+    [stB] fold 0 draw 36 2.1s
+    [stB] fold 0 draw 37 2.2s
+    [stB] fold 0 draw 38 2.2s
+    [stB] fold 0 draw 39 2.1s
+    [stB] fold 0 draw 40 2.1s
+    [stB] fold 0 draw 41 2.1s
+    [stB] fold 0 draw 42 2.1s
+    [stB] fold 0 draw 43 2.1s
+    [stB] fold 0 draw 44 2.1s
+    [stB] fold 0 draw 45 2.1s
+    [stB] fold 0 draw 46 2.1s
+    [stB] fold 0 draw 47 2.1s
+    [stB] fold 0 draw 48 2.1s
+    [stB] fold 0 draw 49 2.1s
+    [stB] fold 0 draw 50 2.0s
+    [stB] fold 0 draw 51 1.9s
+    [stB] fold 0 draw 52 1.9s
+    [stB] fold 0 draw 53 1.9s
+    [stB] fold 0 draw 54 1.9s
+    [stB] fold 0 draw 55 1.9s
+    [stB] fold 0 draw 56 1.9s
+    [stB] fold 0 draw 57 1.9s
+    [stB] fold 0 draw 58 1.9s
+    [stB] fold 0 draw 59 1.9s
+    [stB] fold 1 setup 0.2s (arena=True draws=60)
+    [stB] fold 1 ARENA done 1.9s dep 0.4857
+    [stB] fold 1 draw 0 1.9s
+    [stB] fold 1 draw 1 2.1s
+    [stB] fold 1 draw 2 2.0s
+    [stB] fold 1 draw 3 1.9s
+    [stB] fold 1 draw 4 2.0s
+    [stB] fold 1 draw 5 2.0s
+    [stB] fold 1 draw 6 1.9s
+    [stB] fold 1 draw 7 1.9s
+    [stB] fold 1 draw 8 1.9s
+    [stB] fold 1 draw 9 1.9s
+    [stB] fold 1 draw 10 1.9s
+    [stB] fold 1 draw 11 1.9s
+    [stB] fold 1 draw 12 1.9s
+    [stB] fold 1 draw 13 1.9s
+    [stB] fold 1 draw 14 1.9s
+    [stB] fold 1 draw 15 1.9s
+    [stB] fold 1 draw 16 1.9s
+    [stB] fold 1 draw 17 1.8s
+    [stB] fold 1 draw 18 1.9s
+    [stB] fold 1 draw 19 1.9s
+    [stB] fold 1 draw 20 1.9s
+    [stB] fold 1 draw 21 1.9s
+    [stB] fold 1 draw 22 1.9s
+    [stB] fold 1 draw 23 1.9s
+    [stB] fold 1 draw 24 1.9s
+    [stB] fold 1 draw 25 1.9s
+    [stB] fold 1 draw 26 1.9s
+    [stB] fold 1 draw 27 1.9s
+    [stB] fold 1 draw 28 1.9s
+    [stB] fold 1 draw 29 1.9s
+    [stB] fold 1 draw 30 1.9s
+    [stB] fold 1 draw 31 1.8s
+    [stB] fold 1 draw 32 1.8s
+    [stB] fold 1 draw 33 1.9s
+    [stB] fold 1 draw 34 1.9s
+    [stB] fold 1 draw 35 1.9s
+    [stB] fold 1 draw 36 1.9s
+    [stB] fold 1 draw 37 1.9s
+    [stB] fold 1 draw 38 1.9s
+    [stB] fold 1 draw 39 1.9s
+    [stB] fold 1 draw 40 1.8s
+    [stB] fold 1 draw 41 1.9s
+    [stB] fold 1 draw 42 1.8s
+    [stB] fold 1 draw 43 1.8s
+    [stB] fold 1 draw 44 1.8s
+    [stB] fold 1 draw 45 1.8s
+    [stB] fold 1 draw 46 1.8s
+    [stB] fold 1 draw 47 1.8s
+    [stB] fold 1 draw 48 1.9s
+    [stB] fold 1 draw 49 2.0s
+    [stB] fold 1 draw 50 2.1s
+    [stB] fold 1 draw 51 2.1s
+    [stB] fold 1 draw 52 2.1s
+    [stB] fold 1 draw 53 2.1s
+  multiplier check: monotone in p on 4x20 sorted probes and m(0)==1 EXACT, 48 (family x lambda) cells
+  [stA] PARITY-lambda0 18/18
+  [selftest A] dep 0.6143 dacc +0.2771 p=0.0164 nbr-AUC cos 0.5117 -> ver 0.8477 | null mean -0.0062 max +0.0143 frac>=0 0.45
+  [stB0] PARITY-lambda0 18/18
+  [selftest B0] dep 0.5171 dacc +0.0657 p=0.0164 nbr-AUC cos 0.4894 -> ver 0.529 | null mean +0.0056 max +0.0629 frac>=0 0.5833
+    [stB] fold 1 setup 0.2s (arena=False draws=6)
+    [stB] fold 1 draw 54 3.0s
+    [stB] fold 1 draw 55 2.1s
+    [stB] fold 1 draw 56 2.1s
+    [stB] fold 1 draw 57 1.9s
+    [stB] fold 1 draw 58 1.8s
+    [stB] fold 1 draw 59 1.9s
+    [stB] fold 2 setup 0.2s (arena=True draws=60)
+    [stB] fold 2 ARENA done 1.9s dep 0.4429
+    [stB] fold 2 draw 0 1.9s
+    [stB] fold 2 draw 1 1.8s
+    [stB] fold 2 draw 2 1.8s
+    [stB] fold 2 draw 3 1.8s
+    [stB] fold 2 draw 4 1.9s
+    [stB] fold 2 draw 5 2.1s
+    [stB] fold 2 draw 6 2.1s
+    [stB] fold 2 draw 7 2.1s
+    [stB] fold 2 draw 8 2.1s
+    [stB] fold 2 draw 9 2.2s
+    [stB] fold 2 draw 10 2.2s
+    [stB] fold 2 draw 11 2.2s
+    [stB] fold 2 draw 12 2.2s
+    [stB] fold 2 draw 13 2.1s
+    [stB] fold 2 draw 14 2.3s
+    [stB] fold 2 draw 15 2.1s
+    [stB] fold 2 draw 16 1.9s
+    [stB] fold 2 draw 17 1.9s
+    [stB] fold 2 draw 18 1.8s
+    [stB] fold 2 draw 19 1.9s
+    [stB] fold 2 draw 20 1.9s
+    [stB] fold 2 draw 21 1.9s
+    [stB] fold 2 draw 22 1.9s
+    [stB] fold 2 draw 23 1.8s
+    [stB] fold 2 draw 24 1.9s
+  multiplier check: monotone in p on 4x20 sorted probes and m(0)==1 EXACT, 48 (family x lambda) cells
+  [stA] PARITY-lambda0 18/18
+  [selftest A] dep 0.6143 dacc +0.2771 p=0.0164 nbr-AUC cos 0.5117 -> ver 0.8477 | null mean -0.0062 max +0.0143 frac>=0 0.45
+  [stB0] PARITY-lambda0 18/18
+  [selftest B0] dep 0.5171 dacc +0.0657 p=0.0164 nbr-AUC cos 0.4894 -> ver 0.529 | null mean +0.0056 max +0.0629 frac>=0 0.5833
+    [stB] fold 2 setup 0.2s (arena=False draws=35)
+    [stB] fold 2 draw 25 3.4s
+    [stB] fold 2 draw 26 2.1s
+    [stB] fold 2 draw 27 2.1s
+    [stB] fold 2 draw 28 2.2s
+    [stB] fold 2 draw 29 2.2s
+    [stB] fold 2 draw 30 2.2s
+    [stB] fold 2 draw 31 2.3s
+    [stB] fold 2 draw 32 2.2s
+    [stB] fold 2 draw 33 2.2s
+    [stB] fold 2 draw 34 2.2s
+    [stB] fold 2 draw 35 2.2s
+    [stB] fold 2 draw 36 2.2s
+    [stB] fold 2 draw 37 2.2s
+    [stB] fold 2 draw 38 2.2s
+    [stB] fold 2 draw 39 2.2s
+    [stB] fold 2 draw 40 2.2s
+    [stB] fold 2 draw 41 2.3s
+    [stB] fold 2 draw 42 2.3s
+    [stB] fold 2 draw 43 2.3s
+    [stB] fold 2 draw 44 2.2s
+    [stB] fold 2 draw 45 2.2s
+    [stB] fold 2 draw 46 2.1s
+    [stB] fold 2 draw 47 2.1s
+    [stB] fold 2 draw 48 2.1s
+    [stB] fold 2 draw 49 2.1s
+    [stB] fold 2 draw 50 2.1s
+    [stB] fold 2 draw 51 2.2s
+    [stB] fold 2 draw 52 2.1s
+    [stB] fold 2 draw 53 2.0s
+  multiplier check: monotone in p on 4x20 sorted probes and m(0)==1 EXACT, 48 (family x lambda) cells
+  [stA] PARITY-lambda0 18/18
+  [selftest A] dep 0.6143 dacc +0.2771 p=0.0164 nbr-AUC cos 0.5117 -> ver 0.8477 | null mean -0.0062 max +0.0143 frac>=0 0.45
+  [stB0] PARITY-lambda0 18/18
+  [selftest B0] dep 0.5171 dacc +0.0657 p=0.0164 nbr-AUC cos 0.4894 -> ver 0.529 | null mean +0.0056 max +0.0629 frac>=0 0.5833
+    [stB] fold 2 setup 0.2s (arena=False draws=6)
+    [stB] fold 2 draw 54 3.2s
+    [stB] fold 2 draw 55 2.2s
+    [stB] fold 2 draw 56 2.2s
+    [stB] fold 2 draw 57 2.2s
+    [stB] fold 2 draw 58 2.2s
+    [stB] fold 2 draw 59 2.2s
+    [stB] fold 3 setup 0.2s (arena=True draws=60)
+    [stB] fold 3 ARENA done 2.2s dep 0.5286
+    [stB] fold 3 draw 0 2.3s
+    [stB] fold 3 draw 1 2.3s
+    [stB] fold 3 draw 2 2.3s
+    [stB] fold 3 draw 3 2.3s
+    [stB] fold 3 draw 4 2.3s
+    [stB] fold 3 draw 5 2.3s
+    [stB] fold 3 draw 6 2.3s
+    [stB] fold 3 draw 7 2.3s
+    [stB] fold 3 draw 8 2.1s
+    [stB] fold 3 draw 9 2.0s
+    [stB] fold 3 draw 10 1.9s
+    [stB] fold 3 draw 11 1.9s
+    [stB] fold 3 draw 12 1.9s
+    [stB] fold 3 draw 13 1.9s
+    [stB] fold 3 draw 14 1.9s
+    [stB] fold 3 draw 15 1.9s
+    [stB] fold 3 draw 16 1.9s
+    [stB] fold 3 draw 17 1.9s
+    [stB] fold 3 draw 18 1.9s
+    [stB] fold 3 draw 19 1.9s
+    [stB] fold 3 draw 20 1.8s
+    [stB] fold 3 draw 21 1.9s
+  multiplier check: monotone in p on 4x20 sorted probes and m(0)==1 EXACT, 48 (family x lambda) cells
+  [stA] PARITY-lambda0 18/18
+  [selftest A] dep 0.6143 dacc +0.2771 p=0.0164 nbr-AUC cos 0.5117 -> ver 0.8477 | null mean -0.0062 max +0.0143 frac>=0 0.45
+  [stB0] PARITY-lambda0 18/18
+  [selftest B0] dep 0.5171 dacc +0.0657 p=0.0164 nbr-AUC cos 0.4894 -> ver 0.529 | null mean +0.0056 max +0.0629 frac>=0 0.5833
+    [stB] fold 3 setup 0.2s (arena=False draws=38)
+    [stB] fold 3 draw 22 3.0s
+    [stB] fold 3 draw 23 1.9s
+    [stB] fold 3 draw 24 1.9s
+    [stB] fold 3 draw 25 1.9s
+    [stB] fold 3 draw 26 2.1s
+    [stB] fold 3 draw 27 2.0s
+    [stB] fold 3 draw 28 2.0s
+    [stB] fold 3 draw 29 2.1s
+    [stB] fold 3 draw 30 1.9s
+    [stB] fold 3 draw 31 1.9s
+    [stB] fold 3 draw 32 2.1s
+    [stB] fold 3 draw 33 2.1s
+    [stB] fold 3 draw 34 2.1s
+    [stB] fold 3 draw 35 2.1s
+    [stB] fold 3 draw 36 2.1s
+    [stB] fold 3 draw 37 2.1s
+    [stB] fold 3 draw 38 2.1s
+    [stB] fold 3 draw 39 2.1s
+    [stB] fold 3 draw 40 2.1s
+    [stB] fold 3 draw 41 2.1s
+    [stB] fold 3 draw 42 1.9s
+    [stB] fold 3 draw 43 1.9s
+    [stB] fold 3 draw 44 1.9s
+    [stB] fold 3 draw 45 1.9s
+    [stB] fold 3 draw 46 1.9s
+    [stB] fold 3 draw 47 1.9s
+    [stB] fold 3 draw 48 1.9s
+    [stB] fold 3 draw 49 1.9s
+    [stB] fold 3 draw 50 1.9s
+    [stB] fold 3 draw 51 1.9s
+    [stB] fold 3 draw 52 1.9s
+    [stB] fold 3 draw 53 1.9s
+    [stB] fold 3 draw 54 1.9s
+    [stB] fold 3 draw 55 2.0s
+    [stB] fold 3 draw 56 1.9s
+    [stB] fold 3 draw 57 1.9s
+    [stB] fold 3 draw 58 1.9s
+    [stB] fold 3 draw 59 1.9s
+    [stB] fold 4 setup 0.2s (arena=True draws=60)
+    [stB] fold 4 ARENA done 1.9s dep 0.4286
+    [stB] fold 4 draw 0 1.9s
+    [stB] fold 4 draw 1 1.8s
+    [stB] fold 4 draw 2 1.9s
+    [stB] fold 4 draw 3 1.9s
+    [stB] fold 4 draw 4 2.2s
+    [stB] fold 4 draw 5 2.2s
+    [stB] fold 4 draw 6 2.0s
+    [stB] fold 4 draw 7 1.9s
+    [stB] fold 4 draw 8 1.9s
+    [stB] fold 4 draw 9 1.9s
+    [stB] fold 4 draw 10 1.9s
+    [stB] fold 4 draw 11 1.9s
+    [stB] fold 4 draw 12 1.9s
+    [stB] fold 4 draw 13 1.9s
+    [stB] fold 4 draw 14 1.9s
+    [stB] fold 4 draw 15 1.9s
+    [stB] fold 4 draw 16 1.9s
+    [stB] fold 4 draw 17 1.9s
+    [stB] fold 4 draw 18 1.9s
+    [stB] fold 4 draw 19 1.9s
+    [stB] fold 4 draw 20 1.9s
+    [stB] fold 4 draw 21 1.9s
+    [stB] fold 4 draw 22 1.9s
+    [stB] fold 4 draw 23 1.9s
+    [stB] fold 4 draw 24 2.0s
+    [stB] fold 4 draw 25 1.9s
+    [stB] fold 4 draw 26 1.8s
+    [stB] fold 4 draw 27 1.9s
+    [stB] fold 4 draw 28 1.8s
+    [stB] fold 4 draw 29 1.9s
+    [stB] fold 4 draw 30 1.8s
+    [stB] fold 4 draw 31 1.8s
+    [stB] fold 4 draw 32 1.9s
+    [stB] fold 4 draw 33 1.9s
+    [stB] fold 4 draw 34 1.8s
+    [stB] fold 4 draw 35 1.8s
+    [stB] fold 4 draw 36 1.8s
+    [stB] fold 4 draw 37 1.8s
+    [stB] fold 4 draw 38 1.9s
+    [stB] fold 4 draw 39 1.9s
+    [stB] fold 4 draw 40 1.8s
+    [stB] fold 4 draw 41 1.8s
+    [stB] fold 4 draw 42 1.9s
+    [stB] fold 4 draw 43 1.8s
+    [stB] fold 4 draw 44 1.9s
+    [stB] fold 4 draw 45 1.9s
+    [stB] fold 4 draw 46 1.9s
+    [stB] fold 4 draw 47 1.9s
+    [stB] fold 4 draw 48 1.9s
+    [stB] fold 4 draw 49 1.9s
+    [stB] fold 4 draw 50 1.9s
+    [stB] fold 4 draw 51 1.9s
+    [stB] fold 4 draw 52 1.9s
+    [stB] fold 4 draw 53 1.8s
+    [stB] fold 4 draw 54 1.9s
+    [stB] fold 4 draw 55 1.8s
+    [stB] fold 4 draw 56 1.8s
+    [stB] fold 4 draw 57 1.8s
+    [stB] fold 4 draw 58 1.8s
+    [stB] fold 4 draw 59 1.8s
+  [stB] PARITY-lambda0 18/18
+  [selftest B] dep 0.4886 dacc +0.0057 p=0.541 nbr-AUC cos 0.5068 -> ver 0.5056 | null mean +0.0071 max +0.0657 frac>=0 0.6333
+SELFTEST COMPLETE -> scripts/analysis/vsw_selftest_OUT.json
+  multiplier check: monotone in p on 4x20 sorted probes and m(0)==1 EXACT, 48 (family x lambda) cells
+  [stA] PARITY-lambda0 18/18
+  [selftest A] dep 0.6143 dacc +0.2771 p=0.0164 nbr-AUC cos 0.5117 -> ver 0.8477 | null mean -0.0062 max +0.0143 frac>=0 0.45
+  [stB0] PARITY-lambda0 18/18
+  [selftest B0] dep 0.5171 dacc +0.0657 p=0.0164 nbr-AUC cos 0.4894 -> ver 0.529 | null mean +0.0056 max +0.0629 frac>=0 0.5833
+  [stB] PARITY-lambda0 18/18
+  [selftest B] dep 0.4886 dacc +0.0057 p=0.541 nbr-AUC cos 0.5068 -> ver 0.5056 | null mean +0.0071 max +0.0657 frac>=0 0.6333
+SELFTEST COMPLETE -> scripts/analysis/vsw_selftest_OUT.json
+  multiplier check: monotone in p on 4x20 sorted probes and m(0)==1 EXACT, 48 (family x lambda) cells
+  [stA] PARITY-lambda0 18/18
+  [selftest A] dep 0.6143 dacc +0.2771 p=0.0164 nbr-AUC cos 0.5117 -> ver 0.8477 | null mean -0.0062 max +0.0143 frac>=0 0.45
+  [stB0] PARITY-lambda0 18/18
+  [selftest B0] dep 0.5171 dacc +0.0657 p=0.0164 nbr-AUC cos 0.4894 -> ver 0.529 | null mean +0.0056 max +0.0629 frac>=0 0.5833
+  [stB] PARITY-lambda0 18/18
+  [selftest B] dep 0.4886 dacc +0.0057 p=0.541 nbr-AUC cos 0.5068 -> ver 0.5056 | null mean +0.0071 max +0.0657 frac>=0 0.6333
+SELFTEST COMPLETE -> scripts/analysis/vsw_selftest_OUT.json

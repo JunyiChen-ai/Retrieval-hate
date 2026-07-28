@@ -1,0 +1,1297 @@
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 1.9s (arena=False draws=200)
+    [en] fold 0 draw 0 7.7s
+    [en] fold 0 draw 1 6.1s
+    [en] fold 0 draw 2 6.1s
+    [en] fold 0 draw 3 6.2s
+    [en] fold 0 draw 4 6.1s
+    [en] fold 0 draw 5 6.1s
+    [en] fold 0 draw 6 6.1s
+    [en] fold 0 draw 7 6.2s
+    [en] fold 0 draw 8 6.3s
+    [en] fold 0 draw 9 6.2s
+    [en] fold 0 draw 10 6.1s
+    [en] fold 0 draw 11 6.2s
+    [en] fold 0 draw 12 6.3s
+    [en] fold 0 draw 13 6.1s
+    [en] fold 0 draw 14 6.0s
+    [en] fold 0 draw 15 6.1s
+    [en] fold 0 draw 16 6.1s
+    [en] fold 0 draw 17 6.4s
+    [en] fold 0 draw 18 6.0s
+    [en] fold 0 draw 19 6.1s
+    [en] fold 0 draw 20 6.0s
+    [en] fold 0 draw 21 6.1s
+    [en] fold 0 draw 22 6.2s
+    [en] fold 0 draw 23 6.0s
+    [en] fold 0 draw 24 6.1s
+    [en] fold 0 draw 25 6.1s
+    [en] fold 0 draw 26 6.1s
+    [en] fold 0 draw 27 6.1s
+    [en] fold 0 draw 28 6.3s
+    [en] fold 0 draw 29 6.3s
+    [en] fold 0 draw 30 6.1s
+    [en] fold 0 draw 31 6.1s
+    [en] fold 0 draw 32 6.0s
+    [en] fold 0 draw 33 6.1s
+    [en] fold 0 draw 34 6.1s
+    [en] fold 0 draw 35 6.1s
+    [en] fold 0 draw 36 6.1s
+    [en] fold 0 draw 37 6.1s
+    [en] fold 0 draw 38 6.0s
+    [en] fold 0 draw 39 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 1.9s (arena=False draws=160)
+    [en] fold 0 draw 40 7.6s
+    [en] fold 0 draw 41 6.4s
+    [en] fold 0 draw 42 6.3s
+    [en] fold 0 draw 43 6.0s
+    [en] fold 0 draw 44 6.1s
+    [en] fold 0 draw 45 6.2s
+    [en] fold 0 draw 46 6.1s
+    [en] fold 0 draw 47 6.1s
+    [en] fold 0 draw 48 6.0s
+    [en] fold 0 draw 49 6.0s
+    [en] fold 0 draw 50 6.1s
+    [en] fold 0 draw 51 6.0s
+    [en] fold 0 draw 52 6.0s
+    [en] fold 0 draw 53 6.1s
+    [en] fold 0 draw 54 6.0s
+    [en] fold 0 draw 55 6.0s
+    [en] fold 0 draw 56 6.0s
+    [en] fold 0 draw 57 6.1s
+    [en] fold 0 draw 58 6.1s
+    [en] fold 0 draw 59 6.1s
+    [en] fold 0 draw 60 6.1s
+    [en] fold 0 draw 61 6.0s
+    [en] fold 0 draw 62 5.9s
+    [en] fold 0 draw 63 6.0s
+    [en] fold 0 draw 64 6.0s
+    [en] fold 0 draw 65 6.0s
+    [en] fold 0 draw 66 6.0s
+    [en] fold 0 draw 67 6.1s
+    [en] fold 0 draw 68 6.0s
+    [en] fold 0 draw 69 6.1s
+    [en] fold 0 draw 70 6.0s
+    [en] fold 0 draw 71 6.1s
+    [en] fold 0 draw 72 6.1s
+    [en] fold 0 draw 73 6.0s
+    [en] fold 0 draw 74 6.0s
+    [en] fold 0 draw 75 6.0s
+    [en] fold 0 draw 76 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 2.1s (arena=False draws=123)
+    [en] fold 0 draw 77 7.6s
+    [en] fold 0 draw 78 6.4s
+    [en] fold 0 draw 79 6.1s
+    [en] fold 0 draw 80 6.1s
+    [en] fold 0 draw 81 6.1s
+    [en] fold 0 draw 82 6.1s
+    [en] fold 0 draw 83 6.2s
+    [en] fold 0 draw 84 6.2s
+    [en] fold 0 draw 85 6.2s
+    [en] fold 0 draw 86 6.1s
+    [en] fold 0 draw 87 6.4s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 2.0s (arena=False draws=112)
+    [en] fold 0 draw 88 7.1s
+    [en] fold 0 draw 89 6.2s
+    [en] fold 0 draw 90 6.0s
+    [en] fold 0 draw 91 6.0s
+    [en] fold 0 draw 92 6.1s
+    [en] fold 0 draw 93 6.2s
+    [en] fold 0 draw 94 6.1s
+    [en] fold 0 draw 95 6.1s
+    [en] fold 0 draw 96 6.1s
+    [en] fold 0 draw 97 6.0s
+    [en] fold 0 draw 98 6.0s
+    [en] fold 0 draw 99 6.1s
+    [en] fold 0 draw 100 6.1s
+    [en] fold 0 draw 101 6.0s
+    [en] fold 0 draw 102 6.0s
+    [en] fold 0 draw 103 6.1s
+    [en] fold 0 draw 104 6.1s
+    [en] fold 0 draw 105 6.1s
+    [en] fold 0 draw 106 6.2s
+    [en] fold 0 draw 107 6.1s
+    [en] fold 0 draw 108 6.0s
+    [en] fold 0 draw 109 6.0s
+    [en] fold 0 draw 110 6.0s
+    [en] fold 0 draw 111 6.0s
+    [en] fold 0 draw 112 6.0s
+    [en] fold 0 draw 113 6.7s
+    [en] fold 0 draw 114 6.3s
+    [en] fold 0 draw 115 6.2s
+    [en] fold 0 draw 116 6.1s
+    [en] fold 0 draw 117 6.3s
+    [en] fold 0 draw 118 6.2s
+    [en] fold 0 draw 119 6.1s
+    [en] fold 0 draw 120 6.0s
+    [en] fold 0 draw 121 6.0s
+    [en] fold 0 draw 122 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 2.0s (arena=False draws=77)
+    [en] fold 0 draw 123 7.0s
+    [en] fold 0 draw 124 6.1s
+    [en] fold 0 draw 125 6.4s
+    [en] fold 0 draw 126 6.3s
+    [en] fold 0 draw 127 6.3s
+    [en] fold 0 draw 128 6.2s
+    [en] fold 0 draw 129 6.2s
+    [en] fold 0 draw 130 6.1s
+    [en] fold 0 draw 131 6.1s
+    [en] fold 0 draw 132 6.0s
+    [en] fold 0 draw 133 6.3s
+    [en] fold 0 draw 134 6.3s
+    [en] fold 0 draw 135 6.1s
+    [en] fold 0 draw 136 6.1s
+    [en] fold 0 draw 137 6.1s
+    [en] fold 0 draw 138 6.0s
+    [en] fold 0 draw 139 6.0s
+    [en] fold 0 draw 140 6.1s
+    [en] fold 0 draw 141 6.1s
+    [en] fold 0 draw 142 6.1s
+    [en] fold 0 draw 143 6.1s
+    [en] fold 0 draw 144 6.1s
+    [en] fold 0 draw 145 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 2.0s (arena=False draws=54)
+    [en] fold 0 draw 146 7.1s
+    [en] fold 0 draw 147 6.0s
+    [en] fold 0 draw 148 6.0s
+    [en] fold 0 draw 149 6.0s
+    [en] fold 0 draw 150 6.1s
+    [en] fold 0 draw 151 6.1s
+    [en] fold 0 draw 152 6.0s
+    [en] fold 0 draw 153 6.1s
+    [en] fold 0 draw 154 6.1s
+    [en] fold 0 draw 155 6.1s
+    [en] fold 0 draw 156 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 1.9s (arena=False draws=43)
+    [en] fold 0 draw 157 7.2s
+    [en] fold 0 draw 158 6.2s
+    [en] fold 0 draw 159 6.2s
+    [en] fold 0 draw 160 6.2s
+    [en] fold 0 draw 161 6.3s
+    [en] fold 0 draw 162 6.3s
+    [en] fold 0 draw 163 6.1s
+    [en] fold 0 draw 164 6.0s
+    [en] fold 0 draw 165 6.0s
+    [en] fold 0 draw 166 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 1.9s (arena=False draws=33)
+    [en] fold 0 draw 167 7.2s
+    [en] fold 0 draw 168 6.4s
+    [en] fold 0 draw 169 6.2s
+    [en] fold 0 draw 170 6.2s
+    [en] fold 0 draw 171 6.2s
+    [en] fold 0 draw 172 6.5s
+    [en] fold 0 draw 173 6.3s
+    [en] fold 0 draw 174 6.2s
+    [en] fold 0 draw 175 6.0s
+    [en] fold 0 draw 176 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 1.9s (arena=False draws=23)
+    [en] fold 0 draw 177 7.3s
+    [en] fold 0 draw 178 6.3s
+    [en] fold 0 draw 179 6.1s
+    [en] fold 0 draw 180 6.1s
+    [en] fold 0 draw 181 6.1s
+    [en] fold 0 draw 182 6.1s
+    [en] fold 0 draw 183 6.2s
+    [en] fold 0 draw 184 6.1s
+    [en] fold 0 draw 185 6.0s
+    [en] fold 0 draw 186 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 1.9s (arena=False draws=13)
+    [en] fold 0 draw 187 7.7s
+    [en] fold 0 draw 188 6.2s
+    [en] fold 0 draw 189 6.0s
+    [en] fold 0 draw 190 6.0s
+    [en] fold 0 draw 191 6.0s
+    [en] fold 0 draw 192 6.1s
+    [en] fold 0 draw 193 6.0s
+    [en] fold 0 draw 194 6.1s
+    [en] fold 0 draw 195 6.0s
+    [en] fold 0 draw 196 6.1s
+    [en] fold 0 draw 197 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 0 setup 1.9s (arena=False draws=2)
+    [en] fold 0 draw 198 7.1s
+    [en] fold 0 draw 199 6.3s
+    [en] fold 1 setup 1.9s (arena=False draws=200)
+    [en] fold 1 draw 0 6.2s
+    [en] fold 1 draw 1 6.1s
+    [en] fold 1 draw 2 7.1s
+    [en] fold 1 draw 3 6.2s
+    [en] fold 1 draw 4 6.3s
+    [en] fold 1 draw 5 6.3s
+    [en] fold 1 draw 6 6.3s
+    [en] fold 1 draw 7 6.2s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 1 setup 2.0s (arena=False draws=192)
+    [en] fold 1 draw 8 7.4s
+    [en] fold 1 draw 9 6.2s
+    [en] fold 1 draw 10 6.2s
+    [en] fold 1 draw 11 6.6s
+    [en] fold 1 draw 12 6.4s
+    [en] fold 1 draw 13 6.3s
+    [en] fold 1 draw 14 6.2s
+    [en] fold 1 draw 15 6.2s
+    [en] fold 1 draw 16 6.2s
+    [en] fold 1 draw 17 6.3s
+    [en] fold 1 draw 18 6.2s
+    [en] fold 1 draw 19 6.1s
+    [en] fold 1 draw 20 6.1s
+    [en] fold 1 draw 21 6.1s
+    [en] fold 1 draw 22 6.1s
+    [en] fold 1 draw 23 6.2s
+    [en] fold 1 draw 24 6.3s
+    [en] fold 1 draw 25 6.2s
+    [en] fold 1 draw 26 6.1s
+    [en] fold 1 draw 27 6.1s
+    [en] fold 1 draw 28 6.0s
+    [en] fold 1 draw 29 6.0s
+    [en] fold 1 draw 30 6.0s
+    [en] fold 1 draw 31 6.0s
+    [en] fold 1 draw 32 6.0s
+    [en] fold 1 draw 33 6.0s
+    [en] fold 1 draw 34 6.0s
+    [en] fold 1 draw 35 6.1s
+    [en] fold 1 draw 36 6.1s
+    [en] fold 1 draw 37 6.2s
+    [en] fold 1 draw 38 6.2s
+    [en] fold 1 draw 39 6.2s
+    [en] fold 1 draw 40 6.1s
+    [en] fold 1 draw 41 6.0s
+    [en] fold 1 draw 42 6.1s
+    [en] fold 1 draw 43 6.0s
+    [en] fold 1 draw 44 6.1s
+    [en] fold 1 draw 45 6.1s
+    [en] fold 1 draw 46 6.0s
+    [en] fold 1 draw 47 6.0s
+    [en] fold 1 draw 48 6.1s
+    [en] fold 1 draw 49 6.1s
+    [en] fold 1 draw 50 6.0s
+    [en] fold 1 draw 51 6.0s
+    [en] fold 1 draw 52 6.1s
+    [en] fold 1 draw 53 6.1s
+    [en] fold 1 draw 54 6.1s
+    [en] fold 1 draw 55 6.2s
+    [en] fold 1 draw 56 6.1s
+    [en] fold 1 draw 57 6.1s
+    [en] fold 1 draw 58 6.4s
+    [en] fold 1 draw 59 6.2s
+    [en] fold 1 draw 60 6.1s
+    [en] fold 1 draw 61 6.1s
+    [en] fold 1 draw 62 6.2s
+    [en] fold 1 draw 63 6.2s
+    [en] fold 1 draw 64 6.2s
+    [en] fold 1 draw 65 6.2s
+    [en] fold 1 draw 66 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 1 setup 1.9s (arena=False draws=133)
+    [en] fold 1 draw 67 7.4s
+    [en] fold 1 draw 68 6.3s
+    [en] fold 1 draw 69 6.1s
+    [en] fold 1 draw 70 6.1s
+    [en] fold 1 draw 71 6.2s
+    [en] fold 1 draw 72 6.1s
+    [en] fold 1 draw 73 6.2s
+    [en] fold 1 draw 74 6.2s
+    [en] fold 1 draw 75 6.1s
+    [en] fold 1 draw 76 6.2s
+    [en] fold 1 draw 77 6.2s
+    [en] fold 1 draw 78 6.1s
+    [en] fold 1 draw 79 6.1s
+    [en] fold 1 draw 80 6.1s
+    [en] fold 1 draw 81 6.1s
+    [en] fold 1 draw 82 6.2s
+    [en] fold 1 draw 83 6.6s
+    [en] fold 1 draw 84 6.3s
+    [en] fold 1 draw 85 6.2s
+    [en] fold 1 draw 86 6.1s
+    [en] fold 1 draw 87 6.2s
+    [en] fold 1 draw 88 6.2s
+    [en] fold 1 draw 89 6.1s
+    [en] fold 1 draw 90 6.2s
+    [en] fold 1 draw 91 6.2s
+    [en] fold 1 draw 92 6.2s
+    [en] fold 1 draw 93 6.0s
+    [en] fold 1 draw 94 6.1s
+    [en] fold 1 draw 95 6.1s
+    [en] fold 1 draw 96 6.3s
+    [en] fold 1 draw 97 6.2s
+    [en] fold 1 draw 98 6.1s
+    [en] fold 1 draw 99 6.1s
+    [en] fold 1 draw 100 6.1s
+    [en] fold 1 draw 101 6.1s
+    [en] fold 1 draw 102 6.0s
+    [en] fold 1 draw 103 6.1s
+    [en] fold 1 draw 104 6.1s
+    [en] fold 1 draw 105 6.0s
+    [en] fold 1 draw 106 6.7s
+    [en] fold 1 draw 107 6.4s
+    [en] fold 1 draw 108 6.1s
+    [en] fold 1 draw 109 6.1s
+    [en] fold 1 draw 110 6.1s
+    [en] fold 1 draw 111 6.0s
+    [en] fold 1 draw 112 6.3s
+    [en] fold 1 draw 113 6.2s
+    [en] fold 1 draw 114 6.0s
+    [en] fold 1 draw 115 6.0s
+    [en] fold 1 draw 116 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 1 setup 1.9s (arena=False draws=83)
+    [en] fold 1 draw 117 7.9s
+    [en] fold 1 draw 118 6.1s
+    [en] fold 1 draw 119 6.1s
+    [en] fold 1 draw 120 6.1s
+    [en] fold 1 draw 121 6.0s
+    [en] fold 1 draw 122 6.0s
+    [en] fold 1 draw 123 6.0s
+    [en] fold 1 draw 124 6.1s
+    [en] fold 1 draw 125 6.1s
+    [en] fold 1 draw 126 6.0s
+    [en] fold 1 draw 127 6.0s
+    [en] fold 1 draw 128 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 1 setup 1.9s (arena=False draws=71)
+    [en] fold 1 draw 129 7.1s
+    [en] fold 1 draw 130 6.1s
+    [en] fold 1 draw 131 6.2s
+    [en] fold 1 draw 132 6.3s
+    [en] fold 1 draw 133 6.2s
+    [en] fold 1 draw 134 6.1s
+    [en] fold 1 draw 135 6.2s
+    [en] fold 1 draw 136 6.1s
+    [en] fold 1 draw 137 6.2s
+    [en] fold 1 draw 138 6.2s
+    [en] fold 1 draw 139 6.2s
+    [en] fold 1 draw 140 6.2s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 1 setup 2.0s (arena=False draws=59)
+    [en] fold 1 draw 141 7.4s
+    [en] fold 1 draw 142 6.1s
+    [en] fold 1 draw 143 6.1s
+    [en] fold 1 draw 144 6.1s
+    [en] fold 1 draw 145 6.1s
+    [en] fold 1 draw 146 6.1s
+    [en] fold 1 draw 147 6.1s
+    [en] fold 1 draw 148 6.1s
+    [en] fold 1 draw 149 6.1s
+    [en] fold 1 draw 150 6.0s
+    [en] fold 1 draw 151 6.1s
+    [en] fold 1 draw 152 6.0s
+    [en] fold 1 draw 153 6.1s
+    [en] fold 1 draw 154 6.0s
+    [en] fold 1 draw 155 6.0s
+    [en] fold 1 draw 156 6.1s
+    [en] fold 1 draw 157 6.1s
+    [en] fold 1 draw 158 6.1s
+    [en] fold 1 draw 159 6.1s
+    [en] fold 1 draw 160 6.0s
+    [en] fold 1 draw 161 6.2s
+    [en] fold 1 draw 162 6.2s
+    [en] fold 1 draw 163 6.1s
+    [en] fold 1 draw 164 6.0s
+    [en] fold 1 draw 165 6.3s
+    [en] fold 1 draw 166 6.4s
+    [en] fold 1 draw 167 6.4s
+    [en] fold 1 draw 168 6.3s
+    [en] fold 1 draw 169 6.4s
+    [en] fold 1 draw 170 6.4s
+    [en] fold 1 draw 171 6.3s
+    [en] fold 1 draw 172 6.3s
+    [en] fold 1 draw 173 6.3s
+    [en] fold 1 draw 174 6.3s
+    [en] fold 1 draw 175 6.4s
+    [en] fold 1 draw 176 6.4s
+    [en] fold 1 draw 177 6.4s
+    [en] fold 1 draw 178 6.5s
+    [en] fold 1 draw 179 6.4s
+    [en] fold 1 draw 180 6.4s
+    [en] fold 1 draw 181 6.3s
+    [en] fold 1 draw 182 6.3s
+    [en] fold 1 draw 183 6.4s
+    [en] fold 1 draw 184 6.3s
+    [en] fold 1 draw 185 6.3s
+    [en] fold 1 draw 186 6.3s
+    [en] fold 1 draw 187 6.4s
+    [en] fold 1 draw 188 6.3s
+    [en] fold 1 draw 189 6.3s
+    [en] fold 1 draw 190 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 1 setup 1.9s (arena=False draws=9)
+    [en] fold 1 draw 191 7.3s
+    [en] fold 1 draw 192 6.1s
+    [en] fold 1 draw 193 6.1s
+    [en] fold 1 draw 194 6.1s
+    [en] fold 1 draw 195 6.3s
+    [en] fold 1 draw 196 6.1s
+    [en] fold 1 draw 197 6.1s
+    [en] fold 1 draw 198 6.4s
+    [en] fold 1 draw 199 6.2s
+    [en] fold 2 setup 1.9s (arena=False draws=200)
+    [en] fold 2 draw 0 6.2s
+    [en] fold 2 draw 1 6.1s
+    [en] fold 2 draw 2 6.2s
+    [en] fold 2 draw 3 6.2s
+    [en] fold 2 draw 4 6.2s
+    [en] fold 2 draw 5 6.3s
+    [en] fold 2 draw 6 6.2s
+    [en] fold 2 draw 7 6.4s
+    [en] fold 2 draw 8 6.4s
+    [en] fold 2 draw 9 6.3s
+    [en] fold 2 draw 10 6.2s
+    [en] fold 2 draw 11 6.2s
+    [en] fold 2 draw 12 6.2s
+    [en] fold 2 draw 13 6.1s
+    [en] fold 2 draw 14 6.4s
+    [en] fold 2 draw 15 6.4s
+    [en] fold 2 draw 16 6.4s
+    [en] fold 2 draw 17 6.4s
+    [en] fold 2 draw 18 6.5s
+    [en] fold 2 draw 19 6.2s
+    [en] fold 2 draw 20 6.3s
+    [en] fold 2 draw 21 6.3s
+    [en] fold 2 draw 22 6.5s
+    [en] fold 2 draw 23 6.4s
+    [en] fold 2 draw 24 6.1s
+    [en] fold 2 draw 25 6.2s
+    [en] fold 2 draw 26 6.3s
+    [en] fold 2 draw 27 6.3s
+    [en] fold 2 draw 28 6.4s
+    [en] fold 2 draw 29 6.6s
+    [en] fold 2 draw 30 6.6s
+    [en] fold 2 draw 31 6.6s
+    [en] fold 2 draw 32 6.5s
+    [en] fold 2 draw 33 6.6s
+    [en] fold 2 draw 34 6.5s
+    [en] fold 2 draw 35 6.5s
+    [en] fold 2 draw 36 6.4s
+    [en] fold 2 draw 37 6.5s
+    [en] fold 2 draw 38 6.2s
+    [en] fold 2 draw 39 6.2s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.0s (arena=False draws=160)
+    [en] fold 2 draw 40 7.7s
+    [en] fold 2 draw 41 6.4s
+    [en] fold 2 draw 42 6.2s
+    [en] fold 2 draw 43 6.1s
+    [en] fold 2 draw 44 6.2s
+    [en] fold 2 draw 45 6.0s
+    [en] fold 2 draw 46 6.1s
+    [en] fold 2 draw 47 6.2s
+    [en] fold 2 draw 48 6.1s
+    [en] fold 2 draw 49 6.0s
+    [en] fold 2 draw 50 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.2s (arena=False draws=149)
+    [en] fold 2 draw 51 7.1s
+    [en] fold 2 draw 52 6.6s
+    [en] fold 2 draw 53 6.5s
+    [en] fold 2 draw 54 6.2s
+    [en] fold 2 draw 55 6.4s
+    [en] fold 2 draw 56 6.5s
+    [en] fold 2 draw 57 6.2s
+    [en] fold 2 draw 58 6.1s
+    [en] fold 2 draw 59 6.0s
+    [en] fold 2 draw 60 6.1s
+    [en] fold 2 draw 61 6.2s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.1s (arena=False draws=138)
+    [en] fold 2 draw 62 7.9s
+    [en] fold 2 draw 63 6.2s
+    [en] fold 2 draw 64 6.4s
+    [en] fold 2 draw 65 6.2s
+    [en] fold 2 draw 66 6.2s
+    [en] fold 2 draw 67 6.4s
+    [en] fold 2 draw 68 6.3s
+    [en] fold 2 draw 69 6.2s
+    [en] fold 2 draw 70 6.3s
+    [en] fold 2 draw 71 6.1s
+    [en] fold 2 draw 72 6.2s
+    [en] fold 2 draw 73 6.5s
+    [en] fold 2 draw 74 6.1s
+    [en] fold 2 draw 75 6.4s
+    [en] fold 2 draw 76 6.2s
+    [en] fold 2 draw 77 6.1s
+    [en] fold 2 draw 78 6.1s
+    [en] fold 2 draw 79 6.1s
+    [en] fold 2 draw 80 6.2s
+    [en] fold 2 draw 81 6.0s
+    [en] fold 2 draw 82 6.1s
+    [en] fold 2 draw 83 6.0s
+    [en] fold 2 draw 84 6.0s
+    [en] fold 2 draw 85 6.8s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.0s (arena=False draws=114)
+    [en] fold 2 draw 86 7.1s
+    [en] fold 2 draw 87 6.1s
+    [en] fold 2 draw 88 6.1s
+    [en] fold 2 draw 89 6.1s
+    [en] fold 2 draw 90 6.1s
+    [en] fold 2 draw 91 6.1s
+    [en] fold 2 draw 92 6.0s
+    [en] fold 2 draw 93 6.1s
+    [en] fold 2 draw 94 6.0s
+    [en] fold 2 draw 95 6.0s
+    [en] fold 2 draw 96 6.1s
+    [en] fold 2 draw 97 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.1s (arena=False draws=102)
+    [en] fold 2 draw 98 7.1s
+    [en] fold 2 draw 99 6.2s
+    [en] fold 2 draw 100 6.1s
+    [en] fold 2 draw 101 6.3s
+    [en] fold 2 draw 102 6.4s
+    [en] fold 2 draw 103 6.5s
+    [en] fold 2 draw 104 6.5s
+    [en] fold 2 draw 105 6.5s
+    [en] fold 2 draw 106 6.4s
+    [en] fold 2 draw 107 6.6s
+    [en] fold 2 draw 108 6.5s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.1s (arena=False draws=91)
+    [en] fold 2 draw 109 7.5s
+    [en] fold 2 draw 110 6.3s
+    [en] fold 2 draw 111 6.1s
+    [en] fold 2 draw 112 6.4s
+    [en] fold 2 draw 113 6.4s
+    [en] fold 2 draw 114 6.4s
+    [en] fold 2 draw 115 6.1s
+    [en] fold 2 draw 116 6.2s
+    [en] fold 2 draw 117 6.1s
+    [en] fold 2 draw 118 6.0s
+    [en] fold 2 draw 119 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.1s (arena=False draws=80)
+    [en] fold 2 draw 120 7.2s
+    [en] fold 2 draw 121 6.1s
+    [en] fold 2 draw 122 6.2s
+    [en] fold 2 draw 123 6.1s
+    [en] fold 2 draw 124 6.3s
+    [en] fold 2 draw 125 6.3s
+    [en] fold 2 draw 126 6.4s
+    [en] fold 2 draw 127 6.2s
+    [en] fold 2 draw 128 6.1s
+    [en] fold 2 draw 129 6.1s
+    [en] fold 2 draw 130 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.0s (arena=False draws=69)
+    [en] fold 2 draw 131 7.4s
+    [en] fold 2 draw 132 6.1s
+    [en] fold 2 draw 133 6.1s
+    [en] fold 2 draw 134 6.4s
+    [en] fold 2 draw 135 6.4s
+    [en] fold 2 draw 136 6.4s
+    [en] fold 2 draw 137 6.3s
+    [en] fold 2 draw 138 6.3s
+    [en] fold 2 draw 139 6.2s
+    [en] fold 2 draw 140 6.1s
+    [en] fold 2 draw 141 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.0s (arena=False draws=58)
+    [en] fold 2 draw 142 7.2s
+    [en] fold 2 draw 143 6.1s
+    [en] fold 2 draw 144 6.2s
+    [en] fold 2 draw 145 6.1s
+    [en] fold 2 draw 146 6.3s
+    [en] fold 2 draw 147 6.4s
+    [en] fold 2 draw 148 6.4s
+    [en] fold 2 draw 149 6.3s
+    [en] fold 2 draw 150 6.0s
+    [en] fold 2 draw 151 6.1s
+    [en] fold 2 draw 152 6.1s
+    [en] fold 2 draw 153 6.2s
+    [en] fold 2 draw 154 6.2s
+    [en] fold 2 draw 155 6.3s
+    [en] fold 2 draw 156 6.1s
+    [en] fold 2 draw 157 6.1s
+    [en] fold 2 draw 158 6.2s
+    [en] fold 2 draw 159 6.2s
+    [en] fold 2 draw 160 6.3s
+    [en] fold 2 draw 161 6.3s
+    [en] fold 2 draw 162 6.0s
+    [en] fold 2 draw 163 6.0s
+    [en] fold 2 draw 164 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.1s (arena=False draws=35)
+    [en] fold 2 draw 165 7.1s
+    [en] fold 2 draw 166 6.1s
+    [en] fold 2 draw 167 6.1s
+    [en] fold 2 draw 168 6.1s
+    [en] fold 2 draw 169 6.1s
+    [en] fold 2 draw 170 6.0s
+    [en] fold 2 draw 171 6.1s
+    [en] fold 2 draw 172 6.2s
+    [en] fold 2 draw 173 6.2s
+    [en] fold 2 draw 174 6.0s
+    [en] fold 2 draw 175 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 2 setup 2.2s (arena=False draws=24)
+    [en] fold 2 draw 176 7.8s
+    [en] fold 2 draw 177 6.7s
+    [en] fold 2 draw 178 6.7s
+    [en] fold 2 draw 179 6.4s
+    [en] fold 2 draw 180 6.2s
+    [en] fold 2 draw 181 6.6s
+    [en] fold 2 draw 182 6.3s
+    [en] fold 2 draw 183 6.1s
+    [en] fold 2 draw 184 6.1s
+    [en] fold 2 draw 185 6.2s
+    [en] fold 2 draw 186 6.0s
+    [en] fold 2 draw 187 6.0s
+    [en] fold 2 draw 188 6.0s
+    [en] fold 2 draw 189 6.0s
+    [en] fold 2 draw 190 6.1s
+    [en] fold 2 draw 191 6.0s
+    [en] fold 2 draw 192 6.0s
+    [en] fold 2 draw 193 6.1s
+    [en] fold 2 draw 194 6.1s
+    [en] fold 2 draw 195 6.1s
+    [en] fold 2 draw 196 6.3s
+    [en] fold 2 draw 197 6.1s
+    [en] fold 2 draw 198 6.0s
+    [en] fold 2 draw 199 6.0s
+    [en] fold 3 setup 2.0s (arena=False draws=200)
+    [en] fold 3 draw 0 6.1s
+    [en] fold 3 draw 1 6.5s
+    [en] fold 3 draw 2 6.2s
+    [en] fold 3 draw 3 6.2s
+    [en] fold 3 draw 4 6.1s
+    [en] fold 3 draw 5 6.2s
+    [en] fold 3 draw 6 6.1s
+    [en] fold 3 draw 7 6.1s
+    [en] fold 3 draw 8 6.1s
+    [en] fold 3 draw 9 6.0s
+    [en] fold 3 draw 10 6.0s
+    [en] fold 3 draw 11 6.3s
+    [en] fold 3 draw 12 6.3s
+    [en] fold 3 draw 13 6.3s
+    [en] fold 3 draw 14 6.4s
+    [en] fold 3 draw 15 6.4s
+    [en] fold 3 draw 16 6.4s
+    [en] fold 3 draw 17 6.3s
+    [en] fold 3 draw 18 6.3s
+    [en] fold 3 draw 19 6.4s
+    [en] fold 3 draw 20 6.4s
+    [en] fold 3 draw 21 6.4s
+    [en] fold 3 draw 22 6.5s
+    [en] fold 3 draw 23 6.6s
+    [en] fold 3 draw 24 6.5s
+    [en] fold 3 draw 25 6.4s
+    [en] fold 3 draw 26 6.5s
+    [en] fold 3 draw 27 6.7s
+    [en] fold 3 draw 28 6.6s
+    [en] fold 3 draw 29 6.5s
+    [en] fold 3 draw 30 6.5s
+    [en] fold 3 draw 31 6.5s
+    [en] fold 3 draw 32 6.4s
+    [en] fold 3 draw 33 6.5s
+    [en] fold 3 draw 34 6.4s
+    [en] fold 3 draw 35 6.4s
+    [en] fold 3 draw 36 6.2s
+    [en] fold 3 draw 37 6.2s
+    [en] fold 3 draw 38 5.9s
+    [en] fold 3 draw 39 6.1s
+    [en] fold 3 draw 40 6.0s
+    [en] fold 3 draw 41 6.0s
+    [en] fold 3 draw 42 6.0s
+    [en] fold 3 draw 43 6.1s
+    [en] fold 3 draw 44 6.0s
+    [en] fold 3 draw 45 6.1s
+    [en] fold 3 draw 46 6.1s
+    [en] fold 3 draw 47 6.0s
+    [en] fold 3 draw 48 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.1s (arena=False draws=151)
+    [en] fold 3 draw 49 7.3s
+    [en] fold 3 draw 50 6.3s
+    [en] fold 3 draw 51 6.4s
+    [en] fold 3 draw 52 6.2s
+    [en] fold 3 draw 53 6.4s
+    [en] fold 3 draw 54 6.3s
+    [en] fold 3 draw 55 6.5s
+    [en] fold 3 draw 56 6.4s
+    [en] fold 3 draw 57 6.4s
+    [en] fold 3 draw 58 6.4s
+    [en] fold 3 draw 59 6.5s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.1s (arena=False draws=140)
+    [en] fold 3 draw 60 7.6s
+    [en] fold 3 draw 61 6.6s
+    [en] fold 3 draw 62 6.6s
+    [en] fold 3 draw 63 6.4s
+    [en] fold 3 draw 64 6.5s
+    [en] fold 3 draw 65 6.5s
+    [en] fold 3 draw 66 6.3s
+    [en] fold 3 draw 67 6.4s
+    [en] fold 3 draw 68 6.3s
+    [en] fold 3 draw 69 6.4s
+    [en] fold 3 draw 70 6.4s
+    [en] fold 3 draw 71 6.5s
+    [en] fold 3 draw 72 6.3s
+    [en] fold 3 draw 73 6.0s
+    [en] fold 3 draw 74 6.1s
+    [en] fold 3 draw 75 6.0s
+    [en] fold 3 draw 76 6.2s
+    [en] fold 3 draw 77 6.2s
+    [en] fold 3 draw 78 6.2s
+    [en] fold 3 draw 79 6.3s
+    [en] fold 3 draw 80 6.3s
+    [en] fold 3 draw 81 6.1s
+    [en] fold 3 draw 82 6.2s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.0s (arena=False draws=117)
+    [en] fold 3 draw 83 7.0s
+    [en] fold 3 draw 84 6.0s
+    [en] fold 3 draw 85 6.3s
+    [en] fold 3 draw 86 6.2s
+    [en] fold 3 draw 87 6.1s
+    [en] fold 3 draw 88 6.2s
+    [en] fold 3 draw 89 6.4s
+    [en] fold 3 draw 90 6.2s
+    [en] fold 3 draw 91 6.1s
+    [en] fold 3 draw 92 6.2s
+    [en] fold 3 draw 93 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.2s (arena=False draws=106)
+    [en] fold 3 draw 94 7.2s
+    [en] fold 3 draw 95 6.2s
+    [en] fold 3 draw 96 6.6s
+    [en] fold 3 draw 97 6.4s
+    [en] fold 3 draw 98 6.2s
+    [en] fold 3 draw 99 6.0s
+    [en] fold 3 draw 100 6.0s
+    [en] fold 3 draw 101 6.0s
+    [en] fold 3 draw 102 6.2s
+    [en] fold 3 draw 103 6.1s
+    [en] fold 3 draw 104 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.2s (arena=False draws=95)
+    [en] fold 3 draw 105 7.8s
+    [en] fold 3 draw 106 6.2s
+    [en] fold 3 draw 107 6.1s
+    [en] fold 3 draw 108 6.1s
+    [en] fold 3 draw 109 6.1s
+    [en] fold 3 draw 110 6.1s
+    [en] fold 3 draw 111 6.1s
+    [en] fold 3 draw 112 6.2s
+    [en] fold 3 draw 113 6.1s
+    [en] fold 3 draw 114 6.1s
+    [en] fold 3 draw 115 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.1s (arena=False draws=84)
+    [en] fold 3 draw 116 7.2s
+    [en] fold 3 draw 117 6.6s
+    [en] fold 3 draw 118 6.3s
+    [en] fold 3 draw 119 6.4s
+    [en] fold 3 draw 120 6.3s
+    [en] fold 3 draw 121 6.3s
+    [en] fold 3 draw 122 6.2s
+    [en] fold 3 draw 123 6.3s
+    [en] fold 3 draw 124 6.1s
+    [en] fold 3 draw 125 6.1s
+    [en] fold 3 draw 126 6.2s
+    [en] fold 3 draw 127 6.2s
+    [en] fold 3 draw 128 6.1s
+    [en] fold 3 draw 129 6.2s
+    [en] fold 3 draw 130 6.3s
+    [en] fold 3 draw 131 6.2s
+    [en] fold 3 draw 132 6.2s
+    [en] fold 3 draw 133 6.2s
+    [en] fold 3 draw 134 6.3s
+    [en] fold 3 draw 135 6.2s
+    [en] fold 3 draw 136 6.9s
+    [en] fold 3 draw 137 6.4s
+    [en] fold 3 draw 138 6.4s
+    [en] fold 3 draw 139 6.3s
+    [en] fold 3 draw 140 6.2s
+    [en] fold 3 draw 141 6.3s
+    [en] fold 3 draw 142 6.4s
+    [en] fold 3 draw 143 6.4s
+    [en] fold 3 draw 144 6.4s
+    [en] fold 3 draw 145 6.4s
+    [en] fold 3 draw 146 6.5s
+    [en] fold 3 draw 147 6.5s
+    [en] fold 3 draw 148 6.5s
+    [en] fold 3 draw 149 6.3s
+    [en] fold 3 draw 150 6.3s
+    [en] fold 3 draw 151 6.2s
+    [en] fold 3 draw 152 6.2s
+    [en] fold 3 draw 153 6.0s
+    [en] fold 3 draw 154 6.1s
+    [en] fold 3 draw 155 7.0s
+    [en] fold 3 draw 156 6.9s
+    [en] fold 3 draw 157 6.4s
+    [en] fold 3 draw 158 6.1s
+    [en] fold 3 draw 159 6.2s
+    [en] fold 3 draw 160 6.2s
+    [en] fold 3 draw 161 6.2s
+    [en] fold 3 draw 162 6.2s
+    [en] fold 3 draw 163 6.2s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.2s (arena=False draws=36)
+    [en] fold 3 draw 164 7.9s
+    [en] fold 3 draw 165 6.3s
+    [en] fold 3 draw 166 6.2s
+    [en] fold 3 draw 167 6.2s
+    [en] fold 3 draw 168 6.4s
+    [en] fold 3 draw 169 6.4s
+    [en] fold 3 draw 170 6.3s
+    [en] fold 3 draw 171 6.2s
+    [en] fold 3 draw 172 6.3s
+    [en] fold 3 draw 173 6.2s
+    [en] fold 3 draw 174 6.2s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.0s (arena=False draws=25)
+    [en] fold 3 draw 175 7.5s
+    [en] fold 3 draw 176 6.2s
+    [en] fold 3 draw 177 6.1s
+    [en] fold 3 draw 178 6.2s
+    [en] fold 3 draw 179 6.2s
+    [en] fold 3 draw 180 6.2s
+    [en] fold 3 draw 181 6.3s
+    [en] fold 3 draw 182 6.2s
+    [en] fold 3 draw 183 6.2s
+    [en] fold 3 draw 184 6.2s
+    [en] fold 3 draw 185 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 3 setup 2.1s (arena=False draws=14)
+    [en] fold 3 draw 186 8.1s
+    [en] fold 3 draw 187 6.2s
+    [en] fold 3 draw 188 6.0s
+    [en] fold 3 draw 189 6.1s
+    [en] fold 3 draw 190 6.3s
+    [en] fold 3 draw 191 6.3s
+    [en] fold 3 draw 192 6.1s
+    [en] fold 3 draw 193 6.1s
+    [en] fold 3 draw 194 5.9s
+    [en] fold 3 draw 195 6.1s
+    [en] fold 3 draw 196 6.2s
+    [en] fold 3 draw 197 6.0s
+    [en] fold 3 draw 198 6.0s
+    [en] fold 3 draw 199 6.0s
+    [en] fold 4 setup 2.0s (arena=False draws=200)
+    [en] fold 4 draw 0 6.2s
+    [en] fold 4 draw 1 6.5s
+    [en] fold 4 draw 2 6.6s
+    [en] fold 4 draw 3 6.3s
+    [en] fold 4 draw 4 6.2s
+    [en] fold 4 draw 5 6.2s
+    [en] fold 4 draw 6 6.2s
+    [en] fold 4 draw 7 6.2s
+    [en] fold 4 draw 8 6.1s
+    [en] fold 4 draw 9 6.3s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 2.0s (arena=False draws=190)
+    [en] fold 4 draw 10 7.6s
+    [en] fold 4 draw 11 6.3s
+    [en] fold 4 draw 12 6.2s
+    [en] fold 4 draw 13 6.1s
+    [en] fold 4 draw 14 6.3s
+    [en] fold 4 draw 15 6.3s
+    [en] fold 4 draw 16 6.2s
+    [en] fold 4 draw 17 6.2s
+    [en] fold 4 draw 18 6.1s
+    [en] fold 4 draw 19 6.1s
+    [en] fold 4 draw 20 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 2.0s (arena=False draws=179)
+    [en] fold 4 draw 21 7.6s
+    [en] fold 4 draw 22 6.2s
+    [en] fold 4 draw 23 6.2s
+    [en] fold 4 draw 24 6.1s
+    [en] fold 4 draw 25 6.1s
+    [en] fold 4 draw 26 6.1s
+    [en] fold 4 draw 27 6.1s
+    [en] fold 4 draw 28 6.1s
+    [en] fold 4 draw 29 6.2s
+    [en] fold 4 draw 30 6.1s
+    [en] fold 4 draw 31 6.0s
+    [en] fold 4 draw 32 6.0s
+    [en] fold 4 draw 33 6.0s
+    [en] fold 4 draw 34 6.1s
+    [en] fold 4 draw 35 6.0s
+    [en] fold 4 draw 36 6.2s
+    [en] fold 4 draw 37 6.4s
+    [en] fold 4 draw 38 6.4s
+    [en] fold 4 draw 39 6.2s
+    [en] fold 4 draw 40 6.3s
+    [en] fold 4 draw 41 6.1s
+    [en] fold 4 draw 42 6.1s
+    [en] fold 4 draw 43 6.0s
+    [en] fold 4 draw 44 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 2.0s (arena=False draws=155)
+    [en] fold 4 draw 45 7.7s
+    [en] fold 4 draw 46 6.2s
+    [en] fold 4 draw 47 6.4s
+    [en] fold 4 draw 48 6.2s
+    [en] fold 4 draw 49 6.1s
+    [en] fold 4 draw 50 6.2s
+    [en] fold 4 draw 51 6.3s
+    [en] fold 4 draw 52 6.3s
+    [en] fold 4 draw 53 6.2s
+    [en] fold 4 draw 54 6.3s
+    [en] fold 4 draw 55 6.2s
+    [en] fold 4 draw 56 6.2s
+    [en] fold 4 draw 57 6.3s
+    [en] fold 4 draw 58 6.2s
+    [en] fold 4 draw 59 6.1s
+    [en] fold 4 draw 60 6.2s
+    [en] fold 4 draw 61 6.1s
+    [en] fold 4 draw 62 6.1s
+    [en] fold 4 draw 63 6.1s
+    [en] fold 4 draw 64 6.1s
+    [en] fold 4 draw 65 6.1s
+    [en] fold 4 draw 66 6.1s
+    [en] fold 4 draw 67 6.0s
+    [en] fold 4 draw 68 6.0s
+    [en] fold 4 draw 69 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 2.0s (arena=False draws=130)
+    [en] fold 4 draw 70 7.7s
+    [en] fold 4 draw 71 6.1s
+    [en] fold 4 draw 72 6.1s
+    [en] fold 4 draw 73 6.2s
+    [en] fold 4 draw 74 6.1s
+    [en] fold 4 draw 75 6.2s
+    [en] fold 4 draw 76 6.2s
+    [en] fold 4 draw 77 6.1s
+    [en] fold 4 draw 78 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 1.9s (arena=False draws=121)
+    [en] fold 4 draw 79 7.6s
+    [en] fold 4 draw 80 6.3s
+    [en] fold 4 draw 81 6.2s
+    [en] fold 4 draw 82 6.1s
+    [en] fold 4 draw 83 6.2s
+    [en] fold 4 draw 84 6.2s
+    [en] fold 4 draw 85 6.2s
+    [en] fold 4 draw 86 6.1s
+    [en] fold 4 draw 87 6.1s
+    [en] fold 4 draw 88 6.1s
+    [en] fold 4 draw 89 6.1s
+    [en] fold 4 draw 90 6.1s
+    [en] fold 4 draw 91 6.0s
+    [en] fold 4 draw 92 6.0s
+    [en] fold 4 draw 93 6.1s
+    [en] fold 4 draw 94 6.1s
+    [en] fold 4 draw 95 6.1s
+    [en] fold 4 draw 96 6.0s
+    [en] fold 4 draw 97 6.1s
+    [en] fold 4 draw 98 6.1s
+    [en] fold 4 draw 99 6.1s
+    [en] fold 4 draw 100 6.1s
+    [en] fold 4 draw 101 6.1s
+    [en] fold 4 draw 102 6.0s
+    [en] fold 4 draw 103 6.0s
+    [en] fold 4 draw 104 6.0s
+    [en] fold 4 draw 105 6.2s
+    [en] fold 4 draw 106 6.3s
+    [en] fold 4 draw 107 6.1s
+    [en] fold 4 draw 108 6.1s
+    [en] fold 4 draw 109 6.1s
+    [en] fold 4 draw 110 6.1s
+    [en] fold 4 draw 111 6.1s
+    [en] fold 4 draw 112 6.1s
+    [en] fold 4 draw 113 6.1s
+    [en] fold 4 draw 114 6.1s
+    [en] fold 4 draw 115 6.1s
+    [en] fold 4 draw 116 6.1s
+    [en] fold 4 draw 117 6.1s
+    [en] fold 4 draw 118 6.1s
+    [en] fold 4 draw 119 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 2.1s (arena=False draws=80)
+    [en] fold 4 draw 120 7.3s
+    [en] fold 4 draw 121 6.3s
+    [en] fold 4 draw 122 6.1s
+    [en] fold 4 draw 123 6.1s
+    [en] fold 4 draw 124 6.1s
+    [en] fold 4 draw 125 6.0s
+    [en] fold 4 draw 126 6.0s
+    [en] fold 4 draw 127 6.1s
+    [en] fold 4 draw 128 6.1s
+    [en] fold 4 draw 129 6.0s
+    [en] fold 4 draw 130 6.0s
+    [en] fold 4 draw 131 6.0s
+    [en] fold 4 draw 132 5.9s
+    [en] fold 4 draw 133 6.0s
+    [en] fold 4 draw 134 6.2s
+    [en] fold 4 draw 135 6.3s
+    [en] fold 4 draw 136 6.2s
+    [en] fold 4 draw 137 6.1s
+    [en] fold 4 draw 138 6.2s
+    [en] fold 4 draw 139 6.1s
+    [en] fold 4 draw 140 6.1s
+    [en] fold 4 draw 141 6.1s
+    [en] fold 4 draw 142 6.0s
+    [en] fold 4 draw 143 6.0s
+    [en] fold 4 draw 144 6.0s
+    [en] fold 4 draw 145 6.0s
+    [en] fold 4 draw 146 6.0s
+    [en] fold 4 draw 147 6.1s
+    [en] fold 4 draw 148 6.2s
+    [en] fold 4 draw 149 6.4s
+    [en] fold 4 draw 150 6.3s
+    [en] fold 4 draw 151 6.2s
+    [en] fold 4 draw 152 6.2s
+    [en] fold 4 draw 153 6.2s
+    [en] fold 4 draw 154 6.2s
+    [en] fold 4 draw 155 6.2s
+    [en] fold 4 draw 156 6.1s
+    [en] fold 4 draw 157 6.2s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 2.0s (arena=False draws=42)
+    [en] fold 4 draw 158 8.5s
+    [en] fold 4 draw 159 6.3s
+    [en] fold 4 draw 160 6.2s
+    [en] fold 4 draw 161 6.1s
+    [en] fold 4 draw 162 6.1s
+    [en] fold 4 draw 163 6.1s
+    [en] fold 4 draw 164 6.1s
+    [en] fold 4 draw 165 6.8s
+    [en] fold 4 draw 166 7.1s
+    [en] fold 4 draw 167 6.6s
+    [en] fold 4 draw 168 6.1s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 2.0s (arena=False draws=31)
+    [en] fold 4 draw 169 7.4s
+    [en] fold 4 draw 170 6.3s
+    [en] fold 4 draw 171 6.6s
+    [en] fold 4 draw 172 6.2s
+    [en] fold 4 draw 173 6.1s
+    [en] fold 4 draw 174 6.1s
+    [en] fold 4 draw 175 6.1s
+    [en] fold 4 draw 176 6.1s
+    [en] fold 4 draw 177 6.1s
+    [en] fold 4 draw 178 6.0s
+    [en] fold 4 draw 179 6.0s
+    [en] fold 4 draw 180 6.0s
+    [en] fold 4 draw 181 6.1s
+    [en] fold 4 draw 182 6.3s
+    [en] fold 4 draw 183 6.3s
+    [en] fold 4 draw 184 6.5s
+    [en] fold 4 draw 185 7.1s
+    [en] fold 4 draw 186 6.2s
+    [en] fold 4 draw 187 6.3s
+    [en] fold 4 draw 188 6.1s
+    [en] fold 4 draw 189 6.1s
+    [en] fold 4 draw 190 6.1s
+    [en] fold 4 draw 191 6.1s
+    [en] fold 4 draw 192 6.0s
+[en] n=549 pos-rate 0.3060 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/en
+    [en] fold 4 setup 1.9s (arena=False draws=7)
+    [en] fold 4 draw 193 7.5s
+    [en] fold 4 draw 194 6.2s
+    [en] fold 4 draw 195 6.2s
+    [en] fold 4 draw 196 6.2s
+    [en] fold 4 draw 197 6.2s
+    [en] fold 4 draw 198 6.2s
+    [en] fold 4 draw 199 6.2s
+    en eval draw 0: -0.0091
+    en eval draw 1: +0.0000
+    en eval draw 2: +0.0000
+    en eval draw 3: -0.0091
+    en eval draw 4: +0.0000
+    en eval draw 5: +0.0000
+    en eval draw 6: +0.0000
+    en eval draw 7: -0.0073
+    en eval draw 8: +0.0000
+    en eval draw 9: +0.0000
+    en eval draw 10: -0.0018
+    en eval draw 11: -0.0036
+    en eval draw 12: +0.0000
+    en eval draw 13: +0.0091
+    en eval draw 14: -0.0036
+    en eval draw 15: +0.0000
+    en eval draw 16: +0.0000
+    en eval draw 17: -0.0055
+    en eval draw 18: +0.0000
+    en eval draw 19: +0.0000
+    en eval draw 20: +0.0055
+    en eval draw 21: -0.0073
+    en eval draw 22: +0.0000
+    en eval draw 23: +0.0000
+    en eval draw 24: +0.0000
+    en eval draw 25: -0.0018
+    en eval draw 26: +0.0000
+    en eval draw 27: +0.0000
+    en eval draw 28: +0.0000
+    en eval draw 29: -0.0018
+    en eval draw 30: +0.0000
+    en eval draw 31: -0.0164
+    en eval draw 32: -0.0146
+    en eval draw 33: -0.0073
+    en eval draw 34: +0.0000
+    en eval draw 35: +0.0000
+    en eval draw 36: +0.0055
+    en eval draw 37: -0.0146
+    en eval draw 38: -0.0055
+    en eval draw 39: +0.0000
+    en eval draw 40: +0.0073
+    en eval draw 41: -0.0091
+    en eval draw 42: -0.0018
+    en eval draw 43: -0.0073
+    en eval draw 44: +0.0000
+    en eval draw 45: +0.0000
+    en eval draw 46: -0.0073
+    en eval draw 47: +0.0000
+    en eval draw 48: -0.0073
+    en eval draw 49: -0.0055
+    en eval draw 50: -0.0055
+    en eval draw 51: -0.0091
+    en eval draw 52: -0.0073
+    en eval draw 53: +0.0000
+    en eval draw 54: +0.0000
+    en eval draw 55: +0.0000
+    en eval draw 56: -0.0182
+    en eval draw 57: +0.0091
+    en eval draw 58: -0.0146
+    en eval draw 59: +0.0000
+    en eval draw 60: -0.0055
+    en eval draw 61: -0.0073
+    en eval draw 62: +0.0000
+    en eval draw 63: -0.0164
+    en eval draw 64: -0.0036
+    en eval draw 65: +0.0000
+    en eval draw 66: +0.0073
+    en eval draw 67: +0.0146
+    en eval draw 68: -0.0146
+    en eval draw 69: -0.0091
+    en eval draw 70: +0.0091
+    en eval draw 71: +0.0091
+    en eval draw 72: +0.0073
+    en eval draw 73: -0.0073
+    en eval draw 74: -0.0055
+    en eval draw 75: -0.0091
+    en eval draw 76: +0.0000
+    en eval draw 77: -0.0073
+    en eval draw 78: -0.0128
+    en eval draw 79: +0.0000
+    en eval draw 80: -0.0073
+    en eval draw 81: -0.0018
+    en eval draw 82: -0.0036
+    en eval draw 83: +0.0000
+    en eval draw 84: -0.0164
+    en eval draw 85: +0.0000
+    en eval draw 86: -0.0055
+    en eval draw 87: -0.0128
+    en eval draw 88: +0.0128
+    en eval draw 89: -0.0091
+    en eval draw 90: -0.0128
+    en eval draw 91: +0.0000
+    en eval draw 92: -0.0091
+    en eval draw 93: -0.0091
+    en eval draw 94: +0.0000
+    en eval draw 95: -0.0164
+    en eval draw 96: -0.0073
+    en eval draw 97: -0.0073
+    en eval draw 98: -0.0018
+    en eval draw 99: -0.0091
+    en eval draw 100: +0.0000
+    en eval draw 101: -0.0146
+    en eval draw 102: -0.0073
+    en eval draw 103: -0.0091
+    en eval draw 104: -0.0091
+    en eval draw 105: -0.0091
+    en eval draw 106: -0.0091
+    en eval draw 107: -0.0036
+    en eval draw 108: +0.0000
+    en eval draw 109: +0.0091
+    en eval draw 110: -0.0091
+    en eval draw 111: +0.0000
+    en eval draw 112: +0.0000
+    en eval draw 113: -0.0073
+    en eval draw 114: -0.0091
+    en eval draw 115: -0.0200
+    en eval draw 116: -0.0219
+    en eval draw 117: -0.0091
+    en eval draw 118: -0.0073
+    en eval draw 119: -0.0073
+    en eval draw 120: +0.0036
+    en eval draw 121: -0.0036
+    en eval draw 122: +0.0000
+    en eval draw 123: -0.0109
+    en eval draw 124: -0.0073
+    en eval draw 125: -0.0073
+    en eval draw 126: +0.0000
+    en eval draw 127: +0.0000
+    en eval draw 128: -0.0018
+    en eval draw 129: -0.0055
+    en eval draw 130: +0.0000
+    en eval draw 131: +0.0164
+    en eval draw 132: +0.0073
+    en eval draw 133: -0.0200
+    en eval draw 134: -0.0091
+    en eval draw 135: -0.0055
+    en eval draw 136: +0.0000
+    en eval draw 137: -0.0055
+    en eval draw 138: +0.0000
+    en eval draw 139: +0.0000
+    en eval draw 140: -0.0055
+    en eval draw 141: +0.0000
+    en eval draw 142: -0.0036
+    en eval draw 143: -0.0128
+    en eval draw 144: +0.0000
+    en eval draw 145: -0.0073
+    en eval draw 146: +0.0055
+    en eval draw 147: +0.0000
+    en eval draw 148: -0.0073
+    en eval draw 149: +0.0000
+    en eval draw 150: +0.0091
+    en eval draw 151: -0.0109
+    en eval draw 152: -0.0146
+    en eval draw 153: +0.0000
+    en eval draw 154: -0.0018
+    en eval draw 155: -0.0109
+    en eval draw 156: +0.0000
+    en eval draw 157: -0.0036
+    en eval draw 158: -0.0036
+    en eval draw 159: -0.0146
+    en eval draw 160: +0.0000
+    en eval draw 161: -0.0128
+    en eval draw 162: +0.0091
+    en eval draw 163: +0.0000
+    en eval draw 164: +0.0000
+    en eval draw 165: +0.0000
+    en eval draw 166: -0.0091
+    en eval draw 167: +0.0091
+    en eval draw 168: +0.0000
+    en eval draw 169: +0.0000
+    en eval draw 170: -0.0146
+    en eval draw 171: -0.0036
+    en eval draw 172: +0.0000
+    en eval draw 173: +0.0128
+    en eval draw 174: -0.0109
+    en eval draw 175: +0.0000
+    en eval draw 176: +0.0000
+    en eval draw 177: +0.0000
+    en eval draw 178: +0.0000
+    en eval draw 179: +0.0000
+    en eval draw 180: +0.0000
+    en eval draw 181: +0.0000
+    en eval draw 182: -0.0109
+    en eval draw 183: +0.0000
+    en eval draw 184: -0.0091
+    en eval draw 185: -0.0091
+    en eval draw 186: -0.0036
+    en eval draw 187: -0.0109
+    en eval draw 188: -0.0128
+    en eval draw 189: +0.0055
+    en eval draw 190: -0.0055
+    en eval draw 191: -0.0073
+    en eval draw 192: +0.0055
+    en eval draw 193: -0.0073
+    en eval draw 194: +0.0146
+    en eval draw 195: -0.0164
+    en eval draw 196: +0.0000
+    en eval draw 197: +0.0000
+    en eval draw 198: -0.0182
+    en eval draw 199: +0.0000
+[en] PERM COMPLETE (200 draws) -> /data/jehc223/RGCL/scripts/analysis/vsw_perm_en_OUT.json

@@ -1,0 +1,89 @@
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+    fold 0 setup 2.3s (arena=True draws=0)
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+    fold 0 setup 2.3s (arena=True draws=0)
+    fold 0 ARENA done 8.5s dep 0.8534
+    fold 1 setup 2.3s (arena=True draws=0)
+    fold 0 ARENA done 8.8s dep 0.8534
+    fold 1 setup 2.4s (arena=True draws=0)
+    fold 1 ARENA done 8.2s dep 0.8534
+    fold 2 setup 2.1s (arena=True draws=0)
+    fold 1 ARENA done 8.1s dep 0.8534
+    fold 2 setup 2.3s (arena=True draws=0)
+    fold 2 ARENA done 7.2s dep 0.9224
+    fold 3 setup 2.3s (arena=True draws=0)
+    fold 2 ARENA done 8.8s dep 0.9224
+    fold 3 setup 2.3s (arena=True draws=0)
+    fold 3 ARENA done 8.2s dep 0.8017
+    fold 4 setup 2.2s (arena=True draws=0)
+    fold 3 ARENA done 8.5s dep 0.8017
+    fold 4 setup 2.3s (arena=True draws=0)
+    fold 4 ARENA done 7.7s dep 0.8087
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+    fold 4 ARENA done 9.1s dep 0.8087
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+  [zh] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 16/16 trained quantities
+[zh] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_zh_OUT.json
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+  [zh] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 16/16 trained quantities
+[zh] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_zh_OUT.json
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+  [zh] cosine diagnostic {'n_nonpositive_cos': 0, 'n_cos_cells': 11580, 'min_cos': 0.790597, 'n_items_affected': 0, 'n_zero_norm_keys': 0}
+  [zh] PARITY-lambda0 18/18
+  [zh] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 16/16 trained quantities
+[zh] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_zh_OUT.json

@@ -1,0 +1,1357 @@
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=200)
+    [hatemm] fold 0 draw 0 11.7s
+    [hatemm] fold 0 draw 1 10.6s
+    [hatemm] fold 0 draw 2 9.8s
+    [hatemm] fold 0 draw 3 9.8s
+    [hatemm] fold 0 draw 4 9.8s
+    [hatemm] fold 0 draw 5 9.8s
+    [hatemm] fold 0 draw 6 9.6s
+    [hatemm] fold 0 draw 7 9.4s
+    [hatemm] fold 0 draw 8 9.5s
+    [hatemm] fold 0 draw 9 9.6s
+    [hatemm] fold 0 draw 10 9.8s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=189)
+    [hatemm] fold 0 draw 11 10.6s
+    [hatemm] fold 0 draw 12 9.6s
+    [hatemm] fold 0 draw 13 9.9s
+    [hatemm] fold 0 draw 14 10.1s
+    [hatemm] fold 0 draw 15 9.7s
+    [hatemm] fold 0 draw 16 9.5s
+    [hatemm] fold 0 draw 17 9.7s
+    [hatemm] fold 0 draw 18 9.9s
+    [hatemm] fold 0 draw 19 9.4s
+    [hatemm] fold 0 draw 20 9.6s
+    [hatemm] fold 0 draw 21 9.5s
+    [hatemm] fold 0 draw 22 9.6s
+    [hatemm] fold 0 draw 23 9.7s
+    [hatemm] fold 0 draw 24 9.5s
+    [hatemm] fold 0 draw 25 9.4s
+    [hatemm] fold 0 draw 26 9.5s
+    [hatemm] fold 0 draw 27 9.6s
+    [hatemm] fold 0 draw 28 9.5s
+    [hatemm] fold 0 draw 29 9.5s
+    [hatemm] fold 0 draw 30 10.2s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=169)
+    [hatemm] fold 0 draw 31 11.9s
+    [hatemm] fold 0 draw 32 10.0s
+    [hatemm] fold 0 draw 33 9.6s
+    [hatemm] fold 0 draw 34 9.9s
+    [hatemm] fold 0 draw 35 9.6s
+    [hatemm] fold 0 draw 36 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=163)
+    [hatemm] fold 0 draw 37 10.6s
+    [hatemm] fold 0 draw 38 9.8s
+    [hatemm] fold 0 draw 39 9.6s
+    [hatemm] fold 0 draw 40 9.4s
+    [hatemm] fold 0 draw 41 9.6s
+    [hatemm] fold 0 draw 42 9.4s
+    [hatemm] fold 0 draw 43 9.4s
+    [hatemm] fold 0 draw 44 9.8s
+    [hatemm] fold 0 draw 45 9.7s
+    [hatemm] fold 0 draw 46 9.7s
+    [hatemm] fold 0 draw 47 10.7s
+    [hatemm] fold 0 draw 48 10.1s
+    [hatemm] fold 0 draw 49 9.7s
+    [hatemm] fold 0 draw 50 9.7s
+    [hatemm] fold 0 draw 51 9.7s
+    [hatemm] fold 0 draw 52 9.7s
+    [hatemm] fold 0 draw 53 9.6s
+    [hatemm] fold 0 draw 54 9.7s
+    [hatemm] fold 0 draw 55 9.6s
+    [hatemm] fold 0 draw 56 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=143)
+    [hatemm] fold 0 draw 57 11.0s
+    [hatemm] fold 0 draw 58 9.4s
+    [hatemm] fold 0 draw 59 9.4s
+    [hatemm] fold 0 draw 60 9.5s
+    [hatemm] fold 0 draw 61 9.5s
+    [hatemm] fold 0 draw 62 9.5s
+    [hatemm] fold 0 draw 63 9.5s
+    [hatemm] fold 0 draw 64 10.2s
+    [hatemm] fold 0 draw 65 9.4s
+    [hatemm] fold 0 draw 66 9.4s
+    [hatemm] fold 0 draw 67 9.4s
+    [hatemm] fold 0 draw 68 9.5s
+    [hatemm] fold 0 draw 69 9.3s
+    [hatemm] fold 0 draw 70 9.4s
+    [hatemm] fold 0 draw 71 9.5s
+    [hatemm] fold 0 draw 72 9.4s
+    [hatemm] fold 0 draw 73 9.4s
+    [hatemm] fold 0 draw 74 9.7s
+    [hatemm] fold 0 draw 75 10.7s
+    [hatemm] fold 0 draw 76 9.7s
+    [hatemm] fold 0 draw 77 9.7s
+    [hatemm] fold 0 draw 78 9.8s
+    [hatemm] fold 0 draw 79 10.0s
+    [hatemm] fold 0 draw 80 9.6s
+    [hatemm] fold 0 draw 81 9.5s
+    [hatemm] fold 0 draw 82 9.4s
+    [hatemm] fold 0 draw 83 9.4s
+    [hatemm] fold 0 draw 84 10.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=115)
+    [hatemm] fold 0 draw 85 10.6s
+    [hatemm] fold 0 draw 86 9.5s
+    [hatemm] fold 0 draw 87 9.4s
+    [hatemm] fold 0 draw 88 9.5s
+    [hatemm] fold 0 draw 89 9.4s
+    [hatemm] fold 0 draw 90 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.1s (arena=False draws=109)
+    [hatemm] fold 0 draw 91 11.2s
+    [hatemm] fold 0 draw 92 9.7s
+    [hatemm] fold 0 draw 93 10.1s
+    [hatemm] fold 0 draw 94 9.9s
+    [hatemm] fold 0 draw 95 9.7s
+    [hatemm] fold 0 draw 96 10.0s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=103)
+    [hatemm] fold 0 draw 97 10.7s
+    [hatemm] fold 0 draw 98 9.5s
+    [hatemm] fold 0 draw 99 9.4s
+    [hatemm] fold 0 draw 100 9.5s
+    [hatemm] fold 0 draw 101 9.5s
+    [hatemm] fold 0 draw 102 9.4s
+    [hatemm] fold 0 draw 103 9.3s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.1s (arena=False draws=96)
+    [hatemm] fold 0 draw 104 10.9s
+    [hatemm] fold 0 draw 105 9.7s
+    [hatemm] fold 0 draw 106 9.7s
+    [hatemm] fold 0 draw 107 9.9s
+    [hatemm] fold 0 draw 108 9.6s
+    [hatemm] fold 0 draw 109 9.5s
+    [hatemm] fold 0 draw 110 9.6s
+    [hatemm] fold 0 draw 111 9.5s
+    [hatemm] fold 0 draw 112 9.4s
+    [hatemm] fold 0 draw 113 9.5s
+    [hatemm] fold 0 draw 114 9.5s
+    [hatemm] fold 0 draw 115 9.5s
+    [hatemm] fold 0 draw 116 9.5s
+    [hatemm] fold 0 draw 117 9.5s
+    [hatemm] fold 0 draw 118 9.4s
+    [hatemm] fold 0 draw 119 9.4s
+    [hatemm] fold 0 draw 120 9.4s
+    [hatemm] fold 0 draw 121 9.4s
+    [hatemm] fold 0 draw 122 9.5s
+    [hatemm] fold 0 draw 123 9.5s
+    [hatemm] fold 0 draw 124 9.5s
+    [hatemm] fold 0 draw 125 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.1s (arena=False draws=74)
+    [hatemm] fold 0 draw 126 10.7s
+    [hatemm] fold 0 draw 127 9.7s
+    [hatemm] fold 0 draw 128 9.7s
+    [hatemm] fold 0 draw 129 9.5s
+    [hatemm] fold 0 draw 130 9.5s
+    [hatemm] fold 0 draw 131 9.5s
+    [hatemm] fold 0 draw 132 9.7s
+    [hatemm] fold 0 draw 133 9.6s
+    [hatemm] fold 0 draw 134 9.7s
+    [hatemm] fold 0 draw 135 9.7s
+    [hatemm] fold 0 draw 136 9.7s
+    [hatemm] fold 0 draw 137 9.7s
+    [hatemm] fold 0 draw 138 9.7s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=61)
+    [hatemm] fold 0 draw 139 11.3s
+    [hatemm] fold 0 draw 140 9.6s
+    [hatemm] fold 0 draw 141 9.5s
+    [hatemm] fold 0 draw 142 9.5s
+    [hatemm] fold 0 draw 143 9.6s
+    [hatemm] fold 0 draw 144 9.4s
+    [hatemm] fold 0 draw 145 9.5s
+    [hatemm] fold 0 draw 146 9.7s
+    [hatemm] fold 0 draw 147 9.5s
+    [hatemm] fold 0 draw 148 9.5s
+    [hatemm] fold 0 draw 149 9.9s
+    [hatemm] fold 0 draw 150 9.5s
+    [hatemm] fold 0 draw 151 9.5s
+    [hatemm] fold 0 draw 152 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.2s (arena=False draws=47)
+    [hatemm] fold 0 draw 153 10.9s
+    [hatemm] fold 0 draw 154 9.6s
+    [hatemm] fold 0 draw 155 9.5s
+    [hatemm] fold 0 draw 156 9.5s
+    [hatemm] fold 0 draw 157 9.8s
+    [hatemm] fold 0 draw 158 9.5s
+    [hatemm] fold 0 draw 159 9.5s
+    [hatemm] fold 0 draw 160 9.9s
+    [hatemm] fold 0 draw 161 9.4s
+    [hatemm] fold 0 draw 162 9.4s
+    [hatemm] fold 0 draw 163 9.4s
+    [hatemm] fold 0 draw 164 9.4s
+    [hatemm] fold 0 draw 165 9.3s
+    [hatemm] fold 0 draw 166 9.7s
+    [hatemm] fold 0 draw 167 9.3s
+    [hatemm] fold 0 draw 168 9.4s
+    [hatemm] fold 0 draw 169 9.6s
+    [hatemm] fold 0 draw 170 9.6s
+    [hatemm] fold 0 draw 171 9.3s
+    [hatemm] fold 0 draw 172 9.4s
+    [hatemm] fold 0 draw 173 9.4s
+    [hatemm] fold 0 draw 174 9.3s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.0s (arena=False draws=25)
+    [hatemm] fold 0 draw 175 12.8s
+    [hatemm] fold 0 draw 176 10.6s
+    [hatemm] fold 0 draw 177 9.8s
+    [hatemm] fold 0 draw 178 9.6s
+    [hatemm] fold 0 draw 179 9.5s
+    [hatemm] fold 0 draw 180 9.6s
+    [hatemm] fold 0 draw 181 9.6s
+    [hatemm] fold 0 draw 182 9.5s
+    [hatemm] fold 0 draw 183 9.6s
+    [hatemm] fold 0 draw 184 9.5s
+    [hatemm] fold 0 draw 185 9.6s
+    [hatemm] fold 0 draw 186 9.5s
+    [hatemm] fold 0 draw 187 9.4s
+    [hatemm] fold 0 draw 188 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.1s (arena=False draws=11)
+    [hatemm] fold 0 draw 189 10.7s
+    [hatemm] fold 0 draw 190 9.8s
+    [hatemm] fold 0 draw 191 9.6s
+    [hatemm] fold 0 draw 192 9.5s
+    [hatemm] fold 0 draw 193 9.8s
+    [hatemm] fold 0 draw 194 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 0 setup 3.1s (arena=False draws=5)
+    [hatemm] fold 0 draw 195 10.5s
+    [hatemm] fold 0 draw 196 9.5s
+    [hatemm] fold 0 draw 197 9.5s
+    [hatemm] fold 0 draw 198 9.8s
+    [hatemm] fold 0 draw 199 9.8s
+    [hatemm] fold 1 setup 3.1s (arena=False draws=200)
+    [hatemm] fold 1 draw 0 9.4s
+    [hatemm] fold 1 draw 1 9.4s
+    [hatemm] fold 1 draw 2 9.4s
+    [hatemm] fold 1 draw 3 9.4s
+    [hatemm] fold 1 draw 4 9.4s
+    [hatemm] fold 1 draw 5 9.6s
+    [hatemm] fold 1 draw 6 9.4s
+    [hatemm] fold 1 draw 7 9.3s
+    [hatemm] fold 1 draw 8 9.4s
+    [hatemm] fold 1 draw 9 9.3s
+    [hatemm] fold 1 draw 10 9.4s
+    [hatemm] fold 1 draw 11 9.4s
+    [hatemm] fold 1 draw 12 9.5s
+    [hatemm] fold 1 draw 13 9.6s
+    [hatemm] fold 1 draw 14 9.5s
+    [hatemm] fold 1 draw 15 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.1s (arena=False draws=184)
+    [hatemm] fold 1 draw 16 10.5s
+    [hatemm] fold 1 draw 17 9.5s
+    [hatemm] fold 1 draw 18 9.5s
+    [hatemm] fold 1 draw 19 9.6s
+    [hatemm] fold 1 draw 20 9.4s
+    [hatemm] fold 1 draw 21 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.2s (arena=False draws=178)
+    [hatemm] fold 1 draw 22 10.5s
+    [hatemm] fold 1 draw 23 9.5s
+    [hatemm] fold 1 draw 24 9.5s
+    [hatemm] fold 1 draw 25 9.4s
+    [hatemm] fold 1 draw 26 9.4s
+    [hatemm] fold 1 draw 27 9.4s
+    [hatemm] fold 1 draw 28 9.9s
+    [hatemm] fold 1 draw 29 9.6s
+    [hatemm] fold 1 draw 30 9.6s
+    [hatemm] fold 1 draw 31 9.5s
+    [hatemm] fold 1 draw 32 9.5s
+    [hatemm] fold 1 draw 33 9.4s
+    [hatemm] fold 1 draw 34 9.5s
+    [hatemm] fold 1 draw 35 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.2s (arena=False draws=164)
+    [hatemm] fold 1 draw 36 10.7s
+    [hatemm] fold 1 draw 37 9.5s
+    [hatemm] fold 1 draw 38 9.6s
+    [hatemm] fold 1 draw 39 9.5s
+    [hatemm] fold 1 draw 40 9.6s
+    [hatemm] fold 1 draw 41 9.5s
+    [hatemm] fold 1 draw 42 9.4s
+    [hatemm] fold 1 draw 43 9.4s
+    [hatemm] fold 1 draw 44 9.3s
+    [hatemm] fold 1 draw 45 9.4s
+    [hatemm] fold 1 draw 46 9.4s
+    [hatemm] fold 1 draw 47 9.5s
+    [hatemm] fold 1 draw 48 9.3s
+    [hatemm] fold 1 draw 49 10.5s
+    [hatemm] fold 1 draw 50 9.4s
+    [hatemm] fold 1 draw 51 9.4s
+    [hatemm] fold 1 draw 52 9.4s
+    [hatemm] fold 1 draw 53 9.6s
+    [hatemm] fold 1 draw 54 9.4s
+    [hatemm] fold 1 draw 55 9.3s
+    [hatemm] fold 1 draw 56 9.3s
+    [hatemm] fold 1 draw 57 9.4s
+    [hatemm] fold 1 draw 58 9.5s
+    [hatemm] fold 1 draw 59 9.6s
+    [hatemm] fold 1 draw 60 9.8s
+    [hatemm] fold 1 draw 61 9.6s
+    [hatemm] fold 1 draw 62 9.5s
+    [hatemm] fold 1 draw 63 9.3s
+    [hatemm] fold 1 draw 64 9.3s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.2s (arena=False draws=135)
+    [hatemm] fold 1 draw 65 11.3s
+    [hatemm] fold 1 draw 66 9.4s
+    [hatemm] fold 1 draw 67 9.8s
+    [hatemm] fold 1 draw 68 9.9s
+    [hatemm] fold 1 draw 69 9.8s
+    [hatemm] fold 1 draw 70 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.1s (arena=False draws=129)
+    [hatemm] fold 1 draw 71 10.5s
+    [hatemm] fold 1 draw 72 9.5s
+    [hatemm] fold 1 draw 73 9.5s
+    [hatemm] fold 1 draw 74 9.5s
+    [hatemm] fold 1 draw 75 9.6s
+    [hatemm] fold 1 draw 76 9.6s
+    [hatemm] fold 1 draw 77 9.6s
+    [hatemm] fold 1 draw 78 9.6s
+    [hatemm] fold 1 draw 79 9.5s
+    [hatemm] fold 1 draw 80 9.5s
+    [hatemm] fold 1 draw 81 9.5s
+    [hatemm] fold 1 draw 82 9.5s
+    [hatemm] fold 1 draw 83 9.6s
+    [hatemm] fold 1 draw 84 9.4s
+    [hatemm] fold 1 draw 85 9.5s
+    [hatemm] fold 1 draw 86 9.5s
+    [hatemm] fold 1 draw 87 9.5s
+    [hatemm] fold 1 draw 88 9.4s
+    [hatemm] fold 1 draw 89 9.6s
+    [hatemm] fold 1 draw 90 9.8s
+    [hatemm] fold 1 draw 91 9.8s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.2s (arena=False draws=108)
+    [hatemm] fold 1 draw 92 10.6s
+    [hatemm] fold 1 draw 93 9.5s
+    [hatemm] fold 1 draw 94 9.7s
+    [hatemm] fold 1 draw 95 9.7s
+    [hatemm] fold 1 draw 96 9.5s
+    [hatemm] fold 1 draw 97 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.2s (arena=False draws=102)
+    [hatemm] fold 1 draw 98 10.6s
+    [hatemm] fold 1 draw 99 9.7s
+    [hatemm] fold 1 draw 100 9.5s
+    [hatemm] fold 1 draw 101 9.6s
+    [hatemm] fold 1 draw 102 9.7s
+    [hatemm] fold 1 draw 103 10.2s
+    [hatemm] fold 1 draw 104 9.4s
+    [hatemm] fold 1 draw 105 9.3s
+    [hatemm] fold 1 draw 106 9.3s
+    [hatemm] fold 1 draw 107 9.3s
+    [hatemm] fold 1 draw 108 9.4s
+    [hatemm] fold 1 draw 109 9.4s
+    [hatemm] fold 1 draw 110 9.4s
+    [hatemm] fold 1 draw 111 9.2s
+    [hatemm] fold 1 draw 112 9.3s
+    [hatemm] fold 1 draw 113 9.2s
+    [hatemm] fold 1 draw 114 9.3s
+    [hatemm] fold 1 draw 115 9.6s
+    [hatemm] fold 1 draw 116 9.9s
+    [hatemm] fold 1 draw 117 9.3s
+    [hatemm] fold 1 draw 118 9.6s
+    [hatemm] fold 1 draw 119 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.1s (arena=False draws=80)
+    [hatemm] fold 1 draw 120 10.8s
+    [hatemm] fold 1 draw 121 9.5s
+    [hatemm] fold 1 draw 122 9.4s
+    [hatemm] fold 1 draw 123 9.5s
+    [hatemm] fold 1 draw 124 9.6s
+    [hatemm] fold 1 draw 125 9.8s
+    [hatemm] fold 1 draw 126 9.7s
+    [hatemm] fold 1 draw 127 9.4s
+    [hatemm] fold 1 draw 128 9.6s
+    [hatemm] fold 1 draw 129 10.2s
+    [hatemm] fold 1 draw 130 9.9s
+    [hatemm] fold 1 draw 131 9.8s
+    [hatemm] fold 1 draw 132 9.6s
+    [hatemm] fold 1 draw 133 9.6s
+    [hatemm] fold 1 draw 134 9.8s
+    [hatemm] fold 1 draw 135 9.5s
+    [hatemm] fold 1 draw 136 10.2s
+    [hatemm] fold 1 draw 137 10.0s
+    [hatemm] fold 1 draw 138 9.6s
+    [hatemm] fold 1 draw 139 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.1s (arena=False draws=60)
+    [hatemm] fold 1 draw 140 11.1s
+    [hatemm] fold 1 draw 141 9.6s
+    [hatemm] fold 1 draw 142 9.6s
+    [hatemm] fold 1 draw 143 9.7s
+    [hatemm] fold 1 draw 144 9.5s
+    [hatemm] fold 1 draw 145 9.4s
+    [hatemm] fold 1 draw 146 9.5s
+    [hatemm] fold 1 draw 147 9.5s
+    [hatemm] fold 1 draw 148 9.5s
+    [hatemm] fold 1 draw 149 9.7s
+    [hatemm] fold 1 draw 150 9.8s
+    [hatemm] fold 1 draw 151 10.2s
+    [hatemm] fold 1 draw 152 9.6s
+    [hatemm] fold 1 draw 153 9.6s
+    [hatemm] fold 1 draw 154 9.5s
+    [hatemm] fold 1 draw 155 9.5s
+    [hatemm] fold 1 draw 156 9.4s
+    [hatemm] fold 1 draw 157 9.9s
+    [hatemm] fold 1 draw 158 9.8s
+    [hatemm] fold 1 draw 159 9.7s
+    [hatemm] fold 1 draw 160 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.2s (arena=False draws=39)
+    [hatemm] fold 1 draw 161 10.6s
+    [hatemm] fold 1 draw 162 9.6s
+    [hatemm] fold 1 draw 163 9.5s
+    [hatemm] fold 1 draw 164 9.6s
+    [hatemm] fold 1 draw 165 9.6s
+    [hatemm] fold 1 draw 166 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.2s (arena=False draws=33)
+    [hatemm] fold 1 draw 167 11.3s
+    [hatemm] fold 1 draw 168 9.8s
+    [hatemm] fold 1 draw 169 9.5s
+    [hatemm] fold 1 draw 170 9.7s
+    [hatemm] fold 1 draw 171 9.9s
+    [hatemm] fold 1 draw 172 10.6s
+    [hatemm] fold 1 draw 173 11.1s
+    [hatemm] fold 1 draw 174 11.2s
+    [hatemm] fold 1 draw 175 9.7s
+    [hatemm] fold 1 draw 176 9.8s
+    [hatemm] fold 1 draw 177 9.7s
+    [hatemm] fold 1 draw 178 9.5s
+    [hatemm] fold 1 draw 179 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.3s (arena=False draws=20)
+    [hatemm] fold 1 draw 180 11.6s
+    [hatemm] fold 1 draw 181 9.5s
+    [hatemm] fold 1 draw 182 9.4s
+    [hatemm] fold 1 draw 183 9.5s
+    [hatemm] fold 1 draw 184 9.4s
+    [hatemm] fold 1 draw 185 9.4s
+    [hatemm] fold 1 draw 186 9.4s
+    [hatemm] fold 1 draw 187 9.4s
+    [hatemm] fold 1 draw 188 9.5s
+    [hatemm] fold 1 draw 189 9.4s
+    [hatemm] fold 1 draw 190 9.4s
+    [hatemm] fold 1 draw 191 9.3s
+    [hatemm] fold 1 draw 192 9.3s
+    [hatemm] fold 1 draw 193 9.8s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 1 setup 3.1s (arena=False draws=6)
+    [hatemm] fold 1 draw 194 10.5s
+    [hatemm] fold 1 draw 195 9.8s
+    [hatemm] fold 1 draw 196 11.0s
+    [hatemm] fold 1 draw 197 10.3s
+    [hatemm] fold 1 draw 198 9.4s
+    [hatemm] fold 1 draw 199 9.4s
+    [hatemm] fold 2 setup 3.1s (arena=False draws=200)
+    [hatemm] fold 2 draw 0 9.3s
+    [hatemm] fold 2 draw 1 9.4s
+    [hatemm] fold 2 draw 2 10.5s
+    [hatemm] fold 2 draw 3 10.0s
+    [hatemm] fold 2 draw 4 9.6s
+    [hatemm] fold 2 draw 5 9.4s
+    [hatemm] fold 2 draw 6 9.4s
+    [hatemm] fold 2 draw 7 9.3s
+    [hatemm] fold 2 draw 8 9.3s
+    [hatemm] fold 2 draw 9 9.4s
+    [hatemm] fold 2 draw 10 9.6s
+    [hatemm] fold 2 draw 11 9.9s
+    [hatemm] fold 2 draw 12 9.6s
+    [hatemm] fold 2 draw 13 9.4s
+    [hatemm] fold 2 draw 14 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=185)
+    [hatemm] fold 2 draw 15 10.6s
+    [hatemm] fold 2 draw 16 9.5s
+    [hatemm] fold 2 draw 17 9.7s
+    [hatemm] fold 2 draw 18 9.9s
+    [hatemm] fold 2 draw 19 9.9s
+    [hatemm] fold 2 draw 20 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=179)
+    [hatemm] fold 2 draw 21 11.0s
+    [hatemm] fold 2 draw 22 9.6s
+    [hatemm] fold 2 draw 23 9.5s
+    [hatemm] fold 2 draw 24 9.6s
+    [hatemm] fold 2 draw 25 9.6s
+    [hatemm] fold 2 draw 26 9.9s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=173)
+    [hatemm] fold 2 draw 27 10.5s
+    [hatemm] fold 2 draw 28 9.4s
+    [hatemm] fold 2 draw 29 9.6s
+    [hatemm] fold 2 draw 30 9.5s
+    [hatemm] fold 2 draw 31 9.5s
+    [hatemm] fold 2 draw 32 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=167)
+    [hatemm] fold 2 draw 33 10.6s
+    [hatemm] fold 2 draw 34 9.5s
+    [hatemm] fold 2 draw 35 9.5s
+    [hatemm] fold 2 draw 36 9.4s
+    [hatemm] fold 2 draw 37 9.4s
+    [hatemm] fold 2 draw 38 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.4s (arena=False draws=161)
+    [hatemm] fold 2 draw 39 13.0s
+    [hatemm] fold 2 draw 40 11.3s
+    [hatemm] fold 2 draw 41 11.6s
+    [hatemm] fold 2 draw 42 11.5s
+    [hatemm] fold 2 draw 43 11.5s
+    [hatemm] fold 2 draw 44 11.3s
+    [hatemm] fold 2 draw 45 11.3s
+    [hatemm] fold 2 draw 46 11.1s
+    [hatemm] fold 2 draw 47 11.1s
+    [hatemm] fold 2 draw 48 11.3s
+    [hatemm] fold 2 draw 49 10.3s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=150)
+    [hatemm] fold 2 draw 50 11.0s
+    [hatemm] fold 2 draw 51 9.5s
+    [hatemm] fold 2 draw 52 9.4s
+    [hatemm] fold 2 draw 53 9.4s
+    [hatemm] fold 2 draw 54 9.4s
+    [hatemm] fold 2 draw 55 9.3s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=144)
+    [hatemm] fold 2 draw 56 10.7s
+    [hatemm] fold 2 draw 57 9.6s
+    [hatemm] fold 2 draw 58 9.5s
+    [hatemm] fold 2 draw 59 9.6s
+    [hatemm] fold 2 draw 60 9.6s
+    [hatemm] fold 2 draw 61 9.5s
+    [hatemm] fold 2 draw 62 9.4s
+    [hatemm] fold 2 draw 63 9.5s
+    [hatemm] fold 2 draw 64 9.5s
+    [hatemm] fold 2 draw 65 9.6s
+    [hatemm] fold 2 draw 66 9.6s
+    [hatemm] fold 2 draw 67 10.1s
+    [hatemm] fold 2 draw 68 9.5s
+    [hatemm] fold 2 draw 69 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=130)
+    [hatemm] fold 2 draw 70 11.0s
+    [hatemm] fold 2 draw 71 9.7s
+    [hatemm] fold 2 draw 72 9.7s
+    [hatemm] fold 2 draw 73 9.6s
+    [hatemm] fold 2 draw 74 9.5s
+    [hatemm] fold 2 draw 75 9.3s
+    [hatemm] fold 2 draw 76 9.4s
+    [hatemm] fold 2 draw 77 9.3s
+    [hatemm] fold 2 draw 78 9.4s
+    [hatemm] fold 2 draw 79 9.4s
+    [hatemm] fold 2 draw 80 9.6s
+    [hatemm] fold 2 draw 81 9.4s
+    [hatemm] fold 2 draw 82 9.4s
+    [hatemm] fold 2 draw 83 9.7s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=116)
+    [hatemm] fold 2 draw 84 10.9s
+    [hatemm] fold 2 draw 85 9.9s
+    [hatemm] fold 2 draw 86 10.3s
+    [hatemm] fold 2 draw 87 9.7s
+    [hatemm] fold 2 draw 88 9.6s
+    [hatemm] fold 2 draw 89 10.1s
+    [hatemm] fold 2 draw 90 9.6s
+    [hatemm] fold 2 draw 91 9.6s
+    [hatemm] fold 2 draw 92 9.5s
+    [hatemm] fold 2 draw 93 9.5s
+    [hatemm] fold 2 draw 94 9.5s
+    [hatemm] fold 2 draw 95 9.7s
+    [hatemm] fold 2 draw 96 9.8s
+    [hatemm] fold 2 draw 97 9.7s
+    [hatemm] fold 2 draw 98 10.3s
+    [hatemm] fold 2 draw 99 10.4s
+    [hatemm] fold 2 draw 100 9.6s
+    [hatemm] fold 2 draw 101 9.6s
+    [hatemm] fold 2 draw 102 9.6s
+    [hatemm] fold 2 draw 103 9.7s
+    [hatemm] fold 2 draw 104 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.1s (arena=False draws=95)
+    [hatemm] fold 2 draw 105 11.2s
+    [hatemm] fold 2 draw 106 9.5s
+    [hatemm] fold 2 draw 107 9.5s
+    [hatemm] fold 2 draw 108 9.6s
+    [hatemm] fold 2 draw 109 9.6s
+    [hatemm] fold 2 draw 110 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=89)
+    [hatemm] fold 2 draw 111 11.4s
+    [hatemm] fold 2 draw 112 11.1s
+    [hatemm] fold 2 draw 113 10.3s
+    [hatemm] fold 2 draw 114 9.9s
+    [hatemm] fold 2 draw 115 9.7s
+    [hatemm] fold 2 draw 116 9.6s
+    [hatemm] fold 2 draw 117 9.4s
+    [hatemm] fold 2 draw 118 9.4s
+    [hatemm] fold 2 draw 119 9.5s
+    [hatemm] fold 2 draw 120 9.6s
+    [hatemm] fold 2 draw 121 9.6s
+    [hatemm] fold 2 draw 122 9.9s
+    [hatemm] fold 2 draw 123 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=76)
+    [hatemm] fold 2 draw 124 11.3s
+    [hatemm] fold 2 draw 125 10.2s
+    [hatemm] fold 2 draw 126 9.5s
+    [hatemm] fold 2 draw 127 9.5s
+    [hatemm] fold 2 draw 128 9.6s
+    [hatemm] fold 2 draw 129 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=70)
+    [hatemm] fold 2 draw 130 10.7s
+    [hatemm] fold 2 draw 131 9.7s
+    [hatemm] fold 2 draw 132 9.6s
+    [hatemm] fold 2 draw 133 9.6s
+    [hatemm] fold 2 draw 134 9.6s
+    [hatemm] fold 2 draw 135 9.5s
+    [hatemm] fold 2 draw 136 9.8s
+    [hatemm] fold 2 draw 137 9.5s
+    [hatemm] fold 2 draw 138 9.4s
+    [hatemm] fold 2 draw 139 9.4s
+    [hatemm] fold 2 draw 140 9.5s
+    [hatemm] fold 2 draw 141 9.5s
+    [hatemm] fold 2 draw 142 9.6s
+    [hatemm] fold 2 draw 143 9.7s
+    [hatemm] fold 2 draw 144 9.6s
+    [hatemm] fold 2 draw 145 9.4s
+    [hatemm] fold 2 draw 146 9.8s
+    [hatemm] fold 2 draw 147 10.5s
+    [hatemm] fold 2 draw 148 9.7s
+    [hatemm] fold 2 draw 149 9.6s
+    [hatemm] fold 2 draw 150 9.6s
+    [hatemm] fold 2 draw 151 9.4s
+    [hatemm] fold 2 draw 152 9.4s
+    [hatemm] fold 2 draw 153 10.1s
+    [hatemm] fold 2 draw 154 9.6s
+    [hatemm] fold 2 draw 155 9.8s
+    [hatemm] fold 2 draw 156 10.0s
+    [hatemm] fold 2 draw 157 9.5s
+    [hatemm] fold 2 draw 158 9.5s
+    [hatemm] fold 2 draw 159 9.4s
+    [hatemm] fold 2 draw 160 9.4s
+    [hatemm] fold 2 draw 161 9.5s
+    [hatemm] fold 2 draw 162 9.5s
+    [hatemm] fold 2 draw 163 9.5s
+    [hatemm] fold 2 draw 164 9.5s
+    [hatemm] fold 2 draw 165 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.2s (arena=False draws=34)
+    [hatemm] fold 2 draw 166 11.2s
+    [hatemm] fold 2 draw 167 9.5s
+    [hatemm] fold 2 draw 168 9.5s
+    [hatemm] fold 2 draw 169 9.4s
+    [hatemm] fold 2 draw 170 9.6s
+    [hatemm] fold 2 draw 171 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.1s (arena=False draws=28)
+    [hatemm] fold 2 draw 172 11.1s
+    [hatemm] fold 2 draw 173 10.4s
+    [hatemm] fold 2 draw 174 9.7s
+    [hatemm] fold 2 draw 175 9.6s
+    [hatemm] fold 2 draw 176 9.5s
+    [hatemm] fold 2 draw 177 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.1s (arena=False draws=22)
+    [hatemm] fold 2 draw 178 11.1s
+    [hatemm] fold 2 draw 179 9.5s
+    [hatemm] fold 2 draw 180 9.5s
+    [hatemm] fold 2 draw 181 9.4s
+    [hatemm] fold 2 draw 182 9.5s
+    [hatemm] fold 2 draw 183 9.7s
+    [hatemm] fold 2 draw 184 9.7s
+    [hatemm] fold 2 draw 185 9.9s
+    [hatemm] fold 2 draw 186 9.6s
+    [hatemm] fold 2 draw 187 9.9s
+    [hatemm] fold 2 draw 188 9.9s
+    [hatemm] fold 2 draw 189 10.0s
+    [hatemm] fold 2 draw 190 9.8s
+    [hatemm] fold 2 draw 191 9.8s
+    [hatemm] fold 2 draw 192 9.6s
+    [hatemm] fold 2 draw 193 9.4s
+    [hatemm] fold 2 draw 194 9.5s
+    [hatemm] fold 2 draw 195 9.4s
+    [hatemm] fold 2 draw 196 9.6s
+    [hatemm] fold 2 draw 197 9.5s
+    [hatemm] fold 2 draw 198 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 2 setup 3.1s (arena=False draws=1)
+    [hatemm] fold 2 draw 199 11.2s
+    [hatemm] fold 3 setup 3.1s (arena=False draws=200)
+    [hatemm] fold 3 draw 0 10.0s
+    [hatemm] fold 3 draw 1 9.9s
+    [hatemm] fold 3 draw 2 9.7s
+    [hatemm] fold 3 draw 3 9.5s
+    [hatemm] fold 3 draw 4 9.4s
+    [hatemm] fold 3 draw 5 9.5s
+    [hatemm] fold 3 draw 6 9.8s
+    [hatemm] fold 3 draw 7 9.4s
+    [hatemm] fold 3 draw 8 9.4s
+    [hatemm] fold 3 draw 9 9.4s
+    [hatemm] fold 3 draw 10 9.5s
+    [hatemm] fold 3 draw 11 9.5s
+    [hatemm] fold 3 draw 12 9.4s
+    [hatemm] fold 3 draw 13 9.5s
+    [hatemm] fold 3 draw 14 9.6s
+    [hatemm] fold 3 draw 15 10.0s
+    [hatemm] fold 3 draw 16 10.1s
+    [hatemm] fold 3 draw 17 9.9s
+    [hatemm] fold 3 draw 18 9.8s
+    [hatemm] fold 3 draw 19 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.3s (arena=False draws=180)
+    [hatemm] fold 3 draw 20 10.8s
+    [hatemm] fold 3 draw 21 9.7s
+    [hatemm] fold 3 draw 22 9.8s
+    [hatemm] fold 3 draw 23 10.0s
+    [hatemm] fold 3 draw 24 9.8s
+    [hatemm] fold 3 draw 25 9.9s
+    [hatemm] fold 3 draw 26 9.6s
+    [hatemm] fold 3 draw 27 9.3s
+    [hatemm] fold 3 draw 28 9.5s
+    [hatemm] fold 3 draw 29 9.6s
+    [hatemm] fold 3 draw 30 9.6s
+    [hatemm] fold 3 draw 31 9.7s
+    [hatemm] fold 3 draw 32 9.5s
+    [hatemm] fold 3 draw 33 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=166)
+    [hatemm] fold 3 draw 34 10.7s
+    [hatemm] fold 3 draw 35 9.6s
+    [hatemm] fold 3 draw 36 9.5s
+    [hatemm] fold 3 draw 37 9.5s
+    [hatemm] fold 3 draw 38 9.5s
+    [hatemm] fold 3 draw 39 9.4s
+    [hatemm] fold 3 draw 40 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=159)
+    [hatemm] fold 3 draw 41 10.8s
+    [hatemm] fold 3 draw 42 9.7s
+    [hatemm] fold 3 draw 43 9.9s
+    [hatemm] fold 3 draw 44 9.9s
+    [hatemm] fold 3 draw 45 9.9s
+    [hatemm] fold 3 draw 46 9.8s
+    [hatemm] fold 3 draw 47 9.5s
+    [hatemm] fold 3 draw 48 9.4s
+    [hatemm] fold 3 draw 49 9.4s
+    [hatemm] fold 3 draw 50 9.4s
+    [hatemm] fold 3 draw 51 9.4s
+    [hatemm] fold 3 draw 52 9.7s
+    [hatemm] fold 3 draw 53 9.5s
+    [hatemm] fold 3 draw 54 9.5s
+    [hatemm] fold 3 draw 55 9.5s
+    [hatemm] fold 3 draw 56 9.5s
+    [hatemm] fold 3 draw 57 10.2s
+    [hatemm] fold 3 draw 58 9.6s
+    [hatemm] fold 3 draw 59 9.6s
+    [hatemm] fold 3 draw 60 9.9s
+    [hatemm] fold 3 draw 61 9.7s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=138)
+    [hatemm] fold 3 draw 62 11.2s
+    [hatemm] fold 3 draw 63 9.5s
+    [hatemm] fold 3 draw 64 9.7s
+    [hatemm] fold 3 draw 65 9.7s
+    [hatemm] fold 3 draw 66 9.4s
+    [hatemm] fold 3 draw 67 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=132)
+    [hatemm] fold 3 draw 68 10.8s
+    [hatemm] fold 3 draw 69 9.7s
+    [hatemm] fold 3 draw 70 9.7s
+    [hatemm] fold 3 draw 71 9.5s
+    [hatemm] fold 3 draw 72 9.6s
+    [hatemm] fold 3 draw 73 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=126)
+    [hatemm] fold 3 draw 74 11.1s
+    [hatemm] fold 3 draw 75 9.6s
+    [hatemm] fold 3 draw 76 9.6s
+    [hatemm] fold 3 draw 77 9.6s
+    [hatemm] fold 3 draw 78 9.5s
+    [hatemm] fold 3 draw 79 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.1s (arena=False draws=120)
+    [hatemm] fold 3 draw 80 10.8s
+    [hatemm] fold 3 draw 81 9.8s
+    [hatemm] fold 3 draw 82 9.8s
+    [hatemm] fold 3 draw 83 9.8s
+    [hatemm] fold 3 draw 84 9.7s
+    [hatemm] fold 3 draw 85 9.4s
+    [hatemm] fold 3 draw 86 9.5s
+    [hatemm] fold 3 draw 87 9.7s
+    [hatemm] fold 3 draw 88 9.5s
+    [hatemm] fold 3 draw 89 9.7s
+    [hatemm] fold 3 draw 90 9.5s
+    [hatemm] fold 3 draw 91 9.8s
+    [hatemm] fold 3 draw 92 9.6s
+    [hatemm] fold 3 draw 93 9.5s
+    [hatemm] fold 3 draw 94 9.6s
+    [hatemm] fold 3 draw 95 9.7s
+    [hatemm] fold 3 draw 96 9.6s
+    [hatemm] fold 3 draw 97 9.7s
+    [hatemm] fold 3 draw 98 9.6s
+    [hatemm] fold 3 draw 99 9.5s
+    [hatemm] fold 3 draw 100 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=99)
+    [hatemm] fold 3 draw 101 10.5s
+    [hatemm] fold 3 draw 102 9.5s
+    [hatemm] fold 3 draw 103 9.8s
+    [hatemm] fold 3 draw 104 10.0s
+    [hatemm] fold 3 draw 105 9.8s
+    [hatemm] fold 3 draw 106 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=93)
+    [hatemm] fold 3 draw 107 10.9s
+    [hatemm] fold 3 draw 108 9.7s
+    [hatemm] fold 3 draw 109 9.6s
+    [hatemm] fold 3 draw 110 9.6s
+    [hatemm] fold 3 draw 111 9.5s
+    [hatemm] fold 3 draw 112 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=87)
+    [hatemm] fold 3 draw 113 10.8s
+    [hatemm] fold 3 draw 114 9.8s
+    [hatemm] fold 3 draw 115 9.7s
+    [hatemm] fold 3 draw 116 10.0s
+    [hatemm] fold 3 draw 117 9.7s
+    [hatemm] fold 3 draw 118 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.1s (arena=False draws=81)
+    [hatemm] fold 3 draw 119 10.9s
+    [hatemm] fold 3 draw 120 10.0s
+    [hatemm] fold 3 draw 121 9.7s
+    [hatemm] fold 3 draw 122 9.5s
+    [hatemm] fold 3 draw 123 10.0s
+    [hatemm] fold 3 draw 124 9.8s
+    [hatemm] fold 3 draw 125 10.0s
+    [hatemm] fold 3 draw 126 9.5s
+    [hatemm] fold 3 draw 127 9.4s
+    [hatemm] fold 3 draw 128 9.5s
+    [hatemm] fold 3 draw 129 9.5s
+    [hatemm] fold 3 draw 130 9.4s
+    [hatemm] fold 3 draw 131 9.4s
+    [hatemm] fold 3 draw 132 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=67)
+    [hatemm] fold 3 draw 133 11.2s
+    [hatemm] fold 3 draw 134 9.6s
+    [hatemm] fold 3 draw 135 9.5s
+    [hatemm] fold 3 draw 136 10.1s
+    [hatemm] fold 3 draw 137 9.4s
+    [hatemm] fold 3 draw 138 9.4s
+    [hatemm] fold 3 draw 139 9.4s
+    [hatemm] fold 3 draw 140 9.3s
+    [hatemm] fold 3 draw 141 9.4s
+    [hatemm] fold 3 draw 142 9.6s
+    [hatemm] fold 3 draw 143 9.4s
+    [hatemm] fold 3 draw 144 9.5s
+    [hatemm] fold 3 draw 145 9.4s
+    [hatemm] fold 3 draw 146 9.3s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=53)
+    [hatemm] fold 3 draw 147 10.9s
+    [hatemm] fold 3 draw 148 9.6s
+    [hatemm] fold 3 draw 149 9.7s
+    [hatemm] fold 3 draw 150 9.6s
+    [hatemm] fold 3 draw 151 9.5s
+    [hatemm] fold 3 draw 152 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=47)
+    [hatemm] fold 3 draw 153 10.7s
+    [hatemm] fold 3 draw 154 9.7s
+    [hatemm] fold 3 draw 155 9.6s
+    [hatemm] fold 3 draw 156 9.5s
+    [hatemm] fold 3 draw 157 9.4s
+    [hatemm] fold 3 draw 158 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=41)
+    [hatemm] fold 3 draw 159 10.9s
+    [hatemm] fold 3 draw 160 10.0s
+    [hatemm] fold 3 draw 161 9.7s
+    [hatemm] fold 3 draw 162 9.7s
+    [hatemm] fold 3 draw 163 9.6s
+    [hatemm] fold 3 draw 164 9.5s
+    [hatemm] fold 3 draw 165 9.7s
+    [hatemm] fold 3 draw 166 9.5s
+    [hatemm] fold 3 draw 167 9.4s
+    [hatemm] fold 3 draw 168 9.4s
+    [hatemm] fold 3 draw 169 10.1s
+    [hatemm] fold 3 draw 170 9.5s
+    [hatemm] fold 3 draw 171 9.5s
+    [hatemm] fold 3 draw 172 9.4s
+    [hatemm] fold 3 draw 173 9.4s
+    [hatemm] fold 3 draw 174 9.4s
+    [hatemm] fold 3 draw 175 9.5s
+    [hatemm] fold 3 draw 176 9.5s
+    [hatemm] fold 3 draw 177 9.5s
+    [hatemm] fold 3 draw 178 9.4s
+    [hatemm] fold 3 draw 179 9.5s
+    [hatemm] fold 3 draw 180 9.3s
+    [hatemm] fold 3 draw 181 9.3s
+    [hatemm] fold 3 draw 182 9.4s
+    [hatemm] fold 3 draw 183 9.3s
+    [hatemm] fold 3 draw 184 9.4s
+    [hatemm] fold 3 draw 185 9.4s
+    [hatemm] fold 3 draw 186 9.4s
+    [hatemm] fold 3 draw 187 9.7s
+    [hatemm] fold 3 draw 188 9.6s
+    [hatemm] fold 3 draw 189 9.5s
+    [hatemm] fold 3 draw 190 9.4s
+    [hatemm] fold 3 draw 191 9.4s
+    [hatemm] fold 3 draw 192 9.5s
+    [hatemm] fold 3 draw 193 9.7s
+    [hatemm] fold 3 draw 194 9.8s
+    [hatemm] fold 3 draw 195 9.7s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 3 setup 3.2s (arena=False draws=4)
+    [hatemm] fold 3 draw 196 10.4s
+    [hatemm] fold 3 draw 197 9.4s
+    [hatemm] fold 3 draw 198 9.4s
+    [hatemm] fold 3 draw 199 9.5s
+    [hatemm] fold 4 setup 3.1s (arena=False draws=200)
+    [hatemm] fold 4 draw 0 9.5s
+    [hatemm] fold 4 draw 1 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=198)
+    [hatemm] fold 4 draw 2 11.0s
+    [hatemm] fold 4 draw 3 9.5s
+    [hatemm] fold 4 draw 4 9.5s
+    [hatemm] fold 4 draw 5 9.7s
+    [hatemm] fold 4 draw 6 9.6s
+    [hatemm] fold 4 draw 7 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=192)
+    [hatemm] fold 4 draw 8 10.6s
+    [hatemm] fold 4 draw 9 9.7s
+    [hatemm] fold 4 draw 10 9.6s
+    [hatemm] fold 4 draw 11 9.6s
+    [hatemm] fold 4 draw 12 9.8s
+    [hatemm] fold 4 draw 13 9.5s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=186)
+    [hatemm] fold 4 draw 14 10.9s
+    [hatemm] fold 4 draw 15 9.4s
+    [hatemm] fold 4 draw 16 9.4s
+    [hatemm] fold 4 draw 17 9.5s
+    [hatemm] fold 4 draw 18 9.6s
+    [hatemm] fold 4 draw 19 9.6s
+    [hatemm] fold 4 draw 20 10.0s
+    [hatemm] fold 4 draw 21 10.2s
+    [hatemm] fold 4 draw 22 9.6s
+    [hatemm] fold 4 draw 23 9.4s
+    [hatemm] fold 4 draw 24 9.5s
+    [hatemm] fold 4 draw 25 9.5s
+    [hatemm] fold 4 draw 26 9.5s
+    [hatemm] fold 4 draw 27 9.7s
+    [hatemm] fold 4 draw 28 9.4s
+    [hatemm] fold 4 draw 29 9.5s
+    [hatemm] fold 4 draw 30 9.4s
+    [hatemm] fold 4 draw 31 9.4s
+    [hatemm] fold 4 draw 32 9.5s
+    [hatemm] fold 4 draw 33 9.6s
+    [hatemm] fold 4 draw 34 9.4s
+    [hatemm] fold 4 draw 35 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=164)
+    [hatemm] fold 4 draw 36 10.6s
+    [hatemm] fold 4 draw 37 9.5s
+    [hatemm] fold 4 draw 38 9.5s
+    [hatemm] fold 4 draw 39 9.6s
+    [hatemm] fold 4 draw 40 9.6s
+    [hatemm] fold 4 draw 41 9.4s
+    [hatemm] fold 4 draw 42 9.5s
+    [hatemm] fold 4 draw 43 9.5s
+    [hatemm] fold 4 draw 44 9.4s
+    [hatemm] fold 4 draw 45 9.5s
+    [hatemm] fold 4 draw 46 9.6s
+    [hatemm] fold 4 draw 47 9.5s
+    [hatemm] fold 4 draw 48 9.6s
+    [hatemm] fold 4 draw 49 10.0s
+    [hatemm] fold 4 draw 50 9.5s
+    [hatemm] fold 4 draw 51 9.7s
+    [hatemm] fold 4 draw 52 9.8s
+    [hatemm] fold 4 draw 53 9.5s
+    [hatemm] fold 4 draw 54 9.7s
+    [hatemm] fold 4 draw 55 9.6s
+    [hatemm] fold 4 draw 56 9.4s
+    [hatemm] fold 4 draw 57 10.6s
+    [hatemm] fold 4 draw 58 9.5s
+    [hatemm] fold 4 draw 59 9.5s
+    [hatemm] fold 4 draw 60 9.3s
+    [hatemm] fold 4 draw 61 9.4s
+    [hatemm] fold 4 draw 62 9.5s
+    [hatemm] fold 4 draw 63 9.6s
+    [hatemm] fold 4 draw 64 9.5s
+    [hatemm] fold 4 draw 65 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.2s (arena=False draws=134)
+    [hatemm] fold 4 draw 66 10.5s
+    [hatemm] fold 4 draw 67 9.5s
+    [hatemm] fold 4 draw 68 9.6s
+    [hatemm] fold 4 draw 69 9.5s
+    [hatemm] fold 4 draw 70 9.9s
+    [hatemm] fold 4 draw 71 9.7s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=128)
+    [hatemm] fold 4 draw 72 10.5s
+    [hatemm] fold 4 draw 73 9.5s
+    [hatemm] fold 4 draw 74 9.7s
+    [hatemm] fold 4 draw 75 9.7s
+    [hatemm] fold 4 draw 76 9.7s
+    [hatemm] fold 4 draw 77 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.2s (arena=False draws=122)
+    [hatemm] fold 4 draw 78 11.1s
+    [hatemm] fold 4 draw 79 9.7s
+    [hatemm] fold 4 draw 80 9.9s
+    [hatemm] fold 4 draw 81 9.9s
+    [hatemm] fold 4 draw 82 9.8s
+    [hatemm] fold 4 draw 83 9.5s
+    [hatemm] fold 4 draw 84 9.4s
+    [hatemm] fold 4 draw 85 9.5s
+    [hatemm] fold 4 draw 86 9.7s
+    [hatemm] fold 4 draw 87 9.6s
+    [hatemm] fold 4 draw 88 9.5s
+    [hatemm] fold 4 draw 89 9.6s
+    [hatemm] fold 4 draw 90 9.6s
+    [hatemm] fold 4 draw 91 9.4s
+    [hatemm] fold 4 draw 92 9.6s
+    [hatemm] fold 4 draw 93 9.5s
+    [hatemm] fold 4 draw 94 9.4s
+    [hatemm] fold 4 draw 95 9.3s
+    [hatemm] fold 4 draw 96 9.6s
+    [hatemm] fold 4 draw 97 9.5s
+    [hatemm] fold 4 draw 98 9.4s
+    [hatemm] fold 4 draw 99 9.3s
+    [hatemm] fold 4 draw 100 9.3s
+    [hatemm] fold 4 draw 101 9.3s
+    [hatemm] fold 4 draw 102 9.3s
+    [hatemm] fold 4 draw 103 9.4s
+    [hatemm] fold 4 draw 104 9.6s
+    [hatemm] fold 4 draw 105 9.6s
+    [hatemm] fold 4 draw 106 9.4s
+    [hatemm] fold 4 draw 107 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=92)
+    [hatemm] fold 4 draw 108 10.7s
+    [hatemm] fold 4 draw 109 9.6s
+    [hatemm] fold 4 draw 110 9.6s
+    [hatemm] fold 4 draw 111 9.7s
+    [hatemm] fold 4 draw 112 9.9s
+    [hatemm] fold 4 draw 113 9.8s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=86)
+    [hatemm] fold 4 draw 114 10.7s
+    [hatemm] fold 4 draw 115 9.6s
+    [hatemm] fold 4 draw 116 9.4s
+    [hatemm] fold 4 draw 117 9.6s
+    [hatemm] fold 4 draw 118 9.6s
+    [hatemm] fold 4 draw 119 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=80)
+    [hatemm] fold 4 draw 120 10.6s
+    [hatemm] fold 4 draw 121 9.5s
+    [hatemm] fold 4 draw 122 9.5s
+    [hatemm] fold 4 draw 123 9.4s
+    [hatemm] fold 4 draw 124 9.5s
+    [hatemm] fold 4 draw 125 9.6s
+    [hatemm] fold 4 draw 126 9.8s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.2s (arena=False draws=73)
+    [hatemm] fold 4 draw 127 10.5s
+    [hatemm] fold 4 draw 128 9.5s
+    [hatemm] fold 4 draw 129 9.6s
+    [hatemm] fold 4 draw 130 9.6s
+    [hatemm] fold 4 draw 131 9.8s
+    [hatemm] fold 4 draw 132 9.9s
+    [hatemm] fold 4 draw 133 9.7s
+    [hatemm] fold 4 draw 134 9.6s
+    [hatemm] fold 4 draw 135 9.5s
+    [hatemm] fold 4 draw 136 9.5s
+    [hatemm] fold 4 draw 137 9.7s
+    [hatemm] fold 4 draw 138 9.5s
+    [hatemm] fold 4 draw 139 9.6s
+    [hatemm] fold 4 draw 140 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.2s (arena=False draws=59)
+    [hatemm] fold 4 draw 141 11.0s
+    [hatemm] fold 4 draw 142 9.6s
+    [hatemm] fold 4 draw 143 9.6s
+    [hatemm] fold 4 draw 144 9.6s
+    [hatemm] fold 4 draw 145 9.6s
+    [hatemm] fold 4 draw 146 9.5s
+    [hatemm] fold 4 draw 147 9.6s
+    [hatemm] fold 4 draw 148 9.6s
+    [hatemm] fold 4 draw 149 9.6s
+    [hatemm] fold 4 draw 150 9.6s
+    [hatemm] fold 4 draw 151 9.6s
+    [hatemm] fold 4 draw 152 9.7s
+    [hatemm] fold 4 draw 153 9.6s
+    [hatemm] fold 4 draw 154 9.7s
+    [hatemm] fold 4 draw 155 9.7s
+    [hatemm] fold 4 draw 156 9.5s
+    [hatemm] fold 4 draw 157 9.6s
+    [hatemm] fold 4 draw 158 9.7s
+    [hatemm] fold 4 draw 159 9.7s
+    [hatemm] fold 4 draw 160 9.9s
+    [hatemm] fold 4 draw 161 9.7s
+    [hatemm] fold 4 draw 162 9.5s
+    [hatemm] fold 4 draw 163 9.6s
+    [hatemm] fold 4 draw 164 9.5s
+    [hatemm] fold 4 draw 165 9.4s
+    [hatemm] fold 4 draw 166 9.8s
+    [hatemm] fold 4 draw 167 9.8s
+    [hatemm] fold 4 draw 168 9.6s
+    [hatemm] fold 4 draw 169 10.0s
+    [hatemm] fold 4 draw 170 9.6s
+    [hatemm] fold 4 draw 171 9.8s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=28)
+    [hatemm] fold 4 draw 172 11.0s
+    [hatemm] fold 4 draw 173 9.7s
+    [hatemm] fold 4 draw 174 9.6s
+    [hatemm] fold 4 draw 175 9.5s
+    [hatemm] fold 4 draw 176 9.5s
+    [hatemm] fold 4 draw 177 9.4s
+    [hatemm] fold 4 draw 178 9.6s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.1s (arena=False draws=21)
+    [hatemm] fold 4 draw 179 10.8s
+    [hatemm] fold 4 draw 180 9.4s
+    [hatemm] fold 4 draw 181 9.5s
+    [hatemm] fold 4 draw 182 9.6s
+    [hatemm] fold 4 draw 183 9.6s
+    [hatemm] fold 4 draw 184 9.6s
+    [hatemm] fold 4 draw 185 9.4s
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    [hatemm] fold 4 setup 3.2s (arena=False draws=14)
+    [hatemm] fold 4 draw 186 11.0s
+    [hatemm] fold 4 draw 187 9.5s
+    [hatemm] fold 4 draw 188 9.5s
+    [hatemm] fold 4 draw 189 9.8s
+    [hatemm] fold 4 draw 190 9.6s
+    [hatemm] fold 4 draw 191 9.5s
+    [hatemm] fold 4 draw 192 9.7s
+    [hatemm] fold 4 draw 193 9.8s
+    [hatemm] fold 4 draw 194 9.5s
+    [hatemm] fold 4 draw 195 9.7s
+    [hatemm] fold 4 draw 196 9.6s
+    [hatemm] fold 4 draw 197 9.5s
+    [hatemm] fold 4 draw 198 9.6s
+    [hatemm] fold 4 draw 199 9.5s
+    hatemm eval draw 0: +0.0027
+    hatemm eval draw 1: +0.0067
+    hatemm eval draw 2: +0.0000
+    hatemm eval draw 3: +0.0027
+    hatemm eval draw 4: -0.0108
+    hatemm eval draw 5: -0.0067
+    hatemm eval draw 6: +0.0000
+    hatemm eval draw 7: +0.0000
+    hatemm eval draw 8: +0.0027
+    hatemm eval draw 9: -0.0040
+    hatemm eval draw 10: -0.0067
+    hatemm eval draw 11: -0.0013
+    hatemm eval draw 12: +0.0000
+    hatemm eval draw 13: -0.0040
+    hatemm eval draw 14: -0.0054
+    hatemm eval draw 15: +0.0040
+    hatemm eval draw 16: +0.0000
+    hatemm eval draw 17: -0.0108
+    hatemm eval draw 18: +0.0121
+    hatemm eval draw 19: +0.0013
+    hatemm eval draw 20: -0.0013
+    hatemm eval draw 21: +0.0000
+    hatemm eval draw 22: -0.0054
+    hatemm eval draw 23: +0.0000
+    hatemm eval draw 24: -0.0040
+    hatemm eval draw 25: +0.0000
+    hatemm eval draw 26: -0.0081
+    hatemm eval draw 27: -0.0134
+    hatemm eval draw 28: -0.0081
+    hatemm eval draw 29: +0.0000
+    hatemm eval draw 30: -0.0027
+    hatemm eval draw 31: -0.0054
+    hatemm eval draw 32: -0.0040
+    hatemm eval draw 33: +0.0000
+    hatemm eval draw 34: +0.0013
+    hatemm eval draw 35: +0.0013
+    hatemm eval draw 36: -0.0067
+    hatemm eval draw 37: +0.0040
+    hatemm eval draw 38: -0.0054
+    hatemm eval draw 39: +0.0040
+    hatemm eval draw 40: -0.0027
+    hatemm eval draw 41: -0.0108
+    hatemm eval draw 42: -0.0054
+    hatemm eval draw 43: +0.0067
+    hatemm eval draw 44: -0.0067
+    hatemm eval draw 45: -0.0067
+    hatemm eval draw 46: -0.0013
+    hatemm eval draw 47: +0.0027
+    hatemm eval draw 48: +0.0067
+    hatemm eval draw 49: -0.0081
+    hatemm eval draw 50: -0.0054
+    hatemm eval draw 51: +0.0027
+    hatemm eval draw 52: +0.0000
+    hatemm eval draw 53: -0.0054
+    hatemm eval draw 54: -0.0081
+    hatemm eval draw 55: -0.0108
+    hatemm eval draw 56: +0.0081
+    hatemm eval draw 57: -0.0013
+    hatemm eval draw 58: +0.0000
+    hatemm eval draw 59: -0.0027
+    hatemm eval draw 60: +0.0027
+    hatemm eval draw 61: +0.0054
+    hatemm eval draw 62: +0.0013
+    hatemm eval draw 63: +0.0040
+    hatemm eval draw 64: -0.0027
+    hatemm eval draw 65: +0.0000
+    hatemm eval draw 66: +0.0054
+    hatemm eval draw 67: +0.0134
+    hatemm eval draw 68: +0.0013
+    hatemm eval draw 69: -0.0121
+    hatemm eval draw 70: +0.0040
+    hatemm eval draw 71: +0.0054
+    hatemm eval draw 72: -0.0027
+    hatemm eval draw 73: +0.0013
+    hatemm eval draw 74: +0.0000
+    hatemm eval draw 75: -0.0027
+    hatemm eval draw 76: -0.0040
+    hatemm eval draw 77: +0.0000
+    hatemm eval draw 78: +0.0027
+    hatemm eval draw 79: -0.0054
+    hatemm eval draw 80: +0.0067
+    hatemm eval draw 81: -0.0040
+    hatemm eval draw 82: +0.0000
+    hatemm eval draw 83: +0.0000
+    hatemm eval draw 84: -0.0094
+    hatemm eval draw 85: -0.0040
+    hatemm eval draw 86: -0.0067
+    hatemm eval draw 87: +0.0000
+    hatemm eval draw 88: -0.0013
+    hatemm eval draw 89: -0.0027
+    hatemm eval draw 90: +0.0094
+    hatemm eval draw 91: +0.0013
+    hatemm eval draw 92: -0.0054
+    hatemm eval draw 93: -0.0013
+    hatemm eval draw 94: -0.0027
+    hatemm eval draw 95: +0.0067
+    hatemm eval draw 96: -0.0040
+    hatemm eval draw 97: +0.0054
+    hatemm eval draw 98: +0.0000
+    hatemm eval draw 99: -0.0027
+    hatemm eval draw 100: +0.0027
+    hatemm eval draw 101: +0.0000
+    hatemm eval draw 102: +0.0040
+    hatemm eval draw 103: +0.0040
+    hatemm eval draw 104: -0.0013
+    hatemm eval draw 105: +0.0040
+    hatemm eval draw 106: +0.0027
+    hatemm eval draw 107: +0.0054
+    hatemm eval draw 108: -0.0081
+    hatemm eval draw 109: +0.0054
+    hatemm eval draw 110: -0.0067
+    hatemm eval draw 111: -0.0040
+    hatemm eval draw 112: +0.0000
+    hatemm eval draw 113: +0.0054
+    hatemm eval draw 114: +0.0000
+    hatemm eval draw 115: +0.0108
+    hatemm eval draw 116: -0.0067
+    hatemm eval draw 117: +0.0067
+    hatemm eval draw 118: +0.0054
+    hatemm eval draw 119: +0.0040
+    hatemm eval draw 120: +0.0067
+    hatemm eval draw 121: -0.0027
+    hatemm eval draw 122: -0.0054
+    hatemm eval draw 123: +0.0000
+    hatemm eval draw 124: -0.0108
+    hatemm eval draw 125: -0.0161
+    hatemm eval draw 126: +0.0000
+    hatemm eval draw 127: +0.0000
+    hatemm eval draw 128: -0.0054
+    hatemm eval draw 129: +0.0027
+    hatemm eval draw 130: -0.0175
+    hatemm eval draw 131: +0.0000
+    hatemm eval draw 132: +0.0081
+    hatemm eval draw 133: +0.0094
+    hatemm eval draw 134: -0.0027
+    hatemm eval draw 135: +0.0013
+    hatemm eval draw 136: +0.0108
+    hatemm eval draw 137: +0.0027
+    hatemm eval draw 138: +0.0054
+    hatemm eval draw 139: +0.0027
+    hatemm eval draw 140: -0.0027
+    hatemm eval draw 141: -0.0054
+    hatemm eval draw 142: +0.0027
+    hatemm eval draw 143: -0.0013
+    hatemm eval draw 144: -0.0027
+    hatemm eval draw 145: +0.0013
+    hatemm eval draw 146: -0.0067
+    hatemm eval draw 147: -0.0013
+    hatemm eval draw 148: +0.0040
+    hatemm eval draw 149: -0.0027
+    hatemm eval draw 150: +0.0040
+    hatemm eval draw 151: +0.0000
+    hatemm eval draw 152: +0.0013
+    hatemm eval draw 153: -0.0067
+    hatemm eval draw 154: +0.0067
+    hatemm eval draw 155: +0.0067
+    hatemm eval draw 156: +0.0013
+    hatemm eval draw 157: +0.0054
+    hatemm eval draw 158: -0.0081
+    hatemm eval draw 159: -0.0054
+    hatemm eval draw 160: -0.0027
+    hatemm eval draw 161: -0.0040
+    hatemm eval draw 162: +0.0081
+    hatemm eval draw 163: +0.0027
+    hatemm eval draw 164: -0.0040
+    hatemm eval draw 165: +0.0000
+    hatemm eval draw 166: +0.0000
+    hatemm eval draw 167: +0.0027
+    hatemm eval draw 168: -0.0027
+    hatemm eval draw 169: +0.0000
+    hatemm eval draw 170: -0.0027
+    hatemm eval draw 171: +0.0000
+    hatemm eval draw 172: +0.0000
+    hatemm eval draw 173: +0.0067
+    hatemm eval draw 174: +0.0000
+    hatemm eval draw 175: +0.0000
+    hatemm eval draw 176: +0.0054
+    hatemm eval draw 177: -0.0067
+    hatemm eval draw 178: -0.0054
+    hatemm eval draw 179: +0.0000
+    hatemm eval draw 180: -0.0054
+    hatemm eval draw 181: +0.0040
+    hatemm eval draw 182: -0.0040
+    hatemm eval draw 183: +0.0054
+    hatemm eval draw 184: +0.0040
+    hatemm eval draw 185: -0.0040
+    hatemm eval draw 186: +0.0000
+    hatemm eval draw 187: +0.0054
+    hatemm eval draw 188: -0.0054
+    hatemm eval draw 189: +0.0054
+    hatemm eval draw 190: +0.0081
+    hatemm eval draw 191: +0.0000
+    hatemm eval draw 192: +0.0054
+    hatemm eval draw 193: -0.0067
+    hatemm eval draw 194: -0.0027
+    hatemm eval draw 195: +0.0000
+    hatemm eval draw 196: +0.0000
+    hatemm eval draw 197: -0.0027
+    hatemm eval draw 198: -0.0054
+    hatemm eval draw 199: +0.0027
+[hatemm] PERM COMPLETE (200 draws) -> /data/jehc223/RGCL/scripts/analysis/vsw_perm_hatemm_OUT.json

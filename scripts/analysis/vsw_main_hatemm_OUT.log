@@ -1,0 +1,270 @@
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    fold 0 setup 3.3s (arena=True draws=0)
+    fold 0 setup 3.4s (arena=True draws=0)
+    fold 0 ARENA done 13.1s dep 0.7987
+    fold 0 ARENA done 13.4s dep 0.7987
+    fold 1 setup 3.4s (arena=True draws=0)
+    fold 1 setup 3.2s (arena=True draws=0)
+    fold 1 ARENA done 9.9s dep 0.8322
+    fold 1 ARENA done 12.1s dep 0.8322
+    fold 2 setup 3.4s (arena=True draws=0)
+    fold 2 setup 3.2s (arena=True draws=0)
+    fold 2 ARENA done 11.0s dep 0.8926
+    fold 2 ARENA done 12.5s dep 0.8926
+    fold 3 setup 3.3s (arena=True draws=0)
+    fold 3 setup 3.2s (arena=True draws=0)
+    fold 3 ARENA done 10.1s dep 0.8255
+    fold 4 setup 3.6s (arena=True draws=0)
+    fold 3 ARENA done 11.9s dep 0.8255
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+    fold 4 setup 2.9s (arena=True draws=0)
+    fold 4 ARENA done 10.3s dep 0.8716
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+    fold 4 ARENA done 11.9s dep 0.8716
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+  [hatemm] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 15/16 trained quantities
+[hatemm] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_hatemm_OUT.json
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+  [hatemm] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 15/16 trained quantities
+[hatemm] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_hatemm_OUT.json
+[hatemm] n=744 pos-rate 0.4005 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/hatemm
+  [hatemm] cosine diagnostic {'n_nonpositive_cos': 20, 'n_cos_cells': 14880, 'min_cos': 0.0, 'n_items_affected': 1, 'n_zero_norm_keys': 1}
+  [hatemm] PARITY-lambda0 18/18
+  [hatemm] F95-PARITY 26/26  (TIER-1 vs recorded 10/10, TIER-2 vs same-session anchor 16/16);  recorded-vs-anchor DRIFT on 15/16 trained quantities
+[hatemm] MAIN COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_main_hatemm_OUT.json

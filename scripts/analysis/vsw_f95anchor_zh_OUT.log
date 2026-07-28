@@ -1,0 +1,8 @@
+[zh] n=579 pos-rate 0.3109 dim=7168 ck=/data/jehc223/RGCL/scripts/analysis/vsw_ckpt/zh
+    [fused] fold 0: dep 0.8534 mlp_max 0.8707 log_max 0.6724 dAUC(mlp) +0.2708 (17.7s)
+    [fused] fold 1: dep 0.8534 mlp_max 0.8103 log_max 0.7672 dAUC(mlp) +0.2442 (22.2s)
+    [fused] fold 2: dep 0.9224 mlp_max 0.8793 log_max 0.6983 dAUC(mlp) +0.2857 (16.7s)
+    [fused] fold 3: dep 0.8017 mlp_max 0.7672 log_max 0.7155 dAUC(mlp) +0.2574 (15.8s)
+    [fused] fold 4: dep 0.8087 mlp_max 0.7478 log_max 0.7391 dAUC(mlp) +0.2533 (15.6s)
+[zh] ANCHOR acc_deployed 0.848 acc_cos_shape 0.8187 acc_mlp_max 0.8152 (88.1s)
+[zh] ANCHOR COMPLETE -> /data/jehc223/RGCL/scripts/analysis/vsw_f95anchor_zh_OUT.json
