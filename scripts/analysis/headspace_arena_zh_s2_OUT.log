@@ -1,0 +1,12 @@
+    s2 fold 0 setup 1.8s (arena=True draws=0)
+    s2 fold 0 ARENA 13.1s dep 0.8966 dAUC -0.1185
+    s2 fold 1 setup 1.7s (arena=True draws=0)
+    s2 fold 1 ARENA 10.9s dep 0.8966 dAUC -0.1092
+    s2 fold 2 setup 1.6s (arena=True draws=0)
+    s2 fold 2 ARENA 11.3s dep 0.9052 dAUC -0.1302
+    s2 fold 3 setup 1.6s (arena=True draws=0)
+    s2 fold 3 ARENA 12.2s dep 0.9224 dAUC -0.1219
+    s2 fold 4 setup 1.6s (arena=True draws=0)
+    s2 fold 4 ARENA 10.6s dep 0.8522 dAUC -0.1380
+  [zh s2] PARITY-lambda0 18/18
+[zh s2] ARENA COMPLETE dep 0.8946 VSW_pow dacc -0.0052 -> scripts/analysis/headspace_arena_zh_s2_OUT.json

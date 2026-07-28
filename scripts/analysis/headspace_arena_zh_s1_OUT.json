@@ -1,0 +1,2459 @@
+{
+ "meta": {
+  "script_sha256": "761b256bb0f27ca75ef7eb49e93a9c1edc9590d7de6c7544c1354d232ff95243",
+  "frozen_sha256": {
+   "mechfix_ops.py": "635c13124e79ba1a299bc13fc1175a03aa11e09924f5413ce51061793c83fc8d",
+   "mechnov_pairverify.py": "77b0defd8eaa3688e58b6d5d17202bd55d16cf1f4a5aaafbe4b2b98598b7240d",
+   "vsw_pregate.py": "ba9982dba98fb14dd53297ac6c087f2e1a4aa068490879d2121c50cf1f932eea"
+  },
+  "stage": "arena",
+  "dataset": "zh",
+  "seed": 1,
+  "space": "TRAINED HEAD (1024-d), per-fold re-mint",
+  "mint_script_sha256": "cefdf8dc2f4a9aefa042ef7bec9b1d06c9721ae5b4a70ec117e9929ff0916612",
+  "encoder_model": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+  "frozen_vsw": {
+   "INNER_FOLDS": 5,
+   "INNER_SEED": 17,
+   "PERM_SEED": 12345,
+   "DEG_KILL": 0.95,
+   "CLASSBAL_TOL": 0.1,
+   "PRIMARY_FAMILY": "pow",
+   "N_PERM_HEAD": 30
+  },
+  "test_contact": "NONE -- mint npz (train/dev caches only) + banked vsw_ckpt",
+  "runtime": {
+   "env": {
+    "OMP_NUM_THREADS": "8",
+    "MKL_NUM_THREADS": "8",
+    "OPENBLAS_NUM_THREADS": "8",
+    "NUMEXPR_NUM_THREADS": "8"
+   },
+   "threadpools": [
+    {
+     "user_api": "blas",
+     "internal_api": "openblas",
+     "num_threads": 8,
+     "prefix": "libopenblas",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/numpy.libs/libopenblas64_p-r0-0cf96a72.3.23.dev.so",
+     "version": "0.3.23.dev",
+     "threading_layer": "pthreads",
+     "architecture": "Zen"
+    },
+    {
+     "user_api": "blas",
+     "internal_api": "openblas",
+     "num_threads": 8,
+     "prefix": "libscipy_openblas",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/scipy.libs/libscipy_openblas-6cdc3b4a.so",
+     "version": "0.3.30",
+     "threading_layer": "pthreads",
+     "architecture": "Haswell"
+    },
+    {
+     "user_api": "openmp",
+     "internal_api": "openmp",
+     "num_threads": 8,
+     "prefix": "libgomp",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/scikit_learn.libs/libgomp-a34b3233.so.1.0.0",
+     "version": null
+    },
+    {
+     "user_api": "blas",
+     "internal_api": "openblas",
+     "num_threads": 1,
+     "prefix": "libopenblas",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/faiss_cpu.libs/libopenblas-r0-11edc3fa.3.15.so",
+     "version": "0.3.15",
+     "threading_layer": "disabled",
+     "architecture": "Zen"
+    },
+    {
+     "user_api": "openmp",
+     "internal_api": "openmp",
+     "num_threads": 8,
+     "prefix": "libgomp",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/faiss_cpu.libs/libgomp-e985bcbb.so.1.0.0",
+     "version": null
+    },
+    {
+     "user_api": "openmp",
+     "internal_api": "openmp",
+     "num_threads": 8,
+     "prefix": "libgomp",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/torch/lib/libgomp-a34b3233.so.1",
+     "version": null
+    }
+   ],
+   "versions": {
+    "python": "3.11.8",
+    "numpy": "1.26.4",
+    "scipy": "1.17.1",
+    "sklearn": "1.5.2",
+    "torch": "2.6.0+cu124"
+   },
+   "torch_num_threads": 8,
+   "node": "foscsmlprd01.its.auckland.ac.nz"
+  }
+ },
+ "per_fold": [
+  {
+   "fold": 0,
+   "n_fit_items": 463,
+   "n_ho_items": 116,
+   "pca_dim": 256,
+   "pca_explained_var": 1.0,
+   "n_pairs_total": 106953,
+   "n_pairs_fitted": 106953,
+   "secs": 12.6,
+   "lw_shrinkage": 0.0013
+  },
+  {
+   "fold": 1,
+   "n_fit_items": 463,
+   "n_ho_items": 116,
+   "pca_dim": 256,
+   "pca_explained_var": 1.0,
+   "n_pairs_total": 106953,
+   "n_pairs_fitted": 106953,
+   "secs": 10.9,
+   "lw_shrinkage": 0.0029
+  },
+  {
+   "fold": 2,
+   "n_fit_items": 463,
+   "n_ho_items": 116,
+   "pca_dim": 256,
+   "pca_explained_var": 1.0,
+   "n_pairs_total": 106953,
+   "n_pairs_fitted": 106953,
+   "secs": 11.2,
+   "lw_shrinkage": 0.0005
+  },
+  {
+   "fold": 3,
+   "n_fit_items": 463,
+   "n_ho_items": 116,
+   "pca_dim": 256,
+   "pca_explained_var": 1.0,
+   "n_pairs_total": 106953,
+   "n_pairs_fitted": 106953,
+   "secs": 11.2,
+   "lw_shrinkage": 0.0018
+  },
+  {
+   "fold": 4,
+   "n_fit_items": 464,
+   "n_ho_items": 115,
+   "pca_dim": 256,
+   "pca_explained_var": 1.0,
+   "n_pairs_total": 107416,
+   "n_pairs_fitted": 107416,
+   "secs": 10.5,
+   "lw_shrinkage": 0.001
+  }
+ ],
+ "control1": [
+  {
+   "auc_verifier_heldout": 0.7089,
+   "auc_cosine_heldout": 0.9074,
+   "d_auc_vs_cos": -0.1985,
+   "auc_verifier_INSAMPLE_fitpairs": 0.9999,
+   "auc_cosine_INSAMPLE_fitpairs": 0.9198,
+   "same_class_rate_heldout": 0.5717,
+   "same_class_rate_fit": 0.5705,
+   "posrate_pairpred": 0.7933,
+   "n_eval_pairs": 53708
+  },
+  {
+   "auc_verifier_heldout": 0.7874,
+   "auc_cosine_heldout": 0.9001,
+   "d_auc_vs_cos": -0.1128,
+   "auc_verifier_INSAMPLE_fitpairs": 1.0,
+   "auc_cosine_INSAMPLE_fitpairs": 0.9155,
+   "same_class_rate_heldout": 0.5717,
+   "same_class_rate_fit": 0.5705,
+   "posrate_pairpred": 0.6854,
+   "n_eval_pairs": 53708
+  },
+  {
+   "auc_verifier_heldout": 0.7648,
+   "auc_cosine_heldout": 0.8672,
+   "d_auc_vs_cos": -0.1024,
+   "auc_verifier_INSAMPLE_fitpairs": 1.0,
+   "auc_cosine_INSAMPLE_fitpairs": 0.878,
+   "same_class_rate_heldout": 0.5717,
+   "same_class_rate_fit": 0.5705,
+   "posrate_pairpred": 0.7395,
+   "n_eval_pairs": 53708
+  },
+  {
+   "auc_verifier_heldout": 0.7626,
+   "auc_cosine_heldout": 0.9116,
+   "d_auc_vs_cos": -0.149,
+   "auc_verifier_INSAMPLE_fitpairs": 1.0,
+   "auc_cosine_INSAMPLE_fitpairs": 0.9182,
+   "same_class_rate_heldout": 0.5717,
+   "same_class_rate_fit": 0.5705,
+   "posrate_pairpred": 0.7338,
+   "n_eval_pairs": 53708
+  },
+  {
+   "auc_verifier_heldout": 0.7566,
+   "auc_cosine_heldout": 0.8458,
+   "d_auc_vs_cos": -0.0891,
+   "auc_verifier_INSAMPLE_fitpairs": 0.9999,
+   "auc_cosine_INSAMPLE_fitpairs": 0.9181,
+   "same_class_rate_heldout": 0.5709,
+   "same_class_rate_fit": 0.571,
+   "posrate_pairpred": 0.726,
+   "n_eval_pairs": 53360
+  }
+ ],
+ "parity_lambda0": {
+  "n_gates": 18,
+  "n_pass": 18,
+  "gates": [
+   {
+    "key": "pow_fold0_bitexact",
+    "pass": true
+   },
+   {
+    "key": "pow_fold1_bitexact",
+    "pass": true
+   },
+   {
+    "key": "pow_fold2_bitexact",
+    "pass": true
+   },
+   {
+    "key": "pow_fold3_bitexact",
+    "pass": true
+   },
+   {
+    "key": "pow_fold4_bitexact",
+    "pass": true
+   },
+   {
+    "key": "pow_pooled_acc_4dp",
+    "pass": true
+   },
+   {
+    "key": "exp_fold0_bitexact",
+    "pass": true
+   },
+   {
+    "key": "exp_fold1_bitexact",
+    "pass": true
+   },
+   {
+    "key": "exp_fold2_bitexact",
+    "pass": true
+   },
+   {
+    "key": "exp_fold3_bitexact",
+    "pass": true
+   },
+   {
+    "key": "exp_fold4_bitexact",
+    "pass": true
+   },
+   {
+    "key": "exp_pooled_acc_4dp",
+    "pass": true
+   },
+   {
+    "key": "lin_fold0_bitexact",
+    "pass": true
+   },
+   {
+    "key": "lin_fold1_bitexact",
+    "pass": true
+   },
+   {
+    "key": "lin_fold2_bitexact",
+    "pass": true
+   },
+   {
+    "key": "lin_fold3_bitexact",
+    "pass": true
+   },
+   {
+    "key": "lin_fold4_bitexact",
+    "pass": true
+   },
+   {
+    "key": "lin_pooled_acc_4dp",
+    "pass": true
+   }
+  ]
+ },
+ "result": {
+  "acc_deployed": 0.8895,
+  "mF1_deployed": 0.871,
+  "posrate_deployed": 0.3109,
+  "posrate_bank": 0.3109,
+  "fold_acc_deployed": [
+   0.8966,
+   0.8966,
+   0.9052,
+   0.9224,
+   0.8261
+  ],
+  "arms": {
+   "VSW_pow": {
+    "acc": 0.8808,
+    "dacc": -0.0086,
+    "mF1": 0.8599,
+    "posrate": 0.3022,
+    "foldsigns": "0-000",
+    "folddeltas": [
+     0.0,
+     -0.0431,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "fixed": 0,
+    "broke": 5,
+    "net": -5,
+    "exchange_rate": 0.0,
+    "changed": 5,
+    "lambda_per_fold": [
+     {
+      "fold": 0,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8876,
+      "inner_acc_at_lam0": 0.8876
+     },
+     {
+      "fold": 1,
+      "lam": 4096.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8898,
+      "inner_acc_at_lam0": 0.8876
+     },
+     {
+      "fold": 2,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8856,
+      "inner_acc_at_lam0": 0.8856
+     },
+     {
+      "fold": 3,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8812,
+      "inner_acc_at_lam0": 0.8812
+     },
+     {
+      "fold": 4,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.9053,
+      "inner_acc_at_lam0": 0.9053
+     }
+    ]
+   },
+   "VSW_exp": {
+    "acc": 0.8895,
+    "dacc": 0.0,
+    "mF1": 0.871,
+    "posrate": 0.3109,
+    "foldsigns": "00000",
+    "folddeltas": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "fixed": 0,
+    "broke": 0,
+    "net": 0,
+    "exchange_rate": null,
+    "changed": 0,
+    "lambda_per_fold": [
+     {
+      "fold": 0,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8876,
+      "inner_acc_at_lam0": 0.8876
+     },
+     {
+      "fold": 1,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8876,
+      "inner_acc_at_lam0": 0.8876
+     },
+     {
+      "fold": 2,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8856,
+      "inner_acc_at_lam0": 0.8856
+     },
+     {
+      "fold": 3,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8812,
+      "inner_acc_at_lam0": 0.8812
+     },
+     {
+      "fold": 4,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.9053,
+      "inner_acc_at_lam0": 0.9053
+     }
+    ]
+   },
+   "VSW_lin": {
+    "acc": 0.8895,
+    "dacc": 0.0,
+    "mF1": 0.871,
+    "posrate": 0.3109,
+    "foldsigns": "00000",
+    "folddeltas": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "fixed": 0,
+    "broke": 0,
+    "net": 0,
+    "exchange_rate": null,
+    "changed": 0,
+    "lambda_per_fold": [
+     {
+      "fold": 0,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8876,
+      "inner_acc_at_lam0": 0.8876
+     },
+     {
+      "fold": 1,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8876,
+      "inner_acc_at_lam0": 0.8876
+     },
+     {
+      "fold": 2,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8856,
+      "inner_acc_at_lam0": 0.8856
+     },
+     {
+      "fold": 3,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8812,
+      "inner_acc_at_lam0": 0.8812
+     },
+     {
+      "fold": 4,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.9053,
+      "inner_acc_at_lam0": 0.9053
+     }
+    ]
+   },
+   "CTRL_cos_pow": {
+    "acc": 0.8877,
+    "dacc": -0.0017,
+    "mF1": 0.8696,
+    "posrate": 0.3161,
+    "foldsigns": "000-0",
+    "folddeltas": [
+     0.0,
+     0.0,
+     0.0,
+     -0.0086,
+     0.0
+    ],
+    "fixed": 1,
+    "broke": 2,
+    "net": -1,
+    "exchange_rate": 0.5,
+    "changed": 3,
+    "lambda_per_fold": [
+     {
+      "fold": 0,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8876,
+      "inner_acc_at_lam0": 0.8876
+     },
+     {
+      "fold": 1,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8876,
+      "inner_acc_at_lam0": 0.8876
+     },
+     {
+      "fold": 2,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8856,
+      "inner_acc_at_lam0": 0.8856
+     },
+     {
+      "fold": 3,
+      "lam": 384.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.8812,
+      "inner_acc_at_lam0": 0.8812
+     },
+     {
+      "fold": 4,
+      "lam": 0.0,
+      "lam_is_inf": false,
+      "inner_acc_max": 0.9053,
+      "inner_acc_at_lam0": 0.9053
+     }
+    ]
+   },
+   "ORACLE_lambda_pow": {
+    "acc": 0.8946,
+    "dacc": 0.0052,
+    "mF1": 0.8765,
+    "posrate": 0.3057,
+    "foldsigns": "+000+",
+    "folddeltas": [
+     0.0086,
+     0.0,
+     0.0,
+     0.0,
+     0.0174
+    ],
+    "fixed": 3,
+    "broke": 0,
+    "net": 3,
+    "exchange_rate": null,
+    "changed": 3
+   },
+   "THRESH_best": {
+    "acc": 0.8981,
+    "dacc": 0.0086,
+    "mF1": 0.883,
+    "posrate": 0.3299,
+    "foldsigns": "+++0+",
+    "folddeltas": [
+     0.0172,
+     0.0086,
+     0.0086,
+     0.0,
+     0.0087
+    ],
+    "fixed": 8,
+    "broke": 3,
+    "net": 5,
+    "exchange_rate": 2.6667,
+    "changed": 11,
+    "tau_per_fold": [
+     {
+      "fold": 0,
+      "tau": -0.446032,
+      "fit_acc": 0.8942
+     },
+     {
+      "fold": 1,
+      "tau": -0.414591,
+      "fit_acc": 0.8985
+     },
+     {
+      "fold": 2,
+      "tau": -0.416474,
+      "fit_acc": 0.8963
+     },
+     {
+      "fold": 3,
+      "tau": -0.416474,
+      "fit_acc": 0.8942
+     },
+     {
+      "fold": 4,
+      "tau": -0.416474,
+      "fit_acc": 0.9159
+     }
+    ]
+   },
+   "FIXK_1": {
+    "acc": 0.848,
+    "dacc": -0.0415,
+    "mF1": 0.8174,
+    "posrate": 0.2798,
+    "foldsigns": "-0---",
+    "folddeltas": [
+     -0.069,
+     0.0,
+     -0.0776,
+     -0.0172,
+     -0.0435
+    ],
+    "fixed": 9,
+    "broke": 33,
+    "net": -24,
+    "exchange_rate": 0.2727,
+    "changed": 42
+   },
+   "FIXK_2": {
+    "acc": 0.848,
+    "dacc": -0.0415,
+    "mF1": 0.8174,
+    "posrate": 0.2798,
+    "foldsigns": "-0---",
+    "folddeltas": [
+     -0.069,
+     0.0,
+     -0.0776,
+     -0.0172,
+     -0.0435
+    ],
+    "fixed": 9,
+    "broke": 33,
+    "net": -24,
+    "exchange_rate": 0.2727,
+    "changed": 42
+   },
+   "FIXK_3": {
+    "acc": 0.848,
+    "dacc": -0.0415,
+    "mF1": 0.8174,
+    "posrate": 0.2798,
+    "foldsigns": "-0---",
+    "folddeltas": [
+     -0.069,
+     0.0,
+     -0.0776,
+     -0.0172,
+     -0.0435
+    ],
+    "fixed": 9,
+    "broke": 33,
+    "net": -24,
+    "exchange_rate": 0.2727,
+    "changed": 42
+   },
+   "FIXK_5": {
+    "acc": 0.886,
+    "dacc": -0.0035,
+    "mF1": 0.8666,
+    "posrate": 0.3074,
+    "foldsigns": "+00--",
+    "folddeltas": [
+     0.0086,
+     0.0,
+     0.0,
+     -0.0172,
+     -0.0087
+    ],
+    "fixed": 5,
+    "broke": 7,
+    "net": -2,
+    "exchange_rate": 0.7143,
+    "changed": 12
+   },
+   "FIXK_7": {
+    "acc": 0.886,
+    "dacc": -0.0035,
+    "mF1": 0.867,
+    "posrate": 0.3109,
+    "foldsigns": "+00--",
+    "folddeltas": [
+     0.0086,
+     0.0,
+     0.0,
+     -0.0172,
+     -0.0087
+    ],
+    "fixed": 4,
+    "broke": 6,
+    "net": -2,
+    "exchange_rate": 0.6667,
+    "changed": 10
+   },
+   "FIXK_10": {
+    "acc": 0.8826,
+    "dacc": -0.0069,
+    "mF1": 0.8629,
+    "posrate": 0.3109,
+    "foldsigns": "-00--",
+    "folddeltas": [
+     -0.0086,
+     0.0,
+     0.0,
+     -0.0172,
+     -0.0087
+    ],
+    "fixed": 0,
+    "broke": 4,
+    "net": -4,
+    "exchange_rate": 0.0,
+    "changed": 4
+   },
+   "FIXK_15": {
+    "acc": 0.8895,
+    "dacc": 0.0,
+    "mF1": 0.871,
+    "posrate": 0.3109,
+    "foldsigns": "00000",
+    "folddeltas": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "fixed": 0,
+    "broke": 0,
+    "net": 0,
+    "exchange_rate": null,
+    "changed": 0
+   },
+   "FIXK_20": {
+    "acc": 0.8895,
+    "dacc": 0.0,
+    "mF1": 0.871,
+    "posrate": 0.3109,
+    "foldsigns": "00000",
+    "folddeltas": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "fixed": 0,
+    "broke": 0,
+    "net": 0,
+    "exchange_rate": null,
+    "changed": 0
+   }
+  },
+  "curve": {
+   "pow": [
+    {
+     "lam": 0.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 0.25,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8688,
+     "posrate": 0.3092,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0086,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 1,
+     "net": -1,
+     "exchange_rate": 0.0,
+     "changed": 1
+    },
+    {
+     "lam": 0.5,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 1.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 2.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 3.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 4.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 6.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 8.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 12.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 16.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 24.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 32.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 48.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 64.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 96.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 128.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 192.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 256.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 384.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 512.0,
+     "lam_is_inf": false,
+     "acc": 0.8843,
+     "dacc": -0.0052,
+     "mF1": 0.8643,
+     "posrate": 0.3057,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0259,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 3,
+     "net": -3,
+     "exchange_rate": 0.0,
+     "changed": 3
+    },
+    {
+     "lam": 1024.0,
+     "lam_is_inf": false,
+     "acc": 0.8843,
+     "dacc": -0.0052,
+     "mF1": 0.8643,
+     "posrate": 0.3057,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0259,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 3,
+     "net": -3,
+     "exchange_rate": 0.0,
+     "changed": 3
+    },
+    {
+     "lam": 4096.0,
+     "lam_is_inf": false,
+     "acc": 0.8826,
+     "dacc": -0.0069,
+     "mF1": 0.8617,
+     "posrate": 0.3005,
+     "foldsigns": "+-000",
+     "folddeltas": [
+      0.0086,
+      -0.0431,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 1,
+     "broke": 5,
+     "net": -4,
+     "exchange_rate": 0.2,
+     "changed": 6
+    },
+    {
+     "lam": null,
+     "lam_is_inf": true,
+     "acc": 0.8739,
+     "dacc": -0.0155,
+     "mF1": 0.8483,
+     "posrate": 0.2781,
+     "foldsigns": "----+",
+     "folddeltas": [
+      -0.0086,
+      -0.0603,
+      -0.0086,
+      -0.0172,
+      0.0174
+     ],
+     "fixed": 5,
+     "broke": 14,
+     "net": -9,
+     "exchange_rate": 0.3571,
+     "changed": 19
+    }
+   ],
+   "exp": [
+    {
+     "lam": 0.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 0.5,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 1.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 2.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 4.0,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8688,
+     "posrate": 0.3092,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0086,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 1,
+     "net": -1,
+     "exchange_rate": 0.0,
+     "changed": 1
+    },
+    {
+     "lam": 8.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 16.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 32.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 64.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 128.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 256.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 512.0,
+     "lam_is_inf": false,
+     "acc": 0.8843,
+     "dacc": -0.0052,
+     "mF1": 0.8643,
+     "posrate": 0.3057,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0259,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 3,
+     "net": -3,
+     "exchange_rate": 0.0,
+     "changed": 3
+    },
+    {
+     "lam": 1024.0,
+     "lam_is_inf": false,
+     "acc": 0.8843,
+     "dacc": -0.0052,
+     "mF1": 0.8643,
+     "posrate": 0.3057,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0259,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 3,
+     "net": -3,
+     "exchange_rate": 0.0,
+     "changed": 3
+    }
+   ],
+   "lin": [
+    {
+     "lam": 0.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 0.1,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 0.2,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 0.3,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 0.4,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8688,
+     "posrate": 0.3092,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0086,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 1,
+     "net": -1,
+     "exchange_rate": 0.0,
+     "changed": 1
+    },
+    {
+     "lam": 0.5,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8688,
+     "posrate": 0.3092,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0086,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 1,
+     "net": -1,
+     "exchange_rate": 0.0,
+     "changed": 1
+    },
+    {
+     "lam": 0.6,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8688,
+     "posrate": 0.3092,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0086,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 1,
+     "net": -1,
+     "exchange_rate": 0.0,
+     "changed": 1
+    },
+    {
+     "lam": 0.7,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8688,
+     "posrate": 0.3092,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0086,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 1,
+     "net": -1,
+     "exchange_rate": 0.0,
+     "changed": 1
+    },
+    {
+     "lam": 0.8,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8688,
+     "posrate": 0.3092,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0086,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 1,
+     "net": -1,
+     "exchange_rate": 0.0,
+     "changed": 1
+    },
+    {
+     "lam": 0.9,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    },
+    {
+     "lam": 1.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.8666,
+     "posrate": 0.3074,
+     "foldsigns": "0-000",
+     "folddeltas": [
+      0.0,
+      -0.0172,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 2,
+     "net": -2,
+     "exchange_rate": 0.0,
+     "changed": 2
+    }
+   ]
+  },
+  "curve_ctrl_cos": {
+   "pow": [
+    {
+     "lam": 0.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 0.25,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 0.5,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 1.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 2.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 3.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 4.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 6.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 8.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 12.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 16.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 24.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 32.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 48.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 64.0,
+     "lam_is_inf": false,
+     "acc": 0.8895,
+     "dacc": 0.0,
+     "mF1": 0.871,
+     "posrate": 0.3109,
+     "foldsigns": "00000",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "fixed": 0,
+     "broke": 0,
+     "net": 0,
+     "exchange_rate": null,
+     "changed": 0
+    },
+    {
+     "lam": 96.0,
+     "lam_is_inf": false,
+     "acc": 0.8843,
+     "dacc": -0.0052,
+     "mF1": 0.8648,
+     "posrate": 0.3092,
+     "foldsigns": "-00--",
+     "folddeltas": [
+      -0.0086,
+      0.0,
+      0.0,
+      -0.0086,
+      -0.0087
+     ],
+     "fixed": 0,
+     "broke": 3,
+     "net": -3,
+     "exchange_rate": 0.0,
+     "changed": 3
+    },
+    {
+     "lam": 128.0,
+     "lam_is_inf": false,
+     "acc": 0.886,
+     "dacc": -0.0035,
+     "mF1": 0.867,
+     "posrate": 0.3109,
+     "foldsigns": "000--",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      -0.0086,
+      -0.0087
+     ],
+     "fixed": 1,
+     "broke": 3,
+     "net": -2,
+     "exchange_rate": 0.3333,
+     "changed": 4
+    },
+    {
+     "lam": 192.0,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8692,
+     "posrate": 0.3126,
+     "foldsigns": "000-0",
+     "folddeltas": [
+      0.0,
+      0.0,
+      0.0,
+      -0.0086,
+      0.0
+     ],
+     "fixed": 2,
+     "broke": 3,
+     "net": -1,
+     "exchange_rate": 0.6667,
+     "changed": 5
+    },
+    {
+     "lam": 256.0,
+     "lam_is_inf": false,
+     "acc": 0.8843,
+     "dacc": -0.0052,
+     "mF1": 0.8656,
+     "posrate": 0.3161,
+     "foldsigns": "00--0",
+     "folddeltas": [
+      0.0,
+      0.0,
+      -0.0086,
+      -0.0172,
+      0.0
+     ],
+     "fixed": 2,
+     "broke": 5,
+     "net": -3,
+     "exchange_rate": 0.4,
+     "changed": 7
+    },
+    {
+     "lam": 384.0,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8696,
+     "posrate": 0.3161,
+     "foldsigns": "00--+",
+     "folddeltas": [
+      0.0,
+      0.0,
+      -0.0086,
+      -0.0086,
+      0.0087
+     ],
+     "fixed": 4,
+     "broke": 5,
+     "net": -1,
+     "exchange_rate": 0.8,
+     "changed": 9
+    },
+    {
+     "lam": 512.0,
+     "lam_is_inf": false,
+     "acc": 0.8877,
+     "dacc": -0.0017,
+     "mF1": 0.8696,
+     "posrate": 0.3161,
+     "foldsigns": "00--+",
+     "folddeltas": [
+      0.0,
+      0.0,
+      -0.0086,
+      -0.0086,
+      0.0087
+     ],
+     "fixed": 4,
+     "broke": 5,
+     "net": -1,
+     "exchange_rate": 0.8,
+     "changed": 9
+    },
+    {
+     "lam": 1024.0,
+     "lam_is_inf": false,
+     "acc": 0.8843,
+     "dacc": -0.0052,
+     "mF1": 0.8656,
+     "posrate": 0.3161,
+     "foldsigns": "-0--+",
+     "folddeltas": [
+      -0.0086,
+      0.0,
+      -0.0172,
+      -0.0086,
+      0.0087
+     ],
+     "fixed": 3,
+     "broke": 6,
+     "net": -3,
+     "exchange_rate": 0.5,
+     "changed": 9
+    },
+    {
+     "lam": 4096.0,
+     "lam_is_inf": false,
+     "acc": 0.8791,
+     "dacc": -0.0104,
+     "mF1": 0.8589,
+     "posrate": 0.3109,
+     "foldsigns": "-+--+",
+     "folddeltas": [
+      -0.0345,
+      0.0172,
+      -0.0259,
+      -0.0172,
+      0.0087
+     ],
+     "fixed": 4,
+     "broke": 10,
+     "net": -6,
+     "exchange_rate": 0.4,
+     "changed": 14
+    },
+    {
+     "lam": null,
+     "lam_is_inf": true,
+     "acc": 0.848,
+     "dacc": -0.0415,
+     "mF1": 0.8174,
+     "posrate": 0.2798,
+     "foldsigns": "-0---",
+     "folddeltas": [
+      -0.069,
+      0.0,
+      -0.0776,
+      -0.0172,
+      -0.0435
+     ],
+     "fixed": 9,
+     "broke": 33,
+     "net": -24,
+     "exchange_rate": 0.2727,
+     "changed": 42
+    }
+   ]
+  },
+  "degeneracy": {
+   "A_agree_threshold_shift": 0.9724,
+   "B_agree_fixk": {
+    "1": 0.9188,
+    "2": 0.9188,
+    "3": 0.9188,
+    "5": 0.9706,
+    "7": 0.9741,
+    "10": 0.9845,
+    "15": 0.9914,
+    "20": 0.9914
+   },
+   "B_agree_fixk_max": 0.9914,
+   "B_argmax_k": 15,
+   "D_agree_ctrl_cos": 0.9862,
+   "agree_deployed": 0.9914,
+   "DEG_KILL": 0.95,
+   "A_FIRES": true,
+   "B_FIRES": true
+  },
+  "class_balance": {
+   "bank_posrate": 0.3109,
+   "tol": 0.1,
+   "arm_posrate": {
+    "VSW_pow": 0.3022,
+    "VSW_exp": 0.3109,
+    "VSW_lin": 0.3109,
+    "CTRL_cos_pow": 0.3161,
+    "ORACLE_lambda_pow": 0.3057,
+    "THRESH_best": 0.3299,
+    "FIXK_1": 0.2798,
+    "FIXK_2": 0.2798,
+    "FIXK_3": 0.2798,
+    "FIXK_5": 0.3074,
+    "FIXK_7": 0.3109,
+    "FIXK_10": 0.3109,
+    "FIXK_15": 0.3109,
+    "FIXK_20": 0.3109
+   },
+   "primary_deviation": 0.0087,
+   "PRIMARY_PASS": true
+  }
+ },
+ "membership": {
+  "mean_top20_overlap": 2.7841,
+  "mean_overlap_frac": 0.1392,
+  "median_overlap": 2,
+  "frac_queries_overlap_0": 0.1261,
+  "frac_queries_overlap_ge10": 0.0415,
+  "mean_abs_diff_n_positive_neighbours": 1.9473,
+  "raw_deployed_acc": 0.848,
+  "head_deployed_acc": 0.8895,
+  "raw_vs_head_decision_agreement": 0.8791
+ },
+ "extra_arms": {
+  "F95_mlp_max": {
+   "acc": 0.7029,
+   "dacc": -0.1865,
+   "mF1": 0.6936,
+   "posrate": 0.5147,
+   "foldsigns": "-----",
+   "folddeltas": [
+    -0.181,
+    -0.1724,
+    -0.2845,
+    -0.2069,
+    -0.087
+   ],
+   "fixed": 30,
+   "broke": 138,
+   "net": -108,
+   "exchange_rate": 0.2174,
+   "changed": 168
+  },
+  "F95_mlp_mean3": {
+   "acc": 0.7185,
+   "dacc": -0.171,
+   "mF1": 0.7025,
+   "posrate": 0.4577,
+   "foldsigns": "-----",
+   "folddeltas": [
+    -0.1897,
+    -0.1638,
+    -0.25,
+    -0.181,
+    -0.0696
+   ],
+   "fixed": 33,
+   "broke": 132,
+   "net": -99,
+   "exchange_rate": 0.25,
+   "changed": 165
+  },
+  "F95_cos_shape": {
+   "acc": 0.848,
+   "dacc": -0.0415,
+   "mF1": 0.8174,
+   "posrate": 0.2798,
+   "foldsigns": "-0---",
+   "folddeltas": [
+    -0.069,
+    0.0,
+    -0.0776,
+    -0.0172,
+    -0.0435
+   ],
+   "fixed": 9,
+   "broke": 33,
+   "net": -24,
+   "exchange_rate": 0.2727,
+   "changed": 42
+  },
+  "F89_T1_classbal": {
+   "acc": 0.8895,
+   "dacc": 0.0,
+   "mF1": 0.871,
+   "posrate": 0.3109,
+   "foldsigns": "00000",
+   "folddeltas": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fixed": 0,
+   "broke": 0,
+   "net": 0,
+   "exchange_rate": null,
+   "changed": 0
+  },
+  "F89_T2a_csls": {
+   "acc": 0.8895,
+   "dacc": 0.0,
+   "mF1": 0.871,
+   "posrate": 0.3109,
+   "foldsigns": "00000",
+   "folddeltas": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fixed": 0,
+   "broke": 0,
+   "net": 0,
+   "exchange_rate": null,
+   "changed": 0
+  },
+  "F89_T2b_whiten": {
+   "acc": 0.886,
+   "dacc": -0.0035,
+   "mF1": 0.8644,
+   "posrate": 0.2902,
+   "foldsigns": "-+00-",
+   "folddeltas": [
+    -0.0086,
+    0.0086,
+    0.0,
+    0.0,
+    -0.0174
+   ],
+   "fixed": 8,
+   "broke": 10,
+   "net": -2,
+   "exchange_rate": 0.8,
+   "changed": 18
+  },
+  "F89_T4_whiten_classbal": {
+   "acc": 0.8843,
+   "dacc": -0.0052,
+   "mF1": 0.863,
+   "posrate": 0.2953,
+   "foldsigns": "0+0--",
+   "folddeltas": [
+    0.0,
+    0.0086,
+    0.0,
+    -0.0086,
+    -0.0261
+   ],
+   "fixed": 8,
+   "broke": 11,
+   "net": -3,
+   "exchange_rate": 0.7273,
+   "changed": 19
+  }
+ }
+}

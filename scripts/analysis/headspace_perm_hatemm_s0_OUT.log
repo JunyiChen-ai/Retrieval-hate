@@ -1,0 +1,197 @@
+    s0 fold 0 setup 2.3s (arena=False draws=30)
+    s0 fold 0 draw 0 13.2s
+    s0 fold 0 draw 1 12.0s
+    s0 fold 0 draw 2 12.0s
+    s0 fold 0 draw 3 11.4s
+    s0 fold 0 draw 4 11.2s
+    s0 fold 0 draw 5 11.2s
+    s0 fold 0 draw 6 11.4s
+    s0 fold 0 draw 7 11.2s
+    s0 fold 0 draw 8 11.9s
+    s0 fold 0 draw 9 11.7s
+    s0 fold 0 draw 10 11.4s
+    s0 fold 0 draw 11 11.0s
+    s0 fold 0 draw 12 11.4s
+    s0 fold 0 draw 13 11.4s
+    s0 fold 0 draw 14 11.6s
+    s0 fold 0 draw 15 10.8s
+    s0 fold 0 draw 16 11.5s
+    s0 fold 0 setup 2.3s (arena=False draws=13)
+    s0 fold 0 draw 17 13.4s
+    s0 fold 0 draw 18 11.9s
+    s0 fold 0 draw 19 12.5s
+    s0 fold 0 draw 20 12.4s
+    s0 fold 0 draw 21 12.3s
+    s0 fold 0 setup 2.3s (arena=False draws=8)
+    s0 fold 0 draw 22 11.2s
+    s0 fold 0 draw 23 10.8s
+    s0 fold 0 draw 24 10.7s
+    s0 fold 0 draw 25 10.8s
+    s0 fold 0 draw 26 10.4s
+    s0 fold 0 draw 27 12.4s
+    s0 fold 0 draw 28 11.8s
+    s0 fold 0 draw 29 11.8s
+    s0 fold 1 setup 2.0s (arena=False draws=30)
+    s0 fold 1 draw 0 10.8s
+    s0 fold 1 draw 1 11.4s
+    s0 fold 1 draw 2 10.4s
+    s0 fold 1 draw 3 10.8s
+    s0 fold 1 draw 4 11.0s
+    s0 fold 1 setup 2.5s (arena=False draws=25)
+    s0 fold 1 draw 5 12.1s
+    s0 fold 1 draw 6 9.7s
+    s0 fold 1 draw 7 9.8s
+    s0 fold 1 draw 8 10.9s
+    s0 fold 1 draw 9 10.0s
+    s0 fold 1 draw 10 11.1s
+    s0 fold 1 draw 11 11.1s
+    s0 fold 1 draw 12 10.9s
+    s0 fold 1 draw 13 10.0s
+    s0 fold 1 draw 14 9.9s
+    s0 fold 1 draw 15 10.5s
+    s0 fold 1 draw 16 10.3s
+    s0 fold 1 draw 17 10.2s
+    s0 fold 1 draw 18 10.1s
+    s0 fold 1 draw 19 10.9s
+    s0 fold 1 draw 20 11.0s
+    s0 fold 1 draw 21 10.0s
+    s0 fold 1 draw 22 10.1s
+    s0 fold 1 draw 23 10.7s
+    s0 fold 1 draw 24 10.2s
+    s0 fold 1 draw 25 10.5s
+    s0 fold 1 draw 26 10.0s
+    s0 fold 1 draw 27 10.3s
+    s0 fold 1 draw 28 10.0s
+    s0 fold 1 draw 29 11.1s
+    s0 fold 2 setup 2.3s (arena=False draws=30)
+    s0 fold 2 draw 0 10.4s
+    s0 fold 2 draw 1 9.8s
+    s0 fold 2 draw 2 9.7s
+    s0 fold 2 draw 3 9.8s
+    s0 fold 2 draw 4 9.7s
+    s0 fold 2 draw 5 10.8s
+    s0 fold 2 draw 6 11.5s
+    s0 fold 2 draw 7 10.9s
+    s0 fold 2 draw 8 10.3s
+    s0 fold 2 draw 9 10.6s
+    s0 fold 2 draw 10 11.0s
+    s0 fold 2 draw 11 9.9s
+    s0 fold 2 draw 12 9.6s
+    s0 fold 2 draw 13 9.8s
+    s0 fold 2 draw 14 9.7s
+    s0 fold 2 draw 15 9.7s
+    s0 fold 2 draw 16 9.7s
+    s0 fold 2 draw 17 9.7s
+    s0 fold 2 draw 18 9.7s
+    s0 fold 2 draw 19 10.4s
+    s0 fold 2 draw 20 11.2s
+    s0 fold 2 draw 21 10.4s
+    s0 fold 2 draw 22 9.9s
+    s0 fold 2 draw 23 10.3s
+    s0 fold 2 draw 24 10.1s
+    s0 fold 2 draw 25 9.6s
+    s0 fold 2 draw 26 9.5s
+    s0 fold 2 setup 2.3s (arena=False draws=3)
+    s0 fold 2 draw 27 11.2s
+    s0 fold 2 draw 28 9.6s
+    s0 fold 2 draw 29 9.8s
+    s0 fold 3 setup 2.2s (arena=False draws=30)
+    s0 fold 3 draw 0 10.7s
+    s0 fold 3 draw 1 10.5s
+    s0 fold 3 draw 2 9.8s
+    s0 fold 3 setup 2.3s (arena=False draws=27)
+    s0 fold 3 draw 3 11.0s
+    s0 fold 3 draw 4 9.7s
+    s0 fold 3 draw 5 9.6s
+    s0 fold 3 draw 6 9.6s
+    s0 fold 3 draw 7 9.8s
+    s0 fold 3 draw 8 9.6s
+    s0 fold 3 draw 9 9.5s
+    s0 fold 3 setup 2.3s (arena=False draws=20)
+    s0 fold 3 draw 10 11.4s
+    s0 fold 3 draw 11 10.0s
+    s0 fold 3 draw 12 10.0s
+    s0 fold 3 draw 13 9.9s
+    s0 fold 3 draw 14 10.0s
+    s0 fold 3 draw 15 9.9s
+    s0 fold 3 draw 16 9.8s
+    s0 fold 3 draw 17 9.6s
+    s0 fold 3 draw 18 9.5s
+    s0 fold 3 draw 19 9.6s
+    s0 fold 3 draw 20 9.7s
+    s0 fold 3 draw 21 9.8s
+    s0 fold 3 draw 22 9.6s
+    s0 fold 3 draw 23 9.7s
+    s0 fold 3 draw 24 9.5s
+    s0 fold 3 draw 25 9.6s
+    s0 fold 3 draw 26 9.6s
+    s0 fold 3 draw 27 9.5s
+    s0 fold 3 draw 28 9.6s
+    s0 fold 3 draw 29 10.1s
+    s0 fold 4 setup 2.1s (arena=False draws=30)
+    s0 fold 4 draw 0 9.9s
+    s0 fold 4 setup 2.1s (arena=False draws=29)
+    s0 fold 4 draw 1 11.0s
+    s0 fold 4 draw 2 9.7s
+    s0 fold 4 draw 3 9.7s
+    s0 fold 4 draw 4 9.8s
+    s0 fold 4 draw 5 9.9s
+    s0 fold 4 draw 6 9.7s
+    s0 fold 4 draw 7 9.4s
+    s0 fold 4 draw 8 9.7s
+    s0 fold 4 setup 2.2s (arena=False draws=21)
+    s0 fold 4 draw 9 12.7s
+    s0 fold 4 draw 10 10.7s
+    s0 fold 4 draw 11 9.8s
+    s0 fold 4 draw 12 9.9s
+    s0 fold 4 draw 13 9.9s
+    s0 fold 4 draw 14 9.7s
+    s0 fold 4 setup 2.3s (arena=False draws=15)
+    s0 fold 4 draw 15 10.8s
+    s0 fold 4 draw 16 9.6s
+    s0 fold 4 draw 17 9.6s
+    s0 fold 4 draw 18 10.0s
+    s0 fold 4 draw 19 9.6s
+    s0 fold 4 draw 20 9.5s
+    s0 fold 4 draw 21 9.5s
+    s0 fold 4 setup 2.2s (arena=False draws=8)
+    s0 fold 4 draw 22 13.1s
+    s0 fold 4 draw 23 9.7s
+    s0 fold 4 draw 24 9.8s
+    s0 fold 4 draw 25 9.6s
+    s0 fold 4 draw 26 9.7s
+    s0 fold 4 draw 27 10.4s
+    s0 fold 4 setup 2.2s (arena=False draws=2)
+    s0 fold 4 draw 28 10.9s
+    s0 fold 4 draw 29 9.5s
+    draw 0: +0.0000
+    draw 1: -0.0013
+    draw 2: +0.0000
+    draw 3: +0.0000
+    draw 4: +0.0000
+    draw 5: -0.0013
+    draw 6: -0.0027
+    draw 7: +0.0000
+    draw 8: +0.0013
+    draw 9: +0.0000
+    draw 10: +0.0000
+    draw 11: -0.0027
+    draw 12: +0.0000
+    draw 13: +0.0040
+    draw 14: +0.0000
+    draw 15: -0.0013
+    draw 16: -0.0013
+    draw 17: -0.0013
+    draw 18: -0.0013
+    draw 19: -0.0040
+    draw 20: +0.0000
+    draw 21: -0.0027
+    draw 22: -0.0027
+    draw 23: +0.0000
+    draw 24: -0.0013
+    draw 25: -0.0040
+    draw 26: -0.0067
+    draw 27: +0.0000
+    draw 28: +0.0000
+    draw 29: +0.0040
+[hatemm s0] PERM COMPLETE (30 draws) -> scripts/analysis/headspace_perm_hatemm_s0_OUT.json

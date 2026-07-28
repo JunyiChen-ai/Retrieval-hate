@@ -1,0 +1,1490 @@
+{
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "arena_files": [
+  "scripts/analysis/headspace_arena_hatemm_s0_OUT.json",
+  "scripts/analysis/headspace_arena_hatemm_s1_OUT.json",
+  "scripts/analysis/headspace_arena_hatemm_s2_OUT.json"
+ ],
+ "fidelity_file": "scripts/analysis/headspace_fidelity_OUT.json",
+ "GATE_FID": {
+  "floor_dev_acc_ep29_3seedmean": 0.838,
+  "proxy_dev_acc_ep29_3seedmean": 0.8287,
+  "delta_3seedmean": -0.0093,
+  "B_fid_abs_3seedmean": 0.0093,
+  "per_seed_abs_delta_max": 0.028,
+  "mean_abs_delta_over_30_epochs_3seedmean": 0.0111,
+  "raw_effect_under_test": 0.0255,
+  "STOP_RULE_TRIGGERED": false,
+  "one_dev_item": 0.0093
+ },
+ "GATE_ARENA2": {
+  "pos_rate_bank": 0.4005,
+  "majority_rate": 0.5995,
+  "lo": 0.6195,
+  "hi": 0.98,
+  "head_deployed_acc_per_seed": [
+   0.8884,
+   0.8858,
+   0.8858
+  ],
+  "head_deployed_acc_3seedmean": 0.8867,
+  "raw_deployed_acc": 0.8441,
+  "PASS": true
+ },
+ "PARITY_lambda0": {
+  "n_gates_total": 54,
+  "n_pass_total": 54,
+  "PASS": true
+ },
+ "K_HST_1": {
+  "delta_head_3seedmean": 0.0009,
+  "raw_effect": 0.0255,
+  "transfer_ratio": 0.0353,
+  "bar_TRANSFERS": 0.0128,
+  "n_folds_seedmean_nonneg": 5,
+  "n_seeds_strictly_positive": 2,
+  "B_fid": 0.0093,
+  "inside_instrument_band": true,
+  "VERDICT": "PARTIAL"
+ },
+ "K_HST_2_membership": {
+  "mean_top20_overlap": 2.0354,
+  "mean_overlap_frac": 0.1018,
+  "median_overlap": [
+   2,
+   2,
+   2
+  ],
+  "frac_queries_overlap_0": 0.1994,
+  "frac_queries_overlap_ge10": 0.0031,
+  "mean_abs_diff_n_positive_neighbours": 1.6136,
+  "raw_deployed_acc": 0.8441,
+  "head_deployed_acc": 0.8867,
+  "raw_vs_head_decision_agreement": 0.8965,
+  "reading_rule_threshold_overlap": 10.0,
+  "SUBSTANTIAL_MEMBERSHIP_CHANGE": true
+ },
+ "K_HST_3_verifier": {
+  "auc_verifier_heldout": 0.8317,
+  "auc_cosine_heldout": 0.896,
+  "d_auc_vs_cos": -0.0643,
+  "auc_verifier_INSAMPLE_fitpairs": 0.9999,
+  "auc_cosine_INSAMPLE_fitpairs": 0.9264,
+  "same_class_rate_heldout": 0.5198,
+  "same_class_rate_fit": 0.5185,
+  "posrate_pairpred": 0.6176,
+  "n_eval_pairs": 88565.6,
+  "d_auc_per_seed": [
+   -0.0657,
+   -0.0663,
+   -0.0609
+  ],
+  "raw_arena_d_auc_hatemm": 0.1572,
+  "VERIFIER_UNINFORMATIVE": true
+ },
+ "degeneracy": {
+  "A_agree_threshold_shift": [
+   0.9758,
+   0.9839,
+   0.9691
+  ],
+  "A_FIRES": [
+   true,
+   true,
+   true
+  ],
+  "B_agree_fixk_max": [
+   0.9919,
+   0.9946,
+   0.9946
+  ],
+  "B_argmax_k": [
+   20,
+   20,
+   20
+  ],
+  "B_FIRES": [
+   true,
+   true,
+   true
+  ],
+  "D_agree_ctrl_cos": [
+   0.9879,
+   0.9879,
+   0.9946
+  ],
+  "agree_deployed": [
+   0.9919,
+   0.9946,
+   0.9946
+  ],
+  "class_balance_primary_deviation": [
+   0.0094,
+   0.004,
+   0.0013
+  ],
+  "class_balance_PASS": [
+   true,
+   true,
+   true
+  ]
+ },
+ "deployed_floor": {
+  "head_acc_per_seed": [
+   0.8884,
+   0.8858,
+   0.8858
+  ],
+  "head_mF1_per_seed": [
+   0.8838,
+   0.8811,
+   0.8812
+  ],
+  "head_fold_acc_per_seed": [
+   [
+    0.8725,
+    0.8993,
+    0.8926,
+    0.8725,
+    0.9054
+   ],
+   [
+    0.8591,
+    0.8859,
+    0.906,
+    0.8658,
+    0.9122
+   ],
+   [
+    0.8591,
+    0.8859,
+    0.906,
+    0.8658,
+    0.9122
+   ]
+  ],
+  "raw_acc": 0.8441
+ },
+ "arms": {
+  "CTRL_cos_pow": {
+   "dacc_per_seed": [
+    -0.004,
+    0.0013,
+    0.0
+   ],
+   "dacc_3seedmean": -0.0009,
+   "dmF1_3seedmean": -0.0009,
+   "acc_3seedmean": 0.8858,
+   "foldsigns_per_seed": [
+    "0-000",
+    "+-00+",
+    "00000"
+   ],
+   "folddeltas_3seedmean": [
+    0.0022,
+    -0.0089,
+    0.0,
+    0.0,
+    0.0023
+   ],
+   "fixed_per_seed": [
+    0,
+    4,
+    0
+   ],
+   "broke_per_seed": [
+    3,
+    3,
+    0
+   ],
+   "net_per_seed": [
+    -3,
+    1,
+    0
+   ],
+   "changed_per_seed": [
+    3,
+    7,
+    0
+   ],
+   "posrate_per_seed": [
+    0.3978,
+    0.4032,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 1,
+   "lambda_star_per_seed": [
+    [
+     0.0,
+     384.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     384.0,
+     384.0,
+     384.0,
+     24.0,
+     384.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   ]
+  },
+  "F89_T1_classbal": {
+   "dacc_per_seed": [
+    -0.0013,
+    0.0013,
+    0.0
+   ],
+   "dacc_3seedmean": 0.0,
+   "dmF1_3seedmean": 0.0,
+   "acc_3seedmean": 0.8867,
+   "foldsigns_per_seed": [
+    "-0000",
+    "0+000",
+    "00000"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0022,
+    0.0022,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fixed_per_seed": [
+    0,
+    1,
+    0
+   ],
+   "broke_per_seed": [
+    1,
+    0,
+    0
+   ],
+   "net_per_seed": [
+    -1,
+    1,
+    0
+   ],
+   "changed_per_seed": [
+    1,
+    1,
+    0
+   ],
+   "posrate_per_seed": [
+    0.3978,
+    0.4032,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 1
+  },
+  "F89_T2a_csls": {
+   "dacc_per_seed": [
+    -0.0013,
+    0.0,
+    0.0
+   ],
+   "dacc_3seedmean": -0.0004,
+   "dmF1_3seedmean": -0.0005,
+   "acc_3seedmean": 0.8862,
+   "foldsigns_per_seed": [
+    "-0000",
+    "00000",
+    "00000"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0022,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fixed_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "broke_per_seed": [
+    1,
+    0,
+    0
+   ],
+   "net_per_seed": [
+    -1,
+    0,
+    0
+   ],
+   "changed_per_seed": [
+    1,
+    0,
+    0
+   ],
+   "posrate_per_seed": [
+    0.3978,
+    0.4019,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 0
+  },
+  "F89_T2b_whiten": {
+   "dacc_per_seed": [
+    0.004,
+    0.0027,
+    0.0013
+   ],
+   "dacc_3seedmean": 0.0027,
+   "dmF1_3seedmean": 0.0018,
+   "acc_3seedmean": 0.8893,
+   "foldsigns_per_seed": [
+    "00+-0",
+    "+0+--",
+    "0-+0+"
+   ],
+   "folddeltas_3seedmean": [
+    0.0067,
+    -0.0045,
+    0.0201,
+    -0.0089,
+    0.0
+   ],
+   "fixed_per_seed": [
+    13,
+    12,
+    16
+   ],
+   "broke_per_seed": [
+    10,
+    10,
+    15
+   ],
+   "net_per_seed": [
+    3,
+    2,
+    1
+   ],
+   "changed_per_seed": [
+    23,
+    22,
+    31
+   ],
+   "posrate_per_seed": [
+    0.379,
+    0.3858,
+    0.3763
+   ],
+   "n_seeds_strictly_positive": 3
+  },
+  "F89_T4_whiten_classbal": {
+   "dacc_per_seed": [
+    0.0013,
+    0.004,
+    0.0108
+   ],
+   "dacc_3seedmean": 0.0054,
+   "dmF1_3seedmean": 0.0048,
+   "acc_3seedmean": 0.892,
+   "foldsigns_per_seed": [
+    "+-+--",
+    "+++-0",
+    "00+++"
+   ],
+   "folddeltas_3seedmean": [
+    0.0067,
+    -0.0022,
+    0.0201,
+    0.0022,
+    0.0
+   ],
+   "fixed_per_seed": [
+    13,
+    15,
+    18
+   ],
+   "broke_per_seed": [
+    12,
+    12,
+    10
+   ],
+   "net_per_seed": [
+    1,
+    3,
+    8
+   ],
+   "changed_per_seed": [
+    25,
+    27,
+    28
+   ],
+   "posrate_per_seed": [
+    0.3817,
+    0.3871,
+    0.3831
+   ],
+   "n_seeds_strictly_positive": 3
+  },
+  "F95_cos_shape": {
+   "dacc_per_seed": [
+    -0.0403,
+    -0.0255,
+    -0.0309
+   ],
+   "dacc_3seedmean": -0.0322,
+   "dmF1_3seedmean": -0.0338,
+   "acc_3seedmean": 0.8544,
+   "foldsigns_per_seed": [
+    "-----",
+    "---+-",
+    "0----"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0156,
+    -0.0492,
+    -0.0403,
+    -0.0089,
+    -0.0473
+   ],
+   "fixed_per_seed": [
+    13,
+    17,
+    14
+   ],
+   "broke_per_seed": [
+    43,
+    36,
+    37
+   ],
+   "net_per_seed": [
+    -30,
+    -19,
+    -23
+   ],
+   "changed_per_seed": [
+    56,
+    53,
+    51
+   ],
+   "posrate_per_seed": [
+    0.4019,
+    0.3844,
+    0.4059
+   ],
+   "n_seeds_strictly_positive": 0,
+   "raw_arena_dacc": -0.0417,
+   "transfer_ratio": 0.7722
+  },
+  "F95_mlp_max": {
+   "dacc_per_seed": [
+    -0.0753,
+    -0.0645,
+    -0.0954
+   ],
+   "dacc_3seedmean": -0.0784,
+   "dmF1_3seedmean": -0.0758,
+   "acc_3seedmean": 0.8082,
+   "foldsigns_per_seed": [
+    "-----",
+    "-----",
+    "-----"
+   ],
+   "folddeltas_3seedmean": [
+    -0.076,
+    -0.0581,
+    -0.0984,
+    -0.0671,
+    -0.0924
+   ],
+   "fixed_per_seed": [
+    34,
+    33,
+    23
+   ],
+   "broke_per_seed": [
+    90,
+    81,
+    94
+   ],
+   "net_per_seed": [
+    -56,
+    -48,
+    -71
+   ],
+   "changed_per_seed": [
+    124,
+    114,
+    117
+   ],
+   "posrate_per_seed": [
+    0.5013,
+    0.4852,
+    0.5027
+   ],
+   "n_seeds_strictly_positive": 0,
+   "raw_arena_dacc": -0.004,
+   "transfer_ratio": 19.6
+  },
+  "F95_mlp_mean3": {
+   "dacc_per_seed": [
+    -0.0605,
+    -0.0618,
+    -0.0699
+   ],
+   "dacc_3seedmean": -0.0641,
+   "dmF1_3seedmean": -0.064,
+   "acc_3seedmean": 0.8226,
+   "foldsigns_per_seed": [
+    "-----",
+    "-----",
+    "-----"
+   ],
+   "folddeltas_3seedmean": [
+    -0.047,
+    -0.0693,
+    -0.0671,
+    -0.0649,
+    -0.0721
+   ],
+   "fixed_per_seed": [
+    33,
+    30,
+    25
+   ],
+   "broke_per_seed": [
+    78,
+    76,
+    77
+   ],
+   "net_per_seed": [
+    -45,
+    -46,
+    -52
+   ],
+   "changed_per_seed": [
+    111,
+    106,
+    102
+   ],
+   "posrate_per_seed": [
+    0.4382,
+    0.4422,
+    0.4395
+   ],
+   "n_seeds_strictly_positive": 0,
+   "raw_arena_dacc": 0.0054,
+   "transfer_ratio": -11.8704
+  },
+  "FIXK_1": {
+   "dacc_per_seed": [
+    -0.0417,
+    -0.0255,
+    -0.0323
+   ],
+   "dacc_3seedmean": -0.0332,
+   "dmF1_3seedmean": -0.0348,
+   "acc_3seedmean": 0.8535,
+   "foldsigns_per_seed": [
+    "-----",
+    "---+-",
+    "0----"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0134,
+    -0.0492,
+    -0.0403,
+    -0.0089,
+    -0.0541
+   ],
+   "fixed_per_seed": [
+    13,
+    17,
+    14
+   ],
+   "broke_per_seed": [
+    44,
+    36,
+    38
+   ],
+   "net_per_seed": [
+    -31,
+    -19,
+    -24
+   ],
+   "changed_per_seed": [
+    57,
+    53,
+    52
+   ],
+   "posrate_per_seed": [
+    0.4005,
+    0.3844,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 0
+  },
+  "FIXK_10": {
+   "dacc_per_seed": [
+    -0.0094,
+    0.0027,
+    -0.0027
+   ],
+   "dacc_3seedmean": -0.0031,
+   "dmF1_3seedmean": -0.003,
+   "acc_3seedmean": 0.8835,
+   "foldsigns_per_seed": [
+    "--0--",
+    "0+00+",
+    "--0+-"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0045,
+    -0.0045,
+    0.0,
+    0.0,
+    -0.0068
+   ],
+   "fixed_per_seed": [
+    1,
+    3,
+    1
+   ],
+   "broke_per_seed": [
+    8,
+    1,
+    3
+   ],
+   "net_per_seed": [
+    -7,
+    2,
+    -2
+   ],
+   "changed_per_seed": [
+    9,
+    4,
+    4
+   ],
+   "posrate_per_seed": [
+    0.4086,
+    0.4073,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 1
+  },
+  "FIXK_15": {
+   "dacc_per_seed": [
+    -0.0013,
+    0.0013,
+    -0.0013
+   ],
+   "dacc_3seedmean": -0.0004,
+   "dmF1_3seedmean": -0.0004,
+   "acc_3seedmean": 0.8862,
+   "foldsigns_per_seed": [
+    "-0000",
+    "0+000",
+    "--0+0"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0045,
+    0.0,
+    0.0,
+    0.0022,
+    0.0
+   ],
+   "fixed_per_seed": [
+    0,
+    2,
+    1
+   ],
+   "broke_per_seed": [
+    1,
+    1,
+    2
+   ],
+   "net_per_seed": [
+    -1,
+    1,
+    -1
+   ],
+   "changed_per_seed": [
+    1,
+    3,
+    3
+   ],
+   "posrate_per_seed": [
+    0.3978,
+    0.4059,
+    0.4032
+   ],
+   "n_seeds_strictly_positive": 1
+  },
+  "FIXK_2": {
+   "dacc_per_seed": [
+    -0.0417,
+    -0.0255,
+    -0.0323
+   ],
+   "dacc_3seedmean": -0.0332,
+   "dmF1_3seedmean": -0.0348,
+   "acc_3seedmean": 0.8535,
+   "foldsigns_per_seed": [
+    "-----",
+    "---+-",
+    "0----"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0134,
+    -0.0492,
+    -0.0403,
+    -0.0089,
+    -0.0541
+   ],
+   "fixed_per_seed": [
+    13,
+    17,
+    14
+   ],
+   "broke_per_seed": [
+    44,
+    36,
+    38
+   ],
+   "net_per_seed": [
+    -31,
+    -19,
+    -24
+   ],
+   "changed_per_seed": [
+    57,
+    53,
+    52
+   ],
+   "posrate_per_seed": [
+    0.4005,
+    0.3844,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 0
+  },
+  "FIXK_20": {
+   "dacc_per_seed": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dacc_3seedmean": 0.0,
+   "dmF1_3seedmean": 0.0,
+   "acc_3seedmean": 0.8867,
+   "foldsigns_per_seed": [
+    "00000",
+    "00000",
+    "00000"
+   ],
+   "folddeltas_3seedmean": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fixed_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "broke_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "net_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "changed_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "posrate_per_seed": [
+    0.3992,
+    0.4019,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 0
+  },
+  "FIXK_3": {
+   "dacc_per_seed": [
+    -0.0417,
+    -0.0255,
+    -0.0323
+   ],
+   "dacc_3seedmean": -0.0332,
+   "dmF1_3seedmean": -0.0348,
+   "acc_3seedmean": 0.8535,
+   "foldsigns_per_seed": [
+    "-----",
+    "---+-",
+    "0----"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0134,
+    -0.0492,
+    -0.0403,
+    -0.0089,
+    -0.0541
+   ],
+   "fixed_per_seed": [
+    13,
+    17,
+    14
+   ],
+   "broke_per_seed": [
+    44,
+    36,
+    38
+   ],
+   "net_per_seed": [
+    -31,
+    -19,
+    -24
+   ],
+   "changed_per_seed": [
+    57,
+    53,
+    52
+   ],
+   "posrate_per_seed": [
+    0.4005,
+    0.3844,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 0
+  },
+  "FIXK_5": {
+   "dacc_per_seed": [
+    -0.0067,
+    0.0,
+    -0.0054
+   ],
+   "dacc_3seedmean": -0.004,
+   "dmF1_3seedmean": -0.0041,
+   "acc_3seedmean": 0.8826,
+   "foldsigns_per_seed": [
+    "0-00-",
+    "0+-+-",
+    "+--+-"
+   ],
+   "folddeltas_3seedmean": [
+    0.0022,
+    -0.0067,
+    -0.0067,
+    0.0134,
+    -0.0225
+   ],
+   "fixed_per_seed": [
+    5,
+    11,
+    5
+   ],
+   "broke_per_seed": [
+    10,
+    11,
+    9
+   ],
+   "net_per_seed": [
+    -5,
+    0,
+    -4
+   ],
+   "changed_per_seed": [
+    15,
+    22,
+    14
+   ],
+   "posrate_per_seed": [
+    0.4005,
+    0.4019,
+    0.4099
+   ],
+   "n_seeds_strictly_positive": 0
+  },
+  "FIXK_7": {
+   "dacc_per_seed": [
+    -0.0054,
+    0.0013,
+    -0.0027
+   ],
+   "dacc_3seedmean": -0.0023,
+   "dmF1_3seedmean": -0.0022,
+   "acc_3seedmean": 0.8844,
+   "foldsigns_per_seed": [
+    "-0-+-",
+    "++-0+",
+    "+-0+-"
+   ],
+   "folddeltas_3seedmean": [
+    0.0022,
+    -0.0022,
+    -0.0067,
+    0.0067,
+    -0.0113
+   ],
+   "fixed_per_seed": [
+    3,
+    8,
+    4
+   ],
+   "broke_per_seed": [
+    7,
+    7,
+    6
+   ],
+   "net_per_seed": [
+    -4,
+    1,
+    -2
+   ],
+   "changed_per_seed": [
+    10,
+    15,
+    10
+   ],
+   "posrate_per_seed": [
+    0.4046,
+    0.4005,
+    0.4099
+   ],
+   "n_seeds_strictly_positive": 1
+  },
+  "ORACLE_lambda_pow": {
+   "dacc_per_seed": [
+    0.0094,
+    0.0054,
+    0.0067
+   ],
+   "dacc_3seedmean": 0.0072,
+   "dmF1_3seedmean": 0.0071,
+   "acc_3seedmean": 0.8938,
+   "foldsigns_per_seed": [
+    "++++0",
+    "++00+",
+    "+00++"
+   ],
+   "folddeltas_3seedmean": [
+    0.0089,
+    0.0067,
+    0.0067,
+    0.0089,
+    0.0045
+   ],
+   "fixed_per_seed": [
+    9,
+    4,
+    7
+   ],
+   "broke_per_seed": [
+    2,
+    0,
+    2
+   ],
+   "net_per_seed": [
+    7,
+    4,
+    5
+   ],
+   "changed_per_seed": [
+    11,
+    4,
+    9
+   ],
+   "posrate_per_seed": [
+    0.3844,
+    0.3992,
+    0.3925
+   ],
+   "n_seeds_strictly_positive": 3
+  },
+  "THRESH_best": {
+   "dacc_per_seed": [
+    0.0081,
+    0.0081,
+    -0.004
+   ],
+   "dacc_3seedmean": 0.0041,
+   "dmF1_3seedmean": 0.0028,
+   "acc_3seedmean": 0.8907,
+   "foldsigns_per_seed": [
+    "0-+++",
+    "++++0",
+    "--0+0"
+   ],
+   "folddeltas_3seedmean": [
+    -0.0022,
+    -0.0045,
+    0.0089,
+    0.0156,
+    0.0023
+   ],
+   "fixed_per_seed": [
+    15,
+    9,
+    12
+   ],
+   "broke_per_seed": [
+    9,
+    3,
+    15
+   ],
+   "net_per_seed": [
+    6,
+    6,
+    -3
+   ],
+   "changed_per_seed": [
+    24,
+    12,
+    27
+   ],
+   "posrate_per_seed": [
+    0.3669,
+    0.3858,
+    0.3683
+   ],
+   "n_seeds_strictly_positive": 2
+  },
+  "VSW_exp": {
+   "dacc_per_seed": [
+    0.004,
+    -0.0027,
+    0.0027
+   ],
+   "dacc_3seedmean": 0.0013,
+   "dmF1_3seedmean": 0.0011,
+   "acc_3seedmean": 0.888,
+   "foldsigns_per_seed": [
+    "+00+0",
+    "-00-0",
+    "+0000"
+   ],
+   "folddeltas_3seedmean": [
+    0.0045,
+    0.0,
+    0.0,
+    0.0022,
+    0.0
+   ],
+   "fixed_per_seed": [
+    5,
+    1,
+    3
+   ],
+   "broke_per_seed": [
+    2,
+    3,
+    1
+   ],
+   "net_per_seed": [
+    3,
+    -2,
+    2
+   ],
+   "changed_per_seed": [
+    7,
+    4,
+    4
+   ],
+   "posrate_per_seed": [
+    0.3898,
+    0.3965,
+    0.3992
+   ],
+   "n_seeds_strictly_positive": 2,
+   "lambda_star_per_seed": [
+    [
+     8.0,
+     8.0,
+     8.0,
+     8.0,
+     8.0
+    ],
+    [
+     128.0,
+     0.0,
+     256.0,
+     16.0,
+     16.0
+    ],
+    [
+     16.0,
+     16.0,
+     16.0,
+     16.0,
+     0.5
+    ]
+   ],
+   "raw_arena_dacc": 0.0255,
+   "transfer_ratio": 0.051
+  },
+  "VSW_lin": {
+   "dacc_per_seed": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "dacc_3seedmean": 0.0,
+   "dmF1_3seedmean": 0.0,
+   "acc_3seedmean": 0.8867,
+   "foldsigns_per_seed": [
+    "00000",
+    "00000",
+    "00000"
+   ],
+   "folddeltas_3seedmean": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fixed_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "broke_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "net_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "changed_per_seed": [
+    0,
+    0,
+    0
+   ],
+   "posrate_per_seed": [
+    0.3992,
+    0.4019,
+    0.4046
+   ],
+   "n_seeds_strictly_positive": 0,
+   "lambda_star_per_seed": [
+    [
+     1.0,
+     1.0,
+     1.0,
+     0.0,
+     1.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.2,
+     0.2,
+     0.2,
+     0.2
+    ]
+   ],
+   "raw_arena_dacc": 0.0188,
+   "transfer_ratio": 0.0
+  },
+  "VSW_pow": {
+   "dacc_per_seed": [
+    0.0027,
+    -0.0027,
+    0.0027
+   ],
+   "dacc_3seedmean": 0.0009,
+   "dmF1_3seedmean": 0.0007,
+   "acc_3seedmean": 0.8875,
+   "foldsigns_per_seed": [
+    "000+0",
+    "-00-0",
+    "+0000"
+   ],
+   "folddeltas_3seedmean": [
+    0.0022,
+    0.0,
+    0.0,
+    0.0022,
+    0.0
+   ],
+   "fixed_per_seed": [
+    4,
+    1,
+    3
+   ],
+   "broke_per_seed": [
+    2,
+    3,
+    1
+   ],
+   "net_per_seed": [
+    2,
+    -2,
+    2
+   ],
+   "changed_per_seed": [
+    6,
+    4,
+    4
+   ],
+   "posrate_per_seed": [
+    0.3911,
+    0.3965,
+    0.3992
+   ],
+   "n_seeds_strictly_positive": 2,
+   "lambda_star_per_seed": [
+    [
+     1.0,
+     8.0,
+     8.0,
+     8.0,
+     8.0
+    ],
+    [
+     96.0,
+     0.0,
+     192.0,
+     192.0,
+     6.0
+    ],
+    [
+     12.0,
+     12.0,
+     12.0,
+     12.0,
+     0.25
+    ]
+   ],
+   "raw_arena_dacc": 0.0255,
+   "transfer_ratio": 0.0353
+  }
+ },
+ "lambda_curve_pow_3seedmean": [
+  {
+   "lam": 0.0,
+   "dacc_3seedmean": 0.0,
+   "changed_3seedmean": 0.0,
+   "fixed_3seedmean": 0.0,
+   "broke_3seedmean": 0.0,
+   "net_3seedmean": 0.0
+  },
+  {
+   "lam": 0.25,
+   "dacc_3seedmean": 0.0,
+   "changed_3seedmean": 2.6667,
+   "fixed_3seedmean": 1.3333,
+   "broke_3seedmean": 1.3333,
+   "net_3seedmean": 0.0
+  },
+  {
+   "lam": 0.5,
+   "dacc_3seedmean": 0.0004,
+   "changed_3seedmean": 3.6667,
+   "fixed_3seedmean": 2.0,
+   "broke_3seedmean": 1.6667,
+   "net_3seedmean": 0.3333
+  },
+  {
+   "lam": 1.0,
+   "dacc_3seedmean": 0.0014,
+   "changed_3seedmean": 3.6667,
+   "fixed_3seedmean": 2.3333,
+   "broke_3seedmean": 1.3333,
+   "net_3seedmean": 1.0
+  },
+  {
+   "lam": 2.0,
+   "dacc_3seedmean": 0.0014,
+   "changed_3seedmean": 3.6667,
+   "fixed_3seedmean": 2.3333,
+   "broke_3seedmean": 1.3333,
+   "net_3seedmean": 1.0
+  },
+  {
+   "lam": 3.0,
+   "dacc_3seedmean": 0.0014,
+   "changed_3seedmean": 3.6667,
+   "fixed_3seedmean": 2.3333,
+   "broke_3seedmean": 1.3333,
+   "net_3seedmean": 1.0
+  },
+  {
+   "lam": 4.0,
+   "dacc_3seedmean": 0.0014,
+   "changed_3seedmean": 3.6667,
+   "fixed_3seedmean": 2.3333,
+   "broke_3seedmean": 1.3333,
+   "net_3seedmean": 1.0
+  },
+  {
+   "lam": 6.0,
+   "dacc_3seedmean": 0.0018,
+   "changed_3seedmean": 4.0,
+   "fixed_3seedmean": 2.6667,
+   "broke_3seedmean": 1.3333,
+   "net_3seedmean": 1.3333
+  },
+  {
+   "lam": 8.0,
+   "dacc_3seedmean": 0.0022,
+   "changed_3seedmean": 4.3333,
+   "fixed_3seedmean": 3.0,
+   "broke_3seedmean": 1.3333,
+   "net_3seedmean": 1.6667
+  },
+  {
+   "lam": 12.0,
+   "dacc_3seedmean": 0.0022,
+   "changed_3seedmean": 5.6667,
+   "fixed_3seedmean": 3.6667,
+   "broke_3seedmean": 2.0,
+   "net_3seedmean": 1.6667
+  },
+  {
+   "lam": 16.0,
+   "dacc_3seedmean": 0.0022,
+   "changed_3seedmean": 5.6667,
+   "fixed_3seedmean": 3.6667,
+   "broke_3seedmean": 2.0,
+   "net_3seedmean": 1.6667
+  },
+  {
+   "lam": 24.0,
+   "dacc_3seedmean": 0.0009,
+   "changed_3seedmean": 6.6667,
+   "fixed_3seedmean": 3.6667,
+   "broke_3seedmean": 3.0,
+   "net_3seedmean": 0.6667
+  },
+  {
+   "lam": 32.0,
+   "dacc_3seedmean": 0.0013,
+   "changed_3seedmean": 7.0,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 3.0,
+   "net_3seedmean": 1.0
+  },
+  {
+   "lam": 48.0,
+   "dacc_3seedmean": 0.0009,
+   "changed_3seedmean": 7.3333,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 3.3333,
+   "net_3seedmean": 0.6667
+  },
+  {
+   "lam": 64.0,
+   "dacc_3seedmean": 0.0009,
+   "changed_3seedmean": 7.3333,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 3.3333,
+   "net_3seedmean": 0.6667
+  },
+  {
+   "lam": 96.0,
+   "dacc_3seedmean": 0.0,
+   "changed_3seedmean": 7.3333,
+   "fixed_3seedmean": 3.6667,
+   "broke_3seedmean": 3.6667,
+   "net_3seedmean": 0.0
+  },
+  {
+   "lam": 128.0,
+   "dacc_3seedmean": 0.0005,
+   "changed_3seedmean": 7.6667,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 3.6667,
+   "net_3seedmean": 0.3333
+  },
+  {
+   "lam": 192.0,
+   "dacc_3seedmean": 0.0009,
+   "changed_3seedmean": 7.3333,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 3.3333,
+   "net_3seedmean": 0.6667
+  },
+  {
+   "lam": 256.0,
+   "dacc_3seedmean": 0.0009,
+   "changed_3seedmean": 7.3333,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 3.3333,
+   "net_3seedmean": 0.6667
+  },
+  {
+   "lam": 384.0,
+   "dacc_3seedmean": 0.0009,
+   "changed_3seedmean": 7.3333,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 3.3333,
+   "net_3seedmean": 0.6667
+  },
+  {
+   "lam": 512.0,
+   "dacc_3seedmean": 0.0009,
+   "changed_3seedmean": 7.3333,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 3.3333,
+   "net_3seedmean": 0.6667
+  },
+  {
+   "lam": 1024.0,
+   "dacc_3seedmean": 0.0,
+   "changed_3seedmean": 8.0,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 4.0,
+   "net_3seedmean": 0.0
+  },
+  {
+   "lam": 4096.0,
+   "dacc_3seedmean": -0.0018,
+   "changed_3seedmean": 9.3333,
+   "fixed_3seedmean": 4.0,
+   "broke_3seedmean": 5.3333,
+   "net_3seedmean": -1.3333
+  },
+  {
+   "lam": "inf",
+   "dacc_3seedmean": -0.0067,
+   "changed_3seedmean": 15.6667,
+   "fixed_3seedmean": 5.3333,
+   "broke_3seedmean": 10.3333,
+   "net_3seedmean": -5.0
+  }
+ ],
+ "permutation_null_seed0": {
+  "n_draws": 30,
+  "observed_dacc_seed0": 0.0027,
+  "null_mean": -0.0008,
+  "null_sd": 0.0021,
+  "null_max": 0.004,
+  "frac_null_ge_zero": 0.5333,
+  "n_null_ge_observed": 2,
+  "p": 0.0968
+ }
+}

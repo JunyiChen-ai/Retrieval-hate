@@ -1,5 +1,5 @@
 {
- "updated": "2026-07-28T06:55:38Z",
+ "updated": "2026-07-28T22:45:00Z",
  "diagnosis_frame": "low-bandwidth decision-side MLLM signals are conditionally redundant given frozen representation; only representation-level levers ever cleared +3 (encoder swap, HateMM only). Every new direction must state bandwidth + injection point and be non-isomorphic to all entries below.",
  "dead": [
   {
@@ -519,6 +519,10 @@
    "killed": "2026-07-28T06:55:38Z",
    "record": "refine-logs/MEMBANK_C4_PREGATE_RECORD.md (commit 4eea267)",
    "finding": "F112"
+  },
+  {
+   "name": "RAW-ARENA SCREENING as a source of LEADS (the $0 pregate arena used by F89/F94/F95/F96/F97/F98/F105/F112: banked raw fused keys, 7168-d, 5-fold item-disjoint train-LOO)",
+   "status": "SUPERSEDED AS A LEAD-FINDER, VINDICATED AS A KILL-FINDER -- F113 / refine-logs/HEADSPACE_TRANSFER_PREGATE.md, $0, CPU only, zero GPU/SLURM/Modal/test contact. The deployed system retrieves in the trained head's 1024-d space; the raw arena was adopted because head-space FULL-train LOO saturates at 0.998 (F47). That objection does NOT apply to a head trained on 4/5 of the train split and queried with the held-out fifth: measured pooled deployed acc 0.8867 (HateMM) / 0.8923 (MHC-ZH) vs raw 0.8441 / 0.8480. AN UNSATURATED HEAD-SPACE ARENA EXISTS and costs ~35 s of CPU per fold-head; the frozen mechfix_ops / mechnov_pairverify / vsw_pregate battery runs in it UNMODIFIED. MEASURED TRANSFER, 2 datasets x 3 head seeds x 21 operator cells: 9 of 9 raw-space POSITIVES fail (F105/VSW HateMM +0.0255 -> +0.0009, ratio 0.035, p=0.0968, below the null maximum, hindsight-lambda ceiling only +0.0072 vs +0.0349 raw; VSW_lin +0.0188 -> 0.0000; THRESH_best +0.0148 -> +0.0041; FIXK_15 +0.0040 -> -0.0004; F95 mlp_mean3 +0.0054/+0.0107 -> -0.0641). 0 of 8 raw-space KILLS reverse and most DEEPEN (FIXK_1 -0.0430 -> -0.0332; F95 mlp_max -0.0040 -> -0.0784 HateMM, -0.0466 -> -0.1738 ZH). MECHANISM: (i) the raw and head deployed top-20 share only 2.04/20 (HateMM) and 2.85/20 (ZH) neighbours for the SAME query/fold/bank, and the vote reads only the retrieved label tuple, so the two arenas are different neighbourhoods; (ii) the |vote|<0.10 re-weightable population collapses from 43/46 items to 2-10 (4-23x); (iii) any FITTED relation score over head keys memorises the bank (in-sample pair AUC 0.9999) and is WORSE than the plain cosine on held-out pairs (d_AUC +0.1572/+0.2302 raw -> -0.0643/-0.1294 head, 30/30 fold cells) -- exactly what mechnov_pairverify.py:22-24 predicted and never measured. CONSEQUENCE: the raw arena's error is ONE-SIDED (optimistic), so every raw-space closure of 2026-07-26/28 is MORE secure, not less; only F105's near-miss framing and F95's control-1 'verifier beats cosine' datum need RE-SCOPING to 'raw encoder key space', and neither verdict moves. NOT established: that a raw-space NEGATIVE cannot be a head-space positive (F95 limitation L1 untouched), nor that any of this reaches TEST. STANDING RULE PROPOSED (not yet ruled): run every future $0 pregate in the FOLD-HEAD arena; marginal cost per new operator after the arena exists is seconds."
   }
  ],
  "banned_constraints": [
@@ -573,6 +577,9 @@
   "CC": "NOT PROMOTED (FA killed; relaxation-f D7-composition sub-ruling moot)",
   "cand2_hardneg_sft_curriculum": "MEASURED F56 (546acc5): ZH TIE (primary leg, F0.7), HateMM hold+val-sel add +0.0155 single-draw; no kill; do NOT re-run curriculum variants (tactics) without new structural premise",
   "premise_d_clip_img_lora_text_EN": "DEAD F55 (K-D-1 calibrated kill; EN closed at all 3 levels)",
-  "cand2_rep2": "MEASURED F59 (weakly-hardened; single-attempt binding consumed — no re-draws ever)"
+  "cand2_rep2": "MEASURED F59 (weakly-hardened; single-attempt binding consumed — no re-draws ever)",
+  "headspace_arena_EN": "QUEUED $0, ~15 CPU-min (F113 section 8.3): MHC-EN fold-head arena to complete the 3-dataset replication of K-HST-2 (membership overlap) / K-HST-3 (verifier sign inversion) / ARENA-2. Needed only if the arena characterisation is to be quoted as general; the HateMM+ZH replication is already 2-for-2 on every arena property.",
+  "headspace_arena_devquery": "QUEUED $0, ~10 CPU-min (F113 section 8.3): dev-query head-space arena built from the six deployed-configuration heads already minted for GATE-FID (keys banked). The only remaining zero-test-touch arena that queries with NON-TRAIN items, i.e. one rung closer to deployment than the fold arena.",
+  "screening_arena_switch": "PROPOSED PRACTICE CHANGE, needs a user ruling (F113 section 8.1/8.3): make the FOLD-HEAD arena, not the raw arena, the default $0 pregate arena. Evidence: raw is one-sidedly optimistic for leads (9/9 positives fail to transfer) while head->head verdicts agree cell-for-cell with the banked MECHFIX head-space test reads."
  }
 }

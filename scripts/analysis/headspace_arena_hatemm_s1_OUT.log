@@ -1,0 +1,13 @@
+    s1 fold 0 setup 2.3s (arena=True draws=0)
+    s1 fold 0 ARENA 15.8s dep 0.8591 dAUC -0.0648
+    s1 fold 1 setup 2.0s (arena=True draws=0)
+    s1 fold 1 ARENA 14.5s dep 0.8859 dAUC -0.0709
+    s1 fold 2 setup 2.0s (arena=True draws=0)
+    s1 fold 2 ARENA 14.3s dep 0.9060 dAUC -0.0636
+    s1 fold 3 setup 2.1s (arena=True draws=0)
+    s1 fold 3 ARENA 14.1s dep 0.8658 dAUC -0.0612
+    s1 fold 4 setup 2.1s (arena=True draws=0)
+    s1 fold 4 setup 2.2s (arena=True draws=0)
+    s1 fold 4 ARENA 15.8s dep 0.9122 dAUC -0.0711
+  [hatemm s1] PARITY-lambda0 18/18
+[hatemm s1] ARENA COMPLETE dep 0.8858 VSW_pow dacc -0.0027 -> scripts/analysis/headspace_arena_hatemm_s1_OUT.json
