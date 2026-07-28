@@ -646,14 +646,19 @@ Consequence (`:562-565`): F95's *"Δ ≥ +0.010 achieved by 0 of 36 cells"* **do
 × fused × MLP × mean-top-3 moves **+0.0054 → +0.0107** and clears. And (`:576-577`) *"F97's '78/78
 parity' was true when made and **would not re-assert today**"*.
 
-**And it is now settled as NON-DETERMINISM, not a defect — which shrinks the blast radius rather than
-enlarging it.** `PROVENANCE_AUDIT_2026-07-28.md:396-411` exonerates every candidate cause: *"every
-source is pinned"* (`mechnov_pairverify.py:171` `torch.manual_seed(0)`, `:177`
-`np.random.RandomState(0)`, `:210` `StratifiedKFold(random_state=0)`, `:227` `PCA(random_state=0)`,
-`:233` per-fold `RandomState(0+fold)`); threads pinned at `:413` `torch.set_num_threads(8)`; library
-versions unchanged since 2026-03-27. Residual cause: *"cross-session CPU GEMM kernel dispatch
-(oneDNN/MKL) on the 256-core EPYC"* compounding through Adam. `PROVENANCE_AUDIT_2026-07-28.md:31`:
-*"**Zero verdicts move**; one headline *count* ('0 of 36') is session-dependent."*
+**And it is now fully RESOLVED — the cause is one unpinned environment variable, and parity is
+restored.** Superseding the "residual oneDNN/MKL dispatch" account above (which was the state of
+knowledge when the erratum was written): `PREGATE_DETERMINISM_CLAUSE.md:30-44` identifies the cause as
+`OMP_NUM_THREADS` / `MKL_NUM_THREADS` being unset in one driver script, and reports **630/630 key-by-key
+parity restored** under `OMP_NUM_THREADS=8 MKL_NUM_THREADS=8`. Intermediate state: an earlier pass
+(`PROVENANCE_AUDIT_2026-07-28.md:396-411`) had already exonerated every seeded source
+(`torch.manual_seed(0)`, `np.random.RandomState(0)`, `StratifiedKFold`, `PCA`, per-fold seeds) and
+concluded *"**Zero verdicts move**"* (`:31`).
+
+**Net effect on this record: the reproducibility problem is CLOSED and was never the same problem as
+mine.** F95's *"0 of 36"* count remains environment-conditioned and should be quoted as *"0 of 4
+PRIMARY cells"* or with the environment stated (`PREGATE_DETERMINISM_CLAUSE.md:180`). **Nothing about
+predictiveness changes**, and §3.1's numbers were never exposed to it.
 
 **Interaction with this record — four statements:**
 
@@ -662,10 +667,11 @@ versions unchanged since 2026-03-27. Residual cause: *"cross-session CPU GEMM ke
    of the data**, not a reproducibility artefact — it cannot be explained away as drift.
 2. **§3.2 is largely immune.** `THRESH_best` is a grid search over a scalar, not a torch fit; D1 is a
    closed-form logistic. `C3_net` (used only as context) **is** exposed.
-3. **The two problems are now cleanly separated and should stay that way.** Reproducibility: settled,
-   zero verdicts move. Predictiveness (this record): **unvalidated**. Only the second is open.
-4. **They compound in exactly one place** — F95's and F97's *trained* arms, which are both
-   session-dependent and arena-dependent. F96's and F98's decisive bars (RESTRANS's degeneracy at
+3. **The two problems are now cleanly separated and should stay that way.** Reproducibility: **closed**
+   (one env var, 630/630 parity restored). Predictiveness (this record): **unvalidated**. **Only the
+   second is open, and it is the one nobody had measured.**
+4. **They compounded in exactly one place** — F95's and F97's *trained* arms, which were both
+   environment-dependent and arena-dependent. The first half of that is now fixed. F96's and F98's decisive bars (RESTRANS's degeneracy at
    95.03/97.75/99.45 %; AGGNET's DEG-A 0.9570 / DEG-B 0.9610) are **within-arena, within-session,
    closed-form agreement counts** and are exposed to neither problem. **That is the property that
    actually protects the recent kills — not any claim that the arena predicts deployment.**
