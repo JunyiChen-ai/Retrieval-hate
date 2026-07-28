@@ -295,6 +295,23 @@ def parse_args():
              "Epochs 0..(warmup-1) are ignored when choosing the best checkpoint. "
              "If no epoch >= warmup exists (run too short), falls back to all epochs."
     )
+    # Checkpoint retention. Default False: at the end of training, keep only the
+    # selected-epoch and final-epoch `epoch_model_*.pt` and delete the rest.
+    # `best_model_*.pt` / `last_model_*.pt` are NEVER touched, so the selected and
+    # final weights are persisted twice over regardless of this flag.
+    # Rationale: a 30-epoch x 3-arm x 3-seed probe retains 270 x ~46 MB = ~12 GiB of
+    # per-epoch heads that no verdict reads; one such probe put the account over its
+    # disk quota on 2026-07-27 (refine-logs/DISK_FORENSICS_2026-07-28.md §2.3, §6.3).
+    # Set True for runs that will later be swept across ALL epochs (e.g.
+    # scripts/analysis/swa_probe.py, gradnorm_select_probe.py); the current forensic
+    # consumers (errpat_hatemm_*, mechfix_*) only ever load selected/final epochs.
+    arg_parser.add_argument(
+        "--keep_epoch_ckpts", type=lambda x: (str(x).lower() == "true"),
+        default=False,
+        help="Keep every per-epoch epoch_model_*.pt (default False = keep only the "
+             "selected and final epochs). Set True only if the run will be swept "
+             "across all epochs afterwards."
+    )
     arg_parser.add_argument(
         "--save_embed",
         type=lambda x: (str(x).lower() == "true"),
@@ -966,6 +983,39 @@ pre: {:.4f} recall: {:.4f} f1: {:.4f}".format(
         shutil.copy(fb_ckpt, best_epoch_path)
         print("Fallback selected epoch {} (Val_Retrieval acc: {}, roc: {})".format(
             fb_epoch, fb_acc, fb_roc))
+
+    # ---- Per-epoch checkpoint retention -------------------------------------
+    # Runs after the warmup-floor fallback above (which may copy an epoch_model_*
+    # into best_model_*), so nothing this deletes is still needed. Scoped to the
+    # paths this call actually wrote (all_epoch_records), never a directory glob,
+    # so concurrent runs and earlier EM rounds are untouched. best_model_*.pt and
+    # last_model_*.pt are never candidates. See --keep_epoch_ckpts.
+    if not getattr(args, "keep_epoch_ckpts", False) and all_epoch_records:
+        import re as _re
+        _final_epoch = max(r[0] for r in all_epoch_records)
+        _sel_epoch = None
+        if best_epoch_path is not None:
+            _m = _re.match(r"best_model_(\d+)_",
+                           os.path.basename(best_epoch_path))
+            if _m:
+                _sel_epoch = int(_m.group(1))
+        _keep = {e for e in (_sel_epoch, _final_epoch) if e is not None}
+        _removed = _bytes = 0
+        for _ep, _a, _r, _path in all_epoch_records:
+            if _ep in _keep:
+                continue
+            try:
+                _sz = os.path.getsize(_path)
+                os.remove(_path)
+                _removed += 1
+                _bytes += _sz
+            except OSError:
+                pass  # never let checkpoint housekeeping fail a training run
+        print("[ckpt-retention] kept epoch_model for epochs {} (selected={}, "
+              "final={}); deleted {} of {} per-epoch checkpoints, freed {:.2f} GiB. "
+              "Pass --keep_epoch_ckpts True to retain all epochs.".format(
+                  sorted(_keep), _sel_epoch, _final_epoch,
+                  _removed, len(all_epoch_records), _bytes / (1024 ** 3)))
 
     return model, best_epoch_path
 

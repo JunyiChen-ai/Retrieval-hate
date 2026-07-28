@@ -390,6 +390,16 @@ zero-test-touch head-space instrument. The re-ranking / candidate-set family sta
 channel — the one thing the kernel argument left open — is **isomorphic to F75 under its only practical
 estimator, and bounded at +0.0286 under the upper 95 % CI of its own measured conversion rate.**
 
+**The one thing a reader of this summary alone must not mistake.** K-HC-3's 1.0000 is **not** independent
+corroboration of the decision-rule account. In head space the identity is **collapse-forced** (similarity
+spread 1.95e-04 against `M`'s smallest step 0.0095, a factor ~49), and **DEG-HC — the control written
+specifically to separate "property of the rule" from "artefact of collapse" — FAILED**, because its
+epoch-0 reference proved *more* degenerate than epoch 29. What K-HC-3 establishes is **transfer**: the
+theorem is true where the system retrieves. What it does **not** establish is *why*. The mechanism
+evidence is the **raw**-arena measurement (`LITSWEEP8` §2.1: 99.6-100 % identity despite a real
+0.021-0.025 spread), independently reproduced twice — by `VSW_ASYMMETRY_RECON.md` §5 and by
+`PROVENANCE_AUDIT_2026-07-28.md:464`.
+
 **Scope, restated so nothing is over-claimed:** ZH dev, n = 78, 3 seeds, CPU re-mint proxy heads, one
 split. HateMM and MHC-EN are **out of scope by instrument availability**, declared before any number
 existed (§1.3), and their extension cost is priced, not spent. **This is a pregate, not a verdict.**
@@ -398,17 +408,25 @@ existed (§1.3), and their extension cost is priced, not spent. **This is a preg
 
 ## §8. LEDGER ERRATUM EVIDENCE (stated for the provenance-audit agent; ledger rows NOT edited here)
 
-The certified law-I count: `findings.jsonl` F50 says "5th better-signal-no-conversion instance", F63 says
-"SEVENTH", F65's title says "**8th law-I instance**", and **F87 says "9th law-I NOT certified"** — twice,
-once in the title and once in the body ("image AMBIGUOUS (9th law-I not certified…)"). F95 calls itself
-"the sharpest instance of law-I yet recorded" without claiming an ordinal. **On that evidence the ledger
-certifies EIGHT.** litsweep-7 says nine and a figure of ten circulated earlier. I have **not** edited any
-historical row; adjudication belongs to the provenance-audit agent.
+**SUPERSEDED 2026-07-28 by `refine-logs/PROVENANCE_AUDIT_2026-07-28.md` (commit `0477d56`). The
+certified law-I count is NINE. My "eight" was wrong, and so was the tasking's "ten".**
 
-Separately: the cand-2 datum quoted to me as "a targeted train-LOO move of −0.0538 buying +0.0132" could
-not be reconciled. **+0.0132 is verified** (`CAND2_REP2_VERDICT_REVIEW.md:120,182`); the only `0.0538` in
-`refine-logs/` is HateMM's **LOO-disagreement rate** in an unrelated curation experiment
-(`ERRPAT_HateMM_2026-07-26.md:390`).
+What I originally wrote here: F50 "5th" → F63 "SEVENTH" → F65 "8th law-I instance" → F87 "9th law-I NOT
+certified" (twice), therefore **eight**. That chain is individually correct at every link but
+**incomplete — it stops at F87 and never reaches F91**, whose body states the count "moves 8 → 9"
+explicitly. Verified at source this pass. F87 declining a 9th and F91 certifying one are not in conflict:
+MokA was declined, and Molmo2 was certified later. **Authoritative enumeration** (audit §2, one ledger
+source per entry): **P3 · S2S (F37) · W2-A (F42) · Router (F47) · FA (F50) · Premise-d (F55) · LP (F63) ·
+Vision-unfreeze (F65) · Molmo2 (F91)**. Correctly not certified: F87, F95, VSW. I edited no historical
+ledger row, and none of this record's measurements or verdicts depends on the count.
+
+**The cand-2 "tenth datum" is RETRACTED IN FULL** (audit §1.4). I reported that I could not reconcile the
+−0.0538; the audit killed the interpretation outright: uncurriculumed generic LoRA moves the same head
+*more* (−0.0762 / −0.1207), the "deprived tail 0.0000" is a tautology over a stratum *defined* as the
+saturated-vote set, the second same-recipe draw moves the wrong way (+0.0090, honest 2-draw −0.0224), and
+**on HateMM the train-side gain CONVERTED** (+0.0068 arena → +0.0132 test) — making the cell a
+**counter-example to law-I, not an instance of it**. The ZH "0.0000" was a TIE *adjudication* over
+−0.0067 / +0.0067, never a measurement.
 
 ---
 

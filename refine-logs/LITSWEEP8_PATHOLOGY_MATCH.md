@@ -70,11 +70,23 @@ negative results.
    score variance, and F89 records that T2a "changes half the retrieved sets". CSLS is inert because the
    *decision* does not read the similarity at all (§2).
 
+4b. **[POST-FREEZE INSERT, 2026-07-28 — see §6b.]** §2's two results were re-tested in the **deployed
+   head space** (`HEADCOV_PREGATE_RECORD.md`, F107): Result A's decision identity is **1.0000** and
+   Result B's coverage bounds the pool-expansion oracle at **+0.0171**, so §5.1's kill stands where the
+   system actually retrieves. **Two honesty caveats a summary-only reader must carry:** (i) the
+   head-space identity is **collapse-forced** — the similarity spread there (1.95e-04) is ~49× smaller
+   than the label vote's smallest step (0.0095) — so it confirms *transfer* but is **not independent
+   evidence** for the decision-rule account; that evidence lives in the **raw** arena (§2.1), where the
+   identity holds despite a real 0.021-0.025 spread. HEADCOV's own DEG-HC control, which was designed to
+   separate these, **FAILED**: its epoch-0 reference turned out to be *more* degenerate than epoch 29
+   (spread 9.3e-07 vs 1.95e-04). (ii) HEADCOV covers **MHC-ZH dev only** (n = 78); HateMM and MHC-EN had
+   no zero-test-touch head-space instrument.
+
 5. **Net for the campaign: this sweep proposes ZERO new GPU spend and closes one family.** One candidate
    survives to a $0 pregate sketch and it is a **door-closer / analysis deliverable**, not a goal bet
    (§5.3). Everything else self-kills on oracle or is pre-closed. The honest headline is the one the
    brief said would be an outstanding result: **the phenomenon is (partly) known, the theory predicts our
-   ten-odd law-I data, and the same theory predicts that nothing in the legal class can work.**
+   nine law-I data, and the same theory predicts that nothing in the legal class can work.**
 
 ---
 
@@ -94,7 +106,8 @@ Every claim in the tasking was re-read against its source. Verdicts below; corre
 | 4a | F66/ISR: 91-98 % of oracle headroom formally disjoint from symmetric operators | `refine-logs/ISR_PREGATE_RECORD.md:110-118` (HateMM +0.0776 = +0.0012 symmetric + +0.0764 selection; EN +0.0700 = +0.0064 + +0.0636) | **VERIFIED**, with a scope note: the decomposition is computed on the **W2-B per-segment** oracle, not on an arbitrary Gram-matrix operator. Generalising it to "every symmetric operator on a fixed Gram" is the project's standing *inference*, not that record's measurement. §2 supplies an independent and much tighter bound that does not need the inference. |
 | 4b | F98/AGGNET oracle +0.1492 / +0.1520 / +0.2186, realised +0.0134 | `refine-logs/AGGNET_PREGATE_RECORD.md:368-370,387,418` | **VERIFIED**, and **independently reproduced this sweep** (§2: +0.1440 / +0.1520 / +0.2295 on full-bank train LOO; ZH matches to 4 dp) |
 | 4c | F94 truncation closed both directions | `AGGNET_PREGATE_RECORD.md:44-48` (quoting KSWEEP) | **VERIFIED** |
-| 5 | "Ten certified law-I data" | `state/findings.jsonl` F50 ("5th"), F63 ("SEVENTH"), F65 ("8th"), F87 ("**9th law-I NOT certified**") | **CORRECTION — the ledger certifies EIGHT.** F87 explicitly declines to certify a 9th. F95 calls itself "the sharpest instance of law-I yet recorded" (`MECHNOV_PAIRVERIFY_PREGATE.md:436-437`) without claiming an ordinal. The cand-2 figure "−0.0538 train-LOO buying +0.0132" could not be reconciled: **+0.0132 is verified** (`CAND2_REP2_VERDICT_REVIEW.md:120,182`) but the only `0.0538` in `refine-logs/` is HateMM's **LOO-disagreement rate** in a different experiment (`ERRPAT_HateMM_2026-07-26.md:390`). **Do not put "ten certified" in the paper without re-deriving the list.** |
+| 5 | "Ten certified law-I data" | `refine-logs/PROVENANCE_AUDIT_2026-07-28.md` §2 (commit `0477d56`), enumerating from `state/findings.jsonl` | **CORRECTED 2026-07-28 — the count is NINE, and BOTH the tasking's "ten" and this record's original "eight" were wrong.** The audit's enumeration, with a ledger source per entry: **P3 · S2S (F37) · W2-A (F42) · Router (F47) · FA (F50) · Premise-d (F55) · LP (F63) · Vision-unfreeze (F65) · Molmo2 (F91)**. *My original correction claimed eight, reasoning from F50 ("5th") → F63 ("SEVENTH") → F65 ("8th") → F87 ("9th law-I NOT certified"). That chain is sound but **incomplete: it stops at F87 and never reaches F91**, whose body states the count "moves 8 → 9" explicitly (`findings.jsonl` F91) — verified at source this pass. F87 declining a 9th and F91 certifying one are not in conflict; MokA was declined and Molmo2 was later certified.* Correctly **not** certified: F87 (MokA), F95 (calls itself "the sharpest instance of law-I yet recorded" without an ordinal), VSW. **The "tenth datum" (cand-2 curriculum) is RETRACTED IN FULL — see §1 row 5b.** |
+| 5b | "the cand-2 curriculum: a targeted train-LOO move of −0.0538 buying +0.0132" | `PROVENANCE_AUDIT_2026-07-28.md` §1.4 | **RETRACTED IN FULL, and wrong in kind rather than in count.** I flagged that I could not reconcile the −0.0538; the audit went further and killed the *interpretation*: (i) generic LoRA with **no curriculum at all** moves the same head **more** (−0.0762 HateMM / −0.1207 ZH), so the claimed shape has no discriminating power; (ii) the "deprived tail 0.0000" is a tautology — that stratum is *defined* as the saturated-vote set, with bit-identical predictions across 100 % of it in every arm including the untrained frozen encoder; (iii) the same-recipe second draw moves the head the **wrong way** (+0.0090), making the honest 2-draw figure −0.0224. Decisively, **on HateMM the train-side gain CONVERTED** (+0.0068 arena 2-draw → +0.0132 test), so the cell is a **counter-example to law-I, not an instance of it**. Also retracted: the ZH "0.0000" was never a measurement but a TIE *adjudication* over −0.0067 / +0.0067. **Nothing in this record's argument depended on the cand-2 datum**; it appeared only in the tasking's symptom list. |
 | 6 | test n=215/149/161; head-seed band ±0.014; banks 549-744 in 7168-d | `MECHFIX_PREGATE_2026-07-27.md:307` (n via 1-item = 0.0047/0.0067/0.0062), `:429`; `MECHNOV_PAIRVERIFY_PREGATE.md:155-157,361` | **VERIFIED** |
 | 7 | VSW "IN PROGRESS", HateMM +0.0255 at p=0.0050 vs ZH −0.0017 p=0.5522 | `refine-logs/VSW_PREGATE_RECORD.md:567,570,902-960` | **CORRECTION — VSW has already written its verdict: "KILL as a performance lever."** K-VSW-1 FAIL and *arithmetically unreachable*; DEG-A **and** DEG-B both fire on MHC-ZH (0.9516 / 0.9706, with DEG-B's arg-max at k=20 = the deployed rule). +0.0255 clears only the weaker K-VSW-0 interest threshold, on one dataset, and remains below the F47-gate benchmark of +0.0269 on that same dataset. Read `:902-960` before treating it as a "live exception". |
 
@@ -135,6 +148,18 @@ Define `M = Σ_i (2·lab_i − 1)·w_i / Σ_i w_i` — the rank-weighted **label
 | HateMM (n=743) | 0.8493 | 0.8506 | **99.60 %** (3 items differ) | 0.0445 | 0.7238 |
 | MHC-ZH (n=579) | 0.8480 | 0.8480 | **100.00 %** (0 differ) | 0.0299 | 0.5429 |
 | MHC-EN (n=549) | 0.7687 | 0.7687 | **100.00 %** (0 differ) | 0.0293 | 0.4190 |
+
+**Independent re-derivation (added 2026-07-28).** `PROVENANCE_AUDIT_2026-07-28.md:464` re-derived this
+row from scratch, full bank, all three datasets, and reports **Δ = +0.0000 ×3** with agreement
+**0.9946 / 1.0000 / 1.0000** — i.e. *stronger* than stated here on HateMM's Δ and marginally weaker on
+its agreement. The two ZH/EN cells match exactly. The HateMM difference (my Δ +0.0013 at 0.9960 vs the
+audit's +0.0000 at 0.9946, i.e. 3 vs 4 differing items of ~744) is almost certainly the **single
+zero-norm HateMM row** that §2's procedure drops (n = 743) and the audit's does not (n = 744) — the same
+row `VSW_ASYMMETRY_RECON.md:163` independently attributes a 1-item/744 discrepancy to. **I am leaving my
+number as measured** rather than adopting the audit's, so this record stays reproducible from its own
+§2.4 procedure; the discrepancy is 1 item and does not touch any conclusion. Either way the claim holds
+in its strongest form: **on 2 of 3 datasets the cosine values are decision-irrelevant on every single
+item.**
 
 Algebraically: writing `sim_i = c̄ + δ_i` with `c̄` the w-weighted mean, `v = c̄·M + D` with
 `D = Σ s_i δ_i w_i / Σ w_i`. Measured `|D| ≈ 0.03-0.045` median against `|M| ≈ 0.42-0.72` median — a
@@ -515,7 +540,7 @@ for the user's judgement, not asserted:
 > weighting problem that Bailey-Jain and Samworth bound to a vanishing improvement in high dimension.
 
 That statement is falsifiable, it is measured on three datasets (§2), it has classical theory behind it, and
-it explains the campaign's eight certified law-I data on the decision-side axis without appeal to any
+it explains the campaign's nine certified law-I data on the decision-side axis without appeal to any
 project-specific fact.
 
 ---
@@ -601,8 +626,13 @@ falsification test and it is the only experiment this sweep recommends.
    *stronger*, not weaker: *hubness reduction is measured inert on the decision even though hubness carries
    a third to a half of the similarity's variance.* Arena caveat: MECHFIX T2a is head-space, F95 §4.1 is
    raw-space; the direction is unaffected but a same-arena confirmation is exactly what §5.3's pregate buys.
-2. **"Ten certified law-I data" over-counts the ledger, which certifies eight** (F50 "5th", F63 "SEVENTH",
-   F65 "8th", **F87 "9th law-I NOT certified"**). Fix the count before it reaches the paper.
+2. **"Ten certified law-I data" is wrong; the count is NINE.** *(This item was itself corrected on
+   2026-07-28 — I originally wrote "eight". See §1 rows 5 and 5b.)* The authoritative enumeration is
+   `PROVENANCE_AUDIT_2026-07-28.md` §2: **P3 · S2S (F37) · W2-A (F42) · Router (F47) · FA (F50) ·
+   Premise-d (F55) · LP (F63) · Vision-unfreeze (F65) · Molmo2 (F91)**. My chain stopped at F87's
+   "9th law-I NOT certified" and never reached F91, which certifies the ninth. Separately, the
+   **cand-2 "tenth datum" is retracted in full** — it converted on HateMM, so it is a counter-example
+   to law-I rather than an instance of it.
 3. **VSW is not "in progress" — it has written `KILL as a performance lever`** (`VSW_PREGATE_RECORD.md:902`),
    with DEG-A **and** DEG-B both firing on MHC-ZH and K-VSW-1 declared "arithmetically unreachable"
    (`:920-928`). It should not be described as a live exception.

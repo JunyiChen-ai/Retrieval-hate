@@ -80,9 +80,14 @@ done
 # 2. Allowlist / blocklist for destructive operations.
 # ---------------------------------------------------------------------------
 # Only paths whose canonical form starts with one of these roots may be deleted.
+# NOTE: "$RGCL_ROOT/data/CLIP_Embedding" was REMOVED from this list on 2026-07-28.
+# It holds the 7168-d fused feature caches every $0 pregate depends on (incl. the
+# Molmo2-8B HateMM caches); deleting them would force GPU re-extraction. No step in
+# this script ever targeted it, so it sat on the permission list with nothing but the
+# absence of a code path protecting it. See refine-logs/DISK_FORENSICS_2026-07-28.md §6
+# (and §4.3 item 4). Removing it strictly reduces what the guard may touch.
 _DG_ALLOWED_ROOTS=(
     "$RGCL_ROOT/logging"
-    "$RGCL_ROOT/data/CLIP_Embedding"
     "$_DG_HOME/.cache/rclone"
     "$_DG_HOME/.cache/huggingface"
 )

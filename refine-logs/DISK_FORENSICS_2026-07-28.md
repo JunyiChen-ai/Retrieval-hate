@@ -412,3 +412,96 @@ Cross-referenced: `refine-logs/DISK_BACKUP_RECORD_2026-07-14.md`,
 `refine-logs/ERRPAT_*.md`, `scripts/disk_guard.sh`.
 
 **No file outside this one was created, modified, moved or deleted by this audit.**
+
+---
+
+## 9. EXECUTION LOG — 2026-07-28 (appended after user ruling)
+
+The user approved **exactly one deletion**: the two Molmo2 probe scratch trees of §7. Nothing
+else on the menu was approved or touched — no duplicated model weights, no `.vscode-server`, no
+`__pycache__`, no conda pkgs or envs, no `logging/Retrieval`, no `logging/lora`, no
+`SafetyContradiction`, nothing under `ExMRD_ours`, no `git gc`, no B2 push. `disk_guard.sh` was
+**not run**.
+
+### 9.1 Verification performed BEFORE deleting (all passed)
+
+| # | check | result |
+|---|---|---|
+| 1 | Paths + measured size | `…/scratchpad/molmo2_probe` = 15,908,489,420 B (14.82 GiB); `…/scratchpad/molmo2_probe_dryrun` = 1,803,083,397 B (1.68 GiB). Total **17,711,572,817 B = 16.50 GiB** — matches §7 exactly. |
+| 2 | Genuinely probe scratch | Contents: 381 `.pt` + 900 `.pkl` + 10 `.trainlog`, nothing else. 300 of the `.pt` are per-epoch `epoch_model_*.pt` (270 in `molmo2_probe` = 10.91 GiB, 30 in the dryrun = 1.17 GiB); remainder are `best_model_*`/`last_model_*` and `testepoch_*_retrieval_logging_dict.pkl`. Layout = 3 arms (A/B/C) × 3 seeds under `Retrieval/HateMM/RAC_molmo2_probe_*`. Rooted in the Claude Code scratchpad (`~/tmp/claude-135258174/…`), **not** under `RGCL/data/` and not under any banked-record path. No symlinks, no hardlinks out, no `.pt` outside `ckpt/`. |
+| 3 | Citation grep | **No committed record, script, or state file references any file inside these two trees.** Only two references to the trees at all: `scripts/slurm/molmo2_cpu_probe.sbatch:36` (the *producer's* `OUT_ROOT` default, env-overridable via `MOLMO2_PROBE_ROOT` — regenerates on re-run) and this document. Critically, every `epoch_model_*.pt` path cited in `scripts/analysis/mechfix_hatemm_OUT.json` and `errpat_hatemm_*_OUT.json` points at the **separate** `scratchpad/errpat` tree, which was **not** touched (still 4.6 GiB, class C per §3.3). |
+| 4 | Verdict banked | `refine-logs/MOLMO2_PROBE_RECORD.md` committed clean at **`3298e8e`** ("molmo2 VERDICT: KILL"), carrying the verdict numbers in-file: val-sel **−0.0217** acc / **−0.0249** mF1, final **−0.0124** / **−0.0151**. `MOLMO2_FORENSIC_RECON.md` present. `findings.jsonl` **F91** repeats the same four figures with per-seed signs. Additionally the 9 raw `PROBE_ROW` lines survive outside the trees in `slurm/logs/molmo2_probe_13653.out`. **The verdict does not depend on the deleted files.** |
+| 5 | Feature caches survive | `/data/jehc223/RGCL/data/CLIP_Embedding/HateMM/{train,dev_seen,test_seen}_Molmo2-8B_HF.pt` = 24 MB + 3.4 MB + 6.8 MB (**34 MB total**), outside both trees, verified intact after deletion. The ~10-min CPU re-run capability is preserved. |
+| 6 | Quota recorded | See §9.2. |
+
+### 9.2 Quota before / after (verbatim)
+
+**BEFORE** (`quota -s`, exit status 1):
+
+```
+Disk quotas for user jehc223 (uid 135258174):
+     Filesystem   space   quota   limit   grace   files   quota   limit   grace
+/dev/mapper/data-data
+                   304G*   290G   3000G   5days   1235k       0       0
+```
+
+**AFTER** (`quota -s`, exit status **0**):
+
+```
+Disk quotas for user jehc223 (uid 135258174):
+     Filesystem   space   quota   limit   grace   files   quota   limit   grace
+/dev/mapper/data-data
+                   287G    290G   3000G           1233k       0       0
+```
+
+**The `*` is gone, the `grace` field is empty, and `quota` now exits 0 — the grace clock is
+stopped and the account is under the 290G soft limit.**
+
+Reclaim: raw 1K-block reading fell from `317,766,476` (§1.1) to `300,485,320` =
+**17,281,156 KiB = 16.48 GiB**, against `du`'s 16.50 GiB of apparent bytes and the predicted
+**16.5 GiB**. **Prediction met; no material discrepancy** (the ~0.02 GiB is block-vs-apparent
+accounting, and other agents were writing to the repo concurrently).
+
+### 9.3 Change 1 — `scripts/disk_guard.sh` allowlist narrowed
+
+`RGCL_ROOT/data/CLIP_Embedding` **removed** from `_DG_ALLOWED_ROOTS`, with a comment at the edit
+site pointing back to §6/§4.3-item-4. This strictly reduces what the guard may ever delete. The
+`quota` exit-code parse bug at :134 was **left in place**, and `TARGET` / `RGCL_ROOT` were **not**
+changed — per §6.2 a merely-parse-fixed guard has no safe operating point, and re-scoping remains
+a pending user decision. `bash -n` clean.
+
+### 9.4 Change 2 — recurrence prevented at the generator
+
+Root cause (§2.3): `src/run_rac.py` wrote one `epoch_model_<N>_<acc>.pt` **per epoch,
+unconditionally**, and the probe sbatch pointed `--output_path` at a `/tmp`-rooted scratchpad, so
+30 epochs × 3 arms × 3 seeds accumulated ~12 GiB that no verdict ever reads — invisible to the
+guard, whose scope is `RGCL_ROOT`.
+
+Fix, per §6.3 ("fix the generator rather than the collector"), as a **code change** because the
+retention had no flag to configure:
+
+- New `src/run_rac.py` arg **`--keep_epoch_ckpts`** (bool, **default `False`**).
+- At the end of `train()` — *after* the warmup-floor fallback, so nothing still needed is removed
+  — all `epoch_model_*.pt` are deleted **except the selected epoch and the final epoch**. It
+  iterates `all_epoch_records` (the exact paths that call wrote), never a directory glob, so
+  concurrent runs and earlier EM rounds are unaffected; `OSError` is swallowed so housekeeping can
+  never fail a training run; it prints what it kept, what it freed, and the flag to opt out.
+- **`best_model_*.pt` and `last_model_*.pt` are never candidates**, so the selected and final
+  weights remain persisted twice over regardless of the flag.
+
+Effect: a repeat of this probe retains 2 per-epoch checkpoints per run instead of 30 — the same
+event would have cost ~0.8 GiB instead of 15.6 GiB.
+
+**Safety of the default flip** — every current consumer of `epoch_model_*.pt` loads only the
+`valsel` and `final` epochs, i.e. exactly what is retained: `errpat_hatemm_forensics.py:239`,
+`errpat_hatemm_clusters.py:111`, `errpat_hatemm_ceilings.py:115`, `mechfix_run.py:319`,
+`mechfix_diag.py:73`. The two tools that sweep **all** epochs — `swa_probe.py` and
+`gradnorm_select_probe.py` — read *already-banked* run dirs and never launch training, so they are
+unaffected today; a future run intended for such a sweep must pass `--keep_epoch_ckpts True`, and
+the printed message names the flag. `squeue` was empty at edit time, so no in-flight job is
+affected. `scripts/slurm/train_{p4aux,p5cf,p8sum}.sbatch` already `find … -delete` every
+`epoch_model_*.pt` post-run; their net result is unchanged.
+
+Logic exercised standalone across 5 cases before commit (prune-30-keep-2; `--keep_epoch_ckpts
+True` restores old behaviour; selected == final; `best_epoch_path is None`; all-files-missing
+idempotence) — all passed, with `best_model_*`/`last_model_*` untouched in every case.
