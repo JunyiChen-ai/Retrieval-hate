@@ -420,6 +420,11 @@ and F95's binding *"NEVER an accuracy claim"* should be carried verbatim.
 ## §7. LIMITATIONS
 
 1. **Raw space, train split, not the deployed head space and not test (L1, inherited from F95 §6).**
+   **[ERRATUM — see the appended ERRATUM at the end of this record. The inherited justification (F47's
+   "head LOO 0.998") is a **CLIP** number; the deployed **Qwen** heads measure 0.9406 / 0.8915 / 0.8154,
+   and F113 has since shown a fold-head arena is unsaturated at ~35 s CPU per fold-head. This record's
+   K-VGA-3 bar is a within-session *relative* comparison and is untouched — indeed strengthened, since
+   F113 measures the verifier features getting *worse* in head space.]**
    A raw-space null does not logically entail a head-space null. This cuts *against* the negative
    verdict and is stated first for that reason. It is mitigated but not removed by the fact that
    K-VGA-3 is a *relative* comparison between two feature families measured in the same arena under
@@ -468,3 +473,58 @@ Read-only inputs: `data/CLIP_Embedding/{HateMM,MHC_zh,MHC}/train_*.pt` (**train 
 Read for context, not modified: `LITSWEEP6_RELGEN.md`, `MECHNOV_PAIRVERIFY_PREGATE.md`,
 `MECHFIX_PREGATE_2026-07-27.md`. Nothing under `autoresearch/goal_mllm_plus3/state/` was written.
 No file deleted or moved. **Zero GPU, zero SLURM submissions, zero Modal calls, zero test contact.**
+
+---
+
+## ⚠ ERRATUM (appended 2026-07-28, closeout) — the inherited "head memorises train at LOO ≈ 0.998" premise is a **CLIP** number
+
+**No verdict moves.** This is a framing correction to an inherited premise, not to any measurement
+taken in this record.
+
+**The error.** This record repeats — from `mechnov_pairverify.py:21-25` / F95 — that the trained RGCL
+head *"memorises its own train split (LOO train acc 0.998, F47)"*, and uses it to justify screening in
+the **raw** encoder key space rather than the deployed head space.
+
+**0.998 is F47's CLIP head, not the deployed head.** F47's own `ban_scope`
+(`directions_tried.json:171`) reads *"train-supervised = memorization-degenerate target, **CLIP LOO
+0.998**"*, and the memory index pairs it with *"vs **Qwen 0.800**"*. The deployed system does not use
+the CLIP head.
+
+**The deployed Qwen heads, newly computed** (`INSTRUMENT_VALIDATION_RECON.md` §0.2, F111; re-read from
+`scripts/analysis/mechfix_{hatemm,zh,en}_OUT.json` → `train_side_sanity.deployed_loo_train_acc`):
+
+| | HateMM | MHC-ZH | MHC-EN |
+|---|---|---|---|
+| **deployed head train LOO** | **0.9406** | **0.8915** | **0.8154** |
+| raw-arena deployed train LOO | 0.8441 | 0.8480 | 0.7796 |
+| gap between the two arenas | +0.0965 | +0.0435 | +0.0358 |
+
+**The two arenas differ by 3.6–9.7 accuracy points on the same train items, not by the 0.998-vs-0.84
+chasm the premise asserts.** The argument *"a train-side screen in head space measures memorisation"*
+is therefore **weaker than stated — downgraded, not vacated**: 0.9406 against a 0.8441 raw floor still
+means the head reproduces its own train split far better than its deployed test behaviour.
+
+**CONSEQUENCE 1 — the raw-space screening justification is superseded.** The saturation claim applies
+**only to full-train LOO**. `HEADSPACE_TRANSFER_PREGATE.md` (F113) demonstrates the fix nobody used:
+**train the head on 4/5 of the train split and query it with the held-out fifth.** That **fold-head
+arena is unsaturated**, is a strictly better proxy for deployment than the raw arena, and costs
+**~35 s of CPU per fold-head**. The existing `mechfix_ops` / `vsw_pregate` battery runs in it
+unmodified. **The head space was available the whole time**, and F113 recommends it become the default
+`$0` pregate arena.
+
+**CONSEQUENCE 2 — F107's Q1 argument depended on this figure and has been adjudicated.**
+`HEADCOV_PREGATE_RECORD.md` §6.1 claimed *"the objective is already at its optimum on its own training
+signal, with ≤0.002 of headroom"*. On the corrected figures the remaining train-side headroom is
+**0.0594 / 0.1085 / 0.1846** — 30× / 54× / 92× larger. That step is **RETRACTED**; F107's conclusion
+(the metric channel is closed) **survives but is SCOPED and WEAKENED — it is now empirical, not
+analytic**, resting on the F75/NCA isomorphism (a measured GPU negative) plus a weak observational
+conversion bound (R² = 0.027, MHC-ZH dev only) plus F113's head-space fitting evidence. **F107 must no
+longer be cited as a theory-level door-closer.** See `HEADCOV_PREGATE_RECORD.md` §6.1 ERRATUM in full.
+
+**Provenance note.** `scripts/analysis/mechnov_pairverify.py:21-25` still carries the wrong premise and
+has been **deliberately left byte-identical**: its sha256 `77b0defd…b7240d` is asserted at run time by
+five scripts, so editing even a comment would break the reproducibility of F95, F97, F98, F105, F112
+and F113 at once. The correction lives in `MECHNOV_PAIRVERIFY_PREGATE.md` §E.1–E.3.
+
+*Authority: `INSTRUMENT_VALIDATION_RECON.md` §0.2 (F111) · `HEADSPACE_TRANSFER_PREGATE.md` §8 (F113).
+Ledger: F114. `$0` — no GPU, no SLURM, no Modal, no training, no test contact.*

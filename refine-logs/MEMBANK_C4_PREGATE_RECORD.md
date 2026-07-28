@@ -146,7 +146,11 @@ Banked **RAW encoder key spaces** (seed-independent), **train split only**, item
 `.FOLD_SEED`), **PRIMARY space = fused** = `l2n(concat(l2n(img), l2n(txt)))`, 7168-d; `text` and `img`
 SECONDARY. This is the arena F95 froze and that RESTRANS, VGA, AGGNET and VSW all used. The trained
 RGCL head is **not** the arena: it memorises its own train split (LOO train acc 0.998, F47), so a
-train-side screen in head space measures memorisation.
+train-side screen in head space measures memorisation. **[ERRATUM — this sentence is WRONG as written
+and is corrected in §9.2 of this record: 0.998 is F47's **CLIP** head; the deployed **Qwen** heads
+measure **0.9406 / 0.8915 / 0.8154**. Read §9.2 before relying on this paragraph. The verdict is
+untouched; the binding reason for this arena is **comparability with F95/F96/F97/F98/F105**, not
+memorisation. F113 has since shown a fold-head arena is unsaturated at ~35 s CPU per fold-head.]**
 
 Consequence: this arena has **no seeds** (raw encoder features are seed-independent, and MEMBANK-C4 is
 training-free, so it has no initialisation seed either), so sign evidence is **per fold**, not per
@@ -984,7 +988,8 @@ Adding to `AGGNET_PREGATE_RECORD.md` §7.1's list, on this neighbourhood object:
 
 1. **Arena.** Banked **raw** encoder key space, **train** split — the F95 precedent inherited by all
    four sibling pregates (F47: head LOO train acc 0.998, so a train-side screen in head space measures
-   memorisation). **A raw-space, train-side null does not logically entail a head-space or test null.**
+   memorisation) **[ERRATUM: 0.998 is the CLIP head — see §9.2. Deployed Qwen = 0.9406 / 0.8915 /
+   0.8154; a fold-head arena is unsaturated at ~35 s CPU/fold-head (F113)]**. **A raw-space, train-side null does not logically entail a head-space or test null.**
    This is stated first because it cuts *against* the verdict.
    **8.1 — but the transfer is asymmetric, and the asymmetry favours the kill.** The head space's cone
    is ~250× more collapsed than the raw fused space (top-1 cosine 0.999852 vs 0.9444;

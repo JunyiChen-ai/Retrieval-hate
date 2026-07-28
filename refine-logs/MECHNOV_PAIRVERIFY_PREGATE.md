@@ -156,7 +156,11 @@ Feature caches: HateMM `Qwen2.5-VL-7B-Instruct-LoRA-curric_HF` (n=744, pos-rate 
 `Qwen2.5-VL-7B-Instruct-LoRA_HF` (n=579, 0.3109), MHC-EN `Qwen2.5-VL-7B-Instruct_HF` (n=549,
 0.3060) — the deployed encoder per dataset, **train split only**.
 
-**Why not the trained head space.** F47 measured the RGCL head's leave-one-out accuracy on its own
+**Why not the trained head space.** **[ERRATUM — see §E.1 at the end of this record. 0.998 is F47's
+**CLIP** head; the deployed **Qwen** heads measure **0.9406 / 0.8915 / 0.8154**. The saturation claim
+holds only for FULL-train LOO: a fold-head arena (train on 4/5, query the held-out fifth) is
+unsaturated at ~35 s CPU per fold-head (F113). The paragraph's *prediction* was nonetheless correct —
+see §E.2.]** F47 measured the RGCL head's leave-one-out accuracy on its own
 train split at **0.998**. In head space, same-class train pairs have been explicitly pulled together
 by the triplet objective, so a verifier fitted there would be fitted on a geometry that has already
 memorised the fitting labels, and its pair-AUC would measure memorisation rather than a transferable
@@ -490,7 +494,9 @@ repairs is closed, and it is a stronger mechanism claim than F89's.
 
 1. **Raw space, not the deployed head space (L1, the load-bearing one).** Everything here is measured
    on banked raw encoder keys. A raw-space null does not logically entail a head-space null. The
-   choice was deliberate (F47's LOO-0.998 memorisation makes head-space pair-AUC uninterpretable),
+   choice was deliberate (F47's LOO-0.998 memorisation makes head-space pair-AUC uninterpretable)
+   **[ERRATUM §E.1: 0.998 is the CLIP head; deployed Qwen = 0.9406 / 0.8915 / 0.8154, and a fold-head
+   arena is unsaturated. F113 has since MEASURED this record's head space — see §E.2]**,
    and control 2b's shape cost — the dominant failure term — is a property of the aggregation, not of
    the space. But this is a pregate, not a verdict.
 2. **Train-split LOO arena, not test.** The end-to-end floor is the deployed vote computed on
@@ -539,3 +545,91 @@ Read-only inputs: `data/CLIP_Embedding/{HateMM,MHC_zh,MHC}/train_*.pt` (**train 
 ERRPAT reports, `MECHFIX_PREGATE_2026-07-27.md`, `state/findings.jsonl`, `state/directions_tried.json`.
 Nothing under `autoresearch/goal_mllm_plus3/state/` was written. No file deleted or moved.
 **Zero GPU, zero SLURM submissions, zero Modal calls, zero training of any deployed arm.**
+
+---
+
+## ⚠ ERRATUM (appended 2026-07-28, closeout) — the arena justification rests on a **CLIP** number, and F95 control-1 must be RE-SCOPED to the raw encoder key space
+
+**No verdict moves.** F95's KILL, its split verdict, control-1's pass and control-2's 0/36 are all
+unchanged. Two framing corrections and one provenance note.
+
+### E.1 The "head memorises train at LOO ≈ 0.998" premise is a **CLIP** number
+
+This record states it at **`:66`, `:160`, `:474`, `:493`**, and it is the premise four sibling
+pregates inherited (`RESTRANS`, `AGGNET`, `VGA`, `MEMBANK-C4`) plus `LITSWEEP6_MEMBANK` and
+`LITSWEEP7_LANDING_SITE`.
+
+Its source is F47, and F47 says something narrower: `directions_tried.json:171` reads
+*"train-supervised = memorization-degenerate target, **CLIP LOO 0.998**"*, and the memory index pairs
+it with *"vs **Qwen 0.800**"*. **The deployed system does not use the CLIP head.**
+
+The deployed **Qwen** heads, newly computed (`INSTRUMENT_VALIDATION_RECON.md` §0.2, F111, re-read from
+`scripts/analysis/mechfix_{hatemm,zh,en}_OUT.json` → `train_side_sanity.deployed_loo_train_acc`):
+
+| | HateMM | MHC-ZH | MHC-EN |
+|---|---|---|---|
+| **deployed head train LOO** | **0.9406** | **0.8915** | **0.8154** |
+| raw-arena deployed train LOO (this record, `:298-300`) | 0.8441 | 0.8480 | 0.7796 |
+| gap between the two arenas | +0.0965 | +0.0435 | +0.0358 |
+
+**So the two arenas differ by 3.6–9.7 accuracy points on the same train items, not by the
+0.998-vs-0.84 chasm this record asserts.** On MHC-EN they differ by 3.6 points.
+
+**Effect on this record — downgraded, not vacated.** "A verifier fitted in head space would be
+measuring memorisation" is a weaker claim at Qwen-head LOO 0.82–0.94 than at 0.998. It is **not**
+vacuous, and §E.2 shows it was in fact *correct* — but this record should not have leaned on 0.998,
+and it did not need to.
+
+**The stated justification for screening in raw space is superseded.** The saturation claim applies
+**only to full-train LOO**. `HEADSPACE_TRANSFER_PREGATE.md` (F113) demonstrates the fix nobody used:
+**train the head on 4/5 of the train split and query it with the held-out fifth.** That *fold-head
+arena* is **unsaturated**, is a strictly better proxy for deployment, and costs **~35 s of CPU per
+fold-head**. This record's whole battery runs in it unmodified. The head space was available all along.
+
+### E.2 CONTROL-1 RE-SCOPED — *"the trained pair verifier beats the cosine"* holds **in the raw encoder key space**, and **sign-inverts in the deployed head space**
+
+Control-1's datum — *"the verifier carries ordering information the cosine does not: **+0.1572 /
++0.2302 / +0.1785** within-query AUC, 5/5 fold signs, 18/18 cells"* (`:414-416`; pooled fused form
+**+0.1910 / +0.2625 / +0.1952** at `:268-270`) — was cited forward by `LITSWEEP6_RELGEN.md:114-115`,
+F97 and `VSW_PREGATE_RECORD.md:103` as the reason the relational asset is real.
+
+`HEADSPACE_TRANSFER_PREGATE.md` §4.6 (F113) recomputed exactly this quantity in the deployed head
+space, on the full held-out × in-fold pair matrix (88 208–88 655 pairs/fold, 5 folds × 3 seeds):
+
+| | RAW fused (this record) | **HEAD space (F113)** |
+|---|---|---|
+| `d_AUC` = verifier − cosine, held-out — HateMM | **+0.1572** | **−0.0643** |
+| `d_AUC` — MHC-ZH | **+0.2302** | **−0.1294** |
+| fold cells with the stated sign | 18/18 raw | **30/30 head cells NEGATIVE** |
+| verifier pair-AUC on its **in-sample fitting** pairs | — | **0.9999** |
+
+> **In the deployed head space the trained pair verifier is WORSE than the plain cosine at separating
+> same-class from cross-class pairs, having reached 0.9999 on the pairs it was fitted on.**
+
+**Required wording from now on:** any sentence asserting the relation score is informative **must say
+"in the raw encoder key space"**. The unqualified claim *"trained pair relations beat the cosine"* is
+**true in raw space and false in the deployed space**.
+
+**This record's own prediction was right, and it should be credited as such** — `:160` and `:474`
+predicted that a verifier fitted in head space would measure memorisation. Measured: in-sample
+**0.9999**, held-out **0.8317**. **The consequence this record did not draw** is that the raw arena is
+therefore *not a conservative stand-in* for head space but a **systematically more favourable** one for
+any operator built on a fitted relation score.
+
+**Nothing in §E.2 disturbs the split verdict.** Control-2's 0/36 and the control-2b shape-cost
+arithmetic are aggregation properties, measured in raw space and unaffected. F97's K-VGA-3 is a
+within-session *relative* comparison and is **strengthened**, since the verifier features get worse
+where the deployed system lives.
+
+### E.3 PROVENANCE NOTE — the frozen script is deliberately **NOT** edited
+
+`scripts/analysis/mechnov_pairverify.py:21-25` carries the same wrong premise in its `ARENA`
+docstring. **It has been left byte-identical on purpose.** Its sha256
+`77b0defd8eaa3688e58b6d5d17202bd55d16cf1f4a5aaafbe4b2b98598b7240d` is asserted **at run time by five
+scripts** — `aggnet_pregate.py:709`, `vga_pregate_emit.py:303`, `vsw_pregate.py:787`,
+`headspace_mint.py:188`, `mechnov_pairverify_runner.py:93` — so editing even a comment would break the
+reproducibility of F95, F97, F98, F105, F112 and F113 simultaneously. **The correction lives here, in
+the record that owns the script.** A reader who reaches the script header must read §E.1 of this file.
+
+*Authority: `INSTRUMENT_VALIDATION_RECON.md` §0.2 (F111) · `HEADSPACE_TRANSFER_PREGATE.md` §4.6, §8.2
+row 2 (F113). Ledger: F114. `$0` — no GPU, no SLURM, no Modal, no training, no test contact.*

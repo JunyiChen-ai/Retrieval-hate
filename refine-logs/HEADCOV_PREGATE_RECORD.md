@@ -278,6 +278,80 @@ F75/NCA, (3) bounded, and (4) if not, what its cheapest falsifier is.
 
 ### 6.1 Q1 — is the channel genuinely left open by the theory? **Partly open by the kernel argument, but closed by neural collapse.**
 
+> ## ⚠ ERRATUM (appended 2026-07-28, closeout) — **the neural-collapse leg of this subsection is RETRACTED. The Q1 conclusion survives, but SCOPED and WEAKENED: it is now MEASURED, not PROVED.**
+>
+> **The error.** Below, this record writes *"F47 records the deployed head's train LOO accuracy at
+> **0.998** — the objective is already at its optimum on its own training signal, with **≤0.002** of
+> headroom there"*. **0.998 is F47's CLIP head, not the deployed head.** F47's own `ban_scope`
+> (`directions_tried.json:171`) reads *"CLIP LOO 0.998"*, and the memory index pairs it with
+> *"vs Qwen 0.800"*. The deployed system does not use the CLIP head.
+>
+> **The deployed Qwen heads, newly computed** (`INSTRUMENT_VALIDATION_RECON.md` §0.2, F111; re-read
+> from `scripts/analysis/mechfix_{hatemm,zh,en}_OUT.json` → `train_side_sanity.deployed_loo_train_acc`):
+>
+> | | HateMM | MHC-ZH | MHC-EN |
+> |---|---|---|---|
+> | deployed head train LOO | **0.9406** | **0.8915** | **0.8154** |
+> | **remaining train-side headroom** | **0.0594** | **0.1085** | **0.1846** |
+> | claimed here | ≤0.002 | ≤0.002 | ≤0.002 |
+> | **understated by** | **30×** | **54×** | **92×** |
+>
+> **Adjudication, stated plainly rather than papered over.**
+>
+> 1. **RETRACTED — the "already at its optimum" step.** There *is* an optimisation gap on the deployed
+>    heads, and it is **largest on MHC-EN (0.1846)** — the dataset where this campaign's arithmetic is
+>    tightest. The dichotomy *"that is a generalisation gap, not an optimisation gap"* is **not
+>    established by this evidence** and must not be re-quoted.
+> 2. **RETRACTED — the Feldman flourish.** *"A label-using metric … does memorise the train split —
+>    that is exactly what 0.998 is"* and *"the theory … predicts the 0.998 number"* are withdrawn: the
+>    deployed heads sit at 0.82–0.94, so the alleged prediction is **not confirmed on the deployed
+>    object**. Feldman's *substantive* step — that memorising a long-tail singleton does not transfer
+>    to an unseen member of the same one-member sub-population — never depended on the head having
+>    reached 0.998, and **that step stands**.
+> 3. **NC1 as the family's optimum stands** — it is an analytic claim about where a purity-raising
+>    objective converges, and it is independent of any measured number. What is retracted is the
+>    empirical claim that the deployed head has **already arrived** there.
+>
+> **What the conclusion now rests on — and what it does NOT rest on.**
+>
+> * **Load-bearing, and untouched: §6.2's isomorphism.** Under the only estimator available without
+>   held-out labels — train LOO — a purity-raising metric **is** NCA. **F75 measured that object:
+>   0/8 formal, 7/8 KS-arm-dead, ~0.33 GPU-h.** This leg uses no part of the 0.998 figure and is a
+>   *measured* negative on the actual axis. It is now the primary support for Q1.
+> * **Load-bearing but weak: §6.3's conversion bound** (+0.0286 at the upper 95 % CI). It is derived
+>   from the head's own purity→accuracy trajectory, not from 0.998, so it survives — but it must
+>   **always** be quoted with its own disclosed limits: **R² = 0.027**, r = +0.1642, slope CI
+>   **[−0.0221, +0.1637]** straddling zero, **MHC-ZH dev only**. Observational, single-dataset.
+> * **NOT a substitute — K-HC-1's coverage bound (≤ +0.0171).** §6.1 itself states that coverage bounds
+>   *pool expansion*, not *purity within a fixed pool*. It cannot backfill the retracted leg.
+> * **NOT a substitute — K-HC-3's 1.0000.** §4.4 of this record already discloses that the identity is
+>   **collapse-forced** in head space and is *"not independent corroboration"*. It cannot backfill it either.
+> * **Partial empirical replacement, from a later record (F113).**
+>   `HEADSPACE_TRANSFER_PREGATE.md` §4.6 measures what happens when a score **is** fitted on head keys:
+>   in-sample pair AUC **0.9999**, held-out **0.8317**, i.e. **worse than the plain cosine**
+>   (`d_AUC` **−0.0643** HateMM / **−0.1294** MHC-ZH, **30/30** fold cells). So the real 0.06/0.11/0.18
+>   of train-side headroom **is** closable by fitting, and closing it by fitting is measured to
+>   generalise *worse*. **Stated against interest:** F113 fitted a pair-**relation** MLP, not a
+>   purity-raising metric objective. It is a strong analogue, **not an identity**, and is offered as
+>   evidence, not proof.
+>
+> **NET.** *The metric channel remains CLOSED — but the closure is now empirical, not analytic.*
+> **This record must no longer be cited as a theory-level door-closer.** Cite it as: *"isomorphic to a
+> measured negative (F75), plus a weak observational conversion bound (F107 §6.3, R² = 0.027, ZH dev
+> only), plus F113's head-space fitting evidence."* Wherever F107 is load-bearing for a **completeness**
+> claim, that claim's strength on **this channel** drops from analytic to empirical. **No verdict moves.**
+>
+> **Second consequence, carried per F113.** The 0.998 figure was also the stated justification for
+> screening in the **raw** key space at all. That justification is now doubly wrong:
+> `HEADSPACE_TRANSFER_PREGATE.md` (F113) shows the saturation claim applies **only to full-train LOO**,
+> and that a **fold-head arena** — train the head on 4/5 of the train split, query it with the held-out
+> fifth — is **not saturated** and costs **~35 s of CPU per fold-head**. The head space was available
+> the whole time.
+>
+> *Authority: `INSTRUMENT_VALIDATION_RECON.md` §0.2 (F111), which referred this question here rather
+> than adjudicating it; `HEADSPACE_TRANSFER_PREGATE.md` §4.6/§8 (F113). Ledger: F114.*
+
+
 The kernel argument (§4.2 / `LITSWEEP8` §2 C1) closes only *metric-value* changes that leave the retrieved
 label tuple fixed. A metric that **changes the tuple** is outside the kernel, so the kernel argument alone
 does **not** close it. The coverage oracle (§4.3) does not close it either — coverage bounds *pool
@@ -288,19 +362,26 @@ purity-raising metric optimises is train-side neighbourhood purity. Its optimum 
 neighbourhood pure — *is* NC1: "cross-example within-class variability of last-layer training activations
 collapses to zero, as the individual activations themselves collapse to their class-means"
 (Papyan, Han & Donoho, PNAS 117(40):24652-24663, arXiv:2008.08186). **The family's own optimum is the
-0.9999 cone this campaign has spent three records fighting.** F47 records the deployed head's train LOO
+0.9999 cone this campaign has spent three records fighting.** ~~F47 records the deployed head's train LOO
 accuracy at **0.998** — the objective is already at its optimum on its own training signal, with ≤0.002
 of headroom there, while held-out error purity sits at 0.12-0.22. **That is a generalisation gap, not an
-optimisation gap, and no objective evaluated on the train split addresses it.**
+optimisation gap, and no objective evaluated on the train split addresses it.**~~
+**[RETRACTED — see the ERRATUM at the head of §6.1. 0.998 is the CLIP head; the deployed Qwen heads
+measure 0.9406 / 0.8915 / 0.8154, i.e. 0.06 / 0.11 / 0.18 of remaining train-side headroom, not ≤0.002.
+The generalisation-vs-optimisation dichotomy does not follow. The held-out error purity of 0.12-0.22 is
+itself unaffected and stands.]**
 
 **On Feldman and label-freeness (the tasking's specific challenge).** I wrote that Feldman predicts "no
 **label-free** operator can fix it", and metric learning is label-*using*. The theory still binds, and the
 reason is not label-freeness: Feldman's claim is that the correct label of a long-tail singleton is not
 determined by the training distribution, so achieving it **requires memorising that example**. A
-label-using metric can and does memorise the train split — that is exactly what 0.998 is — and
+label-using metric can and does memorise the train split — ~~that is exactly what 0.998 is~~ **[RETRACTED
+— 0.998 is the CLIP head; deployed Qwen heads measure 0.9406 / 0.8915 / 0.8154. See the §6.1 ERRATUM.]** — and
 memorisation of a train item does not transfer to an unseen test item drawn from the same one-member
-sub-population. **The theory binds label-using metric learning specifically, and it predicts the 0.998
-number.**
+sub-population. **The theory binds label-using metric learning specifically** ~~, and it predicts the 0.998
+number.~~ **[RETRACTED — the deployed heads sit at 0.82-0.94, so no such prediction is confirmed. The
+substantive Feldman step above — memorisation of a singleton does not transfer — is untouched and does
+not depend on the number. See the §6.1 ERRATUM.]**
 
 ### 6.2 Q2 — is it isomorphic to F75/NCA? **Yes under the only estimator anyone can actually optimise; formally distinguishable only under a cross-fitted estimator.**
 

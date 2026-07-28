@@ -426,3 +426,34 @@ must be verified before any of them is cited in writing.
 - Negahban, Oh, Shah. *Rank Centrality: Ranking from Pairwise Comparisons*. arXiv:1209.1688 / Operations Research 65(1). https://arxiv.org/abs/1209.1688 — *NOT FETCHED; listed for §2 C5 closure only*
 - Chen, Suh. *Spectral MLE: Top-K Rank Aggregation from Pairwise Comparisons*. ICML 2015, arXiv:1504.07218. https://arxiv.org/abs/1504.07218 — *NOT FETCHED; listed for §2 C5 closure only*
 - Wang, Leskovec. *Unifying Graph Convolutional Neural Networks and Label Propagation* (GCN-LPA). arXiv:2002.06755. https://arxiv.org/abs/2002.06755 — *NOT FETCHED; listed for §2 C5 closure only*
+
+---
+
+## ⚠ RE-SCOPING (appended 2026-07-28, closeout) — F95 control-1 holds **in the raw encoder key space** and **sign-inverts in the deployed head space**
+
+**No verdict moves.** This sweep's rankings and kills are unchanged. One premise is re-scoped.
+
+`:5` and `:114-115` lean on F95 control-1 — *"the relation profile … carries ordering information the
+cosine does not (within-query AUC **+0.1572 / +0.2302 / +0.1785**, 5/5 fold signs, 18/18 cells)"* — as
+the reason the relational asset is real.
+
+`HEADSPACE_TRANSFER_PREGATE.md` §4.6 (F113) recomputed exactly that quantity in the **deployed head
+space**, on the full held-out × in-fold pair matrix (88 208–88 655 pairs/fold, 5 folds × 3 seeds):
+
+| `d_AUC` = verifier − cosine, held-out | RAW | **HEAD** |
+|---|---|---|
+| HateMM | +0.1572 | **−0.0643** |
+| MHC-ZH | +0.2302 | **−0.1294** |
+| fold cells with the stated sign | 18/18 raw | **30/30 head cells NEGATIVE** |
+| verifier pair-AUC on its **in-sample fitting** pairs | — | **0.9999** |
+
+**In the deployed head space the trained pair verifier is WORSE than the plain cosine.** Any relation
+score fitted on head keys **memorises the bank** (0.9999 in-sample) and generalises worse than the
+cosine it was meant to beat.
+
+**Required wording:** *"in the raw encoder key space"* must qualify every claim that the relation score
+is informative. The *"analysis-grade only"* routing of the relational asset is **unchanged and
+strengthened** — but it may not be justified by an unqualified appeal to control-1.
+
+*Authority: `HEADSPACE_TRANSFER_PREGATE.md` §4.6, §8.2 row 2 (F113); `MECHNOV_PAIRVERIFY_PREGATE.md`
+§E.2. Ledger: F114. `$0`.*

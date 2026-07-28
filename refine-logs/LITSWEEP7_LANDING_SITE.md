@@ -763,6 +763,11 @@ itself, that the arena is not the deployed one (`MECHNOV_PAIRVERIFY_PREGATE.md:4
 It cannot be waved away by the "relative comparisons are less arena-sensitive" argument those records
 make, because the arenas differ in a first-order way: F47 measures head-space LOO train accuracy at
 **0.998** while the raw-space deployed-equivalent LOO in the pregate arena is **0.8441/0.8480/0.7796**.
+**[ERRATUM — see the appended ERRATUM at the end of this file. 0.998 is F47's CLIP head. The deployed
+Qwen heads measure **0.9406 / 0.8915 / 0.8154**, so the true arena gap is **+0.0965 / +0.0435 / +0.0358**
+— 3.6 to 9.7 points, not a "first-order" chasm. This sweep's D-1 probability estimate of ~80 % for a
+large head-space asymmetry (`:502`) was calibrated on the wrong number; F113 subsequently measured the
+asymmetry directly and found it real but differently shaped.]**
 Those are not the same object. F61 and F81 audited *cells*; neither audited the *instrument*, and the
 instrument did not exist when F61 ran. **This is L4/CURDIAG and it costs $0 on two caches already on
 disk.** Until it is run, "0-for-25" carries an unquantified instrument discount.
@@ -937,3 +942,81 @@ RESTRANS_PREGATE_RECORD, VGA_PREGATE_RECORD, AGGNET_PREGATE_RECORD, VSW_PREGATE_
 **Required statements.** ZERO GPU / SLURM / Modal / training spent. No held-out test metric read or
 produced; no test-split file opened. No `state/`, prereg, config, frozen artifact or `research-wiki/`
 document mutated. Nothing committed.
+
+---
+
+## ⚠ ERRATUM (appended 2026-07-28, closeout) — the inherited "head memorises train at LOO ≈ 0.998" premise is a **CLIP** number
+
+**No verdict moves.** This is a framing correction to an inherited premise, not to any measurement
+taken in this record.
+
+**The error.** This record repeats — from `mechnov_pairverify.py:21-25` / F95 — that the trained RGCL
+head *"memorises its own train split (LOO train acc 0.998, F47)"*, and uses it to justify screening in
+the **raw** encoder key space rather than the deployed head space.
+
+**0.998 is F47's CLIP head, not the deployed head.** F47's own `ban_scope`
+(`directions_tried.json:171`) reads *"train-supervised = memorization-degenerate target, **CLIP LOO
+0.998**"*, and the memory index pairs it with *"vs **Qwen 0.800**"*. The deployed system does not use
+the CLIP head.
+
+**The deployed Qwen heads, newly computed** (`INSTRUMENT_VALIDATION_RECON.md` §0.2, F111; re-read from
+`scripts/analysis/mechfix_{hatemm,zh,en}_OUT.json` → `train_side_sanity.deployed_loo_train_acc`):
+
+| | HateMM | MHC-ZH | MHC-EN |
+|---|---|---|---|
+| **deployed head train LOO** | **0.9406** | **0.8915** | **0.8154** |
+| raw-arena deployed train LOO | 0.8441 | 0.8480 | 0.7796 |
+| gap between the two arenas | +0.0965 | +0.0435 | +0.0358 |
+
+**The two arenas differ by 3.6–9.7 accuracy points on the same train items, not by the 0.998-vs-0.84
+chasm the premise asserts.** The argument *"a train-side screen in head space measures memorisation"*
+is therefore **weaker than stated — downgraded, not vacated**: 0.9406 against a 0.8441 raw floor still
+means the head reproduces its own train split far better than its deployed test behaviour.
+
+**CONSEQUENCE 1 — the raw-space screening justification is superseded.** The saturation claim applies
+**only to full-train LOO**. `HEADSPACE_TRANSFER_PREGATE.md` (F113) demonstrates the fix nobody used:
+**train the head on 4/5 of the train split and query it with the held-out fifth.** That **fold-head
+arena is unsaturated**, is a strictly better proxy for deployment than the raw arena, and costs
+**~35 s of CPU per fold-head**. The existing `mechfix_ops` / `vsw_pregate` battery runs in it
+unmodified. **The head space was available the whole time**, and F113 recommends it become the default
+`$0` pregate arena.
+
+**CONSEQUENCE 2 — F107's Q1 argument depended on this figure and has been adjudicated.**
+`HEADCOV_PREGATE_RECORD.md` §6.1 claimed *"the objective is already at its optimum on its own training
+signal, with ≤0.002 of headroom"*. On the corrected figures the remaining train-side headroom is
+**0.0594 / 0.1085 / 0.1846** — 30× / 54× / 92× larger. That step is **RETRACTED**; F107's conclusion
+(the metric channel is closed) **survives but is SCOPED and WEAKENED — it is now empirical, not
+analytic**, resting on the F75/NCA isomorphism (a measured GPU negative) plus a weak observational
+conversion bound (R² = 0.027, MHC-ZH dev only) plus F113's head-space fitting evidence. **F107 must no
+longer be cited as a theory-level door-closer.** See `HEADCOV_PREGATE_RECORD.md` §6.1 ERRATUM in full.
+
+**Provenance note.** `scripts/analysis/mechnov_pairverify.py:21-25` still carries the wrong premise and
+has been **deliberately left byte-identical**: its sha256 `77b0defd…b7240d` is asserted at run time by
+five scripts, so editing even a comment would break the reproducibility of F95, F97, F98, F105, F112
+and F113 at once. The correction lives in `MECHNOV_PAIRVERIFY_PREGATE.md` §E.1–E.3.
+
+*Authority: `INSTRUMENT_VALIDATION_RECON.md` §0.2 (F111) · `HEADSPACE_TRANSFER_PREGATE.md` §8 (F113).
+Ledger: F114. `$0` — no GPU, no SLURM, no Modal, no training, no test contact.*
+
+
+---
+
+## ⚠ RE-SCOPING (appended 2026-07-28, closeout) — the `+0.0255` VSW figure quoted here is a **raw-arena** number
+
+**No verdict moves.** `HEADSPACE_TRANSFER_PREGATE.md` (F113) re-ran F105/VSW on the same items in the
+**deployed head space** (fold heads, 2 datasets × 3 seeds × 5 folds): **+0.0009**, p = **0.0968**,
+transfer ratio **0.035**, λ-oracle ceiling **+0.0072**, and **both** degeneracy controls firing.
+**Wherever `+0.0255` appears in this file — including any "85 % / 90 % of the bar" or "relational
+asset" framing — it must carry: *"raw train-LOO arena; head-space transfer measured at +0.0009 (F113)."*
+The near-miss reading is retired and F105's KILL is over-determined.**
+
+**Companion re-scoping.** F95 control-1 (*"the trained pair verifier beats the cosine",* +0.1572 /
++0.2302 / +0.1785) holds **in the raw encoder key space only**: in head space it is **−0.0643 /
+−0.1294** on **30/30** fold cells, with any score fitted on head keys memorising at **0.9999** in-sample
+(F113 §4.6).
+
+**Companion note.** The raw arena's `k = 10/15` residual (+0.0027 / +0.0040) is **arena-specific** —
+head-fold arena −0.0031 / −0.0004, F94's deployed head-space TEST reads **+0.0000 / +0.0000**.
+**F94's verdict is untouched.**
+
+*Authority: `HEADSPACE_TRANSFER_PREGATE.md` §4.4, §4.6, §4.10, §8.2 (F113). Ledger: F114. `$0`.*

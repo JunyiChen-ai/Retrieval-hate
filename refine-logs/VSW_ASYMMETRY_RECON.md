@@ -527,3 +527,27 @@ the capped net, with a $0 supply/exposure pre-check installed as the gate for an
 `scripts/analysis/vsw_pregate.py` (read for the multiplier definitions only),
 `data/CLIP_Embedding/{HateMM,MHC_zh,MHC}/train_*.pt`.
 **Not committed** — the orchestrator sequences commits, since the vsw-pregate agent is writing adjacent paths.
+
+---
+
+## ⚠ RE-SCOPING (appended 2026-07-28, closeout) — this record's framing question presupposes a raw-arena artefact
+
+**No verdict moves; no measurement in this record is withdrawn.** Every quantity here was computed in
+the **raw** train-LOO arena and remains correct *of that arena*.
+
+**The framing correction.** This record opens by asking *"why does HateMM **convert** under VSW
+(+0.0255, p = 0.0050) and MHC-ZH not"*. `HEADSPACE_TRANSFER_PREGATE.md` (F113) re-ran that operator on
+those items in the **deployed head space** (fold heads, 3 seeds × 5 folds): **+0.0009**, p = **0.0968**,
+transfer ratio **0.035**, λ-oracle ceiling **+0.0072**, and **both** degeneracy controls firing (they
+did not fire on HateMM in raw). **HateMM does not convert in the deployed space either.** The
+asymmetry this record explains is an asymmetry **of the raw arena**, not of the datasets.
+
+**What survives, and it is the useful part.** The *mechanistic* content — break exposure as the binding
+constraint, the fold-level structure, the exchange-rate arithmetic — is a within-arena analysis and is
+untouched. What must not be re-quoted is any sentence implying HateMM was close to converting: F113
+measures a **33× miss** against K-VSW-1 in the arena that matters.
+
+**Wherever `+0.0255` appears in this record it must carry:** *"raw train-LOO arena; head-space transfer
+measured at +0.0009, p = 0.0968 (F113)."*
+
+*Authority: `HEADSPACE_TRANSFER_PREGATE.md` §4.4, §4.8, §8.2 row 1 (F113). Ledger: F114. `$0`.*

@@ -351,9 +351,21 @@ features admit a $0 pointwise-V-information measurement that would quantify the 
 paper want Law I stated quantitatively rather than by its nine instances [DOC:LITSURVEY_NOVEL_MECHANISMS.md
 §3.1]. The sharpest *measurement* of the law is not one of the nine but the round-8 pair-verification pregate
 (F95, §3.13), which for the first time measures both ends of the chain on the same quantity the decision
-consumes — a trained relation scorer beats the deployed cosine by +0.13 to +0.27 pair-AUC and converts
-nothing — and which is deliberately **not** counted as a tenth instance, being a train-split, raw-space
-diagnostic that promotes no arm and moves no deployed read-out.
+consumes — a trained relation scorer beats the deployed cosine by +0.13 to +0.27 pair-AUC **in the raw
+encoder key space** and converts nothing — and which is deliberately **not** counted as a tenth instance,
+being a train-split, raw-space diagnostic that promotes no arm and moves no deployed read-out.
+
+> **Scope note (F113 / F114, 2026-07-28) — load-bearing for any sentence about the relation scorer.**
+> F95's control-1 advantage is a property of the **raw encoder key space**. Recomputed in the
+> **deployed head space** on the full held-out × in-fold pair matrix (2 datasets × 3 head seeds ×
+> 5 folds), it **sign-inverts**: `d_AUC` = verifier − cosine goes **+0.1572 → −0.0643** (HateMM) and
+> **+0.2302 → −0.1294** (MHC-ZH), **negative on 30 of 30 fold cells**, while any relation score fitted
+> on head keys **memorises the bank** (in-sample pair AUC **0.9999**, held-out 0.8317). *In the space
+> where the deployed system actually retrieves, the trained pair verifier is worse than the plain
+> cosine.* Every claim in this chapter that the relation score is informative **must be qualified with
+> "in the raw encoder key space"**. The **law-I reading is unaffected and is strengthened** — better
+> relations converting to nothing is exactly the law — and F95's KILL is unchanged
+> [DOC:HEADSPACE_TRANSFER_PREGATE.md §4.6, §8.2; DOC:MECHNOV_PAIRVERIFY_PREGATE.md §E.2].
 
 ### 3.7 Structural law II — the cumulative-causal three-level closure
 
@@ -653,7 +665,11 @@ curation, class-imbalance/mF1 operators, SFT-example selection — pre-priced de
 same three walls: F66's arithmetic (91–98 % of the ZH/EN oracle headroom is per-item-selection-only, legal
 slice +0.001–0.006), the EN label-limit, and the fact that the ZH miss is a *dev-selection* failure a train-side
 operator cannot touch. The deepest obstacle is a data-generating-process one, not a capacity one: the retrieval
-head **memorises its own training bank** (CLIP leave-one-out train accuracy 0.998), so any selector or reshaper
+head **memorises its own training bank** (CLIP leave-one-out train accuracy 0.998 — **scope note, F111/F114:
+0.998 is the *CLIP* head. The *deployed Qwen* heads measure 0.9406 / 0.8915 / 0.8154, so the memorisation
+premise is materially weaker off the CLIP arm and this sentence must not be read as a whole-family
+proof; the family closure below rests on the measured router/selector results at all three supervision
+sources, not on 0.998**), so any selector or reshaper
 trained on the train split sees a degenerate, base-rate-inverted target (train-disagreement "Qwen correct" =
 0/109, 0/102, 0/92) — the mechanism that killed the F47 router (§3.8) generalises to the whole
 train-supervised-conversion family [DOC:LITSWEEP3_DATA_CENTRIC.md, commit `8629188`;
@@ -1080,7 +1096,9 @@ DOC:MNTP_FORENSIC_RECON.md, commit `ead9f5d`].
 
 **The organizing fact, on four independent measurements: our system ranks much better than it decides.**
 F95 measures a relation scorer beating the deployed cosine by **+0.13 to +0.27 pair-AUC** (18/18 cells,
-4.3–8.8× over bar) and converting **0 of 36** end-to-end; the W4 temporal protocol measures MHC-EN's
+4.3–8.8× over bar) **in the raw encoder key space** — the advantage **sign-inverts to −0.064 / −0.129 on
+30/30 fold cells in the deployed head space** (F113; see the §3.6 scope note) — and converting **0 of 36**
+end-to-end; the W4 temporal protocol measures MHC-EN's
 temporal-split **ROC rising to 0.8484** — above the random-split reference of 0.7175 — while macro-F1 *drops*
 0.084 [DOC:EVAL_temporal_memory_W4.md]; F88 finds the correct analogue at **median rank ~1.5** and then
 out-voted, with errors that are confident and ~90 % seed-invariant (§3.12); and F50/F48 recorded a dev AUC of
@@ -1141,7 +1159,9 @@ n = 80 one item is 0.0125 and cannot resolve a +0.009 effect [DOC:ERRPAT_MHC-EN_
 semantic addressing plus surgical deletion is a pure-CPU, seconds-fast, retraining-free operation that a
 weight-baked head cannot offer at all, and the correction is what licenses saying so without an accuracy
 overclaim. Round 8 adds one legal, unmeasured asset to the same pillar: the trained pair verifier of F95 is
-**analysis-grade only for accuracy** (§3.13) but is a legitimate **evidence ranker** for the audit
+**analysis-grade only for accuracy** (§3.13) — and, per the §3.6 scope note, its advantage over the cosine
+is established **only in the raw encoder key space**, inverting in the deployed head space — but is a
+legitimate **evidence ranker** for the audit
 surface — it scores (query, neighbour) relations 2.5–3.5× more relationally than the deployed cosine — and
 that use must carry F95's own binding wording, *never an accuracy claim*
 [DOC:MECHNOV_PAIRVERIFY_PREGATE.md, commit `0261b82`; DOC:VGA_PREGATE_RECORD.md, commit `db2eae8`]. Here

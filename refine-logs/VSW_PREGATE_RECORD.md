@@ -100,7 +100,10 @@ aggregator spans that class and converged to a threshold shift (DEG-A 0.9570) an
 content**: C3's input was the `(cosine, label)` profile of the top-20 and contained **no verifier
 feature by construction** (F98 §1.3, binding restriction); VSW's multiplier is a function of the
 **trained relation score**, which F95 control 1 measured to carry ordering information the cosine
-does not (+0.1572 / +0.2302 / +0.1785 within-query AUC, 5/5 fold signs, 18/18 cells). VSW is
+does not (+0.1572 / +0.2302 / +0.1785 within-query AUC, 5/5 fold signs, 18/18 cells) **[RE-SCOPED —
+this holds **in the raw encoder key space only**. In the deployed head space the same quantity is
+**−0.0643 / −0.1294**, 30/30 fold cells negative, with the verifier at 0.9999 in-sample (F113 §4.6).
+See §R.2 at the end of this record.]**. VSW is
 therefore the *one* member of the re-weighting family F98's closure does not price — and it is being
 run precisely so that the closure becomes exhaustive rather than nearly so. **DEG-A and DEG-B are
 imported from F98 unchanged and at the same 0.95 threshold**, and a firing kills this arm exactly as
@@ -643,6 +646,10 @@ fitting pool), ties toward λ = 0, applied to the held-out fold. PRIMARY family 
 **0 of 3 datasets reach +0.030 under any family.** The best λ-selected number anywhere in the
 battery is **+0.0255** (HateMM, and it is reached by `pow` and `exp` alike), i.e. **85 % of the bar
 on one dataset and ~0 on the other two.** The bar requires two datasets; it is missed by two.
+**[RE-SCOPED — see §R.1 at the end of this record. The `+0.0255` is a property of the RAW train-LOO
+arena. In the deployed head space the same operator on the same items gives **+0.0009** (p = 0.0968,
+transfer ratio 0.035, ceiling +0.0072, both degeneracy controls firing) — F113. The "85 % of the bar"
+framing is retired; the KILL is over-determined.]**
 
 ### 5.2 K-VSW-0 (interest threshold: ≥ +0.010 on ≥1 dataset, 5/5 fold signs ≥ 0, ≥3/5 strict) — **PASS on HateMM only**
 
@@ -1301,3 +1308,80 @@ transcribed from the records**). Read for context, not modified: `LITSWEEP6_RELG
 `MECHNOV_PAIRVERIFY_PREGATE.md`, `VGA_PREGATE_RECORD.md`, `AGGNET_PREGATE_RECORD.md`.
 No file was deleted or moved outside this pregate's own outputs.
 **Zero GPU, zero SLURM submissions, zero Modal calls, zero test contact.**
+
+---
+
+## ⚠ RE-SCOPING (appended 2026-07-28, closeout) — the `+0.0255` is a property of the **raw arena**, not of the method. **The KILL is unchanged and is now over-determined.**
+
+**No verdict moves.** K-VSW-1 was missed in raw and is missed by **33×** in head space. K-VSW-2's
+outcome (b) — the aggregation axis closed across the sharpness continuum — holds *a fortiori*. This
+section corrects **framing only**, per `HEADSPACE_TRANSFER_PREGATE.md` §8.2 (F113).
+
+### R.1 The near-miss framing is RETIRED
+
+`HEADSPACE_TRANSFER_PREGATE.md` (F113) re-ran **this exact operator on these exact items** in the
+**deployed head space** (fold heads: trained on 4/5 of the train split, queried with the held-out
+fifth; 2 datasets × 3 head seeds × 5 folds):
+
+| quantity | **RAW arena (this record)** | **HEAD space (F113)** |
+|---|---|---|
+| `VSW_pow`, HateMM | **+0.0255** | **+0.0009** |
+| `VSW_exp`, HateMM | +0.0255 | +0.0013 |
+| `VSW_lin`, HateMM | +0.0188 | **0.0000** (λ never leaves 0 — degenerate, not a measured shrink) |
+| permutation p | **0.0050** | **0.0968** (below the null maximum) |
+| λ-oracle ceiling | +0.0349 | **+0.0072** |
+| transfer ratio | — | **0.035** |
+| degeneracy controls DEG-A / DEG-B | did **not** fire on HateMM | **BOTH FIRE** |
+
+**Required wording from now on.** Wherever `+0.0255` appears — including *"85 % of the bar"* (`:644`),
+*"90 %"* (`:675`), *"the largest honest raw-arena effect the campaign has produced"*, and
+*"permutation-validated p = 0.0050"* — it **must** carry: *"raw train-LOO arena; head-space transfer
+measured at **+0.0009**, p = 0.0968, transfer ratio 0.035, both degeneracy controls firing (F113)."*
+**The phrase "near miss" and any narrative that the campaign nearly converted on HateMM are
+unsupported and must stop.** F113 §9.6 adds an independent reason: +0.0009 sits **well inside** the
+`PREGATE_DETERMINISM_CLAUSE.md` reference band, so it is *no measurable transfer*, not a small positive.
+
+### R.2 CONTROL-1 RE-SCOPED — `:103`'s premise is true **in the raw encoder key space** and **false in the deployed head space**
+
+This record's §1 justifies VSW on F95 control-1: *"the trained relation score carries ordering
+information the cosine does not (+0.1572 / +0.2302 / +0.1785 within-query AUC, 5/5 fold signs, 18/18
+cells)"*. F113 §4.6 recomputed that quantity in head space on the full held-out × in-fold pair matrix:
+
+| `d_AUC` = verifier − cosine, held-out | RAW | **HEAD** |
+|---|---|---|
+| HateMM | +0.1572 | **−0.0643** |
+| MHC-ZH | +0.2302 | **−0.1294** |
+| fold cells with the stated sign | 18/18 raw | **30/30 head cells NEGATIVE** |
+| verifier pair-AUC on its **in-sample fitting** pairs | — | **0.9999** |
+
+**In the deployed head space the trained pair verifier is WORSE than the plain cosine, having reached
+0.9999 on the pairs it was fitted on.** So VSW's multiplier has **nothing to spend** where the
+deployed system lives. Any sentence asserting the relation score is informative **must say "in the raw
+encoder key space"** (see `MECHNOV_PAIRVERIFY_PREGATE.md` §E.2).
+
+### R.3 The raw `k = 10/15` residual is ARENA-SPECIFIC. **F94's verdict is untouched.**
+
+`:883-885` reports `FIXK_10` **+0.0027** and `FIXK_15` **+0.0040** beating `FIXK_20` (the deployed
+rule) in the raw arena. Three arenas now measure this and **the raw arena is the outlier of the three**:
+
+| | `FIXK_10` | `FIXK_15` |
+|---|---|---|
+| **raw arena (this record)** | **+0.0027** | **+0.0040** |
+| head-fold arena (F113 §4.10) | **−0.0031** | **−0.0004** |
+| **F94's deployed head space, on TEST** (`KSWEEP_RECORD.md` §3) | **+0.0000** | **+0.0000** |
+
+**Annotate these numbers as arena-specific and do not quote them as a residual lead.** F94 was measured
+in head space on test, not in raw; **F94's k-axis closure stands unchanged** and F113 independently
+reproduces it (§4.10 rung 3).
+
+### R.4 What this record's KILL now rests on — stated so the strengthening is not mistaken for a reversal
+
+F113's measured finding is that **the raw arena's error is one-sided**: 9 of 9 raw positives fail to
+transfer (median shrink > 7×, three invert), while **0 of 8 raw kills reverse**. A screen that
+over-reports effect sizes **cannot manufacture a false kill**. This record's KILL is therefore *more*
+secure than when it was written. What needed checking was its one **lead** — and that lead was VSW,
+**the only raw-space positive this campaign ever produced.** It has now been checked and it does not
+transfer.
+
+*Authority: `HEADSPACE_TRANSFER_PREGATE.md` §4.4, §4.6, §4.9, §4.10, §8.1, §8.2 rows 1/2/4 (F113).
+Ledger: F114. `$0` — no GPU, no SLURM, no Modal, no training, no test contact.*

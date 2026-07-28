@@ -735,3 +735,26 @@ directly. §3.7 (calibration) is the thinnest section and is the one to extend f
 read or produced. No `state/`, prereg, config, `research-wiki/`, or frozen artifact was mutated. No entry
 appended to `findings.jsonl`. **Not committed** (adjacent paths are being committed by other agents).
 
+
+
+---
+
+## ⚠ RE-SCOPING (appended 2026-07-28, closeout) — the `+0.0255` VSW figure quoted here is a **raw-arena** number
+
+**No verdict moves.** `HEADSPACE_TRANSFER_PREGATE.md` (F113) re-ran F105/VSW on the same items in the
+**deployed head space** (fold heads, 2 datasets × 3 seeds × 5 folds): **+0.0009**, p = **0.0968**,
+transfer ratio **0.035**, λ-oracle ceiling **+0.0072**, and **both** degeneracy controls firing.
+**Wherever `+0.0255` appears in this file — including any "85 % / 90 % of the bar" or "relational
+asset" framing — it must carry: *"raw train-LOO arena; head-space transfer measured at +0.0009 (F113)."*
+The near-miss reading is retired and F105's KILL is over-determined.**
+
+**Companion re-scoping.** F95 control-1 (*"the trained pair verifier beats the cosine",* +0.1572 /
++0.2302 / +0.1785) holds **in the raw encoder key space only**: in head space it is **−0.0643 /
+−0.1294** on **30/30** fold cells, with any score fitted on head keys memorising at **0.9999** in-sample
+(F113 §4.6).
+
+**Companion note.** The raw arena's `k = 10/15` residual (+0.0027 / +0.0040) is **arena-specific** —
+head-fold arena −0.0031 / −0.0004, F94's deployed head-space TEST reads **+0.0000 / +0.0000**.
+**F94's verdict is untouched.**
+
+*Authority: `HEADSPACE_TRANSFER_PREGATE.md` §4.4, §4.6, §4.10, §8.2 (F113). Ledger: F114. `$0`.*
