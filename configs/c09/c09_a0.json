@@ -1,0 +1,125 @@
+{
+ "_design_of_record": "refine-logs/C09_A0_RECORD.md (text: C09_A0_V17_RECORD.md, design GO 0C/0H/0I at review round 17)",
+ "_note": "Every constant here is frozen by the design of record. Nothing is tuned in-run.",
+ "datasets": [
+  "hatemm",
+  "zh"
+ ],
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "k_folds": 5,
+ "fold_seed": 0,
+ "topk": 20,
+ "n_items": {
+  "hatemm": 744,
+  "zh": 579
+ },
+ "reach_bar": 0.05,
+ "net_bar": {
+  "hatemm": 37.2,
+  "zh": 29.0
+ },
+ "net_bar_030": {
+  "hatemm": 22.3,
+  "zh": 17.4
+ },
+ "net_mf1_030": 0.03,
+ "alpha": 0.05,
+ "D_perm": 1000,
+ "D_shuffle": 200,
+ "D_random": 200,
+ "B_boot": 10000,
+ "B_boot_unstable": 2000,
+ "rng_seed": 20260801,
+ "shuffle_band": [
+  0.45,
+  0.55
+ ],
+ "pw_min": 30,
+ "min_weighted_strata": 3,
+ "unstable_min": 20,
+ "unstable_ci_width_max": 0.3,
+ "deg_kill": 0.95,
+ "fixk_grid": [
+  1,
+  2,
+  3,
+  5,
+  7,
+  10,
+  15
+ ],
+ "arena_band_margin": 0.02,
+ "arena_band_upper": 0.98,
+ "lr_C": 1.0,
+ "lr_max_iter": 2000,
+ "lr_tol": 1e-06,
+ "gbm_max_iter": 200,
+ "gbm_lr": 0.1,
+ "gbm_max_depth": 3,
+ "gbm_l2": 1.0,
+ "gbm_random_state": 20260801,
+ "null_row_dataset": "hatemm",
+ "null_row_index": 355,
+ "banked_floors": {
+  "hatemm": {
+   "acc": [
+    0.8884,
+    0.8858,
+    0.8858
+   ],
+   "mF1": [
+    0.8838,
+    0.8811,
+    0.8812
+   ]
+  },
+  "zh": {
+   "acc": [
+    0.8929,
+    0.8895,
+    0.8946
+   ],
+   "mF1": [
+    0.8747,
+    0.871,
+    0.8765
+   ]
+  }
+ },
+ "net_bar_030_rate": 0.03,
+ "cal3_comparators": {
+  "source": "refine-logs/C09_A0_V17_RECORD.md:1718-1728, quoting ERRPAT_HateMM \u00a77 ('SOLUTION MAPPING PER CLUSTER') and F113",
+  "errpat_hatemm_per_cluster_deployed_flip_ceilings": {
+   "FN1": {
+    "delta": 0.0326,
+    "n": 7
+   },
+   "FN2": {
+    "delta": 0.014,
+    "n": 3
+   },
+   "FN3": {
+    "delta": 0.0233,
+    "n": 5
+   },
+   "FP1": {
+    "delta": 0.0233,
+    "n": 5
+   },
+   "FP2": {
+    "delta": 0.0233,
+    "n": 5
+   },
+   "FP3": {
+    "delta": 0.0093,
+    "n": 2
+   }
+  },
+  "f113_headspace_THRESH_best": 0.0041,
+  "status": "COMPARATOR OF RECORD, NOT A STRICT CAL-3 CEILING -- a different arena and a different population (test split, n=215; C09's arena is the train split at n=744/579). No arm is escalated in any direction; the raw leg's only permitted use remains KILL corroboration."
+ }
+}

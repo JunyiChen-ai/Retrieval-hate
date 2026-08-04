@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "experiment_id": "C01_A0",
+  "run_id": "C01-A0-v3",
+  "scientific_base": {
+    "config_path": "configs/c01/c01_a0_v2.json",
+    "config_sha256": "f3997bddb4788d451ae5f90d9d03d096df3de383f8133a6d3818d97a241563f5",
+    "analysis_path": "scripts/analysis/c01_policy_contrast_a0.py",
+    "analysis_sha256": "d2b9c2ff909c07518ae35526db9550df655fb4af395cc7a0899f83e48db1b855",
+    "scientific_fields_policy": "load_exact_v2_config_then_change_only_v3_lineage_output_and_halt_only_numerical_equivalence",
+    "scientific_thresholds_exact": true
+  },
+  "execution": {
+    "require_slurm": true,
+    "cpu_only": true,
+    "required_cpus": 8,
+    "required_memory": "32G",
+    "required_environment": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "OMP_NUM_THREADS": "8",
+      "MKL_NUM_THREADS": "8",
+      "OPENBLAS_NUM_THREADS": "8",
+      "NUMEXPR_NUM_THREADS": "8"
+    },
+    "required_software": {
+      "numpy": "1.26.4",
+      "torch": "2.6.0",
+      "faiss": "1.13.2"
+    },
+    "required_cpu": {
+      "architecture": "x86_64",
+      "byte_order": "little",
+      "model_name": "AMD EPYC 7742 64-Core Processor"
+    }
+  },
+  "lineage_evidence": {
+    "guard_review_path": "TARGET_REVIEW_RAW.md",
+    "guard_review_section_sha256": "2f4a1b1ff3fdaff176bca52a1a7a0940e949ee8ac75e51d7ac18b9883d28fe54",
+    "guard_review_heading": "C01 retrieval numerical-equivalence guard adjudication（2026-07-29）",
+    "guard_review_line_start": 1165,
+    "guard_review_line_end": 1338,
+    "diagnostic_path": "artifacts/c01_policy_contrastive/v2/retrieval_equivalence_probe/C01-RETRIEVAL-EQUIV-PROBE-v1/retrieval_equivalence_probe.json",
+    "diagnostic_sha256": "724c87cd2fbdb763180b663bc6492322887bc2077f378c5b21c4184c4ba80e6f",
+    "diagnostic_schema_version": "c01_retrieval_equivalence_probe_v1",
+    "diagnostic_run_id": "C01-RETRIEVAL-EQUIV-PROBE-v1",
+    "diagnostic_job_id": "13732",
+    "diagnostic_classification": "FLOAT_VARIATION_WITH_STABLE_NEIGHBOR_IDENTITY",
+    "manifest_sha256": "083275d39a1026bde3b6583bd5608d41cec5b431da9ffda87ae8ab1046cf2305",
+    "zero_probe_sha256": "bee4964ce7e4ca81cfdb72c3859f78196568badf982aef587bc14ee6dbe63526",
+    "authorized_null": {
+      "dataset": "HateMM",
+      "split": "train",
+      "raw_id": "hate_video_95",
+      "row_index": 355,
+      "policies": ["standard", "oneword"],
+      "modalities": ["img", "text"],
+      "expected_label_integrity_only": 1
+    },
+    "exact_a0_key_construction": "normalize raw modality blocks; fuse_modalities re-normalizes each modality block; concatenate; final row L2",
+    "diagnostic_train_cache_sha256": "6a44cce4f65d4a60b8863969a2ad9ed72731658cea49e75f487a911000be045f",
+    "diagnostic_dev_seen_cache_sha256": "92a17d42627cb4b1e127026d486b7e58ca9cd649435480b2855f6c7708ab35e8"
+  },
+  "numerical_equivalence_v3": {
+    "required": true,
+    "halt_label": "HALT_NUMERICAL_EQUIVALENCE",
+    "operand_parity": "raw_retained_keys_normalized_retained_memory_and_normalized_queries_dtype_shape_c_order_bytes_exact",
+    "mapping": "flatnonzero(keep)[reduced_local_neighbors]_equals_original_indices",
+    "raw_neighbor_rule": "dtype_shape_c_order_bytes_rank_order_and_per_query_sets_exact_after_mapping",
+    "stable_neighbor_rule": "lexicographic_negative_float32_similarity_then_original_index_dtype_shape_c_order_bytes_rank_order_exact",
+    "neighbor_label_rule": "dtype_shape_c_order_bytes_exact",
+    "registered_null_top20_count": 0,
+    "prediction_rule": "dtype_shape_c_order_bytes_exact",
+    "metric_rule": "canonical_sorted_typed_ieee754_binary64_hex_json_bytes_exact_for_accuracy_macro_f1_roc_auc",
+    "scientific_boolean_rule": "exact_prediction_and_metric_basis_plus_frozen_v2_scientific_config_implies_exact_deterministic_scientific_booleans",
+    "nonfinite_rule": "NaN_positive_Inf_negative_Inf_and_nonfinite_bounds_forbidden",
+    "signed_zero_rule": "positive_and_negative_zero_are_distinct_and_cross_path_signed_zero_ambiguity_is_forbidden",
+    "float32": {
+      "unit_roundoff": 5.960464477539063e-08,
+      "unit_roundoff_formula": "2^-24",
+      "require_dimension_times_unit_roundoff_lt_one": true,
+      "gamma_formula": "gamma32(d)=d*u32/(1-d*u32)",
+      "operand_scale_formula": "rho=max_retained_norm_upper*max_query_norm_upper",
+      "operand_scale_audit": "binary64_sum_of_squares_with_gamma64_upward_correction_then_sqrt_and_nextafter_positive_infinity",
+      "absolute_raw_bound_formula": "2*gamma32(d)*rho",
+      "absolute_bound_formula": "B_sim(d,rho)=2^ceil(log2(2*gamma32(d)*rho))",
+      "absolute_bound_policy": "next_power_of_two_from_actual_dimension_and_upward_safe_operand_norm_scale",
+      "ulp_order_mapping": "negative_bitwise_not_raw_u32_nonnegative_raw_u32_xor_0x80000000",
+      "ulp_bound_formula": "max(ord32(upper32(a+B))-ord32(a),ord32(a)-ord32(lower32(a-B)))",
+      "ulp_outward_rounding": "binary64_endpoint_clipped_to_finite_float32_then_float32_nextafter_outward",
+      "require_absolute_and_ulp_bounds": true
+    },
+    "weighted_vote": {
+      "topk": 20,
+      "weights": [20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+      "weight_total": 210,
+      "score_formula": "s=(1/210)*sum_r(w_r*sigma_r*a_r)",
+      "binary64_roundoff_allowance": 2.842170943040401e-14,
+      "binary64_roundoff_allowance_formula": "2^-45",
+      "per_query_bound_formula": "B_score(q)=(1/210)*sum_r(w_r*abs(delta_a_qr))+2^-45",
+      "arm_sanity_bound_formula": "max_q_abs_delta_score<=B_sim(d,rho)+2^-45",
+      "cutoff": 0.0,
+      "cutoff_stability": "closed_interval_expanding_either_score_by_B_score_q_must_not_contain_or_cross_zero"
+    },
+    "average_score_control": {
+      "bound_formula": "B_avg(q)=0.5*(abs(delta_endpoint_std_score_q)+abs(delta_endpoint_ow_score_q))+2^-45",
+      "arm_sanity_bound_formula": "max_q_abs_delta_avg<=0.5*(B_sim_endpoint_std+B_sim_endpoint_ow)+2^-45"
+    },
+    "binary64_reference": {
+      "required": true,
+      "scope": "rescore_only_the_exact_agreed_float32_top20_original_neighbor_ids_for_every_real_arm_rotation_and_fixed_null_shuffle",
+      "neighbor_selection": "none_reference_does_not_remine_or_replace_float32_neighbors",
+      "algorithm": "chunked_C_order_float64_multiply_then_numpy_add_reduce_over_feature_axis_in_frozen_neighbor_rank_order",
+      "query_chunk_size": 8,
+      "thread_contract": "same_8CPU_and_OMP_MKL_OPENBLAS_NUMEXPR_8_environment_no_thread_or_algorithm_sweep",
+      "between_path_rule": "single_shared_operand_computation_is_byte_exact_for_reference_similarities_scores_predictions_and_canonical_metrics",
+      "faiss_relation": "FAISS_with_path_minus_reference_similarity_finite_and_within_B_sim_and_reference_uses_only_exact_agreed_FAISS_neighbor_IDs"
+    },
+    "scientific_gate_basis": [
+      "ordinary_arm_predictions_and_canonical_metrics",
+      "primary_secondary_and_rotation_predictions_and_canonical_metrics",
+      "all_256_fixed_null_shuffle_predictions_and_canonical_metrics",
+      "fixed_v2_bootstrap_Holm_rotation_shuffle_p95_small_displacement_netfix_and_gain_threshold_config"
+    ],
+    "all_failures_before_publication": true
+  },
+  "output": {
+    "namespace": "artifacts/c01_policy_contrastive/v3/a0/C01-A0-v3",
+    "result_file": "C01_A0_OUT.json",
+    "decision_file": "C01_A0_DECISION.json",
+    "record_file": "refine-logs/C01_A0_V3_RECORD.md",
+    "slurm_stdout": "slurm/logs/c01_a0_v3_%j.out",
+    "slurm_stderr": "slurm/logs/c01_a0_v3_%j.err",
+    "maximum_result_bytes": 100000000,
+    "atomic_json": true,
+    "decision_exclusive_create": true,
+    "run_namespace_no_clobber": true,
+    "result_schema_version": "c01_a0_result_v3",
+    "decision_schema_version": "c01_a0_decision_v3"
+  }
+}

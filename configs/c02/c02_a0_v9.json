@@ -1,0 +1,376 @@
+{
+  "schema_version": 1,
+  "experiment_id": "C02_A0",
+  "run_id": "C02-A0-v9",
+  "candidate": "C02 Evidence-Density Quotient Geometry",
+  "authority": {
+    "registry_amendment": "TARGET_STATE.json::iteration_8_stage0_bounded_extraction_amendment",
+    "amendment_id": "STAGE0_BOUNDED_EXTRACTION_2026_07_30",
+    "user_ruling": "2026-07-30 extraction authorized",
+    "superseded_kill": "KILL_C02_DESIGN_COLLISION_OR_INFEASIBILITY (refine-logs/C02_DESIGN_REVIEW.md, 2026-07-29) -- retained as historical evidence, not overturned on its own terms",
+    "record": "refine-logs/C02_A0_V9_RECORD.md"
+  },
+  "question": "Does the controlled evidence-density orbit of a video's own text channel contain enough reachable signal, in the DEPLOYED HEAD key space, for the quotient similarity s_Q(i,j)=max_{a,b} cos(z_i^a, z_j^b) to clear +0.050 accuracy AND +0.050 macro-F1 over the paired native floor on BOTH HateMM and MHC-ZH?",
+  "oracle_status": "OPTIMISTIC in the ordinary sense: s_Q may use the best view of every item on BOTH sides of every comparison, which no deployable system may do, and it is not a router. It is NOT a proven supremum over all orbit-contracting representations -- it is ONE PARTICULAR orbit-invariant similarity, the canonical max-matching quotient pseudo-metric. A KILL is therefore a GATE verdict under the registry's frozen Stage-0 rule, not a proof that no orbit-contracting representation could ever help; a PASS authorizes Stage-1 design plus a fresh review only. (The v1/v2 wording 'OPTIMISTIC UPPER BOUND ... a failure is decisive' is RETRACTED.)",
+  "views": {
+    "module": "src/utils/c02_density_views.py",
+    "names": [
+      "NAT",
+      "RFULL",
+      "RW1",
+      "RW2",
+      "RW3",
+      "RW4"
+    ],
+    "channel": "the `text` field of data/gt/<DS>/<split>.jsonl, i.e. exactly the string the deployed extractor puts in the Transcript slot",
+    "k_windows": 4,
+    "window_cut_rule": "c_k = (k * len(T)) // 4, contiguous character quarters, no snapping heuristic and no tunable parameter",
+    "separator": " ",
+    "NAT": "T verbatim",
+    "RFULL": "T + ' ' + T (exact-content quantity doubling)",
+    "RWk": "T[:c_k] + ' ' + T[c_{k-1}:c_k] + T[c_k:] (window k duplicated in place)",
+    "label_preservation_contract": "every view retains the COMPLETE native text as an ORDERED SUBSEQUENCE and adds only controlled repetition; nothing is deleted, reordered, summarised or paraphrased. Proven per item per view at extraction time by c02_density_views.assert_subsequence before any forward pass.",
+    "l_max_chars": 12000,
+    "identity_causes": {
+      "EMPTY_TEXT": "T.strip()=='' -- two sub-cases, handled identically. For T=='' the deployed prompt substitutes '(none)', and T+' '+T would be ' ', which is truthy, so the prompt would flip from '(none)' to ' ' -- a prompt edit, not a density view. For WHITESPACE-ONLY T, which is the case that ACTUALLY fires (39 of 744 HateMM train rows, 0 of 579 MHC-ZH; the frozen gt contains ZERO rows with T==''), there is no '(none)' flip because whitespace is already truthy; the guard fires because repeating whitespace changes token count without changing evidence density, which is not controlled repetition of any evidence. All views set to T.",
+      "LENGTH_GUARD": "len(T) > l_max_chars. A CHARACTER budget, not a tokenizer limit: it bounds the growth of the forward's sequence length under doubling. The closest precedent is C02_EXPERIMENT_PLAN.md 3.1, which excluded and counted items that would truncate under the frozen native tokenizer limit; this guard is in that spirit but is not the same criterion. All views set to T.",
+      "EMPTY_WINDOW": "window k empty (only when len(T)<4); RW_k alone set to T"
+    },
+    "identity_is_bit_exact": "for an identity view the NAT vector is computed once and COPIED into the view slot, so identity holds by construction, not by tolerance",
+    "measured_identity_counts_2026_07_30": {
+      "method": "json parse of data/gt/<DS>/{train,val}.jsonl only; no cache, model or test",
+      "HateMM_train": {
+        "n": 744,
+        "text_eq_empty_string": 0,
+        "text_strip_empty": 39,
+        "len_gt_12000": 9,
+        "full_identity": 48,
+        "view_support": 0.9355,
+        "max_chars": 80731
+      },
+      "HateMM_val": {
+        "n": 107,
+        "text_strip_empty": 9,
+        "len_gt_12000": 1,
+        "full_identity": 10,
+        "view_support": 0.9065,
+        "max_chars": 12275
+      },
+      "MHC_zh_train": {
+        "n": 579,
+        "text_strip_empty": 0,
+        "len_gt_12000": 0,
+        "full_identity": 0,
+        "view_support": 1.0,
+        "max_chars": 708
+      },
+      "MHC_zh_val": {
+        "n": 78,
+        "text_strip_empty": 0,
+        "len_gt_12000": 0,
+        "full_identity": 0,
+        "view_support": 1.0,
+        "max_chars": 343
+      },
+      "note": "EMPTY_TEXT is NOT a dormant guard: 39 of 744 HateMM train rows carry a whitespace-only transcript. Both datasets clear the 0.60 view-support gate with margin, and A0 uses the TRAIN split only.",
+      "max_chars_definition": "len(json['text']) in PYTHON CHARACTERS, which is exactly what L_MAX compares against. Measured twice independently with identical results (80731 / 12275 / 708 / 343). A byte-length or gt-line-length count gives different numbers and is not the quantity the guard uses. No code path consumes max_chars.",
+      "scope_note": "these counts are TEXT-DERIVED, measured from gt alone. The RUNTIME VIEW_SUPPORT gate additionally counts video-decode-failure (zero-guard) rows as identity orbits, because their orbit IS the identity in every space. Expected runtime values: HateMM train 1 - 49/744 = 0.9341 if the extraction reports the single known zero-guard row (hate_video_95), MHC-ZH train 1.0000 if it reports none. The pre-measured 0.9355 is the text-only figure and is NOT what the gate reads; both are far above the 0.60 bar."
+    }
+  },
+  "extraction": {
+    "script": "src/utils/generate_c02_density_view_text_embedding_HF.py",
+    "sbatch": "scripts/slurm/c02_density_extract.sbatch",
+    "reuses_unmodified": "src/utils/generate_VideoMLLM_embedding_lora_HF.py (encoder, frame sampler, chat template, pooling span, instruction constants, prompt assembly); its sha256 is asserted at start-up",
+    "streams": "TEXT ONLY. img_feats never see the transcript and are therefore invariant across views by construction; the arena pairs the BANKED native img_feats with per-view text_feats.",
+    "splits": [
+      "train",
+      "dev_seen"
+    ],
+    "test_rule": "splits restricted to train/val by assertion; output/input path guard; torch.load guard. A0 consumes the TRAIN split only, asserted in scripts/analysis/c02_a0_mint.py. dev_seen views are extracted under the same frozen contract so a future Stage-2 needs no second GPU spend, and are NOT read by A0.",
+    "datasets": {
+      "HateMM": {
+        "lora_dir": "logging/lora/HateMM_curric",
+        "base_tag": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF"
+      },
+      "MHC_zh": {
+        "lora_dir": "logging/lora/MHC_zh",
+        "base_tag": "Qwen2.5-VL-7B-Instruct-LoRA_HF"
+      }
+    },
+    "resources": "8 CPU / 1 A100 / 64 G, no --time, one submission",
+    "budget_gpu_hours_cap": 4.0,
+    "output_contract": "data/CLIP_Embedding/<DS>/{split}_{base_tag}-c02den-{VIEW}.pt containing ids/text_feats/labels/c02_view and deliberately NO img_feats key, so run_rac cannot consume a view file as a full cache; no-clobber enforced"
+  },
+  "arena": {
+    "primary": "fold-head / deployed-head. StratifiedKFold(5, shuffle=True, random_state=0) over the train split, asserted item-for-item against scripts/analysis/vsw_ckpt/<ds>/f{0..4}.npz inside every mint. Bank = the fitting pool's head keys from a head trained on that same fitting pool; queries = the held-out fifth, never seen by that head in any role.",
+    "self_orbit_exclusion": "bank and query index sets are disjoint per fold and asserted; a query's own orbit can never be retrieved",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "primary_read": "3-seed mean of the pooled FULL-minus-NATIVE delta, both datasets, final-epoch head (epoch 29), pooled over every train item exactly once",
+    "secondary": "raw fused key space l2n(concat(l2n(img), l2n(text_view))). SECONDARY under F113: may corroborate a KILL, may NEVER promote a lead.",
+    "head_recipe": "the deployed CLI, imported unchanged from scripts/analysis/headspace_mint.py::CLI"
+  },
+  "arms": {
+    "NATIVE": [
+      "NAT"
+    ],
+    "FULL": [
+      "NAT",
+      "RFULL",
+      "RW1",
+      "RW2",
+      "RW3",
+      "RW4"
+    ],
+    "REPEAT_ONLY": [
+      "NAT",
+      "RFULL"
+    ],
+    "LOCALIZED_REPEAT_ONLY": [
+      "NAT",
+      "RW1",
+      "RW2",
+      "RW3",
+      "RW4"
+    ],
+    "RANDOM_WINDOW_REPEAT": [
+      "NAT",
+      "RW_{r(i)} with r(i)=blake2b(salt+id) mod 4 + 1"
+    ],
+    "MIN_WINDOW_REPEAT": [
+      "NAT",
+      "RW_{argmin P3 K=4 evidence-density score}, ties -> lowest index"
+    ],
+    "MAX_WINDOW_REPEAT": [
+      "NAT",
+      "RW_{argmax P3 K=4 evidence-density score}, ties -> lowest index"
+    ],
+    "SHUFFLE": [
+      "NAT",
+      "z_i^v := NAT_i + ( view_v(pi(i)) - NAT_pi(i) ) -- the DISPLACEMENT of a wrong video applied to this video's own native key. pi is a Sattolo random CYCLIC permutation (a derangement BY CONSTRUCTION for every group of size >= 2, O(m), no rejection and no repair loop) over partition x degeneracy-class groups. The partition boundary (fitting pool vs held-out fifth) is absolute. A class group of exactly ONE member is DROPPED, not merged: that item then keeps its OWN displacement in SHUFFLE. For the case that matters -- a lone DEGENERATE item, whose displacement is ZERO by construction -- SHUFFLE is thereby EXACTLY MATCHED to FULL for that item, so it contributes to neither side of the conjunct; merging would instead have handed that degenerate item a real displacement it never has under FULL and made FULL > SHUFFLE EASIER. (A lone NON-degenerate item would leave one unshuffled real displacement in the control, a trace of the treatment, which can only make the conjunct harder.) Dropped singletons are counted and reported. Labels are never used."
+    ],
+    "NOISE": [
+      "NAT",
+      "NAT + a deterministic random tangent per item and per view, norm-matched to the true native-to-view displacement (seed 20260730)"
+    ],
+    "note": "every arm is a SUB-ORBIT of the single extraction; no arm costs additional GPU. MAX_WINDOW_REPEAT is SECONDARY. The PRIMARY treatment FULL does not use P3 at all; P3 enters only the MIN/MAX control arms, and the P3-window-to-text-window correspondence is a declared positional approximation (P3 windows are temporal ASR windows) which is why those two arms are controls and not the treatment.",
+    "p3_missing_rule": "an item with no P3 row falls back to the identity orbit {NAT} in the MIN/MAX arms only, and the count is reported",
+    "control_roles": "NOISE and SHUFFLE are BOTH fair nulls and both are binding PASS conjuncts. NOISE holds the number of extra vectors and the per-item displacement NORMS fixed while randomising direction. SHUFFLE keeps REAL displacement directions but mismatches the donor video, so it is the stronger control: if all density displacements share a common direction, SHUFFLE approaches FULL and the conjunct fails. Neither creates a cross-item near-duplicate.",
+    "shuffle_h0_rationale": "v1 donated pi(i)'s ABSOLUTE view keys, which made bank row j a near-duplicate of bank row pi(j): every true neighbour was mirrored onto an unrelated-label row, so SHUFFLE degraded under the design's OWN null and the FULL > SHUFFLE conjunct was satisfiable at H0 while proving nothing. Displacement donation removes that -- no component of pi(i)'s POSITION enters, so no spurious cross-item near-duplicate is created -- while still destroying the correspondence between a density displacement and the video it came from.",
+    "shuffle_conjunct_scope": "NECESSARY, NOT SUFFICIENT. FULL and SHUFFLE are exchangeable under the EXCHANGEABILITY null (displacements i.i.d. across items and independent of the item they attach to). They are NOT exchangeable under EVERY null in which the orbit is uninformative: a purely RADIAL displacement d_i = eps * NAT_i leaves FULL identical to NATIVE after L2 normalisation while SHUFFLE still perturbs. The earlier claim 'under H0 FULL and SHUFFLE are EXCHANGEABLE BY CONSTRUCTION' is RETRACTED. This cannot manufacture a PASS: under that radial null FULL == NATIVE exactly, so delta_acc = 0 and the binding +0.050 bar is unreachable. The bar against the paired native floor carries the verdict; SHUFFLE and NOISE only exclude ways of clearing it that do not need the correct within-video orbit.",
+    "shuffle_conjunct_uncovered_residue": "The FULL > SHUFFLE conjunct is a strict inequality with no margin, and one null is not covered by it: a displacement with a SHARED component plus an item-specific component, where the accuracy movement is carried by the shared component. FULL and SHUFFLE then both carry it and differ only by noise, so a strict '>' degenerates to a coin flip. FULL > NOISE does still hold there, because NOISE destroys the shared direction. More generally an orbit that is any deterministic function of the native key could clear the bar without the density channel carrying anything new. retrieval_length_spearman and krr_length_probe are the right instruments and are computed per arm, but they are REPORTED, NOT GATED -- attaching a threshold to them now would be an unjustified post-hoc bar. This BOUNDS WHAT A PASS MAY BE READ AS and cannot affect a KILL; it is recorded so a Stage-1 design must address it.",
+    "nulls_declared_assumption": "SHUFFLE and NOISE are built by vector arithmetic in head-key space, whereas FULL's non-native views are genuine head outputs. If the head is materially nonlinear at the measured orbit radius, both nulls sit slightly off the head's image manifold and are handicapped for a reason unrelated to the null -- in the direction that makes BOTH conjuncts EASIER, so it can weaken a PASS but cannot manufacture a KILL. orbit_radius_median_oof and its per-view breakdown are reported so this can be bounded post hoc; it is not gated."
+  },
+  "oracle": {
+    "similarity": "s_Q(i,j) = max over (query view a, bank view b) of cos(z_i^a, z_j^b)",
+    "search": "faiss.IndexFlatIP over float32 L2-normalised private copies, k = 20 per (query view, bank view) pair. EXACTNESS: if tau is the 20th largest per-item maximum, any row with s >= tau forces that item into the top-20, so each view pair contributes at most 20 such rows and its own top-20 already contains all of them. For a singleton orbit it IS the literal deployed k = 20 faiss call, which is what makes PARITY-NAT bit-exact.",
+    "aliasing_rule": "the arena's _norm32 ALWAYS copies. mechfix_ops._norm32 can alias a float32 C-contiguous input and faiss.normalize_L2 works in place, so an aliasing call would normalise stored keys twice and shift similarities at float32 ulp level.",
+    "topk": 20,
+    "weights": [
+      20,
+      19,
+      18,
+      17,
+      16,
+      15,
+      14,
+      13,
+      12,
+      11,
+      10,
+      9,
+      8,
+      7,
+      6,
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "vote": "v = sum_r (2*lab_r - 1) * s_r * w_r / sum_r w_r; predict 1 iff v >= 0 -- the frozen deployed rule",
+    "tie_rule": "ties in s_Q resolve to the LOWER bank index",
+    "self_test": "scripts/analysis/c02_a0_arena_v9.py::oracle_self_test runs on SYNTHETIC arrays before any real data is opened and proves, in-job: singleton-orbit bit-exact parity with mechfix_ops.deployed_vote; that an all-zero query ties every similarity at 0 so its vote is 0 and its prediction is invariant to tie order (the PARITY-NAT tie exemption, verified rather than assumed); that the k=topk-per-pair search reproduces a brute-force max over view pairs on the top-20 item set; that the derangement never maps across the bank/query boundary; that the degeneracy-matched grouping never straddles that boundary and DROPS a singleton class group rather than merging it, and that the dropped item leaves the donor pool entirely; and -- THROUGH build_arms, not by re-typing the formula -- that SHUFFLE carries the donor's DISPLACEMENT applied to the item's own native key and is NOT the donor's absolute view, and that NOISE is norm-matched to FULL per item and view.",
+    "exactness_side_condition": "the k = topk per-view-pair search is exact for the top-topk items WHENEVER AT MOST topk items attain tau. With topk or more EXACT float32 ties at tau inside one pair a boundary item could be dropped. The only exactly-tied rows reachable on this data are duplicate keys, i.e. the structural all-zero rows (1 on HateMM train, 0 on MHC-ZH), where every similarity is 0, the vote is identically 0 and the prediction is invariant. The self-test uses tie-free random matrices and therefore checks the generic case only.",
+    "search_width_erratum": "RETRACTED CLAIM. v1-v7 asserted that an exhaustive k = n_bank search is NOT bit-equal to the deployed k = 20 call and cited a measured 1.5e-07 discrepancy. Re-measured on synthetic arrays with private, singly-normalised operands: the exhaustive path IS bit-equal -- similarities, neighbour ids and votes all identical, max |delta sim| = 0.0. The 1.4901161193847656e-07 figure belonged ENTIRELY to the _norm32 aliasing defect (operands normalised twice) and was misattributed to the search width. k = topk is retained on its own merits: provably sufficient for the top-topk; it returns an (nq x topk) result and selects with a topk-sized heap instead of materialising all n_bank similarities per view pair -- the SCAN is O(n_bank) either way, because a flat inner-product index computes every inner product regardless of k, which bounds only the heap and the result width, and an earlier wording claiming an O(topk) SEARCH COST is corrected here; and LITERALLY the deployed call for a singleton orbit rather than merely equal to it. No numerical behaviour changes."
+  },
+  "gates": {
+    "PARITY_NAT": "the oracle run on the {NAT} orbit must reproduce mechfix_ops.deployed_vote BIT-EQUALLY in predictions and in the sorted top-20 similarity vector, on all 15 (seed x fold) cells per dataset. Neighbour IDs are asserted equal on every row whose top-20 similarities are all distinct; rows with an exact float32 tie are exempt from the ID assert ONLY. Stated precisely: tie order is NOT vote-invariant in general -- two tied neighbours with different labels at adjacent ranks move the vote by 2*s*(w_r - w_{r+1})/sum(w). The exemption is safe because predictions AND sorted similarities are bit-checked on EVERY row, so a tie-induced vote flip HALTs rather than passing silently; it is genuinely vote-invariant only in the reachable case, the all-zero query. The number of checked seed x fold cells is counted and asserted equal to seeds x folds, and the exempted row count is reported.",
+    "ARENA1": "fold parity against the banked vsw_ckpt npz, hard assert inside every mint",
+    "ARENA2": "pooled head-space NATIVE accuracy must lie in [majority_rate + 0.02, 0.98]; outside means the arena is saturated or collapsed and no operator could show an effect in it",
+    "GATE_FID": "the deployed-configuration CPU proxy head is compared to the banked GPU floor's DEV Val_Retrieval curve by the FROZEN, UNMODIFIED scripts/analysis/headspace_fidelity.py (job 13241 for HateMM, 13150 for MHC-ZH). STOP RULE: if the 3-seed instrument band B_fid >= 0.050 (the Stage-0 accuracy bar) the measurement is inadmissible and the job halts before the arena runs. NOTE: headspace_fidelity.py also emits its own `raw_effect_under_test: 0.0255` and `STOP_RULE_TRIGGERED` fields. Those belong to F105 and are NOT this design's rule; the reader is used unmodified and only its measured `B_fid_abs_3seedmean` is consumed, against the 0.050 bar enforced in scripts/slurm/c02_a0_cpu_v9.sbatch. The reader's own sha256 is asserted by the wrapper before it is invoked, so 'imported unmodified' is enforced and not merely asserted in prose.",
+    "GATE_EXT": "the re-extracted NAT text_feats must match the banked native text_feats with median row cosine >= 0.99; min/mean cosine and max abs difference are reported. The FLOOR used by every delta is the re-extracted NAT from this same session, so treatment and floor come off one GPU, one driver and one process.",
+    "ZERO_CONTRACT": "the four C01 zero-contract criteria are applied verbatim: (1) documented structural null (video-decode-failure zero-guard); (2) EXACT zero-mask match across the banked native and all six views, asserted; (3) no non-structural row with 0 < norm <= 1e-12, asserted; (4) the same deployed baseline consumed that row. Structural nulls are RETAINED identically in every arm, so no arm gains or loses from them, and a sensitivity read excluding them is reported separately. Any deviation HALTs. A video-decode-failure zero row is also folded into the SHUFFLE degeneracy mask, because its orbit is the identity in every space even though the manifest's text-derived identity_views does not say so.",
+    "VIEW_SUPPORT": "fraction of train items whose orbit is NOT the full identity must be >= 0.60, else HALT",
+    "NONFINITE": "any NaN or Inf in any cache HALTs",
+    "TEST_PATH": "any path containing test_seen, /test or test.jsonl HALTs before a handle is opened",
+    "VIEW_CACHE_INTEGRITY": "each view file's sha256 recorded by the extractor in the manifest is recomputed and compared before use, and the manifest's path must match the path opened; a stale or swapped view cache with a matching id/label vector therefore cannot pass."
+  },
+  "statistics": {
+    "bootstrap": "paired ITEM bootstrap, B = 10000, seed 20260730. Both the point estimate and every replicate are the 3-SEED MEAN of the pooled metric, i.e. EXACTLY the estimand the +0.050 bar is stated on. (The v1 draft bootstrapped the macro-F1 of the 3-seed MAJORITY prediction, a different estimand from the bar's mean of per-seed macro-F1; repaired in v2.)",
+    "confidence": "percentile 95% CI; a PASS requires both lower bounds > 0",
+    "holm_family": [
+      "hatemm_acc",
+      "hatemm_mf1",
+      "zh_acc",
+      "zh_mf1"
+    ],
+    "alpha": 0.05,
+    "lambda_selection": "NOT APPLICABLE AT A0 -- the A0 oracle has no lambda_orbit. lambda_orbit first exists at Stage-1, where it is selected inside outer-train folds only and never on test or outer-held data.",
+    "seeds_frozen": {
+      "SHUFFLE_SEED": 20260730,
+      "NOISE_SEED": 20260730,
+      "BOOTSTRAP_SEED": 20260730,
+      "note": "the SHUFFLE permutation is HEAD-SEED-INDEPENDENT by construction (derangement_within(..., SHUFFLE_SEED, fold)), so the same donor assignment is used for all three head seeds and for the secondary raw arena; only the fold index varies. This is deliberate: it removes head-seed as a source of control variance."
+    }
+  },
+  "mechanism_diagnostics": {
+    "orbit_radius": "median over items and non-native views of 1 - cos(head_key(NAT), head_key(view)), computed strictly OOF (each item read from its own fold's head)",
+    "krr_length_probe": "strict-OOF RBF kernel ridge, gamma = 1/d, ridge = 1, target log1p(len(T)), same 5 folds, each row read from its OWN fold's head; reported as the length-predictability INSTRUMENT baseline. The contraction comparison it feeds belongs to Stage-1, not to A0.",
+    "krr_declared_repair": "C02_EXPERIMENT_PLAN said 'gamma = 1/d, ridge = 1' on the representation. gamma = 1/d is the sklearn convention for PER-DIMENSION STANDARDISED features (squared distances about 2d, so gamma*dist^2 about 2). On L2-normalised 1024-d keys squared distances lie in [0,4], gamma*dist^2 < 0.004, the kernel is numerically constant and the probe is uninformative BY CONSTRUCTION -- measured R^2 = 0.0087 on a synthetic planted signal. Features are therefore z-scored on the FITTING fold only; gamma and ridge are untouched, nothing is tuned, nothing is selected on the held-out fold. After the repair the same synthetic planted signal gives R^2 = 0.8788 at n = 744, d = 1024 and a null gives -0.0163.",
+    "retrieval_length_correlation": "TIE-CORRECTED Spearman rho (scipy.stats.spearmanr, average ranks) between a query's len(T) and the median len(T) of its top-20 retrieved neighbours, reported for every arm. Text lengths tie heavily on short transcripts, so untied argsort ranks would be wrong.",
+    "membership": "mean size of the top-20 intersection with the NATIVE arm, per arm",
+    "item_accounting": "fixed / broken / net_fix / changed per arm per seed",
+    "krr_known_limitation": "the OOF key matrix mixes heads: row i is read from fold(i)'s head, so a kernel entry can span two different heads. This is a declared property of a SECONDARY diagnostic, not of any gated quantity; the gated arena never compares keys across folds because bank and queries always come from one fold's head."
+  },
+  "decision_rule": {
+    "PASS": "PASS_C02_DENSITY_ORBIT_REACHABLE requires, on BOTH hatemm and zh, in the PRIMARY head arena, 3-seed mean: delta_acc >= 0.050 AND delta_mf1 >= 0.050 AND net_fix_rate >= 0.030 AND FULL strictly beats SHUFFLE and NOISE in both metrics AND both bootstrap 95% lower bounds > 0 AND both Holm-corrected null rejections at alpha = 0.05.",
+    "KILL": "anything weaker is KILL_C02_DENSITY_ORBIT_UNREACHABLE",
+    "HALT": "any gate failure is a fail-closed HALT_FAIL_CLOSED_NO_DECISION and is NOT a scientific verdict",
+    "interpretation_boundary": "A PASS is reachability evidence only: it authorizes Stage-1 design plus a fresh independent review. It is not a training gain, not a development result and not a test result. A KILL is a GATE verdict under the registry's frozen Stage-0 rule: s_Q is ONE PARTICULAR orbit-invariant similarity (the canonical max-matching quotient pseudo-metric), NOT a proven supremum over all orbit-contracting representations, so a KILL closes C02 under the rule rather than proving that no orbit-contracting representation could ever help. The v1 draft overstated this as an upper bound; corrected in v2.",
+    "net_fix_clause": "fixed - broken = n * delta_acc EXACTLY, so net_fix_rate is the accuracy delta re-expressed in items and CANNOT bind given BAR_ACC 0.050 > BAR_NETFIX_RATE 0.030. The registry's net-fix clause is therefore discharged BY the accuracy bar. The check is retained defensively and the quantity is reported, but it is labelled as implied rather than presented as an independent gate. precision_on_changed = fixed/(fixed+broken) is reported as a genuinely independent fragility diagnostic and is NOT gated -- adding a threshold for it after the fact would itself be a defect.",
+    "dedup_vs_C14": "the A0 maxes over multiple views at RETRIEVAL time. That is exactly the 'frozen mechanism/upper-bound diagnostic' role the registry permits for C14 Multi-prompt Representation Ensemble, and it is forbidden as a final method. The C02 METHOD contract has no multi-view inference: inference uses q_theta(x^0), the native view alone. No ensemble prediction is proposed at any stage."
+  },
+  "execution": {
+    "require_slurm": true,
+    "extraction_job": {
+      "cpus": 8,
+      "gpus": 1,
+      "mem": "64G",
+      "time": null,
+      "submissions": 1
+    },
+    "a0_job": {
+      "cpus": 8,
+      "gpus": 0,
+      "mem": "32G",
+      "time": null,
+      "submissions": 1
+    },
+    "conda_env": "HateVideo",
+    "det1_threads": 8,
+    "no_release_no_retry_no_array_no_dependency_no_chain_no_force": true,
+    "budget_enforcement": "ENFORCED IN-JOB as of v9. Amendment condition (f) makes an over-budget run a protocol violation whose result is VOID, and CLAUDE.md forbids --time, so the job enforces the cap itself. scripts/slurm/c02_density_extract.sbatch computes ONE absolute deadline at job start -- BUDGET_CAP_SECONDS 14400 (4.0 GPU-h) minus BUDGET_MARGIN_SECONDS 600 -- and passes it to BOTH dataset invocations, so the second inherits what the first left. The extractor's budget_check refuses to START work whose completion could cross the deadline, requiring headroom of max(2 x slowest item so far, 60 s). On breach it publishes a BUDGET_BREACH_<dataset>.json accounting record and exits 5. The guard may ONLY EVER STOP WORK: view caches and the manifest are written only after a whole split completes, so a breach leaves the in-progress dataset entirely unwritten and any completed dataset intact, and the A0 then fails closed on the missing manifest or view cache. It touches no scientific semantic, threshold, arm, metric or decision rule. Projected spend remains ~8760 text forwards + 1508 video decodes, ~1.5-2.5 GPU-h.",
+    "serial_execution_interlock": "amendment condition (e) is enforced by a manual squeue check immediately before the extraction is submitted, not by an automated interlock. The check and its result are recorded in refine-logs/C02_A0_V5_RECORD.md.",
+    "frozen_module_verification": "all four frozen imported modules (headspace_fidelity, mechfix_ops, mechnov_pairverify, headspace_mint) have their sha256 verified by the wrapper BEFORE the 36 mints, so a changed module costs seconds instead of ~25 minutes. The mint and the arena re-assert their own subsets in-process.",
+    "budget_guard_constants": {
+      "BUDGET_CAP_SECONDS": 14400,
+      "BUDGET_MARGIN_SECONDS": 600,
+      "BUDGET_ITEM_HEADROOM_FACTOR": 2.0,
+      "BUDGET_MIN_ITEM_HEADROOM_S": 60.0,
+      "BUDGET_EXIT_CODE": 5,
+      "deadline_basis": "SLURM_JOB_START_TIME when exported, else the wrapper's own date +%s a few seconds later; the 600 s margin dominates that difference"
+    }
+  },
+  "output": {
+    "extract_namespace": "artifacts/c02_edq/v1/extract/C02-DEN-v1",
+    "a0_namespace": "artifacts/c02_edq/v1/a0/C02-A0-v9",
+    "result_file": "C02_A0_OUT.json",
+    "decision_file": "C02_A0_DECISION.json",
+    "result_schema_version": "c02_a0_result_v9",
+    "decision_schema_version": "c02_a0_decision_v9",
+    "atomic_json": true,
+    "no_clobber": true,
+    "halt_exit_code": 3,
+    "budget_breach_record": "artifacts/c02_edq/v1/extract/C02-DEN-v1/BUDGET_BREACH_<dataset>.json"
+  },
+  "supersedes": {
+    "v1": {
+      "run_id": "C02-A0-v1",
+      "config": "configs/c02/c02_a0_v1.json",
+      "config_sha256": "0b8a8289e7438396ce081fdf872f7d18017f870640fa33a687099de4066b53d1",
+      "arena": "scripts/analysis/c02_a0_arena.py",
+      "arena_sha256": "92abe7d8157a54f89a47657fb1edaf4a8f90e55b873c3fd03840aa940593fa41",
+      "wrapper": "scripts/slurm/c02_a0_cpu.sbatch",
+      "wrapper_sha256": "2b55c67834fc6dfdaf9a932be634c735b5362edcd128cfd5aa6e3829fc82c281",
+      "record": "refine-logs/C02_A0_RECORD.md",
+      "reason": "independent static review REVISE (0C/4H/20I), refine-logs/C02_A0_PREREG_REVIEW.md",
+      "status": "NEVER SUBMITTED, no artifact, no result, no decision"
+    },
+    "v2": {
+      "run_id": "C02-A0-v2",
+      "config": "configs/c02/c02_a0_v2.json",
+      "config_sha256": "2d4b7148154caea6ed41ec95043c15295c63d1abf3c47467b9191d285bd98a6f",
+      "arena": "scripts/analysis/c02_a0_arena_v2.py",
+      "arena_sha256": "7315e3232a42c96f1bf943028bb852eb89c9d85acd902f3890fb83fcd110e01d",
+      "wrapper": "scripts/slurm/c02_a0_cpu_v2.sbatch",
+      "wrapper_sha256": "ccf9881ccae7019d261a393afec4e6504203b947d38a259bf4d68b0238eccbf0",
+      "record": "refine-logs/C02_A0_V2_RECORD.md",
+      "reason": "fresh independent static review REVISE (0C/2H/19I), refine-logs/C02_A0_V2_PREREG_REVIEW.md",
+      "status": "NEVER SUBMITTED, no artifact, no result, no decision"
+    },
+    "v3": {
+      "run_id": "C02-A0-v3",
+      "config_sha256": "3c55214494372457fb8f2702f7ecf1c82c48b13c6b523d99e00272d2b0aa15ca",
+      "arena": "scripts/analysis/c02_a0_arena_v3.py",
+      "arena_sha256": "7d04a8ad8e644851fb8e25f77eee30ac12fbf7e33344dbc484bc5da240e21629",
+      "wrapper_sha256": "9463d642756269a77929dd3ffeb8afeab02f81c2b5bd77a20d1566d245bae399",
+      "record": "refine-logs/C02_A0_V3_RECORD.md",
+      "reason": "fresh independent static review REVISE (0C/4H/23I), refine-logs/C02_A0_V3_PREREG_REVIEW.md",
+      "status": "NEVER SUBMITTED, no artifact, no result, no decision"
+    },
+    "v4": {
+      "run_id": "C02-A0-v4",
+      "config_sha256": "8ccd2464699a7029db3952bc18612ea1cfcc79ede2b946e67051df843b26a4a9",
+      "arena": "scripts/analysis/c02_a0_arena_v4.py",
+      "arena_sha256": "71bba0f1bd47517ea8da1bbd922274f66d4b2ef6c62099ca17cc97c1364aba26",
+      "wrapper_sha256": "ae4a237508ebfccde51cd3552903991d60001aad89f483e4861c490a648a8cd6",
+      "record": "refine-logs/C02_A0_V4_RECORD.md",
+      "reason": "fresh independent static review GO (0C/0H/23I), refine-logs/C02_A0_V4_PREREG_REVIEW.md -- zero Critical, zero High; v5 closes the Info list rather than shipping with it open",
+      "status": "NEVER SUBMITTED, no artifact, no result, no decision"
+    },
+    "v5": {
+      "run_id": "C02-A0-v5",
+      "config_sha256": "2d90f7bd455dfcd7743fe3b7a0d0f99ff60b7e5e7ace7f449491f73d930aacf6",
+      "arena": "scripts/analysis/c02_a0_arena_v5.py",
+      "arena_sha256": "4f5d9cff2bd7829e97c60d3902340bbf37f14c73989e320279afdd795cb08edc",
+      "wrapper_sha256": "d4c1783fabd7bce22ccd5c1ad144674db4dd47459f89de16b65ec6b66b824239",
+      "record": "refine-logs/C02_A0_V5_RECORD.md",
+      "reason": "fresh independent delta review GO (0C/0H/4I), refine-logs/C02_A0_V5_PREREG_REVIEW.md -- v6 closes the last four Info items",
+      "status": "NEVER SUBMITTED, no artifact, no result, no decision"
+    },
+    "v6": {
+      "run_id": "C02-A0-v6",
+      "config_sha256": "8b0572f1ee8626de540417613eb9d3dc2d6bf1db3d867b7ad4aebb9472340982",
+      "arena_sha256": "d2f62adbd06ec9f286220b26f656a6026e3deb336d4537b6f6d71ff266784815",
+      "wrapper_sha256": "1de480c3bbfad52215fb781e676062eaf17e5a909a5f6a48f770f67616b14acb",
+      "record": "refine-logs/C02_A0_V6_RECORD.md",
+      "reason": "fresh independent delta review GO (0C/0H/3I), refine-logs/C02_A0_V6_PREREG_REVIEW.md -- v7 closes the last three documentation findings, one of which was a materially WRONG justification",
+      "status": "NEVER SUBMITTED, no artifact, no result, no decision"
+    },
+    "v7": {
+      "run_id": "C02-A0-v7",
+      "config_sha256": "4fac60501de74e8975d3bca0209837ce416c15bdeff00cbcdb3fdd1898a94ed1",
+      "arena_sha256": "1548a7e330b3c05557cf86ebea6bbf60368a5ec2383950f066798a9e16258fd9",
+      "wrapper_sha256": "592bad52e2b6ee68a45fd1f54de00f7000fd8491fe7123205913e498f659ca81",
+      "record": "refine-logs/C02_A0_V7_RECORD.md",
+      "reason": "SELF-DETECTED ERRATUM by the implementer after GO (0C/0H/0I): the frozen justification for k=topk asserted that an exhaustive k=n_bank faiss search is NOT bit-equal to the deployed k=20 call. Re-measured: it IS bit-equal (max |delta sim| = 0.0). The 1.4901161193847656e-07 figure belonged entirely to the _norm32 aliasing defect and was misattributed. No review caught this because every reviewer was asked to check whether the exactness ARGUMENT holds, which it does; the false part was the empirical claim beside it.",
+      "status": "NEVER SUBMITTED, no artifact, no result, no decision"
+    },
+    "v8": {
+      "run_id": "C02-A0-v8",
+      "config_sha256": "280c7b81e905373579283684e25a961604a5a948940047a71fe8cb3624ea1ed7",
+      "arena_sha256": "7f8f491e5632775fe465555622c2560ae650b148059a85b91ef2d7c515b80349",
+      "wrapper_sha256": "85576a244d890ff143ea16abe78ebfa145f990daf8288d7455e45b25a3635aa4",
+      "extract_wrapper_sha256": "afda59d243db9a6e2c1af882f2338cacaf509497e824a50b3b7fbc65c835cb0d",
+      "extractor_sha256": "6c5b9fd15e653ede183a1ad1d15f6f151f2f1dfc3760883d4b7c884e992ee235",
+      "record": "refine-logs/C02_A0_V8_RECORD.md",
+      "reason": "delta review GO (0C/0H/1I), refine-logs/C02_A0_V8_PREREG_REVIEW.md. v9 closes the last Info, adds an in-job fail-closed GPU-budget guard (the [U] item the reviewer named as the largest downside), and adopts the measured-claims register.",
+      "status": "NEVER SUBMITTED, no artifact, no result, no decision"
+    }
+  },
+  "measured_claims_register": "refine-logs/C02_A0_V9_RECORD.md section 3 -- one row per empirical claim: claim / how obtained / what depends on it / re-derivable by a static reviewer without execution. A review request may say 'audit the register'."
+}

@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "experiment_id": "C01_A0",
+  "run_id": "C01-A0-v2",
+  "claim_scope": "A parameter-free, block-normalized paired-endpoint contrast may preserve useful policy/readout-conditioned structure beyond either L24 endpoint and equally normalized endpoint-pair or orthogonal-rotation controls.",
+  "positive_scope": "A CONTINUE decision authorizes only a later extraction of same-pooling neutral/policy caches and a capacity-matched fold-head pilot. It does not establish safety, stance, or discourse disentanglement.",
+  "negative_scope": "A KILL decision retires only the current standard-L24 versus one-word-L24 endpoint-contrast route. It does not falsify policy contrast under same-pooling caches.",
+  "execution": {
+    "require_slurm": true,
+    "cpu_only": true,
+    "required_cpus": 8,
+    "required_environment": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "OMP_NUM_THREADS": "8",
+      "MKL_NUM_THREADS": "8",
+      "OPENBLAS_NUM_THREADS": "8",
+      "NUMEXPR_NUM_THREADS": "8"
+    }
+  },
+  "inputs": {
+    "cache_root": "data/CLIP_Embedding",
+    "allowed_datasets": ["MHC_zh", "HateMM"],
+    "allowed_splits": ["train", "dev_seen"],
+    "feature_dim": 3584,
+    "exact_contract_keys": ["ids", "img_feats", "text_feats", "labels"],
+    "standard_suffix": "ro_L24",
+    "oneword_suffix": "ro_ow_L24",
+    "datasets": {
+      "MHC_zh": {
+        "base_tag": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+        "expected": {
+          "train": {
+            "n": 579,
+            "standard_bytes": 16619920,
+            "standard_provenance_sha16": "1d33fe5d69083479",
+            "oneword_bytes": 16619941,
+            "oneword_provenance_sha16": "3ad1309dc7500182"
+          },
+          "dev_seen": {
+            "n": 78,
+            "standard_bytes": 2240677,
+            "standard_provenance_sha16": "a4cf072837e6fe6b",
+            "oneword_bytes": 2240698,
+            "oneword_provenance_sha16": "17c4efb2f7a0c2c0"
+          }
+        },
+        "historical_strict_devtrain": {
+          "source": "refine-logs/READOUT_SCREEN_OUT.json",
+          "endpoint_std_accuracy": 0.8589743589743589,
+          "endpoint_ow_accuracy": 0.8589743589743589,
+          "deployed_r0_accuracy_context_only": 0.8589743589743589
+        }
+      },
+      "HateMM": {
+        "base_tag": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+        "expected": {
+          "train": {
+            "n": 744,
+            "standard_bytes": 21358913,
+            "standard_provenance_sha16": "6a44cce4f65d4a60",
+            "oneword_bytes": 21358934,
+            "oneword_provenance_sha16": "60054f3be1204ca7"
+          },
+          "dev_seen": {
+            "n": 107,
+            "standard_bytes": 3073494,
+            "standard_provenance_sha16": "92a17d42627cb4b1",
+            "oneword_bytes": 3073579,
+            "oneword_provenance_sha16": "07c19096a054845a"
+          }
+        },
+        "historical_strict_devtrain": {
+          "source": "refine-logs/READOUT_SCREEN_OUT.json",
+          "endpoint_std_accuracy": 0.8411214953271028,
+          "endpoint_ow_accuracy": 0.8411214953271028,
+          "deployed_r0_accuracy_context_only": 0.8504672897196262
+        }
+      }
+    }
+  },
+  "transforms": {
+    "normalization_epsilon": 1e-12,
+    "tiny_displacement_epsilon": 0.001,
+    "small_displacement_train_quantile": 0.1,
+    "max_tiny_displacement_fraction": 0.05,
+    "max_small_displacement_fix_fraction": 0.5,
+    "endpoint_order": ["standard", "oneword"],
+    "common": "L2(L2(standard)+L2(oneword))",
+    "displacement": "L2(L2(oneword)-L2(standard))",
+    "common_interaction": "L2(common*displacement)",
+    "small_displacement_gate_reference": "strongest_ordinary_control_by_accuracy_then_macro_f1_then_frozen_gain_controls_order",
+    "small_displacement_endpoint_concat_role": "diagnostic_only",
+    "pair_block_rule": "L2-concatenate two individually L2-normalized blocks within each modality, then L2-concatenate image and text modality blocks",
+    "displacement_registered_null_exclusion": "with_null_masked_vs_physically_remove_null_dual_path_exact"
+  },
+  "retrieval": {
+    "protocol": "strict_train_memory_to_dev_query",
+    "topk": 20,
+    "similarity": "signed_cosine",
+    "rank_weights": "descending_integer",
+    "prediction_cutoff": 0.0,
+    "arms": [
+      "endpoint_std",
+      "endpoint_ow",
+      "avg_score",
+      "endpoint_concat",
+      "common",
+      "displacement",
+      "common_displacement",
+      "common_interaction",
+      "shuffled_pair_null"
+    ],
+    "primary_arm": "common_displacement",
+    "secondary_arm": "common_interaction",
+    "fix_break_reference": "endpoint_std"
+  },
+  "orthogonal_rotation_control": {
+    "distribution": "angles frozen ex ante as label-blind pseudo-random draws over (0,90) degrees; 45 degrees excluded because it is the primary common/displacement transform",
+    "angles_degrees": [8.3, 17.6, 29.1, 60.4, 72.7, 83.8],
+    "arm_prefix": "orthrot_",
+    "same_block_l2": true,
+    "upper_bound": "maximum observed metric over every frozen angle; no angle selection or tuning is permitted"
+  },
+  "statistics": {
+    "seed": 20260728,
+    "n_bootstrap": 2000,
+    "bootstrap_lower_quantile": 0.05,
+    "bootstrap_upper_quantile": 0.95,
+    "n_id_hash_permutations": 256,
+    "permutation_hash": "sha256",
+    "permutation_pairing": "independent label-blind ID-hash ordering within dataset and split; the registered structural-null train index is fixed and excluded from the remaining-source bijection",
+    "holm_alpha": 0.05,
+    "metrics": ["accuracy", "macro_f1", "roc_auc"],
+    "holm_metrics": ["accuracy", "macro_f1"],
+    "bootstrap_comparisons": {
+      "primary_vs_controls": [
+        "endpoint_std",
+        "endpoint_ow",
+        "avg_score",
+        "endpoint_concat",
+        "common",
+        "displacement"
+      ],
+      "secondary_vs_controls": [
+        "endpoint_concat",
+        "common",
+        "common_displacement"
+      ]
+    }
+  },
+  "history_parity": {
+    "absolute_tolerance": 1e-12,
+    "require_endpoint_accuracy_match": true
+  },
+  "full_sha256_preflight": {
+    "required": true,
+    "schema_version": "c01_full_sha256_manifest_v1",
+    "run_id": "C01-HASH-v1",
+    "source_set_id": "c01_l24_train_dev_eight_files_v1",
+    "manifest_path": "artifacts/c01_policy_contrastive/v1/hash_preflight/C01-HASH-v1/full_sha256_manifest.json",
+    "approved_manifest_sha256": "083275d39a1026bde3b6583bd5608d41cec5b431da9ffda87ae8ab1046cf2305",
+    "producer_script": "scripts/analysis/c01_hash_inputs.py",
+    "expected_file_count": 8,
+    "required_thread_environment": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1"
+    },
+    "access_ledger_entry_keys": [
+      "ordinal",
+      "path",
+      "dataset",
+      "split",
+      "policy",
+      "open_attempted",
+      "opened",
+      "bytes_read",
+      "test_like"
+    ],
+    "slurm_job_id_pattern": "[1-9][0-9]*",
+    "require_complete": true,
+    "require_exact_64hex_before_torch_load": true
+  },
+  "decision": {
+    "required_datasets": ["MHC_zh", "HateMM"],
+    "required_metrics": ["accuracy", "macro_f1"],
+    "minimum_gain_over_strongest_control": 0.02,
+    "gain_controls": [
+      "endpoint_std",
+      "endpoint_ow",
+      "avg_score",
+      "endpoint_concat",
+      "common"
+    ],
+    "require_accuracy_gain_over_deployed_r0_context": true,
+    "minimum_bootstrap_lower_bound": 0.0,
+    "require_primary_bootstrap_holm_reject": true,
+    "require_primary_above_all_rotation_controls": true,
+    "require_rotation_bootstrap_holm_reject": true,
+    "require_primary_and_displacement_above_shuffle_p95": true,
+    "require_shuffle_holm_reject": true,
+    "minimum_net_fixes": {
+      "MHC_zh": 2,
+      "HateMM": 3
+    },
+    "require_no_small_displacement_dominance": true,
+    "continue_label": "CONTINUE_SAME_POOLING_CACHE_ONLY",
+    "kill_label": "KILL_CURRENT_ENDPOINT_ROUTE_ONLY"
+  },
+  "output": {
+    "namespace": "artifacts/c01_policy_contrastive/v2/a0/C01-A0-v2",
+    "result_file": "C01_A0_OUT.json",
+    "decision_file": "C01_A0_DECISION.json",
+    "record_file": "refine-logs/C01_A0_RECORD.md",
+    "slurm_stdout": "slurm/logs/c01_a0_v2_%j.out",
+    "slurm_stderr": "slurm/logs/c01_a0_v2_%j.err",
+    "maximum_result_bytes": 100000000,
+    "atomic_json": true,
+    "decision_exclusive_create": true,
+    "run_namespace_no_clobber": true,
+    "result_schema_version": "c01_a0_result_v2",
+    "decision_schema": {
+      "schema_version": "c01_a0_decision_v2",
+      "allowed_decisions": [
+        "CONTINUE_SAME_POOLING_CACHE_ONLY",
+        "KILL_CURRENT_ENDPOINT_ROUTE_ONLY"
+      ],
+      "required_dataset_keys": ["MHC_zh", "HateMM"],
+      "small_displacement_gate_selection_rule": "strongest_ordinary_control_by_accuracy_then_macro_f1_then_frozen_gain_controls_order",
+      "endpoint_concat_small_displacement_role": "diagnostic_only",
+      "zero_contract_probe_other_modality_state_enum": [
+        "normal_nonzero",
+        "exact_zero",
+        "tiny_nonzero",
+        "nonfinite"
+      ],
+      "zero_contract_probe_exact_zero_semantics": "observation_only_structural_interpretation_requires_external_evidence_and_review",
+      "exclusive_create": true,
+      "required_halt_only_validity_guards": [
+        "probe_evidence_exact",
+        "raw_zero_allowlist_exact",
+        "derived_zero_masks_exact",
+        "displacement_null_exclusion_dual_path_exact",
+        "shuffle_fixed_point_bijection",
+        "registered_null_absent_from_all_top20",
+        "with_null_remove_null_dtype_shape_bytes_equivalence"
+      ],
+      "validity_guards_halt_only": true,
+      "exact_array_comparison": "dtype_shape_c_order_bytes_sha256",
+      "exact_metric_comparison": "canonical_sorted_typed_ieee754_binary64_hex_json_sha256",
+      "exact_zero_semantics": "all_components_numeric_equal_zero_with_exact_registered_row_mask"
+    }
+  },
+  "zero_contract_v2": {
+    "required": true,
+    "probe_path": "artifacts/c01_policy_contrastive/v2/zero_contract_probe/C01-ZERO-PROBE-v1/zero_contract_probe.json",
+    "probe_sha256": "bee4964ce7e4ca81cfdb72c3859f78196568badf982aef587bc14ee6dbe63526",
+    "probe_schema_version": "c01_zero_contract_probe_v1",
+    "probe_run_id": "C01-ZERO-PROBE-v1",
+    "authorized_dataset": "HateMM",
+    "authorized_split": "train",
+    "authorized_id": "hate_video_95",
+    "authorized_row_index": 355,
+    "expected_label_integrity_only": 1,
+    "authorized_policies": ["standard", "oneword"],
+    "authorized_modalities": ["img", "text"],
+    "input_state": "exact_numeric_zero",
+    "normalization_output_state": "exact_numeric_zero",
+    "remove_null_comparison": "dtype_shape_c_order_bytes_exact",
+    "remove_null_metric_comparison": "canonical_typed_ieee754_binary64_bytes_exact",
+    "signed_zero_comparison_policy": "positive_and_negative_zero_are_distinct",
+    "nonfinite_comparison_policy": "nan_and_inf_forbidden",
+    "halt_only": true,
+    "require_fixed_null_in_shuffle": true,
+    "require_derived_mask_preservation": true,
+    "require_null_absent_from_all_top20": true,
+    "require_remove_null_exact_equivalence": true,
+    "require_displacement_null_exclusion_dual_path_exact": true
+  }
+}

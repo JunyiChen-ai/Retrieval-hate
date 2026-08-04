@@ -1,0 +1,405 @@
+{
+  "schema_version": "c04_a0t_small_v1_v8_config_v1",
+  "run": {
+    "run_id": "C04-A0T-SMALL-v1",
+    "implementation_version": "v8_prospective",
+    "datasets": [
+      "HateMM",
+      "MHC_zh"
+    ],
+    "dataset_execution_order": "strictly_serial",
+    "artifact_root": "artifacts/c04/a0t_small_v1_impl_v8",
+    "no_performance_claim": true
+  },
+  "authorization": {
+    "implementation_authorized": true,
+    "preflight_materialization_authorized": false,
+    "teacher_authorized": false,
+    "gpu_authorized": false,
+    "slurm_authorized": false,
+    "small_tranche_execution_authorized": false,
+    "post_job_reconciliation_authorized": true,
+    "dev_authorized": false,
+    "test_authorized": false,
+    "ocr_authorized": false,
+    "external_api_authorized": false,
+    "network_authorized": false,
+    "cross_dataset_authorized": false,
+    "label_value_authorized_before_seal": false,
+    "chain_authorized": false,
+    "release_authorized": false,
+    "resubmit_authorized": false
+  },
+  "review": {
+    "design_verdict": "GO_0C_0H_0I",
+    "design_review_path": "refine-logs/C04_V4_DESIGN_REVIEW.md",
+    "code_resource_verdict": "GO",
+    "code_resource_authorization_manifest": "refine-logs/C04_A0T_SMALL_V1_V8_CODE_RESOURCE_AUTHORIZATION.json",
+    "code_resource_authorization_sha256": "c0a12d1a4cae0105dadfc477c9e9111a81361b087cea52cfd5de735b53150344",
+    "payload_hash_verdict": "GO",
+    "payload_review": "refine-logs/C04_A0T_SMALL_V1_V8_PAYLOAD_HASH_REVIEW.json",
+    "payload_review_sha256": "8d1fc767b714bc0ee3633be3aa7453a708872004bf06aa805a8e55ad03302392",
+    "gpu_execution_verdict": "GO",
+    "gpu_execution_authorization_manifest": "refine-logs/C04_A0T_SMALL_V1_V8_GPU_EXECUTION_AUTHORIZATION.json",
+    "gpu_execution_authorization_sha256": "a786a90b15eaeb99c9df958c5608e74c6316dbcc88dd40213c98c28066d5197f",
+    "resource_reconciliation_verdict": "GO",
+    "resource_reconciliation_authorization_manifest": "refine-logs/C04_A0T_SMALL_V1_V8_RESOURCE_RECONCILIATION_AUTHORIZATION.json",
+    "resource_reconciliation_authorization_sha256": "8c78cd797b97f78dea21a3ff6f3d0f111076d36c7180d2b4b1b73c167634d07a",
+    "payload_hash_review_required_after_cpu_preflight": true,
+    "execution_blocked_until_all_stage_reviews_go": true,
+    "downstream_review_requires_terminal_resource_state": true
+  },
+  "selection": {
+    "tag": "C04-A0T-SMALL-v1",
+    "suffix": "20260729",
+    "digest_payload": "utf8(tag || dataset || video_id || suffix)",
+    "sort": "ascending_sha256_utf8_concatenation",
+    "tie_break": "ascending_video_id_utf8",
+    "count_per_dataset": 200,
+    "replacement": false,
+    "redraw": false,
+    "class_balance": false,
+    "label_access_before_allowlist_seal": false
+  },
+  "datasets": {
+    "HateMM": {
+      "expected_train_n": 744,
+      "train_asr": "data/ASR/HateMM/train_asrK4_whisper-large-v3.jsonl",
+      "train_asr_sha256": "d47d4062e96452a533a2b3ce7d80e0d5e1bd274b4c5ca6940e3d88f851f24124",
+      "train_asr_size": 3900160,
+      "language_contract": "english_proposition_max_32_whitespace_tokens",
+      "video_root": "data/video/HateMM/All",
+      "physical_train_video_root": "/data/jehc223/HateMM/video",
+      "allowlist_path": "artifacts/c04/a0t_small_v1_impl_v8/freeze/HateMM.allowlist.json",
+      "source_manifest_path": "artifacts/c04/a0t_small_v1_impl_v8/freeze/HateMM.source_manifest.json",
+      "checkpoint_path": "artifacts/c04/a0t_small_v1_impl_v8/checkpoints/HateMM/prompt_records",
+      "frame_pack_root": "artifacts/c04/a0t_small_v1_impl_v8/checkpoints/frames/HateMM"
+    },
+    "MHC_zh": {
+      "expected_train_n": 579,
+      "train_asr": "data/ASR/MHC_zh/train_asrK4_whisper-large-v3.jsonl",
+      "train_asr_sha256": "1c3ce3d2b191e259a8251eb53b74a542b31955917d1b090882e6a2d7d4b21a5d",
+      "train_asr_size": 610605,
+      "language_contract": "chinese_proposition_max_64_unicode_scalars",
+      "video_root": "data/video/MHC_zh/All",
+      "physical_train_video_root": "/data/jehc223/Multihateclip/Chinese/video",
+      "allowlist_path": "artifacts/c04/a0t_small_v1_impl_v8/freeze/MHC_zh.allowlist.json",
+      "source_manifest_path": "artifacts/c04/a0t_small_v1_impl_v8/freeze/MHC_zh.source_manifest.json",
+      "checkpoint_path": "artifacts/c04/a0t_small_v1_impl_v8/checkpoints/MHC_zh/prompt_records",
+      "frame_pack_root": "artifacts/c04/a0t_small_v1_impl_v8/checkpoints/frames/MHC_zh"
+    }
+  },
+  "teacher_contract": {
+    "prompt_forms": [
+      "A",
+      "B"
+    ],
+    "prompt_order": "A_then_B_per_video",
+    "num_frames": 8,
+    "frame_index_rule": "floor((i+0.5)*N/8), i=0..7",
+    "zero_frame_rule": "eight_fixed_rgb_black_frames",
+    "max_pixels": 151200,
+    "max_pixels_authority": "360*420, the cap every deployed Qwen2.5-VL entrypoint in this repository already uses (generate_c02_density_view_text_embedding_HF.py:157, predict_target_qwen.py:299, generate_vision_summary.py:69, p10_score_segments.py:147, p10c_score_segments.py:137, score_segments_mllm.py:87, role3/arbitrate_qwen.py:363 all default to it, and generate_VideoMLLM_embedding_bidir_textpool_HF.py:29 calls 151200 'the deployed max_pixels'). v7 passed NO max_pixels, so its teacher saw native-resolution frames -- unlike every other Qwen2.5-VL call in the project -- and job 13852 died allocating 110.50 GiB of fp32 vision attention on a 1080x1920 item.",
+    "max_pixels_is_a_teacher_input_change": true,
+    "visual_patch_token_hard_ceiling": 4096,
+    "visual_patch_token_ceiling_is_checked_before_every_forward": true,
+    "requested_decode_failure_rule": "fixed_rgb_black_frame_no_neighbor_retry",
+    "transcript_normalization": "NFKC_then_CRLF_CR_to_LF",
+    "transcript_cap_unicode_scalars": 2048,
+    "transcript_head_scalars": 1024,
+    "transcript_tail_scalars": 1024,
+    "transcript_separator": "\n<TRUNCATED>\n",
+    "do_sample": false,
+    "temperature": 0.0,
+    "num_beams": 1,
+    "max_new_tokens": 256,
+    "retry_count": 0,
+    "ocr": false,
+    "title_input": false
+  },
+  "prompt_hashes": {
+    "A": "cecb3555daa7a4cc0840db154086138dae9260795bde2b64e89f6724d80abb9b",
+    "B": "9521bee7fe7a6964d4ff61605bbe5a02eb4cfd149fd5aa9cbf975accbfe40314",
+    "combined": "a42268e4c0d1afb2b9576dd968d7f6250fc989fe3b97077a55363e63e1e2bb8a",
+    "system": "1ffc06755b18f9315dc930aaf02a0c79cf1f9e2d91d0ec5bae2fa0c1436ed048"
+  },
+  "prompt_hash_contract": {
+    "pending_sentinel": "PENDING_CPU_PREFLIGHT_HASH_FREEZE",
+    "keys": [
+      "A",
+      "B",
+      "combined",
+      "system"
+    ],
+    "sentinel_permitted_only_on": "CPU_PREFLIGHT_FREEZE_RUN",
+    "sentinel_requires_authorization": "preflight_materialization_authorized",
+    "any_other_value_halts": true,
+    "mixed_pending_and_frozen_halts": true,
+    "foreign_key_set_halts": true,
+    "downstream_stage_reading_sentinel_halts": true,
+    "frozen_literal_artifact": "artifacts/c04/a0t_small_v1_impl_v8/freeze/prompt_hashes.json",
+    "downstream_authority": "the frozen literal artifact and the preflight manifest, never the pending sentinel",
+    "config_contract_normalizes_prompt_hashes": true,
+    "config_contract_normalization_reason": "the CPU preflight materializes these four values, so the field necessarily differs before and after the freeze; normalizing it keeps the post-freeze config amendment contract-neutral for the manifest, genesis ledger and resource ticket pinned at freeze time",
+    "maps_expected_hashes_is_inside_the_contract_hash": "maps.expected_hashes is NOT normalized and must remain the literal string PENDING_CPU_PREFLIGHT_AND_FRESH_PAYLOAD_REVIEW for the entire lifecycle; amending it would move the config contract and simultaneously invalidate the pinned code/resource authorization manifest, genesis GPU ledger and resource ticket inside a no-clobber namespace. Materialized map hashes are recorded in the preflight manifest and bound by the payload-hash review manifest, never written back into this field.",
+    "v5_defect_closed": "v5 asserted config<->computed prompt-hash equality before the freeze that produces those hashes, so its CPU preflight could never pass its own static gate (job 13805, FAILED 1:0)"
+  },
+  "reliability": {
+    "confidence_min": 0,
+    "confidence_max": 4,
+    "reliable_confidence_min": 3,
+    "proposition_agreement_cosine_min": 0.8,
+    "per_slot_usable_min": 0.85,
+    "per_slot_missing_max": 0.1,
+    "per_slot_conflict_max": 0.2,
+    "joint_all_four_usable_min": 0.6,
+    "max_nonfallback_value_frequency": 0.9,
+    "individual_malformed_form_is_not_terminal": true,
+    "semantic_failure_terminal": "KILL_C04_TEACHER_SEMANTIC_RELIABILITY",
+    "prompt_model_threshold_rewrite_after_failure": false
+  },
+  "fallback_contract": {
+    "states": [
+      "stable",
+      "single_valid",
+      "conflict",
+      "missing"
+    ],
+    "fallback_content": "NO_CONTENT_<slot>",
+    "full_render": "content<fallback=state>",
+    "state_only_render": "NO_CONTENT_<slot><fallback=state>",
+    "state_blind_render": "content",
+    "fallback_collapse_render": "content<fallback=unavailable>",
+    "shuffle_tag": "C04-FB-SHUFFLE-v3",
+    "noise_tag": "C04-FB-NOISE-v3",
+    "shuffle_noise_are_later_outer_fold_controls": true
+  },
+  "maps": {
+    "role_map_tag": "C04-SPASH-ROLEMAP-v2",
+    "role_maps": {
+      "S": "artifacts/c04/a0t_small_v1_impl_v8/freeze/maps/role_S.json",
+      "P": "artifacts/c04/a0t_small_v1_impl_v8/freeze/maps/role_P.json",
+      "T": "artifacts/c04/a0t_small_v1_impl_v8/freeze/maps/role_T.json",
+      "H": "artifacts/c04/a0t_small_v1_impl_v8/freeze/maps/role_H.json"
+    },
+    "role_input_dim": 3584,
+    "role_output_dim": 256,
+    "le3_tag": "C04-LE3-DENSEJL-v3",
+    "le3_shape": [
+      256,
+      3598
+    ],
+    "le3_payload_path": "artifacts/c04/a0t_small_v1_impl_v8/freeze/maps/le3_256x3598.f32le",
+    "additive_tag": "C04-ADDITIVE-DENSEJL-v3",
+    "additive_shape": [
+      256,
+      1024
+    ],
+    "additive_payload_path": "artifacts/c04/a0t_small_v1_impl_v8/freeze/maps/additive_256x1024.f32le",
+    "scale": 0.0625,
+    "expected_hashes": "PENDING_CPU_PREFLIGHT_AND_FRESH_PAYLOAD_REVIEW"
+  },
+  "model": {
+    "model_id": "Qwen/Qwen2.5-VL-7B-Instruct",
+    "snapshot_revision": "cc594898137f460bfe9f0759e9844b3ce807cfb5",
+    "snapshot_path": "/data/jehc223/home/.cache/huggingface/hub/models--Qwen--Qwen2.5-VL-7B-Instruct/snapshots/cc594898137f460bfe9f0759e9844b3ce807cfb5",
+    "offline_only": true,
+    "model_tree_sha256": "55705d03c3150ccff547732d26c441084196a7b46fa84bb96b93ce986ee28c22",
+    "processor_tree_sha256": "f77f60221873e53eada13794f0b3595641aa94505b1fd528bd097e418920710e",
+    "files": {
+      "model": [
+        {
+          "path": "config.json",
+          "size": 1374,
+          "sha256": "77d9ec7321cc572e3579e2c84799c9cadaded63c49ce93b101733349fc330c43"
+        },
+        {
+          "path": "generation_config.json",
+          "size": 216,
+          "sha256": "0a3aea82869fe29f20dc95ccf3e2bcff380eca1f5ad6447a4a4b37110b08e43e"
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "size": 57619,
+          "sha256": "73b333b0b16e5286ddba615d2caebcd495cf7e616f52eb217a81781393d79de9"
+        },
+        {
+          "path": "model-00001-of-00005.safetensors",
+          "size": 3900233256,
+          "sha256": "e97b877e47fde53a6c6e77aafb36e58e91ee9d95c4a3eeac6f1b5c0e6a1c986e"
+        },
+        {
+          "path": "model-00002-of-00005.safetensors",
+          "size": 3864726320,
+          "sha256": "a9a300a43b4724eee2abe7c18ceb26768d0ab011eb0cad19d9bfd2476a24d024"
+        },
+        {
+          "path": "model-00003-of-00005.safetensors",
+          "size": 3864726424,
+          "sha256": "111223d173e00bbee81cba1216fad28668df3476706b7fd26f4d5b50f8b3a507"
+        },
+        {
+          "path": "model-00004-of-00005.safetensors",
+          "size": 3864733680,
+          "sha256": "ef47f634fa57d46ee134edcc09f34085a47da1e16c12a2abe0d67118be6d72ed"
+        },
+        {
+          "path": "model-00005-of-00005.safetensors",
+          "size": 1089994880,
+          "sha256": "0c859795ad3a627a9b95bcb762e059d5b768a4a36fdd4affeff269d93fdecc67"
+        }
+      ],
+      "processor": [
+        {
+          "path": "preprocessor_config.json",
+          "size": 350,
+          "sha256": "f2058c716eef96ccaed1cc1e2d0c08306b62586d535b28d9d08e691b2fab7ca0"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "size": 5702,
+          "sha256": "4abd3520120e266da84c0864fee064d1fb10806f02225911a47253dd38dc5f56"
+        },
+        {
+          "path": "tokenizer.json",
+          "size": 7031645,
+          "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+        },
+        {
+          "path": "vocab.json",
+          "size": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        },
+        {
+          "path": "merges.txt",
+          "size": 1671839,
+          "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+        },
+        {
+          "path": "chat_template.json",
+          "size": 1050,
+          "sha256": "ad60d90252ed0b0705ba14e2d0ad0fec0beac1ea955642b54059b36052d8bc96"
+        }
+      ]
+    }
+  },
+  "resources": {
+    "gpu_count": 1,
+    "cpus": 8,
+    "ram_gb": 64,
+    "small_cap_gpu_seconds": 5222,
+    "campaign_aggregate_cap_gpu_seconds": 28800,
+    "campaign_first_tranche_phase_cap_gpu_seconds": 7200,
+    "guard_item_margin_seconds": 300,
+    "guard_seal_reserve_seconds": 600,
+    "minimum_submit_remaining_seconds": 300,
+    "watchdog_reserve_seconds": 300,
+    "watchdog_term_then_kill_seconds": 30,
+    "slurm_time_directive_allowed": false,
+    "job_array_allowed": false,
+    "job_dependency_allowed": false,
+    "concurrent_c04_gpu_jobs_allowed": false
+  },
+  "schemas": {
+    "prompt_record": "schemas/c04/c04_a0t_small_v1_v8_prompt_record.schema.json",
+    "canonical_record": "schemas/c04/c04_a0t_small_v1_v8_canonical_record.schema.json",
+    "stage_authorization": "schemas/c04/c04_a0t_small_v1_v8_stage_authorization.schema.json",
+    "payload_review": "schemas/c04/c04_a0t_small_v1_v8_payload_review.schema.json",
+    "resource_final_state": "schemas/c04/c04_a0t_small_v1_v8_resource_final_state.schema.json"
+  },
+  "paths": {
+    "preflight_manifest": "artifacts/c04/a0t_small_v1_impl_v8/freeze/preflight_manifest.json",
+    "prompt_hash_freeze": "artifacts/c04/a0t_small_v1_impl_v8/freeze/prompt_hashes.json",
+    "access_ledger": "artifacts/c04/a0t_small_v1_impl_v8/freeze/access_ledger.json",
+    "gpu_ledger": "artifacts/c04/a0t_small_v1_impl_v8/resource/gpu_ledger.json",
+    "gpu_ledger_lock": "artifacts/c04/a0t_small_v1_impl_v8/resource/gpu_ledger.lock",
+    "resource_ticket": "artifacts/c04/a0t_small_v1_impl_v8/resource/resource_ticket.json",
+    "resource_consumption": "artifacts/c04/a0t_small_v1_impl_v8/resource/resource_ticket_consumed.json",
+    "allocation_entry_marker": "artifacts/c04/a0t_small_v1_impl_v8/resource/allocation_entry_marker.json",
+    "allocation_claim": "artifacts/c04/a0t_small_v1_impl_v8/resource/allocation_claim.json",
+    "resource_final_state": "artifacts/c04/a0t_small_v1_impl_v8/resource/resource_final_state.json",
+    "budget_breach": "artifacts/c04/a0t_small_v1_impl_v8/resource/budget_breach.json",
+    "campaign_gpu_ledger": "artifacts/c04/campaign/gpu_ledger.json",
+    "sealed_prompt_records": "artifacts/c04/a0t_small_v1_impl_v8/seal/prompt_records.jsonl",
+    "sealed_canonical_bank": "artifacts/c04/a0t_small_v1_impl_v8/seal/canonical_bank.jsonl",
+    "producer_access_ledger": "artifacts/c04/a0t_small_v1_impl_v8/seal/access_ledger.json",
+    "provisional_gpu_usage": "artifacts/c04/a0t_small_v1_impl_v8/seal/provisional_gpu_usage.json",
+    "seal_manifest": "artifacts/c04/a0t_small_v1_impl_v8/seal/seal_manifest.json"
+  },
+  "implementation_hashes": {
+    "scripts/analysis/c04_a0t_small_v1_v8_common.py": "1dbcc2c480ecc71abdf200b179382c098b597ff05cdf277b48090a293ca00703",
+    "scripts/analysis/c04_a0t_small_v1_v8_preflight.py": "51f2ae69207a1cf575bc3756f7be3f209e53950b53b2d98c18e90302540f1f6b",
+    "scripts/analysis/c04_a0t_small_v1_v8_gpu_ledger.py": "b2e98d23cd5c851b9277a94cdc8875a1fca6293b9511106b573fcf5d11247049",
+    "scripts/analysis/c04_a0t_small_v1_v8_producer.py": "7997d8ab9659f5ce91e111156d3cb3fcf3ab3360c405c53a7d291272c610f65a",
+    "scripts/wrappers/c04_a0t_small_v1_v8_preflight.sh": "c52a8ab3b9d8678633c8e00ab831aab1ab231e41edabc814ab933893865f375c",
+    "scripts/wrappers/c04_a0t_small_v1_v8.sh": "0568ed9381271fe6d901aafef713eff68c0932c74b54bf413a619fb357cfff18",
+    "scripts/wrappers/c04_a0t_small_v1_v8_reconcile.sh": "2a6a922d2c7ac913141d4ac284734205ce1e9d8fb091273c11872bd66456a7cd",
+    "scripts/slurm/c04_a0t_small_v1_v8_preflight.sbatch": "9214e2287b5244b86505ff1a9d9685b45eb8c8ad1904fea51a51828a5219d462",
+    "scripts/slurm/c04_a0t_small_v1_v8.sbatch": "bff81fd58881638ee75a489f1931013d51ca0cafe020ea4d6a5b4ad6d34c1d84",
+    "scripts/slurm/c04_a0t_small_v1_v8_reconcile.sbatch": "c17f9f5be14b95bdb32b7b8e020dbd1d953d74b40cbd1d01e3dfc2454268e561",
+    "schemas/c04/c04_a0t_small_v1_v8_prompt_record.schema.json": "eea33f75c196996afa701c32213ca3c6773e4580866e64347722c4a2a01da3ca",
+    "schemas/c04/c04_a0t_small_v1_v8_canonical_record.schema.json": "e36b36d6559f0b26f363aa2b98ac2257ea2418eb38bccd618f24e7cd14ce92ee",
+    "schemas/c04/c04_a0t_small_v1_v8_stage_authorization.schema.json": "316930ee7170021cb8f91c8a51f15292d57033864a563d62a4d61f0dcf437600",
+    "schemas/c04/c04_a0t_small_v1_v8_payload_review.schema.json": "55902820a1160afba3555065f4908dfdf6919e423228d8f75e88d979410f0cfd",
+    "schemas/c04/c04_a0t_small_v1_v8_resource_final_state.schema.json": "2abdf8f674a31166d489952cca4d5b27b7553d8099793ef001832932bcca698c"
+  },
+  "frozen_design_hashes": {
+    "refine-logs/C04_REFINED_PROPOSAL_V2.md": "d2b86f87ee81588b535ffa08fa45b75285d0067252c0322f4a3a4714611a215d",
+    "refine-logs/C04_EXPERIMENT_PLAN_V2.md": "1fcbddffa32a8108d2791152bdb0128dafd93bd3bbc4e551204917b8617e4c87",
+    "refine-logs/C04_USER_AMENDMENT_V2.md": "c3180ecb8708d60bc41717961322083ed03ea4a6bf0bc5617d290981ccc7278f",
+    "refine-logs/C04_STAGE0_ASSET_AUDIT.md": "4e054569d6de19ed4a510212848164e4fbf43563128474fb15fee4a14d392524",
+    "refine-logs/C04_STAGE0_ASSET_AUDIT_V2.md": "1afbae3767012392cfa9429cd87282377889ec62f6907a89c02f9311b8253fd6",
+    "refine-logs/C04_V2_REVIEW_RESPONSE.md": "1a4ee800aaa5d26d333f7c3620f3595b7405e23cea83d14df916b079a114d001",
+    "refine-logs/C04_V2_DESIGN_REVIEW.md": "a4052227e212fcf261bdf9de90fc1bf07a2632869e5ea4f0fb5444c3a055e338",
+    "refine-logs/C04_REFINED_PROPOSAL_V3.md": "57f4488ebc9dcbc3ef9fecbeab099006f14bdeb0505f273140a5abec9ad33d8b",
+    "refine-logs/C04_EXPERIMENT_PLAN_V3.md": "c7766ff3adbf6e35b9a9985ecab2bc3128ec48c55ef164cff12147ff9e82cbfb",
+    "refine-logs/C04_V3_REVIEW_RESPONSE.md": "bcb1a5fe359a8ede965ad90b385c866374b8079bb209bb2197b1117e062a67e9",
+    "refine-logs/C04_V3_DESIGN_REVIEW.md": "775a15257f91a3dac9719cf71f2245458598631bb3ccc42c53b1acb393ff955c",
+    "refine-logs/C04_REFINED_PROPOSAL_V4.md": "fc17447642eb08ced1014b702e7f88be16559ff5e9bb39a3a5bb5401ce6fba73",
+    "refine-logs/C04_EXPERIMENT_PLAN_V4.md": "f2c331ed0a5e58ac60af18e1ff4befd11f7496e8527961f9d91cf34ea411bfa6",
+    "refine-logs/C04_V4_REVIEW_RESPONSE.md": "13bf1dcbe2d7cfbb7ac881c58491649f443639f925bf3929ebefa0bd1a44021c",
+    "refine-logs/C04_V4_DESIGN_REVIEW.md": "340ae2c156e7acab8a19dcda9625f883058377ca618bdc4fd59177900738a854"
+  },
+  "projection_basis": {
+    "purpose": "the measured inputs to the v8 CPU-preflight pre-submit projection gate",
+    "source_job": "13852",
+    "source_job_name": "c04_a0t_small_v1_v7",
+    "sacct_command": "sacct -X -n -P -j 13852 -o JobIDRaw,JobName,State,ExitCode,ElapsedRaw,AllocTRES",
+    "sacct_state": "FAILED",
+    "sacct_exit_code": "1:0",
+    "sacct_elapsed_seconds": 1978,
+    "sacct_alloc_tres": "billing=8,cpu=8,gres/gpu=1,mem=64G,node=1",
+    "forward_source": "artifacts/c04/a0t_small_v1_impl_v7/checkpoints/HateMM/prompt_records/*.json, field elapsed_seconds",
+    "hatemm_forward_count": 400,
+    "hatemm_forward_seconds_sum": 1769.9,
+    "hatemm_forward_seconds_mean": 4.4248,
+    "hatemm_forward_seconds_median": 4.457,
+    "hatemm_forward_seconds_max": 10.15,
+    "non_forward_overhead_seconds": 208.1,
+    "non_forward_overhead_derivation": "1978 sacct elapsed - 1769.9 summed forward seconds",
+    "basis_regime": "V7_NATIVE_RESOLUTION",
+    "basis_note": "v7's forwards ran at NATIVE resolution: measured over its own 200 HateMM frame packs, pre-merge visual tokens were min 1456 / median 8160 / max 9248 / mean 6823, against capped min 1456 / median 2880 / max 3072 / mean 2848. Forward time regresses strongly on that count (least squares over the 400 measured forwards: elapsed = 1.9913 + 3.567e-4 * pre_merge_patch_tokens), so v7's per-forward mean is an UPPER BOUND on a v8 forward for the same item. non_forward_overhead_seconds also still contains the 201 frame packs v7 built inside its allocation, which v8 does not do, so it over-counts as well.",
+    "capped_regime_observation": {
+      "hatemm_forwards_on_items_already_at_or_below_the_cap": 46,
+      "their_mean_seconds": 2.9,
+      "their_mean_native_patch_tokens": 2534,
+      "forwards_on_items_above_the_cap": 354,
+      "their_mean_seconds_above": 4.623,
+      "their_mean_native_patch_tokens_above": 7380,
+      "note": "for these 46 forwards native geometry EQUALS capped geometry, so 2.900s is a direct measurement in the capped regime. It is a biased subsample (small-frame videos), so it is reported as corroboration only and is NOT the gate basis."
+    },
+    "gate_rule": "projected = non_forward_overhead_seconds + measured frame-pack validate+load seconds + 800 * hatemm_forward_seconds_mean; the tranche proceeds iff projected <= (small_cap_gpu_seconds - watchdog_reserve_seconds - guard_item_margin_seconds - guard_seal_reserve_seconds) AND the measured worst-case pre-merge patch-token count is strictly below visual_patch_token_hard_ceiling. There is no third state."
+  },
+  "v8_scope": {
+    "supersedes": "artifacts/c04/a0t_small_v1_impl_v7 (GPU job 13852, CUDA OOM in the vision tower, no scientific verdict)",
+    "v7_terminal_state": "ENGINEERING_HALT_CUDA_OOM_NO_SCIENTIFIC_VERDICT; resource_final_state published with seal_published=false; the namespace is terminal and is not reused",
+    "no_v7_record_is_salvaged": "v7 completed 400/400 HateMM prompt records, and none of them enter a v8 bank. Applying the deployed cap changes what the teacher sees for 178/200 HateMM items too, so a mixed bank would hold some items at native resolution and some capped. Uniform teacher input across the sealed tranche is a SCIENTIFIC bar, not a seal-semantics convenience.",
+    "no_scientific_semantic_changed": "selection rule, tag, suffix, count, the sealed 200+200 allowlists, prompt TEXT and its four SHA-256 values, prompt-hash rule, frame index rule, frame count, transcript normalization and cap, decoding parameters, the five-rate reliability taxonomy and every threshold are byte-identical to v7 and to the v6 freeze.",
+    "CHANGE_1_tranche_cap": "small_cap_gpu_seconds 7200 -> 5222. The FIRST_TRANCHE phase ceiling is UNCHANGED at 7200s; what shrinks is this tranche's reservation, because job 13852 really spent 1978 GPU-seconds and the campaign accumulator recorded it from sacct. 1978 + 5222 = 7200 exactly. Every stage that asserted == 7200 now asserts SMALL_TRANCHE_CAP_GPU_SECONDS, including the resource_final_state schema's cap_gpu_seconds const, and a self-test proves 5222 is accepted and 5223 refused against the live ledger.",
+    "CHANGE_2_teacher_input_max_pixels": "max_pixels=151200 is threaded into AutoProcessor.from_pretrained. This IS a teacher-input change and is flagged as one. It is argued as protocol-faithful matching of the deployed project-wide cap, not as a convenience constant. A fail-closed pre-merge visual-token ceiling of 4096 is checked after the processor and BEFORE model.generate, so the v7 failure mode cannot recur even if an item's geometry escapes the cap.",
+    "CHANGE_3_preflight_projection_gate": "the CPU preflight now measures every one of the 400 sealed items' real pre-merge visual token count by running its frozen frames through the Qwen2.5-VL image_processor on CPU (no model, CUDA explicitly unavailable), records them per item, and projects the GPU window from measured inputs. Two states only: fits by measurement -> the namespace is published; does not fit -> HALT before the namespace exists, with the numbers.",
+    "CHANGE_4_frame_packs_move_to_the_cpu_preflight": "the 400 immutable eight-frame packs are now decoded, written and hash-pinned by the CPU preflight; the GPU producer may only LOAD one and HALTs if a pack is absent. Measured cost removed from the allocation: ~0.54s per HateMM item and ~3.4s per MHC_zh item of decode plus PNG encode, plus one MHC_zh item whose decord open fails and whose pyav fallback measured 32.9s. The frame BYTES are unchanged; the pyav fallback is additionally hardened from one pass holding every frame in memory (measured 2879 frames at 1920x842) to two passes retaining only the eight requested.",
+    "CARRIED_FORWARD_v7_round5_observations": "NO_SEAL_SENTINEL is now IMPORTED by the gpu_ledger module rather than redefined (the v7 round-5 reviewer's explicit instruction), and a template-tamper fixture that injects NO banned token was added, so deleting the template-equality clause inside assert_teacher_visible_containment now turns a fixture red.",
+    "v7_hardenings_retained_intact": "I-1 fail-closed teacher-visible identifier containment (400 IDs x 2 forms as a batch precondition before model load, re-checked per forward); I-2 known-answer selection digest vector; I-3 allocation-anchored in-job BudgetGuard with an accounting-only breach record and exit 40; the campaign-ledger pre-ticket headroom check at three points; and the authorization-flag-before-namespace-creation gate in the GPU wrapper."
+  }
+}
