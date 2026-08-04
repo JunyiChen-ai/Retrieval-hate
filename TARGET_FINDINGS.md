@@ -445,3 +445,78 @@ per-phase heartbeat to a progress file. Recorded in `TARGET_STATE.json` under
 Cost: **52.07 h wall, CPU-only, 8 cores, ZERO GPU-hours, $0 cloud.** Records:
 `refine-logs/C09_A0_RECORD.md §8` (post-run), design of record
 `refine-logs/C09_A0_V17_RECORD.md`. State block: `c09_a0_verdict_2026_08_04`.
+
+---
+
+## F119 — C06 CLOSED: prompt-orbit displacement carries no per-item signal in matched head space — the $0 falsifier ran, and the valid instrument returned 0/92 (2026-08-05, 53m34s CPU, 0 GPU-h)
+
+CPU job `13988` COMPLETED `0:0` in `00:53:34`, 8 cores, peak RSS `1.45 GB`, **zero GPU**.
+The frozen arena published **`verdict = HALT`** with all twenty gate names on the face,
+`GATE-LEDGER` measuring `test_path_opens = 0`, `processes_reporting = 74`,
+`dev_path_opens = 70 = mints_executed 66 + expected_sha_dev_opens 4`,
+`stale_attempt_files = 0` and `predicate_failures = []`. Verdict file:
+`artifacts/c06_falsifier/C06_VERDICT.json`.
+
+**The chain, in the order it actually happened.**
+
+1. **Hypothesis.** The prompt-orbit *displacement* direction (`ro_ow − ro_std`, tangent/chord,
+   first-order) carries per-item signal in the deployed fold-head space that the endpoints do
+   not — the head-space analogue of C01's raw-space route.
+2. **Valid instrument result — lineage R (in-domain head), the binding evidence.**
+   `R` passed every per-lineage gate on **both** datasets and was tested.
+   S4's Holm family is frozen at **92 hypotheses per dataset**; **46 were TESTED (R's) and
+   `holm_reject = 0` on both datasets** — no hypothesis survives multiplicity correction.
+   S5's permutation null agrees: all four displacement arms per dataset sit **below** their
+   own shuffled-pair `p95`, `above_p95 = false` throughout, with one-sided raw `p` between
+   `0.366` and `0.498`:
+
+   | dataset | arm · metric | observed | null p95 | raw p |
+   |---|---|---|---|---|
+   | HateMM | `displacement` · acc | `0.889637` | `0.894235` | `0.4708` |
+   | HateMM | `common_displacement` · acc | `0.890534` | `0.894123` | `0.3658` |
+   | MHC-ZH | `displacement` · acc | `0.890616` | `0.895222` | `0.4981` |
+   | MHC-ZH | `common_displacement` · acc | `0.891192` | `0.895941` | `0.4319` |
+
+   The displacement arms do not merely fail to clear a bar — they land **below the centre of
+   their own null**. This is consistent with C01's raw-space result and with the
+   pre-registered expectation.
+3. **Instrument-a disqualification, recorded as a measured fact, not as doubt.** Lineage `N`
+   (the deployed L28-trained head applied to L24 inputs) was dropped on both datasets by
+   `GATE-ORBITDISP` — **11 drop reasons, all of them `GATE-ORBITDISP`**: `ρ_head` reached
+   `0.968691–0.991691` against HateMM's bar `0.968176`, and `0.978742–0.998484` against
+   MHC-ZH's bar `0.977223`. At `ρ ≈ 0.998` the head-space keys collapse toward a single
+   direction, so the arena is measuring a degenerate geometry rather than the hypothesis.
+   The gate did its job: it refused to let a degenerate instrument report.
+4. **Published verdict `HALT`, promoted to `CLOSE` by team-lead ruling** under the user's
+   autonomy directive. **The rule gap, named honestly:** the frozen two-lineage decision rule
+   had no *R-alone* lane. §5.6 rule 3 maps "not every lineage passed" to `HALT`, so the
+   realized outcome — exactly one lineage valid, and that one returning a clean negative —
+   fell through the rule as written. The N-drop was a *predicted* scenario (the design's own
+   §3.3 flags Head-N as out-of-domain) and the rule still lacked a lane for it. The evidence
+   is not ambiguous; the rule was incomplete. Recorded so the next prereg carries the lane.
+
+**Scope — from the verdict's own `scope` block, not paraphrased.** The close covers C06's
+**first-order (tangent/chord) prompt-orbit route in the fold-head arena at `ro_L24`**, on
+HateMM (`-LoRA-curric`, `n = 743`) and MHC-ZH (`-LoRA`, `n = 579`), under the lineage that
+passed its instrument gates. It **does not establish** anything about: `curvature`, a
+`per-arm retrained head`, `C01's per-modality contrast`, `a different readout span`, `L28`,
+`the test split`, or `directions off the primary's own Givens family`. The standing confound
+is unchanged: `generate_VideoMLLM_embedding_readout_HF.py:73-89` — the `ow_` cell changes the
+prompt kind **and** both readout spans, so no result here attributes an effect to the prompt
+alone.
+
+**Untested cell, banked and cheap if ever wanted.** The **28-layer displacement pair** was
+never run. The caches exist (`ro_L28` banked), and the cell is **~1 hour of CPU** — the same
+shape of job as this one. It is not queued and needs no GPU; it is recorded here so a future
+round does not have to rediscover that it is affordable.
+
+**Process note.** The falsifier's own arithmetic held end to end: §8 projected `3674.0 s`
+and the run took `3214 s` wall, inside the projection. Two blocking defects found by the
+single code-review round (`GATE-COMPLETENESS` missing 7 of 20 gate names; a 75th
+ledger-writing process) were fixed pre-run; a third — the sbatch activating no conda
+environment — surfaced only on the first real submission (job `13987`, dead in 1 s at
+`ModuleNotFoundError: torch`, before any science executed) and cost one second, not one hour.
+Freeze record: `refine-logs/C06_FALSIFIER_FREEZE.md`. Design of record:
+`refine-logs/C06_FALSIFIER_PREREG_DRAFT_V15E2.md`. State block: `c06_verdict_2026_08_05`.
+
+Cost: **53m34s wall, CPU-only, 8 cores, ZERO GPU-hours, $0 cloud.**

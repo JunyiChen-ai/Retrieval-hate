@@ -1,0 +1,277 @@
+{
+  "schema_version": "c06-falsifier-1",
+  "experiment_id": "C06_ZERO_COST_FALSIFIER",
+  "run_id": "C06-FALSIFIER-v15",
+  "design_document": "refine-logs/C06_FALSIFIER_PREREG_DRAFT_V15E2.md",
+  "design_sha256": "a24188868272716ffcedcfc0dbb9769f5843f9fe34ebff66ecfc713e118337ae",
+  "design_status": "GO at round 15 (0C/0H/0I) + ERRATUM 1 landed under six binding obligations (C06_FALSIFIER_ERRATUM1_REVIEW.md §5) + CODE-R1 §8 correction + ERRATUM 2 landed under the round-7 obligations (C06_FALSIFIER_ERRATUM2_REVIEW_R7.md). v15 remains on disk unmodified at 75e3aa84a39f3c276be8b5b7fb1271e83c0c2e7e3b0ad0480b47465a81408228; V15E1 at 8cde58aade0d04873f5313a89d6f321c59423e602a85fd88d6505593b0d58f7d.",
+  "erratum_1": {
+    "defect": "§5.4 pre-registered a per-item accuracy decomposition as THE bootstrap statistic while S4 spans holm_metrics=[accuracy,macro_f1] and §5.5 counts both; the 46 macro-F1 hypotheses per dataset had no statistic.",
+    "repair": "accuracy leg RETAINED VERBATIM; a macro-F1 bullet ADDED using C01's recompute-per-resample form via mechfix_ops.macro_f1, seed mean inside.",
+    "accuracy_leg_moved": false,
+    "accuracy_forms_bit_identical": false,
+    "accuracy_forms_max_abs_diff": 5.55e-16,
+    "why_retained": "S4's `lower > 0` and zero-adverse-count predicates are the only ulp-sensitive predicates in the design; 38.8% of near-identical arm pairs get a different one_sided_raw_p under the two forms and 1.2% flip `lower > 0`.",
+    "macro_f1_function": "mechfix_ops.macro_f1 (scripts/analysis/mechfix_ops.py:56-66, sha 635c13124e79ba1a299bc13fc1175a03aa11e09924f5413ce51061793c83fc8d)",
+    "tie_direction": "mechfix_ops can only REMOVE draws from S4's adverse count, never add (19.3% of mathematically-tied draws) -> S4 easier -> SURVIVE easier -> CLOSE harder -> conservative under §4; disclosed at §5.9 item 10."
+  },
+
+  "authorization": {
+    "unblock_condition": "TARGET_STATE.json::gate0_reopen_2026_07_31.dispositions.gated[0].falsifier_spec",
+    "gpu": 0,
+    "extraction": 0,
+    "queue": "SLURM CPU",
+    "submissions": 1
+  },
+
+  "execution": {
+    "require_slurm": true,
+    "cpu_only": true,
+    "required_cpus": 8,
+    "required_memory_gb": 32,
+    "required_environment": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "OMP_NUM_THREADS": "8",
+      "MKL_NUM_THREADS": "8",
+      "OPENBLAS_NUM_THREADS": "8",
+      "NUMEXPR_NUM_THREADS": "8"
+    },
+    "output_root": "artifacts/c06_falsifier",
+    "progress_file": "artifacts/c06_falsifier/progress/C06_PROGRESS.txt",
+    "processes": {"gate_sha_driver": 1, "mints": 66, "fidelity": 6, "arena": 1, "total": 74},
+    "process_order": "1 gate-sha driver leg -> 66 mints -> 6 fidelity -> 1 arena",
+    "projected_seconds": 3674.0,
+    "projected_seconds_conservative": 4592.5
+  },
+
+  "c01_source": {
+    "config": "configs/c01/c01_a0_v2.json",
+    "config_sha256": "f3997bddb4788d451ae5f90d9d03d096df3de383f8133a6d3818d97a241563f5",
+    "module": "scripts/analysis/c01_policy_contrast_a0.py",
+    "module_sha256": "d2b9c2ff909c07518ae35526db9550df655fb4af395cc7a0899f83e48db1b855",
+    "note": "§3.7 second block: these constants are READ from the sha-gated C01 config and asserted equal, never recomputed (§13.1 item 5b)."
+  },
+
+  "frozen_c01_constants_read_and_asserted": {
+    "normalization_epsilon": 1e-12,
+    "tiny_displacement_epsilon": 0.001,
+    "max_tiny_displacement_fraction": 0.05,
+    "max_small_displacement_fix_fraction": 0.5,
+    "small_displacement_train_quantile": 0.1,
+    "small_set_comparison_operator": "<=",
+    "minimum_gain_over_strongest_control": 0.02,
+    "minimum_net_fixes": {"HateMM": 3, "MHC_zh": 2},
+    "gain_controls": ["endpoint_std", "endpoint_ow", "avg_score", "endpoint_concat", "common"],
+    "angles_degrees": [8.3, 17.6, 29.1, 60.4, 72.7, 83.8],
+    "rotation_arm_prefix": "orthrot_",
+    "statistics_seed": 20260728,
+    "n_bootstrap": 2000,
+    "_erratum1_units": {"U_acc_per_comparison_s": 0.0049, "U_mF1_per_arm_seed_s": 0.0384,
+                        "phase4_counts": {"macro_f1": 168, "accuracy": 92},
+                        "phase4_raw_s": 6.90, "phase4_carried_s": 7.0},
+    "bootstrap_lower_quantile": 0.05,
+    "bootstrap_upper_quantile": 0.95,
+    "n_id_hash_permutations": 256,
+    "permutation_hash": "sha256",
+    "holm_alpha": 0.05,
+    "holm_metrics": ["accuracy", "macro_f1"],
+    "topk_deployed": 20
+  },
+
+  "population_derived_constants": {
+    "_verb": "COMPUTED from the arena at run time and asserted equal to these frozen values by GATE-POP; never read as inputs (§3.7 first block, §13.1 item 5a).",
+    "hatemm": {
+      "arena_n": 743,
+      "class_counts": {"pos": 297, "neg": 446},
+      "arena_majority": 0.6003,
+      "full_majority": 0.5995,
+      "gate_arena_band": [0.6203, 0.98],
+      "tie_cap": 7,
+      "removed_zero_rows": [355]
+    },
+    "zh": {
+      "arena_n": 579,
+      "class_counts": {"pos": 180, "neg": 399},
+      "arena_majority": 0.6891,
+      "full_majority": 0.6891,
+      "gate_arena_band": [0.7091, 0.98],
+      "tie_cap": 5,
+      "removed_zero_rows": []
+    }
+  },
+
+  "arena": {
+    "datasets": ["hatemm", "zh"],
+    "lineages": ["N", "R"],
+    "seeds": [0, 1, 2],
+    "folds": 5,
+    "fold_contract": "StratifiedKFold(n_splits=5, shuffle=True, random_state=0) over the full train split",
+    "full_n": {"hatemm": 744, "zh": 579},
+    "mask_convention": "zero_mask is ALWAYS an explicit boolean array, never None (§3.7)",
+    "parity_population": {"hatemm": {"n": 744, "mask": "one_hot_355"}, "zh": {"n": 579, "mask": "all_false"}},
+    "rowsubset_population": {"hatemm": {"n": 743, "mask": "all_false"}},
+    "head_space_arm_dims": {"single_block": 1024, "paired_block": 2048},
+    "raw_space_arm_dims": {"single_block": 7168, "paired_block": 14336}
+  },
+
+  "arms": {
+    "key_space": ["endpoint_std", "endpoint_ow", "endpoint_concat", "common",
+                  "displacement", "common_displacement", "common_interaction",
+                  "orthrot_8p3", "orthrot_17p6", "orthrot_29p1",
+                  "orthrot_60p4", "orthrot_72p7", "orthrot_83p8"],
+    "derived_score": ["avg_score"],
+    "guard": ["guard_orthrot_0", "guard_orthrot_45"],
+    "real": ["displacement", "common_displacement"],
+    "rotation_family": ["orthrot_8p3", "orthrot_17p6", "orthrot_29p1",
+                        "orthrot_60p4", "orthrot_72p7", "orthrot_83p8"],
+    "comparators": {
+      "common_displacement": ["endpoint_std", "endpoint_ow", "avg_score",
+                              "endpoint_concat", "common", "displacement"],
+      "displacement": ["endpoint_std", "endpoint_ow", "avg_score",
+                       "endpoint_concat", "common"]
+    },
+    "note": "avg_score is a C01 gain_control, hence a comparator for BOTH real arms (§3.5)."
+  },
+
+  "decision_rule": {
+    "conditions": ["S1", "S2", "S3", "S4", "S5", "S6", "S7"],
+    "S2_seed_axis": "3/3",
+    "S6_seed_axis": "3/3",
+    "S7_seed_axis": "3/3",
+    "S6_reference": "select_strongest_ordinary_control over decision.gain_controls, within each (dataset, lineage) cell (D-1, §5.2.1)",
+    "S7_arm_scope": ["common_displacement"],
+    "S7_statistic": "head-space one-block d_i = ||l2(h_ow_i) - l2(h_std_i)||, per item under the head that scored it",
+    "S7_zero_fix_convention": {"fixed_fraction": 0.0, "dominated": false},
+    "tiny_ok_carried": false,
+    "holm_family_size_per_dataset": 92,
+    "holm_family_frozen_on_every_path": true,
+    "dropped_lineage_p": 1.0,
+    "s5_family_size_per_cell": 4,
+    "s5_feasibility_max_family": 12,
+    "verdict_rules": {
+      "1": "SURVIVE if any lineage that passed its per-lineage gates clears S1-S7 on both datasets",
+      "2": "CLOSE if BOTH lineages passed their per-lineage gates and neither clears",
+      "3": "HALT (INSTRUMENT_INCONCLUSIVE) otherwise"
+    },
+    "dataset_axis_of_drop": "a lineage failing a per-lineage gate on ANY dataset is dropped on BOTH (§5.6)"
+  },
+
+  "gates": {
+    "global": ["GATE-DET1", "GATE-SHA", "GATE-FOLD", "GATE-FLOOR", "GATE-POP",
+               "GATE-C01PARITY", "GATE-ROWSUBSET", "GATE-RHORAW", "GATE-NULLREMOVED",
+               "GATE-IDPARITY", "GATE-ZEROMASK", "GATE-LEDGER"],
+    "per_lineage": ["GATE-ARENA", "GATE-ORBITDISP", "GATE-NESTED", "GATE-SELFTEST",
+                    "GATE-ZEROOP", "GATE-ALGEBRA"],
+    "reporting": ["GATE-DOMAIN", "GATE-DEVFID"],
+    "counts": {"G": 12, "L": 6, "R": 2, "total": 20},
+    "GATE-C01PARITY": {"predicate": "max_abs_diff == 0.0", "tolerance_struck": "2e-6"},
+    "GATE-ALGEBRA": {"bar": 2e-6},
+    "GATE-ORBITDISP": {
+      "rho_star": {"hatemm": 0.968176, "zh": 0.977223},
+      "granularity": "per fold, all 60 head cells, all 13 arms",
+      "fires_when": "rho_head > rho_star AND rho_raw <= rho_star",
+      "reduction": "mean accumulated in float64 over the float32 keys"
+    },
+    "GATE-RHORAW": {"assert_dp": 4},
+    "GATE-ARENA": {"upper_bound": 0.98, "lower_bound_arm": "endpoint_std"},
+    "GATE-ZEROOP": {
+      "rank_window": 21,
+      "aggregation": "per (dataset, seed, lineage), pooling the five folds",
+      "ranking": "union of the two arms' top-21 sets",
+      "collapse": "worst case over orderings, computed ANALYTICALLY",
+      "one_directional": "REPORT -> HALT only"
+    },
+    "GATE-FLOOR": {
+      "acc_deployed": {"hatemm": [0.8884, 0.8858, 0.8858], "zh": [0.8929, 0.8895, 0.8946]},
+      "mf1_deployed": {"hatemm": [0.8838, 0.8811, 0.8812], "zh": [0.8747, 0.8710, 0.8765]},
+      "dp": 4,
+      "scope": "Head-N through the shared driver, native keys, full n; anchors the driver, hence global"
+    }
+  },
+
+  "rho_raw_frozen_6dp": {
+    "endpoint_std":       {"hatemm": 0.968176, "zh": 0.977223},
+    "common":             {"hatemm": 0.964446, "zh": 0.969686},
+    "orthrot_83p8":       {"hatemm": 0.956894, "zh": 0.964384},
+    "orthrot_72p7":       {"hatemm": 0.956491, "zh": 0.965058},
+    "endpoint_concat":    {"hatemm": 0.955291, "zh": 0.962418},
+    "orthrot_8p3":        {"hatemm": 0.951438, "zh": 0.958355},
+    "orthrot_60p4":       {"hatemm": 0.948430, "zh": 0.958728},
+    "orthrot_17p6":       {"hatemm": 0.944759, "zh": 0.951882},
+    "endpoint_ow":        {"hatemm": 0.942230, "zh": 0.947382},
+    "orthrot_29p1":       {"hatemm": 0.933575, "zh": 0.941849},
+    "common_displacement":{"hatemm": 0.928799, "zh": 0.939863},
+    "common_interaction": {"hatemm": 0.913840, "zh": 0.968188},
+    "displacement":       {"hatemm": 0.891728, "zh": 0.909063}
+  },
+
+  "_code_review_r1": {
+    "review": "refine-logs/C06_FALSIFIER_CODE_REVIEW_R1.md",
+    "verdict": "REVISE 1C/4H/5I/12M",
+    "blocked_on_erratum_2": "RESOLVED -- see erratum_2 below."
+  },
+
+  "erratum_2": {
+    "landed": "refine-logs/C06_FALSIFIER_ERRATUM2_LANDED.md",
+    "reviews": "seven independent rounds; the round-7 adjudication (C06_FALSIFIER_ERRATUM2_REVIEW_R7.md) is the final one",
+    "what_moved": "dev_path_opens gains the two-term form with expected_sha_dev_opens DERIVED and ASSERTED; processes_reporting 73 -> 74 (the --gate-sha-only driver leg is a process); GATE-SHA runs twice and gains the design document as a 38th artifact; SS8 Phase 1d 1->2 x U7 and Phase 1g 1->2 x U11, total 3670.0 -> 3674.0 s; the heartbeat denominator gets a single source with a three-way HALT assertion; three uninstrumented ledger counters move to by_construction publication while their runtime assertions are RETAINED VERBATIM.",
+    "code_review_r1_carried": "I-4 (GATE-ZEROOP ranks on the union of the two arms' top-21 sets), M-6 (the :2724-equivalent S7 consistency assertion), M-7 (finiteness on the decision quantities), M-10 (the arena's import set completed and runtime_block recorded), M-12 (load_ro memoised so the arena performs one load event per dataset)."
+  },
+
+  "ledger": {
+    "test_path_opens": {"expected": 0, "binding": true},
+    "mints_present_before_arena": {"expected": 66, "binding": true},
+    "dev_path_opens": {"expected": "mints_executed + expected_sha_dev_opens", "expected_sha_dev_opens": 4, "derivation": "(dev-like files in the concatenated iterable gate_sha hashes = 2) x (GATE-SHA passes = 2); the arena DERIVES both factors and asserts them against this declaration", "binding": true},
+    "banked_trainlog_opens": {"expected": 6, "binding": false},
+    "processes_reporting": {"expected": 74, "decomposition": "1+66+6+1", "binding": true}
+  },
+  "ledger_by_construction": {
+    "test_label_materialisations": "no code path increments it: c09guard._guarded_open RAISES on a test path, so no test file is opened at all.",
+    "dev_label_materialisations_outside_decisions": "no code path increments it. lab_dev is written twice in the executed corpus -- headspace_mint.py:323 and c06_falsifier_mint.py:336, the latter into the banked .npz -- and read by no path in the arena or headspace_fidelity.py: the arena has no lab_dev reference and never iterates .npz keys generically, and headspace_fidelity.py reads only meta out of the banked .npz and references no label array at all.",
+    "dev_or_test_labels_into_decision_quantities": "no code path increments it: same writes, read by no decision path."
+  },
+
+  "frozen_sha256": {
+    "scripts/analysis/headspace_mint.py": "cefdf8dc2f4a9aefa042ef7bec9b1d06c9721ae5b4a70ec117e9929ff0916612",
+    "scripts/analysis/mechfix_ops.py": "635c13124e79ba1a299bc13fc1175a03aa11e09924f5413ce51061793c83fc8d",
+    "scripts/analysis/mechnov_pairverify.py": "77b0defd8eaa3688e58b6d5d17202bd55d16cf1f4a5aaafbe4b2b98598b7240d",
+    "scripts/analysis/headspace_fidelity.py": "72fd8e0aab61b635b4421b87bdbccc8ef6c58bf28fe1ff64cab0671e08bf6598",
+    "scripts/analysis/c01_policy_contrast_a0.py": "d2b9c2ff909c07518ae35526db9550df655fb4af395cc7a0899f83e48db1b855",
+    "scripts/analysis/c09_guard/c09guard.py": "aed50842c232105f1b06182aa89512ee89dd050bdcaedec2706062c9d745f062",
+    "scripts/analysis/c09_guard/sitecustomize.py": "b238789fd80076b0b890c4894fd8b69255792af51c80cd9fe2d6db6c53383850",
+    "configs/c01/c01_a0_v4.json": "2d9488e6f9af6be00d500d1c2f13912fd4be0ab9439608d33b0857178efe7ca6",
+    "scripts/analysis/c01_policy_contrast_a0_v4.py": "3c545eed876f97aa05f3e85375430bedf8e63226c70f3ee8ea12da02e9bf5514",
+    "scripts/analysis/c01_policy_contrast_a0_v3.py": "40b35eee2fb6fdbdb21fe9b4acfdcebf003c121c76492b898fbd2ea9b8c34dfb",
+    "configs/c01/c01_a0_v3.json": "4ddb0f6f322de06316ea014a77c732b1a593c0fae5d926558d6c64a1be21cda5",
+    "configs/c01/c01_a0_v2.json": "f3997bddb4788d451ae5f90d9d03d096df3de383f8133a6d3818d97a241563f5",
+    "scripts/analysis/c02_a0_mint.py": "e6430b76b7ccdd831ddb9939500aa24ea70d9662b62b955a2a11273a3b00ac1b"
+  },
+
+  "frozen_sha256_input_caches": {
+    "data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_L24.pt": "6a44cce4f65d4a60b8863969a2ad9ed72731658cea49e75f487a911000be045f",
+    "data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_ow_L24.pt": "60054f3be1204ca7bf2ac55b9bae6a88dd84d9dda35b0225f1ca27ce61977f4e",
+    "data/CLIP_Embedding/MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_L24.pt": "1d33fe5d69083479f0b6968a924578770364c00ca78c37cfef664bb4b6221c06",
+    "data/CLIP_Embedding/MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_ow_L24.pt": "3ad1309dc75001820318e3e9a073b781d28ee0afc2b879571d063a276b8d2a23",
+    "data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF.pt": "5e80f39327a743144067857e6f8c9f0c909e3131bdc13bcb063be6abc333e7cf",
+    "data/CLIP_Embedding/HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF.pt": "46ee4fd9fcaec80b7859a5e4c18b76e84b4020fa242ced802f289f790e4d7cb0",
+    "data/CLIP_Embedding/MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt": "b2e8e78d19c71d2ca674903586d53ca171c33a539956ee37c1c61f44a5e01f1d",
+    "data/CLIP_Embedding/MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF.pt": "4c07af75098391c999013e1cf6fb7ffe8fac29546d9ce329d51004a37e4f5d3c"
+  },
+  "_gate_sha_count": {
+    "imported_modules": 7, "read_for_definitions": 6, "input_caches": 8,
+    "design_document": 1,
+    "total_§11_digests": 22,
+    "banked_unhashed_artifacts": 16,
+    "note": "§11 declares 38 = 7 + 6 + 8 imported/read/cached digests plus the design document, whose digest §11 names and design_sha256 above carries, plus the 16 banked artifacts (6 arena OUT JSONs + 10 vsw_ckpt npz), whose presence GATE-SHA asserts. 7 + 6 + 8 + 1 = 22; 22 + 16 = 38."
+  },
+
+  "scope": {
+    "close_closes": "C06's first-order (tangent/chord) prompt-orbit route in the fold-head arena at ro_L24, on HateMM (-LoRA-curric) at n=743 and MHC_zh (-LoRA) at n=579, under the lineage(s) that passed their instrument gates",
+    "close_does_not_establish": ["curvature", "per-arm retrained head",
+                                 "C01's per-modality contrast", "a different readout span",
+                                 "L28", "the test split",
+                                 "directions off the primary's own Givens family"],
+    "confound": "generate_VideoMLLM_embedding_readout_HF.py:73-89 -- the ow_ cell changes the prompt kind AND both readout spans; no result attributes an effect to the prompt alone",
+    "survive_licenses": "only that C06 has earned its extraction; a SURVIVE is not a Stage-0 PASS and authorizes no GPU"
+  }
+}
