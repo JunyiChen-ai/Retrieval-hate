@@ -1,0 +1,47 @@
+{
+  "candidate": "XFM",
+  "decided_on": "zh",
+  "per_dataset": {
+    "hatemm": {
+      "acc_fold_by_seed": [
+        0.8884,
+        0.8858,
+        0.8858
+      ],
+      "acc_full_loo_by_seed": [
+        0.9382,
+        0.9409,
+        0.9422
+      ],
+      "ks_p": 8.134770502918847e-38,
+      "ks_stat": 0.195789,
+      "mean_abs_margin_shift": 0.147432,
+      "mean_margin_fold": -0.202916,
+      "mean_margin_full_loo": -0.203808,
+      "mean_margin_shift": 0.000893,
+      "n_pooled": 2232
+    },
+    "zh": {
+      "acc_fold_by_seed": [
+        0.8929,
+        0.8895,
+        0.8946
+      ],
+      "acc_full_loo_by_seed": [
+        0.9361,
+        0.9309,
+        0.924
+      ],
+      "ks_p": 0.16283088550961416,
+      "ks_stat": 0.037997,
+      "mean_abs_margin_shift": 0.12335,
+      "mean_margin_fold": -0.392431,
+      "mean_margin_full_loo": -0.379664,
+      "mean_margin_shift": -0.012767,
+      "n_pooled": 1737
+    }
+  },
+  "probe": "P2_fold_vs_full_margin_gap",
+  "rule": "ZH: KS p > 0.05 AND mean|margin shift| < 0.02 -> XFM KILLED; otherwise ALIVE. HateMM reported descriptively only.",
+  "verdict": "ALIVE"
+}

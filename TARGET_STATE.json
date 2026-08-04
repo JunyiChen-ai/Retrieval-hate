@@ -4763,7 +4763,7 @@
       "target_met": false
     }
   },
-  "updated_at": "2026-08-04 C09 A0 SETTLED: job 13885 COMPLETED 0:0 in 2-04:04:18 (52.07 h, CPU-only, 0 GPU-h) and the frozen arena published DECISION.verdict = KILL (rules_fired K-FELDMAN@tau_0 + K-REACH@tau_hi; all nine HALT gates and the SHUFFLE-POP band passing on both datasets; test_path_opens 0). K-REACH CLEARS at tau_0 on both datasets (+0.0981/+0.1021 HateMM, +0.0864/+0.1010 MHC-ZH against a +0.050 bar) while K-FELDMAN fails everywhere (dAUC NEGATIVE at tau_0 on both datasets; smallest Holm p 0.164) and K-NET is negative in all six cells -- a memorisation measurement on a large pool, not a null result on a small one. Null-row leg agrees on the VERDICT and disagrees only on tau_hi K-DEG, in the KILL direction; the decision file's 'this KILL does NOT survive removal of the structural-zero row' string is erroneous boilerplate and must not be quoted. Recorded as F118, refine-logs/C09_A0_RECORD.md section 8, and state block c09_a0_verdict_2026_08_04. c09_a0_cloud_port VOID (local run took the pre-registered tie-break; the cloud leg was never invoked). Next in the gate0_reopen order: C06's $0 CPU FALSIFIER -- C06 itself stays GATED. New standing rule process_rule_compute_projection_and_heartbeat_2026_08_04: measured-unit-cost x explicit-count compute projection plus a line-buffered per-phase heartbeat, after this run over-ran its arena estimate by 103x-155x behind a 51.6-hour observability blackout.",
+  "updated_at": "2026-08-05 MECH-PROBES-A SETTLED: CPU job 13997 COMPLETED 0:0 in 00:20:23 (8 CPU, 0 GPU, $0) under the frozen prereg refine-logs/MECH_PROBES_A_PREREG.md (sha256 5b617ca7...). Three verdicts, all measured: RVS NOT KILLED / formally INDETERMINATE (mean top-20 NCA softmax mass 0.0857 HateMM, 0.1142 MHC_zh against a >0.5 kill and a <0.1 alive band; ESS/N 0.459/0.507, i.e. the NCA gradient touches ~15-17x more items than the deployed k=20 vote, so F75 did not test a kNN-shaped objective -- ZH sits 0.0142 above the ALIVE band, recorded honestly, threshold not moved). XFM ALIVE (ZH KS D 0.0380 p 0.1628 but mean |per-item margin shift| 0.1234 >> 0.02, so the conjunction kill fails: a distribution-preserving per-item reshuffle, per-item fuel on BOTH datasets). AQM zero-parameter epoch-snapshot bank KILLED (every t* in {10,15,20,25,29} at or below the epoch-29 floor on both datasets, best non-final -0.0032 / -0.0080 against a +0.020 bar; all 30 re-mints bit-exact vs banked C06 mints, parity 0.0) -- kill scoped to the zero-new-training realization only, trained-g_phi untested. ERRATUM: the campaign-wide 'deployed head train LOO' triple 0.9406/0.8915/0.8154 is a PROTOCOL-MIXED POOLED MEAN over val-selected AND final-epoch checkpoints (MHC_en final-only), not a deployed-protocol triple; measured MHC_zh = 0.9303 (LOO-vs-fold gap +0.0380, not zero), HateMM deployed -LoRA-curric lineage = 0.9404, MHC_en 0.8154 unchanged. Zero test contact, rules frozen before results, single submission. Recorded as F120 and state block mech_probes_a_2026_08_05. Free-running candidate pool REPLENISHED from EMPTY to RVS / XFM / AQM-trained-gphi / TRA, all four stage-B queued; every user-gated item unchanged.",
   "gate_6_g0_freeze_execution": {
     "method": "LB-SCGP",
     "status": "FROZEN_CODE_AUDIT_NEXT",
@@ -6132,8 +6132,86 @@
     "kind": "queue_state_after_the_c06_close",
     "recorded_at": "2026-08-05T06:35:00+12:00",
     "c06": "SETTLED — CLOSED, job 13988, finding F119",
-    "free_running_candidate_pool": "EMPTY",
+    "free_running_candidate_pool": "REPLENISHED 2026-08-05 by job 13997 / F120 -- see state block mech_probes_a_2026_08_05.free_running_candidate_pool (RVS, XFM, AQM-trained-gphi, TRA; all four stage-B queued). Was EMPTY.",
     "all_remaining_items": "USER-GATED — nothing may start without an explicit user ruling",
     "supersedes": "iteration_8_queue_state_2026_08_04"
+  },
+  "mech_probes_a_2026_08_05": {
+    "kind": "mech_probes_a_three_candidate_screen",
+    "recorded_at": "2026-08-05T22:10:00+12:00",
+    "job": "13997 (mech_probes_a) COMPLETED 0:0, elapsed 00:20:23, 8 CPU / 0 GPU / 32G, peak RSS 1.27 GB, $0",
+    "finding": "F120",
+    "prereg": "refine-logs/MECH_PROBES_A_PREREG.md sha256 5b617ca77f8527870981bba55aeb853785aa8b83993c24e359b6caaa806ec1ee, frozen before any probe metric was computed",
+    "driver_sha256": "84b01c82842b63c97600ca3b243d6f96867defcaee9ca365f860e8c1dd18576b (scripts/analysis/mech_probes_a.py)",
+    "sbatch_sha256": "4b6eb2585dc6fea97f90972a982ad1875c2239492173e22eb8a67a0f762ea822 (scripts/slurm/mech_probes_a_cpu.sbatch)",
+    "result": "artifacts/mech_probes_a/MECH_PROBES_A_RESULT.json plus probe1.json, probe2.json, probe3.json; log slurm/logs/mech_probes_a_13997.out",
+    "verdicts": {
+      "RVS": "RVS_not_killed_indeterminate",
+      "XFM": "XFM_alive",
+      "AQM_zero_parameter": "AQM_zero_param_killed"
+    },
+    "probe1_rvs": {
+      "verdict": "RVS_not_killed_indeterminate",
+      "frozen_rule": "3-seed mean top-20 NCA softmax mass > 0.5 on BOTH datasets -> RVS KILLED; < 0.1 on BOTH -> ALIVE; anything else -> INDETERMINATE",
+      "measured_top20_mass": "HateMM 0.0857 (uniform 20/744 = 0.0269); MHC_zh 0.1142 (uniform 20/579 = 0.0345)",
+      "measured_ess_frac": "HateMM 0.459 (~341 of 744 items); MHC_zh 0.507 (~294 of 579 items)",
+      "distance_from_kill": "kill branch (>0.5) missed by 5.8x on HateMM and 4.4x on MHC_zh",
+      "substantive_reading": "at tau=0.1 the NCA gradient spreads over ~15-17x more items than the deployed k=20 vote reads, so F75's NCA arm did NOT test a kNN-shaped objective on this geometry",
+      "honesty_note": "MHC_zh sits 0.0142 ABOVE the pre-registered ALIVE band (<0.1) so the ALIVE branch did not fire either; the threshold was NOT moved after seeing the number; RVS stays open as untested, not promoted"
+    },
+    "probe2_xfm": {
+      "verdict": "XFM_alive",
+      "frozen_rule": "decide on MHC_zh only: KS p > 0.05 AND mean |per-item margin shift| < 0.02 -> XFM KILLED; otherwise ALIVE",
+      "measured_zh": "n_pooled 1737; KS D 0.0380, p 0.1628; mean |shift| 0.1234 against a <0.02 threshold -> conjunction fails on its second conjunct by 6.2x",
+      "measured_hatemm_descriptive": "n_pooled 2232; KS D 0.1958, p 8.1e-38; mean |shift| 0.1474",
+      "reading": "MHC_zh is a distribution-preserving per-item reshuffle: the marginal vote-margin histogram is indistinguishable while individual items move a lot. Per-item fuel for a cross-fit objective exists on BOTH datasets. A KS test on pooled marginals alone would have missed this."
+    },
+    "probe3_aqm": {
+      "verdict": "AQM_zero_param_killed",
+      "frozen_rule": "no snapshot epoch t* beating the epoch-29 floor by >= +0.020 acc (3-seed mean) on BOTH datasets -> zero-parameter AQM realization KILLED",
+      "acc_delta_vs_floor_hatemm": "t*=10 -0.0645; t*=15 -0.0032; t*=20 -0.0045; t*=25 -0.0041; t*=29 -0.000018",
+      "acc_delta_vs_floor_zh": "t*=10 -0.1716; t*=15 -0.0207; t*=20 -0.0080; t*=25 -0.0115; t*=29 +0.000010",
+      "result": "every snapshot epoch at or below the epoch-29 floor on both datasets; nothing positive anywhere; best non-final cell -0.0032 (HateMM t*=15) / -0.0080 (ZH t*=20) against a +0.020 bar",
+      "instrument_validation": "all 30 fold-head re-mints bit-exact vs the banked C06 mints, banked_parity_maxabs = 0.0 on every cell, parity_all_pass true; the t*=29 self-check reproduces the banked floors exactly (the -1.8e-5 / +1.0e-5 residual is 4-dp rounding of the banked floor strings: 661/659/659 of 744 = 0.886649; 517/515/518 of 579 = 0.892343)",
+      "kill_scope": "ZERO-NEW-TRAINING REALIZATION ONLY (earlier-epoch key snapshot as bank). The trained-g_phi asymmetric map is a different object and remains UNTESTED; this probe says nothing about it either way."
+    },
+    "erratum_deployed_head_train_loo": {
+      "kind": "numeric_provenance_erratum",
+      "subject": "the triple 0.9406 / 0.8915 / 0.8154 quoted campaign-wide as 'deployed head train LOO' (HateMM / MHC_zh / MHC_en)",
+      "diagnosis": "PROTOCOL-MIXED POOLED MEAN, not a fabrication. The triple IS reproducible from scripts/analysis/mechfix_{hatemm,zh,en}_OUT.json, but as the mean over ALL train_side_sanity.*.deployed_loo_train_acc entries in each file -- which pools val-selected AND final-epoch checkpoints for HateMM and MHC_zh, and is final-epoch-only for MHC_en (that file has no valsel block). The three columns are therefore not commensurable with each other and two of the three are not the deployed final-epoch protocol they are labelled as.",
+      "arithmetic_hatemm": "valsel 0.9395/0.9153/0.9476 + final 0.9476/0.9462/0.9476 -> 6-value mean 0.940633 -> 0.9406",
+      "arithmetic_zh": "valsel 0.8307/0.9102/0.8169 + final 0.9361/0.9309/0.9240 -> 6-value mean 0.891467 -> 0.8915",
+      "arithmetic_en": "final only 0.7996/0.8142/0.8324 -> 3-value mean 0.815400 -> 0.8154",
+      "measured_zh_correction": "MHC_zh deployed-head train LOO = 0.9361 / 0.9309 / 0.9240, mean 0.9303 (probe 2 reproduces mechfix_zh_OUT.json train_side_sanity.final_s{0,1,2}.deployed_loo_train_acc exactly). Fold mean 0.8923 -> ZH LOO-vs-fold gap +0.0380, NOT zero.",
+      "measured_hatemm_correction": "mechfix_hatemm_OUT.json final-epoch mean is 0.9471, but that file is the errpat PROXY head lineage (RAC_errpat_proxy). On the deployed -LoRA-curric lineage, probe 2 measured 0.9382/0.9409/0.9422, mean 0.9404, vs fold mean 0.8867 -> gap +0.0538. Quote 0.9404 for a HateMM deployed-head train LOO, not 0.9471 and not 0.9406.",
+      "measured_en": "0.8154 unchanged (mechfix_en_OUT.json, router_ckpt_snapshot lineage); no EN measurement exists in the C06 mint space because no EN mints exist",
+      "net_movement": "MHC_zh 0.8915 -> 0.9303 (+0.0388, the material one); HateMM 0.9406 -> 0.9404 deployed-lineage (-0.0002, immaterial by arithmetic coincidence); MHC_en unchanged",
+      "what_breaks": "conclusions leaning on the HateMM leg survive; conclusions leaning on 'MHC_zh has little train-side headroom' or 'ZH LOO approx fold' DO NOT -- the ZH gap is +0.0380",
+      "false_lead_killed": "0.8154 also occurs at mechfix_diag_OUT.json /zh/per_seed/s2/T2b_length_organisation_rho, a Spearman rho on ZH. That is a COINCIDENCE, not the source.",
+      "affected_files": "refine-logs/LITSWEEP6_MEMBANK.md:177,880,886; refine-logs/RESTRANS_PREGATE_RECORD.md:62,489,495; refine-logs/LITSWEEP7_LANDING_SITE.md:767,967,973; refine-logs/MEMBANK_C4_PREGATE_RECORD.md:151,991,1049,1057; refine-logs/C09_A0_V2_RECORD.md:237,257; refine-logs/C09_A0_V3_RECORD.md:254,306; refine-logs/C09_A0_V7_RECORD.md:367,420; refine-logs/C09_A0_V10_RECORD.md:401,454; refine-logs/C09_A0_V11_RECORD.md:409,462; refine-logs/MECH_PROBES_A_PREREG.md:108-109 (frozen, deliberately not edited)",
+      "handling": "historical records left as written per CLAUDE.md's no-doc-consistency-iteration rule; one-line ERRATUM POINTER inserted at the top of LITSWEEP6_MEMBANK.md and RESTRANS_PREGATE_RECORD.md only"
+    },
+    "integrity": {
+      "test_contact": "ZERO -- every query in every probe is a train-split item, K_dev never read, grep -c test_seen on slurm/logs/mech_probes_a_13997.out returns 0; three guard layers active (headspace_mint.py:106-116 torch.load guard, frozen load_split restricted to train_*.pt / dev_seen_*.pt, scripts/analysis/c09_guard on PYTHONPATH)",
+      "rules_frozen_before_results": "YES -- prereg hashed before any candidate metric; the INDETERMINATE branch was pre-registered, not invented when ZH landed at 0.1142",
+      "blindness": "YES -- self-test on synthetic random data only during design and implementation",
+      "single_submission": "YES -- one sbatch, one clean run, no resubmission",
+      "ceremony": "$0 CPU diagnostic under CLAUDE.md's 2026-08-05 proportional-ceremony ruling: no review round, author self-test as release gate"
+    },
+    "code_facts_confirmed": {
+      "fact_a": "CONFIRMED: the deployed non-TARC retrieval-contrastive triplet path has NO id-based self-exclusion. retrieval.py:421 indexes all train rows; :426 searches with the live grad-on batch embedding from loss.py:284-296; the non-TARC mining loop retrieval.py:466-509 filters on LABEL ONLY; query_ids is read only inside the tarc_active branch. QUALIFICATION: this makes item i's own row ELIGIBLE as its own positive, it does NOT establish selection at rank 0, because the bank is the epoch-start snapshot while the query is live. The NCA arm DOES self-exclude by id (loss.py:655-660).",
+      "fact_b": "CONFIRMED: _nca_head_loss (loss.py:635-668) = -mean_i log sum_{j same-class, j != i} softmax_j(cos(q_i,k_j)/tau) over a detached per-epoch bank, cosine logits / tau, tau = float(getattr(args,'nca_tau',0.1)) at loss.py:647 -- 0.1 as deployed"
+    },
+    "artifact_cleanup": "artifacts/mech_probes_a/snaps/ (777 MB of per-epoch key snapshots) DELETED 2026-08-05 after probe 3 closed. The run is bit-exactly reproducible from the banked C06 mints plus the frozen prereg and driver (parity 0.0 on all 30 cells). All JSON results and the log are retained.",
+    "free_running_candidate_pool": {
+      "status": "REPLENISHED -- was EMPTY as of iteration_8_queue_state_2026_08_05, now four mechanism candidates",
+      "RVS": "rank-space deployed-vote surrogate. Screen verdict NOT KILLED (indeterminate). Stage-B = train the objective in rank space rather than screen the geometry. QUEUED.",
+      "XFM": "cross-fit memory training. Screen verdict ALIVE, per-item fuel measured on both datasets. Stage-B QUEUED.",
+      "AQM_trained_gphi": "trained asymmetric bank-side map g_phi. OPEN -- untouched by probe 3, whose kill is scoped to the zero-parameter epoch-snapshot realization only. Stage-B QUEUED.",
+      "TRA": "per-bank-item trust radius. UNTESTED -- never screened. Stage-B QUEUED.",
+      "closed_by_this_run": "AQM zero-parameter epoch-snapshot realization"
+    },
+    "user_gated_items_unchanged": "YES -- every user-gated item recorded elsewhere in this file (C03 training, C04 teacher, the seven Gate-0 holds C05/C07/C08/C10/C11/C12/C13, OCR, DUA, Modal) is untouched by this block and still requires an explicit user ruling",
+    "supersedes_pool_status_in": "iteration_8_queue_state_2026_08_05.free_running_candidate_pool"
   }
 }

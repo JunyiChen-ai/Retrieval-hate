@@ -1,0 +1,62 @@
+{
+  "candidate": "RVS",
+  "cells": [
+    {
+      "dataset": "hatemm",
+      "mean_ess_frac": 0.462212,
+      "mean_top20_mass": 0.085584,
+      "n": 744,
+      "seed": 0,
+      "uniform_top20_mass": 0.026882
+    },
+    {
+      "dataset": "hatemm",
+      "mean_ess_frac": 0.463559,
+      "mean_top20_mass": 0.085071,
+      "n": 744,
+      "seed": 1,
+      "uniform_top20_mass": 0.026882
+    },
+    {
+      "dataset": "hatemm",
+      "mean_ess_frac": 0.450942,
+      "mean_top20_mass": 0.086477,
+      "n": 744,
+      "seed": 2,
+      "uniform_top20_mass": 0.026882
+    },
+    {
+      "dataset": "zh",
+      "mean_ess_frac": 0.493924,
+      "mean_top20_mass": 0.109145,
+      "n": 579,
+      "seed": 0,
+      "uniform_top20_mass": 0.034542
+    },
+    {
+      "dataset": "zh",
+      "mean_ess_frac": 0.534095,
+      "mean_top20_mass": 0.118405,
+      "n": 579,
+      "seed": 1,
+      "uniform_top20_mass": 0.034542
+    },
+    {
+      "dataset": "zh",
+      "mean_ess_frac": 0.49314,
+      "mean_top20_mass": 0.114906,
+      "n": 579,
+      "seed": 2,
+      "uniform_top20_mass": 0.034542
+    }
+  ],
+  "mean_top20_mass_by_dataset": {
+    "hatemm": 0.085711,
+    "zh": 0.114152
+  },
+  "probe": "P1_nca_softmax_concentration",
+  "rule": "top20_mass > 0.5 on both -> RVS KILLED; < 0.1 on both -> RVS ALIVE; else INDETERMINATE",
+  "tau": 0.1,
+  "topk": 20,
+  "verdict": "INDETERMINATE"
+}

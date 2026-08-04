@@ -1,0 +1,570 @@
+{
+  "driver_sha256": "84b01c82842b63c97600ca3b243d6f96867defcaee9ca365f860e8c1dd18576b",
+  "elapsed_seconds": 0.0,
+  "frozen_sha256": {
+    "scripts/analysis/headspace_mint.py": "cefdf8dc2f4a9aefa042ef7bec9b1d06c9721ae5b4a70ec117e9929ff0916612",
+    "scripts/analysis/mechfix_ops.py": "635c13124e79ba1a299bc13fc1175a03aa11e09924f5413ce51061793c83fc8d",
+    "scripts/analysis/mechnov_pairverify.py": "77b0defd8eaa3688e58b6d5d17202bd55d16cf1f4a5aaafbe4b2b98598b7240d"
+  },
+  "prereg": "refine-logs/MECH_PROBES_A_PREREG.md",
+  "probes": {
+    "probe1": {
+      "candidate": "RVS",
+      "cells": [
+        {
+          "dataset": "hatemm",
+          "mean_ess_frac": 0.462212,
+          "mean_top20_mass": 0.085584,
+          "n": 744,
+          "seed": 0,
+          "uniform_top20_mass": 0.026882
+        },
+        {
+          "dataset": "hatemm",
+          "mean_ess_frac": 0.463559,
+          "mean_top20_mass": 0.085071,
+          "n": 744,
+          "seed": 1,
+          "uniform_top20_mass": 0.026882
+        },
+        {
+          "dataset": "hatemm",
+          "mean_ess_frac": 0.450942,
+          "mean_top20_mass": 0.086477,
+          "n": 744,
+          "seed": 2,
+          "uniform_top20_mass": 0.026882
+        },
+        {
+          "dataset": "zh",
+          "mean_ess_frac": 0.493924,
+          "mean_top20_mass": 0.109145,
+          "n": 579,
+          "seed": 0,
+          "uniform_top20_mass": 0.034542
+        },
+        {
+          "dataset": "zh",
+          "mean_ess_frac": 0.534095,
+          "mean_top20_mass": 0.118405,
+          "n": 579,
+          "seed": 1,
+          "uniform_top20_mass": 0.034542
+        },
+        {
+          "dataset": "zh",
+          "mean_ess_frac": 0.49314,
+          "mean_top20_mass": 0.114906,
+          "n": 579,
+          "seed": 2,
+          "uniform_top20_mass": 0.034542
+        }
+      ],
+      "mean_top20_mass_by_dataset": {
+        "hatemm": 0.085711,
+        "zh": 0.114152
+      },
+      "probe": "P1_nca_softmax_concentration",
+      "rule": "top20_mass > 0.5 on both -> RVS KILLED; < 0.1 on both -> RVS ALIVE; else INDETERMINATE",
+      "tau": 0.1,
+      "topk": 20,
+      "verdict": "INDETERMINATE"
+    },
+    "probe2": {
+      "candidate": "XFM",
+      "decided_on": "zh",
+      "per_dataset": {
+        "hatemm": {
+          "acc_fold_by_seed": [
+            0.8884,
+            0.8858,
+            0.8858
+          ],
+          "acc_full_loo_by_seed": [
+            0.9382,
+            0.9409,
+            0.9422
+          ],
+          "ks_p": 8.134770502918847e-38,
+          "ks_stat": 0.195789,
+          "mean_abs_margin_shift": 0.147432,
+          "mean_margin_fold": -0.202916,
+          "mean_margin_full_loo": -0.203808,
+          "mean_margin_shift": 0.000893,
+          "n_pooled": 2232
+        },
+        "zh": {
+          "acc_fold_by_seed": [
+            0.8929,
+            0.8895,
+            0.8946
+          ],
+          "acc_full_loo_by_seed": [
+            0.9361,
+            0.9309,
+            0.924
+          ],
+          "ks_p": 0.16283088550961416,
+          "ks_stat": 0.037997,
+          "mean_abs_margin_shift": 0.12335,
+          "mean_margin_fold": -0.392431,
+          "mean_margin_full_loo": -0.379664,
+          "mean_margin_shift": -0.012767,
+          "n_pooled": 1737
+        }
+      },
+      "probe": "P2_fold_vs_full_margin_gap",
+      "rule": "ZH: KS p > 0.05 AND mean|margin shift| < 0.02 -> XFM KILLED; otherwise ALIVE. HateMM reported descriptively only.",
+      "verdict": "ALIVE"
+    },
+    "probe3": {
+      "acc_delta_vs_floor": {
+        "hatemm": {
+          "10": -0.064534,
+          "15": -0.003154,
+          "20": -0.004499,
+          "25": -0.004051,
+          "29": -1.8e-05
+        },
+        "zh": {
+          "10": -0.17155,
+          "15": -0.020715,
+          "20": -0.00805,
+          "25": -0.011504,
+          "29": 1e-05
+        }
+      },
+      "best_t_star": 29,
+      "best_t_star_deltas": {
+        "hatemm": -1.8e-05,
+        "zh": 1e-05
+      },
+      "best_t_star_mF1_delta": {
+        "hatemm": 1.1e-05,
+        "zh": -1.5e-05
+      },
+      "candidate": "AQM_zero_parameter_realization",
+      "floor_source": "banked",
+      "floors": {
+        "hatemm": {
+          "banked_acc_mean": 0.886667,
+          "banked_mF1_mean": 0.882033,
+          "primary_acc_mean": 0.886667,
+          "remint_e29_acc_mean": 0.886649,
+          "remint_e29_mF1_mean": 0.882044
+        },
+        "zh": {
+          "banked_acc_mean": 0.892333,
+          "banked_mF1_mean": 0.874067,
+          "primary_acc_mean": 0.892333,
+          "remint_e29_acc_mean": 0.892343,
+          "remint_e29_mF1_mean": 0.874052
+        }
+      },
+      "parity": [
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 0,
+          "pass": true,
+          "secs": 37.9,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 1,
+          "pass": true,
+          "secs": 37.6,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 2,
+          "pass": true,
+          "secs": 38.1,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 3,
+          "pass": true,
+          "secs": 39.0,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 4,
+          "pass": true,
+          "secs": 37.6,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 0,
+          "pass": true,
+          "secs": 38.4,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 1,
+          "pass": true,
+          "secs": 38.0,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 2,
+          "pass": true,
+          "secs": 38.3,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 3,
+          "pass": true,
+          "secs": 38.2,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 4,
+          "pass": true,
+          "secs": 37.8,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 0,
+          "pass": true,
+          "secs": 38.0,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 1,
+          "pass": true,
+          "secs": 37.6,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 2,
+          "pass": true,
+          "secs": 38.3,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 3,
+          "pass": true,
+          "secs": 37.8,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "hatemm",
+          "fold": 4,
+          "pass": true,
+          "secs": 38.3,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 0,
+          "pass": true,
+          "secs": 29.1,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 1,
+          "pass": true,
+          "secs": 30.6,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 2,
+          "pass": true,
+          "secs": 29.5,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 3,
+          "pass": true,
+          "secs": 30.2,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 4,
+          "pass": true,
+          "secs": 29.8,
+          "seed": 0
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 0,
+          "pass": true,
+          "secs": 30.7,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 1,
+          "pass": true,
+          "secs": 30.1,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 2,
+          "pass": true,
+          "secs": 30.4,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 3,
+          "pass": true,
+          "secs": 30.1,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 4,
+          "pass": true,
+          "secs": 30.3,
+          "seed": 1
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 0,
+          "pass": true,
+          "secs": 29.8,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 1,
+          "pass": true,
+          "secs": 30.1,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 2,
+          "pass": true,
+          "secs": 30.7,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 3,
+          "pass": true,
+          "secs": 29.9,
+          "seed": 2
+        },
+        {
+          "banked_parity_maxabs": 0.0,
+          "dataset": "zh",
+          "fold": 4,
+          "pass": true,
+          "secs": 30.6,
+          "seed": 2
+        }
+      ],
+      "parity_all_pass": true,
+      "per_dataset": {
+        "hatemm": {
+          "10": {
+            "acc_by_seed": [
+              0.8293,
+              0.8226,
+              0.8145
+            ],
+            "acc_mean": 0.822133,
+            "mF1_by_seed": [
+              0.8156,
+              0.8066,
+              0.7985
+            ],
+            "mF1_mean": 0.80687
+          },
+          "15": {
+            "acc_by_seed": [
+              0.8898,
+              0.8831,
+              0.8777
+            ],
+            "acc_mean": 0.883513,
+            "mF1_by_seed": [
+              0.8854,
+              0.8779,
+              0.8723
+            ],
+            "mF1_mean": 0.87852
+          },
+          "20": {
+            "acc_by_seed": [
+              0.8898,
+              0.8804,
+              0.8763
+            ],
+            "acc_mean": 0.882168,
+            "mF1_by_seed": [
+              0.8854,
+              0.8751,
+              0.8708
+            ],
+            "mF1_mean": 0.877091
+          },
+          "25": {
+            "acc_by_seed": [
+              0.8831,
+              0.8831,
+              0.8817
+            ],
+            "acc_mean": 0.882616,
+            "mF1_by_seed": [
+              0.8786,
+              0.8772,
+              0.8778
+            ],
+            "mF1_mean": 0.877834
+          },
+          "29": {
+            "acc_by_seed": [
+              0.8884,
+              0.8858,
+              0.8858
+            ],
+            "acc_mean": 0.886649,
+            "mF1_by_seed": [
+              0.8838,
+              0.8811,
+              0.8812
+            ],
+            "mF1_mean": 0.882044
+          }
+        },
+        "zh": {
+          "10": {
+            "acc_by_seed": [
+              0.6943,
+              0.6891,
+              0.7789
+            ],
+            "acc_mean": 0.720783,
+            "mF1_by_seed": [
+              0.4404,
+              0.4285,
+              0.679
+            ],
+            "mF1_mean": 0.515985
+          },
+          "15": {
+            "acc_by_seed": [
+              0.8497,
+              0.8826,
+              0.8826
+            ],
+            "acc_mean": 0.871618,
+            "mF1_by_seed": [
+              0.8146,
+              0.8668,
+              0.8594
+            ],
+            "mF1_mean": 0.846948
+          },
+          "20": {
+            "acc_by_seed": [
+              0.8929,
+              0.8774,
+              0.8826
+            ],
+            "acc_mean": 0.884283,
+            "mF1_by_seed": [
+              0.8762,
+              0.8608,
+              0.8594
+            ],
+            "mF1_mean": 0.865438
+          },
+          "25": {
+            "acc_by_seed": [
+              0.8826,
+              0.8808,
+              0.8791
+            ],
+            "acc_mean": 0.880829,
+            "mF1_by_seed": [
+              0.8621,
+              0.8654,
+              0.8538
+            ],
+            "mF1_mean": 0.860424
+          },
+          "29": {
+            "acc_by_seed": [
+              0.8929,
+              0.8895,
+              0.8946
+            ],
+            "acc_mean": 0.892343,
+            "mF1_by_seed": [
+              0.8747,
+              0.871,
+              0.8765
+            ],
+            "mF1_mean": 0.874052
+          }
+        }
+      },
+      "probe": "P3_epoch_snapshot_asymmetric_bank",
+      "rule": "no t* with >= +0.020 acc (3-seed mean) over the epoch-29 floor on BOTH datasets -> AQM zero-parameter realization KILLED; the trained-g_phi version is a separate later question either way.",
+      "snap_epochs": [
+        10,
+        15,
+        20,
+        25,
+        29
+      ],
+      "verdict": "KILLED"
+    }
+  },
+  "verdicts": {
+    "AQM_zero_parameter": "KILLED",
+    "RVS": "INDETERMINATE",
+    "XFM": "ALIVE"
+  }
+}

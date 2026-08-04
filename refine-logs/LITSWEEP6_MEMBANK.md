@@ -1,5 +1,7 @@
 # LITSWEEP-6 — THE MEMORY BANK AS AN ACTIVE OBJECT
 
+> **ERRATUM POINTER (2026-08-05, F120):** the "deployed head train LOO" triple `0.9406 / 0.8915 / 0.8154` used in this file (lines 177, 880, 886) is a **protocol-mixed pooled mean** over val-selected **and** final-epoch checkpoints (MHC-EN final-epoch only), not a deployed-protocol LOO triple. Measured: MHC-ZH **0.9303** (not 0.8915), HateMM **0.9404** on the deployed `-LoRA-curric` lineage, MHC-EN 0.8154 unchanged. See `TARGET_FINDINGS.md` F120. This record is left as written.
+
 **Date:** 2026-07-27 NZST · **Agent:** litsweep-6 membank · **Cost: $0** (WebSearch/WebFetch +
 local record reads only; zero GPU, zero SLURM, zero Modal, zero code execution beyond `python3`
 reads of `state/directions_tried.json`). Repo sha at writing `8a9d484` (working tree dirty).

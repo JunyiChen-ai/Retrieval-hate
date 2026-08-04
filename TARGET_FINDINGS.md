@@ -520,3 +520,212 @@ Freeze record: `refine-logs/C06_FALSIFIER_FREEZE.md`. Design of record:
 `refine-logs/C06_FALSIFIER_PREREG_DRAFT_V15E2.md`. State block: `c06_verdict_2026_08_05`.
 
 Cost: **53m34s wall, CPU-only, 8 cores, ZERO GPU-hours, $0 cloud.**
+
+---
+
+## F120 — MECH-PROBES-A: three mechanism candidates screened at $0 — RVS not killed (indeterminate), XFM alive, AQM zero-parameter killed; plus a numeric-provenance ERRATUM on the deployed-head train-LOO triple (2026-08-05, 20m23s CPU, 0 GPU-h)
+
+CPU job `13997` (`mech_probes_a`) COMPLETED `0:0` in `00:20:23`, 8 cores, 32 G, peak RSS
+`1.27 GB`, **zero GPU**, against a pre-registered projection of `1210 s` (~20 min) — the
+projection held to within one minute. Prereg `refine-logs/MECH_PROBES_A_PREREG.md`,
+sha256 `5b617ca77f8527870981bba55aeb853785aa8b83993c24e359b6caaa806ec1ee`, frozen before
+any probe metric was computed. Driver `scripts/analysis/mech_probes_a.py` sha256
+`84b01c82842b63c97600ca3b243d6f96867defcaee9ca365f860e8c1dd18576b` (recorded in the result
+file as `driver_sha256`), submission `scripts/slurm/mech_probes_a_cpu.sbatch` sha256
+`4b6eb2585dc6fea97f90972a982ad1875c2239492173e22eb8a67a0f762ea822`. Result:
+`artifacts/mech_probes_a/MECH_PROBES_A_RESULT.json` (+ `probe1.json`, `probe2.json`,
+`probe3.json`). Log `slurm/logs/mech_probes_a_13997.out`.
+
+Per CLAUDE.md's 2026-08-05 proportional-ceremony ruling this is a $0 CPU diagnostic: no
+review round, author self-test on synthetic data as the release gate. All four hard red
+lines held (see Integrity below).
+
+### Code facts settled before the freeze (read-only, no execution)
+
+**Fact A — CONFIRMED. The deployed non-TARC retrieval-contrastive triplet path has no
+id-based self-exclusion.** `src/utils/retrieval.py:421` indexes **all** train rows
+(`index.add(train_feats_normalized)`, epoch-start bank); `:426` searches with the live
+grad-on batch embedding passed from `src/model/loss.py:284-296`; the non-TARC mining loop at
+`retrieval.py:466-509` filters on **label only** (`train_labels[I[i,iter]] != / ==
+query_labels[i]`), and `query_ids` is read **only** inside the `tarc_active` branch. No id
+equality test exists on the non-TARC path. **Qualification, stated because it bounds the
+fact:** this makes item *i*'s own row *eligible* as its own positive; it does **not**
+establish that the self-row is selected at rank 0, because the bank is the epoch-start
+snapshot while the query is the live embedding. Contrast: the **NCA arm does** self-exclude
+by id — `src/model/loss.py:655-660` masks `logits[arange(B), own_rows] = -inf`.
+
+**Fact B — CONFIRMED.** `_nca_head_loss` (`src/model/loss.py:635-668`) is
+`L = -mean_i log sum_{j same-class, j != i} softmax_j(cos(q_i, k_j)/tau)` over a **detached
+per-epoch bank**, cosine logits divided by `tau`, with
+`tau = float(getattr(args, "nca_tau", 0.1))` at `loss.py:647` — 0.1 as deployed.
+
+### Probe 1 — RVS (rank-space deployed-vote surrogate): NOT KILLED, formally INDETERMINATE
+
+Frozen rule: 3-seed mean top-20 softmax mass `> 0.5` on **both** datasets → RVS KILLED;
+`< 0.1` on **both** → RVS ALIVE; anything else → INDETERMINATE.
+
+Measured on the deployed-head train keys (`mint_{ds}_N_s{seed}_ffull.npz`, all 6 cells),
+`tau = 0.1`, self masked:
+
+| dataset | mean top-20 mass | uniform reference (20/N) | mean ESS/N | ESS in items |
+|---|---|---|---|---|
+| HateMM (N=744) | **0.0857** | 0.0269 | 0.459 | ~341 of 744 |
+| MHC-ZH (N=579) | **0.1142** | 0.0345 | 0.507 | ~294 of 579 |
+
+Per-cell top-20 mass: HateMM 0.085584 / 0.085071 / 0.086477; ZH 0.109145 / 0.118405 /
+0.114906. Per-cell ESS/N: HateMM 0.462212 / 0.463559 / 0.450942; ZH 0.493924 / 0.534095 /
+0.493140.
+
+**Verdict INDETERMINATE, and the boundary is asymmetric.** The KILL branch is missed by
+**5.8x on HateMM and 4.4x on ZH** — nowhere near. The substantive reading the numbers do
+support: at `tau = 0.1` the NCA gradient spreads over an effective ~341 / ~294 items, i.e.
+**15-17x more items than the deployed k=20 vote reads**, so F75's NCA arm did **not** test a
+kNN-shaped objective on this geometry. **Recorded honestly: ZH sits 0.0142 ABOVE the
+pre-registered ALIVE band (`< 0.1` on both datasets), so the ALIVE branch did not fire
+either. The threshold was not moved after seeing the number.** RVS therefore stays open as
+an untested candidate rather than being promoted.
+
+### Probe 2 — XFM (cross-fit memory training): ALIVE
+
+Frozen rule, decided on ZH only: KS `p > 0.05` **AND** mean absolute per-item margin shift
+`< 0.02` → XFM KILLED; otherwise ALIVE. Margin = the deployed k=20 rank-weighted vote value
+(`mechfix_ops.deployed_vote`); config (a) full head + LOO, config (b) fold head + fitting
+pool (the `gate_floor` protocol verbatim); pooled over 3 seeds.
+
+| dataset | n pooled | KS D | KS p | mean signed shift | **mean \|shift\|** |
+|---|---|---|---|---|---|
+| **MHC-ZH (deciding)** | 1737 | 0.0380 | **0.1628** | −0.012767 | **0.1234** |
+| HateMM (descriptive) | 2232 | 0.1958 | 8.1e-38 | +0.000893 | 0.1474 |
+
+**ALIVE: the conjunction fails on its second conjunct by a factor of 6.2** — ZH's KS test
+cannot distinguish the two margin *distributions* (`p = 0.1628`), but the mean absolute
+**per-item** shift is 0.1234 against a `< 0.02` kill threshold. The reading: ZH is a
+**distribution-preserving per-item reshuffle** — the marginal histogram of vote margins is
+the same, while individual items move a great deal. Per-item fuel for a cross-fit objective
+therefore exists on **both** datasets, not just HateMM. A KS test on pooled marginals would
+have missed this entirely; the conjunction is what caught it.
+
+**Premise correction (this probe refutes one of its own prereg's context lines).** The
+prereg's §1 context read *"ZH LOO 0.8915 vs fold 0.8923 (no accuracy gap)"*. **That is
+FALSE.** Measured full-head LOO accuracy on ZH: **0.9361 / 0.9309 / 0.9240, mean 0.9303**,
+which reproduces `scripts/analysis/mechfix_zh_OUT.json` →
+`train_side_sanity.final_s{0,1,2}.deployed_loo_train_acc` **exactly**; fold mean is 0.8923.
+**ZH LOO-vs-fold gap = +0.0380, not zero.** The HateMM leg of the premise does check out:
+measured LOO 0.9382 / 0.9409 / 0.9422 (mean **0.9404**) vs fold mean 0.8867, gap
+**+0.0538**. The false ZH leg came from the erratum below.
+
+### Probe 3 — AQM zero-parameter realization (epoch-snapshot asymmetric bank): KILLED
+
+Frozen rule: no snapshot epoch `t*` beating the epoch-29 floor by `>= +0.020` accuracy
+(3-seed mean) on **both** datasets → the zero-parameter realization is KILLED.
+
+Accuracy delta vs the banked epoch-29 floor, 3-seed mean:
+
+| `t*` | HateMM | MHC-ZH |
+|---|---|---|
+| 10 | −0.0645 | −0.1716 |
+| 15 | **−0.0032** | −0.0207 |
+| 20 | −0.0045 | **−0.0080** |
+| 25 | −0.0041 | −0.0115 |
+| 29 (self-check) | −0.000018 | +0.000010 |
+
+**KILLED — and not marginally: every snapshot epoch is at or below the floor on both
+datasets, nothing is positive anywhere, and the best non-final cell is −0.0032 (HateMM
+`t*=15`) / −0.0080 (ZH `t*=20`) against a `+0.020` bar.** Using an earlier-epoch bank
+against a final-epoch query monotonically destroys accuracy; there is no free asymmetry to
+harvest.
+
+**Instrument validation — the kill rests on a verified instrument.** All 30 fold-head
+re-mints (5 folds x 3 seeds x 2 datasets) were **bit-exact** against the banked C06 mints:
+`banked_parity_maxabs = 0.0` on all 30 cells, `parity_all_pass: true`. The `t*=29`
+self-check reproduces the banked floors exactly — the residual `−1.8e-5 / +1.0e-5` is the
+4-decimal rounding of the banked floor strings, not a discrepancy: recomputing HateMM from
+integer counts `661/659/659` of 744 gives 0.886649, and ZH from `517/515/518` of 579 gives
+0.892343, matching the re-mint to all printed digits.
+
+**Kill scope, stated narrowly.** This closes the **zero-new-training realization only** —
+using an earlier training-epoch key snapshot as the bank. The **trained-`g_phi` asymmetric
+map** (a learned bank-side transform) is a different object and **remains untested**; this
+probe says nothing about it either way, exactly as the frozen rule anticipated.
+
+### ERRATUM — the "deployed head train LOO" triple `0.9406 / 0.8915 / 0.8154` is a
+### protocol-mixed pooled mean, not a deployed-protocol LOO triple
+
+Probe 2's premise refutation forced an audit of the cited source. **The triple IS
+arithmetically reproducible from `scripts/analysis/mechfix_{hatemm,zh,en}_OUT.json` — but as
+the mean over ALL `train_side_sanity.*.deployed_loo_train_acc` entries in each file, which
+pools the val-selected and final-epoch protocols the campaign otherwise keeps strictly
+separate:**
+
+- HateMM: valsel `0.9395 / 0.9153 / 0.9476` **+** final `0.9476 / 0.9462 / 0.9476` → 6-value
+  mean **0.940633** → `0.9406`.
+- MHC-ZH: valsel `0.8307 / 0.9102 / 0.8169` **+** final `0.9361 / 0.9309 / 0.9240` → 6-value
+  mean **0.891467** → `0.8915`.
+- MHC-EN: **final only** `0.7996 / 0.8142 / 0.8324` → 3-value mean **0.815400** → `0.8154`.
+  (`mechfix_en_OUT.json` has no `valsel` block at all.)
+
+**So the defect is a protocol mix and a commensurability failure, not a fabrication.** Two of
+the three columns average across val-selected and final-epoch checkpoints; the third averages
+final-epoch only. The triple is quoted throughout the campaign as *"deployed head train
+LOO"*, i.e. the final-epoch deployed protocol — which is what two thirds of it is not, and
+the three columns are not comparable with each other.
+
+**Measured values, with provenance kept separate rather than collapsed into one replacement
+triple:**
+
+| dataset | final-epoch mean in `mechfix_*_OUT.json` | head lineage in that file | directly measured in the C06 deployed-head mint space (job 13997) |
+|---|---|---|---|
+| HateMM | **0.9471** (0.9476 / 0.9462 / 0.9476) | `RAC_errpat_proxy` — the errpat **proxy** head | **0.9404** (0.9382 / 0.9409 / 0.9422), `-LoRA-curric` |
+| MHC-ZH | **0.9303** (0.9361 / 0.9309 / 0.9240) | `errpat_zh_remint_v2`, `-LoRA` | **0.9303** — reproduces the file exactly |
+| MHC-EN | **0.8154** (0.7996 / 0.8142 / 0.8324) | `router_ckpt_snapshot` | not measured — no EN mints exist |
+
+The ZH row agrees across both instruments because the two lineages are the same head; the
+HateMM row does not, because `mechfix_hatemm_OUT.json` is the errpat **proxy** lineage while
+the C06 mints are the deployed `-LoRA-curric` lineage. **Anyone needing a HateMM
+deployed-head train LOO should quote 0.9404 (measured on the deployed lineage), not 0.9471
+and not 0.9406.**
+
+**Net movement of the quoted triple: MHC-ZH `0.8915 → 0.9303` (+0.0388, the material one),
+HateMM `0.9406 → 0.9404` deployed-lineage (−0.0002, immaterial by coincidence), MHC-EN
+`0.8154` unchanged.** The HateMM near-agreement is arithmetic luck, not provenance: the
+pooled mean happened to land 0.0002 from the deployed measurement. Conclusions that leaned on
+the HateMM leg survive; **conclusions that leaned on "ZH has little train-side headroom / ZH
+LOO ≈ fold" do not** — ZH's LOO-vs-fold gap is +0.0380, not ~0.
+
+**A false lead, killed so nobody re-derives it:** `0.8154` also occurs in
+`scripts/analysis/mechfix_diag_OUT.json` at `/zh/per_seed/s2/T2b_length_organisation_rho` —
+a Spearman rho on ZH. That is a **coincidence**, not the source; the EN provenance above is
+the real one.
+
+**Affected files (quotation sites, historical records NOT rewritten):**
+`refine-logs/LITSWEEP6_MEMBANK.md:177,880,886`;
+`refine-logs/RESTRANS_PREGATE_RECORD.md:62,489,495`;
+`refine-logs/LITSWEEP7_LANDING_SITE.md:767,967,973`;
+`refine-logs/MEMBANK_C4_PREGATE_RECORD.md:151,991,1049,1057`;
+`refine-logs/C09_A0_V2_RECORD.md:237,257`; `refine-logs/C09_A0_V3_RECORD.md:254,306`;
+`refine-logs/C09_A0_V7_RECORD.md:367,420`; `refine-logs/C09_A0_V10_RECORD.md:401,454`;
+`refine-logs/C09_A0_V11_RECORD.md:409,462`; and
+`refine-logs/MECH_PROBES_A_PREREG.md:108-109` (frozen, deliberately not edited).
+Per CLAUDE.md's no-doc-consistency-iteration rule, the historical records stand as written; a
+one-line pointer to this finding was inserted at the top of `LITSWEEP6_MEMBANK.md` and
+`RESTRANS_PREGATE_RECORD.md` only.
+
+### Integrity
+
+**Zero test contact.** Every query in every probe is a **train-split** item; `K_dev` was never
+read; `grep -c test_seen` on `slurm/logs/mech_probes_a_13997.out` returns **0**. Three guard
+layers active (`headspace_mint.py:106-116` `torch.load` guard; frozen `load_split` reading
+only `train_*.pt` / `dev_seen_*.pt`; `scripts/analysis/c09_guard` on `PYTHONPATH`). **Rules
+frozen before results** — the prereg was written and hashed before any candidate metric was
+computed, and the INDETERMINATE branch was pre-registered rather than invented when ZH landed
+at 0.1142. **Blindness** held during design and implementation (self-test on synthetic random
+data only). **Single submission** — one `sbatch`, one clean run, no resubmission.
+
+### What this leaves on the board
+
+RVS and XFM survive as untested mechanism candidates (stage B = actually training the
+objective, not screening the geometry); AQM survives only in its trained-`g_phi` form; TRA
+(per-bank-item trust radius) was never screened. AQM's zero-parameter form is closed.
+
+Cost: **20m23s wall, CPU-only, 8 cores, ZERO GPU-hours, $0 cloud.** State block:
+`mech_probes_a_2026_08_05`.

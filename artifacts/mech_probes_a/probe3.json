@@ -1,0 +1,444 @@
+{
+  "acc_delta_vs_floor": {
+    "hatemm": {
+      "10": -0.064534,
+      "15": -0.003154,
+      "20": -0.004499,
+      "25": -0.004051,
+      "29": -1.8e-05
+    },
+    "zh": {
+      "10": -0.17155,
+      "15": -0.020715,
+      "20": -0.00805,
+      "25": -0.011504,
+      "29": 1e-05
+    }
+  },
+  "best_t_star": 29,
+  "best_t_star_deltas": {
+    "hatemm": -1.8e-05,
+    "zh": 1e-05
+  },
+  "best_t_star_mF1_delta": {
+    "hatemm": 1.1e-05,
+    "zh": -1.5e-05
+  },
+  "candidate": "AQM_zero_parameter_realization",
+  "floor_source": "banked",
+  "floors": {
+    "hatemm": {
+      "banked_acc_mean": 0.886667,
+      "banked_mF1_mean": 0.882033,
+      "primary_acc_mean": 0.886667,
+      "remint_e29_acc_mean": 0.886649,
+      "remint_e29_mF1_mean": 0.882044
+    },
+    "zh": {
+      "banked_acc_mean": 0.892333,
+      "banked_mF1_mean": 0.874067,
+      "primary_acc_mean": 0.892333,
+      "remint_e29_acc_mean": 0.892343,
+      "remint_e29_mF1_mean": 0.874052
+    }
+  },
+  "parity": [
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 0,
+      "pass": true,
+      "secs": 37.9,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 1,
+      "pass": true,
+      "secs": 37.6,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 2,
+      "pass": true,
+      "secs": 38.1,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 3,
+      "pass": true,
+      "secs": 39.0,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 4,
+      "pass": true,
+      "secs": 37.6,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 0,
+      "pass": true,
+      "secs": 38.4,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 1,
+      "pass": true,
+      "secs": 38.0,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 2,
+      "pass": true,
+      "secs": 38.3,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 3,
+      "pass": true,
+      "secs": 38.2,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 4,
+      "pass": true,
+      "secs": 37.8,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 0,
+      "pass": true,
+      "secs": 38.0,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 1,
+      "pass": true,
+      "secs": 37.6,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 2,
+      "pass": true,
+      "secs": 38.3,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 3,
+      "pass": true,
+      "secs": 37.8,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "hatemm",
+      "fold": 4,
+      "pass": true,
+      "secs": 38.3,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 0,
+      "pass": true,
+      "secs": 29.1,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 1,
+      "pass": true,
+      "secs": 30.6,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 2,
+      "pass": true,
+      "secs": 29.5,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 3,
+      "pass": true,
+      "secs": 30.2,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 4,
+      "pass": true,
+      "secs": 29.8,
+      "seed": 0
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 0,
+      "pass": true,
+      "secs": 30.7,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 1,
+      "pass": true,
+      "secs": 30.1,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 2,
+      "pass": true,
+      "secs": 30.4,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 3,
+      "pass": true,
+      "secs": 30.1,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 4,
+      "pass": true,
+      "secs": 30.3,
+      "seed": 1
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 0,
+      "pass": true,
+      "secs": 29.8,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 1,
+      "pass": true,
+      "secs": 30.1,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 2,
+      "pass": true,
+      "secs": 30.7,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 3,
+      "pass": true,
+      "secs": 29.9,
+      "seed": 2
+    },
+    {
+      "banked_parity_maxabs": 0.0,
+      "dataset": "zh",
+      "fold": 4,
+      "pass": true,
+      "secs": 30.6,
+      "seed": 2
+    }
+  ],
+  "parity_all_pass": true,
+  "per_dataset": {
+    "hatemm": {
+      "10": {
+        "acc_by_seed": [
+          0.8293,
+          0.8226,
+          0.8145
+        ],
+        "acc_mean": 0.822133,
+        "mF1_by_seed": [
+          0.8156,
+          0.8066,
+          0.7985
+        ],
+        "mF1_mean": 0.80687
+      },
+      "15": {
+        "acc_by_seed": [
+          0.8898,
+          0.8831,
+          0.8777
+        ],
+        "acc_mean": 0.883513,
+        "mF1_by_seed": [
+          0.8854,
+          0.8779,
+          0.8723
+        ],
+        "mF1_mean": 0.87852
+      },
+      "20": {
+        "acc_by_seed": [
+          0.8898,
+          0.8804,
+          0.8763
+        ],
+        "acc_mean": 0.882168,
+        "mF1_by_seed": [
+          0.8854,
+          0.8751,
+          0.8708
+        ],
+        "mF1_mean": 0.877091
+      },
+      "25": {
+        "acc_by_seed": [
+          0.8831,
+          0.8831,
+          0.8817
+        ],
+        "acc_mean": 0.882616,
+        "mF1_by_seed": [
+          0.8786,
+          0.8772,
+          0.8778
+        ],
+        "mF1_mean": 0.877834
+      },
+      "29": {
+        "acc_by_seed": [
+          0.8884,
+          0.8858,
+          0.8858
+        ],
+        "acc_mean": 0.886649,
+        "mF1_by_seed": [
+          0.8838,
+          0.8811,
+          0.8812
+        ],
+        "mF1_mean": 0.882044
+      }
+    },
+    "zh": {
+      "10": {
+        "acc_by_seed": [
+          0.6943,
+          0.6891,
+          0.7789
+        ],
+        "acc_mean": 0.720783,
+        "mF1_by_seed": [
+          0.4404,
+          0.4285,
+          0.679
+        ],
+        "mF1_mean": 0.515985
+      },
+      "15": {
+        "acc_by_seed": [
+          0.8497,
+          0.8826,
+          0.8826
+        ],
+        "acc_mean": 0.871618,
+        "mF1_by_seed": [
+          0.8146,
+          0.8668,
+          0.8594
+        ],
+        "mF1_mean": 0.846948
+      },
+      "20": {
+        "acc_by_seed": [
+          0.8929,
+          0.8774,
+          0.8826
+        ],
+        "acc_mean": 0.884283,
+        "mF1_by_seed": [
+          0.8762,
+          0.8608,
+          0.8594
+        ],
+        "mF1_mean": 0.865438
+      },
+      "25": {
+        "acc_by_seed": [
+          0.8826,
+          0.8808,
+          0.8791
+        ],
+        "acc_mean": 0.880829,
+        "mF1_by_seed": [
+          0.8621,
+          0.8654,
+          0.8538
+        ],
+        "mF1_mean": 0.860424
+      },
+      "29": {
+        "acc_by_seed": [
+          0.8929,
+          0.8895,
+          0.8946
+        ],
+        "acc_mean": 0.892343,
+        "mF1_by_seed": [
+          0.8747,
+          0.871,
+          0.8765
+        ],
+        "mF1_mean": 0.874052
+      }
+    }
+  },
+  "probe": "P3_epoch_snapshot_asymmetric_bank",
+  "rule": "no t* with >= +0.020 acc (3-seed mean) over the epoch-29 floor on BOTH datasets -> AQM zero-parameter realization KILLED; the trained-g_phi version is a separate later question either way.",
+  "snap_epochs": [
+    10,
+    15,
+    20,
+    25,
+    29
+  ],
+  "verdict": "KILLED"
+}

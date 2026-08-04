@@ -1,5 +1,7 @@
 # RESTRANS PREGATE — C1, the residual-transport vote (de-bias the label field)
 
+> **ERRATUM POINTER (2026-08-05, F120):** the "deployed head train LOO" triple `0.9406 / 0.8915 / 0.8154` used in this file (lines 62, 489, 495) is a **protocol-mixed pooled mean** over val-selected **and** final-epoch checkpoints (MHC-EN final-epoch only), not a deployed-protocol LOO triple. Measured: MHC-ZH **0.9303** (not 0.8915), HateMM **0.9404** on the deployed `-LoRA-curric` lineage, MHC-EN 0.8154 unchanged. See `TARGET_FINDINGS.md` F120. This record is left as written.
+
 **Date:** 2026-07-27 NZST · **Agent:** restrans pregate · **Cost: $0** (CPU only, ≤8 threads,
 **zero GPU, zero SLURM, zero Modal, zero training**). Repo sha at freeze time `62efd82`
 (working tree dirty). Env: conda `HateVideo`, numpy 1.26.4, scipy 1.17.1, scikit-learn 1.5.2,
