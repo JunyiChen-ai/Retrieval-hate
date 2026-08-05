@@ -1,0 +1,1419 @@
+{
+ "meta": {
+  "script_sha256": "7562e43477ed5d9705ea357d4815aaea5cddd3bc0c1db8741ea5a25a04b52844",
+  "config_sha256": "21ffdc3ff59913cd91f9d001ca66664f56b3d7f54bc62a607a63583820c626da",
+  "frozen_sha256": {
+   "headspace_mint.py": "cefdf8dc2f4a9aefa042ef7bec9b1d06c9721ae5b4a70ec117e9929ff0916612",
+   "mechfix_ops.py": "635c13124e79ba1a299bc13fc1175a03aa11e09924f5413ce51061793c83fc8d",
+   "mechnov_pairverify.py": "77b0defd8eaa3688e58b6d5d17202bd55d16cf1f4a5aaafbe4b2b98598b7240d",
+   "headspace_fidelity.py": "72fd8e0aab61b635b4421b87bdbccc8ef6c58bf28fe1ff64cab0671e08bf6598"
+  },
+  "config": {
+   "_design_of_record": "refine-logs/C09_A0_RECORD.md (text: C09_A0_V17_RECORD.md, design GO 0C/0H/0I at review round 17)",
+   "_note": "Every constant here is frozen by the design of record. Nothing is tuned in-run.",
+   "datasets": [
+    "hatemm",
+    "zh"
+   ],
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "k_folds": 5,
+   "fold_seed": 0,
+   "topk": 20,
+   "n_items": {
+    "hatemm": 744,
+    "zh": 579
+   },
+   "reach_bar": 0.05,
+   "net_bar": {
+    "hatemm": 37.2,
+    "zh": 29.0
+   },
+   "net_bar_030": {
+    "hatemm": 22.3,
+    "zh": 17.4
+   },
+   "net_mf1_030": 0.03,
+   "alpha": 0.05,
+   "D_perm": 1000,
+   "D_shuffle": 200,
+   "D_random": 200,
+   "B_boot": 10000,
+   "B_boot_unstable": 2000,
+   "rng_seed": 20260801,
+   "shuffle_band": [
+    0.45,
+    0.55
+   ],
+   "pw_min": 30,
+   "min_weighted_strata": 3,
+   "unstable_min": 20,
+   "unstable_ci_width_max": 0.3,
+   "deg_kill": 0.95,
+   "fixk_grid": [
+    1,
+    2,
+    3,
+    5,
+    7,
+    10,
+    15
+   ],
+   "arena_band_margin": 0.02,
+   "arena_band_upper": 0.98,
+   "lr_C": 1.0,
+   "lr_max_iter": 2000,
+   "lr_tol": 1e-06,
+   "gbm_max_iter": 200,
+   "gbm_lr": 0.1,
+   "gbm_max_depth": 3,
+   "gbm_l2": 1.0,
+   "gbm_random_state": 20260801,
+   "null_row_dataset": "hatemm",
+   "null_row_index": 355,
+   "banked_floors": {
+    "hatemm": {
+     "acc": [
+      0.8884,
+      0.8858,
+      0.8858
+     ],
+     "mF1": [
+      0.8838,
+      0.8811,
+      0.8812
+     ]
+    },
+    "zh": {
+     "acc": [
+      0.8929,
+      0.8895,
+      0.8946
+     ],
+     "mF1": [
+      0.8747,
+      0.871,
+      0.8765
+     ]
+    }
+   },
+   "net_bar_030_rate": 0.03,
+   "cal3_comparators": {
+    "source": "refine-logs/C09_A0_V17_RECORD.md:1718-1728, quoting ERRPAT_HateMM \u00a77 ('SOLUTION MAPPING PER CLUSTER') and F113",
+    "errpat_hatemm_per_cluster_deployed_flip_ceilings": {
+     "FN1": {
+      "delta": 0.0326,
+      "n": 7
+     },
+     "FN2": {
+      "delta": 0.014,
+      "n": 3
+     },
+     "FN3": {
+      "delta": 0.0233,
+      "n": 5
+     },
+     "FP1": {
+      "delta": 0.0233,
+      "n": 5
+     },
+     "FP2": {
+      "delta": 0.0233,
+      "n": 5
+     },
+     "FP3": {
+      "delta": 0.0093,
+      "n": 2
+     }
+    },
+    "f113_headspace_THRESH_best": 0.0041,
+    "status": "COMPARATOR OF RECORD, NOT A STRICT CAL-3 CEILING -- a different arena and a different population (test split, n=215; C09's arena is the train split at n=744/579). No arm is escalated in any direction; the raw leg's only permitted use remains KILL corroboration."
+   }
+  },
+  "design_of_record": {
+   "freeze_record": "refine-logs/C09_A0_RECORD.md",
+   "design_text": "refine-logs/C09_A0_V17_RECORD.md",
+   "design_review": "GO 0C/0H/0I at round 17",
+   "note": "the design text is the specification; the freeze record carries the sha256 table, the measured-claims register and every declared implementation reading"
+  },
+  "test_contact": "NONE -- mint npz + train caches + gt text; open()/torch.load guards refuse any test path",
+  "runtime": {
+   "env": {
+    "OMP_NUM_THREADS": "8",
+    "MKL_NUM_THREADS": "8",
+    "OPENBLAS_NUM_THREADS": "8",
+    "NUMEXPR_NUM_THREADS": "8"
+   },
+   "threadpools": [
+    {
+     "user_api": "blas",
+     "internal_api": "openblas",
+     "num_threads": 8,
+     "prefix": "libopenblas",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/numpy.libs/libopenblas64_p-r0-0cf96a72.3.23.dev.so",
+     "version": "0.3.23.dev",
+     "threading_layer": "pthreads",
+     "architecture": "Zen"
+    },
+    {
+     "user_api": "openmp",
+     "internal_api": "openmp",
+     "num_threads": 8,
+     "prefix": "libgomp",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/torch/lib/libgomp-a34b3233.so.1",
+     "version": null
+    },
+    {
+     "user_api": "blas",
+     "internal_api": "openblas",
+     "num_threads": 1,
+     "prefix": "libopenblas",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/faiss_cpu.libs/libopenblas-r0-11edc3fa.3.15.so",
+     "version": "0.3.15",
+     "threading_layer": "disabled",
+     "architecture": "Zen"
+    },
+    {
+     "user_api": "openmp",
+     "internal_api": "openmp",
+     "num_threads": 8,
+     "prefix": "libgomp",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/faiss_cpu.libs/libgomp-e985bcbb.so.1.0.0",
+     "version": null
+    },
+    {
+     "user_api": "blas",
+     "internal_api": "openblas",
+     "num_threads": 8,
+     "prefix": "libscipy_openblas",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/scipy.libs/libscipy_openblas-6cdc3b4a.so",
+     "version": "0.3.30",
+     "threading_layer": "pthreads",
+     "architecture": "Haswell"
+    },
+    {
+     "user_api": "openmp",
+     "internal_api": "openmp",
+     "num_threads": 8,
+     "prefix": "libgomp",
+     "filepath": "/data/jehc223/miniconda3/envs/HateVideo/lib/python3.11/site-packages/scikit_learn.libs/libgomp-a34b3233.so.1.0.0",
+     "version": null
+    }
+   ],
+   "versions": {
+    "python": "3.11.8",
+    "numpy": "1.26.4",
+    "scipy": "1.17.1",
+    "sklearn": "1.5.2",
+    "torch": "2.6.0+cu124"
+   },
+   "torch_num_threads": 8,
+   "node": "foscsmlprd01.its.auckland.ac.nz"
+  },
+  "rng_root": {
+   "seed": 20260801,
+   "n_children": 6,
+   "created": "once, in main()",
+   "child_seed_sequences": [
+    {
+     "index": 0,
+     "entropy": 20260801,
+     "spawn_key": [
+      0
+     ]
+    },
+    {
+     "index": 1,
+     "entropy": 20260801,
+     "spawn_key": [
+      1
+     ]
+    },
+    {
+     "index": 2,
+     "entropy": 20260801,
+     "spawn_key": [
+      2
+     ]
+    },
+    {
+     "index": 3,
+     "entropy": 20260801,
+     "spawn_key": [
+      3
+     ]
+    },
+    {
+     "index": 4,
+     "entropy": 20260801,
+     "spawn_key": [
+      4
+     ]
+    },
+    {
+     "index": 5,
+     "entropy": 20260801,
+     "spawn_key": [
+      5
+     ]
+    }
+   ]
+  }
+ },
+ "GATE_LEDGER": {
+  "predicate_coverage_measured_this_run": {
+   "n_repo_files_matched": 983,
+   "n_unmatched_paths_containing_test": 14,
+   "sample_unmatched": [
+    "RA-HMD/LLAMA-FACTORY-Ver202512/tests/check_license.py",
+    "RA-HMD/LLAMA-FACTORY-Ver202512/tests/conftest.py",
+    "RA-HMD/LLAMA-FACTORY-Ver202512/tests/utils.py",
+    "RA-HMD/LLAMA-FACTORY-Ver202512/tests/version.txt",
+    "scripts/analysis/membank_c4_selftest_OUT.json",
+    "scripts/analysis/vsw_selftest_B0_ARCHIVE.json",
+    "scripts/analysis/vsw_selftest_OUT.log",
+    "scripts/analysis/vsw_selftest_OUT.json",
+    "scripts/analysis/membank_c4_selftest_OUT.log",
+    "refine-logs/REDTEAM_UNTESTED_CELLS.md"
+   ],
+   "note": "re-derived against the live tree by c09guard.verify_predicate(); the unmatched residue is inspected in the freeze record and contains no test-SPLIT artifact this job can reach"
+  },
+  "measured": {
+   "test_path_opens": 0,
+   "dev_path_opens": 36,
+   "banked_trainlog_opens": 6
+  },
+  "measured_expectations": {
+   "test_path_opens": 0,
+   "dev_path_opens": "36 on a fresh run (one dev_seen load per mint); LOWER on a resume, since a mint whose .npz already exists is skipped without opening anything",
+   "banked_trainlog_opens": "6 (GATE-DEVFID reads the banked encoder trainlogs); design 8.1 counts these separately from the 36, for a declared dev-side total of 42",
+   "declared_dev_side_total_8_1": 42
+  },
+  "evidence": {
+   "n_processes_reporting": 39,
+   "n_processes_expected_fresh_run": 39,
+   "n_processes_expected_breakdown": "1 version/preflight heredoc + 36 mints + 2 GATE-DEVFID runs (the arena's own counts are added in memory, not read back)",
+   "resume_note": "a resume legitimately reports FEWER: a mint whose .npz already exists is skipped and opens nothing. The gate requires >= 1 reporting process, not 39.",
+   "stale_ledger_files_from_earlier_attempts": [],
+   "why_this_is_gated": "a ledger that reports zero because NO process ever reported is not evidence of a clean run; the gate therefore requires at least one reporting process besides the arena"
+  },
+  "by_construction_zero": {
+   "test_label_materialisations": "no test path can be opened (guard raises), so no test label can be materialised; this is a consequence of test_path_opens == 0, not an independent count",
+   "dev_label_materialisations_outside_decisions": "dev labels are materialised once per mint inside headspace_mint.py (36 mints) for the deployed-head fit; the arena never loads a dev label -- it reads only mint .npz key matrices, train caches and data/gt/*/train.jsonl",
+   "dev_or_test_labels_into_decision_quantities": "every decision quantity in this file is computed from train-split labels via BankLabels or the query-side train labels; no dev or test label array is in scope of any decision path"
+  },
+  "per_process": [
+   {
+    "pid": 1698829,
+    "argv": "-",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 0,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1699564,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1710763,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1723919,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1736870,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1750816,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1764001,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1777869,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1794020,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1806558,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1817591,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1829378,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1843012,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1857608,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1870345,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1883272,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1894544,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1905296,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1918474,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset HateMM --model Qwen2.5-VL-7B-Instruct-LoRA-curric_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --h",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1934014,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1943292,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1952517,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1963619,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1973572,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 1984242,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2003147,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2014032,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2023465,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2034083,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2045898,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2054921,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2074450,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2083668,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2094989,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2104510,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2113639,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2124701,
+    "argv": "run_rac.py --batch_size 64 --lr 0.0001 --epochs 30 --topk 20 --dataset MHC_zh --model Qwen2.5-VL-7B-Instruct-LoRA_HF --proj_dim 1024 --map_dim 1024 --dropout 0.2 0.4 0.1 --fusion_mode align --hard_neg",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 1,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 0
+    }
+   },
+   {
+    "pid": 2147183,
+    "argv": "scripts/analysis/headspace_fidelity.py --dataset hatemm --mintdir /data/jehc223/RGCL/artifacts/c09_topo/v1/a0/C09-A0-v1/scratch --out /data/jehc223/RGCL/artifacts/c09_topo/v1/a0/C09-A0-v1/C09_FIDELITY",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 0,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 3
+    }
+   },
+   {
+    "pid": 2148093,
+    "argv": "scripts/analysis/headspace_fidelity.py --dataset zh --mintdir /data/jehc223/RGCL/artifacts/c09_topo/v1/a0/C09-A0-v1/scratch --out /data/jehc223/RGCL/artifacts/c09_topo/v1/a0/C09-A0-v1/C09_FIDELITY_zh.",
+    "counts": {
+     "test_path_opens": 0,
+     "test_label_materialisations": 0,
+     "dev_path_opens": 0,
+     "dev_label_materialisations_outside_decisions": 0,
+     "dev_or_test_labels_into_decision_quantities": 0,
+     "banked_trainlog_opens": 3
+    }
+   }
+  ],
+  "arena_process_counts": {
+   "test_path_opens": 0,
+   "test_label_materialisations": 0,
+   "dev_path_opens": 0,
+   "dev_label_materialisations_outside_decisions": 0,
+   "dev_or_test_labels_into_decision_quantities": 0,
+   "banked_trainlog_opens": 0
+  },
+  "ledger_dir": "/data/jehc223/RGCL/artifacts/c09_topo/v1/a0/C09-A0-v1/ledger",
+  "guard_predicate": "repo-scoped: basename contains test_seen, or begins test. / test_, or a path component is exactly 'test'",
+  "pass": true
+ },
+ "GATE_DEVFID": {
+  "per_dataset": {
+   "hatemm": {
+    "floor_dev_acc_ep29_3seedmean": 0.838,
+    "proxy_dev_acc_ep29_3seedmean": 0.8287,
+    "delta_3seedmean": -0.0093,
+    "B_fid_abs_3seedmean": 0.0093,
+    "per_seed_abs_delta_max": 0.028,
+    "mean_abs_delta_over_30_epochs_3seedmean": 0.0111,
+    "raw_effect_under_test": 0.0255,
+    "STOP_RULE_TRIGGERED": false,
+    "one_dev_item": 0.0093
+   },
+   "zh": {
+    "floor_dev_acc_ep29_3seedmean": 0.8505,
+    "proxy_dev_acc_ep29_3seedmean": 0.8419,
+    "delta_3seedmean": -0.0086,
+    "B_fid_abs_3seedmean": 0.0086,
+    "per_seed_abs_delta_max": 0.0257,
+    "mean_abs_delta_over_30_epochs_3seedmean": 0.0217,
+    "raw_effect_under_test": 0.0255,
+    "STOP_RULE_TRIGGERED": false,
+    "one_dev_item": 0.0128
+   }
+  },
+  "stop_rule_triggered_any": false,
+  "instrument_absent_any": false,
+  "reading": "GATE-DEVFID is REPORTING ONLY (8.2) and does not gate. 'INSTRUMENT_ABSENT' is a THIRD value, distinct from a clean pass: it means the instrument did not run."
+ },
+ "DECISION": {
+  "publication_precondition": {
+   "per_dataset": {
+    "hatemm": {
+     "GATE_FLOOR": true,
+     "GATE_PARITY_FOLD": true,
+     "GATE_FIXK20": true,
+     "GATE_BLIND": true,
+     "GATE_NESTED": true,
+     "GATE_SELFTEST": true,
+     "GATE_ZEROOP": true,
+     "GATE_ARENA": true,
+     "SHUFFLE_POP_band": true
+    },
+    "zh": {
+     "GATE_FLOOR": true,
+     "GATE_PARITY_FOLD": true,
+     "GATE_FIXK20": true,
+     "GATE_BLIND": true,
+     "GATE_NESTED": true,
+     "GATE_SELFTEST": true,
+     "GATE_ZEROOP": true,
+     "GATE_ARENA": true,
+     "SHUFFLE_POP_band": true
+    }
+   },
+   "other_spaces_structural_only": {
+    "hatemm/head_remove_null": {
+     "GATE_FIXK20": true,
+     "GATE_BLIND": true,
+     "GATE_NESTED": true,
+     "GATE_SELFTEST": true,
+     "GATE_ZEROOP": true
+    },
+    "hatemm/raw": {
+     "GATE_FIXK20": true,
+     "GATE_BLIND": true,
+     "GATE_NESTED": true,
+     "GATE_SELFTEST": true,
+     "GATE_ZEROOP": true
+    },
+    "zh/raw": {
+     "GATE_FIXK20": true,
+     "GATE_BLIND": true,
+     "GATE_NESTED": true,
+     "GATE_SELFTEST": true,
+     "GATE_ZEROOP": true
+    }
+   },
+   "other_spaces_note": "DIAGNOSTIC, NOT A GATE. 8.1 declares its nine gates plus the SHUFFLE-POP band 'the complete publication precondition of 9', so this file does not add HALT conditions to that frozen list: these five arithmetic/structural checks are computed and published for the remove-null and raw legs but do NOT enter ok_pub. 9 confines the raw leg to KILL corroboration and lets no raw number reach the decision, and 8.2 makes the remove-null leg a sensitivity whose disagreement is already published as a first-class finding by GATE_NULL_AGREEMENT -- so a failure here cannot corrupt a verdict, while gating on it could void an otherwise clean one for a data property of a non-decisional leg.",
+   "other_spaces_all_pass": true,
+   "GATE_LEDGER": true,
+   "publishes_a_verdict": true
+  },
+  "per_tau": {
+   "tau_0": {
+    "K_REACH_both": true,
+    "K_FELDMAN_both": false,
+    "multipliers_paired": [
+     1.0,
+     1.5,
+     2.0
+    ],
+    "multipliers_unpaired": [],
+    "MARGINAL_ONLY_NOT_CONDITIONAL": false,
+    "net_deg_cells": [
+     {
+      "multiplier": 1.0,
+      "k_per_dataset": {
+       "hatemm": 73,
+       "zh": 50
+      },
+      "live_on_net_both": true,
+      "K_NET_clears": false,
+      "K_DEG_fires": true,
+      "cell_clears": false
+     },
+     {
+      "multiplier": 1.5,
+      "k_per_dataset": {
+       "hatemm": 110,
+       "zh": 75
+      },
+      "live_on_net_both": true,
+      "K_NET_clears": false,
+      "K_DEG_fires": true,
+      "cell_clears": false
+     },
+     {
+      "multiplier": 2.0,
+      "k_per_dataset": {
+       "hatemm": 146,
+       "zh": 100
+      },
+      "live_on_net_both": false,
+      "K_NET_clears": false,
+      "K_DEG_fires": true,
+      "cell_clears": false
+     }
+    ],
+    "clears": false
+   },
+   "tau_hi": {
+    "K_REACH_both": false,
+    "K_FELDMAN_both": false,
+    "multipliers_paired": [
+     1.0,
+     1.5,
+     2.0
+    ],
+    "multipliers_unpaired": [],
+    "MARGINAL_ONLY_NOT_CONDITIONAL": false,
+    "net_deg_cells": [
+     {
+      "multiplier": 1.0,
+      "k_per_dataset": {
+       "hatemm": 36,
+       "zh": 26
+      },
+      "live_on_net_both": false,
+      "K_NET_clears": false,
+      "K_DEG_fires": false,
+      "cell_clears": false
+     },
+     {
+      "multiplier": 1.5,
+      "k_per_dataset": {
+       "hatemm": 54,
+       "zh": 39
+      },
+      "live_on_net_both": true,
+      "K_NET_clears": false,
+      "K_DEG_fires": false,
+      "cell_clears": false
+     },
+     {
+      "multiplier": 2.0,
+      "k_per_dataset": {
+       "hatemm": 72,
+       "zh": 52
+      },
+      "live_on_net_both": true,
+      "K_NET_clears": false,
+      "K_DEG_fires": false,
+      "cell_clears": false
+     }
+    ],
+    "clears": false
+   }
+  },
+  "verdict": "KILL",
+  "holm": {
+   "hatemm": {
+    "PERM_STRUCT": {
+     "tau_0": {
+      "p": 0.85614386,
+      "reject": false
+     },
+     "tau_hi": {
+      "p": 0.26473526,
+      "reject": false
+     }
+    },
+    "PERM_STRUCT_COND": {
+     "tau_0": {
+      "p": 0.83016983,
+      "reject": false
+     },
+     "tau_hi": {
+      "p": 0.16383616,
+      "reject": false
+     }
+    }
+   },
+   "zh": {
+    "PERM_STRUCT": {
+     "tau_0": {
+      "p": 0.51348651,
+      "reject": false
+     },
+     "tau_hi": {
+      "p": 0.35864136,
+      "reject": false
+     }
+    },
+    "PERM_STRUCT_COND": {
+     "tau_0": {
+      "p": 0.48151848,
+      "reject": false
+     },
+     "tau_hi": {
+      "p": 0.2987013,
+      "reject": false
+     }
+    }
+   }
+  },
+  "K_FELDMAN_per_dataset": {
+   "hatemm": {
+    "tau_0": false,
+    "tau_hi": false
+   },
+   "zh": {
+    "tau_0": false,
+    "tau_hi": false
+   }
+  },
+  "verdict_provisional": "KILL",
+  "GATE_NULL_AGREEMENT": {
+   "ran": true,
+   "dataset": "hatemm",
+   "row_removed": 355,
+   "rules_compared": [
+    "K_REACH_clears",
+    "K_FELDMAN_clears",
+    "IDENTIFIABILITY_UNDERPOWERED",
+    "identifiability_cell_marking",
+    "K_NET_primary_clears_any_cell",
+    "K_DEG_fires_any_cell",
+    "per-multiplier NET/DEG cells",
+    "VERDICT"
+   ],
+   "verdict_primary": "KILL",
+   "verdict_remove_null": "KILL",
+   "continue_cells_remove_null": null,
+   "remove_null_leg_halted": false,
+   "remove_null_leg_halt_gates": [],
+   "halt_reading": null,
+   "primary": {
+    "tau_0": {
+     "K_REACH_clears": true,
+     "K_FELDMAN_clears": false,
+     "PERM_STRUCT_p": 0.85614386,
+     "PERM_STRUCT_COND_p": 0.83016983,
+     "IDENTIFIABILITY_UNDERPOWERED": false,
+     "identifiability_cell_marking": "LIVE",
+     "K_NET_primary_clears_any_cell": false,
+     "K_DEG_fires_any_cell": true,
+     "per_multiplier": {
+      "1.0": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": true
+      },
+      "1.5": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": true
+      },
+      "2.0": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": false
+      }
+     }
+    },
+    "tau_hi": {
+     "K_REACH_clears": false,
+     "K_FELDMAN_clears": false,
+     "PERM_STRUCT_p": 0.26473526,
+     "PERM_STRUCT_COND_p": 0.16383616,
+     "IDENTIFIABILITY_UNDERPOWERED": false,
+     "identifiability_cell_marking": "LIVE",
+     "K_NET_primary_clears_any_cell": false,
+     "K_DEG_fires_any_cell": false,
+     "per_multiplier": {
+      "1.0": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": false,
+       "live_on_net": false
+      },
+      "1.5": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": false,
+       "live_on_net": true
+      },
+      "2.0": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": false,
+       "live_on_net": true
+      }
+     }
+    }
+   },
+   "remove_null": {
+    "tau_0": {
+     "K_REACH_clears": true,
+     "K_FELDMAN_clears": false,
+     "PERM_STRUCT_p": 0.7952048,
+     "PERM_STRUCT_COND_p": 0.78021978,
+     "IDENTIFIABILITY_UNDERPOWERED": false,
+     "identifiability_cell_marking": "LIVE",
+     "K_NET_primary_clears_any_cell": false,
+     "K_DEG_fires_any_cell": true,
+     "per_multiplier": {
+      "1.0": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": true
+      },
+      "1.5": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": true
+      },
+      "2.0": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": false
+      }
+     }
+    },
+    "tau_hi": {
+     "K_REACH_clears": false,
+     "K_FELDMAN_clears": false,
+     "PERM_STRUCT_p": 0.23376623,
+     "PERM_STRUCT_COND_p": 0.14385614,
+     "IDENTIFIABILITY_UNDERPOWERED": false,
+     "identifiability_cell_marking": "LIVE",
+     "K_NET_primary_clears_any_cell": false,
+     "K_DEG_fires_any_cell": true,
+     "per_multiplier": {
+      "1.0": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": false
+      },
+      "1.5": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": true
+      },
+      "2.0": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": true
+      }
+     }
+    }
+   },
+   "disagreements": [
+    {
+     "tau": "tau_hi",
+     "rule": "K_DEG_fires_any_cell",
+     "primary": false,
+     "remove_null": true
+    },
+    {
+     "tau": "tau_hi",
+     "rule": "cell@1.0",
+     "primary": {
+      "K_NET_primary_clears": false,
+      "K_DEG_fires": false,
+      "live_on_net": false
+     },
+     "remove_null": {
+      "K_NET_primary_clears": false,
+      "K_DEG_fires": true,
+      "live_on_net": false
+     }
+    },
+    {
+     "tau": "tau_hi",
+     "rule": "cell@1.5",
+     "primary": {
+      "K_NET_primary_clears": false,
+      "K_DEG_fires": false,
+      "live_on_net": true
+     },
+     "remove_null": {
+      "K_NET_primary_clears": false,
+      "K_DEG_fires": true,
+      "live_on_net": true
+     }
+    },
+    {
+     "tau": "tau_hi",
+     "rule": "cell@2.0",
+     "primary": {
+      "K_NET_primary_clears": false,
+      "K_DEG_fires": false,
+      "live_on_net": true
+     },
+     "remove_null": {
+      "K_NET_primary_clears": false,
+      "K_DEG_fires": true,
+      "live_on_net": true
+     }
+    }
+   ],
+   "agrees": false,
+   "requirement": "agreement on the verdict and every K-rule outcome (8.2); a disagreement is a first-class finding and scopes the verdict"
+  },
+  "kill_scope": {
+   "rules_fired": [
+    "K-FELDMAN@tau_0",
+    "K-REACH@tau_hi"
+   ],
+   "GATE_NULL_AGREEMENT": {
+    "ran": true,
+    "dataset": "hatemm",
+    "row_removed": 355,
+    "rules_compared": [
+     "K_REACH_clears",
+     "K_FELDMAN_clears",
+     "IDENTIFIABILITY_UNDERPOWERED",
+     "identifiability_cell_marking",
+     "K_NET_primary_clears_any_cell",
+     "K_DEG_fires_any_cell",
+     "per-multiplier NET/DEG cells",
+     "VERDICT"
+    ],
+    "verdict_primary": "KILL",
+    "verdict_remove_null": "KILL",
+    "continue_cells_remove_null": null,
+    "remove_null_leg_halted": false,
+    "remove_null_leg_halt_gates": [],
+    "halt_reading": null,
+    "primary": {
+     "tau_0": {
+      "K_REACH_clears": true,
+      "K_FELDMAN_clears": false,
+      "PERM_STRUCT_p": 0.85614386,
+      "PERM_STRUCT_COND_p": 0.83016983,
+      "IDENTIFIABILITY_UNDERPOWERED": false,
+      "identifiability_cell_marking": "LIVE",
+      "K_NET_primary_clears_any_cell": false,
+      "K_DEG_fires_any_cell": true,
+      "per_multiplier": {
+       "1.0": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": true
+       },
+       "1.5": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": true
+       },
+       "2.0": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": false
+       }
+      }
+     },
+     "tau_hi": {
+      "K_REACH_clears": false,
+      "K_FELDMAN_clears": false,
+      "PERM_STRUCT_p": 0.26473526,
+      "PERM_STRUCT_COND_p": 0.16383616,
+      "IDENTIFIABILITY_UNDERPOWERED": false,
+      "identifiability_cell_marking": "LIVE",
+      "K_NET_primary_clears_any_cell": false,
+      "K_DEG_fires_any_cell": false,
+      "per_multiplier": {
+       "1.0": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": false,
+        "live_on_net": false
+       },
+       "1.5": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": false,
+        "live_on_net": true
+       },
+       "2.0": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": false,
+        "live_on_net": true
+       }
+      }
+     }
+    },
+    "remove_null": {
+     "tau_0": {
+      "K_REACH_clears": true,
+      "K_FELDMAN_clears": false,
+      "PERM_STRUCT_p": 0.7952048,
+      "PERM_STRUCT_COND_p": 0.78021978,
+      "IDENTIFIABILITY_UNDERPOWERED": false,
+      "identifiability_cell_marking": "LIVE",
+      "K_NET_primary_clears_any_cell": false,
+      "K_DEG_fires_any_cell": true,
+      "per_multiplier": {
+       "1.0": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": true
+       },
+       "1.5": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": true
+       },
+       "2.0": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": false
+       }
+      }
+     },
+     "tau_hi": {
+      "K_REACH_clears": false,
+      "K_FELDMAN_clears": false,
+      "PERM_STRUCT_p": 0.23376623,
+      "PERM_STRUCT_COND_p": 0.14385614,
+      "IDENTIFIABILITY_UNDERPOWERED": false,
+      "identifiability_cell_marking": "LIVE",
+      "K_NET_primary_clears_any_cell": false,
+      "K_DEG_fires_any_cell": true,
+      "per_multiplier": {
+       "1.0": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": false
+       },
+       "1.5": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": true
+       },
+       "2.0": {
+        "K_NET_primary_clears": false,
+        "K_DEG_fires": true,
+        "live_on_net": true
+       }
+      }
+     }
+    },
+    "disagreements": [
+     {
+      "tau": "tau_hi",
+      "rule": "K_DEG_fires_any_cell",
+      "primary": false,
+      "remove_null": true
+     },
+     {
+      "tau": "tau_hi",
+      "rule": "cell@1.0",
+      "primary": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": false,
+       "live_on_net": false
+      },
+      "remove_null": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": false
+      }
+     },
+     {
+      "tau": "tau_hi",
+      "rule": "cell@1.5",
+      "primary": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": false,
+       "live_on_net": true
+      },
+      "remove_null": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": true
+      }
+     },
+     {
+      "tau": "tau_hi",
+      "rule": "cell@2.0",
+      "primary": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": false,
+       "live_on_net": true
+      },
+      "remove_null": {
+       "K_NET_primary_clears": false,
+       "K_DEG_fires": true,
+       "live_on_net": true
+      }
+     }
+    ],
+    "agrees": false,
+    "requirement": "agreement on the verdict and every K-rule outcome (8.2); a disagreement is a first-class finding and scopes the verdict"
+   },
+   "scoped_to_null_row_disagreement": "this KILL does NOT survive removal of the structural-zero row: see GATE_NULL_AGREEMENT.disagreements",
+   "closes": "tau in {tau_0, tau_hi} only; neither precision nor AUC is monotone in tau (\u00a79)",
+   "identifiability_underpowered": {
+    "hatemm": {
+     "tau_0": false,
+     "tau_hi": false
+    },
+    "zh": {
+     "tau_0": false,
+     "tau_hi": true
+    }
+   },
+   "identifiability_underpowered_any": true,
+   "secondary_030_cleared_anywhere": false,
+   "note_if_secondary_only": "if a cell cleared the +0.030-sized net figure from banned_constraints[10] but not the +0.050-sized figure the C09 registry entry names, the record says so in terms (\u00a75.3)"
+  }
+ }
+}

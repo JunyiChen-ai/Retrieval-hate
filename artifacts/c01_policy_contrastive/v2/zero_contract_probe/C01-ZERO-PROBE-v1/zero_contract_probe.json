@@ -1,0 +1,520 @@
+{
+  "access_ledger": [
+    {
+      "bytes_hashed": 16619920,
+      "dataset": "MHC_zh",
+      "ordinal": 0,
+      "path": "data/CLIP_Embedding/MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_L24.pt",
+      "policy": "standard",
+      "sha256_matched_before_torch_load": true,
+      "split": "train",
+      "test_like": false,
+      "torch_loaded": true
+    },
+    {
+      "bytes_hashed": 16619941,
+      "dataset": "MHC_zh",
+      "ordinal": 1,
+      "path": "data/CLIP_Embedding/MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_ow_L24.pt",
+      "policy": "oneword",
+      "sha256_matched_before_torch_load": true,
+      "split": "train",
+      "test_like": false,
+      "torch_loaded": true
+    },
+    {
+      "bytes_hashed": 2240677,
+      "dataset": "MHC_zh",
+      "ordinal": 2,
+      "path": "data/CLIP_Embedding/MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_L24.pt",
+      "policy": "standard",
+      "sha256_matched_before_torch_load": true,
+      "split": "dev_seen",
+      "test_like": false,
+      "torch_loaded": true
+    },
+    {
+      "bytes_hashed": 2240698,
+      "dataset": "MHC_zh",
+      "ordinal": 3,
+      "path": "data/CLIP_Embedding/MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_ow_L24.pt",
+      "policy": "oneword",
+      "sha256_matched_before_torch_load": true,
+      "split": "dev_seen",
+      "test_like": false,
+      "torch_loaded": true
+    },
+    {
+      "bytes_hashed": 21358913,
+      "dataset": "HateMM",
+      "ordinal": 4,
+      "path": "data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_L24.pt",
+      "policy": "standard",
+      "sha256_matched_before_torch_load": true,
+      "split": "train",
+      "test_like": false,
+      "torch_loaded": true
+    },
+    {
+      "bytes_hashed": 21358934,
+      "dataset": "HateMM",
+      "ordinal": 5,
+      "path": "data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_ow_L24.pt",
+      "policy": "oneword",
+      "sha256_matched_before_torch_load": true,
+      "split": "train",
+      "test_like": false,
+      "torch_loaded": true
+    },
+    {
+      "bytes_hashed": 3073494,
+      "dataset": "HateMM",
+      "ordinal": 6,
+      "path": "data/CLIP_Embedding/HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_L24.pt",
+      "policy": "standard",
+      "sha256_matched_before_torch_load": true,
+      "split": "dev_seen",
+      "test_like": false,
+      "torch_loaded": true
+    },
+    {
+      "bytes_hashed": 3073579,
+      "dataset": "HateMM",
+      "ordinal": 7,
+      "path": "data/CLIP_Embedding/HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_ow_L24.pt",
+      "policy": "oneword",
+      "sha256_matched_before_torch_load": true,
+      "split": "dev_seen",
+      "test_like": false,
+      "torch_loaded": true
+    }
+  ],
+  "config": "configs/c01/c01_a0_v1.json",
+  "datasets": {
+    "HateMM": {
+      "splits": {
+        "dev_seen": {
+          "endpoint_comparison": {
+            "img": {
+              "matched_zero_ids": [],
+              "oneword_only_zero_ids": [],
+              "standard_only_zero_ids": [],
+              "zero_mask_exact_match": true
+            },
+            "text": {
+              "matched_zero_ids": [],
+              "oneword_only_zero_ids": [],
+              "standard_only_zero_ids": [],
+              "zero_mask_exact_match": true
+            }
+          },
+          "endpoint_ids_exact_match": true,
+          "endpoint_labels_exact_match": true,
+          "n": 107,
+          "policies": {
+            "oneword": {
+              "modalities": {
+                "img": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                },
+                "text": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                }
+              },
+              "path": "data/CLIP_Embedding/HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_ow_L24.pt",
+              "sha256": "07c19096a054845a314b4f36a5cf8b9a1ded1e37caa30dc353c4fc800385c82c"
+            },
+            "standard": {
+              "modalities": {
+                "img": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                },
+                "text": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                }
+              },
+              "path": "data/CLIP_Embedding/HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_L24.pt",
+              "sha256": "92a17d42627cb4b1e127026d486b7e58ca9cd649435480b2855f6c7708ab35e8"
+            }
+          }
+        },
+        "train": {
+          "endpoint_comparison": {
+            "img": {
+              "matched_zero_ids": [
+                "hate_video_95"
+              ],
+              "oneword_only_zero_ids": [],
+              "standard_only_zero_ids": [],
+              "zero_mask_exact_match": true
+            },
+            "text": {
+              "matched_zero_ids": [
+                "hate_video_95"
+              ],
+              "oneword_only_zero_ids": [],
+              "standard_only_zero_ids": [],
+              "zero_mask_exact_match": true
+            }
+          },
+          "endpoint_ids_exact_match": true,
+          "endpoint_labels_exact_match": true,
+          "n": 744,
+          "policies": {
+            "oneword": {
+              "modalities": {
+                "img": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 1,
+                  "zero_row_ids": [
+                    "hate_video_95"
+                  ],
+                  "zero_rows": [
+                    {
+                      "id": "hate_video_95",
+                      "label": 1,
+                      "other_modality_state": "exact_zero",
+                      "row_index": 355
+                    }
+                  ]
+                },
+                "text": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 1,
+                  "zero_row_ids": [
+                    "hate_video_95"
+                  ],
+                  "zero_rows": [
+                    {
+                      "id": "hate_video_95",
+                      "label": 1,
+                      "other_modality_state": "exact_zero",
+                      "row_index": 355
+                    }
+                  ]
+                }
+              },
+              "path": "data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_ow_L24.pt",
+              "sha256": "60054f3be1204ca7bf2ac55b9bae6a88dd84d9dda35b0225f1ca27ce61977f4e"
+            },
+            "standard": {
+              "modalities": {
+                "img": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 1,
+                  "zero_row_ids": [
+                    "hate_video_95"
+                  ],
+                  "zero_rows": [
+                    {
+                      "id": "hate_video_95",
+                      "label": 1,
+                      "other_modality_state": "exact_zero",
+                      "row_index": 355
+                    }
+                  ]
+                },
+                "text": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 1,
+                  "zero_row_ids": [
+                    "hate_video_95"
+                  ],
+                  "zero_rows": [
+                    {
+                      "id": "hate_video_95",
+                      "label": 1,
+                      "other_modality_state": "exact_zero",
+                      "row_index": 355
+                    }
+                  ]
+                }
+              },
+              "path": "data/CLIP_Embedding/HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-ro_L24.pt",
+              "sha256": "6a44cce4f65d4a60b8863969a2ad9ed72731658cea49e75f487a911000be045f"
+            }
+          }
+        }
+      }
+    },
+    "MHC_zh": {
+      "splits": {
+        "dev_seen": {
+          "endpoint_comparison": {
+            "img": {
+              "matched_zero_ids": [],
+              "oneword_only_zero_ids": [],
+              "standard_only_zero_ids": [],
+              "zero_mask_exact_match": true
+            },
+            "text": {
+              "matched_zero_ids": [],
+              "oneword_only_zero_ids": [],
+              "standard_only_zero_ids": [],
+              "zero_mask_exact_match": true
+            }
+          },
+          "endpoint_ids_exact_match": true,
+          "endpoint_labels_exact_match": true,
+          "n": 78,
+          "policies": {
+            "oneword": {
+              "modalities": {
+                "img": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                },
+                "text": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                }
+              },
+              "path": "data/CLIP_Embedding/MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_ow_L24.pt",
+              "sha256": "17c4efb2f7a0c2c076f69d281f7ae387125cdfad240d35c1ce016e93eac383e1"
+            },
+            "standard": {
+              "modalities": {
+                "img": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                },
+                "text": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                }
+              },
+              "path": "data/CLIP_Embedding/MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_L24.pt",
+              "sha256": "a4cf072837e6fe6b91eae43041c74a67d3b602f97df710c2ace1a4716f6c481d"
+            }
+          }
+        },
+        "train": {
+          "endpoint_comparison": {
+            "img": {
+              "matched_zero_ids": [],
+              "oneword_only_zero_ids": [],
+              "standard_only_zero_ids": [],
+              "zero_mask_exact_match": true
+            },
+            "text": {
+              "matched_zero_ids": [],
+              "oneword_only_zero_ids": [],
+              "standard_only_zero_ids": [],
+              "zero_mask_exact_match": true
+            }
+          },
+          "endpoint_ids_exact_match": true,
+          "endpoint_labels_exact_match": true,
+          "n": 579,
+          "policies": {
+            "oneword": {
+              "modalities": {
+                "img": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                },
+                "text": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                }
+              },
+              "path": "data/CLIP_Embedding/MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_ow_L24.pt",
+              "sha256": "3ad1309dc75001820318e3e9a073b781d28ee0afc2b879571d063a276b8d2a23"
+            },
+            "standard": {
+              "modalities": {
+                "img": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                },
+                "text": {
+                  "nonfinite_row_count": 0,
+                  "nonfinite_row_ids": [],
+                  "nonfinite_rows": [],
+                  "tiny_nonzero_row_count": 0,
+                  "tiny_nonzero_row_ids": [],
+                  "tiny_nonzero_rows": [],
+                  "zero_row_count": 0,
+                  "zero_row_ids": [],
+                  "zero_rows": []
+                }
+              },
+              "path": "data/CLIP_Embedding/MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-ro_L24.pt",
+              "sha256": "1d33fe5d69083479f0b6968a924578770364c00ca78c37cfef664bb4b6221c06"
+            }
+          }
+        }
+      }
+    }
+  },
+  "hash_manifest": {
+    "path": "artifacts/c01_policy_contrastive/v1/hash_preflight/C01-HASH-v1/full_sha256_manifest.json",
+    "run_id": "C01-HASH-v1",
+    "sha256": "083275d39a1026bde3b6583bd5608d41cec5b431da9ffda87ae8ab1046cf2305",
+    "slurm_job_id": "13710"
+  },
+  "input_scope": {
+    "actual_cache_count": 8,
+    "datasets": [
+      "MHC_zh",
+      "HateMM"
+    ],
+    "exact_zero_semantics": "observation_only_structural_interpretation_requires_external_evidence_and_review",
+    "expected_cache_count": 8,
+    "features_serialized": false,
+    "modalities": [
+      "img",
+      "text"
+    ],
+    "other_modality_state_enum": [
+      "normal_nonzero",
+      "exact_zero",
+      "tiny_nonzero",
+      "nonfinite"
+    ],
+    "policies": [
+      "standard",
+      "oneword"
+    ],
+    "splits": [
+      "train",
+      "dev_seen"
+    ],
+    "test_like_attempt_count": 0,
+    "test_like_open_count": 0
+  },
+  "run_id": "C01-ZERO-PROBE-v1",
+  "schema_version": "c01_zero_contract_probe_v1",
+  "slurm_job_id": "13717",
+  "status": "DIAGNOSTIC_ONLY",
+  "thread_environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "v2_repair_preregistered_assessment": {
+    "allow_zero_block_in_a0": false,
+    "authorization": "This probe never authorizes an A0 change by itself. C01 v2 may retain a zero block only when endpoint zero masks align at the same ID and modality, no non-structural tiny row exists, and frozen evidence confirms the historical baseline consumed the same structural null. Any endpoint mismatch, non-structural tiny row, non-finite row, or absent baseline evidence remains fail-closed.",
+    "endpoint_zero_masks_exact_match": true,
+    "historical_baseline_same_id_consumption": {
+      "evidence": [
+        {
+          "lines": "187-193",
+          "path": "refine-logs/PROVENANCE_AUDIT_2026-07-28.md"
+        },
+        {
+          "lines": "183-185,227-230",
+          "path": "refine-logs/MNTP_S1_RECORD.md"
+        }
+      ],
+      "not_verified_by_this_eight_cache_probe": true,
+      "status": "REPORTED_EXTERNAL_NOT_VERIFIED_BY_PROBE"
+    },
+    "non_structural_tiny_absent": true,
+    "nonfinite_rows_absent": true,
+    "probe_observation_scope": "observation_only_structural_interpretation_requires_external_evidence_and_review"
+  }
+}

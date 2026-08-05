@@ -1,0 +1,378 @@
+{
+  "audit_schema_self_test": {
+    "cases": {
+      "HateMM_avg_integer_count_rejected": true,
+      "HateMM_avg_missing_count_rejected": true,
+      "HateMM_avg_nonzero_source_count_rejected": true,
+      "HateMM_registered_null_direct_and_derived_valid": true,
+      "MHC_NO_REGISTERED_NULL_missing_count_rejected": true,
+      "MHC_NO_REGISTERED_NULL_valid": true
+    },
+    "fail_closed": true,
+    "pass": true,
+    "required_cases": [
+      "HateMM_registered_null_direct_and_derived_valid",
+      "HateMM_avg_missing_count_rejected",
+      "HateMM_avg_integer_count_rejected",
+      "HateMM_avg_nonzero_source_count_rejected",
+      "MHC_NO_REGISTERED_NULL_valid",
+      "MHC_NO_REGISTERED_NULL_missing_count_rejected"
+    ]
+  },
+  "audit_schema_v4_contract": {
+    "exact_top_level_keys": true,
+    "fail_closed_self_test": {
+      "required_before_namespace_creation": true,
+      "required_cases": [
+        "HateMM_registered_null_direct_and_derived_valid",
+        "HateMM_avg_missing_count_rejected",
+        "HateMM_avg_integer_count_rejected",
+        "HateMM_avg_nonzero_source_count_rejected",
+        "MHC_NO_REGISTERED_NULL_valid",
+        "MHC_NO_REGISTERED_NULL_missing_count_rejected"
+      ]
+    },
+    "halt_label": "HALT_AUDIT_SCHEMA_V4",
+    "registered_null_top20_field": "registered_null_top20_count",
+    "required": true,
+    "union_discriminator": "audit_kind",
+    "variants": {
+      "DERIVED_AVERAGE_SCORE_CONTROL": {
+        "registered_null_top20_count_type": "null",
+        "required_source_arms": [
+          "endpoint_std",
+          "endpoint_ow"
+        ],
+        "semantics": "NOT_DIRECTLY_APPLICABLE_PROVEN_BY_SOURCE_RETRIEVAL_ARMS",
+        "source_count_type": "integer_not_bool",
+        "source_count_value": 0
+      },
+      "NO_REGISTERED_NULL": {
+        "registered_null_top20_count_type": "integer_not_bool",
+        "registered_null_top20_count_value": 0,
+        "semantics": "NOT_APPLICABLE_NO_REGISTERED_NULL"
+      },
+      "REGISTERED_NULL_RETRIEVAL": {
+        "registered_null_top20_count_type": "integer_not_bool",
+        "registered_null_top20_count_value": 0,
+        "semantics": "DIRECT_COUNT_FROM_TOP20_NEIGHBOR_IDS"
+      }
+    }
+  },
+  "config_sha256": "2d9488e6f9af6be00d500d1c2f13912fd4be0ab9439608d33b0857178efe7ca6",
+  "continue": false,
+  "dataset_pass": {
+    "HateMM": false,
+    "MHC_zh": false
+  },
+  "decision_label": "KILL_CURRENT_ENDPOINT_ROUTE_ONLY",
+  "endpoint_concat_small_displacement_role": "diagnostic_only",
+  "exclusive_create": true,
+  "experiment_id": "C01_A0",
+  "full_sha256_manifest": {
+    "path": "artifacts/c01_policy_contrastive/v1/hash_preflight/C01-HASH-v1/full_sha256_manifest.json",
+    "run_id": "C01-HASH-v1",
+    "sha256": "083275d39a1026bde3b6583bd5608d41cec5b431da9ffda87ae8ab1046cf2305"
+  },
+  "halt_only_validity_guards": {
+    "checks": {
+      "audit_schema_union_v4": true,
+      "derived_zero_masks_exact": true,
+      "deterministic_binary64_reference": true,
+      "displacement_null_exclusion_dual_path_exact": true,
+      "probe_evidence_exact": true,
+      "raw_zero_allowlist_exact": true,
+      "registered_null_absent_from_all_top20": true,
+      "scientific_boolean_basis_exact": true,
+      "shuffle_fixed_point_bijection": true,
+      "v4_lineage_evidence_exact": true,
+      "with_null_remove_null_numerical_equivalence_v3": true
+    },
+    "datasets": {
+      "HateMM": {
+        "audit_schema_union_v4": true,
+        "derived_zero_masks_exact": true,
+        "deterministic_binary64_reference": true,
+        "displacement_null_exclusion_dual_path_exact": true,
+        "raw_zero_allowlist_exact": true,
+        "registered_null_absent_from_all_top20": true,
+        "scientific_boolean_basis_exact": true,
+        "shuffle_fixed_point_bijection": true,
+        "with_null_remove_null_numerical_equivalence_v3": true
+      },
+      "MHC_zh": {
+        "audit_schema_union_v4": true,
+        "derived_zero_masks_exact": true,
+        "deterministic_binary64_reference": true,
+        "displacement_null_exclusion_dual_path_exact": true,
+        "raw_zero_allowlist_exact": true,
+        "registered_null_absent_from_all_top20": true,
+        "scientific_boolean_basis_exact": true,
+        "shuffle_fixed_point_bijection": true,
+        "with_null_remove_null_numerical_equivalence_v3": true
+      }
+    },
+    "halt_label_on_failure": "HALT_NUMERICAL_EQUIVALENCE",
+    "halt_only": true,
+    "passed": true,
+    "required": [
+      "probe_evidence_exact",
+      "v4_lineage_evidence_exact",
+      "audit_schema_union_v4",
+      "raw_zero_allowlist_exact",
+      "derived_zero_masks_exact",
+      "displacement_null_exclusion_dual_path_exact",
+      "shuffle_fixed_point_bijection",
+      "registered_null_absent_from_all_top20",
+      "with_null_remove_null_numerical_equivalence_v3",
+      "deterministic_binary64_reference",
+      "scientific_boolean_basis_exact"
+    ],
+    "schema_halt_label_on_failure": "HALT_AUDIT_SCHEMA_V4"
+  },
+  "interpretation_scope": "A KILL decision retires only the current standard-L24 versus one-word-L24 endpoint-contrast route. It does not falsify policy contrast under same-pooling caches.",
+  "numerical_equivalence_v3_contract": {
+    "all_failures_before_publication": true,
+    "average_score_control": {
+      "arm_sanity_bound_formula": "max_q_abs_delta_avg<=0.5*(B_sim_endpoint_std+B_sim_endpoint_ow)+2^-45",
+      "bound_formula": "B_avg(q)=0.5*(abs(delta_endpoint_std_score_q)+abs(delta_endpoint_ow_score_q))+2^-45"
+    },
+    "binary64_reference": {
+      "algorithm": "chunked_C_order_float64_multiply_then_numpy_add_reduce_over_feature_axis_in_frozen_neighbor_rank_order",
+      "between_path_rule": "single_shared_operand_computation_is_byte_exact_for_reference_similarities_scores_predictions_and_canonical_metrics",
+      "faiss_relation": "FAISS_with_path_minus_reference_similarity_finite_and_within_B_sim_and_reference_uses_only_exact_agreed_FAISS_neighbor_IDs",
+      "neighbor_selection": "none_reference_does_not_remine_or_replace_float32_neighbors",
+      "query_chunk_size": 8,
+      "required": true,
+      "scope": "rescore_only_the_exact_agreed_float32_top20_original_neighbor_ids_for_every_real_arm_rotation_and_fixed_null_shuffle",
+      "thread_contract": "same_8CPU_and_OMP_MKL_OPENBLAS_NUMEXPR_8_environment_no_thread_or_algorithm_sweep"
+    },
+    "float32": {
+      "absolute_bound_formula": "B_sim(d,rho)=2^ceil(log2(2*gamma32(d)*rho))",
+      "absolute_bound_policy": "next_power_of_two_from_actual_dimension_and_upward_safe_operand_norm_scale",
+      "absolute_raw_bound_formula": "2*gamma32(d)*rho",
+      "gamma_formula": "gamma32(d)=d*u32/(1-d*u32)",
+      "operand_scale_audit": "binary64_sum_of_squares_with_gamma64_upward_correction_then_sqrt_and_nextafter_positive_infinity",
+      "operand_scale_formula": "rho=max_retained_norm_upper*max_query_norm_upper",
+      "require_absolute_and_ulp_bounds": true,
+      "require_dimension_times_unit_roundoff_lt_one": true,
+      "ulp_bound_formula": "max(ord32(upper32(a+B))-ord32(a),ord32(a)-ord32(lower32(a-B)))",
+      "ulp_order_mapping": "negative_bitwise_not_raw_u32_nonnegative_raw_u32_xor_0x80000000",
+      "ulp_outward_rounding": "binary64_endpoint_clipped_to_finite_float32_then_float32_nextafter_outward",
+      "unit_roundoff": 5.960464477539063e-08,
+      "unit_roundoff_formula": "2^-24"
+    },
+    "halt_label": "HALT_NUMERICAL_EQUIVALENCE",
+    "mapping": "flatnonzero(keep)[reduced_local_neighbors]_equals_original_indices",
+    "metric_rule": "canonical_sorted_typed_ieee754_binary64_hex_json_bytes_exact_for_accuracy_macro_f1_roc_auc",
+    "neighbor_label_rule": "dtype_shape_c_order_bytes_exact",
+    "nonfinite_rule": "NaN_positive_Inf_negative_Inf_and_nonfinite_bounds_forbidden",
+    "operand_parity": "raw_retained_keys_normalized_retained_memory_and_normalized_queries_dtype_shape_c_order_bytes_exact",
+    "prediction_rule": "dtype_shape_c_order_bytes_exact",
+    "raw_neighbor_rule": "dtype_shape_c_order_bytes_rank_order_and_per_query_sets_exact_after_mapping",
+    "registered_null_top20_count": 0,
+    "required": true,
+    "scientific_boolean_rule": "exact_prediction_and_metric_basis_plus_frozen_v2_scientific_config_implies_exact_deterministic_scientific_booleans",
+    "scientific_gate_basis": [
+      "ordinary_arm_predictions_and_canonical_metrics",
+      "primary_secondary_and_rotation_predictions_and_canonical_metrics",
+      "all_256_fixed_null_shuffle_predictions_and_canonical_metrics",
+      "fixed_v2_bootstrap_Holm_rotation_shuffle_p95_small_displacement_netfix_and_gain_threshold_config"
+    ],
+    "signed_zero_rule": "positive_and_negative_zero_are_distinct_and_cross_path_signed_zero_ambiguity_is_forbidden",
+    "stable_neighbor_rule": "lexicographic_negative_float32_similarity_then_original_index_dtype_shape_c_order_bytes_rank_order_exact",
+    "weighted_vote": {
+      "arm_sanity_bound_formula": "max_q_abs_delta_score<=B_sim(d,rho)+2^-45",
+      "binary64_roundoff_allowance": 2.842170943040401e-14,
+      "binary64_roundoff_allowance_formula": "2^-45",
+      "cutoff": 0.0,
+      "cutoff_stability": "closed_interval_expanding_either_score_by_B_score_q_must_not_contain_or_cross_zero",
+      "per_query_bound_formula": "B_score(q)=(1/210)*sum_r(w_r*abs(delta_a_qr))+2^-45",
+      "score_formula": "s=(1/210)*sum_r(w_r*sigma_r*a_r)",
+      "topk": 20,
+      "weight_total": 210,
+      "weights": [
+        20,
+        19,
+        18,
+        17,
+        16,
+        15,
+        14,
+        13,
+        12,
+        11,
+        10,
+        9,
+        8,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1
+      ]
+    }
+  },
+  "result_file": "C01_A0_OUT.json",
+  "result_sha256": "b45adf18cc35695618572abfbbc69571fe042fce9bdc48fce649bf7511e65f53",
+  "run_id": "C01-A0-v4",
+  "schema_version": "c01_a0_decision_v4",
+  "scientific_base": {
+    "change_scope": "frozen v2/v3 scientific fields and v3 numerical equivalence exact; v4 changes only run/output lineage and HALT-only typed audit schema",
+    "changed_paths": [
+      "output.decision_schema.exact_array_comparison",
+      "output.decision_schema.exact_metric_comparison",
+      "output.decision_schema.required_halt_only_validity_guards",
+      "output.decision_schema.schema_version",
+      "output.namespace",
+      "output.record_file",
+      "output.result_schema_version",
+      "output.slurm_stderr",
+      "output.slurm_stdout",
+      "run_id",
+      "zero_contract_v2.remove_null_comparison"
+    ],
+    "pass": true,
+    "scientific_thresholds_exact": true,
+    "v2_analysis_path": "scripts/analysis/c01_policy_contrast_a0.py",
+    "v2_analysis_sha256": "d2b9c2ff909c07518ae35526db9550df655fb4af395cc7a0899f83e48db1b855",
+    "v2_config_path": "configs/c01/c01_a0_v2.json",
+    "v2_config_sha256": "f3997bddb4788d451ae5f90d9d03d096df3de383f8133a6d3818d97a241563f5"
+  },
+  "small_displacement_gate_reference": {
+    "HateMM": "common",
+    "MHC_zh": "endpoint_concat"
+  },
+  "small_displacement_gate_selection_rule": "strongest_ordinary_control_by_accuracy_then_macro_f1_then_frozen_gain_controls_order",
+  "v4_lineage_evidence": {
+    "frozen_v3": {
+      "analysis_path": "scripts/analysis/c01_policy_contrast_a0_v3.py",
+      "analysis_sha256": "40b35eee2fb6fdbdb21fe9b4acfdcebf003c121c76492b898fbd2ea9b8c34dfb",
+      "config_path": "configs/c01/c01_a0_v3.json",
+      "config_sha256": "4ddb0f6f322de06316ea014a77c732b1a593c0fae5d926558d6c64a1be21cda5",
+      "record_path": "refine-logs/C01_A0_V3_RECORD.md",
+      "record_sha256": "3af07f73155ba7b6857879e2f8b408028cf9a3a2edf34f99f16a82bebb5138fb",
+      "wrapper_path": "scripts/slurm/c01_a0_cpu_v3.sbatch",
+      "wrapper_sha256": "e61b99620622d4161e0baded335e6172bd55b606e425668843cd9d370489af99"
+    },
+    "frozen_v3_lineage_evidence": {
+      "authorized_null_semantic_equality": {
+        "diagnostic_fields": {
+          "dataset": true,
+          "diagnostic_policy_scope": true,
+          "expected_label_integrity_only": true,
+          "modalities": true,
+          "raw_id": true,
+          "row_index": true,
+          "split": true
+        },
+        "diagnostic_policy_scope_note": "the diagnostic was intentionally standard-only; its policy must equal standard and belong to the v2/v3 authorized {standard,oneword} policy set",
+        "frozen_v2_tuple": {
+          "dataset": "HateMM",
+          "expected_label_integrity_only": 1,
+          "modalities": [
+            "img",
+            "text"
+          ],
+          "policies": [
+            "standard",
+            "oneword"
+          ],
+          "raw_id": "hate_video_95",
+          "row_index": 355,
+          "split": "train"
+        },
+        "pass": true,
+        "v2_exact": true,
+        "v3_tuple": {
+          "dataset": "HateMM",
+          "expected_label_integrity_only": 1,
+          "modalities": [
+            "img",
+            "text"
+          ],
+          "policies": [
+            "standard",
+            "oneword"
+          ],
+          "raw_id": "hate_video_95",
+          "row_index": 355,
+          "split": "train"
+        }
+      },
+      "checks": {
+        "a0_source": true,
+        "authorized_null_equals_diagnostic_fields": true,
+        "authorized_null_equals_frozen_v2_tuple": true,
+        "classification": true,
+        "dev_cache": true,
+        "dev_key_parity": true,
+        "job_id": true,
+        "manifest": true,
+        "mapping": true,
+        "null_top20": true,
+        "raw_neighbors": true,
+        "run_id": true,
+        "schema_version": true,
+        "stable_neighbors": true,
+        "thread_environment": true,
+        "train_cache": true,
+        "train_key_parity": true,
+        "zero_probe": true
+      },
+      "diagnostic": {
+        "classification": "FLOAT_VARIATION_WITH_STABLE_NEIGHBOR_IDENTITY",
+        "path": "artifacts/c01_policy_contrastive/v2/retrieval_equivalence_probe/C01-RETRIEVAL-EQUIV-PROBE-v1/retrieval_equivalence_probe.json",
+        "run_id": "C01-RETRIEVAL-EQUIV-PROBE-v1",
+        "schema_version": "c01_retrieval_equivalence_probe_v1",
+        "sha256": "724c87cd2fbdb763180b663bc6492322887bc2077f378c5b21c4184c4ba80e6f",
+        "slurm_job_id": "13732"
+      },
+      "guard_review": {
+        "heading": "C01 retrieval numerical-equivalence guard adjudication（2026-07-29）",
+        "line_end": 1338,
+        "line_start": 1165,
+        "path": "TARGET_REVIEW_RAW.md",
+        "section_sha256": "2f4a1b1ff3fdaff176bca52a1a7a0940e949ee8ac75e51d7ac18b9883d28fe54"
+      },
+      "pass": true
+    },
+    "job_13735_failure": {
+      "decision_absent": true,
+      "failure_scope": "avg_score_derived_control_missing_registered_null_top20_count_in_untyped_aggregate",
+      "job_id": "13735",
+      "namespace_empty": true,
+      "result_absent": true,
+      "review_path": "TARGET_REVIEW_RAW.md",
+      "review_section_sha256": "3a7c4fdad2e740b2d224d86d982fb5972ace55374df0fb976cf577e4e915af1d",
+      "scientific_or_numerical_failure_observed": false,
+      "status": "HALT_FAIL_CLOSED_NO_DECISION",
+      "stderr_sha256": "9271e642fb6f0fd85265cf9fd4633432647c5ca49659a4cb2eb431f950c92cf6",
+      "stdout_sha256": "cf2a95043ca98139756f42a93693869184c111c577c58168ba5c7987435c9124"
+    },
+    "pass": true
+  },
+  "zero_contract_v2_evidence": {
+    "authorized_tuple": {
+      "authorized_dataset": "HateMM",
+      "authorized_id": "hate_video_95",
+      "authorized_modalities": [
+        "img",
+        "text"
+      ],
+      "authorized_policies": [
+        "standard",
+        "oneword"
+      ],
+      "authorized_row_index": 355,
+      "authorized_split": "train",
+      "expected_label_integrity_only": 1
+    },
+    "path": "artifacts/c01_policy_contrastive/v2/zero_contract_probe/C01-ZERO-PROBE-v1/zero_contract_probe.json",
+    "run_id": "C01-ZERO-PROBE-v1",
+    "schema_version": "c01_zero_contract_probe_v1",
+    "sha256": "bee4964ce7e4ca81cfdb72c3859f78196568badf982aef587bc14ee6dbe63526"
+  }
+}

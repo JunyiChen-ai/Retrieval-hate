@@ -1,0 +1,68 @@
+{
+ "bars": {
+  "acc": 0.05,
+  "alpha": 0.05,
+  "bootstrap_B": 10000,
+  "macro_f1": 0.05,
+  "net_fix_rate": 0.03,
+  "view_support_min": 0.6
+ },
+ "holm_family": {
+  "hatemm_acc": {
+   "p": 0.44245575442455753,
+   "reject_null": false,
+   "threshold": 0.0125
+  },
+  "hatemm_mf1": {
+   "p": 0.45085491450854914,
+   "reject_null": false,
+   "threshold": 0.016666666666666666
+  },
+  "zh_acc": {
+   "p": 0.5802419758024198,
+   "reject_null": false,
+   "threshold": 0.025
+  },
+  "zh_mf1": {
+   "p": 0.6414358564143585,
+   "reject_null": false,
+   "threshold": 0.05
+  }
+ },
+ "interpretation_boundary": "A0 is the registry's Stage-0 REACHABILITY gate, instantiated as an optimistic max-matching oracle over the extracted density orbit in the deployed head key space of train-split fold heads. A PASS authorises Stage-1 design plus a fresh review only: it is not a training gain, not a development result and not a test result. A KILL is a GATE verdict under the registry's frozen Stage-0 rule -- s_Q is one particular orbit-invariant similarity, NOT a proven supremum over all orbit-contracting representations, so a KILL closes C02 under the rule rather than proving that no such representation could ever help.",
+ "per_dataset": {
+  "hatemm": {
+   "acc_ci_lower": -0.008960573476702502,
+   "acc_p": 0.44245575442455753,
+   "beats_noise_acc": true,
+   "beats_noise_mf1": true,
+   "beats_shuffle_acc": true,
+   "beats_shuffle_mf1": true,
+   "delta_acc": 0.0008960573476701761,
+   "delta_mf1": 0.0005790634953705132,
+   "mf1_ci_lower": -0.009720852118035613,
+   "mf1_p": 0.45085491450854914,
+   "net_fix_rate_implied_by_acc_bar": 0.0008960573476702509,
+   "precision_on_changed": 0.5039980009995003
+  },
+  "zh": {
+   "acc_ci_lower": -0.013241220495106528,
+   "acc_p": 0.5802419758024198,
+   "beats_noise_acc": false,
+   "beats_noise_mf1": false,
+   "beats_shuffle_acc": false,
+   "beats_shuffle_mf1": false,
+   "delta_acc": -0.0011514104778355128,
+   "delta_mf1": -0.0027456813390588364,
+   "mf1_ci_lower": -0.01767394932954361,
+   "mf1_p": 0.6414358564143585,
+   "net_fix_rate_implied_by_acc_bar": -0.0011514104778353482,
+   "precision_on_changed": 0.48808003405704553
+  }
+ },
+ "result_exists": true,
+ "run_id": "C02-A0-v9",
+ "schema_version": "c02_a0_decision_v9",
+ "target_met": false,
+ "verdict": "KILL_C02_DENSITY_ORBIT_UNREACHABLE"
+}
