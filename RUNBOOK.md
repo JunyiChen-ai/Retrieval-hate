@@ -106,11 +106,21 @@ conda activate HateVideo
 
 ### 4.1 获取
 
-`git clone` 项目 remote(**remote 正由并行任务配置中,配好后用那个地址**)。
-注意:当前本地 `origin` 指向上游 `https://github.com/JingbiaoMei/RGCL`(原 hateful-meme 项目),
-**不是**本项目的 remote,不要往它推。
+`git clone https://github.com/JunyiChen-ai/Retrieval-hate.git` —— 这是本项目的 remote,所有成果推这里。
 
-当前 HEAD:`a1d1013`(`MECH-STAGE-B: all four new-mechanism candidates KILLED at first contact (F121)`),branch `main`。
+**remote 布局(两个,别搞混)**:
+
+| remote 名 | URL | 用途 |
+|---|---|---|
+| `project` | `https://github.com/JunyiChen-ai/Retrieval-hate.git` | **本项目的 remote,push 只推这里** |
+| `origin` | `https://github.com/JingbiaoMei/RGCL` | 上游原 hateful-meme 项目,**只读,永远不要往它推**(我们对它无写权限,推也会 403) |
+
+新机器上从 `project` clone 之后,`origin` 就是本项目 remote;若要保留上游做对比,再
+`git remote add upstream https://github.com/JingbiaoMei/RGCL`。
+
+Branch `main`。当前 HEAD 以 `git log --oneline -1` 为准(本文件写作时的最后一条研究提交是
+`a1d1013 MECH-STAGE-B: all four new-mechanism candidates KILLED at first contact (F121)`,
+其后是本次成果归档的若干提交)。
 
 ### 4.2 入口点清单(只列位置,不解释用法)
 
@@ -328,7 +338,7 @@ cache 中还存有若干**与本项目无关**的大模型(InternVL3-78B、Qwen3
 ## 9. 新机器最小可用路径(总结)
 
 1. `conda env create -f environment_HateVideo.yml` → `conda activate HateVideo`。
-2. clone 项目 remote(配好后)→ 确认 `git log --oneline -1`。
+2. `git clone https://github.com/JunyiChen-ai/Retrieval-hate.git` → 确认 `git log --oneline -1`。
 3. 配 rclone `b2` remote → `scripts/b2_pull.sh` 拉回需要的 feature caches / artifacts;
    `data/gt/` 与 `configs/` 随 clone 已到位。
 4. 跑 §6 五步 checklist,重点是第 5 步 fold-arena replay(5e-5 容差)。
