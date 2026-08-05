@@ -4763,7 +4763,7 @@
       "target_met": false
     }
   },
-  "updated_at": "2026-08-05 MECH-PROBES-A SETTLED: CPU job 13997 COMPLETED 0:0 in 00:20:23 (8 CPU, 0 GPU, $0) under the frozen prereg refine-logs/MECH_PROBES_A_PREREG.md (sha256 5b617ca7...). Three verdicts, all measured: RVS NOT KILLED / formally INDETERMINATE (mean top-20 NCA softmax mass 0.0857 HateMM, 0.1142 MHC_zh against a >0.5 kill and a <0.1 alive band; ESS/N 0.459/0.507, i.e. the NCA gradient touches ~15-17x more items than the deployed k=20 vote, so F75 did not test a kNN-shaped objective -- ZH sits 0.0142 above the ALIVE band, recorded honestly, threshold not moved). XFM ALIVE (ZH KS D 0.0380 p 0.1628 but mean |per-item margin shift| 0.1234 >> 0.02, so the conjunction kill fails: a distribution-preserving per-item reshuffle, per-item fuel on BOTH datasets). AQM zero-parameter epoch-snapshot bank KILLED (every t* in {10,15,20,25,29} at or below the epoch-29 floor on both datasets, best non-final -0.0032 / -0.0080 against a +0.020 bar; all 30 re-mints bit-exact vs banked C06 mints, parity 0.0) -- kill scoped to the zero-new-training realization only, trained-g_phi untested. ERRATUM: the campaign-wide 'deployed head train LOO' triple 0.9406/0.8915/0.8154 is a PROTOCOL-MIXED POOLED MEAN over val-selected AND final-epoch checkpoints (MHC_en final-only), not a deployed-protocol triple; measured MHC_zh = 0.9303 (LOO-vs-fold gap +0.0380, not zero), HateMM deployed -LoRA-curric lineage = 0.9404, MHC_en 0.8154 unchanged. Zero test contact, rules frozen before results, single submission. Recorded as F120 and state block mech_probes_a_2026_08_05. Free-running candidate pool REPLENISHED from EMPTY to RVS / XFM / AQM-trained-gphi / TRA, all four stage-B queued; every user-gated item unchanged.",
+  "updated_at": "2026-08-05 MECH-STAGE-B SETTLED: ALL FOUR new-mechanism candidates KILLED in the fold-head arena (out-of-fold TRAIN queries, screening bar +0.020 acc vs floors HateMM 0.8867 / MHC_zh 0.8923, 3 seeds, zero test contact). Jobs 13998 (mech_stage_b, FAILED 1:0 in 01:50:53 -- all 156 head trains done and cached, then HALTed on B4's OWN instrument assert) and 14085 (mech_stage_b_b4, COMPLETED 0:0 in 00:10:07 -- B4 re-run after the vote-parity defect was fixed; B1-B3 verdicts aggregated from cached heads in 2.9 s, no retraining). Prereg refine-logs/MECH_STAGE_B_PREREG.md (sha256 d453eb4d..., incl. pre-data amendments A1/A2), driver sha256 dc696bde... . VERDICTS: B1 RVS KILLED CATASTROPHICALLY (all three frozen lambda in {0.1,0.3,1.0} land at -0.20 to -0.23 acc on both datasets, out-of-fold accuracy 0.64-0.70; the UNIFORM collapse at every lambda incl. the smallest indicates a term destructive to training, not merely unhelpful -- kill scoped to the frozen realization, but no positive sign anywhere in the family's first contact). B2 XFM KILLED, CLEAN NULL (HateMM +0.0027/+0.0027, MHC_zh -0.0006/+0.0001) -- and this is the arm that pays interpretively: the measured LOO-vs-fold memorisation gaps (+0.0538 HateMM, +0.0380 MHC_zh, F120) are NOT convertible by removing memorisation influence from training, i.e. the gap is PURE MEMORISATION, not recoverable signal; training-side confirmation of F118's inference-side result. B3 AQM trained-g_phi KILLED (HateMM -0.4032/-0.4947, MHC_zh -0.0645/-0.0966, self-recall 0.0016/0.0017 so the pre-registered memory-corruption clause <0.8 ALSO fires -- joint training decouples the two key spaces; AQM now killed in BOTH realizations, zero-parameter in F120 and trained here). B4 TRA KILLED on both frozen conditions (fitted vs floor HateMM -0.0041/-0.0046, MHC_zh -0.0029/-0.0030; fitted vs rejection-rate-matched random control -0.0044 at SE 0.0021 and -0.0028 at SE 0.0023, i.e. negative or within 1 SE on both datasets). INSTRUMENT VALIDATED BEFORE ANY CANDIDATE NUMBER: fold-arena replay matched the banked floors within 5e-5 on all 6 cells, and the B1-B3 mechanism-off parity heads reproduced the banked heads BIT-EXACTLY (parity_maxabs 0.0 on all six). Instrument history recorded: the first submission HALTed on the admit-always parity assert (TRA vote vs deployed vote diff 0.0095, a faiss-vs-argsort float32 tie-order defect confined to B4); fixed and re-verified at max|dvote| = 0 on all 30 cells before resubmission -- the HALT-fix-rerun path is the accepted cheap-experiment cost under the 2026-08-05 proportional-ceremony ruling. Zero test contact, rules frozen before results, blindness held, one submission per leg. Recorded as F121 and state block mech_stage_b_2026_08_05. CONSEQUENCE: the mechanism space opened by F120's two code facts is measured dead at first contact in all four directions; free-running candidate pool returns to EMPTY (all remaining items user-gated, every user-gated item unchanged).",
   "gate_6_g0_freeze_execution": {
     "method": "LB-SCGP",
     "status": "FROZEN_CODE_AUDIT_NEXT",
@@ -6132,7 +6132,7 @@
     "kind": "queue_state_after_the_c06_close",
     "recorded_at": "2026-08-05T06:35:00+12:00",
     "c06": "SETTLED — CLOSED, job 13988, finding F119",
-    "free_running_candidate_pool": "REPLENISHED 2026-08-05 by job 13997 / F120 -- see state block mech_probes_a_2026_08_05.free_running_candidate_pool (RVS, XFM, AQM-trained-gphi, TRA; all four stage-B queued). Was EMPTY.",
+    "free_running_candidate_pool": "EMPTY (all four MECH-PROBES-A survivors killed at stage B, F121) -- see state block mech_stage_b_2026_08_05.free_running_candidate_pool. Was REPLENISHED 2026-08-05 by job 13997 / F120.",
     "all_remaining_items": "USER-GATED — nothing may start without an explicit user ruling",
     "supersedes": "iteration_8_queue_state_2026_08_04"
   },
@@ -6204,14 +6204,105 @@
     },
     "artifact_cleanup": "artifacts/mech_probes_a/snaps/ (777 MB of per-epoch key snapshots) DELETED 2026-08-05 after probe 3 closed. The run is bit-exactly reproducible from the banked C06 mints plus the frozen prereg and driver (parity 0.0 on all 30 cells). All JSON results and the log are retained.",
     "free_running_candidate_pool": {
-      "status": "REPLENISHED -- was EMPTY as of iteration_8_queue_state_2026_08_05, now four mechanism candidates",
-      "RVS": "rank-space deployed-vote surrogate. Screen verdict NOT KILLED (indeterminate). Stage-B = train the objective in rank space rather than screen the geometry. QUEUED.",
-      "XFM": "cross-fit memory training. Screen verdict ALIVE, per-item fuel measured on both datasets. Stage-B QUEUED.",
-      "AQM_trained_gphi": "trained asymmetric bank-side map g_phi. OPEN -- untouched by probe 3, whose kill is scoped to the zero-parameter epoch-snapshot realization only. Stage-B QUEUED.",
-      "TRA": "per-bank-item trust radius. UNTESTED -- never screened. Stage-B QUEUED.",
+      "status": "SUPERSEDED by mech_stage_b_2026_08_05 -- all four candidates listed here were KILLED at stage B (jobs 13998/14085, F121). Pool is EMPTY again.",
+      "RVS": "KILLED at stage B (F121). rank-space deployed-vote surrogate. Screen verdict NOT KILLED (indeterminate). Stage-B = train the objective in rank space rather than screen the geometry. QUEUED.",
+      "XFM": "KILLED at stage B (F121). cross-fit memory training. Screen verdict ALIVE, per-item fuel measured on both datasets. Stage-B QUEUED.",
+      "AQM_trained_gphi": "KILLED at stage B (F121). trained asymmetric bank-side map g_phi. OPEN -- untouched by probe 3, whose kill is scoped to the zero-parameter epoch-snapshot realization only. Stage-B QUEUED.",
+      "TRA": "KILLED at stage B (F121). per-bank-item trust radius. UNTESTED -- never screened. Stage-B QUEUED.",
       "closed_by_this_run": "AQM zero-parameter epoch-snapshot realization"
     },
     "user_gated_items_unchanged": "YES -- every user-gated item recorded elsewhere in this file (C03 training, C04 teacher, the seven Gate-0 holds C05/C07/C08/C10/C11/C12/C13, OCR, DUA, Modal) is untouched by this block and still requires an explicit user ruling",
     "supersedes_pool_status_in": "iteration_8_queue_state_2026_08_05.free_running_candidate_pool"
+  },
+  "mech_stage_b_2026_08_05": {
+    "kind": "mech_stage_b_four_candidate_verdict",
+    "recorded_at": "2026-08-05T23:40:00+12:00",
+    "finding": "F121",
+    "jobs": {
+      "13998": "mech_stage_b -- FAILED 1:0, elapsed 01:50:53, 8 CPU / 0 GPU / 32G, peak RSS 1.44 GB. Completed all 156 head trains (B1 90, B2 30, B3 30, 6 parity; cached under artifacts/mech_stage_b/heads/) then HALTed inside run_b4 on the arm's OWN pre-registered instrument assert (admit-always TRA vote vs deployed vote max|diff| = 0.00952381, hatemm s0 f0).",
+      "14085": "mech_stage_b_b4 -- COMPLETED 0:0, elapsed 00:10:07, 8 CPU / 0 GPU / 32G, peak RSS 97 MB. Re-asserted the floor replay, ran the zero-training B4 leg, re-collected. NO head retrained: B1/B2/B3 verdicts aggregated from job 13998's cached predictions in 2.9 s."
+    },
+    "prereg": "refine-logs/MECH_STAGE_B_PREREG.md sha256 d453eb4d158bcb6fe0903ecad6c0015cf0e495a06b07de28a727d0163af39217 (as committed, incl. amendments A1 and A2, both dated, justified and pre-data)",
+    "driver_sha256": "dc696bdec2c0df28d6db30efd31edcd831df02901ec46a229addc2ad4990c86b (scripts/analysis/mech_stage_b.py; recorded in the result file as driver_sha256)",
+    "sbatch_sha256": {
+      "scripts/slurm/mech_stage_b_cpu.sbatch": "fc0b7aa1720a606f5bd5ac72126a6b210cf7ce228d96d30daaddfb134338b20c",
+      "scripts/slurm/mech_stage_b_b4_cpu.sbatch": "2eb3e6e2f53a786cc39140968eef3e14552e6c0a9f8e3f89c95016d1aa092f91"
+    },
+    "result": "artifacts/mech_stage_b/MECH_STAGE_B_RESULT.json plus b4.json and instrument.json; logs slurm/logs/mech_stage_b_13998.{out,err} and slurm/logs/mech_stage_b_b4_14085.{out,err}",
+    "arena_and_bar": "out-of-fold TRAIN queries: 5 stratified folds over the train split only, per fold a head trained on the other four, then the deployed top-20 rank-weighted signed-cosine vote against a fitting-pool bank; concatenated folds give one out-of-fold prediction per train item. Screening bar +0.020 accuracy (3-seed mean of per-seed paired differences) on BOTH datasets vs floors HateMM 0.8867 / MHC_zh 0.8923. 3 seeds. Macro-F1 reported everywhere, enters no verdict.",
+    "verdicts": {
+      "B1_RVS": "KILLED",
+      "B2_XFM": "KILLED",
+      "B3_AQM_trained_gphi": "KILLED",
+      "B4_TRA": "KILLED"
+    },
+    "b1_rvs": {
+      "verdict": "KILLED -- catastrophic",
+      "mechanism": "rank-space deployed-vote surrogate added to the hybrid loss: L = L_deployed_hybrid + lambda * L_RVS, L_RVS = BCE on a soft-rank surrogate of the deployed vote (self-excluded bank, top-M=128, w = relu(21 - soft_rank), bandwidth beta_i = max(IQR(s_i)/10, 1e-8) from the per-query cosine IQR, temp 0.25)",
+      "selection_rule": "lambda* = argmax over the frozen grid {0.1, 0.3, 1.0} of the dataset-mean 3-seed-mean out-of-fold TRAIN accuracy delta; one shared lambda*, no per-dataset selection",
+      "lambda_star": "0.3",
+      "delta_acc_at_lambda_star": "HateMM -0.2128; MHC_zh -0.2049",
+      "all_lambdas_delta_acc": "lam=0.1 HateMM -0.2316 / zh -0.2176; lam=0.3 HateMM -0.2128 / zh -0.2049; lam=1.0 HateMM -0.2007 / zh -0.2199",
+      "all_lambdas_delta_mF1": "lam=0.1 HateMM -0.2716 / zh -0.4020; lam=0.3 HateMM -0.2434 / zh -0.3705; lam=1.0 HateMM -0.2345 / zh -0.4045",
+      "magnitude": "out-of-fold accuracy drops to 0.64-0.70 on both datasets; ZH macro-F1 collapses to 0.45-0.55 (classes merging). Kill by a factor of ~10 in the wrong direction against a +0.020 bar.",
+      "kill_scope": "kills the FROZEN REALIZATION -- this surrogate, this bandwidth, this weighting, at these three lambda, on this head space. What makes it more than a single point: the UNIFORM collapse at every lambda including the smallest (all three within 0.03 of each other at approx -0.21, no descent toward the floor as the term is turned down) indicates a term DESTRUCTIVE to training, not merely uninformative. No positive sign anywhere in the family's first contact. A different surrogate is not formally excluded, but nothing measured recommends building one."
+    },
+    "b2_xfm": {
+      "verdict": "KILLED -- clean null",
+      "mechanism": "cross-fit memory training: retrieval terms mined against a frozen sibling fold-head bank (mint_<ds>_N_s<seed>_f<k> restricted to fold_of not in {k, f}), removing the self-positive degeneracy BY CONSTRUCTION. Everything else unchanged.",
+      "delta_acc": "HateMM +0.0027 (per-seed +0.0041 / +0.0053 / -0.0014); MHC_zh -0.0006 (per-seed +0.0052 / -0.0018 / -0.0051)",
+      "delta_mF1": "HateMM +0.0027; MHC_zh +0.0001",
+      "reading": "both datasets inside +/-0.006 with mixed signs across seeds: a NULL, not a regression. The prereg's leakage qualifier (sibling head k was itself trained on folds including f) can only make the number OPTIMISTIC, so KILL is sound as-is; the confounded-ALIVE clause never triggered.",
+      "interpretive_value": "THIS IS THE ARM THAT PAYS. F120 measured LOO-vs-fold gaps of +0.0538 (HateMM) and +0.0380 (MHC_zh), the campaign's remaining reason to believe in train-side headroom. B2 removes memorisation influence from TRAINING and recovers NOTHING => the gap is PURE MEMORISATION, not recoverable signal behind a degenerate objective. Training-side confirmation of F118's inference-side result. Two independent instruments, one conclusion."
+    },
+    "b3_aqm_trained_gphi": {
+      "verdict": "KILLED -- and the memory-corruption clause also fires",
+      "mechanism": "g_phi = a second classifier_hateClipper deepcopied from f_theta's init, added to the same AdamW, trained by re-forwarding selected neighbours with grad; bank keys g_phi(z), queries and BCE term f_theta(z); arena bank = g_phi(fitting pool), query = f_theta(held-out fold)",
+      "delta_acc": "HateMM -0.4032; MHC_zh -0.0645",
+      "delta_mF1": "HateMM -0.4947; MHC_zh -0.0966",
+      "self_recall": "HateMM 0.0016; MHC_zh 0.0017 -- the pre-registered memory-corruption guard (<0.8 on either dataset) fires at essentially zero",
+      "reading": "HateMM out-of-fold accuracy falls to 0.45-0.50, below the majority-class trivial level. Joint training DECOUPLES the two key spaces: g_phi drifts to a geometry where an item's own memory row is not even its own nearest neighbour, so the deployed vote addresses the wrong rows. The guard was written to catch this and caught it at the far end of its range.",
+      "kill_scope": "AQM kill now covers BOTH realizations: the zero-parameter epoch-snapshot bank (F120) and the trained bank-side map (here). The asymmetric-memory direction is CLOSED."
+    },
+    "b4_tra": {
+      "verdict": "KILLED -- on both of its own frozen conditions, on both datasets",
+      "mechanism": "per-bank-item admission radius rho_j (row j enters a query's top-20 only if cos(q,k_j) >= rho_j; rejected rows replaced by the next admitted row), fitted by coordinate ascent on the signed vote margin with 0.05 rejection-rate shrinkage, under a 4/5-1/5 rotation within each fold's held-out queries, initialised at rho = -1 (admit always) so the floor is inside the search space. NO head trained.",
+      "control": "5 random-radius draws per cell, matched in rejection rate by permuting the fitted rho across bank rows",
+      "delta_vs_floor_acc": "HateMM -0.0041 (per-seed -0.0080 / -0.0027 / -0.0014); MHC_zh -0.0029 (per-seed +0.00002 / -0.0035 / -0.0051)",
+      "delta_vs_floor_mF1": "HateMM -0.0046; MHC_zh -0.0030",
+      "delta_vs_random_control": "HateMM -0.0044 with SE 0.0021 (negative by 2.1 SE); MHC_zh -0.0028 with SE 0.0023 (negative by 1.2 SE)",
+      "rejection_rate": "0.069-0.096 HateMM, 0.080-0.130 MHC_zh",
+      "reading": "both frozen kill conditions fire on both datasets: the fitted operator misses the +0.020 bar (it is BELOW the floor) and does not beat its rejection-rate-matched random control. Fitted radii do no better than discarding the same fraction of neighbours at random, and both are slightly worse than admitting everything. Learned per-item trust in this bank has no content."
+    },
+    "instrument_validation": {
+      "floor_replay_HALT_gate": "artifacts/mech_stage_b/instrument.json -- the arena replayed directly from the banked C06 mints vs the frozen floor literals: ALL 6 CELLS PASS, max abs deviation 4.7e-5 acc / 4.2e-5 mF1 against a 5e-5 tolerance with NO fallback floor. The arena reimplementation is the same instrument that produced the floors.",
+      "mechanism_off_parity": "one head per arm per dataset trained with the arm's patches installed but the mechanism bypassed: ALL SIX BIT-EXACT vs the banked mints, banked_parity_maxabs = 0.0, bit_exact true on b1_hatemm, b1_zh, b2_hatemm, b2_zh, b3_hatemm, b3_zh. Harness plumbing (model capture, optimizer injection, mining interception, RNG-stream alignment) is a verified no-op when the mechanism is off, so every delta is the mechanism and not the harness."
+    },
+    "halt_fix_rerun_note": {
+      "what_happened": "job 13998's B4 leg HALTed on its own in-run assert: admit-always TRA did not reproduce mechfix_ops.deployed_vote, max|dvote| = 0.00952381 on hatemm s0 f0.",
+      "diagnosis_amendment_A2": "the canonical neighbour order used np.argsort(-S, kind='stable') while deployed_vote takes faiss's own top-20; in this collapsed head space (cosines 0.9998+) EXACT float32 TIES occur and faiss's heap breaks them differently from numpy's stable argsort. On 7 of 149 queries the neighbour SET was identical and only a tied pair's order differed; with opposite labels that swap crosses the rank-20/rank-19 boundary and changes the vote by exactly 2*cos/210 = 0.00952.",
+      "fix_and_verification": "tra_order() now builds the order as faiss's own top-20 in faiss's own order followed by the remaining rows in faiss's k=n_bank order, so admit-always is bit-identical to deployed_vote by construction; the same single ordering is used for fitting and for held-out evaluation. RE-VERIFIED ON ALL 30 (ds, seed, fold) CELLS AT max|dvote| = 0, zero prediction mismatches, before resubmission.",
+      "blast_radius": "B4 instrument only -- B1/B2/B3 never enter that code path, which is why their heads stayed valid and were reused (no retraining in job 14085).",
+      "amendment_A1": "also pre-data: the pre-submission synthetic drive showed the originally written acc_fit objective is plateau-locked (single-coordinate moves flip no prediction, greedy ascent never starts, planted positive stuck 0.500 -> 0.500), so the objective was changed to the signed vote margin, which recovers the planted positive 0.500 -> 1.000 while the rejection-rate-matched control stays at 0.500. Under the old objective B4 would have been under-powered TOWARD kill -- a wrong-verdict-class defect, the class allowed to block.",
+      "protocol_reading": "the HALT-fix-rerun path is the ACCEPTED COST of a cheap CPU battery under CLAUDE.md's 2026-08-05 proportional-ceremony ruling, not an incident: correctness is bought with a rerun rather than with review rounds, the assert fired exactly where it was placed, no candidate number was read before the fix, and the total price was 10 minutes of CPU because the expensive part (156 head trains) was cached."
+    },
+    "integrity": {
+      "test_contact": "ZERO -- every query in every arm is a train-split item, K_dev never read by this driver, grep -c test_seen returns 0 on BOTH slurm/logs/mech_stage_b_13998.out and slurm/logs/mech_stage_b_b4_14085.out; three guard layers active (headspace_mint.py torch.load guard, patched load_feats_from_CLIP reaching only train_*.pt / dev_seen_*.pt, scripts/analysis/c09_guard on PYTHONPATH)",
+      "rules_frozen_before_results": "YES -- the prereg, incl. the shared +0.020 rule, B1's lambda* selection rule, B2's confounded-ALIVE clause, B3's self-recall veto and B4's two-condition rule, was written and committed before any candidate metric existed; both amendments are dated, justified and pre-data",
+      "blindness": "YES -- synthetic-only self-test through design and implementation",
+      "single_submission": "13998 was one submission that HALTed by design; 14085 is the one resubmission of the leg it HALTed on. No arm was run twice looking for a better number.",
+      "ceremony": "$0 CPU battery under CLAUDE.md's 2026-08-05 proportional-ceremony ruling"
+    },
+    "campaign_consequence": "the mechanism space opened by F120's two confirmed code facts (no id-based self-exclusion on the deployed retrieval path; NCA tau=0.1 spreading gradient over ~15-17x more items than the deployed vote reads) is now MEASURED DEAD AT FIRST CONTACT IN ALL FOUR DIRECTIONS it opened: loss-shaping (RVS), training-side degeneracy (XFM), asymmetric memory (AQM, both realizations, F120 + here), bank-side admission (TRA).",
+    "free_running_candidate_pool": {
+      "status": "EMPTY (all four MECH-PROBES-A survivors killed at stage B, F121)",
+      "RVS": "KILLED -- see F121 / this block b1_rvs",
+      "XFM": "KILLED -- see F121 / this block b2_xfm",
+      "AQM_trained_gphi": "KILLED -- see F121 / this block b3_aqm_trained_gphi; with F120's zero-parameter kill the AQM direction is closed in both realizations",
+      "TRA": "KILLED -- see F121 / this block b4_tra"
+    },
+    "user_gated_items_unchanged": "YES -- every user-gated item recorded elsewhere in this file (C03 training, C04 teacher, the seven Gate-0 holds C05/C07/C08/C10/C11/C12/C13, OCR, DUA, Modal) is untouched by this block and still requires an explicit user ruling",
+    "cost": "2h01m wall across two CPU jobs, 8 cores, ZERO GPU-hours, $0 cloud",
+    "supersedes_pool_status_in": "mech_probes_a_2026_08_05.free_running_candidate_pool"
   }
 }

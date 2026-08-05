@@ -729,3 +729,213 @@ objective, not screening the geometry); AQM survives only in its trained-`g_phi`
 
 Cost: **20m23s wall, CPU-only, 8 cores, ZERO GPU-hours, $0 cloud.** State block:
 `mech_probes_a_2026_08_05`.
+
+## F121 — MECH-STAGE-B: all four surviving new-mechanism candidates KILLED at first contact in the fold-head arena — RVS catastrophically, XFM a clean null, AQM-trained-g_phi a memory-corruption failure, TRA below its own random control (2026-08-05, 2h01m CPU across two jobs, 0 GPU-h)
+
+Two CPU jobs, one battery. Job `13998` (`mech_stage_b`) ran `01:50:53`, 8 cores, 32 G, peak
+RSS `1.44 GB`, and **FAILED `1:0`** — it completed all 156 head trains (B1 90, B2 30, B3 30,
+6 parity heads, all cached under `artifacts/mech_stage_b/heads/`) and then HALTed inside
+`run_b4` on the arm's **own** pre-registered instrument assert. Job `14085`
+(`mech_stage_b_b4`) ran `00:10:07`, 8 cores, peak RSS `97 MB`, **COMPLETED `0:0`** after the
+defect was fixed: it re-asserted the floor replay, ran the zero-training B4 leg, and
+re-collected. **No head was retrained** — the B1/B2/B3 verdicts were aggregated from job
+13998's cached predictions in `2.9 s`.
+
+Prereg `refine-logs/MECH_STAGE_B_PREREG.md` (sha256
+`d453eb4d158bcb6fe0903ecad6c0015cf0e495a06b07de28a727d0163af39217` as committed, including
+amendments A1 and A2, both recorded in-file with the date and the reason). Driver
+`scripts/analysis/mech_stage_b.py` sha256
+`dc696bdec2c0df28d6db30efd31edcd831df02901ec46a229addc2ad4990c86b` (recorded in the result
+file as `driver_sha256`). Submissions `scripts/slurm/mech_stage_b_cpu.sbatch` (sha256
+`fc0b7aa1720a606f5bd5ac72126a6b210cf7ce228d96d30daaddfb134338b20c`) and
+`scripts/slurm/mech_stage_b_b4_cpu.sbatch` (sha256
+`2eb3e6e2f53a786cc39140968eef3e14552e6c0a9f8e3f89c95016d1aa092f91`). Results
+`artifacts/mech_stage_b/MECH_STAGE_B_RESULT.json` (+ `b4.json`, `instrument.json`). Logs
+`slurm/logs/mech_stage_b_13998.{out,err}`, `slurm/logs/mech_stage_b_b4_14085.{out,err}`.
+
+**Arena and bar (frozen in the prereg before any candidate number).** Out-of-fold **train**
+queries: 5 stratified folds over the train split only, per fold a head trained on the other
+four, then the deployed top-20 rank-weighted signed-cosine vote against a bank of the fitting
+pool; concatenating folds gives one out-of-fold prediction per train item. Screening bar
+**+0.020 accuracy** (3-seed mean of the per-seed paired difference) **on both datasets**,
+against floors HateMM **0.8867** and MHC-ZH **0.8923** (3-seed means of the banked per-seed
+literals). 3 seeds, zero test contact. Macro-F1 is reported everywhere and enters no verdict.
+
+### Verdicts
+
+| arm | mechanism | HateMM Δacc | ZH Δacc | verdict |
+|---|---|---|---|---|
+| B1 RVS | rank-space deployed-vote surrogate added to the hybrid loss | **−0.2128** | **−0.2049** | KILLED |
+| B2 XFM | cross-fit memory training against sibling fold-head banks | **+0.0027** | **−0.0006** | KILLED |
+| B3 AQM | trained `g_φ`, separate memory-side head | **−0.4032** | **−0.0645** | KILLED |
+| B4 TRA | per-bank-item trust radius, no head training | **−0.0041** | **−0.0029** | KILLED |
+
+### B1 — RVS: KILLED, and catastrophically
+
+`L = L_deployed_hybrid + λ · L_RVS`; `L_RVS` is a BCE on a soft-rank surrogate of the
+deployed vote (self-excluded bank, top-M = 128 candidates, `w̃ = relu(21 − soft_rank)`,
+bandwidth `β_i = max(IQR(s_i·)/10, 1e-8)` from the per-query cosine IQR, temp 0.25). Three
+frozen λ, all run on all 30 cells; `λ* = argmax` of the dataset-mean Δacc.
+
+| λ | HateMM Δacc | ZH Δacc | HateMM ΔmF1 | ZH ΔmF1 |
+|---|---|---|---|---|
+| 0.1 | −0.2316 | −0.2176 | −0.2716 | −0.4020 |
+| **0.3 (λ\*)** | **−0.2128** | **−0.2049** | −0.2434 | −0.3705 |
+| 1.0 | −0.2007 | −0.2199 | −0.2345 | −0.4045 |
+
+Out-of-fold accuracy drops to **0.64–0.70** on both datasets — the head is barely above
+chance-plus on HateMM and its ZH macro-F1 collapses to 0.45–0.55, i.e. the classes are being
+merged. Against a `+0.020` bar this is a kill by a factor of ~10 in the wrong direction.
+
+**Scope, stated honestly.** This kills the **frozen realization** — this surrogate (soft ranks
+over cosines, IQR-derived bandwidth, this weighting, added at these three λ) on this head
+space. What makes the verdict more than a single-point failure is the **uniformity**: all
+three λ including the smallest land within 0.03 of each other at ≈ −0.21, so there is no
+descent toward the floor as the term is turned down, which is the signature of a term that is
+**destructive to training** rather than merely uninformative. Nowhere in the family's first
+contact is there a positive sign to follow. A different surrogate (e.g. a listwise objective
+that does not fight the triplet term) is not formally excluded, but nothing measured here
+recommends building one.
+
+### B2 — XFM: KILLED, a clean null, and it settles what the memorization gap is made of
+
+Retrieval terms mined against a frozen sibling fold-head bank (`mint_<ds>_N_s<seed>_f<k>`
+restricted to `fold_of ∉ {k, f}`), which removes the self-positive degeneracy **by
+construction** — the item is not in its own bank. Everything else unchanged.
+
+| dataset | Δacc | ΔmF1 | per-seed Δacc |
+|---|---|---|---|
+| HateMM | **+0.0027** | +0.0027 | +0.0041 / +0.0053 / −0.0014 |
+| MHC-ZH | **−0.0006** | +0.0001 | +0.0052 / −0.0018 / −0.0051 |
+
+Both datasets sit inside ±0.006 with mixed signs across seeds: this is a **null, not a
+regression**. The prereg's leakage qualifier (§3.2 — the sibling head `k` was itself trained
+on folds including `f`, so its weights carry a trace of the query fold) can only make the
+number **optimistic**, which makes a KILL verdict sound as-is; no confounded-ALIVE clause was
+triggered.
+
+**Interpretive value — this is the arm that pays.** F120 measured the LOO-vs-fold accuracy
+gaps of the deployed heads at **+0.0538 (HateMM)** and **+0.0380 (MHC-ZH)**, and that gap was
+the campaign's remaining reason to think there was train-side headroom to convert. B2 removes
+memorization influence from **training** and recovers **nothing**: the gap is **pure
+memorization**, not recoverable signal sitting behind a degenerate objective. This is the
+training-side confirmation of F118's inference-side result (the stable-inversion pool is
+arithmetically big enough to pay the bar and carries no label-free handle). Two independent
+instruments, one conclusion.
+
+### B3 — AQM with a trained `g_φ`: KILLED, and the memory-corruption clause also fires
+
+`g_φ` = a second `classifier_hateClipper` deepcopied from `f_θ`'s init, added to the same
+AdamW, trained by re-forwarding the selected neighbours with grad; bank keys are `g_φ(z)`,
+queries and the BCE term are `f_θ(z)`; arena deployment is bank = `g_φ(fitting pool)`,
+query = `f_θ(held-out fold)`.
+
+| dataset | Δacc | ΔmF1 | self-recall (3-seed mean) |
+|---|---|---|---|
+| HateMM | **−0.4032** | −0.4947 | **0.0016** |
+| MHC-ZH | **−0.0645** | −0.0966 | **0.0017** |
+
+HateMM out-of-fold accuracy falls to **0.45–0.50**, i.e. below the majority-class trivial
+level. The pre-registered memory-corruption guard (§4.2: `self_recall` = fraction of bank rows
+whose nearest neighbour in query space is themselves; `< 0.8` on either dataset vetoes an
+otherwise-ALIVE arm) fires at **0.0016 / 0.0017** — essentially zero. Joint training
+**decouples the two key spaces**: `g_φ` drifts to a geometry in which an item's own memory row
+is not even its own nearest neighbour, so the retrieval that the deployed vote depends on is
+addressing the wrong rows. The guard was written to catch exactly this and it caught it, at
+the far end of its range.
+
+**Kill scope now covers both AQM realizations.** F120 killed the zero-parameter epoch-snapshot
+bank; this kills the trained bank-side map. The asymmetric-memory direction is closed.
+
+### B4 — TRA: KILLED on both of its own frozen conditions
+
+Per-bank-item admission radius `ρ_j` (row `j` may enter a query's top-20 only if
+`cos(q, k_j) ≥ ρ_j`, rejected rows replaced by the next admitted row), fitted by coordinate
+ascent on the signed vote margin with a 0.05 rejection-rate shrinkage, under a 4/5–1/5 rotation
+within each fold's held-out queries, initialized at `ρ = −1` (admit always) so the floor is
+inside the search space. No head is trained. Mandatory control: 5 random-radius draws per cell
+matched in rejection rate by permuting the fitted `ρ` across bank rows.
+
+| dataset | Δ vs floor | ΔmF1 vs floor | Δ vs random control | SE(Δ vs random) | rejection rate |
+|---|---|---|---|---|---|
+| HateMM | **−0.0041** | −0.0046 | **−0.0044** | 0.0021 | 0.069–0.096 |
+| MHC-ZH | **−0.0029** | −0.0030 | **−0.0028** | 0.0023 | 0.080–0.130 |
+
+Both frozen kill conditions fire on both datasets: the fitted operator misses the `+0.020` bar
+(it is *below* the floor), and it does not beat its rejection-rate-matched random control —
+HateMM is negative by 2.1 SE, ZH negative by 1.2 SE. The fitted radii are doing no better than
+throwing away the same fraction of neighbours at random, and both are slightly worse than
+admitting everything. Learned per-item trust in this bank has no content.
+
+### Instrument validation — both layers, before any candidate number
+
+**Floor replay (HALT gate, `instrument.json`).** The arena was replayed directly from the
+banked C06 mints and compared to the frozen floor literals: **all 6 cells pass**, max absolute
+deviation **4.7e-5 accuracy / 4.2e-5 macro-F1** against a `5e-5` tolerance with **no fallback
+floor**. The arena reimplementation is the same instrument that produced the floors.
+
+**Mechanism-off parity (per-arm HALT gate).** For each of the three training arms, one head per
+dataset was trained with the arm's patches installed but the mechanism bypassed. All six are
+**bit-exact** against the banked mints: `banked_parity_maxabs = 0.0`, `bit_exact: true` on
+`b1_hatemm`, `b1_zh`, `b2_hatemm`, `b2_zh`, `b3_hatemm`, `b3_zh`. The harness plumbing (model
+capture, optimizer injection, mining interception, RNG-stream alignment) is a verified no-op
+when the mechanism is off, so every delta above is the mechanism and not the harness.
+
+### Instrument history — the B4 HALT, and why it is the cheap path and not a defect in the verdict
+
+Job 13998's B4 leg HALTed on its own in-run assert: admit-always TRA did not reproduce
+`mechfix_ops.deployed_vote`, `max |Δvote| = 0.00952381` on HateMM s0 f0. Diagnosis (prereg
+amendment A2, written before any B4 candidate number was read): the canonical neighbour order
+was built with `np.argsort(-S, kind="stable")` while `deployed_vote` takes faiss's own top-20,
+and in this collapsed head space (cosines 0.9998+) **exact float32 ties occur** — faiss's heap
+and numpy's stable argsort break them differently. On 7 of 149 queries the neighbour *set* was
+identical and only a tied pair's order differed; when that pair carries opposite labels the
+swap moves it across the rank-20/rank-19 boundary and changes the vote by exactly
+`2·cos/210 = 0.00952`. Fix: build the order as faiss's own top-20 in faiss's own order,
+followed by the remaining rows in faiss's `k = n_bank` order, so admit-always is bit-identical
+to the deployed vote by construction; the same single ordering is used for fitting and for
+held-out evaluation. **Re-verified on all 30 (ds, seed, fold) cells at `max |Δvote| = 0` with
+zero prediction mismatches** before resubmission. The defect was confined to the B4 instrument
+— B1/B2/B3 never enter that code path, which is why their heads stayed valid and were reused.
+
+Amendment A1 (also pre-data) is recorded in the same section: the pre-submission synthetic
+drive showed the originally-written `acc_fit` objective is plateau-locked (single-coordinate
+moves flip no prediction, greedy ascent never starts, planted positive stuck at 0.500 → 0.500),
+so the objective was changed to the signed vote margin, which recovers the planted positive
+0.500 → 1.000 while the rejection-rate-matched control stays at 0.500. Under the old objective
+B4 would have been under-powered *toward* KILL — a wrong-verdict-class defect, the class that
+is allowed to block under the 2026-08-05 ceremony rule.
+
+**The HALT-fix-rerun path is the accepted cost here, not an incident.** Under CLAUDE.md's
+2026-08-05 proportional-ceremony ruling, a cheap CPU battery buys correctness with a rerun
+rather than with review rounds; the assert fired exactly where it was placed, no candidate
+number was read before the fix, and the total price was 10 minutes of CPU because the expensive
+part (156 head trains) was cached.
+
+### Integrity
+
+**Zero test contact.** Every query in every arm is a **train-split** item; `K_dev` was never
+read by this driver; `grep -c test_seen` returns **0** on both
+`slurm/logs/mech_stage_b_13998.out` and `slurm/logs/mech_stage_b_b4_14085.out`. Three guard
+layers active (`headspace_mint.py` `torch.load` guard; patched `load_feats_from_CLIP` reaching
+only `train_*.pt` / `dev_seen_*.pt`; `scripts/analysis/c09_guard` on `PYTHONPATH`). **Rules
+frozen before results** — the prereg, including the shared `+0.020` rule, B1's λ* selection
+rule, B2's confounded-ALIVE clause, B3's self-recall veto and B4's two-condition rule, was
+written and committed before any candidate metric existed; both amendments are dated,
+justified, and pre-data. **Blindness** held through design and implementation (synthetic-only
+self-test). **Single submission per leg** — 13998 was one submission that HALTed by design, and
+14085 is the one resubmission of the leg it HALTed on; no arm was run twice looking for a
+better number. Driver sha256 is recorded in the result file.
+
+### What this leaves on the board
+
+The mechanism space opened by F120's two confirmed code facts (no id-based self-exclusion on
+the deployed retrieval path; NCA's `tau = 0.1` spreading gradient over ~15-17x more items than
+the deployed vote reads) is now **measured dead at first contact in all four directions it
+opened**: the loss-shaping direction (RVS), the training-side degeneracy direction (XFM), the
+asymmetric-memory direction (AQM, both realizations, F120 + here), and the bank-side admission
+direction (TRA). The **free-running candidate pool returns to EMPTY**; every remaining item is
+user-gated.
+
+Cost: **2h01m wall across two CPU jobs, 8 cores, ZERO GPU-hours, $0 cloud.** State block:
+`mech_stage_b_2026_08_05`.

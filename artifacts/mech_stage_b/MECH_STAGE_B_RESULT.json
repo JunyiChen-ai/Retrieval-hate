@@ -1,0 +1,498 @@
+{
+  "arms": {
+    "B1_RVS": {
+      "delta_at_lambda_star": {
+        "hatemm": -0.212832,
+        "zh": -0.204941
+      },
+      "lambda_star": "0.3",
+      "lambdas": {
+        "0.1": {
+          "mean_over_datasets": -0.224628,
+          "per_dataset": {
+            "hatemm": {
+              "acc_by_seed": [
+                0.659946,
+                0.639785,
+                0.665323
+              ],
+              "delta_acc_by_seed": [
+                -0.228454,
+                -0.246015,
+                -0.220477
+              ],
+              "delta_mF1_by_seed": [
+                -0.278576,
+                -0.283152,
+                -0.252968
+              ],
+              "mF1_by_seed": [
+                0.605224,
+                0.597948,
+                0.628232
+              ],
+              "mean_delta_acc": -0.231649,
+              "mean_delta_mF1": -0.271565
+            },
+            "zh": {
+              "acc_by_seed": [
+                0.671848,
+                0.685665,
+                0.666667
+              ],
+              "delta_acc_by_seed": [
+                -0.221052,
+                -0.203835,
+                -0.227933
+              ],
+              "delta_mF1_by_seed": [
+                -0.393517,
+                -0.39644,
+                -0.41614
+              ],
+              "mF1_by_seed": [
+                0.481183,
+                0.47456,
+                0.46036
+              ],
+              "mean_delta_acc": -0.217607,
+              "mean_delta_mF1": -0.402032
+            }
+          }
+        },
+        "0.3": {
+          "mean_over_datasets": -0.208886,
+          "per_dataset": {
+            "hatemm": {
+              "acc_by_seed": [
+                0.651882,
+                0.669355,
+                0.700269
+              ],
+              "delta_acc_by_seed": [
+                -0.236518,
+                -0.216445,
+                -0.185531
+              ],
+              "delta_mF1_by_seed": [
+                -0.275829,
+                -0.246683,
+                -0.207691
+              ],
+              "mF1_by_seed": [
+                0.607971,
+                0.634417,
+                0.673509
+              ],
+              "mean_delta_acc": -0.212832,
+              "mean_delta_mF1": -0.243401
+            },
+            "zh": {
+              "acc_by_seed": [
+                0.697755,
+                0.692573,
+                0.671848
+              ],
+              "delta_acc_by_seed": [
+                -0.195145,
+                -0.196927,
+                -0.222752
+              ],
+              "delta_mF1_by_seed": [
+                -0.364011,
+                -0.322409,
+                -0.425036
+              ],
+              "mF1_by_seed": [
+                0.510689,
+                0.548591,
+                0.451464
+              ],
+              "mean_delta_acc": -0.204941,
+              "mean_delta_mF1": -0.370485
+            }
+          }
+        },
+        "1.0": {
+          "mean_over_datasets": -0.210322,
+          "per_dataset": {
+            "hatemm": {
+              "acc_by_seed": [
+                0.688172,
+                0.692204,
+                0.677419
+              ],
+              "delta_acc_by_seed": [
+                -0.200228,
+                -0.193596,
+                -0.208381
+              ],
+              "delta_mF1_by_seed": [
+                -0.240546,
+                -0.226332,
+                -0.236572
+              ],
+              "mF1_by_seed": [
+                0.643254,
+                0.654768,
+                0.644628
+              ],
+              "mean_delta_acc": -0.200735,
+              "mean_delta_mF1": -0.234483
+            },
+            "zh": {
+              "acc_by_seed": [
+                0.670121,
+                0.668394,
+                0.678756
+              ],
+              "delta_acc_by_seed": [
+                -0.222779,
+                -0.221106,
+                -0.215844
+              ],
+              "delta_mF1_by_seed": [
+                -0.397983,
+                -0.413495,
+                -0.402042
+              ],
+              "mF1_by_seed": [
+                0.476717,
+                0.457505,
+                0.474458
+              ],
+              "mean_delta_acc": -0.21991,
+              "mean_delta_mF1": -0.404506
+            }
+          }
+        }
+      },
+      "selection_rule": "argmax over the frozen grid of the mean over datasets of the 3-seed-mean out-of-fold TRAIN accuracy delta",
+      "verdict": "KILLED"
+    },
+    "B2_XFM": {
+      "per_dataset": {
+        "hatemm": {
+          "acc_by_seed": [
+            0.892473,
+            0.891129,
+            0.884409
+          ],
+          "delta_acc_by_seed": [
+            0.004073,
+            0.005329,
+            -0.001391
+          ],
+          "delta_mF1_by_seed": [
+            0.004243,
+            0.005222,
+            -0.001421
+          ],
+          "mF1_by_seed": [
+            0.888043,
+            0.886322,
+            0.879779
+          ],
+          "mean_delta_acc": 0.00267,
+          "mean_delta_mF1": 0.002681
+        },
+        "zh": {
+          "acc_by_seed": [
+            0.8981,
+            0.887737,
+            0.889465
+          ],
+          "delta_acc_by_seed": [
+            0.0052,
+            -0.001763,
+            -0.005135
+          ],
+          "delta_mF1_by_seed": [
+            0.006926,
+            -0.001025,
+            -0.005489
+          ],
+          "mF1_by_seed": [
+            0.881626,
+            0.869975,
+            0.871011
+          ],
+          "mean_delta_acc": -0.000566,
+          "mean_delta_mF1": 0.000137
+        }
+      },
+      "verdict": "KILLED"
+    },
+    "B3_AQM_trained_gphi": {
+      "per_dataset": {
+        "hatemm": {
+          "acc_by_seed": [
+            0.452957,
+            0.49328,
+            0.504032
+          ],
+          "delta_acc_by_seed": [
+            -0.435443,
+            -0.39252,
+            -0.381768
+          ],
+          "delta_mF1_by_seed": [
+            -0.45914,
+            -0.530776,
+            -0.494125
+          ],
+          "mF1_by_seed": [
+            0.42466,
+            0.350324,
+            0.387075
+          ],
+          "mean_delta_acc": -0.403244,
+          "mean_delta_mF1": -0.494681
+        },
+        "zh": {
+          "acc_by_seed": [
+            0.842832,
+            0.806563,
+            0.834197
+          ],
+          "delta_acc_by_seed": [
+            -0.050068,
+            -0.082937,
+            -0.060403
+          ],
+          "delta_mF1_by_seed": [
+            -0.076375,
+            -0.121851,
+            -0.091515
+          ],
+          "mF1_by_seed": [
+            0.798325,
+            0.749149,
+            0.784985
+          ],
+          "mean_delta_acc": -0.064469,
+          "mean_delta_mF1": -0.09658
+        }
+      },
+      "self_recall_by_dataset": {
+        "hatemm": 0.001568,
+        "zh": 0.001727
+      },
+      "verdict": "KILLED"
+    },
+    "B4_TRA": {
+      "experiment": "B4_TRA_per_bank_item_trust_radius",
+      "per_dataset": {
+        "hatemm": {
+          "beats_random_control": false,
+          "clears_floor_bar": false,
+          "delta_vs_floor_by_seed": [
+            -0.008024,
+            -0.002735,
+            -0.001391
+          ],
+          "delta_vs_random_by_seed": [
+            -0.008333,
+            -0.003495,
+            -0.001344
+          ],
+          "fitted_acc_by_seed": [
+            0.880376,
+            0.883065,
+            0.884409
+          ],
+          "fitted_mF1_by_seed": [
+            0.875378,
+            0.877759,
+            0.879234
+          ],
+          "mF1_delta_vs_floor": -0.004576,
+          "mean_delta_vs_floor": -0.00405,
+          "mean_delta_vs_random": -0.004391,
+          "random_acc_by_seed": [
+            0.88871,
+            0.886559,
+            0.885753
+          ],
+          "se_delta_vs_random": 0.002067
+        },
+        "zh": {
+          "beats_random_control": false,
+          "clears_floor_bar": false,
+          "delta_vs_floor_by_seed": [
+            1.9e-05,
+            -0.00349,
+            -0.005135
+          ],
+          "delta_vs_random_by_seed": [
+            0.001727,
+            -0.004491,
+            -0.005527
+          ],
+          "fitted_acc_by_seed": [
+            0.892919,
+            0.88601,
+            0.889465
+          ],
+          "fitted_mF1_by_seed": [
+            0.876159,
+            0.86698,
+            0.870212
+          ],
+          "mF1_delta_vs_floor": -0.00295,
+          "mean_delta_vs_floor": -0.002869,
+          "mean_delta_vs_random": -0.002763,
+          "random_acc_by_seed": [
+            0.891192,
+            0.890501,
+            0.894991
+          ],
+          "se_delta_vs_random": 0.002265
+        }
+      },
+      "rule": "KILLED iff mean delta vs floor < +0.020 on either dataset, OR mean(fitted - random) <= SE across the 3 seeds on either dataset",
+      "verdict": "KILLED"
+    }
+  },
+  "driver_sha256": "dc696bdec2c0df28d6db30efd31edcd831df02901ec46a229addc2ad4990c86b",
+  "elapsed_seconds": 2.9,
+  "floors": {
+    "acc": {
+      "hatemm": [
+        0.8884,
+        0.8858,
+        0.8858
+      ],
+      "zh": [
+        0.8929,
+        0.8895,
+        0.8946
+      ]
+    },
+    "mF1": {
+      "hatemm": [
+        0.8838,
+        0.8811,
+        0.8812
+      ],
+      "zh": [
+        0.8747,
+        0.871,
+        0.8765
+      ]
+    }
+  },
+  "frozen_sha256": {
+    "scripts/analysis/headspace_mint.py": "cefdf8dc2f4a9aefa042ef7bec9b1d06c9721ae5b4a70ec117e9929ff0916612",
+    "scripts/analysis/mechfix_ops.py": "635c13124e79ba1a299bc13fc1175a03aa11e09924f5413ce51061793c83fc8d",
+    "scripts/analysis/mechnov_pairverify.py": "77b0defd8eaa3688e58b6d5d17202bd55d16cf1f4a5aaafbe4b2b98598b7240d"
+  },
+  "instrument": {
+    "all_pass": true,
+    "check": "fold_arena_replay_vs_banked_floors",
+    "rows": [
+      {
+        "abs_diff_acc": 4.086e-05,
+        "abs_diff_mF1": 2.046e-05,
+        "banked_acc": 0.8884,
+        "banked_mF1": 0.8838,
+        "dataset": "hatemm",
+        "pass": true,
+        "replay_acc": 0.888441,
+        "replay_mF1": 0.88378,
+        "seed": 0
+      },
+      {
+        "abs_diff_acc": 4.731e-05,
+        "abs_diff_mF1": 1.151e-05,
+        "banked_acc": 0.8858,
+        "banked_mF1": 0.8811,
+        "dataset": "hatemm",
+        "pass": true,
+        "replay_acc": 0.885753,
+        "replay_mF1": 0.881112,
+        "seed": 1
+      },
+      {
+        "abs_diff_acc": 4.731e-05,
+        "abs_diff_mF1": 4.189e-05,
+        "banked_acc": 0.8858,
+        "banked_mF1": 0.8812,
+        "dataset": "hatemm",
+        "pass": true,
+        "replay_acc": 0.885753,
+        "replay_mF1": 0.881242,
+        "seed": 2
+      },
+      {
+        "abs_diff_acc": 1.883e-05,
+        "abs_diff_mF1": 4.218e-05,
+        "banked_acc": 0.8929,
+        "banked_mF1": 0.8747,
+        "dataset": "zh",
+        "pass": true,
+        "replay_acc": 0.892919,
+        "replay_mF1": 0.874658,
+        "seed": 0
+      },
+      {
+        "abs_diff_acc": 3.541e-05,
+        "abs_diff_mF1": 1.086e-05,
+        "banked_acc": 0.8895,
+        "banked_mF1": 0.871,
+        "dataset": "zh",
+        "pass": true,
+        "replay_acc": 0.889465,
+        "replay_mF1": 0.871011,
+        "seed": 1
+      },
+      {
+        "abs_diff_acc": 4.594e-05,
+        "abs_diff_mF1": 1.158e-05,
+        "banked_acc": 0.8946,
+        "banked_mF1": 0.8765,
+        "dataset": "zh",
+        "pass": true,
+        "replay_acc": 0.894646,
+        "replay_mF1": 0.876488,
+        "seed": 2
+      }
+    ],
+    "rule": "any |replay - banked| > 5e-5 -> HALT the whole battery; no fallback floor",
+    "tol": 5e-05
+  },
+  "parity_heads": {
+    "b1_hatemm": {
+      "banked_parity_maxabs": 0.0,
+      "bit_exact": true
+    },
+    "b1_zh": {
+      "banked_parity_maxabs": 0.0,
+      "bit_exact": true
+    },
+    "b2_hatemm": {
+      "banked_parity_maxabs": 0.0,
+      "bit_exact": true
+    },
+    "b2_zh": {
+      "banked_parity_maxabs": 0.0,
+      "bit_exact": true
+    },
+    "b3_hatemm": {
+      "banked_parity_maxabs": 0.0,
+      "bit_exact": true
+    },
+    "b3_zh": {
+      "banked_parity_maxabs": 0.0,
+      "bit_exact": true
+    }
+  },
+  "prereg": "refine-logs/MECH_STAGE_B_PREREG.md",
+  "screening_bar": 0.02,
+  "verdicts": {
+    "B1_RVS": "KILLED",
+    "B2_XFM": "KILLED",
+    "B3_AQM_trained_gphi": "KILLED",
+    "B4_TRA": "KILLED"
+  }
+}

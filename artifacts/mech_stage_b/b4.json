@@ -1,0 +1,73 @@
+{
+  "experiment": "B4_TRA_per_bank_item_trust_radius",
+  "per_dataset": {
+    "hatemm": {
+      "beats_random_control": false,
+      "clears_floor_bar": false,
+      "delta_vs_floor_by_seed": [
+        -0.008024,
+        -0.002735,
+        -0.001391
+      ],
+      "delta_vs_random_by_seed": [
+        -0.008333,
+        -0.003495,
+        -0.001344
+      ],
+      "fitted_acc_by_seed": [
+        0.880376,
+        0.883065,
+        0.884409
+      ],
+      "fitted_mF1_by_seed": [
+        0.875378,
+        0.877759,
+        0.879234
+      ],
+      "mF1_delta_vs_floor": -0.004576,
+      "mean_delta_vs_floor": -0.00405,
+      "mean_delta_vs_random": -0.004391,
+      "random_acc_by_seed": [
+        0.88871,
+        0.886559,
+        0.885753
+      ],
+      "se_delta_vs_random": 0.002067
+    },
+    "zh": {
+      "beats_random_control": false,
+      "clears_floor_bar": false,
+      "delta_vs_floor_by_seed": [
+        1.9e-05,
+        -0.00349,
+        -0.005135
+      ],
+      "delta_vs_random_by_seed": [
+        0.001727,
+        -0.004491,
+        -0.005527
+      ],
+      "fitted_acc_by_seed": [
+        0.892919,
+        0.88601,
+        0.889465
+      ],
+      "fitted_mF1_by_seed": [
+        0.876159,
+        0.86698,
+        0.870212
+      ],
+      "mF1_delta_vs_floor": -0.00295,
+      "mean_delta_vs_floor": -0.002869,
+      "mean_delta_vs_random": -0.002763,
+      "random_acc_by_seed": [
+        0.891192,
+        0.890501,
+        0.894991
+      ],
+      "se_delta_vs_random": 0.002265
+    }
+  },
+  "rule": "KILLED iff mean delta vs floor < +0.020 on either dataset, OR mean(fitted - random) <= SE across the 3 seeds on either dataset",
+  "verdict": "KILLED"
+}

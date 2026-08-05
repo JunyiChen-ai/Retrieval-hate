@@ -1,0 +1,74 @@
+{
+  "all_pass": true,
+  "check": "fold_arena_replay_vs_banked_floors",
+  "rows": [
+    {
+      "abs_diff_acc": 4.086e-05,
+      "abs_diff_mF1": 2.046e-05,
+      "banked_acc": 0.8884,
+      "banked_mF1": 0.8838,
+      "dataset": "hatemm",
+      "pass": true,
+      "replay_acc": 0.888441,
+      "replay_mF1": 0.88378,
+      "seed": 0
+    },
+    {
+      "abs_diff_acc": 4.731e-05,
+      "abs_diff_mF1": 1.151e-05,
+      "banked_acc": 0.8858,
+      "banked_mF1": 0.8811,
+      "dataset": "hatemm",
+      "pass": true,
+      "replay_acc": 0.885753,
+      "replay_mF1": 0.881112,
+      "seed": 1
+    },
+    {
+      "abs_diff_acc": 4.731e-05,
+      "abs_diff_mF1": 4.189e-05,
+      "banked_acc": 0.8858,
+      "banked_mF1": 0.8812,
+      "dataset": "hatemm",
+      "pass": true,
+      "replay_acc": 0.885753,
+      "replay_mF1": 0.881242,
+      "seed": 2
+    },
+    {
+      "abs_diff_acc": 1.883e-05,
+      "abs_diff_mF1": 4.218e-05,
+      "banked_acc": 0.8929,
+      "banked_mF1": 0.8747,
+      "dataset": "zh",
+      "pass": true,
+      "replay_acc": 0.892919,
+      "replay_mF1": 0.874658,
+      "seed": 0
+    },
+    {
+      "abs_diff_acc": 3.541e-05,
+      "abs_diff_mF1": 1.086e-05,
+      "banked_acc": 0.8895,
+      "banked_mF1": 0.871,
+      "dataset": "zh",
+      "pass": true,
+      "replay_acc": 0.889465,
+      "replay_mF1": 0.871011,
+      "seed": 1
+    },
+    {
+      "abs_diff_acc": 4.594e-05,
+      "abs_diff_mF1": 1.158e-05,
+      "banked_acc": 0.8946,
+      "banked_mF1": 0.8765,
+      "dataset": "zh",
+      "pass": true,
+      "replay_acc": 0.894646,
+      "replay_mF1": 0.876488,
+      "seed": 2
+    }
+  ],
+  "rule": "any |replay - banked| > 5e-5 -> HALT the whole battery; no fallback floor",
+  "tol": 5e-05
+}
