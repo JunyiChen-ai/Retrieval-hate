@@ -1,0 +1,43 @@
+2026/08/06 07:35:41 NOTICE: HateMM/train_c1settle_hatemm_s0.pt: Can't follow symlink without -L/--copy-links
+2026/08/06 07:35:41 NOTICE: HateMM/dev_seen_c1settle_hatemm_s0.pt: Can't follow symlink without -L/--copy-links
+2026/08/06 07:35:41 NOTICE: HateMM/test_seen_c1settle_hatemm_s0.pt: Can't follow symlink without -L/--copy-links
+2026/08/06 07:35:43 INFO  : HateMM/SPANSTATS_HateMM_dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-textpool_HF.json: Copied (new)
+2026/08/06 07:35:43 INFO  : HateMM/SPANSTATS_HateMM_train_Qwen2.5-VL-7B-Instruct-LoRA-curric-bidir-textpool_HF.json: Copied (new)
+2026/08/06 07:35:44 INFO  : HateClipSeg/test_seen_subclipK4_openai_clip-vit-large-patch14-336_HF.pt: Copied (new)
+2026/08/06 07:35:44 INFO  : HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-NAT.pt: Copied (new)
+2026/08/06 07:35:44 INFO  : HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RW4.pt: Copied (new)
+2026/08/06 07:35:44 INFO  : HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric-nullop2merge_HF.pt: Copied (new)
+2026/08/06 07:35:45 INFO  : HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RW1.pt: Copied (new)
+2026/08/06 07:35:45 INFO  : HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RW3.pt: Copied (new)
+2026/08/06 07:35:45 INFO  : HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RW2.pt: Copied (new)
+2026/08/06 07:35:45 INFO  : HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-NAT.pt: Copied (new)
+2026/08/06 07:35:45 INFO  : HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RFULL.pt: Copied (new)
+2026/08/06 07:35:45 INFO  : HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric-nullop2merge_HF.pt: Copied (new)
+2026/08/06 07:35:45 INFO  : HateMM/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RFULL.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : MHC_zh/SPANSTATS_MHC_zh_dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-bidir-textpool_HF.json: Copied (new)
+2026/08/06 07:35:46 INFO  : HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RW1.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RW3.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : MHC_zh/SPANSTATS_MHC_zh_train_Qwen2.5-VL-7B-Instruct-LoRA-bidir-textpool_HF.json: Copied (new)
+2026/08/06 07:35:46 INFO  : MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-NAT.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RW4.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RFULL.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : HateMM/train_Qwen2.5-VL-7B-Instruct-LoRA-curric_HF-c02den-RW2.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA-nullop2merge_HF.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RW1.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RW3.pt: Copied (new)
+2026/08/06 07:35:46 INFO  : MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RW4.pt: Copied (new)
+2026/08/06 07:35:47 INFO  : MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA-nullop2merge_HF.pt: Copied (new)
+2026/08/06 07:35:47 INFO  : MHC_zh/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RW2.pt: Copied (new)
+2026/08/06 07:35:47 INFO  : MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RFULL.pt: Copied (new)
+2026/08/06 07:35:47 INFO  : MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RW1.pt: Copied (new)
+2026/08/06 07:35:47 INFO  : MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RW2.pt: Copied (new)
+2026/08/06 07:35:47 INFO  : MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-NAT.pt: Copied (new)
+2026/08/06 07:35:47 INFO  : MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RW3.pt: Copied (new)
+2026/08/06 07:35:47 INFO  : HateClipSeg/test_seen_subclipK30_openai_clip-vit-large-patch14-336_HF.pt: Copied (new)
+2026/08/06 07:35:48 INFO  : MHC_zh/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-c02den-RW4.pt: Copied (new)
+2026/08/06 07:35:48 INFO  : 
+Transferred:   	  183.286 MiB / 183.286 MiB, 100%, 25.724 MiB/s, ETA 0s
+Checks:              4008 / 4008, 100%, Listed 8104
+Transferred:           34 / 34, 100%
+Elapsed time:         7.7s
+

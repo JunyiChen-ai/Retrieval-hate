@@ -1,0 +1,11 @@
+2026/08/06 07:35:49 INFO  : Using sha1 for hash comparisons
+2026/08/06 07:35:50 NOTICE: HateMM/train_c1settle_hatemm_s0.pt: Can't follow symlink without -L/--copy-links
+2026/08/06 07:35:50 NOTICE: HateMM/dev_seen_c1settle_hatemm_s0.pt: Can't follow symlink without -L/--copy-links
+2026/08/06 07:35:50 NOTICE: HateMM/test_seen_c1settle_hatemm_s0.pt: Can't follow symlink without -L/--copy-links
+2026/08/06 07:35:53 NOTICE: B2 bucket junyi-data path RGCL_video/embeddings: 0 differences found
+2026/08/06 07:35:53 NOTICE: B2 bucket junyi-data path RGCL_video/embeddings: 4042 matching files
+2026/08/06 07:35:53 INFO  : 
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:              4042 / 4042, 100%, Listed 8133
+Elapsed time:         4.5s
+

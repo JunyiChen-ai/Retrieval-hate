@@ -1,0 +1,19 @@
+2026/08/06 09:05:12 INFO  : Using sha1 for hash comparisons
+2026/08/06 09:05:14 NOTICE: data/HateMM/videos: Can't follow symlink without -L/--copy-links
+2026/08/06 09:05:14 NOTICE: data/MultiHateClip/en/videos: Can't follow symlink without -L/--copy-links
+2026/08/06 09:05:14 NOTICE: data/MultiHateClip/zh/videos: Can't follow symlink without -L/--copy-links
+2026/08/06 09:05:15 NOTICE: data/HateMM/retrieval/all_modal.jsonl: Can't follow symlink without -L/--copy-links
+2026/08/06 09:05:15 NOTICE: data/MultiHateClip/en/retrieval/all_modal.jsonl: Can't follow symlink without -L/--copy-links
+2026/08/06 09:05:15 NOTICE: data/MultiHateClip/zh/retrieval/all_modal.jsonl: Can't follow symlink without -L/--copy-links
+2026/08/06 09:06:12 INFO  : 
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:             26260 / 26260, 100%, Listed 58184
+Elapsed time:       1m0.0s
+
+2026/08/06 09:06:48 NOTICE: B2 bucket junyi-data path RGCL_video/manual_backup_2026-08-06/baselines_MoRE: 0 differences found
+2026/08/06 09:06:48 NOTICE: B2 bucket junyi-data path RGCL_video/manual_backup_2026-08-06/baselines_MoRE: 43251 matching files
+2026/08/06 09:06:48 INFO  : 
+Transferred:   	          0 B / 0 B, -, 0 B/s, ETA -
+Checks:             43251 / 43251, 100%, Listed 92038
+Elapsed time:      1m36.0s
+
