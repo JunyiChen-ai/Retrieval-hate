@@ -1,0 +1,213 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "c04_a0t_small_v1_v8_stage_authorization",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "implementation_version",
+    "stage",
+    "verdict",
+    "authorization_snapshot",
+    "config_contract_sha256",
+    "implementation_hashes",
+    "frozen_design_hashes",
+    "design_go_review_sha256",
+    "source_hash_closure",
+    "model_hash_closure",
+    "payload_binding",
+    "reviewer",
+    "decision_utc",
+    "closure_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "c04_stage_authorization_v8"},
+    "run_id": {"const": "C04-A0T-SMALL-v1"},
+    "implementation_version": {"const": "v8_prospective"},
+    "stage": {
+      "enum": [
+        "CPU_PREFLIGHT",
+        "GPU_TEACHER_PRELABEL_SEAL",
+        "CPU_POST_JOB_RECONCILIATION"
+      ]
+    },
+    "verdict": {"const": "GO"},
+    "authorization_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "implementation_authorized",
+        "preflight_materialization_authorized",
+        "teacher_authorized",
+        "gpu_authorized",
+        "slurm_authorized",
+        "small_tranche_execution_authorized",
+        "post_job_reconciliation_authorized",
+        "dev_authorized",
+        "test_authorized",
+        "ocr_authorized",
+        "external_api_authorized",
+        "network_authorized",
+        "cross_dataset_authorized",
+        "label_value_authorized_before_seal",
+        "chain_authorized",
+        "release_authorized",
+        "resubmit_authorized"
+      ],
+      "properties": {
+        "implementation_authorized": {"type": "boolean"},
+        "preflight_materialization_authorized": {"type": "boolean"},
+        "teacher_authorized": {"type": "boolean"},
+        "gpu_authorized": {"type": "boolean"},
+        "slurm_authorized": {"type": "boolean"},
+        "small_tranche_execution_authorized": {"type": "boolean"},
+        "post_job_reconciliation_authorized": {"type": "boolean"},
+        "dev_authorized": {"const": false},
+        "test_authorized": {"const": false},
+        "ocr_authorized": {"const": false},
+        "external_api_authorized": {"const": false},
+        "network_authorized": {"const": false},
+        "cross_dataset_authorized": {"const": false},
+        "label_value_authorized_before_seal": {"const": false},
+        "chain_authorized": {"const": false},
+        "release_authorized": {"const": false},
+        "resubmit_authorized": {"const": false}
+      }
+    },
+    "config_contract_sha256": {"$ref": "#/definitions/sha256"},
+    "implementation_hashes": {"$ref": "#/definitions/hash_map"},
+    "frozen_design_hashes": {"$ref": "#/definitions/hash_map"},
+    "design_go_review_sha256": {"$ref": "#/definitions/sha256"},
+    "source_hash_closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["HateMM", "MHC_zh"],
+      "properties": {
+        "HateMM": {"$ref": "#/definitions/source"},
+        "MHC_zh": {"$ref": "#/definitions/source"}
+      }
+    },
+    "model_hash_closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_id",
+        "snapshot_revision",
+        "snapshot_path",
+        "model_tree_sha256",
+        "processor_tree_sha256",
+        "files"
+      ],
+      "properties": {
+        "model_id": {"const": "Qwen/Qwen2.5-VL-7B-Instruct"},
+        "snapshot_revision": {"const": "cc594898137f460bfe9f0759e9844b3ce807cfb5"},
+        "snapshot_path": {"type": "string", "minLength": 1},
+        "model_tree_sha256": {"$ref": "#/definitions/sha256"},
+        "processor_tree_sha256": {"$ref": "#/definitions/sha256"},
+        "files": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["model", "processor"],
+          "properties": {
+            "model": {"$ref": "#/definitions/file_rows"},
+            "processor": {"$ref": "#/definitions/file_rows"}
+          }
+        }
+      }
+    },
+    "payload_binding": {
+      "oneOf": [
+        {"const": "NO_PREFLIGHT_PAYLOAD_YET"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "payload_review_sha256",
+            "preflight_manifest_sha256",
+            "prompt_hashes",
+            "map_hashes"
+          ],
+          "properties": {
+            "payload_review_sha256": {"$ref": "#/definitions/sha256"},
+            "preflight_manifest_sha256": {"$ref": "#/definitions/sha256"},
+            "prompt_hashes": {"type": "object"},
+            "map_hashes": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "preflight_manifest_sha256",
+            "payload_review_sha256",
+            "gpu_execution_authorization_sha256",
+            "original_slurm_job_id",
+            "allocation_claim_sha256",
+            "gpu_ledger_pre_reconcile_sha256",
+            "allocation_entry_marker_sha256",
+            "provisional_gpu_usage_sha256"
+          ],
+          "properties": {
+            "preflight_manifest_sha256": {"$ref": "#/definitions/sha256"},
+            "payload_review_sha256": {"$ref": "#/definitions/sha256"},
+            "gpu_execution_authorization_sha256": {"$ref": "#/definitions/sha256"},
+            "original_slurm_job_id": {"type": "string", "pattern": "^[0-9]+$"},
+            "allocation_claim_sha256": {"$ref": "#/definitions/sha256"},
+            "gpu_ledger_pre_reconcile_sha256": {"$ref": "#/definitions/sha256"},
+            "allocation_entry_marker_sha256": {"$ref": "#/definitions/sha256"},
+            "provisional_gpu_usage_sha256": {
+              "anyOf": [
+                {"$ref": "#/definitions/sha256"},
+                {"const": "NO_SEAL_PUBLISHED"}
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "reviewer": {"type": "string", "minLength": 1},
+    "decision_utc": {"type": "string", "minLength": 1},
+    "closure_sha256": {"$ref": "#/definitions/sha256"}
+  },
+  "definitions": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "hash_map": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/definitions/sha256"}
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "train_asr",
+        "train_asr_sha256",
+        "train_asr_size",
+        "lexical_video_root",
+        "physical_train_video_root"
+      ],
+      "properties": {
+        "train_asr": {"type": "string", "minLength": 1},
+        "train_asr_sha256": {"$ref": "#/definitions/sha256"},
+        "train_asr_size": {"type": "integer", "minimum": 1},
+        "lexical_video_root": {"type": "string", "minLength": 1},
+        "physical_train_video_root": {"type": "string", "minLength": 1}
+      }
+    },
+    "file_rows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "size", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "size": {"type": "integer", "minimum": 1},
+          "sha256": {"$ref": "#/definitions/sha256"}
+        }
+      }
+    }
+  }
+}

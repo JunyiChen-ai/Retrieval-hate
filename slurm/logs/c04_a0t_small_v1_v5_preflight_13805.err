@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/c04_a0t_small_v1_v5_preflight.py", line 499, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c04_a0t_small_v1_v5_preflight.py", line 488, in main
+    verify_static_config(cfg)
+  File "/data/jehc223/RGCL/scripts/analysis/c04_a0t_small_v1_v5_preflight.py", line 152, in verify_static_config
+    assert_equal(prompt_hashes(), cfg["prompt_hashes"], "prompt hashes")
+  File "/data/jehc223/RGCL/scripts/analysis/c04_a0t_small_v1_v5_preflight.py", line 63, in assert_equal
+    raise RuntimeError(f"{label}: {actual!r} != {expected!r}")
+RuntimeError: prompt hashes: {'system': '1ffc06755b18f9315dc930aaf02a0c79cf1f9e2d91d0ec5bae2fa0c1436ed048', 'A': 'cecb3555daa7a4cc0840db154086138dae9260795bde2b64e89f6724d80abb9b', 'B': '9521bee7fe7a6964d4ff61605bbe5a02eb4cfd149fd5aa9cbf975accbfe40314', 'combined': 'a42268e4c0d1afb2b9576dd968d7f6250fc989fe3b97077a55363e63e1e2bb8a'} != {'system': 'PENDING_CPU_PREFLIGHT_HASH_FREEZE', 'A': 'PENDING_CPU_PREFLIGHT_HASH_FREEZE', 'B': 'PENDING_CPU_PREFLIGHT_HASH_FREEZE', 'combined': 'PENDING_CPU_PREFLIGHT_HASH_FREEZE'}

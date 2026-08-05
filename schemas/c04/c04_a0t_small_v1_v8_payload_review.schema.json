@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "c04_a0t_small_v1_v8_payload_review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "implementation_version",
+    "verdict",
+    "config_contract_sha256",
+    "code_resource_authorization_sha256",
+    "preflight_manifest_sha256",
+    "prompt_hashes",
+    "map_hashes",
+    "staged_output_hashes",
+    "reviewer",
+    "decision_utc",
+    "reviewed_payload_sha256",
+    "attested_closure_sha256",
+    "closure_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "c04_payload_review_v8"},
+    "run_id": {"const": "C04-A0T-SMALL-v1"},
+    "implementation_version": {"const": "v8_prospective"},
+    "verdict": {"const": "GO"},
+    "config_contract_sha256": {"$ref": "#/definitions/sha256"},
+    "code_resource_authorization_sha256": {"$ref": "#/definitions/sha256"},
+    "preflight_manifest_sha256": {"$ref": "#/definitions/sha256"},
+    "prompt_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system", "A", "B", "combined"],
+      "properties": {
+        "system": {"$ref": "#/definitions/sha256"},
+        "A": {"$ref": "#/definitions/sha256"},
+        "B": {"$ref": "#/definitions/sha256"},
+        "combined": {"$ref": "#/definitions/sha256"}
+      }
+    },
+    "map_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roles", "le3_f32le_sha256", "additive_f32le_sha256"],
+      "properties": {
+        "roles": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["S", "P", "T", "H"],
+          "properties": {
+            "S": {"$ref": "#/definitions/sha256"},
+            "P": {"$ref": "#/definitions/sha256"},
+            "T": {"$ref": "#/definitions/sha256"},
+            "H": {"$ref": "#/definitions/sha256"}
+          }
+        },
+        "le3_f32le_sha256": {"$ref": "#/definitions/sha256"},
+        "additive_f32le_sha256": {"$ref": "#/definitions/sha256"}
+      }
+    },
+    "staged_output_hashes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/definitions/sha256"}
+    },
+    "reviewer": {"type": "string", "minLength": 1},
+    "decision_utc": {"type": "string", "minLength": 1},
+    "reviewed_payload_sha256": {"$ref": "#/definitions/sha256"},
+    "attested_closure_sha256": {"$ref": "#/definitions/sha256"},
+    "closure_sha256": {"$ref": "#/definitions/sha256"}
+  },
+  "definitions": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,14 @@
+C01_A0_V3_FAIL_CLOSED: HALT_NUMERICAL_EQUIVALENCE: HateMM: derived public contract summary failed
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0_v3.py", line 2661, in <module>
+    main()
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0_v3.py", line 2586, in main
+    ] = build_halt_only_validity_guards_v3(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0_v3.py", line 2118, in build_halt_only_validity_guards_v3
+    halt(dataset, "derived public contract summary failed")
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0_v3.py", line 68, in halt
+    base.die("{}: {}: {}".format(HALT_LABEL, context, message))
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 393, in die
+    raise RuntimeError(message)
+RuntimeError: HALT_NUMERICAL_EQUIVALENCE: HateMM: derived public contract summary failed

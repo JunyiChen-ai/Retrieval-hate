@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/c06_falsifier_arena.py", line 1684, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/data/jehc223/RGCL/scripts/analysis/c06_falsifier_arena.py", line 1480, in main
+    bat.load_frozen()
+    ~~~~~~~~~~~~~~~^^
+  File "/data/jehc223/RGCL/scripts/analysis/c06_falsifier_arena.py", line 562, in load_frozen
+    C01.import_compute_modules(self.c01cfg)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 1051, in import_compute_modules
+    import torch as imported_torch
+ModuleNotFoundError: No module named 'torch'

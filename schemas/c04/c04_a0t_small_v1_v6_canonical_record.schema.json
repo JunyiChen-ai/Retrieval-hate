@@ -1,0 +1,229 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "c04_a0t_small_v1_impl_v6_canonical_record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "dataset",
+    "video_id",
+    "prompt_record_sha256",
+    "slots",
+    "control_renders",
+    "fallback_applicability_sha256",
+    "collapse_exact_by_slot",
+    "features",
+    "frame_decode_failed"
+  ],
+  "properties": {
+    "schema_version": {"const": "c04_a0t_small_canonical_record_v6"},
+    "run_id": {"const": "C04-A0T-SMALL-v1"},
+    "dataset": {"enum": ["HateMM", "MHC_zh"]},
+    "video_id": {"type": "string", "minLength": 1},
+    "prompt_record_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A", "B"],
+      "properties": {
+        "A": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "B": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "slots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["S", "P", "T", "H"],
+      "properties": {
+        "S": {"$ref": "#/definitions/reliability"},
+        "P": {"$ref": "#/definitions/reliability"},
+        "T": {"$ref": "#/definitions/reliability"},
+        "H": {"$ref": "#/definitions/reliability"}
+      }
+    },
+    "control_renders": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["FULL", "STATE_ONLY", "STATE_BLIND", "FALLBACK_COLLAPSE"],
+      "properties": {
+        "FULL": {"$ref": "#/definitions/render_map"},
+        "STATE_ONLY": {"$ref": "#/definitions/render_map"},
+        "STATE_BLIND": {"$ref": "#/definitions/render_map"},
+        "FALLBACK_COLLAPSE": {"$ref": "#/definitions/render_map"}
+      }
+    },
+    "fallback_applicability_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "collapse_exact_by_slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["S", "P", "T", "H"],
+      "properties": {
+        "S": {"type": "boolean"},
+        "P": {"type": "boolean"},
+        "T": {"type": "boolean"},
+        "H": {"type": "boolean"}
+      }
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "FULL",
+        "STATE_ONLY",
+        "STATE_BLIND",
+        "FALLBACK_COLLAPSE",
+        "LOWER_ORDER_LE3",
+        "ADDITIVE",
+        "STANCE_ONLY",
+        "HARM_ONLY"
+      ],
+      "properties": {
+        "FULL": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["q4", "slots"],
+          "properties": {
+            "q4": {"$ref": "#/definitions/vector257"},
+            "slots": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["S", "P", "T", "H"],
+              "properties": {
+                "S": {"$ref": "#/definitions/vector256"},
+                "P": {"$ref": "#/definitions/vector256"},
+                "T": {"$ref": "#/definitions/vector256"},
+                "H": {"$ref": "#/definitions/vector256"}
+              }
+            }
+          }
+        },
+        "STATE_ONLY": {"$ref": "#/definitions/q4only"},
+        "STATE_BLIND": {"$ref": "#/definitions/q4only"},
+        "FALLBACK_COLLAPSE": {"$ref": "#/definitions/q4slots"},
+        "LOWER_ORDER_LE3": {"$ref": "#/definitions/qonly"},
+        "ADDITIVE": {"$ref": "#/definitions/qonly"},
+        "STANCE_ONLY": {"$ref": "#/definitions/qonly"},
+        "HARM_ONLY": {"$ref": "#/definitions/qonly"}
+      }
+    },
+    "frame_decode_failed": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {"type": "boolean"}
+    }
+  },
+  "definitions": {
+    "render_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["S", "P", "T", "H"],
+      "properties": {
+        "S": {"type": "string", "minLength": 1},
+        "P": {"type": "string", "minLength": 1},
+        "T": {"type": "string", "minLength": 1},
+        "H": {"type": "string", "minLength": 1}
+      }
+    },
+    "reliability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slot",
+        "state",
+        "content",
+        "selected_form",
+        "a_valid",
+        "b_valid",
+        "a_confidence",
+        "b_confidence",
+        "agreement",
+        "proposition_cosine"
+      ],
+      "properties": {
+        "slot": {"enum": ["S", "P", "T", "H"]},
+        "state": {"enum": ["stable", "single_valid", "conflict", "missing"]},
+        "content": {"type": "string", "minLength": 1},
+        "selected_form": {"enum": ["A", "B", "none"]},
+        "a_valid": {"type": "boolean"},
+        "b_valid": {"type": "boolean"},
+        "a_confidence": {
+          "anyOf": [
+            {"type": "integer", "minimum": 0, "maximum": 4},
+            {"type": "null"}
+          ]
+        },
+        "b_confidence": {
+          "anyOf": [
+            {"type": "integer", "minimum": 0, "maximum": 4},
+            {"type": "null"}
+          ]
+        },
+        "agreement": {"type": "boolean"},
+        "proposition_cosine": {
+          "anyOf": [
+            {"type": "number", "minimum": -1, "maximum": 1},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "vector256": {
+      "allOf": [
+        {"$ref": "#/definitions/vector"},
+        {"properties": {"count": {"const": 256}}}
+      ]
+    },
+    "vector257": {
+      "allOf": [
+        {"$ref": "#/definitions/vector"},
+        {"properties": {"count": {"const": 257}}}
+      ]
+    },
+    "vector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["encoding", "count", "sha256", "data"],
+      "properties": {
+        "encoding": {"const": "float32_le_base64"},
+        "count": {"type": "integer", "minimum": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "data": {"type": "string", "minLength": 4}
+      }
+    },
+    "q4only": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["q4"],
+      "properties": {"q4": {"$ref": "#/definitions/vector257"}}
+    },
+    "q4slots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["q4", "slots"],
+      "properties": {
+        "q4": {"$ref": "#/definitions/vector257"},
+        "slots": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["S", "P", "T", "H"],
+          "properties": {
+            "S": {"$ref": "#/definitions/vector256"},
+            "P": {"$ref": "#/definitions/vector256"},
+            "T": {"$ref": "#/definitions/vector256"},
+            "H": {"$ref": "#/definitions/vector256"}
+          }
+        }
+      }
+    },
+    "qonly": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["q"],
+      "properties": {"q": {"$ref": "#/definitions/vector257"}}
+    }
+  }
+}

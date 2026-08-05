@@ -1,0 +1,46 @@
+{
+  "schema_version": "c04_payload_review_v7",
+  "run_id": "C04-A0T-SMALL-v1",
+  "implementation_version": "v7_prospective",
+  "verdict": "GO",
+  "config_contract_sha256": "ed9cc74d16dbcd6ab2cdda9e1a8243cce5c44328807be07ee100341700599707",
+  "code_resource_authorization_sha256": "09669bed4816e92b0b9df417ed6cd9bc288fc0f523d10358edf34a48821e6377",
+  "preflight_manifest_sha256": "b348c2fea15df61a3110f5305927898f7fccb5444e9fc8c69f0a61fc51ab801b",
+  "prompt_hashes": {
+    "A": "cecb3555daa7a4cc0840db154086138dae9260795bde2b64e89f6724d80abb9b",
+    "B": "9521bee7fe7a6964d4ff61605bbe5a02eb4cfd149fd5aa9cbf975accbfe40314",
+    "combined": "a42268e4c0d1afb2b9576dd968d7f6250fc989fe3b97077a55363e63e1e2bb8a",
+    "system": "1ffc06755b18f9315dc930aaf02a0c79cf1f9e2d91d0ec5bae2fa0c1436ed048"
+  },
+  "map_hashes": {
+    "additive_f32le_sha256": "0c0ee6a78b5ceda885751bd4f0947614aa1e13005449008902da3837cae49100",
+    "le3_f32le_sha256": "381b0b92f469034beccbce0b3b1ec8f318ba9efdb2dceeb7af88d92d8f01612c",
+    "roles": {
+      "H": "b7bf0cca7a493156dc8753c9c3bfd2d5c091f7c967a6e04956da368411849219",
+      "P": "d1f99aee531cd3bccb4ccdad079948776da5e69050033bc263131ab5acc539e8",
+      "S": "d60c9b7d46d03019e785c13e8c154485918c8c033106f6b398365d2802b259b3",
+      "T": "1150f7e7fa5413e1b8bb742346dd05383ed4f02ce7cb37580054679747b98bbb"
+    }
+  },
+  "staged_output_hashes": {
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/HateMM.allowlist.json": "02028929091d3a9e139a8f5587a3a128e550fc2d3832f260e2d742e5059d4925",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/HateMM.source_manifest.json": "b26eea0c8bc258a4058e6e7579af12cdad3a17b11b332c667ae63ff44443d669",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/MHC_zh.allowlist.json": "bcfaaa657a2e7cc9d991f958707702ce717f129fec107ff1080f029c48ccff5d",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/MHC_zh.source_manifest.json": "0b7694503141f9226d6ba43624d654a0d9de3c4b07b0215bc9b4e25ed22c1ec4",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/access_ledger.json": "242549d96a5ce6e30dffc6c8542c0891fcc6b346fe33c479cbe5c64d49c29348",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/maps/additive_256x1024.f32le": "0c0ee6a78b5ceda885751bd4f0947614aa1e13005449008902da3837cae49100",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/maps/le3_256x3598.f32le": "381b0b92f469034beccbce0b3b1ec8f318ba9efdb2dceeb7af88d92d8f01612c",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/maps/role_H.json": "b7bf0cca7a493156dc8753c9c3bfd2d5c091f7c967a6e04956da368411849219",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/maps/role_P.json": "d1f99aee531cd3bccb4ccdad079948776da5e69050033bc263131ab5acc539e8",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/maps/role_S.json": "d60c9b7d46d03019e785c13e8c154485918c8c033106f6b398365d2802b259b3",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/maps/role_T.json": "1150f7e7fa5413e1b8bb742346dd05383ed4f02ce7cb37580054679747b98bbb",
+    "artifacts/c04/a0t_small_v1_impl_v7/freeze/prompt_hashes.json": "9be8c55a509df2591227a3a953a3d5371142859d44152e3011800fd8517bcc2e",
+    "artifacts/c04/a0t_small_v1_impl_v7/resource/gpu_ledger.json": "4d0e52ec3c3431696725c0ed86801cdc4c922959d71343fc04136835a042e659",
+    "artifacts/c04/a0t_small_v1_impl_v7/resource/resource_ticket.json": "8a066ab904185d72c24a479a11098ca0dcf4ce50ed36f9e7a7cc2737ea77e348"
+  },
+  "reviewer": "independent_payload_reviewer_opus;fresh_context;single_round;verdict=GO_0C_0H_8I;review=refine-logs/C04_A0T_SMALL_V1_V7_PAYLOAD_REVIEW.md;review_sha256=05448a4c785683bb75fe5412dcf67d5c9df2958169cfa1cbf7f52847b3c02d75;allowlists_and_source_manifests_rebuilt_byte_for_byte;3.43GB_rehashed_0_mismatches;dev_test_contamination=0_on_both_datasets;maps_rebuilt_byte_for_byte;zero_gpu_consumed_by_any_c04_job_confirmed_via_sacct;campaign_effective_ceiling=7200s_matches_the_amendment_first_tranche_clause;containment_replayed_over_800_real_renderings_0_banned_tokens;57_self_test_checks_confirmed_real;8_importants_are_fixture_coverage_and_documentation_gaps_none_impugning_a_frozen_byte",
+  "decision_utc": "2026-07-31T11:35:00Z",
+  "reviewed_payload_sha256": "4a18f588960be466a047f5626bc47f33f3ea4117f5646dc95b559779a03ff92e",
+  "attested_closure_sha256": "2903d169c4503e7c92fee94e45594ecd173e05f9cf90db730434cb97d0b28a99",
+  "closure_sha256": "e74419a5bf233beadc80a9d7955fe2ee165ec5ff6964b2ce6d0479c1d1f6e215"
+}

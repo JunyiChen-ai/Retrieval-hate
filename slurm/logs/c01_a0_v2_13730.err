@@ -1,0 +1,18 @@
+C01_A0_FAIL_CLOSED: real/endpoint_std with-null/remove-null retrieval mismatch
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 3087, in <module>
+    main()
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 2993, in main
+    public, runtime = analyse_dataset(
+                      ^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 2325, in analyse_dataset
+    evaluations, public_arms, retrieval_audit = evaluate_real_arms(
+                                                ^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 1693, in evaluate_real_arms
+    validity[arm], reduced = retrieval_without_registered_null(
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 1639, in retrieval_without_registered_null
+    die("{} with-null/remove-null retrieval mismatch".format(context))
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 393, in die
+    raise RuntimeError(message)
+RuntimeError: real/endpoint_std with-null/remove-null retrieval mismatch

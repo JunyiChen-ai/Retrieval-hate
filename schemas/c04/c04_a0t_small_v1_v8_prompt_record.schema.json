@@ -1,0 +1,311 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "c04_a0t_small_v1_impl_v8_prompt_record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "dataset",
+    "video_id",
+    "prompt_form",
+    "sequence_index",
+    "input",
+    "provenance",
+    "raw_output",
+    "raw_output_sha256",
+    "transport_error",
+    "parsed",
+    "elapsed_seconds",
+    "retry_count"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "c04_a0t_small_prompt_record_v8"
+    },
+    "run_id": {
+      "const": "C04-A0T-SMALL-v1"
+    },
+    "dataset": {
+      "enum": [
+        "HateMM",
+        "MHC_zh"
+      ]
+    },
+    "video_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_form": {
+      "enum": [
+        "A",
+        "B"
+      ]
+    },
+    "sequence_index": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 399
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transcript_sha256",
+        "video_sha256",
+        "frame_backend",
+        "total_frame_indices",
+        "requested_indices",
+        "frame_decode_failed",
+        "frame_pack_manifest_sha256",
+        "frame_sha256",
+        "visual_patch_tokens"
+      ],
+      "properties": {
+        "transcript_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "video_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "frame_backend": {
+          "enum": [
+            "decord",
+            "pyav",
+            "none"
+          ]
+        },
+        "total_frame_indices": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "requested_indices": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 8,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "frame_decode_failed": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "frame_pack_manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "frame_sha256": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "visual_patch_tokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preflight_manifest_sha256",
+        "payload_review_sha256",
+        "gpu_execution_authorization_sha256",
+        "config_contract_sha256",
+        "allocation_claim_sha256",
+        "prompt_sha256",
+        "model_snapshot_revision",
+        "model_tree_sha256",
+        "processor_tree_sha256",
+        "guard_contract",
+        "teacher_max_pixels",
+        "visual_patch_token_hard_ceiling"
+      ],
+      "properties": {
+        "preflight_manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "payload_review_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "gpu_execution_authorization_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "config_contract_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "allocation_claim_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "prompt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "model_snapshot_revision": {
+          "const": "cc594898137f460bfe9f0759e9844b3ce807cfb5"
+        },
+        "model_tree_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "processor_tree_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "guard_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "label_values",
+            "dev_test_paths",
+            "cross_dataset_paths",
+            "ocr",
+            "external_api"
+          ],
+          "properties": {
+            "label_values": {
+              "const": "SYNTACTIC_SKIP_ONLY"
+            },
+            "dev_test_paths": {
+              "const": "REJECTED_BY_COMPONENT_AND_ROOT_GUARD"
+            },
+            "cross_dataset_paths": {
+              "const": "REJECTED_BY_DATASET_PHYSICAL_ROOT"
+            },
+            "ocr": {
+              "const": "NO_ENTRYPOINT_IN_IMPLEMENTATION"
+            },
+            "external_api": {
+              "const": "NO_CLIENT_AND_OFFLINE_LOCAL_FILES_ONLY"
+            }
+          }
+        },
+        "teacher_max_pixels": {
+          "const": 151200
+        },
+        "visual_patch_token_hard_ceiling": {
+          "const": 4096
+        }
+      }
+    },
+    "raw_output": {
+      "type": "string"
+    },
+    "raw_output_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transport_error": {
+      "const": ""
+    },
+    "parsed": {
+      "$ref": "#/definitions/parsed"
+    },
+    "elapsed_seconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "retry_count": {
+      "const": 0
+    }
+  },
+  "definitions": {
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "valid",
+        "content",
+        "confidence",
+        "error"
+      ],
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "content": {
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "parsed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "form_valid",
+        "object_recoverable",
+        "parse_error",
+        "slots"
+      ],
+      "properties": {
+        "form_valid": {
+          "type": "boolean"
+        },
+        "object_recoverable": {
+          "type": "boolean"
+        },
+        "parse_error": {
+          "type": "string"
+        },
+        "slots": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "S",
+            "P",
+            "T",
+            "H"
+          ],
+          "properties": {
+            "S": {
+              "$ref": "#/definitions/slot"
+            },
+            "P": {
+              "$ref": "#/definitions/slot"
+            },
+            "T": {
+              "$ref": "#/definitions/slot"
+            },
+            "H": {
+              "$ref": "#/definitions/slot"
+            }
+          }
+        }
+      }
+    }
+  }
+}

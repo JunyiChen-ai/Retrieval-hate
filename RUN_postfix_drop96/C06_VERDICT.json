@@ -1,0 +1,32 @@
+{
+ "verdict": "HALT",
+ "status": "INSTRUMENT_INCONCLUSIVE",
+ "failing_gate": "GATE-LEDGER",
+ "context": "mint absent: mints_drop/mint_hatemm_N_s0_f0.npz",
+ "design": {
+  "document": "refine-logs/C06_FALSIFIER_PREREG_DRAFT_V15E2.md",
+  "sha256_declared": "a24188868272716ffcedcfc0dbb9769f5843f9fe34ebff66ecfc713e118337ae",
+  "sha256_derived": "a24188868272716ffcedcfc0dbb9769f5843f9fe34ebff66ecfc713e118337ae",
+  "note": "declared digest is not pinned inside the job; the external anchor is the freeze record in refine-logs/C06_FALSIFIER_IMPLEMENTATION_RECORD.md"
+ },
+ "gates": {
+  "GATE-DET1": "PASS",
+  "GATE-SHA": "PASS"
+ },
+ "dropped_lineages": {},
+ "ledger": {},
+ "scope": {
+  "close_closes": "C06's first-order (tangent/chord) prompt-orbit route in the fold-head arena at ro_L24, on HateMM (-LoRA-curric) at n=743 and MHC_zh (-LoRA) at n=579, under the lineage(s) that passed their instrument gates",
+  "close_does_not_establish": [
+   "curvature",
+   "per-arm retrained head",
+   "C01's per-modality contrast",
+   "a different readout span",
+   "L28",
+   "the test split",
+   "directions off the primary's own Givens family"
+  ],
+  "confound": "generate_VideoMLLM_embedding_readout_HF.py:73-89 -- the ow_ cell changes the prompt kind AND both readout spans; no result attributes an effect to the prompt alone",
+  "survive_licenses": "only that C06 has earned its extraction; a SURVIVE is not a Stage-0 PASS and authorizes no GPU"
+ }
+}

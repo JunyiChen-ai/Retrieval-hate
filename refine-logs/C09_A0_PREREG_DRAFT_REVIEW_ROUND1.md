@@ -1,0 +1,67 @@
+# C09 Stage-0 (A0) DRAFT — Independent Design Review, Round 1
+
+**Reviewer.** Fresh independent worker, no exposure to the author's reasoning.
+**Target.** `refine-logs/C09_A0_PREREG_DRAFT.md`
+**Verdict.** `REVISE — 4 Critical / 8 High / 10 Important`
+**Status.** The draft is **NOT ready to freeze or implement.** One round of review
+was the authorized scope; the repairs are not attempted here.
+
+---
+
+## VERDICT: **REVISE** — 4 Critical / 8 High / 10 Important
+
+The design is cheap, well-scoped on legality, and the arena/instrument choice is right. But its central instrument (`D-FELDMAN`) as specified **cannot decide the question it is built to decide**, and one of its frozen features is a direct read of the scored item's own gold label. Both defects push in the same direction — toward a false CONTINUE. Every finding is repairable at zero cost.
+
+**Verified as sound** (so it is not re-litigated): both legality quotes are exact at the cited lines (`progress.json:25`, `LITSWEEP3_DATA_CENTRIC.md:82`); the F113 fold-head floors are exactly the banked values; `headspace_mint.py:274-281` is precisely the `torch.save` no-op; `n=744/579` are the true train sizes and the true pooled query counts; MHC-EN genuinely has no instrument; the F98 epitaph and its delivered figures are faithful; C02's A0 did reproduce `pooled_native_acc`.
+
+## CRITICAL
+
+**C-1 — §5.2 feeds the scored item's own gold label into `D-FELDMAN`.** The feature list opens with *"top-20 purity"* and then asserts *"none reads the scored item's own label"* — but §4.4 defines purity as *"fraction of `i`'s top-20 carrying **`i`'s gold label**"*. The leak is nearly the target itself: `ERRPAT_HateMM:143-145` measures gold-purity `< 0.5` for **24-27 of 26-28** errors in every cell. AUC would land near 1.0 by construction and the run returns CONTINUE regardless of the science. **Repair:** delete gold-purity; if a purity-like feature is wanted define it against the **predicted** class; add a `GATE-BLIND` validity gate enumerating every feature, naming the arrays it indexes, and asserting the query-side label array is never indexed at `i`, emitted as per-feature integer counts.
+
+**C-2 — `D-FELDMAN` is not decidable: H-MEMORISATION does not predict AUC ~ 0.5.** Feldman's long-tail singletons are *by definition* the low-density, no-analogue, weak-margin items — exactly what the feature set measures. The separation is already measured: `ERRPAT_HateMM:130` gives median `|vote|` **0.7267 for errors vs 0.9873 for always-correct**. A label-blind feature set will separate at AUC ~ 0.85-0.95 under *either* hypothesis, so `K-FELDMAN` essentially cannot fire and `K-NET` carries the entire decision. §6's table has **no row** for the realistic outcome (AUC ~ 0.8, net far under bar) — precisely the AGGNET/F98 pattern the draft opens with. **Repair:** make `D-FELDMAN` **conditional and incremental** — negative class = `CONFIG-MATCHED-CORRECT`; primary statistic `dAUC = AUC(full) - AUC(configuration-only baseline)` with the CI on the difference; threshold pre-declared as the **conversion-equivalent** AUC, not 0.5; §6 restated three-valued, with the middle band a KILL under the F98 epitaph and explicitly **not** a Feldman confirmation. State that conditioning on a gold-defined stratification makes this an **upper bound** on identifiability.
+
+**C-3 — cross-seed item leakage: the target is per-item, the rows are per (item, seed).** Stability is the 3-seed intersection, a property of the *item*; features are per-seed; `GATE-NESTED` asserts disjointness only from the arena fold, and results are pooled over seeds. Fitting on an item's seed-1 row and scoring its seed-0 row leaks the target exactly. **Repair:** group the nested split by **item id across both seeds and arena folds**; make the bootstrap resampling unit the item, not the (item, seed) row — otherwise the CI is anti-conservatively narrow by ~sqrt(3).
+
+**C-4 — `NET`'s break accounting is non-conservative and mis-scoped.** Selected items in neither class — unstable errors, and correct items outside the matched stratum — are **uncosted**, inflating the promoting quantity. And the currency is mis-scoped: `22.3/17.4/16.5` is an accuracy delta over the **full** arena. **Repair:** `net = |{selected AND currently wrong}| - |{selected AND currently correct}|` over all `n` query items, with `CONFIG-MATCHED-CORRECT` retained as reporting stratification only; add a self-test asserting `net == n * dacc`.
+
+## HIGH
+
+**H-1 — `SHUFFLE-POP` is blind to the two leaks it is offered against.** Permuting the target destroys the feature-target association, so an estimator leaking through C-1 or C-3 **passes** cleanly. Also self-contradictory: a plain permutation does not preserve configuration marginals. Pin which permutation, and add `GATE-BLIND` as the actual leak detector.
+
+**H-2 — undefined outcome in the decision rule.** `K-FELDMAN` fires only if the bar fails on **both** datasets; CONTINUE requires all three rules on **both**. Clear on HateMM, fail on ZH, everything else clearing → **neither** KILL nor CONTINUE. **Repair:** make every K-rule dataset-conjunctive in the same direction so KILL and CONTINUE partition the outcome space.
+
+**H-3 — the vote and confidence definitions are wrong, and the sensitivity ladder is vacuous.** `mechfix_ops.py:91-95` is a **signed-cosine x rank-weighted** vote **already divided by sum(w)**, so `c_i = |score|/sum(w)` double-normalises and the declared ladder selects the empty set; on the correct scale it selects everything. Either way *"high-confidence"* is never tested. **Repair:** define `score` by literal reference to `mechfix_ops.py:94` and freeze tau as **quantiles of the in-run OOF `|vote|` distribution among stable inversions**.
+
+**H-4 — §4.3's monotonicity argument is advertised far beyond where it holds.** It is arithmetic for `O1` only. Raising tau redefines the target and both AUC and precision can rise on a purer subpopulation — and `tau = 0` is **not the registered population**, which is *"high-confidence"* inversions. **Repair:** make the registered high-confidence point a co-primary for `K-FELDMAN`/`K-NET`, or restrict §9's KILL scope to `tau = 0` in terms.
+
+**H-5 — the net-item bar is contested on three surfaces and the draft silently picks the hardest.** `unified_pilot_gate.stage_0_reachability` ties the net requirement to the **+0.030 final bar** (22.3/17.4); C02's own A0 ran `net_fix_rate: 0.03`; the C09 registry `bar` field says 37.2/29.0/27.5. **Repair:** adjudicate explicitly, report both currencies, name which governs — and discharge the R13 instruction to state the **train arena** whenever the figures are quoted.
+
+**H-6 — the Holm family is named but no test exists, and there is no macro-F1 currency.** No test statistic, p-value source, resampling unit, `B` or `alpha`; *"2 metrics"* undefined for a net count; the Stage-0 bar has a macro-F1 leg the net currency does not price; *"paired bootstrap"* for a single AUC is not a paired quantity; and `K-FELDMAN` never says which estimator it reads — a live forking path.
+
+**H-7 — F47's ban_scope literally covers `D-FELDMAN`'s feature family.** *"Decision-level meta-features (vote margins, purity, sub-votes, confidence differential, transcript stats) carry NO per-item routing signal, GBM or linear. Do NOT re-propose per-item selectors over frozen channels regardless of feature family or nonlinearity unless the selector input is a genuinely NEW information source not derivable from banked features/votes."* The draft cites F47 as a *protocol model* without registering its measured **null** as the prior or adjudicating the ban. **Repair:** add a fourth §3 boundary adjudicating `D-FELDMAN` against F47's text — the defensible distinction is the **target** and the fact that a Stage-0 probe is never deployed — and set §6's prior from F47's null. Carry the symmetric correction: F47's train-supervised leg rests on the F114-retracted *"CLIP LOO 0.998"* premise, which weakens the ban in C09's favour.
+
+**H-8 — kill-risk (i) is never addressed, and `GATE-FID` names a gate that already exists as something else.** (a) The reopen's first quoted kill-risk (F75/NCA) appears **nowhere** in the draft, and it is a Stage-**0** problem: `H-L1` bans any query-time locator, so the only legal Stage-1 realisation is a train-label metric pull during encoder training — i.e. the F75 object the dedup boundary says C09 is *not*. The A0 would prove the existence of a target it has pre-banned itself from addressing. (b) `headspace_fidelity.py` already owns the name `GATE-FID` for a different check (the CPU-minted `fold == -1` head against the banked GPU floor's dev curve). Rename the draft's gate, and **also run the real one** — the six `fold == -1` heads are already inside the 36-head budget.
+
+## IMPORTANT
+
+**I-1** F88/ERRPAT provenance is a **test-split, deployed-head** measurement presented as a measurement of this arena; restate the stability rate as a transferred expectation. The configuration stratum is also frozen on test-derived buckets — say so. **I-2** `GATE-FID` pins only accuracy floors; the bar has a macro-F1 leg — pin the banked macro-F1s. **I-3** the two mandatory pregate clauses (`PREGATE_DETERMINISM_CLAUSE.md` DET-1..4, `PREGATE_CALIBRATION_CLAUSE.md` CAL-1..4) are not cited though `pregate_conventions` makes them mandatory; the fold contract is unpinned. **I-4** head-count arithmetic is wrong (30 total, not per sweep; 36 = 30 + six fidelity heads) and the wall-clock is optimistic — declare a resume path. **I-5** `GATE-NULL` is internally contradictory: with-null and remove-null cannot agree on every metric because `n` moves. **I-6** several declared features are measured to have **no dynamic range** in this space (cosine saturated at ~0.9999). **I-7** the raw arena is asserted but never specified. **I-8** estimator hyperparameters, bootstrap `B`, `alpha` and RNG seed are unfrozen. **I-9** §9 misses two scope items: `O1` is a **label-flip** oracle, not the registry's representation-level oracle; and with MHC-EN out of scope the two-dataset requirement has **zero slack**. **I-10** two carried corrections are missing from §3 — the LITSWEEP5 counter-text's *"downgraded, not vacated"* status, and round 14's *"indistinguishable"* reading of F88 null (3). Both omissions run **against** C09.
+
+## Answers to the draft's six §10 open items
+
+**1. Label-blind? NO.** The bank-side features are fine and are *not* the problem — *"first neighbour whose bank label differs from the majority"* is non-circular independently of the nested split, because the arena's folds are item-disjoint. The actual leaks are gold-purity (C-1) and cross-seed pooling (C-3), neither caught by `SHUFFLE-POP` or `GATE-NESTED`.
+
+**2. `UNSTABLE-POP` on MHC-ZH? Do not declare it HateMM-only in advance** — that would import a test-split measurement into a train-arena design as a frozen scope decision. Declare a **data-independent power rule applied identically to both datasets**: `n_unstable < N_MIN` or CI width `> W` emits `CONTROL_UNDERPOWERED`. Once C-2's repair lands the control becomes genuinely informative.
+
+**3. The scaling? Arithmetic and denominators right; premise contested.** `0.050 x 744 = 37.2`, `0.050 x 579 = 28.95`; `22.3/17.4/16.5` are exactly `0.030 x 744/579/549`; the denominators are the same population and the arena is right. But three surfaces disagree on which bar governs — see H-5.
+
+**4. Six operating points? The count is not the problem; the absence of a test is.** Four of six cannot pass by arithmetic; the 95th percentile can at best tie the bar and only at precision 1.000. Use **three** points on the *selected-count* scale, `k in {|P|, 1.5|P|, 2|P|}`, each with a one-sided item-level bootstrap lower bound, Holm across 3 x 2 = 6, plus a declared macro-F1 currency.
+
+**5. Monotonicity for `NET`? No — `O1` only.** Neither AUC nor precision is monotone in tau. Consequence §9 does not state: a KILL fired by `K-FELDMAN` or `K-NET` at `tau = 0` closes **only** `tau = 0`, which is not the population the registry claim registers.
+
+**6. `GATE-FID` bit-exactness? Achievable at 4 dp, with three changes.** DET-1 is already hard-asserted in the instrument, so a thread mis-export fails fast. Required: (a) say **"equal at 4 decimal places"** — the banked anchor is a 4-dp value and asserting beyond it is the engineering-HALT trap that killed three C01 runs; (b) the residual risk is the **version/node** quartet — pin the interpreter/library versions and node from the banked `meta.runtime` and make a mismatch a documented HALT with a re-run path; (c) rename the gate and additionally run the real `headspace_fidelity.py` read on the six `fold == -1` heads.
+
+## Bottom line
+
+Legality holds and the three HALT boundaries are adequate for **Stage-0 as scoped** — nothing here becomes per-test-instance selection, because `D-FELDMAN` never scores a test item and `H-L1` forecloses query-time consultation. The live legality risk is at the **seam**: `H-L1` bans the only region-locator this A0 builds, so the CONTINUE it can produce has no legal successor unless the encoder-training route is named — and that route is F75's measured object.
+
+Fix C-1 through C-4 and H-1 through H-4 and this becomes a genuinely decisive `$0` pregate: cheap, fast-failing, and — with the conditional/incremental discriminator — the first design in this channel that could actually separate a fixable topology defect from a memorisation-necessary error rather than re-measuring atypicality.

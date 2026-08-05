@@ -1,0 +1,18 @@
+C01_A0_FAIL_CLOSED: HateMM/train/standard/img has 1 rows at/below epsilon 1e-12; first=355
+Traceback (most recent call last):
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 2183, in <module>
+    main()
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 2094, in main
+    public, runtime = analyse_dataset(
+                      ^^^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 1542, in analyse_dataset
+    split_views, split_normed, split_d_norm, names, split_algebra = prepare_views(
+                                                                    ^^^^^^^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 1081, in prepare_views
+    normed[policy][modality], _ = l2_rows(
+                                  ^^^^^^^^
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 1006, in l2_rows
+    die("{} has {} rows at/below epsilon {}; first={}".format(
+  File "/data/jehc223/RGCL/scripts/analysis/c01_policy_contrast_a0.py", line 317, in die
+    raise RuntimeError(message)
+RuntimeError: HateMM/train/standard/img has 1 rows at/below epsilon 1e-12; first=355
