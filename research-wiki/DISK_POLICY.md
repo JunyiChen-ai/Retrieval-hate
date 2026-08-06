@@ -1,6 +1,12 @@
 # DISK_POLICY — sustainable quota management for RGCL video
 
-**Status:** active · **Owner:** jehc223 · **Last updated:** 2026-07-01
+**Status:** active · **Owner:** jehc223 · **Last updated:** 2026-08-07
+
+> **2026-08-07 update:** §5 P2/P3 (+ new P3b `HateClipSeg`) are now **backed up and
+> SHA1-verified on B2** under `RGCL_video/raw/` — **upload only, nothing deleted locally**,
+> so the audit numbers below still describe the current disk. See
+> `refine-logs/DISK_BACKUP_RECORD_2026-08-06.md` (§2026-08-07) for sizes, exclusions and
+> restore commands. The 2026-07-01 audit table in §2 is otherwise unchanged.
 
 The `/data` quota is **soft 290G / hard 3000G**, with a **6-day grace** period once
 usage crosses the soft limit. The login node *is* the compute node
@@ -42,10 +48,10 @@ Ranked largest-first. "Ours?" = belongs to THIS project.
 | `/data/jehc223/miniconda3` | 59G | shared | n/a | no | All conda envs; `HateVideo` env is 7.2G of this. Shared across projects. |
 | `/data/jehc223/SafetyContradiction` | 36G | other project | n/a | DO-NOT-TOUCH | Separate project. |
 | `/data/jehc223/ExMRD_ours` | 28G | other project | n/a | DO-NOT-TOUCH | Separate project. |
-| `/data/jehc223/Multihateclip` | **27G** | **YES** | no | **PROPOSE** | RAW dataset (En 16G + Zh 12G). Source video for MHC/MHC_zh. Not re-derivable locally. Offload only after feature extraction + user approval. |
+| `/data/jehc223/Multihateclip` | **27G** | **YES** | **yes (video, 2026-08-07)** | **PROPOSE** | RAW dataset (En 16G + Zh 12G). Source video for MHC/MHC_zh. Not re-derivable locally. Video + annotations now on B2 `RGCL_video/raw/Multihateclip` (§5 P2); `quad/`+`audios/` (7.2G) NOT on B2 but re-derivable from it. Still fully present locally. |
 | `/data/jehc223/home` | 14G | shared | n/a | no | `$HOME`. `.cache/huggingface` = 6.3G (CLIP weights). |
 | `/data/jehc223/NIPS2026` | 14G | other project | n/a | DO-NOT-TOUCH | Separate project. |
-| `/data/jehc223/HateMM` | **9.6G** | **YES** | no | **PROPOSE** | RAW dataset (video 6.2G + frames 2.4G + quad 1.1G). Not re-derivable locally. |
+| `/data/jehc223/HateMM` | **9.6G** | **YES** | **yes (video, 2026-08-07)** | **PROPOSE** | RAW dataset (video 6.2G + frames 2.4G + quad 1.1G). Not re-derivable locally. Video + annotations now on B2 `RGCL_video/raw/HateMM` (§5 P3); `frames/`+`quad/` (3.5G) NOT on B2 but re-derivable from it. Still fully present locally. |
 | `…/miniconda3/envs/HateVideo` | 7.2G | **YES** (in miniconda3) | no | no | The project conda env. Keep. |
 | `…/home/.cache/huggingface` | 6.3G | shared | partial | no | HF model cache — CLIP ViT-L/14-336 is needed by the pipeline. Conservative: do NOT auto-purge models. |
 | `/data/jehc223/RGCL` | ~1.5G→ small | **YES** | — | — | The repo. Now ~code only after prune (was 459M; logging+embeddings pruned). |
@@ -146,20 +152,34 @@ local (see Section 6 caveat).
 ## 5. PROPOSAL — bigger offloads that need your approval
 
 Safe automated steps top out around ~1G because the repo's derived footprint is
-tiny. To build a real buffer, one of these needs your OK. **None have been done.**
+tiny. To build a real buffer, one of these needs your OK.
+
+**Status 2026-08-07: P2 and P3 are now BACKED UP AND VERIFIED on B2 — but NOT deleted
+locally, so they have not yet freed any quota.** The user approved the *upload* only
+(「把这几个数据集上面的原始视频都上传到B2」); the delete half of the push-verify-prune
+contract is still an open decision. P1 and P4 remain untouched. Full evidence, per-directory
+sizes and restore commands: `refine-logs/DISK_BACKUP_RECORD_2026-08-06.md` §2026-08-07
+(SLURM job 14238, 29.920 GiB / 3,938 objects, 0 differences on all three datasets).
 
 Restore for all: `scripts/b2_pull.sh <subpath> <local_path>` (or `rclone copy`).
 
 | # | Item | Size | B2 destination | How to restore | Risk / precondition |
 |---|---|---|---|---|---|
 | **P1** | **`AlphaSteer` (if it is also yours)** | **93G** | e.g. `b2:junyi-data/AlphaSteer/` | `rclone copy b2:junyi-data/AlphaSteer /data/jehc223/AlphaSteer` | **Highest-leverage single move.** Only if you confirm it is your project and inactive. NOT touched by any automation. |
-| **P2** | **`Multihateclip` raw video** (En 16G + Zh 12G) | **27G** | `b2:junyi-data/RGCL_video/raw/Multihateclip/` | `scripts/b2_pull.sh raw/Multihateclip /data/jehc223/Multihateclip` | Offload **after** CLIP embeddings are extracted + pushed (they already are). Re-extraction needs the raw video, so keep on B2. Push-verify-then-delete. |
-| **P3** | **`HateMM` raw** (video 6.2G + frames 2.4G + quad 1.1G) | **9.6G** | `b2:junyi-data/RGCL_video/raw/HateMM/` | `scripts/b2_pull.sh raw/HateMM /data/jehc223/HateMM` | Same as P2. Frames (2.4G) are re-derivable from video; could offload frames first as a smaller step. |
+| **P2** | **`Multihateclip` raw video** (En 16G + Zh 12G) | **27G** local / **19.638 GiB on B2** | `b2:junyi-data/RGCL_video/raw/Multihateclip/` | `scripts/b2_pull.sh raw/Multihateclip /data/jehc223/Multihateclip` | **PUSHED + VERIFIED 2026-08-07** (2,410 obj, 0 differences). Video + `annotation(new).json` + `splits/` only; `quad/` (jpg) and `audios/` (wav) excluded — re-derivable from the uploaded video, no consumer in the repo. **Not deleted locally — the prune half still needs your OK.** |
+| **P3** | **`HateMM` raw** (video 6.2G + frames 2.4G + quad 1.1G) | **9.6G** local / **6.121 GiB on B2** | `b2:junyi-data/RGCL_video/raw/HateMM/` | `scripts/b2_pull.sh raw/HateMM /data/jehc223/HateMM` | **PUSHED + VERIFIED 2026-08-07** (1,089 obj, 0 differences). `video/` + annotation + `splits/` only; `frames/` (34,567 jpg) and `quad/` (8,643 jpg) excluded as re-derivable. **Not deleted locally.** |
+| **P3b** | **`HateClipSeg`** (videos 4.2G + 8.5M metadata) | **4.2G** local / **4.160 GiB on B2** | `b2:junyi-data/RGCL_video/raw/HateClipSeg/` | `scripts/b2_pull.sh raw/HateClipSeg /data/jehc223/HateClipSeg` | **PUSHED + VERIFIED 2026-08-07** (439 obj, 0 differences). Whole tree incl. `Dataset/` (frozen-unconsumed split). Added 2026-08-07; was not in the original proposal list. **Not deleted locally.** |
 | **P4** | HF cache trim | up to ~6G | (re-download from HF hub on demand) | auto on next run if online, or `huggingface-cli download` | Only unused models; keep CLIP ViT-L/14-336. Needs online access to restore, so lower priority. |
 
 **Recommended order:** P1 (if yours) → P2 → P3. P1 alone takes us from 282G to
 ~189G — a comfortable buffer with room for large model weights. P2+P3 together
 free ~37G (282G → ~245G) without touching the other project.
+
+**As of 2026-08-07 the precondition for that P2+P3 prune is satisfied** — both are on B2 and
+SHA1-verified — so deleting them locally would free ~36.6G whenever you want it, at the cost
+of a ~10 min re-pull before any job that touches raw video. Note the excluded derived trees
+(`frames/`, `quad/`, `audios/`, ~10.7G combined) are **not** on B2: a local delete loses them
+outright, and they would have to be regenerated from the restored video rather than pulled.
 
 Before any P-item: `rclone copy <local> <B2 dest>`, then
 `rclone check <local> <B2 dest>` (must be 0 differences), then delete. This is

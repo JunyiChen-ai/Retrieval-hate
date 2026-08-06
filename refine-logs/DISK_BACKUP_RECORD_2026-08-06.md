@@ -267,9 +267,14 @@ the sole copy.
 ## 7. Git
 
 The `.git` directory (130M, 5,455 objects) **is** included in the `repo` leg, so the full commit
-history has an off-machine copy independent of any git remote. Note that `origin` points at the
-**upstream** `https://github.com/JingbiaoMei/RGCL`, not a personal fork, so a `git push` of this
-campaign's history is not guaranteed to have a destination — the B2 copy is the belt-and-braces.
+history has an off-machine copy independent of any git remote.
+
+> **Corrected 2026-08-07.** This section originally warned that `origin` points at the upstream
+> `https://github.com/JingbiaoMei/RGCL` and that a push of this campaign's history therefore had
+> nowhere to land. That is no longer true: a second remote `project` →
+> `https://github.com/JunyiChen-ai/Retrieval-hate.git` now exists (see commit f07cc87), so the
+> history does have a real destination. The B2 `.git` copy stays useful as an independent
+> off-machine copy, but it is belt-and-braces rather than the only route.
 A separate `git bundle` was therefore not created (it would duplicate `.git` for no added
 recoverability). **This record was not committed by this agent** — git is handled elsewhere.
 
@@ -280,3 +285,140 @@ pushed to `b2:junyi-data`; every leg re-verified by SHA1 at 0 differences (4,042
 The one remaining gap is raw video (§5): Multihateclip 27G, HateMM 9.6G, HateClipSeg 4.2G —
 never mirrored, ~1 h to push, awaiting a user decision. Note that ImpliHateVid's raw video is
 B2-ONLY (no local copy), so for that dataset the bucket is the sole copy, not a backup._
+
+---
+
+# 2026-08-07 — RAW VIDEO uploaded (closes §5, and DISK_POLICY §5 P2/P3)
+
+**STATUS: COMPLETE — 29.920 GiB / 3,938 files pushed, all three datasets SHA1-verified at
+0 differences (SLURM job 14238, COMPLETED 00:09:36, ExitCode 0:0). Nothing deleted locally.**
+
+User ruling: 把这几个数据集上面的原始视频都上传到B2 — upload the raw videos of these datasets
+to B2. This supersedes the "awaiting a user decision" state that §5 above was left in.
+
+## Destination — the prefix DISK_POLICY §5 already promised
+
+```
+b2:junyi-data/RGCL_video/raw/{Multihateclip,HateMM,HateClipSeg}
+```
+
+Chosen so DISK_POLICY §5's own restore line (`scripts/b2_pull.sh raw/Multihateclip
+/data/jehc223/Multihateclip`) becomes literally true rather than aspirational.
+`RGCL_video/raw/` was **verified empty before the run** — purely additive, nothing overwritten.
+
+## What was uploaded
+
+Job `scripts/slurm/b2_backup_raw_video_2026-08-07.sbatch` (CPU-only, no `--gres`, **no
+`--time`**), `PENDING (JobHeldUser)` → auto-released → `COMPLETED` on `foscsmlprd01`.
+`rclone copy --transfers 8 --checkers 16 --b2-chunk-size 96M`, then
+`rclone check --one-way` (**SHA1**) with the identical filter set.
+
+| Dataset | B2 prefix | Size | Objects | Copy time | Verify |
+|---|---|---|---|---|---|
+| Multihateclip | `RGCL_video/raw/Multihateclip` | 19.638 GiB (21,086,603,512 B) | 2,410 | 6m14s | **2,410 matching / 0 differences** |
+| HateMM | `RGCL_video/raw/HateMM` | 6.121 GiB (6,572,419,912 B) | 1,089 | 1m51s | **1,089 matching / 0 differences** |
+| HateClipSeg | `RGCL_video/raw/HateClipSeg` | 4.160 GiB (4,467,115,855 B) | 439 | 1m08s | **439 matching / 0 differences** |
+| **total** | `RGCL_video/raw` | **29.920 GiB (32,126,139,279 B)** | **3,938** | **9m36s** | **0 errors in all three copy logs** |
+
+Video payload by directory:
+
+| Directory | Bytes | Files | Kind |
+|---|---|---|---|
+| `Multihateclip/English/video_mp4` | 7,377,606,298 | 792 | mp4 (transcoded) |
+| `Multihateclip/English/video` | 5,162,273,843 | 792 | 772 webm + 20 mp4 (as-downloaded originals) |
+| `Multihateclip/Chinese/video` | 8,545,430,223 | 814 | mp4 |
+| `HateMM/video` | 6,570,593,842 | 1,083 | mp4 |
+| `HateClipSeg/videos` | 4,452,757,045 | 395 | 364 mp4 + 26 webm + 5 mkv |
+
+English ships **both** the as-downloaded `video/` (webm) and the transcoded `video_mp4/`;
+both were uploaded, since `video/` is the true original and `video_mp4/` is what the pipeline
+reads. Alongside the video, the small metadata the loaders actually open was included so each
+mirror restores standalone: `annotation(new).json` + `splits/` for Multihateclip (per language)
+and HateMM, and HateClipSeg's `Dataset/`, `Images/`, `pilot/`, `lexicons.json`, `README.md`
+(8.5M total — `Dataset/` carries the frozen-unconsumed split).
+
+**Estimate vs actual — my §5 estimate was wrong, conservatively.** §5 projected ~1 h by
+assuming per-object round-trips would bind, as they did for the 96k small files on 2026-08-06
+(~18 objects/s). For raw video the binding constraint is bandwidth, not object count: 3,938
+large files moved at **~56–66 MB/s**, so the real cost was **9m36s**. Rule of thumb going
+forward: object-count-bound for small files, bandwidth-bound above roughly 1 MB/file.
+
+## What was EXCLUDED, and why it is safe
+
+Per the ruling ("skip HateMM's re-derivable frame files"), the derived image/audio trees were
+left off. **All of them remain untouched on local disk** — this was an upload, not a move.
+
+| Excluded | Size | Files | Re-derivation |
+|---|---|---|---|
+| `HateMM/frames/` | 2.4G | 34,567 jpg | decode from `HateMM/video/` |
+| `HateMM/quad/` | 1.1G | 8,643 jpg | 4-frame grids from `HateMM/video/` |
+| `Multihateclip/{English,Chinese}/quad/` | 5.6G | 13,229 jpg | 4-frame grids from `*/video/` |
+| `Multihateclip/{English,Chinese}/audios/` | 1.6G | 1,604 wav | `ffmpeg` audio track from `*/video/` |
+
+**Every excluded byte is re-derivable from a byte that IS in this backup**, and none of these
+directories has a consumer in this repo — verified by grep over `src/`, `scripts/`, `configs/`
+(the only `frames` hits are the unrelated `data/CLIP_Embedding/HateMM/frameset_qwen7b_8f/`
+caches and dict keys, not these paths). The live pipeline never reads them: it decodes frames
+straight from the video at run time via decord —
+`src/utils/generate_video_archive_HF.py:319 _decode_with_decord(video_path, num_frames)`,
+default `--num_frames 8` — and the audio route re-extracts from video in
+`scripts/analysis/apx_extract_egemaps.py` and `scripts/analysis/laud_extract_whisper.py`.
+The paths `src/` actually opens are exactly the ones backed up: `<ds>/video`, `splits/`,
+`annotation(new).json`, `HateClipSeg/lexicons.json`.
+
+## RESTORE — exact copy-paste commands
+
+```bash
+RCLONE=/data/jehc223/home/.local/bin/rclone
+BASE=b2:junyi-data/RGCL_video/raw
+
+$RCLONE copy $BASE/Multihateclip /data/jehc223/Multihateclip \
+    --transfers 8 --checkers 16 --b2-chunk-size 96M
+$RCLONE copy $BASE/HateMM       /data/jehc223/HateMM \
+    --transfers 8 --checkers 16 --b2-chunk-size 96M
+$RCLONE copy $BASE/HateClipSeg  /data/jehc223/HateClipSeg \
+    --transfers 8 --checkers 16 --b2-chunk-size 96M
+
+# equivalent via the repo helper (this is the DISK_POLICY §5 line, now real):
+scripts/b2_pull.sh raw/Multihateclip /data/jehc223/Multihateclip
+scripts/b2_pull.sh raw/HateMM        /data/jehc223/HateMM
+scripts/b2_pull.sh raw/HateClipSeg   /data/jehc223/HateClipSeg
+
+# verify after restore (one-way, SHA1) -- filters MUST match the upload:
+$RCLONE check /data/jehc223/Multihateclip $BASE/Multihateclip --one-way \
+    --exclude "*/quad/**" --exclude "*/audios/**"
+$RCLONE check /data/jehc223/HateMM        $BASE/HateMM --one-way \
+    --exclude "frames/**" --exclude "quad/**"
+$RCLONE check /data/jehc223/HateClipSeg   $BASE/HateClipSeg --one-way
+```
+
+A restore yields video + annotations but **not** `frames/`, `quad/`, `audios/` — regenerate
+those from the restored video if some future route needs them. Nothing in the current codebase
+does.
+
+## Process notes
+
+- **Transfer logs were written outside the copied trees** (`RGCL/slurm/logs/b2_rawvid_14238_*`,
+  while the sources are `/data/jehc223/{Multihateclip,HateMM,HateClipSeg}`), applying the
+  forward-fix from §3 above. Result: all three legs verified clean on the **first** pass, with
+  none of the self-referential log churn that cost the 2026-08-06 `repo` leg a second pass.
+- **`scripts/disk_guard.sh` was deliberately NOT run.** Usage sat at 287G against the guard's
+  250G default threshold, so invoking it per DISK_POLICY §4 would have triggered its
+  push-verify-**prune** path and deleted local checkpoints. This job is backup-only and the
+  ruling says nothing is deleted locally, so the guard was omitted on purpose — noting it here
+  because §4 otherwise reads as "every sbatch runs the guard".
+- Quota is **unchanged at 288G/290G**; all three datasets still show their full local file
+  counts (17,243 / 44,299 / 439) and every excluded directory is still present on disk.
+- Zero symlinks in all three trees, so the rclone symlink caveat from §3 does not apply here.
+
+## Remaining state
+
+`RGCL_video/raw/` now holds Multihateclip, HateMM and HateClipSeg. Combined with the
+pre-existing `ImpliHateVid/` prefix (50.128 GiB, B2-only), **all four raw video corpora used by
+this project now have an off-machine copy.** The §5 asymmetry still stands and still matters:
+ImpliHateVid has no local copy, so for that one dataset B2 is the sole copy, not a backup.
+
+_SLURM job 14238 COMPLETED 2026-08-07 (00:09:36, ExitCode 0:0). 29.920 GiB / 3,938 objects to
+`b2:junyi-data/RGCL_video/raw/`; every leg SHA1-verified at 0 differences, 0 errors across all
+copy logs. Backup only — nothing deleted locally, nothing overwritten. DISK_POLICY §5 P2/P3
+updated from "None have been done" to DONE in the same commit as this record._
