@@ -180,8 +180,42 @@ def ffprobe_duration(path):
         return None
 
 
+def read_frames_ffmpeg(path, duration, k=K):
+    """Fallback decoder: one ffmpeg seek per window midpoint (used when decord fails)."""
+    import subprocess
+
+    import cv2
+
+    if not duration or duration <= 0:
+        duration = ffprobe_duration(path) or 0.0
+    if duration <= 0:
+        raise RuntimeError("no duration for ffmpeg fallback")
+    times = [(i + 0.5) * duration / k for i in range(k)]
+    frames = []
+    last = None
+    for t in times:
+        p = subprocess.run(
+            ["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", str(path),
+             "-frames:v", "1", "-f", "image2pipe", "-vcodec", "png", "-"],
+            capture_output=True, timeout=120,
+        )
+        if p.returncode == 0 and p.stdout:
+            arr = cv2.imdecode(np.frombuffer(p.stdout, np.uint8), cv2.IMREAD_COLOR)
+        else:
+            arr = None
+        if arr is None:
+            arr = last if last is not None else np.zeros((64, 64, 3), np.uint8)
+        else:
+            last = arr
+        frames.append(arr)
+    # engine batching needs a uniform shape
+    h, w = frames[0].shape[:2]
+    frames = [f if f.shape[:2] == (h, w) else cv2.resize(f, (w, h)) for f in frames]
+    return frames, times
+
+
 def read_frames(path, duration, k=K):
-    """Return (frames_bgr, times, n_ok). Midpoint sampling t_k=(k+0.5)D/K."""
+    """Return (frames_bgr, times). Midpoint sampling t_k=(k+0.5)D/K."""
     from decord import VideoReader, cpu
 
     vr = VideoReader(str(path), ctx=cpu(0), num_threads=2)
@@ -250,10 +284,15 @@ def main():
         D = dur.get(vid) or ffprobe_duration(p)
         try:
             frames, times = read_frames(p, D)
-        except Exception as e:  # decoder failure
-            failures.append({"video_id": vid, "error": f"decode:{type(e).__name__}:{e}"})
-            print(f"[warn] decode failed {vid}: {e}", flush=True)
-            continue
+        except Exception as e:  # decord failure -> ffmpeg fallback
+            print(f"[warn] decord failed {vid}: {e}; trying ffmpeg fallback", flush=True)
+            try:
+                frames, times = read_frames_ffmpeg(p, D)
+                print(f"[info] ffmpeg fallback ok {vid}", flush=True)
+            except Exception as e2:
+                failures.append({"video_id": vid, "error": f"decode:{type(e2).__name__}:{e2}"})
+                print(f"[warn] decode failed {vid}: {e2}", flush=True)
+                continue
         try:
             dets_per_frame = eng.run(frames)
         except Exception as e:
