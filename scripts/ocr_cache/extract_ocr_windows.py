@@ -80,31 +80,45 @@ class PaddleOCREngine:
             use_textline_orientation=False,
             device="gpu" if gpu else "cpu",
         )
-        self.tag = f"paddleocr-{self.version}+paddle-{self.paddle_version}+PP-OCRv5+{lang}"
+        p = getattr(self.ocr, "_params", None) or {}
+        det = p.get("text_detection_model_name", "?")
+        rec = p.get("text_recognition_model_name", "?")
+        self.tag = (f"paddleocr-{self.version}+paddle-{self.paddle_version}"
+                    f"+{det}+{rec}+{lang}")
+
+    @staticmethod
+    def _parse(page):
+        d = page if isinstance(page, dict) else getattr(page, "res", {})
+        texts = d.get("rec_texts", []) or []
+        scores = d.get("rec_scores", []) or []
+        polys = d.get("rec_polys", None)
+        if polys is None:
+            polys = d.get("dt_polys", []) or []
+        dets = []
+        for i, t in enumerate(texts):
+            c = float(scores[i]) if i < len(scores) else 0.0
+            if i < len(polys):
+                poly = np.asarray(polys[i]).reshape(-1, 2)
+                bbox = [[int(round(float(x))), int(round(float(y)))] for x, y in poly]
+            else:
+                bbox = []
+            dets.append({"text": str(t), "conf": round(c, 4), "bbox": bbox})
+        return dets
 
     def run(self, frames):
+        """Batch the whole K=30 frame stack through one predict() call."""
+        try:
+            res = self.ocr.predict(list(frames))
+            if len(res) == len(frames):
+                return [self._parse(p) for p in res]
+        except Exception as e:  # fall back to per-frame
+            print(f"[warn] batch predict failed ({e}); per-frame fallback", flush=True)
         out = []
         for im in frames:
             try:
-                res = self.ocr.predict(im)
+                out.append(self._parse(self.ocr.predict(im)[0]))
             except Exception:
                 out.append([])
-                continue
-            dets = []
-            for page in res:
-                d = page if isinstance(page, dict) else getattr(page, "res", {})
-                texts = d.get("rec_texts", []) or []
-                scores = d.get("rec_scores", []) or []
-                polys = d.get("rec_polys", d.get("dt_polys", [])) or []
-                for i, t in enumerate(texts):
-                    c = float(scores[i]) if i < len(scores) else 0.0
-                    if i < len(polys):
-                        poly = np.asarray(polys[i]).reshape(-1, 2)
-                        bbox = [[int(round(float(x))), int(round(float(y)))] for x, y in poly]
-                    else:
-                        bbox = []
-                    dets.append({"text": str(t), "conf": round(c, 4), "bbox": bbox})
-            out.append(dets)
         return out
 
 

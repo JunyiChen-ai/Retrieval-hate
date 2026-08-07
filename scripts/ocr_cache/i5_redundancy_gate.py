@@ -86,6 +86,18 @@ def topk_neighbors(Kq, Kmem, mem_idx, k, self_pos):
 
 
 def main():
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--ocr-dir", default=str(ROOT / "data/OCR/HateMM"))
+    ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--shuffle-ocr", action="store_true",
+                    help="DEBUG ONLY: permute the video_id -> OCR text map so the run "
+                         "exercises every code path without producing a valid metric.")
+    args = ap.parse_args()
+    ocr_dir = Path(args.ocr_dir)
+    out_path = Path(args.out)
+
     who = torch.load(WHOLE, map_location="cpu")
     ids = who["ids"][0] if (len(who["ids"]) == 1 and isinstance(who["ids"][0], list)) else who["ids"]
     ids = list(ids)
@@ -94,15 +106,8 @@ def main():
     KT = l2(who["text_feats"].numpy().astype(np.float64))
 
     # ---- OCR video-level text -> Key_O (same CLIP text tower / same truncation recipe)
-    ocr_raw = {}
-    with open(OCRV) as fh:
-        for line in fh:
-            line = line.strip()
-            if line:
-                r = json.loads(line)
-                ocr_raw[r["video_id"]] = r
     # rebuild the text under the conf filter from the window file
-    win = ROOT / "data/OCR/HateMM/ocr_windows_K30.jsonl"
+    win = ocr_dir / "ocr_windows_K30.jsonl"
     buf = {v: [] for v in ids}
     with open(win) as fh:
         for line in fh:
@@ -116,6 +121,11 @@ def main():
             if keep:
                 buf[r["video_id"]].append(" ".join(keep))
     ocr_text = [" ".join(buf[v]) for v in ids]
+    if args.shuffle_ocr:
+        rng = np.random.default_rng(0)
+        perm = rng.permutation(len(ocr_text))
+        ocr_text = [ocr_text[i] for i in perm]
+        print("[DEBUG] OCR texts permuted -- numbers below are NOT a valid gate result")
     n_chars = np.array([len(t) for t in ocr_text])
     KO = l2(encode_texts(ocr_text))
 
@@ -241,8 +251,8 @@ def main():
     res["R2"]["verdict"] = v2
     res["R3"]["recovery_key_O_same_subgroup"] = round(recO, 4) if recO == recO else None
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    json.dump(res, open(OUT, "w"), indent=1)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    json.dump(res, open(out_path, "w"), indent=1)
     print(json.dumps(res, indent=1))
 
 
