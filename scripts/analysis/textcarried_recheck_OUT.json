@@ -1,0 +1,130 @@
+{
+ "n_total": 744,
+ "n_empty_gt": 39,
+ "n_empty_featdup": 39,
+ "empty_id_sets_agree": true,
+ "n_unique_text_rows_744": 695,
+ "empty_ids": [
+  "hate_video_157",
+  "hate_video_369",
+  "hate_video_57",
+  "non_hate_video_129",
+  "non_hate_video_143",
+  "non_hate_video_160",
+  "non_hate_video_161",
+  "non_hate_video_164",
+  "non_hate_video_220",
+  "non_hate_video_250",
+  "non_hate_video_258",
+  "non_hate_video_267",
+  "non_hate_video_297",
+  "non_hate_video_335",
+  "non_hate_video_336",
+  "non_hate_video_34",
+  "non_hate_video_361",
+  "non_hate_video_374",
+  "non_hate_video_387",
+  "non_hate_video_389",
+  "non_hate_video_394",
+  "non_hate_video_416",
+  "non_hate_video_426",
+  "non_hate_video_429",
+  "non_hate_video_438",
+  "non_hate_video_449",
+  "non_hate_video_452",
+  "non_hate_video_47",
+  "non_hate_video_482",
+  "non_hate_video_489",
+  "non_hate_video_507",
+  "non_hate_video_508",
+  "non_hate_video_523",
+  "non_hate_video_539",
+  "non_hate_video_6",
+  "non_hate_video_622",
+  "non_hate_video_643",
+  "non_hate_video_87",
+  "non_hate_video_95"
+ ],
+ "empty_hate_count": 3,
+ "empty_p_hate": 0.07692307692307693,
+ "full_p_hate": 0.40053763440860213,
+ "clean_p_hate": 0.41843971631205673,
+ "K": 20,
+ "historical": {
+  "text": 0.8471,
+  "img": 0.8255,
+  "margin": 0.021599999999999953
+ },
+ "conditions": {
+  "full744": {
+   "n": 744,
+   "p_hate": 0.40053763440860213,
+   "img": {
+    "auc": 0.8255334517109579,
+    "acc": 0.7634408602150538,
+    "balacc": 0.7687272398952659
+   },
+   "text": {
+    "auc": 0.8472326722243958,
+    "acc": 0.7405913978494624,
+    "balacc": 0.760804466247329
+   },
+   "concat": {
+    "auc": 0.866727360279291,
+    "acc": 0.771505376344086,
+    "balacc": 0.7782375778734163
+   },
+   "delta_text_minus_img": 0.021699220513437867,
+   "delta_boot95": [
+    -0.016312223492942503,
+    0.05767711499683996
+   ],
+   "delta_boot_frac_gt0": 0.8695
+  },
+  "clean705": {
+   "n": 705,
+   "p_hate": 0.41843971631205673,
+   "img": {
+    "auc": 0.8201818933443572,
+    "acc": 0.7588652482269503,
+    "balacc": 0.7646341463414634
+   },
+   "text": {
+    "auc": 0.8476560562215791,
+    "acc": 0.7319148936170212,
+    "balacc": 0.7523976849937991
+   },
+   "concat": {
+    "auc": 0.8647705663497313,
+    "acc": 0.7659574468085106,
+    "balacc": 0.7745349317899959
+   },
+   "delta_text_minus_img": 0.02747416287722193,
+   "delta_boot95": [
+    -0.009581645307978542,
+    0.0637219925589086
+   ],
+   "delta_boot_frac_gt0": 0.9175
+  }
+ },
+ "alignment": {
+  "text_diff_vs_hist": 0.0001326722243958356,
+  "img_diff_vs_hist": 3.345171095792132e-05,
+  "tol": 0.0005,
+  "pass": true
+ },
+ "paired": {
+  "d_text_705_minus_744": 0.0004233839971833353,
+  "d_img_705_minus_744": -0.005351558366600728,
+  "d_concat_705_minus_744": -0.001956793929559719,
+  "margin_744": 0.021699220513437867,
+  "margin_705": 0.02747416287722193,
+  "margin_shrink": 0.0057749423637840636
+ },
+ "verdict": {
+  "threshold_half_original_margin": 0.010799999999999976,
+  "delta705": 0.02747416287722193,
+  "label": "SURVIVES",
+  "branch": "text>img and margin >= half original"
+ }
+}
