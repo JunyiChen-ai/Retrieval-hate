@@ -18,6 +18,12 @@ process, no re-run, no tuning after seeing numbers.
   (`run.log` generation, `arms.log` training, `logs/<ARM>_s<SEED>.trainlog`)
 - Analysis (frozen rule): `idea-stage/desc_channel/analyze_arms.py` → `results.json`
 - Wall clock: generation 14 min 20 s, training 3 min 44 s for all 21 runs.
+- Reproducibility note: the 21 × 30 per-epoch checkpoints (34 GB) were deleted after the
+  defect-subset readout was computed and written into `results.json`; the trainlogs,
+  best/last checkpoints, descriptions and feature caches are all retained, so §3 is
+  re-derivable from disk and §4 requires re-running the 3 min 44 s grid.
+  `feats/` and the 289 MB of batch request files are `.gitignore`d and rebuildable from
+  `descriptions_hatemm.jsonl` via `build_desc_feats.py`.
 
 ---
 
