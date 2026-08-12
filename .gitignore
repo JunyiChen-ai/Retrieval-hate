@@ -34,3 +34,7 @@ slurm/logs/disk_guard.log
 # VSW pregate: per-fold/per-draw reap-resilience checkpoints (82 MB, 4710 files).
 # Reproducible intermediate state; every load-bearing number is in vsw_*_OUT.json.
 scripts/analysis/vsw_ckpt/
+idea-stage/desc_channel/batch_in_*.jsonl
+idea-stage/desc_channel/batch_out_*.jsonl
+idea-stage/desc_channel/feats/
+idea-stage/desc_channel/__pycache__/
