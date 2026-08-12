@@ -38,3 +38,7 @@ idea-stage/desc_channel/batch_in_*.jsonl
 idea-stage/desc_channel/batch_out_*.jsonl
 idea-stage/desc_channel/feats/
 idea-stage/desc_channel/__pycache__/
+
+# TEXT_MERGE
+idea-stage/text_merge/feats/
+idea-stage/text_merge/__pycache__/
