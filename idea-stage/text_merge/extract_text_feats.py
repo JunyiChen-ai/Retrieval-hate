@@ -51,6 +51,62 @@ def text_prompt(transcript, title):
             + "\n" + "Transcript: " + (transcript if transcript else "(none)"))
 
 
+class _NoLMHead(torch.nn.Module):
+    """Replaces lm_head so the (seq x 152k, fp32-upcast) logits are never materialised.
+
+    The pooled feature is read from the LAST HIDDEN STATE, which lm_head does not touch,
+    so this is a memory optimisation with no effect on the vector. Verified numerically
+    against the unmodified generate_VideoMLLM_embedding_HF._encode by --verify_lean.
+    """
+
+    def forward(self, x):
+        return x[..., :1]
+
+
+def encode_lean(frames, instruction, processor, model, device, span="response"):
+    """Bit-equivalent, memory-lean version of GEN._encode.
+
+    Same prompt, same processor call, same span arithmetic, same L2 norm; the only
+    differences are (a) output_hidden_states=False plus a forward hook on the text model
+    to grab the same final hidden state, and (b) the no-op lm_head.
+    """
+    messages = GEN._build_messages(frames, instruction)
+    text = processor.apply_chat_template(messages, tokenize=False,
+                                         add_generation_prompt=True)
+    inputs = processor(text=[text], images=None, videos=[frames], return_tensors="pt")
+    inputs = inputs.to(device)
+
+    cap = {}
+
+    def hook(_m, _i, out):
+        cap["h"] = out.last_hidden_state if hasattr(out, "last_hidden_state") else out[0]
+
+    h = model.model.register_forward_hook(hook)
+    try:
+        with torch.no_grad():
+            model(**inputs, output_hidden_states=False, use_cache=False)
+    finally:
+        h.remove()
+    last_hidden = cap["h"][0]
+    input_ids = inputs["input_ids"][0]
+    assert last_hidden.shape[0] == input_ids.numel(), (
+        "hidden/input_ids length mismatch: %d vs %d"
+        % (last_hidden.shape[0], input_ids.numel()))
+
+    im_start_id = processor.tokenizer.convert_tokens_to_ids("<|im_start|>")
+    positions = (input_ids == im_start_id).nonzero(as_tuple=True)[0]
+    if span == "prefix":
+        end = int(positions[-1].item()) if len(positions) else last_hidden.shape[0]
+        pooled = last_hidden[: max(end, 1)].mean(dim=0)
+    else:
+        start = int(positions[-1].item()) if len(positions) else max(
+            last_hidden.shape[0] - 4, 0)
+        start = min(start, last_hidden.shape[0] - 1)
+        pooled = last_hidden[start:].mean(dim=0)
+    pooled = torch.nn.functional.normalize(pooled.float(), p=2, dim=0)
+    return pooled.detach().cpu()
+
+
 def free_vram_mib():
     out = subprocess.check_output(
         ["nvidia-smi", "--query-gpu=memory.total,memory.used",
@@ -117,12 +173,27 @@ def run_extract(a):
             print("[dry] %-22s %s" % (vid, "  ".join(info)), flush=True)
         return
 
-    wait_for_vram(a.need_vram)
-    print("[load] %s" % MODEL_ID, flush=True)
     from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
-    model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-        MODEL_ID, torch_dtype=torch.bfloat16, attn_implementation="sdpa", device_map=None)
-    model.to("cuda").eval()
+    if a.offload_gib:
+        # Fallback when another user holds most of the card: split the frozen encoder
+        # between GPU and CPU. Same weights, same dtype, same prompts; every arm of
+        # every video is extracted in this one process, so the placement is common-mode
+        # across arms and cannot bias any paired comparison.
+        print("[load] %s (GPU/CPU split, %d GiB on GPU)" % (MODEL_ID, a.offload_gib),
+              flush=True)
+        model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+            MODEL_ID, torch_dtype=torch.bfloat16, attn_implementation="sdpa",
+            device_map="auto",
+            max_memory={0: "%dGiB" % a.offload_gib, "cpu": "45GiB"})
+        model.eval()
+    else:
+        wait_for_vram(a.need_vram)
+        print("[load] %s" % MODEL_ID, flush=True)
+        model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+            MODEL_ID, torch_dtype=torch.bfloat16, attn_implementation="sdpa",
+            device_map=None)
+        model.to("cuda").eval()
+    model.lm_head = _NoLMHead()
     processor = AutoProcessor.from_pretrained(MODEL_ID, max_pixels=MAX_PIXELS)
 
     video_root = os.path.join(ROOT, "data", "video", "HateMM", "All")
@@ -148,8 +219,7 @@ def run_extract(a):
                     rec["n_tokens"][arm] = seen[h][1]
                     continue
                 ntok = n_prompt_tokens(processor, frames, p)
-                v = GEN._encode(frames, p, processor, model, "cuda",
-                                MAX_PIXELS, span="response")
+                v = encode_lean(frames, p, processor, model, "cuda", span="response")
                 n_fwd += 1
                 seen[h] = (v, ntok)
                 vecs[arm] = v
@@ -227,16 +297,52 @@ def run_assemble(a):
     print("[assemble] wrote", os.path.join(HERE, "extract_meta.json"))
 
 
+def run_verify_lean(a):
+    """encode_lean must return the same vector as the production GEN._encode."""
+    ids, gt, arm_text, defect = build(ROOT)
+    titles = title_map()
+    from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
+    model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+        MODEL_ID, torch_dtype=torch.bfloat16, attn_implementation="sdpa",
+        device_map="auto", max_memory={0: "%dGiB" % (a.offload_gib or 7), "cpu": "45GiB"})
+    model.eval()
+    processor = AutoProcessor.from_pretrained(MODEL_ID, max_pixels=MAX_PIXELS)
+    video_root = os.path.join(ROOT, "data", "video", "HateMM", "All")
+    # shortest-transcript videos, so the production path (which materialises the
+    # fp32 logits) still fits next to the other tenant on the card
+    cand = sorted(ids, key=lambda v: len(arm_text["TMall"][v]))[: a.limit or 3]
+    for vid in cand:
+        frames, ok = GEN.load_video_frames(os.path.join(video_root, vid + ".mp4"),
+                                           NUM_FRAMES)
+        if not ok:
+            continue
+        p = text_prompt(arm_text["TMall"][vid], titles[vid])
+        ref = GEN._encode(frames, p, processor, model, "cuda", MAX_PIXELS,
+                          span="response")
+        got = encode_lean(frames, p, processor, model, "cuda", span="response")
+        print("[verify] %-22s max|diff| %.3e  cos %.10f  bitwise %s"
+              % (vid, (ref - got).abs().max().item(),
+                 torch.nn.functional.cosine_similarity(
+                     ref.unsqueeze(0), got.unsqueeze(0)).item(),
+                 bool(torch.equal(ref, got))), flush=True)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--assemble", action="store_true")
+    ap.add_argument("--verify_lean", action="store_true")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--dry_run", action="store_true",
                     help="decode + prompt + tokenize only; no model, no cache written")
+    ap.add_argument("--offload_gib", type=int, default=0,
+                    help="if >0, load with device_map=auto capped at this many GiB on "
+                         "GPU (fallback when the card is shared)")
     ap.add_argument("--need_vram", type=int, default=19000,
                     help="MiB of free VRAM required before the model is loaded")
     a = ap.parse_args()
-    if a.assemble:
+    if a.verify_lean:
+        run_verify_lean(a)
+    elif a.assemble:
         run_assemble(a)
     else:
         run_extract(a)
