@@ -25,8 +25,9 @@ for by the previous experiment.
   logs `logging/runs/text_merge/run.log`, `logs/<ARM>_s<SEED>.trainlog`
 - Analysis (frozen rule): `idea-stage/text_merge/analyze_arms.py` → `results.json`
 - Wall clock: 132.2 min feature extraction (2291 forwards over the 1057 videos of the
-  completed run, plus 9 videos / 18 forwards carried over from the aborted attempt; the
-  GPU was shared with another tenant throughout), 127 s for all 12 head runs.
+  completed run; 9 videos / 22 forwards were carried over from the aborted attempt, 2313
+  forwards in total; the GPU was shared with another tenant throughout), 127 s for all 12
+  head runs.
 
 ---
 
@@ -173,7 +174,8 @@ Other encoding facts:
   `Qwen2.5-VL-7B-Instruct_HF` cache: cosine mean **0.99966** (test), **0.99966** (val),
   **0.99834** (train, dragged down only by the zero-vector video); per-split minimum
   0.9978 / 0.9985. The residual is GPU/CPU placement and hardware drift (deviations D1/D2).
-- **2309 forwards** for the 1066 videos: frames are decoded once per video and identical
+- **2313 forwards** for the 1066 videos (2291 of them in the completed run, the rest
+  carried over from the aborted attempt): frames are decoded once per video and identical
   prompts across arms are encoded once, so a DEFECT video costs 3 forwards and a clean
   video 2.
 
