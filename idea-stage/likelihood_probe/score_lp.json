@@ -1,0 +1,4148 @@
+{
+ "bars": {
+  "signal": 0.7,
+  "fail": 0.563,
+  "base_delta": 0.1
+ },
+ "view_sizes": {
+  "A32_primary": 32,
+  "A33_all_local": 33,
+  "C_textonly": 13
+ },
+ "arms": {
+  "A1": {
+   "n_eval_rows": 815,
+   "n_ctrl_rows": 100,
+   "n_errors": 0,
+   "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+   "fmt": "plain",
+   "template_prior_mean": {
+    "v1|p0|en": {
+     "mean_margin": -0.9951,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p0|zh": {
+     "mean_margin": 0.4465,
+     "endorse_win_rate": 1.0,
+     "n": 6
+    },
+    "v1|p1|en": {
+     "mean_margin": -1.7323,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p1|zh": {
+     "mean_margin": -0.0041,
+     "endorse_win_rate": 0.5,
+     "n": 6
+    },
+    "v1|p2|en": {
+     "mean_margin": 0.054,
+     "endorse_win_rate": 0.643,
+     "n": 14
+    },
+    "v1|p2|zh": {
+     "mean_margin": -0.7675,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p3|en": {
+     "mean_margin": 1.3205,
+     "endorse_win_rate": 1.0,
+     "n": 14
+    },
+    "v1|p3|zh": {
+     "mean_margin": -0.1978,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p4|en": {
+     "mean_margin": -1.7583,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p4|zh": {
+     "mean_margin": 0.3885,
+     "endorse_win_rate": 1.0,
+     "n": 6
+    }
+   },
+   "mean_raw": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.6
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 32
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 19,
+     "acc": 0.5757575757575758,
+     "p_vs_chance_0.5": 0.4869,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.6363636363636364
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 33
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.3333333333333333
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 13
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.05555555555555555
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.05555555555555555
+     }
+    }
+   },
+   "mean_priorcorr": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 15,
+     "acc": 0.46875,
+     "p_vs_chance_0.5": 0.8601,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "ENDORSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "ENDORSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "ENDORSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "ENDORSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "ENDORSE"
+     },
+     "acc_S_FP": 0.6111111111111112,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.2857142857142857,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.5
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.5333333333333333
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.3
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "ENDORSE": 11,
+      "OPPOSE": 21
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 15,
+     "acc": 0.45454545454545453,
+     "p_vs_chance_0.5": 0.7283,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "ENDORSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "ENDORSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "ENDORSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "ENDORSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "ENDORSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "ENDORSE"
+     },
+     "acc_S_FP": 0.5789473684210527,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.2857142857142857,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.5
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.5333333333333333
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.3333333333333333
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.2727272727272727
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "ENDORSE": 12,
+      "OPPOSE": 21
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 10,
+     "acc": 0.7692307692307693,
+     "p_vs_chance_0.5": 0.0923,
+     "verdict": "SIGNAL",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "ENDORSE",
+      "ImpliHateVid::IM_308": "ENDORSE",
+      "ImpliHateVid::IM_5": "ENDORSE",
+      "ImpliHateVid::IM_57": "ENDORSE",
+      "ImpliHateVid::NH_394": "ENDORSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "ENDORSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 0.75,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.8,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.7692307692307693
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.75
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 1.0
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 0.5
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 7,
+      "ENDORSE": 6
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.5
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.4444444444444444
+     }
+    }
+   },
+   "mean_raw_v2": {
+    "A32_primary": [
+     0.4375,
+     32,
+     14
+    ],
+    "A33_all_local": [
+     0.42424242424242425,
+     33,
+     14
+    ],
+    "C_textonly": [
+     0.6153846153846154,
+     13,
+     8
+    ]
+   },
+   "template_prior_sum": {
+    "v1|p0|en": {
+     "mean_margin": -9.0893,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p0|zh": {
+     "mean_margin": -20.4028,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p1|en": {
+     "mean_margin": -6.9504,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p1|zh": {
+     "mean_margin": 6.0398,
+     "endorse_win_rate": 1.0,
+     "n": 6
+    },
+    "v1|p2|en": {
+     "mean_margin": -24.1674,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p2|zh": {
+     "mean_margin": -21.1527,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p3|en": {
+     "mean_margin": -0.5066,
+     "endorse_win_rate": 0.429,
+     "n": 14
+    },
+    "v1|p3|zh": {
+     "mean_margin": -8.6773,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p4|en": {
+     "mean_margin": -22.3532,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p4|zh": {
+     "mean_margin": -20.8435,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    }
+   },
+   "sum_raw": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.6
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 32
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 19,
+     "acc": 0.5757575757575758,
+     "p_vs_chance_0.5": 0.4869,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.6363636363636364
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 33
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.3333333333333333
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 13
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     }
+    }
+   },
+   "sum_priorcorr": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 13,
+     "acc": 0.40625,
+     "p_vs_chance_0.5": 0.3771,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "ENDORSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "ENDORSE",
+      "MHC::DxcRdnzBZoo": "ENDORSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "ENDORSE",
+      "MHC::XlJCNPi5inM": "ENDORSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "ENDORSE",
+      "MHC_zh::BV12G4y1S7mN": "ENDORSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "ENDORSE",
+      "MHC_zh::BV1Vy4y1p7x2": "ENDORSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "ENDORSE"
+     },
+     "acc_S_FP": 0.3888888888888889,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.42857142857142855,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.5
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.4
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.46153846153846156
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.4
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "ENDORSE": 17,
+      "OPPOSE": 15
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 13,
+     "acc": 0.3939393939393939,
+     "p_vs_chance_0.5": 0.2962,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "ENDORSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "ENDORSE",
+      "MHC::DxcRdnzBZoo": "ENDORSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "ENDORSE",
+      "MHC::XlJCNPi5inM": "ENDORSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "ENDORSE",
+      "MHC_zh::BV12G4y1S7mN": "ENDORSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "ENDORSE",
+      "MHC_zh::BV1Vy4y1p7x2": "ENDORSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "ENDORSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "ENDORSE"
+     },
+     "acc_S_FP": 0.3684210526315789,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.42857142857142855,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.5
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.4
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.3333333333333333
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.46153846153846156
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "ENDORSE": 18,
+      "OPPOSE": 15
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 10,
+     "acc": 0.7692307692307693,
+     "p_vs_chance_0.5": 0.0923,
+     "verdict": "SIGNAL",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "ENDORSE",
+      "ImpliHateVid::IM_5": "ENDORSE",
+      "ImpliHateVid::IM_57": "ENDORSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "ENDORSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 0.875,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.6,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.7692307692307693
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 1.0
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 9,
+      "ENDORSE": 4
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.6111111111111112
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.5
+     }
+    }
+   },
+   "sum_raw_v2": {
+    "A32_primary": [
+     0.34375,
+     32,
+     11
+    ],
+    "A33_all_local": [
+     0.36363636363636365,
+     33,
+     12
+    ],
+    "C_textonly": [
+     0.6153846153846154,
+     13,
+     8
+    ]
+   }
+  },
+  "A2": {
+   "n_eval_rows": 815,
+   "n_ctrl_rows": 100,
+   "n_errors": 0,
+   "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+   "fmt": "chat",
+   "template_prior_mean": {
+    "v1|p0|en": {
+     "mean_margin": -0.9442,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p0|zh": {
+     "mean_margin": 0.3139,
+     "endorse_win_rate": 1.0,
+     "n": 6
+    },
+    "v1|p1|en": {
+     "mean_margin": -1.0376,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p1|zh": {
+     "mean_margin": -0.3845,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p2|en": {
+     "mean_margin": -0.0165,
+     "endorse_win_rate": 0.5,
+     "n": 14
+    },
+    "v1|p2|zh": {
+     "mean_margin": -0.3538,
+     "endorse_win_rate": 0.167,
+     "n": 6
+    },
+    "v1|p3|en": {
+     "mean_margin": 1.1548,
+     "endorse_win_rate": 1.0,
+     "n": 14
+    },
+    "v1|p3|zh": {
+     "mean_margin": -0.3559,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p4|en": {
+     "mean_margin": -0.9098,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p4|zh": {
+     "mean_margin": 0.7948,
+     "endorse_win_rate": 1.0,
+     "n": 6
+    }
+   },
+   "mean_raw": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.6
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 32
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 19,
+     "acc": 0.5757575757575758,
+     "p_vs_chance_0.5": 0.4869,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.6363636363636364
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 33
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.3333333333333333
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 13
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.05555555555555555
+     }
+    }
+   },
+   "mean_priorcorr": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "ENDORSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "ENDORSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "ENDORSE",
+      "MHC::pofgIFZpR7c": "ENDORSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "ENDORSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.6666666666666666,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.42857142857142855,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.5
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.5454545454545454
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.7692307692307693
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.4
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.4444444444444444
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 20,
+      "ENDORSE": 12
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 18,
+     "acc": 0.5454545454545454,
+     "p_vs_chance_0.5": 0.7283,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "ENDORSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "ENDORSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "ENDORSE",
+      "MHC::pofgIFZpR7c": "ENDORSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "ENDORSE",
+      "MHC_zh::BV1m8411z7mV": "ENDORSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.631578947368421,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.42857142857142855,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.5
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.5
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.7692307692307693
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.4444444444444444
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 20,
+      "ENDORSE": 13
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "ENDORSE",
+      "ImpliHateVid::IM_308": "ENDORSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "ENDORSE",
+      "ImpliHateVid::NH_396": "ENDORSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 0.75,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.4,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.6666666666666666
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 0.5
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 9,
+      "ENDORSE": 4
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.3888888888888889
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.5
+     }
+    }
+   },
+   "mean_raw_v2": {
+    "A32_primary": [
+     0.34375,
+     32,
+     11
+    ],
+    "A33_all_local": [
+     0.3333333333333333,
+     33,
+     11
+    ],
+    "C_textonly": [
+     0.6153846153846154,
+     13,
+     8
+    ]
+   },
+   "template_prior_sum": {
+    "v1|p0|en": {
+     "mean_margin": -9.1142,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p0|zh": {
+     "mean_margin": -19.2475,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p1|en": {
+     "mean_margin": -0.088,
+     "endorse_win_rate": 0.5,
+     "n": 14
+    },
+    "v1|p1|zh": {
+     "mean_margin": -0.9008,
+     "endorse_win_rate": 0.333,
+     "n": 6
+    },
+    "v1|p2|en": {
+     "mean_margin": -17.8238,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p2|zh": {
+     "mean_margin": -14.0716,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p3|en": {
+     "mean_margin": 1.0485,
+     "endorse_win_rate": 0.714,
+     "n": 14
+    },
+    "v1|p3|zh": {
+     "mean_margin": -10.3249,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p4|en": {
+     "mean_margin": -10.4604,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p4|zh": {
+     "mean_margin": -10.0531,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    }
+   },
+   "sum_raw": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.6
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 32
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 19,
+     "acc": 0.5757575757575758,
+     "p_vs_chance_0.5": 0.4869,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.6363636363636364
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 33
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.3333333333333333
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 13
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     }
+    }
+   },
+   "sum_priorcorr": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 16,
+     "acc": 0.5,
+     "p_vs_chance_0.5": 1.0,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "ENDORSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "ENDORSE",
+      "MHC::YDEsYXYlB8o": "ENDORSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "ENDORSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "ENDORSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "ENDORSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "ENDORSE"
+     },
+     "acc_S_FP": 0.5555555555555556,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.42857142857142855,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.3333333333333333
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.45454545454545453
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.4
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.4444444444444444
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 18,
+      "ENDORSE": 14
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 16,
+     "acc": 0.48484848484848486,
+     "p_vs_chance_0.5": 1.0,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "ENDORSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "ENDORSE",
+      "MHC::YDEsYXYlB8o": "ENDORSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "ENDORSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "ENDORSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "ENDORSE",
+      "MHC_zh::BV1m8411z7mV": "ENDORSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "ENDORSE"
+     },
+     "acc_S_FP": 0.5263157894736842,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.42857142857142855,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.3333333333333333
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.4444444444444444
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 18,
+      "ENDORSE": 15
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "ENDORSE",
+      "ImpliHateVid::IM_308": "ENDORSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "ENDORSE",
+      "ImpliHateVid::NH_396": "ENDORSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 0.75,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.4,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.6666666666666666
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 0.5
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 9,
+      "ENDORSE": 4
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.5
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.5
+     }
+    }
+   },
+   "sum_raw_v2": {
+    "A32_primary": [
+     0.25,
+     32,
+     8
+    ],
+    "A33_all_local": [
+     0.2727272727272727,
+     33,
+     9
+    ],
+    "C_textonly": [
+     0.6923076923076923,
+     13,
+     9
+    ]
+   }
+  },
+  "B1": {
+   "n_eval_rows": 815,
+   "n_ctrl_rows": 100,
+   "n_errors": 0,
+   "model": "Qwen/Qwen2-VL-7B-Instruct",
+   "fmt": "plain",
+   "template_prior_mean": {
+    "v1|p0|en": {
+     "mean_margin": -0.8276,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p0|zh": {
+     "mean_margin": 0.1716,
+     "endorse_win_rate": 0.5,
+     "n": 6
+    },
+    "v1|p1|en": {
+     "mean_margin": -1.0989,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p1|zh": {
+     "mean_margin": -0.3981,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p2|en": {
+     "mean_margin": 0.1088,
+     "endorse_win_rate": 0.571,
+     "n": 14
+    },
+    "v1|p2|zh": {
+     "mean_margin": -0.3612,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p3|en": {
+     "mean_margin": 1.0732,
+     "endorse_win_rate": 1.0,
+     "n": 14
+    },
+    "v1|p3|zh": {
+     "mean_margin": -0.4807,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p4|en": {
+     "mean_margin": -0.4887,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p4|zh": {
+     "mean_margin": 1.3277,
+     "endorse_win_rate": 1.0,
+     "n": 6
+    }
+   },
+   "mean_raw": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.6
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 32
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 19,
+     "acc": 0.5757575757575758,
+     "p_vs_chance_0.5": 0.4869,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.6363636363636364
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 33
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.3333333333333333
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 13
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.1111111111111111
+     }
+    }
+   },
+   "mean_priorcorr": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 15,
+     "acc": 0.46875,
+     "p_vs_chance_0.5": 0.8601,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "ENDORSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "ENDORSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.6666666666666666,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.21428571428571427,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.3333333333333333
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.5333333333333333
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.45454545454545453
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.5384615384615384
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.5
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 23,
+      "ENDORSE": 9
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 16,
+     "acc": 0.48484848484848486,
+     "p_vs_chance_0.5": 1.0,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "ENDORSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "ENDORSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "ENDORSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.6842105263157895,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.21428571428571427,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.3333333333333333
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.5333333333333333
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.5
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.5384615384615384
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.5454545454545454
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 24,
+      "ENDORSE": 9
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 10,
+     "acc": 0.7692307692307693,
+     "p_vs_chance_0.5": 0.0923,
+     "verdict": "SIGNAL",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "ENDORSE",
+      "ImpliHateVid::IM_308": "ENDORSE",
+      "ImpliHateVid::IM_5": "ENDORSE",
+      "ImpliHateVid::IM_57": "ENDORSE",
+      "ImpliHateVid::NH_394": "ENDORSE",
+      "ImpliHateVid::NH_396": "ENDORSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 0.75,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.8,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.7692307692307693
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.75
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 1.0
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 0.5
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 7,
+      "ENDORSE": 6
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.4444444444444444
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.6666666666666666
+     }
+    }
+   },
+   "mean_raw_v2": {
+    "A32_primary": [
+     0.40625,
+     32,
+     13
+    ],
+    "A33_all_local": [
+     0.42424242424242425,
+     33,
+     14
+    ],
+    "C_textonly": [
+     0.6153846153846154,
+     13,
+     8
+    ]
+   },
+   "template_prior_sum": {
+    "v1|p0|en": {
+     "mean_margin": -7.9276,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p0|zh": {
+     "mean_margin": -21.2396,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p1|en": {
+     "mean_margin": -2.2644,
+     "endorse_win_rate": 0.143,
+     "n": 14
+    },
+    "v1|p1|zh": {
+     "mean_margin": -1.3594,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p2|en": {
+     "mean_margin": -15.7431,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p2|zh": {
+     "mean_margin": -14.4887,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p3|en": {
+     "mean_margin": 0.5684,
+     "endorse_win_rate": 0.714,
+     "n": 14
+    },
+    "v1|p3|zh": {
+     "mean_margin": -12.0222,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p4|en": {
+     "mean_margin": -4.1345,
+     "endorse_win_rate": 0.071,
+     "n": 14
+    },
+    "v1|p4|zh": {
+     "mean_margin": -0.9397,
+     "endorse_win_rate": 0.333,
+     "n": 6
+    }
+   },
+   "sum_raw": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.6
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 32
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 19,
+     "acc": 0.5757575757575758,
+     "p_vs_chance_0.5": 0.4869,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.6363636363636364
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 33
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.3333333333333333
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 13
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     }
+    }
+   },
+   "sum_priorcorr": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 14,
+     "acc": 0.4375,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "ENDORSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "ENDORSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "ENDORSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "ENDORSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.6111111111111112,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.21428571428571427,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.3333333333333333
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.5333333333333333
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.38461538461538464
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.5
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.4444444444444444
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 22,
+      "ENDORSE": 10
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 15,
+     "acc": 0.45454545454545453,
+     "p_vs_chance_0.5": 0.7283,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "ENDORSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "ENDORSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "ENDORSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "ENDORSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.631578947368421,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.21428571428571427,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.3333333333333333
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.5333333333333333
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.38461538461538464
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.5454545454545454
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.4444444444444444
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 23,
+      "ENDORSE": 10
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 10,
+     "acc": 0.7692307692307693,
+     "p_vs_chance_0.5": 0.0923,
+     "verdict": "SIGNAL",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "ENDORSE",
+      "ImpliHateVid::IM_308": "ENDORSE",
+      "ImpliHateVid::IM_5": "ENDORSE",
+      "ImpliHateVid::IM_57": "ENDORSE",
+      "ImpliHateVid::NH_394": "ENDORSE",
+      "ImpliHateVid::NH_396": "ENDORSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 0.75,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.8,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.7692307692307693
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.75
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 1.0
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 0.5
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 7,
+      "ENDORSE": 6
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.4444444444444444
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.6111111111111112
+     }
+    }
+   },
+   "sum_raw_v2": {
+    "A32_primary": [
+     0.3125,
+     32,
+     10
+    ],
+    "A33_all_local": [
+     0.3333333333333333,
+     33,
+     11
+    ],
+    "C_textonly": [
+     0.6153846153846154,
+     13,
+     8
+    ]
+   }
+  },
+  "C1": {
+   "n_eval_rows": 815,
+   "n_ctrl_rows": 100,
+   "n_errors": 0,
+   "model": "Qwen/Qwen2-VL-7B",
+   "fmt": "plain",
+   "template_prior_mean": {
+    "v1|p0|en": {
+     "mean_margin": -0.57,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p0|zh": {
+     "mean_margin": 0.1377,
+     "endorse_win_rate": 0.833,
+     "n": 6
+    },
+    "v1|p1|en": {
+     "mean_margin": -1.08,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p1|zh": {
+     "mean_margin": -0.4346,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p2|en": {
+     "mean_margin": 0.0378,
+     "endorse_win_rate": 0.429,
+     "n": 14
+    },
+    "v1|p2|zh": {
+     "mean_margin": -0.3793,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p3|en": {
+     "mean_margin": 0.9238,
+     "endorse_win_rate": 1.0,
+     "n": 14
+    },
+    "v1|p3|zh": {
+     "mean_margin": -0.2895,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p4|en": {
+     "mean_margin": -0.4824,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p4|zh": {
+     "mean_margin": 1.3258,
+     "endorse_win_rate": 1.0,
+     "n": 6
+    }
+   },
+   "mean_raw": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.6
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 32
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 19,
+     "acc": 0.5757575757575758,
+     "p_vs_chance_0.5": 0.4869,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.6363636363636364
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 33
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.3333333333333333
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 13
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.05555555555555555
+     }
+    }
+   },
+   "mean_priorcorr": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 19,
+     "acc": 0.59375,
+     "p_vs_chance_0.5": 0.3771,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "ENDORSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "ENDORSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.7777777777777778,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.35714285714285715,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.5
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6666666666666666
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.5454545454545454
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.5
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.5555555555555556
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 23,
+      "ENDORSE": 9
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 20,
+     "acc": 0.6060606060606061,
+     "p_vs_chance_0.5": 0.2962,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "ENDORSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "ENDORSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "ENDORSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.7894736842105263,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.35714285714285715,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.5
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6666666666666666
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.5833333333333334
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.5454545454545454
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.5555555555555556
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 24,
+      "ENDORSE": 9
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 7,
+     "acc": 0.5384615384615384,
+     "p_vs_chance_0.5": 1.0,
+     "verdict": "FAIL",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "ENDORSE",
+      "ImpliHateVid::IM_57": "ENDORSE",
+      "ImpliHateVid::NH_394": "ENDORSE",
+      "ImpliHateVid::NH_396": "ENDORSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "ENDORSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 0.625,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.4,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.5384615384615384
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.5
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.6666666666666666
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 0.5
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 8,
+      "ENDORSE": 5
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.6666666666666666
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.6111111111111112
+     }
+    }
+   },
+   "mean_raw_v2": {
+    "A32_primary": [
+     0.40625,
+     32,
+     13
+    ],
+    "A33_all_local": [
+     0.42424242424242425,
+     33,
+     14
+    ],
+    "C_textonly": [
+     0.6153846153846154,
+     13,
+     8
+    ]
+   },
+   "template_prior_sum": {
+    "v1|p0|en": {
+     "mean_margin": -4.46,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p0|zh": {
+     "mean_margin": -21.0701,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p1|en": {
+     "mean_margin": -2.1675,
+     "endorse_win_rate": 0.071,
+     "n": 14
+    },
+    "v1|p1|zh": {
+     "mean_margin": -1.9045,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p2|en": {
+     "mean_margin": -16.6437,
+     "endorse_win_rate": 0.0,
+     "n": 14
+    },
+    "v1|p2|zh": {
+     "mean_margin": -14.4401,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p3|en": {
+     "mean_margin": -1.5386,
+     "endorse_win_rate": 0.429,
+     "n": 14
+    },
+    "v1|p3|zh": {
+     "mean_margin": -9.0444,
+     "endorse_win_rate": 0.0,
+     "n": 6
+    },
+    "v1|p4|en": {
+     "mean_margin": -4.0118,
+     "endorse_win_rate": 0.071,
+     "n": 14
+    },
+    "v1|p4|zh": {
+     "mean_margin": -1.602,
+     "endorse_win_rate": 0.167,
+     "n": 6
+    }
+   },
+   "sum_raw": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 18,
+     "acc": 0.5625,
+     "p_vs_chance_0.5": 0.5966,
+     "verdict": "FAIL",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.36363636363636365
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.6
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 32
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 19,
+     "acc": 0.5757575757575758,
+     "p_vs_chance_0.5": 0.4869,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "OPPOSE",
+      "HateMM::non_hate_video_149": "OPPOSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "OPPOSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "OPPOSE",
+      "MHC::_qldaPBgkk0": "OPPOSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "OPPOSE",
+      "MHC_zh::BV15h4y157Km": "OPPOSE",
+      "MHC_zh::BV1Kh411T7FJ": "OPPOSE",
+      "MHC_zh::BV1Km4y1u7ri": "OPPOSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "OPPOSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "OPPOSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "OPPOSE",
+      "MHC_zh::BV1to4y177df": "OPPOSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.8333333333333334
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.4166666666666667
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.6923076923076923
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.6363636363636364
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.3333333333333333
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 33
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 8,
+     "acc": 0.6153846153846154,
+     "p_vs_chance_0.5": 0.5811,
+     "verdict": "WEAK",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "OPPOSE",
+      "ImpliHateVid::IM_57": "OPPOSE",
+      "ImpliHateVid::NH_394": "OPPOSE",
+      "ImpliHateVid::NH_396": "OPPOSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "OPPOSE"
+     },
+     "acc_S_FP": 1.0,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.0,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.6153846153846154
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.3333333333333333
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 1.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 13
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.0
+     }
+    }
+   },
+   "sum_priorcorr": {
+    "A32_primary": {
+     "view": "A32_primary",
+     "n": 32,
+     "hit": 19,
+     "acc": 0.59375,
+     "p_vs_chance_0.5": 0.3771,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "ENDORSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "ENDORSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "ENDORSE",
+      "MHC_zh::BV15h4y157Km": "ENDORSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "ENDORSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "ENDORSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "ENDORSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.6666666666666666,
+     "n_S_FP": 18,
+     "acc_S_FN": 0.5,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.3333333333333333
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 11,
+       "acc": 0.7272727272727273
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.46153846153846156
+      },
+      "NOT_OWN": {
+       "n": 10,
+       "acc": 0.7
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.6666666666666666
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 19,
+      "ENDORSE": 13
+     }
+    },
+    "A33_all_local": {
+     "view": "A33_all_local",
+     "n": 33,
+     "hit": 20,
+     "acc": 0.6060606060606061,
+     "p_vs_chance_0.5": 0.2962,
+     "verdict": "WEAK",
+     "per_item": {
+      "HateMM::hate_video_365": "OPPOSE",
+      "HateMM::non_hate_video_121": "ENDORSE",
+      "HateMM::non_hate_video_149": "ENDORSE",
+      "HateMM::non_hate_video_400": "OPPOSE",
+      "HateMM::non_hate_video_528": "ENDORSE",
+      "HateMM::non_hate_video_642": "OPPOSE",
+      "MHC::03qOelm_dK8": "OPPOSE",
+      "MHC::8zLoOqXvk64": "OPPOSE",
+      "MHC::DxcRdnzBZoo": "OPPOSE",
+      "MHC::EEC98aHSgIY": "OPPOSE",
+      "MHC::N68vmAE5s_g": "OPPOSE",
+      "MHC::OMSByZ-o3Ww": "OPPOSE",
+      "MHC::XlJCNPi5inM": "OPPOSE",
+      "MHC::YDEsYXYlB8o": "ENDORSE",
+      "MHC::_qldaPBgkk0": "ENDORSE",
+      "MHC::cXRgVEENkPA": "OPPOSE",
+      "MHC::dK43yHIUMKA": "OPPOSE",
+      "MHC::ga1r2cweP80": "OPPOSE",
+      "MHC::h_wKRDyoG_c": "OPPOSE",
+      "MHC::j_foVftOOs4": "OPPOSE",
+      "MHC::pofgIFZpR7c": "OPPOSE",
+      "MHC_zh::BV12G4y1S7mN": "ENDORSE",
+      "MHC_zh::BV15h4y157Km": "ENDORSE",
+      "MHC_zh::BV1Kh411T7FJ": "ENDORSE",
+      "MHC_zh::BV1Km4y1u7ri": "ENDORSE",
+      "MHC_zh::BV1Qk4y1g7PM": "OPPOSE",
+      "MHC_zh::BV1Vy4y1p7x2": "ENDORSE",
+      "MHC_zh::BV1aP4y1E7PF": "OPPOSE",
+      "MHC_zh::BV1ch411L7VP": "ENDORSE",
+      "MHC_zh::BV1m8411z7mV": "OPPOSE",
+      "MHC_zh::BV1qZ4y1T71a": "ENDORSE",
+      "MHC_zh::BV1to4y177df": "ENDORSE",
+      "MHC_zh::BV1vK41177zi": "OPPOSE"
+     },
+     "acc_S_FP": 0.6842105263157895,
+     "n_S_FP": 19,
+     "acc_S_FN": 0.5,
+     "n_S_FN": 14,
+     "by_dataset": {
+      "HateMM": {
+       "n": 6,
+       "acc": 0.3333333333333333
+      },
+      "MHC": {
+       "n": 15,
+       "acc": 0.6
+      },
+      "MHC_zh": {
+       "n": 12,
+       "acc": 0.75
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 13,
+       "acc": 0.46153846153846156
+      },
+      "NOT_OWN": {
+       "n": 11,
+       "acc": 0.7272727272727273
+      },
+      "UNDET": {
+       "n": 9,
+       "acc": 0.6666666666666666
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 20,
+      "ENDORSE": 13
+     }
+    },
+    "C_textonly": {
+     "view": "C_textonly",
+     "n": 13,
+     "hit": 7,
+     "acc": 0.5384615384615384,
+     "p_vs_chance_0.5": 1.0,
+     "verdict": "FAIL",
+     "per_item": {
+      "ImpliHateVid::EX_150": "OPPOSE",
+      "ImpliHateVid::IM_176": "OPPOSE",
+      "ImpliHateVid::IM_308": "OPPOSE",
+      "ImpliHateVid::IM_5": "ENDORSE",
+      "ImpliHateVid::IM_57": "ENDORSE",
+      "ImpliHateVid::NH_394": "ENDORSE",
+      "ImpliHateVid::NH_396": "ENDORSE",
+      "ImpliHateVid::NH_44": "OPPOSE",
+      "ImpliHateVid::NH_650": "OPPOSE",
+      "ImpliHateVid::NH_736": "OPPOSE",
+      "ImpliHateVid::NH_875": "OPPOSE",
+      "ImpliHateVid::NH_887": "OPPOSE",
+      "ImpliHateVid::NH_988": "ENDORSE"
+     },
+     "acc_S_FP": 0.625,
+     "n_S_FP": 8,
+     "acc_S_FN": 0.4,
+     "n_S_FN": 5,
+     "by_dataset": {
+      "ImpliHateVid": {
+       "n": 13,
+       "acc": 0.5384615384615384
+      }
+     },
+     "by_voice": {
+      "OWN": {
+       "n": 8,
+       "acc": 0.625
+      },
+      "NOT_OWN": {
+       "n": 3,
+       "acc": 0.6666666666666666
+      },
+      "UNDET": {
+       "n": 2,
+       "acc": 0.0
+      }
+     },
+     "call_hist": {
+      "OPPOSE": 8,
+      "ENDORSE": 5
+     }
+    },
+    "controls": {
+     "CTRL_HATE": {
+      "n": 18,
+      "endorse_rate": 0.7222222222222222
+     },
+     "CTRL_NONHATE": {
+      "n": 18,
+      "endorse_rate": 0.5555555555555556
+     }
+    }
+   },
+   "sum_raw_v2": {
+    "A32_primary": [
+     0.34375,
+     32,
+     11
+    ],
+    "A33_all_local": [
+     0.36363636363636365,
+     33,
+     12
+    ],
+    "C_textonly": [
+     0.3076923076923077,
+     13,
+     4
+    ]
+   }
+  }
+ },
+ "baselines": {
+  "round1_binarised": {
+   "A32_primary": [
+    0.5,
+    32,
+    16
+   ],
+   "A33_all_local": [
+    0.48484848484848486,
+    33,
+    16
+   ],
+   "C_textonly": [
+    0.3076923076923077,
+    13,
+    4
+   ]
+  },
+  "round2_masked_binarised": {
+   "A32_primary": [
+    0.5625,
+    32,
+    18
+   ],
+   "A33_all_local": [
+    0.5454545454545454,
+    33,
+    18
+   ],
+   "C_textonly": [
+    0.3076923076923077,
+    13,
+    4
+   ]
+  },
+  "round3_contrast_v1": {
+   "A32_primary": [
+    0.46875,
+    32,
+    15
+   ],
+   "A33_all_local": [
+    0.45454545454545453,
+    33,
+    15
+   ],
+   "C_textonly": [
+    0.3076923076923077,
+    13,
+    4
+   ]
+  }
+ },
+ "tuning_contrast": {
+  "C1_minus_B1_same_generation": 0.0,
+  "C1_minus_A1": 0.0,
+  "bar": 0.1
+ }
+}
