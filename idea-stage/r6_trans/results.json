@@ -1,0 +1,1449 @@
+{
+ "grid": {
+  "lambda": [
+   0.25,
+   0.5,
+   1.0,
+   2.0,
+   4.0
+  ],
+  "rho": [
+   0.0,
+   0.5,
+   1.0
+  ]
+ },
+ "max_iter": 20,
+ "tol": 1e-05,
+ "datasets": {
+  "HateMM": {
+   "seeds": {
+    "0": {
+     "epoch": 14,
+     "encoder": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+     "n_dev": 107,
+     "n_test": 215,
+     "train_prior_pos": 0.40053763440860213,
+     "threshold": 0.20676008611917496,
+     "dev_macro_f1_IND": 0.8494018296973962,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.8383542166533369,
+     "test_macro_f1_IND": 0.8396929824561403,
+     "test_macro_f1_TRANS": 0.8827699018538713,
+     "test_macro_f1_SHUF": 0.5213104325699746,
+     "n_changed_TRANS_vs_IND": 22,
+     "n_changed_SHUF_vs_IND": 104,
+     "em_iters_TRANS": 4,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 2
+      }
+     ]
+    },
+    "1": {
+     "epoch": 13,
+     "encoder": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+     "n_dev": 107,
+     "n_test": 215,
+     "train_prior_pos": 0.40053763440860213,
+     "threshold": 0.5,
+     "dev_macro_f1_IND": 0.8482269503546098,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.8383542166533369,
+     "test_macro_f1_IND": 0.8832579185520362,
+     "test_macro_f1_TRANS": 0.8827699018538713,
+     "test_macro_f1_SHUF": 0.5114588067259624,
+     "n_changed_TRANS_vs_IND": 2,
+     "n_changed_SHUF_vs_IND": 101,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8383542166533369,
+       "iters": 3
+      }
+     ]
+    },
+    "2": {
+     "epoch": 14,
+     "encoder": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+     "n_dev": 107,
+     "n_test": 215,
+     "train_prior_pos": 0.40053763440860213,
+     "threshold": 0.17835790663957596,
+     "dev_macro_f1_IND": 0.8494018296973962,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.8284034212401995,
+     "test_macro_f1_IND": 0.8393265342008088,
+     "test_macro_f1_TRANS": 0.8827699018538713,
+     "test_macro_f1_SHUF": 0.5207643532645155,
+     "n_changed_TRANS_vs_IND": 20,
+     "n_changed_SHUF_vs_IND": 99,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8284034212401995,
+       "iters": 2
+      }
+     ]
+    }
+   },
+   "aggregate": {
+    "delta_TRANS_IND_per_seed": [
+     0.04307691939773095,
+     -0.0004880166981648948,
+     0.04344336765306245
+    ],
+    "delta_TRANS_IND_mean": 0.028677423450876167,
+    "n_seeds_positive_TRANS_IND": 2,
+    "delta_TRANS_SHUF_per_seed": [
+     0.3614594692838967,
+     0.37131109512790883,
+     0.36200554858935574
+    ],
+    "delta_TRANS_SHUF_mean": 0.3649253710003871,
+    "mean_test_IND": 0.8540924784029951,
+    "mean_test_TRANS": 0.8827699018538713,
+    "mean_test_SHUF": 0.5178445308534841,
+    "dataset_passes": false
+   }
+  },
+  "MHC": {
+   "seeds": {
+    "0": {
+     "epoch": 25,
+     "encoder": "Qwen2.5-VL-7B-Instruct_HF",
+     "n_dev": 80,
+     "n_test": 161,
+     "train_prior_pos": 0.30601092896174864,
+     "threshold": 0.5,
+     "dev_macro_f1_IND": 0.7747971518463321,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.7747971518463321,
+     "test_macro_f1_IND": 0.73015172900494,
+     "test_macro_f1_TRANS": 0.7244239631336404,
+     "test_macro_f1_SHUF": 0.4559139784946237,
+     "n_changed_TRANS_vs_IND": 1,
+     "n_changed_SHUF_vs_IND": 71,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 4,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      }
+     ]
+    },
+    "1": {
+     "epoch": 24,
+     "encoder": "Qwen2.5-VL-7B-Instruct_HF",
+     "n_dev": 80,
+     "n_test": 161,
+     "train_prior_pos": 0.30601092896174864,
+     "threshold": 0.48068587481975555,
+     "dev_macro_f1_IND": 0.7986239301896292,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.7986239301896292,
+     "test_macro_f1_IND": 0.7216385157600744,
+     "test_macro_f1_TRANS": 0.7216385157600744,
+     "test_macro_f1_SHUF": 0.5217892450237177,
+     "n_changed_TRANS_vs_IND": 0,
+     "n_changed_SHUF_vs_IND": 64,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7986239301896292,
+       "iters": 3
+      }
+     ]
+    },
+    "2": {
+     "epoch": 24,
+     "encoder": "Qwen2.5-VL-7B-Instruct_HF",
+     "n_dev": 80,
+     "n_test": 161,
+     "train_prior_pos": 0.30601092896174864,
+     "threshold": 0.5,
+     "dev_macro_f1_IND": 0.7866666666666666,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.7747971518463321,
+     "test_macro_f1_IND": 0.73015172900494,
+     "test_macro_f1_TRANS": 0.7244239631336404,
+     "test_macro_f1_SHUF": 0.4648268398268398,
+     "n_changed_TRANS_vs_IND": 1,
+     "n_changed_SHUF_vs_IND": 90,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.7747971518463321,
+       "iters": 2
+      }
+     ]
+    }
+   },
+   "aggregate": {
+    "delta_TRANS_IND_per_seed": [
+     -0.005727765871299528,
+     0.0,
+     -0.005727765871299528
+    ],
+    "delta_TRANS_IND_mean": -0.003818510580866352,
+    "n_seeds_positive_TRANS_IND": 0,
+    "delta_TRANS_SHUF_per_seed": [
+     0.26850998463901676,
+     0.19984927073635672,
+     0.2595971233068006
+    ],
+    "delta_TRANS_SHUF_mean": 0.24265212622739138,
+    "mean_test_IND": 0.7273139912566515,
+    "mean_test_TRANS": 0.7234954806757852,
+    "mean_test_SHUF": 0.4808433544483937,
+    "dataset_passes": false
+   }
+  },
+  "MHC_zh": {
+   "seeds": {
+    "0": {
+     "epoch": 21,
+     "encoder": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+     "n_dev": 78,
+     "n_test": 149,
+     "train_prior_pos": 0.31088082901554404,
+     "threshold": 0.5,
+     "dev_macro_f1_IND": 0.8528301886792452,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.8528301886792452,
+     "test_macro_f1_IND": 0.7875164545853444,
+     "test_macro_f1_TRANS": 0.8064935064935066,
+     "test_macro_f1_SHUF": 0.47696358051777094,
+     "n_changed_TRANS_vs_IND": 2,
+     "n_changed_SHUF_vs_IND": 58,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      }
+     ]
+    },
+    "1": {
+     "epoch": 16,
+     "encoder": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+     "n_dev": 78,
+     "n_test": 149,
+     "train_prior_pos": 0.31088082901554404,
+     "threshold": 0.5009302496910095,
+     "dev_macro_f1_IND": 0.8661071905397674,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.8397759103641456,
+     "test_macro_f1_IND": 0.7607798165137615,
+     "test_macro_f1_TRANS": 0.8133137222857765,
+     "test_macro_f1_SHUF": 0.47240834559023803,
+     "n_changed_TRANS_vs_IND": 7,
+     "n_changed_SHUF_vs_IND": 59,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8397759103641456,
+       "iters": 2
+      }
+     ]
+    },
+    "2": {
+     "epoch": 17,
+     "encoder": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+     "n_dev": 78,
+     "n_test": 149,
+     "train_prior_pos": 0.31088082901554404,
+     "threshold": 0.5,
+     "dev_macro_f1_IND": 0.8528301886792452,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.8528301886792452,
+     "test_macro_f1_IND": 0.7844904316866934,
+     "test_macro_f1_TRANS": 0.8133137222857765,
+     "test_macro_f1_SHUF": 0.40915645277577506,
+     "n_changed_TRANS_vs_IND": 3,
+     "n_changed_SHUF_vs_IND": 86,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.8528301886792452,
+       "iters": 2
+      }
+     ]
+    }
+   },
+   "aggregate": {
+    "delta_TRANS_IND_per_seed": [
+     0.018977051908162235,
+     0.052533905772015,
+     0.028823290599083062
+    ],
+    "delta_TRANS_IND_mean": 0.033444749426420096,
+    "n_seeds_positive_TRANS_IND": 3,
+    "delta_TRANS_SHUF_per_seed": [
+     0.32952992597573566,
+     0.34090537669553844,
+     0.4041572695100014
+    ],
+    "delta_TRANS_SHUF_mean": 0.3581975240604252,
+    "mean_test_IND": 0.7775955675952665,
+    "mean_test_TRANS": 0.8110403170216864,
+    "mean_test_SHUF": 0.45284279296126134,
+    "dataset_passes": true
+   }
+  },
+  "ImpliHateVid": {
+   "seeds": {
+    "0": {
+     "epoch": 26,
+     "encoder": "openai_clip-vit-large-patch14-336_HF",
+     "n_dev": 325,
+     "n_test": 401,
+     "train_prior_pos": 0.5058456742010912,
+     "threshold": 0.5,
+     "dev_macro_f1_IND": 0.9292307692307692,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.9230740099033337,
+     "test_macro_f1_IND": 0.9076479705210478,
+     "test_macro_f1_TRANS": 0.9050236848666169,
+     "test_macro_f1_SHUF": 0.525118424333084,
+     "n_changed_TRANS_vs_IND": 7,
+     "n_changed_SHUF_vs_IND": 185,
+     "em_iters_TRANS": 4,
+     "em_iters_SHUF": 5,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9230740099033337,
+       "iters": 2
+      }
+     ]
+    },
+    "1": {
+     "epoch": 11,
+     "encoder": "openai_clip-vit-large-patch14-336_HF",
+     "n_dev": 325,
+     "n_test": 401,
+     "train_prior_pos": 0.5058456742010912,
+     "threshold": 0.5989948511123657,
+     "dev_macro_f1_IND": 0.9292307692307692,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.9261531470120428,
+     "test_macro_f1_IND": 0.9126399721145049,
+     "test_macro_f1_TRANS": 0.9126116870583107,
+     "test_macro_f1_SHUF": 0.5105370665603826,
+     "n_changed_TRANS_vs_IND": 2,
+     "n_changed_SHUF_vs_IND": 197,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 3,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9261531470120428,
+       "iters": 2
+      }
+     ]
+    },
+    "2": {
+     "epoch": 14,
+     "encoder": "openai_clip-vit-large-patch14-336_HF",
+     "n_dev": 325,
+     "n_test": 401,
+     "train_prior_pos": 0.5058456742010912,
+     "threshold": 0.5,
+     "dev_macro_f1_IND": 0.9261531470120428,
+     "selected_lambda": 0.25,
+     "selected_rho": 0.0,
+     "dev_macro_f1_selected": 0.9199931828510832,
+     "test_macro_f1_IND": 0.9150931646074134,
+     "test_macro_f1_TRANS": 0.9150931646074134,
+     "test_macro_f1_SHUF": 0.487962876452085,
+     "n_changed_TRANS_vs_IND": 0,
+     "n_changed_SHUF_vs_IND": 201,
+     "em_iters_TRANS": 2,
+     "em_iters_SHUF": 4,
+     "grid": [
+      {
+       "lambda": 0.25,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 0.25,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 0.25,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 0.5,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 1.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 2.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 0.5,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      },
+      {
+       "lambda": 4.0,
+       "rho": 1.0,
+       "dev_macro_f1": 0.9199931828510832,
+       "iters": 3
+      }
+     ]
+    }
+   },
+   "aggregate": {
+    "delta_TRANS_IND_per_seed": [
+     -0.002624285654430958,
+     -2.8285056194121694e-05,
+     0.0
+    ],
+    "delta_TRANS_IND_mean": -0.0008841902368750265,
+    "n_seeds_positive_TRANS_IND": 0,
+    "delta_TRANS_SHUF_per_seed": [
+     0.3799052605335329,
+     0.4020746204979282,
+     0.4271302881553284
+    ],
+    "delta_TRANS_SHUF_mean": 0.4030367230622631,
+    "mean_test_IND": 0.911793702414322,
+    "mean_test_TRANS": 0.910909512177447,
+    "mean_test_SHUF": 0.5078727891151839,
+    "dataset_passes": false
+   }
+  }
+ },
+ "n_datasets_passing": 1,
+ "passing_datasets": [
+  "MHC_zh"
+ ],
+ "verdict": "AMBIGUOUS"
+}

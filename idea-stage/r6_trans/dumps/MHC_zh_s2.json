@@ -1,0 +1,25 @@
+{
+ "dataset": "MHC_zh",
+ "model": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+ "seed": 2,
+ "epoch": 17,
+ "ckpt": "epoch_model_17_0.8589743589743589.pt",
+ "trainlog_dev_macro_f1": 0.8528,
+ "trainlog_test_macro_f1": 0.7845,
+ "train_prior_pos": 0.31088082901554404,
+ "n_train": 579,
+ "dev": {
+  "n": 78,
+  "dim": 1024,
+  "recomputed_macro_f1_at_0.5": 0.8528301886792452,
+  "trainlog_macro_f1": 0.8528,
+  "match": true
+ },
+ "test": {
+  "n": 149,
+  "dim": 1024,
+  "recomputed_macro_f1_at_0.5": 0.7844904316866934,
+  "trainlog_macro_f1": 0.7845,
+  "match": true
+ }
+}

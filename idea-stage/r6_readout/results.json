@@ -1,0 +1,485 @@
+{
+ "freeze": "idea-stage/R6_PILOT_FREEZE_2026-08-17.md (pilot R6-1)",
+ "selection": "epoch = argmax_{e>=5}(dev head acc, dev head roc); reported = test macro-F1 at that epoch (parse_run I1)",
+ "per_run": {
+  "HateMM_A0_s0": {
+   "epoch": 19,
+   "val": 0.8466,
+   "test": 0.8817,
+   "test_acc": 0.8884,
+   "test_roc": 0.9287
+  },
+  "HateMM_A0_s1": {
+   "epoch": 23,
+   "val": 0.8456,
+   "test": 0.8771,
+   "test_acc": 0.8837,
+   "test_roc": 0.9237
+  },
+  "HateMM_A0_s2": {
+   "epoch": 14,
+   "val": 0.8482,
+   "test": 0.8735,
+   "test_acc": 0.8791,
+   "test_roc": 0.922
+  },
+  "HateMM_L24_s0": {
+   "epoch": 25,
+   "val": 0.8445,
+   "test": 0.8632,
+   "test_acc": 0.8698,
+   "test_roc": 0.9324
+  },
+  "HateMM_L24_s1": {
+   "epoch": 25,
+   "val": 0.8312,
+   "test": 0.8613,
+   "test_acc": 0.8698,
+   "test_roc": 0.9337
+  },
+  "HateMM_L24_s2": {
+   "epoch": 20,
+   "val": 0.8456,
+   "test": 0.8638,
+   "test_acc": 0.8698,
+   "test_roc": 0.9349
+  },
+  "HateMM_CAT_s0": {
+   "epoch": 19,
+   "val": 0.8557,
+   "test": 0.8771,
+   "test_acc": 0.8837,
+   "test_roc": 0.9294
+  },
+  "HateMM_CAT_s1": {
+   "epoch": 21,
+   "val": 0.8547,
+   "test": 0.8765,
+   "test_acc": 0.8837,
+   "test_roc": 0.9306
+  },
+  "HateMM_CAT_s2": {
+   "epoch": 28,
+   "val": 0.8566,
+   "test": 0.874,
+   "test_acc": 0.8791,
+   "test_roc": 0.9292
+  },
+  "HateMM_RANDCAT_s0": {
+   "epoch": 23,
+   "val": 0.8384,
+   "test": 0.8689,
+   "test_acc": 0.8744,
+   "test_roc": 0.9217
+  },
+  "HateMM_RANDCAT_s1": {
+   "epoch": 21,
+   "val": 0.8475,
+   "test": 0.8735,
+   "test_acc": 0.8791,
+   "test_roc": 0.9189
+  },
+  "HateMM_RANDCAT_s2": {
+   "epoch": 24,
+   "val": 0.8354,
+   "test": 0.8712,
+   "test_acc": 0.8791,
+   "test_roc": 0.9199
+  },
+  "MHC_zh_A0_s0": {
+   "epoch": 16,
+   "val": 0.8194,
+   "test": 0.7016,
+   "test_acc": 0.7919,
+   "test_roc": 0.9154
+  },
+  "MHC_zh_A0_s1": {
+   "epoch": 16,
+   "val": 0.8364,
+   "test": 0.7742,
+   "test_acc": 0.8255,
+   "test_roc": 0.9175
+  },
+  "MHC_zh_A0_s2": {
+   "epoch": 18,
+   "val": 0.8528,
+   "test": 0.805,
+   "test_acc": 0.8456,
+   "test_roc": 0.9083
+  },
+  "MHC_zh_L24_s0": {
+   "epoch": 27,
+   "val": 0.8364,
+   "test": 0.7527,
+   "test_acc": 0.8121,
+   "test_roc": 0.9269
+  },
+  "MHC_zh_L24_s1": {
+   "epoch": 16,
+   "val": 0.8364,
+   "test": 0.7916,
+   "test_acc": 0.8389,
+   "test_roc": 0.9269
+  },
+  "MHC_zh_L24_s2": {
+   "epoch": 17,
+   "val": 0.8364,
+   "test": 0.795,
+   "test_acc": 0.8389,
+   "test_roc": 0.931
+  },
+  "MHC_zh_CAT_s0": {
+   "epoch": 15,
+   "val": 0.8364,
+   "test": 0.8176,
+   "test_acc": 0.8523,
+   "test_roc": 0.9246
+  },
+  "MHC_zh_CAT_s1": {
+   "epoch": 15,
+   "val": 0.8364,
+   "test": 0.7595,
+   "test_acc": 0.8188,
+   "test_roc": 0.9252
+  },
+  "MHC_zh_CAT_s2": {
+   "epoch": 15,
+   "val": 0.8364,
+   "test": 0.7847,
+   "test_acc": 0.8322,
+   "test_roc": 0.9246
+  },
+  "MHC_zh_RANDCAT_s0": {
+   "epoch": 15,
+   "val": 0.8364,
+   "test": 0.7913,
+   "test_acc": 0.8322,
+   "test_roc": 0.9167
+  },
+  "MHC_zh_RANDCAT_s1": {
+   "epoch": 29,
+   "val": 0.8628,
+   "test": 0.7871,
+   "test_acc": 0.8121,
+   "test_roc": 0.903
+  },
+  "MHC_zh_RANDCAT_s2": {
+   "epoch": 15,
+   "val": 0.8364,
+   "test": 0.7779,
+   "test_acc": 0.8255,
+   "test_roc": 0.9139
+  }
+ },
+ "table": {
+  "HateMM": {
+   "A0": {
+    "test_macro_f1": [
+     0.8817,
+     0.8771,
+     0.8735
+    ],
+    "test_macro_f1_mean": 0.8774333333333333,
+    "test_macro_f1_std": 0.004110150037812889,
+    "test_roc": [
+     0.9287,
+     0.9237,
+     0.922
+    ],
+    "test_roc_mean": 0.9248,
+    "val_macro_f1": [
+     0.8466,
+     0.8456,
+     0.8482
+    ],
+    "epochs": [
+     19,
+     23,
+     14
+    ]
+   },
+   "L24": {
+    "test_macro_f1": [
+     0.8632,
+     0.8613,
+     0.8638
+    ],
+    "test_macro_f1_mean": 0.8627666666666666,
+    "test_macro_f1_std": 0.0013051181300301512,
+    "test_roc": [
+     0.9324,
+     0.9337,
+     0.9349
+    ],
+    "test_roc_mean": 0.9336666666666665,
+    "val_macro_f1": [
+     0.8445,
+     0.8312,
+     0.8456
+    ],
+    "epochs": [
+     25,
+     25,
+     20
+    ]
+   },
+   "CAT": {
+    "test_macro_f1": [
+     0.8771,
+     0.8765,
+     0.874
+    ],
+    "test_macro_f1_mean": 0.8758666666666667,
+    "test_macro_f1_std": 0.0016441816606851231,
+    "test_roc": [
+     0.9294,
+     0.9306,
+     0.9292
+    ],
+    "test_roc_mean": 0.9297333333333334,
+    "val_macro_f1": [
+     0.8557,
+     0.8547,
+     0.8566
+    ],
+    "epochs": [
+     19,
+     21,
+     28
+    ]
+   },
+   "RANDCAT": {
+    "test_macro_f1": [
+     0.8689,
+     0.8735,
+     0.8712
+    ],
+    "test_macro_f1_mean": 0.8712,
+    "test_macro_f1_std": 0.0023000000000000242,
+    "test_roc": [
+     0.9217,
+     0.9189,
+     0.9199
+    ],
+    "test_roc_mean": 0.9201666666666667,
+    "val_macro_f1": [
+     0.8384,
+     0.8475,
+     0.8354
+    ],
+    "epochs": [
+     23,
+     21,
+     24
+    ]
+   }
+  },
+  "MHC_zh": {
+   "A0": {
+    "test_macro_f1": [
+     0.7016,
+     0.7742,
+     0.805
+    ],
+    "test_macro_f1_mean": 0.7602666666666668,
+    "test_macro_f1_std": 0.053089484206698935,
+    "test_roc": [
+     0.9154,
+     0.9175,
+     0.9083
+    ],
+    "test_roc_mean": 0.9137333333333334,
+    "val_macro_f1": [
+     0.8194,
+     0.8364,
+     0.8528
+    ],
+    "epochs": [
+     16,
+     16,
+     18
+    ]
+   },
+   "L24": {
+    "test_macro_f1": [
+     0.7527,
+     0.7916,
+     0.795
+    ],
+    "test_macro_f1_mean": 0.7797666666666667,
+    "test_macro_f1_std": 0.023501985731706428,
+    "test_roc": [
+     0.9269,
+     0.9269,
+     0.931
+    ],
+    "test_roc_mean": 0.9282666666666666,
+    "val_macro_f1": [
+     0.8364,
+     0.8364,
+     0.8364
+    ],
+    "epochs": [
+     27,
+     16,
+     17
+    ]
+   },
+   "CAT": {
+    "test_macro_f1": [
+     0.8176,
+     0.7595,
+     0.7847
+    ],
+    "test_macro_f1_mean": 0.7872666666666666,
+    "test_macro_f1_std": 0.029134916051592366,
+    "test_roc": [
+     0.9246,
+     0.9252,
+     0.9246
+    ],
+    "test_roc_mean": 0.9248,
+    "val_macro_f1": [
+     0.8364,
+     0.8364,
+     0.8364
+    ],
+    "epochs": [
+     15,
+     15,
+     15
+    ]
+   },
+   "RANDCAT": {
+    "test_macro_f1": [
+     0.7913,
+     0.7871,
+     0.7779
+    ],
+    "test_macro_f1_mean": 0.7854333333333333,
+    "test_macro_f1_std": 0.006853709457901838,
+    "test_roc": [
+     0.9167,
+     0.903,
+     0.9139
+    ],
+    "test_roc_mean": 0.9112,
+    "val_macro_f1": [
+     0.8364,
+     0.8628,
+     0.8364
+    ],
+    "epochs": [
+     15,
+     29,
+     15
+    ]
+   }
+  }
+ },
+ "deltas": {
+  "HateMM": {
+   "CAT-A0": {
+    "mean": -0.0015666666666667162,
+    "per_seed": [
+     -0.0046000000000000485,
+     -0.0006000000000000449,
+     0.0004999999999999449
+    ],
+    "n_positive": 1,
+    "n_seeds": 3
+   },
+   "CAT-RANDCAT": {
+    "mean": 0.004666666666666634,
+    "per_seed": [
+     0.008199999999999985,
+     0.0029999999999998916,
+     0.0028000000000000247
+    ],
+    "n_positive": 3,
+    "n_seeds": 3
+   },
+   "L24-A0": {
+    "mean": -0.014666666666666717,
+    "per_seed": [
+     -0.018500000000000072,
+     -0.015800000000000036,
+     -0.009700000000000042
+    ],
+    "n_positive": 0,
+    "n_seeds": 3
+   },
+   "RANDCAT-A0": {
+    "mean": -0.00623333333333335,
+    "per_seed": [
+     -0.012800000000000034,
+     -0.0035999999999999366,
+     -0.0023000000000000798
+    ],
+    "n_positive": 0,
+    "n_seeds": 3
+   }
+  },
+  "MHC_zh": {
+   "CAT-A0": {
+    "mean": 0.02699999999999995,
+    "per_seed": [
+     0.11599999999999999,
+     -0.014700000000000046,
+     -0.020300000000000096
+    ],
+    "n_positive": 1,
+    "n_seeds": 3
+   },
+   "CAT-RANDCAT": {
+    "mean": 0.0018333333333332795,
+    "per_seed": [
+     0.02629999999999999,
+     -0.02760000000000007,
+     0.006799999999999917
+    ],
+    "n_positive": 2,
+    "n_seeds": 3
+   },
+   "L24-A0": {
+    "mean": 0.0195,
+    "per_seed": [
+     0.051100000000000034,
+     0.01739999999999997,
+     -0.010000000000000009
+    ],
+    "n_positive": 2,
+    "n_seeds": 3
+   },
+   "RANDCAT-A0": {
+    "mean": 0.02516666666666667,
+    "per_seed": [
+     0.0897,
+     0.012900000000000023,
+     -0.027100000000000013
+    ],
+    "n_positive": 2,
+    "n_seeds": 3
+   }
+  }
+ },
+ "verdict": {
+  "per_dataset": {
+   "HateMM": {
+    "clause1_mean_CAT_minus_A0_ge_0.005": false,
+    "clause2_3of3_seeds_CAT_minus_A0_positive": false,
+    "clause3_mean_CAT_minus_RANDCAT_ge_0.005": false,
+    "pass": false
+   },
+   "MHC_zh": {
+    "clause1_mean_CAT_minus_A0_ge_0.005": true,
+    "clause2_3of3_seeds_CAT_minus_A0_positive": false,
+    "clause3_mean_CAT_minus_RANDCAT_ge_0.005": false,
+    "pass": false
+   }
+  },
+  "n_datasets_passing": 0,
+  "verdict": "KILL",
+  "rule": "GO iff both datasets pass; AMBIGUOUS iff exactly one; KILL otherwise. L24-A0 recorded, not in the rule."
+ }
+}

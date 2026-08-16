@@ -1,0 +1,25 @@
+{
+ "dataset": "ImpliHateVid",
+ "model": "openai_clip-vit-large-patch14-336_HF",
+ "seed": 1,
+ "epoch": 11,
+ "ckpt": "epoch_model_11_0.9292307692307692.pt",
+ "trainlog_dev_macro_f1": 0.9262,
+ "trainlog_test_macro_f1": 0.9126,
+ "train_prior_pos": 0.5058456742010912,
+ "n_train": 1283,
+ "dev": {
+  "n": 325,
+  "dim": 1024,
+  "recomputed_macro_f1_at_0.5": 0.9261531470120428,
+  "trainlog_macro_f1": 0.9262,
+  "match": true
+ },
+ "test": {
+  "n": 401,
+  "dim": 1024,
+  "recomputed_macro_f1_at_0.5": 0.9126116870583107,
+  "trainlog_macro_f1": 0.9126,
+  "match": true
+ }
+}

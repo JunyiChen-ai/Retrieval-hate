@@ -1,0 +1,25 @@
+{
+ "dataset": "MHC",
+ "model": "Qwen2.5-VL-7B-Instruct_HF",
+ "seed": 0,
+ "epoch": 25,
+ "ckpt": "epoch_model_25_0.7875.pt",
+ "trainlog_dev_macro_f1": 0.7748,
+ "trainlog_test_macro_f1": 0.7302,
+ "train_prior_pos": 0.30601092896174864,
+ "n_train": 549,
+ "dev": {
+  "n": 80,
+  "dim": 1024,
+  "recomputed_macro_f1_at_0.5": 0.7747971518463321,
+  "trainlog_macro_f1": 0.7748,
+  "match": true
+ },
+ "test": {
+  "n": 161,
+  "dim": 1024,
+  "recomputed_macro_f1_at_0.5": 0.73015172900494,
+  "trainlog_macro_f1": 0.7302,
+  "match": true
+ }
+}

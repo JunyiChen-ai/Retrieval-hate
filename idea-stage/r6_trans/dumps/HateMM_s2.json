@@ -1,0 +1,25 @@
+{
+ "dataset": "HateMM",
+ "model": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+ "seed": 2,
+ "epoch": 14,
+ "ckpt": "epoch_model_14_0.822429906542056.pt",
+ "trainlog_dev_macro_f1": 0.8482,
+ "trainlog_test_macro_f1": 0.8735,
+ "train_prior_pos": 0.40053763440860213,
+ "n_train": 744,
+ "dev": {
+  "n": 107,
+  "dim": 1024,
+  "recomputed_macro_f1_at_0.5": 0.8482269503546098,
+  "trainlog_macro_f1": 0.8482,
+  "match": true
+ },
+ "test": {
+  "n": 215,
+  "dim": 1024,
+  "recomputed_macro_f1_at_0.5": 0.8735294117647059,
+  "trainlog_macro_f1": 0.8735,
+  "match": true
+ }
+}
