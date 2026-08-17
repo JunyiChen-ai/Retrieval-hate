@@ -126,6 +126,17 @@ def main():
             rows.append(r)
         return rows
 
+    # ---- SUPPLEMENTARY, POST-HOC, DESCRIPTIVE ----------------------------------
+    # Added AFTER observing that the frozen 2/3-vs-1/3 sets are near-empty on both
+    # datasets (which is itself the finding).  These lists use NO threshold: they are
+    # simply the items ranked by the per-item seed-error-rate gap, so that section 5
+    # step 3 ("take the top ~10 of each") has something to read.  They carry no
+    # verdict power of any kind and are labelled post-hoc everywhere they appear.
+    gaps = [(ids[i], float(dA[i] - dC[i])) for i in range(len(ids))]
+    top_cat = sorted(gaps, key=lambda t: -t[1])
+    top_a0 = sorted(gaps, key=lambda t: t[1])
+    top_a0 = [(i, -g) for i, g in top_a0]
+
     rest = [i for i in ids if i not in {x for x, _ in fixed} | {x for x, _ in broken}]
 
     def dist(idlist):
@@ -147,7 +158,45 @@ def main():
                               "REST": dist(rest)},
            "label_mix": {"FIXED": [int(gt[x]["label"]) for x, _ in fixed],
                          "BROKEN": [int(gt[x]["label"]) for x, _ in broken]},
-           "FIXED": describe(fixed), "BROKEN": describe(broken)}
+           "FIXED": describe(fixed), "BROKEN": describe(broken),
+           "posthoc_note": "the FIXED/BROKEN sets above use the thresholds frozen in "
+                           "CAT_CLOSEOUT_FREEZE.md 5; the *_posthoc lists below use no "
+                           "threshold at all and were added after observing that the "
+                           "frozen sets are near-empty. Descriptive only, no verdict.",
+           "TOP_CAT_GAIN_posthoc": describe(top_cat),
+           "TOP_A0_GAIN_posthoc": describe(top_a0),
+           "gap_distribution": {
+               "abs_gap_sum": float(np.abs(dA - dC).sum()),
+               "n_gap_ge_0.5": int((np.abs(dA - dC) >= 0.5).sum()),
+               "n_gap_ge_0.2": int((np.abs(dA - dC) >= 0.2).sum()),
+               "n_gap_ge_0.05": int((np.abs(dA - dC) >= 0.05).sum()),
+               "n_gap_zero": int((np.abs(dA - dC) < 1e-9).sum()),
+               "n_both_always_wrong": int(((dA == 1.0) & (dC == 1.0)).sum()),
+               "n_both_always_right": int(((dA == 0.0) & (dC == 0.0)).sum())},
+           "transcript_len_posthoc": {
+               "TOP_CAT_GAIN": dist([x for x, _ in top_cat[:TOP_N]]),
+               "TOP_A0_GAIN": dist([x for x, _ in top_a0[:TOP_N]])}}
+
+    # post-hoc descriptive: mean error-rate improvement by transcript-length quartile
+    # and by true label -- the two candidate explanations named in freeze section 5.
+    L = np.array([tlen(i) for i in ids], dtype=float)
+    imp = dA - dC
+    qs = np.percentile(L, [25, 50, 75])
+    bands = {"Q1_shortest": L <= qs[0], "Q2": (L > qs[0]) & (L <= qs[1]),
+             "Q3": (L > qs[1]) & (L <= qs[2]), "Q4_longest": L > qs[2],
+             "empty_or_le_20_chars": L <= 20}
+    res["improvement_by_band_posthoc"] = {
+        k: {"n": int(m.sum()),
+            "mean_err_A0": float(dA[m].mean()) if m.sum() else None,
+            "mean_err_CAT": float(dC[m].mean()) if m.sum() else None,
+            "mean_improvement": float(imp[m].mean()) if m.sum() else None}
+        for k, m in bands.items()}
+    res["improvement_by_label_posthoc"] = {
+        str(c): {"n": int((y == c).sum()),
+                 "mean_err_A0": float(dA[y == c].mean()),
+                 "mean_err_CAT": float(dC[y == c].mean()),
+                 "mean_improvement": float(imp[y == c].mean())} for c in (0, 1)}
+    res["transcript_len_quartiles_chars"] = [float(x) for x in qs]
 
     if span:
         A0len = np.array([span[i]["T"] - span[i]["hdr"] for i in ids if i in span])
