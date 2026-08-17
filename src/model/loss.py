@@ -8,6 +8,49 @@ from utils.retrieval import (
     _encode_subclip_fused,
 )
 
+# ----------------- R7-1 soft-target / label-smoothing training target -----------------
+# idea-stage/R7_SOFTVOTE_FREEZE.md.  BOTH knobs default OFF; when both are off the
+# BCE target below is `labels.float()` exactly as before, so every prior run is
+# reproduced byte-identically.  Only the TRAINING target is touched: evaluation
+# (utils/metrics.py) always uses the hard cached labels.
+_SOFT_TARGET_CACHE = {}
+
+
+def _soft_target_map(args):
+    """id -> soft target in [0,1], loaded once from --soft_target_json.  None if unset."""
+    path = getattr(args, "soft_target_json", None)
+    if not path:
+        return None
+    if path not in _SOFT_TARGET_CACHE:
+        import json
+        with open(path) as f:
+            obj = json.load(f)
+        m = obj["targets"] if isinstance(obj, dict) and "targets" in obj else obj
+        _SOFT_TARGET_CACHE[path] = {str(k): float(v) for k, v in m.items()}
+    return _SOFT_TARGET_CACHE[path]
+
+
+def bce_target(labels, ids, args):
+    """The [B,1] float BCE target.  Hard labels by default."""
+    tgt = labels.float().reshape(-1, 1)
+    m = _soft_target_map(args)
+    eps = float(getattr(args, "label_smoothing", 0.0) or 0.0)
+    if m is not None and eps > 0.0:
+        raise ValueError("--soft_target_json and --label_smoothing are mutually "
+                         "exclusive (they are the two arms being contrasted).")
+    if m is not None:
+        try:
+            vals = [m[str(i)] for i in ids]
+        except KeyError as e:
+            raise KeyError("HALT: no soft target for train id %s in %s"
+                           % (e, args.soft_target_json))
+        tgt = torch.tensor(vals, dtype=torch.float32,
+                           device=labels.device).reshape(-1, 1)
+    elif eps > 0.0:
+        # binary label smoothing: y' = (1-2e)*y + e   => positives 1-e, negatives e
+        tgt = tgt * (1.0 - 2.0 * eps) + eps
+    return tgt
+
 
 def compute_loss(batch,
                 train_dl,
@@ -60,6 +103,30 @@ def compute_loss(batch,
         else:
             loss_classifier = 0
         _zero = torch.tensor(0.0, device=args.device)
+        return (total_loss, _zero, _zero, _zero, loss_classifier,
+                train_feats, train_labels)
+
+    # ----------------- L1 rung: contrastive term switched OFF (BCE only) -----------------
+    # idea-stage/RGCL_ABLATION_FREEZE.md. contrast_mode == 'none' makes the whole
+    # contrastive branch (in-batch negatives + mined positive/negative) identically
+    # zero, so the head is trained by BCE alone. The BCE is still combined through the
+    # SAME `total_loss*(1-ce_weight) + BCE*ce_weight` assembly, so the BCE gradient
+    # scale is identical to the L2/L3 rungs (the ONLY difference is the missing
+    # contrastive gradient). Default 'retrieval' skips this block entirely -> the
+    # deployed path below runs byte-identically.
+    if getattr(args, "contrast_mode", "retrieval") == "none":
+        if not args.hybrid_loss:
+            raise ValueError(
+                "--contrast_mode none is the BCE-only rung and requires "
+                "--hybrid_loss True (otherwise the total loss is identically 0).")
+        _zero = torch.tensor(0.0, device=args.device)
+        if args.pos_weight_value is not None:
+            lossFn_classifier = nn.BCEWithLogitsLoss(
+                pos_weight=torch.tensor([args.pos_weight_value], device=args.device))
+        else:
+            lossFn_classifier = nn.BCEWithLogitsLoss()
+        loss_classifier = lossFn_classifier(output, bce_target(labels, ids, args))
+        total_loss = _zero * (1 - args.ce_weight) + loss_classifier * args.ce_weight
         return (total_loss, _zero, _zero, _zero, loss_classifier,
                 train_feats, train_labels)
 
@@ -275,7 +342,16 @@ def compute_loss(batch,
 
     # Only hard negative
     #print("start to retrieve hard negatives and pseudo gold")
-    if args.sparse_dictionary is None:
+    if getattr(args, "contrast_mode", "retrieval") == "random":
+        # ----------------- L2 rung: random in-batch pairs, no retrieval -----------------
+        # idea-stage/RGCL_ABLATION_FREEZE.md. Structurally identical to the deployed
+        # rung -- same triplet/margin, same in-batch negative term, same detached
+        # partner vectors, same per-anchor counts -- the ONLY change is the SELECTION
+        # RULE: uniform random instead of FAISS-nearest. No index is built, so
+        # train_feats/train_labels stay untouched (pass straight through).
+        hard_negative_features, pseudo_positive_features = _random_inbatch_pairs(
+            feats, labels, args)
+    elif args.sparse_dictionary is None:
         if args.hard_negatives_loss and args.no_pseudo_gold_positives == 0:
             (
                 hard_negative_features,
@@ -630,6 +706,55 @@ def compute_loss(batch,
         total_loss = total_loss + lambda_tarc * tarc_loss
 
     return total_loss, torch.mean(in_batch_loss), torch.mean(hard_loss), torch.mean(pseudo_gold_loss), loss_classifier, train_feats, train_labels
+
+
+def _random_inbatch_pairs(feats, labels_bool, args):
+    """L2 rung of the component ablation: uniform-random in-batch partners.
+
+    Returns (hard_negative_features [B, no_hard_negatives, dim],
+             pseudo_positive_features [B, no_pseudo_gold_positives, dim]),
+    matching the shapes/dtype/device/detachment of the FAISS-mined tensors the
+    deployed path produces, so the downstream loss code is bit-for-bit the same
+    arithmetic on differently-selected vectors.
+
+    Selection rule: for each anchor i, draw the positive uniformly at random
+    among the OTHER same-label rows of the current batch and the negative
+    uniformly at random among the opposite-label rows. Under a shuffled loader
+    the batch is itself a uniform random subset of train, so this is
+    distributionally a uniform random draw from the same train pool the FAISS
+    index is built over -- the pool is held fixed and only "nearest" -> "random"
+    changes.
+
+    Partners are DETACHED, exactly like the mined rows (which come from the
+    per-epoch detached train bank), so gradient flows through the anchor only.
+    Anchors with no eligible partner keep the all-zero vector, which is the same
+    "not found" convention the mining path uses (cosine 0 for the positive,
+    zeroLoss_mask 0 for the negative).
+    """
+    batch_size, dim = feats.shape
+    src = feats.detach()
+    lab = labels_bool.reshape(-1).long()
+    same = lab.unsqueeze(0) == lab.unsqueeze(1)
+    eye = torch.eye(batch_size, dtype=torch.bool, device=feats.device)
+    pos_mask = same & (~eye)
+    neg_mask = ~same
+
+    def _draw(mask, n_per_anchor):
+        out = torch.zeros(batch_size, n_per_anchor, dim, device=feats.device)
+        if n_per_anchor <= 0:
+            return out
+        for i in range(batch_size):
+            cand = mask[i].nonzero(as_tuple=False).reshape(-1)
+            if cand.numel() == 0:
+                continue
+            pick = cand[torch.randint(
+                0, cand.numel(), (n_per_anchor,), device=feats.device)]
+            out[i] = src[pick]
+        return out
+
+    hard_negative_features = _draw(neg_mask, args.no_hard_negatives)
+    pseudo_positive_features = _draw(pos_mask, args.no_pseudo_gold_positives)
+    return hard_negative_features, pseudo_positive_features
 
 
 def _nca_head_loss(feats, labels, nca_bank, batch_ids, args):

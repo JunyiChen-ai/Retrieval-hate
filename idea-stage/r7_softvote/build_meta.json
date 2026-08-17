@@ -1,0 +1,135 @@
+{
+ "freeze": "idea-stage/R7_SOFTVOTE_FREEZE.md",
+ "rule": "p = (#Hateful + w*#Offensive) / n_annotators; Counter Narrative counted as non-positive (denominator only)",
+ "train_only_guard": "only *_train.tsv opened",
+ "datasets": {
+  "MHC_zh": {
+   "vote_tsv": "data/gt/mhc_votes/mhc_Chinese_train.tsv",
+   "vote_tsv_sha256": "de9cacc45e0740d90362f8797b441a35194b5d90602e4c095472d1f39f2bd7bb",
+   "gt_jsonl": "data/gt/MHC_zh/train.jsonl",
+   "n_train": 579,
+   "hard_pos_rate": 0.31088082901554404,
+   "vote_vocab": {
+    "Normal": 797,
+    "Offensive": 293,
+    "Hateful": 183,
+    "Counter Narrative": 47,
+    "No": 1
+   },
+   "annotators_per_video": {
+    "2": 422,
+    "3": 151,
+    "4": 6
+   },
+   "arms": {
+    "SOFT10": {
+     "w": 1.0,
+     "target_json": "idea-stage/r7_softvote/targets_MHC_zh_SOFT10.json",
+     "target_json_sha256": "c451049f2c493c3e0734c4066541f94d2ebd2a710f7d771440aa7b9f002ef46b",
+     "mean_target": 0.31994818652849744,
+     "frac_non_degenerate": 0.18134715025906736,
+     "n_distinct_values": 6,
+     "distinct_values": [
+      0.0,
+      0.333333,
+      0.5,
+      0.666667,
+      0.75,
+      1.0
+     ],
+     "corr_with_hard_label": 0.9490010447368462,
+     "mean_binary_entropy_nats": 0.11488726352057248,
+     "matched_LS_epsilon": 0.02445044033893274,
+     "LS_entropy_check_nats": 0.11488726352057246,
+     "n_disagree_with_hard_label_side": 1
+    },
+    "SOFT05": {
+     "w": 0.5,
+     "target_json": "idea-stage/r7_softvote/targets_MHC_zh_SOFT05.json",
+     "target_json_sha256": "9951ddf1eb3a06e67325d2dff4708b564cfb29dcfc33389ee248c8cd4836ffdc",
+     "mean_target": 0.2191278065630397,
+     "frac_non_degenerate": 0.3696027633851468,
+     "n_distinct_values": 9,
+     "distinct_values": [
+      0.0,
+      0.166667,
+      0.333333,
+      0.375,
+      0.5,
+      0.625,
+      0.666667,
+      0.833333,
+      1.0
+     ],
+     "corr_with_hard_label": 0.8983205373352889,
+     "mean_binary_entropy_nats": 0.2220726779707315,
+     "matched_LS_epsilon": 0.05823122386517614,
+     "LS_entropy_check_nats": 0.22207267797073146,
+     "n_disagree_with_hard_label_side": 25
+    }
+   }
+  },
+  "MHC": {
+   "vote_tsv": "data/gt/mhc_votes/mhc_English_train.tsv",
+   "vote_tsv_sha256": "f4452dbed4d31d6a1268be1a40a81b707e87b997db261449c054a9470c65e589",
+   "gt_jsonl": "data/gt/MHC/train.jsonl",
+   "n_train": 549,
+   "hard_pos_rate": 0.30601092896174864,
+   "vote_vocab": {
+    "Normal": 758,
+    "Offensive": 280,
+    "Counter Narrative": 41,
+    "Hateful": 108
+   },
+   "annotators_per_video": {
+    "2": 461,
+    "3": 87,
+    "4": 1
+   },
+   "arms": {
+    "SOFT10": {
+     "w": 1.0,
+     "target_json": "idea-stage/r7_softvote/targets_MHC_SOFT10.json",
+     "target_json_sha256": "ab22acba6478d58c5c31918a45547249b48700f7cf06508ebe7cca33b8af9205",
+     "mean_target": 0.29401942926533087,
+     "frac_non_degenerate": 0.09836065573770492,
+     "n_distinct_values": 5,
+     "distinct_values": [
+      0.0,
+      0.333333,
+      0.666667,
+      0.75,
+      1.0
+     ],
+     "corr_with_hard_label": 0.9753115098573604,
+     "mean_binary_entropy_nats": 0.06247283438691468,
+     "matched_LS_epsilon": 0.011429776772735926,
+     "LS_entropy_check_nats": 0.06247283438691468,
+     "n_disagree_with_hard_label_side": 0
+    },
+    "SOFT05": {
+     "w": 0.5,
+     "target_json": "idea-stage/r7_softvote/targets_MHC_SOFT05.json",
+     "target_json_sha256": "2cd48051c7f8db30afb0be3c3be22a3bf21f34a08a13cc78e7db7912fb8b2e6d",
+     "mean_target": 0.1845780206435944,
+     "frac_non_degenerate": 0.30783242258652094,
+     "n_distinct_values": 7,
+     "distinct_values": [
+      0.0,
+      0.166667,
+      0.333333,
+      0.5,
+      0.666667,
+      0.833333,
+      1.0
+     ],
+     "corr_with_hard_label": 0.9184643392831471,
+     "mean_binary_entropy_nats": 0.19288233303802318,
+     "matched_LS_epsilon": 0.0480999961962551,
+     "LS_entropy_check_nats": 0.19288233303802316,
+     "n_disagree_with_hard_label_side": 27
+    }
+   }
+  }
+ }
+}

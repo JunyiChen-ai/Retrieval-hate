@@ -144,6 +144,24 @@ def parse_args():
     arg_parser.add_argument("--triplet_margin", type=float, default=0.1,
                             help="The margin for triplet loss, epsilon")
 
+    # <----------------- RGCL component-ablation ladder (idea-stage/RGCL_ABLATION_FREEZE.md) ----------------->
+    arg_parser.add_argument(
+        "--contrast_mode", type=str, default="retrieval",
+        choices=["retrieval", "random", "none"],
+        help="Which contrastive term the head is trained with. "
+             "'retrieval' (default) = the deployed RGCL term: FAISS-mined "
+             "pseudo-gold positive + mined hard negative (EXACT no-op vs the "
+             "pre-existing code path, byte-identical). "
+             "'random' = same triplet/margin/weights and the same in-batch "
+             "negative term, but the per-anchor positive/negative are drawn "
+             "UNIFORMLY AT RANDOM from the current batch (same-label / "
+             "opposite-label respectively), detached exactly like the mined "
+             "bank rows; no FAISS index is built. "
+             "'none' = the contrastive term is identically zero; the head is "
+             "trained by BCE only (requires --hybrid_loss True). The BCE is "
+             "still scaled by --ce_weight so its gradient scale is IDENTICAL "
+             "across the three levels.")
+
     arg_parser.add_argument("--norm_feats_loss", type=lambda x: (str(x).lower() == "true"), default=False,
                             help="Whether to normalize the feature fpr computing loss ")
 
@@ -275,6 +293,19 @@ def parse_args():
         type=lambda x: (str(x).lower() == "true"),
         default=False,
         help="Doing the final eval or not",
+    )
+
+    arg_parser.add_argument(
+        "--val_only_eval",
+        type=lambda x: (str(x).lower() == "true"),
+        default=False,
+        help="TEST-SET FIREWALL. When True, the test_seen split is DISCARDED "
+             "immediately after loading and replaced by a copy of dev_seen, so "
+             "no test row ever reaches a metric, a retrieval index, or a "
+             "checkpoint-selection decision. The per-epoch 'Test_Retrieval' "
+             "lines then carry dev numbers and MUST be ignored (read the "
+             "'Val_Retrieval' lines instead). Default False keeps the original "
+             "behaviour bit-for-bit.",
     )
 
     arg_parser.add_argument("--exp_comment", type=str, default="",
@@ -589,6 +620,24 @@ def parse_args():
         "--mixup_alpha", type=float, default=0.0,
         help="Beta(alpha,alpha) parameter for --mixup (active only when --mixup True "
              "and mixup_alpha > 0).")
+
+    # <----------------- R7 round-7 pilots: additive, no-op by default ----------------->
+    # idea-stage/R7_SOFTVOTE_FREEZE.md / idea-stage/R7_OCRPROV_FREEZE.md.
+    # All three default to off; with them off every prior run reproduces byte-identically.
+    arg_parser.add_argument(
+        "--soft_target_json", type=str, default=None,
+        help="R7-1. JSON {'targets': {train_id: p}} replacing the hard BCE training "
+             "target by an annotator-vote soft target. TRAIN only; evaluation always "
+             "uses the hard cached labels. Mutually exclusive with --label_smoothing. "
+             "Active only on the BCE path (--contrast_mode none).")
+    arg_parser.add_argument(
+        "--label_smoothing", type=float, default=0.0,
+        help="R7-1 control. Binary label smoothing of the BCE training target: "
+             "y' = (1-2e)y + e. 0.0 (default) = off.")
+    arg_parser.add_argument(
+        "--dump_head_scores", type=str, default=None,
+        help="R7-2. Append per-epoch per-item dev/test head logits as JSONL to this "
+             "path. Read-out only; never feeds back into training.")
 
     args = arg_parser.parse_args()
 
@@ -1076,6 +1125,9 @@ def main(args):
             args.archive_mode,
             "-a{}".format(args.archive_alpha)
             if args.archive_mode in ("knn", "both") else "")
+    # Component-ablation ladder: keep each contrast_mode in its own output dir.
+    if str(getattr(args, "contrast_mode", "retrieval")) != "retrieval":
+        exp_name += "_cm-{}".format(args.contrast_mode)
     # P4: distinguish aux runs from the lambda_aux=0 floor within the same group.
     if float(getattr(args, "lambda_aux", 0.0)) > 0:
         exp_name += "_p4aux-l{}".format(args.lambda_aux)
@@ -1133,6 +1185,23 @@ def main(args):
         train, dev, test_seen = load_feats_from_CLIP(
             os.path.join(args.path, "CLIP_Embedding"), args.dataset, args.model
         )
+
+    # <----------------- Test-set firewall (--val_only_eval) ----------------->
+    # Drop the test split entirely and stand dev_seen in its place. Everything
+    # downstream (dataloaders, archive alignment, retrieval, metrics, ckpt
+    # selection) then sees dev rows only; the loaded test tensors are released
+    # here and never enter a computation. Inert when the flag is False.
+    if getattr(args, "val_only_eval", False):
+        if args.dataset == "FB":
+            raise NotImplementedError(
+                "--val_only_eval is only wired for the 3-split video datasets")
+        n_test_dropped = len(list(test_seen[0]))
+        test_seen = [list(dev[0]), dev[1].clone(), dev[2].clone(),
+                     dev[3].clone()]
+        print("[val_only_eval] TEST FIREWALL ON: dropped {} test_seen rows; "
+              "the 'test' slot now holds a copy of dev_seen ({} rows). "
+              "Test_Retrieval lines in this log are DEV duplicates -- ignore "
+              "them.".format(n_test_dropped, len(test_seen[0])))
 
     # <----------------- MLLM structured-archive (E0b) injection ----------------->
     # Fully inert when --archive_feats is None (bit-for-bit baseline).

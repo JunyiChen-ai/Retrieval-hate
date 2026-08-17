@@ -558,8 +558,27 @@ def eval_and_save_epoch_end(args, artifact, train_dl, dev_dl, test_dl, classifie
     
     dev_acc, dev_roc, dev_pre, dev_recall, dev_f1, loss = eval_metrics(args, dev_labels, dev_predicted, name="dev", epoch=epoch, compute_loss=compute_loss)
     test_ids, test_labels, test_predicted, _ = iterate_dl(args, test_dl, classifier)
-    test_acc, test_roc, test_pre, test_recall, test_f1, _ = eval_metrics(args, test_labels, test_predicted, name="test", epoch=epoch, compute_loss=False) 
-    
+    test_acc, test_roc, test_pre, test_recall, test_f1, _ = eval_metrics(args, test_labels, test_predicted, name="test", epoch=epoch, compute_loss=False)
+
+    # ---- R7-2 per-item head-logit dump (idea-stage/R7_OCRPROV_FREEZE.md) ----
+    # Flag-gated, default OFF -> no behavioural change.  Writes the raw
+    # pre-sigmoid head output for dev and test at every epoch so a decision-layer
+    # combiner can be fitted OFFLINE.  Nothing here feeds back into training.
+    _dump = getattr(args, "dump_head_scores", None)
+    if _dump:
+        os.makedirs(os.path.dirname(_dump) or ".", exist_ok=True)
+        with open(_dump, "a") as _fh:
+            for _sp, _i, _l, _p in (("dev", dev_ids, dev_labels, dev_predicted),
+                                    ("test", test_ids, test_labels, test_predicted)):
+                _fh.write(json.dumps({
+                    "epoch": int(epoch), "split": _sp,
+                    "ids": [str(x) for x in _i],
+                    "labels": _l.reshape(-1).long().cpu().numpy().tolist(),
+                    "logits": [float(v) for v in
+                               _p.reshape(-1).detach().cpu().numpy()],
+                }) + "\n")
+
+
     if args.save_embed:
         train_ids, train_labels, _, train_embed = iterate_dl(args, train_dl, classifier)
         pickle_dict["train_feats"] = train_embed.numpy().astype("float32")
