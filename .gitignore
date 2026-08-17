@@ -46,3 +46,6 @@ idea-stage/text_merge/__pycache__/
 # derived feature caches / probe outputs (regenerable, not records)
 idea-stage/*/out/*.npz
 idea-stage/*/out/*.npy
+
+# R16 detector prediction dumps: regenerable from scripts/r16_detbase/run_af.py in ~4 min/seed
+idea-stage/*/out/preds_*.json

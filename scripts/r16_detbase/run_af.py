@@ -164,13 +164,9 @@ def main() -> None:
                 f"tIoU{t}: F1={test_m[t]['F1']:.2f} P={test_m[t]['P']:.2f} "
                 f"R={test_m[t]['R']:.2f}" for t in (0.3, 0.5, 0.7)), flush=True)
             if args.dump_preds:
-                np.save(outdir / f"preds_test_{args.tag}_s{seed}.npy",
-                        np.array([(v, s, e, sc) for v, ps in tp_.items() for s, e, sc in ps],
-                                 dtype=object), allow_pickle=True)
+                (outdir / f"preds_test_{args.tag}_s{seed}.json").write_text(json.dumps(tp_))
         if args.dump_preds:
-            np.save(outdir / f"preds_val_{args.tag}_s{seed}.npy",
-                    np.array([(v, s, e, sc) for v, ps in vp.items() for s, e, sc in ps],
-                             dtype=object), allow_pickle=True)
+            (outdir / f"preds_val_{args.tag}_s{seed}.json").write_text(json.dumps(vp))
         res["wall_s"] = time.time() - t0
         all_res[str(seed)] = res
         (outdir / f"res_{args.tag}.json").write_text(json.dumps(all_res, indent=1))
