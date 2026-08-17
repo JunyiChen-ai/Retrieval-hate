@@ -1,0 +1,117 @@
+{
+ "freeze": "idea-stage/R11_UNION_FREEZE.md 2,3",
+ "dataset": "MHC_zh",
+ "base": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+ "n_folds": 5,
+ "fold_seed": 20260818,
+ "logreg": {
+  "C": 1.0,
+  "max_iter": 5000,
+  "solver": "lbfgs",
+  "tol": 0.0001
+ },
+ "reused_caches": {
+  "train/A0": {
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "227d350f34f023bbc712289b1e743ff592a2a617ce6890db2f90df94bba8d7f9",
+   "matches_r10_combo": true
+  },
+  "train/LL": {
+   "img_sha256": "7205b0677ddeac41fa3f7d332b7faaba713aa6e9dcbaf8813ef13a2256ecfd76",
+   "text_sha256": "bb1f27a7ecc3f3ef4569a1e7968263486357da776e8272f0705b3760a79d7661",
+   "matches_r10_combo": true
+  },
+  "train/CAT": {
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "f176fe02e7f8b2e156fde7cc505832396b28b769155dd9041f9d205bacd6c316",
+   "matches_r10_combo": true
+  },
+  "dev_seen/A0": {
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "81179bb710d75af64d3fd2ac7eecd432e6447be02c37fcfc3d17cec1e8b12323",
+   "matches_r10_combo": true
+  },
+  "dev_seen/LL": {
+   "img_sha256": "9211c5c34cfbc24e45e796782a306b8d26c16c27012bf1e7647850bf79c33828",
+   "text_sha256": "53a4fea5e8ed63cfcf50ccdaaf69c5dbd0323c8001297e6c19abf2606c9a1a7a",
+   "matches_r10_combo": true
+  },
+  "dev_seen/CAT": {
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "99de6ad36a91aebc664560abe6512af1b8e1ea29bad8d3f8d1c041701143dab3",
+   "matches_r10_combo": true
+  },
+  "test_seen/A0": {
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "f78fffbde21f4b4b46fd62be8dccf8776f6a5e7d023d16237d12e448cce17d8f",
+   "matches_r10_combo": true
+  },
+  "test_seen/LL": {
+   "img_sha256": "4e9b1375a927f0d5c8460a1f17ecae713b4de5097b0eb68b773cef30cca84a6d",
+   "text_sha256": "d61631c26327f035f793939b74826f4cbb58c1b353a90c79492e049ce656ddc1",
+   "matches_r10_combo": true
+  },
+  "test_seen/CAT": {
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "9da2fb71d8f741d4eea9195c8a132927b2ddbc0dd22b020042b931f0d60572c2",
+   "matches_r10_combo": true
+  }
+ },
+ "files": {
+  "train/MC": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R11UN-MC.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "a0ddb691a550893913e7625e2d093858adf0527830d526c2e89563c31e26eb4b"
+  },
+  "dev_seen/MC": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R11UN-MC.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "041f6af5b92d15a7d3015789d1c2f9073244c1bf2740688bff77ca8d996f64de"
+  },
+  "test_seen/MC": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R11UN-MC.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "61918dc3aba388095a039f37232f36485f92b449f49e89811010e1ab4d666b79"
+  }
+ },
+ "teachers": {
+  "A0": {
+   "path": "idea-stage/r11_union/teacher_MHC_zh_A0.json",
+   "oof_macro_f1": 0.7660624777479528,
+   "oof_acc": 0.8255613126079447,
+   "mean_abs_q_minus_y": 0.3094832062428537,
+   "frac_q_within_0.05_of_label": 0.0017271157167530224,
+   "q_mean": 0.3101370041535338,
+   "q_std": 0.18208667361583525
+  },
+  "LL": {
+   "path": "idea-stage/r11_union/teacher_MHC_zh_LL.json",
+   "oof_macro_f1": 0.8098013750954927,
+   "oof_acc": 0.8514680483592401,
+   "mean_abs_q_minus_y": 0.2833308206164842,
+   "frac_q_within_0.05_of_label": 0.031088082901554404,
+   "q_mean": 0.3100109687384753,
+   "q_std": 0.21319774691439908
+  },
+  "LBL": {
+   "path": "idea-stage/r11_union/teacher_MHC_zh_LBL.json",
+   "oof_macro_f1": 1.0,
+   "oof_acc": 1.0,
+   "mean_abs_q_minus_y": 0.0001,
+   "frac_q_within_0.05_of_label": 1.0,
+   "q_mean": 0.31091865284974096,
+   "q_std": 0.4627615521624968,
+   "note": "hard-label control, not a teacher"
+  }
+ },
+ "mc_train_mean_norm": 0.9372974038124084
+}

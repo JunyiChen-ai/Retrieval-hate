@@ -485,6 +485,21 @@ def parse_args():
         "--lambda_tarc", type=float, default=0.0,
         help="V3 intra-target separation regulariser weight. 0.0 (default) = exact "
              "no-op (the term is never computed). Pre-registered sweep 0.1 / 0.5.")
+    # <----------------- R11-UNION: churn-anchored training ----------------->
+    # idea-stage/R11_UNION_FREEZE.md section 3.  Adds  lambda_anchor * BCE(head_logit,
+    # q_teacher)  on TRAIN items only, where q_teacher is a frozen out-of-fold
+    # teacher probability read from a JSON file.  lambda_anchor == 0.0 (default) or
+    # no --anchor_logits -> the term is never computed and no RNG is drawn, so the
+    # default path is byte-identical to baseline (same additive-gating precedent as
+    # --lambda_aux / --lambda_tarc).
+    arg_parser.add_argument(
+        "--anchor_logits", type=str, default="",
+        help="Path to a JSON {video_id: teacher_probability} over TRAIN ids. Empty "
+             "(default) = no anchor pack is built = exact no-op.")
+    arg_parser.add_argument(
+        "--lambda_anchor", type=float, default=0.0,
+        help="Weight of the churn-anchor distillation term. 0.0 (default) = exact "
+             "no-op (the term is never computed).")
     arg_parser.add_argument(
         "--tarc_vote_gamma", type=float, default=0.0,
         help="V2 target-consistency kNN-vote multiplier. A neighbour whose target "
@@ -721,6 +736,7 @@ def model_pass(
     aux_pack=None,
     cf_pack=None,
     target_pack=None,
+    anchor_pack=None,
 ):
     # P4: the aux linear heads are optimised jointly with the model. When aux_pack
     # is None (lambda_aux == 0) the optimizer is built over model.parameters() only,
@@ -792,6 +808,7 @@ def model_pass(
                 aux_pack=aux_pack,
                 cf_pack=cf_pack,
                 target_pack=target_pack,
+                anchor_pack=anchor_pack,
                 nca_bank=nca_bank,
             )
             """if args.sparse_dictionary is None and (args.no_hard_negatives != 0 and args.no_pseudo_gold_positives != 0):
@@ -833,6 +850,7 @@ def model_pass(
                     aux_pack=aux_pack,
                     cf_pack=cf_pack,
                     target_pack=target_pack,
+                    anchor_pack=anchor_pack,
                     nca_bank=nca_bank,
                 )[0]
                 optimizer.zero_grad()
@@ -1537,6 +1555,37 @@ def main(args):
                   tarc_source, tarc_path, num_targets, train_have,
                   len(train_ids_t), cls_hist))
 
+    # <----------------- R11-UNION anchor_pack ----------------->
+    # idea-stage/R11_UNION_FREEZE.md section 3. Inert when --lambda_anchor == 0 or
+    # --anchor_logits is empty (anchor_pack stays None) -> byte-identical baseline
+    # (no torch RNG drawn; only reads a JSON id->probability map over TRAIN ids).
+    anchor_pack = None
+    if float(getattr(args, "lambda_anchor", 0.0)) > 0:
+        anchor_path = str(getattr(args, "anchor_logits", "") or "")
+        if not anchor_path:
+            raise SystemExit(
+                "HALT: --lambda_anchor > 0 requires --anchor_logits <json>")
+        if not os.path.exists(anchor_path):
+            raise FileNotFoundError(
+                "anchor teacher file not found: {}".format(anchor_path))
+        with open(anchor_path, "r") as f:
+            raw_anchor = json.load(f)
+        id_to_q = {str(k): float(v) for k, v in raw_anchor.items()
+                   if not str(k).startswith("_")}
+        train_ids_a = list(train_set.ids)
+        cover = sum(1 for vid in train_ids_a if vid in id_to_q)
+        anchor_pack = {"id_to_q": id_to_q,
+                       "source": anchor_path,
+                       "meta": raw_anchor.get("_meta", {})}
+        print("[anchor] lambda_anchor={} source={} train coverage={}/{} "
+              "teacher_meta={}".format(
+                  args.lambda_anchor, anchor_path, cover, len(train_ids_a),
+                  raw_anchor.get("_meta", {})))
+        if cover != len(train_ids_a):
+            raise SystemExit(
+                "HALT: anchor teacher covers {}/{} train ids".format(
+                    cover, len(train_ids_a)))
+
     # <----------------- Train the model ----------------->
     if segment_cache is not None and args.seg_mode in ("consensus", "selfscore"):
         # EM driver (DESIGN_iter3 SS2). Each round: M-step = retrain the head
@@ -1620,6 +1669,7 @@ def main(args):
             aux_pack=aux_pack,
             cf_pack=cf_pack,
             target_pack=target_pack,
+            anchor_pack=anchor_pack,
         )
 
 if __name__ == "__main__":

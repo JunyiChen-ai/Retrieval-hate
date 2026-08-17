@@ -1,0 +1,117 @@
+{
+ "freeze": "idea-stage/R11_UNION_FREEZE.md 2,3",
+ "dataset": "HateMM",
+ "base": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+ "n_folds": 5,
+ "fold_seed": 20260818,
+ "logreg": {
+  "C": 1.0,
+  "max_iter": 5000,
+  "solver": "lbfgs",
+  "tol": 0.0001
+ },
+ "reused_caches": {
+  "train/A0": {
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "e6bf32961c43da8be5e0ff561812824c4a89bf8a839ea11a1054b004ad2834e7",
+   "matches_r10_combo": true
+  },
+  "train/LL": {
+   "img_sha256": "6f91d26680cbb0f95978640182a0af01c053d9177122e217a07eec44233d983e",
+   "text_sha256": "aeae005d169828313d555846bc219521140dd77498018d9e3220da04bb807bfa",
+   "matches_r10_combo": true
+  },
+  "train/CAT": {
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da",
+   "matches_r10_combo": true
+  },
+  "dev_seen/A0": {
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "20a882f90330c66a438e54f2b9bdd3220e6b55f3682bedd6f5c751ed77551ca9",
+   "matches_r10_combo": true
+  },
+  "dev_seen/LL": {
+   "img_sha256": "f47cb4df85338e1d05dd5cabee24ed4993dee529d5f3ed4ca2852b3429cd9958",
+   "text_sha256": "ccee4111b896d965898c45abaca16b1ad378acb3abc312a294722e9daf0c74d6",
+   "matches_r10_combo": true
+  },
+  "dev_seen/CAT": {
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7",
+   "matches_r10_combo": true
+  },
+  "test_seen/A0": {
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "af953e54bffc2a2b90c1a5fe32b8cf4ebc5c3930d726c68215f1a3c344ea822f",
+   "matches_r10_combo": true
+  },
+  "test_seen/LL": {
+   "img_sha256": "4cfc3db0236e2e35080a622e63afe24f03aa8a9e9d6536841dd3bbd6adfb6bdc",
+   "text_sha256": "32c94af2f1dfadd707354f3e390cbca4ef217ea2df4421de51b96f607b7a4a41",
+   "matches_r10_combo": true
+  },
+  "test_seen/CAT": {
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad",
+   "matches_r10_combo": true
+  }
+ },
+ "files": {
+  "train/MC": {
+   "path": "data/CLIP_Embedding/HateMM/train_R11UN-MC.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "a73a75d9624ff857aa4ee759d22dfbef7434ee5e7908061f0113750ee85ed245"
+  },
+  "dev_seen/MC": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R11UN-MC.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "bc5f71a17adb29cda309f6df53134e345f97e890eeb134acd1a79dc09bd07988"
+  },
+  "test_seen/MC": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R11UN-MC.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "ffcb9f83dda5c58ecbaf16913c974f146b95023da557a3e5b090a10b1a82eda8"
+  }
+ },
+ "teachers": {
+  "A0": {
+   "path": "idea-stage/r11_union/teacher_HateMM_A0.json",
+   "oof_macro_f1": 0.8643779431869968,
+   "oof_acc": 0.8709677419354839,
+   "mean_abs_q_minus_y": 0.2753914450263465,
+   "frac_q_within_0.05_of_label": 0.002688172043010753,
+   "q_mean": 0.3994486903496349,
+   "q_std": 0.2714893393098508
+  },
+  "LL": {
+   "path": "idea-stage/r11_union/teacher_HateMM_LL.json",
+   "oof_macro_f1": 0.8748012335338172,
+   "oof_acc": 0.8803763440860215,
+   "mean_abs_q_minus_y": 0.24982971018297367,
+   "frac_q_within_0.05_of_label": 0.024193548387096774,
+   "q_mean": 0.3991236375777195,
+   "q_std": 0.30001302316822975
+  },
+  "LBL": {
+   "path": "idea-stage/r11_union/teacher_HateMM_LBL.json",
+   "oof_macro_f1": 1.0,
+   "oof_acc": 1.0,
+   "mean_abs_q_minus_y": 0.0001,
+   "frac_q_within_0.05_of_label": 1.0,
+   "q_mean": 0.40055752688172047,
+   "q_std": 0.4899093840090432,
+   "note": "hard-label control, not a teacher"
+  }
+ },
+ "mc_train_mean_norm": 0.9388481378555298
+}

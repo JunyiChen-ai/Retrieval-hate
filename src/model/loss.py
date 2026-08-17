@@ -64,6 +64,7 @@ def compute_loss(batch,
                 aux_pack=None,
                 cf_pack=None,
                 target_pack=None,
+                anchor_pack=None,
                 nca_bank=None,
                 ):
     ids = batch["ids"]
@@ -103,6 +104,10 @@ def compute_loss(batch,
         else:
             loss_classifier = 0
         _zero = torch.tensor(0.0, device=args.device)
+        _lam_anc = float(getattr(args, "lambda_anchor", 0.0))
+        if _lam_anc > 0 and anchor_pack is not None:
+            total_loss = total_loss + _lam_anc * compute_anchor_loss(
+                output, ids, anchor_pack, args)
         return (total_loss, _zero, _zero, _zero, loss_classifier,
                 train_feats, train_labels)
 
@@ -127,6 +132,13 @@ def compute_loss(batch,
             lossFn_classifier = nn.BCEWithLogitsLoss()
         loss_classifier = lossFn_classifier(output, bce_target(labels, ids, args))
         total_loss = _zero * (1 - args.ce_weight) + loss_classifier * args.ce_weight
+        # R11-UNION churn anchor -- the deployed R10/R11 recipe runs through THIS
+        # rung (--contrast_mode none), so the term has to be added here as well as in
+        # the retrieval path below. lambda_anchor == 0 -> exact no-op.
+        _lam_anc = float(getattr(args, "lambda_anchor", 0.0))
+        if _lam_anc > 0 and anchor_pack is not None:
+            total_loss = total_loss + _lam_anc * compute_anchor_loss(
+                output, ids, anchor_pack, args)
         return (total_loss, _zero, _zero, _zero, loss_classifier,
                 train_feats, train_labels)
 
@@ -705,6 +717,18 @@ def compute_loss(batch,
         tarc_loss = compute_target_loss(feats, batch["ids"], target_pack, labels, args)
         total_loss = total_loss + lambda_tarc * tarc_loss
 
+    # ----------------- R11-UNION: churn-anchor distillation term -----------------
+    # L = L_main + lambda_anchor * BCE(head_logit, q_teacher)  over TRAIN items.
+    # q_teacher is a FROZEN out-of-fold teacher probability (idea-stage/
+    # R11_UNION_FREEZE.md section 3); nothing here is learned or selected at run time.
+    # lambda_anchor == 0 (or no anchor_pack) -> EXACT no-op, identical to baseline.
+    # Reuses the SAME grad-tracked head output `output` from the forward pass above
+    # (no second forward, no extra dropout RNG) -- mirrors P4 / TARC.
+    lambda_anchor = float(getattr(args, "lambda_anchor", 0.0))
+    if lambda_anchor > 0 and anchor_pack is not None:
+        anchor_loss = compute_anchor_loss(output, ids, anchor_pack, args)
+        total_loss = total_loss + lambda_anchor * anchor_loss
+
     return total_loss, torch.mean(in_batch_loss), torch.mean(hard_loss), torch.mean(pseudo_gold_loss), loss_classifier, train_feats, train_labels
 
 
@@ -899,6 +923,43 @@ def compute_aux_loss(feats, batch_ids, aux_pack, args):
         else:
             total = total + bce(logits, tgt.float())
     return total
+
+
+def compute_anchor_loss(output, batch_ids, anchor_pack, args):
+    """R11-UNION churn anchor: soft-target BCE toward a frozen teacher probability.
+
+        L_anchor = mean_i  BCEWithLogits( z_i , q_i )
+
+    where z_i is the head's pre-sigmoid output for train item i and q_i in (0,1) is
+    the teacher's OUT-OF-FOLD probability for that item, read from a JSON map that is
+    fixed before the run and never touched again.  Minimising this pulls the student's
+    train-time decision surface toward the teacher's, which is the mechanism under
+    test: keep the items the anchor model already gets right (suppress churn) while
+    the new features are still free to fix the ones it gets wrong.
+
+    Note the constant offset: soft-target BCE equals KL(q || sigma(z)) plus the
+    teacher's own binary entropy H(q), which does not depend on the model, so the
+    gradient is exactly the KL gradient.
+
+    Every train id must be covered (checked in run_rac before the loop), so no
+    masking is needed; ids missing from the map would be skipped defensively here.
+    Returns a scalar (0 when no batch item has a teacher entry).
+    """
+    device = args.device
+    id_to_q = anchor_pack["id_to_q"]
+    q_list, keep = [], []
+    for j, vid in enumerate(batch_ids):
+        v = id_to_q.get(str(vid))
+        if v is None:
+            continue
+        keep.append(j)
+        q_list.append(float(v))
+    if not keep:
+        return torch.zeros((), device=device)
+    idx = torch.as_tensor(keep, dtype=torch.long, device=device)
+    q = torch.as_tensor(q_list, dtype=torch.float32, device=device).reshape(-1, 1)
+    z = output.reshape(-1, 1).index_select(0, idx)
+    return nn.functional.binary_cross_entropy_with_logits(z, q)
 
 
 def compute_target_loss(feats, batch_ids, target_pack, labels, args):
