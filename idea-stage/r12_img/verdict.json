@@ -1,0 +1,190 @@
+{
+ "freeze": "idea-stage/R12_FREEZE.md 2.5",
+ "bar": 0.005,
+ "p2_harm_bound": -0.005,
+ "candidates": {
+  "ISPLIT": {
+   "per_dataset": {
+    "MHC_zh": {
+     "clause1_vs_I0": {
+      "mean": -0.003111616440871438,
+      "ci95": [
+       -0.009073464440269149,
+       0.0024126573213245624
+      ],
+      "pass": false
+     },
+     "clause2_vs_IRW": {
+      "mean": -0.0021771771370867944,
+      "ci95": [
+       -0.008038176344696455,
+       0.003325255469935644
+      ],
+      "pass": false
+     },
+     "clause3_vs_IRSPLIT": {
+      "mean": -0.005707987244398112,
+      "ci95": [
+       -0.011588533355656716,
+       -9.355074192036805e-05
+      ],
+      "pass": false
+     },
+     "clause4_P2_no_harm": {
+      "mean": -0.005210794924951897,
+      "ci95": [
+       -0.011729550983277793,
+       0.0004462370091838592
+      ],
+      "pass": false
+     },
+     "dev_contrast": {
+      "mean": -0.003986666666666664,
+      "ci95": [
+       -0.009566916666666665,
+       0.0014600833333333427
+      ]
+     },
+     "dev_demotion_fired": false
+    },
+    "HateMM": {
+     "clause1_vs_I0": {
+      "mean": 0.002454190898250171,
+      "ci95": [
+       -0.005121374791168771,
+       0.010695869421411106
+      ],
+      "pass": false
+     },
+     "clause2_vs_IRW": {
+      "mean": 0.002821929594693599,
+      "ci95": [
+       -0.0040980055881936,
+       0.009570375761111024
+      ],
+      "pass": false
+     },
+     "clause3_vs_IRSPLIT": {
+      "mean": 0.00471633216833313,
+      "ci95": [
+       -0.004538880671728637,
+       0.014404964266123654
+      ],
+      "pass": false
+     },
+     "clause4_P2_no_harm": {
+      "mean": 0.009560664515555432,
+      "ci95": [
+       0.002672912411669066,
+       0.017953935307001574
+      ],
+      "pass": true
+     },
+     "dev_contrast": {
+      "mean": -0.0016933333333333318,
+      "ci95": [
+       -0.004693333333333327,
+       0.0012933333333333314
+      ]
+     },
+     "dev_demotion_fired": false
+    }
+   },
+   "all_clauses_pass": false,
+   "dev_demotion_fired": false,
+   "verdict": "DOES NOT STAND"
+  },
+  "I2M": {
+   "per_dataset": {
+    "MHC_zh": {
+     "clause1_vs_I0": {
+      "mean": 0.0006537855921796824,
+      "ci95": [
+       -0.004680283045399355,
+       0.005923526917723603
+      ],
+      "pass": false
+     },
+     "clause2_vs_IRW": {
+      "mean": 0.001588224895964326,
+      "ci95": [
+       -0.0030239943598204177,
+       0.006161689124479848
+      ],
+      "pass": false
+     },
+     "clause3_vs_IRSPLIT": {
+      "mean": -0.0019425852113469921,
+      "ci95": [
+       -0.008111522211148579,
+       0.004319718073192535
+      ],
+      "pass": false
+     },
+     "clause4_P2_no_harm": {
+      "mean": -0.008408839455107968,
+      "ci95": [
+       -0.014451613418279732,
+       -0.0025246050650806788
+      ],
+      "pass": false
+     },
+     "dev_contrast": {
+      "mean": -0.00213999999999999,
+      "ci95": [
+       -0.006936750000000002,
+       0.0027933333333333477
+      ]
+     },
+     "dev_demotion_fired": false
+    },
+    "HateMM": {
+     "clause1_vs_I0": {
+      "mean": -0.0005602401592110118,
+      "ci95": [
+       -0.008779981963944474,
+       0.008310640894913856
+      ],
+      "pass": false
+     },
+     "clause2_vs_IRW": {
+      "mean": -0.000192501462767584,
+      "ci95": [
+       -0.0059898912224554315,
+       0.005786361923399011
+      ],
+      "pass": false
+     },
+     "clause3_vs_IRSPLIT": {
+      "mean": 0.0017019011108719468,
+      "ci95": [
+       -0.0063520315230340295,
+       0.010362939670652478
+      ],
+      "pass": false
+     },
+     "clause4_P2_no_harm": {
+      "mean": 0.011879658497899166,
+      "ci95": [
+       0.0042942022895817965,
+       0.020374225599574837
+      ],
+      "pass": true
+     },
+     "dev_contrast": {
+      "mean": -0.0011400000000000002,
+      "ci95": [
+       -0.004066833333333337,
+       0.0017199999999999956
+      ]
+     },
+     "dev_demotion_fired": false
+    }
+   },
+   "all_clauses_pass": false,
+   "dev_demotion_fired": false,
+   "verdict": "DOES NOT STAND"
+  }
+ },
+ "entry": "none -- the image stream's flat prefix mean is not improved by a semantic positional split or a second-moment readout at this sample size; the last never-varied readout is measured and closed"
+}

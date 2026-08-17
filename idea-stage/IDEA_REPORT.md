@@ -3564,3 +3564,255 @@ labels as a disclosed diagnostic over two already-deployed encoders; D2 opened n
 and it is the clause that carried the round's most informative number. (f) ImpliHateVid was excluded
 from R9-1 and the exclusion was declared in the freeze, because it has no LoRA-adapted cache.
 (g) Total API spend for the round: **¥0.00 of ¥15**.
+
+---
+
+## §13 — Round 10 (2026-08-18): the read-out axis is finished, and the breakage mechanism is measured
+
+**Cost: ¥0.00 of a ¥15 round budget (cumulative ¥0 of ¥60). ~2 h on the local RTX 5090, shared.
+One extraction pass (1872 videos, 0 failures) and 675 head-training runs (360 + 315), 0 failures,
+0 NaN, 0 test-label tuning.**
+
+### 13.0 Headline
+
+Round 10 took the two things round 9-11 had left open — the untouched image-stream read-out, and
+the standing recommendation that *"any future attempt needs a mechanism that changes which items get
+broken"* — and measured both. Both are negative, and the second is negative in a way that closes
+the recommendation rather than merely failing it.
+
+- **The read-out axis is now measured on all three of its dimensions and one of the three works.**
+  Layer (`L24⊕L28`, demoted after two failures to replicate), text token position (`CAT`, four
+  replications, banked), image token position (this round, closed).
+- **The image stream's read-out is insensitive to which positions you pool.** Four variants plus
+  three standalone sub-spans sit inside a 0.005 band of the deployed mean on both datasets, every
+  judgement CI straddling zero. On MHC-ZH the *semantic* split loses to a **random** positional
+  split with the same block sizes (−0.0057, CI excluding zero).
+- **The effective-rank premise resolved against the pilot, as the freeze said it might.** A
+  19-position random subset carries twice the within-class effective rank of the deployed read-out
+  and buys nothing. Within-class effective rank does not predict head accuracy on this substrate.
+- **Reference-correctness-gated distillation — the family the literature nominates for changing the
+  error set — does not change the error set.** Every anchored arm's test errors overlap `CAT`'s at
+  Jaccard **0.84-0.96**, against **0.605 / 0.744** for `CAT` vs the layer axis. A change of input
+  features moves which items are wrong three to four times as far as any objective change tested.
+- **Cumulative across ten rounds: 114 candidates, one banked entry (`CAT`).**
+
+### 13.1 What was searched (`idea-stage/R12_CANDIDATES.md`)
+
+Three parallel literature sweeps on angles this project had never covered: mechanisms that change
+per-example error composition beyond prediction churn; the image stream's position axis; and
+label-free structural / spectral / frequency-domain feature transforms. Twelve candidates were
+generated and scored by **gpt-5.6-sol at xhigh reasoning**, hostile, with the full constraint map.
+
+| rank | candidate | composite | reviewer's verdict |
+|---|---|---|---|
+| 1 | **B2 IMGSPLIT** | 4.8 | readout axis genuinely untouched; not a method paper |
+| 2 | **B1 IMG2M** | 4.4 | second-order image-token information unmeasured; standard ablation |
+| 3 | A5 STABSEL | 3.4 | stability identifies reproducibility, not usefulness |
+| 4 | C3 DMD-SEP | 3.1 | a DMD transfer to two blocks of one backbone |
+| 5 | **A1 FOCAL-ANCHOR** | 3.0 | mechanism difference, not a new family |
+| 6 | A4 SPECDEC | 2.9 | off-the-shelf regularisation |
+| 7 | B3 IMGSINK | 2.7 | high norm ≠ irrelevant; free choice of k |
+| 8 | A2 ELODI-ENS | 1.7 | distils a teacher ensemble that does not beat `CAT` |
+| 9 | C2 DBAT | 1.5 | diversity has no route to accuracy without banned selection |
+| 10 | A3 RECONCILE | 1.0 | the disagreement region holds too few held-out items |
+| 11 | B4 IMGFRAME | 0.7 | absorbed by four prior temporal/segment failures |
+| 12 | C1 PIDU | 0.1 | analysis, out of scope |
+
+Asked to name any missing legal family with a non-trivial prior of ≥ +0.005 on ≥ 2 datasets:
+**"There is none"** with a defensible combination of legality, probability and novelty.
+
+Two adjudications shaped the freeze and are recorded because they cost the round a claim each.
+(a) The reviewer ruled that `1(reference correct)` is a correctness bin and that weighting a loss
+term by it falls inside the campaign's ban on loss/difficulty-bin reweighting. The ban was narrowed
+**in advance** to the iteration-6 RGCL campaign it was written for, with the shuffled-mask control
+adopted as the price. (b) `Σ_s w_s KL(p‖q_s)` equals, up to a constant, anchoring to a single
+weighted geometric-mean pseudo-teacher, which in binary classification carries one scalar logit —
+so "double source" was dropped as a separate mechanism and collapsed into one explicit
+pseudo-teacher arm.
+
+### 13.2 One structural argument worth keeping independently of any candidate
+
+If the head's first operation is a dense linear layer, replacing `x` by `Ax + c` for **invertible**
+`A` is an exact reparameterisation (`W → WA⁻¹`, `b → b − WA⁻¹c`): the function class is identical,
+and any measured difference is optimiser implicit bias, basis-dependent weight decay or early
+stopping. Non-invertible linear maps can only lose information and can only help as regularisers —
+which produces exactly the dev-positive / test-negative signature this project has now seen three
+times. Published form of the theoretical half: `2605.17180` (ICML 2026).
+
+Checked against the ledger, this retrodicts six of eight dead feature-transform entries:
+corpus mean-centring (affine, inert) dead; PCA-512 (lossy regulariser) dev-positive/test-negative;
+low-rank projection of concatenated blocks actively harmful; random projections as width negative.
+The two operations that work are the two outside the inert class — row L2 normalisation is
+per-sample nonlinear, and `CAT` adds a new block rather than transforming an old one.
+**Consequence for future rounds: a label-free transform can only add value if it is genuinely
+nonlinear per sample, or injects information the head cannot already see.**
+
+### 13.3 Pilot R12-IMG — **the image read-out axis is closed** (`R12_IMG_RESULT.md`)
+
+Frozen at `a9cd557` before the pilot code existed. One extraction pass, then 8 arms × (30 + 15)
+seeds = 360 runs, seeds 800-829 / 800-814. Text stream held at `CAT` and byte-identical in every
+arm. Belt B1: the extracted `PRE` span equals the frozen deployed `prefix` pooling on the same
+forward with **max abs diff exactly 0.0**, 6/6 splits.
+
+| arm | img_feats | MHC-ZH P1 | HateMM P1 |
+|---|---|---|---|
+| **I0** deployed prefix mean | `n(PRE)` | 0.8176 ± 0.0096 | 0.8751 ± 0.0114 |
+| ISPLIT (B2) | `[n(VIS) ‖ n(INS)]` | 0.8145 ± 0.0133 | 0.8775 ± 0.0088 |
+| I2M (B1) | `[n(PRE) ‖ n(STD)]` | 0.8183 ± 0.0104 | 0.8745 ± 0.0103 |
+| IRSPLIT (random split control) | `[n(RA) ‖ n(RB)]` | 0.8202 ± 0.0122 | 0.8728 ± 0.0143 |
+| IRW (width control) | `[n(PRE) ‖ n(PRE·R)]` | 0.8167 ± 0.0110 | 0.8747 ± 0.0078 |
+| *IVIS / IINS / ISTD* (diagnostics) | — | 0.8162 / 0.8165 / 0.8151 | 0.8750 / 0.8746 / 0.8745 |
+
+`ISPLIT − I0` = −0.0031 / +0.0025; `I2M − I0` = +0.0007 / −0.0006. The only judgement CI that
+excludes zero is **`ISPLIT − IRSPLIT` = −0.0057 [−0.0116, −0.0001]** on MHC-ZH — the semantic split
+loses to the random one. The whole grid spans 0.0057 macro-F1 on MHC-ZH and 0.0047 on HateMM, about
+one test item.
+
+**The mechanism, and why it is the opposite of the text-side story.** The instruction block is
+**19 tokens** of a 1042-position prefix, so `cos(PRE, VIS) = 0.999 / 0.998` — the deployed image
+read-out *is* the vision-block mean. `CAT` worked because the deployed text read-out was the
+**short** block (3 assistant-header tokens) and the 124-229 transcript positions were pooled by
+neither stream; the image side has the reverse geometry, and its short block is drowned rather than
+unpooled. Un-drowning it buys nothing: `IINS − I0` = −0.0011 / −0.0005 from a 19-token read-out
+whose cosine to the deployed one is only 0.39 / 0.61, and on HateMM `IVIS − I0` = −0.0001 with a CI
+of [−0.0011, +0.0008] and 1/15 seeds positive. Two read-outs sharing less than half their direction
+give the same classifier.
+
+**The premise resolved against the pilot, and the freeze said in advance that it could.** Freeze
+§2.2: *"low effective rank is consistent with destructive pooling and with beneficial denoising ...
+this diagnostic motivates the pilot; it does not predict its sign."* Within-class effective rank:
+`RB`, a 19-position random complement, carries **70** against the deployed read-out's **32-37**, and
+`IRSPLIT − I0` is +0.0026 / −0.0023. `INS` carries ~30 % more rank and is neutral. `STD` is nearly
+orthogonal to `PRE` (cos −0.08 / −0.35), a genuinely new second moment, and is −0.0026 / −0.0006.
+**The image stream's low within-class rank reflects redundancy across positions, not information
+destroyed by averaging** — and effective rank does not predict head accuracy here. This also
+retires the round-9 "副读数" reading of the spectral diagnostic.
+
+### 13.4 Pilot R12-ANCHOR — **KILL**, and the round's own recommendation with it (`R12_ANCHOR_RESULT.md`)
+
+7 arms × (30 + 15) seeds = 315 runs, seeds 900-929 / 900-914, λ fixed at 0.1 (not dev-selected,
+because R11 §2.4 showed dev selection is corrupted by this family), α = 1.0, β = 3.0 frozen,
+weights normalised to train mean exactly 1.0 so uniform and focal arms carry equal expected anchor
+mass. The R11 out-of-fold teachers were reused unchanged.
+
+| clause | contrast | MHC-ZH P1 | HateMM P1 |
+|---|---|---|---|
+| 1 gain | **AF_PT − CAT** | **−0.0003 [−0.0048, +0.0041]** | **−0.0002 [−0.0038, +0.0034]** |
+| 2 filter | AF_PT − AU_PT | +0.0014 [−0.0017, +0.0044] | **−0.0044 [−0.0090, −0.0006]** |
+| 3 semantics | AF_PT − AF_SHUF | +0.0008 [−0.0018, +0.0034] | −0.0009 [−0.0053, +0.0025] |
+
+**KILL on both candidates.** Three things make this stronger than an ordinary null.
+
+1. **The focal gate is directionally wrong where the reference is good.** On HateMM, where the
+   teacher is accurate on both classes (0.910 / 0.832), the focal arm is **worse than uniform
+   anchoring with the CI excluding zero**. On MHC-ZH, where the teacher is 0.957 on negatives and
+   0.572 on positives, the gate is close to a positive-class down-weight and measures at zero.
+   It does nothing where it is most differentiated and hurts where it is least — the opposite of
+   the positive-congruent-training pattern.
+2. **The correctness semantics contribute nothing over an arbitrary class-matched bin.**
+   `AF_PT − AF_SHUF` = +0.0008 / −0.0009. The shuffled mask preserves prevalence, per-class rate
+   and the weight histogram exactly and agrees with the real mask on only 79 %. Had a gain
+   appeared, it could not have been attributed to reference correctness.
+3. **The decisive number is the secondary one.** Error-set Jaccard against `CAT`, seed-paired at
+   each arm's own P1 epoch: **0.842-0.907 on MHC-ZH, 0.908-0.959 on HateMM**, 10-15× the
+   independence null. `R10_COMBO_RESULT.md` §3 measured `CAT` vs `L24⊕L28` — two genuinely
+   different read-outs — at **0.605 / 0.744**. Mean error counts across all seven arms span
+   0.34 items (MHC-ZH) and 0.87 (HateMM).
+
+So the round's standing recommendation — *"a mechanism that changes which items get broken"* — was
+tested with the family the literature nominates for exactly that job, and **the family does not
+move the error set far enough to matter**. On this substrate, changing the input features moves the
+error composition three to four times as far as changing the training objective. That is a general
+statement about where the remaining degrees of freedom are, and it points back at an axis that has
+now been measured to exhaustion.
+
+Two side records, neither an entry: `AU_PT − CAT` = **+0.0041 [+0.0008, +0.0080]** on HateMM but
+−0.0017 on MHC-ZH (fixing λ instead of dev-selecting it moved this arm from R11's −0.0041 to
++0.0041, which is a protocol observation on one dataset and nothing more); and `LBL`, the hard-label
+anchor, is again the best or joint-best anchor arm on MHC-ZH, reproducing R11's finding that soft
+out-of-fold teacher knowledge is not worth more than weighting the labels.
+
+**`CAT` replicates a fourth time**, on a fourth disjoint seed range: 0.8180 ± 0.0100 / 0.8774 ±
+0.0083 against R11's 0.8189 / 0.8783.
+
+### 13.5 The honest bottom line
+
+> **Round 10 produced no method candidate. Cumulative: 114 candidates, 1 banked entry.** The round's
+> positive content is two closures: the image-stream read-out is insensitive to which positions are
+> pooled, so the read-out axis is finished on all three of its dimensions; and the objective-level
+> family that was supposed to change which items break moves the error set an order of magnitude
+> less than a feature change does.
+
+The hostile reviewer was asked directly whether the honest conclusion is that this substrate
+contains no further reachable method contribution under these constraints. His answer was **yes**,
+with the reasons that the remaining plausible tweaks are either already-occupied methods, absorbed
+by previous failures, forbidden by the campaign rules, analysis rather than method, or
+statistically unconfirmable on the remaining data. On the one surviving entry he was blunt:
+**"Survival does not create novelty."** Both pilots this round were run *after* that judgement was
+recorded, and neither overturned it.
+
+This is now three consecutive rounds in which the axis with the strongest available premise was
+measured and closed. There is no fourth axis of the same kind.
+
+### 13.6 What closing out honestly with `CAT` as the final entry requires
+
+Transcribed from the reviewer's list, with the project's own status against each. None of it is a
+new experiment on a new idea; all of it is validation of the one thing that survived.
+
+1. **Make the 5090 experiments a self-contained ledger.** Report `CAT` only against `A0` and the
+   matched-width random control extracted in the same 5090 pipeline. Never compare `CAT`'s absolute
+   score or delta to the historical A100 ledger. *Status: already the standing R10 deviation-D1
+   rule, applied in every R10/R11/R12 document. An A100 confirmation run is therefore **not**
+   required — but if continuity with the old ledger is ever claimed, the minimum bridge is same-code
+   `A0` on the stored A100 cache versus the new 5090 cache, and without A100 access that continuity
+   claim must simply be dropped.*
+2. **One clean end-to-end extraction reproducibility check.** The four `CAT` replications are four
+   disjoint **head-seed** ranges over **one** feature cache; they are optimisation replications, not
+   representation replications. Repeat the extraction once from raw inputs with frozen model/LoRA
+   revisions, prompts, frame ids, token masks, dtype and inference settings, and re-measure.
+   *Status: **not done**. This is the single largest outstanding item.*
+3. **Audit the read-out mechanically.** Per-item token counts, special-token exclusions, the exact
+   three assistant-header positions, content spans, feature norms, cache and model checksums.
+   `CAT`'s claim rests unusually heavily on a three-token mask. *Status: partially done — span
+   statistics and LoRA sha256 verification exist in `R10_TOKPOS_RESULT.md` §2.1-2.2; the per-item
+   audit does not.*
+4. **One locked MHC-EN transport check.** The exact frozen `CAT` configuration, one extraction, no
+   retuning, paired `A0` control. Because MHC-EN's test set has participated in the broader
+   campaign, it must be called a transport check, not a fresh confirmation. *Status: **not done**;
+   MHC-EN has raw video but no read-out cache, so it costs one two-forward extraction pass.*
+5. **Add sampling robustness, not more seeds.** A pre-committed repeated stratified cross-validation
+   comparison on train+dev would show `CAT` is not carried by one split. It still cannot undo
+   adaptive dataset reuse. *Status: **not done**.*
+6. **Disclose the selection history.** State plainly that roughly 90 candidates touched the official
+   test splits before `CAT` was selected, and that the paired-bootstrap intervals are conditional
+   descriptive intervals, not post-selection-valid confirmatory ones. *Status: recorded in §12.8
+   and in every R12 document; must appear in any write-up.*
+
+The defensible final statement, in the reviewer's words: **`CAT` repeatedly improves the paired 5090
+baseline on the reused benchmark splits and beats a matched-width random control, but remains an
+exploratory, crowded feature-design result without an uncontaminated confirmatory population.**
+Under a method-paper-only rule the honest close-out is *"no publishable method emerged"* — not
+*"`CAT` became novel because it was the last survivor."*
+
+### 13.7 Reproducibility index
+
+| artifact | path |
+|---|---|
+| candidate slate + three literature sweeps + hostile review | `idea-stage/R12_CANDIDATES.md` |
+| freeze, both pilots (commit `a9cd557`, before any pilot code) | `idea-stage/R12_FREEZE.md` |
+| deviation D1 | `idea-stage/R12_DEVIATION_D1.md` |
+| image pilot: extractor, builder, runner, verdict | `idea-stage/r12_img/` |
+| image pilot result | `idea-stage/R12_IMG_RESULT.md` |
+| anchor pilot: teachers, weights, loss, runner, verdict | `idea-stage/r12_anchor/`, `src/model/loss.py` |
+| anchor pilot result | `idea-stage/R12_ANCHOR_RESULT.md` |
+| logs | `logging/runs/{r12_extract,r12_img,r12_anchor}/` |
+
+**Process notes.** (a) The decision rules for both pilots were frozen and committed before either
+pilot's code was written; the only pre-run execution was a `--smoke` path printing wall-clock,
+belt status and a NaN flag, and a unit test of the loss algebra — no arm metric. (b) Seeds 800-829 /
+800-814 and 900-929 / 900-914 are disjoint from every previously consumed range. (c) Each analyzer
+ran once on its complete grid; the one re-run is documented in deviation D1 and could only tighten a
+verdict. (d) The weighted-anchor code change was verified as an exact no-op on the default path by
+reproducing a banked R11 trainlog line for line. (e) Both pilots' belts — bit-identical deployed
+span, sha-verified random matrix, logit-recomputed macro-F1 at max abs diff 0.0 — passed.
+(f) Total API spend for the round: **¥0.00 of ¥15**.
