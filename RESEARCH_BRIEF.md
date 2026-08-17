@@ -273,6 +273,59 @@ content (`2508.10974`).
   video; MLLM intermediate hidden-state probing for hateful content in any modality; encoder-level
   PEFT for hate video. All except the last need supervision the project cannot currently buy.
 
+### 6.12 Read-out axis — measured on all three dimensions, one works (`IDEA_REPORT` §10, §13)
+
+- **Text token position works and is banked.** `CAT` = `[n(A0_28) ‖ n(TXT_28)]`, the deployed
+  3-token assistant-header read-out concatenated with a mean over the transcript-content positions
+  of the same causal forward. Four replications on disjoint seed ranges: +0.0076/+0.0101,
+  +0.0100/+0.0087, +0.0171/+0.0114, and (R12-ANCHOR reference arm) 0.8180/0.8774 reproducing R11.
+  Graded **(c) crowded** — R-BERT `1905.08284` owns the concat topology, DINOv2 `2304.07193` owns
+  the frozen two-axis linear-eval recipe. Banked as a feature default, not a direction.
+- **Layer is dead.** `L24⊕L28`: two consecutive failures to replicate on HateMM, and a MHC-ZH gain
+  that is dev-negative with the CI excluding zero while test-positive. Same signature as PCA-512
+  and corpus mean-centring — three instances of one artefact.
+- **Image token position is closed** (R12-IMG, 360 runs): semantic split −0.0031/+0.0025,
+  second-moment read-out +0.0007/−0.0006, and the semantic split **loses to a random positional
+  split** on MHC-ZH (−0.0057, CI excluding zero). Mechanism: the instruction block is 19 tokens of a
+  1042-position prefix, so `cos(PRE, VIS) = 0.999` — the deployed image read-out already *is* the
+  vision-block mean, and the short block is drowned rather than unpooled. The 19-token instruction
+  read-out alone scores −0.0011/−0.0005 at cosine 0.39/0.61 to the deployed one.
+- **Effective rank does not predict head accuracy here.** A 19-position random subset carries ~70
+  within-class effective rank against the deployed read-out's 32-37 and buys nothing. Any future
+  candidate motivated by a rank/variance/anisotropy diagnostic must clear this.
+
+### 6.13 The union of two read-outs is not purchasable, at the decision level or the objective level
+
+- **Decision level (R11, five mechanisms, matched controls):** averaging, dev-fitted convex
+  blending, reliability-gated selection, out-of-fold logit distillation (A0 and LL teachers) and
+  hard-label anchoring all fail to beat `CAT`. Averaging `CAT` with a **same-seed copy of itself**
+  beats averaging it with `LL` (−0.0075, CI excluding zero). The dev-fitted blend weight lands at
+  w = 1.00 on MHC-ZH and w = 0.00 on HateMM.
+- **Objective level (R12-ANCHOR, 315 runs):** reference-correctness-gated distillation
+  (PC-Training / ELODI / MPT family) is −0.0003/−0.0002 vs `CAT`; the focal gate is **worse than
+  uniform anchoring on HateMM** (−0.0044, CI excluding zero); and the gain over a class-matched
+  **shuffled** correctness mask is +0.0008/−0.0009, so nothing is attributable to correctness.
+- **The quantitative reason, and the general lesson:** every anchored arm's test-error set overlaps
+  `CAT`'s at **Jaccard 0.84-0.96**, against **0.605/0.744** for `CAT` vs `L24⊕L28`. On this
+  substrate a change of input features moves the error composition **three to four times** as far
+  as any change to the training objective. Objective-level mechanisms aimed at "changing which
+  items break" are priced and closed.
+
+### 6.14 Label-free feature transforms — most of the family is provably inert
+
+If the head's first operation is a dense linear layer, `x → Ax + c` with invertible `A` is an exact
+reparameterisation (`W → WA⁻¹`, `b → b − WA⁻¹c`); non-invertible linear maps can only lose
+information and can only help as regularisers, which is the dev-positive/test-negative signature.
+Published form: `2605.17180` (ICML 2026). This retrodicts corpus mean-centring, PCA-512, low-rank
+projection of concatenated blocks and random projections as width — all dead in-house. **A
+label-free transform can only add value if it is genuinely nonlinear per sample, or injects
+information the head cannot already see.** Whitening/isotropisation is additionally refuted for
+supervised classification (`2402.03191`, ACL 2024) and has failed twice in-house
+(`DRAFT_analysis_chapter.md` §3.13, `PCD_SPEC.md`). Massive-activation clipping reduces to
+mean-centring (`2402.17762`: setting massive activations to their corpus mean costs nothing).
+Fourier/wavelet/covariance pooling is blocked by a repo fact — token sequences are not cached, and
+the only sub-clip windows are K = 4 on the MultiHateClip splits.
+
 ---
 
 ## 7. Where the remaining headroom actually is
