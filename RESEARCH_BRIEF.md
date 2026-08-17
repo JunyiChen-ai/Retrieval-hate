@@ -243,6 +243,36 @@ content (`2508.10974`).
 - **Within-hard-label permutation nulls are invalid** (deviation D1): they manufacture the
   conditionally-independent ideal case and would force KILL for every possible input.
 
+### 6.11 Encoder adaptation — measured in round 9, cheapest mechanism killed (`IDEA_REPORT` §12)
+
+- **The axis is real**: frozen Qwen2.5-VL-7B vs its own LoRA, identical head and protocol, 15 seeds
+  — adaptation **repairs 9-12 and breaks 4-10** test items per dataset (HateMM +0.0169, HateMM
+  curric +0.0121, MHC-EN −0.0062, MHC-ZH +0.0332). It is the only lever in this substrate whose
+  repair and break populations are both double-digit; the largest head/objective/fusion effect ever
+  found here is ~3 items.
+- **The cheapest collection mechanism is dead**: R9-1 ANCHOR-INT, 7 α × 75 seeds, 0 of 3 datasets.
+  No interior mixture of frozen and adapted representations beats the better endpoint, and on
+  MHC-ZH halving the break rate keeps only 37 % of the repairs. Repairs and breaks are one scalar
+  dial, not two populations. The weight-space version is therefore not worth its extraction passes.
+- **Validation cannot select on this axis**: with 80-107 validation items drawn from the LoRA's own
+  training pool, the val ranking of α is the *reverse* of the test ranking on both English splits.
+- **The A-D family is occupied**: LwF (ECCV 2016), L2-SP (ICML 2018), DELTA (ICLR 2019), WiSE-FT
+  (CVPR 2022), model soups (ICML 2022), LP-FT (ICLR 2022), VPT (ECCV 2022), KgCoOp (CVPR 2023),
+  ProGrad / PromptSRC (ICCV 2023), "LoRA Learns Less and Forgets Less" (TMLR 2024), InfLoRA
+  (CVPR 2024), Model Tailor (CVPR 2025).
+- **Robust-loss / label-noise family priced without a pilot**: confidently-wrong train+val items are
+  1.8-4.0 % (12-45 items) per dataset, and on both MultiHateClip splits **100 % of them are
+  positives called normal** — hard positives, not symmetric noise.
+- **New occupants on this project's own datasets**: CRAVE (ICCV 2025, cross-domain meme→video
+  retrieval, HateMM + MHC-EN), MoRE (WWW 2025, video retrieval + modality experts, all three),
+  TIHD (ICMR 2026, ImpliHateVid + HateMM), IARE (SIGIR 2026), DeHate (ACM MM 2025). SOTA, protocols
+  kept separate: HateMM 5-fold 0.874 (MM-HSD), HateMM 7:1:2 0.8628 (SAGE), MHC-EN 0.7962 (SAGE),
+  MHC-ZH 0.7714 (LEAF).
+- **Verified-empty slots** (dedicated sweeps returning zero): use-vs-mention / reported speech in
+  any multimodal setting; speaker attribution × hate; counter-speech vs hate discrimination in
+  video; MLLM intermediate hidden-state probing for hateful content in any modality; encoder-level
+  PEFT for hate video. All except the last need supervision the project cannot currently buy.
+
 ---
 
 ## 7. Where the remaining headroom actually is
