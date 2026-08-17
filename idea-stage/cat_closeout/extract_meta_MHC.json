@@ -1,0 +1,67 @@
+{
+ "freeze": "idea-stage/CAT_CLOSEOUT_FREEZE.md 2.2/3.2",
+ "frozen_source_sha256": {
+  "src/utils/generate_VideoMLLM_embedding_readout_HF.py": "ef05f3d45a3e8c31f8dc198ba41e18c2e525cd29e9ba0ed539dfd9b4c6d869c3",
+  "idea-stage/r10_tokpos/extract_tokpos.py": "0220c869f7a8cbeb49aff7f5a130da2c6bfaf6e4b33d24886b9ad45985fdf884"
+ },
+ "lora_dir": "logging/lora/MHC",
+ "lora_sha256": "084883d769650b69feef528cb9f9d0348f9d0a6f62b6bf0c0ae5a19a4a2489c3",
+ "order": "forward",
+ "layer": 28,
+ "spans": [
+  "A0",
+  "TXT",
+  "S1",
+  "S2",
+  "S3",
+  "S4",
+  "ALL"
+ ],
+ "num_frames": 8,
+ "max_pixels": 200704,
+ "model": "Qwen/Qwen2.5-VL-7B-Instruct",
+ "splits": {
+  "train": {
+   "path": "data/CLIP_Embedding/MHC/train_Qwen2.5-VL-7B-Instruct-LoRA_HF-cc.pt",
+   "n": 549,
+   "zero_guard": 0,
+   "belt": {
+    "text_a0_maxdiff": 0.0,
+    "img_maxdiff": 0.0,
+    "n_belt": 12
+   },
+   "median_total": 1173.0,
+   "median_v_end": 1023.0,
+   "median_hdr": 1170.0,
+   "median_textspan": 147.0
+  },
+  "dev_seen": {
+   "path": "data/CLIP_Embedding/MHC/dev_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-cc.pt",
+   "n": 80,
+   "zero_guard": 0,
+   "belt": {
+    "text_a0_maxdiff": 0.0,
+    "img_maxdiff": 0.0,
+    "n_belt": 12
+   },
+   "median_total": 1184.5,
+   "median_v_end": 1023.0,
+   "median_hdr": 1181.5,
+   "median_textspan": 163.0
+  },
+  "test_seen": {
+   "path": "data/CLIP_Embedding/MHC/test_seen_Qwen2.5-VL-7B-Instruct-LoRA_HF-cc.pt",
+   "n": 161,
+   "zero_guard": 0,
+   "belt": {
+    "text_a0_maxdiff": 0.0,
+    "img_maxdiff": 0.0,
+    "n_belt": 12
+   },
+   "median_total": 1176.0,
+   "median_v_end": 1023.0,
+   "median_hdr": 1173.0,
+   "median_textspan": 153.0
+  }
+ }
+}

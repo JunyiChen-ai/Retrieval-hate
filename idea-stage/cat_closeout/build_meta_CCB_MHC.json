@@ -1,0 +1,158 @@
+{
+ "freeze": "idea-stage/CAT_CLOSEOUT_FREEZE.md 2.4/3.3",
+ "dataset": "MHC",
+ "prefix": "CCB",
+ "R_sha256_float32": "a64c3e16fefbbb0c593b424b264318e31ad4bb46fc22590abf12ac182bf3386c",
+ "files": {
+  "train/A0": {
+   "path": "data/CLIP_Embedding/MHC/train_CCB-A0.pt",
+   "rows": 549,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "067a532323fca5a4e596d39b8acdb70c3d705b8a68241f00987ba40b1061a771",
+   "text_sha256": "34843797310fa1d33850485b083e654c1c127616bff872f5c313cc757edebcc3"
+  },
+  "train/CAT": {
+   "path": "data/CLIP_Embedding/MHC/train_CCB-CAT.pt",
+   "rows": 549,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "067a532323fca5a4e596d39b8acdb70c3d705b8a68241f00987ba40b1061a771",
+   "text_sha256": "3a70163d2ddb761e8ce42292924faeec5b89bbf66c8113517dcb74386bde65b5"
+  },
+  "train/RAND": {
+   "path": "data/CLIP_Embedding/MHC/train_CCB-RAND.pt",
+   "rows": 549,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "067a532323fca5a4e596d39b8acdb70c3d705b8a68241f00987ba40b1061a771",
+   "text_sha256": "a185d1f013c77b49d27dc2921209a612885203f5a1e818959d8ce2d7b84d7589"
+  },
+  "dev_seen/A0": {
+   "path": "data/CLIP_Embedding/MHC/dev_seen_CCB-A0.pt",
+   "rows": 80,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "4178ad115f227f34b75595983389d2c572bf3f6da46c0690e06aa6d1c042d378",
+   "text_sha256": "d57cfa9cf4b7040c08bb27761154f44ec3c911f07b352673160fe48dc2b74ca5"
+  },
+  "dev_seen/CAT": {
+   "path": "data/CLIP_Embedding/MHC/dev_seen_CCB-CAT.pt",
+   "rows": 80,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "4178ad115f227f34b75595983389d2c572bf3f6da46c0690e06aa6d1c042d378",
+   "text_sha256": "d89a6ad8c0a8d6b27d38d213fc6e932b44c55288f3cd0d544e92a04e917b3f54"
+  },
+  "dev_seen/RAND": {
+   "path": "data/CLIP_Embedding/MHC/dev_seen_CCB-RAND.pt",
+   "rows": 80,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "4178ad115f227f34b75595983389d2c572bf3f6da46c0690e06aa6d1c042d378",
+   "text_sha256": "4741f151ccc65700a7d2953a502ef36221d33bf3e6de712fbbf91eeda05e1308"
+  },
+  "test_seen/A0": {
+   "path": "data/CLIP_Embedding/MHC/test_seen_CCB-A0.pt",
+   "rows": 161,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "130e6c9fe2b46d57feb20a12bbc1ae7899caf73734355581a57856a7388b50a8",
+   "text_sha256": "288423e3c4e756be70deebd58814fd842212fd78894ce2a8425f833bd0301264"
+  },
+  "test_seen/CAT": {
+   "path": "data/CLIP_Embedding/MHC/test_seen_CCB-CAT.pt",
+   "rows": 161,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "130e6c9fe2b46d57feb20a12bbc1ae7899caf73734355581a57856a7388b50a8",
+   "text_sha256": "2eae71b025ea093ef872eebd150fb09af50fcb3b484730a83fbf86d166fed0bf"
+  },
+  "test_seen/RAND": {
+   "path": "data/CLIP_Embedding/MHC/test_seen_CCB-RAND.pt",
+   "rows": 161,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "130e6c9fe2b46d57feb20a12bbc1ae7899caf73734355581a57856a7388b50a8",
+   "text_sha256": "04a8d2bbaf5d0dcf62b6ffd729971b290f1f31ba1d64c5fcdd9927aae38b795c"
+  }
+ },
+ "belt_B1": {
+  "train": {
+   "note": "cross-hardware drift vs the banked deployed (A100) cache; gates encoder identity only",
+   "img": {
+    "n": 549,
+    "cos_mean": 0.9915925860404968,
+    "cos_min": 0.9643062949180603,
+    "cos_median": 0.9923509359359741,
+    "frac_ge_0.999": 0.01092896144837141,
+    "frac_ge_0.99": 0.7613843083381653
+   },
+   "text_A0": {
+    "n": 549,
+    "cos_mean": 0.9962588548660278,
+    "cos_min": 0.9596626162528992,
+    "cos_median": 0.997639536857605,
+    "frac_ge_0.999": 0.06010929122567177,
+    "frac_ge_0.99": 0.938069224357605
+   }
+  },
+  "dev_seen": {
+   "note": "cross-hardware drift vs the banked deployed (A100) cache; gates encoder identity only",
+   "img": {
+    "n": 80,
+    "cos_mean": 0.9911770820617676,
+    "cos_min": 0.9606378674507141,
+    "cos_median": 0.9920234680175781,
+    "frac_ge_0.999": 0.02500000037252903,
+    "frac_ge_0.99": 0.800000011920929
+   },
+   "text_A0": {
+    "n": 80,
+    "cos_mean": 0.9950000047683716,
+    "cos_min": 0.9263337254524231,
+    "cos_median": 0.9975866079330444,
+    "frac_ge_0.999": 0.07500000298023224,
+    "frac_ge_0.99": 0.887499988079071
+   }
+  },
+  "test_seen": {
+   "note": "cross-hardware drift vs the banked deployed (A100) cache; gates encoder identity only",
+   "img": {
+    "n": 161,
+    "cos_mean": 0.9914770722389221,
+    "cos_min": 0.9783521890640259,
+    "cos_median": 0.9920670390129089,
+    "frac_ge_0.999": 0.018633540719747543,
+    "frac_ge_0.99": 0.7763975262641907
+   },
+   "text_A0": {
+    "n": 161,
+    "cos_mean": 0.9966005086898804,
+    "cos_min": 0.9790951013565063,
+    "cos_median": 0.9978920221328735,
+    "frac_ge_0.999": 0.08695652335882187,
+    "frac_ge_0.99": 0.9440993666648865
+   }
+  }
+ },
+ "vs_banked_tp": {},
+ "geometry": {
+  "train": {
+   "cos_A0_TXT": 0.41965511441230774,
+   "cos_A0_img": 0.3307540714740753,
+   "cos_TXT_img": 0.657676100730896
+  },
+  "dev_seen": {
+   "cos_A0_TXT": 0.41489019989967346,
+   "cos_A0_img": 0.3259579539299011,
+   "cos_TXT_img": 0.6645480394363403
+  },
+  "test_seen": {
+   "cos_A0_TXT": 0.417158842086792,
+   "cos_A0_img": 0.33767691254615784,
+   "cos_TXT_img": 0.6562770009040833
+  }
+ },
+ "belt_B1_pass": true
+}

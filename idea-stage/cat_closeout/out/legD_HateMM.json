@@ -1,0 +1,397 @@
+{
+ "what": "CAT close-out Leg D per-item read-out audit (descriptive)",
+ "freeze": "idea-stage/CAT_CLOSEOUT_FREEZE.md 5",
+ "dataset": "HateMM",
+ "seeds": [
+  600,
+  601,
+  602,
+  603,
+  604,
+  605,
+  606,
+  607,
+  608,
+  609,
+  610,
+  611,
+  612,
+  613,
+  614
+ ],
+ "n_test": 215,
+ "belt_D1_max_abs_diff": 4.973247421524718e-05,
+ "thresholds": {
+  "wrong_in_at_least": 0.6666666666666666,
+  "wrong_in_at_most": 0.3333333333333333
+ },
+ "n_fixed": 3,
+ "n_broken": 1,
+ "mean_err_rate": {
+  "A0": 0.12434108527131783,
+  "CAT": 0.11596899224806202
+ },
+ "transcript_len": {
+  "FIXED": {
+   "n": 3,
+   "empty_rate": 0.3333333333333333,
+   "median_chars": 18.0,
+   "mean_chars": 247.0,
+   "q25": 9.0,
+   "q75": 370.5
+  },
+  "BROKEN": {
+   "n": 1,
+   "empty_rate": 0.0,
+   "median_chars": 1963.0,
+   "mean_chars": 1963.0,
+   "q25": 1963.0,
+   "q75": 1963.0
+  },
+  "REST": {
+   "n": 211,
+   "empty_rate": 0.11848341232227488,
+   "median_chars": 745.0,
+   "mean_chars": 1115.478672985782,
+   "q25": 89.5,
+   "q75": 1571.5
+  }
+ },
+ "label_mix": {
+  "FIXED": [
+   1,
+   1,
+   0
+  ],
+  "BROKEN": [
+   1
+  ]
+ },
+ "FIXED": [
+  {
+   "id": "hate_video_10",
+   "label": 1,
+   "gap": 0.9333333333333333,
+   "a0_err_rate": 0.9333333333333333,
+   "cat_err_rate": 0.0,
+   "transcript_chars": 18,
+   "ocr_chars": 1078,
+   "transcript": "\ud83c\udfbc In and and.\ud83c\udfbcAnd."
+  },
+  {
+   "id": "hate_video_1",
+   "label": 1,
+   "gap": 0.8666666666666667,
+   "a0_err_rate": 0.9333333333333333,
+   "cat_err_rate": 0.06666666666666667,
+   "transcript_chars": 0,
+   "ocr_chars": 2319,
+   "transcript": " "
+  },
+  {
+   "id": "non_hate_video_216",
+   "label": 0,
+   "gap": 0.8,
+   "a0_err_rate": 0.8,
+   "cat_err_rate": 0.0,
+   "transcript_chars": 723,
+   "ocr_chars": 411,
+   "transcript": "There was no sound in this video.Obviously, that's the suspect walking in, engaging in conversation with the victim, and there's also the female in the office who's blurred out who was on the phone with dispatch at that time. This point, the victim is sat down in the chair, and I believe the female was still behind.And at that point, just now, the suspect fired around through the computer screen right there, the wall into and it came out the computer computer screen in the back.This is our other victim who was on the phone with dispatch. Shes able to convince him to let her leave, and he lets "
+  }
+ ],
+ "BROKEN": [
+  {
+   "id": "hate_video_300",
+   "label": 1,
+   "gap": 0.7333333333333334,
+   "a0_err_rate": 0.13333333333333333,
+   "cat_err_rate": 0.8666666666666667,
+   "transcript_chars": 1963,
+   "ocr_chars": 348,
+   "transcript": "Terrorism analyst ph Mud, a former CIA counterterrorism official and loe Radowsky who has a big interview with President Trump in the Wall Street Journal, I'm so glad to have both of you on thank you so much.Are you shocked or surprised by this?I'm not surprised in one way I'm proud I'm proud yeah, let's stand against this and say we call the Chinese man a slani when we call the man from Guatemala a spick and a wet back and we call the black man and Negatory I work for shit holders shitholderers who escape Guatemala and El Salvador Chinese people called Slopers and slan Eye George Tenant is a "
+  }
+ ],
+ "posthoc_note": "the FIXED/BROKEN sets above use the thresholds frozen in CAT_CLOSEOUT_FREEZE.md 5; the *_posthoc lists below use no threshold at all and were added after observing that the frozen sets are near-empty. Descriptive only, no verdict.",
+ "TOP_CAT_GAIN_posthoc": [
+  {
+   "id": "hate_video_10",
+   "label": 1,
+   "gap": 0.9333333333333333,
+   "a0_err_rate": 0.9333333333333333,
+   "cat_err_rate": 0.0,
+   "transcript_chars": 18,
+   "ocr_chars": 1078,
+   "transcript": "\ud83c\udfbc In and and.\ud83c\udfbcAnd."
+  },
+  {
+   "id": "hate_video_1",
+   "label": 1,
+   "gap": 0.8666666666666667,
+   "a0_err_rate": 0.9333333333333333,
+   "cat_err_rate": 0.06666666666666667,
+   "transcript_chars": 0,
+   "ocr_chars": 2319,
+   "transcript": " "
+  },
+  {
+   "id": "non_hate_video_216",
+   "label": 0,
+   "gap": 0.8,
+   "a0_err_rate": 0.8,
+   "cat_err_rate": 0.0,
+   "transcript_chars": 723,
+   "ocr_chars": 411,
+   "transcript": "There was no sound in this video.Obviously, that's the suspect walking in, engaging in conversation with the victim, and there's also the female in the office who's blurred out who was on the phone with dispatch at that time. This point, the victim is sat down in the chair, and I believe the female was still behind.And at that point, just now, the suspect fired around through the computer screen right there, the wall into and it came out the computer computer screen in the back.This is our other victim who was on the phone with dispatch. Shes able to convince him to let her leave, and he lets "
+  },
+  {
+   "id": "non_hate_video_642",
+   "label": 0,
+   "gap": 0.4,
+   "a0_err_rate": 0.8666666666666667,
+   "cat_err_rate": 0.4666666666666667,
+   "transcript_chars": 1257,
+   "ocr_chars": 3804,
+   "transcript": "I was wondering if, you know, you guys would be on board to maybe to sponsor the video to sponsor00.privilege a leg No I' being serious that means that that music would need.The turn in excess of 10 to 20 million views I think we all get that if every South African business turned we so for sure.\ud83c\udfbcYou know, it's cool, I'll make a plan.We're victims of the time.Being white is a 21st century recry.\ud83c\udfbcWhen your parents pay your tuition fees and you have a lot of opportunities, privilege what what privilege When you see a protest and like to complain while you tweet about the drink champagne.Pvi priv"
+  },
+  {
+   "id": "non_hate_video_140",
+   "label": 0,
+   "gap": 0.33333333333333337,
+   "a0_err_rate": 0.9333333333333333,
+   "cat_err_rate": 0.6,
+   "transcript_chars": 980,
+   "ocr_chars": 0,
+   "transcript": "\ud83c\udfbc Blow his campaign to wind down, heard it from the FBI.foundationos a bit of corruption and evidenceence is piling high rumors and Hillary bedside while winner isn to end wrong.Just about to make a transition plan when we nurse got song home, she was out alive when she opened her eyes.She was a nasty woman in a mattress dress, just ahead on the room cab November 9 July left.The badness is the nasty warm of the ball.\ud83c\udfbc There's nothing that's not on the table for the third of dealing to a rat, we know what happens the witness is going, you can be very sure.That thought everything was going too u"
+  },
+  {
+   "id": "non_hate_video_121",
+   "label": 0,
+   "gap": 0.2,
+   "a0_err_rate": 0.2,
+   "cat_err_rate": 0.0,
+   "transcript_chars": 937,
+   "ocr_chars": 1646,
+   "transcript": "Hello, is this Greg Yeah, are you Andre Anglin's father, Are you Andre Anglin's father.Yes I am yeah, did you know that there was a dossier out on him on the internet about him being a pedophile in the Philippines?There's a dossier on your son on the internet, you can Google it where he is actually seen with an underage girl Yeah I'm aophil too, so I'm okay with that.You said you're a pedophile too. Oh yeah,ophile I'm under girl right now I'm fine doing that Oh, really, how does that work, You know, that's illegal I have sex under all the.Really, you know you're being recorded right now right "
+  },
+  {
+   "id": "hate_video_408",
+   "label": 1,
+   "gap": 0.13333333333333336,
+   "a0_err_rate": 0.4666666666666667,
+   "cat_err_rate": 0.3333333333333333,
+   "transcript_chars": 745,
+   "ocr_chars": 416,
+   "transcript": "saltie you can always call in sec, you can meet a man from Grer at a hotel in Glendale when your companion arrives, you can answer the door fully nude, you can set out the room with DJ style lighting with S&m toys lubrication jelly and a massage bench you can engage in oral and anal activities then you can start inserting rocks of crystal math into your rectum, you can give your companion from grinder.ful of GHB and a bottle of Gatorade then the two of you can become intimate again then you can add another rock of mathth into your rectum and you can both take some poppers so I mean really you "
+  },
+  {
+   "id": "hate_video_389",
+   "label": 1,
+   "gap": 0.13333333333333333,
+   "a0_err_rate": 0.13333333333333333,
+   "cat_err_rate": 0.0,
+   "transcript_chars": 1423,
+   "ocr_chars": 20011,
+   "transcript": "New horror film Mids Summerum by subversive Jew demonizes European Hes.Imagine if a white man was to make a movie about the very real ritual genital mutilation of the Jewish community or to take some creative liberties in portraying Jewish ritual murder.There would be endless caveging, bannings, possibly some untimely deaths and media loudly proclaiming that such hatred is actually incitement to violence.However, when you have a Jewle Garriasster who directed hereditary, now releasing a film to paint Europeans who embrace their prejudedo Christian ways in the worst possible light.It is just in"
+  },
+  {
+   "id": "hate_video_321",
+   "label": 1,
+   "gap": 0.06666666666666667,
+   "a0_err_rate": 0.06666666666666667,
+   "cat_err_rate": 0.0,
+   "transcript_chars": 1058,
+   "ocr_chars": 479,
+   "transcript": "Now let's say the numbers backwards, 10,9,8,7,6,5,4,3,2,1, and let's sing ten littlenega boys, you will enjoy it.\ud83d\ude0a\ud83c\udfbc 10 little Nier boys going up to time, one overrate himself and then there were nine, nine little Nier boys set up very late.One overslept himself and then there were a8 little Leagueger voice traveling in Devon, one said he'd stay there and then there were seven.7 little lia boys dropping upts, one dropped himself hot, and then there was six, six little lia boys playing with a high a bumblebees down.And then there were five five little Leaguer boys playing on the floor, one bit i"
+  },
+  {
+   "id": "hate_video_412",
+   "label": 1,
+   "gap": 0.06666666666666667,
+   "a0_err_rate": 0.06666666666666667,
+   "cat_err_rate": 0.0,
+   "transcript_chars": 1336,
+   "ocr_chars": 1682,
+   "transcript": "Me so hypnotizing, never do a fact check No again opinion still.Msmerizing numbers capitalbalistic, many statistics we want you afraid the the media cover our power would be your by studying your DNA.To know one near you to gain control of the world, we took control of information while we pull the mission lies and nobody knows.To our distant TV infecting yourself sub consciencecious, fill your head with day theory the bake act on a come.For how I thought they are in recording all this stories so un its unbelievable.Bom line organic solution gives us power we're always using brain screens and "
+  }
+ ],
+ "TOP_A0_GAIN_posthoc": [
+  {
+   "id": "hate_video_300",
+   "label": 1,
+   "gap": 0.7333333333333334,
+   "a0_err_rate": 0.13333333333333333,
+   "cat_err_rate": 0.8666666666666667,
+   "transcript_chars": 1963,
+   "ocr_chars": 348,
+   "transcript": "Terrorism analyst ph Mud, a former CIA counterterrorism official and loe Radowsky who has a big interview with President Trump in the Wall Street Journal, I'm so glad to have both of you on thank you so much.Are you shocked or surprised by this?I'm not surprised in one way I'm proud I'm proud yeah, let's stand against this and say we call the Chinese man a slani when we call the man from Guatemala a spick and a wet back and we call the black man and Negatory I work for shit holders shitholderers who escape Guatemala and El Salvador Chinese people called Slopers and slan Eye George Tenant is a "
+  },
+  {
+   "id": "hate_video_295",
+   "label": 1,
+   "gap": 0.33333333333333337,
+   "a0_err_rate": 0.6666666666666666,
+   "cat_err_rate": 1.0,
+   "transcript_chars": 1098,
+   "ocr_chars": 0,
+   "transcript": "\ud83c\udfbc Cose a scheming oh my news and voice don't talk too much about it echo make no secret all the same somehow they get around.Listen, the externalal replacement they seek for, you believe what they wanted.L see and down have to let love refugees to let in this refugees somewhere somehow short source must have poisoned your mind song.Tell me why you won to lay there, your people you'll have on.It makes all the difference to me, I'll tell you, a thousand years we've had to fight to be free and see you have to let it all the refugees don up to let.In those refugees you have to almost refugee or de"
+  },
+  {
+   "id": "non_hate_video_167",
+   "label": 0,
+   "gap": 0.2666666666666667,
+   "a0_err_rate": 0.6666666666666666,
+   "cat_err_rate": 0.9333333333333333,
+   "transcript_chars": 47,
+   "ocr_chars": 1676,
+   "transcript": "A.momomo.You,,, you. Oh, you few.You about you."
+  },
+  {
+   "id": "hate_video_427",
+   "label": 1,
+   "gap": 0.20000000000000007,
+   "a0_err_rate": 0.6666666666666666,
+   "cat_err_rate": 0.8666666666666667,
+   "transcript_chars": 1073,
+   "ocr_chars": 112,
+   "transcript": "Yeah.A, Juy Jewburg, How you doing,, Are you worrying about money again, Joey, My money goes flying out the vi. Just smoking pot alone. Do you know what this cost me. Well, I know some shit that get you have for the rest of your life for less than $30 less than $30 just $29,99. Oh good, I save up pen, Thats, Where do I buy this shit.That's a good bargain shes mother did your sight mewa animal, just go on and seek you for her bargain, I go.Juy Juer, How you doing, man. What is the shit you're selling for 29,99, I share it for 49,99. I am going to kick your S. Oh, please don't talk that boy. I h"
+  },
+  {
+   "id": "hate_video_87",
+   "label": 1,
+   "gap": 0.2,
+   "a0_err_rate": 0.06666666666666667,
+   "cat_err_rate": 0.26666666666666666,
+   "transcript_chars": 2323,
+   "ocr_chars": 2642,
+   "transcript": "Cooon Watch, the official, the original home for Coe shaing, find all the Coons you can handle them.At cowatch.com.\ud83c\udfbc  \ud83c\udfbc \ud83d\ude14Yeah.\ud83c\udfbc \ud83d\ude14You trying to mock me, CJ, naa sauce, God, because whatever an ignorant low lasquici like you has to say ain't worth paying attention to.Is it is it I recognize sir? \ud83d\ude14You know by the end of this trial, pretty much everyone involved in it had a financial interest in it, I mean we know for a fact I losing you, not me, not including me.Not included but who did then if everybody did, why are you accepted from that Well, I had you know, I hadn't had contact with agents du"
+  },
+  {
+   "id": "hate_video_362",
+   "label": 1,
+   "gap": 0.1333333333333333,
+   "a0_err_rate": 0.2,
+   "cat_err_rate": 0.3333333333333333,
+   "transcript_chars": 730,
+   "ocr_chars": 1111,
+   "transcript": "TheEngland of a Hton does start a folk have in G under deep saloon.Beat a pure, o be old, and it en against those spare and de the touch and ba..We flag out both years in sub peace.,.He the England and time from.In civil as international U buildings constant demoition and and.You're not allowed to releasing them England of now search the first sight this compass.\ud83d\ude0aN3, they feel, make the, leak to fantastic camera,9 little cat to the with the high sense.\ud83c\udfbcSo I, I life, I trust, I I in I or me my convenience or be my Par or be.I Mal des troops who end the I can hear thus Luke and vow stop there He"
+  },
+  {
+   "id": "non_hate_video_20",
+   "label": 0,
+   "gap": 0.06666666666666667,
+   "a0_err_rate": 0.0,
+   "cat_err_rate": 0.06666666666666667,
+   "transcript_chars": 2538,
+   "ocr_chars": 27,
+   "transcript": "Kkk playing cleaning up on him vote, see if people I don't find another day spotted this shoulder watching folk, these people need some sick f and rans vote.You can do nothing and none the bottom people, these are raps Fs folks here I found a goose spot shelter it is by the star Ra, watch the KKK folks.Now you got Uncle Tom Niggle playing with a small phone where you got homeless jocks, got tents over there own that property over.See, I said people that's a drug going up see, I'm going to tell you'all some of these black drug dealers in Nashville, they go to college, they' smart, they had a st"
+  },
+  {
+   "id": "hate_video_428",
+   "label": 1,
+   "gap": 0.06666666666666667,
+   "a0_err_rate": 0.06666666666666667,
+   "cat_err_rate": 0.13333333333333333,
+   "transcript_chars": 3339,
+   "ocr_chars": 3148,
+   "transcript": "Oh useless eaters. your unqualified, non elected global human health overlor, I'd like to take this opportunity to flaunt my position of power and influence over society and share some of my plans for you and your future. When I amassed my fortune in computer software, I demonstrated that I was willing to lie, steel code, cheat my partners and exercise monopolistic control to destroy my competitors. Now that I've retired, I can rebrand myself as a humanitarian with.My for profit foundation mass grading is a charity, I can advocate for population reduction and sponsor masshu experiments with un"
+  },
+  {
+   "id": "non_hate_video_16",
+   "label": 0,
+   "gap": 0.06666666666666665,
+   "a0_err_rate": 0.9333333333333333,
+   "cat_err_rate": 1.0,
+   "transcript_chars": 828,
+   "ocr_chars": 2342,
+   "transcript": "We've set up a 20 man committee to do away with these dis vulgar animalistic nigger rock and roll box our committee will check with the restaurant owners and the cafes.To see what seabo breakfasts is on their machines and then ask them to do away with them, our committee will judge the record according to who who they're by.If they can't tell by looking at the name of the record, whether it's a nigger singer or a nigger version of this rock and roll bump, they'll play the record.And then just use their judgment and where they should come off for not as far as we're concerned in Anderson and Ca"
+  },
+  {
+   "id": "non_hate_video_528",
+   "label": 0,
+   "gap": 0.06666666666666665,
+   "a0_err_rate": 0.9333333333333333,
+   "cat_err_rate": 1.0,
+   "transcript_chars": 495,
+   "ocr_chars": 4657,
+   "transcript": "\ud83c\udfbcYdesia, we an at 7000 Mi mentioned offer for Minosus Tes. Ni Shena, I, Udaanting fan, London, Zan and de Bodesca Republic Toutsland.In Deutch.\ud83c\udfbcAngerfang might bi to enough to home.Ta mentionedninininaar isk.\ud83c\udfbc .\ud83c\udfbcZ Zilauk andorri wing anbalingften.Zaiion Paterbe understood.\ud83c\udfbcSome I nonsing aboard star, the enoughtenbergga and Ozlahabeck, finished at anoin in November in Belefield and a demontonad, demten to It Sut's complex field..\ud83c\udfbcCome to the Bostocks Demontion andm9 November, it's 50009 in."
+  }
+ ],
+ "gap_distribution": {
+  "abs_gap_sum": 6.066666666666666,
+  "n_gap_ge_0.5": 4,
+  "n_gap_ge_0.2": 11,
+  "n_gap_ge_0.05": 20,
+  "n_gap_zero": 195,
+  "n_both_always_wrong": 17,
+  "n_both_always_right": 178
+ },
+ "transcript_len_posthoc": {
+  "TOP_CAT_GAIN": {
+   "n": 10,
+   "empty_rate": 0.1,
+   "median_chars": 958.5,
+   "mean_chars": 847.7,
+   "q25": 728.5,
+   "q75": 1207.25
+  },
+  "TOP_A0_GAIN": {
+   "n": 10,
+   "empty_rate": 0.0,
+   "median_chars": 1085.5,
+   "mean_chars": 1443.4,
+   "q25": 754.5,
+   "q75": 2233.0
+  }
+ },
+ "improvement_by_band_posthoc": {
+  "Q1_shortest": {
+   "n": 54,
+   "mean_err_A0": 0.10246913580246914,
+   "mean_err_CAT": 0.07407407407407407,
+   "mean_improvement": 0.02839506172839506
+  },
+  "Q2": {
+   "n": 54,
+   "mean_err_A0": 0.1654320987654321,
+   "mean_err_CAT": 0.154320987654321,
+   "mean_improvement": 0.011111111111111113
+  },
+  "Q3": {
+   "n": 53,
+   "mean_err_A0": 0.16981132075471697,
+   "mean_err_CAT": 0.15597484276729562,
+   "mean_improvement": 0.013836477987421382
+  },
+  "Q4_longest": {
+   "n": 54,
+   "mean_err_A0": 0.060493827160493834,
+   "mean_err_CAT": 0.08024691358024691,
+   "mean_improvement": -0.019753086419753086
+  },
+  "empty_or_le_20_chars": {
+   "n": 42,
+   "mean_err_A0": 0.06825396825396826,
+   "mean_err_CAT": 0.025396825396825397,
+   "mean_improvement": 0.04285714285714286
+  }
+ },
+ "improvement_by_label_posthoc": {
+  "0": {
+   "n": 129,
+   "mean_err_A0": 0.08785529715762275,
+   "mean_err_CAT": 0.07803617571059432,
+   "mean_improvement": 0.009819121447028423
+  },
+  "1": {
+   "n": 86,
+   "mean_err_A0": 0.17906976744186046,
+   "mean_err_CAT": 0.17286821705426356,
+   "mean_improvement": 0.006201550387596899
+  }
+ },
+ "transcript_len_quartiles_chars": [
+  80.5,
+  743.0,
+  1571.5
+ ]
+}

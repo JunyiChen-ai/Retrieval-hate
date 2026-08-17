@@ -3770,27 +3770,35 @@ new experiment on a new idea; all of it is validation of the one thing that surv
    disjoint **head-seed** ranges over **one** feature cache; they are optimisation replications, not
    representation replications. Repeat the extraction once from raw inputs with frozen model/LoRA
    revisions, prompts, frame ids, token masks, dtype and inference settings, and re-measure.
-   *Status: **not done**. This is the single largest outstanding item.*
+   *Status: **DONE**, `idea-stage/CAT_CLOSEOUT_RESULT.md` Leg A. The extraction is **bit-identical** across passes with the traversal order reversed (max abs diff exactly 0.0 on every span, split and row), so there was never any extraction-time variance to worry about; the 20-seed re-measurement on the re-derived cache — the project's first fully-5090 table, image stream included — returns `CAT − A0` = **+0.0136 [+0.0074, +0.0200]**, verdict REPRODUCED.*
 3. **Audit the read-out mechanically.** Per-item token counts, special-token exclusions, the exact
    three assistant-header positions, content spans, feature norms, cache and model checksums.
-   `CAT`'s claim rests unusually heavily on a three-token mask. *Status: partially done — span
-   statistics and LoRA sha256 verification exist in `R10_TOKPOS_RESULT.md` §2.1-2.2; the per-item
-   audit does not.*
+   `CAT`'s claim rests unusually heavily on a three-token mask. *Status: **DONE**, `CAT_CLOSEOUT_RESULT.md` Leg D.2. The `A0` span is exactly the three tokens `['<|im_start|>','assistant','\n']` with **no special-token exclusion applied**; the span is 3 positions for all 149 MHC-ZH test items, the degenerate-mask guard never fires, the `TXT` span is 49 tokens of constant scaffolding plus the transcript, and every span is L2-normalised so per-item norms carry no information.*
 4. **One locked MHC-EN transport check.** The exact frozen `CAT` configuration, one extraction, no
    retuning, paired `A0` control. Because MHC-EN's test set has participated in the broader
-   campaign, it must be called a transport check, not a fresh confirmation. *Status: **not done**;
-   MHC-EN has raw video but no read-out cache, so it costs one two-forward extraction pass.*
+   campaign, it must be called a transport check, not a fresh confirmation. *Status: **DONE**, `CAT_CLOSEOUT_RESULT.md` Leg B, and it **failed**. `CAT − A0` = **−0.0149 [−0.0235, −0.0059]** on MHC-EN (30 seeds, both protocols, also worse than the matched-width control): the effect does not transport, it reverses. Coverage is now two of three measurable datasets; ImpliHateVid remains unmeasurable (raw video gone).*
 5. **Add sampling robustness, not more seeds.** A pre-committed repeated stratified cross-validation
    comparison on train+dev would show `CAT` is not carried by one split. It still cannot undo
-   adaptive dataset reuse. *Status: **not done**.*
+   adaptive dataset reuse. *Status: **DONE**, `CAT_CLOSEOUT_RESULT.md` Leg C, and it came back **inconclusive**. 5×5 repeated stratified CV on train+dev gives `CAT − A0` = +0.0020 [−0.0046, +0.0085] (MHC-ZH) and +0.0051 [−0.0014, +0.0116] (HateMM) — both CIs contain zero, across-cell SD 0.017 on both. The fixed-split gain is neither confirmed nor refuted as split-specific at this sample size.*
 6. **Disclose the selection history.** State plainly that roughly 90 candidates touched the official
    test splits before `CAT` was selected, and that the paired-bootstrap intervals are conditional
-   descriptive intervals, not post-selection-valid confirmatory ones. *Status: recorded in §12.8
-   and in every R12 document; must appear in any write-up.*
+   descriptive intervals, not post-selection-valid confirmatory ones. *Status: recorded in §12.8,
+   in every R12 document, and now verbatim in `CAT_CLOSEOUT_RESULT.md`; must appear in any write-up.*
 
 The defensible final statement, in the reviewer's words: **`CAT` repeatedly improves the paired 5090
 baseline on the reused benchmark splits and beats a matched-width random control, but remains an
 exploratory, crowded feature-design result without an uncontaminated confirmatory population.**
+
+**Updated 2026-08-18 after the close-out run** (`idea-stage/CAT_CLOSEOUT_RESULT.md`, freeze
+`ae286c9`): that statement now needs three clauses added. The effect is reproducible from raw
+inputs at bit-level extraction determinism (Leg A), **but it does not transport to MHC-EN — it
+reverses to −0.0149 with the CI excluding zero** (Leg B); **it is not separable from resampling
+noise under repeated cross-validation on train+dev** on either dataset it works on (Leg C); and on
+MHC-ZH it is present only at the dev-selected epoch, the last-epoch contrast being positive in two
+of four seed ranges and negative in two (Leg A). The per-item audit finds **no set of items `CAT`
+reliably repairs** — 80-90 % of each test split is decided identically by the two read-outs (Leg
+D). Coverage is therefore **two of the three measurable datasets, +0.008 to +0.017 macro-F1, fixed
+split only, dev-selected epoch only, as a substitute for and not an addition to the layer axis.**
 Under a method-paper-only rule the honest close-out is *"no publishable method emerged"* — not
 *"`CAT` became novel because it was the last survivor."*
 
