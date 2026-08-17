@@ -3445,6 +3445,54 @@ steering vectors fitted on 500 samples, beating ICL and PEFT — the meme-side o
 and the hidden-state literature repeatedly reports internals beating a model's own verbalised
 verdict (`2512.03994` +16 points over LLM-as-judge; ESLD `2605.18918` +16.4).
 
+### 12.6b Second landscape sweep (label-free mechanism families) — two leads for round 10
+
+A second independent sweep covered adaptation/probing/small-n/guideline/multi-corpus/self-supervised
+families (arXiv API, ~60 queries; WebSearch quota was already spent). It confirms three round-9
+closures and produces two leads that are **not** isomorphic to anything in §6 of the brief.
+
+**Confirms.** (a) Few-shot CLIP PEFT is severely crowded (40+ 2025-26 methods on the same 11
+datasets) and measured at 1-16 shots per class — we sit 20-50x past that shot regime, and every
+method assumes a text-prototype classifier we do not have. (b) Frozen-feature augmentation is
+shot-curve-bound: FroFA (`2403.10519`, CVPR 2024) is +5.9 at 1 shot and **+0.4 at 25 shots**, which
+prices R9-G FEATMIX at ~0 before any pilot. (c) Coreset/pruning at n < 2k is predicted to *harm*
+(`2206.14486` NeurIPS 2022; `2607.05891` — few-shot selection "often struggles to surpass random
+selection"), which agrees with D2's pricing of R9-F RLOSS. (d) `2503.09707` (NeurIPS 2025) finds
+PEFT on the labelled data alone often matches full semi-supervised learning, arguing against the
+self-supervised family (R9-I). (e) `2603.18123` (2026-06) runs a frozen trunk with task-conditioned
+expert heads over 27 heterogeneous tasks and reports **negative transfer in low-data settings**,
+with unified unconditioned training more consistent — so if `banned_constraints[8]` is ever lifted,
+the baseline to beat is pooled-unconditioned training, not per-dataset training.
+
+**Lead 1 — token-position structure in the read-out, not layer structure.** `2605.12726` (ICML 2026
+mech-interp workshop) reports that **final-token** safety probes miss evidence distributed across
+earlier token positions, that naive max-pooling over positions over-fires, and that a
+trajectory model over the prefill recovers the misses. This project's `text_feats` is **exactly the
+failing design**: `generate_VideoMLLM_embedding_HF.py` pools the mean of the **last four tokens** of
+the assistant generation-prompt tail. The in-house closure that matches it is the standing
+"pooling is the culprit" finding. What is dead in-house is *multi-layer* fusion (§10.4, §10.8);
+token-position structure is a different axis, and the second sweep found **zero** papers doing
+MLLM intermediate-state probing for hateful video in any form (nearest: HiProbe-VAD, ACM MM 2025,
+which reports intermediate states have "higher sensitivity and linear separability than the output
+layer" for video anomaly detection; V-DEAL `2607.21151` and HarmVideoBench `2606.27187` are
+output-level). Cost: one extraction pass per read-out variant, no training.
+
+**Lead 2 — a pre-flight saturation test that could retire the search rather than extend it.**
+`2606.24903` (2026-06) defines a spectral saturation index over frozen features (effective rank of
+the within-class covariance over class count) and reports rho = 0.637 with the marginal gain from
+doubling supervision and AUC 0.787 for a stop/continue decision, evaluated on 49 tasks **including
+binary tasks on frozen CLIP features**. It costs milliseconds on caches that already exist. After
+nine rounds and 101 candidates, measuring whether *any* further label-driven capacity can help on
+these four datasets is worth more than the next candidate.
+
+Also logged: `2512.03994` (AAAI 2026 workshop) scores policy compliance by **whitening the
+activation space** and taking a norm — 86.0 F1, beating LLM-as-judge by 16 points with no training;
+`2508.04900` (2025-08) independently measures temporal label noise on HateMM and MHC-EN and
+concludes video-level labels alter decision boundaries, which corroborates the in-house
+segment-purity finding from outside; and two 2026 papers (`2606.18322`, `2607.10226`) argue SAE /
+activation-intervention results are unreliable without matched-strength controls, which any future
+ACT-STEER design must adopt.
+
 ### 12.7 What round 9 bought
 
 1. **The last unsearched axis was searched.** Encoder adaptation is now measured (D1), its
