@@ -576,7 +576,10 @@ Ranked by cost, and filtered for "does not import an assumption the data violate
 3. **NumPro (arXiv 2411.10332, CVPR 2025)** — burn frame numbers into the pixels, zero training;
    Qwen2-VL-7B goes 5.4 → 36.8 R@0.5 on Charades. The cheapest transfer in the whole adjacent
    literature and it has never been pointed at hate.
-4. **The concatenation trick from Speech Emotion Diarization** — synthesize span supervision by
+4. **The concatenation trick from Speech Emotion Diarization** (arXiv **2306.12991v2**, Wang,
+   Ravanelli & Yacoubi, ASRU 2023 — verified 2026-08-18; §5.1 concatenates same-speaker recordings
+   into 21 h of simulated data under four transition patterns, and evaluates only on the real
+   boundary-annotated ZED set) — synthesize span supervision by
    splicing clip-level-labelled data into known transition patterns. **Annotation-free**, and
    therefore compatible with this project's ban on manual annotation. Directly applicable: splice
    known-hateful and known-benign clips into synthetic videos with known boundaries.
@@ -826,3 +829,109 @@ HateMM number and roughly doubles its MultiHateClip number under a 1 fps convent
 
 **Cost.** Zero GPU, zero training, zero cloud spend, zero test-label contact. Read-only throughout
 except for this file.
+
+---
+
+## 10. Round-11 addendum (2026-08-18) — corrections and one structural finding
+
+Added after a dedicated occupancy sweep over eight candidate mechanisms plus one question the
+original report never asked. Verification tags as in the header.
+
+### 10.1 The single most damaging new fact about the incumbent
+
+**MultiHateLoc's own ablation, read from the PDF** `[read-method]` — Table 4, HateMM, adaptive
+top-K expressed as a proportion of frames:
+
+| K setting | frames selected | mAP | AUC |
+|---|---|---|---|
+| 1 | **all frames (100%)** | 0.612 | 0.758 |
+| 2 | top 50% | 0.630 | 0.785 |
+| 3 | **top 33% (their setting)** | **0.645** | **0.799** |
+| 5 | top 20% | 0.620 | 0.762 |
+
+Two readings, both damaging, and they compound §1.2:
+
+1. The WWW 2026 hate localizer's tuned optimum **selects 33% of the timeline while HateMM's median
+   gold coverage is 0.806**. The selection mechanism is in direct conflict with the label
+   distribution it is fitted to.
+2. **Turning selection off entirely costs 0.033 mAP** (0.612 vs 0.645). The MIL machinery — the
+   paper's headline contribution — is buying 3.3 points on top of a predictor that pools every
+   frame, on a benchmark where §1.3's zero-localization oracle already scores 0.675.
+
+### 10.2 The structural finding the original report missed
+
+The report asked which localization families are empty. It did not ask **which families are
+structurally invalid at coverage 0.8-1.0**. They are, verified across TAL / WSTAL / WSVAD / TVG:
+
+video-level MIL with top-k pooling; sparsity and attention-normalisation losses; softmax-over-time
+pooling (attention mass sums to 1 across T, so it *cannot represent* "80-100% of instants are
+foreground"); auxiliary background classes and background suppression (BaS-Net `1911.09963`);
+**foreground/background contrastive and intra-video saliency negatives** — UniVTG `2307.16715`
+treats *"other clips in the same video with saliency less than s_p"* as negatives, R²-Tuning
+`2404.00801` and SDST `2507.07744` the same, and **at coverage 1.0 that entire negative set is true
+foreground** `[read-method]`; outer-inner completeness scoring; instant-level detectors with
+focal-loss negatives (ActionFormer, TriDet — i.e. HateClipSeg's own baselines); DETR-style
+set prediction with a no-object class; relative CAS thresholding; background pseudo-label mining;
+and the metrics themselves (at median coverage 0.8 a constant whole-video prediction clears
+tIoU 0.3, 0.5 **and 0.7**).
+
+**Every mechanism this project tried on the temporal axis, and every published hate-localization
+method, comes from that list.** The failures were over-determined by the regime, not only by the
+data scale.
+
+### 10.3 The family that is *not* on that list
+
+**Temporal action segmentation (TAS)** assumes 100% coverage by construction, has no background
+class, and lives at this project's data scale (GTEA 28 videos, 50Salads 50, Breakfast 1712).
+Three importable pieces, all 2025-2026, none applied to hate:
+
+- **EAST** `2503.06316` (ICCV 2025 W) `[read-method]` — frozen ViT-G plus a Contract-Expand adapter
+  at **4.7% of backbone parameters**; segmentation-by-detection.
+- **Constraint-Aware Decoding** `2605.10149` (2026) `[read-method]` — **training-free** post-hoc
+  Viterbi with transition confidences and **per-class duration bounds normalised to video length**.
+  The most directly liftable coverage-prior mechanism found in the whole sweep.
+- **RefDense** `2501.18509` `[read-method]` — per-frame multi-label sigmoid, **no background
+  class**, therefore coverage-agnostic by construction.
+- Adjacent: **Sound Event Bounding Boxes** `2406.04212` (Interspeech 2024) `[read-abstract]`
+  decouples event *extent* from *confidence*, naming exactly the failure a single frame threshold
+  causes at high coverage.
+
+The composite that survives all three of this project's constraints (tiny data, intent-defined
+single class, majority foreground): *frozen features + small adapter → per-instant binary or
+multi-label score with plain BCE and **no intra-video contrastive negatives** → post-hoc constrained
+decode with an explicit duration/coverage prior.*
+
+**Do not lift WSVAD machinery.** UCF-Crime (1,610 train) and XD-Violence (3,954) match the data
+scale and the frozen-CLIP-plus-light-head recipe is standard there, but every method is built on
+normal-vs-abnormal MIL ranking or feature-magnitude contrast — a background prior in disguise,
+whose entire signal comes from the abnormal video being *mostly normal*.
+
+### 10.4 Occupancy corrections to §6.2
+
+| §6.2 slot | corrected status |
+|---|---|
+| localize → trim → re-classify | **partially occupied**: Yang et al. `2508.04900` already runs a **clean→noisy** configuration — train on trimmed gold spans, test on full videos. What is unoccupied is the **duration-matched random-crop control**, which no paper in any domain has run. The control, not the crop, is the scientific content. |
+| annotation-free synthetic span supervision | **occupied in video**: BSP `2011.10830` (ICCV 2021, splices trimmed clips and classifies the *boundary type*), AherNet `2008.13705` (ECCV 2020), TemPVL `2301.07463`. Only the concat-only, evaluate-on-real variant is unoccupied. ⚠ **"Background Mixup", cited in §4.4 of an earlier draft, could not be confirmed to exist** — zero arXiv hits across six formulations. Treat as unverified. |
+| OCR-derived boundaries | **occupied in general video**: DuVOG `2208.11307` derives chapters from OCR'd subtitles; and the dominant free-boundary recipe is ASR, not OCR — Vid2Seq `2302.14115` (CVPR 2023) reformulates *"sentence boundaries of transcribed speech as pseudo event boundaries"*. Empty in hate. |
+| query-conditioned grounding | **near-exact structural twin exists**: VadCLIP `2308.11681` (AAAI 2024) encodes anomaly class labels with frozen CLIP text and MIL-Align *"select[s] the most matched video frames for each label to represent the whole video"* `[read-method]`. Swapping the anomaly vocabulary for a protected-group vocabulary is a one-line substitution a reviewer will make out loud. |
+| complement-region negatives (new slot) | **empty in hate, occupied in general TAL** — CoLA `2103.16392` hard-snippet mining, CPL (CVPR 2022) and CNM (AAAI 2022) generate negative proposals within the same video, UniVTG / R²-Tuning / SDST use lower-saliency frames of the same video as InfoNCE negatives. Yang et al. `2508.04900` *extracts* the non-hate segments of hateful videos for analysis and never trains on them. |
+| modality-factored boundary vs label (new slot) | **empty, and it is the only slot in this report with no structural twin**. Decouple-SSAD `1904.07442` splits localization from classification *within one modality*; AVVP `2007.10558` predicts modality-*specific events*, not modality-specific *roles*; Centre Stage `2311.16446` explicitly fuses jointly. No paper assigns boundary prediction to one modality and label prediction to another. |
+| broadcast-residual factorisation (new slot) | **the idea is occupied under other names** — RUBi `1906.10169` (NeurIPS 2019) and Learned-Mixin `1909.03683` (EMNLP 2019) are "score = bias branch + residual, train the residual". Not written for the temporal axis, but a VQA-literate reviewer names RUBi within a paragraph. |
+
+### 10.5 Sequencing note that follows from §10.1-10.2
+
+HateClipSeg's own published baselines (ActionFormer, LSTR) are drawn from the invalid list in
+§10.2, and its paper frames its setting as *"offensive segments are sparse and embedded within
+mostly normal content"* — adopting the minority-foreground assumption at 44.6% coverage. Its
+online per-timestamp task is, formally, temporal action segmentation, not detection. That reframing
+is free, is unclaimed, and is where §10.3's importable composite would land.
+
+### 10.6 Verification gaps in this addendum
+
+Semantic Scholar returned HTTP 429 on every call, so there is **no citation-graph cross-check**.
+The CVF PDF for Tan et al. (WACVW 2024, video-classification-on-top-of-WSVAD) returned 403, so its
+XD-Violence 78.84 → 82.10 figure is `[second-hand]` and must not be cited. CPL and CNM have no
+arXiv IDs that could be located. arXiv indexes title and abstract only, so absence claims about a
+*formula* — the broadcast-residual row above — are structurally weaker than the rest.
+Yang et al.'s +19.34 / +30.45 and 98.64 / 97.31 remain extracted-from-HTML, not table-read, and
+§7.4's warning to re-pull them before any pre-registration stands.

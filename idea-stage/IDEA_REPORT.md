@@ -3824,3 +3824,282 @@ verdict. (d) The weighted-anchor code change was verified as an exact no-op on t
 reproducing a banked R11 trainlog line for line. (e) Both pilots' belts — bit-identical deployed
 span, sha-verified random matrix, logit-recomputed macro-F1 at max abs diff 0.0 — passed.
 (f) Total API spend for the round: **¥0.00 of ¥15**.
+
+---
+
+## §14 — Round 11 (2026-08-18): the temporal span / localization sub-direction
+
+**Cost: ¥0.00 of a ¥15 round budget (cumulative ¥0 of ¥60) — the external review ran on the Codex
+MCP allowance, not the DashScope budget. One CPU probe, 92.8 min wall, background `nohup` with
+`logging/runs/r13_span/{run.log,run.pid}`, plus one 27 352-string CLIP-text extraction pass on the
+local 5090. Zero training runs, zero test-label contact, 0 failures.**
+
+### 14.0 Headline
+
+- **The three in-scope span-annotated corpora are temporally degenerate**, quantified against the
+  published state of the art: a predictor with a perfect video-level classifier and *zero* temporal
+  resolution scores frame-AP **0.675** on HateMM, above MultiHateLoc's published weakly-supervised
+  SOTA of 0.645, and **0.786 / 0.853** on the two MultiHateClip splits against a published 0.445.
+- **The incumbent's own ablation confirms it from the inside.** Read from the MultiHateLoc PDF:
+  turning its adaptive top-K selection off entirely — pooling every frame — costs **0.033 mAP**
+  (0.612 vs 0.645), and its tuned optimum selects **33% of the timeline** on a corpus whose median
+  gold coverage is **0.806**. The WWW 2026 flagship's selection mechanism is in direct conflict with
+  the label distribution it is fitted to.
+- **The released gold spans do carry real information — and it is redundant.** R13-SPAN measured
+  both halves. Span *location* beats a duration-matched random crop by **+0.0170 OOF ROC-AUC**
+  (95% CI [+0.0072, +0.0274]) on HateMM, rising to **+0.0230** at a 10%-length crop where 79% of
+  gold-vs-random comparisons have *literally zero* temporal overlap; and the span's complement is
+  far worse than a random crop of the same length (−0.0357 concat, **−0.1204 text**). So the
+  evidence genuinely is inside the annotated span. But **trimming to that span does not beat not
+  trimming** (Δ₂ = −0.0041, CI [−0.0186, +0.0092]), gold crops used as **training augmentation are
+  statistically indistinguishable from random crops** (one-sided 95% upper bound **+0.0024** against
+  a pre-declared worthwhile gain of +0.015), and handing a classifier the gold-located view
+  **directly** as a second feature buys at most **+0.0101** AUC. The information is real, and the
+  full-video model already has all of it.
+- **The effect is HateMM-only.** Every sweep Δ on MHC-EN and MHC-ZH has a CI containing zero,
+  exactly as the coverage geometry predicts: MHC-ZH's gold coverage is median **1.000** with
+  **69.6%** of videos at exactly 1.0, so the "span" and the "video" are the same object.
+- **The round's structural finding is a regime diagnosis, not a candidate.** Twelve mechanism
+  families are **structurally invalid at coverage 0.8-1.0**, not merely weak — softmax-over-time
+  cannot represent "80-100% of instants are foreground"; UniVTG-family InfoNCE takes lower-saliency
+  frames of the same video as negatives, and at coverage 1.0 that entire negative set is true
+  foreground. **Every mechanism this project tried on the temporal axis, and every published
+  hate-localization method, is drawn from that list.** The six prior kills were over-determined by
+  the regime, not only by the data scale.
+- **One family is not on that list and has never been pointed at hate: temporal action
+  segmentation** — 100% coverage by construction, no background class, and it lives at this
+  project's data scale (GTEA 28 videos, 50Salads 50). HateClipSeg's online per-timestamp task *is*
+  temporal action segmentation, and its own baselines (ActionFormer, LSTR) come from the invalid
+  list.
+- **Cumulative across eleven rounds: 129 candidates, one banked entry (`CAT`).**
+
+### 14.1 What the round inherited
+
+**(a) The field map** — `research-wiki/TEMPORAL_SPAN_LANDSCAPE_2026-08-18.md` (828 lines, zero GPU;
+extended this round with a §10 addendum). HateMM span coverage median **0.806**, single contiguous
+block **72.8%**; MHC-EN 0.937 / 95.8%; MHC-ZH **1.000 / 98.2%**; HateClipSeg 0.544 / 22.0%.
+The field is five methods wide and no two published HateMM localization numbers are comparable.
+
+**(b) This project's own record** — `RESEARCH_BRIEF.md` §6.3 and `refine-logs/LITSWEEP5_TEMPORAL.md`
+close the temporal axis at six independent levels: order kernels (Δacc +0.0059 = the shuffle null's
+95th percentile exactly), set-to-set / late-interaction retrieval (+0.0035 vs a +0.05 bar; MHC
+−0.0397), causal-prefix conditional information (**exactly +0.0000**), segment granularity
+(+0.0012 / +0.0032, with 91-98% of the oracle inside banned per-item selection), frame count
+(8→16 = −0.0077), within-video signal on frozen CLIP segments (**AUROC 0.511**). Plus P3, P11,
+TERA Gate-0 and two segment-retrieval kills.
+
+**The one thing neither document had spent.** Every prior temporal attempt used *noisy* segment
+supervision — MIL pseudo-labels, MLLM scores, unsupervised sub-clips. The **released gold spans
+have never been used as training supervision** here (declared validation-only in the TERA, P6 and
+P10 pre-registrations), and in the field they are only ever a localization target; MultiHateClip's
+spans ship in an under-advertised `Duration` column that no published method consumes at all.
+
+### 14.2 The candidates
+
+Fifteen were generated; thirteen went to **gpt-5.6-sol at xhigh reasoning, hostile**, with the full
+constraint map (bundle: `idea-stage/codex_brainstorm_bundle_r11_2026-08-18.md`).
+
+| # | candidate | mechanism | score | verdict and load-bearing reason |
+|---|---|---|---|---|
+| A1 | **GSA** gold-span crop augmentation | add a span-cropped copy of each hateful train video; negatives get a coverage-matched random crop; inference unchanged | **1.5** | keep only through a direct controlled probe — legal and untested, but cropping to 81-100% coverage on cosine-0.95 representations is barely an intervention |
+| A2 | **CRHN** complement-region negatives | the region outside the 8×-over-broad span as a speaker/channel-matched certified negative | **0** | kill — within-video AUROC 0.511 means the representation cannot separate these pairs; opposite labels on cosine-0.95 vectors is contradictory supervision |
+| A3 | **PBT** predicted-boundary trim → re-classify | the landscape's one empty method-shaped slot; Yang et al. report +19.3 / +30.5 macro-F1 with *gold* boundaries | **0** | kill — per-item segment selection (Law III / F47), and the ground-truth result is an oracle on a changed, easier input distribution |
+| A4 | **CDN** coverage-dependent noise reweighting | span as a bag of purity ≈ coverage | **0.5** | kill — occupied (Yang et al. is literally "temporal label noise"); this project's confidently-wrong items are 100% hard positives, not symmetric noise |
+| A5 | **SYNSPAN** synthetic span supervision by concatenation | splice labelled material into videos with known boundaries | **0** | kill — splice boundaries are a trivial shortcut and every downstream consumer is already dead or illegal |
+| A6 | **OCRSEG** OCR-burst boundaries as free units | on-screen-text change points as annotation-free segmentation | **0** | kill — composes the dead OCR axis with the dead segment-operator axis |
+| A7 | **PACE** absolute-time / fps injection | extraction passes no fps, so Qwen2.5-VL is pacing-blind | **1** | kill — a configuration deficiency, not a contribution; the finer frame-group tensor already measured at exactly +0.0000 conditional information |
+| A8 | **TGQ** target-group-conditioned scoring | enumerate protected groups, ground the best moment per group, max as the video score | **0** | kill — per-item hypothesis selection on top of two dead prerequisites; and VadCLIP's MIL-Align is a near-exact structural twin |
+| A9 | **SPANAUX** coverage as auxiliary target | multi-task the head with a free coverage label | **0.5** | kill — positive-only target, largely solved by recognising the video label |
+| A10 | **RATSUP** rationale-supervised temporal attention | HateXplain's attention supervision, ported to video time | executor-killed | not sent to the jury — this is P3 (`EXP_p3_evidence_pooling`, no method role on EN/ZH/HateMM) with gold weights instead of MLLM weights, and its test-time operator is a soft per-item selection |
+| A11 | **LUPI** span-privileged distillation | teacher sees gold-span views, student sees only the whole video, teacher discarded at inference | added by the reviewer, then **downgraded by it** | see §14.3 |
+| B1 | **HCS-XFER** cross-dataset boundary transfer `[needs-ruling]` | train a segment scorer on HateClipSeg, apply its boundaries to HateMM/MHC | **0** | kill — downstream still selection-blocked; 0.5447 frame AP against a 0.5252 broadcast control |
+| B2 | **HCS-DIRECT** enter HateClipSeg's two accuracy tasks `[needs-ruling]` | trimmed segment classification (69.48 M-F1) and online per-timestamp classification (72.06 M-F1) are *classification* tasks | **3** | keep as a **substrate decision, not a method** — the only non-degenerate temporal substrate, but "use this dataset" is not a paper idea until a mechanism is attached |
+| B3 | **MODASYM** modality-factored boundary vs label `[needs-ruling]` | visual draws boundaries, prosody labels moments | **3** | keep conditionally — the strongest actual mechanism, but the published inversion may be an architecture confound and must be reproduced under matched heads first |
+| B4 | beat StreamSense on the online task `[needs-ruling]` | — | **0** | kill — occupied freshly (WWW 2026), and its escalation/deferral mechanism is this project's dead uncertainty-gated deferral (−0.0135, 0/3 seeds) |
+
+**C1, recorded not proposed:** the highest-value contribution available in this sub-direction —
+report coverage, single-block fraction and a broadcast control, and unify five incompatible
+protocols — is closed by the method-paper-only rule and stays closed.
+
+**B3's motivating numbers were re-verified this round directly from the HateClipSeg paper HTML**
+(arXiv 2508.01712v2): Table 4 localization F1@tIoU 0.5 visual **52.65** / text 34.60 / audio
+**25.40** with V+T+A at 50.92 (fusion *below* visual alone at every threshold); Table 5 online
+per-timestamp Macro-F1 audio **60.84** > visual **57.52** > text 56.51. The inversion is real as
+printed. Trimmed classification best is 69.48 (V+T, LLaMA-3.2-11B), also confirmed.
+
+### 14.3 The one family the review added, and how it was priced before any code
+
+Asked directly whether a legal family had been missed, the reviewer named **training-time
+span-privileged distillation (LUPI / generalized distillation)** — a teacher on gold-span views, a
+student on the unchanged whole video, teacher discarded at inference. It routes around Law III / F47
+completely, which none of the other fourteen candidates does.
+
+Pressed with this project's 315-run distillation record (reference-correctness-gated distillation
+−0.0003/−0.0002 vs `CAT`; gain over a class-matched **shuffled** correctness mask +0.0008/−0.0009;
+anchored-arm error sets overlapping the baseline at Jaccard 0.84-0.96), the reviewer downgraded its
+own proposal:
+
+> On your cached-feature / shallow-head substrate, LUPI is operationally the same objective-level
+> family with a differently fed teacher. [...] If the student receives the same frozen pooled P0
+> key, the distinction disappears. Teacher logits are merely alternative per-example targets; they
+> cannot add information to the student input.
+
+Stated probability of clearing +0.010 on two of three datasets: **about 1%**. It also named a
+falsification needing **no distillation code** — cross-fit `M_gold = f(z_P0, z_G)` against
+`M_rand = f(z_P0, z_R)`, which hands a classifier the gold view *directly*, strictly more access
+than any distilled student. That became arm set D. The family was priced inside the same $0 run.
+
+### 14.4 R13-SPAN — design, two pre-result amendments, results
+
+**Design** (`idea-stage/R13_SPAN_FREEZE.md`, frozen before any arm metric existed). HateMM train
+only, 744 videos / 298 positive, 5-fold OOF logistic regression *inside train*. Channels: `visual`
+= mean of `subclipK30` CLIP image features overlapping the kept interval; `text` = CLIP text
+embedding of the transcript restricted to the kept interval, rebuilt from word-level Whisper
+`chunks`; primary = their L2-normalised concatenation. 20 draws, seeds 2000-2019.
+
+**Amendment D1 — the original control was geometrically underpowered.** Two intervals of the same
+length fraction `c` in one video must overlap by at least `2c − 1`. At HateMM's median coverage
+0.825 the "random" control is *forced* to contain 65% of the video; at MHC-ZH's 1.000 the gold and
+random arms are **identical by construction**. D1 added a **matched-length sweep** at
+r ∈ {0.10, 0.20, 0.40} — `G_r` centred on the longest gold span, `R_r` at a random position, same
+length — plus a deliberately leaky **ORACLE_r** positive control so a null could be distinguished
+from a measurement without power. Measured: at r = 0.10, **78.96%** of gold-vs-random pairs have
+**zero** temporal overlap. The control is decontaminated.
+
+**Amendment D2 — the frozen kill rule was too broad, and is withdrawn.** Δ₁ and Δ_sweep test only
+whether a gold-located crop is a better *standalone key* — the ceiling for predicted-boundary
+trimming and nothing else. D2 added **arm set C** (train on P0 ∪ G_r, *evaluate on P0 only*, crops
+fold-locked to their parent) and **arm set D** (the privileged-information read-out above), and
+replaced "CI contains zero ⇒ kill" with a one-sided **equivalence test** against a pre-declared
+smallest worthwhile gain of **δ = +0.015 OOF ROC-AUC**. Both amendments are recorded in
+`idea-stage/R13_SPAN_DEVIATION_D1_D2.md`; both were issued before any number existed and both
+*narrow* what the probe may claim.
+
+**Power check first.** ORACLE_r − R_r is **+0.1192 / +0.0963 / +0.0645** on HateMM and +0.157 /
++0.132 / +0.095 (MHC-EN) and +0.121 / +0.128 / +0.108 (MHC-ZH), every CI excluding zero. The
+read-out detects a large effect on every arena, so the nulls below are informative.
+
+**Result 1 — span location is informative, on HateMM only** (OOF ROC-AUC, concat, paired bootstrap
+10 000, seed 2021):
+
+| Δ | HateMM | MHC-EN (531) | MHC-ZH (560) |
+|---|---|---|---|
+| Δ₁ = P1 − P2 | **+0.0170** [+0.0072, +0.0274] | +0.0014 [−0.0121, +0.0144] | +0.0036 [−0.0049, +0.0132] |
+| G₀.₁₀ − R₀.₁₀ | **+0.0230** [+0.0121, +0.0345] | +0.0102 [−0.0053, +0.0255] | +0.0060 [−0.0074, +0.0194] |
+| G₀.₂₀ − R₀.₂₀ | **+0.0191** [+0.0074, +0.0305] | +0.0050 [−0.0135, +0.0235] | −0.0020 [−0.0148, +0.0105] |
+| G₀.₄₀ − R₀.₄₀ | **+0.0149** [+0.0058, +0.0242] | −0.0049 [−0.0210, +0.0108] | −0.0007 [−0.0137, +0.0122] |
+
+Every HateMM sweep CI excludes zero on concat and visual. Every MHC CI contains zero.
+
+**Result 2 — and it is redundant with the untrimmed video.** Δ₂ = P1 − P0 on HateMM concat is
+**−0.0041** [−0.0186, +0.0092]: trimming to the gold span does not beat not trimming. The
+complement arm rules out "there is no signal": P3 − P2 = **−0.0357** concat and **−0.1204** text —
+the region outside the span is far worse than a random crop of the same length, so the evidence
+really is inside the span. And the realistic non-oracle trimmer is as good as gold: P4 − P2 =
++0.0166 against gold's +0.0170, so **localization quality is not the bottleneck either**.
+
+**Result 3 — arm set C kills gold-span crop augmentation by equivalence, on all three datasets.**
+Gold-crop augmentation vs random-crop augmentation, evaluated on untouched P0 keys:
+
+| Δ (concat) | HateMM point / 1-sided 95% upper | MHC-EN upper | MHC-ZH upper |
+|---|---|---|---|
+| full span | −0.0002 / **+0.0008** | +0.0031 | +0.0013 |
+| r = 0.20 | +0.0012 / **+0.0024** | +0.0016 | +0.0031 |
+| r = 0.40 | +0.0004 / **+0.0013** | +0.0019 | +0.0029 |
+
+Every upper bound is below δ = +0.015 by a factor of six or more; the largest anywhere in set C is
++0.0036. Adding crops at all buys +0.0008 to +0.0031 over no augmentation.
+
+**Result 4 — arm set D kills span-privileged distillation by equivalence, before any code.**
+Handing the classifier the gold-located view *directly*: AUC Δ gold−rand is +0.0063 [+0.0021,
++0.0108] (full span) and +0.0031 [−0.0002, +0.0062] (r = 0.20) on HateMM, upper bounds **+0.0101**
+and **+0.0057**, both below δ; MHC-EN +0.0061, MHC-ZH +0.0091. Log loss does favour gold and
+excludes zero (−0.0110 [−0.0173, −0.0049] full span), so a *little* privileged signal exists — but
+its AUC ceiling is ≤+0.010 with strictly more access than any student could have.
+
+**Result 5 — the geometry, measured.** cos(P0, P1) on HateMM: visual mean 0.9891 (median 0.9996),
+concat mean 0.9223 (median 0.9793). Trimming barely moves the key, confirming §6.3's cosine-0.95
+fact independently. HateMM gold coverage mean 0.7156 / median 0.8250, 34.2% at ≥0.90; MHC-EN median
+0.956; MHC-ZH median **1.000** with **69.6%** at exactly 1.0.
+
+**Verdict under the frozen (amended) rule.** The positive control passed, so the probe decides.
+- **A1 gold-span crop augmentation: KILLED by equivalence** (upper bound +0.0024 vs δ = +0.015,
+  on three of three datasets).
+- **A11 span-privileged distillation: KILLED by equivalence** (upper bound +0.0101, three of three).
+- **A3 predicted-boundary trimming: KILLED.** Δ₂ shows trimming to *gold* does not beat the
+  untrimmed video, so no predicted boundary can; and it was already Law-III-illegal.
+- **A2 complement negatives and A5 synthetic span supervision: killed on the jury's reasons**, not
+  by this probe, which does not test them. Stated plainly rather than over-claimed.
+- **Span location on HateMM is a real but one-dataset effect** (+0.015 to +0.023 AUC), and it fails
+  the project's standing ≥2-dataset bar. It is recorded as a measured fact, not a claim.
+
+### 14.5 What is left, and what it costs — the HateClipSeg ruling
+
+One unresolved branch, and it is a **substrate** question. Does training or evaluating on an
+already-public, already-annotated corpus count as "introducing a new dataset"? The standing
+constraint bans new dataset *construction* and manual annotation. HateClipSeg's 395-video subset is
+downloaded and its declared split (`data/gt/HateClipSeg/p11_split.json`, 237/39/119, stratified,
+seed 0) is **frozen and unconsumed**.
+
+**Why it is the only live substrate.** Every closure level in §14.1(b) was measured on 30-second
+videos whose annotated span *is* the video. HateClipSeg is a different object, re-measured from the
+local copy this round: median duration **239.1 s**, median **27 segments per video**, median segment
+length **8.12 s**, toxic coverage median 0.544, single-block 22.0%.
+
+**Why it is method-paper-legal.** Two of its three tasks are classification-accuracy tasks, not
+mAP@tIoU: trimmed segment classification (69.48 macro-F1) and online per-timestamp classification
+(72.06 macro-F1, StreamSense).
+
+**What it costs — much less than it looks.** The existing uniform K=30 grid lands at ~8.0 s per
+window against a median gold segment of 8.12 s, so the online per-timestamp task can be run
+**today at zero extraction cost**: `data/CLIP_Embedding/HateClipSeg/test_seen_subclipK30_*.pt`
+(395 × 30 visual), `data/ASR/HateClipSeg/test_seen_asrK30_*.jsonl` (word-level chunks, re-windowable
+free), `data/OCR/HateClipSeg/ocr_windows_K30.jsonl` (11 850 lines), the 72B per-window scores, and
+`gold_segments.json` (10 572 segments). Missing and not free: audio/prosody features (no
+`data/audio/HateClipSeg/`), and exact variable-length gold-segment pooling for the *trimmed* task
+(a fresh CLIP pass over ~10 572 segments — tens of minutes on the 5090, not days).
+
+**Two conditions any ruling should carry.**
+1. **No SOTA claim is available.** Our copy is the 90.8% surviving subset with non-random attrition
+   (YouTube 20.8% loss vs BitChute 6.9%; rarest strata hit hardest). Only method-vs-method on the
+   identical frozen subset is valid, with the selection-bias statement attached to every number.
+2. **B3's motivating inversion must be reproduced before it is built on** — a matched 2×2,
+   {audio, visual} × {moment label, boundary}, on one common 1 s grid, one common causal context,
+   frozen encoders projected to equal width, identical temporal model and parameter budget, with
+   **video-clustered** CIs (10 572 segments are not independent) and a **within-video circular-shift
+   control** per modality. If shuffled audio classifies moments as well as real audio, the claim
+   that prosody carries the moment label is unsupported.
+
+### 14.6 Deviations recorded
+
+- **D1, D2** — pre-result amendments, `idea-stage/R13_SPAN_DEVIATION_D1_D2.md`. Both narrow the
+  claim; neither loosens a threshold; neither was informed by a result.
+- **D3 — MHC arena population added, not substituted.** The freeze's literal restriction (videos
+  with a non-empty `Duration`) gives 150 pos / 12 neg on EN, which returns a constant majority-class
+  prediction in every arm. Both the literal frozen arena and a `neg_augmented` arena (gold-span
+  positives plus all label-0 train videos, i.e. the HateMM construction) are reported and labelled.
+- **D4 — implementer blindness disclosure.** The implementing agent ran two debug smoke tests on a
+  120-video HateMM subsample with 2 seeds and 200 bootstrap resamples and saw those subsample
+  numbers. No design decision followed: the smoke code already implemented the freeze plus both
+  amendments, the only subsequent edits were two crash fixes and one RNG memoisation, and amendment
+  D2 was authored by a session that had seen nothing. Recorded rather than buried.
+- **Test discipline.** `hate_spans.json` holds all 1083 videos; after filtering to `train.jsonl` ids
+  the leak assertions against `val.jsonl` and `test.jsonl` passed on all three datasets. A path
+  guard raised on any filename containing `test_seen`/`dev_seen`; no such cache was opened. The
+  val/test jsonls were opened for their `id` field only, to run that assertion.
+
+### 14.7 Cumulative, and what round 12 must not do
+
+| round | axis | candidates | survivors |
+|---|---|---|---|
+| 1-10 | §1-§13 | 114 | 1 (`CAT`) |
+| **11** | **temporal span / localization** | **15** | **0 mechanisms; 1 substrate question pending a user ruling** |
+
+1. **Do not import any mechanism from the minority-foreground families.** The landscape's §10.2
+   lists twelve that are structurally invalid at coverage 0.8-1.0, and every one of this project's
+   six temporal kills and every published hate-localization method is drawn from that list.
+2. **Do not treat a large oracle as evidence.** This round's own leaky control returned +0.119 and
+   converted to nothing; Yang et al.'s +19.3 / +30.5 is measured on a changed, easier input
+   distribution; and AGGNET already priced oracle-to-delivery conversion at roughly 10%.
+3. **Do not propose a measurement contribution.** Closed by the method-paper-only rule, permanently,
+   and re-confirmed closed this round.
