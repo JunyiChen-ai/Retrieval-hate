@@ -1,0 +1,161 @@
+{
+ "freeze": "idea-stage/R10_TOKPOS_FREEZE.md 2.3",
+ "deviation": "idea-stage/R10_TOKPOS_DEVIATION_D1.md",
+ "R_sha256_float32": "a64c3e16fefbbb0c593b424b264318e31ad4bb46fc22590abf12ac182bf3386c",
+ "files": {
+  "train/A0": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10TP-A0.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "text_sha256": "227d350f34f023bbc712289b1e743ff592a2a617ce6890db2f90df94bba8d7f9"
+  },
+  "train/TXT": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10TP-TXT.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "text_sha256": "bdd5c01eab2c73087d10fdcfcf3940cb36dbd67b06a2e965637b72f308d1300a"
+  },
+  "train/CAT": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10TP-CAT.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "text_sha256": "f176fe02e7f8b2e156fde7cc505832396b28b769155dd9041f9d205bacd6c316"
+  },
+  "train/RAND": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10TP-RAND.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "text_sha256": "e30765c16831234e6c8135be0093d734dbcf76733a4839fa9b687bd3e06c9c54"
+  },
+  "train/SEG": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10TP-SEG.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 17920,
+   "text_sha256": "4415b56b5a0064cc5d1741a74edd8f912b9d1a09cb29aa60008177cc314ae162"
+  },
+  "dev_seen/A0": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10TP-A0.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "text_sha256": "81179bb710d75af64d3fd2ac7eecd432e6447be02c37fcfc3d17cec1e8b12323"
+  },
+  "dev_seen/TXT": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10TP-TXT.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "text_sha256": "ef749f3e24e7e643e523e38985bc2c75917c74665f4d45077c8c4b9a423f7937"
+  },
+  "dev_seen/CAT": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10TP-CAT.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "text_sha256": "99de6ad36a91aebc664560abe6512af1b8e1ea29bad8d3f8d1c041701143dab3"
+  },
+  "dev_seen/RAND": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10TP-RAND.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "text_sha256": "cf473449c0c110a22dda4a9e54d569d6e8529fe2d67f867dbd48306fa4705326"
+  },
+  "dev_seen/SEG": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10TP-SEG.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 17920,
+   "text_sha256": "8f4e49320c9074541ddd44a480060ca69705c2e30ee90f38d9a6ad2144eb6116"
+  },
+  "test_seen/A0": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10TP-A0.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "text_sha256": "f78fffbde21f4b4b46fd62be8dccf8776f6a5e7d023d16237d12e448cce17d8f"
+  },
+  "test_seen/TXT": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10TP-TXT.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "text_sha256": "4d51e0a4edb7a66ae25ec1ca7a74a432ea1b9d8147d20e4c3e956db8b11c66ad"
+  },
+  "test_seen/CAT": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10TP-CAT.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "text_sha256": "9da2fb71d8f741d4eea9195c8a132927b2ddbc0dd22b020042b931f0d60572c2"
+  },
+  "test_seen/RAND": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10TP-RAND.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "text_sha256": "b2d00b87e8d43e3022efe84460d3adfa840800ed4e915f0417ad1189a7be3bd9"
+  },
+  "test_seen/SEG": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10TP-SEG.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 17920,
+   "text_sha256": "421267a5f4358661cae96fa997c9df7c5897fdfe8233ce749bb54364061957dc"
+  }
+ },
+ "parity": {
+  "train": {
+   "note": "descriptive cross-hardware drift; gating belt is the bit-exact internal one (R10_TOKPOS_DEVIATION_D2.md)",
+   "n_compared": 579,
+   "cos_min": 0.9620981216430664,
+   "cos_mean": 0.9961358904838562,
+   "cos_median": 0.9968457221984863,
+   "frac_ge_0.99": 0.9689119458198547,
+   "frac_ge_0.95": 1.0
+  },
+  "dev_seen": {
+   "note": "descriptive cross-hardware drift; gating belt is the bit-exact internal one (R10_TOKPOS_DEVIATION_D2.md)",
+   "n_compared": 78,
+   "cos_min": 0.9870877265930176,
+   "cos_mean": 0.9962792992591858,
+   "cos_median": 0.9968008995056152,
+   "frac_ge_0.99": 0.9743589758872986,
+   "frac_ge_0.95": 1.0
+  },
+  "test_seen": {
+   "note": "descriptive cross-hardware drift; gating belt is the bit-exact internal one (R10_TOKPOS_DEVIATION_D2.md)",
+   "n_compared": 149,
+   "cos_min": 0.9532958269119263,
+   "cos_mean": 0.9958974123001099,
+   "cos_median": 0.9965769052505493,
+   "frac_ge_0.99": 0.9664429426193237,
+   "frac_ge_0.95": 1.0
+  }
+ },
+ "geometry": {
+  "train": {
+   "cos_A0_TXT": 0.4520585834980011,
+   "cos_A0_ALL": 0.34727364778518677,
+   "cos_A0_img": 0.3068317174911499,
+   "cos_TXT_img": 0.605431854724884
+  },
+  "dev_seen": {
+   "cos_A0_TXT": 0.44222116470336914,
+   "cos_A0_ALL": 0.3387666344642639,
+   "cos_A0_img": 0.29764217138290405,
+   "cos_TXT_img": 0.6092115640640259
+  },
+  "test_seen": {
+   "cos_A0_TXT": 0.4495358467102051,
+   "cos_A0_ALL": 0.347134530544281,
+   "cos_A0_img": 0.30618706345558167,
+   "cos_TXT_img": 0.614483118057251
+  }
+ }
+}

@@ -65,18 +65,39 @@ def erank(Sigma):
     return float(np.exp(H))
 
 
-def pooled_within(X, y):
-    """Sigma_W^(K) = (1/N) sum_c Sigma_c^(K), Sigma_c with the K-1 denominator (Def 3.2)."""
-    mats = []
-    for c in np.unique(y):
+def pooled_within_spectrum(X, y):
+    """Non-zero eigenvalues of Sigma_W^(K) = (1/N) sum_c Sigma_c^(K)  (Def 3.2).
+
+    With equal per-class support K, stacking the class-centred blocks into A gives
+    Sigma_W = A^T A / (N (K-1)).  The non-zero eigenvalues of A^T A (d x d) and of
+    A A^T (NK x NK) are identical, and zero eigenvalues contribute nothing to the
+    Shannon entropy, so erank is unchanged.  We take whichever side is smaller --
+    exact, not an approximation.
+    """
+    classes = np.unique(y)
+    N = len(classes)
+    blocks = []
+    for c in classes:
         Z = X[y == c]
-        Zc = Z - Z.mean(0, keepdims=True)
-        mats.append(Zc.T @ Zc / (Z.shape[0] - 1))
-    return sum(mats) / len(mats)
+        blocks.append(Z - Z.mean(0, keepdims=True))
+        K = Z.shape[0]
+    A = np.concatenate(blocks, 0)
+    scale = 1.0 / (N * (K - 1))
+    if A.shape[0] <= A.shape[1]:
+        M = (A @ A.T) * scale
+    else:
+        M = (A.T @ A) * scale
+    lam = np.linalg.eigvalsh(M)
+    return np.clip(lam, 0.0, None)
 
 
-def s_index(X, y, K):
-    return erank(pooled_within(X, y)) / float(K)
+def erank_from_spectrum(lam):
+    tr = lam.sum()
+    if tr <= 0:
+        return 1.0
+    p = lam / tr
+    p = p[p > 0]
+    return float(np.exp(float(-(p * np.log(p)).sum())))
 
 
 def one_trial(Xall, yall, K, rng, do_pca):
@@ -92,8 +113,8 @@ def one_trial(Xall, yall, K, rng, do_pca):
         ncomp = min(PCA_DIM, X.shape[0] - 1, X.shape[1])
         X = PCA(n_components=ncomp, svd_solver="randomized",
                 random_state=0).fit_transform(X)
-    Sw = pooled_within(X, y)
-    return erank(Sw), erank(Sw) / float(K)
+    e = erank_from_spectrum(pooled_within_spectrum(X, y))
+    return e, e / float(K)
 
 
 def main():
