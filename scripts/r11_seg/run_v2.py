@@ -221,6 +221,8 @@ def decode(p, mode, budget=None, T=None, dur_min=0):
 def main():
     R.causality_guard()
     D = R.load_all()
+    # y_multi is in the frozen grid artifact but not returned by load_all(); read it directly.
+    D["y_multi"] = np.load(OUT / "grid_labels.npz", allow_pickle=True)["y_multi"]
     tr, va, te = D["tr"], D["va"], D["te"]
     y_ts, wot, y_win = D["y_ts"], D["win_of_ts"], D["y_win"]
     res, meta = {}, {}

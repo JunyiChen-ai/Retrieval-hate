@@ -263,3 +263,162 @@ throughout.
 Test discipline: the runner asserts train/val/test id disjointness and prints the result; val (39
 videos) carried all epoch selection; the 0.5 threshold was never tuned; test labels were read in a
 single scripted pass after training.
+
+---
+---
+
+# R11-SEG — result (pilot v2)
+
+**Freeze**: `idea-stage/R11_SEG_PILOT_FREEZE_V2.md`, commit **`4a45d35`**, committed before
+`scripts/r11_seg/run_v2.py` was written or executed. **Cost**: ¥0, local, ~9 min.
+
+v2 was written after `idea-stage/R11_SEG_NOVELTY_CHECK.md` (`6ad6b32`) rated the direction **(c)**
+and gave a revision path to **(b)**. It tests the two things v1 could not: **(a)** the *work*
+carrier — does any temporal-structure arm beat the per-window independent head, now including the
+dense action detection family the novelty check named — and **(b)** the *novelty* carrier —
+does a **coverage-budget constrained decode** driven by a video-level score add anything.
+
+## VERDICT: **KILL** — neither gate passes
+
+| gate | contrast | result | pass? |
+|---|---|---|---|
+| **(a) work** | `max(B2_DENSE, A4_CTCN) − A2_PERWIN`, ALL, ONLINE | **−0.233 [−1.911, +1.392]** | **no** |
+| **(b) novelty** | `C1_COVBUD_ONLINE − C0_UNCONSTRAINED`, ALL, ONLINE | **−7.531 [−10.403, −4.577]** | **no** |
+| (b) fallback branch | same, MULTISPAN subset (n=80) | −5.595 [−8.795, −2.370] | no |
+
+## 1. Gate (a) — the dense family fails too
+
+Per-timestamp macro-F1 / accuracy, 119 test videos, 12 seeds 2200-2211. `A1/A2/A4` reproduce v1
+**exactly** (65.77 / 64.67); `A4` re-drew at 64.44 on GPU nondeterminism.
+
+| arm | claim | `ALL` | `V` |
+|---|---|---|---|
+| `A1_BCAST_CAUSAL` learned broadcast control | control | **65.77** / 66.25 | 60.61 / 61.20 |
+| `A2_PERWIN` no temporal context | comparator | 64.67 / 64.93 | **63.06** / 63.45 |
+| `A4_CTCN` GTEA-line causal MS-TCN | (a) | 64.44 / 64.67 | 62.23 / 62.42 |
+| **`B2_DENSE`** MS-TCT/PAT-shaped, causal, per-window multi-hot sigmoid over 5 categories | (a) | 64.34 / 64.58 | 62.01 / 62.05 |
+
+| contrast | `ALL` | `V` |
+|---|---|---|
+| B2_DENSE − A2_PERWIN | **−0.326 [−2.904, +2.291]** | −1.050 [−4.873, +2.634] |
+| A4_CTCN − A2_PERWIN | −0.233 [−1.911, +1.392] | −0.821 [−3.514, +1.927] |
+| B2_DENSE − A1_BCAST_CAUSAL | −1.424 [−4.672, +1.953] | +1.399 [−2.395, +5.163] |
+
+**Three architecture families have now been tried against the same per-window independent head on
+this task — GTEA-line TAS (`A4`), LSTR-family causal attention (`A6`, v1), and dense action
+detection (`B2`) — and all three are null.** The novelty check was right that the dense family is
+the closer architectural fit to a multi-hot toxicity timeline; it does not change the answer.
+Across four independent executions of identical code with identical seeds, `A4_CTCN` on `ALL` came
+out at 64.42 / 64.94 / 64.58 / 64.44 — a ±0.5 spread from GPU nondeterminism alone, which is larger
+than any effect claimed for the temporal operator.
+
+## 2. Gate (b) — the coverage budget is actively harmful, and the reason is measurable
+
+All decoders operate on the **identical** `A2_PERWIN` seed-averaged scores; the decoder is the only
+thing that changes. `A4_CTCN` scores give the same pattern and are in `results_v2.json`.
+
+| decoder | protocol | ts macro-F1 | Δ vs `C0` [95% CI] |
+|---|---|---|---|
+| `C0_UNCONSTRAINED` (threshold 0.5) | ONLINE | 64.67 | — |
+| **`C1_COVBUD_ONLINE`** budget + causal forward filter | ONLINE | **57.14** | **−7.531 [−10.403, −4.577]** |
+| `C1a_BUDGET_ONLY` | ONLINE | 55.28 | **−9.387 [−12.645, −6.093]** |
+| `C1b_TRANS_ONLY` causal forward filter alone | ONLINE | 64.79 | +0.119 [−0.998, +1.194] |
+| `C2_COVBUD_OFFLINE` Viterbi + global budget + duration bound | **OFFLINE** | 63.31 | −1.356 [−4.447, +1.659] |
+| `C3_ORACLE_BUDGET` (gold coverage) | diagnostic | **73.64** | **+8.969 [+5.255, +13.030]** |
+
+Stratified `C1 − C0`: MULTISPAN (n=80) −5.595 [−8.795, −2.370]; SINGLESPAN (n=24) −12.445;
+LOW coverage (n=35) −4.480; MID (n=56) −1.135 [−4.400, +2.115]; HIGH (n=28) −8.685. **There is no
+stratum where the budget helps.**
+
+**Decomposition.** The transition prior — the causal HMM forward filter, i.e. the CAD-style
+"transition confidences" half — is **neutral** (+0.119, CI containing zero; measured train
+persistence 0.855 / 0.834). Every point of the loss comes from the **budget** half (−9.387).
+
+**The cause, quantified.** The coverage-budget mechanism needs a per-video estimate of what
+fraction of the timeline is offensive. The frozen estimator (ridge on prefix-mean features, fitted
+on train) reaches Pearson **r = 0.999 on train and r = 0.344 on test** — it does not generalise.
+Post-hoc (`scripts/r11_seg/posthoc_v2.py`, labelled post-hoc, no gate):
+
+| budget source | test r vs gold coverage | ts macro-F1 |
+|---|---|---|
+| constant (train mean) | — | 53.11 |
+| ridge on features (frozen choice) | 0.344 | 57.14 |
+| the model's own causal running-mean probability | 0.509 | 61.43 |
+| gold coverage + noise sd 0.30 | ≈0.76 | 69.12 |
+| gold coverage + noise sd 0.15 | ≈0.92 | 70.97 |
+| gold coverage (oracle) | 1.00 | 73.64 |
+
+So the decode **would** beat `C0` — by 4 to 9 points — given a coverage predictor at r ≳ 0.7. The
+best estimator available on this substrate reaches **r ≈ 0.5**, and at that accuracy the decode is
+3 points *below* doing nothing. **The binding constraint is video-level coverage predictability,
+not the decoder.** That is a concrete, falsifiable diagnosis and it names exactly what a future
+attempt would have to fix first — but per the round-11 standing rule, a large oracle is not
+evidence, and AGGNET already priced oracle-to-delivery conversion at roughly 10%, which here would
+be +0.9, below δ = +1.0.
+
+## 3. The controlled objective test — the narrowed structural claim is not confirmed here
+
+`E1` = `A4_CTCN` with plain per-instant BCE. `E2` = the same plus a **UniVTG-style score-derived
+intra-video negative** term (anchor = the windows the current model scores highest; negatives = the
+lowest-scoring windows *of the same video*, chosen by relative score, not by gold; InfoNCE τ=0.07,
+weight 0.1).
+
+| | ts macro-F1 | Δ = E2 − E1 [95% CI] |
+|---|---|---|
+| `E1_OBJ_BCE` | 64.63 | — |
+| `E2_OBJ_INTRA` | 64.95 | **+0.314 [−0.612, +1.268]** |
+| by stratum | | LOW +0.300 · MID +0.090 · **HIGH +0.487 [−1.461, +2.658]** · MULTISPAN −0.258 · SINGLESPAN −0.134 |
+
+The narrowed Part A claim ("objectives that manufacture negatives from relative within-video scores
+become inconsistent as coverage → 1") predicts `E2 − E1 < 0` on the high-coverage stratum. It is
+**not observed**: +0.487 with a CI containing zero on n = 28. Honest reading — HateClipSeg's mean
+coverage is 0.45 and the HIGH stratum is coverage ≥ 0.75, not → 1, and 28 videos is underpowered.
+The result does not refute the claim; it does mean **this project has no positive evidence for it**,
+and the claim must not be asserted as though the experiment supported it.
+
+## 4. What v2 adds to the closure
+
+1. **Gate (a) is closed across three architecture families**, not one. "Temporal structure over
+   per-segment scores" buys nothing measurable on HateClipSeg's online task.
+2. **Gate (b) — the novelty carrier — is closed as specified.** Coverage-budget decoding is
+   *harmful* at achievable budget accuracy, in every stratum, on both score sources. Its transition
+   half is a no-op. Its oracle version is large, which under this project's own rules is a warning,
+   not a promise.
+3. **The one substantive open sub-question it leaves** is narrow and expensive: could a video-level
+   *coverage* predictor be pushed from r ≈ 0.5 to r ≳ 0.7? Nothing in this project's record suggests
+   that a video-level regression head does better than r ≈ 0.5 on a 237-video train set, and the
+   payoff would still have to survive the ±0.5 run-to-run noise floor measured in §1.
+4. **`C1b`'s neutrality is worth carrying forward as a fact**: HateClipSeg's window labels persist
+   at 0.855 / 0.834, so an HMM transition prior is already implicit in the scores. This is the
+   quantitative reason "add temporal smoothing" cannot help here, and it agrees with v1's `A4` vs
+   `A5` result (the MS-TCN smoothing term was worth +0.29, CI containing zero).
+
+## 5. v2 deviations
+
+- **D5 — one crash-and-fix.** The first v2 invocation died with `KeyError: 'y_multi'` after the
+  carried arms: `run_pilot.load_all()` builds the per-window multi-hot target but does not return
+  it. Fix: `run_v2.main()` reads `y_multi` directly from the frozen `grid_labels.npz`. The fix
+  touches data plumbing only — no arm, threshold, seed, metric or decision rule changed, and the
+  carried arms reproduced bit-identically after the restart (`A1` 65.77, `A2` 64.67 in both). Log
+  retained at `logging/runs/r11_seg/run_v2_attempt1_crash.log`.
+- **D6 — post-hoc budget diagnostic** (§2 lower table, `scripts/r11_seg/posthoc_v2.py`) was written
+  and run after the frozen v2 verdict. It uses gold coverage as an oracle input and is labelled a
+  diagnostic throughout; it changes no gate.
+- **D7 — `C3_ORACLE_BUDGET` reads test labels** to build the gold-coverage budget. It was declared
+  in the freeze as a labelled oracle diagnostic, is not a gate, and no arm, threshold or
+  hyperparameter was selected using it.
+
+## 6. v2 reproduction
+
+| artifact | path |
+|---|---|
+| freeze (pre-code, commit `4a45d35`) | `idea-stage/R11_SEG_PILOT_FREEZE_V2.md` |
+| runner | `scripts/r11_seg/run_v2.py` → `idea-stage/r11_seg/out/results_v2.json`, `v2_probs_*.npy` |
+| post-hoc budget diagnostic | `scripts/r11_seg/posthoc_v2.py` → `out/posthoc_v2.json` |
+| logs | `logging/runs/r11_seg/{run_v2.log, run_v2_attempt1_crash.log}` |
+
+Causality was asserted in-run for every arm including the two new modules (`B2_DENSE` and the
+projection-exposing CTCN used by `E1`/`E2`): `max|Δ_past| = 0.00e+00` for all. The Dense arm's
+multi-scale branch initially leaked future through pool-and-upsample and was rewritten as causal
+moving averages *before* the freeze was executed; the leak was caught by the synthetic smoke test,
+never by a real-data metric.
