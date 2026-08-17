@@ -3223,3 +3223,296 @@ R6-1C, 100-129 R7). (c) The analyzer ran exactly once on the complete 600-run gr
 encoder defect was declared rather than patched. (e) Diagnostics D1-D3 opened no test split. (f) The
 external reviewer's two "indispensable control arms" were both adopted into the freeze before the
 run. (g) Total API spend for the round: **¥0.00 of ¥10**.
+
+---
+
+## §12 — Round 9 (2026-08-18): the encoder-adaptation axis, opened and closed in one round
+
+**Cost: ¥0.00 of a ¥15 round budget (cumulative ¥0 of ¥60). ~25 minutes on the local RTX 5090
+(shared), all on cached features. 625 head-training runs, 0 failures, 0 NaN, 0 test-label tuning.**
+
+### 12.0 Headline
+
+The principal added one hard constraint for this round — **no new human annotation may be
+introduced** — which removes the project's only priced route into the S bucket. Round 9 therefore
+had to find a mechanism that adds information without adding labels.
+
+It found the axis, measured it, and closed it in the same round.
+
+- **New diagnostic D1: encoder adaptation is the only intervention in this project that moves
+  ≥9 test items.** Comparing the frozen Qwen2.5-VL-7B with its own LoRA-adapted version under the
+  identical head and protocol, adaptation **repairs 9-12 items and breaks 4-10** on every dataset
+  where both caches exist. The largest head-/objective-/fusion-level effect ever found here
+  (L24‖L28, +0.0185 on MHC-ZH) is about 3 items.
+- **The breaks are a real, unpriced loss**: 6 / 9 / 10 / 4 net items = +2.4 to +5.5 macro-F1
+  points, comparable to the S-bucket prize (+3.23) and blocked on neither money nor annotation.
+- **Pilot R9-1 killed the cheapest mechanism that could collect it.** No interior mixture of the
+  frozen and adapted representation beats the better endpoint on any of 3 datasets, and on MHC-ZH
+  the interpolation cuts the break rate by 50 % while keeping only 37 % of the repairs — the
+  repairs and the breaks are one scalar dial, not two separable populations.
+- **The S-bucket repricing does not open a mechanism family under this round's constraints**, and
+  the enumeration of why is §12.4.
+
+**Cumulative across nine rounds: 101 candidates, 0 method candidates.**
+
+### 12.1 Diagnostic D1 — the encoder-adaptation error population
+
+`idea-stage/r9_diag/diag.py --mode d1`, raw `idea-stage/r9_diag/d1.json`. 15 seeds per arm,
+`r4_harness` protocol (train on train, epoch by **validation macro-F1**, report test). Both arms
+are **already-deployed encoders from the contrast-line table**, not candidates; test labels were
+read for the error-set comparison and this is declared as a disclosed diagnostic with the same
+standing as §10.6.
+
+| dataset | frozen | adapted | Δ | frozen errors | adapted errors | **fixed** | **broken** | Jaccard | prob corr |
+|---|---|---|---|---|---|---|---|---|---|
+| HateMM (LoRA) | 0.8575 | 0.8744 | +0.0169 | 30 / 215 | 25 | **11** | **6** | 0.53 | 0.952 |
+| HateMM (LoRA-curric) | 0.8575 | 0.8696 | +0.0121 | 30 | 27 | **12** | **9** | 0.46 | 0.927 |
+| MHC-EN (LoRA) | 0.7281 | 0.7220 | −0.0062 | 37 / 161 | 38 | **9** | **10** | 0.60 | 0.841 |
+| MHC-ZH (LoRA) | 0.7681 | 0.8013 | +0.0332 | 29 / 149 | 24 | **9** | **4** | 0.61 | 0.934 |
+
+The harness reproduces the ledger: MHC-ZH 0.8013 against the corrected contrast line 0.8014,
+HateMM 0.8744 against 0.8774.
+
+The external reviewer's caution is recorded with the table: expressed as *net* items these effects
+are five, three, minus one and five items, and the independence null (3.5-8.7 expected overlap) is
+not a meaningful null because items differ in intrinsic difficulty. What the table establishes is
+not that adaptation is large but that it is the **only** lever measured in this project whose
+repair and break populations are both in double digits.
+
+### 12.2 Diagnostic D2 — the label-noise family is bounded at 12-45 train items per dataset
+
+`--mode d2`, 5-fold stratified CV over train+val, frozen features, 5 seeds, **no test contact**.
+
+| dataset | n | OOF macro-F1 | OOF ROC | wrong | conf-wrong >0.9 | >0.8 | >0.7 | positives among conf-wrong |
+|---|---|---|---|---|---|---|---|---|
+| HateMM | 851 | 0.8503 | 0.9102 | 123 | 34 (4.0 %) | 62 | 84 | 65 % |
+| MHC-EN | 629 | 0.7864 | 0.8549 | 117 | 19 (3.0 %) | 25 | 30 | **100 %** |
+| MHC-ZH | 657 | 0.7990 | 0.8849 | 116 | 12 (1.8 %) | 25 | 54 | **100 %** |
+| ImpliHateVid | 1608 | 0.9254 | 0.9761 | 120 | 45 (2.8 %) | 64 | 79 | 42 % |
+
+If the S-bucket repricing (21 of 49 stance errors are items where a content-only panel unanimously
+reads the opposite of gold) reflected symmetric annotation noise with train-side mass, a robust-loss
+or small-loss-pruning family would have a population to attack. It does not: 1.8-4.0 % of train+val,
+and on both MultiHateClip splits **every** confidently-wrong item is a positive called normal —
+hard positives, not noise. Small-loss pruning would delete exactly those. Family priced and dropped
+without a pilot.
+
+### 12.3 Candidate slate — 9 generated, 0 recommended (`idea-stage/R9_CANDIDATES.md`)
+
+Scored by an external reviewer (gpt-5.6-sol, xhigh, instructed to be hostile) after being given the
+full constraint map, the two diagnostics and the nine candidates.
+
+| rank | candidate | comp | verdict (reviewer's own framing) |
+|---|---|---|---|
+| 1 | **ANCHOR-INT** feature interpolation frozen↔LoRA | 4.15 | cheap control, not a method; at deployment it is a two-encoder ensemble |
+| 2 | **ANCHOR-TRAIN** L2-SP / feature-distillation anchored LoRA | 3.70 | best match to the repair/break trade-off, but it is L2-SP applied to Qwen |
+| 3 | **DIAR-PROV** diarization as use-vs-mention provenance | 3.05 | diarization gives speaker clusters, not uploader-vs-quoted-source; the variable stays unobserved |
+| 4 | **FEATMIX** frozen-feature mixup | 2.90 | generic regularisation; interpolated pooled VLM embeddings need not lie on any video manifold |
+| 5 | **DONOHARM** repair-conditioned adaptation objective | 2.70 | noisy teacher-correctness partition + a ranking term already measured null |
+| 6 | **PREFIX-PEFT** soft-prompt-only adaptation | 2.50 | the parameter-count story dies on the data: EN 549 and ZH 579 differ by 30 examples and by 0.0394 in adaptation outcome |
+| 7 | **ACT-STEER** difference-in-means activation injection | 2.20 | a class-mean direction inside the decoder is still a linear discriminant, locally absorbable as a bias |
+| 8 | **RLOSS** robust loss / small-loss pruning | 2.15 | D2 shows hard positives, not label noise |
+| 9 | **SS-CONSIST** frame-sampling consistency regulariser | 1.35 | expensive consistency over a view axis already measured uninformative |
+
+Two further candidates were written down and are **policy-blocked, not evidence-blocked**:
+**XDATA-GUIDE** (factor the label into shared hatefulness + a dataset-specific guideline offset,
+trained across the four splits) is banned by `banned_constraints[8]`; **AUX-LABELFIELD**
+(multi-task on `Target_Victim` / `Component` / 3-way severity, all already on disk) is banned by
+`banned_constraints[1]`. Both are recorded for the principal, not proposed.
+
+Reviewer's answer to the direct question *"name any mechanism family the slate is missing that is
+still legal and has a non-trivial prior of ≥ +0.005 on ≥ 2 datasets"*: **"None with a defensible
+prior."** Sharpness-aware minimisation, SWA, adversarial feature perturbation and modality dropout
+are legal but are *"generic optimizer lotteries with no project-specific two-dataset prior"*.
+
+The A-D family is occupied by, in the reviewer's list: LwF (ECCV 2016), L2-SP (ICML 2018), DELTA
+(ICLR 2019), WiSE-FT (CVPR 2022), model soups (ICML 2022), LP-FT (ICLR 2022), VPT (ECCV 2022),
+KgCoOp (CVPR 2023), ProGrad (ICCV 2023), PromptSRC (ICCV 2023), "LoRA Learns Less and Forgets Less"
+(TMLR 2024), InfLoRA (CVPR 2024), Model Tailor (CVPR 2025). His ruling on the niche argument:
+*"The exact niche 'small-n binary hateful-video classification using pooled MLLM features' may not
+have a prior paper. That is irrelevant. Novelty attaches to the mechanism, not the dataset noun."*
+
+He also names a framing error we had made and which is corrected above: what D1 measures is
+**same-task prediction churn after small-sample adaptation** — negative transfer / feature
+distortion — not catastrophic forgetting, since no prior task or pretrained capability was
+evaluated.
+
+### 12.4 Pilot R9-1 ANCHOR-INT — **KILL, 0 of 3** (`idea-stage/R9_PILOT_RESULT.md`)
+
+Frozen at commit `20ab02b` before the pilot code existed (`idea-stage/R9_PILOT_FREEZE.md`);
+7 α × (15 + 30 + 30) seeds = 525 runs, 0 failures; seeds 400-429, disjoint from every consumed
+range; analyzer run once.
+
+Test macro-F1 by α (0 = frozen, 1 = LoRA-adapted, arm = L2-renormalised convex combination of both
+pooled streams):
+
+| dataset | α=0.0 | 0.2 | 0.4 | 0.5 | 0.6 | 0.8 | α=1.0 | α* (val) | Δ vs endpoint | 95 % CI |
+|---|---|---|---|---|---|---|---|---|---|---|
+| HateMM | 0.8547 | 0.8636 | 0.8639 | 0.8668 | 0.8697 | **0.8749** | 0.8698 | 0.0 | −0.0151 | [−0.0381, +0.0086] |
+| MHC-EN | 0.7292 | 0.7365 | **0.7450** | 0.7326 | 0.7027 | 0.7079 | 0.7235 | 0.0 | 0.0000 | [0, 0] |
+| MHC-ZH | 0.7662 | 0.7724 | 0.7797 | 0.7780 | 0.7930 | 0.8004 | **0.8017** | 0.5 | −0.0237 | [−0.0523, +0.0025] |
+
+**0 of 3 clears the frozen rule.** The mechanism clause is the informative one: on MHC-ZH the
+α*=0.5 arm halves the break rate (0.0333 → 0.0167, clearing the reviewer's 25 % bar) but keeps only
+**37 %** of the repairs (0.2759 → 0.1034) against a required 80 %. Interpolation does not separate
+the two populations; it shrinks both toward the frozen model in proportion. That is the finding,
+and it is what makes the expensive weight-space version (`W_α = W_0 + α·s·B·A`, one extraction pass
+per α) not worth running: the more expressive of the two operations found nothing.
+
+**Unplanned second finding — validation cannot select α on the two English splits.** On HateMM the
+validation curve is monotonically decreasing in α while the test curve is monotonically increasing;
+on MHC-EN validation prefers α=0 and test prefers α=0.4. With 107 and 80 validation items — about
+1 macro-F1 point per item — and with validation drawn from the pool the LoRA was trained on, the
+adapted representation looks worse on validation than it is on test. Any future mechanism on this
+axis that needs a validation-selected hyper-parameter inherits this defect, and more seeds do not
+fix it.
+
+### 12.5 The round's direct question — what can carry "information beyond the content"?
+
+The brief asked it explicitly: `S_PRIZE_DECOMP` says gold on 21 of 49 stance errors depends on
+information outside the visible content; what mechanism can carry that? The enumeration was written
+into `R9_CANDIDATES.md` §3 **before** the slate was scored:
+
+1. **New human judgements** — banned this round.
+2. **A model's judgement** — banned (`banned_constraints[5]`), and negative at all five MLLM access
+   points.
+3. **Another corpus's labels** — banned (`banned_constraints[8]`), and no new datasets.
+4. **Platform / uploader / community metadata** — does not exist on any of the four datasets
+   (§10.9.1: title is already inside the encoder's text on both MultiHateClip splits and absent on
+   HateMM and ImpliHateVid).
+5. **The dataset's own train labels** — the only remaining carrier, and the head already consumes
+   it in full. The contested items in `S_PRIZE_DECOMP` §4 are *labelling-convention* differences of
+   the same dataset (ImpliHateVid counts objectification as hate; MHC annotators reject a speaker's
+   disclaimer). Learning them better is sample efficiency, not a new information channel.
+
+**Answer: none, under round-9 constraints.** The repricing sharpens a pricing question for the
+principal; it does not generate candidates.
+
+A methodological caveat belongs with it. `S_PRIZE_DECOMP` defines "recoverable" as *the four-judge
+content-only panel agrees with gold*, and `CLAUDE_STANCE_GATE` measured that same panel at 18/32 on
+stance rows — a tie with the constant-DISTANCED baseline. The recoverable subset is therefore
+**defined by the panel's agreement with gold**, so **+3.23 is a price for human annotation, not
+evidence that any content-only method can reach those items**. This is the circularity pattern the
+principal has caught twice before, and it is flagged here rather than repaired: the pricing use is
+legitimate, the "a stance method would recover +3.23" reading is not.
+
+### 12.6 Landscape increment (independent sweep, 2026-08-18)
+
+Machine-verified against arXiv / OpenAlex / Semantic Scholar / CVF; WebSearch quota was exhausted,
+so venue-only papers without preprints may be missing.
+
+**New occupants that change the project's framing.**
+
+- **CRAVE (ICCV 2025)** — cross-domain retrieval augmentation for malicious video: retrieves
+  image-text pairs from a resource-rich meme/news domain per video, disentangles domain-shared vs
+  domain-unique representations, all encoders frozen. Evaluated on **HateMM and MHC-EN**
+  (0.8651 / 0.7981 macro-F1 on its own splits). **MoRE (WWW 2025)** — per-modality experts plus a
+  joint multimodal video retriever with sample-sensitive gating, on **HateMM, MHC-EN, MHC-ZH**.
+  With HCG-MPB (ICMR 2026) and SCANNER (AAAI 2026), the retrieval slot is now owned end-to-end by
+  one group (Hong / Lang, UESTC). Any remaining RGCL-family framing for this project is closed by
+  occupancy, not only by HCG-MPB's argument.
+- **TIHD (ICMR 2026)** — conflict-inference and incongruity-aware alignment on **ImpliHateVid +
+  HateMM**, claiming SOTA (numbers paywalled). **IARE (SIGIR 2026, `2606.11953`)** ships extended
+  **Ex-HateMM / Ex-ImpliHateVid**. **DeHate (ACM MM 2025)** is a 6,689-video corpus with
+  explicit/implicit labels, segment localisation, contributing modality and target group.
+- **MARS (ICASSP 2026, `2601.15115`)** and **LELA (`2602.09637`)** are training-free LLM
+  decompositions; **MATCH (TCSVT 2026)** is multi-agent proposer/verifier; **UNIVID
+  (`2606.05748`)** replaces 1,000+ policy classifiers with policy-aware captions.
+- **`2508.04900`** measures temporal label noise in HateMM / MHC-EN from video-level labels — the
+  analysis side of D2, and the only paper in the neighbourhood of it.
+
+**Current SOTA, protocols kept separate** (they are not comparable and must not be merged):
+HateMM 5-fold **0.874** (MM-HSD, ACM MM 2025); HateMM fixed 7:1:2 **0.8628** (SAGE, ACL 2026);
+MHC-EN **0.7962** (SAGE); MHC-ZH **0.7714** (LEAF, Findings ACL 2026); ImpliHateVid binary F1
+87.73 / 3-class macro-F1 69.18 (dataset paper, unbeaten in-protocol).
+
+**Verified-empty slots** (each from a dedicated sweep returning zero):
+(a) **use-vs-mention / quotation / reported speech in video or any multimodal setting** — the
+seminal `2404.01651` is still the only relevant work and is text-only;
+(b) **speaker attribution × hate** — the 2025-26 attribution literature is pure ASR/diarization
+engineering;
+(c) **counter-speech vs hate discrimination in video**;
+(d) **MLLM intermediate hidden-state probing for hateful content in any modality** — nearest
+neighbours are V-DEAL (`2607.21151`, diagnosis not classification) and Kelp (`2510.09694`, text+VL,
+explicitly not video);
+(e) **encoder-level PEFT / LoRA for hate video** — one irrelevant hit across the sweep; CRAVE
+freezes all encoders, SAGE / LEAF / HVGuard operate above the encoder.
+
+Slots (a)-(d) are the ones this project's own measurements have repeatedly failed to enter, and
+(e) is where D1 says the movement is. Two 2026 priors are worth carrying into any future round:
+**FBHM (`2605.31349`)** gets ~+30 macro-F1 on a hateful-meme functionality benchmark from learnable
+steering vectors fitted on 500 samples, beating ICL and PEFT — the meme-side occupant of ACT-STEER;
+and the hidden-state literature repeatedly reports internals beating a model's own verbalised
+verdict (`2512.03994` +16 points over LLM-as-judge; ESLD `2605.18918` +16.4).
+
+### 12.7 What round 9 bought
+
+1. **The last unsearched axis was searched.** Encoder adaptation is now measured (D1), its
+   headroom priced (6/9/10/4 net items), its cheapest collection mechanism killed (R9-1), and its
+   remaining mechanisms named and matched to their thirteen prior occupants.
+2. **A second family priced without a pilot.** D2 bounds every robust-loss / label-noise mechanism
+   to 12-45 train items per dataset, and shows the population is hard positives rather than
+   symmetric noise.
+3. **A protocol defect found on the adaptation axis**: validation of size 80-107, drawn from the
+   LoRA's own training pool, ranks α in the opposite order to test on both English datasets.
+4. **The S-prize reading corrected.** +3.23 is a price for annotation, not a reachable oracle; the
+   subset is defined by the same panel that scores at chance overall.
+5. **The framing debt updated.** CRAVE (ICCV 2025) and MoRE (WWW 2025) close the retrieval slot on
+   this project's own datasets, and the empty slots that remain (use-vs-mention, speaker
+   attribution, hidden-state probing for hate) are exactly the ones that need supervision this
+   project is not allowed to buy this round.
+6. **Two blocked candidates identified as policy-only**, both cheap to run if the principal lifts
+   the ruling: cross-dataset guideline factorisation (`banned_constraints[8]`) and multi-task on the
+   `Target_Victim` / `Component` / severity fields already on disk (`banned_constraints[1]`).
+
+### 12.8 Honest bottom line for round 9
+
+> **Round 9 produced no method candidate. Cumulative: 101 candidates, 0 method candidates.** The
+> round's positive content is a measurement: the encoder-adaptation axis is the only one in this
+> substrate where an intervention moves double-digit item populations in both directions, and the
+> cheapest mechanism for collecting the difference does not work because the two populations are
+> one dial.
+
+The external reviewer was asked directly whether the honest conclusion is that the substrate
+contains no reachable method contribution under these constraints. His answer was **yes**, with
+five reasons and one that this project had not stated: *"Reusing these official test sets after
+eight rounds and 89 candidates has effectively converted them into development sets… paired
+bootstrap CIs do not correct adaptive test reuse. Thirty seeds estimate training randomness; they
+do not create new test examples."* Under the no-new-data constraint, the confirmatory population
+that would answer that objection **does not exist**.
+
+The decision this leaves with the principal is unchanged in kind and sharper in price:
+
+- **(a)** Lift a policy veto and accept a numbers-only gain: cross-dataset guideline factorisation
+  or the on-disk auxiliary label fields, each cheap, each ruled out on novelty grounds rather than
+  on evidence.
+- **(b)** Fund supervision — human stance annotation (now priced at +3.23, not +6.46, and with the
+  circularity caveat attached) or the LDC BeSt licence — which this round's constraint forbids.
+- **(c)** Accept that the paper cannot be a gain-on-these-four-datasets paper, and change the
+  target — which the standing method-paper constraint forbids.
+
+Round 9's contribution to that decision is that option (d), "keep searching the substrate", now has
+nine rounds of evidence against it and a named reason: **every remaining legal mechanism either
+moves under 3 test items, or is an application of a transfer-learning control published between
+2016 and 2025.**
+
+### 12.9 Reproducibility index
+
+| artifact | path |
+|---|---|
+| candidate slate + hostile review + the "beyond content" enumeration | `idea-stage/R9_CANDIDATES.md` |
+| diagnostics code + raw | `idea-stage/r9_diag/{diag.py,d1.json,d2.json}` |
+| pilot freeze (commit `20ab02b`) | `idea-stage/R9_PILOT_FREEZE.md` |
+| pilot code / raw / verdict | `idea-stage/r9_anchor/{anchor.py,analyze.py,results.json,verdict.json}` |
+| pilot result | `idea-stage/R9_PILOT_RESULT.md` |
+| logs | `logging/runs/{r9_diag,r9_anchor}/` |
+
+**Process notes.** (a) The decision rule was frozen and committed before the pilot code was written;
+the only pre-run execution was `--smoke`, which prints wall-clock, epoch count and a NaN flag and no
+arm metric. (b) Seeds 400-429 (pilot) and 300-314 (diagnostics) are disjoint from every previously
+consumed range. (c) The analyzer ran exactly once on the complete 525-run grid. (d) D1 read test
+labels as a disclosed diagnostic over two already-deployed encoders; D2 opened no test split.
+(e) The external reviewer's mechanism clause was adopted into the freeze verbatim before the run,
+and it is the clause that carried the round's most informative number. (f) ImpliHateVid was excluded
+from R9-1 and the exclusion was declared in the freeze, because it has no LoRA-adapted cache.
+(g) Total API spend for the round: **¥0.00 of ¥15**.
