@@ -40,7 +40,9 @@ in §1.6, by the snippets recorded in §8.
 5. **The best numbers are not close to usable.** HateClipSeg proposals: 52.65 F1@tIoU 0.5, 30.99
    @0.7, at precision ~40% — roughly half of what the same ActionFormer architecture does on
    THUMOS14. MLLM timestamping: best HateMM Avg IoU 0.43 for a trained model, **losing to an
-   untrained Qwen3-Omni zero-shot at 0.53**.
+   untrained Qwen3-Omni zero-shot at 0.53**. And the metric choice hides this: one WSVAD model
+   (VadCLIP) reports UCF-Crime **frame-AUC 88.02 alongside mAP@tIoU 6.68** — frame-level AUC, the
+   metric MultiHateLoc and LELA both use, can be high while the system cannot propose an interval.
 6. **This project has already spent four routes on this axis and all four came back negative**
    (multi-granularity segment retrieval, segment-keyed purity loop, MLLM weak-supervision P11,
    TERA Gate-0). The mechanism is now visible in the data, not just in the results: **video-level
@@ -291,9 +293,14 @@ Incremental ablation on HateMM: 0.565 → +MA-TE 0.581 → +DCM-Fusion 0.615 →
 
 The trained model does not beat the untrained zero-shot baseline on Avg IoU. TANDEM's abstract
 headline (0.73 F1, "30% improvement") is the **target-identification** metric, not localization.
-Its Table 4 "mAP 0.71 / 0.62" comparison to MultiHateLoc is **not derivable from its own results**
-(the term is undefined elsewhere in the paper and cannot be reconciled with an Avg IoU of 0.43) —
-treat as unverifiable. Code not released.
+
+Its Table 4 does claim a localization win over MultiHateLoc — **mAP 0.71 vs 0.645 on HateMM and
+0.62 vs 0.445 on MHC-en** — and two independent readers of the paper confirm those digits are
+printed there. **The comparison is not like-for-like and should not be propagated.** TANDEM
+evaluates in 30-second chunks aggregated to video level, on positive instances only; MultiHateLoc
+scores every frame over the whole corpus. Neither paper defines "mAP" compatibly with the other,
+and a 0.71 mAP cannot be reconciled with the same system's Avg IoU of 0.43 on the same data.
+Treat 0.71 / 0.62 as *reported but not comparable*. Code not released.
 
 **HateClipSeg, F1@tIoU for the Offensive class** (proposal-level; note F1@tIoU, not mAP):
 
@@ -330,7 +337,14 @@ worth ~1.2 M-F1 (β=0 → 62.71, β=1.0 → 63.94).
 | MultiHateClip | Avg IoU / Acc@0.5 | 0.13 / 0.15 | Qwen3-Omni zero-shot |
 | HateClipSeg | F1@tIoU 0.5 / 0.7, proposals | 52.65 / 30.99 | ActionFormer, visual-only |
 | HateClipSeg | online per-timestamp M-F1 | 72.06 | StreamSense |
+| HateMM / MHC-en | TANDEM's own "mAP" | 0.71 / 0.62, claimed over MultiHateLoc's 0.645 / 0.445 | **reported but not comparable** — §2.2 |
 | **DeHate** | — | **no localization baseline exists** | — |
+
+**Cross-check against the degenerate oracle (§1.3).** Only one of these numbers clears a predictor
+with zero temporal resolution: LELA's HateMM PR-AUC 0.7264 against the oracle's 0.675, a margin of
++0.05 on a different protocol. MultiHateLoc's 0.645 does not, and neither does anything reported on
+MultiHateClip against 0.786 / 0.853. HateClipSeg's ActionFormer numbers are the only ones measured
+with a metric the oracle cannot game at all.
 
 ### 2.4 There is no leaderboard
 
@@ -471,46 +485,122 @@ produced on 100 SFT videos. That is a warning about the transfer, not an invitat
 
 ### 4.2 Reference points from the adjacent literature
 
-Numbers below are the comparison anchors used in §2.5; they are `[read-abstract]` / secondary-source
-grade unless marked otherwise, and are used only as order-of-magnitude anchors.
+> ⚠ **Provenance warning on this table.** These anchors are `[second-hand, unverified]` — they come
+> from survey summaries, not from reading the papers. The worker that produced them flagged the
+> fabrication risk itself and declined to restate part of the set. **Re-pull every number here
+> directly before it enters a pre-registration, a related-work table, or a paper.** The arXiv IDs
+> are the reliable part; the digits are the unreliable part. They are used in this report only as
+> order-of-magnitude anchors for §2.5, and no decision in §7 turns on any of them.
 
-| family | benchmark | representative current level |
-|---|---|---|
-| Fully-supervised TAL | THUMOS14 | ActionFormer ~71.0 mAP@0.5; DyFADet-class methods ~71.7 average mAP over tIoU 0.3–0.7 (86.0 / 81.7 / 76.3 / 64.5 / 50.1) |
-| Weakly-supervised TAL | THUMOS14 | roughly half of fully-supervised average mAP; the standing recipe is MIL + class-activation sequence + top-k pooling + explicit background modelling + contrastive separation (UntrimmedNet → W-TALC → CoLA → CO2-Net → DELU lineage) |
-| Weakly-supervised video anomaly detection | XD-Violence / UCF-Crime | AP ~85% (XD-Violence) / frame AUC ~87% (UCF-Crime), visual-only; the Sultani-MIL → RTFM → MGFN → UR-DMU → VadCLIP lineage. **Structurally the closest analogue to "video-level hate label → hateful span"**, and the one MultiHateLoc already borrowed from |
-| Video moment retrieval / temporal grounding | QVHighlights / Charades-STA | R@1 IoU=0.5 in the 60–70% range (Moment-DETR → QD-DETR → UniVTG → CG-DETR → TR-DETR lineage); MLLM grounders (TimeChat, VTimeLLM, TRACE, Grounded-VideoLLM) trade accuracy for zero-shot generality |
-| Text-side toxic span detection | SemEval-2021 Task 5 | span-F1 on character offsets in text; the direct analogue on the transcript side, and the closest thing to a solved version of this problem |
-| Speech-side toxic span | ViToSA (2506.00636) | Vietnamese, Macro-F1 0.817 on transcript character spans — **not video time intervals** |
+| family | benchmark | current level | ID |
+|---|---|---|---|
+| Fully-supervised TAL | THUMOS14 avg mAP@[0.3:0.7] | ActionFormer 66.8 (71.0@0.5); TriDet 69.3; TemporalMaxer 67.7; DyFADet 69.2; CausalTAD 69.75; CLTDR-GMG 74.3 with InternVideo2; **AdaTAD 76.9 avg / 80.9@0.5** | 2202.07925 / 2407.03197 / 2407.17792 / 2412.09202 / 2311.17241 |
+| Fully-supervised TAL | FineAction / Multi-THUMOS | MambaTAD 29.4 / 46.6 (SOTA) | 2511.17929 |
+| Weakly-supervised TAL | THUMOS14 avg mAP@[0.1:0.7] | STPN 27.0 → CoLA 40.9 → CO2-Net 44.6 → DELU 46.4 → DDG-Net 47.3 → FuSTAL 50.8 → **PseudoFormer 52.4** (43.4 avg@[0.3:0.7], 44.8@0.5) | 2103.16392 / 2107.12589 / 2307.16415 / 2504.14860 |
+| Weakly-supervised anomaly / violence | UCF-Crime AUC / XD-Violence AP | Sultani-MIL 75.4 → RTFM 84.0 → MGFN 87.0 → UR-DMU 87.0 / 81.7 → VadCLIP 88.0 / 84.5 → GS-MoE 91.6 → LAS-VAD 91.05 / 89.96; LAVAD 80.3 training-free | 1801.04264 / 2101.10030 / 2211.15098 / 2302.05160 / 2308.11681 / 2404.01014 |
+| Moment retrieval, specialists | QVHighlights R1@0.5 | Moment-DETR 52.9 → … → CVA 70.1 (CVPR 2026); R²-Tuning 68.03 with 2.7M trainable params | 2404.00801 |
+| Moment retrieval, MLLM | Charades-STA / ActivityNet / QVHighlights R1@0.5 | TimeLens2 current open SOTA; Gemini-2.5-Pro zero-shot 61.1 / 64.2 / 75.9 on **re-annotated** splits | 2512.14698 / 2607.17423 |
+| Text toxic-span | SemEval-2021 Task 5 | HITSZ-HLT 70.83 char-F1 (BERT+CRF ensemble); rationale-extraction-from-classifier only 38–60 | — |
+| Rationale extraction | HateXplain | IOU-F1 **0.11–0.22** — token attribution barely agrees with human highlights | 2012.10289 |
+| Speech toxic-span | ViToSA | Macro-F1 0.817 on **transcript character spans**, never mapped back to audio time | 2506.00636 |
 
-Against these anchors, hateful-video localization is roughly where WSVAD was several years ago,
-with more modalities and less data.
+Two facts from this table that should govern any design decision here:
+
+- **OpenTAD's controlled study (arXiv 2502.20361)**: holding the detection head fixed, swapping the
+  feature backbone moves THUMOS avg mAP **49.8 → 72.4 (+22.6)**; holding the backbone fixed, five
+  years of neck/head architecture spans **67.9 → 68.4**, i.e. seed noise. **Features dominate;
+  detection heads are a rounding error.** Any plan whose contribution is a new temporal head is
+  buying the 0.5-point axis.
+- **Frame-level AUC and mAP@tIoU are not the same measurement.** VadCLIP, one model, reports
+  XD-Violence **AP 84.51 but mAP@[0.1:0.5] 24.70**, and UCF-Crime **AUC 88.02 but mAP@[0.1:0.5]
+  6.68**. A model can score 88 frame-AUC and be nearly incapable of proposing a correct interval.
+  MultiHateLoc and LELA both report the frame metric; only HateClipSeg reports tIoU.
 
 ### 4.3 Why the transfer is harder than it looks
 
 1. **The label does not vary within the video** on the two benchmarks the field reports on (§1.2).
-   TAL and WSVAD both assume the foreground occupies a *minority* of the timeline — THUMOS actions
-   are seconds inside minutes. HateMM's hateful region is a median 80.6% of the video and
-   MHC-ZH's is 100%. Every mechanism these families use — background modelling, top-k selection,
-   contrastive foreground/background separation — is built on an assumption these corpora violate.
+   TAL and WSVAD assume foreground is a *minority* of the timeline. HateMM's hateful region is a
+   median 80.6% of the video and MHC-ZH's is 100%. Every mechanism these families rely on —
+   background modelling, top-k selection, foreground/background contrast — assumes what these
+   corpora violate. **The single largest gain in all of WSTAL is the explicit background class:
+   24.3 → 36.6 avg mAP (+12.3) in ASM-Loc's ablation.** That gain exists because THUMOS background
+   is *visually distinct*. When the background is the same person in the same room saying something
+   slightly different, that loss has no gradient.
 2. **Evidence is speech-carried, and the strongest localization modality reported is visual.**
-   HateClipSeg F1@tIoU 0.5: visual 52.65, text 34.60, audio 25.40; and multimodal late fusion is
+   HateClipSeg F1@tIoU 0.5: visual 52.65, text 34.60, audio 25.40 — and late fusion of V+T+A is
    *worse* than visual alone at every threshold. This project measured the mirror image internally
    (CLIP-visual keys are blind to spoken hate). Nobody has reconciled the two observations.
-3. **One foreground class, and it is defined by intent rather than appearance.** TAL benefits from
-   many visually distinct classes; hate localization has one class whose boundary is a judgement.
-4. **The boundaries are annotator-generous, not evidence-minimal** (§5.2) — so even a perfect
-   evidence localizer would be penalised by the ground truth.
-5. **The corpora are small.** 431 HateMM hateful videos, ~1,134 usable DeHate spans, 380 offensive
+   Independently: on XD-Violence, audio was worth ~5 AP in 2020 and is now ≲0.2 AP — the 2025-26
+   SOTA there is RGB-only. **But the ordering flips with the task**: on HateClipSeg's *online*
+   per-timestamp task the same paper's LSTR baseline has audio-only 60.84 beating visual-only
+   57.52, the reverse of its own localization table. Prosody carries when you are classifying a
+   moment; pixels carry when you are drawing its boundary. Nobody has explained this.
+3. **One foreground class, defined by intent rather than appearance.** LAS-VAD's entire CVPR 2026
+   contribution is bolting LLM intention reasoning onto WSVAD because visual separation is not
+   recoverable — and its ablation over *which* LLM does the reasoning spans 0.08 points, meaning
+   the semantic prior matters and the model identity does not.
+4. **The boundaries are annotator-subjective, and the hate corpora barely measure it.** HateClipSeg
+   is the only dataset that reports it, and segment-level is the worst of its four annotation
+   tasks — Krippendorff α before → after its three-stage discussion protocol: offensive category
+   0.840 → 0.899, video-level label 0.791 → **0.817**, target victim 0.716 → 0.721, and
+   **segment-level 0.715 → 0.757**. SemEval-2021 toxic spans sit at mean pairwise Cohen's
+   κ ≈ 0.61 with the organizers conceding the task is "highly subjective". **HateMM and
+   MultiHateClip report no span-agreement statistic at all** — only label agreement (κ 0.625 and
+   0.51–0.72). Nobody in this field has published a human-vs-human span F1, so no localization
+   number here has a known ceiling. HateClipSeg's own stated reason for pre-segmenting via Whisper
+   sentence boundaries and scene detection is that free-form annotator boundaries make quality
+   "difficult to measure and ensure" — a designed-in admission that free boundaries do not replicate.
+5. **The boundaries are annotator-generous, not evidence-minimal** (§5.2) — so even a perfect
+   evidence localizer is penalised by the ground truth.
+6. **The weak-to-full gap is large and widens with IoU.** THUMOS14, same protocol: TriDet (full)
+   69.2 avg mAP@[0.3:0.7] vs PseudoFormer (weak) 43.4 — weak retains 63%. At IoU 0.7 it is 46.8 vs
+   18.4, only 39%. That widening is the signature of a boundary-precision failure, and eight years
+   of WSTAL has closed it by roughly 5 points.
+7. **The corpora are small.** 431 HateMM hateful videos, ~1,134 usable DeHate spans, 380 offensive
    HateClipSeg videos. WSVAD trains on thousands.
 
 ### 4.4 What is genuinely importable
 
-The one adjacent mechanism that maps cleanly and has *already been shown to help in this exact
-domain* is **IoU-weighted loss reweighting at segment boundaries** — StreamSense's
-`L = −Σ IoU(W_i,S_i)^β · y_i log p(y_i|x_i)`, worth ~+1.2 Macro-F1 on its own on HateClipSeg. It
-addresses a real property of the data (windows straddling a boundary carry a mixed label) rather
-than an assumption the data violates. Everything else in §4.2 imports an assumption first.
+Ranked by cost, and filtered for "does not import an assumption the data violates":
+
+1. **IoU-weighted loss reweighting at segment boundaries** — StreamSense's
+   `L = −Σ IoU(W_i,S_i)^β · y_i log p(y_i|x_i)`, worth ~+1.2 Macro-F1 alone on HateClipSeg. It
+   addresses a real property of the data (windows straddling a boundary carry a mixed label).
+2. **An OCR channel.** LELA's modality ablation (GPT-4o-mini, ROC-AUC): speech 68.28 → +Image 68.89
+   (+0.6) → **+OCR 71.47 (+2.6, the largest single jump)** → +Music 71.75 → +Video 72.27.
+   An independent group found on-screen text to be the dominant modality gain in hate localization.
+   **MultiHateLoc — the WWW 2026 weakly-supervised baseline — has no OCR channel at all.** This
+   externally corroborates this project's 2026-08-08 OCR unblocking, which rested on the Gate-C
+   finding that on-screen text is the only significantly enriched modality gap in the failures
+   (30.1% of misses, OR 2.29). Two independent lines of evidence now point the same way.
+3. **NumPro (arXiv 2411.10332, CVPR 2025)** — burn frame numbers into the pixels, zero training;
+   Qwen2-VL-7B goes 5.4 → 36.8 R@0.5 on Charades. The cheapest transfer in the whole adjacent
+   literature and it has never been pointed at hate.
+4. **The concatenation trick from Speech Emotion Diarization** — synthesize span supervision by
+   splicing clip-level-labelled data into known transition patterns. **Annotation-free**, and
+   therefore compatible with this project's ban on manual annotation. Directly applicable: splice
+   known-hateful and known-benign clips into synthetic videos with known boundaries.
+5. **DCASE Task 4's recipe** (weak clip labels + unlabeled + small synthetic strong set, CRNN
+   mean-teacher, frame posteriorgram → median filter → threshold; PSDS1 0.359 → 0.500 with BEATs
+   embeddings) is structurally identical to this problem and is the mature version of it.
+
+**Two things that look importable and are not.** (a) **Point-level supervision** is the highest-
+leverage option in WSTAL — one clicked frame per instance buys ~8 mAP (HR-Pro 60.4 vs PseudoFormer
+52.4 avg@[0.1:0.7]) — and it is **banned here**, because it is manual annotation. (b) Purpose-built
+video temporal-grounding LLMs (TimeChat 2312.02051, VTimeLLM 2311.18445, Momentor 2402.11435,
+TRACE 2410.05643, Grounded-VideoLLM 2410.03290, VTG-LLM 2405.13382, TimeSuite 2410.19702,
+Time-R1 2507.18100, TimeLens 2512.14698 / 2607.17423) have **never** been applied to hate — a real
+empty slot — but §4.1(b) is the warning: hate-specific RL tuning already lost to an off-the-shelf
+zero-shot model on this exact task.
+
+### 4.5 A measurement caution carried over from the grounding literature
+
+Five papers report five different zero-shot Charades-STA numbers for the same Qwen2.5-VL-7B
+(38.2 / 48.8 / 53.6 / 60.3). TimeLens re-annotated the standard grounding benchmarks and **model
+rankings inverted**; frontier MLLMs that look terrible on original Charades-STA (GPT-5 at 18.3)
+score 61.1 on the re-annotated version — annotation-convention fitting, not capability. Treat any
+single published zero-shot MLLM temporal number as ±20 points until reproduced. The same caution
+applies with more force to the hate numbers in §2.2, where no two protocols match.
 
 ---
 
@@ -599,6 +689,18 @@ capability inside this project.
 8. **Any localization baseline on DeHate**, the second-largest span-annotated corpus.
 9. **Degeneracy-aware evaluation.** No paper in this field reports coverage fraction, single-block
    fraction, or a video-level-broadcast control. §1.2–1.3 is, as far as this sweep can tell, new.
+10. **An OCR channel in weakly-supervised hate localization.** MultiHateLoc uses ViT + VGGish +
+    Whisper→BERT and no on-screen text; LELA's own ablation makes OCR the largest single modality
+    gain (+2.6 ROC-AUC, larger than image, music or video context). Empty, and evidence-backed from
+    two independent directions (§4.4.2).
+11. **Purpose-built video temporal-grounding LLMs applied to hate.** TimeChat / VTimeLLM /
+    Momentor / TRACE / Grounded-VideoLLM / TimeLens2 — none has been pointed at this task. TANDEM
+    is general-MLLM prompting plus RL, which is a different thing.
+12. **Annotation-free synthetic span supervision** (the Speech-Emotion-Diarization concatenation
+    trick: splice clip-level-labelled hateful and benign material into videos with known
+    boundaries). Untried in this domain and compatible with the no-manual-annotation constraint.
+13. **Reporting mAP@tIoU on HateMM / MultiHateClip.** Both localization papers on those corpora use
+    the frame-level VAD metric; §4.2 shows a model can hold 88 frame-AUC at 6.68 mAP@tIoU.
 
 ---
 
@@ -642,11 +744,12 @@ papers); no manual annotation; no new dataset construction; incremental but real
 | # | Option | Method-shaped? | Verdict |
 |---|---|---|---|
 | 1 | **Localize → trim → re-classify with predicted boundaries**, reported as a *video-level accuracy* gain | **yes** — the output is main-table accuracy, not a localization number | **the only live candidate.** Empty in the literature; oracle headroom +19 to +30 macro-F1 (Yang et al.); all ingredients already on disk. **Strong prior against it**, though: on HateMM the trim is a no-op a third of the time, and the project's own segment scorers top out at wv-AUC 0.59. Needs a cheap CPU pre-registered probe before anything else — see §7.4. |
-| 2 | Query-conditioned grounding ("which moment attacks group X") | yes, but the metric is a localization metric | **no** under the method-paper-for-accuracy rule, unless recast as option 1 with a target-conditioned trimmer |
-| 3 | Audio-first localization | yes | **no** — same reason; and it would be evaluated on HateClipSeg, off the project's main table |
-| 4 | Proposal-based / DETR-style detection for hate | yes | **no** — pure localization performance, and it requires HateClipSeg or DeHate as the training arena (see §7.5) |
-| 5 | Fix the field's evaluation (report coverage, single-block fraction, a broadcast control, one protocol) | **no** — this is a benchmark/measurement paper | **closed by user rule.** It is the highest-value contribution available in this sub-direction and the project is not allowed to make it. It can appear only as an analysis section supporting a method claim. |
-| 6 | Reproduce MultiHateLoc (no code) | no | **no** — reproduction, and the 2026-07-03 ruling already declined it; repo still empty as of 2026-01-28 |
+| 2 | **OCR-channel localization** — add on-screen text to a weakly-supervised localizer | yes | **the strongest localization-side slot**, because it is the one place where two independent evidence lines agree (LELA's +2.6 ablation, this project's Gate-C 30.1% / OR 2.29) and the incumbent baseline has no OCR channel. Still a localization metric, so it only becomes admissible if folded into option 1 or if §7.5 is ruled on. The OCR cache already exists for HateMM train/val/test. |
+| 3 | Query-conditioned grounding ("which moment attacks group X") | yes, but the metric is a localization metric | **no** under the method-paper-for-accuracy rule, unless recast as option 1 with a target-conditioned trimmer |
+| 4 | Audio-first localization | yes | **no** — same reason; and §4.3.2 says the audio channel is the weakest in every published table |
+| 5 | Proposal-based / DETR-style detection for hate | yes | **no** — pure localization performance; and OpenTAD (§4.2) shows the detection-head axis is worth ~0.5 mAP while the feature axis is worth ~22 |
+| 6 | Fix the field's evaluation (report coverage, single-block fraction, a broadcast control, one protocol) | **no** — this is a benchmark/measurement paper | **closed by user rule.** It is the highest-value contribution available in this sub-direction and the project is not allowed to make it. It can appear only as an analysis section supporting a method claim. |
+| 7 | Reproduce MultiHateLoc (no code) | no | **no** — reproduction, and the 2026-07-03 ruling already declined it; repo still empty as of 2026-01-28 |
 
 ### 7.4 If option 1 is pursued, the cheapest kill first
 
@@ -706,6 +809,20 @@ HateClipSeg, GitHub REST API tree listings and raw-file fetches, and WebFetch on
 - MHC-EN coverage is measured on 245 of 331 span-carrying videos (local media availability);
   MHC-ZH on 262 of 327. HateClipSeg statistics are on the **395/435 surviving subset** — see
   `DATASET_hateclipseg.md §4` for the selection-bias statement that must accompany any number from it.
+
+**A search-string warning for future novelty checks.** `abs:"multiple instance learning" AND
+abs:"hate"` on the arXiv API returns **zero results** — MultiHateLoc does not put "MIL" in its
+abstract. A novelty check on "MIL for hateful video" run with that phrasing would have concluded
+the slot was empty when it is occupied by a WWW 2026 paper. Query on the task words
+(`"temporal localisation"`, both spellings, plus `"segment"`, `"frame-level"`), not on the
+mechanism words. Note also that both `localisation` and `localization` must be searched: the two
+groups that own this axis use the British spelling.
+
+**Convergent independent recommendation.** Two of the three sweeps, working separately, named the
+same highest-value next action: *compute the trivial "predict the whole video as one span" baseline
+on HateMM and MultiHateClip, because it may recover most of the published frame-mAP*. That
+computation is §1.3 of this report, and the answer is that it does — it exceeds MultiHateLoc's
+HateMM number and roughly doubles its MultiHateClip number under a 1 fps convention.
 
 **Cost.** Zero GPU, zero training, zero cloud spend, zero test-label contact. Read-only throughout
 except for this file.
