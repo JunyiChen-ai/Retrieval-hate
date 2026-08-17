@@ -1,0 +1,185 @@
+{
+ "freeze": "idea-stage/R6_CONFIRM_FREEZE_2026-08-17.md (R6-1C)",
+ "reused_arms": [
+  "R6RO-A0",
+  "R6RO-CAT"
+ ],
+ "reused_arms_note": "built by idea-stage/r6_readout/build_arms.py; not rebuilt",
+ "rng_seeds": {
+  "RANDA": 20260817001,
+  "RANDB": 20260817002
+ },
+ "R_shape": [
+  3584,
+  3584
+ ],
+ "R_sha256_float32": {
+  "RANDA": "c1155b54a142c94e740b594023918a692c54286752765befc6dfe70a293b0582",
+  "RANDB": "eb85a275f1e01fe4c0bdfcbbdebe445ae27f4180b524c6c00df30a09e4d01df9"
+ },
+ "R_corr_first_1e6": 0.001013490727791908,
+ "datasets": {
+  "HateMM": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+  "MHC_zh": "Qwen2.5-VL-7B-Instruct-LoRA_HF"
+ },
+ "files": {
+  "HateMM/train/RANDA": {
+   "path": "data/CLIP_Embedding/HateMM/train_R6RO-RANDA.pt",
+   "rows": 744,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 744,
+   "img_sha256": "1de381f739ec4f82197ffd321974e4e47ea513877a36db776457c9eecde86e77",
+   "text_sha256": "cdd239e2713d60d2fdcafa9079cb294e73fae50a5d080f44932064f61b80564a"
+  },
+  "HateMM/train/RANDB": {
+   "path": "data/CLIP_Embedding/HateMM/train_R6RO-RANDB.pt",
+   "rows": 744,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 744,
+   "img_sha256": "45aaa9a9926b3c7829259b0d284843b3f4129b7f8f8c017df8c9159bc68ae73e",
+   "text_sha256": "d51c675965816a8dc401487c968a256a08d28e25fd3154da85582dad0242d6dc"
+  },
+  "HateMM/dev_seen/RANDA": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R6RO-RANDA.pt",
+   "rows": 107,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 107,
+   "img_sha256": "362c30e2cd9d15fd288a796aa51b4d5a66c907fe23b693e06972956f09c87b77",
+   "text_sha256": "8a711c44fc260546be787116ef537d9dcf2a3bb7dc78c8ccda56e366f7b06781"
+  },
+  "HateMM/dev_seen/RANDB": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R6RO-RANDB.pt",
+   "rows": 107,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 107,
+   "img_sha256": "da0a57b4fae083fbec02d27f7f65fd4a8a68ead82e06f03f40942f5a9c87cccb",
+   "text_sha256": "81e8de89177bf925cb5f1d002c9494e3e3892cfc2c3e14d7b022494428b673eb"
+  },
+  "HateMM/test_seen/RANDA": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R6RO-RANDA.pt",
+   "rows": 215,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 215,
+   "img_sha256": "87f8a6365033cf7dbfc9ba55d9072f83d8b4bff5560b9a08afce0cfd70622efe",
+   "text_sha256": "0ac06d74a50f56e91acef1295bf510c21c0a7eec625e07d881cf344d1c0a139d"
+  },
+  "HateMM/test_seen/RANDB": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R6RO-RANDB.pt",
+   "rows": 215,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 215,
+   "img_sha256": "3b6c5c8c2b9bb2e6e1497d87668232d2ff834b13ba384da5a0fe14e190d30412",
+   "text_sha256": "5611ba2815b2c79c357ed4c37912d2c920b00ffd4a4805ed5e2ff8cf0dd6db90"
+  },
+  "MHC_zh/train/RANDA": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R6RO-RANDA.pt",
+   "rows": 579,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 579,
+   "img_sha256": "aeea65b7052f7c075e2527da74cf5c1495486289c3859a730bc49d32a358658f",
+   "text_sha256": "cb056d06913af664b327c01bb03c59c4500d79105db5ada9cc721427a21170de"
+  },
+  "MHC_zh/train/RANDB": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R6RO-RANDB.pt",
+   "rows": 579,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 579,
+   "img_sha256": "6e941856dbeae025113625277efe3e81925b50d299012873d42918e43b463357",
+   "text_sha256": "0b393719f87a8e2ac797ddbefa6aeb39c1f148725e3bec7ddc3c059d000056ff"
+  },
+  "MHC_zh/dev_seen/RANDA": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R6RO-RANDA.pt",
+   "rows": 78,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 78,
+   "img_sha256": "45bc4f27d0c054c36fe2f3b80b79e1191044009cf9ceb2b3d6b1401dac02d23d",
+   "text_sha256": "4a248d07cd322913c3360c10886badbac246780dd91fee058ed2dedca5600b40"
+  },
+  "MHC_zh/dev_seen/RANDB": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R6RO-RANDB.pt",
+   "rows": 78,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 78,
+   "img_sha256": "da31389fed60463ffebb3d572e0e9ccc5efbe6ce2812366af6bd7f742c0262e0",
+   "text_sha256": "10726c92045f30ef1c1f4f6ba7ef66796c9651f55e2f1dad788cfe172e3d1159"
+  },
+  "MHC_zh/test_seen/RANDA": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R6RO-RANDA.pt",
+   "rows": 149,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 149,
+   "img_sha256": "902801086e62288ccf5eb8baa06659054d9cc1d9019b059668cd28426354fa65",
+   "text_sha256": "cabf54ce043af4a45521c2821ba1fdcfa04b6a46de03141824b3d29dcf75b2e0"
+  },
+  "MHC_zh/test_seen/RANDB": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R6RO-RANDB.pt",
+   "rows": 149,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n_labels": 149,
+   "img_sha256": "5352e4186b4dbbfc7e196c47449609dfdc40aa6e37461ac4242f88abdae191a6",
+   "text_sha256": "db52032b485ab7e36086f84f6df947bee6e8501d31e2a6d689b00279a385bfc0"
+  }
+ },
+ "id_label_identity_check": {
+  "HateMM/train": {
+   "ids_identical_L24_L28": true,
+   "labels_identical_L24_L28": true,
+   "ids_identical_A0": true,
+   "labels_identical_A0": true,
+   "ids_identical_CAT": true,
+   "labels_identical_CAT": true
+  },
+  "HateMM/dev_seen": {
+   "ids_identical_L24_L28": true,
+   "labels_identical_L24_L28": true,
+   "ids_identical_A0": true,
+   "labels_identical_A0": true,
+   "ids_identical_CAT": true,
+   "labels_identical_CAT": true
+  },
+  "HateMM/test_seen": {
+   "ids_identical_L24_L28": true,
+   "labels_identical_L24_L28": true,
+   "ids_identical_A0": true,
+   "labels_identical_A0": true,
+   "ids_identical_CAT": true,
+   "labels_identical_CAT": true
+  },
+  "MHC_zh/train": {
+   "ids_identical_L24_L28": true,
+   "labels_identical_L24_L28": true,
+   "ids_identical_A0": true,
+   "labels_identical_A0": true,
+   "ids_identical_CAT": true,
+   "labels_identical_CAT": true
+  },
+  "MHC_zh/dev_seen": {
+   "ids_identical_L24_L28": true,
+   "labels_identical_L24_L28": true,
+   "ids_identical_A0": true,
+   "labels_identical_A0": true,
+   "ids_identical_CAT": true,
+   "labels_identical_CAT": true
+  },
+  "MHC_zh/test_seen": {
+   "ids_identical_L24_L28": true,
+   "labels_identical_L24_L28": true,
+   "ids_identical_A0": true,
+   "labels_identical_A0": true,
+   "ids_identical_CAT": true,
+   "labels_identical_CAT": true
+  }
+ }
+}
