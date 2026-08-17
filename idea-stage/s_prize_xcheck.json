@@ -1,0 +1,1905 @@
+{
+ "rows": [
+  {
+   "item": "item_001",
+   "dataset": "ImpliHateVid",
+   "id": "NH_44",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Uploader delivers red-pill monologue generalising women as ego-driven and manipulative, no distancing frame.",
+    "m3q": "Red-pill monologue stereotypes women as ego-driven and manipulative; creator asserts it directly with no distancing.",
+    "z9x": "Creator delivers red-pill monologue demeaning women as ego-driven and undeserving of respect, no distancing."
+   },
+   "voice_maj": "uploader",
+   "transcript": "Hi everyone today I'm gonna talk about how women should not be chased. Women, they're like cats and the more you chase, the harder they run. And that's a mistake that men make. You do not chase the woman, you must become the prize. Yeah. Like what every other red pill video says, yeah I'm just re-judicating what they say. So women shouldn't be chased because for a variety of reasons, right? The first one being they get an ego boost and two, they think they're above you. And if you chase women you lower their attraction level because they would want a man of equal or higher value. And chasing women, it's pathetic really. Because when you chase them, it shows that you have zero value. Because women, they can sense a desperation from a mile away. I don't know how, I don't know how to do it, but they just do. They can sense your desperation, your weakness from a mile away. And they are turne…",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 0.447
+  },
+  {
+   "item": "item_002",
+   "dataset": "MHC",
+   "id": "EEC98aHSgIY",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "DISTANCED",
+    "z9x": "ENDORSE",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 2,
+   "cls": "SPLIT",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "none",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Channel's own commentary frames the adulteress as the temptress ruining fools, endorsed without distancing.",
+    "m3q": "Devotional Bible-verse slide video about fools and the adulteress; no identity-based attack on any group.",
+    "z9x": "Uploader's own commentary endorses framing of the adulteress woman as a snare for fools."
+   },
+   "human_votes": [
+    1,
+    0,
+    1
+   ],
+   "human_split": true,
+   "voice_maj": "uploader",
+   "transcript": "Fools Cannot Resist The Adulteress - Proverbs 5:13 . Welcome to Proverbs Club Fools cannot resist the adulter Proverbs 5 verse 13I would not obey my teachers.🎼Or turn my ear to my instructors Proverbs club commentary, a fool would rather leave his narrow path than miss out on his invitation from the adultreess.Please share this open source video Visit Proverbs Club at Proverbs.club.",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -4.1
+  },
+  {
+   "item": "item_003",
+   "dataset": "ImpliHateVid",
+   "id": "NH_394",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Speaker threatens violence while mocking the target's disability with 'crippled ass', no distancing.",
+    "m3q": "Speaker threatens to kick someone's 'crippled ass', a disability-based insult delivered in his own voice.",
+    "z9x": "Speaker threatens and mocks target's disability with 'crippled ass', no critical or quoting frame."
+   },
+   "voice_maj": "uploader",
+   "transcript": "I am going to make your life a living hell. I want to, I can come down there right now and kick your crippled ass without even breaking a sweat.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 2.569
+  },
+  {
+   "item": "item_005",
+   "dataset": "MHC_zh",
+   "id": "BV1m8411z7mV",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": null
+   },
+   "n_valid": 3,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": null,
+   "qwen_r2_5way": null,
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Uploader's own title uses the mocking gendered epithet for a boy-crazy woman with no distancing.",
+    "m3q": "Uploader's own title labels a woman '花痴娘们', a mocking gendered epithet, with no distancing framing.",
+    "z9x": "Uploader's title labels a woman with the mocking gendered epithet 'huachi niangmen', no distancing."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "uploader",
+   "transcript": "这<em class=\"keyword\">花痴</em>娘们 . 🎼不知道你看中我家哪位公子呢？有请贝公子。哎呀，这个老儿等了轻。儿雅，完全就是姑娘们喜欢的庆心女人的美男美。😊",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.509
+  },
+  {
+   "item": "item_006",
+   "dataset": "MHC",
+   "id": "YDEsYXYlB8o",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Satire refuting the anti-gay groomer smear; creator mocks the bigoted premise rather than endorsing it.",
+    "m3q": "Satire defending gay people and refuting the 'groomer' smear; creator sides against the bigoted claim.",
+    "z9x": "Satire explicitly refutes the gay-groomer stereotype and concludes gays are harmless to children."
+   },
+   "human_votes": [
+    0,
+    1,
+    0
+   ],
+   "human_split": true,
+   "voice_maj": "none",
+   "transcript": "Should gays be around children? . This is gay science In today's episode is your child Sa around the LGBTQs a STEM professor at the Carly Gay Jeson University developed a comprehensive system that assigns negative and positive values to everything a child can encounter after running simulations they published their findings as a ranked list of people most likely to cause harm to childrensexuals were not only harmless but actually a good influence on children as they inspired self-express and didn't instill religious guilt at the age of five but while homosexuals are great for kids are not great for homosexuals The toll on the gay.Devastating children are annoying, they're loud. they shit their pants. they don't understand social cues. they're sticky and worst of all, they're horrible storytellers the mere presence of children picks away at the gay immune system and in as little as five m…",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": -1.409
+  },
+  {
+   "item": "item_012",
+   "dataset": "MHC_zh",
+   "id": "BV1to4y177df",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "on_screen_speaker",
+    "m3q": "on_screen_speaker",
+    "z9x": "on_screen_speaker"
+   },
+   "why": {
+    "r7k": "Animated skit ridicules the abusive character's hypocrisy, framing her slurs as class prejudice.",
+    "m3q": "Animated skit where a character's slurs and prejudice are the butt of the creator's satire about classism.",
+    "z9x": "Animated satire criticises the character's slurs, framing such prejudice as really being classism."
+   },
+   "human_votes": [
+    1,
+    0,
+    0
+   ],
+   "human_split": true,
+   "voice_maj": "on_screen_speaker",
+   "transcript": "厌男厌女厌蠢？厌穷而已 . 🎼你干嘛偷拍我撕骗他啊，我没偷拍你啊，给我看你的相册第一张照片，原来你是死给。子感觉咱很有雅小。🎼快点儿，老板催了，姐姐先别不要卡的快行，你看我成吗？😊",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.107
+  },
+  {
+   "item": "item_013",
+   "dataset": "ImpliHateVid",
+   "id": "IM_57",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 1,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Institutional criticism of churches over tax exemption; no attack on believers as an identity.",
+    "m3q": "Argument that churches should be taxed; institutional and financial criticism, not attack on believers' identity.",
+    "z9x": "Criticism of churches as untaxed businesses is institutional, not an attack on believers' identity."
+   },
+   "voice_maj": "none",
+   "transcript": "way I look at it, I think the church is about 200 and some years in a rears in their taxes. They should have been taxing the church all along because when an organization which basically is a business as all these churches and cults and everything are in the United States, they set themselves up and they take money from people, promising them some sort of mental relief or a piece of heaven or whatever the deal is that they're offering, but basically they're taking money from people. And although they promised to send it overseas to have these little missions that they're going to save heathens from themselves and so forth, what they do is they buy real estate, that buy vast quantities of real estate and they don't pay any taxes on it and they've got all this stuff that should be taxed and I'm mad about that.",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -1.463
+  },
+  {
+   "item": "item_014",
+   "dataset": "MHC",
+   "id": "dK43yHIUMKA",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 1,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "archival",
+    "m3q": "quoted_third_party",
+    "z9x": "archival"
+   },
+   "why": {
+    "r7k": "Archival stand-up clip explicitly attributed to Dave Allen, whose punchline mocks the homophobic speaker.",
+    "m3q": "Archival Dave Allen stand-up joke; anti-gay anxiety is attributed to a quoted emigrating man and mocked.",
+    "z9x": "Archival Dave Allen stand-up clip, explicitly attributed, whose joke targets the emigrating homophobe."
+   },
+   "human_votes": [
+    1,
+    1,
+    1
+   ],
+   "human_split": false,
+   "voice_maj": "archival",
+   "transcript": "Is now the era of homosexuality ? Dave Allen . I was talking to a man the other day who was leaving, decided to immigrate, decided to leave this country, and I said, why are you leaving, he said,\" it's homosexuality, I said what are you talking about?\"He said 300 years ago, if you were homosexual, you were hanged drawn and quaed100 years ago, if you were homosexual, you were hanged 50 years ago, if you were homosexual, you were flogged and given 20 years in prison.went0 years ago, if you were homosexual, you were fined 200 pounds and sent to prison for two years, five years ago, if you were homosexual, you were a small, fine and you were pardoned.Go off for the warning. I said, what are you leaving for, He said, I'm going before they make it compulsory.",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -2.621
+  },
+  {
+   "item": "item_015",
+   "dataset": "MHC_zh",
+   "id": "BV1Qk4y1g7PM",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "condemns",
+   "qwen_r2_5way": "condemns",
+   "voices": {
+    "r7k": "quoted_third_party",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Creator quotes common misogynistic phrases in order to criticise them and defend feminism.",
+    "m3q": "Creator enacts misogynistic phrases explicitly to criticize them and closes with an anti-weaponization message.",
+    "z9x": "Creator enacts misogynistic phrases in order to expose and criticise them as unconscious sexism."
+   },
+   "human_votes": [
+    1,
+    0,
+    0
+   ],
+   "human_split": true,
+   "voice_maj": "uploader",
+   "transcript": "一些无意识的厌女词汇 . 🎼大哥大哥，你帮帮我好不好？哎呦，你可真是个大爷啊。大姐，你没事吧，阿妈，你有病吧。哦，你好有男友力好man啊，这一看就是女司机吧。知道你这种日系双容的精髓代表什么吗？娇妻能不能不要再服美艺了？大姐，你打扮的这么邋遢，你还是别出来丢人现眼了吧。我跟你说，我看她长相知道她不怎么样。😡🎼嗯，真是爱男又不自知。我感觉我之前是有点性运闹了。不过我现在意识到了我的问题，我打算改善我那些不好的地方，好好做自己。别，我们可不认可你这个精神男人，难道我们很需要你，你根本就不配有女性主义。😊",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.214
+  },
+  {
+   "item": "item_016",
+   "dataset": "ImpliHateVid",
+   "id": "NH_650",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Ideological satire of feminist argumentation; criticism of a position, not attack on women's identity.",
+    "m3q": "Animated argument against feminist theory; ideological criticism rather than attack on women as a group.",
+    "z9x": "Ideological argument that sexism against men exists; mocks feminist reasoning, not women as a group."
+   },
+   "voice_maj": "none",
+   "transcript": "Society hates women! We live under patriarchy! Huh, I don't know. I mean, I've always felt most responsible adults kind of see it as a grass-as-greener thing. Men have it hard in some areas, women have it hard in other areas. Ugh, no! That's not true because there's no such thing as sexism against men! How do you figure? Because society hates women! Why do you think that? Because it's never sexist against men! Huh, look at all these reasons that proof society is unfair to women! This proves we live under patriarchy! Look at all these ways in which society is unfair to men. Those don't count! If society exists to privilege men and oppress women, those things can't be the result of sexism! No, no, no, no, no. If society exists to privilege men and oppress women, those things wouldn't happen. All you're doing is rejecting evidence that men have it difficult in some areas so that you won't h…",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.995
+  },
+  {
+   "item": "item_021",
+   "dataset": "ImpliHateVid",
+   "id": "NH_988",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "DISTANCED",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 1,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "quoted_third_party",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Deploys the stereotype that Palestinians murder gay people to demean them, mocking critics, no critical frame.",
+    "m3q": "Absurdist reply mocking the speaker who paints Palestinians as gay-killers; creator ridicules that talking point.",
+    "z9x": "Speaker asserts Palestinians murder homosexuals as a group trait, presented as the video's own claim."
+   },
+   "voice_maj": "uploader",
+   "transcript": "Why don't these Palestinians stand with gay activists? Like, don't you think it's weird that in Palestine that if you're homosexual, they'll kill you? Yeah, yeah, I have. I've seen the videos. Have you ever seen it? Sure, sure. And because I'm not gay, thankfully. Ah, this is not gay, that's a lie. These gargoyles out here think they're so clever, Jimmy. That's why I have to block them on Twitter. Now, I'm a pimple on a blimp, and I stand for gay rights for all Palestinians.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 3.235
+  },
+  {
+   "item": "item_022",
+   "dataset": "MHC_zh",
+   "id": "BV1Km4y1u7ri",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "caption",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Uploader's added captions build the joke around the gendered 'mama's boy' epithet with no distancing.",
+    "m3q": "Fan edit labels an idol '妈宝男', a mocking gendered epithet, used as the video's own joke framing.",
+    "z9x": "Uploader labels the idol with the mocking gender stereotype 'mabao nan' as comedic fan content."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "uploader",
+   "transcript": "<em class=\"keyword\">妈宝男</em>~ . 妈宝男妈，你听见了吗？人侮辱我，我天天自己吃，自己喝，自己能上桌，每天自行睡觉8小时独立拉屎，还不用拿纸跟谁俩。😡",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.184
+  },
+  {
+   "item": "item_023",
+   "dataset": "MHC_zh",
+   "id": "BV12G4y1S7mN",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "quoted_third_party",
+    "m3q": "none",
+    "z9x": "quoted_third_party"
+   },
+   "why": {
+    "r7k": "Film recap narrates a replayed movie scene sympathetically, calling the girl pitiable and stripped of dignity.",
+    "m3q": "Sympathetic film recap of a girl sold into a brothel; narrator condemns her degradation.",
+    "z9x": "Replayed film scene of a girl's degradation, narrated with explicit sympathy for her humiliation."
+   },
+   "human_votes": [
+    1,
+    0,
+    1
+   ],
+   "human_split": true,
+   "voice_maj": "quoted_third_party",
+   "transcript": "女孩被卖进风月场所，立马成了抢手货，交出了18年的“秘密” . 🎼了，他赤裸着躺在桌子上，阿玉不顾女孩的意愿，帮女孩检查身体。两个男人在边上看得津津有味，女孩像待宰的羔羊一样，毫无尊严，她痛苦万分，觉得很丢脸，但又无可奈何。经过一番试探，阿玉确定这个女孩还是处女。",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -0.46
+  },
+  {
+   "item": "item_024",
+   "dataset": "MHC",
+   "id": "j_foVftOOs4",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Commentary on news footage of police misconduct at a bar; no identity-based attack.",
+    "m3q": "Commentary on news footage of a police SUV crashing into a gay bar; criticism aimed at police.",
+    "z9x": "Podcast commentary on police misconduct after a cruiser hit a bar; no identity attack asserted."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "none",
+   "transcript": "Cops Crashes Into Gay Bar . He got a cop lose control of his vehicle. and he crashes into a gay bar. This is the moment a Saint Louis police officer lost control of his su and slammed into a bar early Monday morning. an owner of a business who lives there is then threatened and told that if he doesn't show his idea when he broke no laws he'd be arrested. James Pence admits he wasn't happy with police. but didn't deserve to be handcuffed. Yes, I was loud. I was very vocal. Police say his.husbandusband Chad morris shoved one of the responding officers he man jail he driving night as2 morning cop was just tight his foot press on the gas he.I wonder if had scream the only femalebri cop scream for Nor was on the plane was God's terminal and women star scream up up, let me get peace.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": -1.585
+  },
+  {
+   "item": "item_025",
+   "dataset": "ImpliHateVid",
+   "id": "IM_5",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "on_screen_speaker",
+    "m3q": "on_screen_speaker",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Clip carries a senator's attack on Aboriginal ceremonies and history uncritically, with no distancing framing.",
+    "m3q": "Broadcast commentator disparages Aboriginal Australians' heritage claims and calls for ending 'indulging them' with ceremonies.",
+    "z9x": "Editorial demeans Aboriginal Australians and their ceremonies as years of 'indulging them', no distancing."
+   },
+   "voice_maj": "on_screen_speaker",
+   "transcript": "It was hardly surprising to see a welcome to country before the opening of the Brisbane GWS, AFL match last weekend, but what was surprising was the assertion that these ceremonies have been conducted for 250,000 years BC. That's before cook. We're now told. Prior to this, we've been told that the history of Aboriginal Australians began about 50 to 60,000 years ago. Now the idea that AFL fans and players are expected to listen to these ceremonies when all they actually want to do is watch the footy is extraordinary. And one suspects that many viewers who in principle would have had a problem with these practices are getting fed up with the genetic dysregion. Senator Thorpe, you have a point of order? No, I just wanted to interrupt this speech. Oh, seriously. Can we just, you know, two minutes, I can't wait to hear it. Thank you, Mr Acting Deputy President. It is, it tells the story, does…",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -1.093
+  },
+  {
+   "item": "item_026",
+   "dataset": "HateMM",
+   "id": "hate_video_365",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 1,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "condemns",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "on_screen_speaker",
+    "m3q": "on_screen_speaker",
+    "z9x": "on_screen_speaker"
+   },
+   "why": {
+    "r7k": "Footage documents a heckler's 'stay in Mexico' slur while speakers on camera condemn it.",
+    "m3q": "Footage documents a heckler telling a Latino father to go back to Mexico; video exposes the incident.",
+    "z9x": "Meeting footage documents an audience member's 'stay in Mexico' heckle as evidence of the racism described."
+   },
+   "voice_maj": "on_screen_speaker",
+   "transcript": "I remember when I went to his bedroom to say good night and he was crying because of the abuse that he was endured in this school system and why did't you stay in Mexico.You need the way is.That's indicative of what these kids are doing That's indicative of what our kids are experiencing comments like this and that's no, he's sharing the story right now and that's indicative of what our kids are experiencing.Oh, you me.This right's right you got the floor, you got the floory.All right, all right let me the question, me me a question, why did I stay in Mexico because this is the greatest country in the world?😊Well you're complaining about being here complaining about being here.It's not the thing tell her to have a seat.",
+   "ocr": "四 | 2 | 1G0TE | 0 | LIVE MLIVE MEDIA GROUP. ALL RIGHTS RESERVED.",
+   "err_kind": "FN",
+   "score": -6.013
+  },
+  {
+   "item": "item_027",
+   "dataset": "MHC_zh",
+   "id": "BV1Kh411T7FJ",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "on_screen_speaker",
+    "m3q": "on_screen_speaker",
+    "z9x": "on_screen_speaker"
+   },
+   "why": {
+    "r7k": "Reposted variety-show clip where guests debate gendered male labels; uploader merely displays it, taking no side.",
+    "m3q": "Talk-show clip and title debate which gendered male epithet, '妈宝男' or '普信男', is worse, with no distancing.",
+    "z9x": "Uploader clips and titles a show debating which male stereotype is scarier, amplifying the epithets uncritically."
+   },
+   "human_votes": [
+    1,
+    1
+   ],
+   "human_split": false,
+   "voice_maj": "on_screen_speaker",
+   "transcript": "妈宝男 普信男哪个最可怕 . 🎼妈宝男苦性男，你不最让人无法忍受，妈好是最可怕的，妈宝是没有办法改变的。妈宝是最恐怖的，你不觉得妈宝男很恐怕吗？万一那个妈妈是个好妈妈呢？就是他会有多种可能像属性就是肯定是妈宝男起码你对妈妈是有爱的，而且你是孝顺的。妈妈在妈宝太吓人了，他没有自己的思想，对为他的生命里有两个女人，很多人离婚都有可能是妈宝对电一苦幸男是，我们可以去改变。驾驭的可以改变驾驭的，你听听，慢慢拿捏。😊",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": 0.583
+  },
+  {
+   "item": "item_033",
+   "dataset": "MHC_zh",
+   "id": "BV1ch411L7VP",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "caption",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Burned-in text calls Hepburn a whore and pushes the antisemitic Rothschild conspiracy trope approvingly.",
+    "m3q": "Uploader's title and burned-in captions brand Audrey Hepburn '天下第一淫妇', a gendered slur, as their own claim.",
+    "z9x": "Uploader's title and burned-in text brand Audrey Hepburn 'the world's number one slut', a gendered slur."
+   },
+   "human_votes": [
+    1,
+    1
+   ],
+   "human_split": false,
+   "voice_maj": "uploader",
+   "transcript": "奥黛丽赫本：“我是天下第一淫妇！” . 🎼我就是天下第一夫。道光。🎼把每个黑暗的地方全部都照亮，庞大时光像男儿的胸膛。😊用无穷的力量如此的坚强。",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": 0.357
+  },
+  {
+   "item": "item_034",
+   "dataset": "MHC_zh",
+   "id": "BV1aP4y1E7PF",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "DISTANCED",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "none",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Uploader's title frames young women as soul-stealing seductresses to avoid, presented as the video's own content.",
+    "m3q": "Compilation of women dancing with flirty 'stay away from 少妇' caption; sexualized but not an identity attack.",
+    "z9x": "Title frames young women as soul-stealing seductresses to avoid, a gender stereotype used as entertainment."
+   },
+   "human_votes": [
+    1,
+    0,
+    1
+   ],
+   "human_split": true,
+   "voice_maj": "uploader",
+   "transcript": "珍爱生命，远离少妇 少妇勾人 少妇勾魂…… . 🎼救命，我真的是见一个爱一个，怎么看都不会腻，不信艾特你兄弟试试。자녀 와 에도 예 에게 우가 엮 어져 안.🎼一个月才几百块，你玩什么命啊，你。😊자녀와 배예에게 요.",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": 0.712
+  },
+  {
+   "item": "item_037",
+   "dataset": "MHC_zh",
+   "id": "BV1Vy4y1p7x2",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Titled bullying of a female classmate, narrated as an animal tamer subduing a beast, played for laughs.",
+    "m3q": "Uploader films bullying a female classmate and narrates her as an animal being tamed, played for laughs.",
+    "z9x": "Uploader films bullying a female classmate and narrates her as an animal being tamed, as entertainment."
+   },
+   "human_votes": [
+    1,
+    1
+   ],
+   "human_split": false,
+   "voice_maj": "uploader",
+   "transcript": "日常欺负女同学 . 怎么会嘿你。😊说明一下，这是这是现在驯兽师驯兽的方式。对，驯兽师会以手部抓住闭嘴猎兽的脖子，然后进进行训。干有啊，表情表情表情。后现在叫杨康也不好使了，表情挂了挂了关了。😊",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -1.547
+  },
+  {
+   "item": "item_038",
+   "dataset": "MHC",
+   "id": "N68vmAE5s_g",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "True-crime news recap of a child abuse conviction; no group-identity attack present.",
+    "m3q": "True-crime recap of a child-abuse conviction; condemns the offender, no group-identity attack.",
+    "z9x": "True-crime news recap of a child abuse conviction; no group-identity attack present."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "none",
+   "transcript": "Shocking story 😱 Man sexually Abuse His 3 year old daughter 🤯 #shorts #ytshorts #youtubeshorts . A 26 year old West Virginia man, Henry Vincent Bennet, was arrested in 2018 after his threey old daughter told her mother that daddy was putting his butt on her butt When asked to draw the butt, the young girl produced the shape of a penis Bennet had sexually assaulted his daughter twice before she reported him he claimed he mistook the toddler for his wife after she climbed into his bed in the dark how in the world would a sane grown man mistake a threey old girl weighing 30 pounds with a 24 year old woman.was sentenced to at least 50 years in prison before he will be eligible for parole, subscribe Amelia Time for more videos.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": -0.33
+  },
+  {
+   "item": "item_039",
+   "dataset": "MHC",
+   "id": "OMSByZ-o3Ww",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Profane vlog about signs of child abuse; profanity only, no identity-based attack.",
+    "m3q": "Man discusses signs of child sexual abuse; profane but contains no identity-based attack.",
+    "z9x": "Profane vlog about signs of child sexual abuse; no identity-based attack."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "none",
+   "transcript": "07262022 signs your child might have/experienced , sexually abuse . I. this little girl just fucked around and stuck her finger up the statues as saying and that's the fucking your stark indicated that something was wrong. You film me inside here. look at the statue.New saying she died saying the ass was like the crack in the jacket and shit right, but new saying like that's how you know something's wrong when they fuck around and end display space shit like that.The simulated sex acts.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.154
+  },
+  {
+   "item": "item_047",
+   "dataset": "MHC",
+   "id": "pofgIFZpR7c",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Self-improvement talk about masturbation and male lethargy; no attack on a group identity.",
+    "m3q": "Self-improvement talk about masturbation aimed at his own male audience; no group-identity attack.",
+    "z9x": "Masturbation self-improvement lecture aimed at men generally; no attack on a protected identity group."
+   },
+   "human_votes": [
+    0,
+    1,
+    0
+   ],
+   "human_split": true,
+   "voice_maj": "none",
+   "transcript": "YOU NEED to stop MASTURBATING - Hamza Ahmed #hamza . 🎼My generation of men are castrating themselves, my generation of men are willingly chopping their dipff in balls off with very, very frequent, frequent, I just say that word frequent masturbation.😊Now I'm not one of these like you know hardcore human like I think it's good for you 100% think it's good for you I'm not one of these like damn we make like oh 90 day nofa challenged benefits you should be on noFap, you should be on Se retention sometimes and you shouldn't watch porn but.🎼We can't deny of the lethargy, the weakness and the sort of laziness that comes about when you bust the nose, can't deny it and a lot of guys are doing that.Three times a day more, think once more of that animal that gets castrated and it's just submissive weak docile and then just see the holds of men, younger men.🎼Willingly just jacking off multiple time…",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 0.531
+  },
+  {
+   "item": "item_048",
+   "dataset": "MHC",
+   "id": "XlJCNPi5inM",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Relationship commentary that also faults men; no demeaning identity-based attack in this clip.",
+    "m3q": "Relationship commentary on infidelity that mainly urges men to improve; no slur or dehumanising attack.",
+    "z9x": "Relationship-advice clip; says men must improve too, no demeaning identity-based attack in this excerpt."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "none",
+   "transcript": "Kevin Samuels explains the reasons why women cheat on their man 👨🏾‍🦱 . When women are honest, one of the main reasons why women cheat is because the man they're choosing to be with as a provider does not stimulate her sexually.And this is one of the areas that we as men need to be better, you need to get better in the bedroom, you need to get better in dirty talk, I'm be honest man, we we got room to improve too.Who told you you were good and bad gentlemen, who told you you were good and bad, if you good and bad, the results will speak for themselves and there are things that you can improve on, what are they?But today we're going to talk about the things that women can improve on, hello, unmute yourself, hello.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": -0.682
+  },
+  {
+   "item": "item_051",
+   "dataset": "MHC",
+   "id": "ga1r2cweP80",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Documentary walkthrough of a red light district; no identity-attacking material.",
+    "m3q": "Red-light-district vlog showing sex workers' homes; intrusive but no group-identity attack.",
+    "z9x": "Documentary-style walkthrough of a red light district; no identity-based attack."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "none",
+   "transcript": "I am able to show this Sex Worker pictures of her child! . So these are the homes of the sex workers during the daytime in the red light district, a different red light district that I have been in from before.And iss the ri deep. And I new like, Oh, it's mother. Oh, I've met your child.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 0.153
+  },
+  {
+   "item": "item_052",
+   "dataset": "ImpliHateVid",
+   "id": "IM_176",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Cultural essay on shifting body-type preferences; sexual but no identity-based attack.",
+    "m3q": "Video essay on shifting cultural preference for breasts versus buttocks; sexual topic, no identity attack.",
+    "z9x": "Video essay on shifting sexual tastes; objectifying but no identity-attacking material."
+   },
+   "voice_maj": "none",
+   "transcript": "This may come as a surprise to my younger viewers, but it wasn't always about the ass. In fact, the ass used to be an afterthought of niche interest, not the primary focus of sexual desire. There was a time, let's say, up to the late 80s, when men would be no more likely to publicly comment on a woman's backside than they would about her feet. It wasn't that they had no interest there, but to focus too much attention on the ass would seem like admitting to an embarrassing fetish. Social convention dictated that you should get your kicks above the waistline, and if your interest straight elsewhere, you kept quiet about it. It wasn't that no one had ever noticed the attractions of the female dairy ear. It was just that as a secondary sexual characteristic, it very much played second fiddle to the breast. Before the 90s, tits were a big thing. I mean, it was all about the rack, as it has be…",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -1.469
+  },
+  {
+   "item": "item_054",
+   "dataset": "MHC",
+   "id": "cXRgVEENkPA",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 1,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Culture-war commentary criticising a drag group's mockery of Catholics; institutional criticism, not identity attack.",
+    "m3q": "Commentary segment reporting the Dodgers-Sisters controversy; political-religious criticism without slurs or dehumanisation.",
+    "z9x": "Culture-war commentary on the Dodgers dispute; criticism of an event, not an identity-based attack."
+   },
+   "human_votes": [
+    1,
+    1
+   ],
+   "human_split": false,
+   "voice_maj": "none",
+   "transcript": "Catholic Drag Queens . The Los Angeles Dodgers found themselves in hot water this week when they invited the sisteristers of perpetual indulgence to participate in the team's upcoming gay pridede event that you may be asking yourself, wait who are these sisters and what exactly are they indulging in Well apparently this is a group of male drag queens who dress up as catho nuns to mock Christianity, the invitation angered many Catholichos understandably which led the Dodgers to disinvite the sisters and that in turn offended the LGBtq.I a plus community, I think I got them all and with any dispute between Christianity and unorthodox sexuality, we know which wins and right on cue, the Dodgers issued an apology and reinvited the Ss to gay pridede Knight in hopes they would accept a community hero award.",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -3.088
+  },
+  {
+   "item": "item_057",
+   "dataset": "HateMM",
+   "id": "non_hate_video_149",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "archival",
+    "m3q": "archival",
+    "z9x": "archival"
+   },
+   "why": {
+    "r7k": "Vintage 78rpm comic record containing racial slurs is played and displayed as a historical recording.",
+    "m3q": "Video shows an antique 78rpm disc playing an old comic song whose lyrics contain period racial slurs.",
+    "z9x": "Video documents an antique 78rpm record playing a period comic song containing racial slurs."
+   },
+   "voice_maj": "archival",
+   "transcript": "Paraday on way down upon the Fly River, Lord Shepherd.You've all heard the song about the Pway River, they tell you with' the pretty little s all the benefits of people knowing nothing at all about the place a lot of information I have got Why the Darkkey and the Didty ever wanted to retire is really something more than I can say.Okay.But I'm willing to admit the nigger showed a lot of sense when he made up his mind to come away way down on the Swway River, That's the place to give you inflammation of the river. That's where the old folks love to stay. They got the up there because they cannot get away way down on the sway River. No more I wish to rollam. All the cool they stay. I'm glad you get away.Far from the old apple.There are big alligators in the Swwanneee River that greet you with a playful little laugh, but if you are deluded by the elongated smile of them and the one they bite…",
+   "ocr": "td. DAL | td. DAI HIS | td. DAI | td. DAI SIH | td. DAI HIH",
+   "err_kind": "FP",
+   "score": 1.44
+  },
+  {
+   "item": "item_058",
+   "dataset": "HateMM",
+   "id": "non_hate_video_528",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 1,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Far-right party promo campaigning for an imprisoned Holocaust denier, framing her denial as free speech.",
+    "m3q": "Far-right party promo campaigns for jailed Holocaust denier Ursula Haverbeck, presenting her denial as free speech.",
+    "z9x": "Far-right party promo glorifies convicted Holocaust denier Haverbeck and mobilises a demonstration for her."
+   },
+   "voice_maj": "uploader",
+   "transcript": "🎼Ydesia, we an at 7000 Mi mentioned offer for Minosus Tes. Ni Shena, I, Udaanting fan, London, Zan and de Bodesca Republic Toutsland.In Deutch.🎼Angerfang might bi to enough to home.Ta mentionedninininaar isk.🎼 .🎼Z Zilauk andorri wing anbalingften.Zaiion Paterbe understood.🎼Some I nonsing aboard star, the enoughtenbergga and Ozlahabeck, finished at anoin in November in Belefield and a demontonad, demten to It Sut's complex field..🎼Come to the Bostocks Demontion andm9 November, it's 50009 in.",
+   "ocr": "CA.10.000 STRAFVERFOLGUNGEN WEGEN POLITISCHER 8 MEINUNGEN. IN DEUTSCHLAND. Every year about 10.000 people become the victim of mind \"Justice\" | DEUTSCHLAND HÄLT WEITER AN POLITISCHER INQUISITION FEST. Not in China, Iran or another foreign country... | 一 E | POLITICAL CORRECTNESS. MILLIONENBETRÄGE AN STEUERGELDERN FÜR DUBIOSE KAMPAGNEN, ÜBERWACHUNG & LINKE NETZWERKE. ...are forced through a tiny mind corridor. | AKTUELLE URTEILE: ÜBER 12 JAHRE HAFT FÜR WORTE! IN DEUTSCHLAND. Thoughts and opinions that don't pass, are tied to penalties. | sksunten.indymedia.org #002112:Do it like Leipzig! LINKE STAATSIDEOLOGIE WIRD IN ALLEN SOZIALEN Chemnitz AMADEL SCHICHTEN VERANKERT. ANTONIC STIFTUNG Startin…",
+   "err_kind": "FP",
+   "score": 2.469
+  },
+  {
+   "item": "item_060",
+   "dataset": "MHC_zh",
+   "id": "BV15h4y157Km",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 2,
+   "cls": "SPLIT",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Crude jokes about a Japanese balloon funeral custom; mocks a practice rather than attacking a group identity.",
+    "m3q": "Dark-humour commentary on Japanese balloon funerals mocking the custom, not attacking Japanese people as a group.",
+    "z9x": "Uploader jokes mockingly about Japanese balloon funerals and Japanese grandmothers' ashes as entertainment."
+   },
+   "human_votes": [
+    1,
+    0,
+    1
+   ],
+   "human_split": true,
+   "voice_maj": "none",
+   "transcript": "这是谁家太奶？呛死我了！ . 🎼不是你要不要看看你在干什么？日本现在出现了气球葬礼，就是把骨灰装进气球升空，自然爆炸，费用约1.2万人民币。网友蜡平那天风很大，谁家太奶迷糊了我的双眼，跟我们中国这玩意儿叫错骨扬灰，一般用以仇人身上。日本小孩妈，我看见我太太在天上炸了。如果我参加日本老奶奶的葬礼，看见他儿子哭得伤心，我一定会拉着他的衣袖，说，快看你妈妈炸了，你头上有头皮屑，这不是普通的头皮屑，这是别人的太奶张万森吓太奶了。😊",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -1.367
+  },
+  {
+   "item": "item_062",
+   "dataset": "HateMM",
+   "id": "non_hate_video_16",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "archival",
+    "m3q": "archival",
+    "z9x": "archival"
+   },
+   "why": {
+    "r7k": "1950s segregationist interview with racial slurs presented as timecoded archival stock news footage.",
+    "m3q": "Stock-archive 1950s newsreel of a segregationist announcing a committee against Black rock and roll records.",
+    "z9x": "Timecoded 1950s stock newsreel of a segregationist announcing an anti-rock-and-roll committee, presented as archive."
+   },
+   "voice_maj": "archival",
+   "transcript": "We've set up a 20 man committee to do away with these dis vulgar animalistic nigger rock and roll box our committee will check with the restaurant owners and the cafes.To see what seabo breakfasts is on their machines and then ask them to do away with them, our committee will judge the record according to who who they're by.If they can't tell by looking at the name of the record, whether it's a nigger singer or a nigger version of this rock and roll bump, they'll play the record.And then just use their judgment and where they should come off for not as far as we're concerned in Anderson and Calowun County.As long as the music is played, like white people should play it, it's not just animalistic bebs, but we won't object to it as long as it is a white band, but don't want this nigger version of the rock and roll box.",
+   "ocr": "GLOBALIMAGEWORKS \"SERVE WHITE -GIWCUSTOM TCR 01:04:29.10 4207ONI PLAY LOCK GIW #4207 2 | GLOBALIMAGEWORKS We .\"SERVE WHITE 1GIWCUSTOM TCR 01:04:31.18 4207ONL PLAY LOCK GIW #4207 2 | GLOBALIMAGEWORKS We .*SERVE WHITE 1GIWCUSTOM TCR 01:04:33.26 ONI 4207 PLAY LOCK GIW #4207 2 | 11 GLOBALIMAGEWORKS We ***SERVE WHITE 1GIWCUSTOM TCR 01:04:36.05 ONI 4207 PLAY LOCK GIW #4207 2 | LOBALIMAGEWORKS SERVE WHITE 1GIWCUSTOM TCR 01:04:38.13 ONI 4207 PLAY LOCK GIW #4207 2 | TIMAGEWORKS *SERVE WHITE GIW.CUSTOM TCR 01:04:40.21 4207 ONL PLAY LOCK GIW #4207 2 | LOBALIMAGEWORKS We **SERVE WHITE HGIW.CUSTOM TCR 01:04:42.29 ONI 4207 PLAY LOCK GIW #4207 2 | LOBALIMAGEVW/ORKS We... **SERVE WHITE FGIWCUSTOM TCR 01:04:…",
+   "err_kind": "FP",
+   "score": 0.85
+  },
+  {
+   "item": "item_064",
+   "dataset": "ImpliHateVid",
+   "id": "NH_887",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Complaint that Americans are sedentary and should garden; social criticism, no identity-group attack.",
+    "m3q": "Speaker criticises American sedentary habits and urges urban gardens; social criticism, no identity attack.",
+    "z9x": "Rant urging urban gardens and calling Americans sedentary; social criticism, not a group-identity attack."
+   },
+   "voice_maj": "none",
+   "transcript": "see an American people sit all day they sit jail all day they sit chairs all day they just lay around all day and got to pay immigrants from Mexico in different places of the world to come and do all the work because they can't do anything because they sit all day they got to pay people all kinds of money to do simple things because they just sit around all day people need to get out and start making urban gardens",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 2.272
+  },
+  {
+   "item": "item_068",
+   "dataset": "ImpliHateVid",
+   "id": "NH_396",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "condemns",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Interview with a detransitioner criticising gender clinics; medical and institutional criticism, no identity-group slurs or dehumanisation.",
+    "m3q": "Interview with a detransitioner criticizing gender clinics; medical and institutional criticism, no identity slurs or dehumanization.",
+    "z9x": "Interview with a detransitioner criticising gender clinics and a named doctor; medical/institutional criticism, no identity-group slur or dehumanisation."
+   },
+   "voice_maj": "none",
+   "transcript": "Yeah, come on in. What's your name? My name's Common Ty. Nice to meet you. I've actually seen your stuff online and I'm a huge fan. I was on puberty blockers. I started when I was 12 and I've been on I was on testosterone from 14 to 17 and I got top surgery at 17. Totally messed my life up. So I just want to say you're doing a good thing. I can't put people disagree with you on this. As a former like child transitional, I'm just like a pulled and people have anything to question you about. Well, I'm so sorry you had to go through all that. I'm glad you are through it now. Thank you so much for speaking up. That's extremely valuable because a lot of people are afraid to. Yeah. So do you mind if we have a little conversation about it? Okay, come on in this way just a little bit. Oh, yeah, for sure. Hi. So your name again? My name is Common Ty. Common Ty. So Common Ty went on puberty blocke…",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.467
+  },
+  {
+   "item": "item_070",
+   "dataset": "MHC",
+   "id": "h_wKRDyoG_c",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "quotes_mentions",
+   "voices": {
+    "r7k": "quoted_third_party",
+    "m3q": "quoted_third_party",
+    "z9x": "quoted_third_party"
+   },
+   "why": {
+    "r7k": "Reports netizens' racism and 'princess syndrome' accusations against an idol, attributing both sides without taking one.",
+    "m3q": "Gossip clip reporting netizens' racism and princess-syndrome accusations against an idol while also giving fans' defense.",
+    "z9x": "Gossip clip reports netizens' racism and 'princess syndrome' accusations against an idol, gives fan rebuttal, takes no side."
+   },
+   "human_votes": [
+    1,
+    1
+   ],
+   "human_split": false,
+   "voice_maj": "quoted_third_party",
+   "transcript": "Do Wonyoung Have Princess Syndrome? || #ive #dive #wonyoung #kpop #wonny . 🎼Recently, a clip of one young had went viral in which one young reacted in surprise when a child approached her, So a lot of fans are accusing her of racism and choleism as the child was not pale. netizens are saying that she as Princess syndrome and she thinks that she is superior to everyone On the other hand I fans defended her by saying that she gets surprised easily and also it was the child fault to suddenly approach them like this. So do you think that one young has a Princess syndrome.",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -2.761
+  },
+  {
+   "item": "item_071",
+   "dataset": "HateMM",
+   "id": "non_hate_video_121",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Prank call accusing a man of pedophilia; personal accusation with no group-identity basis.",
+    "m3q": "Prank call accusing a man and his son of pedophilia; personal accusation with no group-identity attack.",
+    "z9x": "Prank call accusing a neo-Nazi blogger and his father of pedophilia; personal accusations, no group-identity attack."
+   },
+   "voice_maj": "none",
+   "transcript": "Hello, is this Greg Yeah, are you Andre Anglin's father, Are you Andre Anglin's father.Yes I am yeah, did you know that there was a dossier out on him on the internet about him being a pedophile in the Philippines?There's a dossier on your son on the internet, you can Google it where he is actually seen with an underage girl Yeah I'm aophil too, so I'm okay with that.You said you're a pedophile too. Oh yeah,ophile I'm under girl right now I'm fine doing that Oh, really, how does that work, You know, that's illegal I have sex under all the.Really, you know you're being recorded right now right you're being recorded right now Yeah you're being recorded right now, you know that right good?😡Okay, Greg Anglin, that's really nice, I'm glad you like underdes girls I'm glad you like underdes girls, Mr. Anglin, that's I definitely do you work for the United Nations, sir?Do you work for the United…",
+   "ocr": "GREG ANGLIN ANDRE ANGLIN OHIO'S #1 PEDOFAMILY EXPOSED | GREG ANGLIN ANDREANGLIN OHIO'S #1 PEDOFAMILY EXPOSED",
+   "err_kind": "FP",
+   "score": 0.432
+  },
+  {
+   "item": "item_074",
+   "dataset": "ImpliHateVid",
+   "id": "IM_308",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Neutral news report sympathetic to international students facing permit caps; no identity-attacking material.",
+    "m3q": "Neutral CTV news report on international student permit caps; sympathetic reporting, no identity attack.",
+    "z9x": "CTV news report on Canadian international-student permit caps, sympathetic to students; no identity-attacking material."
+   },
+   "voice_maj": "none",
+   "transcript": "The pressure keeps ramping up for international students trying to make Canada a forever home. As Ottawa tightens the cap on study and work permits, students say they're being left in the dark with their future on the line, some calling the rules unfair, pointing to the number of people who enter the country as permanent residents. CTV's Kamal Kramali explains. Here at this university in Toronto, students from abroad feel like they're carrying the weight of the world on their shoulders. I am honestly very scared. The Sneema Ahmed is an international student. Her next step would have been getting a postgraduate work permit, but with the new rules introduced, she might be sent back home to Bangladesh. Where hundreds were killed in clashes this summer. It's honestly very terrifying to think to have to go back at this situation now. We need to adjust accordingly. Earlier this month, Ottawa a…",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -1.809
+  },
+  {
+   "item": "item_080",
+   "dataset": "MHC_zh",
+   "id": "BV1vK41177zi",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Uploader dubs and titles an anime clip around tearing apart a 'bitch', a gendered epithet used as the video's own content.",
+    "m3q": "Uploader's title and dub invite viewers to enjoy tearing apart a bitch; gendered slur used as content.",
+    "z9x": "Uploader's own title and dub call a woman a 'bitch' and celebrate tearing her apart, no distancing."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "uploader",
+   "transcript": "【14岁少女】进来体验一下手撕<em class=\"keyword\">贱人</em>的感觉 . 🎼剑必敢儿打狗也得看主人。😊你算什么东西，要惩治我家里的人在我面前提尊卑，我就教教你何为尊卑。😡🎼我为尊，你为妃。",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.247
+  },
+  {
+   "item": "item_081",
+   "dataset": "MHC_zh",
+   "id": "BV1qZ4y1T71a",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Skit built on the creator's own stereotype that boy-crazy women excuse anything a man does.",
+    "m3q": "Skit's own title generalizes women as boy-crazy and treats unwanted face-touching as fine; gender stereotype played for laughs.",
+    "z9x": "Light comedy skit about a girl swooning over a handsome passerby; no demeaning identity attack."
+   },
+   "human_votes": [
+    0,
+    1,
+    1
+   ],
+   "human_split": true,
+   "voice_maj": "uploader",
+   "transcript": "女人<em class=\"keyword\">花痴</em>起来，男人怎么样都是对的 . 🎼老可姐去看一下那个帅哥帅哥，一会叫我。月月，请问那个帅哥好看吗？有毛病吧喂。😊。",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -0.188
+  },
+  {
+   "item": "item_082",
+   "dataset": "ImpliHateVid",
+   "id": "EX_150",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Speaker ranks women by race for sexual desirability and claims Asian accounts are CCP bots, in his own voice.",
+    "m3q": "Uploader ranks women by race for sexual desirability, asserting Asian women were less in demand; racialized sexual stereotyping.",
+    "z9x": "Speaker ranks women by race for sexual desirability, calling Asian women less in demand, as his own generalisation."
+   },
+   "voice_maj": "uploader",
+   "transcript": "experience in America, Asia women in general weren't that highly sought after for reproduction and love, romance, sex reasons, not that they were really far down on the totem of women in general, but in general they seem to be maybe like third, fourth, fifth place. Or further down the line than latinas, white women, red heads and other types. This is not me judging people, okay, I'm just saying, from a grand generalization perspective, Asian women were less in demand. However, recently on sites like mines.com, I've seen just in the past five years a just absolute explosion of pictures of cute Asian girls way more than in the past. And I think also on other platforms like TikTok and other places, it seems to be in my personal opinion that the Asian beauty is more desirable to the average American man than ever before in human history. Now, I think some of these accounts are run by bots, r…",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -0.517
+  },
+  {
+   "item": "item_085",
+   "dataset": "MHC",
+   "id": "KDcCiUU8q5E",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "condemns",
+   "voices": {
+    "r7k": "none",
+    "m3q": "quoted_third_party",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Podcast hosts criticise Trump and his crowd for misogyny and cruelty; the video attacks bigotry, not an identity.",
+    "m3q": "Podcast hosts criticize Trump's and his crowd's misogyny toward accusers; explicit condemnation, not endorsement.",
+    "z9x": "Podcast hosts condemn Trump's and his crowd's misogyny as cruel and disgusting; only criticism, no attacking material reproduced."
+   },
+   "human_votes": [
+    1,
+    0,
+    0
+   ],
+   "human_split": true,
+   "voice_maj": "none",
+   "transcript": "Trump &amp; his audience&#39;s Misogyny &amp; Cruelty are disgusting #shorts . Sure seems like a big deal that the Republican frontrunner for president will finally face some measure of accountability after being accused of sexual misconduct by 26 women. No, the entire episode last night.Was just so disgusting, the way he talked about it, the way the crowd reacted to it, just the amount of like cruelty and misogyny, like running through the entire event through him and and it is when you watch it is like this is why so many victims do not come forward because that is a huge part of society that audience represents a significant swath of Americans and the embodiment of that cruelty and misogyny is their chosen leader, The man who was president of the United States and could very well be president again.And that, I mean, it was a truly one of the more horrifying things I've ever seen in a …",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 0.16
+  },
+  {
+   "item": "item_086",
+   "dataset": "MHC",
+   "id": "8zLoOqXvk64",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "uploader",
+    "m3q": "uploader",
+    "z9x": "uploader"
+   },
+   "why": {
+    "r7k": "Uploader captions CCTV of a robbery 'be aware of transgender on road', framing trans people as a public danger.",
+    "m3q": "Uploader's title tells viewers to beware of transgender people on the road, generalizing one robbery clip into a warning about the group.",
+    "z9x": "Uploader captions CCTV robbery footage 'Be aware of transgender on road', framing an identity group as a danger."
+   },
+   "human_votes": [
+    1,
+    0,
+    0
+   ],
+   "human_split": true,
+   "voice_maj": "uploader",
+   "transcript": "Be aware of transgender on road . 🎼 .🎼",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 0.339
+  },
+  {
+   "item": "item_088",
+   "dataset": "ImpliHateVid",
+   "id": "NH_736",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "condemns",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Comedian calls racial slurs lazy and unimaginative; no slur used and no group attacked.",
+    "m3q": "Speaker dismisses racial slurs as lazy insults; mentions but does not deploy any slur against a group.",
+    "z9x": "Speaker calls using racial slurs stupid and lazy without uttering any; no group is attacked."
+   },
+   "voice_maj": "none",
+   "transcript": "You know what also is stupid about calling people racial slurs? Is that it's so hacked? It's an easy, it's easy. Anybody can do it. Not everybody can find a person's real weak point and rip them apart based on that. Call on somebody the N word might make them mad for like 10 minutes, but if you find the right thing to say, you could destroy somebody's psyche for the rest of their fucking life. You could completely destroy them as a human being forever if you find the right thing to say. And just call on somebody the N word? Yeah, no. Anyways, whatever, bye.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 3.095
+  },
+  {
+   "item": "item_089",
+   "dataset": "MHC",
+   "id": "DxcRdnzBZoo",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "DISTANCED"
+   },
+   "n_valid": 4,
+   "k_for_gold": 4,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "no_hate_content",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Couple candidly answer questions about disability and sex; no identity-attacking material.",
+    "m3q": "Disabled creator and partner answer questions about his body; no identity-attacking material.",
+    "z9x": "Disabled creator and partner answer questions about his body positively; no identity-attacking material."
+   },
+   "human_votes": [
+    0,
+    0
+   ],
+   "human_split": false,
+   "voice_maj": "none",
+   "transcript": "Does Disability Affect My Penis Size? . The Shane have regular sized private parts Can he get hard naturally too much LL that was like oh maybe that is too much like can you find this information online then I looked and no you literally can't find this information online Do you want to answer it you're the yes Yes to both of those questions Yes to both I think a lot of people think that because you have like a muscle wasting disease that it is different but it it is not how did had a phrases but my head is not proportional to the size of my.And one other part of me is not quite proportional. I'll let you assume.What it is it's not my toes like yeah, so yes to both of those and my early on I told Hannah that I like hey just like I was like head's up everything down there mers and whos and it forms wonderful it's all wonderful.I'm not sure if you use the phrase wonderful, I mean that woul…",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": -1.411
+  },
+  {
+   "item": "item_090",
+   "dataset": "MHC",
+   "id": "_qldaPBgkk0",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 1,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "no_hate_content",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Podcast hosts say lesbians coexist peacefully with men and have not been wronged; no attack on any group.",
+    "m3q": "Podcast guests say lesbians coexist peacefully with men; observation about man-hating, no attack on a group.",
+    "z9x": "Lesbian podcasters say they coexist peacefully with men and were not wronged by them; no attack."
+   },
+   "human_votes": [
+    1,
+    0,
+    1
+   ],
+   "human_split": true,
+   "voice_maj": "none",
+   "transcript": "#lesbians can&#39;t hate men #gay #lgbt #podcast . If you go online and you look at like straight woman memes, like they hate men, they hate them. straight women hate men more than anybody because lesbians can't hate men that much because like we don't have to deal with them. men have not super wronged me. I gotta say we live peacefully away from them. We don't We coexist. They're not our main babes. We don't have to worry about it., we go to football games together and we look at each other and we nod and we move on. Yes.😡",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -2.263
+  },
+  {
+   "item": "item_092",
+   "dataset": "MHC",
+   "id": "03qOelm_dK8",
+   "group": "S_FN",
+   "gold": "ENDORSE",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 1,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "none",
+    "m3q": "none",
+    "z9x": "none"
+   },
+   "why": {
+    "r7k": "Commentator criticises Disney over who teaches children about sex while explicitly stating he accepts lesbian couples.",
+    "m3q": "Commentator criticizes Disney's choice while explicitly stating he accepts lesbian couples; corporate criticism, not identity attack.",
+    "z9x": "Commentator criticises Disney's choice while explicitly stating he accepts lesbian couples; institutional criticism, not identity attack."
+   },
+   "human_votes": [
+    1,
+    1,
+    1
+   ],
+   "human_split": false,
+   "voice_maj": "none",
+   "transcript": "Disney Forces Lesbian Couple Into Lightyear . 🎼Oh, I got engaged. Oh, wow. that's, that's great. What's your name, Kiko, She's one of the science crew. You got engaged as someone you just met. was, I met her three years ago. All right, right.😊。This is not about whether I accept lesbian couples, which as it happens I do, the question is, who speaks to her children about sex, the mom and dad family, the person who has given her life to raising these children to doing the heroic work that she's doing, who is going to make this decision, or is it going to be the people who brought you Harvey Weinstein?",
+   "ocr": "",
+   "err_kind": "FN",
+   "score": -2.731
+  },
+  {
+   "item": "item_094",
+   "dataset": "HateMM",
+   "id": "non_hate_video_400",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "quoted_third_party",
+    "m3q": "quoted_third_party",
+    "z9x": "quoted_third_party"
+   },
+   "why": {
+    "r7k": "A racist song built on the slur is dubbed over talk-show footage as the video's own soundtrack, no critical framing.",
+    "m3q": "Talk-show footage of a Black child dubbed over with the racist Alabama Nigger song as the video's soundtrack.",
+    "z9x": "A racist 'Alabama N-word' song is dubbed over talk-show footage as the video's soundtrack, no critical framing."
+   },
+   "voice_maj": "quoted_third_party",
+   "transcript": "All right, well I think it's time for us to show us why you're going to be a superstar, you want to walk over there and Dan?All right.I'm an Alabama Nigger and I want to be free He would and aACP, I don't drink, I don't cu I want a ride on the front of the bus.I'm an Alabama Nigger and I want to be free held within AACP.I want to eat worth the five folks feed because I'm white on the bottom of the feet I have another I nigg and I want to be free go withAC feet.We don't screw like the what folkss do We just screw to we can do.I am an Alabama the wantna be.",
+   "ocr": "ellentube | ellen ellentube | clien Watch More Videos on ellentube.com. Watch Ellen Weekdays ellentv.com | clilen Watch More Videos on ellentube.com. Watch Ellen Weekdays ellentv.com",
+   "err_kind": "FP",
+   "score": 2.375
+  },
+  {
+   "item": "item_096",
+   "dataset": "HateMM",
+   "id": "non_hate_video_642",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "caption",
+    "m3q": "caption",
+    "z9x": "caption"
+   },
+   "why": {
+    "r7k": "Uploader overlays antisemitic banner text ('FuckTheJews.com', 'WorldGoyimUnite.com') across the whole reposted clip.",
+    "m3q": "Screen recording carries the uploader's burned-in antisemitic banners including FuckTheJews.com and WorldGoyimUnite.com.",
+    "z9x": "Uploader overlays antisemitic banner text ('FuckTheJews.com', 'WorldGoyimUnite.com') across the reposted music video."
+   },
+   "voice_maj": "caption",
+   "transcript": "I was wondering if, you know, you guys would be on board to maybe to sponsor the video to sponsor00.privilege a leg No I' being serious that means that that music would need.The turn in excess of 10 to 20 million views I think we all get that if every South African business turned we so for sure.🎼You know, it's cool, I'll make a plan.We're victims of the time.Being white is a 21st century recry.🎼When your parents pay your tuition fees and you have a lot of opportunities, privilege what what privilege When you see a protest and like to complain while you tweet about the drink champagne.Pvi privilege when you didn't have to deal with years of oppression, but deny that you benefit from your complexion privilege.🎼When you cry, you hope your guilt is an issue, but the skin's the same color as your free price issue privilege.Being white is a 20% rec.🎼When you want your rhymes to be amazed ma, …",
+   "ocr": "YouTube 91 へ Search OK 血 dave: I was wondering if, you know, you guys would be on board to maybe... to sponsor the video? KIFFNESS 911 DON'TBESCARED 队有. BEPREPARED HandsomeTruth.com TRUTH 农友友友 NOW | YouTube Search DN 血 91 label: to sponsor a R400k video called... White Privilege? KIFFNESS 911 DON'T BE SCARED 青队R. BEPREPARED JewTruth.com TRUTH 友友友友 NOW | YouTube Search DN 血 91 dave: no I'm being serious! KIFFNESS 911 DON'T BE SCARED 队R. BE PREPARED WorldGoyimUnite.com TRUTH 友友友友 NOW | YouTube Search OK 血 91 label: that means that the music video will need to turn in excess of 10 to 20 million views KIFFNESS 911 DON'T BE SCARED 队有. BEPREPARED RevoltingAndOffensive.com TRUTH 友友友友 NOW | YouTube …",
+   "err_kind": "FP",
+   "score": 1.282
+  },
+  {
+   "item": "item_098",
+   "dataset": "HateMM",
+   "id": "non_hate_video_32",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 8,
+   "votes": {
+    "r7k": "ENDORSE",
+    "m3q": "ENDORSE",
+    "z9x": "ENDORSE",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 0,
+   "cls": "CONTESTED",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "quoted_third_party",
+    "m3q": "quoted_third_party",
+    "z9x": "quoted_third_party"
+   },
+   "why": {
+    "r7k": "Song using the racial slur throughout is the video's entire soundtrack over a static image, no distancing.",
+    "m3q": "Video's entire soundtrack is a song using the racial slur plus a jab at men called women, played with no framing.",
+    "z9x": "Song using the racial slur repeatedly is the video's entire soundtrack over a static image, no distancing."
+   },
+   "voice_maj": "quoted_third_party",
+   "transcript": "Man is a nigger.Well, man, he's a nigger of the world Yes he is.Try to think of body is man, he's a nigger of the world.just think about it, try to do something about it.We make him pay the bills and make him take the chance if he won't be a slave, we'll make him do the dance and if he's not real we say he's trying to be a woman.We'll put him down and pretend that we love him but don't.🎼 Listen, man, he's the nigger of the world the yes he is.Don't have to think much more a body is now man, he's a nigger of Word.Well, you can think about it, but there's nothing left to think about it.We make him pay the bills and make him take a chance if it won't be a slave, we'll make him do a dance if he's not real, we'll try to make him romance.We'll put him down and make him believe.🎼 Man, he's a nigger roer.don't forget at Yes he is Oh yes, he is.",
+   "ocr": "YOUARE FREE",
+   "err_kind": "FP",
+   "score": 3.238
+  },
+  {
+   "item": "item_099",
+   "dataset": "ImpliHateVid",
+   "id": "NH_875",
+   "group": "S_FP",
+   "gold": "DISTANCED",
+   "n_frames": 0,
+   "votes": {
+    "r7k": "DISTANCED",
+    "m3q": "DISTANCED",
+    "z9x": "DISTANCED",
+    "qwen_r2": "ENDORSE"
+   },
+   "n_valid": 4,
+   "k_for_gold": 3,
+   "cls": "RECOVERABLE",
+   "qwen_r1_5way": "endorses",
+   "qwen_r2_5way": "endorses",
+   "voices": {
+    "r7k": "quoted_third_party",
+    "m3q": "quoted_third_party",
+    "z9x": "quoted_third_party"
+   },
+   "why": {
+    "r7k": "Commentator replays and ridicules another creator's parody clip, explicitly attributing the sexist line to him.",
+    "m3q": "Commentator replays and mocks a leftist parody ad; the kitchen line comes from the ridiculed clip, not from him.",
+    "z9x": "Commentator plays another creator's clip while calling him an idiot and a clown, explicitly attributing the content."
+   },
+   "voice_maj": "quoted_third_party",
+   "transcript": "Leftists are just never funny in spite of how hard they try and all this guy did was make himself look like an idiot give me an opportunity to remind people I run a non-woat coffee company called coffee brand coffee.com promo code save big and give us a try check this clown out. women belong in the kit. We serve the community by bringing people together. Look there's a black lady helping an old white lady to cross the street. Through our large windows we see humanity for what it can be. This holiday season come and view things the way we do. Starbucks, a little kindness goes a long way. 10% of all proceeds go to Hamas. Make sure you leave a like in this video and you subscribe or follow from our daily news.",
+   "ocr": "",
+   "err_kind": "FP",
+   "score": 1.057
+  }
+ ],
+ "annot_split_by_cls_MHC_both": {
+  "CONTESTED": {
+   "n": 10,
+   "split": 3,
+   "rate": 0.3
+  },
+  "MHC/CONTESTED": {
+   "n": 6,
+   "split": 2,
+   "rate": 0.333
+  },
+  "MHC/RECOVERABLE": {
+   "n": 9,
+   "split": 3,
+   "rate": 0.333
+  },
+  "MHC/SPLIT": {
+   "n": 1,
+   "split": 1,
+   "rate": 1.0
+  },
+  "MHC_zh/CONTESTED": {
+   "n": 4,
+   "split": 1,
+   "rate": 0.25
+  },
+  "MHC_zh/RECOVERABLE": {
+   "n": 7,
+   "split": 4,
+   "rate": 0.571
+  },
+  "MHC_zh/SPLIT": {
+   "n": 1,
+   "split": 1,
+   "rate": 1.0
+  },
+  "RECOVERABLE": {
+   "n": 16,
+   "split": 7,
+   "rate": 0.438
+  },
+  "SPLIT": {
+   "n": 2,
+   "split": 2,
+   "rate": 1.0
+  }
+ },
+ "voice_none_rate_by_cls": {
+  "RECOVERABLE": {
+   "n": 26,
+   "voice_none_maj": 14,
+   "rate": 0.538
+  },
+  "CONTESTED": {
+   "n": 21,
+   "voice_none_maj": 6,
+   "rate": 0.286
+  },
+  "SPLIT": {
+   "n": 2,
+   "voice_none_maj": 1,
+   "rate": 0.5
+  }
+ },
+ "qwen_r2_5way_by_cls": {
+  "RECOVERABLE": {
+   "endorses": 18,
+   "condemns": 3,
+   "no_hate_content": 5
+  },
+  "CONTESTED": {
+   "endorses": 15,
+   "null": 1,
+   "no_hate_content": 4,
+   "quotes_mentions": 1
+  },
+  "SPLIT": {
+   "no_hate_content": 1,
+   "endorses": 1
+  }
+ }
+}
