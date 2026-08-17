@@ -35,7 +35,7 @@ Composite = 0.3·Premise + 0.3·Novelty + 0.3·Gain + 0.1·Cost, each 0-10.
 | C3 | QAT — quantile-anchored training | 1 | 1 | 1 | 9 | 1.8 | D3: prior matching is −0.0002…+0.0104 and fails the two-dataset bar |
 | C6 | MIMO — implicit multi-output ensemble in one head | 1 | 0 | 1 | 8 | 1.4 | `2601.16936` (Jan 2026): implicit ensembles track a single model |
 | C2 | XVC — cross-view co-regularisation on unlabelled inputs, single-view deployment | 1 | 0 | 1 | 6 | 1.2 | D1: cross-encoder averaging loses −0.0068 / −0.0427 / −0.0191; agreement cannot manufacture complementarity. Also `1905.11866` (finite-unlabelled impossibility) and the Balcan-Blum arithmetic: m_u ≈ 300, VCdim ≈ 10 → ε ≈ 0.18 |
-| C4 | NCLV — negative-correlation training over views | 1 | 0 | 1 | 5 | 1.1 | `2301.11323` (NeurIPS 2023) learner collusion, worst at small n |
+| C4 | NCLV — negative-correlation training over views | 1 | 0 | 1 | 5 | 1.1 | `2301.11323` (NeurIPS 2023): jointly optimising an ensemble objective makes base learners collude to inflate apparent diversity, widening the generalisation gap. *Scope note: the "worse at small n" qualifier used in the review is an inference, not a claim of that paper's abstract, which is verified only for "a range of standard machine learning tasks and architectures".* |
 
 **Reviewer's headline, verbatim:** *"No candidate clears the bar. Do not spend GPU on this slate.
 C1 is the only hypothesis worth a cheap cached-feature falsification run, but it is not a defensible

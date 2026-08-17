@@ -3021,3 +3021,205 @@ underpowered; the confirmation is a separate run on disjoint seeds. (d) Both R6-
 declared by the executor rather than patched around, and the frozen AMBIGUOUS was not upgraded.
 (e) The external reviewer's objection to a single random-control matrix was adopted before the
 confirmation ran, not after. (f) Total API spend for the round: **¥0.00 of ¥60**.
+
+---
+
+## §11 — Round 8 (2026-08-17): the head / objective / view-combination axis, searched and priced
+
+**Cost: ¥0.00 of a ¥10 API budget. ~1.5 GPU-hours on the local (shared) RTX 5090, all on cached
+features. 780 head-training runs, 0 failures, 0 test-label tuning.**
+
+### 11.0 Headline
+
+The principal fixed the search axis — **downstream head architecture, training objective and
+optimisation dynamics, and view-combination mechanism** — on the ground that the project's only
+three measured positive effects all sit there and the axis had never been searched systematically.
+
+Round 8 ran the diagnostics before scoring any candidate, and they rewrote the axis.
+
+**The three "positives" are not three effects.**
+
+- **Positive #1, the pairwise/AUC objective, is class balancing.** With the sampling held identical
+  and the anchored pointwise term held identical, adding the pairwise ranking loss is worth
+  **+0.0003 / −0.0008 / +0.0011 / +0.0007** macro-F1 across the four datasets, every CI containing
+  zero, and **−0.0008 / +0.0014 / −0.0001 / −0.0004** on ROC. The entire banked effect is the
+  equal-positive/negative sampling that a pairwise objective performs incidentally
+  (`idea-stage/R8_BLR_RESULT.md` §3, 30 seeds, paired bootstrap).
+- **Positive #2, the three-encoder ensemble, is encoder selection plus head estimation variance.**
+  Equal-weight averaging across encoders *loses* to the best single encoder on 3 of 4 datasets
+  (−0.0068 / −0.0427 / −0.0191 / +0.0103), while averaging three seeds of the *same* encoder is
+  positive in 4/4 on both macro-F1 and ROC.
+- **Positive #3, the L24 ‖ L28 concatenation, stands** — it was already confirmed at 60 seeds and
+  already novelty-killed in §10.8.
+
+**And the axis has a structural ceiling that was not previously visible.** Three independent
+mechanisms — the pairwise objective, trajectory prediction averaging, and a boundary-localised
+partial-AUC objective — each produce consistent ROC gains that do not reach the reported metric:
+
+| mechanism | Δ test/CV ROC | Δ macro-F1 @0.5 |
+|---|---|---|
+| pairwise objective, banked (§8.8, 3 seeds) | +0.0080 / +0.0167 / +0.0115 / +0.0020 | never measured; now measured at ≈0 once balancing is removed |
+| trajectory averaging (D2, CV) | +0.0171 / +0.0059 / +0.0150 / +0.0032 | +0.0005 / +0.0024 / −0.0040 / +0.0010 |
+| boundary-localised ranking (R8-1, test, 30 seeds) | +0.0019 / +0.0042 / +0.0086 / +0.0024 over global pairwise, all CIs exclude 0 | −0.0037 / −0.0012 / −0.0077 / +0.0033 |
+
+And it is **not** the operating point. Evaluated at each arm's own oracle threshold, trajectory
+averaging's ROC advantage is still worth only **+0.0051 / +0.0033 / +0.0008 / +0.0001**.
+
+**Cumulative across eight rounds: 89 candidates, 0 method candidates.**
+
+### 11.1 The three zero-cost diagnostics (`idea-stage/R8_DECOMP_MEMO.md`)
+
+Stratified 5-fold CV over train+val, no test split opened, `r4_harness` head, raw in
+`idea-stage/r8_decomp/{results,results2,results3}.json`.
+
+**D1 — the ensemble decomposition.** Final-epoch read-out at threshold 0.5, so no epoch or threshold
+selection enters. Seed-ensembling one encoder: +0.0153 / +0.0016 / +0.0048 / +0.0033 macro-F1 and
++0.0041 / +0.0054 / +0.0080 / +0.0021 ROC, positive 4/4 on both. Cross-encoder equal-weight
+averaging: −0.0068 / −0.0427 / −0.0191 / +0.0103 against the best single encoder. The recorded
+"+1.3 to +5.3" is measured against the *validation-selected* encoder and uses weighted / logistic /
+MLP stackers; once the best encoder is known and members are equally weighted, the cross-encoder
+gain is negative except on the one dataset whose two encoders are nearly equal in strength. This
+agrees with R4-1's post-hoc lattice null (ΔROC = −0.0000) from a second direction, and with the
+published finding that plain concatenation matches any learned mixer (`2408.15998` Eagle;
+`2503.06063` CVPR 2025).
+
+**D2 — the trajectory read-out.** With an inner dev split so the deployed protocol is one of the
+arms: averaging predicted probabilities over epochs 20-29 beats the P1 val-selected epoch on ROC in
+4/4 (+0.0171 / +0.0059 / +0.0150 / +0.0032) and on macro-F1 by nothing (+0.0005 / +0.0024 / −0.0040
+/ +0.0010). The P1-selected epoch has a **seed std of 2.9 to 7.0 epochs**. Mechanism occupied
+regardless: `1306.2759` (Horizontal Voting, 2013), `1710.03282` (Checkpoint Ensembles, 2017).
+
+**D3 — where the conversion is lost.** Every arm evaluated at fixed 0.5, a dev-fitted threshold, a
+prior-matched quantile, and a pooled-out-of-fold oracle threshold:
+
+1. **The operating-point headroom is +0.0025 to +0.0119, not +1.2 to +4.6 points.** The standing cap
+   (§8.2) was measured with a threshold oracle on 149-215-item **test** splits; on the 629-1608-item
+   train+val pool the same oracle is worth roughly **4x less**. The difference is the oracle
+   overfitting a small evaluation set. Realistic rules do worse: a dev-fitted threshold is negative
+   on 3 of 4 datasets, prior-matching ranges −0.0002 to +0.0104.
+2. **The ranking gain does not convert even at the oracle threshold**: TRAJ − SEL there is
+   +0.0051 / +0.0033 / +0.0008 / +0.0001.
+3. Therefore the ROC gains live in a region of the curve macro-F1 cannot see. macro-F1 at a fixed
+   threshold depends only on the ordering *local* to that threshold; a global AUC surrogate spends
+   its capacity re-ordering pairs that are already far apart.
+
+### 11.2 Candidate table — 12 generated, 0 recommended (`idea-stage/R8_CANDIDATES.md`)
+
+Scored by an external reviewer (gpt-5.6-sol, xhigh, instructed to be hostile) after being given the
+diagnostics and three literature sweeps. Composite = 0.3·Premise + 0.3·Novelty + 0.3·Gain + 0.1·Cost.
+
+| # | candidate | comp | closest closer |
+|---|---|---|---|
+| C1 | **BLR** boundary-localised ranking objective | **4.5** | `2208.06164` JRC; piloted below |
+| C9 | ALIGNRC aligned ranking + pointwise | 3.2 | `2208.06164`, `2211.01494` |
+| C8 | FROFA frozen-feature augmentation | 3.0 | `2403.10519` |
+| C12 | PAIRSAMP pair count as effective sample size | 2.7 | D2 |
+| C5 | LAYERATT learned layer attention | 2.5 | `2601.09322`, `2405.13800`, `2606.26379` |
+| C11 | DUALENS dual-space ensembling | 2.2 | `2206.10566` |
+| C7 | LOGADJ logit adjustment / balanced softmax | 2.1 | `2607.09832`, `2007.07314` |
+| C10 | OOBDR bagged out-of-fold decision rule | 2.1 | D3 |
+| C3 | QAT quantile-anchored training | 1.8 | D3 |
+| C6 | MIMO implicit ensemble | 1.4 | `2601.16936` |
+| C2 | XVC cross-view co-regularisation on unlabelled inputs | 1.2 | D1; `1905.11866`; Balcan-Blum arithmetic (m_u≈300, VC≈10 → ε≈0.18) |
+| C4 | NCLV negative-correlation view training | 1.1 | `2301.11323` |
+
+Reviewer verdict, verbatim: *"No candidate clears the bar. Do not spend GPU on this slate. C1 is the
+only hypothesis worth a cheap cached-feature falsification run, but it is not a defensible
+method-paper contribution."* Asked directly whether **any** objective-level or view-combination
+mechanism can plausibly move macro-F1 at 0.5 by ≥ +0.005 on ≥ 2 of these datasets: *"No … This is
+not a mathematical impossibility: a new objective could learn a genuinely better boundary rather
+than merely reorder or recenter existing scores. Nothing here supplies such a mechanism."*
+
+### 11.3 Pilot R8-1 BLR — **KILL, 0 of 4 datasets**
+
+Frozen at `eac73b6` before any seed in 200-229 ran (`idea-stage/R8_BLR_FREEZE.md`); five arms x four
+datasets x 30 seeds = 600 runs, 0 failures; analyzer run once. Full numbers in
+`idea-stage/R8_BLR_RESULT.md`.
+
+`PAIRL − PAIRG` under P1: −0.0037 / −0.0012 / −0.0077 / **+0.0033** — negative on two datasets, flat
+on one, and below the +0.005 bar on the fourth. Boundary localisation loses to the global objective
+it was designed to beat, while simultaneously producing **more** ROC than it on all four datasets
+with every CI excluding zero. Fourth independent instance of the decoupling.
+
+The pilot's secondary quantities are the round's most useful output and are reported in §11.0:
+the ranking term isolated is worth nothing anywhere, and the balancing is worth
++0.0065 / **−0.0113** / +0.0163 / +0.0106.
+
+**Declared defect:** the MHC-EN cell was run on `Qwen2.5-VL-7B-Instruct-LoRA_HF`, while the deployed
+MHC-EN contrast line uses the **frozen** `Qwen2.5-VL-7B-Instruct_HF`. All verdict quantities are
+within-cell seed-paired deltas so the KILL is unaffected, but the MHC-EN absolutes sit on a
+non-deployed encoder and its `BALBCE` sign reversal may be encoder-specific. Declared rather than
+patched, because patching would be a second submission of a frozen grid.
+
+### 11.4 What round 8 bought
+
+1. **Two of the project's three banked positives are now explained away.** Positive #1 is class
+   balancing (ranking term ≈ 0 on 4/4, all CIs contain zero). Positive #2 is encoder selection plus
+   head variance (cross-encoder averaging is negative on 3/4). Neither can motivate a mechanism.
+2. **A free, real, per-dataset default**: balanced positive/negative sampling, +0.0065 / +0.0163 /
+   +0.0106 macro-F1 on HateMM / MHC-ZH / ImpliHateVid with CIs excluding zero, and −0.0113 on
+   MHC-EN. Not a contribution — `2007.07314` and `2607.09832` own it — but it belongs in the
+   baseline and in an ablation row, exactly like the R6-1C layer concatenation.
+3. **A corrected standing number.** The "+1.2 to +4.6 point calibration cap" is roughly 4x inflated
+   by a threshold oracle fitted on 149-215 test items; the honest figure on a properly sized pool is
+   **+0.25 to +1.2**, and no realistic rule reaches even that.
+4. **A structural closure with a named mechanism.** Four independent mechanisms on this axis produce
+   ROC gains that do not reach macro-F1 at a fixed threshold, and D3 shows the operating point is
+   not the culprit. Any future candidate on this axis must state why its effect is local to the
+   decision boundary *and* survive the observation that the one mechanism explicitly designed to be
+   local was measured worse than the global one.
+5. **Six sub-families closed by citation rather than by GPU**: learned multi-layer/multi-view
+   combination (`2601.09322`, `2405.13800`, `2606.26379`, `2503.06063`, `2408.15998`); joint
+   diversity-regularised ensembles (`2301.11323`); implicit ensembles (`2601.16936`); item-level
+   sub-bagging (`2305.18496`, Nixon et al. ICBINB@NeurIPS 2020); SSL/transduction without covariate
+   shift (`1905.11866`, `1602.03027`, `2010.03622`, `2204.11181`); trajectory prediction averaging
+   (`1306.2759`, `1710.03282`).
+6. **A new occupant found in the niche**: `2602.00132` SCANNER (AAAI 2026) already does test-time
+   adaptation on hate video with a reported +4.69 % macro-F1 — the first hateful-video paper to
+   claim the unlabelled-test-input resource. The R6 sweep predates it.
+
+### 11.5 Honest bottom line for round 8
+
+> **Round 8 produced no method candidate, and it removed two of the three reasons to look on this
+> axis.** The principal's premise — that the axis holding the project's only positives is the axis
+> most likely to hold a method — was correct as a heuristic and false as a fact: two of the three
+> positives dissolve into a sampler change and an encoder choice under controlled measurement, and
+> the axis has a measured ceiling (ROC gains that macro-F1 cannot see, and an operating point worth
+> +0.25 to +1.2 points at oracle).
+
+What this does **not** establish: that no objective can help. The reviewer's own formulation is the
+accurate one — a new objective would have to *learn a genuinely better boundary* rather than reorder
+or recentre the existing score, and nothing in the frozen-feature substrate supplies the information
+to do that. That routes straight back to the standing decision in §9.8 / §10.12: the information the
+boundary is missing is **stance**, it costs roughly 750 human judgements or a paid corpus licence
+(`LDC2023T13`), and no zero-cost route into it has survived seven attempts.
+
+**Recommended next actions, in order.**
+1. **Bank balanced sampling as the per-dataset default** alongside the L24 ‖ L28 concatenation, and
+   re-baseline MHC-EN on the deployed frozen-Qwen encoder before adopting it there.
+2. **Correct the "+1.2 to +4.6 calibration cap"** wherever it is quoted (`RESEARCH_BRIEF.md` §6.10,
+   `IDEA_REPORT` §8.2) to +0.25 to +1.2 with the small-evaluation-set explanation attached.
+3. **Stop searching this axis.** Eight rounds, 89 candidates, 0 method candidates; this round
+   converted the axis from unsearched to measured-and-priced.
+4. **Escalate the stance-supervision funding decision**, unchanged and now with one more round of
+   evidence that the free routes are exhausted.
+
+### 11.6 Reproducibility index
+
+| artifact | path |
+|---|---|
+| diagnostics memo | `idea-stage/R8_DECOMP_MEMO.md` |
+| diagnostic code + raw | `idea-stage/r8_decomp/{decomp,decomp2,decomp3}.py`, `results{,2,3}.json` |
+| candidate slate + hostile review | `idea-stage/R8_CANDIDATES.md` |
+| pilot freeze (commit `eac73b6`) | `idea-stage/R8_BLR_FREEZE.md` |
+| pilot code / raw / verdict | `idea-stage/r8_blr/{blr.py,analyze.py,results.json,verdict.json}` |
+| pilot result | `idea-stage/R8_BLR_RESULT.md` |
+| logs | `logging/runs/{r8_decomp,r8_blr}/` |
+
+**Process notes.** (a) The decision rule was frozen and committed before the pilot code was run in
+anything but `--smoke` mode, which prints wall-clock, step count, loss and a NaN flag and no arm
+metric. (b) Seeds 200-229 are disjoint from every previously consumed range (0-29 audit, 30-89
+R6-1C, 100-129 R7). (c) The analyzer ran exactly once on the complete 600-run grid. (d) The MHC-EN
+encoder defect was declared rather than patched. (e) Diagnostics D1-D3 opened no test split. (f) The
+external reviewer's two "indispensable control arms" were both adopted into the freeze before the
+run. (g) Total API spend for the round: **¥0.00 of ¥10**.

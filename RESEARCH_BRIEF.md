@@ -53,6 +53,16 @@ recorded as a **trick line, not a method** — it may be reported but cannot be 
 Pairwise/AUC objective beats BCE on ROC in 4/4 cells; ensembling beats the val-best single encoder
 by +1.3 to +5.3 macro-F1. Both are already banked and neither counts as novelty.
 
+**Round-8 correction to both (2026-08-17, `idea-stage/R8_BLR_RESULT.md`, `R8_DECOMP_MEMO.md`).**
+Neither is what it looked like. With sampling and the pointwise term held identical, the **pairwise
+ranking term itself is worth +0.0003 / −0.0008 / +0.0011 / +0.0007 macro-F1 (all CIs contain zero)
+and ≈0 ROC** — the whole banked effect is the equal-positive/negative sampling a pairwise objective
+performs incidentally, which is worth **+0.0065 / −0.0113 / +0.0163 / +0.0106** and is a per-dataset
+default, not a universal one. And **equal-weight cross-encoder averaging loses to the best single
+encoder on 3 of 4 datasets** (−0.0068 / −0.0427 / −0.0191 / +0.0103); the recorded ensemble gain is
+measured against the *val-selected* encoder and is largely encoder selection plus head estimation
+variance. Same-encoder seed averaging is positive 4/4 (+0.0153 / +0.0016 / +0.0048 / +0.0033).
+
 **User ruling on gain size**: "one step must gain 5 points" is *not* the kill line. A real,
 stackable, honestly-measured gain is worth pursuing even if incremental.
 
@@ -213,8 +223,12 @@ content (`2508.10974`).
 - **Cross-encoder complementarity is additive.** A monotone non-additive lattice over per-encoder
   OOF logits extracts nothing: ΔROC mean −0.0000, bootstrap LCB95 −0.00253, with a positive control
   that recovered a planted interaction.
-- **Decision-rule / calibration mechanisms are capped** at +1.2 to +4.6 points by a *test-label
-  oracle threshold*, and practice already reaches that ceiling.
+- **Decision-rule / calibration mechanisms are capped** at **+0.25 to +1.2 points** (round 8, D3:
+  a global threshold oracle fitted on the 629-1608-item train+val pool). The older figure of
+  +1.2 to +4.6 was measured with an oracle fitted on the 149-215-item **test** splits and is roughly
+  4x inflated by that oracle overfitting a small evaluation set. No realistic rule reaches even the
+  corrected cap: a dev-fitted threshold is negative on 3 of 4 datasets and prior-matching ranges
+  −0.0002 to +0.0104. (`idea-stage/R8_DECOMP_MEMO.md` §3.)
 - **No measurable train/test covariate shift on any of the four datasets** (domain-classifier AUC
   0.42-0.56, MMD p 0.17-0.96). Any distribution-alignment / shift-correction TTA premise is dead on
   arrival.
