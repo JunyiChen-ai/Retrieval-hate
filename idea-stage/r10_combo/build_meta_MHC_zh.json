@@ -1,0 +1,310 @@
+{
+ "freeze": "idea-stage/R10_COMBO_FREEZE.md 2",
+ "dataset": "MHC_zh",
+ "base": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+ "pca_dim": 512,
+ "pca": {
+  "PC0": {
+   "blocks": [
+    "A0_28"
+   ],
+   "in_dim": 3584,
+   "out_dim": 512,
+   "explained_var_ratio": 0.9972796115889605
+  },
+  "K1": {
+   "blocks": [
+    "A0_28",
+    "A0_24",
+    "TXT_28",
+    "TXT_24"
+   ],
+   "in_dim": 14336,
+   "out_dim": 512,
+   "explained_var_ratio": 0.995114104559838
+  },
+  "K2": {
+   "blocks": [
+    "A0_28",
+    "TXT_28"
+   ],
+   "in_dim": 7168,
+   "out_dim": 512,
+   "explained_var_ratio": 0.9963805136965935
+  },
+  "K6": {
+   "blocks": [
+    "A0_28",
+    "TXT_28",
+    "S1_28",
+    "S2_28",
+    "S3_28",
+    "S4_28",
+    "ALL_28",
+    "A0_24",
+    "TXT_24",
+    "S1_24",
+    "S2_24",
+    "S3_24",
+    "S4_24",
+    "ALL_24"
+   ],
+   "in_dim": 50176,
+   "out_dim": 512,
+   "explained_var_ratio": 0.9924765661869936
+  }
+ },
+ "files": {
+  "train/A0": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-A0.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "227d350f34f023bbc712289b1e743ff592a2a617ce6890db2f90df94bba8d7f9"
+  },
+  "train/LL": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-LL.pt",
+   "rows": 579,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "7205b0677ddeac41fa3f7d332b7faaba713aa6e9dcbaf8813ef13a2256ecfd76",
+   "text_sha256": "bb1f27a7ecc3f3ef4569a1e7968263486357da776e8272f0705b3760a79d7661"
+  },
+  "train/CAT": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-CAT.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "f176fe02e7f8b2e156fde7cc505832396b28b769155dd9041f9d205bacd6c316"
+  },
+  "train/PC0": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-PC0.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "1f75003bf95fb2952ea6bb200e1eea677a16e241c831bd84b7428fbb53d2694e"
+  },
+  "train/K1": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-K1.pt",
+   "rows": 579,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "7205b0677ddeac41fa3f7d332b7faaba713aa6e9dcbaf8813ef13a2256ecfd76",
+   "text_sha256": "23c74302732f55cb8996528f769f0d6aff1794d0f35aab6f99010913c92bd4c3"
+  },
+  "train/K2": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-K2.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "b7aff1907bdca68a95f650a2444b386577a774d40b946e4b576f3bd4edc8f94b"
+  },
+  "train/K3": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-K3.pt",
+   "rows": 579,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "7205b0677ddeac41fa3f7d332b7faaba713aa6e9dcbaf8813ef13a2256ecfd76",
+   "text_sha256": "f176fe02e7f8b2e156fde7cc505832396b28b769155dd9041f9d205bacd6c316"
+  },
+  "train/K4": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-K4.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "3fd38e82b75da0e965ba4359e800be19ced8b5e0b911cd0bcb1f87c9a0814726"
+  },
+  "train/K5": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-K5.pt",
+   "rows": 579,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "2c97adf93624cfe922369aee447573ef32538bcee883976ed63e1f0dacacf4b4",
+   "text_sha256": "37ecbc1d64cce18156fc23fd80541881a3c439bd7aa2d856643441cedab2f0ec"
+  },
+  "train/K6": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10CB-K6.pt",
+   "rows": 579,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "7205b0677ddeac41fa3f7d332b7faaba713aa6e9dcbaf8813ef13a2256ecfd76",
+   "text_sha256": "bf0aa0fa6b47f207f6f5a508639bf97b997e9be9cb960b2fd66010f9da2e02fb"
+  },
+  "dev_seen/A0": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-A0.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "81179bb710d75af64d3fd2ac7eecd432e6447be02c37fcfc3d17cec1e8b12323"
+  },
+  "dev_seen/LL": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-LL.pt",
+   "rows": 78,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "9211c5c34cfbc24e45e796782a306b8d26c16c27012bf1e7647850bf79c33828",
+   "text_sha256": "53a4fea5e8ed63cfcf50ccdaaf69c5dbd0323c8001297e6c19abf2606c9a1a7a"
+  },
+  "dev_seen/CAT": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-CAT.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "99de6ad36a91aebc664560abe6512af1b8e1ea29bad8d3f8d1c041701143dab3"
+  },
+  "dev_seen/PC0": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-PC0.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "d063918553de9dd55584289b2be931b40c8bfb394677659c5933f791b01ae083"
+  },
+  "dev_seen/K1": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-K1.pt",
+   "rows": 78,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "9211c5c34cfbc24e45e796782a306b8d26c16c27012bf1e7647850bf79c33828",
+   "text_sha256": "aacb7a041d4244cc87c6d48b921371c27d4a4763d5da70ae85da23f639cb6a8c"
+  },
+  "dev_seen/K2": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-K2.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "a5ee7e8cb6fee5dea3dddebfc934f7fd60649a69f165059bbeb2e90c8b2b6a56"
+  },
+  "dev_seen/K3": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-K3.pt",
+   "rows": 78,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "9211c5c34cfbc24e45e796782a306b8d26c16c27012bf1e7647850bf79c33828",
+   "text_sha256": "99de6ad36a91aebc664560abe6512af1b8e1ea29bad8d3f8d1c041701143dab3"
+  },
+  "dev_seen/K4": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-K4.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "edb46d7fa86cd74bef5c6c91fc57c4886a621a8359f9c26031b9b76bbfd59335"
+  },
+  "dev_seen/K5": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-K5.pt",
+   "rows": 78,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "f20d1f3e56847a8ce570537b69391ecf23207733ba5b682a8070f6c17655b381",
+   "text_sha256": "2d7f6d60b5e7f00d2727342802a9cad957f4cf589f6f3e1cdb5d2f7d39f60b4a"
+  },
+  "dev_seen/K6": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10CB-K6.pt",
+   "rows": 78,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "9211c5c34cfbc24e45e796782a306b8d26c16c27012bf1e7647850bf79c33828",
+   "text_sha256": "3b495fff80466a8f2fd22615d58516b3f5142f3f144a9206b060bfebd62a6c49"
+  },
+  "test_seen/A0": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-A0.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "f78fffbde21f4b4b46fd62be8dccf8776f6a5e7d023d16237d12e448cce17d8f"
+  },
+  "test_seen/LL": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-LL.pt",
+   "rows": 149,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "4e9b1375a927f0d5c8460a1f17ecae713b4de5097b0eb68b773cef30cca84a6d",
+   "text_sha256": "d61631c26327f035f793939b74826f4cbb58c1b353a90c79492e049ce656ddc1"
+  },
+  "test_seen/CAT": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-CAT.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "9da2fb71d8f741d4eea9195c8a132927b2ddbc0dd22b020042b931f0d60572c2"
+  },
+  "test_seen/PC0": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-PC0.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "029b63dbaea372b2883feb2b8443b48e0527d62ae6f5795ba7b864f4eea972d5"
+  },
+  "test_seen/K1": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-K1.pt",
+   "rows": 149,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "4e9b1375a927f0d5c8460a1f17ecae713b4de5097b0eb68b773cef30cca84a6d",
+   "text_sha256": "294e53b45382a59f3a462c02d1e604a63f05119ad2b7b8907eaca70927625318"
+  },
+  "test_seen/K2": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-K2.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "36671741b694351faf17e7b364e23a1d7c20ad058898fb9d58160a1a80f1f896"
+  },
+  "test_seen/K3": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-K3.pt",
+   "rows": 149,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "4e9b1375a927f0d5c8460a1f17ecae713b4de5097b0eb68b773cef30cca84a6d",
+   "text_sha256": "9da2fb71d8f741d4eea9195c8a132927b2ddbc0dd22b020042b931f0d60572c2"
+  },
+  "test_seen/K4": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-K4.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "bb3c17ffbcadeb7183e8af1e8bb82ba1582c8b93b2d4603f097b4e4e1376fa12"
+  },
+  "test_seen/K5": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-K5.pt",
+   "rows": 149,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "d2624ad1d91867e34c6befcdd6411f3a4dc564092fbeef640bd4748d777746f4",
+   "text_sha256": "11abb66ed6be413d0d50f256c5d41794126de69e832fb6bf7826b5d6f0883782"
+  },
+  "test_seen/K6": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10CB-K6.pt",
+   "rows": 149,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "4e9b1375a927f0d5c8460a1f17ecae713b4de5097b0eb68b773cef30cca84a6d",
+   "text_sha256": "087cda1283d4531de173548a28eb283cc39f282395470f27263c7f20603f8729"
+  }
+ },
+ "belt_A0_vs_R10TP": {
+  "text_max_abs_diff": 0.0,
+  "img_max_abs_diff": 1.1920928955078125e-07
+ },
+ "belt_CAT_vs_R10TP": {
+  "text_max_abs_diff": 0.0
+ },
+ "belt_LL_vs_R10L2C0": {
+  "text_max_abs_diff": 0.0,
+  "img_max_abs_diff": 0.0
+ }
+}

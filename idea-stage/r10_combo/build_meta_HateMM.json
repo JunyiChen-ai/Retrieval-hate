@@ -1,0 +1,306 @@
+{
+ "freeze": "idea-stage/R10_COMBO_FREEZE.md 2",
+ "dataset": "HateMM",
+ "base": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+ "pca_dim": 512,
+ "pca": {
+  "PC0": {
+   "blocks": [
+    "A0_28"
+   ],
+   "in_dim": 3584,
+   "out_dim": 512,
+   "explained_var_ratio": 0.9890511335450353
+  },
+  "K1": {
+   "blocks": [
+    "A0_28",
+    "A0_24",
+    "TXT_28",
+    "TXT_24"
+   ],
+   "in_dim": 14336,
+   "out_dim": 512,
+   "explained_var_ratio": 0.9822249233613328
+  },
+  "K2": {
+   "blocks": [
+    "A0_28",
+    "TXT_28"
+   ],
+   "in_dim": 7168,
+   "out_dim": 512,
+   "explained_var_ratio": 0.9850445237470006
+  },
+  "K6": {
+   "blocks": [
+    "A0_28",
+    "TXT_28",
+    "S1_28",
+    "S2_28",
+    "S3_28",
+    "S4_28",
+    "ALL_28",
+    "A0_24",
+    "TXT_24",
+    "S1_24",
+    "S2_24",
+    "S3_24",
+    "S4_24",
+    "ALL_24"
+   ],
+   "in_dim": 50176,
+   "out_dim": 512,
+   "explained_var_ratio": 0.977166336882493
+  }
+ },
+ "files": {
+  "train/A0": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-A0.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "e6bf32961c43da8be5e0ff561812824c4a89bf8a839ea11a1054b004ad2834e7"
+  },
+  "train/LL": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-LL.pt",
+   "rows": 744,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "6f91d26680cbb0f95978640182a0af01c053d9177122e217a07eec44233d983e",
+   "text_sha256": "aeae005d169828313d555846bc219521140dd77498018d9e3220da04bb807bfa"
+  },
+  "train/CAT": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-CAT.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/PC0": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-PC0.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "f2d66992b193e9039cabe42d5830cd51d004e9836225219031fd09e0093ccd85"
+  },
+  "train/K1": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-K1.pt",
+   "rows": 744,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "6f91d26680cbb0f95978640182a0af01c053d9177122e217a07eec44233d983e",
+   "text_sha256": "cd3b48529d07574baf6abfe958d931bc4e0f3ecec3e009613a4789b79ba943e9"
+  },
+  "train/K2": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-K2.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "7ba6804c77e9e8438878e58eab91b7d1f20d137568aead17853d99d874b8afa0"
+  },
+  "train/K3": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-K3.pt",
+   "rows": 744,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "6f91d26680cbb0f95978640182a0af01c053d9177122e217a07eec44233d983e",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/K4": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-K4.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "25cf6bfc5f9d4b4fbd51b6dbd56eeae2e9313ffe4470c29eae5a5a4e78acb8ad"
+  },
+  "train/K5": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-K5.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "ca4b3742e1d781bcccf7535700a2ae9fd7f728f10d333ee2f3bfd06f3363c084",
+   "text_sha256": "4ee9b5fd262497de82a25c0734653fa9802602f71d6894452e0db2ca05d5c795"
+  },
+  "train/K6": {
+   "path": "data/CLIP_Embedding/HateMM/train_R10CB-K6.pt",
+   "rows": 744,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "6f91d26680cbb0f95978640182a0af01c053d9177122e217a07eec44233d983e",
+   "text_sha256": "e3ff08e45a7b98bd035f58d15ff3b7b1f8e66f01fef56b7851072e78ab110ff2"
+  },
+  "dev_seen/A0": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-A0.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "20a882f90330c66a438e54f2b9bdd3220e6b55f3682bedd6f5c751ed77551ca9"
+  },
+  "dev_seen/LL": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-LL.pt",
+   "rows": 107,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "f47cb4df85338e1d05dd5cabee24ed4993dee529d5f3ed4ca2852b3429cd9958",
+   "text_sha256": "ccee4111b896d965898c45abaca16b1ad378acb3abc312a294722e9daf0c74d6"
+  },
+  "dev_seen/CAT": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-CAT.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/PC0": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-PC0.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "6d919d14ab2753bc0b4deac5b32b3c9577ffe4f67351e892be11a3c6845b0589"
+  },
+  "dev_seen/K1": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-K1.pt",
+   "rows": 107,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "f47cb4df85338e1d05dd5cabee24ed4993dee529d5f3ed4ca2852b3429cd9958",
+   "text_sha256": "865b0d54db52183291f4261bdeefe9c03db85e1a7de91cffe1974d0fd234849b"
+  },
+  "dev_seen/K2": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-K2.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "ec01cc35f0382acfdae546f0322a0582686b0524cb4fbf0eee1ce39c0b41b86a"
+  },
+  "dev_seen/K3": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-K3.pt",
+   "rows": 107,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "f47cb4df85338e1d05dd5cabee24ed4993dee529d5f3ed4ca2852b3429cd9958",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/K4": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-K4.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "a3d6353506031c04e69cbd46163bb34d0908507a6639df2e0e59e7a818797487"
+  },
+  "dev_seen/K5": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-K5.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "6a76ff773847e11a1e20f08b455bcdae5ba64d16e330d69ac38fc61c7110b3f2",
+   "text_sha256": "5e40b77778a2eef0b6fb0799da95e4097a71a02a1b893ba06e42e7992b9eb4af"
+  },
+  "dev_seen/K6": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_R10CB-K6.pt",
+   "rows": 107,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "f47cb4df85338e1d05dd5cabee24ed4993dee529d5f3ed4ca2852b3429cd9958",
+   "text_sha256": "f891a4fe77c55c7da79162b72b0e3533d331143f2af39add207115dbe4b1c1b7"
+  },
+  "test_seen/A0": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-A0.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "af953e54bffc2a2b90c1a5fe32b8cf4ebc5c3930d726c68215f1a3c344ea822f"
+  },
+  "test_seen/LL": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-LL.pt",
+   "rows": 215,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "4cfc3db0236e2e35080a622e63afe24f03aa8a9e9d6536841dd3bbd6adfb6bdc",
+   "text_sha256": "32c94af2f1dfadd707354f3e390cbca4ef217ea2df4421de51b96f607b7a4a41"
+  },
+  "test_seen/CAT": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-CAT.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/PC0": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-PC0.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "2003b7c2256cba0b35a51c722bc09017e4efd9557c4da17e10f33ddf66619e31"
+  },
+  "test_seen/K1": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-K1.pt",
+   "rows": 215,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "4cfc3db0236e2e35080a622e63afe24f03aa8a9e9d6536841dd3bbd6adfb6bdc",
+   "text_sha256": "eb83b22e9d9a0eeae8b2bda0d2bd1b8fe2abb4b254e31a9a46774aff888fec97"
+  },
+  "test_seen/K2": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-K2.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 512,
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "a930053d12d3fb792f02532850064998d2fef19d5607777a4bf8e7a2a47fe750"
+  },
+  "test_seen/K3": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-K3.pt",
+   "rows": 215,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "img_sha256": "4cfc3db0236e2e35080a622e63afe24f03aa8a9e9d6536841dd3bbd6adfb6bdc",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/K4": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-K4.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "9b9c5bc3165e9be49574a3125ec126133891b25187011681882883501adadb3d"
+  },
+  "test_seen/K5": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-K5.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "386b26fd2f43d2d9c676b6cfbfb6e964e3e38a1b1cae602f7b1f8dd12e35bfba",
+   "text_sha256": "f6807f7ef90daf3f21b4d75f91c36ed8740ad10c5fb1a4ec8f4668961068db07"
+  },
+  "test_seen/K6": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_R10CB-K6.pt",
+   "rows": 215,
+   "img_dim": 7168,
+   "text_dim": 512,
+   "img_sha256": "4cfc3db0236e2e35080a622e63afe24f03aa8a9e9d6536841dd3bbd6adfb6bdc",
+   "text_sha256": "7f9ca8009b9643549636af79d35f7217fb0795f74580d8520766899b1e261954"
+  }
+ },
+ "belt_A0_vs_R10TP": {
+  "text_max_abs_diff": 0.0,
+  "img_max_abs_diff": 1.1920928955078125e-07
+ },
+ "belt_CAT_vs_R10TP": {
+  "text_max_abs_diff": 0.0
+ }
+}
