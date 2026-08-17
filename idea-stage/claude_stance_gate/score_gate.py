@@ -43,12 +43,15 @@ def load_manifest():
 
 
 def load_rater(tag):
+    """Read every *.jsonl the rater wrote. One file per delivered chunk (deviation D1:
+    the annotator agents could not be resumed after batch 2, so batches 3-6 were served
+    to fresh agents carrying the identical self-contained frozen prompt)."""
+    import glob
     out = {}
-    for b in range(1, N_BATCH + 1):
-        p = os.path.join(HERE, f"annot_{tag}", f"batch_{b}.jsonl")
-        if not os.path.exists(p):
-            print(f"  !! missing {p}")
-            continue
+    files = sorted(glob.glob(os.path.join(HERE, f"annot_{tag}", "*.jsonl")))
+    if not files:
+        print(f"  !! no files for rater {tag}")
+    for p in files:
         for line in open(p, encoding="utf-8"):
             line = line.strip()
             if not line:
@@ -200,6 +203,18 @@ def main():
         sub = [r for r in rows if r["dataset"] == ds and r["group"] in SCORED_GROUPS_M1
                and not r["in_smoke"]]
         out["by_dataset_S"][ds] = blk(sub)
+    # deviation D1 diagnostic: items 001-034 were annotated with continuous context,
+    # 035-099 by fresh agents. Post-hoc check only; never promoted to the primary metric.
+    def seg(r):
+        return int(r["item"].split("_")[1])
+    out["D1_segment_check"] = {
+        "all99_items_001_034": blk([r for r in rows if seg(r) <= 34]),
+        "all99_items_035_099": blk([r for r in rows if seg(r) > 34]),
+        "S32_items_001_034": blk([r for r in S32 if seg(r) <= 34]),
+        "S32_items_035_099": blk([r for r in S32 if seg(r) > 34]),
+        "kappa_items_001_034": fleiss_kappa([r["votes"] for r in rows if seg(r) <= 34]),
+        "kappa_items_035_099": fleiss_kappa([r["votes"] for r in rows if seg(r) > 34])}
+
     out["all99"] = blk(rows)
     out["all99_excl_ctrl_nonhate"] = blk([r for r in rows if r["group"] != "CTRL_NONHATE"])
 
@@ -277,6 +292,8 @@ def main():
     P("agreement: " + json.dumps(out["agreement"], ensure_ascii=False))
     P("-" * 78)
     P("voice vs GOLD_VOICE: " + json.dumps(out["voice_vs_gold"], ensure_ascii=False))
+    P("-" * 78)
+    P("D1 segment check: " + json.dumps(out["D1_segment_check"], ensure_ascii=False))
 
 
 if __name__ == "__main__":
