@@ -860,6 +860,41 @@ Two readings, both damaging, and they compound §1.2:
 
 ### 10.2 The structural finding the original report missed
 
+> ⚠ **CORRECTION, 2026-08-18** (`idea-stage/R11_SEG_NOVELTY_CHECK.md` §2.3, cross-checked by
+> gpt-5.6-sol at xhigh). **Six of the twelve families listed below do not actually break**, and the
+> list must not be carried into a pre-registration or a paper in the form written here:
+> *softmax-over-time pooling* (attention weights are mixture weights, not per-instant foreground
+> posteriors; a_t = 1/T plus a separate sigmoid represents coverage 1.0 fine), *ActionFormer /
+> TriDet focal-loss negatives* (both can emit a whole-video segment; focal loss is mis-tuned under a
+> reversed class ratio, not invalid), *DETR-style no-object* (a category error — no-object applies
+> to unmatched query slots, not to timestamps), *auxiliary background class / background
+> suppression* (overstated — at coverage 0.8, 20% of the positive video is still background and
+> wholly non-hateful videos exist), *top-K MIL pooling* (overstated — biased, not incapable), and
+> *outer-inner completeness* (weakened, not invalid). The tIoU row is valid but must be reported
+> split by single-span vs multi-span.
+>
+> **The only permitted form of the claim** is the narrowed one: *"objectives that impose low
+> foreground density, or that manufacture negatives from relative within-video scores, become
+> statistically inconsistent as foreground coverage approaches 1."*
+>
+> Two further corrections from the same check: the **"TAS has no background class, therefore it
+> fits" argument in §10.3 is dropped** (under a multi-hot sigmoid, "all categories off" *is* the
+> background state re-encoded — the surviving reasons are data scale and the absence of intra-video
+> contrastive negatives); and **"TAS is the only surviving family" is false** — the dense action
+> detection line (`1507.05738`, MS-TCT `2112.03902`, PAT `2308.05051`) is a fourth family that is
+> not on the list and is a closer fit to a multi-hot toxicity timeline.
+>
+> R11-SEG v2 tested the narrowed claim directly (`idea-stage/R11_SEG_PILOT_RESULT.md` §3, v2) and
+> **found no support for it**: a UniVTG-style score-derived intra-video negative term is null
+> overall (+0.314 macro-F1, CI [−0.612, +1.268]) and null on the high-coverage stratum
+> (+0.487, CI [−1.461, +2.658], n = 28). Underpowered, but this project has no positive evidence.
+>
+> Also missing from this report and added here: **SafeLens (AAAI-26**, Wang / Raharja / Hu / Lee,
+> SUTD, pp. 41712-41714) — per-segment multimodal hate moderation fine-tuned on HateClipSeg with
+> Whisper + EasyOCR + Qwen2.5-VL into a LoRA Llama3-8B, scoring segments **independently** with no
+> temporal model. It is the nearest neighbour in the hate domain, it is from the HateClipSeg
+> authors, and §2.1 / §6.1 should be read as if it were listed there.
+
 The report asked which localization families are empty. It did not ask **which families are
 structurally invalid at coverage 0.8-1.0**. They are, verified across TAL / WSTAL / WSVAD / TVG:
 
