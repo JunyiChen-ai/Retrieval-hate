@@ -1,0 +1,49 @@
+{
+ "freeze": "idea-stage/R10_TOKPOS_FREEZE.md 2.6",
+ "deviation": "idea-stage/R10_TOKPOS_DEVIATION_D1.md clause 4",
+ "winner": "CAT",
+ "files": {
+  "train/C0": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10L2-C0.pt",
+   "rows": 579,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "text_sha256": "bb1f27a7ecc3f3ef4569a1e7968263486357da776e8272f0705b3760a79d7661"
+  },
+  "train/C1": {
+   "path": "data/CLIP_Embedding/MHC_zh/train_R10L2-C1.pt",
+   "rows": 579,
+   "img_dim": 7168,
+   "text_dim": 14336,
+   "text_sha256": "b616720aa448370619501682d1c26d543fde69e54647d1a8ab044da97f38ed53"
+  },
+  "dev_seen/C0": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10L2-C0.pt",
+   "rows": 78,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "text_sha256": "53a4fea5e8ed63cfcf50ccdaaf69c5dbd0323c8001297e6c19abf2606c9a1a7a"
+  },
+  "dev_seen/C1": {
+   "path": "data/CLIP_Embedding/MHC_zh/dev_seen_R10L2-C1.pt",
+   "rows": 78,
+   "img_dim": 7168,
+   "text_dim": 14336,
+   "text_sha256": "992328537b0974eebecb98f82e26c94c568a303ebd2292e9984d1fdc9d4f9a7f"
+  },
+  "test_seen/C0": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10L2-C0.pt",
+   "rows": 149,
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "text_sha256": "d61631c26327f035f793939b74826f4cbb58c1b353a90c79492e049ce656ddc1"
+  },
+  "test_seen/C1": {
+   "path": "data/CLIP_Embedding/MHC_zh/test_seen_R10L2-C1.pt",
+   "rows": 149,
+   "img_dim": 7168,
+   "text_dim": 14336,
+   "text_sha256": "f27d593af0a56ba482b614dece7de867a4e934be91658fd7ab67b4093b05bf30"
+  }
+ }
+}
