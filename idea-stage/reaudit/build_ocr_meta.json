@@ -1,0 +1,110 @@
+{
+ "freeze": "idea-stage/REAUDIT_FREEZE.md (candidate R1b)",
+ "rng_seed": 20260817,
+ "R_shape": [
+  3584,
+  768
+ ],
+ "R_sha256_float32": "5fd429bd66587d1cdeb53ac9790503edd325ca0156555d965689d3db04b09d34",
+ "base": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+ "files": {
+  "train/A0": {
+   "path": "data/CLIP_Embedding/HateMM/train_RAOC-A0.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "9e5e535c6619564aebc1433f89ae22700545fee5774927fb741f2d8cbd33a577",
+   "text_sha256": "997ca26659a49c7e91dc7c7e586d71717373bcfca1e21dca35f5c44c3a4a3fd2"
+  },
+  "train/OCR": {
+   "path": "data/CLIP_Embedding/HateMM/train_RAOC-OCR.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 4352,
+   "img_sha256": "9e5e535c6619564aebc1433f89ae22700545fee5774927fb741f2d8cbd33a577",
+   "text_sha256": "7e441170a1ca54a5a08dc85f456bbdada3bcf838351995f48fb532312286e614"
+  },
+  "train/RAND": {
+   "path": "data/CLIP_Embedding/HateMM/train_RAOC-RAND.pt",
+   "rows": 744,
+   "img_dim": 3584,
+   "text_dim": 4352,
+   "img_sha256": "9e5e535c6619564aebc1433f89ae22700545fee5774927fb741f2d8cbd33a577",
+   "text_sha256": "88057b86b510e4bf46c2288dacb39348f3831b1631d08802a36f84ef91593561"
+  },
+  "dev_seen/A0": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_RAOC-A0.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "ae83f016bd23953ee9febba1a62a1738d86ad5f703af1fb5505d2e2e7fe9d6d1",
+   "text_sha256": "bf28261e5768d02e275c682c4a953671e846171df3dd5d7dd220b048a83bf2be"
+  },
+  "dev_seen/OCR": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_RAOC-OCR.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 4352,
+   "img_sha256": "ae83f016bd23953ee9febba1a62a1738d86ad5f703af1fb5505d2e2e7fe9d6d1",
+   "text_sha256": "e44be3ede8c6c57fdb14053c281eb96758be62b6e919e0deff848be3b4ef43ac"
+  },
+  "dev_seen/RAND": {
+   "path": "data/CLIP_Embedding/HateMM/dev_seen_RAOC-RAND.pt",
+   "rows": 107,
+   "img_dim": 3584,
+   "text_dim": 4352,
+   "img_sha256": "ae83f016bd23953ee9febba1a62a1738d86ad5f703af1fb5505d2e2e7fe9d6d1",
+   "text_sha256": "a58f5dcce0d7f870047740a003ba6192420e49e053ab670e598a52e4a4d7736a"
+  },
+  "test_seen/A0": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_RAOC-A0.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 3584,
+   "img_sha256": "5aaef37fcad36db3c272f775454153ac697f032a9ae72ad8ab32224459693849",
+   "text_sha256": "a72f6d0c613189a1420afd358797d3715032ccc5da436c1c8c0d7a2b9b20fc55"
+  },
+  "test_seen/OCR": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_RAOC-OCR.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 4352,
+   "img_sha256": "5aaef37fcad36db3c272f775454153ac697f032a9ae72ad8ab32224459693849",
+   "text_sha256": "a39c3e4e4c1ff789fa0025e8b5f566d76984ca07f674f621e5c1edac8f7e5296"
+  },
+  "test_seen/RAND": {
+   "path": "data/CLIP_Embedding/HateMM/test_seen_RAOC-RAND.pt",
+   "rows": 215,
+   "img_dim": 3584,
+   "text_dim": 4352,
+   "img_sha256": "5aaef37fcad36db3c272f775454153ac697f032a9ae72ad8ab32224459693849",
+   "text_sha256": "eb8831fd5d2b7149e943ed8d37e0f9840a8be260ce0baa6678eb20827d792163"
+  }
+ },
+ "checks": {
+  "train": {
+   "n_rows": 744,
+   "n_all_zero_ocr_rows": 150,
+   "ocr_ids_in_same_order_as_rac": true,
+   "ocr_block_dim": 768,
+   "rand_block_dim": 768,
+   "labels_carried_unchanged": true
+  },
+  "dev_seen": {
+   "n_rows": 107,
+   "n_all_zero_ocr_rows": 13,
+   "ocr_ids_in_same_order_as_rac": true,
+   "ocr_block_dim": 768,
+   "rand_block_dim": 768,
+   "labels_carried_unchanged": true
+  },
+  "test_seen": {
+   "n_rows": 215,
+   "n_all_zero_ocr_rows": 43,
+   "ocr_ids_in_same_order_as_rac": true,
+   "ocr_block_dim": 768,
+   "rand_block_dim": 768,
+   "labels_carried_unchanged": true
+  }
+ }
+}
