@@ -32,8 +32,9 @@ Three facts follow.
 
 1. **The error populations of the frozen and the adapted encoder genuinely differ.** Overlap is
    18-28 items against 3.5-8.7 expected under independence, so they are strongly correlated — but
-   9-12 items per dataset flip in each direction. For comparison, every head-level / objective-level
-   / fusion-level mechanism searched in rounds 6-8 moved 0-2 items.
+   9-12 items per dataset flip in each direction. For comparison, the largest head-level /
+   objective-level / fusion-level effect found in rounds 6-8 is the L24‖L28 concatenation at
+   +0.0185 on MHC-ZH, roughly 3 net items; every other one is under 2 items.
 2. **Adaptation is not monotone: it breaks 4-10 items it previously got right.** This "adaptation
    forgetting" is not a hypothetical oracle over unknown information — it is a loss the project
    already pays, on items the *same model family* already answered correctly before adaptation.
