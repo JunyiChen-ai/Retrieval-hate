@@ -42,3 +42,7 @@ idea-stage/desc_channel/__pycache__/
 # TEXT_MERGE
 idea-stage/text_merge/feats/
 idea-stage/text_merge/__pycache__/
+
+# derived feature caches / probe outputs (regenerable, not records)
+idea-stage/*/out/*.npz
+idea-stage/*/out/*.npy

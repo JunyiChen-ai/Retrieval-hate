@@ -4103,3 +4103,174 @@ free), `data/OCR/HateClipSeg/ocr_windows_K30.jsonl` (11 850 lines), the 72B per-
    distribution; and AGGNET already priced oracle-to-delivery conversion at roughly 10%.
 3. **Do not propose a measurement contribution.** Closed by the method-paper-only rule, permanently,
    and re-confirmed closed this round.
+
+---
+
+## §15 — Round 12 (2026-08-18): the proposal-level localization task, opened and closed
+
+**Cost: ¥0.00 of a ¥15 round budget (cumulative ¥0 of ¥60). The external review ran on the Codex MCP
+allowance and the occupancy sweep on web search; no DashScope or Claude API spend. Four local runs on
+the 5090, ~20 min GPU total, all background `setsid nohup` with `logging/runs/{r14_recon,r14_wvd}/`.
+Zero test-label contact: every number below is train-split cross-validation or a val-split
+reconnaissance reading, and the 119-video test split was never opened.**
+
+### 15.0 Headline
+
+- **The proposal metric is a real task where the per-timestamp metric was not.** On HateClipSeg an
+  oracle whole-video broadcast predictor scores proposal **F1@tIoU0.5 = 10.9** (train) / 7.1 (val),
+  against the 79.42 per-timestamp macro-F1 with which §14 closed the online task. Round 11's nulls
+  therefore did **not** close this one, and this round entered it legitimately.
+- **The decode axis is worth 2-4 points, not tens, and it is occupied anyway.** A synthetic study
+  said the score→interval decode had 4-9× leverage at fixed score quality; on **real** model scores
+  it collapses to naive 21.6 → tuned 23.8 → per-video-normalised 25.5 F1@tIoU0.5, because real
+  per-window errors are already temporally correlated (lag-1 autocorrelation 0.334). Independently,
+  the mechanism class is occupied in sound event detection since 2019 (`1906.06909`, 22.9 → 32.0
+  event-F1 from post-processing alone), formalised in 2024 (SEBB `2406.04212`), ported to video
+  anomaly detection in 2026-04 (`2604.09327`), and its per-instance unsupervised variant is
+  **nSEBB `2505.11889`**, which already sets the smoothing bandwidth and merge threshold from
+  per-recording contrast and run-length statistics.
+- **An oracle substitution localised the entire remaining gap in one place.** Replacing the model's
+  video-level term with gold moves F1@tIoU0.5 by **+4.3**; replacing its within-video residual with
+  gold moves it by **+62.7**. Proposal-level hateful-video localization is a *within-video
+  discrimination* problem and essentially nothing else.
+- **And within-video discrimination does not move.** A pre-registered 2×2×2 factorial —
+  training objective × text encoder × video-relative representation, 5-fold video-grouped CV inside
+  the 237 training videos, 5 seeds — returns **−0.0052 / −0.0044 / −0.0031** video-macro within-video
+  AUC against a smallest-worthwhile-gain of +0.020. The frozen KILL rule fires on all three.
+- **The cheapest remaining explanation is dead.** The ASR and OCR channels were going through CLIP's
+  77-token caption-trained text tower. Replacing it with a frozen hate-tuned RoBERTa changes nothing
+  (−0.0044) and *raises* the between-video share of score variance from 0.432 to 0.493: the stronger
+  language model buys video-level separability, not moment-level discrimination.
+- **Cumulative across twelve rounds: 141 candidates, one banked entry (`CAT`).**
+
+### 15.1 What the round inherited and what it added
+
+Round 11 left exactly one thing open on the temporal axis: the **localization AP task**
+(mAP/F1@tIoU), whose degenerate oracle is only 0.530 frame-AP, versus an online per-timestamp task
+whose broadcast ceiling of 79.42 macro-F1 exceeds everything published. It also left one strong
+positive: a within-video circular-shift control showing that **audio carries genuine moment-level
+information** (−3.30 macro-F1 when shuffled, CI excluding zero) while **CLIP visual features carry
+only video-level identity** (−0.28, CI containing zero).
+
+Seven new measurements were made before any candidate was scored (`idea-stage/R14_WVD_FREEZE.md` §1):
+
+| id | measurement |
+|---|---|
+| M1 | oracle broadcast proposal F1@tIoU 0.3/0.5/0.7 = 17.1 / **10.9** / 8.0 on train — the task is not degenerate |
+| M2 | unit-grid representation ceilings (oracle labels → merged runs): gold segments 100/100/100 · uniform 1 s 99.9/99.5/99.1 · uniform 2 s 98.2/98.2/95.7 · **uniform 8 s 93.9/87.6/68.1** · Whisper-chunk grid 58.5/50.2/42.1 |
+| M3 | gold segment boundaries are **not** freely recoverable — Whisper-large-v3 chunk boundaries reach 32% recall / 27% precision at 1 s tolerance, so HateClipSeg's automatic annotation pipeline cannot simply be re-run to obtain its own boundaries |
+| M4 | synthetic transfer function at fixed within-video AUC ≈ 0.64: F1@0.5 = 4.3 (threshold only) → 38.3 (tuned decode) for i.i.d. errors, 22.2 for AR-1(ρ=0.8) errors |
+| M5 | on real scores that leverage collapses: 21.6 → 23.8 → 25.5; measured error lag-1 autocorrelation 0.334; between-video share of score variance 0.519; oracle window labels through the same decoder 87.0 |
+| M6 | 2×2 oracle substitution: model+model 23.8 · **gold level + model residual 28.1** · **model level + gold residual 86.5** · gold+gold 87.0 |
+| M7 | single-channel within-video AUC: audio 0.623 > visual 0.587 ≈ CLIP-text(ASR) 0.583 > CLIP-text(OCR) 0.572; all four 0.671 — audio is the strongest single within-video channel, corroborating §14's shift control |
+
+M2 and M3 together kill two candidate stories before they were written: the unit grid is not the
+bottleneck (a plain uniform 2 s grid is near-lossless), and the boundaries are not free.
+
+### 15.2 The candidates
+
+Twelve candidates went to **gpt-5.6-sol at xhigh reasoning, hostile**, with the full constraint map
+and all seven measurements; a separate zero-GPU agent ran an occupancy sweep over nine mechanism
+slots. Full table, scores and the sweep are in `idea-stage/R14_CANDIDATES.md`.
+
+| # | candidate | score | load-bearing verdict |
+|---|---|---|---|
+| C1 | **WVCOND** within-video conditional / ranking objective | **3** | pilot now; but conditional logit is classical and the pairwise form is RankNet |
+| C2 | **AUDLEAD** modality-factored video-level vs within-video branches | 2 | hard visual→global assignment discards visual's real 0.587 within-video AUC; reviewers name RUBi |
+| C3 | **TXTENC** proper text encoder for per-window ASR/OCR | **3** | mandatory substrate repair, explicitly **not** a contribution |
+| C4 | **RESGRID** 8 s → 2 s windows | 2 | needed for high tIoU, but 23.8 is nowhere near the 87.6 ceiling; do not confuse output stride with evidence span |
+| C5 | **DECODECOND** per-video decode parameters from score-curve statistics | **0** | near-exactly occupied by nSEBB `2505.11889`; and M5 caps the axis at 2-4 points |
+| C6 | **SEBBV** extent/confidence decoupling | 1 | the central idea *is* SEBB `2406.04212` |
+| C7 | **PROSBND** prosodic change points propose boundaries | 1 | audio-derived boundaries are a known prior (DASH `2603.15685`, AutoAD II `2310.06838`, Vid2Seq) |
+| C8 | **COUNTDEC** predict block count, decode exactly that many | **0** | no occupant found, but an off-by-one count destroys the tIoU match; the dead coverage-prior family under a new scalar |
+| C9 | **REFPROP** cross-segment referent propagation | 2 | legal and mechanistic, but brittle, and it targets score quality — a different round |
+| C10 | **XVIDCAL** within-video robust z before decoding | 1 | a positive affine map preserves within-video ranks exactly; a trick |
+| C11 | **METRICSWITCH** re-run §14's killed families on the proposal metric | 2 | a mandatory baseline rerun, not a candidate method |
+| C12 | **GEBD2S** generic boundary detection then classify | **0** | saturated in general video; editing boundaries need not coincide with toxicity changes |
+
+**The reviewer's own strongest objection, conceded in advance:** our best measured decode
+configuration (38.3 synthetic, 23.8 real) is *below* the 52.65 F1@tIoU0.5 the dataset paper already
+publishes with ActionFormer, which consumes no score curve at all. A decode paper is therefore
+quantifying how badly a per-window head was configured, not a new capability.
+
+**Five families the reviewer added** that were not on the slate: a video-set-conditioned reference
+head; decoupling output stride from evidence span; toxic-state *transition* discrimination; a
+target/attack state factorization; and reliability-conditioned multimodal interaction. The first
+became factor C of the pilot; the rest are recorded in `R14_CANDIDATES.md` §4.
+
+### 15.3 R14-WVD — the pilot, and the KILL
+
+The reviewer's prescribed sub-hour discriminating experiment was adopted verbatim and extended by
+one factor, pre-registered in `idea-stage/R14_WVD_FREEZE.md` (commit `0f20505`, committed before the
+runner was written), and run once.
+
+**Design.** HateClipSeg train split only (237 videos), 5-fold **video-grouped** CV, canonical K=30
+uniform 8 s grid, R11's `PerWin` head, 40 epochs with **no early stopping and no per-fold model
+selection** in any cell, 5 seeds 4200-4204. Primary endpoint: **video-macro within-video AUC**, on
+which a broadcast predictor scores 0.500 by construction. Secondary: proposal F1@tIoU under a
+decoder frozen in the pre-registration (no smoothing, merge gaps ≤ 5 s, drop intervals < 12 s,
+prevalence-matched threshold fitted on the training folds).
+
+| factor | levels | Δ wv-AUC [95% CI] |
+|---|---|---|
+| **A objective** | per-window BCE vs BCE + equal-video-weighted within-video pairwise ranking over **gold-certified** pairs (λ = 1.0) | **−0.0052 [−0.0094, −0.0011]** |
+| **B text substrate** | CLIP text tower vs frozen `cardiffnlp/twitter-roberta-base-hate-latest`, mean-pooled | **−0.0044 [−0.0226, +0.0138]** |
+| **C representation** | absolute features vs absolute ⊕ leave-one-out video-relative residual + within-video cosine rank (label-free) | **−0.0031 [−0.0155, +0.0088]** |
+
+δ = +0.020, video-clustered paired bootstrap, 10 000 resamples, n = 193 OOF videos with within-video
+label variation. **All eight cells lie between 0.574 and 0.588 wv-AUC and between 14.0 and 16.5
+F1@tIoU0.5**, with per-cell seed sd 0.0015-0.0049. The frozen KILL rule fires.
+
+**Factor A is not merely null, it is negative with a CI excluding zero** — which is exactly what the
+reviewer's pre-supplied vacuity argument predicts: if the head can represent a per-video intercept,
+the BCE logit already ranks within a video as the Bayes-optimal residual does, so a conditional
+objective adds no information and only costs sample efficiency. Together with round 11's null on
+*score-derived* intra-video negatives (+0.31, CI containing zero), the within-video-contrast family
+is now bracketed from both ends: neither manufactured nor gold-certified within-video comparisons
+buy anything here.
+
+**Post-hoc (descriptive, no gate).** 84.2% of train windows are pure, so window impurity is not the
+explanation; restricting the read-out to pure windows moves the baseline 0.5893 → 0.6142, i.e. a
+finer grid is worth about +0.025 wv-AUC. The within-video Spearman correlation between the model
+score and the gold per-window offensive fraction is **0.137**. And 207 of 237 train videos contain a
+toxic segment, so the video-level task is nearly vacuous on this corpus — which is why M6 assigned
+the video-level term only +4.3 points.
+
+**One correction the round produced.** The reconnaissance reported val wv-AUC 0.671; that run
+selected the epoch by val wv-AUC and then reported val wv-AUC. Under the pilot's no-selection
+protocol the same features and head give **0.588**. The recon's *relative* structure (M5-M7) is
+unaffected — every arm shared the identical procedure — but its absolute levels are upper readings.
+Recorded and fixed on sight, per the no-documentation-iteration rule.
+
+### 15.4 What round 12 closes
+
+1. **Proposal-level hateful-video localization is a within-video discrimination problem** (+62.7 of
+   the 63-point oracle gap), and **within-video discrimination does not move on this substrate** —
+   not with the objective, not with a hate-tuned text encoder, not with a label-free video-relative
+   representation, on top of round 11's three null temporal architecture families.
+2. **The score→interval decode axis is closed twice over**: priced at 2-4 F1 points on real scores,
+   and occupied in sound event detection, video anomaly detection and TAL, including the
+   per-instance unsupervised variant.
+3. **"The text substrate was inadequate" is dead**, and it was the most plausible cheap explanation
+   for the ceiling.
+4. **Scaling the scorer is not the missing ingredient either**: the project's 72B MLLM per-window
+   scorer sits at wv-AUC 0.5755, *below* the 0.588 of a two-layer head on frozen features under a
+   stricter protocol.
+
+### 15.5 Cumulative, and what round 13 must not do
+
+| round | axis | candidates | survivors |
+|---|---|---|---|
+| 1-10 | §1-§13 | 114 | 1 (`CAT`) |
+| 11 | temporal span / localization | 15 | 0 |
+| **12** | **proposal-level localization / within-video discrimination** | **12** | **0** |
+
+1. **Do not re-enter the decode / post-processing axis.** Occupied in three adjacent fields, and
+   priced here at 2-4 points against a 63-point gap.
+2. **Do not propose another within-video contrastive or ranking objective.** The family is now
+   bracketed by two nulls, one of them significantly negative.
+3. **Do not assume a bigger encoder fixes moment-level discrimination.** A 72B MLLM, a hate-tuned
+   RoBERTa and CLIP's text tower all land within 0.01 wv-AUC of each other on this task.
+4. **A synthetic transfer function is not evidence.** M4 predicted 4-9× decode leverage; the real
+   scores delivered 2-4 points. The difference was entirely the error correlation structure, which
+   the synthetic model had to assume.
