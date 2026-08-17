@@ -29,8 +29,14 @@ ROOT = "/home/jehc223/Retrieval-hate"
 EMB = os.path.join(ROOT, "data", "CLIP_Embedding")
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-DATASET = "MHC_zh"
-BASE = "Qwen2.5-VL-7B-Instruct-LoRA_HF"
+import argparse
+
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--dataset", default="MHC_zh")
+_ap.add_argument("--base", default="Qwen2.5-VL-7B-Instruct-LoRA_HF")
+_A = _ap.parse_args()
+DATASET = _A.dataset
+BASE = _A.base
 SPLITS = ["train", "dev_seen", "test_seen"]
 DIM = 3584
 RNG_SEED = 20260817
@@ -132,7 +138,7 @@ def main():
                 TXT, l2norm(img.float()), dim=1).mean()),
         }
 
-    mp = os.path.join(HERE, "build_meta.json")
+    mp = os.path.join(HERE, "build_meta_%s.json" % DATASET)
     json.dump(meta, open(mp, "w"), indent=1)
     print("wrote", mp)
     print(json.dumps(meta["geometry"], indent=1))
