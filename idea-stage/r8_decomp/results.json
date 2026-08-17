@@ -1,0 +1,515 @@
+{
+  "meta": {
+    "nfold": 5,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "epochs": 30,
+    "traj_window": [
+      20,
+      29
+    ],
+    "test_touched": false
+  },
+  "datasets": {
+    "HateMM": {
+      "FINAL": {
+        "per_encoder_single": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.8143910690661552,
+            "roc": 0.8976520422440726,
+            "macro_f1_per_seed": [
+              0.8198605249366056,
+              0.8098550270445946,
+              0.8134576552172657
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.830560355869486,
+            "roc": 0.899998083299791,
+            "macro_f1_per_seed": [
+              0.8272957889396246,
+              0.8337077465742971,
+              0.8306775320945361
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF": {
+            "macro_f1": 0.8690453209757081,
+            "roc": 0.9300960266804669,
+            "macro_f1_per_seed": [
+              0.8631881459982785,
+              0.8710517588399433,
+              0.8728960580889027
+            ]
+          }
+        },
+        "per_encoder_seedens": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.816861513406619,
+            "roc": 0.8987924788683802
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.8291449344080923,
+            "roc": 0.9019665344143522
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF": {
+            "macro_f1": 0.8843811182760638,
+            "roc": 0.9341670979242138
+          }
+        },
+        "crossens": {
+          "macro_f1": 0.8622050809707223,
+          "roc": 0.9260671228413164,
+          "macro_f1_per_seed": [
+            0.860531764954019,
+            0.8635046113306983,
+            0.8625788666274496
+          ]
+        },
+        "allens": {
+          "macro_f1": 0.8622221712798925,
+          "roc": 0.9269277212351216
+        },
+        "best_encoder": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+        "gain_seedens": 0.015335797300355725,
+        "gain_crossens": -0.0068402400049857315,
+        "gain_allens": -0.006823149695815545
+      },
+      "TRAJ": {
+        "per_encoder_single": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.8141787707795064,
+            "roc": 0.8988384796733944,
+            "macro_f1_per_seed": [
+              0.8173758425219381,
+              0.8105689057914822,
+              0.8145915640250987
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.8340844169008906,
+            "roc": 0.9096793360550478,
+            "macro_f1_per_seed": [
+              0.8342675186398755,
+              0.8362764197286309,
+              0.8317093123341657
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF": {
+            "macro_f1": 0.8793575919990122,
+            "roc": 0.9362141337473405,
+            "macro_f1_per_seed": [
+              0.8784591302758163,
+              0.8819470365555598,
+              0.8776666091656604
+            ]
+          }
+        },
+        "per_encoder_seedens": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.8155213526988945,
+            "roc": 0.8999022482893451
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.8329891805181064,
+            "roc": 0.9099361738830429
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF": {
+            "macro_f1": 0.8817305364084034,
+            "roc": 0.9374389051808407
+          }
+        },
+        "crossens": {
+          "macro_f1": 0.8646204123296423,
+          "roc": 0.9291127594732908,
+          "macro_f1_per_seed": [
+            0.8623491807197528,
+            0.8635046113306983,
+            0.8680074449384758
+          ]
+        },
+        "allens": {
+          "macro_f1": 0.8682571900371543,
+          "roc": 0.9294117647058823
+        },
+        "best_encoder": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+        "gain_seedens": 0.0023729444093911756,
+        "gain_crossens": -0.014737179669369938,
+        "gain_allens": -0.011100401961857909
+      },
+      "traj_minus_final_single": {
+        "openai_clip-vit-large-patch14-336_HF": -0.00021229828664881545,
+        "Qwen2.5-VL-7B-Instruct_HF": 0.0035240610314046794,
+        "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF": 0.01031227102330412
+      }
+    },
+    "MHC": {
+      "FINAL": {
+        "per_encoder_single": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.6096523862996746,
+            "roc": 0.8214098968484099,
+            "macro_f1_per_seed": [
+              0.5991359255566634,
+              0.6037466037466037,
+              0.6260746295957563
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.7535916452292275,
+            "roc": 0.8431612555655907,
+            "macro_f1_per_seed": [
+              0.7512921679121354,
+              0.7585843709555049,
+              0.750898396820042
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+            "macro_f1": 0.8216683284712217,
+            "roc": 0.9087639238801476,
+            "macro_f1_per_seed": [
+              0.8152617947827945,
+              0.8163017068257978,
+              0.8334414838050731
+            ]
+          }
+        },
+        "per_encoder_seedens": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.6063508475959838,
+            "roc": 0.8231330512905832
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.7589382622865452,
+            "roc": 0.8494081855777916
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+            "macro_f1": 0.8232315015042554,
+            "roc": 0.9141750249560299
+          }
+        },
+        "crossens": {
+          "macro_f1": 0.778993805566241,
+          "roc": 0.8943369618608483,
+          "macro_f1_per_seed": [
+            0.7749428893843062,
+            0.7790989363837046,
+            0.782939590930712
+          ]
+        },
+        "allens": {
+          "macro_f1": 0.7790285925691032,
+          "roc": 0.8965869658221228
+        },
+        "best_encoder": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+        "gain_seedens": 0.0015631730330336602,
+        "gain_crossens": -0.04267452290498075,
+        "gain_allens": -0.04263973590211856
+      },
+      "TRAJ": {
+        "per_encoder_single": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.5392428848239214,
+            "roc": 0.8272210866568427,
+            "macro_f1_per_seed": [
+              0.5328699165255621,
+              0.542429368973101,
+              0.542429368973101
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.7581700963983674,
+            "roc": 0.853864619479964,
+            "macro_f1_per_seed": [
+              0.7632585538351117,
+              0.7511449466490829,
+              0.7601067887109076
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+            "macro_f1": 0.8350568387226258,
+            "roc": 0.911667538147074,
+            "macro_f1_per_seed": [
+              0.8403371642143775,
+              0.8290558903462129,
+              0.8357774616072869
+            ]
+          }
+        },
+        "per_encoder_seedens": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.542429368973101,
+            "roc": 0.8285758425631031
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.7548414929858229,
+            "roc": 0.8548628606740504
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+            "macro_f1": 0.8320870674861023,
+            "roc": 0.9165517897038552
+          }
+        },
+        "crossens": {
+          "macro_f1": 0.6506694623109163,
+          "roc": 0.8999778168623536,
+          "macro_f1_per_seed": [
+            0.6533025062424859,
+            0.6543142027164952,
+            0.6443916779737675
+          ]
+        },
+        "allens": {
+          "macro_f1": 0.6496109945901891,
+          "roc": 0.9003303702999478
+        },
+        "best_encoder": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+        "gain_seedens": -0.002969771236523533,
+        "gain_crossens": -0.18438737641170955,
+        "gain_allens": -0.1854458441324367
+      },
+      "traj_minus_final_single": {
+        "openai_clip-vit-large-patch14-336_HF": -0.0704095014757532,
+        "Qwen2.5-VL-7B-Instruct_HF": 0.004578451169139908,
+        "Qwen2.5-VL-7B-Instruct-LoRA_HF": 0.013388510251404084
+      }
+    },
+    "MHC_zh": {
+      "FINAL": {
+        "per_encoder_single": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.7312189166532318,
+            "roc": 0.8275298383872994,
+            "macro_f1_per_seed": [
+              0.7245283018867925,
+              0.7430944122338405,
+              0.7260340358390623
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.7859151478010639,
+            "roc": 0.8774877220033123,
+            "macro_f1_per_seed": [
+              0.7848792270531402,
+              0.7719529647983596,
+              0.8009132515516917
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+            "macro_f1": 0.8494342730759324,
+            "roc": 0.9279809833818743,
+            "macro_f1_per_seed": [
+              0.8538605933030967,
+              0.8406046285943334,
+              0.8538375973303671
+            ]
+          }
+        },
+        "per_encoder_seedens": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.7427233723878315,
+            "roc": 0.832576666095597
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.7924715179030324,
+            "roc": 0.8856861401404831
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+            "macro_f1": 0.8542142874329299,
+            "roc": 0.9359902347096111
+          }
+        },
+        "crossens": {
+          "macro_f1": 0.8303824846242316,
+          "roc": 0.9215850037119525,
+          "macro_f1_per_seed": [
+            0.8260204209628459,
+            0.8351335428122546,
+            0.829993490097594
+          ]
+        },
+        "allens": {
+          "macro_f1": 0.8316800044076528,
+          "roc": 0.9246295185883159
+        },
+        "best_encoder": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+        "gain_seedens": 0.004780014356997486,
+        "gain_crossens": -0.019051788451700857,
+        "gain_allens": -0.01775426866827967
+      },
+      "TRAJ": {
+        "per_encoder_single": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.7342108788802012,
+            "roc": 0.8346610701844556,
+            "macro_f1_per_seed": [
+              0.7288532968046153,
+              0.7336318161268212,
+              0.7401475237091675
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.788595903558182,
+            "roc": 0.8795756952772543,
+            "macro_f1_per_seed": [
+              0.7896352985638699,
+              0.7865292425695111,
+              0.789623169541165
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+            "macro_f1": 0.8629368757246447,
+            "roc": 0.9345125920849752,
+            "macro_f1_per_seed": [
+              0.8615938454153944,
+              0.8647530136425976,
+              0.862463768115942
+            ]
+          }
+        },
+        "per_encoder_seedens": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.735086837614829,
+            "roc": 0.8363671406544457
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.7876596605644646,
+            "roc": 0.8830413739934898
+          },
+          "Qwen2.5-VL-7B-Instruct-LoRA_HF": {
+            "macro_f1": 0.8577271961694858,
+            "roc": 0.9351871680657873
+          }
+        },
+        "crossens": {
+          "macro_f1": 0.8358182114965663,
+          "roc": 0.926528325052824,
+          "macro_f1_per_seed": [
+            0.8401884444941496,
+            0.8344254032258065,
+            0.8328407867697427
+          ]
+        },
+        "allens": {
+          "macro_f1": 0.8323288639352951,
+          "roc": 0.9271350865170465
+        },
+        "best_encoder": "Qwen2.5-VL-7B-Instruct-LoRA_HF",
+        "gain_seedens": -0.005209679555158941,
+        "gain_crossens": -0.027118664228078404,
+        "gain_allens": -0.030608011789349576
+      },
+      "traj_minus_final_single": {
+        "openai_clip-vit-large-patch14-336_HF": 0.0029919622269694024,
+        "Qwen2.5-VL-7B-Instruct_HF": 0.002680755757118125,
+        "Qwen2.5-VL-7B-Instruct-LoRA_HF": 0.01350260264871228
+      }
+    },
+    "ImpliHateVid": {
+      "FINAL": {
+        "per_encoder_single": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.9106167013085823,
+            "roc": 0.971070657440053,
+            "macro_f1_per_seed": [
+              0.9085336619851836,
+              0.9110445717203721,
+              0.9122718702201909
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.91210387059036,
+            "roc": 0.9704162547642733,
+            "macro_f1_per_seed": [
+              0.9129341111714446,
+              0.9104455445544555,
+              0.9129319560451801
+            ]
+          }
+        },
+        "per_encoder_seedens": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.911647257666091,
+            "roc": 0.9715566893722221
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.9154227547318673,
+            "roc": 0.972519728770976
+          }
+        },
+        "crossens": {
+          "macro_f1": 0.9224495178388965,
+          "roc": 0.9756107371544468,
+          "macro_f1_per_seed": [
+            0.9209942034715723,
+            0.9216212995959749,
+            0.9247330504491422
+          ]
+        },
+        "allens": {
+          "macro_f1": 0.9216180248212683,
+          "roc": 0.9765080268753742
+        },
+        "best_encoder": "Qwen2.5-VL-7B-Instruct_HF",
+        "gain_seedens": 0.0033188841415072723,
+        "gain_crossens": 0.010345647248536483,
+        "gain_allens": 0.00951415423090829
+      },
+      "TRAJ": {
+        "per_encoder_single": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.90978594413001,
+            "roc": 0.9712029303213278,
+            "macro_f1_per_seed": [
+              0.9079140432012778,
+              0.9097965315226613,
+              0.911647257666091
+            ]
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.9152058271447995,
+            "roc": 0.9731148278157752,
+            "macro_f1_per_seed": [
+              0.9172770077627265,
+              0.9135569130452439,
+              0.9147835606264276
+            ]
+          }
+        },
+        "per_encoder_seedens": {
+          "openai_clip-vit-large-patch14-336_HF": {
+            "macro_f1": 0.9097781019581743,
+            "roc": 0.9716928298816041
+          },
+          "Qwen2.5-VL-7B-Instruct_HF": {
+            "macro_f1": 0.9172831508086459,
+            "roc": 0.973596476436089
+          }
+        },
+        "crossens": {
+          "macro_f1": 0.9213971060663759,
+          "roc": 0.9762733907701892,
+          "macro_f1_per_seed": [
+            0.9203624055332775,
+            0.9203664727002601,
+            0.9234624399655902
+          ]
+        },
+        "allens": {
+          "macro_f1": 0.92284690106053,
+          "roc": 0.9765807382837942
+        },
+        "best_encoder": "Qwen2.5-VL-7B-Instruct_HF",
+        "gain_seedens": 0.0020773236638463866,
+        "gain_crossens": 0.0061912789215764485,
+        "gain_allens": 0.007641073915730545
+      },
+      "traj_minus_final_single": {
+        "openai_clip-vit-large-patch14-336_HF": -0.0008307571785722834,
+        "Qwen2.5-VL-7B-Instruct_HF": 0.0031019565544394556
+      }
+    }
+  }
+}
