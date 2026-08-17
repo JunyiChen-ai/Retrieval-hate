@@ -1,0 +1,2955 @@
+{
+ "n_items": 99,
+ "M1_primary": {
+  "n": 32,
+  "acc": 0.5625,
+  "p_vs_chance_0.5": 0.5966,
+  "verdict": "FAIL"
+ },
+ "VERDICT": "FAIL",
+ "M1_per_rater": {
+  "r7k": {
+   "n": 32,
+   "acc": 0.5312
+  },
+  "m3q": {
+   "n": 32,
+   "acc": 0.5
+  },
+  "z9x": {
+   "n": 32,
+   "acc": 0.5625
+  }
+ },
+ "M1_sensitivity_33rows": {
+  "n": 33,
+  "acc": 0.5455
+ },
+ "by_group": {
+  "S_FP": {
+   "n": 30,
+   "acc": 0.6333,
+   "calls": {
+    "ENDORSE": 11,
+    "DISTANCED": 19
+   }
+  },
+  "S_FN": {
+   "n": 19,
+   "acc": 0.4211,
+   "calls": {
+    "ENDORSE": 8,
+    "DISTANCED": 11
+   }
+  },
+  "CTRL_HATE": {
+   "n": 25,
+   "acc": 0.72,
+   "calls": {
+    "ENDORSE": 18,
+    "DISTANCED": 7
+   }
+  },
+  "CTRL_NONHATE": {
+   "n": 25,
+   "acc": 0.92,
+   "calls": {
+    "DISTANCED": 23,
+    "ENDORSE": 2
+   }
+  }
+ },
+ "by_group_S32": {
+  "S_FP": {
+   "n": 18,
+   "acc": 0.6667,
+   "calls": {
+    "DISTANCED": 12,
+    "ENDORSE": 6
+   }
+  },
+  "S_FN": {
+   "n": 14,
+   "acc": 0.4286,
+   "calls": {
+    "ENDORSE": 6,
+    "DISTANCED": 8
+   }
+  }
+ },
+ "by_frames": {
+  "with_frames": {
+   "n": 72,
+   "acc": 0.6944,
+   "calls": {
+    "ENDORSE": 28,
+    "DISTANCED": 44
+   }
+  },
+  "no_frames": {
+   "n": 27,
+   "acc": 0.6667,
+   "calls": {
+    "ENDORSE": 11,
+    "DISTANCED": 16
+   }
+  }
+ },
+ "by_frames_S_all49": {
+  "with_frames": {
+   "n": 33,
+   "acc": 0.5455,
+   "calls": {
+    "ENDORSE": 13,
+    "DISTANCED": 20
+   }
+  },
+  "no_frames": {
+   "n": 13,
+   "acc": 0.5385,
+   "calls": {
+    "ENDORSE": 5,
+    "DISTANCED": 8
+   }
+  }
+ },
+ "by_dataset_S": {
+  "HateMM": {
+   "n": 6,
+   "acc": 0.3333,
+   "calls": {
+    "DISTANCED": 3,
+    "ENDORSE": 3
+   }
+  },
+  "ImpliHateVid": {
+   "n": 13,
+   "acc": 0.5385,
+   "calls": {
+    "ENDORSE": 5,
+    "DISTANCED": 8
+   }
+  },
+  "MHC": {
+   "n": 15,
+   "acc": 0.6,
+   "calls": {
+    "ENDORSE": 2,
+    "DISTANCED": 13
+   }
+  },
+  "MHC_zh": {
+   "n": 12,
+   "acc": 0.5833,
+   "calls": {
+    "ENDORSE": 8,
+    "DISTANCED": 4
+   }
+  }
+ },
+ "D1_segment_check": {
+  "all99_items_001_034": {
+   "n": 34,
+   "acc": 0.6471,
+   "calls": {
+    "ENDORSE": 15,
+    "DISTANCED": 19
+   }
+  },
+  "all99_items_035_099": {
+   "n": 65,
+   "acc": 0.7077,
+   "calls": {
+    "DISTANCED": 41,
+    "ENDORSE": 24
+   }
+  },
+  "S32_items_001_034": {
+   "n": 12,
+   "acc": 0.6667,
+   "calls": {
+    "ENDORSE": 5,
+    "DISTANCED": 7
+   }
+  },
+  "S32_items_035_099": {
+   "n": 20,
+   "acc": 0.5,
+   "calls": {
+    "ENDORSE": 7,
+    "DISTANCED": 13
+   }
+  },
+  "kappa_items_001_034": [
+   0.8369,
+   34
+  ],
+  "kappa_items_035_099": [
+   0.9343,
+   65
+  ]
+ },
+ "all99": {
+  "n": 99,
+  "acc": 0.6869,
+  "calls": {
+   "ENDORSE": 39,
+   "DISTANCED": 60
+  }
+ },
+ "all99_excl_ctrl_nonhate": {
+  "n": 74,
+  "acc": 0.6081,
+  "calls": {
+   "ENDORSE": 37,
+   "DISTANCED": 37
+  }
+ },
+ "agreement": {
+  "all99": {
+   "pairwise": {
+    "r7k-m3q": {
+     "n": 99,
+     "agree": 0.9495
+    },
+    "r7k-z9x": {
+     "n": 99,
+     "agree": 0.9697
+    },
+    "m3q-z9x": {
+     "n": 99,
+     "agree": 0.9394
+    }
+   },
+   "fleiss_kappa": 0.9003,
+   "kappa_n": 99
+  },
+  "S32": {
+   "pairwise": {
+    "r7k-m3q": {
+     "n": 32,
+     "agree": 0.9062
+    },
+    "r7k-z9x": {
+     "n": 32,
+     "agree": 0.9062
+    },
+    "m3q-z9x": {
+     "n": 32,
+     "agree": 0.875
+    }
+   },
+   "fleiss_kappa": 0.7691,
+   "kappa_n": 32
+  },
+  "unanimous_rate_all99": 0.9293,
+  "acc_by_split_S32": {
+   "2-1": {
+    "n": 5,
+    "hit": 4,
+    "acc": 0.8
+   },
+   "3-0": {
+    "n": 27,
+    "hit": 14,
+    "acc": 0.5185
+   }
+  }
+ },
+ "voice_vs_gold": {
+  "n": 37,
+  "agree": 0.4054,
+  "maj_hist": {
+   "OWN": 9,
+   "NONE": 18,
+   "NOT_OWN": 10
+  },
+  "gold_hist": {
+   "OWN": 21,
+   "NOT_OWN": 16
+  },
+  "raw_voice_hist_all99": {
+   "uploader": 87,
+   "none": 146,
+   "on_screen_speaker": 23,
+   "archival": 10,
+   "quoted_third_party": 25,
+   "caption": 6
+  }
+ },
+ "per_item": [
+  {
+   "item": "item_072",
+   "ds": "HateMM",
+   "id": "hate_video_228",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Animated rap by the creator full of racial and antisemitic slurs and calls for extermination, no distancing.",
+    "m3q": "Animated rap track full of antisemitic, anti-Black and genocidal lyrics used as the video's own soundtrack.",
+    "z9x": "Animated rap video is itself packed with antisemitic and racial slurs plus explicit genocide calls, presented as entertainment."
+   }
+  },
+  {
+   "item": "item_069",
+   "ds": "HateMM",
+   "id": "hate_video_23",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "quoted_third_party",
+    "quoted_third_party",
+    "quoted_third_party"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Creator plays a song consisting entirely of the racial slur as entertainment with no critical framing.",
+    "m3q": "Reaction video replaying a rap track saturated with the n-word as entertainment, with no critical framing.",
+    "z9x": "Creator plays a rap song consisting almost entirely of the racial slur as entertainment with no critical framing."
+   }
+  },
+  {
+   "item": "item_079",
+   "ds": "HateMM",
+   "id": "hate_video_299",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Streamer in Joker makeup with Nazi flag repeatedly calls an Omegle stranger the racial slur for entertainment.",
+    "m3q": "Streamer repeatedly calls an Omegle stranger the n-word in his own voice for entertainment.",
+    "z9x": "Streamer in Joker makeup repeatedly hurls the racial slur at an Omegle stranger as his own content."
+   }
+  },
+  {
+   "item": "item_066",
+   "ds": "HateMM",
+   "id": "hate_video_377",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "archival",
+    "on_screen_speaker",
+    "archival"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Old Fox News segment where the host challenges a white supremacist who calls Jews parasites.",
+    "m3q": "Fox News 'Holding Off Hate' segment where the anchor challenges white supremacist Matt Hale over his antisemitic claims.",
+    "z9x": "Old Fox News segment where the anchor challenges a white supremacist whose antisemitic claim is shown critically."
+   }
+  },
+  {
+   "item": "item_008",
+   "ds": "ImpliHateVid",
+   "id": "EX_130",
+   "grp": "CTRL_HATE",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "on_screen_speaker",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Monologue presented as the video's own content casts black people as mindless zombies killing each other.",
+    "m3q": "Filmed speaker dehumanizes black people as mindless zombies who kill for nothing; video adds news clip as endorsement.",
+    "z9x": "Monologue asserts aimless zombie-like violence is inherent to black culture, presented as the video's own claim."
+   }
+  },
+  {
+   "item": "item_050",
+   "ds": "ImpliHateVid",
+   "id": "EX_235",
+   "grp": "CTRL_HATE",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Filmer harasses soldiers with racist, transphobic and homophobic slurs and demands Poland stay white.",
+    "m3q": "Uploader harangues soldiers with racist, transphobic and homophobic slurs and demands Poland stay white.",
+    "z9x": "Filmer harangues US soldiers with racial slurs, 'keep Poland white' and transphobic abuse in his own voice."
+   }
+  },
+  {
+   "item": "item_042",
+   "ds": "ImpliHateVid",
+   "id": "EX_329",
+   "grp": "CTRL_HATE",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Moonman track with racist slurs, genocidal lyrics and homophobic slurs used as the video's own soundtrack.",
+    "m3q": "Moon Man track: uploader's own song celebrates killing and gassing Black people with racist and homophobic slurs.",
+    "z9x": "Video is a Moonman song whose lyrics celebrate killing and gassing Black people plus anti-gay slurs."
+   }
+  },
+  {
+   "item": "item_018",
+   "ds": "ImpliHateVid",
+   "id": "IM_278",
+   "grp": "CTRL_HATE",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Jewish host ironically leans into the killed-Jesus trope to troll the antisemite Nick Fuentes, mocking him.",
+    "m3q": "Podcast crew sarcastically play up antisemitic 'Jews killed Jesus' trope to mock Nick Fuentes, not to assert it.",
+    "z9x": "Speakers sarcastically voice the 'Jews killed Jesus' trope to taunt Nick Fuentes and antisemites, mocking the bigots."
+   }
+  },
+  {
+   "item": "item_095",
+   "ds": "ImpliHateVid",
+   "id": "IM_31",
+   "grp": "CTRL_HATE",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Undercover anti-abortion footage discussing fetal remains; no attack on a protected identity group.",
+    "m3q": "Undercover abortion-clinic footage; graphic but contains no identity-based attack.",
+    "z9x": "Anti-abortion clip with clinician describing fetal remains; graphic but contains no identity-group attack."
+   }
+  },
+  {
+   "item": "item_017",
+   "ds": "ImpliHateVid",
+   "id": "IM_484",
+   "grp": "CTRL_HATE",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "First-person white-nationalist manifesto defending slavery and apartheid and denying the Holocaust.",
+    "m3q": "White-nationalist monologue asserts racial supremacy, denies the Holocaust and blames Jews, entirely in creator's voice.",
+    "z9x": "White-nationalist narration dehumanises non-whites, denies the Holocaust and blames Jews, entirely in the creator's voice."
+   }
+  },
+  {
+   "item": "item_084",
+   "ds": "ImpliHateVid",
+   "id": "IM_79",
+   "grp": "CTRL_HATE",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "on_screen_speaker",
+    "on_screen_speaker",
+    "on_screen_speaker"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Interviewee argues at length that white people are inherently superior and Africans incapable, presented without any critical framing.",
+    "m3q": "Interviewee asserts whites are superior and Africans backward and incapable; racial-hierarchy claims presented without any distancing.",
+    "z9x": "Interviewee asserts white people are superior and Africans primitive; uploader posts the racial-superiority claims without any distancing."
+   }
+  },
+  {
+   "item": "item_043",
+   "ds": "MHC",
+   "id": "01ygFLVdj8s",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "on_screen_speaker",
+    "on_screen_speaker",
+    "on_screen_speaker"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "News host sarcastically mocks a trans woman's gender identity; clip reposted as entertainment with no criticism.",
+    "m3q": "Clip of a Sky News host sarcastically mocking a trans woman's story and identity, posted with no critical framing.",
+    "z9x": "News host sarcastically mocks a trans woman over misgendering; clip posted with no distancing."
+   }
+  },
+  {
+   "item": "item_009",
+   "ds": "MHC",
+   "id": "68gvhiQVzDI",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Uploader performs a mocking 'mean girl' female stereotype as comedy with no distancing frame.",
+    "m3q": "Creator performs a mocking 'mean girl' female caricature in pink wig for comedy with no critical framing.",
+    "z9x": "Creator plays a pink-wig 'mean girl' caricature as comedy, deploying a mocking female stereotype."
+   }
+  },
+  {
+   "item": "item_053",
+   "ds": "MHC",
+   "id": "I557gVaQ_rE",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Host mocks drag performers as men who think they are women and makes race-based remarks, all as his own commentary.",
+    "m3q": "Host derides drag performers as 'men who think they're women' and adds race-based tirades against white people, no distancing.",
+    "z9x": "Host mocks drag performers as 'men who think they're women' and wishes white liberals would disappear."
+   }
+  },
+  {
+   "item": "item_011",
+   "ds": "MHC",
+   "id": "IFP0l5EUO70",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Aimed at child abusers, which is not a protected identity group; no identity attack present.",
+    "m3q": "Mocks the 'Minor Attracted Persons' euphemism; pedophiles are not a protected identity group.",
+    "z9x": "Gun-range reaction aimed at pedophiles and their euphemism, not at any protected identity group."
+   }
+  },
+  {
+   "item": "item_065",
+   "ds": "MHC",
+   "id": "R3Xt1__7TwQ",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Comedy podcast banter about jealousy and concubines; the joke targets the co-host, not an identity group.",
+    "m3q": "Comedy podcast bit about emperors' concubines and personal jabs between hosts; no group-identity attack.",
+    "z9x": "Comedy podcast banter about emperors and concubines plus a personal jab; no group-identity attack."
+   }
+  },
+  {
+   "item": "item_055",
+   "ds": "MHC",
+   "id": "qLa59rRqxaE",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "on_screen_speaker",
+    "on_screen_speaker",
+    "on_screen_speaker"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Host demeans a childless woman over 35 by rating her worth on looks and childbearing; reposted without criticism.",
+    "m3q": "Reposted clip of a host demeaning a woman's worth by looks and fertility ratings, framed as entertainment.",
+    "z9x": "Clip channel reposts Kevin Samuels demeaning a woman by rating women's worth on looks and childbearing."
+   }
+  },
+  {
+   "item": "item_073",
+   "ds": "MHC",
+   "id": "tTJvScuxpZ4",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Host asserts in her own voice that drag queens and non-binary people are perverts driven by hatred of women.",
+    "m3q": "Host asserts drag queens and non-binary people are perverted and hate women; attack on gender identity.",
+    "z9x": "Host asserts drag queens and non-binary people are sick perverts driven by hatred of women, her own claim."
+   }
+  },
+  {
+   "item": "item_078",
+   "ds": "MHC",
+   "id": "uPJtlBAOT_U",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Police arrest footage with personal insult 'idiot frauditor'; no group-identity attack present.",
+    "m3q": "First-amendment auditor arrest footage; no identity-based attack present.",
+    "z9x": "Police bodycam-style clip of an auditor arrested and tased; no group-identity material."
+   }
+  },
+  {
+   "item": "item_076",
+   "ds": "MHC_zh",
+   "id": "BV12B4y1x7eK",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Creator performs a comedy skit mocking women as greedy 'mama's girls' demanding bride price, gender stereotype played straight.",
+    "m3q": "Skit mocking women as mother-controlled and greedy for bride price, played straight as comedy with no distancing.",
+    "z9x": "Uploader performs a comedy skit mocking women as mother-controlled and greedy for bride price, no distancing."
+   }
+  },
+  {
+   "item": "item_077",
+   "ds": "MHC_zh",
+   "id": "BV1Ra4y1V7Ji",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Uploader jokes that gay male pairing is 'sick' and titles it a woman fainting from fright at gay men.",
+    "m3q": "Uploader jokes that gay men are sick and frames them as horrifying; mockery of sexual orientation as entertainment.",
+    "z9x": "Uploader's title jokes a woman fainted from fright at gay men, using sexual orientation as the punchline."
+   }
+  },
+  {
+   "item": "item_046",
+   "ds": "MHC_zh",
+   "id": "BV1bp4y1n7FC",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Title calls two countries idiots while their flags are covered in feces emoji; nationality-based degradation as the video's content.",
+    "m3q": "Uploader titles it 'two idiot countries' and covers the Korean flags with poop emojis, attacking by nationality.",
+    "z9x": "Uploader titles it 'two idiot countries' and covers the Korean flags with feces emoji."
+   }
+  },
+  {
+   "item": "item_029",
+   "ds": "MHC_zh",
+   "id": "BV1kQ4y1k72V",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Uploader titles a dancing woman's video with the gendered slur 'slut', deploying it against her.",
+    "m3q": "Uploader titles a woman's dance clip '荡妇' (slut), a gendered slur applied with no distancing.",
+    "z9x": "Uploader titles a dancing woman's clip with the gendered slur 'dangfu' (slut), no distancing."
+   }
+  },
+  {
+   "item": "item_093",
+   "ds": "MHC_zh",
+   "id": "BV1pE411A787",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "quoted_third_party",
+    "quoted_third_party",
+    "caption"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Uploader films and jokes along with a sign using the slur 'sissy', applying it to himself as the punchline.",
+    "m3q": "Uploader films and jokes along with a sign calling toilet-paper users sissies, an effeminacy slur, adding no criticism.",
+    "z9x": "Video displays and jokes along with a sign calling toilet-paper users 'sissies', an effeminacy slur, with no criticism."
+   }
+  },
+  {
+   "item": "item_056",
+   "ds": "MHC_zh",
+   "id": "BV1vM411p7jy",
+   "grp": "CTRL_HATE",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Streamer calls his fans gutter maggots; personal insults with no group-identity basis.",
+    "m3q": "Streamer insults his own fans as gutter maggots; abusive but with no group-identity basis.",
+    "z9x": "Streamer calls his fans gutter maggots; abusive but with no group-identity basis."
+   }
+  },
+  {
+   "item": "item_075",
+   "ds": "HateMM",
+   "id": "non_hate_video_279",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Drinking challenge video with ordinary profanity only; no group-identity content.",
+    "m3q": "Drinking challenge video with ordinary profanity only; no identity-based content.",
+    "z9x": "Giant-straw drinking challenge with ordinary profanity only; no group-identity content at all."
+   }
+  },
+  {
+   "item": "item_010",
+   "ds": "HateMM",
+   "id": "non_hate_video_356",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Literal raccoon-hunting dog and heartworm treatment story; no identity-attacking material.",
+    "m3q": "Raccoon-hunting dog and ivermectin heartworm story; 'coon' refers to raccoons, no identity attack.",
+    "z9x": "Raccoon-hunting dog and heartworm treatment story; 'coon' refers to the animal, no identity attack."
+   }
+  },
+  {
+   "item": "item_031",
+   "ds": "HateMM",
+   "id": "non_hate_video_4",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Reposted shock clip about a funeral director dumping a body; no group-identity attack.",
+    "m3q": "Shock clip captioned about a funeral director dumping a body over a bounced cheque; no identity attack.",
+    "z9x": "Shock clip of a funeral-home dispute over a bounced cheque; caption references no group identity."
+   }
+  },
+  {
+   "item": "item_049",
+   "ds": "HateMM",
+   "id": "non_hate_video_496",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Silent news agency street footage of an incident; presented as documentary material with no attacking content.",
+    "m3q": "Silent news agency street footage of a roadside incident; no identity-attacking content present.",
+    "z9x": "Silent bystander news footage of women by a roadside; no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_040",
+   "ds": "ImpliHateVid",
+   "id": "NH_187",
+   "grp": "CTRL_NONHATE",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Lifestyle and spirituality monologue about societal awakening; no identity-attacking content.",
+    "m3q": "Lifestyle-awakening monologue about society and habits; no identity group is attacked.",
+    "z9x": "Monologue about lifestyle and spiritual awakening; no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_063",
+   "ds": "ImpliHateVid",
+   "id": "NH_211",
+   "grp": "CTRL_NONHATE",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Generic tarot-style reading about opportunity and success; no identity-attacking material.",
+    "m3q": "Generic tarot-style spiritual reading about opportunity and success; no identity-attacking material.",
+    "z9x": "Generic tarot-style spiritual reading; no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_061",
+   "ds": "ImpliHateVid",
+   "id": "NH_412",
+   "grp": "CTRL_NONHATE",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Creator jokes about the antisemitic 'jewed down' slur and claims criticism of Jews gets you deleted.",
+    "m3q": "Sarcastic YouTube tutorial where the uploader asserts you get banned for speaking of Jews non-positively, an antisemitic-power trope.",
+    "z9x": "Narrator claims YouTube deletes anyone criticising Jews and uses the antisemitic 'jewed down' epithet."
+   }
+  },
+  {
+   "item": "item_041",
+   "ds": "ImpliHateVid",
+   "id": "NH_443",
+   "grp": "CTRL_NONHATE",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Geoengineering conspiracy commentary criticising named elites and institutions, not attacking a protected identity group.",
+    "m3q": "Geoengineering conspiracy commentary attacking named elites and institutions, not any protected identity group.",
+    "z9x": "Geoengineering conspiracy commentary targets institutions and named elites, not a protected identity group."
+   }
+  },
+  {
+   "item": "item_007",
+   "ds": "ImpliHateVid",
+   "id": "NH_617",
+   "grp": "CTRL_NONHATE",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Neutral explainer on qualities of a good general; no identity-attacking content.",
+    "m3q": "Generic essay on qualities of a good general; contains no identity-attacking material.",
+    "z9x": "Neutral explainer on qualities of a good general; no identity-attacking content at all."
+   }
+  },
+  {
+   "item": "item_087",
+   "ds": "ImpliHateVid",
+   "id": "NH_892",
+   "grp": "CTRL_NONHATE",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Great Wall conspiracy claim about falsified history; no attack on any identity group.",
+    "m3q": "Pseudo-historical claim about who built the Great Wall; no identity-based attack.",
+    "z9x": "Great Wall conspiracy claim about Tartarian builders and falsified history; no identity-group attack."
+   }
+  },
+  {
+   "item": "item_004",
+   "ds": "ImpliHateVid",
+   "id": "NH_924",
+   "grp": "CTRL_NONHATE",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Educational recitation of unalienable rights; no identity-attacking material.",
+    "m3q": "Educational recitation of unalienable rights; no identity-attacking content at all.",
+    "z9x": "Educational recitation of unalienable rights; contains no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_030",
+   "ds": "MHC",
+   "id": "71zppfNBrMY",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Compilation of video-game character dialogue; innuendo title only, no identity-attacking material.",
+    "m3q": "Injustice 2 game dialogue compilation about Dick Grayson's death; no identity-based attack.",
+    "z9x": "Injustice game dialogue compilation about Dick Grayson's death; no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_045",
+   "ds": "MHC",
+   "id": "8pEa6Jfz8bA",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Friendly nonbinary interviews at a pride parade; supportive, no attacking material.",
+    "m3q": "Supportive nonbinary vlog at a Pride parade; contains no identity-attacking material.",
+    "z9x": "Friendly nonbinary vlog at a pride parade; supportive content with no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_035",
+   "ds": "MHC",
+   "id": "HO8ndDCRe_A",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "quoted_third_party",
+    "none",
+    "quoted_third_party"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Gay speaker recounts homophobic remarks others made about him; the video criticises those remarks rather than endorsing them.",
+    "m3q": "Podcast clip where a gay creator recounts his own coming-out; recalled homophobia is criticised, not endorsed.",
+    "z9x": "Gay speaker recounts homophobic remarks others made about him; clip is personal narrative, not endorsement."
+   }
+  },
+  {
+   "item": "item_020",
+   "ds": "MHC",
+   "id": "RAGvPqMoW-4",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Uploader's own cartoon and title use 'gay' as a pejorative punchline with no distancing.",
+    "m3q": "Creator's own cartoon and title use 'gay' as a pejorative punchline with no distancing.",
+    "z9x": "Animation's title and punchline use 'gay' as a pejorative for comedy, with no distancing frame."
+   }
+  },
+  {
+   "item": "item_097",
+   "ds": "MHC",
+   "id": "UwLhLuZ3C9U",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Boxing press event where the crowd hurls a personal insult; trash talk with no group-identity basis.",
+    "m3q": "Boxing press-event footage with crowd trash talk; personal insults with no group-identity basis.",
+    "z9x": "Boxing press-conference footage where the crowd calls him a coward; personal taunts, no group-identity attack."
+   }
+  },
+  {
+   "item": "item_028",
+   "ds": "MHC",
+   "id": "fzFdxJSUvNo",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "ZBrush sculpting turnaround of a mythological harpy; no identity-attacking material.",
+    "m3q": "ZBrush sculpting timelapse of a harpy creature; contains no identity-attacking material.",
+    "z9x": "ZBrush sculpting turnaround of a mythical harpy; no identity-attacking material at all."
+   }
+  },
+  {
+   "item": "item_044",
+   "ds": "MHC",
+   "id": "qqBqadanajY",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Wildlife facts about the harpy eagle; no identity-attacking material.",
+    "m3q": "Educational shorts video listing harpy eagle facts; no identity-attacking material at all.",
+    "z9x": "Educational facts video about harpy eagles; no identity-attacking content."
+   }
+  },
+  {
+   "item": "item_032",
+   "ds": "MHC",
+   "id": "xqilG4oMvvI",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Street interview of kids telling crude jokes; vulgar but no identity-based attack.",
+    "m3q": "Street interview with kids telling crude jokes; vulgar but no group-identity attack.",
+    "z9x": "Street interview of children telling jokes; crude but contains no identity-based attack."
+   }
+  },
+  {
+   "item": "item_091",
+   "ds": "MHC_zh",
+   "id": "BV11S4y1n72U",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Home-cooking recipe video for dry-pot chicken; no identity-related content at all.",
+    "m3q": "Home cooking tutorial for dry-pot chicken; no identity-related content.",
+    "z9x": "Home cooking tutorial for dry-pot chicken with background music; no identity content at all."
+   }
+  },
+  {
+   "item": "item_083",
+   "ds": "MHC_zh",
+   "id": "BV19N4y1v7yG",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Traditional Chinese medicine clip about erectile dysfunction remedies; sexual health content, no identity-attacking material.",
+    "m3q": "Traditional-medicine ad about erectile dysfunction; no identity-attacking material.",
+    "z9x": "Traditional-medicine clip about erectile dysfunction remedies; sexual health content only, no identity attack."
+   }
+  },
+  {
+   "item": "item_059",
+   "ds": "MHC_zh",
+   "id": "BV1Lz4y1T7rn",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "ENDORSE",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "on_screen_speaker",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Mutual comedic teasing between two TV hosts; showbiz banter, not an identity-based attack.",
+    "m3q": "Variety-show clip posted as comedy where a male host jabs that the actress would play a brothel madam as herself.",
+    "z9x": "Variety-show comedy banter between two celebrities; teasing without group-identity attack."
+   }
+  },
+  {
+   "item": "item_019",
+   "ds": "MHC_zh",
+   "id": "BV1X5411s76j",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "TV news report on a fatal tick bite; no identity-attacking material at all.",
+    "m3q": "Chinese TV news report on a man dying from a tick bite; no identity-attacking material.",
+    "z9x": "Local news report on a fatal tick bite; contains no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_067",
+   "ds": "MHC_zh",
+   "id": "BV1ad4y1Q7eL",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Chinese news report about a 12-year-old driving on the highway; no identity-attacking content.",
+    "m3q": "Chinese local news report about a 12-year-old driving his father's car on the motorway; no identity attack.",
+    "z9x": "Chinese news report on a 12-year-old who drove his father's car on the highway."
+   }
+  },
+  {
+   "item": "item_036",
+   "ds": "MHC_zh",
+   "id": "BV1sg411i7Ft",
+   "grp": "CTRL_NONHATE",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": null,
+   "why": {
+    "r7k": "Dermatologist explains a harmless skin condition; no identity-attacking material at all.",
+    "m3q": "Chinese dermatologist explains pearly penile papules; purely medical education with no identity-based attack.",
+    "z9x": "Dermatologist explains benign pearly penile papules; purely medical education with no identity attack."
+   }
+  },
+  {
+   "item": "item_026",
+   "ds": "HateMM",
+   "id": "hate_video_365",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "on_screen_speaker",
+    "on_screen_speaker",
+    "on_screen_speaker"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Footage documents a heckler's 'stay in Mexico' slur while speakers on camera condemn it.",
+    "m3q": "Footage documents a heckler telling a Latino father to go back to Mexico; video exposes the incident.",
+    "z9x": "Meeting footage documents an audience member's 'stay in Mexico' heckle as evidence of the racism described."
+   }
+  },
+  {
+   "item": "item_082",
+   "ds": "ImpliHateVid",
+   "id": "EX_150",
+   "grp": "S_FN",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Speaker ranks women by race for sexual desirability and claims Asian accounts are CCP bots, in his own voice.",
+    "m3q": "Uploader ranks women by race for sexual desirability, asserting Asian women were less in demand; racialized sexual stereotyping.",
+    "z9x": "Speaker ranks women by race for sexual desirability, calling Asian women less in demand, as his own generalisation."
+   }
+  },
+  {
+   "item": "item_052",
+   "ds": "ImpliHateVid",
+   "id": "IM_176",
+   "grp": "S_FN",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Cultural essay on shifting body-type preferences; sexual but no identity-based attack.",
+    "m3q": "Video essay on shifting cultural preference for breasts versus buttocks; sexual topic, no identity attack.",
+    "z9x": "Video essay on shifting sexual tastes; objectifying but no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_074",
+   "ds": "ImpliHateVid",
+   "id": "IM_308",
+   "grp": "S_FN",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Neutral news report sympathetic to international students facing permit caps; no identity-attacking material.",
+    "m3q": "Neutral CTV news report on international student permit caps; sympathetic reporting, no identity attack.",
+    "z9x": "CTV news report on Canadian international-student permit caps, sympathetic to students; no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_025",
+   "ds": "ImpliHateVid",
+   "id": "IM_5",
+   "grp": "S_FN",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "on_screen_speaker",
+    "on_screen_speaker",
+    "uploader"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Clip carries a senator's attack on Aboriginal ceremonies and history uncritically, with no distancing framing.",
+    "m3q": "Broadcast commentator disparages Aboriginal Australians' heritage claims and calls for ending 'indulging them' with ceremonies.",
+    "z9x": "Editorial demeans Aboriginal Australians and their ceremonies as years of 'indulging them', no distancing."
+   }
+  },
+  {
+   "item": "item_013",
+   "ds": "ImpliHateVid",
+   "id": "IM_57",
+   "grp": "S_FN",
+   "frames": 0,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Institutional criticism of churches over tax exemption; no attack on believers as an identity.",
+    "m3q": "Argument that churches should be taxed; institutional and financial criticism, not attack on believers' identity.",
+    "z9x": "Criticism of churches as untaxed businesses is institutional, not an attack on believers' identity."
+   }
+  },
+  {
+   "item": "item_092",
+   "ds": "MHC",
+   "id": "03qOelm_dK8",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Commentator criticises Disney over who teaches children about sex while explicitly stating he accepts lesbian couples.",
+    "m3q": "Commentator criticizes Disney's choice while explicitly stating he accepts lesbian couples; corporate criticism, not identity attack.",
+    "z9x": "Commentator criticises Disney's choice while explicitly stating he accepts lesbian couples; institutional criticism, not identity attack."
+   }
+  },
+  {
+   "item": "item_002",
+   "ds": "MHC",
+   "id": "EEC98aHSgIY",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "DISTANCED",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "uploader",
+    "none",
+    "uploader"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Channel's own commentary frames the adulteress as the temptress ruining fools, endorsed without distancing.",
+    "m3q": "Devotional Bible-verse slide video about fools and the adulteress; no identity-based attack on any group.",
+    "z9x": "Uploader's own commentary endorses framing of the adulteress woman as a snare for fools."
+   }
+  },
+  {
+   "item": "item_090",
+   "ds": "MHC",
+   "id": "_qldaPBgkk0",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Podcast hosts say lesbians coexist peacefully with men and have not been wronged; no attack on any group.",
+    "m3q": "Podcast guests say lesbians coexist peacefully with men; observation about man-hating, no attack on a group.",
+    "z9x": "Lesbian podcasters say they coexist peacefully with men and were not wronged by them; no attack."
+   }
+  },
+  {
+   "item": "item_054",
+   "ds": "MHC",
+   "id": "cXRgVEENkPA",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Culture-war commentary criticising a drag group's mockery of Catholics; institutional criticism, not identity attack.",
+    "m3q": "Commentary segment reporting the Dodgers-Sisters controversy; political-religious criticism without slurs or dehumanisation.",
+    "z9x": "Culture-war commentary on the Dodgers dispute; criticism of an event, not an identity-based attack."
+   }
+  },
+  {
+   "item": "item_014",
+   "ds": "MHC",
+   "id": "dK43yHIUMKA",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "archival",
+    "quoted_third_party",
+    "archival"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Archival stand-up clip explicitly attributed to Dave Allen, whose punchline mocks the homophobic speaker.",
+    "m3q": "Archival Dave Allen stand-up joke; anti-gay anxiety is attributed to a quoted emigrating man and mocked.",
+    "z9x": "Archival Dave Allen stand-up clip, explicitly attributed, whose joke targets the emigrating homophobe."
+   }
+  },
+  {
+   "item": "item_070",
+   "ds": "MHC",
+   "id": "h_wKRDyoG_c",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "quoted_third_party",
+    "quoted_third_party",
+    "quoted_third_party"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Reports netizens' racism and 'princess syndrome' accusations against an idol, attributing both sides without taking one.",
+    "m3q": "Gossip clip reporting netizens' racism and princess-syndrome accusations against an idol while also giving fans' defense.",
+    "z9x": "Gossip clip reports netizens' racism and 'princess syndrome' accusations against an idol, gives fan rebuttal, takes no side."
+   }
+  },
+  {
+   "item": "item_023",
+   "ds": "MHC_zh",
+   "id": "BV12G4y1S7mN",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "quoted_third_party",
+    "none",
+    "quoted_third_party"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Film recap narrates a replayed movie scene sympathetically, calling the girl pitiable and stripped of dignity.",
+    "m3q": "Sympathetic film recap of a girl sold into a brothel; narrator condemns her degradation.",
+    "z9x": "Replayed film scene of a girl's degradation, narrated with explicit sympathy for her humiliation."
+   }
+  },
+  {
+   "item": "item_060",
+   "ds": "MHC_zh",
+   "id": "BV15h4y157Km",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "ENDORSE"
+   ],
+   "maj": "DISTANCED",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "uploader"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Crude jokes about a Japanese balloon funeral custom; mocks a practice rather than attacking a group identity.",
+    "m3q": "Dark-humour commentary on Japanese balloon funerals mocking the custom, not attacking Japanese people as a group.",
+    "z9x": "Uploader jokes mockingly about Japanese balloon funerals and Japanese grandmothers' ashes as entertainment."
+   }
+  },
+  {
+   "item": "item_027",
+   "ds": "MHC_zh",
+   "id": "BV1Kh411T7FJ",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "DISTANCED",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "on_screen_speaker",
+    "on_screen_speaker",
+    "on_screen_speaker"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Reposted variety-show clip where guests debate gendered male labels; uploader merely displays it, taking no side.",
+    "m3q": "Talk-show clip and title debate which gendered male epithet, '妈宝男' or '普信男', is worse, with no distancing.",
+    "z9x": "Uploader clips and titles a show debating which male stereotype is scarier, amplifying the epithets uncritically."
+   }
+  },
+  {
+   "item": "item_037",
+   "ds": "MHC_zh",
+   "id": "BV1Vy4y1p7x2",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Titled bullying of a female classmate, narrated as an animal tamer subduing a beast, played for laughs.",
+    "m3q": "Uploader films bullying a female classmate and narrates her as an animal being tamed, played for laughs.",
+    "z9x": "Uploader films bullying a female classmate and narrates her as an animal being tamed, as entertainment."
+   }
+  },
+  {
+   "item": "item_034",
+   "ds": "MHC_zh",
+   "id": "BV1aP4y1E7PF",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "DISTANCED",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "uploader",
+    "none",
+    "uploader"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Uploader's title frames young women as soul-stealing seductresses to avoid, presented as the video's own content.",
+    "m3q": "Compilation of women dancing with flirty 'stay away from 少妇' caption; sexualized but not an identity attack.",
+    "z9x": "Title frames young women as soul-stealing seductresses to avoid, a gender stereotype used as entertainment."
+   }
+  },
+  {
+   "item": "item_033",
+   "ds": "MHC_zh",
+   "id": "BV1ch411L7VP",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "caption",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Burned-in text calls Hepburn a whore and pushes the antisemitic Rothschild conspiracy trope approvingly.",
+    "m3q": "Uploader's title and burned-in captions brand Audrey Hepburn '天下第一淫妇', a gendered slur, as their own claim.",
+    "z9x": "Uploader's title and burned-in text brand Audrey Hepburn 'the world's number one slut', a gendered slur."
+   }
+  },
+  {
+   "item": "item_081",
+   "ds": "MHC_zh",
+   "id": "BV1qZ4y1T71a",
+   "grp": "S_FN",
+   "frames": 8,
+   "gold": "ENDORSE",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "DISTANCED"
+   ],
+   "maj": "ENDORSE",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "none"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Skit built on the creator's own stereotype that boy-crazy women excuse anything a man does.",
+    "m3q": "Skit's own title generalizes women as boy-crazy and treats unwanted face-touching as fine; gender stereotype played for laughs.",
+    "z9x": "Light comedy skit about a girl swooning over a handsome passerby; no demeaning identity attack."
+   }
+  },
+  {
+   "item": "item_071",
+   "ds": "HateMM",
+   "id": "non_hate_video_121",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Prank call accusing a man of pedophilia; personal accusation with no group-identity basis.",
+    "m3q": "Prank call accusing a man and his son of pedophilia; personal accusation with no group-identity attack.",
+    "z9x": "Prank call accusing a neo-Nazi blogger and his father of pedophilia; personal accusations, no group-identity attack."
+   }
+  },
+  {
+   "item": "item_057",
+   "ds": "HateMM",
+   "id": "non_hate_video_149",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "archival",
+    "archival",
+    "archival"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Vintage 78rpm comic record containing racial slurs is played and displayed as a historical recording.",
+    "m3q": "Video shows an antique 78rpm disc playing an old comic song whose lyrics contain period racial slurs.",
+    "z9x": "Video documents an antique 78rpm record playing a period comic song containing racial slurs."
+   }
+  },
+  {
+   "item": "item_062",
+   "ds": "HateMM",
+   "id": "non_hate_video_16",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "archival",
+    "archival",
+    "archival"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "1950s segregationist interview with racial slurs presented as timecoded archival stock news footage.",
+    "m3q": "Stock-archive 1950s newsreel of a segregationist announcing a committee against Black rock and roll records.",
+    "z9x": "Timecoded 1950s stock newsreel of a segregationist announcing an anti-rock-and-roll committee, presented as archive."
+   }
+  },
+  {
+   "item": "item_098",
+   "ds": "HateMM",
+   "id": "non_hate_video_32",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "quoted_third_party",
+    "quoted_third_party",
+    "quoted_third_party"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Song using the racial slur throughout is the video's entire soundtrack over a static image, no distancing.",
+    "m3q": "Video's entire soundtrack is a song using the racial slur plus a jab at men called women, played with no framing.",
+    "z9x": "Song using the racial slur repeatedly is the video's entire soundtrack over a static image, no distancing."
+   }
+  },
+  {
+   "item": "item_094",
+   "ds": "HateMM",
+   "id": "non_hate_video_400",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "quoted_third_party",
+    "quoted_third_party",
+    "quoted_third_party"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "A racist song built on the slur is dubbed over talk-show footage as the video's own soundtrack, no critical framing.",
+    "m3q": "Talk-show footage of a Black child dubbed over with the racist Alabama Nigger song as the video's soundtrack.",
+    "z9x": "A racist 'Alabama N-word' song is dubbed over talk-show footage as the video's soundtrack, no critical framing."
+   }
+  },
+  {
+   "item": "item_058",
+   "ds": "HateMM",
+   "id": "non_hate_video_528",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Far-right party promo campaigning for an imprisoned Holocaust denier, framing her denial as free speech.",
+    "m3q": "Far-right party promo campaigns for jailed Holocaust denier Ursula Haverbeck, presenting her denial as free speech.",
+    "z9x": "Far-right party promo glorifies convicted Holocaust denier Haverbeck and mobilises a demonstration for her."
+   }
+  },
+  {
+   "item": "item_096",
+   "ds": "HateMM",
+   "id": "non_hate_video_642",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "caption",
+    "caption",
+    "caption"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Uploader overlays antisemitic banner text ('FuckTheJews.com', 'WorldGoyimUnite.com') across the whole reposted clip.",
+    "m3q": "Screen recording carries the uploader's burned-in antisemitic banners including FuckTheJews.com and WorldGoyimUnite.com.",
+    "z9x": "Uploader overlays antisemitic banner text ('FuckTheJews.com', 'WorldGoyimUnite.com') across the reposted music video."
+   }
+  },
+  {
+   "item": "item_003",
+   "ds": "ImpliHateVid",
+   "id": "NH_394",
+   "grp": "S_FP",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Speaker threatens violence while mocking the target's disability with 'crippled ass', no distancing.",
+    "m3q": "Speaker threatens to kick someone's 'crippled ass', a disability-based insult delivered in his own voice.",
+    "z9x": "Speaker threatens and mocks target's disability with 'crippled ass', no critical or quoting frame."
+   }
+  },
+  {
+   "item": "item_068",
+   "ds": "ImpliHateVid",
+   "id": "NH_396",
+   "grp": "S_FP",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Interview with a detransitioner criticising gender clinics; medical and institutional criticism, no identity-group slurs or dehumanisation.",
+    "m3q": "Interview with a detransitioner criticizing gender clinics; medical and institutional criticism, no identity slurs or dehumanization.",
+    "z9x": "Interview with a detransitioner criticising gender clinics and a named doctor; medical/institutional criticism, no identity-group slur or dehumanisation."
+   }
+  },
+  {
+   "item": "item_001",
+   "ds": "ImpliHateVid",
+   "id": "NH_44",
+   "grp": "S_FP",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Uploader delivers red-pill monologue generalising women as ego-driven and manipulative, no distancing frame.",
+    "m3q": "Red-pill monologue stereotypes women as ego-driven and manipulative; creator asserts it directly with no distancing.",
+    "z9x": "Creator delivers red-pill monologue demeaning women as ego-driven and undeserving of respect, no distancing."
+   }
+  },
+  {
+   "item": "item_016",
+   "ds": "ImpliHateVid",
+   "id": "NH_650",
+   "grp": "S_FP",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Ideological satire of feminist argumentation; criticism of a position, not attack on women's identity.",
+    "m3q": "Animated argument against feminist theory; ideological criticism rather than attack on women as a group.",
+    "z9x": "Ideological argument that sexism against men exists; mocks feminist reasoning, not women as a group."
+   }
+  },
+  {
+   "item": "item_088",
+   "ds": "ImpliHateVid",
+   "id": "NH_736",
+   "grp": "S_FP",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Comedian calls racial slurs lazy and unimaginative; no slur used and no group attacked.",
+    "m3q": "Speaker dismisses racial slurs as lazy insults; mentions but does not deploy any slur against a group.",
+    "z9x": "Speaker calls using racial slurs stupid and lazy without uttering any; no group is attacked."
+   }
+  },
+  {
+   "item": "item_099",
+   "ds": "ImpliHateVid",
+   "id": "NH_875",
+   "grp": "S_FP",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "quoted_third_party",
+    "quoted_third_party",
+    "quoted_third_party"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Commentator replays and ridicules another creator's parody clip, explicitly attributing the sexist line to him.",
+    "m3q": "Commentator replays and mocks a leftist parody ad; the kitchen line comes from the ridiculed clip, not from him.",
+    "z9x": "Commentator plays another creator's clip while calling him an idiot and a clown, explicitly attributing the content."
+   }
+  },
+  {
+   "item": "item_064",
+   "ds": "ImpliHateVid",
+   "id": "NH_887",
+   "grp": "S_FP",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Complaint that Americans are sedentary and should garden; social criticism, no identity-group attack.",
+    "m3q": "Speaker criticises American sedentary habits and urges urban gardens; social criticism, no identity attack.",
+    "z9x": "Rant urging urban gardens and calling Americans sedentary; social criticism, not a group-identity attack."
+   }
+  },
+  {
+   "item": "item_021",
+   "ds": "ImpliHateVid",
+   "id": "NH_988",
+   "grp": "S_FP",
+   "frames": 0,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "DISTANCED",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "quoted_third_party",
+    "uploader"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Deploys the stereotype that Palestinians murder gay people to demean them, mocking critics, no critical frame.",
+    "m3q": "Absurdist reply mocking the speaker who paints Palestinians as gay-killers; creator ridicules that talking point.",
+    "z9x": "Speaker asserts Palestinians murder homosexuals as a group trait, presented as the video's own claim."
+   }
+  },
+  {
+   "item": "item_086",
+   "ds": "MHC",
+   "id": "8zLoOqXvk64",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Uploader captions CCTV of a robbery 'be aware of transgender on road', framing trans people as a public danger.",
+    "m3q": "Uploader's title tells viewers to beware of transgender people on the road, generalizing one robbery clip into a warning about the group.",
+    "z9x": "Uploader captions CCTV robbery footage 'Be aware of transgender on road', framing an identity group as a danger."
+   }
+  },
+  {
+   "item": "item_089",
+   "ds": "MHC",
+   "id": "DxcRdnzBZoo",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Couple candidly answer questions about disability and sex; no identity-attacking material.",
+    "m3q": "Disabled creator and partner answer questions about his body; no identity-attacking material.",
+    "z9x": "Disabled creator and partner answer questions about his body positively; no identity-attacking material."
+   }
+  },
+  {
+   "item": "item_085",
+   "ds": "MHC",
+   "id": "KDcCiUU8q5E",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": false,
+   "voice_votes": [
+    "none",
+    "quoted_third_party",
+    "none"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Podcast hosts criticise Trump and his crowd for misogyny and cruelty; the video attacks bigotry, not an identity.",
+    "m3q": "Podcast hosts criticize Trump's and his crowd's misogyny toward accusers; explicit condemnation, not endorsement.",
+    "z9x": "Podcast hosts condemn Trump's and his crowd's misogyny as cruel and disgusting; only criticism, no attacking material reproduced."
+   }
+  },
+  {
+   "item": "item_038",
+   "ds": "MHC",
+   "id": "N68vmAE5s_g",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "True-crime news recap of a child abuse conviction; no group-identity attack present.",
+    "m3q": "True-crime recap of a child-abuse conviction; condemns the offender, no group-identity attack.",
+    "z9x": "True-crime news recap of a child abuse conviction; no group-identity attack present."
+   }
+  },
+  {
+   "item": "item_039",
+   "ds": "MHC",
+   "id": "OMSByZ-o3Ww",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Profane vlog about signs of child abuse; profanity only, no identity-based attack.",
+    "m3q": "Man discusses signs of child sexual abuse; profane but contains no identity-based attack.",
+    "z9x": "Profane vlog about signs of child sexual abuse; no identity-based attack."
+   }
+  },
+  {
+   "item": "item_048",
+   "ds": "MHC",
+   "id": "XlJCNPi5inM",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Relationship commentary that also faults men; no demeaning identity-based attack in this clip.",
+    "m3q": "Relationship commentary on infidelity that mainly urges men to improve; no slur or dehumanising attack.",
+    "z9x": "Relationship-advice clip; says men must improve too, no demeaning identity-based attack in this excerpt."
+   }
+  },
+  {
+   "item": "item_006",
+   "ds": "MHC",
+   "id": "YDEsYXYlB8o",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Satire refuting the anti-gay groomer smear; creator mocks the bigoted premise rather than endorsing it.",
+    "m3q": "Satire defending gay people and refuting the 'groomer' smear; creator sides against the bigoted claim.",
+    "z9x": "Satire explicitly refutes the gay-groomer stereotype and concludes gays are harmless to children."
+   }
+  },
+  {
+   "item": "item_051",
+   "ds": "MHC",
+   "id": "ga1r2cweP80",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Documentary walkthrough of a red light district; no identity-attacking material.",
+    "m3q": "Red-light-district vlog showing sex workers' homes; intrusive but no group-identity attack.",
+    "z9x": "Documentary-style walkthrough of a red light district; no identity-based attack."
+   }
+  },
+  {
+   "item": "item_024",
+   "ds": "MHC",
+   "id": "j_foVftOOs4",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Commentary on news footage of police misconduct at a bar; no identity-based attack.",
+    "m3q": "Commentary on news footage of a police SUV crashing into a gay bar; criticism aimed at police.",
+    "z9x": "Podcast commentary on police misconduct after a cruiser hit a bar; no identity attack asserted."
+   }
+  },
+  {
+   "item": "item_047",
+   "ds": "MHC",
+   "id": "pofgIFZpR7c",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "none",
+    "none",
+    "none"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Self-improvement talk about masturbation and male lethargy; no attack on a group identity.",
+    "m3q": "Self-improvement talk about masturbation aimed at his own male audience; no group-identity attack.",
+    "z9x": "Masturbation self-improvement lecture aimed at men generally; no attack on a protected identity group."
+   }
+  },
+  {
+   "item": "item_022",
+   "ds": "MHC_zh",
+   "id": "BV1Km4y1u7ri",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "caption",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Uploader's added captions build the joke around the gendered 'mama's boy' epithet with no distancing.",
+    "m3q": "Fan edit labels an idol '妈宝男', a mocking gendered epithet, used as the video's own joke framing.",
+    "z9x": "Uploader labels the idol with the mocking gender stereotype 'mabao nan' as comedic fan content."
+   }
+  },
+  {
+   "item": "item_015",
+   "ds": "MHC_zh",
+   "id": "BV1Qk4y1g7PM",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "quoted_third_party",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "OWN",
+   "why": {
+    "r7k": "Creator quotes common misogynistic phrases in order to criticise them and defend feminism.",
+    "m3q": "Creator enacts misogynistic phrases explicitly to criticize them and closes with an anti-weaponization message.",
+    "z9x": "Creator enacts misogynistic phrases in order to expose and criticise them as unconscious sexism."
+   }
+  },
+  {
+   "item": "item_005",
+   "ds": "MHC_zh",
+   "id": "BV1m8411z7mV",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": false,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Uploader's own title uses the mocking gendered epithet for a boy-crazy woman with no distancing.",
+    "m3q": "Uploader's own title labels a woman '花痴娘们', a mocking gendered epithet, with no distancing framing.",
+    "z9x": "Uploader's title labels a woman with the mocking gendered epithet 'huachi niangmen', no distancing."
+   }
+  },
+  {
+   "item": "item_012",
+   "ds": "MHC_zh",
+   "id": "BV1to4y177df",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "DISTANCED",
+    "DISTANCED",
+    "DISTANCED"
+   ],
+   "maj": "DISTANCED",
+   "ok": true,
+   "in_M1_32": true,
+   "voice_votes": [
+    "on_screen_speaker",
+    "on_screen_speaker",
+    "on_screen_speaker"
+   ],
+   "gold_voice": "UNDET",
+   "why": {
+    "r7k": "Animated skit ridicules the abusive character's hypocrisy, framing her slurs as class prejudice.",
+    "m3q": "Animated skit where a character's slurs and prejudice are the butt of the creator's satire about classism.",
+    "z9x": "Animated satire criticises the character's slurs, framing such prejudice as really being classism."
+   }
+  },
+  {
+   "item": "item_080",
+   "ds": "MHC_zh",
+   "id": "BV1vK41177zi",
+   "grp": "S_FP",
+   "frames": 8,
+   "gold": "DISTANCED",
+   "votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "maj": "ENDORSE",
+   "ok": false,
+   "in_M1_32": true,
+   "voice_votes": [
+    "uploader",
+    "uploader",
+    "uploader"
+   ],
+   "gold_voice": "NOT_OWN",
+   "why": {
+    "r7k": "Uploader dubs and titles an anime clip around tearing apart a 'bitch', a gendered epithet used as the video's own content.",
+    "m3q": "Uploader's title and dub invite viewers to enjoy tearing apart a bitch; gendered slur used as content.",
+    "z9x": "Uploader's own title and dub call a woman a 'bitch' and celebrate tearing her apart, no distancing."
+   }
+  }
+ ]
+}
