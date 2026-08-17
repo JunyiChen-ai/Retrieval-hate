@@ -1,0 +1,273 @@
+{
+ "tag": "fb2",
+ "n_rows": 99,
+ "A_frames_primary": {
+  "view": "A_frames_primary",
+  "datasets": [
+   "HateMM",
+   "MHC",
+   "MHC_zh"
+  ],
+  "n": 72,
+  "n_S": 36,
+  "n_S_FP": 22,
+  "n_S_FN": 14,
+  "n_ctrl_hate": 18,
+  "n_ctrl_nonhate": 18,
+  "parse_ok": 71,
+  "P1_acc_S": 0.16666666666666666,
+  "P1_acc_S_FP": 0.09090909090909091,
+  "P1_acc_S_FN": 0.2857142857142857,
+  "P1_pass": false,
+  "P2_false_distancing": 0.05555555555555555,
+  "P2_pass": true,
+  "ctrl_nonhate_false_endorse": 0.05555555555555555,
+  "P3_gains": 15,
+  "P3_projected_damage": 38.88,
+  "P3_net": -23.88,
+  "P3_pass": false,
+  "P3_per_dataset": {
+   "HateMM": {
+    "loss_rate_hate": 0.25,
+    "loss_rate_nonhate": 0.0,
+    "n_correct_hate": 71,
+    "n_correct_nonhate": 118,
+    "projected_damage": 17.75
+   },
+   "MHC": {
+    "loss_rate_hate": 0.25,
+    "loss_rate_nonhate": 0.125,
+    "n_correct_hate": 39,
+    "n_correct_nonhate": 91,
+    "projected_damage": 21.12
+   },
+   "MHC_zh": {
+    "loss_rate_hate": 0.0,
+    "loss_rate_nonhate": 0.0,
+    "n_correct_hate": 32,
+    "n_correct_nonhate": 93,
+    "projected_damage": 0.0
+   }
+  },
+  "verdict": "FAIL",
+  "stance_hist": {
+   "S_FN": {
+    "quotes_mentions": 3,
+    "endorses": 4,
+    "no_hate_content": 7
+   },
+   "S_FP": {
+    "no_hate_content": 9,
+    "endorses": 10,
+    "reports": 1,
+    "condemns": 1,
+    "null": 1
+   },
+   "CTRL_HATE": {
+    "endorses": 15,
+    "reports": 1,
+    "quotes_mentions": 1,
+    "no_hate_content": 1
+   },
+   "CTRL_NONHATE": {
+    "no_hate_content": 16,
+    "endorses": 1,
+    "condemns": 1
+   }
+  },
+  "per_dataset_P1": {
+   "HateMM": {
+    "n": 8,
+    "acc": 0.125
+   },
+   "MHC": {
+    "n": 16,
+    "acc": 0.125
+   },
+   "MHC_zh": {
+    "n": 12,
+    "acc": 0.25
+   }
+  },
+  "tokens": {
+   "in": 202796,
+   "out": 4723,
+   "in_per_item": 2816.6,
+   "out_per_item": 65.6
+  }
+ },
+ "B_all99_as_frozen": {
+  "view": "B_all99_as_frozen",
+  "datasets": [
+   "HateMM",
+   "MHC",
+   "MHC_zh",
+   "ImpliHateVid"
+  ],
+  "n": 99,
+  "n_S": 49,
+  "n_S_FP": 30,
+  "n_S_FN": 19,
+  "n_ctrl_hate": 25,
+  "n_ctrl_nonhate": 25,
+  "parse_ok": 98,
+  "P1_acc_S": 0.16326530612244897,
+  "P1_acc_S_FP": 0.1,
+  "P1_acc_S_FN": 0.2631578947368421,
+  "P1_pass": false,
+  "P2_false_distancing": 0.04,
+  "P2_pass": true,
+  "ctrl_nonhate_false_endorse": 0.12,
+  "P3_gains": 18,
+  "P3_projected_damage": 118.3,
+  "P3_net": -100.3,
+  "P3_pass": false,
+  "P3_per_dataset": {
+   "HateMM": {
+    "loss_rate_hate": 0.25,
+    "loss_rate_nonhate": 0.0,
+    "n_correct_hate": 71,
+    "n_correct_nonhate": 118,
+    "projected_damage": 17.75
+   },
+   "MHC": {
+    "loss_rate_hate": 0.25,
+    "loss_rate_nonhate": 0.125,
+    "n_correct_hate": 39,
+    "n_correct_nonhate": 91,
+    "projected_damage": 21.12
+   },
+   "MHC_zh": {
+    "loss_rate_hate": 0.0,
+    "loss_rate_nonhate": 0.0,
+    "n_correct_hate": 32,
+    "n_correct_nonhate": 93,
+    "projected_damage": 0.0
+   },
+   "ImpliHateVid": {
+    "loss_rate_hate": 0.14285714285714285,
+    "loss_rate_nonhate": 0.2857142857142857,
+    "n_correct_hate": 192,
+    "n_correct_nonhate": 182,
+    "projected_damage": 79.43
+   }
+  },
+  "verdict": "FAIL",
+  "stance_hist": {
+   "S_FN": {
+    "quotes_mentions": 4,
+    "endorses": 5,
+    "no_hate_content": 10
+   },
+   "S_FP": {
+    "no_hate_content": 10,
+    "endorses": 16,
+    "reports": 1,
+    "condemns": 2,
+    "null": 1
+   },
+   "CTRL_HATE": {
+    "endorses": 21,
+    "reports": 1,
+    "quotes_mentions": 1,
+    "no_hate_content": 2
+   },
+   "CTRL_NONHATE": {
+    "no_hate_content": 21,
+    "endorses": 3,
+    "condemns": 1
+   }
+  },
+  "per_dataset_P1": {
+   "HateMM": {
+    "n": 8,
+    "acc": 0.125
+   },
+   "MHC": {
+    "n": 16,
+    "acc": 0.125
+   },
+   "MHC_zh": {
+    "n": 12,
+    "acc": 0.25
+   },
+   "ImpliHateVid": {
+    "n": 13,
+    "acc": 0.154
+   }
+  },
+  "tokens": {
+   "in": 245703,
+   "out": 6904,
+   "in_per_item": 2481.8,
+   "out_per_item": 69.7
+  }
+ },
+ "C_textonly_descriptive": {
+  "view": "C_textonly_descriptive",
+  "datasets": [
+   "ImpliHateVid"
+  ],
+  "n": 27,
+  "n_S": 13,
+  "n_S_FP": 8,
+  "n_S_FN": 5,
+  "n_ctrl_hate": 7,
+  "n_ctrl_nonhate": 7,
+  "parse_ok": 27,
+  "P1_acc_S": 0.15384615384615385,
+  "P1_acc_S_FP": 0.125,
+  "P1_acc_S_FN": 0.2,
+  "P1_pass": false,
+  "P2_false_distancing": 0.0,
+  "P2_pass": true,
+  "ctrl_nonhate_false_endorse": 0.2857142857142857,
+  "P3_gains": 3,
+  "P3_projected_damage": 79.43,
+  "P3_net": -76.43,
+  "P3_pass": false,
+  "P3_per_dataset": {
+   "ImpliHateVid": {
+    "loss_rate_hate": 0.14285714285714285,
+    "loss_rate_nonhate": 0.2857142857142857,
+    "n_correct_hate": 192,
+    "n_correct_nonhate": 182,
+    "projected_damage": 79.43
+   }
+  },
+  "verdict": "FAIL",
+  "stance_hist": {
+   "S_FN": {
+    "endorses": 1,
+    "no_hate_content": 3,
+    "quotes_mentions": 1
+   },
+   "S_FP": {
+    "endorses": 6,
+    "no_hate_content": 1,
+    "condemns": 1
+   },
+   "CTRL_HATE": {
+    "endorses": 6,
+    "no_hate_content": 1
+   },
+   "CTRL_NONHATE": {
+    "endorses": 2,
+    "no_hate_content": 5
+   }
+  },
+  "per_dataset_P1": {
+   "ImpliHateVid": {
+    "n": 13,
+    "acc": 0.154
+   }
+  },
+  "tokens": {
+   "in": 42907,
+   "out": 2181,
+   "in_per_item": 1589.1,
+   "out_per_item": 80.8
+  }
+ },
+ "VERDICT": "FAIL"
+}

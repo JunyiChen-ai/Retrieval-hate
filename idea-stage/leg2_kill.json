@@ -1,0 +1,353 @@
+{
+  "experiment": "LEG2-KILL — agreement-weighted contrastive objective, capped kill test",
+  "declaration": "ADAPTIVELY SELECTED. This hypothesis was chosen after the frozen P-A-v2 gate failed in both languages, because leg (ii) is the only leg that gate did not touch. It inherits no prior GO. The original P-A/P-A-v2 gate stays failed regardless of this outcome. A positive result grants the label 'exploratory' only, never 'recommended'. A negative result permanently closes the entire Human-Agreement family (legs i, ii, iii).",
+  "freeze": "idea-stage/PILOT_FREEZE_2026-08-09.md (section LEG2-KILL)",
+  "freeze_sha256_at_implementation": "14c803d1bbf408c193c0676dda7b46b7fb8f6117c3150287f1e32cade0a2f902",
+  "mode": "real",
+  "primary_comparator": "B = GenSCL (arXiv 2206.00384) Eq.2 with cosine label similarity",
+  "arms": {
+    "A": "BCE only (hard-label baseline head)",
+    "B": "GenSCL cosine label similarity on vote distributions",
+    "C": "raw inner product q_i^T q_j = P(Y_i = Y_j)  [candidate]",
+    "D": "shuffled-q placebo (global permutation of q, labels untouched)"
+  },
+  "hyper": {
+    "h_dim": 128,
+    "p_dim": 64,
+    "dropout": 0.2,
+    "lr": 0.001,
+    "wd": 0.01,
+    "steps": 400,
+    "tau": 0.1,
+    "lambda_grid": [
+      0.1,
+      0.3,
+      1.0,
+      3.0
+    ],
+    "nfold": 5,
+    "inner_nfold": 3,
+    "fold_seeds": [
+      20260914,
+      20260915,
+      20260916
+    ],
+    "placebo_seed": 20260920,
+    "threshold": 0.5,
+    "vote_smoothing": "none (frozen)"
+  },
+  "guard": "armed: any path containing 'test' HALTs",
+  "per_lang": {
+    "EN": {
+      "A": {
+        "macro_f1_per_seed": [
+          0.6869534305012441,
+          0.6921029913046575,
+          0.7256917558896039
+        ],
+        "kl_per_seed": [
+          0.6206144645233775,
+          0.6203846428404358,
+          0.5835188016322821
+        ],
+        "soft_f1_per_seed": [
+          0.6797618778254098,
+          0.68045478486551,
+          0.7016862345714026
+        ],
+        "macro_f1": 0.7015827258985018,
+        "kl": 0.6081726363320318,
+        "soft_f1": 0.6873009657541074
+      },
+      "B": {
+        "macro_f1_per_seed": [
+          0.7012687427912341,
+          0.7088577187185076,
+          0.7324464262141192
+        ],
+        "kl_per_seed": [
+          0.6097656778978385,
+          0.5795760832421941,
+          0.56212887152842
+        ],
+        "soft_f1_per_seed": [
+          0.681272807815343,
+          0.6838797806144687,
+          0.6984807080264807
+        ],
+        "macro_f1": 0.7141909625746202,
+        "kl": 0.5838235442228176,
+        "soft_f1": 0.6878777654854308
+      },
+      "C": {
+        "macro_f1_per_seed": [
+          0.699833859640854,
+          0.7004239130756329,
+          0.7309563211473847
+        ],
+        "kl_per_seed": [
+          0.6099520083181679,
+          0.5974241894849703,
+          0.5675672593776919
+        ],
+        "soft_f1_per_seed": [
+          0.6796173739101978,
+          0.6843629904445978,
+          0.6991848775315939
+        ],
+        "macro_f1": 0.7104046979546239,
+        "kl": 0.5916478190602767,
+        "soft_f1": 0.6877217472954632
+      },
+      "D": {
+        "macro_f1_per_seed": [
+          0.6969707651814251,
+          0.7074136160577151,
+          0.7346551360472474
+        ],
+        "kl_per_seed": [
+          0.6070533957769892,
+          0.5870944712438345,
+          0.5778206032280677
+        ],
+        "soft_f1_per_seed": [
+          0.6770560394783773,
+          0.679942902275287,
+          0.6999136122732845
+        ],
+        "macro_f1": 0.7130131724287958,
+        "kl": 0.5906561567496305,
+        "soft_f1": 0.685637518008983
+      },
+      "_meta": {
+        "n": 629,
+        "n_train": 549,
+        "n_val": 80,
+        "base_rate_label_pos": 0.3068362480127186,
+        "vote_count_hist": {
+          "2": 526,
+          "3": 102,
+          "4": 1
+        },
+        "vote_alias_No_to_Normal": 0,
+        "chosen_lambda_hist": {
+          "B": {
+            "0.1": 2,
+            "0.3": 1,
+            "1.0": 2,
+            "3.0": 10
+          },
+          "C": {
+            "0.1": 3,
+            "0.3": 3,
+            "1.0": 3,
+            "3.0": 6
+          },
+          "D": {
+            "0.1": 2,
+            "0.3": 3,
+            "1.0": 5,
+            "3.0": 5
+          }
+        }
+      }
+    },
+    "ZH": {
+      "A": {
+        "macro_f1_per_seed": [
+          0.7210649574756564,
+          0.7171334467095773,
+          0.7347800471327572
+        ],
+        "kl_per_seed": [
+          0.6571003430514221,
+          0.6655900187616328,
+          0.6520206925622408
+        ],
+        "soft_f1_per_seed": [
+          0.6855352188671318,
+          0.6883386490370476,
+          0.6933260105318435
+        ],
+        "macro_f1": 0.7243261504393302,
+        "kl": 0.6582370181250985,
+        "soft_f1": 0.689066626145341
+      },
+      "B": {
+        "macro_f1_per_seed": [
+          0.7196608315098468,
+          0.7376120723159602,
+          0.7433130441108713
+        ],
+        "kl_per_seed": [
+          0.6479710500845703,
+          0.6524812885065236,
+          0.6364874586826385
+        ],
+        "soft_f1_per_seed": [
+          0.6866861939674727,
+          0.6881425288904468,
+          0.6932110878574524
+        ],
+        "macro_f1": 0.733528649312226,
+        "kl": 0.6456465990912442,
+        "soft_f1": 0.6893466035717907
+      },
+      "C": {
+        "macro_f1_per_seed": [
+          0.7210649574756564,
+          0.7214357141904775,
+          0.7390779289197477
+        ],
+        "kl_per_seed": [
+          0.6488221187115167,
+          0.6462614449652514,
+          0.6366633784198854
+        ],
+        "soft_f1_per_seed": [
+          0.6858661280881116,
+          0.6874617570449233,
+          0.6931522072355841
+        ],
+        "macro_f1": 0.7271928668619605,
+        "kl": 0.6439156473655512,
+        "soft_f1": 0.6888266974562064
+      },
+      "D": {
+        "macro_f1_per_seed": [
+          0.7212164073550212,
+          0.732675175603906,
+          0.7419334740172667
+        ],
+        "kl_per_seed": [
+          0.6523504015758294,
+          0.6515588349504795,
+          0.6339097487326676
+        ],
+        "soft_f1_per_seed": [
+          0.6839610354182657,
+          0.6894563284196377,
+          0.6919941463474053
+        ],
+        "macro_f1": 0.7319416856587314,
+        "kl": 0.6459396617529921,
+        "soft_f1": 0.6884705033951027
+      },
+      "_meta": {
+        "n": 657,
+        "n_train": 579,
+        "n_val": 78,
+        "base_rate_label_pos": 0.3165905631659056,
+        "vote_count_hist": {
+          "2": 485,
+          "3": 165,
+          "4": 7
+        },
+        "vote_alias_No_to_Normal": 1,
+        "chosen_lambda_hist": {
+          "B": {
+            "0.1": 2,
+            "0.3": 4,
+            "1.0": 3,
+            "3.0": 6
+          },
+          "C": {
+            "0.1": 1,
+            "0.3": 5,
+            "1.0": 2,
+            "3.0": 7
+          },
+          "D": {
+            "0.1": 2,
+            "0.3": 3,
+            "1.0": 4,
+            "3.0": 6
+          }
+        }
+      }
+    }
+  },
+  "verdict_block": {
+    "verdict": "FAMILY-CLOSED",
+    "M_per_seed": {
+      "A": [
+        0.7040091939884503,
+        0.7046182190071174,
+        0.7302359015111806
+      ],
+      "B": [
+        0.7104647871505405,
+        0.7232348955172339,
+        0.7378797351624953
+      ],
+      "C": [
+        0.7104494085582551,
+        0.7109298136330552,
+        0.7350171250335662
+      ],
+      "D": [
+        0.7090935862682232,
+        0.7200443958308106,
+        0.738294305032257
+      ]
+    },
+    "M_mean": {
+      "A": 0.7129544381689161,
+      "B": 0.7238598059434231,
+      "C": 0.7187987824082921,
+      "D": 0.7224774290437637
+    },
+    "d_CB_per_seed": [
+      -1.537859228539773e-05,
+      -0.01230508188417867,
+      -0.0028626101289290773
+    ],
+    "d_CD_per_seed": [
+      0.0013558222900319494,
+      -0.009114582197755405,
+      -0.0032771799986908157
+    ],
+    "d_CB_mean": -0.005061023535131048,
+    "d_CD_mean": -0.003678646635471424,
+    "pass_CB": false,
+    "pass_CD": false,
+    "gate_delta": 0.005,
+    "no_ambiguous_branch": true,
+    "note": "Futility rule in force (external review IDEA_REPORT 6.5/6.8): one failure permanently closes the Human-Agreement family. A positive result grants only the 'exploratory' label and does not revive the failed P-A/P-A-v2 gate."
+  },
+  "meta": {
+    "files": {
+      "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_train.tsv": {
+        "rows": 701,
+        "sha256": "f4452dbed4d31d6a1268be1a40a81b707e87b997db261449c054a9470c65e589"
+      },
+      "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_valid.tsv": {
+        "rows": 100,
+        "sha256": "05eb7aa8ccd9b1e4dde0be7bccda6bba667bf1cbddeb7c2f50e99d1884cc8748"
+      },
+      "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_train.tsv": {
+        "rows": 699,
+        "sha256": "de9cacc45e0740d90362f8797b441a35194b5d90602e4c095472d1f39f2bd7bb"
+      },
+      "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_valid.tsv": {
+        "rows": 101,
+        "sha256": "d112b5c327e07be75d1fa1b3011cde58ec21b324eef61171c890be638258314f"
+      }
+    }
+  },
+  "paths_touched": [
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC/dev_seen_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC_zh/dev_seen_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC/train.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC/val.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC_zh/train.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC_zh/val.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_train.tsv",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_valid.tsv",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_train.tsv",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_valid.tsv"
+  ],
+  "elapsed_sec": 753.146607875824
+}

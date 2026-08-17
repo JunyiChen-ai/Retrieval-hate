@@ -1,0 +1,3653 @@
+{
+ "tag": "c1",
+ "n_items": 98,
+ "A_frames_primary": {
+  "view": "A_frames_primary",
+  "variant": "v1",
+  "exclude_smoke": true,
+  "n_items": 71,
+  "n_S": 32,
+  "M1_acc_S": 0.46875,
+  "M1_n": 32,
+  "M1_pass": false,
+  "M1_p_vs_chance_0.5": 0.8601,
+  "acc_S_FP": 0.05555555555555555,
+  "n_S_FP": 18,
+  "acc_S_FN": 1.0,
+  "n_S_FN": 14,
+  "M2_ctrl_hate_said_OPPOSE": 0.0,
+  "M2_n": 18,
+  "M2_pass": true,
+  "VERDICT": "FAIL",
+  "ctrl_nonhate_said_ENDORSE": 0.7777777777777778,
+  "ctrl_nonhate_n": 18,
+  "r1_binary_acc_S": 0.5,
+  "r1_binary_n": 32,
+  "mask_binary_acc_S": 0.5625,
+  "mask_binary_n": 32,
+  "r1_5way_acc_S": 0.28125,
+  "r1_5way_n": 32,
+  "mask_5way_acc_S": 0.375,
+  "mask_5way_n": 32,
+  "by_voice": {
+   "OWN": {
+    "n": 13,
+    "acc": 0.38461538461538464,
+    "acc_r1_binary": 0.6923076923076923,
+    "cells": {
+     "S_FP": 9,
+     "S_FN": 4
+    }
+   },
+   "NOT_OWN": {
+    "n": 10,
+    "acc": 0.4,
+    "acc_r1_binary": 0.4,
+    "cells": {
+     "S_FP": 6,
+     "S_FN": 4
+    }
+   },
+   "UNDET": {
+    "n": 9,
+    "acc": 0.6666666666666666,
+    "acc_r1_binary": 0.3333333333333333,
+    "cells": {
+     "S_FP": 3,
+     "S_FN": 6
+    }
+   },
+   "UNCODED": {
+    "n": 0,
+    "acc": null,
+    "acc_r1_binary": null,
+    "cells": {}
+   }
+  },
+  "by_dataset": {
+   "HateMM": {
+    "n": 6,
+    "acc": 0.16666666666666666
+   },
+   "MHC": {
+    "n": 15,
+    "acc": 0.4
+   },
+   "MHC_zh": {
+    "n": 11,
+    "acc": 0.7272727272727273
+   }
+  },
+  "call_hist": {
+   "S_FP": {
+    "ENDORSE": 19,
+    "OPPOSE": 2
+   },
+   "S_FN": {
+    "ENDORSE": 14
+   },
+   "CTRL_HATE": {
+    "ENDORSE": 18
+   },
+   "CTRL_NONHATE": {
+    "ENDORSE": 14,
+    "OPPOSE": 4
+   }
+  },
+  "per_pair_acc_on_S": {
+   "0": {
+    "n": 32,
+    "acc_on_S": 0.469
+   },
+   "1": {
+    "n": 32,
+    "acc_on_S": 0.531
+   },
+   "2": {
+    "n": 32,
+    "acc_on_S": 0.438
+   },
+   "3": {
+    "n": 32,
+    "acc_on_S": 0.469
+   },
+   "4": {
+    "n": 32,
+    "acc_on_S": 0.469
+   }
+  },
+  "per_pair_endorse_rate": {
+   "0": {
+    "n": 71,
+    "endorse_rate_all_items": 0.845
+   },
+   "1": {
+    "n": 71,
+    "endorse_rate_all_items": 0.944
+   },
+   "2": {
+    "n": 71,
+    "endorse_rate_all_items": 0.901
+   },
+   "3": {
+    "n": 71,
+    "endorse_rate_all_items": 0.803
+   },
+   "4": {
+    "n": 71,
+    "endorse_rate_all_items": 0.845
+   }
+  },
+  "vote_split_hist_on_S": {
+   "5-0": 21,
+   "3-2": 4,
+   "4-1": 7
+  },
+  "acc_by_split": {
+   "5-0": {
+    "n": 21,
+    "acc": 0.42857142857142855
+   },
+   "3-2": {
+    "n": 4,
+    "acc": 0.25
+   },
+   "4-1": {
+    "n": 7,
+    "acc": 0.7142857142857143
+   }
+  },
+  "position_bias_slotA_rate": 0.5155,
+  "position_bias_n": 355,
+  "overlap": {
+   "n_scored": 27,
+   "n_zero_diff": 5,
+   "aligned_share": 0.333,
+   "acc_aligned": 0.6666666666666666,
+   "acc_not_aligned": 0.4444444444444444,
+   "per_pair_vote_follows_overlap": 0.487,
+   "per_pair_n": 158,
+   "mean_D_by_group": {
+    "S_FP": -0.0215,
+    "S_FN": -0.0019,
+    "CTRL_HATE": 0.0061,
+    "CTRL_NONHATE": -0.0202
+   }
+  }
+ },
+ "A_frames_primary__incl_smoke_items": {
+  "view": "A_frames_primary",
+  "variant": "v1",
+  "exclude_smoke": false,
+  "n_items": 71,
+  "n_S": 35,
+  "M1_acc_S": 0.45714285714285713,
+  "M1_n": 35,
+  "M1_pass": false,
+  "M1_p_vs_chance_0.5": 0.7359,
+  "acc_S_FP": 0.09523809523809523,
+  "n_S_FP": 21,
+  "acc_S_FN": 1.0,
+  "n_S_FN": 14,
+  "M2_ctrl_hate_said_OPPOSE": 0.0,
+  "M2_n": 18,
+  "M2_pass": true,
+  "VERDICT": "FAIL",
+  "ctrl_nonhate_said_ENDORSE": 0.7777777777777778,
+  "ctrl_nonhate_n": 18,
+  "r1_binary_acc_S": 0.4857142857142857,
+  "r1_binary_n": 35,
+  "mask_binary_acc_S": 0.5428571428571428,
+  "mask_binary_n": 35,
+  "r1_5way_acc_S": 0.2571428571428571,
+  "r1_5way_n": 35,
+  "mask_5way_acc_S": 0.37142857142857144,
+  "mask_5way_n": 35,
+  "by_voice": {
+   "OWN": {
+    "n": 13,
+    "acc": 0.38461538461538464,
+    "acc_r1_binary": 0.6923076923076923,
+    "cells": {
+     "S_FP": 9,
+     "S_FN": 4
+    }
+   },
+   "NOT_OWN": {
+    "n": 12,
+    "acc": 0.3333333333333333,
+    "acc_r1_binary": 0.3333333333333333,
+    "cells": {
+     "S_FP": 8,
+     "S_FN": 4
+    }
+   },
+   "UNDET": {
+    "n": 10,
+    "acc": 0.7,
+    "acc_r1_binary": 0.4,
+    "cells": {
+     "S_FP": 4,
+     "S_FN": 6
+    }
+   },
+   "UNCODED": {
+    "n": 0,
+    "acc": null,
+    "acc_r1_binary": null,
+    "cells": {}
+   }
+  },
+  "by_dataset": {
+   "HateMM": {
+    "n": 8,
+    "acc": 0.125
+   },
+   "MHC": {
+    "n": 16,
+    "acc": 0.4375
+   },
+   "MHC_zh": {
+    "n": 11,
+    "acc": 0.7272727272727273
+   }
+  },
+  "call_hist": {
+   "S_FP": {
+    "ENDORSE": 19,
+    "OPPOSE": 2
+   },
+   "S_FN": {
+    "ENDORSE": 14
+   },
+   "CTRL_HATE": {
+    "ENDORSE": 18
+   },
+   "CTRL_NONHATE": {
+    "ENDORSE": 14,
+    "OPPOSE": 4
+   }
+  },
+  "per_pair_acc_on_S": {
+   "0": {
+    "n": 35,
+    "acc_on_S": 0.457
+   },
+   "1": {
+    "n": 35,
+    "acc_on_S": 0.486
+   },
+   "2": {
+    "n": 35,
+    "acc_on_S": 0.4
+   },
+   "3": {
+    "n": 35,
+    "acc_on_S": 0.457
+   },
+   "4": {
+    "n": 35,
+    "acc_on_S": 0.457
+   }
+  },
+  "per_pair_endorse_rate": {
+   "0": {
+    "n": 71,
+    "endorse_rate_all_items": 0.845
+   },
+   "1": {
+    "n": 71,
+    "endorse_rate_all_items": 0.944
+   },
+   "2": {
+    "n": 71,
+    "endorse_rate_all_items": 0.901
+   },
+   "3": {
+    "n": 71,
+    "endorse_rate_all_items": 0.803
+   },
+   "4": {
+    "n": 71,
+    "endorse_rate_all_items": 0.845
+   }
+  },
+  "vote_split_hist_on_S": {
+   "5-0": 23,
+   "3-2": 5,
+   "4-1": 7
+  },
+  "acc_by_split": {
+   "5-0": {
+    "n": 23,
+    "acc": 0.391304347826087
+   },
+   "3-2": {
+    "n": 5,
+    "acc": 0.4
+   },
+   "4-1": {
+    "n": 7,
+    "acc": 0.7142857142857143
+   }
+  },
+  "position_bias_slotA_rate": 0.5155,
+  "position_bias_n": 355,
+  "overlap": {
+   "n_scored": 30,
+   "n_zero_diff": 5,
+   "aligned_share": 0.367,
+   "acc_aligned": 0.6363636363636364,
+   "acc_not_aligned": 0.42105263157894735,
+   "per_pair_vote_follows_overlap": 0.487,
+   "per_pair_n": 158,
+   "mean_D_by_group": {
+    "S_FP": -0.0215,
+    "S_FN": -0.0019,
+    "CTRL_HATE": 0.0061,
+    "CTRL_NONHATE": -0.0202
+   }
+  }
+ },
+ "B_all99": {
+  "view": "B_all99",
+  "variant": "v1",
+  "exclude_smoke": true,
+  "n_items": 98,
+  "n_S": 45,
+  "M1_acc_S": 0.4222222222222222,
+  "M1_n": 45,
+  "M1_pass": false,
+  "M1_p_vs_chance_0.5": 0.3713,
+  "acc_S_FP": 0.038461538461538464,
+  "n_S_FP": 26,
+  "acc_S_FN": 0.9473684210526315,
+  "n_S_FN": 19,
+  "M2_ctrl_hate_said_OPPOSE": 0.0,
+  "M2_n": 25,
+  "M2_pass": true,
+  "VERDICT": "FAIL",
+  "ctrl_nonhate_said_ENDORSE": 0.8,
+  "ctrl_nonhate_n": 25,
+  "r1_binary_acc_S": 0.4444444444444444,
+  "r1_binary_n": 45,
+  "mask_binary_acc_S": 0.4888888888888889,
+  "mask_binary_n": 45,
+  "r1_5way_acc_S": 0.26666666666666666,
+  "r1_5way_n": 45,
+  "mask_5way_acc_S": 0.35555555555555557,
+  "mask_5way_n": 45,
+  "by_voice": {
+   "OWN": {
+    "n": 21,
+    "acc": 0.38095238095238093,
+    "acc_r1_binary": 0.5714285714285714,
+    "cells": {
+     "S_FP": 14,
+     "S_FN": 7
+    }
+   },
+   "NOT_OWN": {
+    "n": 13,
+    "acc": 0.38461538461538464,
+    "acc_r1_binary": 0.38461538461538464,
+    "cells": {
+     "S_FP": 7,
+     "S_FN": 6
+    }
+   },
+   "UNDET": {
+    "n": 11,
+    "acc": 0.5454545454545454,
+    "acc_r1_binary": 0.2727272727272727,
+    "cells": {
+     "S_FP": 5,
+     "S_FN": 6
+    }
+   },
+   "UNCODED": {
+    "n": 0,
+    "acc": null,
+    "acc_r1_binary": null,
+    "cells": {}
+   }
+  },
+  "by_dataset": {
+   "HateMM": {
+    "n": 6,
+    "acc": 0.16666666666666666
+   },
+   "ImpliHateVid": {
+    "n": 13,
+    "acc": 0.3076923076923077
+   },
+   "MHC": {
+    "n": 15,
+    "acc": 0.4
+   },
+   "MHC_zh": {
+    "n": 11,
+    "acc": 0.7272727272727273
+   }
+  },
+  "call_hist": {
+   "S_FP": {
+    "ENDORSE": 27,
+    "OPPOSE": 2
+   },
+   "S_FN": {
+    "ENDORSE": 18,
+    "OPPOSE": 1
+   },
+   "CTRL_HATE": {
+    "ENDORSE": 25
+   },
+   "CTRL_NONHATE": {
+    "ENDORSE": 20,
+    "OPPOSE": 5
+   }
+  },
+  "per_pair_acc_on_S": {
+   "0": {
+    "n": 45,
+    "acc_on_S": 0.422
+   },
+   "1": {
+    "n": 45,
+    "acc_on_S": 0.511
+   },
+   "2": {
+    "n": 45,
+    "acc_on_S": 0.4
+   },
+   "3": {
+    "n": 45,
+    "acc_on_S": 0.444
+   },
+   "4": {
+    "n": 45,
+    "acc_on_S": 0.422
+   }
+  },
+  "per_pair_endorse_rate": {
+   "0": {
+    "n": 98,
+    "endorse_rate_all_items": 0.857
+   },
+   "1": {
+    "n": 98,
+    "endorse_rate_all_items": 0.949
+   },
+   "2": {
+    "n": 98,
+    "endorse_rate_all_items": 0.908
+   },
+   "3": {
+    "n": 98,
+    "endorse_rate_all_items": 0.857
+   },
+   "4": {
+    "n": 98,
+    "endorse_rate_all_items": 0.867
+   }
+  },
+  "vote_split_hist_on_S": {
+   "5-0": 32,
+   "3-2": 5,
+   "4-1": 8
+  },
+  "acc_by_split": {
+   "5-0": {
+    "n": 32,
+    "acc": 0.40625
+   },
+   "3-2": {
+    "n": 5,
+    "acc": 0.2
+   },
+   "4-1": {
+    "n": 8,
+    "acc": 0.625
+   }
+  },
+  "position_bias_slotA_rate": 0.5102,
+  "position_bias_n": 490,
+  "overlap": {
+   "n_scored": 40,
+   "n_zero_diff": 5,
+   "aligned_share": 0.35,
+   "acc_aligned": 0.5,
+   "acc_not_aligned": 0.4230769230769231,
+   "per_pair_vote_follows_overlap": 0.457,
+   "per_pair_n": 265,
+   "mean_D_by_group": {
+    "S_FP": -0.0211,
+    "S_FN": 0.0075,
+    "CTRL_HATE": -0.0043,
+    "CTRL_NONHATE": -0.0229
+   }
+  }
+ },
+ "B_all99__incl_smoke_items": {
+  "view": "B_all99",
+  "variant": "v1",
+  "exclude_smoke": false,
+  "n_items": 98,
+  "n_S": 48,
+  "M1_acc_S": 0.4166666666666667,
+  "M1_n": 48,
+  "M1_pass": false,
+  "M1_p_vs_chance_0.5": 0.3123,
+  "acc_S_FP": 0.06896551724137931,
+  "n_S_FP": 29,
+  "acc_S_FN": 0.9473684210526315,
+  "n_S_FN": 19,
+  "M2_ctrl_hate_said_OPPOSE": 0.0,
+  "M2_n": 25,
+  "M2_pass": true,
+  "VERDICT": "FAIL",
+  "ctrl_nonhate_said_ENDORSE": 0.8,
+  "ctrl_nonhate_n": 25,
+  "r1_binary_acc_S": 0.4375,
+  "r1_binary_n": 48,
+  "mask_binary_acc_S": 0.4791666666666667,
+  "mask_binary_n": 48,
+  "r1_5way_acc_S": 0.25,
+  "r1_5way_n": 48,
+  "mask_5way_acc_S": 0.3541666666666667,
+  "mask_5way_n": 48,
+  "by_voice": {
+   "OWN": {
+    "n": 21,
+    "acc": 0.38095238095238093,
+    "acc_r1_binary": 0.5714285714285714,
+    "cells": {
+     "S_FP": 14,
+     "S_FN": 7
+    }
+   },
+   "NOT_OWN": {
+    "n": 15,
+    "acc": 0.3333333333333333,
+    "acc_r1_binary": 0.3333333333333333,
+    "cells": {
+     "S_FP": 9,
+     "S_FN": 6
+    }
+   },
+   "UNDET": {
+    "n": 12,
+    "acc": 0.5833333333333334,
+    "acc_r1_binary": 0.3333333333333333,
+    "cells": {
+     "S_FP": 6,
+     "S_FN": 6
+    }
+   },
+   "UNCODED": {
+    "n": 0,
+    "acc": null,
+    "acc_r1_binary": null,
+    "cells": {}
+   }
+  },
+  "by_dataset": {
+   "HateMM": {
+    "n": 8,
+    "acc": 0.125
+   },
+   "ImpliHateVid": {
+    "n": 13,
+    "acc": 0.3076923076923077
+   },
+   "MHC": {
+    "n": 16,
+    "acc": 0.4375
+   },
+   "MHC_zh": {
+    "n": 11,
+    "acc": 0.7272727272727273
+   }
+  },
+  "call_hist": {
+   "S_FP": {
+    "ENDORSE": 27,
+    "OPPOSE": 2
+   },
+   "S_FN": {
+    "ENDORSE": 18,
+    "OPPOSE": 1
+   },
+   "CTRL_HATE": {
+    "ENDORSE": 25
+   },
+   "CTRL_NONHATE": {
+    "ENDORSE": 20,
+    "OPPOSE": 5
+   }
+  },
+  "per_pair_acc_on_S": {
+   "0": {
+    "n": 48,
+    "acc_on_S": 0.417
+   },
+   "1": {
+    "n": 48,
+    "acc_on_S": 0.479
+   },
+   "2": {
+    "n": 48,
+    "acc_on_S": 0.375
+   },
+   "3": {
+    "n": 48,
+    "acc_on_S": 0.438
+   },
+   "4": {
+    "n": 48,
+    "acc_on_S": 0.417
+   }
+  },
+  "per_pair_endorse_rate": {
+   "0": {
+    "n": 98,
+    "endorse_rate_all_items": 0.857
+   },
+   "1": {
+    "n": 98,
+    "endorse_rate_all_items": 0.949
+   },
+   "2": {
+    "n": 98,
+    "endorse_rate_all_items": 0.908
+   },
+   "3": {
+    "n": 98,
+    "endorse_rate_all_items": 0.857
+   },
+   "4": {
+    "n": 98,
+    "endorse_rate_all_items": 0.867
+   }
+  },
+  "vote_split_hist_on_S": {
+   "5-0": 34,
+   "3-2": 6,
+   "4-1": 8
+  },
+  "acc_by_split": {
+   "5-0": {
+    "n": 34,
+    "acc": 0.38235294117647056
+   },
+   "3-2": {
+    "n": 6,
+    "acc": 0.3333333333333333
+   },
+   "4-1": {
+    "n": 8,
+    "acc": 0.625
+   }
+  },
+  "position_bias_slotA_rate": 0.5102,
+  "position_bias_n": 490,
+  "overlap": {
+   "n_scored": 43,
+   "n_zero_diff": 5,
+   "aligned_share": 0.372,
+   "acc_aligned": 0.5,
+   "acc_not_aligned": 0.4074074074074074,
+   "per_pair_vote_follows_overlap": 0.457,
+   "per_pair_n": 265,
+   "mean_D_by_group": {
+    "S_FP": -0.0211,
+    "S_FN": 0.0075,
+    "CTRL_HATE": -0.0043,
+    "CTRL_NONHATE": -0.0229
+   }
+  }
+ },
+ "C_textonly": {
+  "view": "C_textonly",
+  "variant": "v1",
+  "exclude_smoke": true,
+  "n_items": 27,
+  "n_S": 13,
+  "M1_acc_S": 0.3076923076923077,
+  "M1_n": 13,
+  "M1_pass": false,
+  "M1_p_vs_chance_0.5": 0.2668,
+  "acc_S_FP": 0.0,
+  "n_S_FP": 8,
+  "acc_S_FN": 0.8,
+  "n_S_FN": 5,
+  "M2_ctrl_hate_said_OPPOSE": 0.0,
+  "M2_n": 7,
+  "M2_pass": true,
+  "VERDICT": "FAIL",
+  "ctrl_nonhate_said_ENDORSE": 0.8571428571428571,
+  "ctrl_nonhate_n": 7,
+  "r1_binary_acc_S": 0.3076923076923077,
+  "r1_binary_n": 13,
+  "mask_binary_acc_S": 0.3076923076923077,
+  "mask_binary_n": 13,
+  "r1_5way_acc_S": 0.23076923076923078,
+  "r1_5way_n": 13,
+  "mask_5way_acc_S": 0.3076923076923077,
+  "mask_5way_n": 13,
+  "by_voice": {
+   "OWN": {
+    "n": 8,
+    "acc": 0.375,
+    "acc_r1_binary": 0.375,
+    "cells": {
+     "S_FN": 3,
+     "S_FP": 5
+    }
+   },
+   "NOT_OWN": {
+    "n": 3,
+    "acc": 0.3333333333333333,
+    "acc_r1_binary": 0.3333333333333333,
+    "cells": {
+     "S_FN": 2,
+     "S_FP": 1
+    }
+   },
+   "UNDET": {
+    "n": 2,
+    "acc": 0.0,
+    "acc_r1_binary": 0.0,
+    "cells": {
+     "S_FP": 2
+    }
+   },
+   "UNCODED": {
+    "n": 0,
+    "acc": null,
+    "acc_r1_binary": null,
+    "cells": {}
+   }
+  },
+  "by_dataset": {
+   "ImpliHateVid": {
+    "n": 13,
+    "acc": 0.3076923076923077
+   }
+  },
+  "call_hist": {
+   "S_FP": {
+    "ENDORSE": 8
+   },
+   "S_FN": {
+    "ENDORSE": 4,
+    "OPPOSE": 1
+   },
+   "CTRL_HATE": {
+    "ENDORSE": 7
+   },
+   "CTRL_NONHATE": {
+    "ENDORSE": 6,
+    "OPPOSE": 1
+   }
+  },
+  "per_pair_acc_on_S": {
+   "0": {
+    "n": 13,
+    "acc_on_S": 0.308
+   },
+   "1": {
+    "n": 13,
+    "acc_on_S": 0.462
+   },
+   "2": {
+    "n": 13,
+    "acc_on_S": 0.308
+   },
+   "3": {
+    "n": 13,
+    "acc_on_S": 0.385
+   },
+   "4": {
+    "n": 13,
+    "acc_on_S": 0.308
+   }
+  },
+  "per_pair_endorse_rate": {
+   "0": {
+    "n": 27,
+    "endorse_rate_all_items": 0.889
+   },
+   "1": {
+    "n": 27,
+    "endorse_rate_all_items": 0.963
+   },
+   "2": {
+    "n": 27,
+    "endorse_rate_all_items": 0.926
+   },
+   "3": {
+    "n": 27,
+    "endorse_rate_all_items": 1.0
+   },
+   "4": {
+    "n": 27,
+    "endorse_rate_all_items": 0.926
+   }
+  },
+  "vote_split_hist_on_S": {
+   "5-0": 11,
+   "3-2": 1,
+   "4-1": 1
+  },
+  "acc_by_split": {
+   "5-0": {
+    "n": 11,
+    "acc": 0.36363636363636365
+   },
+   "3-2": {
+    "n": 1,
+    "acc": 0.0
+   },
+   "4-1": {
+    "n": 1,
+    "acc": 0.0
+   }
+  },
+  "position_bias_slotA_rate": 0.4963,
+  "position_bias_n": 135,
+  "overlap": {
+   "n_scored": 13,
+   "n_zero_diff": 0,
+   "aligned_share": 0.385,
+   "acc_aligned": 0.2,
+   "acc_not_aligned": 0.375,
+   "per_pair_vote_follows_overlap": 0.411,
+   "per_pair_n": 107,
+   "mean_D_by_group": {
+    "S_FP": -0.02,
+    "S_FN": 0.034,
+    "CTRL_HATE": -0.031,
+    "CTRL_NONHATE": -0.03
+   }
+  }
+ },
+ "C_textonly__incl_smoke_items": {
+  "view": "C_textonly",
+  "variant": "v1",
+  "exclude_smoke": false,
+  "n_items": 27,
+  "n_S": 13,
+  "M1_acc_S": 0.3076923076923077,
+  "M1_n": 13,
+  "M1_pass": false,
+  "M1_p_vs_chance_0.5": 0.2668,
+  "acc_S_FP": 0.0,
+  "n_S_FP": 8,
+  "acc_S_FN": 0.8,
+  "n_S_FN": 5,
+  "M2_ctrl_hate_said_OPPOSE": 0.0,
+  "M2_n": 7,
+  "M2_pass": true,
+  "VERDICT": "FAIL",
+  "ctrl_nonhate_said_ENDORSE": 0.8571428571428571,
+  "ctrl_nonhate_n": 7,
+  "r1_binary_acc_S": 0.3076923076923077,
+  "r1_binary_n": 13,
+  "mask_binary_acc_S": 0.3076923076923077,
+  "mask_binary_n": 13,
+  "r1_5way_acc_S": 0.23076923076923078,
+  "r1_5way_n": 13,
+  "mask_5way_acc_S": 0.3076923076923077,
+  "mask_5way_n": 13,
+  "by_voice": {
+   "OWN": {
+    "n": 8,
+    "acc": 0.375,
+    "acc_r1_binary": 0.375,
+    "cells": {
+     "S_FN": 3,
+     "S_FP": 5
+    }
+   },
+   "NOT_OWN": {
+    "n": 3,
+    "acc": 0.3333333333333333,
+    "acc_r1_binary": 0.3333333333333333,
+    "cells": {
+     "S_FN": 2,
+     "S_FP": 1
+    }
+   },
+   "UNDET": {
+    "n": 2,
+    "acc": 0.0,
+    "acc_r1_binary": 0.0,
+    "cells": {
+     "S_FP": 2
+    }
+   },
+   "UNCODED": {
+    "n": 0,
+    "acc": null,
+    "acc_r1_binary": null,
+    "cells": {}
+   }
+  },
+  "by_dataset": {
+   "ImpliHateVid": {
+    "n": 13,
+    "acc": 0.3076923076923077
+   }
+  },
+  "call_hist": {
+   "S_FP": {
+    "ENDORSE": 8
+   },
+   "S_FN": {
+    "ENDORSE": 4,
+    "OPPOSE": 1
+   },
+   "CTRL_HATE": {
+    "ENDORSE": 7
+   },
+   "CTRL_NONHATE": {
+    "ENDORSE": 6,
+    "OPPOSE": 1
+   }
+  },
+  "per_pair_acc_on_S": {
+   "0": {
+    "n": 13,
+    "acc_on_S": 0.308
+   },
+   "1": {
+    "n": 13,
+    "acc_on_S": 0.462
+   },
+   "2": {
+    "n": 13,
+    "acc_on_S": 0.308
+   },
+   "3": {
+    "n": 13,
+    "acc_on_S": 0.385
+   },
+   "4": {
+    "n": 13,
+    "acc_on_S": 0.308
+   }
+  },
+  "per_pair_endorse_rate": {
+   "0": {
+    "n": 27,
+    "endorse_rate_all_items": 0.889
+   },
+   "1": {
+    "n": 27,
+    "endorse_rate_all_items": 0.963
+   },
+   "2": {
+    "n": 27,
+    "endorse_rate_all_items": 0.926
+   },
+   "3": {
+    "n": 27,
+    "endorse_rate_all_items": 1.0
+   },
+   "4": {
+    "n": 27,
+    "endorse_rate_all_items": 0.926
+   }
+  },
+  "vote_split_hist_on_S": {
+   "5-0": 11,
+   "3-2": 1,
+   "4-1": 1
+  },
+  "acc_by_split": {
+   "5-0": {
+    "n": 11,
+    "acc": 0.36363636363636365
+   },
+   "3-2": {
+    "n": 1,
+    "acc": 0.0
+   },
+   "4-1": {
+    "n": 1,
+    "acc": 0.0
+   }
+  },
+  "position_bias_slotA_rate": 0.4963,
+  "position_bias_n": 135,
+  "overlap": {
+   "n_scored": 13,
+   "n_zero_diff": 0,
+   "aligned_share": 0.385,
+   "acc_aligned": 0.2,
+   "acc_not_aligned": 0.375,
+   "per_pair_vote_follows_overlap": 0.411,
+   "per_pair_n": 107,
+   "mean_D_by_group": {
+    "S_FP": -0.02,
+    "S_FN": 0.034,
+    "CTRL_HATE": -0.031,
+    "CTRL_NONHATE": -0.03
+   }
+  }
+ },
+ "A_variant2": {
+  "view": "A_variant2",
+  "variant": "v2",
+  "exclude_smoke": true,
+  "n_items": 45,
+  "n_S": 22,
+  "M1_acc_S": 0.4090909090909091,
+  "M1_n": 22,
+  "M1_pass": false,
+  "M1_p_vs_chance_0.5": 0.5235,
+  "acc_S_FP": 0.08333333333333333,
+  "n_S_FP": 12,
+  "acc_S_FN": 0.8,
+  "n_S_FN": 10,
+  "M2_ctrl_hate_said_OPPOSE": 0.06666666666666667,
+  "M2_n": 15,
+  "M2_pass": true,
+  "VERDICT": "FAIL",
+  "ctrl_nonhate_said_ENDORSE": 0.5,
+  "ctrl_nonhate_n": 6,
+  "r1_binary_acc_S": 0.4090909090909091,
+  "r1_binary_n": 22,
+  "mask_binary_acc_S": 0.45454545454545453,
+  "mask_binary_n": 22,
+  "r1_5way_acc_S": 0.3181818181818182,
+  "r1_5way_n": 22,
+  "mask_5way_acc_S": 0.45454545454545453,
+  "mask_5way_n": 22,
+  "by_voice": {
+   "OWN": {
+    "n": 7,
+    "acc": 0.42857142857142855,
+    "acc_r1_binary": 0.7142857142857143,
+    "cells": {
+     "S_FP": 4,
+     "S_FN": 3
+    }
+   },
+   "NOT_OWN": {
+    "n": 7,
+    "acc": 0.14285714285714285,
+    "acc_r1_binary": 0.2857142857142857,
+    "cells": {
+     "S_FP": 5,
+     "S_FN": 2
+    }
+   },
+   "UNDET": {
+    "n": 8,
+    "acc": 0.625,
+    "acc_r1_binary": 0.25,
+    "cells": {
+     "S_FP": 3,
+     "S_FN": 5
+    }
+   },
+   "UNCODED": {
+    "n": 0,
+    "acc": null,
+    "acc_r1_binary": null,
+    "cells": {}
+   }
+  },
+  "by_dataset": {
+   "HateMM": {
+    "n": 4,
+    "acc": 0.0
+   },
+   "MHC": {
+    "n": 10,
+    "acc": 0.4
+   },
+   "MHC_zh": {
+    "n": 8,
+    "acc": 0.625
+   }
+  },
+  "call_hist": {
+   "S_FP": {
+    "ENDORSE": 12,
+    "OPPOSE": 2
+   },
+   "S_FN": {
+    "OPPOSE": 2,
+    "ENDORSE": 8
+   },
+   "CTRL_HATE": {
+    "ENDORSE": 14,
+    "OPPOSE": 1
+   },
+   "CTRL_NONHATE": {
+    "OPPOSE": 3,
+    "ENDORSE": 3
+   }
+  },
+  "per_pair_acc_on_S": {
+   "0": {
+    "n": 22,
+    "acc_on_S": 0.409
+   },
+   "1": {
+    "n": 22,
+    "acc_on_S": 0.455
+   },
+   "2": {
+    "n": 22,
+    "acc_on_S": 0.409
+   },
+   "3": {
+    "n": 22,
+    "acc_on_S": 0.318
+   },
+   "4": {
+    "n": 22,
+    "acc_on_S": 0.455
+   }
+  },
+  "per_pair_endorse_rate": {
+   "0": {
+    "n": 45,
+    "endorse_rate_all_items": 0.8
+   },
+   "1": {
+    "n": 45,
+    "endorse_rate_all_items": 0.756
+   },
+   "2": {
+    "n": 45,
+    "endorse_rate_all_items": 0.867
+   },
+   "3": {
+    "n": 45,
+    "endorse_rate_all_items": 0.622
+   },
+   "4": {
+    "n": 45,
+    "endorse_rate_all_items": 0.822
+   }
+  },
+  "vote_split_hist_on_S": {
+   "4-1": 8,
+   "5-0": 11,
+   "3-2": 3
+  },
+  "acc_by_split": {
+   "4-1": {
+    "n": 8,
+    "acc": 0.375
+   },
+   "5-0": {
+    "n": 11,
+    "acc": 0.36363636363636365
+   },
+   "3-2": {
+    "n": 3,
+    "acc": 0.6666666666666666
+   }
+  },
+  "position_bias_slotA_rate": 0.5422,
+  "position_bias_n": 225,
+  "overlap": {
+   "n_scored": 20,
+   "n_zero_diff": 2,
+   "aligned_share": 0.4,
+   "acc_aligned": 0.375,
+   "acc_not_aligned": 0.5,
+   "per_pair_vote_follows_overlap": 0.466,
+   "per_pair_n": 116,
+   "mean_D_by_group": {
+    "S_FP": -0.0164,
+    "S_FN": -0.0064,
+    "CTRL_HATE": -0.0111,
+    "CTRL_NONHATE": -0.0538
+   }
+  }
+ },
+ "A_variant1_on_v2_rows": {
+  "view": "A_variant1_on_v2_rows",
+  "variant": "v1",
+  "exclude_smoke": true,
+  "n_items": 45,
+  "n_S": 22,
+  "M1_acc_S": 0.5,
+  "M1_n": 22,
+  "M1_pass": false,
+  "M1_p_vs_chance_0.5": 1.0,
+  "acc_S_FP": 0.08333333333333333,
+  "n_S_FP": 12,
+  "acc_S_FN": 1.0,
+  "n_S_FN": 10,
+  "M2_ctrl_hate_said_OPPOSE": 0.0,
+  "M2_n": 15,
+  "M2_pass": true,
+  "VERDICT": "FAIL",
+  "ctrl_nonhate_said_ENDORSE": 1.0,
+  "ctrl_nonhate_n": 6,
+  "r1_binary_acc_S": 0.4090909090909091,
+  "r1_binary_n": 22,
+  "mask_binary_acc_S": 0.45454545454545453,
+  "mask_binary_n": 22,
+  "r1_5way_acc_S": 0.3181818181818182,
+  "r1_5way_n": 22,
+  "mask_5way_acc_S": 0.45454545454545453,
+  "mask_5way_n": 22,
+  "by_voice": {
+   "OWN": {
+    "n": 7,
+    "acc": 0.5714285714285714,
+    "acc_r1_binary": 0.7142857142857143,
+    "cells": {
+     "S_FP": 4,
+     "S_FN": 3
+    }
+   },
+   "NOT_OWN": {
+    "n": 7,
+    "acc": 0.2857142857142857,
+    "acc_r1_binary": 0.2857142857142857,
+    "cells": {
+     "S_FP": 5,
+     "S_FN": 2
+    }
+   },
+   "UNDET": {
+    "n": 8,
+    "acc": 0.625,
+    "acc_r1_binary": 0.25,
+    "cells": {
+     "S_FP": 3,
+     "S_FN": 5
+    }
+   },
+   "UNCODED": {
+    "n": 0,
+    "acc": null,
+    "acc_r1_binary": null,
+    "cells": {}
+   }
+  },
+  "by_dataset": {
+   "HateMM": {
+    "n": 4,
+    "acc": 0.25
+   },
+   "MHC": {
+    "n": 10,
+    "acc": 0.5
+   },
+   "MHC_zh": {
+    "n": 8,
+    "acc": 0.625
+   }
+  },
+  "call_hist": {
+   "S_FP": {
+    "ENDORSE": 12,
+    "OPPOSE": 2
+   },
+   "S_FN": {
+    "ENDORSE": 10
+   },
+   "CTRL_HATE": {
+    "ENDORSE": 15
+   },
+   "CTRL_NONHATE": {
+    "ENDORSE": 6
+   }
+  },
+  "per_pair_acc_on_S": {
+   "0": {
+    "n": 22,
+    "acc_on_S": 0.409
+   },
+   "1": {
+    "n": 22,
+    "acc_on_S": 0.591
+   },
+   "2": {
+    "n": 22,
+    "acc_on_S": 0.455
+   },
+   "3": {
+    "n": 22,
+    "acc_on_S": 0.5
+   },
+   "4": {
+    "n": 22,
+    "acc_on_S": 0.5
+   }
+  },
+  "per_pair_endorse_rate": {
+   "0": {
+    "n": 45,
+    "endorse_rate_all_items": 0.889
+   },
+   "1": {
+    "n": 45,
+    "endorse_rate_all_items": 0.933
+   },
+   "2": {
+    "n": 45,
+    "endorse_rate_all_items": 0.978
+   },
+   "3": {
+    "n": 45,
+    "endorse_rate_all_items": 0.778
+   },
+   "4": {
+    "n": 45,
+    "endorse_rate_all_items": 0.911
+   }
+  },
+  "vote_split_hist_on_S": {
+   "5-0": 14,
+   "3-2": 3,
+   "4-1": 5
+  },
+  "acc_by_split": {
+   "5-0": {
+    "n": 14,
+    "acc": 0.42857142857142855
+   },
+   "3-2": {
+    "n": 3,
+    "acc": 0.3333333333333333
+   },
+   "4-1": {
+    "n": 5,
+    "acc": 0.8
+   }
+  },
+  "position_bias_slotA_rate": 0.5244,
+  "position_bias_n": 225,
+  "overlap": {
+   "n_scored": 19,
+   "n_zero_diff": 3,
+   "aligned_share": 0.368,
+   "acc_aligned": 0.7142857142857143,
+   "acc_not_aligned": 0.4166666666666667,
+   "per_pair_vote_follows_overlap": 0.452,
+   "per_pair_n": 104,
+   "mean_D_by_group": {
+    "S_FP": -0.0262,
+    "S_FN": 0.0021,
+    "CTRL_HATE": -0.0061,
+    "CTRL_NONHATE": -0.0356
+   }
+  }
+ },
+ "VERDICT": "FAIL",
+ "cost": {
+  "n_calls": 805,
+  "input_tokens": 1113479,
+  "output_tokens": 2010,
+  "cny_at_listprice_no_batch_discount": 2.243
+ },
+ "losses": [],
+ "per_item": [
+  {
+   "id": "hate_video_228",
+   "ds": "HateMM",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0833,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "hate_video_23",
+   "ds": "HateMM",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "hate_video_299",
+   "ds": "HateMM",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.04,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "hate_video_377",
+   "ds": "HateMM",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Jewish people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0333,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "EX_130",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0867,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "EX_235",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.12,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "EX_329",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0467,
+   "r1_5way": "endorses",
+   "mask_5way": null,
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "IM_278",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "neurodivergent people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.08,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "IM_31",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.08,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "IM_484",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Jewish people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.11,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "IM_79",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0867,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "01ygFLVdj8s",
+   "ds": "MHC",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "transgender people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": 0.0033,
+   "r1_5way": "endorses",
+   "mask_5way": "condemns",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "68gvhiQVzDI",
+   "ds": "MHC",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.05,
+   "r1_5way": "endorses",
+   "mask_5way": "no_hate_content",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "I557gVaQ_rE",
+   "ds": "MHC",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0667,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "IFP0l5EUO70",
+   "ds": "MHC",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "minor-attracted persons",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.04,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "R3Xt1__7TwQ",
+   "ds": "MHC",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "women",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.08,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "qLa59rRqxaE",
+   "ds": "MHC",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "women",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.04,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "tTJvScuxpZ4",
+   "ds": "MHC",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "women",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0067,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "uPJtlBAOT_U",
+   "ds": "MHC",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "people with disabilities",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV12B4y1x7eK",
+   "ds": "MHC_zh",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": "男性",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0397,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1Ra4y1V7Ji",
+   "ds": "MHC_zh",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": "gay men",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.02,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1bp4y1n7FC",
+   "ds": "MHC_zh",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": "nationalities",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1kQ4y1k72V",
+   "ds": "MHC_zh",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": "女性",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1pE411A787",
+   "ds": "MHC_zh",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": "gay men",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1vM411p7jy",
+   "ds": "MHC_zh",
+   "grp": "CTRL_HATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": "粉丝",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0195,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "non_hate_video_279",
+   "ds": "HateMM",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Asian people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": -0.04,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "non_hate_video_356",
+   "ds": "HateMM",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": -0.09,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "non_hate_video_4",
+   "ds": "HateMM",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "non_hate_video_496",
+   "ds": "HateMM",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "NH_187",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0867,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "NH_211",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0033,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "NH_412",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Jewish people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0533,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "NH_443",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "poor people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0333,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "NH_617",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "OPPOSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0733,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "NH_892",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "Chinese people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "NH_924",
+   "ds": "ImpliHateVid",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0333,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "71zppfNBrMY",
+   "ds": "MHC",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "8pEa6Jfz8bA",
+   "ds": "MHC",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.12,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "HO8ndDCRe_A",
+   "ds": "MHC",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "gay people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0067,
+   "r1_5way": "condemns",
+   "mask_5way": "condemns",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "RAGvPqMoW-4",
+   "ds": "MHC",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "gay men",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "UwLhLuZ3C9U",
+   "ds": "MHC",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "women",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": -0.08,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "fzFdxJSUvNo",
+   "ds": "MHC",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "OPPOSE",
+   "v1_votes": [
+    "OPPOSE",
+    "OPPOSE",
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "qqBqadanajY",
+   "ds": "MHC",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "xqilG4oMvvI",
+   "ds": "MHC",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "en",
+   "target": "men",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0033,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "BV11S4y1n72U",
+   "ds": "MHC_zh",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0023,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "BV19N4y1v7yG",
+   "ds": "MHC_zh",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0023,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "BV1Lz4y1T7rn",
+   "ds": "MHC_zh",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0155,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "BV1X5411s76j",
+   "ds": "MHC_zh",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "OPPOSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": 0.001,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "BV1ad4y1Q7eL",
+   "ds": "MHC_zh",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "OPPOSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "OPPOSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0095,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "BV1sg411i7Ft",
+   "ds": "MHC_zh",
+   "grp": "CTRL_NONHATE",
+   "voice": "UNCODED",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "OPPOSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0324,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": null,
+   "ok_v1": null
+  },
+  {
+   "id": "hate_video_365",
+   "ds": "HateMM",
+   "grp": "S_FN",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "immigrants",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": -0.0067,
+   "r1_5way": "condemns",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "EX_150",
+   "ds": "ImpliHateVid",
+   "grp": "S_FN",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "Asian women",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0033,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "IM_176",
+   "ds": "ImpliHateVid",
+   "grp": "S_FN",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.08,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "IM_308",
+   "ds": "ImpliHateVid",
+   "grp": "S_FN",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "OPPOSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": 0.27,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "ENDORSE",
+   "ok_v1": false
+  },
+  {
+   "id": "IM_5",
+   "ds": "ImpliHateVid",
+   "grp": "S_FN",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "Aboriginal Australians",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0167,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "IM_57",
+   "ds": "ImpliHateVid",
+   "grp": "S_FN",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "religious groups",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0067,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "03qOelm_dK8",
+   "ds": "MHC",
+   "grp": "S_FN",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "en",
+   "target": "Jewish people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0333,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "EEC98aHSgIY",
+   "ds": "MHC",
+   "grp": "S_FN",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0067,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "_qldaPBgkk0",
+   "ds": "MHC",
+   "grp": "S_FN",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "en",
+   "target": "women",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "cXRgVEENkPA",
+   "ds": "MHC",
+   "grp": "S_FN",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "Christians",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0333,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "dK43yHIUMKA",
+   "ds": "MHC",
+   "grp": "S_FN",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "gay people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.03,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "h_wKRDyoG_c",
+   "ds": "MHC",
+   "grp": "S_FN",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "people of non-pale skin tone",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": 0.01,
+   "r1_5way": "endorses",
+   "mask_5way": "quotes_mentions",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV12G4y1S7mN",
+   "ds": "MHC_zh",
+   "grp": "S_FN",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0229,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV15h4y157Km",
+   "ds": "MHC_zh",
+   "grp": "S_FN",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "zh",
+   "target": "老年人",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0171,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1Kh411T7FJ",
+   "ds": "MHC_zh",
+   "grp": "S_FN",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0288,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1Vy4y1p7x2",
+   "ds": "MHC_zh",
+   "grp": "S_FN",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "zh",
+   "target": "女性",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0105,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1aP4y1E7PF",
+   "ds": "MHC_zh",
+   "grp": "S_FN",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "zh",
+   "target": "女性",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0214,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1ch411L7VP",
+   "ds": "MHC_zh",
+   "grp": "S_FN",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "zh",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0105,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1qZ4y1T71a",
+   "ds": "MHC_zh",
+   "grp": "S_FN",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "zh",
+   "target": "女性",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0095,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": "ENDORSE",
+   "ok_v1": true
+  },
+  {
+   "id": "non_hate_video_121",
+   "ds": "HateMM",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0033,
+   "r1_5way": "endorses",
+   "mask_5way": "no_hate_content",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "non_hate_video_149",
+   "ds": "HateMM",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.1333,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "non_hate_video_16",
+   "ds": "HateMM",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": true,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0467,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "non_hate_video_32",
+   "ds": "HateMM",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": true,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.04,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "non_hate_video_400",
+   "ds": "HateMM",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0067,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "non_hate_video_528",
+   "ds": "HateMM",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "non_hate_video_642",
+   "ds": "HateMM",
+   "grp": "S_FP",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "en",
+   "target": "white people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.03,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "NH_394",
+   "ds": "ImpliHateVid",
+   "grp": "S_FP",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "en",
+   "target": "disabled people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0333,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "NH_396",
+   "ds": "ImpliHateVid",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "transgender people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": -0.0933,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "condemns",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "NH_44",
+   "ds": "ImpliHateVid",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "women",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0767,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "NH_650",
+   "ds": "ImpliHateVid",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "men",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.1267,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "NH_736",
+   "ds": "ImpliHateVid",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "Black people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0733,
+   "r1_5way": "condemns",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "NH_875",
+   "ds": "ImpliHateVid",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "women",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.12,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "NH_887",
+   "ds": "ImpliHateVid",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "American people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0133,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "NH_988",
+   "ds": "ImpliHateVid",
+   "grp": "S_FP",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "en",
+   "target": "gay people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.01,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "8zLoOqXvk64",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "en",
+   "target": "transgender people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "DxcRdnzBZoo",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": null,
+   "ov_D": -0.0433,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "KDcCiUU8q5E",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "UNDET",
+   "smoke": true,
+   "lang": "en",
+   "target": "women",
+   "v1": "OPPOSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "OPPOSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": -0.1933,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "condemns",
+   "gold": "OPPOSE",
+   "ok_v1": true
+  },
+  {
+   "id": "N68vmAE5s_g",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.0,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "OMSByZ-o3Ww",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": -0.03,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "XlJCNPi5inM",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "men",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0067,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "YDEsYXYlB8o",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "gay people",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0867,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "ga1r2cweP80",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "sex workers",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0067,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "j_foVftOOs4",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": null,
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": null,
+   "ov_D": 0.04,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "no_hate_content",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "pofgIFZpR7c",
+   "ds": "MHC",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "en",
+   "target": "men",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": -0.0067,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "BV1Km4y1u7ri",
+   "ds": "MHC_zh",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "zh",
+   "target": "men perceived as overly dependent on the",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0105,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "BV1Qk4y1g7PM",
+   "ds": "MHC_zh",
+   "grp": "S_FP",
+   "voice": "OWN",
+   "smoke": false,
+   "lang": "zh",
+   "target": "women",
+   "v1": "OPPOSE",
+   "v1_votes": [
+    "OPPOSE",
+    "OPPOSE",
+    "ENDORSE",
+    "OPPOSE",
+    "OPPOSE"
+   ],
+   "v2": "OPPOSE",
+   "ov_D": 0.0317,
+   "r1_5way": "condemns",
+   "mask_5way": "condemns",
+   "gold": "OPPOSE",
+   "ok_v1": true
+  },
+  {
+   "id": "BV1to4y177df",
+   "ds": "MHC_zh",
+   "grp": "S_FP",
+   "voice": "UNDET",
+   "smoke": false,
+   "lang": "zh",
+   "target": "男性和女性",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "OPPOSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0,
+   "r1_5way": "endorses",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  },
+  {
+   "id": "BV1vK41177zi",
+   "ds": "MHC_zh",
+   "grp": "S_FP",
+   "voice": "NOT_OWN",
+   "smoke": false,
+   "lang": "zh",
+   "target": "女性",
+   "v1": "ENDORSE",
+   "v1_votes": [
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE",
+    "ENDORSE"
+   ],
+   "v2": "ENDORSE",
+   "ov_D": 0.0206,
+   "r1_5way": "no_hate_content",
+   "mask_5way": "endorses",
+   "gold": "OPPOSE",
+   "ok_v1": false
+  }
+ ]
+}

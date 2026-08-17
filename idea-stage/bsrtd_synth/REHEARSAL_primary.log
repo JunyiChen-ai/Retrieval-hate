@@ -1,0 +1,207 @@
+==============================================================================
+B-SRTD pilot  mode=primary  start 2026-08-10T07:14:15  device=cuda
+Rules: research-wiki/EXP_bsrtd_prereg.md (frozen before this file existed)
+teacher models=['synthetic-oracle'] engines=['synthetic']
+G0 (assets / encoder responsivity / beyond-gold information): PASS
+{
+  "en": {
+    "train": {
+      "n": 260,
+      "need": 200,
+      "verify_pass_frac": 1.0,
+      "min_class_frac": 0.4846153846153846,
+      "ok": true
+    },
+    "val": {
+      "n": 90,
+      "need": 80,
+      "verify_pass_frac": 1.0,
+      "min_class_frac": 0.4666666666666667,
+      "ok": true
+    },
+    "teacher": {
+      "signB_agree": 1.0,
+      "mean_abs_dB": 0.45524472448104486,
+      "mean_abs_dA": 0.10667330873555629,
+      "mean_abs_dAB": 0.12214843885169313,
+      "sd_dA": 0.1526068927092275,
+      "sd_dB": 0.3124674619013708,
+      "sd_dAB": 0.17014883774220357,
+      "resid_sd_beyond_gold": [
+        0.15132260864854877,
+        0.15234269955986385,
+        0.1696097114487303
+      ],
+      "resid_floor": 0.03,
+      "ok": true
+    },
+    "probe": {
+      "acc": 0.9777777777777777,
+      "need": 0.65,
+      "ok": true
+    }
+  },
+  "zh": {
+    "train": {
+      "n": 260,
+      "need": 200,
+      "verify_pass_frac": 1.0,
+      "min_class_frac": 0.4807692307692308,
+      "ok": true
+    },
+    "val": {
+      "n": 90,
+      "need": 80,
+      "verify_pass_frac": 1.0,
+      "min_class_frac": 0.4888888888888889,
+      "ok": true
+    },
+    "teacher": {
+      "signB_agree": 1.0,
+      "mean_abs_dB": 0.4453828652798879,
+      "mean_abs_dA": 0.10149216689388303,
+      "mean_abs_dAB": 0.11524534820549175,
+      "sd_dA": 0.14720938873827455,
+      "sd_dB": 0.3079669843593373,
+      "sd_dAB": 0.16384863357661245,
+      "resid_sd_beyond_gold": [
+        0.1456000119292654,
+        0.14083140807027067,
+        0.16323435803728376
+      ],
+      "resid_floor": 0.03,
+      "ok": true
+    },
+    "probe": {
+      "acc": 0.9611111111111111,
+      "need": 0.65,
+      "ok": true
+    }
+  }
+}
+G1 teacher exam [en]: overall=0.9593 worst_cell=0.9257 -> PASS
+    orig       n=350   acc=0.9686 fp=0.0229 fn=0.0086 ok
+    targetsub  n=350   acc=0.9257 fp=0.0200 fn=0.0543 ok
+    stancerev  n=350   acc=0.9629 fp=0.0371 fn=0.0000 ok
+    both       n=350   acc=0.9800 fp=0.0200 fn=0.0000 ok
+G1 teacher exam [zh]: overall=0.9636 worst_cell=0.9200 -> PASS
+    orig       n=350   acc=0.9771 fp=0.0143 fn=0.0086 ok
+    targetsub  n=350   acc=0.9200 fp=0.0257 fn=0.0543 ok
+    stancerev  n=350   acc=0.9714 fp=0.0286 fn=0.0000 ok
+    both       n=350   acc=0.9857 fp=0.0143 fn=0.0000 ok
+G2 disagreement filter [en]: train 260->221 (floor 150), val 90->81 (floor 60) -> PASS
+    dropped by cell: {'orig': 11, 'targetsub': 21, 'stancerev': 9, 'both': 6}
+G2 disagreement filter [zh]: train 260->227 (floor 150), val 90->79 (floor 60) -> PASS
+    dropped by cell: {'orig': 7, 'targetsub': 20, 'stancerev': 8, 'both': 4}
+-- dataset MHC (lang en), 221 lattices in the aux loss
+    MHC bce seed=0 val_roc=0.8799 val_f1=0.8226 (1s)
+    MHC bce seed=1 val_roc=0.8487 val_f1=0.7913 (0s)
+    MHC bce seed=2 val_roc=0.8821 val_f1=0.7998 (0s)
+    MHC pair seed=0 val_roc=0.8152 val_f1=0.7583 (2s)
+    MHC pair seed=1 val_roc=0.8014 val_f1=0.7449 (2s)
+    MHC pair seed=2 val_roc=0.8663 val_f1=0.8230 (2s)
+    MHC cad lam=0.3 seed=0 val_roc=0.8322 val_f1=0.7768 (3s)
+    MHC cad lam=0.3 seed=1 val_roc=0.8159 val_f1=0.7813 (3s)
+    MHC cad lam=0.3 seed=2 val_roc=0.8658 val_f1=0.8153 (3s)
+    MHC cad lam=1.0 seed=0 val_roc=0.8675 val_f1=0.7923 (3s)
+    MHC cad lam=1.0 seed=1 val_roc=0.8236 val_f1=0.7895 (3s)
+    MHC cad lam=1.0 seed=2 val_roc=0.8556 val_f1=0.8150 (3s)
+    MHC cad lam=3.0 seed=0 val_roc=0.8692 val_f1=0.8043 (3s)
+    MHC cad lam=3.0 seed=1 val_roc=0.8370 val_f1=0.7846 (3s)
+    MHC cad lam=3.0 seed=2 val_roc=0.8501 val_f1=0.7838 (3s)
+    MHC kdabs lam=0.3 seed=0 val_roc=0.8207 val_f1=0.7533 (2s)
+    MHC kdabs lam=0.3 seed=1 val_roc=0.8109 val_f1=0.7417 (2s)
+    MHC kdabs lam=0.3 seed=2 val_roc=0.8613 val_f1=0.8152 (2s)
+    MHC kdabs lam=1.0 seed=0 val_roc=0.8272 val_f1=0.7844 (2s)
+    MHC kdabs lam=1.0 seed=1 val_roc=0.8169 val_f1=0.7574 (2s)
+    MHC kdabs lam=1.0 seed=2 val_roc=0.8723 val_f1=0.8074 (2s)
+    MHC kdabs lam=3.0 seed=0 val_roc=0.8403 val_f1=0.7766 (2s)
+    MHC kdabs lam=3.0 seed=1 val_roc=0.8102 val_f1=0.7747 (2s)
+    MHC kdabs lam=3.0 seed=2 val_roc=0.8666 val_f1=0.8077 (2s)
+    MHC jac lam=0.3 seed=0 val_roc=0.8040 val_f1=0.7529 (2s)
+    MHC jac lam=0.3 seed=1 val_roc=0.8100 val_f1=0.7524 (2s)
+    MHC jac lam=0.3 seed=2 val_roc=0.8623 val_f1=0.8076 (2s)
+    MHC jac lam=1.0 seed=0 val_roc=0.8057 val_f1=0.7529 (2s)
+    MHC jac lam=1.0 seed=1 val_roc=0.8193 val_f1=0.7608 (2s)
+    MHC jac lam=1.0 seed=2 val_roc=0.8649 val_f1=0.8077 (2s)
+    MHC jac lam=3.0 seed=0 val_roc=0.8424 val_f1=0.7679 (2s)
+    MHC jac lam=3.0 seed=1 val_roc=0.8355 val_f1=0.7833 (2s)
+    MHC jac lam=3.0 seed=2 val_roc=0.8730 val_f1=0.8153 (2s)
+    MHC bsrtd lam=0.3 seed=0 val_roc=0.8057 val_f1=0.7529 (2s)
+    MHC bsrtd lam=0.3 seed=1 val_roc=0.8097 val_f1=0.7524 (2s)
+    MHC bsrtd lam=0.3 seed=2 val_roc=0.8613 val_f1=0.8076 (2s)
+    MHC bsrtd lam=1.0 seed=0 val_roc=0.8071 val_f1=0.7529 (2s)
+    MHC bsrtd lam=1.0 seed=1 val_roc=0.8124 val_f1=0.7524 (2s)
+    MHC bsrtd lam=1.0 seed=2 val_roc=0.8627 val_f1=0.8074 (2s)
+    MHC bsrtd lam=3.0 seed=0 val_roc=0.8269 val_f1=0.7563 (2s)
+    MHC bsrtd lam=3.0 seed=1 val_roc=0.8276 val_f1=0.7753 (2s)
+    MHC bsrtd lam=3.0 seed=2 val_roc=0.8649 val_f1=0.8077 (2s)
+-- dataset MHC_zh (lang zh), 227 lattices in the aux loss
+    MHC_zh bce seed=0 val_roc=0.8381 val_f1=0.7844 (0s)
+    MHC_zh bce seed=1 val_roc=0.8414 val_f1=0.7923 (0s)
+    MHC_zh bce seed=2 val_roc=0.8107 val_f1=0.7436 (0s)
+    MHC_zh pair seed=0 val_roc=0.8012 val_f1=0.7690 (2s)
+    MHC_zh pair seed=1 val_roc=0.8045 val_f1=0.7768 (2s)
+    MHC_zh pair seed=2 val_roc=0.7735 val_f1=0.7146 (2s)
+    MHC_zh cad lam=0.3 seed=0 val_roc=0.8398 val_f1=0.7763 (3s)
+    MHC_zh cad lam=0.3 seed=1 val_roc=0.8147 val_f1=0.7838 (3s)
+    MHC_zh cad lam=0.3 seed=2 val_roc=0.8064 val_f1=0.7460 (3s)
+    MHC_zh cad lam=1.0 seed=0 val_roc=0.8443 val_f1=0.7753 (3s)
+    MHC_zh cad lam=1.0 seed=1 val_roc=0.8244 val_f1=0.7608 (3s)
+    MHC_zh cad lam=1.0 seed=2 val_roc=0.8161 val_f1=0.7538 (3s)
+    MHC_zh cad lam=3.0 seed=0 val_roc=0.8433 val_f1=0.7920 (3s)
+    MHC_zh cad lam=3.0 seed=1 val_roc=0.8348 val_f1=0.7612 (3s)
+    MHC_zh cad lam=3.0 seed=2 val_roc=0.8069 val_f1=0.7460 (3s)
+    MHC_zh kdabs lam=0.3 seed=0 val_roc=0.8180 val_f1=0.7614 (2s)
+    MHC_zh kdabs lam=0.3 seed=1 val_roc=0.8054 val_f1=0.7913 (2s)
+    MHC_zh kdabs lam=0.3 seed=2 val_roc=0.7221 val_f1=0.7214 (2s)
+    MHC_zh kdabs lam=1.0 seed=0 val_roc=0.8253 val_f1=0.7753 (2s)
+    MHC_zh kdabs lam=1.0 seed=1 val_roc=0.8102 val_f1=0.7766 (2s)
+    MHC_zh kdabs lam=1.0 seed=2 val_roc=0.7931 val_f1=0.7304 (2s)
+    MHC_zh kdabs lam=3.0 seed=0 val_roc=0.8296 val_f1=0.7690 (2s)
+    MHC_zh kdabs lam=3.0 seed=1 val_roc=0.8137 val_f1=0.7838 (2s)
+    MHC_zh kdabs lam=3.0 seed=2 val_roc=0.8021 val_f1=0.7384 (2s)
+    MHC_zh jac lam=0.3 seed=0 val_roc=0.7924 val_f1=0.7615 (2s)
+    MHC_zh jac lam=0.3 seed=1 val_roc=0.8161 val_f1=0.8000 (2s)
+    MHC_zh jac lam=0.3 seed=2 val_roc=0.7780 val_f1=0.7125 (2s)
+    MHC_zh jac lam=1.0 seed=0 val_roc=0.7962 val_f1=0.7692 (2s)
+    MHC_zh jac lam=1.0 seed=1 val_roc=0.8189 val_f1=0.8000 (2s)
+    MHC_zh jac lam=1.0 seed=2 val_roc=0.7299 val_f1=0.7125 (2s)
+    MHC_zh jac lam=3.0 seed=0 val_roc=0.7981 val_f1=0.7766 (2s)
+    MHC_zh jac lam=3.0 seed=1 val_roc=0.8215 val_f1=0.7922 (2s)
+    MHC_zh jac lam=3.0 seed=2 val_roc=0.7903 val_f1=0.7133 (2s)
+    MHC_zh bsrtd lam=0.3 seed=0 val_roc=0.8114 val_f1=0.7692 (2s)
+    MHC_zh bsrtd lam=0.3 seed=1 val_roc=0.8147 val_f1=0.8000 (2s)
+    MHC_zh bsrtd lam=0.3 seed=2 val_roc=0.7628 val_f1=0.7152 (2s)
+    MHC_zh bsrtd lam=1.0 seed=0 val_roc=0.7962 val_f1=0.7692 (2s)
+    MHC_zh bsrtd lam=1.0 seed=1 val_roc=0.8182 val_f1=0.8076 (2s)
+    MHC_zh bsrtd lam=1.0 seed=2 val_roc=0.7396 val_f1=0.7146 (2s)
+    MHC_zh bsrtd lam=3.0 seed=0 val_roc=0.8059 val_f1=0.7842 (2s)
+    MHC_zh bsrtd lam=3.0 seed=1 val_roc=0.8213 val_f1=0.7998 (2s)
+    MHC_zh bsrtd lam=3.0 seed=2 val_roc=0.7789 val_f1=0.7214 (2s)
+  [MHC] FROZEN COMPARATOR = bce  (mean val ROC {'bce': 0.8702156441473701, 'pair': 0.8276438290761519, 'cad': 0.8488899498687038, 'kdabs': 0.8390228375905148})
+  [MHC_zh] FROZEN COMPARATOR = bce  (mean val ROC {'bce': 0.8300591715976332, 'pair': 0.7930571992110454, 'cad': 0.8202761341222881, 'kdabs': 0.8151479289940827})
+PROGRESS phase=null dataset=MHC lambda=3.0 reps=8
+  null 5/8 running mean -0.0238
+==============================================================================
+FULL TEST TABLE (withheld until now)
+-- MHC, frozen comparator = bce, lambda = {'cad': 1.0, 'kdabs': 3.0, 'jac': 3.0, 'bsrtd': 3.0}
+     bce     test ROC 0.7019+/-0.0091   macroF1 0.6310+/-0.0209
+     pair    test ROC 0.6674+/-0.0115   macroF1 0.5966+/-0.0254
+     cad     test ROC 0.6800+/-0.0075   macroF1 0.5958+/-0.0210
+     kdabs   test ROC 0.6757+/-0.0145   macroF1 0.6288+/-0.0172
+     jac     test ROC 0.6911+/-0.0024   macroF1 0.6287+/-0.0294
+     bsrtd   test ROC 0.6791+/-0.0067   macroF1 0.6110+/-0.0414
+     => DeltaROC=-0.0228  DeltaF1=-0.0200  vsCAD=-0.0009  vsKDABS=+0.0033  vsJAC=-0.0120
+-- MHC_zh, frozen comparator = bce, lambda = {'cad': 0.3, 'kdabs': 3.0, 'jac': 3.0, 'bsrtd': 3.0}
+     bce     test ROC 0.7464+/-0.0071   macroF1 0.6814+/-0.0066
+     pair    test ROC 0.7056+/-0.0058   macroF1 0.6325+/-0.0197
+     cad     test ROC 0.7152+/-0.0147   macroF1 0.6374+/-0.0044
+     kdabs   test ROC 0.7131+/-0.0104   macroF1 0.6473+/-0.0135
+     jac     test ROC 0.7198+/-0.0074   macroF1 0.6431+/-0.0268
+     bsrtd   test ROC 0.7168+/-0.0037   macroF1 0.6440+/-0.0215
+     => DeltaROC=-0.0296  DeltaF1=-0.0374  vsCAD=+0.0016  vsKDABS=+0.0038  vsJAC=-0.0030
+MeanDeltaROC=-0.0262 MeanDeltaF1=-0.0287 Null95=0.0000 bootLCB95=-0.0353 positive_cells=0/6
+R1=False R2=False R3a(vs CAD)=False R3b(vs KD-ABS)=False R4=False
+VERDICT: KILL
+raw -> /tmp/claude-135258174/-home-jehc223-Retrieval-hate/bcba499b-babe-4ce2-b144-66370e6f6ffd/scratchpad/rh_primary.json

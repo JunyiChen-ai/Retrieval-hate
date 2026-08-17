@@ -1,0 +1,12 @@
+{
+ "tag": "c1",
+ "pair": 3,
+ "model": "qwen3-vl-plus",
+ "file_id": "file-batch-a039e829fb67437b8f8476f1",
+ "batch_id": "batch_5585a952-9020-49db-b318-d1f9df2e0e2e",
+ "n": 163,
+ "submitted": "2026-08-13T07:08:59",
+ "status": "completed",
+ "output_file_id": "file-batch_output-50d8934c50b44c35be869fc1",
+ "error_file_id": "file-batch_output-23cc3ac8700d40818b1718b2"
+}

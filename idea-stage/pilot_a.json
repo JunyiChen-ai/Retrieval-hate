@@ -1,0 +1,176 @@
+{
+  "pilot": "P-A disagreement retrievability",
+  "freeze": "idea-stage/PILOT_FREEZE_2026-08-09.md",
+  "mode": "real",
+  "knn": 20,
+  "boot": 2000,
+  "boot_seed": 20260908,
+  "null_seed": 20260909,
+  "guard": "armed: any path containing 'test' HALTs",
+  "per_lang": {
+    "EN": {
+      "n": 629,
+      "n_neighbour_weights_negative": 0,
+      "weight_min": 0.44517138429197545,
+      "weight_max": 1.8795082603490303,
+      "base_rate_T1": 0.21144674085850557,
+      "base_rate_T2": 0.10015898251192369,
+      "base_rate_label_pos": 0.3068362480127186,
+      "E1_auroc_s_on_T1": 0.685491450400194,
+      "E2_auroc_s_on_T2": 0.6556032306915699,
+      "E3_auroc_h_on_T1": 0.627160138248848,
+      "delta_s_minus_h_on_T1": 0.058331312151346015,
+      "aux_auroc_sT1_on_T2": 0.668181053340064,
+      "aux_auroc_h_on_T2": 0.6543272196982445,
+      "boot": {
+        "n_resamples": 2000,
+        "n_skipped_degenerate": 0,
+        "seed": 20260908,
+        "auroc_s_T1_ci95": [
+          0.6356908273708465,
+          0.731410058497006
+        ],
+        "auroc_h_T1_ci95": [
+          0.5734079849832195,
+          0.6767691703116091
+        ],
+        "delta_ci95": [
+          -0.00963727700382118,
+          0.12324962110398169
+        ],
+        "delta_frac_positive": 0.957
+      },
+      "boot_T2": {
+        "n_skipped_degenerate": 0,
+        "auroc_s_T2_ci95": [
+          0.5806003274639666,
+          0.7259642188475139
+        ],
+        "delta_T2_ci95": [
+          -0.09722880637566553,
+          0.09872362712383981
+        ]
+      },
+      "null_auroc_T1_permuted": 0.49327704341498907,
+      "null_seed": 20260909,
+      "null_in_range": true,
+      "n_train": 549,
+      "n_val": 80,
+      "vote_count_hist": {
+        "2": 526,
+        "3": 102,
+        "4": 1
+      },
+      "vote_alias_No_to_Normal": 0,
+      "majority_vs_cache_label_agreement": 1.0
+    },
+    "ZH": {
+      "n": 657,
+      "n_neighbour_weights_negative": 0,
+      "weight_min": 1.0050602570867084,
+      "weight_max": 1.9996932372647493,
+      "base_rate_T1": 0.3165905631659056,
+      "base_rate_T2": 0.1750380517503805,
+      "base_rate_label_pos": 0.3165905631659056,
+      "E1_auroc_s_on_T1": 0.7089365256124721,
+      "E2_auroc_s_on_T2": 0.6849029359858816,
+      "E3_auroc_h_on_T1": 0.6180293815316087,
+      "delta_s_minus_h_on_T1": 0.09090714408086342,
+      "aux_auroc_sT1_on_T2": 0.6425798171025189,
+      "aux_auroc_h_on_T2": 0.6248676399807477,
+      "boot": {
+        "n_resamples": 2000,
+        "n_skipped_degenerate": 0,
+        "seed": 20260908,
+        "auroc_s_T1_ci95": [
+          0.667072078001326,
+          0.7486752141303543
+        ],
+        "auroc_h_T1_ci95": [
+          0.5789526444042058,
+          0.6595304145899508
+        ],
+        "delta_ci95": [
+          0.04157727033272896,
+          0.13997362823643347
+        ],
+        "delta_frac_positive": 0.9995
+      },
+      "boot_T2": {
+        "n_skipped_degenerate": 0,
+        "auroc_s_T2_ci95": [
+          0.6335218195224707,
+          0.7351835677020275
+        ],
+        "delta_T2_ci95": [
+          0.005010312316984403,
+          0.11316661901709757
+        ]
+      },
+      "null_auroc_T1_permuted": 0.5412562103820455,
+      "null_seed": 20260909,
+      "null_in_range": true,
+      "n_train": 579,
+      "n_val": 78,
+      "vote_count_hist": {
+        "2": 485,
+        "3": 165,
+        "4": 7
+      },
+      "vote_alias_No_to_Normal": 1,
+      "majority_vs_cache_label_agreement": 0.9984779299847792
+    }
+  },
+  "verdict_block": {
+    "verdict": "GO",
+    "per_lang_auroc_bar_met": {
+      "EN": true,
+      "ZH": true
+    },
+    "per_lang_full_go": {
+      "EN": true,
+      "ZH": true
+    },
+    "nogo_condition_triggered": false,
+    "go_condition_triggered": true,
+    "ambiguous_condition_triggered": false,
+    "precedence_note": "The three frozen clauses can co-fire (e.g. full GO in exactly one language while the other is below 0.60). Precedence applied: GO > NO-GO > AMBIGUOUS. All three raw flags are reported so the reader can re-adjudicate without re-running."
+  },
+  "null_control_pass": true,
+  "null_control_failed_langs": [],
+  "meta": {
+    "files": {
+      "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_train.tsv": {
+        "rows": 701,
+        "sha256": "f4452dbed4d31d6a1268be1a40a81b707e87b997db261449c054a9470c65e589"
+      },
+      "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_valid.tsv": {
+        "rows": 100,
+        "sha256": "05eb7aa8ccd9b1e4dde0be7bccda6bba667bf1cbddeb7c2f50e99d1884cc8748"
+      },
+      "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_train.tsv": {
+        "rows": 699,
+        "sha256": "de9cacc45e0740d90362f8797b441a35194b5d90602e4c095472d1f39f2bd7bb"
+      },
+      "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_valid.tsv": {
+        "rows": 101,
+        "sha256": "d112b5c327e07be75d1fa1b3011cde58ec21b324eef61171c890be638258314f"
+      }
+    }
+  },
+  "paths_touched": [
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC/dev_seen_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC_zh/dev_seen_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC/train.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC/val.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC_zh/train.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC_zh/val.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_train.tsv",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_valid.tsv",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_train.tsv",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_valid.tsv"
+  ],
+  "elapsed_sec": 0.859565258026123
+}

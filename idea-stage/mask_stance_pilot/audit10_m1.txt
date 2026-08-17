@@ -1,0 +1,197 @@
+AUDIT SELECTION (rng 20260812):
+   HateMM::hate_video_377
+   HateMM::non_hate_video_149
+   HateMM::non_hate_video_642
+   ImpliHateVid::NH_887
+   ImpliHateVid::NH_892
+   MHC::KDcCiUU8q5E
+   MHC_zh::BV12B4y1x7eK
+   MHC_zh::BV1Lz4y1T7rn
+   MHC_zh::BV1aP4y1E7PF
+   MHC_zh::BV1vM411p7jy
+
+====================================================================================================
+HateMM::hate_video_377 CTRL_HATE | spans 3 matched 3 unmatched 0 placeholders 2 masked_frac 0.475 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "The fact of the matter is that the Jews are parasites", "target": "Jewish people"}
+   * {"text": "I don't lose one.😡Minute of sleep over whatever happened to them in the Second World war that was instigated by the Jews", "target": "Jewish people"}
+   * {"text": "I don't care about the Jews", "target": "Jewish people"}
+-- ORIGINAL --
+That Hitler operated under I take it. you you do condemn Hitler, don't you you do think what he did was wrong the
+hoocaust and and everything about him, don't you you'll condemn him tonight The fact of the matter is that the Jews are
+parasites and I don't lose one.😡Minute of sleep over whatever happened to them in the Second World war that was
+instigated by the Jews, I don't care about the Jews, I care about white people.
+-- MASKED --
+That Hitler operated under I take it. you you do condemn Hitler, don't you you do think what he did was wrong the
+hoocaust and and everything about him, don't you you'll condemn him tonight [a passage of attacking speech targeting
+Jewish people] and [a passage of attacking speech targeting Jewish people], I care about white people.
+
+====================================================================================================
+HateMM::non_hate_video_149 S_FP | spans 4 matched 4 unmatched 0 placeholders 4 masked_frac 0.39 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "the nigger showed a lot of sense", "target": "Black people"}
+   * {"text": "That's the place to give you inflammation of the river. That's where the old folks love to stay. They got the up there because they cannot get away way down on the sway River. No more I wish to rollam. All the cool they stay. I'm glad you get away.Far from the old apple.", "target": "Black
+   * {"text": "That's the place to give you inflammation of the liver that's where the crocodile.Few your legs and the swarms on the swany lay are foing way down on the Swany river, the more I wish to roll all the cool day days, I'm glad to get away.Far from the oldval apple.", "target": "Black people"}
+   * {"text": "That's the place to give you inflammation of the.That's where the nany goes blood to things and proud fro all day long wave down on the Swwannee River, the more I wish to rollam all the who they say, Im glad you'll get away.F for the all at all.", "target": "Black people"}
+-- ORIGINAL --
+Paraday on way down upon the Fly River, Lord Shepherd.You've all heard the song about the Pway River, they tell you
+with' the pretty little s all the benefits of people knowing nothing at all about the place a lot of information I have
+got Why the Darkkey and the Didty ever wanted to retire is really something more than I can say.Okay.But I'm willing to
+admit the nigger showed a lot of sense when he made up his mind to come away way down on the Swway River, That's the
+place to give you inflammation of the river. That's where the old folks love to stay. They got the up there because they
+cannot get away way down on the sway River. No more I wish to rollam. All the cool they stay. I'm glad you get away.Far
+from the old apple.There are big alligators in the Swwanneee River that greet you with a playful little laugh, but if
+you are deluded by the elongated smile of them and the one they bite the green in half there are4 kinds of fever you can
+get with your like and the country roundabout is made a must while the flavor of the atmosphere is fully guaranteed to
+stop the speculation of your blood down out the swannee river, that's the place to give you inflammation of the liver
+that's where the crocodile.Few your legs and the swarms on the swany lay are foing way down on the Swany river, the more
+I wish to roll all the cool day days, I'm glad to get away.Far from the oldval apple.There are great big mosquitos on
+the Twae River thatve got lose the castle of any pin and they'd like to pick it in the tendernder Park or your anatomy
+that's why you have your trousers made of thin When you wake up in the morning all your boots are full of snakes, it's a
+lively place for living in because for half a dozen times to hear the mos are flooded out that's the only time they ever
+have a wat
+-- MASKED --
+Paraday on way down upon the Fly River, Lord Shepherd.You've all heard the song about the Pway River, they tell you
+with' the pretty little s all the benefits of people knowing nothing at all about the place a lot of information I have
+got Why the Darkkey and the Didty ever wanted to retire is really something more than I can say.Okay.But I'm willing to
+admit [a passage of attacking speech targeting Black people] when he made up his mind to come away way down on the Swway
+River, [a passage of attacking speech targeting Black people]There are big alligators in the Swwanneee River that greet
+you with a playful little laugh, but if you are deluded by the elongated smile of them and the one they bite the green
+in half there are4 kinds of fever you can get with your like and the country roundabout is made a must while the flavor
+of the atmosphere is fully guaranteed to stop the speculation of your blood down out the swannee river, [a passage of
+attacking speech targeting Black people]There are great big mosquitos on the Twae River thatve got lose the castle of
+any pin and they'd like to pick it in the tendernder Park or your anatomy that's why you have your trousers made of thin
+When you wake up in the morning all your boots are full of snakes, it's a lively place for living in because for half a
+dozen times to hear the mos are flooded out that's the only time they ever have a watch way down on the Twae river, [a
+passage of attacking speech targeting Black people]
+
+====================================================================================================
+HateMM::non_hate_video_642 S_FP | spans 6 matched 6 unmatched 0 placeholders 3 masked_frac 0.385 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "Being white is a 21st century recry.", "target": "white people"}
+   * {"text": "Being white is a 20% rec.", "target": "white people"}
+   * {"text": "Of beinging white needs a 2% rec.", "target": "white people"}
+   * {"text": "When you cry, you hope your guilt is an issue, but the skin's the same color as your free price issue privilege.", "target": "white people"}
+   * {"text": "When you want your rhymes to be amazed ma, but they all just seem so may a disability when you're at a wedding and you want to dance but as much as you try you don't stand a chance.", "target": "white people"}
+   * {"text": "You have all these real and crippling fears but when you cry they just call my tears disability.", "target": "white people"}
+-- ORIGINAL --
+I was wondering if, you know, you guys would be on board to maybe to sponsor the video to sponsor00.privilege a leg No
+I' being serious that means that that music would need.The turn in excess of 10 to 20 million views I think we all get
+that if every South African business turned we so for sure.🎼You know, it's cool, I'll make a plan.We're victims of the
+time.Being white is a 21st century recry.🎼When your parents pay your tuition fees and you have a lot of opportunities,
+privilege what what privilege When you see a protest and like to complain while you tweet about the drink champagne.Pvi
+privilege when you didn't have to deal with years of oppression, but deny that you benefit from your complexion
+privilege.🎼When you cry, you hope your guilt is an issue, but the skin's the same color as your free price issue
+privilege.Being white is a 20% rec.🎼When you want your rhymes to be amazed ma, but they all just seem so may a
+disability when you're at a wedding and you want to dance but as much as you try you don't stand a chance.DWCa Cota
+comes on, it's your favorite song, it feels sur, but you look so.🎼You have all these real and crippling fears but when
+you cry they just call my tears disability.Of beinging white needs a 2% rec.🎼  🎼The of 2%.
+-- MASKED --
+I was wondering if, you know, you guys would be on board to maybe to sponsor the video to sponsor00.privilege a leg No
+I' being serious that means that that music would need.The turn in excess of 10 to 20 million views I think we all get
+that if every South African business turned we so for sure.🎼You know, it's cool, I'll make a plan.We're victims of the
+time.[a passage of attacking speech targeting white people]🎼When your parents pay your tuition fees and you have a lot
+of opportunities, privilege what what privilege When you see a protest and like to complain while you tweet about the
+drink champagne.Pvi privilege when you didn't have to deal with years of oppression, but deny that you benefit from your
+complexion privilege.🎼[a passage of attacking speech targeting white people]DWCa Cota comes on, it's your favorite song,
+it feels sur, but you look so.🎼[a passage of attacking speech targeting white people]🎼 🎼The of 2%.
+
+====================================================================================================
+ImpliHateVid::NH_887 S_FP | spans 4 matched 4 unmatched 0 placeholders 2 masked_frac 0.633 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "see an American people sit all day they sit jail all day they sit chairs all day they just lay around all day", "target": "American people"}
+   * {"text": "they got to pay immigrants from Mexico in different places of the world to come and do all the work because they can't do anything because they sit all day", "target": "American people"}
+   * {"text": "they got to pay people all kinds of money to do simple things because they just sit around all day", "target": "American people"}
+   * {"text": "immigrants from Mexico", "target": "immigrants"}
+-- ORIGINAL --
+see an American people sit all day they sit jail all day they sit chairs all day they just lay around all day and got to
+pay immigrants from Mexico in different places of the world to come and do all the work because they can't do anything
+because they sit all day they got to pay people all kinds of money to do simple things because they just sit around all
+day people need to get out and start making urban gardens
+-- MASKED --
+[a passage of attacking speech targeting American people] and [a passage of attacking speech targeting American people]
+got to pay people all kinds of money to do simple things because they just sit around all day people need to get out and
+start making urban gardens
+
+====================================================================================================
+ImpliHateVid::NH_892 CTRL_NONHATE | spans 1 matched 1 unmatched 0 placeholders 1 masked_frac 0.044 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "the Chinese did not build this wall", "target": "Chinese people"}
+-- ORIGINAL --
+The Great Wall of China, one of the biggest wonders of the world, no? They say this side is the seat where they throw
+the arrows to the enemies and that's why they built this giant wall to protect China from their enemies. But you know
+what's interesting and very curious. This side is China and this side is outside China. Meaning, this wall, the history
+is allied. This wall was not built to protect China from this enemies. It's that enemies which are in this side are
+protecting themselves from China. So the Chinese did not build this wall. Who built this wall? I'll tell you research
+that Tarjan Empire, which was in all this area. And they were defending themselves from the Chinese, not the other world
+around. History is allied, geography is allied, science is allied, they like to us.
+-- MASKED --
+The Great Wall of China, one of the biggest wonders of the world, no? They say this side is the seat where they throw
+the arrows to the enemies and that's why they built this giant wall to protect China from their enemies. But you know
+what's interesting and very curious. This side is China and this side is outside China. Meaning, this wall, the history
+is allied. This wall was not built to protect China from this enemies. It's that enemies which are in this side are
+protecting themselves from China. So [a passage of attacking speech targeting Chinese people]. Who built this wall? I'll
+tell you research that Tarjan Empire, which was in all this area. And they were defending themselves from the Chinese,
+not the other world around. History is allied, geography is allied, science is allied, they like to us.
+
+====================================================================================================
+MHC::KDcCiUU8q5E S_FP | spans 2 matched 2 unmatched 0 placeholders 2 masked_frac 0.512 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "Trump &amp; his audience&#39;s Misogyny &amp; Cruelty are disgusting", "target": "women"}
+   * {"text": "the way he talked about it, the way the crowd reacted to it, just the amount of like cruelty and misogyny, like running through the entire event through him and and it is when you watch it is like this is why so many victims do not come forward because that is a huge part of society that a
+-- ORIGINAL --
+Trump &amp; his audience&#39;s Misogyny &amp; Cruelty are disgusting #shorts . Sure seems like a big deal that the
+Republican frontrunner for president will finally face some measure of accountability after being accused of sexual
+misconduct by 26 women. No, the entire episode last night.Was just so disgusting, the way he talked about it, the way
+the crowd reacted to it, just the amount of like cruelty and misogyny, like running through the entire event through him
+and and it is when you watch it is like this is why so many victims do not come forward because that is a huge part of
+society that audience represents a significant swath of Americans and the embodiment of that cruelty and misogyny is
+their chosen leader, The man who was president of the United States and could very well be president again.And that, I
+mean, it was a truly one of the more horrifying things I've ever seen in a political like media event like that.
+-- MASKED --
+[a passage of attacking speech targeting women] #shorts . Sure seems like a big deal that the Republican frontrunner for
+president will finally face some measure of accountability after being accused of sexual misconduct by 26 women. No, the
+entire episode last night.Was just so disgusting, [a passage of attacking speech targeting women], The man who was
+president of the United States and could very well be president again.And that, I mean, it was a truly one of the more
+horrifying things I've ever seen in a political like media event like that.
+
+====================================================================================================
+MHC_zh::BV12B4y1x7eK CTRL_HATE | spans 2 matched 2 unmatched 0 placeholders 3 masked_frac 0.148 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "妈宝男", "target": "男性"}
+   * {"text": "妈宝女", "target": "女性"}
+-- ORIGINAL --
+比妈宝男更可怕的人... . 🎼人人讨厌妈宝男，妈宝女是什么样子？我妈说了，彩礼要20万，你还在等什么？赶紧点赞啊，我要。
+-- MASKED --
+比[一段针对男性的攻击性言论]更可怕的人... . 🎼人人讨厌[一段针对男性的攻击性言论]，[一段针对女性的攻击性言论]是什么样子？我妈说了，彩礼要20万，你还在等什么？赶紧点赞啊，我要。
+
+====================================================================================================
+MHC_zh::BV1Lz4y1T7rn CTRL_NONHATE | spans 0 matched 0 unmatched 0 placeholders 0 masked_frac 0.0 leaks []
+-- EXTRACTED SPANS --
+-- ORIGINAL --
+#姐姐好饿第1季 #小S ：吴奇隆你不敢演老色鬼啊，我都敢演老鸨！ #吴奇隆 ：你本色演出我又不是！哈哈哈~ #搞笑 .
+🎼我都感觉一演老好，也不然你演老特怪了，你本色演出我又不信。我给你钱，你不要看你的身体好不好？我求你了，我求你了，本来就是为了钱，我本来又没想碰到要眼贱就很贱，你不用眼。😊What the fuck.
+-- MASKED --
+#姐姐好饿第1季 #小S ：吴奇隆你不敢演老色鬼啊，我都敢演老鸨！ #吴奇隆 ：你本色演出我又不是！哈哈哈~ #搞笑 .
+🎼我都感觉一演老好，也不然你演老特怪了，你本色演出我又不信。我给你钱，你不要看你的身体好不好？我求你了，我求你了，本来就是为了钱，我本来又没想碰到要眼贱就很贱，你不用眼。😊What the fuck.
+
+====================================================================================================
+MHC_zh::BV1aP4y1E7PF S_FN | spans 3 matched 3 unmatched 0 placeholders 1 masked_frac 0.205 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "珍爱生命，远离少妇", "target": "女性"}
+   * {"text": "少妇勾人", "target": "女性"}
+   * {"text": "少妇勾魂……", "target": "女性"}
+-- ORIGINAL --
+珍爱生命，远离少妇  少妇勾人  少妇勾魂…… . 🎼救命，我真的是见一个爱一个，怎么看都不会腻，不信艾特你兄弟试试。자녀 와 에도 예 에게 우가 엮 어져 안.🎼一个月才几百块，你玩什么命啊，你。😊자녀와 배예에게 요.
+-- MASKED --
+[一段针对女性的攻击性言论] . 🎼救命，我真的是见一个爱一个，怎么看都不会腻，不信艾特你兄弟试试。자녀 와 에도 예 에게 우가 엮 어져 안.🎼一个月才几百块，你玩什么命啊，你。😊자녀와 배예에게 요.
+
+====================================================================================================
+MHC_zh::BV1vM411p7jy CTRL_HATE | spans 1 matched 1 unmatched 0 placeholders 1 masked_frac 0.301 leaks []
+-- EXTRACTED SPANS --
+   * {"text": "你们是地沟里的你们是地沟里的巨，又臭又恶心。", "target": "粉丝"}
+-- ORIGINAL --
+皮条客童锦程798骂粉丝 . 🎼你们是地沟里的你们是地沟里的巨，又臭又恶心。除了在网上巴拉巴拉的会恶心人，你们还会干啥呢？一天到晚的这魔这内磨。😡
+-- MASKED --
+皮条客童锦程798骂粉丝 . 🎼[一段针对粉丝的攻击性言论]除了在网上巴拉巴拉的会恶心人，你们还会干啥呢？一天到晚的这魔这内磨。😡
+

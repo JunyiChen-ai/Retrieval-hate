@@ -1,0 +1,43 @@
+{
+ "HateMM": {
+  "base_macro_f1": 0.8731899810770712,
+  "n_test": 215,
+  "repair_all": 1.0,
+  "n_audit_flagged_test_items": 11,
+  "audit_flagged_in_error_set": [
+   "hate_video_295",
+   "non_hate_video_140"
+  ]
+ },
+ "MHC": {
+  "base_macro_f1": 0.7776376477455639,
+  "n_test": 161,
+  "n_split_vote": 26,
+  "repair_split_vote_items": 0.8575245936753865,
+  "repair_unanimous_items": 0.9144910854570864,
+  "testsplit_panel_resample_ceiling": 0.9275985853909765,
+  "testsplit_panel_resample_p05": 0.8961098820058997,
+  "prize_to_ceiling": 0.14996093764541263,
+  "repair_all": 1.0
+ },
+ "MHC_zh": {
+  "base_macro_f1": 0.8183082037531442,
+  "n_test": 149,
+  "n_split_vote": 20,
+  "repair_split_vote_items": 0.8884106338144303,
+  "repair_unanimous_items": 0.9315557146947633,
+  "testsplit_panel_resample_ceiling": 0.938715699483175,
+  "testsplit_panel_resample_p05": 0.9094725214029273,
+  "prize_to_ceiling": 0.12040749573003084,
+  "repair_all": 1.0,
+  "audit_flagged_in_error_set": []
+ },
+ "ImpliHateVid": {
+  "base_macro_f1": 0.9276369313956309,
+  "n_test": 401,
+  "repair_all": 1.0,
+  "audit_flagged_in_error_set": [
+   "NH_180"
+  ]
+ }
+}

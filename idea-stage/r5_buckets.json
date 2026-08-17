@@ -1,0 +1,55 @@
+{
+ "_legend": {
+  "S": "stance / use-vs-mention: hate-associated surface content whose stance is reportage, quotation, counter-speech, satire, archival or education (FP side); or hate carried by endorsement framing over neutral surface (FN side); includes hate-adjacent-but-labelled-non-hate discourse",
+  "O": "on-screen text: the decisive evidence is burned-in text or subtitles, not speech",
+  "M": "silent / speech-free: transcript is empty or music-only, so the speech channel carries nothing",
+  "A": "annotation ambiguity: annotators split, or the given label conflicts with what the material shows",
+  "D": "data defect: item named in refine-logs/TRAINTEST_AUDIT_2026-08-09.md as a cross-split duplicate or degenerate (black video / constant vector)",
+  "X": "other: none of the above; ordinary ranking error"
+ },
+ "_method": "Coded by Claude (this session) from the full transcript + (HateMM) the OCR video-level cache, per item, before any bucket count was computed. No video frames were viewed. Primary bucket only; secondaries noted in _secondary.",
+ "HateMM": {
+  "hate_video_1": "O", "hate_video_10": "O", "hate_video_12": "O", "hate_video_36": "X",
+  "hate_video_71": "O", "hate_video_143": "X", "hate_video_218": "X", "hate_video_276": "X",
+  "hate_video_279": "M", "hate_video_295": "D", "hate_video_304": "O", "hate_video_317": "X",
+  "hate_video_365": "S", "hate_video_408": "X", "hate_video_427": "X",
+  "non_hate_video_16": "S", "non_hate_video_32": "S", "non_hate_video_121": "S",
+  "non_hate_video_134": "X", "non_hate_video_140": "D", "non_hate_video_149": "S",
+  "non_hate_video_312": "X", "non_hate_video_314": "A", "non_hate_video_400": "S",
+  "non_hate_video_528": "S", "non_hate_video_642": "S"
+ },
+ "ImpliHateVid": {
+  "NH_396": "S", "NH_180": "D", "NH_350": "X", "NH_199": "X", "NH_50": "X", "NH_217": "X",
+  "NH_44": "S", "NH_875": "S", "NH_707": "X", "NH_98": "X", "NH_394": "S", "NH_736": "S",
+  "NH_988": "S", "NH_615": "X", "NH_887": "S", "NH_28": "X", "NH_86": "X", "NH_650": "S",
+  "NH_645": "X",
+  "IM_57": "S", "IM_107": "A", "IM_313": "X", "IM_308": "S", "IM_5": "S", "IM_176": "S",
+  "IM_96": "A", "EX_150": "S"
+ },
+ "MHC": {
+  "8oESJEeo7_o": "X", "WYJ3_pvq0aw": "A", "e8ixmdMfSxw": "X", "XlJCNPi5inM": "S",
+  "YDEsYXYlB8o": "S", "1HYp_bfklBI": "A", "DxcRdnzBZoo": "S", "pofgIFZpR7c": "S",
+  "NmMrESRM134": "X", "j_foVftOOs4": "S", "ga1r2cweP80": "S", "YdRuekAOX-Y": "A",
+  "cYQyH7hbNnw": "A", "KDcCiUU8q5E": "S", "OMSByZ-o3Ww": "S", "N68vmAE5s_g": "S",
+  "6IZVj1joK6Q": "X", "gPSs769EvLQ": "A", "ko0Ub2dTh-U": "X", "TvuSOkN7OrM": "X",
+  "8zLoOqXvk64": "S",
+  "EEC98aHSgIY": "S", "cXRgVEENkPA": "S", "lzKJ_AWegCc": "M", "_qldaPBgkk0": "S",
+  "MvB-lgB8jRo": "X", "h_wKRDyoG_c": "S", "ZI_jbZWzW1A": "M", "dK43yHIUMKA": "S",
+  "msWtrZSVUis": "X", "03qOelm_dK8": "S"
+ },
+ "MHC_zh": {
+  "BV1G24y187Fh": "X", "BV1Km4y1u7ri": "S", "BV1vK41177zi": "S", "BV1m8411z7mV": "S",
+  "BV1VJ411378e": "X", "BV1to4y177df": "S", "BV1694y1N7xU": "X", "BV1bh4y1173w": "X",
+  "BV1Qk4y1g7PM": "S", "BV1qT4y1B7xM": "X", "BV1Us411K7va": "X",
+  "BV1Lj411D76g": "M", "BV19C4y177iH": "X", "BV1Vy4y1p7x2": "S", "BV1p14y1D7da": "X",
+  "BV1qZ4y1T71a": "S", "BV1ia411m7Yy": "A", "BV1oJ411p7Hi": "M", "BV15h4y157Km": "S",
+  "BV1Kh411T7FJ": "S", "BV1Le411f78S": "X", "BV1aP4y1E7PF": "S", "BV12G4y1S7mN": "S",
+  "BV1ch411L7VP": "S"
+ },
+ "_secondary": {
+  "hate_video_1": "M", "hate_video_10": "M", "hate_video_279": "O",
+  "YDEsYXYlB8o": "A", "pofgIFZpR7c": "A", "8zLoOqXvk64": "A", "BV1to4y177df": "A",
+  "hate_video_295": "S", "NH_180": "S", "BV1oJ411p7Hi": "S", "lzKJ_AWegCc": "S",
+  "ZI_jbZWzW1A": "S"
+ }
+}

@@ -1,0 +1,73 @@
+## headline (view A, variant 1, smoke items excluded)
+| metric | value | n | bar | pass |
+|---|---|---|---|---|
+| M1 binary stance acc on S | 0.469 | 32 | >= 0.70 | False |
+| M2 CTRL_HATE answered OPPOSE | 0.000 | 18 | <= 0.15 | True |
+| verdict | FAIL | | | |
+
+p(M1 vs two-way chance 0.5) = 0.8601
+
+## three methods, same rows
+| method | task | chance | acc on S |
+|---|---|---|---|
+| round 1 direct classification | 5-way | 0.20 | 0.281 (n=32) |
+| round 2 masked classification | 5-way | 0.20 | 0.375 (n=32) |
+| round 1, binarised | 2-way | 0.50 | 0.500 (n=32) |
+| round 2, binarised | 2-way | 0.50 | 0.562 (n=32) |
+| **this round, pinned-comment contrast** | 2-way | 0.50 | **0.469** (n=32) |
+
+## cells / strata (view A, variant 1)
+S_FP 0.056 (n=18)   S_FN 1.000 (n=14)
+
+by hand-coded voice form:
+| voice | meaning | n | acc | acc (round 1 binarised) |
+|---|---|---|---|---|
+| OWN | author speaks (作者有话) | 13 | 0.385 | 0.692 |
+| NOT_OWN | archive/third party (作者无话) | 10 | 0.400 | 0.400 |
+| UNDET | undeterminable | 9 | 0.667 | 0.333 |
+| UNCODED | not hand-coded | 0 | n/a | n/a |
+
+by dataset: {"HateMM": {"n": 6, "acc": 0.16666666666666666}, "MHC": {"n": 15, "acc": 0.4}, "MHC_zh": {"n": 11, "acc": 0.7272727272727273}}
+call histogram: {"S_FP": {"ENDORSE": 19, "OPPOSE": 2}, "S_FN": {"ENDORSE": 14}, "CTRL_HATE": {"ENDORSE": 18}, "CTRL_NONHATE": {"ENDORSE": 14, "OPPOSE": 4}}
+
+## the 5 template pairs
+| pair | acc on S | endorse rate (all items) |
+|---|---|---|
+| 0 | 0.469 | 0.845 |
+| 1 | 0.531 | 0.944 |
+| 2 | 0.438 | 0.901 |
+| 3 | 0.469 | 0.803 |
+| 4 | 0.469 | 0.845 |
+vote splits on S: {"5-0": 21, "3-2": 4, "4-1": 7} acc by split: {"5-0": {"n": 21, "acc": 0.42857142857142855}, "3-2": {"n": 4, "acc": 0.25}, "4-1": {"n": 7, "acc": 0.7142857142857143}}
+position bias, slot-A rate: 0.5155 over 355 calls
+
+## lexical overlap
+{
+ "n_scored": 27,
+ "n_zero_diff": 5,
+ "aligned_share": 0.333,
+ "acc_aligned": 0.6666666666666666,
+ "acc_not_aligned": 0.4444444444444444,
+ "per_pair_vote_follows_overlap": 0.487,
+ "per_pair_n": 158,
+ "mean_D_by_group": {
+  "S_FP": -0.0215,
+  "S_FN": -0.0019,
+  "CTRL_HATE": 0.0061,
+  "CTRL_NONHATE": -0.0202
+ }
+}
+
+## variant 1 vs 2, paired on target-bearing frame-bearing rows
+A_variant1_on_v2_rows      acc_S=0.500 n=22  S_FP=0.083/12 S_FN=1.000/10  M2=0.000
+A_variant2                 acc_S=0.409 n=22  S_FP=0.083/12 S_FN=0.800/10  M2=0.067
+v1 x v2 agreement over all items with both: {"ENDORSE->ENDORSE": 54, "ENDORSE->OPPOSE": 7, "OPPOSE->OPPOSE": 2}
+
+## other views
+A_frames_primary__incl_smoke_items     acc_S=0.457 n=35  M2=0.000  ctrl_nonhate->ENDORSE=0.778
+B_all99                                acc_S=0.422 n=45  M2=0.000  ctrl_nonhate->ENDORSE=0.800
+C_textonly                             acc_S=0.308 n=13  M2=0.000  ctrl_nonhate->ENDORSE=0.857
+
+## cost / losses
+{"n_calls": 805, "input_tokens": 1113479, "output_tokens": 2010, "cny_at_listprice_no_batch_discount": 2.243}
+losses: []

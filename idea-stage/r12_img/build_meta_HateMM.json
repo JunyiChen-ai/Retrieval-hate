@@ -1,0 +1,200 @@
+{
+ "freeze": "idea-stage/R12_FREEZE.md 2.4",
+ "dataset": "HateMM",
+ "base": "Qwen2.5-VL-7B-Instruct-LoRA-curric_HF",
+ "R_sha256_float32": "a64c3e16fefbbb0c593b424b264318e31ad4bb46fc22590abf12ac182bf3386c",
+ "files": {
+  "train/I0": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_R12IM-I0.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 744,
+   "img_sha256": "ff0f3f617546264bdca56430f5a10b6c0a751fb1f41fe4474155c60d4360c345",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/ISPLIT": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_R12IM-ISPLIT.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 744,
+   "img_sha256": "7df07781cbb69e013c482a52d6abfc6bdd6b6da09e079ff02aab5afc116d2b02",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/I2M": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_R12IM-I2M.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 744,
+   "img_sha256": "f01f73ee0dc124fb8aa12a346949e931e638b802f8915fb8691da8ff948fa1e8",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/IRSPLIT": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_R12IM-IRSPLIT.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 744,
+   "img_sha256": "ff91979d398e2bc5a2c411eda9319f22a0eb33a58287049f01d5db0206fc8c02",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/IRW": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_R12IM-IRW.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 744,
+   "img_sha256": "5429b36423e3f80f4312d5d0a475b5587915e222fc8baf999ffe6124f1c42584",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/IVIS": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_R12IM-IVIS.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 744,
+   "img_sha256": "b0a1c5e403919942302369933f96b80c437dbf274973991203e98754ba6c79fb",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/IINS": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_R12IM-IINS.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 744,
+   "img_sha256": "852dc7044f15b0949f6e10357567a562974c6fbebb42707d75033234c28686a9",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "train/ISTD": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_R12IM-ISTD.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 744,
+   "img_sha256": "65ad08dfea3ad5d5f24814e072689d4b03e9fda73ab1c929eee82a12525f04e0",
+   "text_sha256": "12552764c1363c33d98f92db7bfbaf39c977471d799879e6b73f140d1e2980da"
+  },
+  "dev_seen/I0": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/dev_seen_R12IM-I0.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 107,
+   "img_sha256": "52621f501f5c808fd2542b1aa5c18e77e3e67fb4b820597b1d2be52871115729",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/ISPLIT": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/dev_seen_R12IM-ISPLIT.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 107,
+   "img_sha256": "cb441fa96cc6e0497b2f795029024bb56b0940e90bba97142c25aab5c4825342",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/I2M": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/dev_seen_R12IM-I2M.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 107,
+   "img_sha256": "ccb5850a9d4d351777cf1bf2656ed5587b4f2ed8a9bdb57d97d8861123a370ba",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/IRSPLIT": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/dev_seen_R12IM-IRSPLIT.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 107,
+   "img_sha256": "7460252b9f59e509b1ce7c8917a9aedf33d200d09fe8511e7cf6fa8a4d57d6c8",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/IRW": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/dev_seen_R12IM-IRW.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 107,
+   "img_sha256": "4e395b4166ed0501730302a97b788d85aee7a0e21cb03b94d7f2c1f121f52d37",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/IVIS": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/dev_seen_R12IM-IVIS.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 107,
+   "img_sha256": "5a832fbfeb367973c3c4b7ed737b7797e3c96bc4196d7e176f16625aba49b729",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/IINS": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/dev_seen_R12IM-IINS.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 107,
+   "img_sha256": "b9470581cdfb8455e74229fc9e1d4d9706f81b985f80394503c532f55e6d6773",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "dev_seen/ISTD": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/dev_seen_R12IM-ISTD.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 107,
+   "img_sha256": "7e695fe2b4f05caea95a7fedc8e2179453d2b0de49c100ab78156c946022b87a",
+   "text_sha256": "81296941d41240a6ff32a4287c0517b9e1fe95b0fd76c2e535639f51da9d27b7"
+  },
+  "test_seen/I0": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/test_seen_R12IM-I0.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 215,
+   "img_sha256": "cd4216a000c87a4c7f7652e174bdc57e5aa9712549403ec43ebe0fd457065071",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/ISPLIT": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/test_seen_R12IM-ISPLIT.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 215,
+   "img_sha256": "e809b35eb21bb351d72fd13b7b47bb5a06f462f99fedcf9d9f8d5b84be48285f",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/I2M": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/test_seen_R12IM-I2M.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 215,
+   "img_sha256": "e272ec1db5e7a3084f18f8b5aeb1427220f6702c28e93da0d368d7fcc4dbb705",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/IRSPLIT": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/test_seen_R12IM-IRSPLIT.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 215,
+   "img_sha256": "a95148761ee34ea3f88f138bf3df41d900b26d78200e44ee702d6ba7df67fb0e",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/IRW": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/test_seen_R12IM-IRW.pt",
+   "img_dim": 7168,
+   "text_dim": 7168,
+   "n": 215,
+   "img_sha256": "38fd192383e6259d6db59453350bc73530a8faf33552133c4f22eaecc17a935e",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/IVIS": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/test_seen_R12IM-IVIS.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 215,
+   "img_sha256": "fd748e52f23c0ed0139b5c0560ffa3ccd986ebb8efa3b31363694241f4b85c06",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/IINS": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/test_seen_R12IM-IINS.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 215,
+   "img_sha256": "6b1dd50e209ccb0ad1013b529d10788ebf27e681356b2c5ba6fe35ba7b17f8f2",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  },
+  "test_seen/ISTD": {
+   "path": "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/test_seen_R12IM-ISTD.pt",
+   "img_dim": 3584,
+   "text_dim": 7168,
+   "n": 215,
+   "img_sha256": "d20378e26fbe77f0ab2d9427e8e8120f8a52b3457f80f99a689e34886ea2f6f3",
+   "text_sha256": "010ba6b0ca579cb0b17b24b6a2dc6662f7936d66330ef32122c5a07fc2cba4ad"
+  }
+ }
+}

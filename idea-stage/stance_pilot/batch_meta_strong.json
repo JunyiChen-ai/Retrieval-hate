@@ -1,0 +1,14 @@
+{
+ "tag": "strong",
+ "model": "qwen3-vl-plus",
+ "prompt": "V1",
+ "frames": 8,
+ "ocr": false,
+ "file_id": "file-batch-1badbd33e6024301aab13479",
+ "batch_id": "batch_a4eea1a9-168c-49dc-bb31-6d502f9771ee",
+ "n": 99,
+ "submitted": "2026-08-12T01:10:17",
+ "status": "completed",
+ "output_file_id": "file-batch_output-925e2b4666d64972bb25633a",
+ "error_file_id": "file-batch_output-cfcbfb2690234401add11466"
+}

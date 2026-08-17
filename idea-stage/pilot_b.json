@@ -1,0 +1,779 @@
+{
+  "pilot": "P-B near-duplicate and label-conflict census",
+  "freeze": "idea-stage/PILOT_FREEZE_2026-08-09.md",
+  "mode": "real",
+  "c_img_thresholds": [
+    0.85,
+    0.9,
+    0.95
+  ],
+  "gate": {
+    "c_img": 0.9,
+    "jaccard": 0.5,
+    "ALIVE": ">=30",
+    "DEAD": "<10"
+  },
+  "guard": "armed: any path containing 'test' (or dev_seen/val) HALTs",
+  "datasets_used": [
+    {
+      "dataset": "HateMM",
+      "n": 744,
+      "n_pos": 298
+    },
+    {
+      "dataset": "MHC",
+      "n": 549,
+      "n_pos": 168
+    },
+    {
+      "dataset": "MHC_zh",
+      "n": 579,
+      "n_pos": 180
+    },
+    {
+      "dataset": "ImpliHateVid",
+      "n": 1283,
+      "n_pos": 649
+    }
+  ],
+  "datasets_excluded_no_train_cache": [
+    {
+      "dataset": "HateClipSeg",
+      "train_embedding": false,
+      "train_jsonl": false
+    }
+  ],
+  "files": {
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_openai_clip-vit-large-patch14-336_HF.pt": {
+      "n": 744,
+      "sha256": "0802b6ba00669ec546e63f36dca1772cb2d7806b969de307235af3450a8176c1"
+    },
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC/train_openai_clip-vit-large-patch14-336_HF.pt": {
+      "n": 549,
+      "sha256": "deea74ff78d81836b0937c7996caef4706e97a1e279343581d547ee2e98dc73e"
+    },
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt": {
+      "n": 579,
+      "sha256": "929571f81a5bf4a7f306eaaeceecafd62c85b73cf86ce8177ab175dbcfff8f17"
+    },
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/ImpliHateVid/train_openai_clip-vit-large-patch14-336_HF.pt": {
+      "n": 1283,
+      "sha256": "90b4700a2d687862135564580dce10a2b4c7278ff84b7ff4c72d69e1272fb685"
+    }
+  },
+  "mhc_counter_narrative_items": 88,
+  "null_control": {
+    "seed": 20260909,
+    "n_permutations": 200,
+    "conservative_conflicting_mean": 24.085,
+    "conservative_conflicting_p2.5": 15.0,
+    "conservative_conflicting_p97.5": 30.0,
+    "n_conservative_pairs_pool": 49
+  },
+  "census": {
+    "n_items": 3155,
+    "n_unordered_pairs": 4975435,
+    "n_items_empty_transcript": 57,
+    "tag": "real",
+    "thresholds": {
+      "0.85": {
+        "N1_pairs_total": 1365,
+        "N1_pairs_within_dataset": 1228,
+        "N1_pairs_cross_dataset": 137,
+        "N2_conflicting_total": 194,
+        "N2_conflicting_within_dataset": 83,
+        "N2_conflicting_cross_dataset": 111,
+        "N4_jaccard_ge_0.5_total": 58,
+        "N4_conservative_conflicting_total": 5,
+        "N4_conservative_conflicting_within_dataset": 5,
+        "N4_conservative_conflicting_cross_dataset": 0,
+        "jaccard_mean_flagged": 0.16482465951383607,
+        "jaccard_median_flagged": 0.13138686131386862,
+        "ctxt_mean_flagged": 0.6571860614341724,
+        "per_dataset_within": {
+          "HateMM": {
+            "N1": 224,
+            "N2_conflicting": 57,
+            "N4_conservative_conflicting": 4
+          },
+          "ImpliHateVid": {
+            "N1": 744,
+            "N2_conflicting": 6,
+            "N4_conservative_conflicting": 0
+          },
+          "MHC": {
+            "N1": 17,
+            "N2_conflicting": 2,
+            "N4_conservative_conflicting": 1
+          },
+          "MHC_zh": {
+            "N1": 243,
+            "N2_conflicting": 18,
+            "N4_conservative_conflicting": 0
+          }
+        },
+        "cross_dataset_pairs": {
+          "HateMM|ImpliHateVid": {
+            "N1": 136,
+            "N2_conflicting": 111,
+            "N4_conservative_conflicting": 0
+          },
+          "HateMM|MHC": {
+            "N1": 1,
+            "N2_conflicting": 0,
+            "N4_conservative_conflicting": 0
+          }
+        },
+        "N3": {
+          "conflicting_pairs_any_side_MHC": 20,
+          "conflicting_pairs_both_sides_MHC": 20,
+          "of_those_any_side_MHC_with_CounterNarrative_vote": 7,
+          "of_those_both_sides_MHC_with_CounterNarrative_vote": 7,
+          "conservative_conflicting_any_side_MHC": 1,
+          "conservative_conflicting_any_side_MHC_with_CN": 0
+        }
+      },
+      "0.9": {
+        "N1_pairs_total": 645,
+        "N1_pairs_within_dataset": 630,
+        "N1_pairs_cross_dataset": 15,
+        "N2_conflicting_total": 53,
+        "N2_conflicting_within_dataset": 43,
+        "N2_conflicting_cross_dataset": 10,
+        "N4_jaccard_ge_0.5_total": 49,
+        "N4_conservative_conflicting_total": 5,
+        "N4_conservative_conflicting_within_dataset": 5,
+        "N4_conservative_conflicting_cross_dataset": 0,
+        "jaccard_mean_flagged": 0.18840135136605096,
+        "jaccard_median_flagged": 0.12162162162162163,
+        "ctxt_mean_flagged": 0.6356535236577107,
+        "per_dataset_within": {
+          "HateMM": {
+            "N1": 117,
+            "N2_conflicting": 37,
+            "N4_conservative_conflicting": 4
+          },
+          "ImpliHateVid": {
+            "N1": 454,
+            "N2_conflicting": 2,
+            "N4_conservative_conflicting": 0
+          },
+          "MHC": {
+            "N1": 6,
+            "N2_conflicting": 1,
+            "N4_conservative_conflicting": 1
+          },
+          "MHC_zh": {
+            "N1": 53,
+            "N2_conflicting": 3,
+            "N4_conservative_conflicting": 0
+          }
+        },
+        "cross_dataset_pairs": {
+          "HateMM|ImpliHateVid": {
+            "N1": 15,
+            "N2_conflicting": 10,
+            "N4_conservative_conflicting": 0
+          }
+        },
+        "N3": {
+          "conflicting_pairs_any_side_MHC": 4,
+          "conflicting_pairs_both_sides_MHC": 4,
+          "of_those_any_side_MHC_with_CounterNarrative_vote": 0,
+          "of_those_both_sides_MHC_with_CounterNarrative_vote": 0,
+          "conservative_conflicting_any_side_MHC": 1,
+          "conservative_conflicting_any_side_MHC_with_CN": 0
+        }
+      },
+      "0.95": {
+        "N1_pairs_total": 195,
+        "N1_pairs_within_dataset": 191,
+        "N1_pairs_cross_dataset": 4,
+        "N2_conflicting_total": 39,
+        "N2_conflicting_within_dataset": 38,
+        "N2_conflicting_cross_dataset": 1,
+        "N4_jaccard_ge_0.5_total": 34,
+        "N4_conservative_conflicting_total": 5,
+        "N4_conservative_conflicting_within_dataset": 5,
+        "N4_conservative_conflicting_cross_dataset": 0,
+        "jaccard_mean_flagged": 0.27272230853868173,
+        "jaccard_median_flagged": 0.13414634146341464,
+        "ctxt_mean_flagged": 0.6853944999741103,
+        "per_dataset_within": {
+          "HateMM": {
+            "N1": 87,
+            "N2_conflicting": 34,
+            "N4_conservative_conflicting": 4
+          },
+          "ImpliHateVid": {
+            "N1": 89,
+            "N2_conflicting": 1,
+            "N4_conservative_conflicting": 0
+          },
+          "MHC": {
+            "N1": 3,
+            "N2_conflicting": 1,
+            "N4_conservative_conflicting": 1
+          },
+          "MHC_zh": {
+            "N1": 12,
+            "N2_conflicting": 2,
+            "N4_conservative_conflicting": 0
+          }
+        },
+        "cross_dataset_pairs": {
+          "HateMM|ImpliHateVid": {
+            "N1": 4,
+            "N2_conflicting": 1,
+            "N4_conservative_conflicting": 0
+          }
+        },
+        "N3": {
+          "conflicting_pairs_any_side_MHC": 3,
+          "conflicting_pairs_both_sides_MHC": 3,
+          "of_those_any_side_MHC_with_CounterNarrative_vote": 0,
+          "of_those_both_sides_MHC_with_CounterNarrative_vote": 0,
+          "conservative_conflicting_any_side_MHC": 1,
+          "conservative_conflicting_any_side_MHC_with_CN": 0
+        }
+      }
+    },
+    "top_conflicting_pairs_at_c_img_0.90": [
+      {
+        "id_a": "hate_video_50",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_338",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0000000000000004,
+        "c_txt": 1.0000000000000002,
+        "jaccard": 1.0,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_59",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_338",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 0.999479541683177,
+        "c_txt": 0.8807517654492466,
+        "jaccard": 1.0,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_297",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_338",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 0.999479541683177,
+        "c_txt": 0.8807517654492466,
+        "jaccard": 1.0,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_338",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_63",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0000000000000004,
+        "c_txt": 1.0000000000000002,
+        "jaccard": 1.0,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "0q1PET_IDGc",
+        "ds_a": "MHC",
+        "y_a": 0,
+        "id_b": "KV49pENhk4c",
+        "ds_b": "MHC",
+        "y_b": 1,
+        "c_img": 0.9959956295308738,
+        "c_txt": 0.8726017238606721,
+        "jaccard": 0.7,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_203",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "EX_278",
+        "ds_b": "ImpliHateVid",
+        "y_b": 1,
+        "c_img": 0.9536904329904283,
+        "c_txt": 0.67939557294603,
+        "jaccard": 0.35789473684210527,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "BV1zu41117e3",
+        "ds_a": "MHC_zh",
+        "y_a": 1,
+        "id_b": "BV1uU4y1P7D3",
+        "ds_b": "MHC_zh",
+        "y_b": 0,
+        "c_img": 0.9817773631569792,
+        "c_txt": 0.9762612562953304,
+        "jaccard": 0.3076923076923077,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "BV1Yf4y1n7fF",
+        "ds_a": "MHC_zh",
+        "y_a": 1,
+        "id_b": "BV1uU4y1P7D3",
+        "ds_b": "MHC_zh",
+        "y_b": 0,
+        "c_img": 0.9776538849952774,
+        "c_txt": 0.982128155514638,
+        "jaccard": 0.28313253012048195,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_107",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_198",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 0.9467454808656752,
+        "c_txt": 0.8429219059529152,
+        "jaccard": 0.23941068139963168,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "NH_663",
+        "ds_a": "ImpliHateVid",
+        "y_a": 0,
+        "id_b": "IM_97",
+        "ds_b": "ImpliHateVid",
+        "y_b": 1,
+        "c_img": 0.9176001053819945,
+        "c_txt": 0.8437654075898762,
+        "jaccard": 0.23819742489270387,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_364",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_614",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 0.9136336445737223,
+        "c_txt": 0.7565685243621278,
+        "jaccard": 0.21843003412969283,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "BV1EC4y1S7Ht",
+        "ds_a": "MHC_zh",
+        "y_a": 1,
+        "id_b": "BV1pc411y7qs",
+        "ds_b": "MHC_zh",
+        "y_b": 0,
+        "c_img": 0.9144261120128182,
+        "c_txt": 0.9629808769014293,
+        "jaccard": 0.18248175182481752,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_309",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "IM_291",
+        "ds_b": "ImpliHateVid",
+        "y_b": 1,
+        "c_img": 0.902083666294254,
+        "c_txt": 0.41473450188220656,
+        "jaccard": 0.15517241379310345,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_308",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_308",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6598157721728678,
+        "jaccard": 0.15450643776824036,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_76",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_308",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6917886129806146,
+        "jaccard": 0.15163934426229508,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_308",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_109",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.6702266777313284,
+        "jaccard": 0.14903846153846154,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_110",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_109",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.7217644754118784,
+        "jaccard": 0.14788732394366197,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_110",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_127",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.6005291333857704,
+        "jaccard": 0.14084507042253522,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_308",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_127",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.5374585752333076,
+        "jaccard": 0.13875598086124402,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_395",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_109",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.6980106724375355,
+        "jaccard": 0.13812154696132597,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_90",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_109",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.647433395721464,
+        "jaccard": 0.12987012987012986,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_298",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_308",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6702742817322649,
+        "jaccard": 0.12903225806451613,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_308",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_90",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6118090225738774,
+        "jaccard": 0.1270718232044199,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_76",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_395",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.71192234588596,
+        "jaccard": 0.12217194570135746,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_127",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_90",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6958028457477878,
+        "jaccard": 0.11612903225806452,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_308",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_110",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6419321997851295,
+        "jaccard": 0.11560693641618497,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_76",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_90",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6233656213513561,
+        "jaccard": 0.1134020618556701,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_25",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_109",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.7502364360238747,
+        "jaccard": 0.11219512195121951,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_395",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_127",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.5721539472304105,
+        "jaccard": 0.10810810810810811,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_308",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_25",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.662113083729668,
+        "jaccard": 0.1072961373390558,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_298",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_470",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.7528162179061431,
+        "jaccard": 0.1059322033898305,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_308",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_470",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.650239977145238,
+        "jaccard": 0.10256410256410256,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_298",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_90",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.627107313177178,
+        "jaccard": 0.1013215859030837,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_470",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_109",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.6980246827454185,
+        "jaccard": 0.10119047619047619,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_309",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "IM_319",
+        "ds_b": "ImpliHateVid",
+        "y_b": 1,
+        "c_img": 0.9208299513032536,
+        "c_txt": 0.4479943787895021,
+        "jaccard": 0.09803921568627451,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_298",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_110",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6539072943974882,
+        "jaccard": 0.0963302752293578,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_298",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_25",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.7809527580979799,
+        "jaccard": 0.09352517985611511,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "non_hate_video_395",
+        "ds_a": "HateMM",
+        "y_a": 0,
+        "id_b": "hate_video_298",
+        "ds_b": "HateMM",
+        "y_b": 1,
+        "c_img": 1.0,
+        "c_txt": 0.6697533085801272,
+        "jaccard": 0.0888030888030888,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_127",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_470",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.6171809574149327,
+        "jaccard": 0.08875739644970414,
+        "cn_a": false,
+        "cn_b": false
+      },
+      {
+        "id_a": "hate_video_76",
+        "ds_a": "HateMM",
+        "y_a": 1,
+        "id_b": "non_hate_video_25",
+        "ds_b": "HateMM",
+        "y_b": 0,
+        "c_img": 1.0,
+        "c_txt": 0.7059942011634813,
+        "jaccard": 0.08870967741935484,
+        "cn_a": false,
+        "cn_b": false
+      }
+    ]
+  },
+  "gate_conservative_count": 5,
+  "verdict": "DEAD",
+  "paths_touched": [
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/HateMM/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/ImpliHateVid/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/CLIP_Embedding/MHC_zh/train_openai_clip-vit-large-patch14-336_HF.pt",
+    "/home/jehc223/Retrieval-hate/data/gt/HateMM/train.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/ImpliHateVid/train.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC/train.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/MHC_zh/train.jsonl",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_Chinese_train.tsv",
+    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes/mhc_English_train.tsv"
+  ],
+  "elapsed_sec": 0.4078037738800049
+}

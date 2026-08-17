@@ -51,7 +51,7 @@ def main():
             c2 = get(g, "P1", "%s-IRW" % cand)
             c3 = get(g, "P1", "%s-IRSPLIT" % cand)
             p2 = get(g, "P2", "%s-I0" % cand)
-            dv = devs[ds].get("contrasts", {}).get("P1/%s-I0" % cand)
+            dv = devs[ds].get("contrasts", {}).get("dev_mf1_P1/%s-I0" % cand)
             demoted = bool(dv is not None and dv["mean"] < 0
                            and dv.get("ci_excludes_zero") and c1["mean"] > 0)
             per_ds[ds] = {

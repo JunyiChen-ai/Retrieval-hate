@@ -1,0 +1,2201 @@
+{
+ "frozen_criteria": "see module docstring F0-F8",
+ "population_correct_counts": {
+  "HateMM": [
+   71,
+   118
+  ],
+  "MHC": [
+   39,
+   91
+  ],
+  "MHC_zh": [
+   32,
+   93
+  ],
+  "ImpliHateVid": [
+   192,
+   182
+  ]
+ },
+ "S_error_population": {
+  "HateMM": {
+   "S_FP": 7,
+   "S_FN": 1
+  },
+  "MHC": {
+   "S_FP": 10,
+   "S_FN": 6
+  },
+  "MHC_zh": {
+   "S_FP": 5,
+   "S_FN": 7
+  },
+  "ImpliHateVid": {
+   "S_FP": 8,
+   "S_FN": 5
+  }
+ },
+ "strong": {
+  "A_frames_primary": {
+   "view": "A_frames_primary",
+   "tag": "strong",
+   "datasets": [
+    "HateMM",
+    "MHC",
+    "MHC_zh"
+   ],
+   "n": 71,
+   "voice_dist": {
+    "S_FP": {
+     "uploader": 9,
+     "on_screen_speaker": 7,
+     "quoted_third_party": 0,
+     "archival_source": 1,
+     "caption_overlay": 2,
+     "none": 2,
+     "_null": 0,
+     "_n": 21
+    },
+    "S_FN": {
+     "uploader": 7,
+     "on_screen_speaker": 3,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 3,
+     "none": 1,
+     "_null": 0,
+     "_n": 14
+    },
+    "CTRL_HATE": {
+     "uploader": 10,
+     "on_screen_speaker": 5,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 2,
+     "none": 1,
+     "_null": 0,
+     "_n": 18
+    },
+    "CTRL_NONHATE": {
+     "uploader": 7,
+     "on_screen_speaker": 1,
+     "quoted_third_party": 0,
+     "archival_source": 1,
+     "caption_overlay": 1,
+     "none": 8,
+     "_null": 0,
+     "_n": 18
+    }
+   },
+   "contrasts": {
+    "S_all_vs_CTRL_all": {
+     "V_strict": {
+      "a_err_notown": 16,
+      "b_err_own": 16,
+      "c_ctrl_notown": 10,
+      "d_ctrl_own": 17,
+      "err_rate_notown": 0.5,
+      "ctrl_rate_notown": 0.37037037037037035,
+      "OR_raw": 1.7,
+      "OR": 1.7,
+      "haldane_corrected": false,
+      "p_fisher": 0.43086621555763255,
+      "n_dropped_none": 12
+     },
+     "V_loose": {
+      "a_err_notown": 6,
+      "b_err_own": 26,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 23,
+      "err_rate_notown": 0.1875,
+      "ctrl_rate_notown": 0.14814814814814814,
+      "OR_raw": 1.3269230769230769,
+      "OR": 1.3269230769230769,
+      "haldane_corrected": false,
+      "p_fisher": 0.7412460641007373,
+      "n_dropped_none": 12
+     },
+     "V_incl": {
+      "a_err_notown": 19,
+      "b_err_own": 16,
+      "c_ctrl_notown": 19,
+      "d_ctrl_own": 17,
+      "err_rate_notown": 0.5428571428571428,
+      "ctrl_rate_notown": 0.5277777777777778,
+      "OR_raw": 1.0625,
+      "OR": 1.0625,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FP_vs_CTRL_NONHATE": {
+     "V_strict": {
+      "a_err_notown": 10,
+      "b_err_own": 9,
+      "c_ctrl_notown": 3,
+      "d_ctrl_own": 7,
+      "err_rate_notown": 0.5263157894736842,
+      "ctrl_rate_notown": 0.3,
+      "OR_raw": 2.5925925925925926,
+      "OR": 2.5925925925925926,
+      "haldane_corrected": false,
+      "p_fisher": 0.4334832583708146,
+      "n_dropped_none": 10
+     },
+     "V_loose": {
+      "a_err_notown": 3,
+      "b_err_own": 16,
+      "c_ctrl_notown": 2,
+      "d_ctrl_own": 8,
+      "err_rate_notown": 0.15789473684210525,
+      "ctrl_rate_notown": 0.2,
+      "OR_raw": 0.75,
+      "OR": 0.75,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 10
+     },
+     "V_incl": {
+      "a_err_notown": 12,
+      "b_err_own": 9,
+      "c_ctrl_notown": 11,
+      "d_ctrl_own": 7,
+      "err_rate_notown": 0.5714285714285714,
+      "ctrl_rate_notown": 0.6111111111111112,
+      "OR_raw": 0.8484848484848485,
+      "OR": 0.8484848484848485,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FP_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 10,
+      "b_err_own": 9,
+      "c_ctrl_notown": 7,
+      "d_ctrl_own": 10,
+      "err_rate_notown": 0.5263157894736842,
+      "ctrl_rate_notown": 0.4117647058823529,
+      "OR_raw": 1.5873015873015872,
+      "OR": 1.5873015873015872,
+      "haldane_corrected": false,
+      "p_fisher": 0.5250818011373217,
+      "n_dropped_none": 3
+     },
+     "V_loose": {
+      "a_err_notown": 3,
+      "b_err_own": 16,
+      "c_ctrl_notown": 2,
+      "d_ctrl_own": 15,
+      "err_rate_notown": 0.15789473684210525,
+      "ctrl_rate_notown": 0.11764705882352941,
+      "OR_raw": 1.40625,
+      "OR": 1.40625,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 3
+     },
+     "V_incl": {
+      "a_err_notown": 12,
+      "b_err_own": 9,
+      "c_ctrl_notown": 8,
+      "d_ctrl_own": 10,
+      "err_rate_notown": 0.5714285714285714,
+      "ctrl_rate_notown": 0.4444444444444444,
+      "OR_raw": 1.6666666666666667,
+      "OR": 1.6666666666666667,
+      "haldane_corrected": false,
+      "p_fisher": 0.5272539841674629,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FN_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 6,
+      "b_err_own": 7,
+      "c_ctrl_notown": 7,
+      "d_ctrl_own": 10,
+      "err_rate_notown": 0.46153846153846156,
+      "ctrl_rate_notown": 0.4117647058823529,
+      "OR_raw": 1.2244897959183674,
+      "OR": 1.2244897959183674,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 2
+     },
+     "V_loose": {
+      "a_err_notown": 3,
+      "b_err_own": 10,
+      "c_ctrl_notown": 2,
+      "d_ctrl_own": 15,
+      "err_rate_notown": 0.23076923076923078,
+      "ctrl_rate_notown": 0.11764705882352941,
+      "OR_raw": 2.25,
+      "OR": 2.25,
+      "haldane_corrected": false,
+      "p_fisher": 0.6278051450465244,
+      "n_dropped_none": 2
+     },
+     "V_incl": {
+      "a_err_notown": 7,
+      "b_err_own": 7,
+      "c_ctrl_notown": 8,
+      "d_ctrl_own": 10,
+      "err_rate_notown": 0.5,
+      "ctrl_rate_notown": 0.4444444444444444,
+      "OR_raw": 1.25,
+      "OR": 1.25,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 0
+     }
+    }
+   },
+   "flip": {
+    "rule": "primary_voice in NOT_OWN(V-strict) -> push non-hate",
+    "sample_gains_S_FP": 10,
+    "sample_neutral_S_FN": 6,
+    "sample_damage_CTRL_HATE": 7,
+    "sample_net": 3,
+    "pop_projected_gain": 10.75,
+    "pop_projected_damage": 60.33,
+    "pop_net": -49.58,
+    "per_dataset": {
+     "HateMM": {
+      "rate_notown_ctrl_hate": 0.5,
+      "n_correct_hate_pop": 71,
+      "projected_damage": 35.5,
+      "rate_notown_S_FP": 0.714,
+      "n_S_FP_pop": 7,
+      "projected_gain": 5.0,
+      "n_S_FP_sampled": 7,
+      "n_ctrl_hate_sampled": 4
+     },
+     "MHC": {
+      "rate_notown_ctrl_hate": 0.5,
+      "n_correct_hate_pop": 39,
+      "projected_damage": 19.5,
+      "rate_notown_S_FP": 0.2,
+      "n_S_FP_pop": 10,
+      "projected_gain": 2.0,
+      "n_S_FP_sampled": 10,
+      "n_ctrl_hate_sampled": 8
+     },
+     "MHC_zh": {
+      "rate_notown_ctrl_hate": 0.167,
+      "n_correct_hate_pop": 32,
+      "projected_damage": 5.33,
+      "rate_notown_S_FP": 0.75,
+      "n_S_FP_pop": 5,
+      "projected_gain": 3.75,
+      "n_S_FP_sampled": 4,
+      "n_ctrl_hate_sampled": 6
+     }
+    }
+   }
+  },
+  "B_all99": {
+   "view": "B_all99",
+   "tag": "strong",
+   "datasets": [
+    "HateMM",
+    "MHC",
+    "MHC_zh",
+    "ImpliHateVid"
+   ],
+   "n": 98,
+   "voice_dist": {
+    "S_FP": {
+     "uploader": 16,
+     "on_screen_speaker": 7,
+     "quoted_third_party": 0,
+     "archival_source": 1,
+     "caption_overlay": 2,
+     "none": 3,
+     "_null": 0,
+     "_n": 29
+    },
+    "S_FN": {
+     "uploader": 10,
+     "on_screen_speaker": 4,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 3,
+     "none": 2,
+     "_null": 0,
+     "_n": 19
+    },
+    "CTRL_HATE": {
+     "uploader": 16,
+     "on_screen_speaker": 5,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 2,
+     "none": 2,
+     "_null": 0,
+     "_n": 25
+    },
+    "CTRL_NONHATE": {
+     "uploader": 13,
+     "on_screen_speaker": 1,
+     "quoted_third_party": 0,
+     "archival_source": 1,
+     "caption_overlay": 1,
+     "none": 9,
+     "_null": 0,
+     "_n": 25
+    }
+   },
+   "contrasts": {
+    "S_all_vs_CTRL_all": {
+     "V_strict": {
+      "a_err_notown": 17,
+      "b_err_own": 26,
+      "c_ctrl_notown": 10,
+      "d_ctrl_own": 29,
+      "err_rate_notown": 0.3953488372093023,
+      "ctrl_rate_notown": 0.2564102564102564,
+      "OR_raw": 1.896153846153846,
+      "OR": 1.896153846153846,
+      "haldane_corrected": false,
+      "p_fisher": 0.2406259941612453,
+      "n_dropped_none": 16
+     },
+     "V_loose": {
+      "a_err_notown": 6,
+      "b_err_own": 37,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 35,
+      "err_rate_notown": 0.13953488372093023,
+      "ctrl_rate_notown": 0.10256410256410256,
+      "OR_raw": 1.4189189189189189,
+      "OR": 1.4189189189189189,
+      "haldane_corrected": false,
+      "p_fisher": 0.7409303718649999,
+      "n_dropped_none": 16
+     },
+     "V_incl": {
+      "a_err_notown": 22,
+      "b_err_own": 26,
+      "c_ctrl_notown": 21,
+      "d_ctrl_own": 29,
+      "err_rate_notown": 0.4583333333333333,
+      "ctrl_rate_notown": 0.42,
+      "OR_raw": 1.1684981684981686,
+      "OR": 1.1684981684981686,
+      "haldane_corrected": false,
+      "p_fisher": 0.8388581055358415,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FP_vs_CTRL_NONHATE": {
+     "V_strict": {
+      "a_err_notown": 10,
+      "b_err_own": 16,
+      "c_ctrl_notown": 3,
+      "d_ctrl_own": 13,
+      "err_rate_notown": 0.38461538461538464,
+      "ctrl_rate_notown": 0.1875,
+      "OR_raw": 2.7083333333333335,
+      "OR": 2.7083333333333335,
+      "haldane_corrected": false,
+      "p_fisher": 0.30332114065821225,
+      "n_dropped_none": 12
+     },
+     "V_loose": {
+      "a_err_notown": 3,
+      "b_err_own": 23,
+      "c_ctrl_notown": 2,
+      "d_ctrl_own": 14,
+      "err_rate_notown": 0.11538461538461539,
+      "ctrl_rate_notown": 0.125,
+      "OR_raw": 0.9130434782608695,
+      "OR": 0.9130434782608695,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 12
+     },
+     "V_incl": {
+      "a_err_notown": 13,
+      "b_err_own": 16,
+      "c_ctrl_notown": 12,
+      "d_ctrl_own": 13,
+      "err_rate_notown": 0.4482758620689655,
+      "ctrl_rate_notown": 0.48,
+      "OR_raw": 0.8802083333333334,
+      "OR": 0.8802083333333334,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FP_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 10,
+      "b_err_own": 16,
+      "c_ctrl_notown": 7,
+      "d_ctrl_own": 16,
+      "err_rate_notown": 0.38461538461538464,
+      "ctrl_rate_notown": 0.30434782608695654,
+      "OR_raw": 1.4285714285714286,
+      "OR": 1.4285714285714286,
+      "haldane_corrected": false,
+      "p_fisher": 0.7642796014251136,
+      "n_dropped_none": 5
+     },
+     "V_loose": {
+      "a_err_notown": 3,
+      "b_err_own": 23,
+      "c_ctrl_notown": 2,
+      "d_ctrl_own": 21,
+      "err_rate_notown": 0.11538461538461539,
+      "ctrl_rate_notown": 0.08695652173913043,
+      "OR_raw": 1.3695652173913044,
+      "OR": 1.3695652173913044,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 5
+     },
+     "V_incl": {
+      "a_err_notown": 13,
+      "b_err_own": 16,
+      "c_ctrl_notown": 9,
+      "d_ctrl_own": 16,
+      "err_rate_notown": 0.4482758620689655,
+      "ctrl_rate_notown": 0.36,
+      "OR_raw": 1.4444444444444444,
+      "OR": 1.4444444444444444,
+      "haldane_corrected": false,
+      "p_fisher": 0.5850810184066173,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FN_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 7,
+      "b_err_own": 10,
+      "c_ctrl_notown": 7,
+      "d_ctrl_own": 16,
+      "err_rate_notown": 0.4117647058823529,
+      "ctrl_rate_notown": 0.30434782608695654,
+      "OR_raw": 1.6,
+      "OR": 1.6,
+      "haldane_corrected": false,
+      "p_fisher": 0.5206217340811334,
+      "n_dropped_none": 4
+     },
+     "V_loose": {
+      "a_err_notown": 3,
+      "b_err_own": 14,
+      "c_ctrl_notown": 2,
+      "d_ctrl_own": 21,
+      "err_rate_notown": 0.17647058823529413,
+      "ctrl_rate_notown": 0.08695652173913043,
+      "OR_raw": 2.25,
+      "OR": 2.25,
+      "haldane_corrected": false,
+      "p_fisher": 0.6339618971197919,
+      "n_dropped_none": 4
+     },
+     "V_incl": {
+      "a_err_notown": 9,
+      "b_err_own": 10,
+      "c_ctrl_notown": 9,
+      "d_ctrl_own": 16,
+      "err_rate_notown": 0.47368421052631576,
+      "ctrl_rate_notown": 0.36,
+      "OR_raw": 1.6,
+      "OR": 1.6,
+      "haldane_corrected": false,
+      "p_fisher": 0.5418700084311399,
+      "n_dropped_none": 0
+     }
+    }
+   },
+   "flip": {
+    "rule": "primary_voice in NOT_OWN(V-strict) -> push non-hate",
+    "sample_gains_S_FP": 10,
+    "sample_neutral_S_FN": 7,
+    "sample_damage_CTRL_HATE": 7,
+    "sample_net": 3,
+    "pop_projected_gain": 10.75,
+    "pop_projected_damage": 60.33,
+    "pop_net": -49.58,
+    "per_dataset": {
+     "HateMM": {
+      "rate_notown_ctrl_hate": 0.5,
+      "n_correct_hate_pop": 71,
+      "projected_damage": 35.5,
+      "rate_notown_S_FP": 0.714,
+      "n_S_FP_pop": 7,
+      "projected_gain": 5.0,
+      "n_S_FP_sampled": 7,
+      "n_ctrl_hate_sampled": 4
+     },
+     "MHC": {
+      "rate_notown_ctrl_hate": 0.5,
+      "n_correct_hate_pop": 39,
+      "projected_damage": 19.5,
+      "rate_notown_S_FP": 0.2,
+      "n_S_FP_pop": 10,
+      "projected_gain": 2.0,
+      "n_S_FP_sampled": 10,
+      "n_ctrl_hate_sampled": 8
+     },
+     "MHC_zh": {
+      "rate_notown_ctrl_hate": 0.167,
+      "n_correct_hate_pop": 32,
+      "projected_damage": 5.33,
+      "rate_notown_S_FP": 0.75,
+      "n_S_FP_pop": 5,
+      "projected_gain": 3.75,
+      "n_S_FP_sampled": 4,
+      "n_ctrl_hate_sampled": 6
+     },
+     "ImpliHateVid": {
+      "rate_notown_ctrl_hate": 0.0,
+      "n_correct_hate_pop": 192,
+      "projected_damage": 0.0,
+      "rate_notown_S_FP": 0.0,
+      "n_S_FP_pop": 8,
+      "projected_gain": 0.0,
+      "n_S_FP_sampled": 8,
+      "n_ctrl_hate_sampled": 7
+     }
+    }
+   }
+  },
+  "C_textonly": {
+   "view": "C_textonly",
+   "tag": "strong",
+   "datasets": [
+    "ImpliHateVid"
+   ],
+   "n": 27,
+   "voice_dist": {
+    "S_FP": {
+     "uploader": 7,
+     "on_screen_speaker": 0,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 1,
+     "_null": 0,
+     "_n": 8
+    },
+    "S_FN": {
+     "uploader": 3,
+     "on_screen_speaker": 1,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 1,
+     "_null": 0,
+     "_n": 5
+    },
+    "CTRL_HATE": {
+     "uploader": 6,
+     "on_screen_speaker": 0,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 1,
+     "_null": 0,
+     "_n": 7
+    },
+    "CTRL_NONHATE": {
+     "uploader": 6,
+     "on_screen_speaker": 0,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 1,
+     "_null": 0,
+     "_n": 7
+    }
+   },
+   "contrasts": {
+    "S_all_vs_CTRL_all": {
+     "V_strict": {
+      "a_err_notown": 1,
+      "b_err_own": 10,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 12,
+      "err_rate_notown": 0.09090909090909091,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 3.5714285714285716,
+      "haldane_corrected": true,
+      "p_fisher": 0.4782608695652174,
+      "n_dropped_none": 4
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 11,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 12,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 1.0869565217391304,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 4
+     },
+     "V_incl": {
+      "a_err_notown": 3,
+      "b_err_own": 10,
+      "c_ctrl_notown": 2,
+      "d_ctrl_own": 12,
+      "err_rate_notown": 0.23076923076923078,
+      "ctrl_rate_notown": 0.14285714285714285,
+      "OR_raw": 1.8,
+      "OR": 1.8,
+      "haldane_corrected": false,
+      "p_fisher": 0.6483091787439613,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FP_vs_CTRL_NONHATE": {
+     "V_strict": {
+      "a_err_notown": 0,
+      "b_err_own": 7,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 0.8666666666666667,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 2
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 7,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 0.8666666666666667,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 2
+     },
+     "V_incl": {
+      "a_err_notown": 1,
+      "b_err_own": 7,
+      "c_ctrl_notown": 1,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.125,
+      "ctrl_rate_notown": 0.14285714285714285,
+      "OR_raw": 0.8571428571428571,
+      "OR": 0.8571428571428571,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FP_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 0,
+      "b_err_own": 7,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 0.8666666666666667,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 2
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 7,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 0.8666666666666667,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 2
+     },
+     "V_incl": {
+      "a_err_notown": 1,
+      "b_err_own": 7,
+      "c_ctrl_notown": 1,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.125,
+      "ctrl_rate_notown": 0.14285714285714285,
+      "OR_raw": 0.8571428571428571,
+      "OR": 0.8571428571428571,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FN_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 1,
+      "b_err_own": 3,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.25,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 5.571428571428571,
+      "haldane_corrected": true,
+      "p_fisher": 0.4,
+      "n_dropped_none": 2
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 4,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 1.4444444444444444,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 2
+     },
+     "V_incl": {
+      "a_err_notown": 2,
+      "b_err_own": 3,
+      "c_ctrl_notown": 1,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.4,
+      "ctrl_rate_notown": 0.14285714285714285,
+      "OR_raw": 4.0,
+      "OR": 4.0,
+      "haldane_corrected": false,
+      "p_fisher": 0.5227272727272727,
+      "n_dropped_none": 0
+     }
+    }
+   },
+   "flip": {
+    "rule": "primary_voice in NOT_OWN(V-strict) -> push non-hate",
+    "sample_gains_S_FP": 0,
+    "sample_neutral_S_FN": 1,
+    "sample_damage_CTRL_HATE": 0,
+    "sample_net": 0,
+    "pop_projected_gain": 0.0,
+    "pop_projected_damage": 0.0,
+    "pop_net": 0.0,
+    "per_dataset": {
+     "ImpliHateVid": {
+      "rate_notown_ctrl_hate": 0.0,
+      "n_correct_hate_pop": 192,
+      "projected_damage": 0.0,
+      "rate_notown_S_FP": 0.0,
+      "n_S_FP_pop": 8,
+      "projected_gain": 0.0,
+      "n_S_FP_sampled": 8,
+      "n_ctrl_hate_sampled": 7
+     }
+    }
+   }
+  }
+ },
+ "fb2": {
+  "A_frames_primary": {
+   "view": "A_frames_primary",
+   "tag": "fb2",
+   "datasets": [
+    "HateMM",
+    "MHC",
+    "MHC_zh"
+   ],
+   "n": 72,
+   "voice_dist": {
+    "S_FP": {
+     "uploader": 4,
+     "on_screen_speaker": 6,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 2,
+     "none": 9,
+     "_null": 1,
+     "_n": 22
+    },
+    "S_FN": {
+     "uploader": 2,
+     "on_screen_speaker": 5,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 7,
+     "_null": 0,
+     "_n": 14
+    },
+    "CTRL_HATE": {
+     "uploader": 5,
+     "on_screen_speaker": 8,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 4,
+     "none": 1,
+     "_null": 0,
+     "_n": 18
+    },
+    "CTRL_NONHATE": {
+     "uploader": 1,
+     "on_screen_speaker": 0,
+     "quoted_third_party": 1,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 16,
+     "_null": 0,
+     "_n": 18
+    }
+   },
+   "contrasts": {
+    "S_all_vs_CTRL_all": {
+     "V_strict": {
+      "a_err_notown": 13,
+      "b_err_own": 6,
+      "c_ctrl_notown": 13,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.6842105263157895,
+      "ctrl_rate_notown": 0.6842105263157895,
+      "OR_raw": 1.0,
+      "OR": 1.0,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 34
+     },
+     "V_loose": {
+      "a_err_notown": 2,
+      "b_err_own": 17,
+      "c_ctrl_notown": 5,
+      "d_ctrl_own": 14,
+      "err_rate_notown": 0.10526315789473684,
+      "ctrl_rate_notown": 0.2631578947368421,
+      "OR_raw": 0.32941176470588235,
+      "OR": 0.32941176470588235,
+      "haldane_corrected": false,
+      "p_fisher": 0.4047911547911548,
+      "n_dropped_none": 34
+     },
+     "V_incl": {
+      "a_err_notown": 29,
+      "b_err_own": 6,
+      "c_ctrl_notown": 30,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.8285714285714286,
+      "ctrl_rate_notown": 0.8333333333333334,
+      "OR_raw": 0.9666666666666667,
+      "OR": 0.9666666666666667,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 1
+     }
+    },
+    "S_FP_vs_CTRL_NONHATE": {
+     "V_strict": {
+      "a_err_notown": 8,
+      "b_err_own": 4,
+      "c_ctrl_notown": 1,
+      "d_ctrl_own": 1,
+      "err_rate_notown": 0.6666666666666666,
+      "ctrl_rate_notown": 0.5,
+      "OR_raw": 2.0,
+      "OR": 2.0,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 26
+     },
+     "V_loose": {
+      "a_err_notown": 2,
+      "b_err_own": 10,
+      "c_ctrl_notown": 1,
+      "d_ctrl_own": 1,
+      "err_rate_notown": 0.16666666666666666,
+      "ctrl_rate_notown": 0.5,
+      "OR_raw": 0.2,
+      "OR": 0.2,
+      "haldane_corrected": false,
+      "p_fisher": 0.3956043956043956,
+      "n_dropped_none": 26
+     },
+     "V_incl": {
+      "a_err_notown": 17,
+      "b_err_own": 4,
+      "c_ctrl_notown": 17,
+      "d_ctrl_own": 1,
+      "err_rate_notown": 0.8095238095238095,
+      "ctrl_rate_notown": 0.9444444444444444,
+      "OR_raw": 0.25,
+      "OR": 0.25,
+      "haldane_corrected": false,
+      "p_fisher": 0.34894408578619107,
+      "n_dropped_none": 1
+     }
+    },
+    "S_FP_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 8,
+      "b_err_own": 4,
+      "c_ctrl_notown": 12,
+      "d_ctrl_own": 5,
+      "err_rate_notown": 0.6666666666666666,
+      "ctrl_rate_notown": 0.7058823529411765,
+      "OR_raw": 0.8333333333333334,
+      "OR": 0.8333333333333334,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 11
+     },
+     "V_loose": {
+      "a_err_notown": 2,
+      "b_err_own": 10,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 13,
+      "err_rate_notown": 0.16666666666666666,
+      "ctrl_rate_notown": 0.23529411764705882,
+      "OR_raw": 0.65,
+      "OR": 0.65,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 11
+     },
+     "V_incl": {
+      "a_err_notown": 17,
+      "b_err_own": 4,
+      "c_ctrl_notown": 13,
+      "d_ctrl_own": 5,
+      "err_rate_notown": 0.8095238095238095,
+      "ctrl_rate_notown": 0.7222222222222222,
+      "OR_raw": 1.6346153846153846,
+      "OR": 1.6346153846153846,
+      "haldane_corrected": false,
+      "p_fisher": 0.7061656739076094,
+      "n_dropped_none": 1
+     }
+    },
+    "S_FN_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 5,
+      "b_err_own": 2,
+      "c_ctrl_notown": 12,
+      "d_ctrl_own": 5,
+      "err_rate_notown": 0.7142857142857143,
+      "ctrl_rate_notown": 0.7058823529411765,
+      "OR_raw": 1.0416666666666667,
+      "OR": 1.0416666666666667,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 8
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 7,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 13,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.23529411764705882,
+      "OR_raw": 0.0,
+      "OR": 0.2,
+      "haldane_corrected": true,
+      "p_fisher": 0.28326745718050067,
+      "n_dropped_none": 8
+     },
+     "V_incl": {
+      "a_err_notown": 12,
+      "b_err_own": 2,
+      "c_ctrl_notown": 13,
+      "d_ctrl_own": 5,
+      "err_rate_notown": 0.8571428571428571,
+      "ctrl_rate_notown": 0.7222222222222222,
+      "OR_raw": 2.3076923076923075,
+      "OR": 2.3076923076923075,
+      "haldane_corrected": false,
+      "p_fisher": 0.4263997033741194,
+      "n_dropped_none": 0
+     }
+    }
+   },
+   "flip": {
+    "rule": "primary_voice in NOT_OWN(V-strict) -> push non-hate",
+    "sample_gains_S_FP": 8,
+    "sample_neutral_S_FN": 5,
+    "sample_damage_CTRL_HATE": 12,
+    "sample_net": -4,
+    "pop_projected_gain": 8.0,
+    "pop_projected_damage": 98.96,
+    "pop_net": -90.96,
+    "per_dataset": {
+     "HateMM": {
+      "rate_notown_ctrl_hate": 0.75,
+      "n_correct_hate_pop": 71,
+      "projected_damage": 53.25,
+      "rate_notown_S_FP": 0.571,
+      "n_S_FP_pop": 7,
+      "projected_gain": 4.0,
+      "n_S_FP_sampled": 7,
+      "n_ctrl_hate_sampled": 4
+     },
+     "MHC": {
+      "rate_notown_ctrl_hate": 0.625,
+      "n_correct_hate_pop": 39,
+      "projected_damage": 24.38,
+      "rate_notown_S_FP": 0.3,
+      "n_S_FP_pop": 10,
+      "projected_gain": 3.0,
+      "n_S_FP_sampled": 10,
+      "n_ctrl_hate_sampled": 8
+     },
+     "MHC_zh": {
+      "rate_notown_ctrl_hate": 0.667,
+      "n_correct_hate_pop": 32,
+      "projected_damage": 21.33,
+      "rate_notown_S_FP": 0.2,
+      "n_S_FP_pop": 5,
+      "projected_gain": 1.0,
+      "n_S_FP_sampled": 5,
+      "n_ctrl_hate_sampled": 6
+     }
+    }
+   }
+  },
+  "B_all99": {
+   "view": "B_all99",
+   "tag": "fb2",
+   "datasets": [
+    "HateMM",
+    "MHC",
+    "MHC_zh",
+    "ImpliHateVid"
+   ],
+   "n": 99,
+   "voice_dist": {
+    "S_FP": {
+     "uploader": 9,
+     "on_screen_speaker": 8,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 2,
+     "none": 10,
+     "_null": 1,
+     "_n": 30
+    },
+    "S_FN": {
+     "uploader": 3,
+     "on_screen_speaker": 6,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 10,
+     "_null": 0,
+     "_n": 19
+    },
+    "CTRL_HATE": {
+     "uploader": 7,
+     "on_screen_speaker": 12,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 4,
+     "none": 2,
+     "_null": 0,
+     "_n": 25
+    },
+    "CTRL_NONHATE": {
+     "uploader": 3,
+     "on_screen_speaker": 0,
+     "quoted_third_party": 1,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 21,
+     "_null": 0,
+     "_n": 25
+    }
+   },
+   "contrasts": {
+    "S_all_vs_CTRL_all": {
+     "V_strict": {
+      "a_err_notown": 16,
+      "b_err_own": 12,
+      "c_ctrl_notown": 17,
+      "d_ctrl_own": 10,
+      "err_rate_notown": 0.5714285714285714,
+      "ctrl_rate_notown": 0.6296296296296297,
+      "OR_raw": 0.7843137254901961,
+      "OR": 0.7843137254901961,
+      "haldane_corrected": false,
+      "p_fisher": 0.7847735528976197,
+      "n_dropped_none": 44
+     },
+     "V_loose": {
+      "a_err_notown": 2,
+      "b_err_own": 26,
+      "c_ctrl_notown": 5,
+      "d_ctrl_own": 22,
+      "err_rate_notown": 0.07142857142857142,
+      "ctrl_rate_notown": 0.18518518518518517,
+      "OR_raw": 0.3384615384615385,
+      "OR": 0.3384615384615385,
+      "haldane_corrected": false,
+      "p_fisher": 0.2515588739784078,
+      "n_dropped_none": 44
+     },
+     "V_incl": {
+      "a_err_notown": 36,
+      "b_err_own": 12,
+      "c_ctrl_notown": 40,
+      "d_ctrl_own": 10,
+      "err_rate_notown": 0.75,
+      "ctrl_rate_notown": 0.8,
+      "OR_raw": 0.75,
+      "OR": 0.75,
+      "haldane_corrected": false,
+      "p_fisher": 0.6317420330587196,
+      "n_dropped_none": 1
+     }
+    },
+    "S_FP_vs_CTRL_NONHATE": {
+     "V_strict": {
+      "a_err_notown": 10,
+      "b_err_own": 9,
+      "c_ctrl_notown": 1,
+      "d_ctrl_own": 3,
+      "err_rate_notown": 0.5263157894736842,
+      "ctrl_rate_notown": 0.25,
+      "OR_raw": 3.3333333333333335,
+      "OR": 3.3333333333333335,
+      "haldane_corrected": false,
+      "p_fisher": 0.5900621118012422,
+      "n_dropped_none": 32
+     },
+     "V_loose": {
+      "a_err_notown": 2,
+      "b_err_own": 17,
+      "c_ctrl_notown": 1,
+      "d_ctrl_own": 3,
+      "err_rate_notown": 0.10526315789473684,
+      "ctrl_rate_notown": 0.25,
+      "OR_raw": 0.35294117647058826,
+      "OR": 0.35294117647058826,
+      "haldane_corrected": false,
+      "p_fisher": 0.45285149632975724,
+      "n_dropped_none": 32
+     },
+     "V_incl": {
+      "a_err_notown": 20,
+      "b_err_own": 9,
+      "c_ctrl_notown": 22,
+      "d_ctrl_own": 3,
+      "err_rate_notown": 0.6896551724137931,
+      "ctrl_rate_notown": 0.88,
+      "OR_raw": 0.30303030303030304,
+      "OR": 0.30303030303030304,
+      "haldane_corrected": false,
+      "p_fisher": 0.11337076912491771,
+      "n_dropped_none": 1
+     }
+    },
+    "S_FP_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 10,
+      "b_err_own": 9,
+      "c_ctrl_notown": 16,
+      "d_ctrl_own": 7,
+      "err_rate_notown": 0.5263157894736842,
+      "ctrl_rate_notown": 0.6956521739130435,
+      "OR_raw": 0.4861111111111111,
+      "OR": 0.4861111111111111,
+      "haldane_corrected": false,
+      "p_fisher": 0.34372431754346616,
+      "n_dropped_none": 13
+     },
+     "V_loose": {
+      "a_err_notown": 2,
+      "b_err_own": 17,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 19,
+      "err_rate_notown": 0.10526315789473684,
+      "ctrl_rate_notown": 0.17391304347826086,
+      "OR_raw": 0.5588235294117647,
+      "OR": 0.5588235294117647,
+      "haldane_corrected": false,
+      "p_fisher": 0.6728614167638558,
+      "n_dropped_none": 13
+     },
+     "V_incl": {
+      "a_err_notown": 20,
+      "b_err_own": 9,
+      "c_ctrl_notown": 18,
+      "d_ctrl_own": 7,
+      "err_rate_notown": 0.6896551724137931,
+      "ctrl_rate_notown": 0.72,
+      "OR_raw": 0.8641975308641975,
+      "OR": 0.8641975308641975,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 1
+     }
+    },
+    "S_FN_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 6,
+      "b_err_own": 3,
+      "c_ctrl_notown": 16,
+      "d_ctrl_own": 7,
+      "err_rate_notown": 0.6666666666666666,
+      "ctrl_rate_notown": 0.6956521739130435,
+      "OR_raw": 0.875,
+      "OR": 0.875,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 12
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 9,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 19,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.17391304347826086,
+      "OR_raw": 0.0,
+      "OR": 0.22807017543859648,
+      "haldane_corrected": true,
+      "p_fisher": 0.303476084538376,
+      "n_dropped_none": 12
+     },
+     "V_incl": {
+      "a_err_notown": 16,
+      "b_err_own": 3,
+      "c_ctrl_notown": 18,
+      "d_ctrl_own": 7,
+      "err_rate_notown": 0.8421052631578947,
+      "ctrl_rate_notown": 0.72,
+      "OR_raw": 2.074074074074074,
+      "OR": 2.074074074074074,
+      "haldane_corrected": false,
+      "p_fisher": 0.47436506710471543,
+      "n_dropped_none": 0
+     }
+    }
+   },
+   "flip": {
+    "rule": "primary_voice in NOT_OWN(V-strict) -> push non-hate",
+    "sample_gains_S_FP": 10,
+    "sample_neutral_S_FN": 6,
+    "sample_damage_CTRL_HATE": 16,
+    "sample_net": -6,
+    "pop_projected_gain": 10.0,
+    "pop_projected_damage": 208.67,
+    "pop_net": -198.67,
+    "per_dataset": {
+     "HateMM": {
+      "rate_notown_ctrl_hate": 0.75,
+      "n_correct_hate_pop": 71,
+      "projected_damage": 53.25,
+      "rate_notown_S_FP": 0.571,
+      "n_S_FP_pop": 7,
+      "projected_gain": 4.0,
+      "n_S_FP_sampled": 7,
+      "n_ctrl_hate_sampled": 4
+     },
+     "MHC": {
+      "rate_notown_ctrl_hate": 0.625,
+      "n_correct_hate_pop": 39,
+      "projected_damage": 24.38,
+      "rate_notown_S_FP": 0.3,
+      "n_S_FP_pop": 10,
+      "projected_gain": 3.0,
+      "n_S_FP_sampled": 10,
+      "n_ctrl_hate_sampled": 8
+     },
+     "MHC_zh": {
+      "rate_notown_ctrl_hate": 0.667,
+      "n_correct_hate_pop": 32,
+      "projected_damage": 21.33,
+      "rate_notown_S_FP": 0.2,
+      "n_S_FP_pop": 5,
+      "projected_gain": 1.0,
+      "n_S_FP_sampled": 5,
+      "n_ctrl_hate_sampled": 6
+     },
+     "ImpliHateVid": {
+      "rate_notown_ctrl_hate": 0.571,
+      "n_correct_hate_pop": 192,
+      "projected_damage": 109.71,
+      "rate_notown_S_FP": 0.25,
+      "n_S_FP_pop": 8,
+      "projected_gain": 2.0,
+      "n_S_FP_sampled": 8,
+      "n_ctrl_hate_sampled": 7
+     }
+    }
+   }
+  },
+  "C_textonly": {
+   "view": "C_textonly",
+   "tag": "fb2",
+   "datasets": [
+    "ImpliHateVid"
+   ],
+   "n": 27,
+   "voice_dist": {
+    "S_FP": {
+     "uploader": 5,
+     "on_screen_speaker": 2,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 1,
+     "_null": 0,
+     "_n": 8
+    },
+    "S_FN": {
+     "uploader": 1,
+     "on_screen_speaker": 1,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 3,
+     "_null": 0,
+     "_n": 5
+    },
+    "CTRL_HATE": {
+     "uploader": 2,
+     "on_screen_speaker": 4,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 1,
+     "_null": 0,
+     "_n": 7
+    },
+    "CTRL_NONHATE": {
+     "uploader": 2,
+     "on_screen_speaker": 0,
+     "quoted_third_party": 0,
+     "archival_source": 0,
+     "caption_overlay": 0,
+     "none": 5,
+     "_null": 0,
+     "_n": 7
+    }
+   },
+   "contrasts": {
+    "S_all_vs_CTRL_all": {
+     "V_strict": {
+      "a_err_notown": 3,
+      "b_err_own": 6,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 4,
+      "err_rate_notown": 0.3333333333333333,
+      "ctrl_rate_notown": 0.5,
+      "OR_raw": 0.5,
+      "OR": 0.5,
+      "haldane_corrected": false,
+      "p_fisher": 0.637186343068696,
+      "n_dropped_none": 10
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 9,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 8,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 0.8947368421052632,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 10
+     },
+     "V_incl": {
+      "a_err_notown": 7,
+      "b_err_own": 6,
+      "c_ctrl_notown": 10,
+      "d_ctrl_own": 4,
+      "err_rate_notown": 0.5384615384615384,
+      "ctrl_rate_notown": 0.7142857142857143,
+      "OR_raw": 0.4666666666666667,
+      "OR": 0.4666666666666667,
+      "haldane_corrected": false,
+      "p_fisher": 0.44007119247393844,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FP_vs_CTRL_NONHATE": {
+     "V_strict": {
+      "a_err_notown": 2,
+      "b_err_own": 5,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 2,
+      "err_rate_notown": 0.2857142857142857,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 2.272727272727273,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 6
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 7,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 2,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 0.3333333333333333,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 6
+     },
+     "V_incl": {
+      "a_err_notown": 3,
+      "b_err_own": 5,
+      "c_ctrl_notown": 5,
+      "d_ctrl_own": 2,
+      "err_rate_notown": 0.375,
+      "ctrl_rate_notown": 0.7142857142857143,
+      "OR_raw": 0.24,
+      "OR": 0.24,
+      "haldane_corrected": false,
+      "p_fisher": 0.3146853146853147,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FP_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 2,
+      "b_err_own": 5,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 2,
+      "err_rate_notown": 0.2857142857142857,
+      "ctrl_rate_notown": 0.6666666666666666,
+      "OR_raw": 0.2,
+      "OR": 0.2,
+      "haldane_corrected": false,
+      "p_fisher": 0.28613053613053613,
+      "n_dropped_none": 2
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 7,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 0.8666666666666667,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 2
+     },
+     "V_incl": {
+      "a_err_notown": 3,
+      "b_err_own": 5,
+      "c_ctrl_notown": 5,
+      "d_ctrl_own": 2,
+      "err_rate_notown": 0.375,
+      "ctrl_rate_notown": 0.7142857142857143,
+      "OR_raw": 0.24,
+      "OR": 0.24,
+      "haldane_corrected": false,
+      "p_fisher": 0.3146853146853147,
+      "n_dropped_none": 0
+     }
+    },
+    "S_FN_vs_CTRL_HATE": {
+     "V_strict": {
+      "a_err_notown": 1,
+      "b_err_own": 1,
+      "c_ctrl_notown": 4,
+      "d_ctrl_own": 2,
+      "err_rate_notown": 0.5,
+      "ctrl_rate_notown": 0.6666666666666666,
+      "OR_raw": 0.5,
+      "OR": 0.5,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 4
+     },
+     "V_loose": {
+      "a_err_notown": 0,
+      "b_err_own": 2,
+      "c_ctrl_notown": 0,
+      "d_ctrl_own": 6,
+      "err_rate_notown": 0.0,
+      "ctrl_rate_notown": 0.0,
+      "OR_raw": null,
+      "OR": 2.6,
+      "haldane_corrected": true,
+      "p_fisher": 1.0,
+      "n_dropped_none": 4
+     },
+     "V_incl": {
+      "a_err_notown": 4,
+      "b_err_own": 1,
+      "c_ctrl_notown": 5,
+      "d_ctrl_own": 2,
+      "err_rate_notown": 0.8,
+      "ctrl_rate_notown": 0.7142857142857143,
+      "OR_raw": 1.6,
+      "OR": 1.6,
+      "haldane_corrected": false,
+      "p_fisher": 1.0,
+      "n_dropped_none": 0
+     }
+    }
+   },
+   "flip": {
+    "rule": "primary_voice in NOT_OWN(V-strict) -> push non-hate",
+    "sample_gains_S_FP": 2,
+    "sample_neutral_S_FN": 1,
+    "sample_damage_CTRL_HATE": 4,
+    "sample_net": -2,
+    "pop_projected_gain": 2.0,
+    "pop_projected_damage": 109.71,
+    "pop_net": -107.71,
+    "per_dataset": {
+     "ImpliHateVid": {
+      "rate_notown_ctrl_hate": 0.571,
+      "n_correct_hate_pop": 192,
+      "projected_damage": 109.71,
+      "rate_notown_S_FP": 0.25,
+      "n_S_FP_pop": 8,
+      "projected_gain": 2.0,
+      "n_S_FP_sampled": 8,
+      "n_ctrl_hate_sampled": 7
+     }
+    }
+   }
+  }
+ },
+ "two_round_stability": {
+  "A_frames_primary": {
+   "n": 71,
+   "agree6": 0.493,
+   "kappa6": 0.344,
+   "agree_binary3": 0.507,
+   "kappa_binary3": 0.305,
+   "confusion": {
+    "on_screen_speaker->on_screen_speaker": 11,
+    "none->none": 11,
+    "uploader->uploader": 11,
+    "uploader->none": 11,
+    "uploader->on_screen_speaker": 7,
+    "on_screen_speaker->none": 5,
+    "caption_overlay->none": 5,
+    "uploader->caption_overlay": 3,
+    "caption_overlay->caption_overlay": 2,
+    "archival_source->on_screen_speaker": 1,
+    "caption_overlay->uploader": 1,
+    "none->caption_overlay": 1,
+    "uploader->quoted_third_party": 1,
+    "archival_source->none": 1
+   }
+  },
+  "B_all99": {
+   "n": 98,
+   "agree6": 0.51,
+   "kappa6": 0.348,
+   "agree_binary3": 0.52,
+   "kappa_binary3": 0.324,
+   "confusion": {
+    "uploader->uploader": 21,
+    "uploader->none": 17,
+    "none->none": 15,
+    "uploader->on_screen_speaker": 13,
+    "on_screen_speaker->on_screen_speaker": 12,
+    "on_screen_speaker->none": 5,
+    "caption_overlay->none": 5,
+    "uploader->caption_overlay": 3,
+    "caption_overlay->caption_overlay": 2,
+    "archival_source->on_screen_speaker": 1,
+    "caption_overlay->uploader": 1,
+    "none->caption_overlay": 1,
+    "uploader->quoted_third_party": 1,
+    "archival_source->none": 1
+   }
+  },
+  "C_textonly": {
+   "n": 27,
+   "agree6": 0.556,
+   "kappa6": 0.299,
+   "agree_binary3": 0.556,
+   "kappa_binary3": 0.299,
+   "confusion": {
+    "uploader->uploader": 10,
+    "uploader->none": 6,
+    "uploader->on_screen_speaker": 6,
+    "none->none": 4,
+    "on_screen_speaker->on_screen_speaker": 1
+   }
+  }
+ },
+ "voice_accuracy": {
+  "strong": {
+   "A_frames_primary": {
+    "n_scored": 23,
+    "n_correct": 19,
+    "acc": 0.826,
+    "n_model_said_none": 2,
+    "n_gold_undet": 10,
+    "errors": [
+     {
+      "item": "HateMM::non_hate_video_121",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "uploader's own recorded prank/expose phone call; he is the speaker driving it"
+     },
+     {
+      "item": "MHC::DxcRdnzBZoo",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "Shane & Hannah answering questions about themselves in first person"
+     },
+     {
+      "item": "MHC::pofgIFZpR7c",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "title names Hamza Ahmed; clip of a third party's monologue"
+     },
+     {
+      "item": "MHC_zh::BV1Km4y1u7ri",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "single-speaker performance to camera"
+     }
+    ]
+   },
+   "B_all99": {
+    "n_scored": 32,
+    "n_correct": 27,
+    "acc": 0.844,
+    "n_model_said_none": 4,
+    "n_gold_undet": 12,
+    "errors": [
+     {
+      "item": "HateMM::non_hate_video_121",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "uploader's own recorded prank/expose phone call; he is the speaker driving it"
+     },
+     {
+      "item": "MHC::DxcRdnzBZoo",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "Shane & Hannah answering questions about themselves in first person"
+     },
+     {
+      "item": "MHC::pofgIFZpR7c",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "title names Hamza Ahmed; clip of a third party's monologue"
+     },
+     {
+      "item": "MHC_zh::BV1Km4y1u7ri",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "single-speaker performance to camera"
+     },
+     {
+      "item": "ImpliHateVid::NH_875",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "the hateful surface is in the embedded Starbucks-parody clip being reacted to"
+     }
+    ]
+   },
+   "C_textonly": {
+    "n_scored": 9,
+    "n_correct": 8,
+    "acc": 0.889,
+    "n_model_said_none": 2,
+    "n_gold_undet": 2,
+    "errors": [
+     {
+      "item": "ImpliHateVid::NH_875",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "the hateful surface is in the embedded Starbucks-parody clip being reacted to"
+     }
+    ]
+   }
+  },
+  "fb2": {
+   "A_frames_primary": {
+    "n_scored": 15,
+    "n_correct": 12,
+    "acc": 0.8,
+    "n_model_said_none": 10,
+    "n_gold_undet": 10,
+    "errors": [
+     {
+      "item": "HateMM::non_hate_video_32",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "Lennon/Ono song 'Woman Is the Nigger of the World' \u2014 a third-party recording"
+     },
+     {
+      "item": "MHC::cXRgVEENkPA",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "commentator narrating the Dodgers story on his own show"
+     },
+     {
+      "item": "MHC_zh::BV1Qk4y1g7PM",
+      "gold": "OWN",
+      "pred": "caption_overlay",
+      "why": "uploader performs the misogynistic phrases herself as specimens"
+     }
+    ]
+   },
+   "B_all99": {
+    "n_scored": 22,
+    "n_correct": 17,
+    "acc": 0.773,
+    "n_model_said_none": 14,
+    "n_gold_undet": 12,
+    "errors": [
+     {
+      "item": "HateMM::non_hate_video_32",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "Lennon/Ono song 'Woman Is the Nigger of the World' \u2014 a third-party recording"
+     },
+     {
+      "item": "MHC::cXRgVEENkPA",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "commentator narrating the Dodgers story on his own show"
+     },
+     {
+      "item": "MHC_zh::BV1Qk4y1g7PM",
+      "gold": "OWN",
+      "pred": "caption_overlay",
+      "why": "uploader performs the misogynistic phrases herself as specimens"
+     },
+     {
+      "item": "ImpliHateVid::NH_736",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "first-person monologue"
+     },
+     {
+      "item": "ImpliHateVid::NH_875",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "the hateful surface is in the embedded Starbucks-parody clip being reacted to"
+     }
+    ]
+   },
+   "C_textonly": {
+    "n_scored": 7,
+    "n_correct": 5,
+    "acc": 0.714,
+    "n_model_said_none": 4,
+    "n_gold_undet": 2,
+    "errors": [
+     {
+      "item": "ImpliHateVid::NH_736",
+      "gold": "OWN",
+      "pred": "on_screen_speaker",
+      "why": "first-person monologue"
+     },
+     {
+      "item": "ImpliHateVid::NH_875",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "the hateful surface is in the embedded Starbucks-parody clip being reacted to"
+     }
+    ]
+   }
+  },
+  "_gold_summary": {
+   "n_coded": 49,
+   "by_class": {
+    "NOT_OWN": 16,
+    "OWN": 21,
+    "UNDET": 12
+   },
+   "by_dataset": {
+    "HateMM": 8,
+    "MHC": 16,
+    "MHC_zh": 12,
+    "ImpliHateVid": 13
+   },
+   "n_not_blind": 3
+  }
+ },
+ "voice_accuracy_Vloose": {
+  "strong": {
+   "A_frames_primary": {
+    "n_scored": 23,
+    "n_correct": 16,
+    "acc": 0.696,
+    "n_model_said_none": 2,
+    "n_gold_undet": 10,
+    "errors": [
+     {
+      "item": "HateMM::hate_video_365",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "public-meeting / MLive news footage; the slur is an audience member's, recorded by a media outlet"
+     },
+     {
+      "item": "HateMM::non_hate_video_16",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "1956 segregationist newsreel; OCR carries a GlobalImageWorks stock-footage timecode watermark"
+     },
+     {
+      "item": "HateMM::non_hate_video_400",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "Ellen show broadcast clip (OCR: ellentube / Watch Ellen Weekdays)"
+     },
+     {
+      "item": "MHC::XlJCNPi5inM",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title attributes to a named third party (Kevin Samuels); clip channel"
+     },
+     {
+      "item": "MHC::dK43yHIUMKA",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title names Dave Allen; archival stand-up routine"
+     },
+     {
+      "item": "MHC::pofgIFZpR7c",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "title names Hamza Ahmed; clip of a third party's monologue"
+     },
+     {
+      "item": "MHC_zh::BV1vK41177zi",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "excerpt of a third-party drama (\u723d\u5267\u7247\u6bb5)"
+     }
+    ]
+   },
+   "B_all99": {
+    "n_scored": 32,
+    "n_correct": 23,
+    "acc": 0.719,
+    "n_model_said_none": 4,
+    "n_gold_undet": 12,
+    "errors": [
+     {
+      "item": "HateMM::hate_video_365",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "public-meeting / MLive news footage; the slur is an audience member's, recorded by a media outlet"
+     },
+     {
+      "item": "HateMM::non_hate_video_16",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "1956 segregationist newsreel; OCR carries a GlobalImageWorks stock-footage timecode watermark"
+     },
+     {
+      "item": "HateMM::non_hate_video_400",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "Ellen show broadcast clip (OCR: ellentube / Watch Ellen Weekdays)"
+     },
+     {
+      "item": "MHC::XlJCNPi5inM",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title attributes to a named third party (Kevin Samuels); clip channel"
+     },
+     {
+      "item": "MHC::dK43yHIUMKA",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title names Dave Allen; archival stand-up routine"
+     },
+     {
+      "item": "MHC::pofgIFZpR7c",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "title names Hamza Ahmed; clip of a third party's monologue"
+     },
+     {
+      "item": "MHC_zh::BV1vK41177zi",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "excerpt of a third-party drama (\u723d\u5267\u7247\u6bb5)"
+     },
+     {
+      "item": "ImpliHateVid::IM_5",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "Australian Senate footage + broadcast commentary"
+     },
+     {
+      "item": "ImpliHateVid::NH_875",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "the hateful surface is in the embedded Starbucks-parody clip being reacted to"
+     }
+    ]
+   },
+   "C_textonly": {
+    "n_scored": 9,
+    "n_correct": 7,
+    "acc": 0.778,
+    "n_model_said_none": 2,
+    "n_gold_undet": 2,
+    "errors": [
+     {
+      "item": "ImpliHateVid::IM_5",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "Australian Senate footage + broadcast commentary"
+     },
+     {
+      "item": "ImpliHateVid::NH_875",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "the hateful surface is in the embedded Starbucks-parody clip being reacted to"
+     }
+    ]
+   }
+  },
+  "fb2": {
+   "A_frames_primary": {
+    "n_scored": 15,
+    "n_correct": 6,
+    "acc": 0.4,
+    "n_model_said_none": 10,
+    "n_gold_undet": 10,
+    "errors": [
+     {
+      "item": "HateMM::hate_video_365",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "public-meeting / MLive news footage; the slur is an audience member's, recorded by a media outlet"
+     },
+     {
+      "item": "HateMM::non_hate_video_149",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "archival minstrel-era 'Swanee River' recording reposted"
+     },
+     {
+      "item": "HateMM::non_hate_video_16",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "1956 segregationist newsreel; OCR carries a GlobalImageWorks stock-footage timecode watermark"
+     },
+     {
+      "item": "HateMM::non_hate_video_32",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "Lennon/Ono song 'Woman Is the Nigger of the World' \u2014 a third-party recording"
+     },
+     {
+      "item": "HateMM::non_hate_video_400",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "Ellen show broadcast clip (OCR: ellentube / Watch Ellen Weekdays)"
+     },
+     {
+      "item": "MHC::XlJCNPi5inM",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title attributes to a named third party (Kevin Samuels); clip channel"
+     },
+     {
+      "item": "MHC::dK43yHIUMKA",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title names Dave Allen; archival stand-up routine"
+     },
+     {
+      "item": "MHC::pofgIFZpR7c",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title names Hamza Ahmed; clip of a third party's monologue"
+     },
+     {
+      "item": "MHC_zh::BV1Qk4y1g7PM",
+      "gold": "OWN",
+      "pred": "caption_overlay",
+      "why": "uploader performs the misogynistic phrases herself as specimens"
+     }
+    ]
+   },
+   "B_all99": {
+    "n_scored": 22,
+    "n_correct": 11,
+    "acc": 0.5,
+    "n_model_said_none": 14,
+    "n_gold_undet": 12,
+    "errors": [
+     {
+      "item": "HateMM::hate_video_365",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "public-meeting / MLive news footage; the slur is an audience member's, recorded by a media outlet"
+     },
+     {
+      "item": "HateMM::non_hate_video_149",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "archival minstrel-era 'Swanee River' recording reposted"
+     },
+     {
+      "item": "HateMM::non_hate_video_16",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "1956 segregationist newsreel; OCR carries a GlobalImageWorks stock-footage timecode watermark"
+     },
+     {
+      "item": "HateMM::non_hate_video_32",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "Lennon/Ono song 'Woman Is the Nigger of the World' \u2014 a third-party recording"
+     },
+     {
+      "item": "HateMM::non_hate_video_400",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "Ellen show broadcast clip (OCR: ellentube / Watch Ellen Weekdays)"
+     },
+     {
+      "item": "MHC::XlJCNPi5inM",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title attributes to a named third party (Kevin Samuels); clip channel"
+     },
+     {
+      "item": "MHC::dK43yHIUMKA",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title names Dave Allen; archival stand-up routine"
+     },
+     {
+      "item": "MHC::pofgIFZpR7c",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "title names Hamza Ahmed; clip of a third party's monologue"
+     },
+     {
+      "item": "MHC_zh::BV1Qk4y1g7PM",
+      "gold": "OWN",
+      "pred": "caption_overlay",
+      "why": "uploader performs the misogynistic phrases herself as specimens"
+     },
+     {
+      "item": "ImpliHateVid::IM_5",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "Australian Senate footage + broadcast commentary"
+     },
+     {
+      "item": "ImpliHateVid::NH_875",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "the hateful surface is in the embedded Starbucks-parody clip being reacted to"
+     }
+    ]
+   },
+   "C_textonly": {
+    "n_scored": 7,
+    "n_correct": 5,
+    "acc": 0.714,
+    "n_model_said_none": 4,
+    "n_gold_undet": 2,
+    "errors": [
+     {
+      "item": "ImpliHateVid::IM_5",
+      "gold": "NOT_OWN",
+      "pred": "on_screen_speaker",
+      "why": "Australian Senate footage + broadcast commentary"
+     },
+     {
+      "item": "ImpliHateVid::NH_875",
+      "gold": "NOT_OWN",
+      "pred": "uploader",
+      "why": "the hateful surface is in the embedded Starbucks-parody clip being reacted to"
+     }
+    ]
+   }
+  },
+  "_gold_summary": {
+   "n_coded": 49,
+   "by_class": {
+    "NOT_OWN": 16,
+    "OWN": 21,
+    "UNDET": 12
+   },
+   "by_dataset": {
+    "HateMM": 8,
+    "MHC": 16,
+    "MHC_zh": 12,
+    "ImpliHateVid": 13
+   },
+   "n_not_blind": 3
+  }
+ },
+ "EXPLORATORY_voice_given_endorses": {
+  "strong": {
+   "a_err_notown": 7,
+   "b_err_own": 5,
+   "c_ctrl_notown": 7,
+   "d_ctrl_own": 10,
+   "err_rate_notown": 0.5833333333333334,
+   "ctrl_rate_notown": 0.4117647058823529,
+   "OR_raw": 2.0,
+   "OR": 2.0,
+   "haldane_corrected": false,
+   "p_fisher": 0.4621373523764433,
+   "n_dropped_none": 0,
+   "n_endorses_items": 38
+  },
+  "fb2": {
+   "a_err_notown": 6,
+   "b_err_own": 4,
+   "c_ctrl_notown": 10,
+   "d_ctrl_own": 5,
+   "err_rate_notown": 0.6,
+   "ctrl_rate_notown": 0.6666666666666666,
+   "OR_raw": 0.75,
+   "OR": 0.75,
+   "haldane_corrected": false,
+   "p_fisher": 1.0,
+   "n_dropped_none": 0,
+   "n_endorses_items": 30
+  }
+ },
+ "VERDICT_F4": {
+  "bar": "OR>=3.0 and p<0.05",
+  "rounds": [
+   [
+    "round1",
+    1.7,
+    0.43086621555763255,
+    false
+   ],
+   [
+    "fb2",
+    1.0,
+    1.0,
+    false
+   ]
+  ],
+  "verdict": "BURY"
+ }
+}

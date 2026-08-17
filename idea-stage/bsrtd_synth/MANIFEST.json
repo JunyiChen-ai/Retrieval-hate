@@ -1,0 +1,24 @@
+{
+  "signal": "planted",
+  "seed": 20260810,
+  "d_img": 64,
+  "d_txt": 64,
+  "splits": {
+    "en/train": {
+      "n_items": 500,
+      "n_lattices": 260
+    },
+    "en/val": {
+      "n_items": 130,
+      "n_lattices": 90
+    },
+    "zh/train": {
+      "n_items": 500,
+      "n_lattices": 260
+    },
+    "zh/val": {
+      "n_items": 130,
+      "n_lattices": 90
+    }
+  }
+}

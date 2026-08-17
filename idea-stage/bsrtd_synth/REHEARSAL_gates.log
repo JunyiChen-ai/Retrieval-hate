@@ -1,0 +1,96 @@
+==============================================================================
+B-SRTD pilot  mode=gates  start 2026-08-10T07:08:00  device=cuda
+Rules: research-wiki/EXP_bsrtd_prereg.md (frozen before this file existed)
+teacher models=['synthetic-oracle'] engines=['synthetic']
+G0 (assets / encoder responsivity / beyond-gold information): PASS
+{
+  "en": {
+    "train": {
+      "n": 260,
+      "need": 200,
+      "verify_pass_frac": 1.0,
+      "min_class_frac": 0.4846153846153846,
+      "ok": true
+    },
+    "val": {
+      "n": 90,
+      "need": 80,
+      "verify_pass_frac": 1.0,
+      "min_class_frac": 0.4666666666666667,
+      "ok": true
+    },
+    "teacher": {
+      "signB_agree": 1.0,
+      "mean_abs_dB": 0.45524472448104486,
+      "mean_abs_dA": 0.10667330873555629,
+      "mean_abs_dAB": 0.12214843885169313,
+      "sd_dA": 0.1526068927092275,
+      "sd_dB": 0.3124674619013708,
+      "sd_dAB": 0.17014883774220357,
+      "resid_sd_beyond_gold": [
+        0.15132260864854877,
+        0.15234269955986385,
+        0.1696097114487303
+      ],
+      "resid_floor": 0.03,
+      "ok": true
+    },
+    "probe": {
+      "acc": 0.9777777777777777,
+      "need": 0.65,
+      "ok": true
+    }
+  },
+  "zh": {
+    "train": {
+      "n": 260,
+      "need": 200,
+      "verify_pass_frac": 1.0,
+      "min_class_frac": 0.4807692307692308,
+      "ok": true
+    },
+    "val": {
+      "n": 90,
+      "need": 80,
+      "verify_pass_frac": 1.0,
+      "min_class_frac": 0.4888888888888889,
+      "ok": true
+    },
+    "teacher": {
+      "signB_agree": 1.0,
+      "mean_abs_dB": 0.4453828652798879,
+      "mean_abs_dA": 0.10149216689388303,
+      "mean_abs_dAB": 0.11524534820549175,
+      "sd_dA": 0.14720938873827455,
+      "sd_dB": 0.3079669843593373,
+      "sd_dAB": 0.16384863357661245,
+      "resid_sd_beyond_gold": [
+        0.1456000119292654,
+        0.14083140807027067,
+        0.16323435803728376
+      ],
+      "resid_floor": 0.03,
+      "ok": true
+    },
+    "probe": {
+      "acc": 0.9611111111111111,
+      "need": 0.65,
+      "ok": true
+    }
+  }
+}
+G1 teacher exam [en]: overall=0.9593 worst_cell=0.9257 -> PASS
+    orig       n=350   acc=0.9686 fp=0.0229 fn=0.0086 ok
+    targetsub  n=350   acc=0.9257 fp=0.0200 fn=0.0543 ok
+    stancerev  n=350   acc=0.9629 fp=0.0371 fn=0.0000 ok
+    both       n=350   acc=0.9800 fp=0.0200 fn=0.0000 ok
+G1 teacher exam [zh]: overall=0.9636 worst_cell=0.9200 -> PASS
+    orig       n=350   acc=0.9771 fp=0.0143 fn=0.0086 ok
+    targetsub  n=350   acc=0.9200 fp=0.0257 fn=0.0543 ok
+    stancerev  n=350   acc=0.9714 fp=0.0286 fn=0.0000 ok
+    both       n=350   acc=0.9857 fp=0.0143 fn=0.0000 ok
+G2 disagreement filter [en]: train 260->221 (floor 150), val 90->81 (floor 60) -> PASS
+    dropped by cell: {'orig': 11, 'targetsub': 21, 'stancerev': 9, 'both': 6}
+G2 disagreement filter [zh]: train 260->227 (floor 150), val 90->79 (floor 60) -> PASS
+    dropped by cell: {'orig': 7, 'targetsub': 20, 'stancerev': 8, 'both': 4}
+gates -> PASS

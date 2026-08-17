@@ -1,0 +1,77 @@
+## 1. Headline — masked vs unmasked, same items, same model
+
+| view | n_S | masked P1 | round-1 P1 | fallback-② P1 | Δ vs r1 | bar |
+|---|---|---|---|---|---|---|
+| A frame-bearing (primary) | 35 | **0.371** | 0.257 | 0.171 | +0.114 | ≥0.70 |
+| B all 99 | 48 | **0.354** | 0.250 | 0.167 | +0.104 | ≥0.70 |
+| C text-only | 13 | **0.308** | 0.231 | 0.154 | +0.077 | ≥0.70 |
+
+## 2. By S sub-bucket, view A
+
+| cell | n | masked | round 1 |
+|---|---|---|---|
+| S_FP | 21 | 0.095 | — |
+| S_FN | 14 | 0.786 | — |
+
+## 3. Per dataset, S-bucket accuracy
+
+| dataset | n_S | masked | round 1 | fallback ② |
+|---|---|---|---|---|
+| HateMM | 8 | 0.125 | 0.000 | 0.125 |
+| MHC | 16 | 0.312 | 0.250 | 0.125 |
+| MHC_zh | 11 | 0.636 | 0.455 | 0.273 |
+| ImpliHateVid | 13 | 0.308 | 0.231 | 0.154 |
+
+## 4. Control damage (view A)
+
+P2 false_distancing on CTRL_HATE = **0.056** (round 1 0.000), bar ≤ 0.15 -> pass=True
+CTRL_NONHATE false `endorses` = 0.278
+
+## 5. Five-class stance distribution, view A (masked -> round 1)
+
+| group | endorses | quotes_mentions | condemns | reports | no_hate_content |
+|---|---|---|---|---|---|
+| S_FP | 13 (12) | 0 (0) | 2 (1) | 0 (0) | 6 (8) |
+| S_FN | 11 (8) | 1 (0) | 0 (1) | 0 (0) | 2 (5) |
+| CTRL_HATE | 16 (17) | 0 (0) | 1 (0) | 0 (0) | 1 (1) |
+| CTRL_NONHATE | 5 (1) | 0 (0) | 1 (1) | 0 (0) | 12 (16) |
+| **total** | **45** (38) | **1** (0) | **4** (3) | **0** (0) | **21** (30) |
+
+## 6. Frozen stratification by whether masking could act (view A, S bucket)
+
+| stratum | n | n_S_FP | n_S_FN | masked P1 | round-1 P1 | stance hist |
+|---|---|---|---|---|---|---|
+| with_placeholder | 26 | 15 | 11 | 0.462 | 0.308 | {"endorses": 23, "condemns": 2, "quotes_mentions": 1} |
+| no_placeholder | 9 | 6 | 3 | 0.111 | 0.111 | {"no_hate_content": 8, "endorses": 1} |
+
+## 7. Item-level flips (view A, S bucket)
+
+wrong->right: ['BV1Vy4y1p7x2', 'BV1qZ4y1T71a', 'KDcCiUU8q5E', '_qldaPBgkk0', 'hate_video_365']
+right->wrong: ['h_wKRDyoG_c']
+
+## 8. Extraction / masking quality over the 99-item batch
+
+{
+ "n_items": 97,
+ "items_with_placeholder": 68,
+ "total_spans": 274,
+ "unmatched_spans": 0,
+ "unmatched_rate": 0.0,
+ "mean_masked_frac_when_masked": 0.251,
+ "extract_parse_fail": 5
+}
+
+## 9. Cost (measured tokens)
+
+| run | endpoint | items | input tok | output tok |
+|---|---|---|---|---|
+| smoke step 1 extraction (8 items, realtime) | realtime | 8 | 8,986 | 498 |
+| smoke step 2 masked stance (8 items, realtime) | realtime | 8 | 17,968 | 622 |
+| eval step 1 extraction (99 items, Batch) | Batch | 98 | 92,265 | 10,202 |
+| eval step 2 masked stance (99 items, Batch) | Batch | 97 | 208,803 | 6,259 |
+| synthetic reachability probe (5 items x 2 calls) | realtime | 5 | 9,172 | 558 |
+| **total this pilot** | | | **337,194** | **18,139** |
+
+At the same assumed list price used in STANCE_PILOT_RESULT §7 (¥0.002/1K in, ¥0.008/1K out, Batch at 50%): upper bound ¥0.82 ≈ USD 0.115
+
+## VERDICT: FAIL

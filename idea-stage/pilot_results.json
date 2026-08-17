@@ -1,0 +1,125 @@
+{
+ "p1_n_pos": 298,
+ "p1_n_pos_with_spans": 298,
+ "p1_len_dist": {
+  "median": 26.0,
+  "mean": 22.87248322147651,
+  "min": 1,
+  "max": 30
+ },
+ "P1": {
+  "macroF1_full_A": 0.8195692266044025,
+  "macroF1_randwin_B": 0.8154981968935457,
+  "macroF1_goldwin_C": 0.8203419971359847,
+  "generic_trim_pts": -0.40710297108567106,
+  "oracle_alignment_pts": 0.48438002424389115,
+  "oracle_boot_ci95": [
+   -0.7944775909438234,
+   1.7628047302399394
+  ],
+  "verdict": "AMBIGUOUS"
+ },
+ "P2": {
+  "n_eval_videos": 298,
+  "hit_rate": 0.5436241610738255,
+  "chance_rate": 0.7624161073825504,
+  "ratio": 0.7130281690140845,
+  "hit_boot_lo95": 0.4865771812080537,
+  "macroF1_base": 0.8230751816333015,
+  "macroF1_with_selected_segment": 0.817170555650391,
+  "delta_pts": -0.5904625982910527,
+  "delta_boot_ci95": [
+   -2.159108322142544,
+   0.994389712963858
+  ],
+  "verdict_selection": "NO-GO",
+  "verdict_classification": "NO-GO",
+  "verdict": "NO-GO"
+ },
+ "P3": {
+  "n_audited": 133,
+  "pos_rate": 0.5037593984962406,
+  "probe_auroc": 0.8417005879692447,
+  "probe_boot_lo95": 0.7730755782771329,
+  "typed_routing_per_fold": [
+   {
+    "fold": 0,
+    "n": 25,
+    "purity_unrestricted": 0.408,
+    "purity_typed": 0.426,
+    "delta": 0.018000000000000016
+   },
+   {
+    "fold": 1,
+    "n": 32,
+    "purity_unrestricted": 0.43125,
+    "purity_typed": 0.4421875,
+    "delta": 0.010937499999999989
+   },
+   {
+    "fold": 2,
+    "n": 20,
+    "purity_unrestricted": 0.4800000000000001,
+    "purity_typed": 0.49000000000000005,
+    "delta": 0.009999999999999953
+   },
+   {
+    "fold": 3,
+    "n": 28,
+    "purity_unrestricted": 0.5946428571428573,
+    "purity_typed": 0.6035714285714285,
+    "delta": 0.008928571428571286
+   },
+   {
+    "fold": 4,
+    "n": 28,
+    "purity_unrestricted": 0.5928571428571427,
+    "purity_typed": 0.5946428571428571,
+    "delta": 0.0017857142857143904
+   }
+  ],
+  "folds_with_delta_ge_0.05": 0,
+  "verdict_probe": "GO",
+  "verdict_routing": "NO-GO",
+  "verdict": "NO-GO"
+ },
+ "POST_HOC": {
+  "note": "Exploratory, computed AFTER the frozen verdicts; does not revise any frozen verdict.",
+  "hatemm_official_gold_span_coverage_hateful_train_n298": {
+   "mean": 0.717,
+   "median": 0.829,
+   "q25": 0.57,
+   "q75": 0.933,
+   "frac_ge_0.90": 0.346,
+   "frac_le_0.25": 0.117
+  },
+  "coder_minimal_sufficient_interval_coverage_n99": {
+   "mean": 0.331,
+   "median": 0.131,
+   "q75": 0.716
+  },
+  "paired_n99_official_vs_coder_minimal": {
+   "official_mean": 0.657,
+   "coder_mean": 0.331,
+   "ratio": 2.0
+  },
+  "P2_selection_vs_coder_minimal_intervals": {
+   "n": 99,
+   "hit": 0.444,
+   "chance": 0.361,
+   "ratio": 1.23,
+   "boot95": [
+    0.343,
+    0.545
+   ],
+   "random_selector_control": 0.354
+  },
+  "P3_probe_by_stratum": {
+   "overall": 0.842,
+   "FN": 0.768,
+   "TP": 0.88,
+   "FP": 0.898,
+   "reading": "not an error-status confound"
+  }
+ }
+}

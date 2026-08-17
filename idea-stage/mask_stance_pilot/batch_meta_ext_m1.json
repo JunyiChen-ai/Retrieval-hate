@@ -1,0 +1,12 @@
+{
+ "tag": "m1",
+ "stage": "ext",
+ "model": "qwen3-vl-plus",
+ "file_id": "file-batch-5fccb2783775404992fd9432",
+ "batch_id": "batch_c5b39ef3-a677-47e3-80ce-ebfa3f7c3cb8",
+ "n": 99,
+ "submitted": "2026-08-12T20:49:18",
+ "status": "completed",
+ "output_file_id": "file-batch_output-8400422a685b469c9459b12e",
+ "error_file_id": "file-batch_output-6649206a9ae1416b904931f9"
+}

@@ -78,7 +78,7 @@ def main():
         demoted = {}
         for ds in per_ds:
             key = "%s-CAT" % cand
-            dv = devs[ds].get("contrasts", {}).get("P1/%s" % key)
+            dv = devs[ds].get("contrasts", {}).get("dev_mf1_P1/%s" % key)
             tv = get(grids[ds], "P1", key)
             if dv is None:
                 demoted[ds] = None

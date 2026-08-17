@@ -1,0 +1,147 @@
+{
+ "freeze": "idea-stage/R12_FREEZE.md 3.5",
+ "bar": 0.005,
+ "candidates": {
+  "AF_PT": {
+   "per_dataset": {
+    "MHC_zh": {
+     "clause1_gain": {
+      "contrast": "AF_PT-CAT",
+      "mean": -0.0003468801283657304,
+      "ci95": [
+       -0.004815516138290498,
+       0.004093596852879516
+      ],
+      "pass": false
+     },
+     "clause2_filter": {
+      "contrast": "AF_PT-AU_PT",
+      "mean": 0.0013886053360241772,
+      "ci95": [
+       -0.0016623487274675783,
+       0.004435354274791672
+      ],
+      "pass": false
+     },
+     "clause3_semantics": {
+      "contrast": "AF_PT-AF_SHUF",
+      "mean": 0.0008172214463600281,
+      "ci95": [
+       -0.0017803669728662834,
+       0.003364186355769719
+      ],
+      "pass": false
+     }
+    },
+    "HateMM": {
+     "clause1_gain": {
+      "contrast": "AF_PT-CAT",
+      "mean": -0.0002386246874554354,
+      "ci95": [
+       -0.003802238033882134,
+       0.0033642086666658627
+      ],
+      "pass": false
+     },
+     "clause2_filter": {
+      "contrast": "AF_PT-AU_PT",
+      "mean": -0.004364979757035381,
+      "ci95": [
+       -0.008955336419322077,
+       -0.0005890317071427314
+      ],
+      "pass": false
+     },
+     "clause3_semantics": {
+      "contrast": "AF_PT-AF_SHUF",
+      "mean": -0.0008899483096628098,
+      "ci95": [
+       -0.005303021207750725,
+       0.0024860829849288352
+      ],
+      "pass": false
+     }
+    }
+   },
+   "clause1_all": false,
+   "clause2_all": false,
+   "clause3_all": false,
+   "dev_demotion_fired": {
+    "MHC_zh": false,
+    "HateMM": false
+   },
+   "verdict": "KILL"
+  },
+  "AF_A0": {
+   "per_dataset": {
+    "MHC_zh": {
+     "clause1_gain": {
+      "contrast": "AF_A0-CAT",
+      "mean": -0.0006956105789786041,
+      "ci95": [
+       -0.005119441574445749,
+       0.0038919336399699444
+      ],
+      "pass": false
+     },
+     "clause2_filter": {
+      "contrast": "AF_A0-AU_A0",
+      "mean": -0.0026406649095553274,
+      "ci95": [
+       -0.006400476885545671,
+       0.0006901861866938532
+      ],
+      "pass": false
+     },
+     "clause3_semantics": {
+      "contrast": "AF_A0-AF_SHUF",
+      "mean": 0.0004684909957471543,
+      "ci95": [
+       -0.0016574790916386486,
+       0.0025220060306466374
+      ],
+      "pass": false
+     }
+    },
+    "HateMM": {
+     "clause1_gain": {
+      "contrast": "AF_A0-CAT",
+      "mean": -0.0002669437965969671,
+      "ci95": [
+       -0.0037271660665904437,
+       0.0028099327793970324
+      ],
+      "pass": false
+     },
+     "clause2_filter": {
+      "contrast": "AF_A0-AU_A0",
+      "mean": -0.0033117098367809296,
+      "ci95": [
+       -0.0090657714923653,
+       0.0012839310523643519
+      ],
+      "pass": false
+     },
+     "clause3_semantics": {
+      "contrast": "AF_A0-AF_SHUF",
+      "mean": -0.0009182674188043416,
+      "ci95": [
+       -0.005250089058543396,
+       0.001964425156258341
+      ],
+      "pass": false
+     }
+    }
+   },
+   "clause1_all": false,
+   "clause2_all": false,
+   "clause3_all": false,
+   "dev_demotion_fired": {
+    "MHC_zh": false,
+    "HateMM": false
+   },
+   "verdict": "KILL"
+  }
+ },
+ "entry": "none -- reference-correctness gating does not break the retention/breakage exchange rate on this substrate"
+}

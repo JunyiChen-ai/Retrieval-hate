@@ -1,0 +1,42 @@
+[
+  {
+    "dataset": "HateMM",
+    "n_rep": 120,
+    "abs_delta_null_mean": 0.01832246853443027,
+    "abs_delta_null_p50": 0.013184198347038434,
+    "abs_delta_null_p90": 0.03894662633348778,
+    "abs_delta_null_p95": 0.04600168758445887,
+    "abs_delta_null_max": 0.10144970160848987,
+    "tag": "LORA"
+  },
+  {
+    "dataset": "MHC",
+    "n_rep": 120,
+    "abs_delta_null_mean": 0.07080358206890458,
+    "abs_delta_null_p50": 0.0682434926040178,
+    "abs_delta_null_p90": 0.12017492366687961,
+    "abs_delta_null_p95": 0.1282038647716528,
+    "abs_delta_null_max": 0.14970975251636465,
+    "tag": "QWEN"
+  },
+  {
+    "dataset": "MHC_zh",
+    "n_rep": 120,
+    "abs_delta_null_mean": 0.03883431941727396,
+    "abs_delta_null_p50": 0.03887493614468357,
+    "abs_delta_null_p90": 0.060199399967661986,
+    "abs_delta_null_p95": 0.06380689637367448,
+    "abs_delta_null_max": 0.07924632735655235,
+    "tag": "LORA"
+  },
+  {
+    "dataset": "ImpliHateVid",
+    "n_rep": 120,
+    "abs_delta_null_mean": 0.00242195206168442,
+    "abs_delta_null_p50": 0.001965277205263627,
+    "abs_delta_null_p90": 0.005224172162832509,
+    "abs_delta_null_p95": 0.006247224826806324,
+    "abs_delta_null_max": 0.007741136127185744,
+    "tag": "CLIP"
+  }
+]
