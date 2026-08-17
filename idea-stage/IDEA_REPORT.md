@@ -4274,3 +4274,212 @@ Recorded and fixed on sight, per the no-documentation-iteration rule.
 4. **A synthetic transfer function is not evidence.** M4 predicted 4-9× decode leverage; the real
    scores delivered 2-4 points. The difference was entirely the error correlation structure, which
    the synthetic model had to assume.
+
+---
+
+## §16 — Round 13 (2026-08-18): the last live family is killed, and the sub-direction is handed back
+
+**Cost: ¥0.00 of a ¥15 round budget (cumulative ¥0 of ¥60). The hostile review ran on the Codex MCP
+allowance and the occupancy sweep on web search; no DashScope or Claude API spend. One local run on
+the 5090, 15.1 s wall for 175 head fits plus two bootstrap panels, background `setsid nohup` with
+`logging/runs/r15_nt/`. Zero test-label contact: every number below is out-of-fold inside the
+237-video train split, and the 119-video test split was never opened.**
+
+### 16.0 Headline
+
+- **The external review scored no candidate a 3.** Twelve candidates — the three families round 12's
+  reviewer named but never tested, plus nine new ones including the change-point, speaker-diarization
+  and topic-segmentation transplants the round brief asked for — came back with a maximum score of 2,
+  and both 2s were labelled diagnostics rather than methods.
+- **It named exactly one live mechanism family**, and derived it not from the slate but from a
+  contradiction inside this project's own numbers: audio-only wv-AUC **0.623** against the
+  four-channel fusion's **0.5878**, read next to round 11's circular-shift control (shuffling audio
+  within a video costs 3.30 macro-F1, shuffling CLIP visual costs 0.28). Read together: the fusion is
+  diluting the only channel carrying moment-level information. The family is
+  **temporal-informativeness-aware fusion / within-video nuisance suppression**.
+- **It also supplied the falsifier in advance.** The 0.623 is a **val-split, epoch-selected**
+  reconnaissance reading; the 0.5878 is 5-fold CV in train with no selection. Verbatim: *"If the 0.623
+  result was not produced under exactly the same five-fold/no-selection protocol as 0.5878, then it is
+  not admissible evidence. Under that alternative, the honest answer becomes: no legal family is
+  left."*
+- **Under the matched protocol audio-only measures 0.5507, and the contrast reverses sign
+  significantly**: `AUD − ALL` = **−0.0393 [−0.0690, −0.0098]**. The fusion beats every single channel
+  by 0.035 to 0.061 wv-AUC. There is no negative transfer to suppress.
+- **All three nuisance-suppression arms are below plain concatenation**, two of them with CIs
+  excluding zero, and the intended mechanism variable shows a **dose-response in the wrong direction**:
+  driving the between-video share of score variance from 0.451 down to 0.095 by within-video centering
+  drops wv-AUC from 0.5901 to 0.5530.
+- **Two further slate candidates were falsified at zero marginal cost** on the dumped score curves:
+  no label offset beats zero alignment (degradation is monotone in |shift|), and oracle region pooling
+  — using the *labels themselves* to define the regions — buys +0.006 against a +0.015 bar.
+- **Cumulative across thirteen rounds: 153 candidates, one banked entry (`CAT`).**
+
+### 16.1 The slate and the scoring
+
+Twelve candidates went to **gpt-5.6-sol at xhigh reasoning, hostile**, conversation only, with the
+full constraint map and all twelve standing closures. Full table in `idea-stage/R15_CANDIDATES.md`.
+
+| # | candidate | score | load-bearing verdict |
+|---|---|---|---|
+| D1 | **TRANSD** toxic-state transition discrimination | **0** | 73.4% of K=30 windows are already boundary-positive, so the partition target is near-vacuous; and boundary classification is the core of BSN / BMN / ActionFormer. Renaming the boundary changes the label, not the mechanism |
+| D2 | **TGATT** target/attack state factorization | 1 | survives K2 only if the target state genuinely varies within a video; a constant one is RUBi / Learned-Mixin |
+| D3 | **STRIDESPAN** output stride ≠ evidence span | 1 | baseline engineering; the 87.6 grid ceiling against a current 23.8 shows resolution is not binding |
+| D4 | **SEGPOOL** homogeneous-region pooling | 1 | run the oracle ceiling only, write no clustering code; unsupervised TAS already *is* temporally-constrained clustering |
+| D5 | **CAPACITY** in-sample fit diagnostic | 2 | routing diagnostic, and its stated inference is wrong in both directions |
+| D6 | **XSEG** cross-corpus segment supervision | 1 | standard engineering; high-coverage corpora supply almost no within-video negative contrast |
+| D7 | **SPKUNIT** speaker-turn units | **0** | speaker boundaries are not toxicity boundaries; monologues collapse to one unit |
+| D8 | **RELGATE** reliability-conditioned fusion | 1 | gates on the wrong variable — the demonstrated problem is temporal informativeness, not reliability |
+| D9 | **CATAUX** category timeline as auxiliary target | **0** | generic multi-task plus a direct internal null (`B2_DENSE`, −0.33) |
+| D10 | **OFFSET** evidence–label misalignment | 2 | diagnostic; a winning lag would establish misalignment, not a method |
+| D11 | **MEMSEG** retrieval over a labelled segment memory | **0** | the project's own zero-training kNN measured wv-AUC 0.5259 against a 0.5252 broadcast control |
+| D12 | **UNITLATTICE** adaptive unit grid from ASR/OCR/shot boundaries | **0** | occupied by SafeLens, Vid2Seq, DuVOG; and M3 already prices semantic units at 32% recall / 27% precision |
+
+The reviewer also swept the families the slate missed — full detector machinery, HMM/HSMM/regime
+switching, CUSUM/sequential detection, survival/hazard boundary modelling — and every one is either
+occupied outright or is another temporal prior over emissions that round 11 already showed are the
+binding constraint. **That is the structural reason the slate is not merely unlucky.**
+
+### 16.2 R15-NT — the pilot, and the KILL
+
+Pre-registered in `idea-stage/R15_NT_FREEZE.md` (commit **`e3740dc`**, committed before
+`scripts/r15_nt/run_nt.py` existed) and run once. Seven arms differing **only** in input composition;
+head, optimiser, 40-epoch budget, grid, z-scoring and read-out identical throughout. 5-fold
+video-grouped CV inside the 237 train videos, 5 seeds 4300-4304, primary endpoint video-macro
+within-video AUC on the 193 out-of-fold videos with within-video label variation, δ = +0.010,
+video-clustered paired bootstrap 10 000 resamples.
+
+| arm | input | wv-AUC (sd) | between-video var share |
+|---|---|---|---|
+| **`ALL`** | V ⊕ T ⊕ O ⊕ A ⊕ M | **0.5901** (0.0021) | 0.451 |
+| `AUD` | audio | 0.5507 (0.0043) | 0.435 |
+| `VIS` | visual | 0.5535 (0.0024) | 0.605 |
+| `TXT` | ASR ⊕ OCR ⊕ masks | 0.5288 (0.0028) | 0.321 |
+| `ALLCENT` | all four within-video centered | 0.5530 (0.0038) | **0.095** |
+| `AUDCENT` | raw audio ⊕ centered V/T/O | 0.5721 (0.0033) | 0.150 |
+| `AUDVIS0` | audio ⊕ ASR ⊕ OCR, visual deleted | 0.5687 (0.0035) | 0.348 |
+
+| gate | contrast | Δ [95% CI] | verdict |
+|---|---|---|---|
+| **G0 premise** | `AUD − ALL` | **−0.0393 [−0.0690, −0.0098]** | **refuted, sign reversed** |
+| **P1a** | `AUDCENT − ALL` | −0.0180 [−0.0387, +0.0033] | fail |
+| **P1b** | `AUDCENT − AUD` | +0.0213 [−0.0046, +0.0474] | fail |
+| **P2** | `ALLCENT − ALL` | **−0.0371 [−0.0608, −0.0137]** | fail, significantly negative |
+| **P2** | `AUDVIS0 − ALL` | **−0.0214 [−0.0393, −0.0038]** | fail, significantly negative |
+
+`ALL` at 0.5901 reproduces round 12's `A0_B0_C0` anchor of 0.5878 under a fresh seed block (Δ =
++0.0023, one seed sd), so the protocol is intact and the comparison is clean.
+
+**M7's channel ordering was an artifact, not only its levels.** Under the matched protocol audio
+(0.5507) and visual (0.5535) are indistinguishable (`AUD − VIS` = −0.0027 [−0.0371, +0.0324]), where
+M7 had audio at 0.623 clearly ahead of visual at 0.587. `R14_WVD_RESULT.md` §4 had already flagged
+the recon's *levels* as upper readings; this round shows the *relative structure* of M7 does not
+survive either — a stricter statement than the one recorded last round, and it is recorded here
+rather than left standing.
+
+**The failure is mechanistically clean, not a null.** Within-video leave-one-out centering does
+exactly what it was designed to do — the between-video share of score variance falls 0.451 → 0.150 →
+0.095 — and wv-AUC falls monotonically with it. Removing the video-identity component does not free
+the head to discriminate moments; it removes context the head was using. And `AUDVIS0`, the cheapest
+possible version, shows that CLIP visual **contributes to within-video discrimination even though
+shuffling it within a video is free**, which is compatible: a channel can supply a per-video
+reference frame that calibrates the other channels' contributions without varying informatively in
+time itself.
+
+**What is not refuted, stated precisely.** Round 11's circular-shift control is a different
+measurement on a different metric and split and nothing here contradicts it. A channel can carry
+genuine moment-level information — so that destroying its temporal order hurts — while still being a
+weaker standalone within-video discriminator than the fusion. What is refuted is the inference drawn
+from putting the shift control next to M7.
+
+### 16.3 R15-FS — two more candidates falsified at zero marginal cost
+
+On the dumped out-of-fold seed-averaged per-window scores of arm `ALL` (baseline 0.5915), no fitting.
+
+- **D10 dead.** Shifts −2 / −1 / +1 / +2 give −0.0327 / −0.0055 / −0.0321 / −0.0555; degradation is
+  monotone in |shift| and no lag beats zero. The evidence-to-label alignment on this grid is not
+  misspecified.
+- **D4 dead by its own oracle ceiling.** Pooling inside gold segments buys +0.0015; pooling inside
+  maximal same-label runs — using the labels themselves to define the regions, the most generous
+  ceiling available — buys **+0.0061 [−0.0275, +0.0392]** against a +0.015 bar. No label-free
+  clustering can beat a partition defined by the labels, so SEGPOOL is closed without a line of
+  clustering code.
+- **One diagnostic worth carrying.** A plain width-3 running mean (label-free, descriptive, no gate)
+  buys **+0.0135**, i.e. *more than either oracle partition*. The score-curve error is therefore
+  broad-band, not noise around a correct region mean — an independent confirmation of round 12's
+  lag-1 error autocorrelation of 0.334 and of why the decode axis prices at 2-4 F1 points.
+
+### 16.4 The occupancy sweep, and two published contradictions it surfaced
+
+A parallel zero-GPU sweep rated the composite family **b** (near neighbours, clean difference) —
+moot once the pilot killed it, but three findings outlive it. The *operator* is old one field over
+(cepstral mean normalization in speech, RevIN in forecasting, per-trial baseline subtraction in EEG),
+so novelty could only ever have lived in the diagnosis. The same *diagnosis* is already published
+with a different remedy (**UMIL**, CVPR 2023 `2303.12369`: video-level context bias corrupts
+snippet-level prediction). And the measure-then-modulate template is crowded, with **MultiHateLoc**
+(`2512.10408`, WWW 2026 — id resolved this round) already shipping learned per-modality importance
+for weakly-supervised hate localization.
+
+Two published contradictions the sweep found, both agreeing with G0: HateClipSeg's own table uses
+`wav2vec2-emotion` as its audio encoder and still reports **visual 30.99 > audio 18.83 > text 11.89**
+F1 at tIoU 0.7 while stating that late fusion fails to improve; and `2508.04900` (MMUW'25 @ ACM MM
+2025) concludes that *"hate speech does not possess uniquely distinguishable acoustic signatures when
+isolated by temporal annotations."* An audio-led framing would have had to be argued against two
+existing numbers rather than into a gap.
+
+Sweep coverage gaps, recorded: the arXiv Atom API's phrase search and `id_list` were broken, so **no
+arXiv id in that sweep was verified by direct lookup**; Semantic Scholar rate-limited, so there is no
+citation-graph cross-check; and the zero-hit results were partly collected during the outage.
+
+### 16.5 The two scope questions this round hands back
+
+Under the rule frozen in `R15_NT_FREEZE.md` §3 — **committed before any number existed** so that a
+null could not be reinterpreted afterwards — the written conclusion is:
+
+> **No legal mechanism family remains for hateful-video temporal localization on this substrate under
+> the project's current constraints**, and the goal is escalated to the user as a scope question —
+> not quietly re-attempted.
+
+**Question 1 — the ActionFormer gap, and what it would take.** Our pipeline sits at F1@tIoU0.5 =
+23.8; the dataset paper publishes ActionFormer at 52.65 on the same corpus with roughly the same
+features. The reviewer's judgment, recorded in full in `R15_CANDIDATES.md` §4: no candidate on the
+slate addresses the reason, which is that we threshold a per-window score curve while ActionFormer is
+a trained detector with a multi-level feature pyramid, point assignment, localization losses and
+boundary-distance regression. **A competent detector baseline is a precondition for any method claim
+in this arena**, because otherwise any apparent gain is recovering functionality missing from a
+strawman. And plainly: *"Reproducing it is a legitimate internal baseline-readiness round. It is not
+a method-paper round under constraint 1. It is an admission that this direction is not ready for
+method ideation."* That is a resource-and-scope decision, not an evidence question, so it goes to the
+user.
+
+**Question 2 — whether the sub-direction stays open at all.** Thirteen rounds, 153 candidates, one
+banked entry. On this axis specifically: three encoder swaps within 0.01 wv-AUC of each other, three
+temporal architecture families null, the objective family bracketed by two nulls one significantly
+negative, the decode axis occupied in three adjacent fields and priced at 2-4 points, the text
+substrate dead, window impurity worth +0.025, coverage-budget decoding actively harmful, and now the
+fusion/nuisance family dead with its premise reversed. The evidence for "unreachable under the
+current constraints" is as strong as this project can make it without a change of substrate,
+constraint or arena.
+
+### 16.6 Cumulative, and what round 14 must not do
+
+| round | axis | candidates | survivors |
+|---|---|---|---|
+| 1-10 | §1-§13 | 114 | 1 (`CAT`) |
+| 11 | temporal span / localization | 15 | 0 |
+| 12 | proposal-level localization / within-video discrimination | 12 | 0 |
+| **13** | **fusion composition / within-video nuisance suppression** | **12** | **0** |
+
+1. **Do not re-open the temporal localization sub-direction without a user ruling** on §16.5. The
+   closure sentence was pre-committed and it fired.
+2. **Do not quote M7 (`R14_WVD_FREEZE.md` §1) for anything, including relative structure.** Round 12
+   already downgraded its levels to upper readings; round 13 shows its channel ordering does not
+   survive either. Reconnaissance readings taken under val-based epoch selection are not admissible
+   as motivation for a mechanism.
+3. **Do not treat "shuffling this modality within a video is free" as "this modality is useless for
+   within-video discrimination".** Deleting CLIP visual costs −0.0214 wv-AUC with a CI excluding
+   zero, while shuffling it costs nothing. The two measurements answer different questions.
+4. **Do not propose feature-space nuisance removal on this substrate.** Driving the between-video
+   variance share from 0.451 to 0.095 monotonically *lowers* within-video AUC.
+5. **Use midranks in `wv_auc_per_video`.** float32 softmax saturates to exactly 1.0 on 164 windows
+   across 30 videos, and the frozen index tie-break is worth +0.0006 here — negligible against every
+   δ used so far, but wrong, and it is silently large on any read-out that creates ties.
