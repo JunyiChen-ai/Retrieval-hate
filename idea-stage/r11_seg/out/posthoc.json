@@ -1,0 +1,126 @@
+{
+  "n_test": 119,
+  "test_window_base_rate": 0.4789915966386555,
+  "videos_all_normal": 15,
+  "videos_all_offensive": 7,
+  "videos_with_within_video_variation": 97,
+  "mean_offensive_fraction": 0.47899159663865537,
+  "oracle_video_broadcast_ts_macro_f1": 79.41848229469718,
+  "oracle_video_broadcast_ts_acc": 79.42335306272545,
+  "oracle_video_broadcast_win_macro_f1": 79.15966386554622,
+  "oracle_perwindow_ts_macro_f1": 95.55377240858587,
+  "arms": {
+    "ALL_A1_BCAST_CAUSAL": {
+      "wv_auc": 0.5709034513243728,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.7078871910960196,
+      "between_video_var": 0.0716882273554802,
+      "within_video_var": 0.007585025858134031,
+      "frac_variance_between": 0.9043179750442505
+    },
+    "ALL_A1b_BCAST_VIDEO": {
+      "wv_auc": 0.5,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.7225429164308621,
+      "between_video_var": 0.05162883922457695,
+      "within_video_var": 5.073088691211029e-15,
+      "frac_variance_between": 0.9999999403953552
+    },
+    "ALL_A2_PERWIN": {
+      "wv_auc": 0.6348690031336787,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.7040045903288688,
+      "between_video_var": 0.06754828244447708,
+      "within_video_var": 0.045937519520521164,
+      "frac_variance_between": 0.5952135324478149
+    },
+    "ALL_A3_MIL_TOPK": {
+      "wv_auc": 0.5208157061259524,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.590924196692448,
+      "between_video_var": 0.04906051233410835,
+      "within_video_var": 0.0502750426530838,
+      "frac_variance_between": 0.4938867390155792
+    },
+    "ALL_A4_CTCN": {
+      "wv_auc": 0.6374956800127404,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.7119527762057474,
+      "between_video_var": 0.06530753523111343,
+      "within_video_var": 0.025369565933942795,
+      "frac_variance_between": 0.7202208042144775
+    },
+    "ALL_A5_CTCN_NOSMOOTH": {
+      "wv_auc": 0.6417967320410402,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.7118983839527133,
+      "between_video_var": 0.07045195251703262,
+      "within_video_var": 0.04738325998187065,
+      "frac_variance_between": 0.5978853106498718
+    },
+    "ALL_A6_CTRANS": {
+      "wv_auc": 0.6405773593419992,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.7208564421807206,
+      "between_video_var": 0.07465650886297226,
+      "within_video_var": 0.04508485645055771,
+      "frac_variance_between": 0.6234812140464783
+    },
+    "V_A1_BCAST_CAUSAL": {
+      "wv_auc": 0.5450046215525431,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.6579670502420927,
+      "between_video_var": 0.05997728183865547,
+      "within_video_var": 0.004414231050759554,
+      "frac_variance_between": 0.9314469695091248
+    },
+    "V_A1b_BCAST_VIDEO": {
+      "wv_auc": 0.5,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.6842954159592529,
+      "between_video_var": 0.04223119094967842,
+      "within_video_var": 3.744133384001079e-15,
+      "frac_variance_between": 1.0000001192092896
+    },
+    "V_A2_PERWIN": {
+      "wv_auc": 0.6054204669731413,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.6651219895617179,
+      "between_video_var": 0.05613202974200249,
+      "within_video_var": 0.02799098752439022,
+      "frac_variance_between": 0.6672612428665161
+    },
+    "V_A3_MIL_TOPK": {
+      "wv_auc": 0.5046100029479991,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.5432487580959567,
+      "between_video_var": 0.04679069295525551,
+      "within_video_var": 0.020537056028842926,
+      "frac_variance_between": 0.6949689388275146
+    },
+    "V_A4_CTCN": {
+      "wv_auc": 0.6033418471212854,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.6693447777148965,
+      "between_video_var": 0.06449879705905914,
+      "within_video_var": 0.021041112020611763,
+      "frac_variance_between": 0.7540200352668762
+    },
+    "V_A5_CTCN_NOSMOOTH": {
+      "wv_auc": 0.6096247312857561,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.6725064453247815,
+      "between_video_var": 0.06347919255495071,
+      "within_video_var": 0.02836253121495247,
+      "frac_variance_between": 0.6911802887916565
+    },
+    "V_A6_CTRANS": {
+      "wv_auc": 0.5675841482891968,
+      "n_videos_scored": 97,
+      "pooled_auc": 0.6803376721373325,
+      "between_video_var": 0.082942895591259,
+      "within_video_var": 0.02079828642308712,
+      "frac_variance_between": 0.7995173931121826
+    }
+  }
+}
