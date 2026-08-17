@@ -501,6 +501,12 @@ def parse_args():
         help="Weight of the churn-anchor distillation term. 0.0 (default) = exact "
              "no-op (the term is never computed).")
     arg_parser.add_argument(
+        "--anchor_weights", type=str, default="",
+        help="R12-ANCHOR (idea-stage/R12_FREEZE.md 3.3). Path to a JSON "
+             "{video_id: weight} over the SAME TRAIN ids as --anchor_logits. Makes the "
+             "anchor term the w-weighted mean of the identical per-item BCE terms. "
+             "Empty (default) = unweighted mean = byte-identical to the R11 behaviour.")
+    arg_parser.add_argument(
         "--tarc_vote_gamma", type=float, default=0.0,
         help="V2 target-consistency kNN-vote multiplier. A neighbour whose target "
              "matches the query's is up-weighted by (1+gamma); gamma=0 (default) = "
@@ -1577,6 +1583,29 @@ def main(args):
         anchor_pack = {"id_to_q": id_to_q,
                        "source": anchor_path,
                        "meta": raw_anchor.get("_meta", {})}
+        # R12-ANCHOR: optional per-item weights (idea-stage/R12_FREEZE.md 3.3).
+        w_path = str(getattr(args, "anchor_weights", "") or "")
+        if w_path:
+            if not os.path.exists(w_path):
+                raise FileNotFoundError("anchor weights file not found: {}".format(w_path))
+            with open(w_path, "r") as f:
+                raw_w = json.load(f)
+            id_to_w = {str(k): float(v) for k, v in raw_w.items()
+                       if not str(k).startswith("_")}
+            missing_w = [vid for vid in train_ids_a if vid not in id_to_w]
+            if missing_w:
+                raise SystemExit(
+                    "HALT: anchor weights cover {}/{} train ids".format(
+                        len(train_ids_a) - len(missing_w), len(train_ids_a)))
+            wmean = sum(id_to_w[vid] for vid in train_ids_a) / float(len(train_ids_a))
+            if abs(wmean - 1.0) > 1e-6:
+                raise SystemExit(
+                    "HALT: anchor weights must be normalised to train mean 1.0, got "
+                    "{:.9f} (freeze 3.2: equal expected anchor mass)".format(wmean))
+            anchor_pack["id_to_w"] = id_to_w
+            anchor_pack["weights_source"] = w_path
+            print("[anchor] weights={} n={} train_mean={:.9f} meta={}".format(
+                w_path, len(id_to_w), wmean, raw_w.get("_meta", {})))
         print("[anchor] lambda_anchor={} source={} train coverage={}/{} "
               "teacher_meta={}".format(
                   args.lambda_anchor, anchor_path, cover, len(train_ids_a),

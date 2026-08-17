@@ -944,22 +944,41 @@ def compute_anchor_loss(output, batch_ids, anchor_pack, args):
     Every train id must be covered (checked in run_rac before the loop), so no
     masking is needed; ids missing from the map would be skipped defensively here.
     Returns a scalar (0 when no batch item has a teacher entry).
+
+    R12-ANCHOR extension (idea-stage/R12_FREEZE.md section 3.3).  When the anchor pack
+    carries an `id_to_w` map (from --anchor_weights), the term becomes the w-WEIGHTED
+    mean of exactly the same per-item BCE terms:
+
+        L_anchor = sum_i w_i * BCE(z_i, q_i) / sum_i w_i
+
+    The weights are normalised at BUILD time so that mean_train(w) == 1, which makes
+    the expected anchor mass identical to the uniform arm.  When `id_to_w` is absent
+    (the default, and every previously banked run) this reduces to the unweighted mean
+    above, byte-identically -- `reduction='none'` followed by `.mean()` is the same
+    computation `binary_cross_entropy_with_logits` performs internally.
     """
     device = args.device
     id_to_q = anchor_pack["id_to_q"]
-    q_list, keep = [], []
+    id_to_w = anchor_pack.get("id_to_w")
+    q_list, keep, w_list = [], [], []
     for j, vid in enumerate(batch_ids):
         v = id_to_q.get(str(vid))
         if v is None:
             continue
         keep.append(j)
         q_list.append(float(v))
+        if id_to_w is not None:
+            w_list.append(float(id_to_w[str(vid)]))
     if not keep:
         return torch.zeros((), device=device)
     idx = torch.as_tensor(keep, dtype=torch.long, device=device)
     q = torch.as_tensor(q_list, dtype=torch.float32, device=device).reshape(-1, 1)
     z = output.reshape(-1, 1).index_select(0, idx)
-    return nn.functional.binary_cross_entropy_with_logits(z, q)
+    if id_to_w is None:
+        return nn.functional.binary_cross_entropy_with_logits(z, q)
+    per_item = nn.functional.binary_cross_entropy_with_logits(z, q, reduction="none")
+    w = torch.as_tensor(w_list, dtype=torch.float32, device=device).reshape(-1, 1)
+    return (per_item * w).sum() / w.sum().clamp_min(1e-12)
 
 
 def compute_target_loss(feats, batch_ids, target_pack, labels, args):

@@ -1,0 +1,101 @@
+{
+ "freeze": "idea-stage/R12_FREEZE.md 3.2",
+ "dataset": "MHC_zh",
+ "alpha": 1.0,
+ "beta": 3.0,
+ "shuf_seed": 20261218,
+ "n_train": 579,
+ "sha256": {
+  "teacher_MHC_zh_A0.json": "4a8caacfa4d87371ed1f3f7a4c0dd00098dfd1493465146f91b69fc0f4407bee",
+  "teacher_MHC_zh_LL.json": "82b3916711ede288246133601daeedfbc9ecb8c30ca4c275d9fa8d2753e8c6d6",
+  "teacher_MHC_zh_LBL.json": "233122f0dd55afddbdab68066aa793fe8a357ab2243c02b772efed3bd6c65d35",
+  "w_MHC_zh_A0.json": "4b5fa259c3c0da07318ee80d4221fda49ce6113a7be88ff67aaf0a02e9d74397",
+  "w_MHC_zh_PT.json": "b9f840ab5b9f05a98ed5c95b1dd53105b756089e7b8f72126a8d73d4258753fc",
+  "wshuf_MHC_zh_PT.json": "d2ce25053710d8b2c917f4b85ad7a84e4fd390ccb295afbfcd2e7f8ec531aa61",
+  "teacher_MHC_zh_PT.json": "a846bf9c7929b11c9f7417e9e46a423db99b1990993386ceccdff2bcac1d6bfa"
+ },
+ "teachers": {
+  "A0": {
+   "teacher": "A0",
+   "dataset": "MHC_zh",
+   "n_train": 579,
+   "n_folds": 5,
+   "fold_seed": 20260818,
+   "logreg": {
+    "C": 1.0,
+    "max_iter": 5000,
+    "solver": "lbfgs",
+    "tol": 0.0001
+   },
+   "oof_macro_f1": 0.7660624777479528,
+   "oof_acc": 0.8255613126079447,
+   "mean_abs_q_minus_y": 0.3094832062428537,
+   "frac_q_within_0.05_of_label": 0.0017271157167530224,
+   "q_mean": 0.3101370041535338,
+   "q_std": 0.18208667361583525
+  },
+  "LL": {
+   "teacher": "LL",
+   "dataset": "MHC_zh",
+   "n_train": 579,
+   "n_folds": 5,
+   "fold_seed": 20260818,
+   "logreg": {
+    "C": 1.0,
+    "max_iter": 5000,
+    "solver": "lbfgs",
+    "tol": 0.0001
+   },
+   "oof_macro_f1": 0.8098013750954927,
+   "oof_acc": 0.8514680483592401,
+   "mean_abs_q_minus_y": 0.2833308206164842,
+   "frac_q_within_0.05_of_label": 0.031088082901554404,
+   "q_mean": 0.3100109687384753,
+   "q_std": 0.21319774691439908
+  },
+  "LBL": {
+   "teacher": "LBL",
+   "dataset": "MHC_zh",
+   "n_train": 579,
+   "n_folds": 5,
+   "fold_seed": 20260818,
+   "logreg": {
+    "C": 1.0,
+    "max_iter": 5000,
+    "solver": "lbfgs",
+    "tol": 0.0001
+   },
+   "oof_macro_f1": 1.0,
+   "oof_acc": 1.0,
+   "mean_abs_q_minus_y": 0.0001,
+   "frac_q_within_0.05_of_label": 1.0,
+   "q_mean": 0.31091865284974096,
+   "q_std": 0.4627615521624968,
+   "note": "hard-label control, not a teacher"
+  }
+ },
+ "masks": {
+  "A0": {
+   "teacher_train_acc": 0.8255613126079447,
+   "acc_class0": 0.9649122807017544,
+   "acc_class1": 0.5166666666666667,
+   "shuf_acc": 0.8255613126079447,
+   "shuf_agreement_with_real": 0.7962003454231433,
+   "w_mean": 1.0000000000000004,
+   "w_min": 0.28763040238450077,
+   "w_max": 1.150521609538003,
+   "wshuf_mean": 1.0000000000000004
+  },
+  "PT": {
+   "teacher_train_acc": 0.8376511226252159,
+   "acc_class0": 0.9573934837092731,
+   "acc_class1": 0.5722222222222222,
+   "shuf_acc": 0.8376511226252159,
+   "shuf_agreement_with_real": 0.7858376511226253,
+   "w_mean": 1.0,
+   "w_min": 0.28466076696165193,
+   "w_max": 1.1386430678466077,
+   "wshuf_mean": 1.0
+  }
+ }
+}
