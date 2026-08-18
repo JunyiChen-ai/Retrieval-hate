@@ -197,8 +197,12 @@ def evaluate(ds: str, gt: dict, curves: dict, native_rate: float,
     if intervals is not None:
         res["intervals"] = interval_metrics(gt, intervals, split)
     if ds != "HateClipSeg":
-        for name, fn in [("single_span", lambda g: g["n_spans"] == 1),
-                         ("multi_span", lambda g: g["n_spans"] > 1)]:
+        # Same convention as the ZS-CLIP section of REPRO_CAMPAIGN_RESULTS.md, so the
+        # strata are comparable across methods: zero-span videos supply the negative
+        # frames and therefore appear in both strata; without them a stratum is
+        # single-class and its ROC/AP are undefined.
+        for name, fn in [("single_span", lambda g: g["n_spans"] <= 1),
+                         ("multi_span", lambda g: g["n_spans"] >= 2 or g["n_spans"] == 0)]:
             res[f"strat_{name}"] = pooled_metrics(gt, curves, native_rate, split, fn)
             if intervals is not None:
                 res[f"strat_{name}_intervals"] = interval_metrics(gt, intervals, split, fn)

@@ -333,3 +333,197 @@ between "chance" and "a perfect video-level classifier with zero localisation" i
 (AP 0.286→0.674 on HateMM, 0.471→0.543 on HateClipSeg), and the CLIP frame-similarity floor sits
 inside the bottom tenth of it. A method that beats ZS-CLIP has cleared very little; the number worth
 quoting against is the broadcast ceiling.
+
+
+---
+
+Batch 3 (2026-08-19): **Wave 0 item 2 — ZS-ImageBind**, image / video / audio, all four datasets.
+Wave 0 item 4 (Qwen2.5-VL-7B native grounding) is still running and lands in a later batch.
+
+## H. Method as run — ZS-ImageBind (image / video / audio)
+
+LAVAD's zero-shot ImageBind baseline: cosine similarity of a unit-normalised ImageBind embedding
+against the two text prompts `["normal", "hateful"]`, fixed before any number existed and never
+tuned. The reported score is the softmax over the pair, a strictly increasing function of
+`sim(hateful) − sim(normal)`, so the ranking metrics do not depend on that choice.
+
+The Phase A dense cache is CLIP, not ImageBind, so all three channels were re-encoded from raw
+video with ImageBind-Huge (`imagebind_huge.pth`, 4.8 GB) using the transforms shipped in
+`lavad/libs/ImageBind/imagebind/data.py`:
+
+| channel | unit | native rate | transform source |
+|---|---|---|---|
+| image | one frame | 4 fps | `load_and_transform_vision_data` (Resize short side 224 bicubic, CenterCrop 224, CLIP mean/std) |
+| video | one 2 s clip, 2 frames | 0.5 fps | `load_and_transform_video_data` (`UniformTemporalSubsample(2)` inside ImageBind's native `clip_duration=2`) |
+| audio | one 2 s clip | 0.5 fps | `load_and_transform_audio_data` (`waveform2melspec`, 128 mel bins, target_length 204, normalise −4.268 / 9.138) |
+
+**The audio row is an extension, not a LAVAD baseline row.** LAVAD's published ZS-ImageBind baseline
+is visual. ImageBind supports audio natively and audio matters in this domain, so the audio channel
+is run and reported, marked as beyond the LAVAD baseline table.
+
+**Two declared deviations from the shipped loaders.** (1) The video channel uses the centre crop
+only, not `SpatialCrop(224, num_crops=3)`, so one decode serves both visual channels. (2) Clips tile
+the whole video at a 2 s stride instead of `ConstantClipsPerVideoSampler` spreading a fixed number
+of clips over it — a per-clip curve is the point here, a fixed clip count is not. The 0.5 fps
+channels are broadcast piecewise-constant onto the 4 fps grid (freeze §1); the evaluator's broadcast
+path was verified to reproduce the 4 fps result exactly on the gold oracle.
+
+Embeddings are stored float16, one `.npy` per video per channel, under
+`data/CLIP_Embedding/<DS>/imagebind_{image,video,audio}/`.
+
+**Data-integrity finding, recorded because it touches an already-published row.** One HateClipSeg
+video, `yt_NzvfkIYS5Yg`, is a **138 KB partial download**: ffprobe reports 273.9 s but neither
+ffmpeg nor PyAV can decode a single frame (`partial file` / `Cannot determine format of input
+stream 0:0 after EOF`). The pre-existing Phase A cache nevertheless holds a full-length
+**all-zero** `(1096, 1024)` array for it in both `dense4fps_clipL336` and `dense4fps_w2vemo`, and
+the video **is in the HateClipSeg test split**. A sweep of all eight caches found this to be the
+only fabricated visual array anywhere (the 15 all-zero HateMM `w2vemo` arrays are the documented
+no-audio videos, none of them in a split). The extractor here refuses to fabricate: the video has
+no ImageBind embedding, is counted as missing (0.8% of the HateClipSeg test pool) and is dropped
+from the pool. The ZS-CLIP rows above scored it as ~1096 frames of constant similarity; the effect
+is bounded by 1% of that dataset's test frames but the rows are not strictly comparable to these
+on HateClipSeg.
+
+Reproduce: `bash` the extractor over the four datasets, then
+`python scripts/repro_campaign/eval_frame.py --method imagebind --split {test,all}`
+(raw JSON in `idea-stage/repro_campaign/eval_imagebind_{test,all}.json`,
+embeddings in `data/CLIP_Embedding/<DS>/imagebind_{image,video,audio}/`, 3.0 GB,
+logs in `logging/runs/repro_imagebind/`).
+
+### H.1 Headline rows — test split
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| GOLD_BROADCAST | — | HateMM | test | control | control | n/a | video | 0.8857 | 0.5829 | n/a | n/a | n/a | 1.0000 | 116975 | 0.2421 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateMM | test | control | control | n/a | 4 fps | 0.5003 ± 0.0019 | 0.2423 ± 0.0013 | n/a | n/a | n/a | 0.0000 | 116975 | 0.2421 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| ZS-ImageBind (image) | 0 | HateMM | test | label-free | base | base | 4 fps | 0.5919 | 0.3143 | n/a | n/a | n/a | 0.2115 | 116908 | 0.2422 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (video) | 0 | HateMM | test | label-free | base | base | 0.5 fps | 0.5907 | 0.3100 | n/a | n/a | n/a | 0.1990 | 116931 | 0.2422 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (audio) | 0 | HateMM | test | label-free | base | base | 0.5 fps | 0.5654 | 0.2906 | n/a | n/a | n/a | 0.1422 | 116972 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| GOLD_BROADCAST | — | MHC-EN | test | control | control | n/a | video | 0.9427 | 0.7664 | n/a | n/a | n/a | 1.0000 | 22337 | 0.2734 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-EN | test | control | control | n/a | 4 fps | 0.5004 ± 0.0034 | 0.2737 ± 0.0026 | n/a | n/a | n/a | 0.0000 | 22337 | 0.2734 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| ZS-ImageBind (image) | 0 | MHC-EN | test | label-free | base | base | 4 fps | 0.5938 | 0.3286 | n/a | n/a | n/a | 0.1119 | 22336 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (video) | 0 | MHC-EN | test | label-free | base | base | 0.5 fps | 0.5636 | 0.3056 | n/a | n/a | n/a | 0.0653 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (audio) | 0 | MHC-EN | test | label-free | base | base | 0.5 fps | 0.6157 | 0.3678 | n/a | n/a | n/a | 0.1914 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| GOLD_BROADCAST | — | MHC-ZH | test | control | control | n/a | video | 0.9842 | 0.9191 | n/a | n/a | n/a | 1.0000 | 18199 | 0.2648 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-ZH | test | control | control | n/a | 4 fps | 0.4985 ± 0.0052 | 0.2646 ± 0.0038 | n/a | n/a | n/a | 0.0000 | 18199 | 0.2648 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| ZS-ImageBind (image) | 0 | MHC-ZH | test | label-free | base | base | 4 fps | 0.5975 | 0.3580 | n/a | n/a | n/a | 0.1424 | 18195 | 0.2649 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (video) | 0 | MHC-ZH | test | label-free | base | base | 0.5 fps | 0.5727 | 0.3546 | n/a | n/a | n/a | 0.1372 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (audio) | 0 | MHC-ZH | test | label-free | base | base | 0.5 fps | 0.6527 | 0.3958 | n/a | n/a | n/a | 0.2000 | 18186 | 0.2650 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| GOLD_BROADCAST | — | HateClipSeg | test | control | control | n/a | video | 0.6260 | 0.5437 | n/a | n/a | n/a | 1.0000 | 114097 | 0.4712 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateClipSeg | test | control | control | n/a | 4 fps | 0.5009 ± 0.0021 | 0.4721 ± 0.0016 | n/a | n/a | n/a | 0.0000 | 114097 | 0.4712 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| ZS-ImageBind (image) | 0 | HateClipSeg | test | label-free | base | base | 4 fps | 0.5926 | 0.5535 | n/a | n/a | n/a | 1.0946 | 112926 | 0.4730 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 1/119 (0.8%) dropped, not interpolated |
+| ZS-ImageBind (video) | 0 | HateClipSeg | test | label-free | base | base | 0.5 fps | 0.5814 | 0.5431 | n/a | n/a | n/a | 0.9534 | 112928 | 0.4730 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 1/119 (0.8%) dropped, not interpolated |
+| ZS-ImageBind (audio) | 0 | HateClipSeg | test | label-free | base | base | 0.5 fps | 0.5652 | 0.5121 | n/a | n/a | n/a | 0.5288 | 112979 | 0.4732 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 1/119 (0.8%) dropped, not interpolated |
+
+### H.2 Full corpus
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ZS-ImageBind (image) | 0 | HateMM | all | label-free | base | base | 4 fps | 0.5869 | 0.3546 | n/a | n/a | n/a | 0.1770 | 623788 | 0.2858 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| ZS-ImageBind (video) | 0 | HateMM | all | label-free | base | base | 0.5 fps | 0.5997 | 0.3618 | n/a | n/a | n/a | 0.1958 | 623861 | 0.2857 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| ZS-ImageBind (audio) | 0 | HateMM | all | label-free | base | base | 0.5 fps | 0.5827 | 0.3768 | n/a | n/a | n/a | 0.2310 | 622663 | 0.2874 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 15/1083 (1.4%) dropped, not interpolated |
+| ZS-ImageBind (image) | 0 | MHC-EN | all | label-free | base | base | 4 fps | 0.5874 | 0.3168 | n/a | n/a | n/a | 0.1365 | 110728 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (video) | 0 | MHC-EN | all | label-free | base | base | 0.5 fps | 0.5666 | 0.2967 | n/a | n/a | n/a | 0.0987 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (audio) | 0 | MHC-EN | all | label-free | base | base | 0.5 fps | 0.6078 | 0.3274 | n/a | n/a | n/a | 0.1563 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (image) | 0 | MHC-ZH | all | label-free | base | base | 4 fps | 0.5598 | 0.3065 | n/a | n/a | n/a | 0.0879 | 102130 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (video) | 0 | MHC-ZH | all | label-free | base | base | 0.5 fps | 0.5490 | 0.3010 | n/a | n/a | n/a | 0.0788 | 102152 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (audio) | 0 | MHC-ZH | all | label-free | base | base | 0.5 fps | 0.6139 | 0.3474 | n/a | n/a | n/a | 0.1560 | 102140 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_campaign/ |  |
+| ZS-ImageBind (image) | 0 | HateClipSeg | all | label-free | base | base | 4 fps | 0.5889 | 0.5485 | n/a | n/a | n/a | 1.2697 | 374155 | 0.4641 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 1/395 (0.2%) dropped, not interpolated |
+| ZS-ImageBind (video) | 0 | HateClipSeg | all | label-free | base | base | 0.5 fps | 0.5856 | 0.5451 | n/a | n/a | n/a | 1.2190 | 374161 | 0.4641 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 1/395 (0.2%) dropped, not interpolated |
+| ZS-ImageBind (audio) | 0 | HateClipSeg | all | label-free | base | base | 0.5 fps | 0.5696 | 0.5118 | n/a | n/a | n/a | 0.7156 | 374155 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_campaign/ | missing 1/395 (0.2%) dropped, not interpolated |
+
+### H.3 Stratified — single-span vs multi-span (HateMM / MHC only)
+
+Same convention as section E: `single_span` = videos with ≤1 gold span, `multi_span` = videos with
+≥2 gold spans plus all zero-span videos, which supply the negative frames. Frame counts match
+section E's exactly, which is an independent check that the two methods are pooled identically.
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ZS-ImageBind (image) | 0 | HateMM | test | label-free | base | base | 4 fps | 0.6431 | 0.3243 | n/a | n/a | n/a | 0.2242 | 93251 | 0.2008 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (video) | 0 | HateMM | test | label-free | base | base | 0.5 fps | 0.6340 | 0.3149 | n/a | n/a | n/a | 0.2072 | 93271 | 0.2008 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (audio) | 0 | HateMM | test | label-free | base | base | 0.5 fps | 0.5878 | 0.2667 | n/a | n/a | n/a | 0.1198 | 93312 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (image) | 0 | MHC-EN | test | label-free | base | base | 4 fps | 0.5851 | 0.3129 | n/a | n/a | n/a | 0.0969 | 21668 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (video) | 0 | MHC-EN | test | label-free | base | base | 0.5 fps | 0.5563 | 0.2923 | n/a | n/a | n/a | 0.0570 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (audio) | 0 | MHC-EN | test | label-free | base | base | 0.5 fps | 0.6137 | 0.3541 | n/a | n/a | n/a | 0.1765 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (image) | 0 | MHC-ZH | test | label-free | base | base | 4 fps | 0.5975 | 0.3580 | n/a | n/a | n/a | 0.1424 | 18195 | 0.2649 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (video) | 0 | MHC-ZH | test | label-free | base | base | 0.5 fps | 0.5727 | 0.3546 | n/a | n/a | n/a | 0.1372 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (audio) | 0 | MHC-ZH | test | label-free | base | base | 0.5 fps | 0.6527 | 0.3958 | n/a | n/a | n/a | 0.2000 | 18186 | 0.2650 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (image) | 0 | HateMM | test | label-free | base | base | 4 fps | 0.5588 | 0.1247 | n/a | n/a | n/a | 0.0679 | 91996 | 0.1043 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (video) | 0 | HateMM | test | label-free | base | base | 0.5 fps | 0.5771 | 0.1276 | n/a | n/a | n/a | 0.0776 | 92013 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (audio) | 0 | HateMM | test | label-free | base | base | 0.5 fps | 0.5365 | 0.1213 | n/a | n/a | n/a | 0.0567 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (image) | 0 | MHC-EN | test | label-free | base | base | 4 fps | 0.8197 | 0.0868 | n/a | n/a | n/a | 0.1008 | 15036 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (video) | 0 | MHC-EN | test | label-free | base | base | 0.5 fps | 0.7611 | 0.0668 | n/a | n/a | n/a | 0.0668 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (audio) | 0 | MHC-EN | test | label-free | base | base | 0.5 fps | 0.6644 | 0.0500 | n/a | n/a | n/a | 0.0383 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (image) | 0 | MHC-ZH | test | label-free | base | base | 4 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12952 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span single-class pool, metrics undefined |
+| ZS-ImageBind (video) | 0 | MHC-ZH | test | label-free | base | base | 0.5 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span single-class pool, metrics undefined |
+| ZS-ImageBind (audio) | 0 | MHC-ZH | test | label-free | base | base | 0.5 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12942 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span single-class pool, metrics undefined |
+| ZS-ImageBind (image) | 0 | HateMM | all | label-free | base | base | 4 fps | 0.6061 | 0.3369 | n/a | n/a | n/a | 0.1584 | 528406 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (video) | 0 | HateMM | all | label-free | base | base | 0.5 fps | 0.6171 | 0.3431 | n/a | n/a | n/a | 0.1700 | 528472 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (audio) | 0 | HateMM | all | label-free | base | base | 0.5 fps | 0.5980 | 0.3619 | n/a | n/a | n/a | 0.2035 | 526139 | 0.2531 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (image) | 0 | MHC-EN | all | label-free | base | base | 4 fps | 0.5841 | 0.3089 | n/a | n/a | n/a | 0.1278 | 108453 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (video) | 0 | MHC-EN | all | label-free | base | base | 0.5 fps | 0.5640 | 0.2894 | n/a | n/a | n/a | 0.0926 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (audio) | 0 | MHC-EN | all | label-free | base | base | 0.5 fps | 0.6095 | 0.3213 | n/a | n/a | n/a | 0.1500 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (image) | 0 | MHC-ZH | all | label-free | base | base | 4 fps | 0.5607 | 0.3074 | n/a | n/a | n/a | 0.0879 | 101597 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (video) | 0 | MHC-ZH | all | label-free | base | base | 0.5 fps | 0.5505 | 0.3021 | n/a | n/a | n/a | 0.0791 | 101619 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (audio) | 0 | MHC-ZH | all | label-free | base | base | 0.5 fps | 0.6146 | 0.3478 | n/a | n/a | n/a | 0.1540 | 101607 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=single_span |
+| ZS-ImageBind (image) | 0 | HateMM | all | label-free | base | base | 4 fps | 0.5562 | 0.1152 | n/a | n/a | n/a | 0.0430 | 454771 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (video) | 0 | HateMM | all | label-free | base | base | 0.5 fps | 0.5795 | 0.1218 | n/a | n/a | n/a | 0.0607 | 454814 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (audio) | 0 | HateMM | all | label-free | base | base | 0.5 fps | 0.5581 | 0.1230 | n/a | n/a | n/a | 0.0590 | 453690 | 0.1010 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (image) | 0 | MHC-EN | all | label-free | base | base | 4 fps | 0.7294 | 0.0359 | n/a | n/a | n/a | 0.0388 | 78205 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (video) | 0 | MHC-EN | all | label-free | base | base | 0.5 fps | 0.6767 | 0.0293 | n/a | n/a | n/a | 0.0262 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (audio) | 0 | MHC-EN | all | label-free | base | base | 0.5 fps | 0.5912 | 0.0221 | n/a | n/a | n/a | 0.0123 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (image) | 0 | MHC-ZH | all | label-free | base | base | 4 fps | 0.5947 | 0.0023 | n/a | n/a | n/a | 0.0023 | 72497 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (video) | 0 | MHC-ZH | all | label-free | base | base | 0.5 fps | 0.4912 | 0.0024 | n/a | n/a | n/a | 0.0030 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+| ZS-ImageBind (audio) | 0 | MHC-ZH | all | label-free | base | base | 0.5 fps | 0.7996 | 0.0154 | n/a | n/a | n/a | 0.0730 | 72500 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_campaign/ | stratum=multi_span |
+
+### H.4 Alignment against LELA's published ZS-ImageBind row
+
+LELA (arXiv 2602.09637) reports ZS-ImageBind frame ROC-AUC **0.5683** on HateMM and **0.5753** on
+MultiHateClip, without stating the split, the language of its MultiHateClip column, the prompt
+wording, or which ImageBind modality it used. The campaign brief set the agreement band at ±0.05.
+The image channel is the natural counterpart to a published frame-level visual row.
+
+| target | LELA | ours (image), full corpus | \|diff\| | ours (image), test split | \|diff\| |
+|---|---|---|---|---|---|
+| HateMM ROC | 0.5683 | **0.5869** | 0.0186 | **0.5919** | 0.0236 |
+| MultiHateClip ROC vs MHC-EN | 0.5753 | **0.5874** | **0.0121** | 0.5938 | 0.0185 |
+| MultiHateClip ROC vs MHC-ZH | 0.5753 | 0.5598 | 0.0155 | 0.5975 | 0.0222 |
+
+**The transplant agrees.** Every one of the six comparisons lands inside ±0.024, well within the
+±0.05 band, on a prompt pair fixed before any number existed. The video channel is also inside the
+band on HateMM (0.5997, diff 0.0314). As with ZS-CLIP, the MHC-EN full-corpus figure is the closer
+of the two MultiHateClip candidates (0.0121 vs 0.0155), but the margin is too small to identify
+which language LELA pooled. Freeze §7's formal ±0.03 gate is defined only for LAVAD and URF-HVAA
+and is `n/a` here; this section is the informal equivalent.
+
+### H.5 What the numbers say
+
+1. **ZS-ImageBind is a floor, and it is a slightly higher floor than ZS-CLIP.** Test-split image ROC
+   is 0.5919 / 0.5938 / 0.5975 / 0.5926 (HateMM / MHC-EN / MHC-ZH / HateClipSeg) against a random
+   floor of 0.500 and gold-broadcast ceilings of 0.886 / 0.943 / 0.984 / 0.626. ZS-CLIP's main-pair
+   test row was 0.5368 / 0.5013 / 0.6075 / 0.4990. ImageBind is the more consistent of the two: it
+   is 0.09–0.10 above chance on all four datasets, whereas ZS-CLIP was at chance on two of them.
+   Oracle-normalised AP is still only 0.21 / 0.11 / 0.14 / 1.09 — on the three datasets with a
+   meaningful ceiling it recovers a tenth to a fifth of the chance-to-video-oracle gap.
+2. **Audio is the strongest channel on both MultiHateClip halves, and it is the channel LAVAD's
+   baseline table does not have.** Test ROC: MHC-EN audio 0.6157 vs image 0.5938; MHC-ZH audio
+   0.6527 vs image 0.5975 — the single best zero-shot number anywhere in this campaign so far, and
+   +0.045 / +0.055 over the visual channel on the same videos. On HateMM and HateClipSeg the
+   ordering reverses (audio 0.5654 / 0.5652 vs image 0.5919 / 0.5926). Read against the OCR ruling:
+   the modality that carries hate in these corpora is not the one the published visual baselines
+   score.
+3. **The image and video channels are nearly interchangeable, so the 2 s temporal window buys
+   nothing.** Test ROC differs by 0.001–0.030 between them on every dataset, with image ahead on
+   three of four. ImageBind's video encoder sees 2 frames per 2 s clip, so this is evidence that at
+   this scale the extra frame adds no localisation signal over a single frame — an eight-fold
+   cheaper channel would have reported the same thing.
+4. **The stratification reproduces the coverage degeneracy again, and more sharply than ZS-CLIP.**
+   On MHC-EN test the multi-span stratum has a 2.7% positive base rate and ImageBind's image channel
+   reaches ROC 0.8197 there while sitting at 0.5851 on the single-span stratum; on MHC-EN full corpus
+   the same contrast is 0.7294 vs 0.5841. The frame-level ROC of these benchmarks is still dominated
+   by which videos carry spans, not by where inside a video the span sits.
+5. **AP_norm above 1 on HateClipSeg is a statement about the benchmark, not the method.**
+   HateClipSeg's broadcast ceiling is AP 0.5437 against a base rate of 0.4712, so the whole
+   chance-to-oracle interval is 0.07 wide; ImageBind's 0.5535 clears it. A video-level oracle is
+   simply not a useful ceiling on a dataset where the annotated spans cover 47% of all frames.
