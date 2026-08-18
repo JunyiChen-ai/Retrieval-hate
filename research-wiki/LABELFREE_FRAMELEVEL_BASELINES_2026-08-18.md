@@ -43,11 +43,13 @@ Counting only entries that pass **all three** hard filters:
 
 So 25 rows total, of which 11 are unambiguous. Two structural observations worth carrying:
 
-1. **The axis is young and homogeneous.** 9 of the 11 unambiguous entries are frozen-VLM/LLM
-   prompting pipelines from the last 24 months. Six of them (LAVAD, URF-HVAA, VADTree, EventVAD,
-   MoniTor, and the in-paper baselines) share the same skeleton: caption windows → LLM scores each
-   window → temporal smoothing. Reproducing three of them is closer to reproducing one pipeline
-   three ways than to covering three independent hypotheses.
+1. **The axis is young and homogeneous.** All 11 unambiguous entries are frozen-model inference
+   pipelines (the sole exception being T3AL, which does discardable test-time gradient adaptation on
+   the unlabeled test video), and 10 of the 11 were published in the last 36 months. Worse, five of
+   the six §1A entries — LAVAD, URF-HVAA, VADTree, EventVAD, MoniTor — share one skeleton: caption
+   windows → LLM scores each window → temporal smoothing. Reproducing three of those is closer to
+   reproducing one pipeline three ways than to covering three independent hypotheses. That is the
+   main reason the §1B query-conditioned line earns a slot in the recommended order below.
 2. **Every entry scores visual frames only.** None of the 25 reads speech or on-screen text. Against
    this project's own Gate-C finding — 30.1% of misses are "on-screen text has the evidence, speech
    does not", `on_screen_text` OR 2.29 — a pure CLIP/BLIP frame-similarity curve is measuring the
