@@ -1,0 +1,28 @@
+{
+ "n": 1079,
+ "missing": [],
+ "empty": [
+  "hate_video_147",
+  "hate_video_292"
+ ],
+ "noaudio": [
+  "hate_video_108",
+  "hate_video_17",
+  "non_hate_video_132",
+  "non_hate_video_2",
+  "non_hate_video_218",
+  "non_hate_video_252",
+  "non_hate_video_257",
+  "non_hate_video_262",
+  "non_hate_video_385",
+  "non_hate_video_407",
+  "non_hate_video_420",
+  "non_hate_video_559",
+  "non_hate_video_585",
+  "non_hate_video_7",
+  "non_hate_video_70"
+ ],
+ "oom_retry": [],
+ "wall_seconds": 3094.6,
+ "n_ids": 1083
+}

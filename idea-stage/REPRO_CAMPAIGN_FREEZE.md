@@ -257,6 +257,21 @@ descriptive only — it is not used by any control or metric.
 *Scope:* affects the §3 control rows and the `y_video` array only. No method score, no split, no
 seed, no red line is touched. Recorded before any method was run.
 
+**D2 — 2026-08-19 — two HateMM source files have no video stream; G2/G4 read 1081/1083.**
+*What §11 said at freeze:* G2/G4 require dense features for HateMM 1,083.
+*What happened:* `hate_video_147` (150.14 s) and `hate_video_292` (134.95 s) contain a single AAC
+audio stream and no video stream at all (`ffmpeg -map 0:v:0` → "Stream map matches no streams").
+There is no visual frame to encode; this is a property of the released media, not a pipeline fault.
+*Rule:* both ids are named in `NO_VIDEO_STREAM` in `scripts/repro_campaign/verify_phase_a.py`, the
+gate reports `complete_or_explained`, and the exact count `complete` is still recorded next to it.
+No zero array is fabricated for either video — a method that needs visual features simply has no
+row for them.
+*Scope:* neither video is in any frozen HateMM split (`train`/`val`/`test`), so no headline table is
+affected; only the full-corpus §3 control row loses two videos' frames. Six further HateMM videos
+have a video stream but no decodable audio (`hate_video_108`, `hate_video_17`, `non_hate_video_132`,
+`non_hate_video_2`, `non_hate_video_218`, `non_hate_video_252`); their `dense4fps_w2vemo` array is
+zero-filled, as the HateClipSeg pipeline already does, and none of the six is in a split either.
+
 ## 13. Cache backfill conventions
 
 - **ASR**: `whisper-large-v3`, K=4 sub-clip window alignment, produced by
