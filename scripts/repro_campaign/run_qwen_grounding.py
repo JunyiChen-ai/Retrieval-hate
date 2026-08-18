@@ -211,6 +211,32 @@ def main() -> int:
         p = ROOT / f"data/gt/frame_gt_4fps/durations_{ds}.json"
         durations[ds] = json.loads(p.read_text()) if p.exists() else {}
 
+    # Some released files are truncated mid-stream (`partial file`, `Invalid NAL unit
+    # size`).  On a few of those the C decoder does not raise -- it takes the whole
+    # process down with no Python traceback.  An in-flight marker makes that
+    # survivable: the id being decoded is written before the attempt, and a restart
+    # that finds a marker with no output record retires that id as a decoder crash
+    # instead of hitting it again forever.
+    inflight = out_dir / ".inflight"
+    if inflight.exists():
+        crashed = inflight.read_text().strip()
+        if crashed:
+            ds_c, vid_c = crashed.split("\t", 1)
+            for qk, _ in [("main", MAIN_QUERY)] + (
+                    list(HCS_CLASS_QUERIES.items()) if ds_c == "HateClipSeg"
+                    and args.hcs_classes else []):
+                f = out_dir / f"qwen_{ds_c}_{qk}.jsonl"
+                if vid_c not in done_ids(f):
+                    with open(f, "a") as fh_:
+                        fh_.write(json.dumps({
+                            "video_id": vid_c, "dataset": ds_c, "query_key": qk,
+                            "raw": None, "span": None,
+                            "error": "decode_all_backends_failed",
+                            "detail": "decoder crashed the process on this file"}) + "\n")
+            print(f"[CRASH-RETIRED] {crashed} recorded as a decode failure", flush=True)
+            plan = [t for t in plan if not (t[0] == ds_c and t[1] == vid_c)]
+        inflight.unlink()
+
     n_done = n_err = n_unparsed = n_fallback = 0
     t0 = time.time()
     for i, (ds, vid, todo) in enumerate(plan, 1):
@@ -227,6 +253,7 @@ def main() -> int:
 
         t1 = time.time()
         backend = "qwen_vl_utils"
+        inflight.write_text(f"{ds}\t{vid}")
         try:
             probe = [{"role": "user", "content": [
                 {"type": "video", "video": str(path), "nframes": args.nframes,
@@ -304,6 +331,7 @@ def main() -> int:
             n_done += 1
 
         del video_inputs
+        inflight.write_text("")  # this id survived decoding
         if i % 10 == 0 or i == len(plan):
             el = time.time() - t0
             rate = n_done / max(el, 1e-9)
