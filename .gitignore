@@ -58,6 +58,13 @@ third_party/*
 # actionformer was vendored+tracked before this campaign; keep it tracked.
 !third_party/actionformer
 
+# model weights, belt-and-braces on top of the existing *.pt / *.pth rules.
+# Every checkpoint this campaign downloads lives in third_party/_ckpt/ or the
+# HF cache (~/.cache/huggingface, outside the repo); these patterns just make
+# sure a stray copy elsewhere can never be staged.
+*.ckpt
+*.safetensors
+
 # repro campaign smoke scratch: extracted JPEG frames + one copied mp4 for the
 # single-video smoke tests. Regenerable; the results are recorded in
 # idea-stage/repro_campaign/MODEL_ASSETS_STATUS.md.

@@ -169,6 +169,14 @@ because the ViT sees 32 frames × 771 patches under sdpa. For a shared GPU, lowe
 `--max-pixels` (default 151200 ≈ 192 merged tokens/frame). In bf16 the same run
 would be ~26 GiB — it fits a free 32 GB card but not a shared one.
 
+### 3.8 Gated-model substitutions
+No HF token is configured on this machine, and every `meta-llama/*` repo is
+gated. Substituted ungated mirrors: `NousResearch/Llama-2-13b-chat-hf` and
+`NousResearch/Meta-Llama-3.1-8B-Instruct` (the latter also ships
+`original/consolidated.00.pth`, so URF-HVAA's official loader stays an option —
+8B is MP=1 and fits one card). If a token is ever added, both can be swapped back
+to the canonical repos without touching code.
+
 ### 3.9 `pytorchvideo` needs a torchvision shim in the shared env too
 ImageBind's `data.py` imports `pytorchvideo.transforms`, which imports
 `torchvision.transforms.functional_tensor` — deleted in torchvision ≥0.17. The
@@ -191,17 +199,61 @@ with flash-attn dropped.
 
 ### 3.11 The two things Phase C must decide before running LAVAD at scale
 
-**(a) Llama-3.1-8B-Instruct refuses on violent/hateful captions.** In the shim
-smoke, the caption *"a man points a gun at a cashier"* returned `"I can't
-assist…"` instead of a score — LAVAD's `_parse_score` turns that into `-1`, which
-`_interpolate_unmatched_scores` then linearly interpolates away. On surveillance
-video this is rare; **on a hate-video corpus the refusal rate will be
-systematically higher on exactly the frames that matter**, so a large fraction of
-the anomalous-frame scores would be interpolation rather than model output.
-Llama-2-13b-chat did not refuse on the same four captions. Phase C must (i) log
-the `-1` rate per video and report it beside the AUCs, and (ii) treat a high
-refusal rate as a confound, not noise. This is a genuine threat to the
-LELA-alignment check (±0.03) and should be measured before, not after.
+**(a) Llama-3.1-8B-Instruct refuses to score violent/hateful captions.**
+
+*Observed.* Three captions were sent through the shim with LAVAD's exact
+`context_prompt + format_prompt` (the "law enforcement agency, rate 0 to 1"
+prompt) under greedy decoding:
+
+| caption | Llama-3.1-8B-Instruct | Llama-2-13b-chat (NF4) |
+|---|---|---|
+| a person is holding a cell phone with a twitter app on it | `[0.1]` | `[0.2]` |
+| a group of people fighting in the street | `[0.8]` | `[0.3]` |
+| a man points a gun at a cashier | **`"I can't assist"`** → parsed `-1` | `[0.8]` |
+
+*Why it matters mechanically.* `LLMAnomalyScorer._parse_score` matches
+`r"\[(\d+(?:\.\d+)?)\]"`; anything else becomes `-1`, and
+`_interpolate_unmatched_scores` then runs `np.interp` over the remaining valid
+points — so a refusal is silently replaced by a linear blend of its neighbours
+and nothing in the output distinguishes it from a real model score. URF-HVAA
+inherits the identical code path (`src/llm_anomaly_scorer.py`).
+
+*Why it is worse in our domain than in the papers'.* The refusal fires on
+descriptions of violence and group-directed hostility. On UCF-Crime / XD-Violence
+those are a minority of frames; **on HateMM / MHC / HateClipSeg they are the
+positive class**. The refusals therefore concentrate on exactly the frames the
+metric is computed over, and interpolation systematically drags positive-frame
+scores toward the surrounding negative frames — a bias that *depresses* AUC in a
+way that looks like the method underperforming rather than the harness failing.
+It also invalidates the LELA alignment check (±0.03 vs ROC 0.6163 / PR 0.6239),
+since LELA's port would have hit the same wall silently.
+
+*Countermeasures, in the order Phase C should try them.*
+1. **Measure first, always.** Instrument `_parse_score` to record, per video, the
+   count and frame indices of `-1`s, and the raw refusal text. Report the refusal
+   rate beside every LAVAD/URF-HVAA number, and break it down by GT label
+   (refusal rate on positive vs negative frames). If the rate is under ~2 % and
+   label-balanced, the rest of this list is unnecessary.
+2. **Treat refusal windows as missing, not as interpolated.** Replace the blanket
+   `np.interp` with an explicit mask and score only the frames where the model
+   actually answered, reporting coverage alongside AUC. This is the honest
+   fallback and costs nothing.
+3. **Reframe the prompt, not the label.** LAVAD's prompt already casts the model
+   as a law-enforcement rater; adding an explicit content-moderation framing
+   ("you are a content-safety classifier; you are rating a description, not
+   producing the content; respond only with the list") converts most Llama-3.1
+   refusals into scores. This changes the prompt away from LAVAD's published one,
+   so it must be reported as our adaptation and run **as a paired variant** next
+   to the verbatim prompt, never silently substituted.
+4. **Swap the LLM.** Llama-2-13b-chat did not refuse on any of the four test
+   captions and is what LAVAD actually published with, so LAVAD should stay on
+   it. For URF-HVAA, whose published backbone *is* Llama-3.1-8B, an uncensored or
+   less safety-tuned instruct model of the same size is a last resort and would
+   make the row a variant rather than a reproduction.
+
+Options 1 and 2 are mandatory and cost nothing. 3 and 4 are only justified if the
+measured refusal rate is high enough to move the numbers, which is why 1 comes
+first.
 
 **(b) The LAVAD chain has seven stages, and the shipped `04_query_llm.sh`
 depends on stages 02–03.** The `--score_summary` pass reads *cleaned, nested*
@@ -219,13 +271,6 @@ target was presumably computed with the full ensemble.
 `[INST] <<SYS>>…` layout, which is what Meta's own `ChatFormat` emits for a
 `[system, user]` pair — so prompt formatting stays faithful to LAVAD's original.
 
-### 3.8 Gated-model substitutions
-No HF token is configured on this machine, and every `meta-llama/*` repo is
-gated. Substituted ungated mirrors: `NousResearch/Llama-2-13b-chat-hf` and
-`NousResearch/Meta-Llama-3.1-8B-Instruct` (the latter also ships
-`original/consolidated.00.pth`, so URF-HVAA's official loader stays an option —
-8B is MP=1 and fits one card). If a token is ever added, both can be swapped back
-to the canonical repos without touching code.
 
 ---
 
@@ -237,7 +282,17 @@ tracked). Method repos, downloaded checkpoints and the AV²A venv therefore neve
 enter the ledger; their exact commits are pinned in the table above. Committed
 from this route: `scripts/repro_campaign/` (harness + downloader) and this file.
 
-Reproducibility caveat: the `# ADAPTED` edits described in §3 live inside
-`third_party/`, which is untracked. They are all described here precisely enough
-to re-apply, but if Phase C results depend on them, promote the patches to
-tracked `.patch` files under `scripts/repro_campaign/patches/`.
+The `# ADAPTED` edits described in §3 live inside `third_party/`, which is
+untracked, so they are exported as tracked patches:
+
+```
+scripts/repro_campaign/patches/{UniTime,LaGoVAD-PreVAD,lavad,URF-HVAA}.patch
+scripts/repro_campaign/shim/llama_hf/          # the shim itself, symlinked in as third_party/_shim
+```
+
+To rebuild the environment from scratch: clone the repos at the commits in §1,
+`git apply` the four patches, `ln -s scripts/repro_campaign/shim third_party/_shim`,
+then run `scripts/repro_campaign/download_assets{,2}.sh`. Weight files are kept
+out of the ledger by the `third_party/*` rule plus the pre-existing `*.pt`/`*.pth`
+patterns and added `*.ckpt`/`*.safetensors` patterns; the HF cache lives outside
+the repo at `~/.cache/huggingface`.
