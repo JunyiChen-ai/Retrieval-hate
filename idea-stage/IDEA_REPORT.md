@@ -4483,3 +4483,210 @@ constraint or arena.
 5. **Use midranks in `wv_auc_per_video`.** float32 softmax saturates to exactly 1.0 on 164 windows
    across 30 videos, and the frozen index tie-break is worth +0.0006 here — negligible against every
    δ used so far, but wrong, and it is silently large on any read-out that creates ties.
+
+## §17 — Round 14 (2026-08-18): the detector base attacked on both stages, and both attacks fail
+
+**Cost: ¥0.00 of a ¥15 round budget (cumulative ¥0 of ¥60).** The hostile review ran on the Codex
+MCP allowance and the occupancy sweep on web search; no DashScope or Claude API spend. Three local
+runs on the 5090 — feature build 7 s, 27 ActionFormer trainings 5 866 s, re-ranking panel 198 s —
+all background `setsid nohup` with `logging/runs/r17_{feats,p1,p2}/`. **Zero test contact: the
+119-video test split was never loaded by any run**; every number below is out-of-fold inside the
+237 train videos, or a descriptive ceiling on the 39-video val split.
+
+### 17.0 Headline
+
+- **Round 16's "20+ point ranking headroom" was priced off a fixed-small-k table that conflates
+  ranking quality with a recall cap. Re-priced at the system's own operating point it is +15.1**,
+  and that number is what the round was built on: on val, choosing the best 22 of 200 proposals
+  within each video by oracle tIoU takes F1@0.5 from 48.76 to 63.87 at an unchanged per-video count.
+- **The external reviewer scored no candidate a 3 as a paper.** Twelve candidates; E1 (extent-
+  conditioned span verifier), E2 (IoU-quality head) and E12 (duration control) scored 3 as
+  *experiments*, and the verdict on all twelve was: *"No candidate, as currently stated, is a
+  top-venue method-paper candidate."*
+- **The occupancy sweep then removed the round's motivating diagnostic from the novelty column
+  before either pilot ran.** BREM `2204.11695` (ACM MM 2022) publishes exactly it — replace a
+  detector's classification score with the true tIoU, watch mAP jump, conclude the classification
+  score cannot represent localization quality — and builds quality modules on it for +3.6 avg mAP.
+- **P1 KILL.** Adding a dense on-screen-text channel to the detector's early fusion is
+  **−0.16 F1@0.5 [−1.34, +0.97]** against a +1.50 bar. Proposal-pool recall is unchanged
+  (90.79 → 90.68), so OCR improves neither candidate generation nor ranking.
+- **And the timing of that channel is worth less than nothing**: the arm with the OCR rows
+  *temporally shuffled within each video* scores **+1.00 above** the correctly aligned arm
+  (`VATO − VATO_SHUF` = −1.00 [−2.03, +0.01]). Whatever OCR contributes here is not moment-level.
+- **P2 KILL, and by a wide margin.** An extent-conditioned span verifier on the detector's own
+  proposals is **−7.38 F1 [−8.60, −6.40]** against the better of the detector score and a learned
+  geometry head, at a matched top-22 budget. Its own content-permutation control scores **1.44
+  points higher than the real content**.
+- **The duration prior that motivated E1/E2 evaporates at the operating point.** Within-video
+  Spearman with oracle tIoU is 0.350 for the detector score against 0.423 for duration alone over
+  the full 200-proposal pool — but ranking by duration at top-22 scores **24.28** against the
+  score's **34.20**. The reviewer called this in advance: the ρ inversion lives in the pool tail.
+- **The OpenAlex gap carried since round 11 is closed and the answer is that OpenAlex is unusable
+  here**: after the daily budget reset, `cites:W6967194700` returns **0 citers** of HateClipSeg
+  against Semantic Scholar's 4.
+- **Cumulative across fourteen rounds: 165 candidates, one banked entry (`CAT`).**
+
+### 17.1 The recon that re-priced the bottleneck (val, descriptive, pre-freeze)
+
+VAT detector, rawseg, val (39 videos, 531 gold), pool 200 proposals/video, model keeps 22.0/video:
+
+| read-out | F1@0.5 |
+|---|---|
+| model at its own threshold | **48.76 ± 0.65** (P 39.54 / R 63.72) |
+| **oracle re-ranking, same per-video budget** | **63.87 ± 0.59** |
+| oracle re-ranking, budget = gold count | 77.97 ± 1.07 |
+| oracle binary verifier | 96.83 ± 0.29 |
+| pool recall @0.5 | 93.85 |
+
+Error composition of the 857 kept proposals: matched 338 (39.5%), partial 0<tIoU<0.5 219 (25.5%),
+**zero overlap 300 (35.0%)**. Of 531 gold: matched 338, **missed although a ≥0.5 proposal was in
+the pool 160 (30.1%)**, missed and absent 33. Matched proposals mean 9.8 s, zero-overlap false
+alarms 9.9 s — indistinguishable, which is why the reviewer refused to let the duration statistic
+kill the semantic hypothesis before it was tested.
+
+### 17.2 The slate
+
+Full table in `idea-stage/R17_CANDIDATES.md`.
+
+| # | candidate | score | load-bearing verdict |
+|---|---|---|---|
+| E1 | **XPOOL** extent-conditioned span verifier | **3** | run it, but "two-stage RoI/context proposal verification is heavily occupied and is not a paper contribution by itself" |
+| E2 | **IOUHEAD** quality-aware ranking | **3** | mandatory and baseline-only — BMN / IoU-Net / GFL / VarifocalNet own it |
+| E3 | **OCRDENSE** dense on-screen-text channel | 2 | best evidence-backed ingredient; still "add the omitted modality" |
+| E4 | **MODROLE** modality-asymmetric role assignment | 2 | the only fresh structure, but "audio owns boundaries" may just exploit Whisper's speech-pause boundaries |
+| E5 | **SPANRET** retrieval over labelled train spans | **0** | the project already measured chance-level segment retrieval (0.5259 vs a 0.5252 broadcast control) |
+| E6 | **MLLMVERIFY** MLLM comparative span verifier | **0** | 72B per-window lost to a two-layer head; ¥15 cannot support it; no reproducibility |
+| E7 | **SETSEL** set-level selection | 1 | cannot identify the 300 zero-overlap false alarms without a better quality signal |
+| E8 | **VIDPRIOR** video-level score conditioning | **0** | mathematically dead — a video-constant multiplier cannot alter within-video order |
+| E9 | **HARDNEG** hard negatives from own false alarms | 2 | ordinary OHEM |
+| E10 | **CONSIST** cross-modal agreement | **0** | wrong inductive bias — it suppresses exactly the OCR-only and speech-only positives |
+| E11 | **CTXNEG** complement-region negatives | 1 | ActionFormer already trains outside-GT locations as background |
+| E12 | **DURPRIOR** duration prior | **3** | mandatory control, zero contribution |
+
+### 17.3 The occupancy sweep, and the three things it killed
+
+| # | question | rating | firmest occupant |
+|---|---|---|---|
+| Q1 | proposal re-ranking / relation modelling in TAL | **d** | P-GCN `1909.03252`, TCANet `2103.13141`, BSN++ `2009.07641`, and **GAP `2211.14924`** (CVPR 2023) — a post-hoc module on a *frozen* detector, worth +0.2 to +0.7 avg mAP |
+| Q2 | retrieval / memory-based span scoring | **b** | VideoPatchCore `2409.16225`, CKNN `2408.03014`, RSKP `2203.02925`, SlowFastVAD `2504.10320` |
+| Q3 | MLLM as verifier over external proposals | **c** | **OSGNet + MLLM Reranking `2605.20818`** — Ego4D EM Challenge 2026 *first place*, same topology and same motivation |
+| Q4 | multimodal fusion inside a TAL detector | **c** (**b** for one sliver) | "Hear Me Out" `2106.14118`, MRAV-FF `2310.03456`, DEL `2506.23196`, UniAV `2404.03179`. ASR/subtitle text fused inside a TAL head was not found |
+| Q5 | detector-based harmful-content localization | **a** | nothing; the incumbents are weakly-supervised MIL (MultiHateLoc `2512.10408`) and training-free LLM (LELA `2602.09637`) |
+| Q6 | video-level prior conditioning a span score | **c** | ships as plumbing since BMN `1907.09702` / BaS-Net `1911.09963` |
+| Q7 | boundary-quality / IoU-aware confidence | **d** | **BREM `2204.11695`** runs this round's diagnostic and builds the fix on it |
+
+**Q7 is the one that matters.** It removes E1/E2 from the novelty column entirely — ActionFormer
+genuinely has no quality head, so bolting one on would probably work, and that is engineering.
+Q1 prices the post-hoc-re-ranker framing at +0.5 mAP. Q3 closes the MLLM route with a challenge
+win. What survives is **Q5** and the Q4 sliver, which is what P1 tested.
+
+### 17.4 P1 — dense OCR as a fourth early-fusion channel: **KILL**
+
+Three arms, 3-fold cross-fitting inside the 237 train videos, 3 seeds, 27 ActionFormer runs,
+endpoint corpus F1@tIoU 0.5 on the pooled 237 out-of-fold videos.
+
+| arm | dim | **F1@0.5** | F1@0.3 | F1@0.7 | pool recall@0.5 |
+|---|---|---|---|---|---|
+| **`VAT`** (contrast) | 2816 | **35.60 ± 0.15** | 46.96 | 16.84 | 90.79 ± 0.22 |
+| **`VATO`** | 3584 | **35.44 ± 0.13** | 47.68 | 15.60 | 90.68 ± 0.64 |
+| **`VATO_SHUF`** | 3584 | **36.44 ± 1.13** | 47.71 | 16.88 | 91.45 ± 0.55 |
+
+| contrast | Δ [95% CI] | verdict |
+|---|---|---|
+| **`D1` VATO − VAT** | **−0.16 [−1.34, +0.97]** | **KILL** (bar +1.50) |
+| `D2` VATO − VATO_SHUF | **−1.00 [−2.03, +0.01]** | correctly timed OCR is worse than shuffled OCR |
+| `D3` VATO_SHUF − VAT | +0.84 [−0.15, +1.88] | descriptive |
+
+The freeze pre-committed the three-way reading of pool recall: recall rises ⇒ better proposals;
+recall flat and F1 rises ⇒ better classification; **neither ⇒ dense OCR is inert.** Recall is flat
+to within 0.11 and F1 does not rise, so the third branch fires.
+
+**`D2` is not a null and it is the finding.** The shuffle preserves width, the video's own OCR
+content and every marginal statistic, and destroys only the timing — and it *wins*. On this
+architecture the OCR stream carries no moment-level information; what it carries is video-level,
+and making the detector align it costs more than it buys. That is the same shape as round 13's
+result for the CLIP visual channel, reproduced independently on a different architecture.
+
+**Declared limitation.** The channel comes from the existing K=30 cache: one PaddleOCR reading per
+`duration/30` ≈ 7.6 s window, 70.3% of windows non-empty, 35 of 395 videos empty throughout. That
+is coarse against a 4 FPS grid though comparable to the 8.4 s median gold segment. **This does not
+show OCR is uninformative at finer resolution** — it shows the resolution the project already owns
+buys nothing, which is the question the round could afford to ask.
+
+### 17.5 P2 — the extent-conditioned span verifier: **KILL**
+
+On `VAT`'s own out-of-fold 200-proposal pools, nested cross-fitting, identical head and partition
+in every arm, endpoint F1@0.5 at a fixed top-22 per video, 9 cells (3 detector × 3 re-ranker seeds).
+
+| arm | ranking signal | dim | **F1@0.5** |
+|---|---|---|---|
+| `R0` | the detector's own score | — | **34.20 ± 0.41** |
+| `R1` | duration alone | 1 | **24.28 ± 0.76** |
+| `R2` | learned geometry incl. the score | 6 | **34.21 ± 0.26** |
+| `R3` | `R2` ⊕ extent-pooled V/A/T ⊕ two context rings | 8 454 | **26.83 ± 0.29** |
+| `R4` | `R3` ⊕ extent-pooled OCR | 9 222 | **26.71 ± 0.43** |
+| `R5` | `R3` with content permuted within video, within duration decile | 8 454 | **28.27 ± 0.44** |
+
+| gate | contrast | Δ [95% CI] | bar | verdict |
+|---|---|---|---|---|
+| **G1** | `R3 − max(R0, R2)` | **−7.38 [−8.60, −6.40]** | +2.00 | **FAIL** |
+| **G2** | `R4 − R3` | −0.13 [−0.49, +0.22] | +1.00 | **FAIL** |
+| G3 | — | not evaluated | | G1 failed |
+
+1. **The duration prior does not survive the operating point.** ρ(duration) 0.423 > ρ(score) 0.350
+   over the whole pool, but at top-22 duration scores 24.28 against the score's 34.20. The reviewer
+   named the reason before the run: *"Spearman over all 200 proposals is dominated by easy pool-tail
+   geometry and does not measure top-22 one-to-one matching."* **No future round may motivate a
+   candidate from that ρ inversion.**
+2. **A learned geometry head with the score as an input reproduces the score and adds +0.01.**
+   There is no free geometric structure in the proposal set.
+3. **Real span content generalises worse than its own permutation.** `R5` matches `R3` on
+   dimensionality, capacity and optimisation and differs only in whether the pooled content belongs
+   to the proposal — and it scores 1.44 points higher. That is the signature of a head fitting
+   video-specific content that does not transfer across folds.
+4. **OCR at the verifier stage adds nothing either**, so the stage-placement hypothesis the reviewer
+   named as the only route to a method claim — *"sparse OCR is diluted or temporally misassigned in
+   dense fusion but works when conditioned on a proposed extent"* — is tested and does not hold.
+
+**The limitation a reviewer would raise, stated first.** `R3`/`R4`/`R5` feed 8 454-9 222 dimensions
+into a 256-unit hidden layer fitted on ~31 600 proposals from 158 videos. That regime was frozen in
+advance and is plainly part of why `R3` collapses, so **the experiment cannot separate "no usable
+span-content signal" from "this head cannot use it".** What it *can* separate, because `R5` is
+capacity-matched, is that within this regime real content carries no transferable advantage over
+permuted content. No stronger claim is made.
+
+### 17.6 What round 14 closes
+
+1. **The best-evidenced modality gap this project ever measured is worth −0.16 F1 in the
+   detector.** 30.1% of localization misses with on-screen text as the only evidence, OR 2.29 —
+   and supplying it as a fourth dense channel does nothing, at either stage.
+2. **Both stages at which a span scorer can be improved have now been tested on the detector base**
+   and neither responds.
+3. **The +15.1 oracle re-ranking headroom is not reachable by anything run here**, and three of
+   six re-ranking arms score *below* the detector's own score. `RESEARCH_BRIEF §6.10` is confirmed
+   again: a large oracle ceiling is the precondition every failed candidate already met.
+4. **Round 16's item 5 — that the rounds 13-15 nulls do not transfer to the detector base — is now
+   partly tested and the answer is that the conclusions transfer even though the evidence does
+   not.** The temporal-informativeness result (a channel's timing is worth nothing) was re-derived
+   from scratch on ActionFormer, by the shuffle control, on a channel round 13 never had.
+5. **The OpenAlex citation cross-check is dead as a tool for this corpus** (0 citers vs Semantic
+   Scholar's 4). Two other index facts worth carrying: arXiv's Atom API silently returns an empty
+   body over plain `http://` without a User-Agent, which is a plausible cause of earlier rounds'
+   spurious zero-hit results; and OpenAlex is now credit-metered.
+
+### 17.7 What round 15 must not do
+
+1. **Do not re-motivate a candidate from the ρ(duration) > ρ(score) inversion.** It is a pool-tail
+   property; at the operating point duration is ten points worse than the score.
+2. **Do not propose a proposal-quality / IoU-aware / re-scoring head as a contribution.** BREM
+   `2204.11695` owns the diagnostic and the fix; GAP `2211.14924` owns the frozen-detector post-hoc
+   version and prices it at +0.5 mAP.
+3. **Do not propose an MLLM verifier over detector proposals.** `2605.20818` won a CVPR 2026
+   challenge with that exact topology and motivation.
+4. **Do not read P1 as "OCR is useless for hate localization".** It is "OCR at 7.6 s resolution,
+   as a dense fourth stream and as an extent-pooled verifier feature, is worth nothing on this
+   detector". Dense extraction was not bought and the question at finer resolution is open —
+   though `D2` makes the prior against it much worse than it was.
+5. **The double-null sentence frozen in `R17_OCRV_FREEZE.md` §6 has fired** and is reproduced in
+   `idea-stage/R17_OCRV_RESULT.md`. The sub-direction goes back to the user as a scope question;
+   it is not to be re-attempted on a fourth substrate without a ruling.

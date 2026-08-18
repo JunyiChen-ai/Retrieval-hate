@@ -116,6 +116,45 @@ before `scripts/r17_ocrv/` existed:
   including the duration control and the within-video duration-matched content permutation, with
   the reviewer's +2.0 gate and the 75%-permutation-collapse requirement.
 
+## 5b. Occupancy sweep (zero-GPU agent, run in parallel with the pilots)
+
+Seven questions, arXiv API + Semantic Scholar + WebSearch. **Reachability, recorded first:**
+OpenAlex is now **credit-metered and returned `Insufficient budget … you only have $0 remaining`
+on every call**, so the OpenAlex citer cross-check on HateClipSeg asked for since round 11 is
+**still not done** — and the SafeLens precedent proves Semantic Scholar alone misses citers.
+Semantic Scholar's `/paper/search` returned 429 for most of the session; the citations and
+references endpoints worked. WebSearch hit its 200-call session cap. CVF openaccess 403s.
+arXiv's Atom API works only over **https with a User-Agent**; plain `http://` returns a 301 that
+silently yields an empty body — which ate three queries before it was noticed, and is a plausible
+cause of some earlier rounds' "zero hits".
+
+| # | question | rating | firmest occupant |
+|---|---|---|---|
+| Q1 | proposal re-ranking / proposal-relation modelling in TAL | **d** | P-GCN `1909.03252` (ICCV 2019) and its T-PAMI generalisation `2112.00302`; TCANet `2103.13141` (CVPR 2021, proposal *refinement*); BSN++ `2009.07641`; ContextLoc `2107.12960`; and **GAP `2211.14924` (CVPR 2023)** — a model-agnostic post-hoc module on a *frozen* off-the-shelf detector, worth **+0.2 to +0.7 avg mAP**. No 2025-26 paper's contribution is proposal re-ranking |
+| Q2 | retrieval / kNN / memory-based span scoring | **b** | VideoPatchCore `2409.16225`, CKNN `2408.03014`, RSKP `2203.02925`, AUMN `2104.14135`, SlowFastVAD `2504.10320` (detector → route ambiguous segments → RAG-VLM → fuse). MemAE `1904.02639` / MNAD `2003.13228` are *reconstruction* memories, a clean distinction. Scoring spans by kNN against a **labelled bipolar span memory** is empty everywhere checked — but it is a port of RGCL's instance-level kNN vote |
+| Q3 | MLLM/VLM as verifier over external proposals | **c** | **OSGNet + MLLM Reranking `2605.20818`** — Ego4D EM Challenge 2026, *first place* in NLQ and GoalStep, verbatim "obtain a set of candidate segments from existing localization model … then employ MLLM to select the segment that best matches", motivated by preserving candidate recall. Also TFVTG `2408.16219` (ECCV 2024), F2G `2605.21973` (ICML 2026), TimeProVe `2606.20561`, FreeZAD `2501.13795` |
+| Q4 | multimodal fusion **inside** a TAL detector | **c**, **b** for one sliver | "Hear Me Out" `2106.14118` owns the audio-helps-vs-hurts question (audio-only THUMOS 4.73 mAP; proposal-level late fusion **collapses** 56.16 → 39.37); MRAV-FF `2310.03456` owns the gated audio-per-FPN-scale contribution; DEL `2506.23196`, UniAV `2404.03179`, UnAV-100 `2303.12930`; ActionVLM `2601.21078` (Jan 2026) owns "estimate the language advantage and reweight". **ASR/subtitle text fused inside a TAL head was not found** — that is the b sliver |
+| Q5 | detector-based harmful-content temporal localization | **a** | **Nothing.** `(abs:"hateful" OR abs:"harmful" OR abs:"toxic") AND abs:"temporal localization"` returns 2 entries, one irrelevant. The incumbents are weakly-supervised MIL (MultiHateLoc `2512.10408`, WWW 2026, on HateMM + MultiHateClip, **not** HateClipSeg) and training-free LLM (LELA `2602.09637`, which already uses OCR). Semantic Scholar returns the same 4 citers of `2508.01712` as round 11, none new; MultiHateLoc, TANDEM `2601.11178`, LELA and SafeLens `2605.17610` do not cite HateClipSeg at all |
+| Q6 | video-level prior conditioning a span score | **c** | Ships as plumbing since 2019: BMN `1907.09702` multiplies UntrimmedNet's video-level class score by the proposal confidence; BaS-Net `1911.09963` gates classes on video-level probability. RUBi / Learned-Mixin *delete* the prior at inference where we would inject it — a framing difference over identical arithmetic. **Open item: Tan et al., WACVW 2024, "Overlooked Video Classification in Weakly Supervised VAD" (XD-Violence 78.84 → 82.10) is the closest named occupant and could not be fetched (CVF 403).** |
+| Q7 | boundary-quality / IoU-aware confidence | **d** | **BREM `2204.11695` (ACM MM 2022) runs this round's headline diagnostic and builds its method on it** — replace the classification score with the true tIoU, watch mAP jump, conclude the classification score cannot represent localization quality, then add Boundary-Evaluate and Region-Evaluate modules (+3.6 avg mAP). Plus ReAct `2207.07097` ("segment quality prediction"), TadTR `2106.10271` (actionness regression), ALQA `2407.07673` (ECCV 2024), Centre Stage `2311.16446`, CLTDR `2412.09202`; and IoU-Net `1807.11590` / GFL `2006.04388` / GFLv2 `2011.12885` / VarifocalNet `2008.13367` settled it in object detection in 2018-2021 |
+
+**Three consequences, and they are not small.**
+
+1. **Q7 kills E1/E2 as method novelty outright.** The round's motivating measurement — an oracle
+   ranking of a detector's own proposals beats its classification score — is BREM's opening
+   paragraph, and BREM's fix is E2. ActionFormer genuinely has no quality head, so bolting one on
+   will probably work; that is engineering, not a contribution. P2 therefore runs as a
+   *diagnostic* with its frozen gates intact, and no positive P2 result may be written up as the
+   discovery of the ranking gap.
+2. **Q1 kills the post-hoc-re-ranker-on-a-frozen-detector framing**, and prices it: GAP is the
+   precedent and it bought +0.5 mAP.
+3. **Q3 kills the MLLM-verifier route** the slate had already scored 0 on cost grounds — a
+   CVPR 2026 challenge was won with that exact topology and that exact motivation.
+
+**What survives is Q5 and the Q4 sliver**, which is what P1 tests: a detector-based localizer
+for harmful content is unoccupied, and ASR/OCR text fused *inside* the detector head was not
+found anywhere. Neither is a mechanism; both are the slot P1 occupies if it passes.
+
 ## 6. The reviewer's judgment on the paper question, recorded in full
 
 On whether a decomposition-plus-system paper is available:
