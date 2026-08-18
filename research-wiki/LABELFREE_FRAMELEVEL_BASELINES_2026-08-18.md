@@ -83,7 +83,7 @@ Split into two mechanism families, because they have different interfaces:
 | 3 | **VADTree** | **NeurIPS 2025** (poster) | VAD | fully zero-label, training-free | multi-granularity per-node scores from a hierarchical event tree, fused to a per-frame score | UCF-Crime **84.74** AUC; XD-Violence **67.82** AP / **90.44** AUC (VADTree\* 68.85 / 90.55) | [wenlongli10/VADTree](https://github.com/wenlongli10/VADTree) — ~19★, last push 2026-06-09, official | **MED.** Extra dependency: a pretrained Generic Event Boundary Detection model to build the tree. Attractive for hate video precisely because hate spans have very variable length (HateMM spans range from a few s to whole-video), which is the failure mode VADTree targets |
 | 4 | **EventVAD** | **ACM MM 2025** | VAD | fully zero-label, training-free | event-segment score from a 7B MLLM, broadcast to frames | UCF-Crime **82.03** AUC; XD-Violence **64.04** AP / **87.51** AUC | [YihuaJerry/EventVAD](https://github.com/YihuaJerry/EventVAD) — ~536★, last push 2025-07-09, official | **MED.** Two conda envs (event segmentation + scoring). Needs RAFT optical flow + CLIP features + a dynamic graph before the MLLM. The optical-flow stage encodes a surveillance prior (motion discontinuity = event boundary) that is weaker in talking-head hate video |
 | 5 | **MoniTor** | **NeurIPS 2025** | VAD, **online/streaming** | fully zero-label, training-free | streaming per-frame score from a VLM with an LSTM-style predictor and a scoring queue | Online setting: UCF-Crime **82.57** AUC; XD-Violence **55.01** AP / **79.11** AUC (vs online-LAVAD 76.06 / 52.63 / 76.01) | [YsTvT/MoniTor](https://github.com/YsTvT/MoniTor) — ~30★, last push 2025-10-01, official | **MED.** Only entry designed for causal/streaming scoring. Interesting for hate video if you care about "flag as it plays", less so for offline benchmark AUC where the offline methods dominate |
-| 6 | **O-VAD** | **ECCV 2026** (CORE A\*) | **industrial** VAD | fully zero-label, training-free, agentic | tracks per-object state trajectories, flags abnormal objects in grounded frames + emits a report | three IVAD datasets; beats frontier VLMs and fine-tuned VAD. Exact numbers not in the abstract | [yuanapril/OVAD-ECCV26](https://github.com/yuanapril/OVAD-ECCV26) + [project page](https://o-vad.github.io) — 0★, created 2026-06/07, official but brand-new | **HIGH / poor fit.** The mechanism is object state evolution under physics and procedural constraints. Hateful video has no such object dynamics — the signal is speech, on-screen text and symbols. Listed for completeness only |
+| 6 | **O-VAD** | **ECCV 2026** (CORE A\*) — track not checked, see §3.2 | **industrial** VAD | fully zero-label, training-free, agentic | tracks per-object state trajectories, flags abnormal objects in grounded frames + emits a report | three IVAD datasets; beats frontier VLMs and fine-tuned VAD. Exact numbers not in the abstract | [yuanapril/OVAD-ECCV26](https://github.com/yuanapril/OVAD-ECCV26) + [project page](https://o-vad.github.io) — 0★, created 2026-06/07, official but brand-new | **HIGH / poor fit.** The mechanism is object state evolution under physics and procedural constraints. Hateful video has no such object dynamics — the signal is speech, on-screen text and symbols. Listed for completeness only |
 | 7 | **GtS** (Glance-then-Scrutinize, VAGU) | **AAAI 2026** | VAD grounding + understanding | fully zero-label, training-free, text-prompt guided | coarse glance pass then fine scrutiny pass over candidate intervals; outputs time intervals + scores | Introduces the VAGU benchmark; journal extension arXiv 2608.11260 | **No public repo found** (GitHub search for VAGU / Glance-then-Scrutinize returned nothing) | **BLOCKED** — fails filter 3 today. Listed because it is A-venue + label-free and the prompt-guided interface would accept "a moment containing hate speech" directly. Re-check for a code release |
 | 8 | **ZS-CLIP** (frame-text cosine vs. two prompts) | defined as a baseline **inside LAVAD, CVPR 2024** | VAD | fully zero-label | cosine similarity of each frame embedding against "normal"/"anomalous" text embeddings | UCF-Crime 53.16 AUC; XD-Violence 17.83 AP / 38.21 AUC. On hate: HateMM ROC 0.5367, MHC 0.5449 (LELA) | code lives inside [lucazanella/lavad](https://github.com/lucazanella/lavad) | **NEAR-ZERO.** `data/CLIP_Embedding/HateClipSeg/dense4fps_clipL336/*.npy` already holds dense 4 fps CLIP-L/336 frame features for all 395 videos. This is a dot product plus a text encoder call — hours, not days. Chance-level performance, so it is a floor, not a competitor |
 | 9 | **ZS-ImageBind** (image and video variants) | baseline inside **LAVAD, CVPR 2024** | VAD | fully zero-label | cosine similarity in ImageBind space, image-level or 10 s video-clip-level | UCF-Crime 53.65 / 55.78 AUC; XD-Violence 27.25 / 25.36 AP. On hate: HateMM ROC 0.5683, MHC 0.5753 (LELA) | inside [lucazanella/lavad](https://github.com/lucazanella/lavad) | **LOW.** Needs the ImageBind checkpoint and a re-encode from raw frames (existing cache is CLIP, not ImageBind). Adds the audio modality for free, which matters for hate video — HateMM hate is often carried by speech |
@@ -163,7 +163,7 @@ detector, [lilygeorgescu/AED-SSMTL](https://github.com/lilygeorgescu/AED-SSMTL) 
 
 | Method | Venue | What the supervision actually is | Verdict I would default to |
 |---|---|---|---|
-| **LAVIDA** — *No Need For Real Anomaly* | **CVPR 2026** | Trains end-to-end, but **only on synthetic pseudo-anomalies** built by pasting segmented objects. Zero real VAD data, zero target labels. Frame-level *and* pixel-level output. Code: [VitaminCreed/LAVIDA](https://github.com/VitaminCreed/LAVIDA) ~27★, last push 2026-02-25, official | **Counts as label-free.** A training run exists but consumes no target labels. The pseudo-anomaly generator ("paste an out-of-context object") is a visual-oddity prior that does not obviously produce hate cues, so expect the port to underperform |
+| **LAVIDA** — *No Need For Real Anomaly* | **CVPR 2026 — main track vs Findings UNVERIFIED, see §3.2** | Trains end-to-end, but **only on synthetic pseudo-anomalies** built by pasting segmented objects. Zero real VAD data, zero target labels. Frame-level *and* pixel-level output. Code: [VitaminCreed/LAVIDA](https://github.com/VitaminCreed/LAVIDA) ~27★, last push 2026-02-25, official | **Counts as label-free.** A training run exists but consumes no target labels. The pseudo-anomaly generator ("paste an out-of-context object") is a visual-oddity prior that does not obviously produce hate cues, so expect the port to underperform. **Do not cite as "CVPR 2026" until the track is confirmed** |
 | **HiProbe-VAD** | **ACM MM 2025** | "Tuning-free" MLLM, but trains a **logistic-regression scorer on ~1 % of the labelled training set** and sets its threshold from that same few-shot set. Verified from §4.1.2 of the paper | **Fails filter 1.** Uses video-level labels, just very few. Worth flagging because the numbers are strong (UCF-Crime 86.72 with InternVL2.5, XD 82.15 AP) and 1 % is a cheap concession if you ever relax the rule. Code: [CebCai/HiProbeVAD](https://github.com/CebCai/HiProbeVAD) 4★, last push 2026-02-02 |
 | **VERA** | **CVPR 2025** | "Verbalized learning" optimises guiding questions using **coarsely labelled (video-level) training data**. Confirmed independently: URF-HVAA's Table 2 marks VERA `Zero-shot ✗ / Training-free ✓` | **Fails filter 1.** Rejected. Code: [vera-framework/VERA](https://github.com/vera-framework/VERA) ~86★, last push 2026-03-23 |
 | **C2FPL** | **WACV 2024** | Genuine fully-unsupervised (B2) on precomputed features, official code [AnasEmad11/C2FPL](https://github.com/AnasEmad11/C2FPL) ~21★ | **Fails filter 2 only.** WACV is CORE A, not A\*, and not CCF-A. Cheap to add if the venue bar moves |
@@ -199,6 +199,60 @@ Caveat: the GitHub API rate-limited before their repos could be enumerated, so t
 **not** verified in this session — but since they are excluded on granularity and domain regardless,
 that verification is not worth spending on.
 
+Three further findings from this line that are worth keeping even though the line is excluded:
+
+- **LogSAD** (*Towards Training-free Anomaly Detection with Vision and Language Foundation Models*,
+  **CVPR 2025**, DOI 10.1109/CVPR52734.2025.01416, [zhang0jhon/LogSAD](https://github.com/zhang0jhon/LogSAD)
+  ~101★) is the strongest **genuinely** training-free member — no gradient step anywhere, GPT-4V for
+  offline proposal generation over frozen CLIP + DINOv2 + SAM. Its headline MVTec-AD/VisA numbers
+  (97.0/97.6 and 93.0/98.1) are **4-shot** — they consume target normal reference images. Its true
+  zero-shot number is MVTec-LOCO 90.2 image-AUROC. Still image-only, so still excluded, but it is
+  the right citation if you ever need "training-free dense scoring is possible".
+- **The auxiliary training in this literature is done on the benchmark's *test* split.** VCP-CLIP
+  states it outright ("to evaluate ZSAS performance on other datasets, we employ weights trained on
+  VisA's test sets"), KAnoCLIP likewise; the rest inherit the APRIL-GAN/AnomalyCLIP protocol
+  silently. It is structurally unavoidable — the test split is the only one with anomalous images
+  and pixel masks — but it means the "zero-shot" label in this line rests on cross-dataset transfer
+  from *another benchmark's test set with full pixel supervision*. Worth knowing before adopting any
+  of their framing.
+- **AnomalyVFM** breaks the two-category framing: it is trained **solely on synthetic data**
+  (10,000 FLUX-generated images, low-rank adapters on a frozen RADIOv2.5 backbone), touching no
+  MVTec/VisA labels, and claims a 9-dataset average image-AUROC of 94.1.
+  ([MaticFuc/AnomalyVFM](https://github.com/MaticFuc/AnomalyVFM) ~62★, real code; **venue
+  unverified**.) That is the same move LAVIDA makes on the video side — synthetic anomalies instead
+  of target labels — so it is now a two-domain pattern rather than a one-off.
+
+### 3.2 Venue-integrity warning: "CVPR 2026" in an arXiv comment is not proof of the main track
+
+CVPR 2026 introduced a **Findings Track** at decision time. From the official Author Guidelines:
+*"a venue for technically sound papers with solid experimental validation, even if their novelty is
+more incremental"* … *"**Findings papers will appear in the workshop proceedings.**"* Roughly 147
+arXiv papers currently carry a Findings comment, and the phrasings are inconsistent — some write
+only *"Accepted to CVPR 2026"* and mention Findings solely in the body.
+
+Compounding this: **DBLP has no `conf/cvpr/cvpr2026` volume yet and OpenAlex has no CVPR 2026
+proceedings**, so "absent from DBLP" currently carries *zero* negative signal for CVPR 2026.
+
+The reliable check is the conference's own program data:
+`https://cvpr.thecvf.com/static/virtual/data/cvpr-2026-orals-posters.json`. A main-conference entry
+has `eventtype: Poster|Oral`, a real `session`, and `sourceurl` pointing at the
+`thecvf.com/CVPR/2026/Conference` OpenReview group. Verified that way in this session:
+**Alert-CLIP** — *Abnormality-aware Latent-Enhanced Representation Tuning of CLIP for Video Anomaly
+Detection* (BUPT et al., event id 36334, Poster Session 5) is a genuine CVPR 2026 main-conference
+poster. It is a **video** anomaly detection paper and therefore in scope for this document; its
+supervision is unverified and the title ("representation tuning") implies training, so it most
+likely belongs with the weakly-supervised rejects — flagging as the one open item.
+
+**LAVIDA could not be checked**: the program JSON is paginated at 200 of 5163 entries, the paginating
+API returns 403 from this environment, and OpenReview's search API is fuzzy and rate-limited. Its
+track therefore stays **UNVERIFIED**.
+
+Scope of the damage: **none of the four recommended reproductions is affected.** LAVAD (CVPR 2024),
+URF-HVAA (NeurIPS 2025), UniVTG (ICCV 2023), ZS-CLIP (inside LAVAD) and the fallback MULDE/CLAP
+(CVPR 2024) all have fully indexed pre-2026 venues. The two entries carrying 2026 conference claims
+— LAVIDA (§3) and O-VAD (§1A, ECCV 2026, whose track was likewise not checked) — are both entries I
+recommend against porting for independent reasons.
+
 ---
 
 ## 4. Explicitly rejected, with reasons
@@ -208,6 +262,11 @@ Sultani et al. onward — MIST, RTFM, MGFN, UR-DMU, S3R, CLIP-TSA, **VadCLIP**, 
 Holmes-VAD / Holmes-VAU. Also **MultiHateLoc** (WWW 2026), which is the in-domain frame-level
 weakly-supervised SOTA and therefore the number to beat, not a baseline to reproduce
 (HateMM frame mAP 0.645 / AUC 0.799; MultiHateClip 0.445 / 0.750).
+
+**One open item:** **Alert-CLIP** (CVPR 2026 main conference, verified from the program JSON — see
+§3.2) is a video anomaly detection paper whose supervision was not established. "Representation
+tuning of CLIP" implies training, so it most likely joins the weakly-supervised rejects above, but
+that is inference from the title, not a verified fact. Worth 10 minutes once the paper is posted.
 
 Two more near-misses on this filter, both from the grounding line:
 
@@ -362,6 +421,10 @@ curve is blind to the modality that Gate-C identified as the dominant evidence g
 - **Zero-shot image-anomaly line (§3.1):** venues verified from each paper's arXiv comment field;
   supervision and output granularity read from abstracts. Their GitHub repos were **not** checked —
   the API rate-limited — but the line is excluded on granularity and domain regardless.
+- **2026-venue claims (§3.2):** LAVIDA's and O-VAD's conference *tracks* are unverified, because the
+  CVPR 2026 program API returns 403 from this environment and DBLP has not yet indexed either
+  conference. Every other venue in this document is from a fully indexed year. Alert-CLIP's
+  main-conference status was confirmed directly from the CVPR 2026 program JSON.
 - **Sources used:** arXiv API (metadata + `comment` venue field), arXiv/CVF PDFs read locally with
   `pdftotext` for all result tables, HuggingFace papers search API for discovery, GitHub REST API for
   repo status, DBLP where reachable, OpenReview for the URF-HVAA citation. Semantic Scholar and
