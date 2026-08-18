@@ -1,0 +1,27 @@
+diff --git a/models/qwen2_vl.py b/models/qwen2_vl.py
+index cc39e3b..fc414c3 100644
+--- a/models/qwen2_vl.py
++++ b/models/qwen2_vl.py
+@@ -20,7 +20,7 @@ class Qwen2VLMRForConditionalGeneration(Qwen2VLForConditionalGeneration):
+         super().__init__(config)
+ 
+         self.visual = Qwen2VisionTransformerPretrainedModel._from_config(
+-            config.vision_config, attn_implementation="flash_attention_2"
++            config.vision_config, attn_implementation="sdpa"  # ADAPTED: flash_attention_2 has no wheel for torch 2.7.1+cu128 / sm_120
+         )
+         self.model = Qwen2VLModel(config)
+         self.vocab_size = config.vocab_size
+@@ -323,6 +323,13 @@ class Qwen2VLMRForConditionalGeneration(Qwen2VLForConditionalGeneration):
+             cache_position=cache_position,
+         )
+         hidden_states = outputs[0]
++        # ADAPTED (repro campaign): at inference time only the last position's
++        # logits are consumed by generate(), but the original code materialises
++        # [B, T, 152k] in fp32 -- 9.4 GiB for a 3-minute video at 2 fps, which
++        # OOMs a 32 GB card.  Slice to the last position when no labels are
++        # given (i.e. generation, never training).  Mathematically identical.
++        if labels is None and hidden_states.shape[1] > 1:
++            hidden_states = hidden_states[:, -1:, :]
+         logits = self.lm_head(hidden_states)
+         logits = logits.float()
+ 

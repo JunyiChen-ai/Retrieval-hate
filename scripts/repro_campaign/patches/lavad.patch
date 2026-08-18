@@ -1,0 +1,14 @@
+diff --git a/src/models/llm_anomaly_scorer.py b/src/models/llm_anomaly_scorer.py
+index 9c244e5..312566f 100644
+--- a/src/models/llm_anomaly_scorer.py
++++ b/src/models/llm_anomaly_scorer.py
+@@ -7,7 +7,8 @@ from typing import List
+ import numpy as np
+ from tqdm import tqdm
+ 
+-from libs.llama.llama import Dialog, Llama
++# ADAPTED (repro campaign): Meta llama pkg -> HF shim, see third_party/_shim/llama_hf
++from llama_hf import Dialog, Llama
+ from src.data.video_record import VideoRecord
+ from src.utils.path_utils import find_unprocessed_videos
+ 

@@ -1,0 +1,70 @@
+diff --git a/src/end2end_inference.py b/src/end2end_inference.py
+index 567799d..c5e76fc 100644
+--- a/src/end2end_inference.py
++++ b/src/end2end_inference.py
+@@ -69,6 +69,10 @@ def parse_args():
+     parser.add_argument('--ckpt', type=str, required=True)
+     parser.add_argument('--cache_dir', type=str, default='./tmp')
+     parser.add_argument('-vp', '--video_path', type=str, required=True)
++    # ADAPTED (repro campaign): LaGoVAD's premise is a free-text anomaly
++    # definition at inference. Expose it instead of the hard-coded UCF classes.
++    parser.add_argument('--queries', type=str, nargs='*', default=None,
++                        help='free-text definitions; uses the cap_* head when given')
+     args = parser.parse_args()
+     return args
+ 
+@@ -160,29 +164,35 @@ def main():
+         cap_bin_logits: [B,T] binary logits (w/ query_captions)
+         cap_sim_mat: [B,T,S] similarity matrix (w/ query_captions)
+     """
+-    inputs_dict = {
+-        'batch': {
+-            'v_feat': v_feats[None, ...].to(device),
+-            'v_feat_l': torch.tensor([len(v_feats)], device=device),
+-        },
+-        # 'query_captions': list(ucf_cls_defs.values()),
+-        'class_names': list(ucf_cls_defs.keys()),
+-        # 'class_names': list(ucf_cls_defs.values()),
++    batch = {
++        'v_feat': v_feats[None, ...].to(device),
++        'v_feat_l': torch.tensor([len(v_feats)], device=device),
+     }
+-    outputs_dict = model(**inputs_dict)
+-
+-    # uncomment the following two lines to get the scores with language input
+-    # bin_score = outputs_dict['cap_bin_logits'][0].sigmoid().cpu().numpy()  # [T]
+-    # mul_score = outputs_dict['cap_sim_mat'][0].sigmoid().cpu().T.numpy()  # [S,T]
+-
+-    # the following two lines to get the scores with class input
+-    bin_score = outputs_dict['cls_bin_logits'][0].sigmoid().cpu().numpy()  # [T]
+-    mul_score = outputs_dict['cls_sim_mat'][0].sigmoid().cpu().T.numpy()  # [S,T]
+-
++    if args.queries:
++        names = args.queries
++        outputs_dict = model(batch=batch, query_captions=names)
++        bin_score = outputs_dict['cap_bin_logits'][0].sigmoid().cpu().numpy()  # [T]
++        mul_score = outputs_dict['cap_sim_mat'][0].sigmoid().cpu().T.numpy()   # [S,T]
++    else:
++        names = list(ucf_cls_defs.keys())
++        outputs_dict = model(batch=batch, class_names=names)
++        bin_score = outputs_dict['cls_bin_logits'][0].sigmoid().cpu().numpy()  # [T]
++        mul_score = outputs_dict['cls_sim_mat'][0].sigmoid().cpu().T.numpy()   # [S,T]
++
++
++    # ADAPTED (repro campaign): the upstream script only renders a PNG. Dump the
++    # raw per-frame curves so they can be scored against frame-level GT.
++    np.savez(str(Path(args.cache_dir) / (Path(args.video_path).stem + '_scores.npz')),
++             bin_score=bin_score, mul_score=mul_score,
++             class_names=np.array(names))
++    print(f"[scores] bin_score shape={bin_score.shape} "
++          f"min={bin_score.min():.4f} max={bin_score.max():.4f} mean={bin_score.mean():.4f}")
++    print(f"[scores] mul_score shape={mul_score.shape} "
++          f"min={mul_score.min():.4f} max={mul_score.max():.4f}")
+ 
+     fig = vis_result_v2(
+         np.concatenate([bin_score[None, :], mul_score], axis=0),
+-        ['binary'] + list(ucf_cls_defs.keys()),
++        ['binary'] + list(names),
+         args.video_path,
+         num_img=12,
+     )

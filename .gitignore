@@ -49,3 +49,16 @@ idea-stage/*/out/*.npy
 
 # R16 detector prediction dumps: regenerable from scripts/r16_detbase/run_af.py in ~4 min/seed
 idea-stage/*/out/preds_*.json
+
+# ---- label-free frame-level repro campaign (Phase A route 2) ----
+# Third-party method repos cloned verbatim for reproduction, plus their
+# downloaded checkpoints. Commits are pinned in
+# idea-stage/repro_campaign/MODEL_ASSETS_STATUS.md; nothing here is our code.
+third_party/*
+# actionformer was vendored+tracked before this campaign; keep it tracked.
+!third_party/actionformer
+
+# repro campaign smoke scratch: extracted JPEG frames + one copied mp4 for the
+# single-video smoke tests. Regenerable; the results are recorded in
+# idea-stage/repro_campaign/MODEL_ASSETS_STATUS.md.
+idea-stage/repro_campaign/smoke/lavad_ds/
