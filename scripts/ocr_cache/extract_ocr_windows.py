@@ -9,6 +9,9 @@ Datasets / whitelists (test videos are NEVER touched):
                  durations from data/gt/HateMM/hate_spans.json['<id>']['duration']
                  (only the duration field is read; labels/spans are not used)
   HateClipSeg -> ids + durations from data/gt/HateClipSeg/video_durations.jsonl (395)
+  MHC / MHC_zh -> ids from data/gt/<DS>/{train,val}.jsonl, durations from the ffprobe
+                 cache data/gt/frame_gt_4fps/durations_<DS>.json.  Backfills the
+                 train+dev half of the caches whose test halves are data/OCR/<DS>_test.
 
 Outputs (data/OCR/<dataset>/):
   ocr_windows_K30.jsonl   one line per (video_id, window_k)
@@ -148,12 +151,32 @@ def whitelist(dataset):
                     r = json.loads(line)
                     dur[r["id"]] = float(r["duration"])
         return dur
+    if dataset in ("MHC", "MHC_zh"):
+        # REPRO campaign Phase A step 4: backfill the train+dev half of the MHC OCR
+        # caches, whose test halves already exist as data/OCR/{MHC,MHC_zh}_test.
+        # Same K=30 midpoint grid, same engine, same params; only the id list differs.
+        # Durations come from the ffprobe cache written by
+        # scripts/repro_campaign/build_frame_gt.py (a duration is not a label).
+        probe = json.load(open(ROOT / f"data/gt/frame_gt_4fps/durations_{dataset}.json"))
+        dur = {}
+        for split in ("train", "val"):
+            with open(ROOT / f"data/gt/{dataset}/{split}.jsonl") as fh:
+                for line in fh:
+                    line = line.strip()
+                    if line:
+                        v = json.loads(line)["id"]
+                        d = probe.get(v)
+                        if d:
+                            dur[v] = float(d)
+        return dur
     raise SystemExit(f"unknown dataset {dataset}")
 
 
 VIDEO_DIR = {
     "HateMM": ROOT / "data/video/HateMM/All",
     "HateClipSeg": ROOT / "data/video/HateClipSeg/All",
+    "MHC": ROOT / "data/video/MHC/All",
+    "MHC_zh": ROOT / "data/video/MHC_zh/All",
 }
 
 
@@ -233,7 +256,8 @@ def read_frames(path, duration, k=K):
 # ----------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", required=True, choices=["HateMM", "HateClipSeg"])
+    ap.add_argument("--dataset", required=True,
+                    choices=["HateMM", "HateClipSeg", "MHC", "MHC_zh"])
     ap.add_argument("--engine", default="easyocr", choices=["easyocr", "paddleocr"])
     ap.add_argument("--lang", default="en")
     ap.add_argument("--out-dir", default=None)
