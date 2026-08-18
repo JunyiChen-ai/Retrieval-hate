@@ -167,6 +167,36 @@ detector, [lilygeorgescu/AED-SSMTL](https://github.com/lilygeorgescu/AED-SSMTL) 
 | **C2FPL** | **WACV 2024** | Genuine fully-unsupervised (B2) on precomputed features, official code [AnasEmad11/C2FPL](https://github.com/AnasEmad11/C2FPL) ~21★ | **Fails filter 2 only.** WACV is CORE A, not A\*, and not CCF-A. Cheap to add if the venue bar moves |
 | **AnyAnomaly** | **WACV 2026** | Genuinely zero-shot, customisable-criterion LVLM VAD — the mechanism ("define your own anomaly in text") is the best conceptual fit for "define hate in text" of anything found | **Fails filter 2 only.** WACV. Same note as above |
 
+### 3.1 The zero-shot *image*-anomaly line — checked, and it does not belong on the list
+
+The brief flagged AnomalyCLIP and the zero-shot anomaly-detection line. Venues all verified from
+each paper's own arXiv comment field, and every one clears the venue bar:
+
+| Method | Venue (verified) | Supervision | Output granularity |
+|---|---|---|---|
+| **WinCLIP** | **CVPR 2023** | zero-shot variant is genuinely training-free (window-based CLIP + hand-crafted prompt ensembles); few-shot variant uses normal reference images | per-pixel anomaly map |
+| **AnomalyCLIP** | **ICLR 2024** | learns object-agnostic **text prompts on an auxiliary labelled AD dataset**, then transfers zero-shot to the target | per-pixel |
+| **AnomalyGPT** | **AAAI 2024** | trains on simulated anomalies + auxiliary data with an LLM decoder | per-pixel + text |
+| **AdaCLIP** | **ECCV 2024** | hybrid learnable prompts trained on auxiliary labelled AD data | per-pixel |
+| **InCTRL** | **CVPR 2024** | in-context residual learning trained on auxiliary data; needs few-shot normal prompts at test time | image + region |
+
+**All five are excluded, for two independent reasons.**
+
+1. **Granularity.** Every one produces a per-pixel spatial anomaly map for a still image. None is a
+   video method, and I found no temporal extension for any of them. The brief asks for a per-frame
+   or per-timestamp score; converting a defect segmentation map into a hate-over-time curve is not a
+   port, it is a different method.
+2. **Domain.** These detect *structural and textural defects* on industrial parts (MVTec-AD, VisA)
+   and medical scans — scratches, dents, missing components. Hateful video is a semantic and social
+   judgement about speech, symbols and on-screen text. The shared word "anomaly" is doing all the
+   work in that analogy and none of the mechanism transfers.
+
+Four of the five would also land in this boundary section on supervision grounds anyway
+(auxiliary-dataset prompt training). Recording the check so this axis does not get re-opened.
+Caveat: the GitHub API rate-limited before their repos could be enumerated, so their code status is
+**not** verified in this session — but since they are excluded on granularity and domain regardless,
+that verification is not worth spending on.
+
 ---
 
 ## 4. Explicitly rejected, with reasons
@@ -300,7 +330,7 @@ curve is blind to the modality that Gate-C identified as the dominant evidence g
 | "LAVAD probably qualifies" | **Confirmed.** CVPR 2024, fully training-free, official code, 151★. Entry 1. Better still, its NeurIPS 2025 successor URF-HVAA reuses its codebase, and both already have published HateMM/MultiHateClip frame-level numbers via LELA |
 | "Is there an A-venue version of zero-shot MLLM per-segment scoring (Qwen-style per-window QA)?" | **No.** It exists only as *baseline rows* inside A-venue VAD papers (LLaVA-1.5 direct query in LAVAD; VideoLLaMA3+Llama in URF-HVAA; GLM-4.1V-9B-Thinking ZS-CoT in URF-HVAA's Table 2 at UCF 61.80 / XD 72.73 AUC), and as arXiv/ICASSP-tier hate-domain work (LELA, MARS). No A-venue paper claims it as its contribution |
 | "VadCLIP is weakly supervised — is there an A-venue zero-shot CLIP-scoring line?" | **Confirmed VadCLIP is out** (video-level labels). The zero-shot CLIP line exists but only as the ZS-CLIP baseline row (entry 8), scoring near chance: UCF 53.16 AUC, HateMM ROC 0.5367. The genuine A-venue query-conditioned CLIP methods are in §1B — UniVTG (ICCV 2023) and BOLT (CVPR 2025) |
-| "AnomalyCLIP / zero-shot anomaly line" | **Unresolved — see the gap note in §8.** That line is image/industrial-defect domain with per-pixel output, and several of its members train prompt embeddings on an auxiliary labelled dataset. Expected to be §3 boundary material, not §1, but not verified here |
+| "AnomalyCLIP / zero-shot anomaly line" | **Checked and excluded — see §3.1.** WinCLIP (CVPR 2023), AnomalyCLIP (ICLR 2024), AnomalyGPT (AAAI 2024), AdaCLIP (ECCV 2024), InCTRL (CVPR 2024) all clear the venue bar, but all five are **still-image, per-pixel defect detectors** with no temporal extension, and four of the five train prompts on an auxiliary labelled dataset. Excluded on granularity and domain, not just supervision |
 | "arXiv 2604.09327 (SEBB transplanted to VAD) — check its supervision" | **The ID does not match that description.** 2604.09327 is *From Frames to Events: Rethinking Evaluation in Human-Centric Video Anomaly Detection* (Rashvand, Yao, Danesh Pazho, Rahimi Ardabili, Tabkhi) — a **pose-based VAD evaluation-methodology paper** that ports Temporal Action Localization metrics to event-level VAD scoring. **No mention of SEBB anywhere.** It proposes no detector, so it is not a baseline candidate. It is however directly relevant to the degenerate-benchmark problem in `TEMPORAL_SPAN_LANDSCAPE_2026-08-18.md` — event-level rather than frame-level scoring is exactly the fix for "one long contiguous span makes frame-AUC meaningless". Flagging with the standing constraint in mind: this project does not write metric papers, so treat it as a tool, not a direction |
 | "Training-free temporal grounding counts as a near neighbour" | **Yes, and it is the more interesting half.** §1B has 5 fully-zero-label A-venue methods with code plus 2 boundary cases. It is a genuinely different mechanism from the VAD line and, per the landscape doc, query-conditioned grounding over hateful video is unoccupied |
 
@@ -327,8 +357,11 @@ curve is blind to the modality that Gate-C identified as the dominant evidence g
   Future Frame Prediction, MA-PDM, ADSM, LPGB), LAVIDA, T\*, and O-VAD.
 - **Unverified numbers, explicitly flagged:** AED-MAE, MA-PDM, ADSM, LPGB, O-VAD. Star counts and
   `pushed_at` dates are as of 2026-08-18 and will drift.
-- **Known gap in this document:** the zero-shot *image*-anomaly line (AnomalyCLIP, WinCLIP,
-  AnomalyGPT, AdaCLIP, InCTRL) was not resolved before this document was written. That line is
-  image/industrial-defect-domain with per-pixel rather than per-frame output, and most of its members
-  train prompt embeddings on an auxiliary labelled dataset before transferring — so it is expected to
-  land in §3 as boundary cases rather than §1, but that expectation is not verified here.
+- **Zero-shot image-anomaly line (§3.1):** venues verified from each paper's arXiv comment field;
+  supervision and output granularity read from abstracts. Their GitHub repos were **not** checked —
+  the API rate-limited — but the line is excluded on granularity and domain regardless.
+- **Sources used:** arXiv API (metadata + `comment` venue field), arXiv/CVF PDFs read locally with
+  `pdftotext` for all result tables, HuggingFace papers search API for discovery, GitHub REST API for
+  repo status, DBLP where reachable, OpenReview for the URF-HVAA citation. Semantic Scholar and
+  OpenAlex were avoided as rate-limit-prone. Web search quota was exhausted partway through, so the
+  second half of the sweep ran on arXiv + GitHub + direct page fetches only.
