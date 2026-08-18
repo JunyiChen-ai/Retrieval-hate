@@ -58,6 +58,52 @@ def load_gt(ds: str) -> dict:
     return out
 
 
+HCS_CLASSES = ["normal", "hateful", "insulting", "sexual", "violence", "harm"]
+
+
+def load_gt_hcs_class(cls: int) -> dict:
+    """HateClipSeg gold restricted to one released class (freeze §4 class order).
+
+    The frozen npz stores any-toxic and hateful-only; the other four classes are
+    rebuilt here from the same released segments file, on the same 4 fps grid, so
+    the six per-class query rows are scored against their own labels.
+    """
+    base = load_gt("HateClipSeg")
+    seg = json.loads((ROOT / "data/gt/HateClipSeg/gold_segments.json").read_text())
+    for vid, g in base.items():
+        s = seg.get(vid)
+        if s is None:
+            continue
+        T = len(g["y4"])
+        y = np.zeros(T, dtype=np.int8)
+        spans = []
+        for a, b, multi in s["segments"]:
+            if not multi[cls]:
+                continue
+            a = max(0.0, min(float(a), g["duration"]))
+            b = max(0.0, min(float(b), g["duration"]))
+            if b <= a:
+                continue
+            spans.append([a, b])
+            i0 = int(np.ceil(a * FPS - 1e-9))
+            i1 = int(np.ceil(b * FPS - 1e-9))
+            y[max(0, i0):max(0, min(T, i1))] = 1
+        # merge touching/overlapping spans so the interval metric sees one gold
+        # interval per contiguous stretch, as the released annotation intends
+        spans.sort()
+        merged = []
+        for a, b in spans:
+            if merged and a <= merged[-1][1] + 1e-9:
+                merged[-1][1] = max(merged[-1][1], b)
+            else:
+                merged.append([a, b])
+        g["y4"] = y
+        g["spans"] = np.asarray(merged, dtype=np.float64).reshape(-1, 2)
+        g["n_spans"] = len(merged)
+        g["y_video"] = int(len(merged) > 0)
+    return base
+
+
 def broadcast_to_4fps(curve: np.ndarray, native_rate: float, T: int) -> np.ndarray:
     """Piecewise-constant broadcast of a coarser native rate onto the 4 fps grid."""
     if native_rate == FPS:
@@ -243,14 +289,19 @@ def main() -> int:
                 f = ROOT / f"idea-stage/repro_qwen_ground/raw/qwen_{ds}_{qk}.jsonl"
                 if not f.exists():
                     continue
-                curves, intervals, missing, reasons = qwen_curves(ds, qk, gt)
-                r = evaluate(ds, gt, curves, FPS, intervals, args.split, missing)
+                # a per-class HateClipSeg query is scored against that class's own
+                # frame labels; the `main` query is scored against any-toxic (§4).
+                g_eval = gt
+                if ds == "HateClipSeg" and len(qk) > 1 and qk[0] == "c" and qk[1].isdigit():
+                    g_eval = load_gt_hcs_class(int(qk[1]))
+                curves, intervals, missing, reasons = qwen_curves(ds, qk, g_eval)
+                r = evaluate(ds, g_eval, curves, FPS, intervals, args.split, missing)
                 r.update(method="Qwen2.5-VL-7B grounding", variant=f"query={qk}",
                          supervision="label-free", wave=0)
                 from collections import Counter
                 r["missing_reasons"] = dict(Counter(
                     reasons[v] for v in missing
-                    if args.split in ("all", gt[v]["split"])))
+                    if args.split in ("all", g_eval[v]["split"])))
                 results.append(r)
         else:
             temb = np.load(args.text_emb)
