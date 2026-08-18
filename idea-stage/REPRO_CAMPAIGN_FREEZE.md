@@ -235,7 +235,27 @@ Phase A (assets) is done only when all of the following hold, and each is record
 
 ## 12. Deviations
 
-(append-only; none at freeze time)
+**D1 — 2026-08-19 — the broadcast oracle's positive video set is span-derived, not label-derived.**
+*What §4 said at freeze:* MHC video-level positive = `Majority_Voting != 'Normal'`, HateMM = `label == 1`.
+*What broke:* under that rule the §3 G1 gate failed on both MHC datasets — measured 1 fps broadcast
+AP 0.7150 (EN, target 0.786) and 0.7255 (ZH, target 0.853), while the positive base rate matched the
+published value to four decimals (EN 0.2463 vs 0.2466, ZH 0.2539 vs 0.2539). A matching base rate
+with a mismatched AP isolates the fault to the oracle's *denominator* — which videos get score 1 —
+and not to the frame labels, the durations or the grid.
+*Cause:* the MHC vote TSVs disagree with themselves. 25 EN and 35 ZH videos carry an annotated
+`Duration` span while their majority vote is `Normal`; 24 EN and 28 ZH carry a non-Normal majority
+vote with no span at all. The published landscape oracle is "score 1 for every second of every video
+the gold says is hateful/toxic", and the gold statement that produces frames is the **span
+annotation**, not the majority vote.
+*New rule, used from now on:* `y_video = 1` iff the annotation lists at least one span, evaluated
+**before** clipping to `[0, D)` (so a video whose only span lies past its own duration still counts
+as a positive-scoring video with zero positive frames, exactly as HateMM's one span-less `label == 1`
+video does). The dataset's own video-level class label is still stored, as `y_video_ann`, and is
+descriptive only — it is not used by any control or metric.
+*Effect:* all four G1 gates pass. 1 fps broadcast AP HateMM 0.6750 (target 0.675), MHC-EN 0.7835
+(0.786), MHC-ZH 0.8543 (0.853), HateClipSeg 0.5298 (0.530); max |diff| 0.0025, tolerance 0.005.
+*Scope:* affects the §3 control rows and the `y_video` array only. No method score, no split, no
+seed, no red line is touched. Recorded before any method was run.
 
 ## 13. Cache backfill conventions
 
