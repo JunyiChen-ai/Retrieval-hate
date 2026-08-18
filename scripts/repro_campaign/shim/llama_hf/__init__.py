@@ -50,15 +50,33 @@ _ALIASES = {
 }
 
 
+LLAMA2_CHAT_TEMPLATE = (
+    "{% if messages[0]['role'] == 'system' %}"
+    "{% set loop_messages = messages[1:] %}"
+    "{% set system_message = messages[0]['content'] %}"
+    "{% else %}{% set loop_messages = messages %}{% set system_message = false %}{% endif %}"
+    "{% for message in loop_messages %}"
+    "{% if loop.index0 == 0 and system_message != false %}"
+    "{% set content = '<<SYS>>\n' + system_message + '\n<</SYS>>\n\n' + message['content'] %}"
+    "{% else %}{% set content = message['content'] %}{% endif %}"
+    "{% if message['role'] == 'user' %}"
+    "{{ bos_token + '[INST] ' + content.strip() + ' [/INST]' }}"
+    "{% elif message['role'] == 'assistant' %}"
+    "{{ ' ' + content.strip() + ' ' + eos_token }}{% endif %}{% endfor %}"
+)
+
+
 def _resolve(ckpt_dir: str) -> str:
+    # An explicit override always wins -- it is how a smoke test substitutes a
+    # small stand-in model for the 13B.
+    override = os.environ.get("LLAMA_HF_MODEL")
+    if override:
+        return override
     if os.path.isdir(ckpt_dir) and os.path.exists(os.path.join(ckpt_dir, "config.json")):
         return ckpt_dir
     key = os.path.basename(os.path.normpath(ckpt_dir)).lower()
     if key in _ALIASES:
         return _ALIASES[key]
-    override = os.environ.get("LLAMA_HF_MODEL")
-    if override:
-        return override
     raise ValueError(
         f"llama_hf: cannot map ckpt_dir={ckpt_dir!r} to an HF model. "
         f"Known: {sorted(_ALIASES)}; or set LLAMA_HF_MODEL."
@@ -106,6 +124,11 @@ class Llama:
             )
 
         tok = AutoTokenizer.from_pretrained(model_id)
+        if tok.chat_template is None:
+            # The ungated Llama-2 mirrors ship no chat_template. Fall back to the
+            # canonical Llama-2-chat layout, which is byte-for-byte what Meta's
+            # own ChatFormat.encode_dialog_prompt emits for a [system, user] pair.
+            tok.chat_template = LLAMA2_CHAT_TEMPLATE
         if tok.pad_token_id is None:
             tok.pad_token = tok.eos_token
         tok.padding_side = "left"  # required for batched decoder-only generation

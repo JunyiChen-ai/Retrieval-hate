@@ -22,14 +22,16 @@ Smoke video for all methods: `~/data/HateClipSeg/videos/bit_0dcMcI6hYjhw.mp4`
 | 2 | **UniTime** (NeurIPS 2025) | `lzq5/UniTime` @ `a557bbd5` (2026-05-20) | shared `HateVideo` (transformers 4.49.0 matches its pin exactly) | LoRA `zeqianli/UniTime` (162 MB) on local `Qwen/Qwen2-VL-7B-Instruct` | 1 video: `pred_relevant_windows = [[0.5, 146.4]]`, `pred_relevant_windows_mr_seg = [[0.2, 32.1, 63.9, 95.8, 127.6]]`; 26.6 s/video | **READY** |
 | 3 | **LaGoVAD** (ICLR 2026) | `Kamino666/LaGoVAD-PreVAD` @ `e2b93f85` (2026-05-07) | shared `HateVideo` + `lightning==2.3.3`, `hydra-core`, `ftfy` (installed, no torch/transformers change) | `ckpts/best.ckpt` 218 MB from the repo's Google Drive link + `openai/clip-vit-base-patch16` (1.1 GB) | 1 video → 835 frames (every 8th): `mul_score` shape `(2, 835)`, range 0.0073–0.9897 with free-text hate queries; ~7 s/video | **READY** (see caveat §3.1) |
 | 4 | **MULDE** (CVPR 2024) | `jakubmicorek/MULDE-...` @ `f821b965` (2024-06-19) | shared `HateVideo`, nothing extra | none — trains on our own feature vectors | ran its bundled toy pipeline for 3 epochs, train + noise-free log-density passes complete | **READY** |
-| 5 | **LAVAD** (CVPR 2024) | `lucazanella/lavad` @ `1ad46c66` (2024-07-15) | shared `HateVideo` + `llama_hf` shim (§3.2) | BLIP-2 `Salesforce/blip2-opt-6.7b-coco` (**downloading**, 25/31 GB), ImageBind-Huge 4.5 GB (**queued**), Llama-2-13b-chat via `NousResearch/Llama-2-13b-chat-hf` (**queued**, 26 GB) | frame extraction verified: 6678 JPEGs / 283 MB from one video. Captioner + LLM + ImageBind stages not yet smoked (weights still downloading) | **PENDING-DOWNLOAD** |
-| 6 | **URF-HVAA** (NeurIPS 2025) | `Rathgrith/URF-HVAA` @ `ea993487` (2025-12-06) | shared `HateVideo` + `llama_hf` shim | `DAMO-NLP-SG/VideoLLaMA3-7B` 16 GB (**queued**), Llama-3.1-8B via `NousResearch/Meta-Llama-3.1-8B-Instruct` (**queued**) | not yet smoked (weights downloading) | **PENDING-DOWNLOAD** |
+| 5 | **LAVAD** (CVPR 2024) | `lucazanella/lavad` @ `1ad46c66` (2024-07-15) | shared `HateVideo` + `llama_hf` shim (§3.2) + `pytorchvideo` | BLIP-2 `Salesforce/blip2-opt-6.7b-coco` 31 GB, ImageBind-Huge 4.8 GB, Llama-2-13b-chat via `NousResearch/Llama-2-13b-chat-hf` 26 GB — **all local** | stage-by-stage: frame extraction 6678 JPEGs; BLIP-2 captioner produced 14 captions (e.g. `"a person is texting on a cell phone while driving"`) at 1.3 batch/s; ImageBind text/vision embeddings verified; Llama-2-13b-chat via the shim in NF4 scored 4 test captions `[0.2, 0.3, 0.3, 0.8]` — the gun caption highest — all parsed by LAVAD's own `_parse_score` regex. Weights 6.88 GiB, peak 7.66 GiB, 0.9 s for 4 dialogs | **READY** (full 7-stage chain not yet run end-to-end, §3.11) |
+| 6 | **URF-HVAA** (NeurIPS 2025) | `Rathgrith/URF-HVAA` @ `ea993487` (2025-12-06) | shared `HateVideo` + `llama_hf` shim + `ffmpeg-python` | `DAMO-NLP-SG/VideoLLaMA3-7B` (31 GB incl. revisions) + `VL3-SigLIP-NaViT` 1.6 GB + Llama-3.1-8B via `NousResearch/Meta-Llama-3.1-8B-Instruct` — **all local** | `video_pre_caption.py` produced **418 caption entries** (keyed by frame index, step 16) for the 222 s video; the captions transcribe on-screen text, which is exactly the modality gap the OCR ruling identified. Llama-3.1-8B via the shim scored `[0.1, 0.8, -1]`; bf16 weights 14.96 GiB, peak 15.08 GiB | **READY** |
 | 7 | **AV²A** (CVPR 2025) | `eitan159/AV2A` @ `b0d6db8b` (2025-10-21) | **own venv** `third_party/_venv/av2a` (§3.3) — its vendored LanguageBind needs `transformers==4.31.0`, incompatible with the shared 4.49.0 | LanguageBind Video_FT / Audio_FT / Image + `lb203/LanguageBind_Image` (6.8 GB, **done**); laion-CLAP default ckpt auto-fetched at first use | both backbones import cleanly in the venv (`LanguageBind` + `laion_clap`) | **READY-TO-ADAPT** (§3.4) |
-| 8 | **SeViLA** | `Yui010206/SeViLA` @ `419e7281` (2024-01-14) | not yet attempted | `sevila_pretrained.pth` 814 MB (**downloading**) | — | **PENDING** |
-| 9 | **CLAP** (CVPR 2024) | `AnasEmad11/CLAP` @ `3dcaadc1` (2024-09-30) | shared env; `pynvml` installed, **`visdom` fails to build** (only used for plots) | none — trains on our features | import probe only | **NEEDS-ADAPTATION** (§3.5) |
-| 10 | **T3AL** | `benedettaliberatori/T3AL` @ `dfbbbc1c` (2024-09-11) | needs `open_clip` (CoCa); not yet installed | pre-extracted CoCa features via Google Drive (THUMOS/ANet only — we'd extract our own) | — | **PENDING** |
-| 11 | **VADTree** | `wenlongli10/VADTree` @ `04dc1df3` (2026-06-09) | not yet attempted | needs **three** extra models: EfficientGEBD weights, `lmms-lab/LLaVA-Video-7B-Qwen2`, `deepseek-ai/DeepSeek-R1-Distill-Qwen-14B` (~45 GB more) | — | **DEFERRED** (heaviest of the set) |
-| 12 | **EventVAD** | `YihuaJerry/EventVAD` @ `25cacd88` (2025-07-09) | not yet attempted | needs RAFT weights | — | **PENDING** |
+| 8 | **ZS-ImageBind** (LAVAD's baseline) | ImageBind ships inside `lavad/libs/ImageBind` | shared `HateVideo` + `pytorchvideo` (installed `--no-deps`; needed a `functional_tensor` re-export shim, §3.9) | `imagebind_huge.pth` 4.8 GB from `dl.fbaipublicfiles.com` (**done**, ~100 MB/s) | 8 frames + 2 prompts: text `(2, 1024)`, vision `(8, 1024)`, softmax similarity spans 0.0–1.0; peak 4.67 GiB | **READY** |
+| 9 | **SeViLA** | `Yui010206/SeViLA` @ `419e7281` (2024-01-14) | **own venv required** — pins `timm==0.4.12` (shared env is on 1.0.15, which ImageBind and others depend on) + `fairscale`, LAVIS-based | `sevila_pretrained.pth` 814 MB (**done**) | — | **NEEDS-OWN-VENV** |
+| 10 | **CLAP** (CVPR 2024) | `AnasEmad11/CLAP` @ `3dcaadc1` (2024-09-30) | shared env; `pynvml` installed, **`visdom` fails to build** (only used for plots) | none — trains on our features | import probe only | **NEEDS-ADAPTATION** (§3.5) |
+| 11 | **T3AL** | `benedettaliberatori/T3AL` @ `dfbbbc1c` (2024-09-11) | needs `open_clip` (CoCa); not yet installed | pre-extracted CoCa features via Google Drive (THUMOS/ANet only — we'd extract our own) | — | **PENDING** |
+| 12 | **VADTree** | `wenlongli10/VADTree` @ `04dc1df3` (2026-06-09) | not yet attempted | needs **three** extra models: EfficientGEBD weights, `lmms-lab/LLaVA-Video-7B-Qwen2`, `deepseek-ai/DeepSeek-R1-Distill-Qwen-14B` (~45 GB more) | — | **DEFERRED** (heaviest of the set) |
+| 13 | **EventVAD** | `YihuaJerry/EventVAD` @ `25cacd88` (2025-07-09) | **two separate envs by design**, both incompatible with sm_120 as pinned (§3.10) | needs `raft-things.pth` **and** the RAFT package itself, which is *not* vendored | — | **NEEDS-OWN-VENV**, high risk |
+| 14 | **ZS-CLIP** (LAVAD's baseline) | **no code in the lavad repo** — the paper reports the number but ships only the LAVAD pipeline | our own harness (cosine similarity of frame CLIP features vs. prompts) | `openai/clip-vit-large-patch14-336` already local | — | **TO WRITE** (trivial; Phase B, reuses the existing CLIP cache) |
 
 ### Try-install group (30-min budget each, triaged read-only)
 
@@ -48,25 +50,32 @@ Smoke video for all methods: `~/data/HateClipSeg/videos/bit_0dcMcI6hYjhw.mp4`
 
 ## 2. Disk and download accounting
 
-Downloaded so far (2026-08-19 01:45):
+All downloads complete (2026-08-19 02:13). **HF cache went 60 GB → 161 GB, i.e.
+101 GB downloaded**, plus 5.8 GB of direct-URL checkpoints in `third_party/_ckpt`
+and 11 GB of repos + venv. Disk: 401 GB → ~500 GB used of 1.8 T; **1.3 T free.**
 
 | Asset | Size | Location |
 |---|---|---|
-| BLIP-2 opt-6.7b-coco (safetensors only) | 25 GB of ~31 GB, in flight | `~/.cache/huggingface/hub` |
+| BLIP-2 opt-6.7b-coco (safetensors only) | 31 GB | `~/.cache/huggingface/hub` |
+| `NousResearch/Llama-2-13b-chat-hf` (safetensors) | 26 GB | `~/.cache/huggingface/hub` |
+| `DAMO-NLP-SG/VideoLLaMA3-7B` + `VL3-SigLIP-NaViT` | 32 GB | `~/.cache/huggingface/hub` |
+| `NousResearch/Meta-Llama-3.1-8B-Instruct` | 16 GB | `~/.cache/huggingface/hub` |
+| ImageBind-Huge | 4.8 GB | `third_party/_ckpt/imagebind_huge.pth` |
+| `Qwen/Qwen2.5-0.5B-Instruct` (shim smoke stand-in) | 1.9 GB | `~/.cache/huggingface/hub` |
 | LanguageBind Video_FT / Audio_FT / Image | 5.2 GB | `~/.cache/huggingface/hub` |
 | `lb203/LanguageBind_Image` (AV²A tokenizer) | 1.6 GB | `~/.cache/huggingface/hub` |
 | `openai/clip-vit-base-patch16` (LaGoVAD) | 1.1 GB | `~/.cache/huggingface/hub` |
 | LaGoVAD `best.ckpt` + config | 218 MB (+210 MB zip) | `third_party/_ckpt/lagovad` |
 | UniTime LoRA | 162 MB | `third_party/_ckpt/unitime` |
-| SeViLA `sevila_pretrained.pth` | 814 MB, in flight | `third_party/_ckpt/sevila` |
+| SeViLA `sevila_pretrained.pth` | 814 MB | `third_party/_ckpt/sevila` |
 | 19 method repos (git) | 11 GB incl. venv | `third_party/` |
 | AV²A venv (own torch copy) | 7.5 GB | `third_party/_venv/av2a` |
 | LAVAD smoke frames (1 video) | 288 MB | `idea-stage/repro_campaign/smoke/lavad_ds` |
 
-Still queued: VideoLLaMA3-7B 16 GB, VL3-SigLIP-NaViT ~1.5 GB, Llama-3.1-8B-Instruct
-HF-format 16 GB, Llama-2-13b-chat-hf 26 GB, ImageBind-Huge 4.5 GB. **Projected
-campaign total ≈ 115 GB of weights + 11 GB repos/venv.** Disk went 401 G → 440 G
-used of 1.8 T; 1.3 T free. No disk risk.
+Not downloaded (deliberate, decision pending): the four other BLIP-2 variants
+LAVAD's ensemble script lists (~120 GB, §3.11b); VADTree's LLaVA-Video-7B-Qwen2 +
+DeepSeek-R1-Distill-Qwen-14B + EfficientGEBD (~45 GB); T3AL's CoCa features;
+EventVAD's RAFT weights. No disk risk either way.
 
 **Storage warning for Phase C:** LAVAD works on pre-extracted JPEG frames. One
 222 s video at native fps gives 6678 frames / 283 MB. At that rate the 2689
@@ -159,6 +168,56 @@ Greedy, `max_new_tokens=50`, 32 frames — all lmms-eval defaults.
 because the ViT sees 32 frames × 771 patches under sdpa. For a shared GPU, lower
 `--max-pixels` (default 151200 ≈ 192 merged tokens/frame). In bf16 the same run
 would be ~26 GiB — it fits a free 32 GB card but not a shared one.
+
+### 3.9 `pytorchvideo` needs a torchvision shim in the shared env too
+ImageBind's `data.py` imports `pytorchvideo.transforms`, which imports
+`torchvision.transforms.functional_tensor` — deleted in torchvision ≥0.17. The
+same re-export shim used for the AV²A venv (§3.3) was written into the shared
+env's torchvision. `pytorchvideo` itself was installed `--no-deps` so it could
+not drag old pins into the shared env. ImageBind also needs
+`PYTHONPATH=lavad/libs/ImageBind` because its `__init__.py` does an absolute
+`from imagebind import data`.
+
+### 3.10 EventVAD is split across two mutually incompatible envs
+Its own README asks for `conda create -n event_seg` (torch 2.1.0+cu121,
+transformers 4.33.2, `salesforce-lavis`) and a separate `conda create -n score`
+(torch **2.2.0+cu118**, `flash-attn==2.5.8`, VideoLLaMA2 from git). Neither
+pinned torch supports sm_120 — cu118 will not run on Blackwell at all — and
+flash-attn 2.5.8 has no sm_120 wheel. Additionally `feature_extractor.py` does
+`from RAFT.core.raft import RAFT` and hardcodes `model='/path/raft-things.pth'`,
+but no `RAFT/` directory exists in the repo, so `princeton-vl/RAFT` must be
+cloned separately. Runnable only by rebuilding both envs on torch 2.7.1+cu128
+with flash-attn dropped.
+
+### 3.11 The two things Phase C must decide before running LAVAD at scale
+
+**(a) Llama-3.1-8B-Instruct refuses on violent/hateful captions.** In the shim
+smoke, the caption *"a man points a gun at a cashier"* returned `"I can't
+assist…"` instead of a score — LAVAD's `_parse_score` turns that into `-1`, which
+`_interpolate_unmatched_scores` then linearly interpolates away. On surveillance
+video this is rare; **on a hate-video corpus the refusal rate will be
+systematically higher on exactly the frames that matter**, so a large fraction of
+the anomalous-frame scores would be interpolation rather than model output.
+Llama-2-13b-chat did not refuse on the same four captions. Phase C must (i) log
+the `-1` rate per video and report it beside the AUCs, and (ii) treat a high
+refusal rate as a confound, not noise. This is a genuine threat to the
+LELA-alignment check (±0.03) and should be measured before, not after.
+
+**(b) The LAVAD chain has seven stages, and the shipped `04_query_llm.sh`
+depends on stages 02–03.** The `--score_summary` pass reads *cleaned, nested*
+captions produced by `02_create_index.sh` (ImageBind index over **five** BLIP-2
+variants) and `03_clean_captions.sh`; feeding it the raw flat captions from stage
+01 fails with a missing-summary error. Only `blip2-opt-6.7b-coco` was downloaded
+(31 GB); the other four variants are another ~120 GB and several hours. Decide
+explicitly whether to reproduce the full 5-model caption ensemble or to run a
+single-captioner variant and label it as our adaptation — the LELA alignment
+target was presumably computed with the full ensemble.
+
+### 3.12 Llama-2 mirrors ship no chat template
+`NousResearch/Llama-2-13b-chat-hf` has no `tokenizer.chat_template`, so
+`apply_chat_template` raises. The shim now falls back to the canonical Llama-2
+`[INST] <<SYS>>…` layout, which is what Meta's own `ChatFormat` emits for a
+`[system, user]` pair — so prompt formatting stays faithful to LAVAD's original.
 
 ### 3.8 Gated-model substitutions
 No HF token is configured on this machine, and every `meta-llama/*` repo is
