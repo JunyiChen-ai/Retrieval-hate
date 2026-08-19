@@ -183,6 +183,14 @@ def pooled_metrics(gt: dict, curves: dict, native_rate: float, split: str,
         frame_PR_AUC_trapz=round(pr_trapz, 4),
         AP_broadcast_pool=round(ap_bc, 4), AP_random_pool=round(base, 4),
         AP_norm=round((ap - base) / denom, 4) if denom > 1e-9 else None,
+        # AP_norm rescales by (broadcast - base).  When that gap is small the
+        # rescaling amplifies noise instead of removing a nuisance: on
+        # HateClipSeg the gap is ~0.07, so a 0.01 wobble in AP moves AP_norm by
+        # 0.14, against 0.015 on MHC-ZH.  Carry the denominator and a usability
+        # flag with every row so the column is never read as if all four
+        # datasets were on the same footing.
+        AP_norm_denom=round(denom, 4) if denom == denom else None,
+        AP_norm_reliable=bool(denom > 0.15),
         n_offgrid_gt8=int(sum(1 for a, b in tpairs if abs(a - b) > 8)),
     )
 

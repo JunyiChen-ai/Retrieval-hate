@@ -4,6 +4,20 @@ Protocol: `idea-stage/REPRO_CAMPAIGN_FREEZE.md` (frozen 74b9d87, deviations D1�
 Assets: `idea-stage/repro_campaign/PHASE_A_STATUS.md`. Table schema is freeze §14.
 Machine: single RTX 5090, conda `HateVideo`, torch 2.7.1+cu128. Zero paid API spend.
 
+> **Global caveat — `AP_norm` is not comparable across datasets, and on HateClipSeg it is not
+> interpretable at all.** `AP_norm = (AP − base) / (AP_broadcast − base)` rescales by the gap between
+> the random floor and the gold-broadcast ceiling. That gap is 0.34 (HateMM), 0.49 (MHC-EN) and 0.65
+> (MHC-ZH) on the test split — but only **0.0736 on HateClipSeg**, because a 47% positive base rate
+> leaves the video-level oracle almost no room above chance. Dividing by 0.07 does not remove a
+> nuisance, it **amplifies noise ~14×**: a 0.01 wobble in AP moves HateClipSeg's `AP_norm` by 0.136,
+> against 0.015 on MHC-ZH. Concretely, the LaGoVAD HateClipSeg rows span `AP_norm` −0.22 to +1.04
+> while their raw AP spans only 0.4575 to 0.5499. **Read raw `frame_PR_AUC` against `base_rate` for
+> HateClipSeg; treat its `AP_norm` as unusable**, including any value near or above 1 (which merely
+> means AP touched a ceiling sitting 0.07 above chance). The evaluator now emits `AP_norm_denom` and
+> `AP_norm_reliable` (`False` when the gap is under 0.15) with every row so this cannot be misread
+> again. Raised by the LAVAD worker after a 0.998 reading; applies to **every method's HateClipSeg
+> rows in this file**, §M included.
+
 **This is a baseline table, not a candidate trial** (freeze §0). No row here receives a GO/KILL
 verdict and no decision rule in this file selects a winner.
 
@@ -1052,15 +1066,20 @@ then `scripts/repro_campaign/eval_frame.py --method curves --curve-dir idea-stag
    definition on the test split, frame ROC-AUC is 0.5579 (HateMM), 0.5239 (MHC-EN), 0.5965 (MHC-ZH),
    0.5000 (HateClipSeg), against a random floor of 0.500 and a gold-broadcast ceiling of 0.8857 /
    0.9427 / 0.9842 / 0.6260. Oracle-normalised AP for the same rows is 0.184 / −0.024 / 0.072 /
-   −0.092: the method recovers under a fifth of the chance-to-video-oracle gap on its best dataset
-   and none of it on two others. On HateClipSeg the main definition is exactly at chance to four
-   decimal places.
+   (n/a): the method recovers under a fifth of the chance-to-video-oracle gap on its best dataset
+   and none of it on MHC-EN. On HateClipSeg the main definition is exactly at chance to four
+   decimal places, and its `AP_norm` is **withheld** rather than quoted — see the global caveat at
+   the head of this file: HateClipSeg's normalising gap is 0.0736, so that column amplifies noise
+   ~14× there and carries no interpretable signal. Read its raw AP (0.4666) against its base rate
+   (0.4733) instead, which says the same thing more honestly: below chance.
 
 2. **The free-text definition is not what carries the signal, and on two datasets it is not even the
    best row.** LaGoVAD's premise is that a written definition selects the anomaly at inference. On
    MHC-EN the strongest test row is `bin` — the *binary* anomaly head, which takes no text at all —
    at ROC 0.6058 / AP 0.3490 / AP_norm 0.1534, ahead of every one of the ten text rows. On
-   HateClipSeg `bin` is again the top row (ROC 0.5431, AP_norm 1.0402). A text-free head beating
+   HateClipSeg `bin` is again the top row (ROC 0.5431; its raw AP 0.5499 against a 0.4733 base rate
+   — the `AP_norm` of 1.0402 that this sentence originally quoted is an artefact of HateClipSeg's
+   0.0736 normalising gap and has been withdrawn, per the global caveat). A text-free head beating
    every textual query is evidence that what transfers here is the checkpoint's generic
    surveillance-anomaly prior, not the hate definition we wrote.
 
