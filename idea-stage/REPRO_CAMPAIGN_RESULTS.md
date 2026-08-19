@@ -700,3 +700,400 @@ rate is the complement of any-toxic).
    one for which `F1@tIoU` is even defined — cannot localise hate spans in these corpora at all. Any
    future localisation claim of ours therefore has no meaningful interval-level zero-shot baseline to
    clear on these benchmarks; the honest comparison remains the gold-broadcast ceiling of §3.
+
+---
+
+## M. Method as run — LaGoVAD (ICLR 2026)
+
+LaGoVAD's premise is that the anomaly is **defined at inference time by free text**, so the
+campaign runs it the way the paper intends: a written definition of hateful content is the query,
+and the model's per-frame similarity to that definition is the score.
+
+**Code path.** `third_party/LaGoVAD-PreVAD` @ `e2b93f85`. The repo ships one entry point,
+`src/end2end_inference.py`, a single-video demo whose query list is hard-coded to the six
+XD-Violence class names and whose only output is a PNG. The campaign patch
+(`scripts/repro_campaign/patches/LaGoVAD-PreVAD.patch`) adds `--queries`, which routes the forward
+through the `cap_*` head — the free-text head — instead of the `cls_*` (soft-prompted class-name)
+head, and dumps the raw curves. `scripts/repro_campaign/run_lagovad.py` is the corpus loop around
+exactly that code path; the model class, the released `best.ckpt`, the CLIP ViT-B/16 visual tower,
+the every-8th-frame sampling and the 224×224 square resize are the demo's.
+
+**Frame sampling and native rate.** Upstream extracts every 8th decoded frame
+(`FRAME_INTERVAL = 8`) as a JPEG and lets `CLIPProcessor(size=(224,224), do_center_crop=True)`
+resize it, which for a 224 crop box is a plain square resize. We stream the same selection out of
+ffmpeg (`select=not(mod(n,8)),scale=224:224`) instead of writing ~1.1 M JPEGs to disk. Checked
+against the upstream JPEG path on `bit_0EHvMSiEHVoc`: same frame count (680) and **mean cosine
+1.000000** between the two feature sets. The native rate is therefore `fps/8`, which varies per
+video (2.9–7.5 samples/s across the corpora); each video's own rate is recorded and its curve is
+broadcast piecewise-constant onto the 4 fps grid by the shared evaluator's own broadcast function
+(freeze §1).
+
+**Long videos.** `max_position_embeddings` is 1536. 49 HateMM videos exceed that at `fps/8`
+(the longest is 5,808 s). Those are processed in consecutive non-overlapping chunks of 1,500
+samples and the per-frame outputs concatenated; the temporal encoder is a 2-layer transformer, so
+this removes attention across chunk boundaries and nothing else. Recorded as our adaptation.
+
+**Score = raw logit, not the demo's sigmoid.** `SimScoreHead` divides the cosine similarity by a
+learned temperature before returning it, and the demo then applies `sigmoid`. The resulting logits
+are wide enough that the sigmoid saturates to 0/1 in float32 and destroys the within-video ranking.
+ROC-AUC and AP are rank metrics and the sigmoid is strictly increasing, so the raw logit is the
+same measurement without the saturation; we store the raw logit.
+
+**Query grouping is part of the design, not an accident of batching.** LaGoVAD fuses text and
+vision with co-attention in which the *visual* stream attends over the whole text set
+(`vis_attn(v_feat, t_feat, t_feat)`), so a query's score depends on which other queries share the
+forward pass. The groups are therefore fixed in advance:
+
+- each definition **alone**, giving the `main`, `sens_short`, `sens_vad` and `normal` rows;
+- each hate definition **paired with the `normal` definition** — the two-class set-up upstream's own
+  `Normal + anomaly` class list uses — giving the `<def>_pair` row (the hate similarity from that
+  paired forward) and the `<def>_vsnormal` row (hate minus normal from the same forward);
+- HateClipSeg's **six released classes in one forward**, the multi-class set-up the model was built
+  for, giving the `c0…c5` rows.
+
+**Definition texts, frozen in `scripts/repro_campaign/run_lagovad.py` and committed before the
+first run** (commit `aea5e5f`), so no wording could be chosen after seeing a number. All are
+reported; none is selected.
+
+| key | text |
+|---|---|
+| `main` | Hateful content: speech, imagery or on-screen text that attacks, dehumanizes, demeans or incites hatred or violence against a person or a group because of a protected attribute such as race, ethnicity, national origin, religion, gender, sexual orientation or disability. |
+| `sens_short` | A person or a group is being attacked, insulted or dehumanized because of their race, religion, gender, sexuality or nationality. |
+| `sens_vad` | Abnormal event: hateful or abusive behaviour directed at a person or a group, including slurs, harassment, threats and violence. |
+| `normal` | Normal behavior, views or content that does not involve any hateful, abusive, offensive or otherwise unexpected event. |
+| `c0_normal` | Normal, non-toxic content that does not attack, insult, sexualise or harm anyone. |
+| `c1_hateful` | Hateful content that attacks or dehumanizes a person or a group because of race, ethnicity, religion, gender, sexual orientation, nationality or disability. |
+| `c2_insulting` | Insulting content: mocking, humiliating, name-calling or otherwise demeaning a person or a group. |
+| `c3_sexual` | Sexual content: nudity, sexual acts, or sexually explicit language and imagery. |
+| `c4_violence` | Violent content: physical fighting, assault, weapons, blood, injury or killing. |
+| `c5_harm` | Harmful content: self-harm, suicide, dangerous acts, or content that encourages people to harm themselves or others. |
+
+**Correction to a Phase A observation.** `MODEL_ASSETS_STATUS §3.1` recorded that LaGoVAD's binary
+head is constant across frames and that the per-frame signal lives only in the similarity matrix.
+Both halves of that were an artefact of a **corrupted `openai/clip-vit-base-patch16` checkpoint**:
+the cached `pytorch_model.bin` had the right byte count and wrong content (max |w| = 3.7 × 10¹⁹), so
+CLIP returned one identical image embedding for every frame of every video, and therefore every
+downstream curve — binary head and similarity matrix alike — was flat. With the verified
+checkpoint, both vary. The cache was audited by re-hashing every blob against its own filename (an
+HF cache blob is stored under its sha256): 7 of 55 weight files were corrupt, all repaired and
+re-verified. See `idea-stage/repro_campaign/hf_cache_audit.txt` and
+`scripts/repro_campaign/{audit_hf_cache.sh,hf_refetch.py}`.
+
+`F1@tIoU` is `n/a` for every LaGoVAD row: it emits a score curve, not intervals, and freeze §2
+forbids inventing a threshold for it.
+
+Reproduce: `python scripts/repro_campaign/run_lagovad.py --stage extract` then `--stage infer`,
+then `scripts/repro_campaign/eval_frame.py --method curves --curve-dir idea-stage/repro_lagovad/curves`
+(driver `scripts/repro_campaign/run_lagovad_chain.sh`, logs in `logging/runs/repro_lagovad_*`).
+
+### M.1 Headline rows — test split
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| GOLD_BROADCAST | — | HateMM | test | control | control | n/a | video | 0.8857 | 0.5829 | n/a | n/a | n/a | 1.0000 | 116975 | 0.2421 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateMM | test | control | control | n/a | 4 fps | 0.5003 ± 0.0019 | 0.2423 ± 0.0013 | n/a | n/a | n/a | 0.0000 | 116975 | 0.2421 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | MHC-EN | test | control | control | n/a | video | 0.9427 | 0.7664 | n/a | n/a | n/a | 1.0000 | 22337 | 0.2734 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-EN | test | control | control | n/a | 4 fps | 0.5004 ± 0.0034 | 0.2737 ± 0.0026 | n/a | n/a | n/a | 0.0000 | 22337 | 0.2734 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | MHC-ZH | test | control | control | n/a | video | 0.9842 | 0.9191 | n/a | n/a | n/a | 1.0000 | 18199 | 0.2648 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-ZH | test | control | control | n/a | 4 fps | 0.4985 ± 0.0052 | 0.2646 ± 0.0038 | n/a | n/a | n/a | 0.0000 | 18199 | 0.2648 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | HateClipSeg | test | control | control | n/a | video | 0.6260 | 0.5437 | n/a | n/a | n/a | 1.0000 | 114097 | 0.4712 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateClipSeg | test | control | control | n/a | 4 fps | 0.5009 ± 0.0021 | 0.4721 ± 0.0016 | n/a | n/a | n/a | 0.0000 | 114097 | 0.4712 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main | 4 fps | 0.5579 | 0.3047 | n/a | n/a | n/a | 0.1836 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.5229 | 0.2661 | n/a | n/a | n/a | 0.0703 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.5507 | 0.2651 | n/a | n/a | n/a | 0.0674 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | normal | 4 fps | 0.4879 | 0.2372 | n/a | n/a | n/a | -0.0143 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5458 | 0.2913 | n/a | n/a | n/a | 0.1445 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5336 | 0.2849 | n/a | n/a | n/a | 0.1256 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5193 | 0.2773 | n/a | n/a | n/a | 0.1032 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5176 | 0.2680 | n/a | n/a | n/a | 0.0762 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.5399 | 0.2689 | n/a | n/a | n/a | 0.0787 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.5485 | 0.2811 | n/a | n/a | n/a | 0.1143 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | bin | 4 fps | 0.4989 | 0.2317 | n/a | n/a | n/a | -0.0306 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main | 4 fps | 0.5239 | 0.2617 | n/a | n/a | n/a | -0.0238 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.5149 | 0.2644 | n/a | n/a | n/a | -0.0182 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4236 | 0.2256 | n/a | n/a | n/a | -0.0969 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | normal | 4 fps | 0.3844 | 0.2175 | n/a | n/a | n/a | -0.1133 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.4893 | 0.2480 | n/a | n/a | n/a | -0.0515 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5885 | 0.3033 | n/a | n/a | n/a | 0.0607 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5050 | 0.2552 | n/a | n/a | n/a | -0.0370 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5862 | 0.3015 | n/a | n/a | n/a | 0.0569 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4123 | 0.2229 | n/a | n/a | n/a | -0.1024 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.5796 | 0.3166 | n/a | n/a | n/a | 0.0875 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | bin | 4 fps | 0.6058 | 0.3490 | n/a | n/a | n/a | 0.1534 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main | 4 fps | 0.5965 | 0.3118 | n/a | n/a | n/a | 0.0717 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.6432 | 0.3698 | n/a | n/a | n/a | 0.1605 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4593 | 0.2303 | n/a | n/a | n/a | -0.0528 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | normal | 4 fps | 0.4303 | 0.2208 | n/a | n/a | n/a | -0.0673 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5911 | 0.3128 | n/a | n/a | n/a | 0.0733 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5786 | 0.2981 | n/a | n/a | n/a | 0.0508 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.6479 | 0.3523 | n/a | n/a | n/a | 0.1337 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.6117 | 0.3349 | n/a | n/a | n/a | 0.1070 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4717 | 0.2362 | n/a | n/a | n/a | -0.0438 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.6480 | 0.3744 | n/a | n/a | n/a | 0.1674 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | bin | 4 fps | 0.5673 | 0.2895 | n/a | n/a | n/a | 0.0377 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | main | 4 fps | 0.5000 | 0.4666 | n/a | n/a | n/a | -0.0918 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.5428 | 0.5280 | n/a | n/a | n/a | 0.7435 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4973 | 0.4693 | n/a | n/a | n/a | -0.0553 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | normal | 4 fps | 0.4680 | 0.4634 | n/a | n/a | n/a | -0.1353 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.4937 | 0.4575 | n/a | n/a | n/a | -0.2153 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5261 | 0.4969 | n/a | n/a | n/a | 0.3209 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5417 | 0.5152 | n/a | n/a | n/a | 0.5685 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5460 | 0.5367 | n/a | n/a | n/a | 0.8617 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.5094 | 0.4758 | n/a | n/a | n/a | 0.0334 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.5508 | 0.5416 | n/a | n/a | n/a | 0.9285 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | bin | 4 fps | 0.5431 | 0.5499 | n/a | n/a | n/a | 1.0402 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+
+### M.2 Full corpus
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main | 4 fps | 0.5225 | 0.3099 | n/a | n/a | n/a | 0.0624 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.4938 | 0.2836 | n/a | n/a | n/a | -0.0052 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.5105 | 0.2946 | n/a | n/a | n/a | 0.0232 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | normal | 4 fps | 0.4947 | 0.3039 | n/a | n/a | n/a | 0.0472 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5178 | 0.3116 | n/a | n/a | n/a | 0.0670 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5106 | 0.3050 | n/a | n/a | n/a | 0.0499 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.4875 | 0.2908 | n/a | n/a | n/a | 0.0134 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.4910 | 0.3007 | n/a | n/a | n/a | 0.0389 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.5040 | 0.2945 | n/a | n/a | n/a | 0.0229 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.4880 | 0.2789 | n/a | n/a | n/a | -0.0174 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | bin | 4 fps | 0.4921 | 0.2753 | n/a | n/a | n/a | -0.0267 | 624110 | 0.2856 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main | 4 fps | 0.5605 | 0.2780 | n/a | n/a | n/a | 0.0637 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.5793 | 0.2979 | n/a | n/a | n/a | 0.1010 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4721 | 0.2192 | n/a | n/a | n/a | -0.0468 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | normal | 4 fps | 0.4354 | 0.2064 | n/a | n/a | n/a | -0.0708 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5233 | 0.2518 | n/a | n/a | n/a | 0.0145 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5798 | 0.2870 | n/a | n/a | n/a | 0.0806 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5667 | 0.2797 | n/a | n/a | n/a | 0.0668 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5974 | 0.3192 | n/a | n/a | n/a | 0.1411 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4710 | 0.2146 | n/a | n/a | n/a | -0.0554 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.5885 | 0.3107 | n/a | n/a | n/a | 0.1250 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | bin | 4 fps | 0.5822 | 0.3062 | n/a | n/a | n/a | 0.1166 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main | 4 fps | 0.5694 | 0.3006 | n/a | n/a | n/a | 0.0780 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.6002 | 0.3367 | n/a | n/a | n/a | 0.1382 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4619 | 0.2252 | n/a | n/a | n/a | -0.0476 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | normal | 4 fps | 0.4421 | 0.2223 | n/a | n/a | n/a | -0.0525 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5602 | 0.2816 | n/a | n/a | n/a | 0.0464 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5742 | 0.3175 | n/a | n/a | n/a | 0.1062 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5980 | 0.3156 | n/a | n/a | n/a | 0.1030 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5922 | 0.3383 | n/a | n/a | n/a | 0.1409 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4665 | 0.2267 | n/a | n/a | n/a | -0.0452 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.6102 | 0.3192 | n/a | n/a | n/a | 0.1090 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | bin | 4 fps | 0.5724 | 0.3135 | n/a | n/a | n/a | 0.0996 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ |  |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | main | 4 fps | 0.5433 | 0.4854 | n/a | n/a | n/a | 0.3194 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.5497 | 0.5150 | n/a | n/a | n/a | 0.7645 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4408 | 0.4255 | n/a | n/a | n/a | -0.5817 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | normal | 4 fps | 0.4285 | 0.4140 | n/a | n/a | n/a | -0.7557 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5290 | 0.4759 | n/a | n/a | n/a | 0.1765 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5657 | 0.5108 | n/a | n/a | n/a | 0.7017 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5476 | 0.5011 | n/a | n/a | n/a | 0.5554 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5700 | 0.5413 | n/a | n/a | n/a | 1.1596 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4456 | 0.4263 | n/a | n/a | n/a | -0.5702 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.5647 | 0.5381 | n/a | n/a | n/a | 1.1118 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | bin | 4 fps | 0.5785 | 0.5523 | n/a | n/a | n/a | 1.3251 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+
+### M.3 HateClipSeg 6-class appendix (one forward over the six released classes, each scored against its own frame labels)
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | c0_normal | 4 fps | 0.5373 | 0.5500 | n/a | n/a | n/a | 1.5663 | 113002 | 0.5267 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | c1_hateful | 4 fps | 0.6137 | 0.2462 | n/a | n/a | n/a | 0.1766 | 113002 | 0.2002 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | c2_insulting | 4 fps | 0.5480 | 0.2755 | n/a | n/a | n/a | 0.1301 | 113002 | 0.2572 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | c3_sexual | 4 fps | 0.5619 | 0.0831 | n/a | n/a | n/a | 0.1132 | 113002 | 0.0572 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | c4_violence | 4 fps | 0.3970 | 0.1163 | n/a | n/a | n/a | -0.1112 | 113002 | 0.1367 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | test | aux-temporal-pretrain | base | c5_harm | 4 fps | 0.1843 | 0.0067 | n/a | n/a | n/a | -0.0261 | 113002 | 0.0117 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/119 (0.8%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | c0_normal | 4 fps | 0.5688 | 0.5859 | n/a | n/a | n/a | 2.4745 | 374235 | 0.5358 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | c1_hateful | 4 fps | 0.6357 | 0.2817 | n/a | n/a | n/a | 0.2820 | 374235 | 0.2095 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | c2_insulting | 4 fps | 0.5301 | 0.2657 | n/a | n/a | n/a | 0.0626 | 374235 | 0.2566 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | c3_sexual | 4 fps | 0.5824 | 0.0740 | n/a | n/a | n/a | 0.1878 | 374235 | 0.0365 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | c4_violence | 4 fps | 0.4262 | 0.1118 | n/a | n/a | n/a | -0.0562 | 374235 | 0.1207 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+| LaGoVAD | 1 | HateClipSeg | all | aux-temporal-pretrain | base | c5_harm | 4 fps | 0.3791 | 0.0040 | n/a | n/a | n/a | -0.0060 | 374235 | 0.0050 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 1/395 (0.2%) dropped, not interpolated |
+
+### M.4 Stratified — single-span vs multi-span (HateMM / MHC only)
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main | 4 fps | 0.6120 | 0.2968 | n/a | n/a | n/a | 0.1746 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main | 4 fps | 0.4689 | 0.1044 | n/a | n/a | n/a | 0.0007 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.5759 | 0.2585 | n/a | n/a | n/a | 0.1050 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.4202 | 0.0842 | n/a | n/a | n/a | -0.0665 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.5368 | 0.2217 | n/a | n/a | n/a | 0.0382 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.5765 | 0.1177 | n/a | n/a | n/a | 0.0449 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | normal | 4 fps | 0.4518 | 0.1869 | n/a | n/a | n/a | -0.0251 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | normal | 4 fps | 0.5393 | 0.1152 | n/a | n/a | n/a | 0.0366 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.6021 | 0.2929 | n/a | n/a | n/a | 0.1675 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.4360 | 0.0851 | n/a | n/a | n/a | -0.0635 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.6027 | 0.3121 | n/a | n/a | n/a | 0.2024 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.4147 | 0.0927 | n/a | n/a | n/a | -0.0381 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5871 | 0.2850 | n/a | n/a | n/a | 0.1531 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.3828 | 0.0778 | n/a | n/a | n/a | -0.0876 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5866 | 0.2833 | n/a | n/a | n/a | 0.1501 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.3954 | 0.0842 | n/a | n/a | n/a | -0.0665 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.5311 | 0.2320 | n/a | n/a | n/a | 0.0569 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.5488 | 0.1111 | n/a | n/a | n/a | 0.0228 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.6143 | 0.2846 | n/a | n/a | n/a | 0.1524 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.4379 | 0.0865 | n/a | n/a | n/a | -0.0588 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | bin | 4 fps | 0.5393 | 0.2046 | n/a | n/a | n/a | 0.0071 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | HateMM | test | aux-temporal-pretrain | base | bin | 4 fps | 0.4242 | 0.0888 | n/a | n/a | n/a | -0.0512 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main | 4 fps | 0.5064 | 0.2422 | n/a | n/a | n/a | -0.0399 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main | 4 fps | 0.8407 | 0.0739 | n/a | n/a | n/a | 0.0789 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.4977 | 0.2421 | n/a | n/a | n/a | -0.0400 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.8435 | 0.1004 | n/a | n/a | n/a | 0.1238 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4247 | 0.2176 | n/a | n/a | n/a | -0.0874 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4370 | 0.0221 | n/a | n/a | n/a | -0.0090 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | normal | 4 fps | 0.3906 | 0.2113 | n/a | n/a | n/a | -0.0996 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | normal | 4 fps | 0.2524 | 0.0172 | n/a | n/a | n/a | -0.0173 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.4789 | 0.2344 | n/a | n/a | n/a | -0.0550 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.7024 | 0.0412 | n/a | n/a | n/a | 0.0233 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5773 | 0.2857 | n/a | n/a | n/a | 0.0442 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.8071 | 0.0613 | n/a | n/a | n/a | 0.0576 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.4928 | 0.2387 | n/a | n/a | n/a | -0.0465 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.7628 | 0.0625 | n/a | n/a | n/a | 0.0595 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5738 | 0.2814 | n/a | n/a | n/a | 0.0359 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.8342 | 0.0762 | n/a | n/a | n/a | 0.0828 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4135 | 0.2150 | n/a | n/a | n/a | -0.0925 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4298 | 0.0218 | n/a | n/a | n/a | -0.0095 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.5724 | 0.2981 | n/a | n/a | n/a | 0.0682 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.7716 | 0.0832 | n/a | n/a | n/a | 0.0947 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | bin | 4 fps | 0.5949 | 0.3321 | n/a | n/a | n/a | 0.1340 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | test | aux-temporal-pretrain | base | bin | 4 fps | 0.7768 | 0.0574 | n/a | n/a | n/a | 0.0509 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main | 4 fps | 0.5965 | 0.3118 | n/a | n/a | n/a | 0.0717 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short | 4 fps | 0.6432 | 0.3698 | n/a | n/a | n/a | 0.1605 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4593 | 0.2303 | n/a | n/a | n/a | -0.0528 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | normal | 4 fps | 0.4303 | 0.2208 | n/a | n/a | n/a | -0.0673 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | normal | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5911 | 0.3128 | n/a | n/a | n/a | 0.0733 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main_pair | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5786 | 0.2981 | n/a | n/a | n/a | 0.0508 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | main_vsnormal | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.6479 | 0.3523 | n/a | n/a | n/a | 0.1337 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short_pair | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.6117 | 0.3349 | n/a | n/a | n/a | 0.1070 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4717 | 0.2362 | n/a | n/a | n/a | -0.0438 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.6480 | 0.3744 | n/a | n/a | n/a | 0.1674 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | bin | 4 fps | 0.5673 | 0.2895 | n/a | n/a | n/a | 0.0377 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | test | aux-temporal-pretrain | base | bin | 4 fps | nan | -0.0000 | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span single-class pool, metrics undefined |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main | 4 fps | 0.5248 | 0.2724 | n/a | n/a | n/a | 0.0382 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main | 4 fps | 0.5216 | 0.1268 | n/a | n/a | n/a | 0.0744 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.4937 | 0.2513 | n/a | n/a | n/a | -0.0012 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.4885 | 0.1000 | n/a | n/a | n/a | 0.0024 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.5144 | 0.2644 | n/a | n/a | n/a | 0.0233 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.5155 | 0.1064 | n/a | n/a | n/a | 0.0197 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | normal | 4 fps | 0.4951 | 0.2717 | n/a | n/a | n/a | 0.0368 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | normal | 4 fps | 0.5057 | 0.1235 | n/a | n/a | n/a | 0.0655 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5210 | 0.2740 | n/a | n/a | n/a | 0.0412 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5007 | 0.1164 | n/a | n/a | n/a | 0.0464 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5116 | 0.2752 | n/a | n/a | n/a | 0.0434 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5017 | 0.1063 | n/a | n/a | n/a | 0.0193 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.4892 | 0.2615 | n/a | n/a | n/a | 0.0179 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.4688 | 0.0956 | n/a | n/a | n/a | -0.0095 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.4918 | 0.2756 | n/a | n/a | n/a | 0.0442 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.4777 | 0.0965 | n/a | n/a | n/a | -0.0069 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.5083 | 0.2642 | n/a | n/a | n/a | 0.0229 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.5060 | 0.1078 | n/a | n/a | n/a | 0.0233 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.4925 | 0.2537 | n/a | n/a | n/a | 0.0033 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.4630 | 0.0868 | n/a | n/a | n/a | -0.0330 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | bin | 4 fps | 0.4929 | 0.2439 | n/a | n/a | n/a | -0.0151 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=single_span |
+| LaGoVAD | 1 | HateMM | all | aux-temporal-pretrain | base | bin | 4 fps | 0.4829 | 0.0930 | n/a | n/a | n/a | -0.0165 | 455032 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | missing 2/1083 (0.2%) dropped, not interpolated; stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main | 4 fps | 0.5521 | 0.2626 | n/a | n/a | n/a | 0.0443 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main | 4 fps | 0.8148 | 0.0711 | n/a | n/a | n/a | 0.1062 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.5726 | 0.2841 | n/a | n/a | n/a | 0.0831 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.7759 | 0.0529 | n/a | n/a | n/a | 0.0714 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4703 | 0.2134 | n/a | n/a | n/a | -0.0442 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.5197 | 0.0146 | n/a | n/a | n/a | -0.0020 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | normal | 4 fps | 0.4352 | 0.2014 | n/a | n/a | n/a | -0.0658 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | normal | 4 fps | 0.3997 | 0.0117 | n/a | n/a | n/a | -0.0075 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5144 | 0.2381 | n/a | n/a | n/a | 0.0002 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.7834 | 0.0575 | n/a | n/a | n/a | 0.0800 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5736 | 0.2764 | n/a | n/a | n/a | 0.0692 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.7833 | 0.0401 | n/a | n/a | n/a | 0.0467 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5596 | 0.2663 | n/a | n/a | n/a | 0.0511 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.7681 | 0.0469 | n/a | n/a | n/a | 0.0597 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5918 | 0.3087 | n/a | n/a | n/a | 0.1274 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.7823 | 0.0403 | n/a | n/a | n/a | 0.0473 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4686 | 0.2085 | n/a | n/a | n/a | -0.0531 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.5308 | 0.0150 | n/a | n/a | n/a | -0.0013 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.5839 | 0.3017 | n/a | n/a | n/a | 0.1148 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.7793 | 0.0376 | n/a | n/a | n/a | 0.0421 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | bin | 4 fps | 0.5788 | 0.2984 | n/a | n/a | n/a | 0.1089 | 108460 | 0.2379 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-EN | all | aux-temporal-pretrain | base | bin | 4 fps | 0.6997 | 0.0287 | n/a | n/a | n/a | 0.0249 | 78208 | 0.0157 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main | 4 fps | 0.5691 | 0.2998 | n/a | n/a | n/a | 0.0754 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main | 4 fps | 0.8778 | 0.0155 | n/a | n/a | n/a | 0.0737 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.6003 | 0.3374 | n/a | n/a | n/a | 0.1369 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short | 4 fps | 0.8971 | 0.0181 | n/a | n/a | n/a | 0.0875 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.4623 | 0.2254 | n/a | n/a | n/a | -0.0465 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad | 4 fps | 0.3688 | 0.0014 | n/a | n/a | n/a | -0.0028 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | normal | 4 fps | 0.4424 | 0.2224 | n/a | n/a | n/a | -0.0513 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | normal | 4 fps | 0.3025 | 0.0012 | n/a | n/a | n/a | -0.0035 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.5598 | 0.2808 | n/a | n/a | n/a | 0.0443 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main_pair | 4 fps | 0.8070 | 0.0093 | n/a | n/a | n/a | 0.0404 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.5738 | 0.3168 | n/a | n/a | n/a | 0.1032 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | main_vsnormal | 4 fps | 0.8417 | 0.0119 | n/a | n/a | n/a | 0.0543 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.5979 | 0.3152 | n/a | n/a | n/a | 0.1006 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short_pair | 4 fps | 0.8891 | 0.0115 | n/a | n/a | n/a | 0.0522 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.5919 | 0.3383 | n/a | n/a | n/a | 0.1384 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_short_vsnormal | 4 fps | 0.8653 | 0.0164 | n/a | n/a | n/a | 0.0785 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.4669 | 0.2268 | n/a | n/a | n/a | -0.0442 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad_pair | 4 fps | 0.3738 | 0.0014 | n/a | n/a | n/a | -0.0028 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.6104 | 0.3194 | n/a | n/a | n/a | 0.1074 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | sens_vad_vsnormal | 4 fps | 0.8310 | 0.0055 | n/a | n/a | n/a | 0.0198 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | bin | 4 fps | 0.5718 | 0.3135 | n/a | n/a | n/a | 0.0978 | 101620 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=single_span |
+| LaGoVAD | 1 | MHC-ZH | all | aux-temporal-pretrain | base | bin | 4 fps | 0.8153 | 0.0102 | n/a | n/a | n/a | 0.0450 | 72513 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_lagovad/ | stratum=multi_span |
+
+### M.5 What the numbers say
+
+1. **LaGoVAD clears the random floor on three of the four corpora, and by very little.** With the main
+   definition on the test split, frame ROC-AUC is 0.5579 (HateMM), 0.5239 (MHC-EN), 0.5965 (MHC-ZH),
+   0.5000 (HateClipSeg), against a random floor of 0.500 and a gold-broadcast ceiling of 0.8857 /
+   0.9427 / 0.9842 / 0.6260. Oracle-normalised AP for the same rows is 0.184 / −0.024 / 0.072 /
+   −0.092: the method recovers under a fifth of the chance-to-video-oracle gap on its best dataset
+   and none of it on two others. On HateClipSeg the main definition is exactly at chance to four
+   decimal places.
+
+2. **The free-text definition is not what carries the signal, and on two datasets it is not even the
+   best row.** LaGoVAD's premise is that a written definition selects the anomaly at inference. On
+   MHC-EN the strongest test row is `bin` — the *binary* anomaly head, which takes no text at all —
+   at ROC 0.6058 / AP 0.3490 / AP_norm 0.1534, ahead of every one of the ten text rows. On
+   HateClipSeg `bin` is again the top row (ROC 0.5431, AP_norm 1.0402). A text-free head beating
+   every textual query is evidence that what transfers here is the checkpoint's generic
+   surveillance-anomaly prior, not the hate definition we wrote.
+
+3. **Definition wording moves the number more than the choice of method does.** Across the four
+   test-split datasets the spread between the three hate definitions is 0.52–0.64 ROC on MHC-ZH
+   (`sens_short` 0.6432 vs `sens_vad` 0.4593, a 0.18 swing) and 0.42–0.52 on MHC-EN. The three
+   definitions describe the same concept in different registers; a method whose output swings that
+   far on paraphrase is not reading the definition so much as reacting to its surface form. All
+   three are reported precisely so this is visible; none was chosen after the fact.
+
+4. **The `normal` reference row scores *below* chance on three datasets** (0.4879 / 0.3844 / 0.4303
+   / 0.4680), which is the one internally consistent signal in the table: the similarity to a
+   "nothing unusual happening" definition is anti-correlated with the hateful frames, as it should
+   be. It is also why the `_vsnormal` contrast rows beat their solo counterparts on MHC-EN
+   (0.5885 vs 0.5239) and HateClipSeg (0.5261 vs 0.5000) — subtracting the normal row removes a
+   video-level offset that the raw similarity carries.
+
+5. **Full corpus is not kinder than the test split.** On the full corpora the main definition reads
+   0.5225 / 0.5605 / 0.5694 / 0.5433, i.e. HateMM drops from 0.5579 to 0.5225 while HateClipSeg
+   rises from 0.5000 to 0.5433. The test-split and full-corpus numbers differ by up to 0.043 on the
+   same variant, which is worth remembering before reading any single figure in this section as
+   stable.
+
+6. **Consequence for the campaign.** LaGoVAD is the first `aux-temporal-pretrain` entry in the table
+   and the first method whose whole design is "define the anomaly in words". On these corpora it
+   lands between the Wave 0 floors — above Qwen2.5-VL's 0.50–0.52, below ZS-ImageBind's 0.59
+   everywhere except MHC-ZH — while its own text-free head is competitive with its text rows. The
+   honest reading is that a definition-conditioned VAD checkpoint trained on XD-Violence does not
+   transfer its language conditioning to hate speech, and that the gold-broadcast ceiling remains
+   the only comparison in this table with real headroom in it.
+
+**Recorded for completeness:** while wiring the evaluator's `curves` front-end, a two-video plumbing
+check on HateClipSeg printed AUCs before the full run. No method setting was changed after it — the
+definitions, the grouping and the score convention were already frozen and committed at `aea5e5f`
+and `1eb5366` — but freeze §10 red line 3 asks smoke tests to check shape and range only, so the
+deviation is stated rather than left unmentioned.

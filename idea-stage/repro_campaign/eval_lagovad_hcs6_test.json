@@ -1,0 +1,194 @@
+[
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "n_frames_in_pool": 113002,
+   "coverage": 1.0,
+   "base_rate": 0.5267,
+   "frame_ROC_AUC": 0.5373,
+   "frame_PR_AUC": 0.55,
+   "frame_PR_AUC_trapz": 0.55,
+   "AP_broadcast_pool": 0.5415,
+   "AP_random_pool": 0.5267,
+   "AP_norm": 1.5663,
+   "n_offgrid_gt8": 0
+  },
+  "method": "LaGoVAD",
+  "variant": "c0_normal",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "n_frames_in_pool": 113002,
+   "coverage": 1.0,
+   "base_rate": 0.2002,
+   "frame_ROC_AUC": 0.6137,
+   "frame_PR_AUC": 0.2462,
+   "frame_PR_AUC_trapz": 0.2461,
+   "AP_broadcast_pool": 0.4603,
+   "AP_random_pool": 0.2002,
+   "AP_norm": 0.1766,
+   "n_offgrid_gt8": 0
+  },
+  "method": "LaGoVAD",
+  "variant": "c1_hateful",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "n_frames_in_pool": 113002,
+   "coverage": 1.0,
+   "base_rate": 0.2572,
+   "frame_ROC_AUC": 0.548,
+   "frame_PR_AUC": 0.2755,
+   "frame_PR_AUC_trapz": 0.2754,
+   "AP_broadcast_pool": 0.3975,
+   "AP_random_pool": 0.2572,
+   "AP_norm": 0.1301,
+   "n_offgrid_gt8": 0
+  },
+  "method": "LaGoVAD",
+  "variant": "c2_insulting",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "n_frames_in_pool": 113002,
+   "coverage": 1.0,
+   "base_rate": 0.0572,
+   "frame_ROC_AUC": 0.5619,
+   "frame_PR_AUC": 0.0831,
+   "frame_PR_AUC_trapz": 0.0831,
+   "AP_broadcast_pool": 0.2859,
+   "AP_random_pool": 0.0572,
+   "AP_norm": 0.1132,
+   "n_offgrid_gt8": 0
+  },
+  "method": "LaGoVAD",
+  "variant": "c3_sexual",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "n_frames_in_pool": 113002,
+   "coverage": 1.0,
+   "base_rate": 0.1367,
+   "frame_ROC_AUC": 0.397,
+   "frame_PR_AUC": 0.1163,
+   "frame_PR_AUC_trapz": 0.1162,
+   "AP_broadcast_pool": 0.3203,
+   "AP_random_pool": 0.1367,
+   "AP_norm": -0.1112,
+   "n_offgrid_gt8": 0
+  },
+  "method": "LaGoVAD",
+  "variant": "c4_violence",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "n_frames_in_pool": 113002,
+   "coverage": 1.0,
+   "base_rate": 0.0117,
+   "frame_ROC_AUC": 0.1843,
+   "frame_PR_AUC": 0.0067,
+   "frame_PR_AUC_trapz": 0.0067,
+   "AP_broadcast_pool": 0.2029,
+   "AP_random_pool": 0.0117,
+   "AP_norm": -0.0261,
+   "n_offgrid_gt8": 0
+  },
+  "method": "LaGoVAD",
+  "variant": "c5_harm",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 1
+  }
+ }
+]
