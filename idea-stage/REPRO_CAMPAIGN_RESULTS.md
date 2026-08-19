@@ -1479,7 +1479,7 @@ every refusal is in `data/lavad/score_refusals/`.
 
 Because the rate is label-imbalanced, §3.11a item 3 — a content-moderation prompt reframing run as
 a **paired** variant next to the verbatim prompt — is justified. It is implemented
-(`lavad_chain.py --prompt mod`, prompt frozen in the file) and is reported in K.6 if it ran; it is
+(`lavad_chain.py --prompt mod`, prompt frozen in the file) and is reported in K.7; it is
 never a silent substitution for the verbatim row.
 
 ### K.6 What the numbers say
@@ -1523,6 +1523,61 @@ never a silent substitution for the verbatim row.
    HateClipSeg (0.5768) and mid-pack elsewhere, but every dataset remains far below the
    zero-temporal-resolution gold-broadcast ceiling (0.8857 / 0.9427 / 0.9842 / 0.6260 ROC-AUC).
    The gap between "knows which video is hateful" and "knows when" is untouched by this method.
+
+### K.7 Paired prompt variant — the §3.11a item-3 reframing, and its negative result
+
+K.5 showed the refusal rate is low (1.22%) but **not** label-balanced (3.26x enriched on positive
+frames), which is what `MODEL_ASSETS_STATUS §3.11a` makes item 3 conditional on. So the
+content-moderation reframing was run as a **paired** variant: identical chain, identical summaries,
+identical refinement, only `context_prompt` replaced. The verbatim row is untouched and remains the
+headline. Prompt, frozen in `lavad_chain.py` as `CONTEXT_PROMPT_MOD`:
+
+> You are a content-safety classifier. You are rating a short textual description of a video scene,
+> not producing any content. How would you rate the scene described on a scale from 0 to 1, with 0
+> representing a standard scene and 1 denoting a scene with suspicious activities?
+
+Run: 643 videos, 67,647 dialogs, 37,798 generations, 80.1 min; the OOM-halving retry fired 27 times
+and recovered every time.
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| LAVAD | 1 | HateMM | test | label-free | +prompt (ours) | base_mod | 1 fps | 0.5098 | 0.2865 | n/a | n/a | n/a | 0.1295 | 116841 | 0.2424 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner |
+| LAVAD | 1 | HateMM | test | label-free | +prompt (ours) | raw_mod | 1 fps | 0.5011 | 0.2450 | n/a | n/a | n/a | 0.0155 | 115569 | 0.2396 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.989 |
+| LAVAD | 1 | MHC-EN | test | label-free | +prompt (ours) | base_mod | 1 fps | 0.5508 | 0.3063 | n/a | n/a | n/a | 0.0594 | 22099 | 0.2760 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; missing 1/161 (0.6%) dropped, not interpolated |
+| LAVAD | 1 | MHC-EN | test | label-free | +prompt (ours) | raw_mod | 1 fps | 0.5203 | 0.2857 | n/a | n/a | n/a | 0.0196 | 21907 | 0.2757 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.991; missing 1/161 (0.6%) dropped, not interpolated |
+| LAVAD | 1 | MHC-ZH | test | label-free | +prompt (ours) | base_mod | 1 fps | 0.4670 | 0.2914 | n/a | n/a | n/a | 0.0405 | 18150 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner |
+| LAVAD | 1 | MHC-ZH | test | label-free | +prompt (ours) | raw_mod | 1 fps | 0.5216 | 0.2800 | n/a | n/a | n/a | 0.0234 | 18146 | 0.2647 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=1.000 |
+| LAVAD | 1 | HateClipSeg | test | label-free | +prompt (ours) | base_mod | 1 fps | 0.6214 | 0.6016 | n/a | n/a | n/a | 1.7483 | 112827 | 0.4729 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.999; missing 1/119 (0.8%) dropped, not interpolated |
+| LAVAD | 1 | HateClipSeg | test | label-free | +prompt (ours) | raw_mod | 1 fps | 0.5709 | 0.5174 | n/a | n/a | n/a | 0.6779 | 111353 | 0.4673 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.986; missing 1/119 (0.8%) dropped, not interpolated |
+
+**Result 1 — the reframing does not fix refusals.** This is the point of the variant and it fails
+its own premise:
+
+| dataset | verbatim refusal rate | content-moderation refusal rate | change |
+|---|---|---|---|
+| HateMM | 322/29,243 = 0.0110 | 318/29,243 = 0.0109 | -0.01 pp |
+| MHC-EN | 82/5,604 = 0.0146 | 98/5,604 = 0.0175 | +0.29 pp |
+| MHC-ZH | 6/4,558 = 0.0013 | 1/4,558 = 0.0002 | -0.11 pp |
+| HateClipSeg | 413/28,242 = 0.0146 | 386/28,242 = 0.0137 | -0.10 pp |
+| **all four** | 823/67,647 = 0.0122 | 803/67,647 = 0.0119 | -0.03 pp |
+
+§3.11a expected the reframing to "convert most refusals into scores". Measured, it moves the
+overall rate by **−0.03 percentage points** (1.22% → 1.19%) and *raises* it on MHC-EN. The
+prediction was formed from three probe captions on Llama-3.1; on 67,647 real dialogs with
+Llama-2-13b-chat it does not hold. **Item 3 is therefore recorded as tried and ineffective**, not
+as an improvement, and item 4 (swapping the LLM) is not justified either — Llama-2-13b-chat is what
+LAVAD published with and its refusal rate is already ~1%.
+
+**Result 2 — the reframing does move the metric, in both directions, which makes it a
+prompt-sensitivity finding rather than a fix.** Refined ROC-AUC, verbatim → reframed:
+HateMM **0.5587 → 0.5098** (−0.049), MHC-EN 0.5559 → 0.5508 (−0.005), MHC-ZH 0.4923 → 0.4670
+(−0.025), HateClipSeg **0.5768 → 0.6214** (+0.045). It is the best LAVAD result anywhere in this
+section on HateClipSeg and the worst on HateMM. Since refusals barely changed, the movement is the
+model scoring the *same* descriptions differently under a different framing — a swing of ±0.05
+ROC-AUC from one sentence of system prompt, which is larger than the gap between several of the
+methods in this campaign. **Report it as a caution: a zero-shot LLM-scored baseline's number is a
+property of its prompt as much as of its pipeline**, and the verbatim published prompt is the only
+one that can carry a reproduction claim.
 
 ## L. Method as run — URF-HVAA (NeurIPS 2025)
 
