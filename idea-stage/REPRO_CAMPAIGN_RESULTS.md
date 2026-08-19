@@ -1097,3 +1097,33 @@ check on HateClipSeg printed AUCs before the full run. No method setting was cha
 definitions, the grouping and the score convention were already frozen and committed at `aea5e5f`
 and `1eb5366` — but freeze §10 red line 3 asks smoke tests to check shape and range only, so the
 deviation is stated rather than left unmentioned.
+
+### M.6 Harness defects found while running this method, and what was changed
+
+Recorded here rather than in a commit message alone, because three of them
+affected rows other than LaGoVAD's.
+
+| # | Defect | Effect | Fix |
+|---|---|---|---|
+| 1 | `openai/clip-vit-base-patch16` cached with the right byte count and wrong content (max \|w\| = 3.7 × 10¹⁹) | CLIP returned **one identical embedding for every frame of every video**; `MODEL_ASSETS_STATUS §3.1` recorded the resulting flat curves as a property of LaGoVAD's binary head | `audit_hf_cache.sh` re-hashes every blob against its own filename (an HF blob is stored under its sha256): 7 of 55 weight files corrupt, all repaired and re-verified by `hf_refetch.py` |
+| 2 | The in-flight crash marker could not distinguish a decoder crash from an operator `SIGTERM` or an OOM-kill | Each stop silently retired one healthy video. **12 of the 14** ids the Wave 0 Qwen row excludes decode cleanly | An id is retired only after taking the process down **twice** (freeze §12 **D3**) |
+| 3 | Runners had no `set -e`; the AV²A supervisor printed the smoke's exit code without checking it and emitted `RUN COMPLETE` on driver `rc=0` regardless of output | A chain could report success it had not earned — as the LAVAD chain did, exiting `rc=0` having written 5 curves for one dataset | `set -euo pipefail` plus per-dataset curve-count guards in the LaGoVAD chain, the UniTime converter and the AV²A supervisor; each verified to pass on real data and fail on a truncation |
+| 4 | `decord` cannot open 25.5% of MHC-EN containers | A quarter of that dataset would have been recorded as method failures | `decord_fallback.py` tries the real reader first and falls back to PyAV; 275 of 3,084 containers need it |
+
+**The pattern worth carrying forward.** Defects 1 and 2 — and, separately, the
+`+1.0` bool-mask bias found in VideoLLaMA3's eager vision attention — are all
+*silent correctness* failures: right shape, right range, wrong content, no
+exception, clean exit code. None is caught by asking "did it run?". The question
+that separates them from a working component is whether the output **varies with
+the input**, which a collapsed encoder cannot do.
+`scripts/repro_campaign/discrimination_check.py` makes that a cheap smoke-test
+assertion (`curve_varies`, `embeddings_discriminate`, `scores_separate_items`).
+Replayed against the real corrupt-CLIP failure it fires on both the collapsed
+embeddings (mean off-diagonal cosine 1.000000) and the resulting flat curve, and
+it passes on the repaired LaGoVAD output — while deliberately *not* failing
+Qwen's 19% modal answer, which is a finding rather than a fault.
+
+**LaGoVAD's own artifacts were re-verified after all of the above**: 3,081 curves
+of 3,084, the three missing being exactly the two audio-only HateMM containers
+and the truncated `yt_NzvfkIYS5Yg`; test pools full at 215 / 161 / 149 / 118. No
+row in §M is affected by any of these defects.
