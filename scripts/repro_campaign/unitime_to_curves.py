@@ -105,6 +105,16 @@ def main() -> int:
                 (qout / f"{ds}_intervals_{var}.json").write_text(json.dumps(iv_out))
             print(f"{ds}/{qk}: videos={n_ok} with_mr_seg={n_seg} "
                   f"records={len(last)}", flush=True)
+            # Refuse to exit 0 on a silent truncation.  A raw file that holds
+            # records but yields (almost) no curves means the run died partway
+            # and the conversion is quietly reporting success on nothing -- the
+            # failure mode that let the LAVAD chain finish rc=0 with 5 curves
+            # for one dataset (campaign ruling 2026-08-19).
+            if last and n_ok < 0.5 * len(last):
+                raise SystemExit(
+                    f"[FAIL] {ds}/{qk}: {len(last)} raw records but only {n_ok} "
+                    f"curves. Refusing to report success -- inspect the run "
+                    f"before evaluating.")
     return 0
 
 

@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # LaGoVAD: wait for the feature extraction to finish, then inference, then evaluate.
-set -u
+#
+# fail-fast on purpose (campaign ruling 2026-08-19).  The LAVAD chain exited rc=0
+# having written 5 curves for one dataset because a stage failure was swallowed
+# and the chain marched on.  A chain that reports success it did not earn is
+# worse than one that stops, so: -e aborts on any failing stage, -o pipefail
+# stops a failure being hidden behind a pipe, and the guard below refuses to
+# finish while any dataset has produced no curves at all.
+set -euo pipefail
 R=/home/jehc223/Retrieval-hate
 PY=/home/jehc223/miniconda3/envs/HateVideo/bin/python
 EXTRACT_PID=$(cat $R/logging/runs/repro_lagovad_extract/run.pid | head -1)
@@ -24,4 +31,23 @@ for SP in test all; do
     --datasets HateClipSeg --wave 1 --supervision aux-temporal-pretrain --split $SP \
     --out $R/idea-stage/repro_campaign/eval_lagovad_hcs6_$SP.json
 done
+echo "[chain] done $(date -Is)"
+
+# --- completeness guard: never report success on an empty or near-empty run ---
+echo "[chain] verifying artifact counts"
+$PY - <<'GUARD'
+import glob, sys, numpy as np
+bad = []
+for ds in ["HateMM", "MHC", "MHC_zh", "HateClipSeg"]:
+    exp = len(np.load(f"data/gt/frame_gt_4fps/{ds}.npz", allow_pickle=True)["video_ids"])
+    got = len(glob.glob(f"idea-stage/repro_lagovad/curves/{ds}/*.npz"))
+    print(f"  {ds:<12} curves={got}/{exp}")
+    # >2% of a corpus missing is a truncation, not the handful of genuinely
+    # undecodable containers (3 across all four datasets as of 2026-08-19)
+    if got < exp * 0.98:
+        bad.append(f"{ds}: {got}/{exp}")
+if bad:
+    sys.exit("[chain] FAIL - datasets short of curves: " + "; ".join(bad))
+print("[chain] artifact counts OK")
+GUARD
 echo "[chain] done $(date -Is)"
