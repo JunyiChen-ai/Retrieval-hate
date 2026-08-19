@@ -1111,6 +1111,32 @@ then `scripts/repro_campaign/eval_frame.py --method curves --curve-dir idea-stag
    transfer its language conditioning to hate speech, and that the gold-broadcast ceiling remains
    the only comparison in this table with real headroom in it.
 
+7. **LaGoVAD does not gain the way LAVAD gains — the "converge toward broadcast" mechanism is not
+   universal.** §K.4 shows LAVAD's stage-06 raising ROC by flattening within-video curves about
+   sevenfold (median sd 0.048 → 0.007, 57% of videos varying by under 0.01), i.e. buying its
+   improvement with video-level smoothing rather than localisation. LaGoVAD's curves do the
+   opposite. Measured over 200 videos per dataset on a scale-free statistic (within-video sd divided
+   by within-video range, so it is comparable across variants with different output scales):
+
+   | dataset | median within-video sd/range | videos below 0.10 | corr(variability, test ROC) |
+   |---|---|---|---|
+   | HateClipSeg | 0.180 – 0.206 across variants | 1.5 – 6.0% | **+0.40** |
+   | MHC-EN | 0.212 – 0.241 across variants | 0.0% | **+0.44** |
+
+   Nothing flattens, and the correlation runs the *wrong way for the smoothing story*: the more
+   varied a variant's curves, the higher its ROC. The `bin` head that tops both datasets is among
+   the most varied rows, not the flattest. So LaGoVAD's text-free head does not win by drifting
+   toward the video-level oracle, and point 2 above still needs its own explanation — most likely a
+   generic "something salient is happening" visual prior that correlates with annotated spans, with
+   the hate definitions adding noise on top rather than signal.
+
+   **Hedge this appropriately when reused:** the correlation is over six variants, not six hundred,
+   so it is a direction rather than an estimate; and the statistic is scale-free by construction, so
+   it is not numerically comparable to §K.4's raw sd — only the *sign* of the trend is being
+   compared. What it does support is that "how far is a method from the broadcast ceiling" and "does
+   a method get there by localising or by smoothing" are separate questions, and Wave 1 already
+   contains one method of each kind.
+
 **Recorded for completeness:** while wiring the evaluator's `curves` front-end, a two-video plumbing
 check on HateClipSeg printed AUCs before the full run. No method setting was changed after it — the
 definitions, the grouping and the score convention were already frozen and committed at `aea5e5f`
