@@ -162,15 +162,16 @@ def install_decord_fallback():
     print("[patch] decord.VideoReader -> PyAV fallback on open failure", flush=True)
 
 
-def load_vlm(max_tokens: int = 8192):
-    """VideoLLaMA3's image processor defaults to `max_tokens = 16384` vision
-    tokens per clip, i.e. ~1,600 patches per frame for a 10-frame window.  On
-    the low-resolution HateClipSeg video that Phase A smoked, the clip never
-    reaches that cap; on HateMM's higher-resolution files it does, and one
-    forward then asks for 24.8 GiB on a 32 GiB card that already holds 16.9 GiB
-    of weights.  The cap is lowered here, exactly as `MODEL_ASSETS_STATUS §3.7`
-    lowers Qwen2.5-VL's `max_pixels` for the same reason, and the value actually
-    used per call is recorded (`vlm_token_caps`)."""
+def load_vlm(max_tokens: int = 16384):
+    """Load VideoLLaMA3-7B at the processor's own `max_tokens` (16384 vision
+    tokens per clip) and install the per-block attention fix.
+
+    Without the fix, `VisionSdpaAttention` materialises `[num_heads, N, N]` for
+    N patches across the whole clip and OOMs on the long, higher-resolution
+    HateMM files (24.8 GiB for one forward on a card already holding 16.9 GiB of
+    weights).  The fix computes the identical result block by block, so the
+    upstream resolution is kept rather than traded away -- see
+    `scripts/repro_campaign/videollama3_sdpa_blockattn.py`."""
     install_decord_fallback()
     from transformers import AutoModelForCausalLM, AutoProcessor
 
@@ -179,8 +180,10 @@ def load_vlm(max_tokens: int = 8192):
         torch_dtype=torch.bfloat16, attn_implementation="sdpa")
     proc = AutoProcessor.from_pretrained(VLM, trust_remote_code=True)
     proc.image_processor.max_tokens = max_tokens
-    print(f"[patch] VideoLLaMA3 image_processor.max_tokens 16384 -> {max_tokens}",
-          flush=True)
+    import videollama3_sdpa_blockattn as blockattn
+    if blockattn.install(model) == 0:
+        raise SystemExit("[patch] no VisionSdpaAttention found -- the encoder "
+                         "would OOM on long clips; refusing to run")
     return model.eval(), proc
 
 
@@ -188,7 +191,7 @@ TOKEN_CAPS: dict = {}
 
 
 def vlm_infer_safe(model, proc, conversation, max_new_tokens=256,
-                   max_tokens=8192, floor=1024):
+                   max_tokens=16384, floor=1024):
     """Run one generation, halving the vision-token cap on OOM down to `floor`.
 
     A fixed cap is a bet on the worst-resolution video in the corpus; this is
@@ -574,7 +577,7 @@ def main() -> int:
     ap.add_argument("--step", type=float, default=10.0)
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--tag-max-frames", type=int, default=180)
-    ap.add_argument("--vlm-max-tokens", type=int, default=8192,
+    ap.add_argument("--vlm-max-tokens", type=int, default=16384,
                     help="VideoLLaMA3 vision-token cap per clip (upstream 16384)")
     args = ap.parse_args()
     {"caption": stage_caption, "score": stage_score, "filter": stage_filter,
