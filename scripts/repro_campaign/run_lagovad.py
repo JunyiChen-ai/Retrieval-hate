@@ -263,10 +263,24 @@ def stage_infer(args):
 
     t0, n_done, n_skip, n_fail = time.time(), 0, 0, 0
     for ds in args.datasets.split(","):
-        keys = list(QUERIES)
+        # LaGoVAD's co-attention fusion lets the *visual* stream attend over the
+        # whole text set (`vis_attn(v_feat, t_feat, t_feat)`), so a query's score
+        # depends on which other queries share the forward pass.  The queries are
+        # therefore grouped deliberately, and the grouping is part of the frozen
+        # design rather than an accident of batching:
+        #   * each definition alone, so the `main` / `sens_*` / `normal` rows are
+        #     not contaminated by their siblings;
+        #   * each hate definition paired with the `normal` definition, which is
+        #     the two-class VAD set-up upstream's own `Normal + anomaly` class
+        #     list uses, giving the `_vsnormal` contrast rows;
+        #   * HateClipSeg's six released classes in one forward, which is the
+        #     multi-class set-up the model was built for.
+        groups = [([k], [k]) for k in QUERIES]                       # solo rows
+        groups += [(["normal", k], [f"{k}_pair", f"{k}_vsnormal"])
+                   for k in CONTRASTS]                               # paired rows
         if ds == "HateClipSeg":
-            keys += list(HCS_QUERIES)
-        texts = [{**QUERIES, **HCS_QUERIES}[k] for k in keys]
+            groups.append((list(HCS_QUERIES), list(HCS_QUERIES)))    # 6-class row
+        ALL = {**QUERIES, **HCS_QUERIES}
         outd = CURVE_DIR / ds
         outd.mkdir(parents=True, exist_ok=True)
         featd = ROOT / f"data/CLIP_Embedding/{ds}/{FEAT_SUBDIR}"
@@ -287,35 +301,42 @@ def stage_infer(args):
             if D <= 0 or len(v) == 0:
                 n_fail += 1
                 continue
-            sims, bins = [], []
+            out, binv, T = {}, None, None
             try:
-                for s in range(0, len(v), MAX_POS):
-                    ch = v[s: s + MAX_POS].to("cuda:0")
-                    batch = {"v_feat": ch[None, ...],
-                             "v_feat_l": torch.tensor([len(ch)], device="cuda:0")}
-                    with torch.inference_mode():
-                        o = model(batch=batch, query_captions=texts)
-                    # RAW logits, not the demo's `.sigmoid()`.  SimScoreHead divides
-                    # the cosine by a learned temperature, so the logit range is wide
-                    # enough that sigmoid saturates to 0/1 in float32 and destroys the
-                    # within-video ranking.  ROC-AUC and AP are rank metrics and the
-                    # sigmoid is strictly increasing, so the raw score is the same
-                    # measurement without the saturation.
-                    sims.append(o["cap_sim_mat"][0].float().cpu().numpy())  # T,S
-                    bins.append(o["cap_bin_logits"][0].float().cpu().numpy())
+                for qkeys, outkeys in groups:
+                    texts = [ALL[k] for k in qkeys]
+                    sims, bins = [], []
+                    for s in range(0, len(v), MAX_POS):
+                        ch = v[s: s + MAX_POS].to("cuda:0")
+                        batch = {"v_feat": ch[None, ...],
+                                 "v_feat_l": torch.tensor([len(ch)], device="cuda:0")}
+                        with torch.inference_mode():
+                            o = model(batch=batch, query_captions=texts)
+                        # RAW logits, not the demo's `.sigmoid()`.  SimScoreHead
+                        # divides the cosine by a learned temperature, so the logit
+                        # range is wide enough that sigmoid saturates to 0/1 in
+                        # float32 and destroys the within-video ranking.  ROC-AUC
+                        # and AP are rank metrics and the sigmoid is strictly
+                        # increasing, so the raw logit is the same measurement
+                        # without the saturation.
+                        sims.append(o["cap_sim_mat"][0].float().cpu().numpy())   # T,S
+                        bins.append(o["cap_bin_logits"][0].float().cpu().numpy())
+                    sim = np.concatenate(sims)
+                    T = len(sim)
+                    if len(qkeys) == 2 and outkeys[-1].endswith("_vsnormal"):
+                        out[outkeys[0]] = sim[:, 1].astype(np.float32)
+                        out[outkeys[1]] = (sim[:, 1] - sim[:, 0]).astype(np.float32)
+                    else:
+                        for j, k in enumerate(outkeys):
+                            out[k] = sim[:, j].astype(np.float32)
+                    if binv is None:      # the binary head does not depend on the text
+                        binv = np.concatenate(bins).astype(np.float32)
             except Exception as e:
                 print(f"[FAIL] {ds}/{vid}: {type(e).__name__}:{e}"[:200], flush=True)
                 n_fail += 1
                 continue
-            sim = np.concatenate(sims)            # (T, S)
-            binv = np.concatenate(bins)           # (T,)
-            rate = len(sim) / D
-            out = {k: sim[:, j].astype(np.float32) for j, k in enumerate(keys)}
-            ni = keys.index("normal")
-            for k in CONTRASTS:
-                out[f"{k}_vsnormal"] = (sim[:, keys.index(k)] - sim[:, ni]).astype(np.float32)
-            out["bin"] = binv.astype(np.float32)
-            out["rate"] = np.float32(rate)
+            out["bin"] = binv
+            out["rate"] = np.float32(T / D)
             atomic_save(outp, lambda p: np.savez(open(p, 'wb'), **out))
             n_done += 1
             if i % 50 == 0 or i == len(ids):

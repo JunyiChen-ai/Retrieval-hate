@@ -155,11 +155,11 @@ def demux_wav(src: Path, dst: Path) -> str:
     if dst.exists() and dst.stat().st_size > 44:
         return "cached"
     dst.parent.mkdir(parents=True, exist_ok=True)
-    tmp = dst.with_suffix(".wav.tmp")
+    tmp = dst.with_name(dst.name + ".tmp")
     r = subprocess.run(
         ["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", str(src),
          "-vn", "-map", "0:a:0", "-ac", "1", "-ar", "16000",
-         "-acodec", "pcm_s16le", str(tmp)],
+         "-acodec", "pcm_s16le", "-f", "wav", str(tmp)],
         capture_output=True, text=True)
     if r.returncode != 0 or not tmp.exists() or tmp.stat().st_size <= 44:
         tmp.unlink(missing_ok=True)

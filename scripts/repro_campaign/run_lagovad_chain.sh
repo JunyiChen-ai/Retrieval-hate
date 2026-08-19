@@ -12,7 +12,7 @@ echo "[chain] inference finished $(date -Is)"
 for SP in test all; do
   $PY $R/scripts/repro_campaign/eval_frame.py --method curves \
     --curve-dir $R/idea-stage/repro_lagovad/curves --method-name LaGoVAD \
-    --variants main,sens_short,sens_vad,normal,main_vsnormal,sens_short_vsnormal,sens_vad_vsnormal,bin \
+    --variants main,sens_short,sens_vad,normal,main_pair,main_vsnormal,sens_short_pair,sens_short_vsnormal,sens_vad_pair,sens_vad_vsnormal,bin \
     --wave 1 --supervision aux-temporal-pretrain --split $SP \
     --out $R/idea-stage/repro_campaign/eval_lagovad_$SP.json
   $PY $R/scripts/repro_campaign/eval_frame.py --method curves \
