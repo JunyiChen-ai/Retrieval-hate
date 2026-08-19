@@ -111,6 +111,28 @@ curves (upstream only rendered a PNG). Also symlinked `simhei.ttf` to matplotlib
 bundled DejaVuSans; without it the script crashes at the plotting stage after
 inference has already succeeded.
 
+> **CORRECTION (2026-08-19) — the constancy was a corrupt checkpoint, not the model.**
+> Text above preserved; its first two sentences are wrong. `bin_score` is **not**
+> constant, and the per-frame signal does **not** live only in the similarity
+> matrix. The cached `openai/clip-vit-base-patch16` `pytorch_model.bin` had the
+> right byte count and wrong content (max |w| = 3.7 × 10¹⁹), so CLIP returned one
+> identical image embedding for every frame of every video — which makes *every*
+> downstream curve flat, the binary head included. The quoted "0.0073–0.9897"
+> range was variation across *queries*, not across time.
+>
+> With the repaired checkpoint, on the full corpus: binary-head curves vary
+> normally (e.g. `hate_video_1` sd 1.056, 356 distinct values), and the binary head
+> is in fact the **strongest** LaGoVAD row on MHC-EN (ROC 0.6058) and HateClipSeg
+> (0.5431), ahead of all ten free-text definition rows. So the instruction "score
+> off the similarity matrix, not `bin_score`" was exactly backwards.
+>
+> The `--queries` patch, the `.npz` dump and the `simhei.ttf` symlink remain
+> correct and are still in use. Cache-wide audit found 7 of 55 weight files
+> corrupt; see `hf_cache_audit.txt`, `audit_hf_cache.sh`, `hf_refetch.py`, and
+> §M / §M.6 of `REPRO_CAMPAIGN_RESULTS.md`. Together with the §3.11a correction
+> below, this is the second claim in this document overturned by measurement, both
+> of them small unrepresentative observations reported as model properties.
+
 ### 3.2 `llama_hf` shim replaces Meta's `llama` package
 `third_party/_shim/llama_hf/`. Both LAVAD and URF-HVAA call
 `llama.Llama.build(...)` on **original-format Meta checkpoints**, which are gated
@@ -254,6 +276,56 @@ since LELA's port would have hit the same wall silently.
 Options 1 and 2 are mandatory and cost nothing. 3 and 4 are only justified if the
 measured refusal rate is high enough to move the numbers, which is why 1 comes
 first.
+
+---
+
+> ### CORRECTION (2026-08-20) — (a) above is overturned by measurement, 16× in the opposite direction
+>
+> **The text above is preserved as written. Do not act on it.** Its central claim —
+> that Llama-3.1-8B-Instruct refuses hateful/violent captions and Llama-2-13b-chat
+> does not — is backwards. Countermeasure 1 ("measure first, always") was followed,
+> and it refuted the premise that motivated the list:
+>
+> | scorer | measured refusal rate, full run | what (a) predicted |
+> |---|---|---|
+> | Llama-3.1-8B-Instruct (URF-HVAA) | **0.077%** | frequent refusals on the positive class |
+> | Llama-2-13b-chat (LAVAD) | **1.22%** | "did not refuse on any of the four test captions" |
+>
+> Llama-2 refuses roughly **16× more often** than Llama-3.1 — the reverse of the
+> ordering (a) asserts, and the opposite of the basis for its recommendation 4.
+>
+> **Why the original was wrong, which is the reusable part.** It generalised from
+> **three hand-picked captions** chosen to be maximally provocative (a gun pointed
+> at a cashier). That is not a sample of the caption distribution these corpora
+> actually produce; BLIP-2 captions of hateful videos are overwhelmingly mundane
+> descriptions of people talking to camera, on-screen text, and studio backdrops.
+> A probe designed to elicit a refusal elicited one, and the rate it implied was
+> off by more than an order of magnitude on real data. n=3 adversarially chosen
+> examples cannot estimate a rate, and the write-up presented the result as a
+> property of the model rather than of the probe.
+>
+> **What survives, and what does not.**
+> - *Survives — the mechanism.* `_parse_score` → `-1` → `np.interp` silently
+>   replacing a refusal with a blend of its neighbours is real, and
+>   countermeasure 2 (mask, do not interpolate; report coverage) was implemented
+>   and is what makes the reported `coverage` column meaningful.
+> - *Survives, and is the genuinely useful finding.* The refusals that do occur are
+>   **label-imbalanced**: 3.26× enriched on positive frames overall and 7.91× on
+>   HateClipSeg. So the concern that refusals concentrate where the metric is
+>   computed was directionally right even though the rate and the model ordering
+>   were wrong. This is why countermeasure 3's paired moderation-prompt row is
+>   still being run.
+> - *Does not survive.* Recommendation 4's stated reason. LAVAD should still run on
+>   Llama-2-13b-chat, but because that is the backbone it published with, **not**
+>   because Llama-2 refuses less — it refuses more. Any future reasoning that
+>   treats Llama-3.1 as the refusal-prone option is building on a retracted claim.
+>
+> Measured by the LAVAD/URF worker on the full test-split runs; §K and §L carry the
+> per-dataset breakdown. Recorded here rather than by editing (a) in place, so the
+> inference and its refutation stay side by side — this is the second claim in
+> §3.11/§3.1 to be overturned by measurement (the first being the "LaGoVAD's binary
+> head is constant" reading in §3.1, which was a corrupt CLIP checkpoint), and both
+> failed the same way: a small unrepresentative probe reported as a model property.
 
 **(b) The LAVAD chain has seven stages, and the shipped `04_query_llm.sh`
 depends on stages 02–03.** The `--score_summary` pass reads *cleaned, nested*
