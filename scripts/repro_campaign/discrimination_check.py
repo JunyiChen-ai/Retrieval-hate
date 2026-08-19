@@ -101,3 +101,19 @@ def report(*checks, strict=True):
     if bad and strict:
         raise SystemExit("discrimination check failed: " + "; ".join(bad))
     return not bad
+
+def patch_applied(n_matched, what="monkeypatch", expect_min=1):
+    """A patch that matched zero modules is a silent no-op.
+
+    Written after making this mistake: a memory patch for VideoLLaMA3 matched
+    with `type(m).__name__ == "VisionAttention"`, but the class that actually
+    runs is `VisionSdpaAttention`, a *subclass*.  Exact name matching skipped it
+    entirely and `install()` returned 0 while reporting success.  Match with
+    `isinstance` so subclasses are caught, and assert that something was hit --
+    a patch nobody applied is indistinguishable from a patch that worked.
+    """
+    if n_matched < expect_min:
+        return False, (f"{what}: matched {n_matched} modules (expected >= "
+                       f"{expect_min}) -- SILENT NO-OP. Exact class-name "
+                       f"matching misses subclasses; use isinstance.")
+    return True, f"{what}: applied to {n_matched} module(s)"

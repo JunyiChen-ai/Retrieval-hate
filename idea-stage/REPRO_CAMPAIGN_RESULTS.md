@@ -1110,12 +1110,34 @@ affected rows other than LaGoVAD's.
 | 3 | Runners had no `set -e`; the AV²A supervisor printed the smoke's exit code without checking it and emitted `RUN COMPLETE` on driver `rc=0` regardless of output | A chain could report success it had not earned — as the LAVAD chain did, exiting `rc=0` having written 5 curves for one dataset | `set -euo pipefail` plus per-dataset curve-count guards in the LaGoVAD chain, the UniTime converter and the AV²A supervisor; each verified to pass on real data and fail on a truncation |
 | 4 | `decord` cannot open 25.5% of MHC-EN containers | A quarter of that dataset would have been recorded as method failures | `decord_fallback.py` tries the real reader first and falls back to PyAV; 275 of 3,084 containers need it |
 
-**The pattern worth carrying forward.** Defects 1 and 2 — and, separately, the
-`+1.0` bool-mask bias found in VideoLLaMA3's eager vision attention — are all
-*silent correctness* failures: right shape, right range, wrong content, no
-exception, clean exit code. None is caught by asking "did it run?". The question
-that separates them from a working component is whether the output **varies with
-the input**, which a collapsed encoder cannot do.
+**A retracted claim, kept visible because the mistake is instructive.** While
+diagnosing URF's OOM I read VideoLLaMA3's `VisionAttention`, saw it add a *bool*
+mask to float logits (`True` → `1.0`), measured that 44–56% of a row's attention
+mass escapes its own block, and reported that our forced flash → sdpa adaptation
+had changed the model's semantics. **That was wrong.** The class that actually
+runs is `VisionSdpaAttention`, a *subclass* selected by
+`VISION_ATTENTION_CLASSES[config._attn_implementation]`; it builds the same bool
+tensor but **passes** it to `F.scaled_dot_product_attention` as `attn_mask`
+instead of adding it, and for SDPA a bool mask means "True = attend, False =
+−inf". Verified here: sdpa-with-bool-mask reproduces independently computed
+per-block attention to **0.000e+00**, and the URF worker measured it against the
+published flash path at 4.44e-16. So the sdpa path is genuinely block-diagonal,
+there is no fidelity choice to make, and §L needs only "no sm_120 flash wheel, so
+sdpa; semantics identical". The eager class I analysed is dead code.
+
+The error is worth recording because it is the same species as the defects in the
+table: I inferred behaviour from reading source and reported it as a measurement,
+without checking which class the config actually instantiates. The memory patch I
+wrote off the back of it was removed — it targeted the unused class, and its
+`type(m).__name__ == "VisionAttention"` test would not have matched the subclass
+anyway, so `install()` would have returned 0 while reporting success. That
+silent-no-op shape is now itself a check (`patch_applied`).
+
+**The pattern worth carrying forward.** Defects 1 and 2 are *silent correctness*
+failures: right shape, right range, wrong content, no exception, clean exit code.
+None is caught by asking "did it run?". The question that separates them from a
+working component is whether the output **varies with the input**, which a
+collapsed encoder cannot do.
 `scripts/repro_campaign/discrimination_check.py` makes that a cheap smoke-test
 assertion (`curve_varies`, `embeddings_discriminate`, `scores_separate_items`).
 Replayed against the real corrupt-CLIP failure it fires on both the collapsed
