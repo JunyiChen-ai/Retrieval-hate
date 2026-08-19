@@ -11,6 +11,15 @@ cd /home/jehc223/Retrieval-hate
 PY=third_party/_venv/av2a/bin/python
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
+# Smoke pass first: two videos per dataset, one PROGRESS line each, inside the
+# same GPU-lock acquisition as the corpus run so the smoke does not cost a whole
+# extra turn of a queue whose other jobs run for ten hours.  The driver is
+# idempotent, so these eight videos are simply the first eight of the corpus run.
+echo "=== smoke (2 videos per dataset) $(date -Is) ==="
+$PY -u scripts/repro_campaign/run_av2a.py \
+    --datasets HateMM,MHC,MHC_zh,HateClipSeg --limit 2 --progress-every 1
+echo "=== smoke done rc=$? $(date -Is) ==="
+
 MAX_RESTARTS=${MAX_RESTARTS:-80}
 for attempt in $(seq 1 "$MAX_RESTARTS"); do
   echo "=== attempt $attempt $(date -Is) ==="
