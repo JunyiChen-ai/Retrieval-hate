@@ -16,7 +16,7 @@ DS=HateMM,MHC,MHC_zh,HateClipSeg
 
 echo "=== [$(date -Is)] stage 01 caption (BLIP-2 blip2-opt-6.7b-coco, 1 fps)"
 $PY scripts/repro_campaign/blip2_caption.py --datasets "$DS" --split "$SPLIT" \
-    --batch-size 32 || echo "!! caption rc=$?"
+    --batch-size 64 || echo "!! caption rc=$?"
 
 echo "=== [$(date -Is)] stage 02+03 index + clean captions (ImageBind)"
 $PY scripts/repro_campaign/lavad_chain.py clean --datasets "$DS" --split "$SPLIT" \
@@ -24,11 +24,11 @@ $PY scripts/repro_campaign/lavad_chain.py clean --datasets "$DS" --split "$SPLIT
 
 echo "=== [$(date -Is)] stage 04a temporal summaries (Llama-2-13b-chat NF4)"
 $PY scripts/repro_campaign/lavad_chain.py summarize --datasets "$DS" \
-    --split "$SPLIT" --center-step "$STEP" --batch-size 32 || echo "!! summarize rc=$?"
+    --split "$SPLIT" --center-step "$STEP" --batch-size 64 || echo "!! summarize rc=$?"
 
 echo "=== [$(date -Is)] stage 04b anomaly scores, verbatim prompt"
 $PY scripts/repro_campaign/lavad_chain.py score --datasets "$DS" --split "$SPLIT" \
-    --center-step "$STEP" --batch-size 32 --prompt verbatim || echo "!! score rc=$?"
+    --center-step "$STEP" --batch-size 64 --prompt verbatim || echo "!! score rc=$?"
 
 echo "=== [$(date -Is)] stage 05+06 summary index + refined scores (ImageBind)"
 $PY scripts/repro_campaign/lavad_chain.py refine --datasets "$DS" --split "$SPLIT" \
