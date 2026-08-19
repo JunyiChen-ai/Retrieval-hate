@@ -243,6 +243,50 @@ def qwen_curves(ds: str, qkey: str, gt: dict):
     return curves, intervals, missing, reasons
 
 
+def curve_dir_front_end(ds: str, curve_dir: Path, variant: str, gt: dict):
+    """Generic front-end for a method that writes one npz per video.
+
+    `<curve_dir>/<DS>/<vid>.npz` must hold the per-variant curve under the key
+    `<variant>` and its own native rate under `rate` (a scalar, in samples per
+    second).  A per-video rate is allowed: the curve is broadcast onto the 4 fps
+    grid here with exactly the function the pooled evaluator would have used, so
+    the caller then passes `native_rate=4`.  Videos with no file, an empty curve
+    or a non-finite curve are reported missing and dropped, never interpolated.
+
+    Optional `<curve_dir>/<DS>_intervals_<variant>.json` supplies interval
+    predictions `{vid: [[start, end, score], ...]}` for interval-emitting methods.
+    """
+    d = curve_dir / ds
+    curves, missing, reasons = {}, [], {}
+    for vid, g in gt.items():
+        p = d / f"{vid}.npz"
+        if not p.exists():
+            missing.append(vid)
+            reasons[vid] = "not_run"
+            continue
+        try:
+            z = np.load(p, allow_pickle=False)
+            c = np.asarray(z[variant], dtype=np.float64).reshape(-1)
+            rate = float(z["rate"])
+        except Exception as e:  # a truncated or key-less file is a failure, not a zero
+            missing.append(vid)
+            reasons[vid] = f"load:{type(e).__name__}"
+            continue
+        if c.size == 0 or not np.isfinite(c).all() or rate <= 0:
+            missing.append(vid)
+            reasons[vid] = "empty_or_nonfinite"
+            continue
+        T_feat = int(np.ceil(c.size * FPS / rate))
+        curves[vid] = broadcast_to_4fps(c, rate, T_feat)
+    ivf = curve_dir / f"{ds}_intervals_{variant}.json"
+    intervals = None
+    if ivf.exists():
+        raw = json.loads(ivf.read_text())
+        intervals = {v: [tuple(x) for x in iv] for v, iv in raw.items()
+                     if v in gt and iv is not None}
+    return curves, intervals, missing, reasons
+
+
 def imagebind_curves(ds: str, chan: str, gt: dict, text_emb: np.ndarray):
     d = ROOT / f"data/CLIP_Embedding/{ds}/imagebind_{chan}"
     curves, missing = {}, []
@@ -275,7 +319,15 @@ def imagebind_curves(ds: str, chan: str, gt: dict, text_emb: np.ndarray):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--method", required=True,
-                    choices=["qwen_grounding", "imagebind"])
+                    choices=["qwen_grounding", "imagebind", "curves"])
+    ap.add_argument("--curve-dir", default=None,
+                    help="curves method: root holding <DS>/<vid>.npz")
+    ap.add_argument("--variants", default="main",
+                    help="curves method: comma-separated npz keys to score")
+    ap.add_argument("--method-name", default="curves",
+                    help="curves method: the name written into the result rows")
+    ap.add_argument("--wave", type=int, default=1)
+    ap.add_argument("--supervision", default="label-free")
     ap.add_argument("--datasets", default=",".join(DATASETS))
     ap.add_argument("--split", default="test")
     ap.add_argument("--channels", default="image,video,audio")
@@ -307,6 +359,24 @@ def main() -> int:
                     reasons[v] for v in missing
                     if args.split in ("all", g_eval[v]["split"])))
                 results.append(r)
+        elif args.method == "curves":
+            from collections import Counter
+            cdir = Path(args.curve_dir)
+            for var in args.variants.split(","):
+                g_eval = gt
+                if ds == "HateClipSeg" and len(var) > 1 and var[0] == "c" and var[1].isdigit():
+                    g_eval = load_gt_hcs_class(int(var[1]))
+                curves, intervals, missing, reasons = curve_dir_front_end(
+                    ds, cdir, var, g_eval)
+                if not curves:
+                    continue
+                r = evaluate(ds, g_eval, curves, FPS, intervals, args.split, missing)
+                r.update(method=args.method_name, variant=var,
+                         supervision=args.supervision, wave=args.wave)
+                r["missing_reasons"] = dict(Counter(
+                    reasons[v] for v in missing
+                    if args.split in ("all", g_eval[v]["split"])))
+                results.append(r)
         else:
             temb = np.load(args.text_emb)
             for ch in args.channels.split(","):
@@ -317,8 +387,9 @@ def main() -> int:
                          supervision="label-free", wave=0)
                 results.append(r)
 
+    tag = args.method if args.method != "curves" else args.method_name
     out = Path(args.out) if args.out else (
-        ROOT / f"idea-stage/repro_campaign/eval_{args.method}_{args.split}.json")
+        ROOT / f"idea-stage/repro_campaign/eval_{tag}_{args.split}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(results, indent=1))
     for r in results:
