@@ -527,3 +527,176 @@ and is `n/a` here; this section is the informal equivalent.
    HateClipSeg's broadcast ceiling is AP 0.5437 against a base rate of 0.4712, so the whole
    chance-to-oracle interval is 0.07 wide; ImageBind's 0.5535 clears it. A video-level oracle is
    simply not a useful ceiling on a dataset where the annotated spans cover 47% of all frames.
+
+
+---
+
+Batch 4 (2026-08-19): **Wave 0 item 4 — Qwen2.5-VL-7B native temporal grounding**, all four
+datasets. This completes Wave 0's label-free floors.
+
+## I. Method as run — Qwen2.5-VL-7B native temporal grounding
+
+
+The harness is `scripts/repro_campaign/qwen25vl_grounding.py`, smoke-tested in Phase A. Its
+`pre_prompt`, `post_prompt`, greedy decoding, `max_new_tokens=50`, 32 uniformly sampled frames and
+the `extract_time` regex cascade are copied verbatim from the lmms-eval
+`temporal_grounding_charades` task, which is the harness TempSamp-R1 reports its Qwen2.5-VL-7B
+zero-shot row under. `scripts/repro_campaign/run_qwen_grounding.py` adds only the corpus loop,
+resume, and decode reuse across queries.
+
+**Query text, recorded because the freeze does not fix one.** Freeze §9 names the method and its
+prompt convention but never writes down the query sentence, so the campaign brief's default is used
+verbatim for the main row:
+
+```
+the moment containing hateful content targeting a person or group
+```
+
+HateClipSeg additionally gets one query per released class, same sentence frame:
+`the moment containing {normal, non-toxic | hateful | insulting | sexual | violent | harmful}
+content`. Each per-class row is scored against **that class's own frame labels**, rebuilt from
+`gold_segments.json` on the 4 fps grid (the union of classes 1–5 reproduces the stored any-toxic
+array exactly, and the gold-interval oracle scores F1 = 1.0 at every tIoU for every class).
+
+**Model precision — declared deviation.** The model is loaded in **4-bit NF4** (the Phase A smoke
+configuration, `MODEL_ASSETS_STATUS §3.7`), not bf16. Reason: at the lmms-eval default of 32 frames
+and `max_pixels=151200`, one bf16 forward peaks at ~24 GiB and then asks for a further 7.9 GiB
+block, which does not fit the 32 GiB card at all, let alone beside the parallel extraction job. The
+NF4 run peaks at 27 GiB. Everything else — prompt, frame count, pixel budget, decoding — is the
+published configuration.
+
+**Decoder fallback — declared deviation, and the reason it was necessary.** `qwen_vl_utils` reads
+video with decord and silently falls back to torchvision when decord fails; torchvision then
+reports a nonsense frame count and refuses `nframes=32`. On a 60-video sample per dataset that
+failure hits **27% of MHC-EN, 7% of MHC-ZH and 7% of HateClipSeg** containers, so taking the
+harness at face value would have recorded roughly a tenth of the corpus as model failures that were
+really decode failures. Videos that decord rejects are decoded with PyAV at the same uniform frame
+indices decord would have used, and the count of fallback videos is reported.
+
+**Score curve and the AUC it produces.** The model emits one interval per (video, query). The
+interval is clipped to `[0, D)` and rasterised to a **binary 0/1 curve** on the 4 fps grid. Read the
+frame ROC-AUC and PR-AUC accordingly: a two-valued score has a single operating point, so its ROC
+curve is one interior vertex and its ROC-AUC equals `(TPR + TNR) / 2`, i.e. balanced accuracy at
+that operating point — not the threshold-swept quantity the same column holds for a score-curve
+method. The comparison against ZS-CLIP's and ZS-ImageBind's continuous curves is therefore a
+comparison of a *committed* prediction against a *ranked* one, which favours neither in a
+straightforward way. `F1@tIoU` is the metric this method is actually built for, and unlike the
+score-curve methods it is reported rather than `n/a`.
+
+**Missing videos.** A refusal, an unparseable generation or a decode failure is recorded with
+`span=null` and the video is **dropped from the pool, never interpolated** (freeze §14).
+
+**Run record.** 5,452 generations over 3,082 videos (one main query everywhere, plus six per-class
+queries on HateClipSeg), 4 h 20 min wall clock on one RTX 5090. **Zero refusals and zero
+unparseable generations** — `extract_time` returned an interval for every generation the model
+produced, so the LLM-refusal failure mode that `MODEL_ASSETS_STATUS §3.11a` flags for the
+Llama-based scorers does not arise here.
+
+**Missing videos: 16 of 3,082 (0.5%).** Two are the D2 audio-only HateMM containers. The other
+fourteen are files truncated mid-download (`partial file`, `Invalid NAL unit size`) on which the C
+video decoder does not raise but **kills the process outright**; this stopped the run twice before
+the driver was given an in-flight marker and a supervisor, after which each crash retires exactly
+one id as a decode failure and the run continues. Per dataset: HateMM 3/1083, MHC-EN 11/792,
+MHC-ZH 3/814, HateClipSeg 1/395. All are dropped from the pool, never interpolated.
+
+Reproduce: `bash scripts/repro_campaign/run_qwen_supervised.sh`, then
+`python scripts/repro_campaign/eval_frame.py --method qwen_grounding --split {test,all} --qkeys main,c0_normal,...`
+(raw generations in `idea-stage/repro_qwen_ground/raw/`, logs in `logging/runs/repro_qwen_ground/`).
+
+### I.1 Headline rows — main query, test split
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| GOLD_BROADCAST | — | HateMM | test | control | control | n/a | video | 0.8857 | 0.5829 | n/a | n/a | n/a | 1.0000 | 116975 | 0.2421 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateMM | test | control | control | n/a | 4 fps | 0.5003 ± 0.0019 | 0.2423 ± 0.0013 | n/a | n/a | n/a | 0.0000 | 116975 | 0.2421 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| Qwen2.5-VL-7B grounding | 0 | HateMM | test | label-free | base | query=main | 4 fps | 0.5185 | 0.2522 | 0.0549 | 0.0299 | 0.0200 | 0.0297 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point |
+| GOLD_BROADCAST | — | MHC-EN | test | control | control | n/a | video | 0.9427 | 0.7664 | n/a | n/a | n/a | 1.0000 | 22337 | 0.2734 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-EN | test | control | control | n/a | 4 fps | 0.5004 ± 0.0034 | 0.2737 ± 0.0026 | n/a | n/a | n/a | 0.0000 | 22337 | 0.2734 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| Qwen2.5-VL-7B grounding | 0 | MHC-EN | test | label-free | base | query=main | 4 fps | 0.5221 | 0.2806 | 0.0558 | 0.0279 | 0.0186 | 0.0222 | 21896 | 0.2696 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 2/161 (1.2%) dropped, not interpolated |
+| GOLD_BROADCAST | — | MHC-ZH | test | control | control | n/a | video | 0.9842 | 0.9191 | n/a | n/a | n/a | 1.0000 | 18199 | 0.2648 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-ZH | test | control | control | n/a | 4 fps | 0.4985 ± 0.0052 | 0.2646 ± 0.0038 | n/a | n/a | n/a | 0.0000 | 18199 | 0.2648 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| Qwen2.5-VL-7B grounding | 0 | MHC-ZH | test | label-free | base | query=main | 4 fps | 0.5113 | 0.2699 | 0.0718 | 0.0205 | 0.0000 | 0.0077 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point |
+| GOLD_BROADCAST | — | HateClipSeg | test | control | control | n/a | video | 0.6260 | 0.5437 | n/a | n/a | n/a | 1.0000 | 114097 | 0.4712 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateClipSeg | test | control | control | n/a | 4 fps | 0.5009 ± 0.0021 | 0.4721 ± 0.0016 | n/a | n/a | n/a | 0.0000 | 114097 | 0.4712 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | test | label-free | base | query=main | 4 fps | 0.5030 | 0.4750 | 0.0298 | 0.0128 | 0.0043 | 0.0231 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/119 (0.8%) dropped, not interpolated |
+
+### I.2 Full corpus — main query
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-VL-7B grounding | 0 | HateMM | all | label-free | base | query=main | 4 fps | 0.5245 | 0.3018 | 0.0679 | 0.0453 | 0.0226 | 0.0400 | 622316 | 0.2862 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 3/1083 (0.3%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | MHC-EN | all | label-free | base | query=main | 4 fps | 0.5119 | 0.2501 | 0.0560 | 0.0270 | 0.0097 | 0.0094 | 108488 | 0.2450 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 11/792 (1.4%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | MHC-ZH | all | label-free | base | query=main | 4 fps | 0.5155 | 0.2608 | 0.0633 | 0.0279 | 0.0112 | 0.0116 | 101557 | 0.2539 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 3/814 (0.4%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | all | label-free | base | query=main | 4 fps | 0.5049 | 0.4671 | 0.0267 | 0.0115 | 0.0013 | 0.0439 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/395 (0.2%) dropped, not interpolated |
+
+### I.3 HateClipSeg 6-class appendix
+
+One query per released class, each scored against **that class's own frame labels** rebuilt from
+`gold_segments.json` (the `c0_normal` row is therefore scored against the normal class, whose base
+rate is the complement of any-toxic).
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | test | label-free | base | query=c0_normal | 4 fps | 0.5014 | 0.5274 | 0.0158 | 0.0000 | 0.0000 | 0.0514 | 113002 | 0.5267 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/119 (0.8%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | test | label-free | base | query=c1_hateful | 4 fps | 0.5008 | 0.2005 | 0.0133 | 0.0067 | 0.0067 | 0.0010 | 113002 | 0.2002 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/119 (0.8%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | test | label-free | base | query=c2_insulting | 4 fps | 0.5011 | 0.2577 | 0.0330 | 0.0000 | 0.0000 | 0.0032 | 113002 | 0.2572 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/119 (0.8%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | test | label-free | base | query=c3_sexual | 4 fps | 0.5006 | 0.0573 | 0.0000 | 0.0000 | 0.0000 | 0.0003 | 113002 | 0.0572 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/119 (0.8%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | test | label-free | base | query=c4_violence | 4 fps | 0.5004 | 0.1368 | 0.0154 | 0.0077 | 0.0000 | 0.0005 | 113002 | 0.1367 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/119 (0.8%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | test | label-free | base | query=c5_harm | 4 fps | 0.5009 | 0.0117 | 0.0000 | 0.0000 | 0.0000 | 0.0001 | 113002 | 0.0117 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/119 (0.8%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | all | label-free | base | query=c0_normal | 4 fps | 0.4985 | 0.5351 | 0.0082 | 0.0012 | 0.0000 | -0.0338 | 374235 | 0.5358 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/395 (0.2%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | all | label-free | base | query=c1_hateful | 4 fps | 0.5052 | 0.2119 | 0.0166 | 0.0062 | 0.0021 | 0.0092 | 374235 | 0.2095 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/395 (0.2%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | all | label-free | base | query=c2_insulting | 4 fps | 0.5009 | 0.2570 | 0.0273 | 0.0080 | 0.0016 | 0.0027 | 374235 | 0.2566 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/395 (0.2%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | all | label-free | base | query=c3_sexual | 4 fps | 0.5014 | 0.0366 | 0.0000 | 0.0000 | 0.0000 | 0.0006 | 374235 | 0.0365 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/395 (0.2%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | all | label-free | base | query=c4_violence | 4 fps | 0.5051 | 0.1224 | 0.0244 | 0.0073 | 0.0000 | 0.0107 | 374235 | 0.1207 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/395 (0.2%) dropped, not interpolated |
+| Qwen2.5-VL-7B grounding | 0 | HateClipSeg | all | label-free | base | query=c5_harm | 4 fps | 0.4983 | 0.0050 | 0.0000 | 0.0000 | 0.0000 | -0.0001 | 374235 | 0.0050 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | binary 0/1 curve: ROC-AUC = balanced accuracy at one operating point; missing 1/395 (0.2%) dropped, not interpolated |
+
+### I.4 Stratified — single-span vs multi-span (HateMM / MHC only)
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Qwen2.5-VL-7B grounding | 0 | HateMM | test | label-free | base | query=main | 4 fps | 0.5282 | 0.2166 | 0.0656 | 0.0492 | 0.0328 | 0.0289 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=single_span |
+| Qwen2.5-VL-7B grounding | 0 | MHC-EN | test | label-free | base | query=main | 4 fps | 0.5242 | 0.2706 | 0.0585 | 0.0293 | 0.0195 | 0.0230 | 21228 | 0.2587 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=single_span |
+| Qwen2.5-VL-7B grounding | 0 | MHC-ZH | test | label-free | base | query=main | 4 fps | 0.5113 | 0.2699 | 0.0718 | 0.0205 | 0.0000 | 0.0077 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=single_span |
+| Qwen2.5-VL-7B grounding | 0 | HateMM | test | label-free | base | query=main | 4 fps | 0.5025 | 0.1047 | 0.0209 | 0.0000 | 0.0000 | 0.0017 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=multi_span |
+| Qwen2.5-VL-7B grounding | 0 | MHC-EN | test | label-free | base | query=main | 4 fps | 0.4909 | 0.0274 | 0.0000 | 0.0000 | 0.0000 | -0.0007 | 14799 | 0.0278 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=multi_span |
+| Qwen2.5-VL-7B grounding | 0 | MHC-ZH | test | label-free | base | query=main | 4 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=multi_span single-class pool, metrics undefined |
+| Qwen2.5-VL-7B grounding | 0 | HateMM | all | label-free | base | query=main | 4 fps | 0.5245 | 0.2670 | 0.0688 | 0.0516 | 0.0313 | 0.0281 | 528575 | 0.2520 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=single_span |
+| Qwen2.5-VL-7B grounding | 0 | MHC-EN | all | label-free | base | query=main | 4 fps | 0.5136 | 0.2450 | 0.0561 | 0.0261 | 0.0080 | 0.0103 | 106340 | 0.2392 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=single_span |
+| Qwen2.5-VL-7B grounding | 0 | MHC-ZH | all | label-free | base | query=main | 4 fps | 0.5155 | 0.2608 | 0.0602 | 0.0263 | 0.0113 | 0.0114 | 101024 | 0.2539 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=single_span |
+| Qwen2.5-VL-7B grounding | 0 | HateMM | all | label-free | base | query=main | 4 fps | 0.5289 | 0.1095 | 0.0309 | 0.0146 | 0.0016 | 0.0274 | 453238 | 0.0991 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=multi_span |
+| Qwen2.5-VL-7B grounding | 0 | MHC-EN | all | label-free | base | query=main | 4 fps | 0.4808 | 0.0146 | 0.0034 | 0.0034 | 0.0034 | -0.0007 | 76841 | 0.0149 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=multi_span |
+| Qwen2.5-VL-7B grounding | 0 | MHC-ZH | all | label-free | base | query=main | 4 fps | 0.5139 | 0.0020 | 0.0071 | 0.0036 | 0.0000 | 0.0003 | 72057 | 0.0019 | 1 | n/a | §4 | idea-stage/repro_qwen_ground/ | stratum=multi_span |
+
+### I.5 What the numbers say
+
+1. **Qwen2.5-VL's native grounding is at chance on all four datasets.** Test-split frame ROC-AUC is
+   0.5185 / 0.5221 / 0.5113 / 0.5030 (HateMM / MHC-EN / MHC-ZH / HateClipSeg) against a random floor
+   of 0.500; oracle-normalised AP is 0.030 / 0.022 / 0.008 / 0.023, i.e. it recovers under 3% of the
+   chance-to-video-oracle gap everywhere. It is the weakest of the three Wave 0 floors: ZS-CLIP
+   reached 0.5368 / 0.5013 / 0.6075 / 0.4990 and ZS-ImageBind 0.5919 / 0.5938 / 0.5975 / 0.5926.
+   The result is not a refusal artefact — every generation parsed.
+2. **F1@tIoU is near zero, and most of that is a length mismatch rather than a placement error.**
+   Test F1@0.3 / 0.5 / 0.7 is 0.055 / 0.030 / 0.020 on HateMM and 0.030 / 0.013 / 0.004 on
+   HateClipSeg. The model's predicted intervals have a **median length of 4.2–5.9 s** against a
+   **median gold span of 19–21 s**. Since one predicted interval of length L can reach at best
+   `min(L,G)/max(L,G)` IoU against a gold span of length G, the predicted lengths alone cap the
+   fraction of videos that *could* reach tIoU 0.5 at **24% (HateMM), 16% (MHC-EN), 11% (MHC-ZH),
+   48% (HateClipSeg)** even with perfect placement. The method attains roughly a tenth to a fifth of
+   even that capped ceiling.
+3. **The model answers largely without looking.** A single identical generation,
+   `"The event happens in 19.8 - 25.7 seconds."`, is returned for **12.6% of HateMM, 19.3% of MHC-EN
+   and 10.6% of MHC-ZH videos**; on HateClipSeg the modal answer is
+   `"The event happens in 15.8 - 21.9 seconds."` (9.4%). Median predicted start is 16.8–18.9 s on
+   three datasets regardless of video length. This is the Charades-STA prior — short activity
+   intervals early in a short clip — transferred verbatim to videos whose hateful spans are long and
+   distributed differently. It also explains why the per-class HateClipSeg rows are flat at
+   ROC 0.4983–0.5052: the query text barely moves the answer.
+4. **Read the ROC-AUC column with the binary-curve caveat.** This method commits to one interval, so
+   its frame score is two-valued and its ROC-AUC is balanced accuracy at a single operating point,
+   not a threshold-swept ranking quality. That normally *flatters* a method relative to a continuous
+   curve at the same quality, which makes 0.50–0.52 a weaker result than the same figure from
+   ZS-CLIP or ZS-ImageBind, not a comparable one.
+5. **Consequence for the campaign.** The one Wave 0 method that natively emits intervals — the only
+   one for which `F1@tIoU` is even defined — cannot localise hate spans in these corpora at all. Any
+   future localisation claim of ours therefore has no meaningful interval-level zero-shot baseline to
+   clear on these benchmarks; the honest comparison remains the gold-broadcast ceiling of §3.

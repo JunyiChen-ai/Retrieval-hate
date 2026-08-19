@@ -1,0 +1,575 @@
+[
+ {
+  "dataset": "HateMM",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 215,
+  "n_videos_missing": 0,
+  "missing_frac": 0.0,
+  "missing_ids": [],
+  "pooled": {
+   "n_videos": 215,
+   "n_frames": 116975,
+   "base_rate": 0.2421,
+   "frame_ROC_AUC": 0.5185,
+   "frame_PR_AUC": 0.2522,
+   "AP_broadcast_pool": 0.5829,
+   "AP_random_pool": 0.2421,
+   "AP_norm": 0.0297,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0549,
+   "P@0.3": 0.0512,
+   "R@0.3": 0.0591,
+   "F1@0.5": 0.0299,
+   "P@0.5": 0.0279,
+   "R@0.5": 0.0323,
+   "F1@0.7": 0.02,
+   "P@0.7": 0.0186,
+   "R@0.7": 0.0215,
+   "n_pred": 215,
+   "n_gold": 186,
+   "n_videos": 215
+  },
+  "strat_single_span": {
+   "n_videos": 187,
+   "n_frames": 93315,
+   "base_rate": 0.2007,
+   "frame_ROC_AUC": 0.5282,
+   "frame_PR_AUC": 0.2166,
+   "AP_broadcast_pool": 0.7514,
+   "AP_random_pool": 0.2007,
+   "AP_norm": 0.0289,
+   "n_offgrid_gt8": 0
+  },
+  "strat_single_span_intervals": {
+   "F1@0.3": 0.0656,
+   "P@0.3": 0.0428,
+   "R@0.3": 0.1404,
+   "F1@0.5": 0.0492,
+   "P@0.5": 0.0321,
+   "R@0.5": 0.1053,
+   "F1@0.7": 0.0328,
+   "P@0.7": 0.0214,
+   "R@0.7": 0.0702,
+   "n_pred": 187,
+   "n_gold": 57,
+   "n_videos": 187
+  },
+  "strat_multi_span": {
+   "n_videos": 158,
+   "n_frames": 92052,
+   "base_rate": 0.1042,
+   "frame_ROC_AUC": 0.5025,
+   "frame_PR_AUC": 0.1047,
+   "AP_broadcast_pool": 0.4054,
+   "AP_random_pool": 0.1042,
+   "AP_norm": 0.0017,
+   "n_offgrid_gt8": 0
+  },
+  "strat_multi_span_intervals": {
+   "F1@0.3": 0.0209,
+   "P@0.3": 0.019,
+   "R@0.3": 0.0233,
+   "F1@0.5": 0.0,
+   "P@0.5": 0.0,
+   "R@0.5": 0.0,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 158,
+   "n_gold": 129,
+   "n_videos": 158
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=main",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {}
+ },
+ {
+  "dataset": "MHC",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 161,
+  "n_videos_missing": 2,
+  "missing_frac": 0.0124,
+  "missing_ids": [
+   "dK43yHIUMKA",
+   "suVF3Skd0bo"
+  ],
+  "pooled": {
+   "n_videos": 159,
+   "n_frames": 21896,
+   "base_rate": 0.2696,
+   "frame_ROC_AUC": 0.5221,
+   "frame_PR_AUC": 0.2806,
+   "AP_broadcast_pool": 0.7603,
+   "AP_random_pool": 0.2696,
+   "AP_norm": 0.0222,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0558,
+   "P@0.3": 0.0377,
+   "R@0.3": 0.1071,
+   "F1@0.5": 0.0279,
+   "P@0.5": 0.0189,
+   "R@0.5": 0.0536,
+   "F1@0.7": 0.0186,
+   "P@0.7": 0.0126,
+   "R@0.7": 0.0357,
+   "n_pred": 159,
+   "n_gold": 56,
+   "n_videos": 159
+  },
+  "strat_single_span": {
+   "n_videos": 156,
+   "n_frames": 21228,
+   "base_rate": 0.2587,
+   "frame_ROC_AUC": 0.5242,
+   "frame_PR_AUC": 0.2706,
+   "AP_broadcast_pool": 0.7738,
+   "AP_random_pool": 0.2587,
+   "AP_norm": 0.023,
+   "n_offgrid_gt8": 0
+  },
+  "strat_single_span_intervals": {
+   "F1@0.3": 0.0585,
+   "P@0.3": 0.0385,
+   "R@0.3": 0.1224,
+   "F1@0.5": 0.0293,
+   "P@0.5": 0.0192,
+   "R@0.5": 0.0612,
+   "F1@0.7": 0.0195,
+   "P@0.7": 0.0128,
+   "R@0.7": 0.0408,
+   "n_pred": 156,
+   "n_gold": 49,
+   "n_videos": 156
+  },
+  "strat_multi_span": {
+   "n_videos": 110,
+   "n_frames": 14799,
+   "base_rate": 0.0278,
+   "frame_ROC_AUC": 0.4909,
+   "frame_PR_AUC": 0.0274,
+   "AP_broadcast_pool": 0.6168,
+   "AP_random_pool": 0.0278,
+   "AP_norm": -0.0007,
+   "n_offgrid_gt8": 0
+  },
+  "strat_multi_span_intervals": {
+   "F1@0.3": 0.0,
+   "P@0.3": 0.0,
+   "R@0.3": 0.0,
+   "F1@0.5": 0.0,
+   "P@0.5": 0.0,
+   "R@0.5": 0.0,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 110,
+   "n_gold": 7,
+   "n_videos": 110
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=main",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {
+   "decode_all_backends_failed": 2
+  }
+ },
+ {
+  "dataset": "MHC_zh",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 149,
+  "n_videos_missing": 0,
+  "missing_frac": 0.0,
+  "missing_ids": [],
+  "pooled": {
+   "n_videos": 149,
+   "n_frames": 18199,
+   "base_rate": 0.2648,
+   "frame_ROC_AUC": 0.5113,
+   "frame_PR_AUC": 0.2699,
+   "AP_broadcast_pool": 0.9191,
+   "AP_random_pool": 0.2648,
+   "AP_norm": 0.0077,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0718,
+   "P@0.3": 0.047,
+   "R@0.3": 0.1522,
+   "F1@0.5": 0.0205,
+   "P@0.5": 0.0134,
+   "R@0.5": 0.0435,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 149,
+   "n_gold": 46,
+   "n_videos": 149
+  },
+  "strat_single_span": {
+   "n_videos": 149,
+   "n_frames": 18199,
+   "base_rate": 0.2648,
+   "frame_ROC_AUC": 0.5113,
+   "frame_PR_AUC": 0.2699,
+   "AP_broadcast_pool": 0.9191,
+   "AP_random_pool": 0.2648,
+   "AP_norm": 0.0077,
+   "n_offgrid_gt8": 0
+  },
+  "strat_single_span_intervals": {
+   "F1@0.3": 0.0718,
+   "P@0.3": 0.047,
+   "R@0.3": 0.1522,
+   "F1@0.5": 0.0205,
+   "P@0.5": 0.0134,
+   "R@0.5": 0.0435,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 149,
+   "n_gold": 46,
+   "n_videos": 149
+  },
+  "strat_multi_span": {
+   "n_videos": 103,
+   "n_frames": 12955,
+   "base_rate": 0.0,
+   "frame_ROC_AUC": NaN,
+   "frame_PR_AUC": -0.0,
+   "AP_broadcast_pool": NaN,
+   "AP_random_pool": 0.0,
+   "AP_norm": null,
+   "n_offgrid_gt8": 0
+  },
+  "strat_multi_span_intervals": {
+   "F1@0.3": 0.0,
+   "P@0.3": 0.0,
+   "R@0.3": 0.0,
+   "F1@0.5": 0.0,
+   "P@0.5": 0.0,
+   "R@0.5": 0.0,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 103,
+   "n_gold": 0,
+   "n_videos": 103
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=main",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {}
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "base_rate": 0.4733,
+   "frame_ROC_AUC": 0.503,
+   "frame_PR_AUC": 0.475,
+   "AP_broadcast_pool": 0.5469,
+   "AP_random_pool": 0.4733,
+   "AP_norm": 0.0231,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0298,
+   "P@0.3": 0.0593,
+   "R@0.3": 0.0199,
+   "F1@0.5": 0.0128,
+   "P@0.5": 0.0254,
+   "R@0.5": 0.0085,
+   "F1@0.7": 0.0043,
+   "P@0.7": 0.0085,
+   "R@0.7": 0.0028,
+   "n_pred": 118,
+   "n_gold": 352,
+   "n_videos": 118
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=main",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {
+   "decode_all_backends_failed": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "base_rate": 0.5267,
+   "frame_ROC_AUC": 0.5014,
+   "frame_PR_AUC": 0.5274,
+   "AP_broadcast_pool": 0.5415,
+   "AP_random_pool": 0.5267,
+   "AP_norm": 0.0514,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0158,
+   "P@0.3": 0.0339,
+   "R@0.3": 0.0103,
+   "F1@0.5": 0.0,
+   "P@0.5": 0.0,
+   "R@0.5": 0.0,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 118,
+   "n_gold": 389,
+   "n_videos": 118
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=c0_normal",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {
+   "decode_all_backends_failed": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "base_rate": 0.2002,
+   "frame_ROC_AUC": 0.5008,
+   "frame_PR_AUC": 0.2005,
+   "AP_broadcast_pool": 0.4603,
+   "AP_random_pool": 0.2002,
+   "AP_norm": 0.001,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0133,
+   "P@0.3": 0.0169,
+   "R@0.3": 0.011,
+   "F1@0.5": 0.0067,
+   "P@0.5": 0.0085,
+   "R@0.5": 0.0055,
+   "F1@0.7": 0.0067,
+   "P@0.7": 0.0085,
+   "R@0.7": 0.0055,
+   "n_pred": 118,
+   "n_gold": 182,
+   "n_videos": 118
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=c1_hateful",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {
+   "decode_all_backends_failed": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "base_rate": 0.2572,
+   "frame_ROC_AUC": 0.5011,
+   "frame_PR_AUC": 0.2577,
+   "AP_broadcast_pool": 0.3975,
+   "AP_random_pool": 0.2572,
+   "AP_norm": 0.0032,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.033,
+   "P@0.3": 0.0508,
+   "R@0.3": 0.0244,
+   "F1@0.5": 0.0,
+   "P@0.5": 0.0,
+   "R@0.5": 0.0,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 118,
+   "n_gold": 246,
+   "n_videos": 118
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=c2_insulting",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {
+   "decode_all_backends_failed": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "base_rate": 0.0572,
+   "frame_ROC_AUC": 0.5006,
+   "frame_PR_AUC": 0.0573,
+   "AP_broadcast_pool": 0.2859,
+   "AP_random_pool": 0.0572,
+   "AP_norm": 0.0003,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0,
+   "P@0.3": 0.0,
+   "R@0.3": 0.0,
+   "F1@0.5": 0.0,
+   "P@0.5": 0.0,
+   "R@0.5": 0.0,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 118,
+   "n_gold": 45,
+   "n_videos": 118
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=c3_sexual",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {
+   "decode_all_backends_failed": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "base_rate": 0.1367,
+   "frame_ROC_AUC": 0.5004,
+   "frame_PR_AUC": 0.1368,
+   "AP_broadcast_pool": 0.3203,
+   "AP_random_pool": 0.1367,
+   "AP_norm": 0.0005,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0154,
+   "P@0.3": 0.0169,
+   "R@0.3": 0.0142,
+   "F1@0.5": 0.0077,
+   "P@0.5": 0.0085,
+   "R@0.5": 0.0071,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 118,
+   "n_gold": 141,
+   "n_videos": 118
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=c4_violence",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {
+   "decode_all_backends_failed": 1
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 1,
+  "missing_frac": 0.0084,
+  "missing_ids": [
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 118,
+   "n_frames": 113002,
+   "base_rate": 0.0117,
+   "frame_ROC_AUC": 0.5009,
+   "frame_PR_AUC": 0.0117,
+   "AP_broadcast_pool": 0.2029,
+   "AP_random_pool": 0.0117,
+   "AP_norm": 0.0001,
+   "n_offgrid_gt8": 0
+  },
+  "intervals": {
+   "F1@0.3": 0.0,
+   "P@0.3": 0.0,
+   "R@0.3": 0.0,
+   "F1@0.5": 0.0,
+   "P@0.5": 0.0,
+   "R@0.5": 0.0,
+   "F1@0.7": 0.0,
+   "P@0.7": 0.0,
+   "R@0.7": 0.0,
+   "n_pred": 118,
+   "n_gold": 14,
+   "n_videos": 118
+  },
+  "method": "Qwen2.5-VL-7B grounding",
+  "variant": "query=c5_harm",
+  "supervision": "label-free",
+  "wave": 0,
+  "missing_reasons": {
+   "decode_all_backends_failed": 1
+  }
+ }
+]
