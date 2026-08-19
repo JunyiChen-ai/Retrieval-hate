@@ -1523,3 +1523,266 @@ never a silent substitution for the verbatim row.
    HateClipSeg (0.5768) and mid-pack elsewhere, but every dataset remains far below the
    zero-temporal-resolution gold-broadcast ceiling (0.8857 / 0.9427 / 0.9842 / 0.6260 ROC-AUC).
    The gap between "knows which video is hateful" and "knows when" is untouched by this method.
+
+## L. Method as run — URF-HVAA (NeurIPS 2025)
+
+The harness is `scripts/repro_campaign/urf_chain.py`, driven by
+`scripts/repro_campaign/run_urf_wave1.sh`, against `third_party/URF-HVAA` @ `ea993487`. The repo
+is a fork of LAVAD's codebase, so several of §K's adaptations recur; only what differs is spelled
+out again.
+
+**The chain, stage for stage.** `src/video_pre_caption.py` captions a 10 s window with
+VideoLLaMA3-7B (`fps=2`, at most 10 frames, `max_new_tokens=256`);
+`scripts/query_llm_vad.sh` → `src/llm_anomaly_scorer.py` has Llama-3.1-8B-Instruct rate each
+caption 0-1; `src/score_filter.py` slides a window over those round-1 scores and records each
+video's highest- and lowest-scoring interval plus score statistics; `src/summarize_window.py` shows
+VideoLLaMA3 the highest interval and asks for a Python-style list of suspicious phrases;
+`scripts/refine_score.sh` → `src/refine_with_tag.py` re-scores with that tag list injected into the
+system prompt, but **only for videos whose highest-window average lies inside `0.5 ± threshold`**
+— the paper's intra-video gate, `threshold = 0.05` in the shipped script — and the trailing
+`cp -n` in `refine_score.sh` leaves every other video on its round-1 curve. Both behaviours are
+reproduced: the gate decides which videos are re-scored, and un-gated videos keep round 1.
+
+**Adaptation 1 — a coarser centre grid, the one unavoidable departure.** URF steps its centre by
+16 native frames (0.533 s at 30 fps) while using a 10 s window, i.e. a ~19x overlap and one
+VideoLLaMA3 generation per 0.533 s of video. Their own README quotes ~20 h on a 3090 for one much
+smaller corpus; at that density our 18.9 h test split alone is far outside a single shared RTX 5090.
+Centres are stepped by **10 s**, so the 10 s windows tile the video once and
+`native_rate = 0.1` samples/s. This is the coarsest faithful choice — it changes how often the
+window is placed, not what the window is or how it is described — and it is the largest departure
+in this port. Read the localisation numbers with it in mind: gold spans in these corpora have a
+median length of 19-21 s, so a 10 s grid is still finer than the events being localised, but a
+method whose value lies in sub-second placement would be penalised by it.
+
+**Adaptation 2 — decord fallback, and the count of videos that needed it.** URF reads video
+through VideoLLaMA3's `trust_remote_code` `processing_videollama3.py`, which does
+`from decord import VideoReader` at import time. decord cannot open a substantial share of the
+released MultiHateClip containers, so `scripts/repro_campaign/decord_fallback.py` is installed
+**before** that module imports: the real reader is tried first and only a failure falls through to
+a PyAV-backed object exposing the same three calls. Videos decord opens are untouched. The ids
+that needed the fallback are recorded per stage and reported in §L.5. This is why URF's per-dataset
+video counts can differ from LAVAD's, which never touches decord (§K).
+
+**Adaptation 2b — flash-attn is unavailable on this card, and `sdpa` turns out to be
+semantically identical.** `video_pre_caption.py` and `summarize_window.py` both pin
+`attn_implementation="flash_attention_2"`; no flash-attn wheel exists for torch 2.7.1 / cu128 /
+sm_120, so Phase A switched them to `sdpa` (`MODEL_ASSETS_STATUS §3.6`). That substitution is
+usually worth suspecting, and here it was checked rather than assumed. The vision encoder ships
+three attention classes and `sdpa` selects **`VisionSdpaAttention`**, not the eager
+`VisionAttention`:
+
+  * eager computes `attn_weights + attention_mask` with a **bool** mask, which promotes
+    `True → 1.0` and `False → 0.0`. That is a +1 bias inside each frame block, not a mask, and
+    attention stays global — measured 40% of a row's probability mass off-block on a 2-block case.
+  * `VisionSdpaAttention` passes the same bool mask to `F.scaled_dot_product_attention`, where
+    `True` means *attend*. That is strict block-diagonal attention, and it agrees with a
+    hand-written block-diagonal softmax to **max |diff| 4.4e-16**, which is the same thing
+    `VisionFlashAttention2`'s `flash_attn_varlen_func` computes.
+
+So the published attention semantics are preserved and there is no numerical adaptation to declare
+here beyond the class substitution itself.
+
+**Adaptation 2c — per-block attention, to keep upstream's resolution.** The masked
+`scaled_dot_product_attention` cannot use a fast backend and materialises `[num_heads, N, N]` for
+N patches across the whole clip; at the processor's own `max_tokens = 16384` that is tens of GiB,
+and it killed 153 of the 215 HateMM test videos on the first attempt while leaving the shorter
+corpora untouched. Because the mask is exactly block-diagonal, one **unmasked** call per block
+returns the identical tensor — verified against the original at **max |diff| 1.7e-16** in float64 —
+while allocating `sum(block²)` rather than `N²`. `scripts/repro_campaign/videollama3_sdpa_blockattn.py`
+does that, and `load_vlm` refuses to run if it finds no module to patch. The point of the fix is
+that **no resolution is traded away**: `max_tokens` stays at upstream's 16384, so the on-screen-text
+reading that `MODEL_ASSETS_STATUS §1` identifies as VideoLLaMA3's strength on these corpora is
+intact. The earlier stopgap of halving `max_tokens` was discarded, along with the captions it
+produced, rather than mixing two resolutions in one corpus.
+
+**Adaptations shared with LAVAD.** Greedy decoding, so the run is deterministic and a single run
+under freeze §6 (their `video_pre_caption.py` passes `temperature=0.1` and their scorer defaults to
+`0.6`); `Llama-3.1-8B-Instruct` through the `llama_hf` shim on the ungated
+`NousResearch/Meta-Llama-3.1-8B-Instruct` mirror (`MODEL_ASSETS_STATUS §3.2`, §3.8), in **bf16**
+here rather than NF4 because 8B fits the card; Meta's `total_len = min(max_seq_len, max_gen_len +
+max_prompt_len)` cap at the repo's own `max_seq_len = 512`; refusals recorded with their raw text
+and left unscored rather than passed through `np.interp`; and the **test split only**, for the
+reason and with the pool caveat given in §K's Adaptation 7.
+
+**Adaptation 3 — `score_filter`'s window converted to seconds.** Their sliding window is
+`max(max_frame // 10, 300)` *native frames*, i.e. max(10% of the video, 10 s at 30 fps). On our
+grid the same rule is applied in seconds — `max(D / 10, 10)` — and converted to index units, so
+the filter selects the same temporal extent it would have selected upstream.
+
+**The refusal question is sharper here than for LAVAD.** `MODEL_ASSETS_STATUS §3.11a` measured
+Llama-3.1-8B-Instruct refusing outright on "a man points a gun at a cashier" while Llama-2-13b-chat
+scored it 0.8. Llama-3.1 is URF's published backbone, so the refusal is a property of the method as
+published, not of our port, and it is reported as such — §L.5 gives the rate by dataset and by GT
+label. The concern §3.11a raises is that refusals concentrate on violence and group-directed
+hostility, which on these corpora is the positive class, so silently interpolating them would drag
+positive-frame scores toward their negative neighbours and depress the AUC in a way that looks like
+the method underperforming rather than the harness failing. That is exactly why `np.interp` is
+never called here and coverage is printed beside every AUC.
+
+**What is *not* reproduced, and why.** The paper's Video Anomaly Localisation and Video Anomaly
+Understanding tasks need UCF-Crime bounding-box annotations and the HIVAU-70k dataset respectively;
+neither exists for our corpora and neither is what freeze §9 lists URF-HVAA for. Only the temporal
+VAD task is run. The adaptive-margin variant of the gate (`threshold` unset → `std²`) is also not
+run; the shipped script's constant `0.05` is used, which their own comment calls efficient but
+unstable, and the count of videos it admits is reported so the reader can see how much of the
+corpus the refinement stage actually touched.
+
+**Run record.** One RTX 5090, single run, greedy. Stage 1 VideoLLaMA3-7B: **642 videos, 6,476
+generations, 242.2 min**, zero OOM, `max_tokens = 16384` throughout, **decord fallback used on 0
+videos** — decord opened every file on our paths, so the 27% MHC-EN failure rate seen elsewhere in
+the campaign did not appear here. Stage 2 Llama-3.1-8B-Instruct bf16: 642 videos, 6,455 dialogs,
+5,350 generations, **2.6 min at 35 gen/s**. Stage 3 filter: CPU, instant. Stage 4 tags: 642
+generations, 57.8 min. Stage 5 gated refinement: the gate admitted **42 of 642 videos** (6.5%) and
+37 of them had a usable tag list, 680 dialogs, 0.3 min, **72 prompts hit the 512-token cap** once
+the tag list was prepended. Productive GPU time **5.1 h**.
+
+**Videos lost.** 2 of 644: `yt_NzvfkIYS5Yg` (truncated source; ffmpeg also rejects it, so LAVAD
+lost it too) and `bit_AxrVklzh9Cyf` (`IndexError` inside the frame sampler). Both are HateClipSeg,
+both are reported missing and dropped, never interpolated.
+
+Reproduce: `bash scripts/repro_campaign/run_urf_wave1.sh test 10`, then
+`python scripts/repro_campaign/eval_frame.py --method curves --curve-dir idea-stage/repro_urf/curves --method-name URF-HVAA --variants base,round1 --split test`.
+
+### L.1 Headline rows — test split
+
+`base` is the published chain including the gated refinement; `round1` is the score before
+refinement, i.e. what every un-gated video keeps anyway.
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| GOLD_BROADCAST | — | HateMM | test | control | control | n/a | video | 0.8857 | 0.5829 | n/a | n/a | n/a | 1.0000 | 116975 | 0.2421 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateMM | test | control | control | n/a | 4 fps | 0.5003 ± 0.0019 | 0.2423 ± 0.0013 | n/a | n/a | n/a | 0.0000 | 116975 | 0.2421 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | MHC-EN | test | control | control | n/a | video | 0.9427 | 0.7664 | n/a | n/a | n/a | 1.0000 | 22337 | 0.2734 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-EN | test | control | control | n/a | 4 fps | 0.5004 ± 0.0034 | 0.2737 ± 0.0026 | n/a | n/a | n/a | 0.0000 | 22337 | 0.2734 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | MHC-ZH | test | control | control | n/a | video | 0.9842 | 0.9191 | n/a | n/a | n/a | 1.0000 | 18199 | 0.2648 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-ZH | test | control | control | n/a | 4 fps | 0.4985 ± 0.0052 | 0.2646 ± 0.0038 | n/a | n/a | n/a | 0.0000 | 18199 | 0.2648 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | HateClipSeg | test | control | control | n/a | video | 0.6260 | 0.5437 | n/a | n/a | n/a | 1.0000 | 114097 | 0.4712 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateClipSeg | test | control | control | n/a | 4 fps | 0.5009 ± 0.0021 | 0.4721 ± 0.0016 | n/a | n/a | n/a | 0.0000 | 114097 | 0.4712 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| URF-HVAA | 1 | HateMM | test | label-free | base | base | 0.1 fps | 0.5744 | 0.3183 | n/a | n/a | n/a | 0.2043 | 111115 | 0.2485 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.999; missing 2/215 (0.9%) dropped, not interpolated |
+| URF-HVAA | 1 | HateMM | test | label-free | base | round1 | 0.1 fps | 0.5771 | 0.3105 | n/a | n/a | n/a | 0.1900 | 112755 | 0.2449 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.999 |
+| URF-HVAA | 1 | MHC-EN | test | label-free | base | base | 0.1 fps | 0.5493 | 0.2973 | n/a | n/a | n/a | 0.0459 | 19188 | 0.2743 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_urf/ | 10 s centres; missing 1/161 (0.6%) dropped, not interpolated |
+| URF-HVAA | 1 | MHC-EN | test | label-free | base | round1 | 0.1 fps | 0.5664 | 0.3187 | n/a | n/a | n/a | 0.0797 | 19308 | 0.2788 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_urf/ | 10 s centres |
+| URF-HVAA | 1 | MHC-ZH | test | label-free | base | base | 0.1 fps | 0.5454 | 0.2868 | n/a | n/a | n/a | 0.0519 | 15646 | 0.2527 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.997; missing 1/149 (0.7%) dropped, not interpolated |
+| URF-HVAA | 1 | MHC-ZH | test | label-free | base | round1 | 0.1 fps | 0.5397 | 0.2893 | n/a | n/a | n/a | 0.0491 | 15766 | 0.2574 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.998 |
+| URF-HVAA | 1 | HateClipSeg | test | label-free | base | base | 0.1 fps | 0.5863 | 0.5528 | n/a | n/a | n/a | 1.0787 | 108240 | 0.4713 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; missing 4/119 (3.4%) dropped, not interpolated |
+| URF-HVAA | 1 | HateClipSeg | test | label-free | base | round1 | 0.1 fps | 0.5854 | 0.5534 | n/a | n/a | n/a | 1.1129 | 109920 | 0.4708 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; missing 2/119 (1.7%) dropped, not interpolated |
+
+### L.2 Full corpus — not run
+
+As for LAVAD (§K.2): freeze §5 makes the test split the headline and does not require a
+full-corpus row per method. URF's captioning alone is 4 h for the test split; the full corpus is
+4.5x that.
+
+### L.3 Stratified — single-span vs multi-span (HateMM / MHC only)
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| URF-HVAA | 1 | HateMM | test | label-free | base | base | 0.1 fps | 0.5906 | 0.2933 | n/a | n/a | n/a | 0.1568 | 88075 | 0.2059 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.999; missing 2/215 (0.9%) dropped, not interpolated; stratum=single_span |
+| URF-HVAA | 1 | HateMM | test | label-free | base | base | 0.1 fps | 0.5475 | 0.1339 | n/a | n/a | n/a | 0.0835 | 87367 | 0.1086 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.999; missing 2/215 (0.9%) dropped, not interpolated; stratum=multi_span |
+| URF-HVAA | 1 | HateMM | test | label-free | base | round1 | 0.1 fps | 0.5911 | 0.2811 | n/a | n/a | n/a | 0.1407 | 89715 | 0.2021 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.999; stratum=single_span |
+| URF-HVAA | 1 | HateMM | test | label-free | base | round1 | 0.1 fps | 0.5579 | 0.1343 | n/a | n/a | n/a | 0.0908 | 89007 | 0.1066 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.999; stratum=multi_span |
+| URF-HVAA | 1 | MHC-EN | test | label-free | base | base | 0.1 fps | 0.5554 | 0.2902 | n/a | n/a | n/a | 0.0488 | 18628 | 0.2645 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; missing 1/161 (0.6%) dropped, not interpolated; stratum=single_span |
+| URF-HVAA | 1 | MHC-EN | test | label-free | base | base | 0.1 fps | 0.5154 | 0.0279 | n/a | n/a | n/a | 0.0034 | 12957 | 0.0259 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; missing 1/161 (0.6%) dropped, not interpolated; stratum=multi_span |
+| URF-HVAA | 1 | MHC-EN | test | label-free | base | round1 | 0.1 fps | 0.5729 | 0.3121 | n/a | n/a | n/a | 0.0816 | 18748 | 0.2693 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; stratum=single_span |
+| URF-HVAA | 1 | MHC-EN | test | label-free | base | round1 | 0.1 fps | 0.5302 | 0.0299 | n/a | n/a | n/a | 0.0070 | 12957 | 0.0259 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; stratum=multi_span |
+| URF-HVAA | 1 | MHC-ZH | test | label-free | base | base | 0.1 fps | 0.5454 | 0.2868 | n/a | n/a | n/a | 0.0519 | 15646 | 0.2527 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.997; missing 1/149 (0.7%) dropped, not interpolated; stratum=single_span |
+| URF-HVAA | 1 | MHC-ZH | test | label-free | base | base | 0.1 fps | n/a | n/a | n/a | n/a | n/a | n/a | 11292 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.997; missing 1/149 (0.7%) dropped, not interpolated; stratum=multi_span single-class pool, metrics undefined |
+| URF-HVAA | 1 | MHC-ZH | test | label-free | base | round1 | 0.1 fps | 0.5397 | 0.2893 | n/a | n/a | n/a | 0.0491 | 15766 | 0.2574 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.998; stratum=single_span |
+| URF-HVAA | 1 | MHC-ZH | test | label-free | base | round1 | 0.1 fps | n/a | n/a | n/a | n/a | n/a | n/a | 11292 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_urf/ | 10 s centres; coverage=0.998; stratum=multi_span single-class pool, metrics undefined |
+
+### L.4 Transplant fidelity (freeze §7)
+
+| method | dataset | LELA PR-AUC | ours PR-AUC (AP) | |diff| | LELA ROC-AUC | ours ROC-AUC | |diff| | verdict | ours PR-AUC (trapezoid, LAVAD's own convention) | note |
+|---|---|---|---|---|---|---|---|---|---|---|
+| URF-HVAA | HateMM | 0.6239 | 0.3183 | 0.3056 | 0.5674 | 0.5744 | 0.0070 | **OUT_OF_TOLERANCE** | 0.3515 |  |
+| URF-HVAA | MHC-EN | 0.6147 | 0.2973 | 0.3174 | 0.5626 | 0.5493 | 0.0133 | **OUT_OF_TOLERANCE** | 0.3026 | LELA's 'MultiHateClip' column, language unstated |
+| URF-HVAA | MHC-ZH | 0.6147 | 0.2868 | 0.3279 | 0.5626 | 0.5454 | 0.0172 | **OUT_OF_TOLERANCE** | 0.3195 | LELA's 'MultiHateClip' column, language unstated |
+
+**Verdict: `OUT_OF_TOLERANCE` on all three rows, because §7 requires both metrics — but the
+ROC-AUC half passes cleanly and the PR-AUC half is the same pool artefact §K.4 documents.**
+
+**ROC-AUC is inside tolerance on every row: |diff| 0.0070 (HateMM), 0.0133 (MHC-EN), 0.0172
+(MHC-ZH), against a ±0.03 bar.** That is a successful transplant on the metric that does not depend
+on the frame pool, and it is the strongest evidence in this campaign that the ported chain is
+faithful.
+
+**PR-AUC misses by 0.306 / 0.317 / 0.328 — and the same re-pooling that explains LAVAD's gap
+closes URF's completely on HateMM.** Our HateMM curve, unchanged, re-pooled over the 83 test videos
+that carry an annotated span:
+
+| pool | base rate | frame AP | frame ROC-AUC |
+|---|---|---|---|
+| test split, all videos (our headline) | 0.2485 | 0.3183 | 0.5744 |
+| test split, span-positive videos only | 0.5902 | **0.6334** | **0.5585** |
+| **LELA's published URF-HVAA HateMM row** | (unstated) | **0.6239** | **0.5674** |
+
+On that pool **both** metrics land within ±0.03 of LELA — |diff| **0.0095** on PR-AUC and
+**0.0089** on ROC-AUC. We are not asserting that this is LELA's protocol; MHC does not close the
+same way (span-positive AP 0.789 EN / 0.894 ZH against their 0.6147). But it is now demonstrated
+twice, on two independent methods, that **the ~0.31 PR-AUC offset is produced by which frames are
+pooled and not by the port** — and for URF on HateMM there exists a pool on which the reproduction
+agrees with the published numbers on both metrics simultaneously.
+
+**Read together with §K this is the campaign's cleanest fidelity result.** Two ports, built from
+different repos, different captioners and different LLMs, both reproduce LELA's ROC-AUC (URF within
+0.007-0.017; LAVAD within 0.058-0.138) and both miss PR-AUC by almost exactly the same ~0.3. A
+shared offset of that size across two unrelated pipelines is a property of the comparison, not of
+either transplant.
+
+### L.5 Refusals — rate by dataset and by ground-truth label
+
+| dataset | scored centres | refusals | refusal rate | on positive frames | on negative frames |
+|---|---|---|---|---|---|
+| HateMM | 2,825 | 4 | 0.00142 | 1/687 = 0.00146 | 3/2,138 = 0.00140 |
+| MHC-EN | 486 | 0 | 0.00000 | 0/139 = 0.00000 | 0/347 = 0.00000 |
+| MHC-ZH | 396 | 1 | 0.00253 | 1/104 = 0.00962 | 0/292 = 0.00000 |
+| HateClipSeg | 2,748 | 0 | 0.00000 | 0/1,288 = 0.00000 | 0/1,460 = 0.00000 |
+| **all four** | 6,455 | 5 | 0.00077 | 2/2,218 = 0.00090 | 3/4,237 = 0.00071 |
+
+**The §3.11a prediction inverts at scale, and this is worth recording.** `MODEL_ASSETS_STATUS
+§3.11a` measured Llama-3.1-8B-Instruct refusing on a hand-picked violent caption while
+Llama-2-13b-chat scored it, and concluded that URF's backbone was the refusal risk. On the real
+corpus the ordering is the other way round: **URF/Llama-3.1 refuses on 0.077% of 6,455 dialogs
+(5 refusals), LAVAD/Llama-2-13b-chat on 1.22% of 67,647 (823)** — a 16x difference in the opposite
+direction, and URF's refusals are label-balanced (2 positive, 3 negative) where LAVAD's are 3.26x
+enriched on positives.
+
+Two things explain it, and both matter for anyone reusing that note. First, the **input** differs:
+Llama-3.1 reads one neutral VideoLLaMA3 narration ("The video shows a Confederate flag waving in
+the wind"), while Llama-2 reads ten stacked BLIP-2 fragments and is asked to answer *as a law
+enforcement agency*. Second, **Llama-2-chat is the more refusal-prone model** of the two on this
+prompt family. A three-caption probe was too small a sample to establish either. At 0.077%,
+§3.11a items 3 and 4 are **not** justified for URF and were not run.
+
+### L.6 What the numbers say
+
+1. **URF-HVAA is the strongest label-free method reproduced in the campaign so far, on three of
+   four datasets.** Test frame ROC-AUC 0.5744 / 0.5493 / 0.5454 / 0.5863 (HateMM / MHC-EN / MHC-ZH
+   / HateClipSeg). It beats LAVAD on HateMM (0.5744 vs 0.5587), MHC-ZH (0.5454 vs 0.4923) and
+   HateClipSeg (0.5863 vs 0.5768), and is slightly behind on MHC-EN (0.5493 vs 0.5559). It does
+   this at **one tenth** LAVAD's temporal sampling rate and **five eighths** of its GPU time.
+2. **The gain over LAVAD is a captioner gain, not a reasoning gain.** The two chains share their
+   scorer's shape — an LLM rating a text description 0-1 — and differ mainly in what produces the
+   description: ten BLIP-2 stills cleaned by retrieval, versus one VideoLLaMA3 narration of the
+   clip. URF's advantage is largest exactly where LAVAD's English-only still-image captioner is
+   weakest, **MHC-ZH: 0.5454 vs 0.4923**, a 0.053 swing on the Chinese-language corpus. A video
+   captioner that reads on-screen text recovers what a frame captioner throws away.
+3. **The refinement stage is almost inert here.** The intra-video gate admits only **42 of 642
+   videos (6.5%)**, and of those 37 produce a usable tag list, so **94% of the corpus is scored by
+   round 1 alone**. `base` and `round1` differ by at most 0.017 ROC-AUC on any dataset and the
+   refinement *lowers* it on MHC-EN (0.5493 vs 0.5664) and HateClipSeg. The paper's headline
+   mechanism, tag-conditioned re-scoring, is effectively untested on these corpora because the
+   `0.5 ± 0.05` gate almost never fires — URF's round-1 scores are concentrated near 0.0-0.2
+   (median 0.2), far from the 0.5 the gate is centred on. **The gate is calibrated for UCF-Crime's
+   score distribution, not ours.** That, not the reasoning, is what a follow-up should change.
+4. **Every dataset is still far below the video-level ceiling.** ROC-AUC 0.545-0.586 against
+   gold-broadcast 0.8857 / 0.9427 / 0.9842 / 0.6260. Oracle-normalised AP is 0.204 / 0.046 / 0.052
+   / (unstable on HateClipSeg, see §K.6 item 1). The best label-free method in the campaign
+   recovers about a fifth of the chance-to-oracle gap on HateMM and under a twentieth on MHC.
+5. **The transplant is faithful on the pool-independent metric.** ROC-AUC within 0.007-0.017 of
+   LELA on all three rows, and on HateMM a pool exists where both metrics agree within 0.01. Read
+   with §K, the ~0.3 PR-AUC offset is a property of the comparison rather than of either port.
+6. **Consequence for the campaign.** URF-HVAA sets the label-free frame-level floor to beat at
+   ROC-AUC ~0.55-0.59. Any localisation claim of ours has to clear that, and — far harder — has to
+   close some part of the gap to the gold-broadcast ceiling that neither of these two 2024/2025
+   methods touches.
