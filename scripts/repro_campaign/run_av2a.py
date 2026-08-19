@@ -169,22 +169,28 @@ def demux_wav(src: Path, dst: Path) -> str:
 
 
 class WindowVR:
-    """A view of a decord VideoReader restricted to [i0, i1).
+    """A view of a video reader over one exactly-10-second window.
 
     `VisionTransform` only uses `len()` and `get_batch()`, so a view is enough to
-    hand the unmodified pipeline the 10-second unit it expects without cutting new
-    files.  Frame indices inside the window are 0-based, as they would be for a
-    standalone 10 s clip.
+    hand the unmodified pipeline the 10 s unit it expects without cutting new files.
+    The view always reports `n_target` frames (= 10 s worth at the source frame
+    rate); past the real end of the video the last real frame is repeated, so the
+    final window of a video whose length is not a multiple of 10 s is padded rather
+    than compressed.  This matters because the published code derives its
+    per-second grid as `fps = len(vr) // 10` and `refine_segments` then crops the
+    *audio* at `start_sec = bin_index`; the two only agree when a window really is
+    10 s long.
     """
 
-    def __init__(self, vr, i0: int, i1: int):
-        self.vr, self.i0, self.i1 = vr, i0, i1
+    def __init__(self, vr, i0: int, i1: int, n_target: int):
+        self.vr, self.i0, self.i1, self.n = vr, i0, i1, n_target
 
     def __len__(self):
-        return self.i1 - self.i0
+        return self.n
 
     def get_batch(self, idx):
-        return self.vr.get_batch([int(i) + self.i0 for i in idx])
+        last = self.i1 - 1
+        return self.vr.get_batch([min(int(i) + self.i0, last) for i in idx])
 
 
 class PyAVReader:
@@ -196,18 +202,29 @@ class PyAVReader:
     videos in these corpora fit comfortably.
     """
 
-    def __init__(self, path: Path, max_frames: int = 4000):
+    def __init__(self, path: Path, duration: float, target_fps: float = 4.0,
+                 short_side: int = 256, max_frames: int = 3000):
         import av
         import torch
+        want = int(min(max_frames, max(BINS_PER_WINDOW,
+                                       math.ceil(max(duration, 1.0) * target_fps))))
         frames = []
         with av.open(str(path)) as c:
             st = c.streams.video[0]
             st.thread_type = "AUTO"
             n = st.frames or 0
-            step = max(1, math.ceil(n / max_frames)) if n else 1
+            step = max(1, n // want) if n else 1
+            w, h = st.codec_context.width or 0, st.codec_context.height or 0
+            if w and h and min(w, h) > short_side:
+                sc = short_side / min(w, h)
+                ow, oh = int(round(w * sc)) // 2 * 2, int(round(h * sc)) // 2 * 2
+            else:
+                ow = oh = 0
             for k, f in enumerate(c.decode(video=0)):
                 if k % step == 0:
-                    frames.append(f.to_ndarray(format="rgb24"))
+                    g = f.reformat(width=ow, height=oh, format="rgb24") if ow \
+                        else f.reformat(format="rgb24")
+                    frames.append(g.to_ndarray(format="rgb24"))
                 if len(frames) >= max_frames:
                     break
         if not frames:
@@ -222,16 +239,16 @@ class PyAVReader:
         return self.arr[torch.as_tensor([int(i) for i in idx])]
 
 
-def open_video(path: Path):
+def open_video(path: Path, duration: float):
     from decord import VideoReader, cpu
     try:
         vr = VideoReader(str(path), ctx=cpu(0))
-        if len(vr) > 0:
-            _ = vr.get_batch([0])
+        if len(vr) >= BINS_PER_WINDOW:
+            _ = vr.get_batch([0, len(vr) - 1])
             return vr, "decord"
     except Exception:
         pass
-    return PyAVReader(path), "pyav"
+    return PyAVReader(path, duration), "pyav"
 
 
 def jsonl_ids(p: Path) -> set:
@@ -266,7 +283,7 @@ def process_video(vparser, model, vision_tf, audio_tf, ds, vid, path, duration, 
     import torch
     import torchaudio
 
-    vr, backend = open_video(path)
+    vr, backend = open_video(path, duration)
     n_frames_total = len(vr)
     if n_frames_total < BINS_PER_WINDOW:
         raise RuntimeError(f"too_few_frames:{n_frames_total}")
@@ -275,14 +292,17 @@ def process_video(vparser, model, vision_tf, audio_tf, ds, vid, path, duration, 
     # the wav is written by us at 16 kHz mono; keep the check honest anyway
     n_samp = wav.shape[1]
 
-    # windowing: as many equal windows of at most 10 s as the video needs, and
-    # never so many that a window holds fewer than 10 frames (the pipeline's
-    # `fps = len(vr) // 10` would degenerate to 0).
+    # Windowing.  AV²A is published on LLP and AVE, whose clips are all exactly
+    # 10 s, and the code depends on that in two places at once: `VisionTransform`
+    # builds its grid as `fps = len(vr) // 10` (bin = one tenth of the clip) while
+    # `refine_segments` crops the audio with `start_sec = bin_index` (bin = one
+    # second).  Both readings agree only for a 10 s window, so the video is cut
+    # into consecutive **exactly 10 s** windows and the last one is padded — the
+    # final real video frame repeated, the audio zero-padded — rather than
+    # compressed.  One bin is then one second everywhere and `rate = 1.0`.
     n_win = max(1, math.ceil(duration / WINDOW_SEC))
-    n_win = max(1, min(n_win, n_frames_total // BINS_PER_WINDOW))
-    W = duration / n_win
     n_bins = n_win * BINS_PER_WINDOW
-    rate = n_bins / duration
+    rate = 1.0
 
     sim = {k: np.zeros(n_bins, dtype=np.float32) for k in ("video", "audio", "combined")}
     evt = {k: np.zeros(n_bins, dtype=np.float32) for k in ("video", "audio", "combined")}
@@ -290,22 +310,22 @@ def process_video(vparser, model, vision_tf, audio_tf, ds, vid, path, duration, 
     hate_iv = {"video": [], "audio": [], "combined": []}
 
     fps_native = n_frames_total / duration
+    n_target = max(BINS_PER_WINDOW, int(round(WINDOW_SEC * fps_native)))
+    win_samp = int(round(WINDOW_SEC * sr))
     for k in range(n_win):
-        t0, t1 = k * W, (k + 1) * W
-        i0 = int(round(t0 * fps_native))
-        i1 = int(round(t1 * fps_native)) if k < n_win - 1 else n_frames_total
-        i1 = min(max(i1, i0 + BINS_PER_WINDOW), n_frames_total)
-        i0 = min(i0, i1 - BINS_PER_WINDOW)
-        win_vr = WindowVR(vr, i0, i1)
+        t0 = k * WINDOW_SEC
+        i0 = min(int(round(t0 * fps_native)), n_frames_total - 1)
+        i1 = min(i0 + n_target, n_frames_total)
+        win_vr = WindowVR(vr, i0, i1, n_target)
 
-        a0 = int(round(t0 * sr))
-        a1 = min(int(round(t1 * sr)), n_samp)
+        a0 = min(int(round(t0 * sr)), max(0, n_samp - 1))
         # clone: AudioTransform.get_mel subtracts the mean *in place*, and a slice
         # of the full waveform is a view, so an un-cloned slice would corrupt the
         # neighbouring windows.
-        wav_win = wav[:, a0:a1].clone()
-        if wav_win.shape[1] < sr // 10:  # < 0.1 s of audio in this window
-            wav_win = torch.zeros((wav.shape[0], max(1, sr // 10)), dtype=wav.dtype)
+        wav_win = wav[:, a0:a0 + win_samp].clone()
+        if wav_win.shape[1] < win_samp:
+            wav_win = torch.cat([wav_win, torch.zeros(
+                (wav.shape[0], win_samp - wav_win.shape[1]), dtype=wav.dtype)], dim=1)
 
         # ---- the published pipeline, unmodified -------------------------------
         combined_res, video_res, audio_res = vparser(
@@ -326,20 +346,22 @@ def process_video(vparser, model, vision_tf, audio_tf, ds, vid, path, duration, 
             sim[ch][b0:b0 + BINS_PER_WINDOW] = m[:, HATE_IDX].max(axis=1)
 
         # ---- rasterise the events the pipeline kept ---------------------------
-        bin_sec = W / BINS_PER_WINDOW
+        # one bin == one second, so an event's bin indices are already seconds
         for ch, res in (("video", video_res), ("audio", audio_res),
                         ("combined", combined_res)):
             for e in res.get(vid, []):
                 lab = str(e["event_label"]).lower()
-                gs = t0 + float(e["start"]) * bin_sec
-                ge = t0 + float(e["end"]) * bin_sec
+                gs = t0 + float(e["start"])
+                ge = t0 + float(e["end"])
                 all_events[ch].append([LABELS.index(lab) if lab in LABELS else -1,
                                        round(gs, 3), round(ge, 3)])
                 if lab in HATE_SET:
                     j0 = b0 + int(e["start"])
                     j1 = b0 + int(e["end"])
                     evt[ch][max(b0, j0):min(b0 + BINS_PER_WINDOW, j1)] = 1.0
-                    hate_iv[ch].append([round(gs, 3), round(min(ge, duration), 3)])
+                    if gs < duration:  # an interval wholly inside the padded tail
+                        hate_iv[ch].append(
+                            [round(gs, 3), round(min(ge, duration), 3)])
 
     # merge touching hate intervals so the proposal metric sees one per stretch
     for ch in hate_iv:
@@ -354,7 +376,7 @@ def process_video(vparser, model, vision_tf, audio_tf, ds, vid, path, duration, 
 
     curves = {f"sim_{c}": sim[c] for c in sim}
     curves.update({f"evt_{c}": evt[c] for c in evt})
-    meta = dict(n_win=n_win, window_sec=round(W, 4), rate=rate, n_bins=n_bins,
+    meta = dict(n_win=n_win, window_sec=WINDOW_SEC, rate=rate, n_bins=n_bins,
                 backend=backend, n_frames=n_frames_total, sr=sr,
                 audio_sec=round(n_samp / sr, 3))
     return curves, rate, all_events, hate_iv, meta

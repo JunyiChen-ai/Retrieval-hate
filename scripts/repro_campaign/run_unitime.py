@@ -157,6 +157,9 @@ def main() -> int:
     args = ap.parse_args()
 
     patch_vision_attention()
+    sys.path.insert(0, str(ROOT / 'scripts/repro_campaign'))
+    import decord_fallback
+    decord_fallback.install()
     sys.path.insert(0, str(UNITIME))
     os.chdir(UNITIME)
     import inference as UT

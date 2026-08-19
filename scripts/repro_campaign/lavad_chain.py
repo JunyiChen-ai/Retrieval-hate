@@ -403,12 +403,14 @@ def stage_score(args) -> None:
 
 # ------------------------------------------------------ stage 05 + 06 ------
 def stage_refine(args) -> None:
+    src = "summary_text" if args.text else "summary"
+    dst = "refined_text" if args.text else "refined"
     model = imagebind()
     jobs = [(ds, v) for ds in args.datasets.split(",") for v in videos(ds, args.split)]
     todo = [(ds, v) for ds, v in jobs
-            if (WORK / "summary" / ds / f"{v}.json").exists()
-            and not (WORK / "refined" / ds / f"{v}.json").exists()]
-    print(f"PROGRESS refine plan={len(todo)}", flush=True)
+            if (WORK / src / ds / f"{v}.json").exists()
+            and not (WORK / dst / ds / f"{v}.json").exists()]
+    print(f"PROGRESS refine[{dst}] plan={len(todo)}", flush=True)
     t0, n = time.time(), 0
     for ds, vid in todo:
         summ = json.loads((WORK / src / ds / f"{vid}.json").read_text())
