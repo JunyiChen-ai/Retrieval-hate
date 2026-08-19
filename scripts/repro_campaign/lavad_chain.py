@@ -287,7 +287,7 @@ class Scorer:
         self.model, self.tok = g.model, g.tokenizer
         self.bs = batch_size
         self.cache: dict[tuple[str, str], str] = {}
-        self.n_gen = self.n_hit = 0
+        self.n_gen = self.n_hit = self.n_trunc = 0
 
     @torch.inference_mode()
     def _run(self, pairs: list[tuple[str, str]]) -> list[str]:
@@ -298,6 +298,10 @@ class Scorer:
                        max_length=MAX_SEQ_LEN - 1, add_special_tokens=False
                        ).to(self.model.device)
         plen = enc["input_ids"].shape[1]
+        if plen >= MAX_SEQ_LEN - 1:
+            # LAVAD/URF run with --max_seq_len 512; a prompt at the cap has been
+            # truncated, which the +text variant can trigger.  Counted, not hidden.
+            self.n_trunc += len(prompts)
         new = max(MAX_SEQ_LEN - plen, 1)
         out = self.model.generate(**enc, max_new_tokens=new, do_sample=False,
                                   pad_token_id=self.tok.pad_token_id)
@@ -361,11 +365,11 @@ def stage_summarize(args) -> None:
         if n % 5 == 0 or n == len(todo):
             el = time.time() - t0
             print(f"PROGRESS summarize[{sub}] {n}/{len(todo)} calls={ncall} "
-                  f"gen={sc.n_gen} cachehit={sc.n_hit} "
+                  f"gen={sc.n_gen} cachehit={sc.n_hit} trunc={sc.n_trunc} "
                   f"{sc.n_gen/max(el,1e-9):.2f} gen/s elapsed={el/60:.1f}min "
                   f"eta={(len(todo)-n)*el/n/60:.1f}min", flush=True)
     print(f"[done] summarize[{sub}] videos={n} calls={ncall} gen={sc.n_gen} "
-          f"cachehit={sc.n_hit} n_text={n_text} "
+          f"cachehit={sc.n_hit} trunc={sc.n_trunc} n_text={n_text} "
           f"wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
@@ -403,11 +407,11 @@ def stage_score(args) -> None:
         if n % 5 == 0 or n == len(todo):
             el = time.time() - t0
             print(f"PROGRESS score {n}/{len(todo)} calls={ncall} gen={sc.n_gen} "
-                  f"cachehit={sc.n_hit} {sc.n_gen/max(el,1e-9):.2f} gen/s "
+                  f"cachehit={sc.n_hit} trunc={sc.n_trunc} {sc.n_gen/max(el,1e-9):.2f} gen/s "
                   f"elapsed={el/60:.1f}min eta={(len(todo)-n)*el/n/60:.1f}min",
                   flush=True)
     print(f"[done] score[{args.prompt}] videos={n} calls={ncall} gen={sc.n_gen} "
-          f"cachehit={sc.n_hit} wall={(time.time()-t0)/60:.1f}min", flush=True)
+          f"cachehit={sc.n_hit} trunc={sc.n_trunc} wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
 # ------------------------------------------------------ stage 05 + 06 ------
