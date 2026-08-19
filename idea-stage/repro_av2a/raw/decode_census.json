@@ -1,0 +1,1166 @@
+{
+ "what": "pre-run decode census: can each corpus video be opened, and by which backend",
+ "test": "decord open + len>=10 + get_batch([0,len-1]); failures retried with the PyAV fallback",
+ "note": "the len>=10 arm of this census predates the driver fix that accepts a short clip; hate_video_108 (8 frames) is accepted by the shipped driver, and is dropped only because it has no audio stream",
+ "datasets": {
+  "HateMM": {
+   "decord": {
+    "decord_ok": 1079,
+    "decord_fail": 2,
+    "no_video_stream": 2
+   },
+   "pyav_ok": 1,
+   "pyav_failed": 1,
+   "decord_failures": [
+    [
+     "hate_video_108",
+     "RuntimeError: len=8"
+    ],
+    [
+     "hate_video_95",
+     "DECORDError: [18:31:56] /github/workspace/src/video/video_reader.cc:486: Error: av_read_frame failed with 1094995529"
+    ]
+   ],
+   "pyav_failures": [
+    [
+     "hate_video_108",
+     8,
+     1.7,
+     "too_few_frames"
+    ]
+   ]
+  },
+  "MHC": {
+   "decord": {
+    "decord_ok": 590,
+    "decord_fail": 202
+   },
+   "pyav_ok": 202,
+   "pyav_failed": 0,
+   "decord_failures": [
+    [
+     "-MkO3AEHK4Y",
+     "DECORDError: [18:32:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "-cgm2EZcLC8",
+     "DECORDError: [18:32:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "-wrkLbbsh3Y",
+     "DECORDError: [18:32:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "01ygFLVdj8s",
+     "DECORDError: [18:32:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "03qOelm_dK8",
+     "DECORDError: [18:32:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "0BqXuLbTxks",
+     "DECORDError: [18:32:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "11dBwxuAA_A",
+     "DECORDError: [18:32:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "1Dpv_CJsa-g",
+     "DECORDError: [18:32:13] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "1HYp_bfklBI",
+     "DECORDError: [18:32:13] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "1fglv1fiibc",
+     "DECORDError: [18:32:13] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "1oEQlFqed8I",
+     "DECORDError: [18:32:13] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "22_Ke43yIgU",
+     "DECORDError: [18:32:13] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "2OrFHiDWxZ4",
+     "DECORDError: [18:32:13] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "4BkwQWsVgGg",
+     "DECORDError: [18:32:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "4JUFqX-okGc",
+     "DECORDError: [18:32:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "4ncG92uEVy4",
+     "DECORDError: [18:32:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "4rOegNB6CXg",
+     "DECORDError: [18:32:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "5lx44-lko-U",
+     "DECORDError: [18:32:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "5zmsggoz9SU",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "6WSRaKFyeYI",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "6YJlcoEadZ0",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "6mZzB--pat4",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "71zppfNBrMY",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "7Gqgbj9mIH4",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "7_-y8KAjfWs",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "7iWKZEvbwL8",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "7w5xCkEiO6A",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "8G6jryooPXY",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "8S1OVYwoGBQ",
+     "DECORDError: [18:32:15] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "90eY2NKYmzM",
+     "DECORDError: [18:32:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "92uVzchnUSE",
+     "DECORDError: [18:32:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "9b1WF9eFPR8",
+     "DECORDError: [18:32:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "9op067bRp9A",
+     "DECORDError: [18:32:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "AIqIN75NS-0",
+     "DECORDError: [18:32:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BjWYvE7TWok",
+     "DECORDError: [18:32:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BrtS_6vHPz4",
+     "DECORDError: [18:32:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BvJmlxx4Tlc",
+     "DECORDError: [18:32:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BvTG2iZplew",
+     "DECORDError: [18:32:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "C46T6IWiFwo",
+     "DECORDError: [18:32:17] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "CJs0SPOnRmg",
+     "DECORDError: [18:32:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "CWqz1PooWi4",
+     "DECORDError: [18:32:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "D0PmPDQpY1E",
+     "DECORDError: [18:32:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "EuGF6X7Jsb8",
+     "DECORDError: [18:32:19] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "FpONjY0jWE0",
+     "DECORDError: [18:32:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "FrMkNOgVm-0",
+     "DECORDError: [18:32:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "GF8FUKNuPLo",
+     "DECORDError: [18:32:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "GIbu4VTCQF8",
+     "DECORDError: [18:32:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "GM0X46DYdwU",
+     "DECORDError: [18:32:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "GSvTsPjX2D4",
+     "DECORDError: [18:32:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "GddMPWUznpk",
+     "DECORDError: [18:32:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "HAplQvSs_hQ",
+     "DECORDError: [18:32:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "HO8ndDCRe_A",
+     "DECORDError: [18:32:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "HWG0MQsBjIg",
+     "DECORDError: [18:32:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Hd9ebI66Quw",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "I0gPws4B-_4",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "IC03a8kvPhU",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "ICw0Y6FSDVI",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "IET_tUu8u0Y",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "IM90prUQlqY",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "IQhlEYCXDA4",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "ISBGfgYfinI",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "IahCMMYyy4w",
+     "DECORDError: [18:32:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "IbHu0XGqH6M",
+     "DECORDError: [18:32:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "J16NDM-YPk4",
+     "DECORDError: [18:32:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "JRHKZYFHVJ0",
+     "DECORDError: [18:32:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Jocr_4Py5-U",
+     "DECORDError: [18:32:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "JqFZcFDCZyQ",
+     "DECORDError: [18:32:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "K7BfqS8_yAc",
+     "DECORDError: [18:32:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Kd_3R1H4YoU",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Kg8GW7DhKeI",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "KhKRln1vs9A",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "KkVOBnyy0v8",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Kz3M_kw6oGQ",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "LJZOcfIX4kk",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "LMOHDiG5XQg",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "LgPnUK567xg",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "M1keacZWdEo",
+     "DECORDError: [18:32:24] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "MfU-Eh52VFg",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "MmqgRbGKWrM",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "MnLng0Sop2M",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Mx5TMVcZnzU",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "My5PVJLP6Bg",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "MyrsHPvrBBY",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "N7Lh2YB5Qk8",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "NNeWDl7qxoQ",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "NQV9x-Z92tQ",
+     "DECORDError: [18:32:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Npu3G0MWuSo",
+     "DECORDError: [18:32:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "O_i2jeFqsCQ",
+     "DECORDError: [18:32:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "PaPyby_xXFQ",
+     "DECORDError: [18:32:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "PbAnl5hzhVw",
+     "DECORDError: [18:32:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "QUNmycJNpIE",
+     "DECORDError: [18:32:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "QvPp8Q7QhWE",
+     "DECORDError: [18:32:27] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "RPf2D-N7sSs",
+     "DECORDError: [18:32:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Ri-ds6VKJg4",
+     "DECORDError: [18:32:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "SskF-2mpGCI",
+     "DECORDError: [18:32:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "T1fp3aNf93g",
+     "DECORDError: [18:32:28] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "T5RZVNRhUBo",
+     "DECORDError: [18:32:29] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "T9OlXnaLiTo",
+     "DECORDError: [18:32:29] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "THSCStmcjLE",
+     "DECORDError: [18:32:29] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "TLpsP8pJehI",
+     "DECORDError: [18:32:29] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "TVw55EP9LYY",
+     "DECORDError: [18:32:29] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "UBKG4daNAaQ",
+     "DECORDError: [18:32:30] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "UWoGy468-m4",
+     "DECORDError: [18:32:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "UZNQGQviDYI",
+     "DECORDError: [18:32:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "UeRqjzlI4jY",
+     "DECORDError: [18:32:31] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "VBSUf12Wnog",
+     "DECORDError: [18:32:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "VFGkut1nqF0",
+     "DECORDError: [18:32:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "VUybGxIoxMM",
+     "DECORDError: [18:32:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "WETQcPxy7y0",
+     "DECORDError: [18:32:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "WYJ3_pvq0aw",
+     "DECORDError: [18:32:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "XWrKWANI2ZU",
+     "DECORDError: [18:32:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Xa0MscJaPTM",
+     "DECORDError: [18:32:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "XeROfeXGs_E",
+     "DECORDError: [18:32:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Y05AKSPwElU",
+     "DECORDError: [18:32:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "YDEsYXYlB8o",
+     "DECORDError: [18:32:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "Z7i6M38h3dU",
+     "DECORDError: [18:32:33] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "ZZOSLjm0LqE",
+     "DECORDError: [18:32:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "ZvQHy3L7Ff4",
+     "DECORDError: [18:32:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "_0W4cgpQDbY",
+     "DECORDError: [18:32:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "aeOm9oT0_qk",
+     "DECORDError: [18:32:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "b71aLLcyO-E",
+     "DECORDError: [18:32:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "b7WbQg-4LCY",
+     "DECORDError: [18:32:35] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "cLF-B7u3kNE",
+     "DECORDError: [18:32:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "cME9naxSvoc",
+     "DECORDError: [18:32:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "cclrUXh1IBo",
+     "DECORDError: [18:32:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "cdTnicui088",
+     "DECORDError: [18:32:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "dF6ntZKChz4",
+     "DECORDError: [18:32:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "dK43yHIUMKA",
+     "DECORDError: [18:32:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "dUuRZuf5KFg",
+     "DECORDError: [18:32:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "dazAmRoS17Y",
+     "DECORDError: [18:32:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "de4NWDu3GeY",
+     "DECORDError: [18:32:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "dzpYgBJk_0s",
+     "DECORDError: [18:32:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "e-XqcRbBVi4",
+     "DECORDError: [18:32:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "ePAI0sI5Z-M",
+     "DECORDError: [18:32:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "fG5oeqbh7_c",
+     "DECORDError: [18:32:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "fOzWzzN7sBQ",
+     "DECORDError: [18:32:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "fYqGqmoy8qI",
+     "DECORDError: [18:32:38] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "g-MEsUQ8CI4",
+     "DECORDError: [18:32:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "g3sjNzCJO74",
+     "DECORDError: [18:32:39] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "gLDz7IvH4HU",
+     "DECORDError: [18:32:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "gTpQcw2IXtw",
+     "DECORDError: [18:32:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "gU1kdxnJKdw",
+     "DECORDError: [18:32:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "givOqgEF8Xw",
+     "DECORDError: [18:32:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "gnDhz9NQP7s",
+     "DECORDError: [18:32:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "gnJ9_iricSo",
+     "DECORDError: [18:32:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "hUrk26CM-uc",
+     "DECORDError: [18:32:40] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "hYyxxngdwRY",
+     "DECORDError: [18:32:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "hcT_icMFNDo",
+     "DECORDError: [18:32:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "hdwHZQck-a8",
+     "DECORDError: [18:32:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "iIXubV-fD5k",
+     "DECORDError: [18:32:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "iKcETp5BbAo",
+     "DECORDError: [18:32:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "j-cUTF18bEg",
+     "DECORDError: [18:32:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "j6tCb7d_py4",
+     "DECORDError: [18:32:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "k3z2jLnSaOo",
+     "DECORDError: [18:32:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "k9OtaMbK0Ac",
+     "DECORDError: [18:32:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "kec4e6w697w",
+     "DECORDError: [18:32:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "klirgVzagPM",
+     "DECORDError: [18:32:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "lNCfDw80YSQ",
+     "DECORDError: [18:32:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "lpH2cbkr82M",
+     "DECORDError: [18:32:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "ltuGQ7RBmEU",
+     "DECORDError: [18:32:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "lv8elRv03u0",
+     "DECORDError: [18:32:43] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "mR5Z2DsedwA",
+     "DECORDError: [18:32:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "m_aR033m3kI",
+     "DECORDError: [18:32:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "msWtrZSVUis",
+     "DECORDError: [18:32:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "oPDUomtm2Zk",
+     "DECORDError: [18:32:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "otf-f7km56U",
+     "DECORDError: [18:32:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "p1TRuS3zDa0",
+     "DECORDError: [18:32:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "pOV_1-vWVrE",
+     "DECORDError: [18:32:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "pStxFSBkFDQ",
+     "DECORDError: [18:32:45] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "pmlRRVUhRHM",
+     "DECORDError: [18:32:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "qtsXdG0wPyY",
+     "DECORDError: [18:32:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "qwa1Q4Qdyko",
+     "DECORDError: [18:32:46] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "rWcNhEpJRag",
+     "DECORDError: [18:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "rlJYN0JNSJs",
+     "DECORDError: [18:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "rwP8t2lQXI0",
+     "DECORDError: [18:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "sPPxWVGU2Ro",
+     "DECORDError: [18:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "sVA-q76vNBo",
+     "DECORDError: [18:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "sYpThqzEIVE",
+     "DECORDError: [18:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "sbNdkr9KuIQ",
+     "DECORDError: [18:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "scJdG086bgg",
+     "DECORDError: [18:32:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "suVF3Skd0bo",
+     "DECORDError: [18:32:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "tCI-xwrr_gQ",
+     "DECORDError: [18:32:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "tjqpB_PPGPo",
+     "DECORDError: [18:32:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "tuaHPvzQmgM",
+     "DECORDError: [18:32:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "uP_UT10_WHM",
+     "DECORDError: [18:32:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "uqnqHKANAqc",
+     "DECORDError: [18:32:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "uvgb_MVPmF4",
+     "DECORDError: [18:32:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "uvvZvLafwQ8",
+     "DECORDError: [18:32:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "uw_doUh2HHE",
+     "DECORDError: [18:32:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "uye-VeVA3LY",
+     "DECORDError: [18:32:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "vJ_kVd__NBo",
+     "DECORDError: [18:32:50] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "vmomA2iKSIs",
+     "DECORDError: [18:32:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "w8F9Nma-gpg",
+     "DECORDError: [18:32:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "wlzEd1F0S4Y",
+     "DECORDError: [18:32:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "x5lljednNDU",
+     "DECORDError: [18:32:51] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "xqilG4oMvvI",
+     "DECORDError: [18:32:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yjNHjAZPs9Y",
+     "DECORDError: [18:32:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "ytkxeYhjup8",
+     "DECORDError: [18:32:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "zK2fH9ZKCas",
+     "DECORDError: [18:32:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "zX1fn56DJHw",
+     "DECORDError: [18:32:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "zh8HoJ0IDUY",
+     "DECORDError: [18:32:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "zrKWJc4elOQ",
+     "DECORDError: [18:32:53] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ]
+   ],
+   "pyav_failures": []
+  },
+  "MHC_zh": {
+   "decord": {
+    "decord_ok": 766,
+    "decord_fail": 48
+   },
+   "pyav_ok": 48,
+   "pyav_failed": 0,
+   "decord_failures": [
+    [
+     "BV12v411g72s",
+     "DECORDError: [18:32:55] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV13j411R79M",
+     "DECORDError: [18:32:56] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV13z4y1x7CP",
+     "DECORDError: [18:32:56] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV15X4y1N74H",
+     "DECORDError: [18:32:58] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV15w411w7ZS",
+     "DECORDError: [18:32:59] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV16M4y1c7eo",
+     "DECORDError: [18:32:59] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV16N4y1q7WU",
+     "DECORDError: [18:32:59] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV18N4y1B7qA",
+     "DECORDError: [18:33:01] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV18f421o7ne",
+     "DECORDError: [18:33:02] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1AT411y7ER",
+     "DECORDError: [18:33:04] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1BL4y1j7iH",
+     "DECORDError: [18:33:05] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1C84y1J7LA",
+     "DECORDError: [18:33:05] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1CN4y1h79K",
+     "DECORDError: [18:33:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1EN4y1j7rN",
+     "DECORDError: [18:33:08] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1FN41167Ei",
+     "DECORDError: [18:33:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Fi42117Sj",
+     "DECORDError: [18:33:09] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1GD4y1u7Yf",
+     "DECORDError: [18:33:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1GN411y7fq",
+     "DECORDError: [18:33:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Gb411o7Fr",
+     "DECORDError: [18:33:11] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Gk4y1p71q",
+     "DECORDError: [18:33:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Gw411E7i2",
+     "DECORDError: [18:33:12] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1KK411P7uJ",
+     "DECORDError: [18:33:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1KS4y147N8",
+     "DECORDError: [18:33:14] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Me411J74o",
+     "DECORDError: [18:33:16] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Pj411N7Mb",
+     "DECORDError: [18:33:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1QJ4m1P7xo",
+     "DECORDError: [18:33:18] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Qx411V7tT",
+     "DECORDError: [18:33:19] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1S84y1R7B4",
+     "DECORDError: [18:33:20] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Te411m7PS",
+     "DECORDError: [18:33:21] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1UK4y1j7N9",
+     "DECORDError: [18:33:22] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Uu411o7YR",
+     "DECORDError: [18:33:23] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1YA411r78E",
+     "DECORDError: [18:33:25] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1Yh411B7XD",
+     "DECORDError: [18:33:26] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1bA41137we",
+     "DECORDError: [18:33:29] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1du411g7tk",
+     "DECORDError: [18:33:32] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1fU4y1X7Gu",
+     "DECORDError: [18:33:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1fp4y1M7HW",
+     "DECORDError: [18:33:34] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1iD4y1B7Sw",
+     "DECORDError: [18:33:36] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1jJ41147t5",
+     "DECORDError: [18:33:37] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1nJ4m1p7BG",
+     "DECORDError: [18:33:41] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1oS4y1c7v3",
+     "DECORDError: [18:33:42] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1q94y1L76j",
+     "DECORDError: [18:33:44] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1sa411U7wo",
+     "DECORDError: [18:33:47] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1tP4y1b7NN",
+     "DECORDError: [18:33:48] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1tq4y1G74f",
+     "DECORDError: [18:33:49] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1xV4y1m723",
+     "DECORDError: [18:33:52] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1zD4y1Y7ec",
+     "DECORDError: [18:33:54] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "BV1zc411d7LH",
+     "DECORDError: [18:33:54] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ]
+   ],
+   "pyav_failures": []
+  },
+  "HateClipSeg": {
+   "decord": {
+    "decord_ok": 372,
+    "decord_fail": 23
+   },
+   "pyav_ok": 22,
+   "pyav_failed": 1,
+   "decord_failures": [
+    [
+     "yt_4G5e6jGm8yY",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_5yZByxbH8cg",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_AZLFeHdizxQ",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_DnrYK1FXKgk",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_HEwBHlLheTs",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_LYFd22E4gng",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_NzvfkIYS5Yg",
+     "DECORDError: [18:34:06] /github/workspace/src/video/ffmpeg/filter_graph.cc:61: Check failed: avfilter_graph_create_filter(&buffersrc_"
+    ],
+    [
+     "yt_P4DOyAwN13U",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_QHcJj6VWttY",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_RomlBumSu9k",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_UrgpZ0fUixs",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_WK5eEPmbJ1w",
+     "DECORDError: [18:34:06] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_a4uI8jNY_hU",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_hObvr_Iyl7k",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_jNY3ZXSTBb8",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_kKLoZalVUwQ",
+     "DECORDError: [18:34:07] /github/workspace/src/video/ffmpeg/threaded_decoder.cc:292: [18:34:07] /github/workspace/src/video/ffmpeg/thr"
+    ],
+    [
+     "yt_oiWasPF9I_g",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_p_qvu46d1AU",
+     "DECORDError: [18:34:07] /github/workspace/src/video/ffmpeg/threaded_decoder.cc:292: [18:34:07] /github/workspace/src/video/ffmpeg/thr"
+    ],
+    [
+     "yt_qDVZ9Z6BhyY",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_rOPzqNGEvT4",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_vD0VJV6srao",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_yoC8ujwznfw",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ],
+    [
+     "yt_zLlbzlS6_Lk",
+     "DECORDError: [18:34:07] /github/workspace/src/video/video_reader.cc:151: Check failed: st_nb >= 0 (-1128613112 vs. 0) ERROR cannot fi"
+    ]
+   ],
+   "pyav_failures": [
+    [
+     "yt_NzvfkIYS5Yg",
+     0,
+     0.0,
+     "RuntimeError: pyav decoded 0 frames"
+    ]
+   ]
+  }
+ }
+}
