@@ -285,8 +285,10 @@ def process_video(vparser, model, vision_tf, audio_tf, ds, vid, path, duration, 
 
     vr, backend = open_video(path, duration)
     n_frames_total = len(vr)
-    if n_frames_total < BINS_PER_WINDOW:
-        raise RuntimeError(f"too_few_frames:{n_frames_total}")
+    # A clip shorter than the sampler asks for is an answer, not a failure: the
+    # window view below repeats the final real frame to fill the window, which is
+    # what the Wave 0 Qwen driver already does for short clips.  Only a container
+    # that yields no frame at all is a decode failure (raised by `open_video`).
 
     wav, sr = torchaudio.load(str(WAV_ROOT / ds / f"{vid}.wav"))
     # the wav is written by us at 16 kHz mono; keep the check honest anyway

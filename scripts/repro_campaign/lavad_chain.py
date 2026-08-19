@@ -424,7 +424,7 @@ def stage_refine(args) -> None:
             if (WORK / src / ds / f"{v}.json").exists()
             and not (WORK / dst / ds / f"{v}.json").exists()]
     print(f"PROGRESS refine[{dst}] plan={len(todo)}", flush=True)
-    t0, n = time.time(), 0
+    t0, n, short = time.time(), 0, []
     for ds, vid in todo:
         summ = json.loads((WORK / src / ds / f"{vid}.json").read_text())
         centers = sorted((int(c) for c in summ))
@@ -452,7 +452,13 @@ def stage_refine(args) -> None:
             continue
         vemb = ib_video(model, clips)
         sim = vemb @ temb.T
+        # LAVAD asks FAISS for 10 neighbours unconditionally; when a video has
+        # fewer than 10 *distinct* summaries FAISS returns -1 for the missing
+        # ones and `file_names[-1]` silently picks the last entry.  We clamp
+        # instead, and count the videos where the clamp bites.
         k = min(NUM_NEIGHBORS, temb.shape[0])
+        if k < NUM_NEIGHBORS:
+            short.append(f"{ds}/{vid}:{temb.shape[0]}")
         order = np.argsort(-sim, axis=1)[:, :k]
         out = {}
         for i, c in enumerate(kept):
@@ -465,7 +471,8 @@ def stage_refine(args) -> None:
             el = time.time() - t0
             print(f"PROGRESS refine {n}/{len(todo)} elapsed={el/60:.1f}min "
                   f"eta={(len(todo)-n)*el/n/60:.1f}min", flush=True)
-    print(f"[done] refine[{dst}] videos={n} "
+    write_json(RUN_DIR / f"{dst}_short_index.json", short)
+    print(f"[done] refine[{dst}] videos={n} under10_summaries={len(short)} "
           f"wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
