@@ -209,20 +209,39 @@ def main() -> int:
             handles[k] = open(out_dir / f"unitime_{ds}_{qk}.jsonl", "a")
         return handles[k]
 
+    # An in-flight marker means the process died while this id was being decoded.
+    # It does NOT mean the file is bad: a SIGTERM from an operator, an OOM-kill,
+    # or a machine reboot leaves exactly the same trace as a decoder segfault.
+    # Retiring on the first sighting therefore silently drops healthy videos --
+    # measured: 12 of the 14 ids the Wave 0 Qwen row retired this way decode
+    # cleanly under ffmpeg and PyAV (one HateMM file of 13,461 frames and eleven
+    # MHC-EN files).  So a first crash only costs the id one retry; an id is
+    # retired as undecodable only after it has taken the process down TWICE,
+    # which no external kill will do to the same id by chance.
     inflight = out_dir / ".inflight"
+    crashfile = out_dir / ".crashcount.json"
+    crashes = json.loads(crashfile.read_text()) if crashfile.exists() else {}
     if inflight.exists():
         s = inflight.read_text().strip()
         if s:
             ds_c, vid_c, qk_c = s.split("\t")
-            f = out_dir / f"unitime_{ds_c}_{qk_c}.jsonl"
-            if vid_c not in done_ids(f):
-                with open(f, "a") as h:
-                    h.write(json.dumps({
-                        "video_id": vid_c, "dataset": ds_c, "query_key": qk_c,
-                        "window": None, "error": "decode_all_backends_failed",
-                        "detail": "decoder crashed the process on this file"}) + "\n")
-            print(f"[CRASH-RETIRED] {s}", flush=True)
-            plan = [t for t in plan if not (t[0] == ds_c and t[1] == vid_c and t[2] == qk_c)]
+            key = f"{ds_c}\t{vid_c}"
+            crashes[key] = crashes.get(key, 0) + 1
+            crashfile.write_text(json.dumps(crashes))
+            if crashes[key] >= 2:
+                f = out_dir / f"unitime_{ds_c}_{qk_c}.jsonl"
+                if vid_c not in done_ids(f):
+                    with open(f, "a") as h:
+                        h.write(json.dumps({
+                            "video_id": vid_c, "dataset": ds_c, "query_key": qk_c,
+                            "window": None, "error": "decode_all_backends_failed",
+                            "detail": f"took the process down {crashes[key]}x"}) + "\n")
+                print(f"[CRASH-RETIRED after {crashes[key]}] {s}", flush=True)
+                plan = [t for t in plan if not
+                        (t[0] == ds_c and t[1] == vid_c and t[2] == qk_c)]
+            else:
+                print(f"[CRASH-RETRY {crashes[key]}] {s} -- kept in the plan; an "
+                      f"external kill looks identical to a decoder crash", flush=True)
         inflight.unlink()
 
     n_ok = n_err = 0

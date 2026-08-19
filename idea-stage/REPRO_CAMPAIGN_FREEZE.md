@@ -325,3 +325,37 @@ Report what was run, what number came out, and what it means for a future locali
 No method in this campaign is judged good or bad. The campaign's own headline finding is expected
 to be a comparison of every reproduced number against the §3 broadcast ceiling; that comparison is
 a statement about the benchmarks, not about the methods.
+
+**D3 — 2026-08-19 — the in-flight crash marker retires healthy videos; 12 Wave 0 exclusions are false.**
+*What the harness did:* `run_qwen_grounding.py` (Wave 0) and `run_unitime.py` (Wave 1) write the id
+being decoded to a `.inflight` marker before the attempt, so that a video which takes the whole
+process down — the C decoder aborting rather than raising — can be retired on restart instead of
+crashing the run forever. On restart, an id found in the marker with no output record was retired
+immediately as `decode_all_backends_failed`.
+*What broke:* a marker cannot distinguish a decoder crash from any other reason the process died.
+An operator `SIGTERM`, an OOM-kill or a reboot leaves exactly the same trace, so each such stop
+silently retires one healthy video. Measured directly: of the 14 ids the Wave 0 Qwen2.5-VL row
+retired this way, **12 decode cleanly** under both `ffmpeg -f null` (exit 0, no stderr) and PyAV —
+`hate_video_95` (13,461 frames) and eleven MHC-EN files (`5zmsggoz9SU`, `6YJlcoEadZ0`,
+`IbHu0XGqH6M`, `SskF-2mpGCI`, `_0W4cgpQDbY`, `dK43yHIUMKA`, `g3sjNzCJO74`, `lpH2cbkr82M`,
+`rwP8t2lQXI0`, `suVF3Skd0bo`, `ytkxeYhjup8`). Only 4 of the retirements are genuine
+(`yt_NzvfkIYS5Yg` on HateClipSeg; `BV16N4y1q7WU`, `BV1S84y1R7B4`, `BV1fp4y1M7HW` on MHC-ZH), plus
+the two D2 audio-only HateMM containers.
+*Consequence for a published row:* §I of the results file explains all fourteen as "files truncated
+mid-download on which the C video decoder does not raise but kills the process outright". That
+explanation is wrong for twelve of them, and the Qwen2.5-VL MHC-EN full-corpus row is computed on a
+pool missing 11 healthy videos (1.4%) for a harness reason rather than a data reason. The affected
+cells are the Qwen `missing` counts and the MHC-EN / HateMM pools; the reported AUCs move only by
+whatever those videos contribute.
+*New rule, used from now on:* a first crash costs the id one retry, and an id is retired as
+undecodable only after it has taken the process down **twice** (`.crashcount.json` beside the
+marker). No external kill hits the same id twice by chance. Implemented in `run_unitime.py`;
+`run_qwen_grounding.py` must get the same fix before it is next run.
+*Remediation:* `1PEr_STq3jk` (MHC-EN, UniTime) was retired by exactly this false positive after the
+UniTime process was stopped for the GPU-reservation ruling; it has been voided in the JSONL by an
+appended `crash_marker_voided` record, so the resume re-attempts it. The 12 Wave 0 Qwen ids have
+**not** been re-run — the GPU is reserved — and the correction is a completion of a run that never
+actually evaluated them, not a second test call on the same data. Scheduling that completion, and
+amending §I's prose and counts, is left to the campaign owner.
+*Scope:* no protocol clause, split, seed or metric definition changes. Frame GT, controls and every
+other method's pool are untouched.
