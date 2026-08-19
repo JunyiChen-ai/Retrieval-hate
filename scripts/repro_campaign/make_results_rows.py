@@ -36,6 +36,12 @@ def row(r, run_dir, notes, transplant="n/a", gt_conv="§4", seeds="1", stratum=N
     p = r.get("pooled", {}) if stratum is None else r.get(f"strat_{stratum}", {})
     iv = r.get("intervals") if stratum is None else r.get(f"strat_{stratum}_intervals")
     f = (lambda k: fmt(iv[k])) if iv else (lambda k: "n/a")
+    # A pool with only one class has no ROC-AUC and no meaningful AP: sklearn
+    # returns nan there and the AP degenerates.  Print `n/a` rather than
+    # propagating it, matching how the Qwen2.5-VL section reports the same
+    # MHC-ZH multi_span pool (which carries no span-bearing video at all).
+    if p and p.get("base_rate") in (0.0, 1.0):
+        p = dict(p, frame_ROC_AUC=None, frame_PR_AUC=None, AP_norm=None)
     rate = r["native_rate"]
     rate_s = f"{rate:g} fps"
     if native_rate:
