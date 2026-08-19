@@ -1149,3 +1149,332 @@ Qwen's 19% modal answer, which is a finding rather than a fault.
 of 3,084, the three missing being exactly the two audio-only HateMM containers
 and the truncated `yt_NzvfkIYS5Yg`; test pools full at 215 / 161 / 149 / 118. No
 row in §M is affected by any of these defects.
+
+## K. Method as run — LAVAD (CVPR 2024)
+
+The harness is `scripts/repro_campaign/lavad_chain.py` (stages 02-06) on top of
+`scripts/repro_campaign/blip2_caption.py` (stage 01) and
+`scripts/repro_campaign/extract_frames_1fps.py` (stage 00), driven by
+`scripts/repro_campaign/run_lavad_wave1.sh`. Every prompt, window geometry, dedup rule,
+neighbour count and weighting is taken from `third_party/lavad` @ `1ad46c66`; what changed is
+listed below, and nothing else did.
+
+**The chain, stage for stage.** `00_extract_frames.sh` writes JPEG frames; `01_caption.sh`
+captions each frame with BLIP-2; `02_create_index.sh` builds a per-video ImageBind **text** index
+over the captions; `03_clean_captions.sh` re-assigns each frame the caption whose ImageBind text
+embedding is nearest that frame's ImageBind **image** embedding, giving a nested
+`{center: {frame: cleaned caption}}`; `04_query_llm.sh` runs Llama-2-13b-chat twice, first to
+summarise the ten cleaned captions of a 10 s window into one sentence, then to score that summary
+0-1 with the law-enforcement prompt; `05_create_summary_index.sh` indexes the summaries;
+`06_refine_anomaly_scores.sh` embeds each 10 s window with ImageBind's **video** path, retrieves
+the ten nearest summaries in the same video, and `src/eval.py` combines their scores with
+`softmax(similarity)` weights before `np.repeat`-ing each centre's score across the interval it
+represents. That final curve is what is scored here.
+
+**Adaptation 1 — a 1 fps frame grid, our stand-in for `frame_interval=16`.** LAVAD extracts every
+native frame: `MODEL_ASSETS_STATUS §2` measured 283 MB of JPEG for one 222 s video, so the four
+corpora would need 700-800 GB, which does not fit beside the other campaign jobs. Frames are
+instead extracted at `fps=1`, so `frames/<DS>/<vid>/000123.jpg` is the content at `t = 123 s` and
+one caption exists per second. Centres are every captioned frame, i.e. `native_rate = 1.0`
+samples/s against LAVAD's 1.875/s (16 frames at its assumed 30 fps). The 10 s clip window and its
+10 uniform samples are unchanged, and at 1 fps those 10 samples are exactly the 10 frames of the
+window — which is why the same JPEGs serve stages 01, 03 and 06 without a second decode. Total
+cost on disk: **4.0 GB, not 700-800 GB.**
+
+**Extraction path — ffmpeg, and no video was lost to a decoder.** Frames come from
+`ffmpeg -vf fps=1 -q:v 2`, not decord. This matters because decord cannot open a substantial share
+of the released MultiHateClip containers — 27% of MHC-EN on the sample the Wave 0 Qwen2.5-VL row
+measured. ffmpeg opened **215/215 HateMM, 161/161 MHC-EN, 149/149 MHC-ZH and 118/119 HateClipSeg**
+test videos. The single loss, `yt_NzvfkIYS5Yg`, is a truncated source file that ffmpeg itself
+rejects (exit 183); that is a media fault, not a decoder choice.
+
+**Adaptation 2 — a single captioner, and what it costs (the `§3.11b` decision).**
+`01_caption.sh` lists five BLIP-2 variants and `02_create_index.sh` indexes all five; only
+`Salesforce/blip2-opt-6.7b-coco` is on disk, the other four being ~120 GB of download and a 5x
+multiplier on both the captioning and the indexing stages. **Decision: run the chain over the one
+captioner and label every row `single-captioner`.** The likely effect on the LELA alignment is
+worth stating precisely rather than hand-waving, because it is the largest single departure in
+this port. Stage 03's retrieval pool shrinks from up to five candidate captions per frame to one,
+so caption *cleaning* can still substitute a caption across **frames** — which is the mechanism
+LAVAD's ablation credits most of the gain to — but no longer across **captioners**. The
+ensemble's role in the published pipeline is to widen the candidate set that the image embedding
+chooses from; with one captioner the cleaning step becomes "pick the moment in this video whose
+caption best matches this frame" rather than "pick the best of five descriptions of the best
+matching moment". We therefore expect a *lower* score than the published one if the ensemble
+contributes, and we should not read a shortfall on the §7 check as evidence of a coding error
+before checking this. If a row misses tolerance, this and the evaluation pool (below) are the two
+explanations to rule out first.
+
+**Adaptation 3 — greedy decoding, so the run is deterministic.** The shipped `04_query_llm.sh`
+never passes `--temperature`, so it inherits the `0.6` default, i.e. sampling; under freeze §6
+that would make LAVAD a three-seed method and triple an already tight single-GPU budget. Decoding
+is greedy (`temperature = 0`, which is also Meta's own `chat_completion` semantics for
+`temperature == 0`), the run is a single run, and the §7 transplant comparison is not contaminated
+by decode luck. Greedy decoding also makes the content-keyed generation cache exactly lossless:
+identical prompts must give identical generations, so caching them is a speed-up and not an
+approximation.
+
+**Adaptation 4 — the `llama_hf` shim and the ungated mirror.** Both `Llama.build` call sites are
+redirected to `scripts/repro_campaign/shim/llama_hf` (`MODEL_ASSETS_STATUS §3.2`), which maps
+`libs/llama/llama-2-13b-chat/` to `NousResearch/Llama-2-13b-chat-hf` because every `meta-llama/*`
+repo is gated and no token is configured here (§3.8). That mirror ships no `tokenizer.chat_template`,
+so the shim falls back to the canonical Llama-2 `[INST] <<SYS>>…` layout, which is byte-for-byte
+what Meta's own `ChatFormat` emits for a `[system, user]` pair (§3.12) — verified on this machine.
+The 13B runs in **NF4** (~7.5 GiB) rather than bf16 (26 GiB), because bf16 weights plus a batch-32
+KV cache do not fit a 32 GiB card. Meta caps generation at `total_len = min(max_seq_len,
+max_gen_len + max_prompt_len)`; that is reproduced exactly, with the repo's own `max_seq_len = 512`.
+
+**Adaptation 5 — FAISS replaced by an exact matrix product.** `IndexFlatIP` over `normalize_L2`-ed
+vectors *is* cosine similarity, so a per-video matmul with `argsort` returns the same neighbours
+in the same order without writing index files. Two further changes are exact-equivalence
+speed-ups, each verified numerically rather than assumed:
+  * ImageBind's video loader emits 15 sub-clips per window, but only **3 are distinct** — the
+    `ConstantClipsPerVideoSampler` asks for 5 clips of 2 s from a 10-frame "video" that
+    `FrameVideo` calls 0.33 s long, so all 5 clips are the same frames and only `SpatialCrop`'s 3
+    crops differ (equivalence classes `{0,3,6,9,12}`, `{1,4,7,10,13}`, `{2,5,8,11,14}`). ImageBind
+    reduces the clip axis with `mean(dim=1)`, so averaging the 3 distinct crops equals averaging
+    all 15, at a fifth of the cost.
+  * `UniformTemporalSubsample(2)` keeps `linspace(0, T-1, 2)`, i.e. the **first and last frame**
+    of each window, so handing the loader those two frames gives a bit-identical tensor
+    (max |diff| = 0.0, checked on real frames) while reading 2 JPEGs per window instead of 10.
+
+**Adaptation 6 — refusals are masked, never interpolated** (`MODEL_ASSETS_STATUS §3.11a`,
+mandatory items 1 and 2). LAVAD's `_parse_score` turns anything without a `[x]` into `-1`, and its
+`_interpolate_unmatched_scores` then runs `np.interp` over the remaining points, so a refusal
+becomes a linear blend of its neighbours and nothing in the output distinguishes it from a real
+score. **`np.interp` is never called here.** Every `-1` is recorded with its raw generation text
+in `data/lavad/score_refusals/`, the frame is left unscored, and the shared evaluator drops exactly
+those frames and reports `coverage` beside every AUC. Refusal rates are broken down by GT label in
+§K.5, which is the breakdown that matters: refusals concentrate on violent and group-hostile
+descriptions, which in these corpora are the positive class.
+
+Note carefully what this does and does not do to the two variants. The `raw` row is the stage-04b
+score with refused frames dropped, so its coverage is below 1. The `base` row is LAVAD's *own*
+stage-06 refinement, which replaces **every** centre's score — refused or not — with a
+similarity-weighted average of the ten visually nearest summaries' scores; a refused frame
+therefore still has a defined refined score, computed only over the neighbours that did answer.
+That is the published mechanism, not a harness patch, and it is why `base` coverage is 1.000 while
+`raw` coverage is not.
+
+**Adaptation 7 — the evaluation pool is the test split, not the full corpus (declared deviation).**
+The four corpora are 84 h of video and the two Llama passes alone are ~135k generations at 1 fps;
+running LAVAD *and* URF-HVAA over all splits does not fit the single shared RTX 5090. Both methods
+are therefore evaluated on the **frozen test split only** — 644 videos, 18.9 h, 67,647 one-second
+centres — which is what freeze §5 calls the headline anyway ("Headline table = test split"), so
+no rule is broken; but there is **no full-corpus row for LAVAD or URF**, unlike the Wave 0
+methods. This matters for §7: LELA does not say which pool it evaluated, and ZS-CLIP §A/§B already
+show the test and full-corpus pools can differ by up to 0.05 on the same method and dataset
+(MHC-ZH ROC 0.6075 test vs 0.5611 full). **A miss on the §7 check must therefore be read against
+the pool difference before it is read as a bad transplant.**
+
+**Nothing else changed.** `context_prompt`, `format_prompt` and `summary_prompt` are byte-for-byte
+the strings in `04_query_llm.sh`; `clip_duration = 10`, `num_samples = 10`, `num_neighbors = 10`,
+`index_dim = 1024`, `batch_size = 32` are the shipped values; the captioner is unconditional with
+the checkpoint's own generation config, as `image_captioner.py` runs it.
+
+**One upstream bug we did not inherit.** `06_refine_anomaly_scores.sh` asks FAISS for 10
+neighbours unconditionally. A video with fewer than 10 *distinct* summaries gets `-1` back for the
+missing ones, and LAVAD's `file_names[-1]` then silently selects the last index entry. We clamp
+the neighbour count to the index size and renormalise the weights instead; the number of videos
+where the clamp bites is reported in §K.5.
+
+**Run record.** One RTX 5090, single run, greedy. Stage 01 BLIP-2: **643 videos, 67,647 captions,
+43.6 min at 25.9 img/s**; one video lost, `yt_NzvfkIYS5Yg`, a truncated source ffmpeg rejects.
+Stage 02+03 ImageBind: 643 videos, 30.4 min. Stage 04a Llama-2-13b-chat NF4: 637 videos,
+**66,477 dialogs, 47,102 generations, 19,375 served from the prompt cache** (29%), 0 truncations,
+0 OOM, 260.7 min. Stage 04b: 638 videos, 66,666 dialogs, 37,262 generations, 29,404 cached (44%),
+67.8 min. Stage 05+06 ImageBind: 637 videos, 96.0 min, **145 videos had fewer than 10 distinct
+summaries** and had their neighbour count clamped. Productive GPU time **8.3 h**.
+
+**What looked wrong, and was fixed before the numbers were produced.** A first attempt at batch 64
+died of CUDA OOM inside stage 04a; the runner's `|| echo` then let stages 04b-06 run on the 6
+videos that had made it through, and the chain exited 0 having written 5 curves for one dataset.
+The run reported here is a clean re-run at batch 48 with `expandable_segments`. Three guards were
+added first: a failed stage now exits the chain, `curves` raises when any dataset yields zero
+curves, and both scorers halve the batch on OOM and retry (greedy decoding makes the result
+independent of how the work is split, so batch size can no longer change a number or wedge a run).
+
+Reproduce: `bash scripts/repro_campaign/run_lavad_wave1.sh test 1`, then
+`python scripts/repro_campaign/eval_frame.py --method curves --curve-dir idea-stage/repro_lavad/curves --method-name LAVAD --variants base,raw --split test`.
+
+### K.1 Headline rows — test split
+
+`base` is the full published chain (stage-06 refined score). `raw` is the stage-04b LLM score
+before refinement — LAVAD's own ablation, reported as a diagnostic, not as a competing row.
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| GOLD_BROADCAST | — | HateMM | test | control | control | n/a | video | 0.8857 | 0.5829 | n/a | n/a | n/a | 1.0000 | 116975 | 0.2421 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateMM | test | control | control | n/a | 4 fps | 0.5003 ± 0.0019 | 0.2423 ± 0.0013 | n/a | n/a | n/a | 0.0000 | 116975 | 0.2421 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | MHC-EN | test | control | control | n/a | video | 0.9427 | 0.7664 | n/a | n/a | n/a | 1.0000 | 22337 | 0.2734 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-EN | test | control | control | n/a | 4 fps | 0.5004 ± 0.0034 | 0.2737 ± 0.0026 | n/a | n/a | n/a | 0.0000 | 22337 | 0.2734 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | MHC-ZH | test | control | control | n/a | video | 0.9842 | 0.9191 | n/a | n/a | n/a | 1.0000 | 18199 | 0.2648 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-ZH | test | control | control | n/a | 4 fps | 0.4985 ± 0.0052 | 0.2646 ± 0.0038 | n/a | n/a | n/a | 0.0000 | 18199 | 0.2648 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | HateClipSeg | test | control | control | n/a | video | 0.6260 | 0.5437 | n/a | n/a | n/a | 1.0000 | 114097 | 0.4712 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateClipSeg | test | control | control | n/a | 4 fps | 0.5009 ± 0.0021 | 0.4721 ± 0.0016 | n/a | n/a | n/a | 0.0000 | 114097 | 0.4712 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| LAVAD | 1 | HateMM | test | label-free | base | base | 1 fps | 0.5587 | 0.2909 | n/a | n/a | n/a | 0.1424 | 116841 | 0.2424 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_lavad/ | single-captioner |
+| LAVAD | 1 | HateMM | test | label-free | base | raw | 1 fps | 0.5040 | 0.2445 | n/a | n/a | n/a | 0.0123 | 115553 | 0.2403 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.989 |
+| LAVAD | 1 | MHC-EN | test | label-free | base | base | 1 fps | 0.5559 | 0.3107 | n/a | n/a | n/a | 0.0680 | 22099 | 0.2760 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_lavad/ | single-captioner; missing 1/161 (0.6%) dropped, not interpolated |
+| LAVAD | 1 | MHC-EN | test | label-free | base | raw | 1 fps | 0.5077 | 0.2801 | n/a | n/a | n/a | 0.0103 | 21971 | 0.2749 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.994; missing 1/161 (0.6%) dropped, not interpolated |
+| LAVAD | 1 | MHC-ZH | test | label-free | base | base | 1 fps | 0.4923 | 0.2634 | n/a | n/a | n/a | -0.0022 | 18150 | 0.2648 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_lavad/ | single-captioner |
+| LAVAD | 1 | MHC-ZH | test | label-free | base | raw | 1 fps | 0.5159 | 0.2737 | n/a | n/a | n/a | 0.0133 | 18127 | 0.2650 | 1 | OUT_OF_TOLERANCE | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.999 |
+| LAVAD | 1 | HateClipSeg | test | label-free | base | base | 1 fps | 0.5768 | 0.5464 | n/a | n/a | n/a | 0.9980 | 112883 | 0.4730 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=1.000; missing 1/119 (0.8%) dropped, not interpolated |
+| LAVAD | 1 | HateClipSeg | test | label-free | base | raw | 1 fps | 0.5453 | 0.5018 | n/a | n/a | n/a | 0.4699 | 111243 | 0.4671 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.985; missing 1/119 (0.8%) dropped, not interpolated |
+
+### K.2 Full corpus — not run, and why
+
+There is **no full-corpus row for LAVAD**. Freeze §5 makes the test split the headline and does not
+require a full-corpus evaluation per method, so this breaks no rule, but it does differ from the
+Wave 0 sections, which report both. The two Llama passes at a 1 s grid are ~133k dialogs on the
+test split alone and took 5.5 h of the 8.3 h; the full corpus is 4.5x that for LAVAD and again for
+URF-HVAA, which does not fit one shared GPU. The consequence for §7 is spelled out in K.4.
+
+### K.3 Stratified — single-span vs multi-span (HateMM / MHC only)
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| LAVAD | 1 | HateMM | test | label-free | base | base | 1 fps | 0.5657 | 0.2540 | n/a | n/a | n/a | 0.0963 | 93190 | 0.2010 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; stratum=single_span |
+| LAVAD | 1 | HateMM | test | label-free | base | base | 1 fps | 0.5844 | 0.1428 | n/a | n/a | n/a | 0.1277 | 91945 | 0.1043 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; stratum=multi_span |
+| LAVAD | 1 | HateMM | test | label-free | base | raw | 1 fps | 0.4938 | 0.2005 | n/a | n/a | n/a | 0.0016 | 92170 | 0.1996 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.989; stratum=single_span |
+| LAVAD | 1 | HateMM | test | label-free | base | raw | 1 fps | 0.5372 | 0.1130 | n/a | n/a | n/a | 0.0356 | 91577 | 0.1023 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.989; stratum=multi_span |
+| LAVAD | 1 | MHC-EN | test | label-free | base | base | 1 fps | 0.5579 | 0.3022 | n/a | n/a | n/a | 0.0686 | 21433 | 0.2653 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; missing 1/161 (0.6%) dropped, not interpolated; stratum=single_span |
+| LAVAD | 1 | MHC-EN | test | label-free | base | base | 1 fps | 0.5774 | 0.0317 | n/a | n/a | n/a | 0.0072 | 15012 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; missing 1/161 (0.6%) dropped, not interpolated; stratum=multi_span |
+| LAVAD | 1 | MHC-EN | test | label-free | base | raw | 1 fps | 0.5035 | 0.2680 | n/a | n/a | n/a | 0.0073 | 21309 | 0.2641 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.994; missing 1/161 (0.6%) dropped, not interpolated; stratum=single_span |
+| LAVAD | 1 | MHC-EN | test | label-free | base | raw | 1 fps | 0.5681 | 0.0321 | n/a | n/a | n/a | 0.0076 | 14948 | 0.0276 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.994; missing 1/161 (0.6%) dropped, not interpolated; stratum=multi_span |
+| LAVAD | 1 | MHC-ZH | test | label-free | base | base | 1 fps | 0.4923 | 0.2634 | n/a | n/a | n/a | -0.0022 | 18150 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; stratum=single_span |
+| LAVAD | 1 | MHC-ZH | test | label-free | base | base | 1 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12919 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; stratum=multi_span single-class pool, metrics undefined |
+| LAVAD | 1 | MHC-ZH | test | label-free | base | raw | 1 fps | 0.5159 | 0.2737 | n/a | n/a | n/a | 0.0133 | 18127 | 0.2650 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.999; stratum=single_span |
+| LAVAD | 1 | MHC-ZH | test | label-free | base | raw | 1 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12908 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_lavad/ | single-captioner; coverage=0.999; stratum=multi_span single-class pool, metrics undefined |
+
+### K.4 Transplant fidelity (freeze §7) — the campaign's only pass/fail
+
+Target: within **±0.03 absolute on both metrics** against LELA (arXiv 2602.09637). LELA does not
+state which MultiHateClip language it pooled, so both are compared against the same target.
+
+| method | dataset | LELA PR-AUC | ours PR-AUC (AP) | |diff| | LELA ROC-AUC | ours ROC-AUC | |diff| | verdict | ours PR-AUC (trapezoid, LAVAD's own convention) | note |
+|---|---|---|---|---|---|---|---|---|---|---|
+| LAVAD | HateMM | 0.5781 | 0.2909 | 0.2872 | 0.6163 | 0.5587 | 0.0576 | **OUT_OF_TOLERANCE** | 0.2829 |  |
+| LAVAD | MHC-EN | 0.5865 | 0.3107 | 0.2758 | 0.6302 | 0.5559 | 0.0743 | **OUT_OF_TOLERANCE** | 0.3149 | LELA's 'MultiHateClip' column, language unstated |
+| LAVAD | MHC-ZH | 0.5865 | 0.2634 | 0.3231 | 0.6302 | 0.4923 | 0.1379 | **OUT_OF_TOLERANCE** | 0.2637 | LELA's 'MultiHateClip' column, language unstated |
+
+**Verdict: `OUT_OF_TOLERANCE` on all three rows.** Reported, not hidden. The investigation the
+freeze requires follows, and it separates cleanly into two different-sized problems.
+
+**ROC-AUC misses by 0.058 / 0.074 / 0.138.** That is outside tolerance but the right order of
+magnitude, and it is the comparison worth trusting, because ROC-AUC does not depend on the positive
+base rate of the pool.
+
+**PR-AUC misses by ~0.29, and that gap is dominated by the evaluation pool, not by the port.**
+Average precision is prevalence-dependent, and LELA states no pool. Measured on **our own HateMM
+curve, unchanged**, simply re-pooled:
+
+| pool | positive base rate | frame AP | frame ROC-AUC |
+|---|---|---|---|
+| test split, all 215 videos (our headline) | 0.2424 | 0.2909 | 0.5587 |
+| test split, the 83 videos with an annotated span | 0.5833 | **0.5770** | 0.4708 |
+| mean of per-video AP over those 83 videos | — | 0.6123 | — |
+
+The same scores give **AP 0.291 or 0.577** depending only on which frames are pooled — a factor of
+two, with the method untouched — and the span-positive pool lands 0.0011 from LELA's 0.5781. We do
+**not** claim that is LELA's protocol: their ROC-AUC on that pool would be 0.4708, not 0.6163, so no
+single pool we can construct reproduces both of their numbers. What the table does establish is
+that **a PR-AUC comparison against a paper that does not state its frame pool is not interpretable
+at ±0.03**, and that the honest reading of K.4 is "ROC-AUC is 0.06-0.14 low; PR-AUC is not
+comparable as published".
+
+**Would a full-corpus re-run settle it?** No, and the arithmetic says so without spending the GPU.
+The coordinator's condition was to suspect the pool before the transplant and to re-run a dataset
+on the full corpus if that would decide it. The full-corpus HateMM pool has base rate 0.2858
+against the test split's 0.2424 — 18% higher. AP scales roughly with prevalence at fixed ranking
+quality, so the full corpus would move our 0.2909 to roughly 0.34, nowhere near 0.578. The
+sensitivity that matters is 0.24 → 0.58 (which frames are pooled), not 0.24 → 0.29 (which split).
+A ~3 h full-corpus re-run of MHC-EN was therefore not spent.
+
+**Three further candidate explanations, in the order we would test them.**
+1. **The single-captioner adaptation** (see above). LAVAD's stage 03 retrieval pool is 1 caption
+   per frame instead of up to 5. This can only lower our number, and is the largest deliberate
+   departure in the port.
+2. **The 1 s centre grid** against LAVAD's 1.875 samples/s. This costs temporal resolution, but
+   K.5 shows the refined curve is almost constant within a video anyway, so it is unlikely to be
+   worth 0.06 ROC-AUC.
+3. **LELA's own port may have hit the refusal wall silently.** `MODEL_ASSETS_STATUS §3.11a` notes
+   that LAVAD's `_interpolate_unmatched_scores` replaces refusals with a linear blend of their
+   neighbours and nothing in the output distinguishes them. We mask instead (K.5). On 1.2% of
+   frames the difference is small, but it moves in the direction of a *higher* published number.
+
+### K.5 Refusals — rate by dataset and by ground-truth label
+
+`_parse_score` returning -1 is recorded with its raw generation text and the frame is left
+unscored. **`np.interp` is never called.** Positive/negative is the gold label at the centre's own
+instant.
+
+| dataset | scored centres | refusals | refusal rate | on positive frames | on negative frames | enrichment (pos/neg) |
+|---|---|---|---|---|---|---|
+| HateMM | 29,243 | 322 | 0.0110 | 138/7,080 = 0.0195 | 184/22,163 = 0.0083 | 2.35x |
+| MHC-EN | 5,604 | 82 | 0.0146 | 17/1,527 = 0.0111 | 65/4,077 = 0.0159 | 0.70x |
+| MHC-ZH | 4,558 | 6 | 0.0013 | 1/1,208 = 0.0008 | 5/3,350 = 0.0015 | 0.55x |
+| HateClipSeg | 28,242 | 413 | 0.0146 | 362/13,360 = 0.0271 | 51/14,882 = 0.0034 | 7.91x |
+| **all four** | 67,647 | 823 | 0.0122 | 518/23,175 = 0.0224 | 305/44,472 = 0.0069 | 3.26x |
+
+**Reading it.** The overall rate is **1.22%**, under the ~2% below which `MODEL_ASSETS_STATUS
+§3.11a` says the remaining countermeasures are unnecessary — but it is **not label-balanced**, which
+is the other half of that condition. Refusals are **3.26x more likely on a positive frame than a
+negative one** overall, and **7.91x on HateClipSeg**, exactly the concentration §3.11a predicted:
+Llama-2-13b-chat declines on descriptions of violence and group-directed hostility, which in these
+corpora are the positive class. Because we mask rather than interpolate, this costs coverage
+(`raw` coverage 0.985-0.999) rather than biasing the score; had `np.interp` been left in, 2.24% of
+positive frames would have been silently replaced by a blend of their mostly-negative neighbours.
+MHC-ZH is the outlier at 0.13%, consistent with BLIP-2 describing Chinese-language video in
+generic English that trips no safety heuristic.
+
+The most common refusals are the standard Llama-2 safety strings, e.g. *"I cannot provide a rating
+for the scene as it is not appropriate to use offensive language"* (188 occurrences) and
+*"I apologize, but I cannot provide a rating for the scene you described..."* (86). Raw text for
+every refusal is in `data/lavad/score_refusals/`.
+
+Because the rate is label-imbalanced, §3.11a item 3 — a content-moderation prompt reframing run as
+a **paired** variant next to the verbatim prompt — is justified. It is implemented
+(`lavad_chain.py --prompt mod`, prompt frozen in the file) and is reported in K.6 if it ran; it is
+never a silent substitution for the verbatim row.
+
+### K.6 What the numbers say
+
+1. **LAVAD clears the random floor on three of four datasets, and is at or below it on MHC-ZH.**
+   Test frame ROC-AUC 0.5587 / 0.5559 / 0.4923 / 0.5768 (HateMM / MHC-EN / MHC-ZH / HateClipSeg)
+   against a 0.500 floor. Oracle-normalised AP is 0.142 / 0.068 / -0.002 / 0.998 — it recovers 14%
+   of the chance-to-video-oracle gap on HateMM and essentially none on MHC. **Read the HateClipSeg
+   `AP_norm` of 0.998 with care:** HateClipSeg's broadcast ceiling (AP 0.5437) sits only 0.073
+   above its base rate (0.4712), so the normaliser's denominator is tiny and the ratio is unstable;
+   the raw AP gain there is 0.073, not a near-perfect result.
+2. **Against the other campaign floors, LAVAD is mid-pack, not ahead.** On HateMM its 0.5587 sits
+   between ZS-CLIP (0.5368) and ZS-ImageBind (0.5919), and above Qwen2.5-VL grounding (0.5185). A
+   seven-stage chain with two large language models, a captioner and a multimodal retriever does
+   not beat a single ImageBind forward pass on these corpora.
+3. **The gain comes from the refinement stage, and the refinement works by flattening the curve.**
+   Refined vs raw ROC-AUC is 0.559 vs 0.504 (HateMM), 0.556 vs 0.508 (MHC-EN), 0.577 vs 0.545
+   (HateClipSeg). Over the same videos the **median within-video standard deviation of the score
+   falls from 0.048 to 0.007**, a 7x flattening, and the share of videos whose whole curve varies
+   by less than 0.01 rises from 23% to 57% (81% on MHC-ZH). Stage 06 replaces each moment's score
+   with a similarity-weighted average of the ten visually nearest moments *in the same video*, so
+   on corpora where the hateful content is diffuse it converges to a per-video constant. **What
+   improves the metric is therefore video-level smoothing, not localisation** — the opposite of
+   what a frame-level baseline is supposed to demonstrate.
+4. **MHC-ZH is the failure case and the reason is legible.** ROC-AUC 0.4923 is below chance and
+   `AP_norm` is -0.002. LAVAD is an English-only chain: BLIP-2 emits English captions for
+   Chinese-language video, and the Chinese on-screen text that carries much of the hate signal is
+   not read at all. 81% of MHC-ZH videos end with a curve flatter than 0.01, the highest of the
+   four corpora.
+5. **The transplant is out of tolerance, and the PR-AUC half of it is not diagnostic.** ROC-AUC is
+   0.06-0.14 below LELA. PR-AUC is ~0.29 below, but the same curve yields 0.291 or 0.577 depending
+   only on which frames are pooled (K.4), so that half of the ±0.03 check cannot be evaluated
+   against a paper that does not state its pool. Anyone re-using LELA's LAVAD row as a baseline
+   should state the frame pool alongside it.
+6. **Refusals are rare but land where they hurt.** 1.22% overall, 3.26x enriched on positive
+   frames, 7.91x on HateClipSeg. The rate is too low to explain the transplant gap, but it is
+   large enough that a harness which interpolates instead of masking would report a *different*
+   number without saying so — which is the failure mode §3.11a warned about and the reason
+   coverage is printed next to every AUC here.
+7. **Consequence for the campaign.** LAVAD is the strongest label-free chain reproduced so far on
+   HateClipSeg (0.5768) and mid-pack elsewhere, but every dataset remains far below the
+   zero-temporal-resolution gold-broadcast ceiling (0.8857 / 0.9427 / 0.9842 / 0.6260 ROC-AUC).
+   The gap between "knows which video is hateful" and "knows when" is untouched by this method.
