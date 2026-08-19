@@ -437,7 +437,12 @@ def stage_refine(args) -> None:
             fp = [fdir / f"{f:06d}.jpg" for f in window_frames(c, n_frames)]
             fp = [p for p in fp if p.exists()]
             if len(fp) >= 2:
-                clips.append(fp)
+                # `UniformTemporalSubsample(num_samples=clip_duration=2)` keeps
+                # `linspace(0, T-1, 2).long()` = the first and last frame of the
+                # clip, so handing the loader those two produces a bit-identical
+                # tensor (verified, max |diff| = 0.0) while reading 2 JPEGs per
+                # window instead of 10.
+                clips.append([fp[0], fp[-1]])
                 kept.append(c)
         if not clips:
             continue

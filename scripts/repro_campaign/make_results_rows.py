@@ -31,15 +31,24 @@ def fmt(x, nd=4):
     return str(x)
 
 
-def row(r, run_dir, notes, transplant="n/a", gt_conv="§4", seeds="1", stratum=None):
+def row(r, run_dir, notes, transplant="n/a", gt_conv="§4", seeds="1", stratum=None,
+        variant_map=None, native_rate=None):
     p = r.get("pooled", {}) if stratum is None else r.get(f"strat_{stratum}", {})
     iv = r.get("intervals") if stratum is None else r.get(f"strat_{stratum}_intervals")
     f = (lambda k: fmt(iv[k])) if iv else (lambda k: "n/a")
     rate = r["native_rate"]
     rate_s = f"{rate:g} fps"
+    if native_rate:
+        # The `curves` front-end broadcasts each video's own rate onto the 4 fps
+        # grid itself and then reports 4; the method's true output rate is what
+        # freeze §14's `native_rate` column wants, so it is passed in.
+        rate_s = native_rate
+    # freeze §8: `variant` is base or `+text (ours)`; the npz key that produced
+    # the row stays visible in `query_set`.
+    var = (variant_map or {}).get(r["variant"], "base")
     return ("| " + " | ".join([
         r["method"], str(r["wave"]), DS_LABEL[r["dataset"]], r["split"],
-        r["supervision"], "base", r["variant"], rate_s,
+        r["supervision"], var, r["variant"], rate_s,
         fmt(p.get("frame_ROC_AUC")), fmt(p.get("frame_PR_AUC")),
         f("F1@0.3"), f("F1@0.5"), f("F1@0.7"),
         fmt(p.get("AP_norm")), str(p.get("n_frames")), fmt(p.get("base_rate")),
@@ -80,7 +89,17 @@ def main() -> int:
     ap.add_argument("--split", default="test", help="which split the control rows describe")
     ap.add_argument("--strata", action="store_true",
                     help="emit the single_span / multi_span rows instead of the pooled row")
+    ap.add_argument("--variant-map", default="",
+                    help="npz-key=variant-label pairs, e.g. "
+                         "'base=base,base_text=+text (ours)' (freeze §8)")
+    ap.add_argument("--native-rate", default="",
+                    help="the method's own output rate for the native_rate column, "
+                         "when the curves front-end has already broadcast to 4 fps")
+    ap.add_argument("--transplant", default="",
+                    help="dataset:verdict pairs for the §7 column, e.g. 'HateMM:OK'")
     args = ap.parse_args()
+    vmap = dict(kv.split("=", 1) for kv in args.variant_map.split(",") if "=" in kv)
+    tmap = dict(kv.split(":", 1) for kv in args.transplant.split(",") if ":" in kv)
 
     print(HEADER)
     print(SEP)
@@ -92,6 +111,9 @@ def main() -> int:
             if r.get("pooled", {}).get("n_videos", 0) == 0:
                 continue
             note = args.notes
+            cov = r.get("pooled", {}).get("coverage")
+            if cov is not None and cov < 1.0:
+                note = (note + "; " if note else "") + f"coverage={cov:.3f}"
             if r["n_videos_missing"]:
                 note = (note + "; " if note else "") + \
                     f"missing {r['n_videos_missing']}/{r['n_videos_in_split']} " \
@@ -104,9 +126,12 @@ def main() -> int:
                     n = (note + "; " if note else "") + f"stratum={st}"
                     if q.get("frame_ROC_AUC") is None or q.get("base_rate") in (0.0, 1.0):
                         n += " single-class pool, metrics undefined"
-                    print(row(r, args.run_dir, n, stratum=st))
+                    print(row(r, args.run_dir, n, stratum=st, variant_map=vmap,
+                              native_rate=args.native_rate))
             else:
-                print(row(r, args.run_dir, note))
+                print(row(r, args.run_dir, note, variant_map=vmap,
+                          native_rate=args.native_rate,
+                          transplant=tmap.get(r["dataset"], "n/a")))
     return 0
 
 
