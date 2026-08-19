@@ -130,7 +130,40 @@ def centers_of(dur: float, step: float) -> list[int]:
 
 
 # ----------------------------------------------------------- stage 1: VLM ---
+FALLBACK_HITS: set = set()
+
+
+def install_decord_fallback():
+    """VideoLLaMA3's `processing_videollama3.py` does `from decord import
+    VideoReader` at import time, so the patch must land before the remote-code
+    module loads.  decord cannot open ~27% of MHC-EN containers; without this
+    those become method failures rather than decode failures (see
+    `scripts/repro_campaign/decord_fallback.py`).  Videos decord opens are
+    untouched; the ids that needed PyAV are counted and reported."""
+    import decord
+    from decord_fallback import PyAVReader
+
+    real = decord.VideoReader
+
+    class VideoReader:
+        def __new__(cls, path, *a, **kw):
+            try:
+                return real(path, *a, **kw)
+            except Exception:
+                FALLBACK_HITS.add(Path(str(path)).stem)
+                return PyAVReader(path)
+
+    decord.VideoReader = VideoReader
+    try:
+        import decord.video_reader as _vr
+        _vr.VideoReader = VideoReader
+    except Exception:
+        pass
+    print("[patch] decord.VideoReader -> PyAV fallback on open failure", flush=True)
+
+
 def load_vlm():
+    install_decord_fallback()
     from transformers import AutoModelForCausalLM, AutoProcessor
 
     model = AutoModelForCausalLM.from_pretrained(
@@ -191,7 +224,9 @@ def stage_caption(args) -> None:
             print(f"PROGRESS caption {n}/{len(todo)} calls={ncall} "
                   f"{ncall/max(el,1e-9):.2f} call/s elapsed={el/60:.1f}min "
                   f"eta={(len(todo)-n)*el/n/60:.1f}min", flush=True)
+    write_json(WORK / "decord_fallback_caption.json", sorted(FALLBACK_HITS))
     print(f"[done] caption videos={n} calls={ncall} "
+          f"decord_fallback={len(FALLBACK_HITS)} "
           f"wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
@@ -373,7 +408,9 @@ def stage_tags(args) -> None:
                   f"elapsed={el/60:.1f}min eta={(len(jobs)-n)*el/n/60:.1f}min",
                   flush=True)
     write_json(outp, res)
-    print(f"[done] tags videos={n} wall={(time.time()-t0)/60:.1f}min", flush=True)
+    write_json(WORK / "decord_fallback_tags.json", sorted(FALLBACK_HITS))
+    print(f"[done] tags videos={n} decord_fallback={len(FALLBACK_HITS)} "
+          f"wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
 # ----------------------------------------------------------- stage 5 -------

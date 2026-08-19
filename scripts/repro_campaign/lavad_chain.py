@@ -204,8 +204,17 @@ def ib_video(model, clips: list[list[Path]], bs: int = 8) -> np.ndarray:
     for i in range(0, len(clips), bs):
         chunk = [[str(p) for p in c] for c in clips[i: i + bs]]
         with torch.no_grad():
-            e = model({ModalityType.VISION:
-                       data.load_and_transform_video_data(chunk, "cuda")})
+            t = data.load_and_transform_video_data(chunk, "cuda")
+            # (B, 15, 3, 2, 224, 224): `ConstantClipsPerVideoSampler` asks for 5
+            # clips of 2 s from a 10-frame "video" that `FrameVideo` calls 0.33 s
+            # long, so all 5 clips are the same frames and only `SpatialCrop`'s 3
+            # crops differ -- verified bit-exact, classes {0,3,6,9,12},
+            # {1,4,7,10,13}, {2,5,8,11,14}.  ImageBind reduces the clip axis with
+            # `mean(dim=1)`, so averaging the 3 distinct crops is identical to
+            # averaging all 15 and is 5x cheaper.
+            if t.ndim == 6 and t.shape[1] == 15:
+                t = t[:, :3].contiguous()
+            e = model({ModalityType.VISION: t})
             out.append(e[ModalityType.VISION].float().cpu().numpy())
     v = np.concatenate(out) if out else np.zeros((0, 1024), np.float32)
     return v / np.maximum(np.linalg.norm(v, axis=1, keepdims=True), 1e-12)
@@ -441,13 +450,14 @@ def stage_refine(args) -> None:
             idx = order[i]
             out[str(c)] = {"nn_frame": [int(first_idx[j]) for j in idx],
                            "sim": [float(sim[i, j]) for j in idx]}
-        write_json(WORK / "refined" / ds / f"{vid}.json", out)
+        write_json(WORK / dst / ds / f"{vid}.json", out)
         n += 1
         if n % 10 == 0 or n == len(todo):
             el = time.time() - t0
             print(f"PROGRESS refine {n}/{len(todo)} elapsed={el/60:.1f}min "
                   f"eta={(len(todo)-n)*el/n/60:.1f}min", flush=True)
-    print(f"[done] refine videos={n} wall={(time.time()-t0)/60:.1f}min", flush=True)
+    print(f"[done] refine[{dst}] videos={n} "
+          f"wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
 # ------------------------------------------------------------- curves ------
@@ -470,9 +480,11 @@ def stage_curves(args) -> None:
         st = defaultdict(float)
         for vid in videos(ds, args.split):
             arrays = {}
-            for tag, sub in (("", "score"), ("_mod", "score_mod")):
+            for tag, sub, ref in (("", "score", "refined"),
+                                  ("_mod", "score_mod", "refined"),
+                                  ("_text", "score_text", "refined_text")):
                 sp = WORK / sub / ds / f"{vid}.json"
-                rp = WORK / "refined" / ds / f"{vid}.json"
+                rp = WORK / ref / ds / f"{vid}.json"
                 if not sp.exists():
                     continue
                 raw = {int(k): v for k, v in json.loads(sp.read_text()).items()}

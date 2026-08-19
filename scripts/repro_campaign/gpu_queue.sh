@@ -10,6 +10,16 @@ set -u
 LOCK=/home/jehc223/Retrieval-hate/logging/runs/GPU.lock
 OWNER=${1:?owner name required}; shift
 
+RESERVE=/home/jehc223/Retrieval-hate/logging/runs/GPU.reservation
+# A reservation outranks the queue. While the file exists, only the owners it
+# names may take the card; everyone else waits. Written by the coordinator's
+# ruling of 2026-08-19, which gave the night to the LAVAD + URF run because it is
+# the largest job and the one that cannot be split.
+while [ -f "$RESERVE" ] && ! grep -qx "allow:$OWNER" "$RESERVE"; do
+  echo "[gpu_queue] $OWNER blocked by reservation $(date -Is)" >&2
+  sleep 120
+done
+
 while true; do
   if mkdir "$LOCK" 2>/dev/null; then
     echo "$OWNER $$" > "$LOCK/owner"
