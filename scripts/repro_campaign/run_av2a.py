@@ -38,6 +38,7 @@ import argparse
 import json
 import math
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -525,6 +526,23 @@ def main() -> int:
             git=subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
                                capture_output=True, text=True).stdout.strip(),
         ), indent=1))
+
+    # The in-flight marker exists to retire an id whose *decoder* killed the
+    # process.  A polite stop is not that: without this handler, killing the run
+    # (operator, scheduler, OOM reaper sending TERM) makes the next attempt
+    # condemn a perfectly healthy video as a decode failure.  That happened once
+    # -- MHC_zh BV1184y1Y7he, a 15.4 s train-split video that decodes fine, was
+    # retired after the run was stopped to release a reserved GPU -- so the
+    # marker is now cleared on TERM/INT and only an uncatchable death (SIGSEGV,
+    # SIGKILL, a C-level abort in the decoder) leaves it behind.
+    def _clear_and_exit(signum, _frame):
+        inflight.write_text("")
+        print(f"[signal] {signum} received; in-flight marker cleared, "
+              f"no id retired", flush=True)
+        sys.exit(128 + signum)
+
+    for _sig in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(_sig, _clear_and_exit)
 
     t0 = time.time()
     n_ok = n_fail = 0
