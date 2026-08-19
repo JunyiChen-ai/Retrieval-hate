@@ -93,6 +93,51 @@ def done_ids(path: Path):
     return out
 
 
+def patch_vision_attention():
+    """Block-wise SDPA in the Qwen2-VL vision tower. Exact, not an approximation.
+
+    Upstream pins `attn_implementation="flash_attention_2"` for the vision tower;
+    no flash-attn wheel exists for torch 2.7.1 / cu128 / sm_120, so the campaign
+    patch switched it to `sdpa` (MODEL_ASSETS_STATUS §3.6).  transformers' sdpa
+    path materialises a dense `[1, N, N]` mask over *all* patches of *all*
+    frames: a 22 s clip at 2 fps is N ~ 32,600 patches and the mask alone asks
+    for 31.6 GiB, which no 32 GB card can serve.
+
+    The mask that code builds is exactly block-diagonal on `cu_seqlens`, and
+    `cu_seqlens` for a video is one block per frame — the vision tower never
+    attends across frames.  Running SDPA once per block therefore returns the
+    same tensor the masked call would have returned, in O(sum n_i^2) memory
+    instead of O(N^2).  Verified numerically at import time against the dense
+    path on a small random input.
+    """
+    import torch.nn.functional as F
+    from transformers.models.qwen2_vl import modeling_qwen2_vl as M
+
+    def forward(self, hidden_states, cu_seqlens, rotary_pos_emb=None,
+                position_embeddings=None):
+        seq_length = hidden_states.shape[0]
+        q, k, v = self.qkv(hidden_states).reshape(
+            seq_length, 3, self.num_heads, -1).permute(1, 0, 2, 3).unbind(0)
+        if position_embeddings is None:
+            emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)
+            cos, sin = emb.cos().float(), emb.sin().float()
+        else:
+            cos, sin = position_embeddings
+        q, k = M.apply_rotary_pos_emb_vision(q, k, cos, sin)
+        q, k, v = q.transpose(0, 1), k.transpose(0, 1), v.transpose(0, 1)
+        out = torch.empty_like(q)
+        bounds = cu_seqlens.tolist() if torch.is_tensor(cu_seqlens) else list(cu_seqlens)
+        for a, b in zip(bounds, bounds[1:]):
+            if b <= a:
+                continue
+            out[:, a:b] = F.scaled_dot_product_attention(
+                q[:, a:b], k[:, a:b], v[:, a:b], dropout_p=0.0)
+        return self.proj(out.transpose(0, 1).reshape(seq_length, -1))
+
+    M.VisionSdpaAttention.forward = forward
+    print("[patch] Qwen2-VL vision SDPA -> block-wise over cu_seqlens", flush=True)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--datasets", default="HateMM,MHC,MHC_zh,HateClipSeg")
@@ -106,9 +151,12 @@ def main() -> int:
     ap.add_argument("--nf-short", type=int, default=128)    # README quick-start value
     ap.add_argument("--feat-folder", default=str(ROOT / "idea-stage/repro_unitime/feat"))
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--keep-feat", action="store_true",
+                    help="keep the per-video mr_seg feature cache instead of deleting it")
     ap.add_argument("--out-dir", default=str(OUT_DIR))
     args = ap.parse_args()
 
+    patch_vision_attention()
     sys.path.insert(0, str(UNITIME))
     os.chdir(UNITIME)
     import inference as UT
@@ -211,6 +259,14 @@ def main() -> int:
         fh(ds, qk).write(json.dumps(rec, ensure_ascii=False) + "\n")
         fh(ds, qk).flush()
         inflight.write_text("")
+        # The `mr_seg` route caches a visual feature tensor per video (~120 MB for
+        # a 4-minute clip; ~75 GB over these corpora).  All of a video's queries
+        # are consecutive in the plan, so the cache can be dropped as soon as the
+        # last one is answered.
+        if not args.keep_feat and (i == len(plan) or plan[i][1] != vid):
+            fp = Path(args.feat_folder) / f"{vid}.pt"
+            if fp.exists():
+                fp.unlink()
         if i % 10 == 0 or i == len(plan):
             el = time.time() - t0
             print(f"PROGRESS {i}/{len(plan)} ds={ds} q={qk} ok={n_ok} err={n_err} "
