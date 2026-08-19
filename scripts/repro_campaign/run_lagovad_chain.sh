@@ -6,8 +6,11 @@ PY=/home/jehc223/miniconda3/envs/HateVideo/bin/python
 EXTRACT_PID=$(cat $R/logging/runs/repro_lagovad_extract/run.pid | head -1)
 while kill -0 "$EXTRACT_PID" 2>/dev/null; do sleep 60; done
 echo "[chain] extraction finished $(date -Is)"
-bash $R/scripts/repro_campaign/gpu_queue.sh lagovad_infer \
-  $PY $R/scripts/repro_campaign/run_lagovad.py --stage infer
+# Deliberately outside the GPU queue: the LaGoVAD head is a 2-layer temporal
+# transformer over cached 512-d features, ~1.5 GiB and a few minutes for the whole
+# corpus. Queueing it behind a multi-hour captioning job would hold up the whole
+# Wave 1 table for no memory benefit.
+$PY $R/scripts/repro_campaign/run_lagovad.py --stage infer
 echo "[chain] inference finished $(date -Is)"
 for SP in test all; do
   $PY $R/scripts/repro_campaign/eval_frame.py --method curves \

@@ -255,7 +255,7 @@ def append_jsonl(p: Path, rec: dict):
 
 def save_npz(path: Path, **arrays):
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(".npz.tmp")
+    tmp = path.with_name(path.stem + ".tmp.npz")  # np.savez appends .npz otherwise
     np.savez(tmp, **arrays)
     os.replace(tmp, path)
 
@@ -369,7 +369,15 @@ def main() -> int:
     ap.add_argument("--build-intervals", action="store_true")
     ap.add_argument("--gpu-id", type=int, default=0)
     ap.add_argument("--progress-every", type=int, default=10)
+    ap.add_argument("--out-root", default="",
+                    help="redirect all outputs (a dry run writes nowhere real)")
     args = ap.parse_args()
+
+    if args.out_root:
+        global RUN_DIR, CURVE_DIR, RAW_DIR
+        RUN_DIR = Path(args.out_root)
+        CURVE_DIR = RUN_DIR / "curves"
+        RAW_DIR = RUN_DIR / "raw"
 
     dss = [d for d in args.datasets.split(",") if d]
 
