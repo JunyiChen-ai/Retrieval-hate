@@ -146,13 +146,26 @@ def pooled_metrics(gt: dict, curves: dict, native_rate: float, split: str,
     y = np.concatenate(ys)
     s = np.concatenate(ss)
     v = np.concatenate(yv)
+    # A method may leave individual frames unscored -- an LLM refusal, an
+    # unparseable generation -- and marks them NaN.  Those frames are dropped
+    # from the pool, never interpolated (freeze §14, MODEL_ASSETS_STATUS §3.11a
+    # item 2), and the surviving share is reported as `coverage`.  Curves with
+    # no NaN, which is every other front-end, are unaffected.
+    n_all = len(y)
+    ok = np.isfinite(s)
+    cov = float(ok.mean())
+    if not ok.all():
+        y, s, v = y[ok], s[ok], v[ok]
+    if len(y) == 0:
+        return dict(n_videos=ns_used, n_frames=0, coverage=0.0)
     base = float(y.mean())
     ap = float(average_precision_score(y, s))
     roc = float(roc_auc_score(y, s)) if 0 < y.sum() < len(y) else float("nan")
     ap_bc = float(average_precision_score(y, v)) if 0 < y.sum() < len(y) else float("nan")
     denom = ap_bc - base
     return dict(
-        n_videos=ns_used, n_frames=int(len(y)), base_rate=round(base, 4),
+        n_videos=ns_used, n_frames=int(len(y)), n_frames_in_pool=int(n_all),
+        coverage=round(cov, 4), base_rate=round(base, 4),
         frame_ROC_AUC=round(roc, 4), frame_PR_AUC=round(ap, 4),
         AP_broadcast_pool=round(ap_bc, 4), AP_random_pool=round(base, 4),
         AP_norm=round((ap - base) / denom, 4) if denom > 1e-9 else None,
@@ -272,7 +285,9 @@ def curve_dir_front_end(ds: str, curve_dir: Path, variant: str, gt: dict):
             missing.append(vid)
             reasons[vid] = f"load:{type(e).__name__}"
             continue
-        if c.size == 0 or not np.isfinite(c).all() or rate <= 0:
+        # A NaN marks one unscored frame (see `pooled_metrics`); a curve that is
+        # NaN everywhere carries no score at all and the video is reported missing.
+        if c.size == 0 or not np.isfinite(c).any() or rate <= 0:
             missing.append(vid)
             reasons[vid] = "empty_or_nonfinite"
             continue
@@ -397,6 +412,7 @@ def main() -> int:
         print(f"{r['method']:<28} {r['variant']:<14} {r['dataset']:<12} "
               f"ROC={p.get('frame_ROC_AUC')} AP={p.get('frame_PR_AUC')} "
               f"APn={p.get('AP_norm')} base={p.get('base_rate')} "
+              f"cov={p.get('coverage')} "
               f"n={p.get('n_videos')}/{r['n_videos_in_split']} miss={r['missing_frac']}"
               + (f" F1@.5={r['intervals']['F1@0.5']}" if "intervals" in r else ""))
     print(f"[written] {out}")
