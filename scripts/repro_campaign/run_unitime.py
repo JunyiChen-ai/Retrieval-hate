@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import signal
 import sys
 import time
 from pathlib import Path
@@ -220,6 +221,26 @@ def main() -> int:
     # which no external kill will do to the same id by chance.
     inflight = out_dir / ".inflight"
     crashfile = out_dir / ".crashcount.json"
+
+    # A polite stop must not look like a decoder crash.  Killing this process to
+    # hand back a reserved GPU leaves the in-flight marker behind, and the next
+    # start reads that as "this video killed us".  The two-strikes rule below
+    # keeps that from costing a video, but the marker should not be written at
+    # all for a signal we can catch: clear it and leave.  Only an uncatchable
+    # death -- SIGKILL, SIGSEGV, a C-level abort inside the decoder -- can now
+    # leave a marker, which is exactly the case the mechanism exists for.
+    # (The AV2A worker hit this same false positive independently and fixed it
+    # the same way; recorded so the two drivers stay consistent.)
+    def _clean_stop(signum, _frame):
+        try:
+            if inflight.exists():
+                inflight.unlink()
+        finally:
+            print(f"[signal] {signal.Signals(signum).name}: cleared the in-flight "
+                  f"marker, exiting without retiring anything", flush=True)
+            sys.exit(128 + signum)
+    signal.signal(signal.SIGTERM, _clean_stop)
+    signal.signal(signal.SIGINT, _clean_stop)
     crashes = json.loads(crashfile.read_text()) if crashfile.exists() else {}
     if inflight.exists():
         s = inflight.read_text().strip()
