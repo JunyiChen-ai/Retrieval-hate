@@ -31,7 +31,8 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from sklearn.metrics import average_precision_score, roc_auc_score
+from sklearn.metrics import (auc, average_precision_score,
+                             precision_recall_curve, roc_auc_score)
 
 ROOT = Path("/home/jehc223/Retrieval-hate")
 sys.path.insert(0, str(ROOT / "scripts/r16_detbase"))
@@ -161,12 +162,25 @@ def pooled_metrics(gt: dict, curves: dict, native_rate: float, split: str,
     base = float(y.mean())
     ap = float(average_precision_score(y, s))
     roc = float(roc_auc_score(y, s)) if 0 < y.sum() < len(y) else float("nan")
+    # Freeze §2 fixes PR-AUC = average precision.  LAVAD's own `src/eval.py`
+    # (and URF-HVAA's, which is forked from it) instead reports
+    # `auc(recall, precision)` -- the trapezoid rule over the PR curve, which is
+    # a different and generally larger quantity.  Any third party who ported
+    # those repos, LELA included, would have reported the trapezoid number, so
+    # it is computed here purely so the §7 alignment can be checked against both
+    # conventions.  It is never the headline and never replaces `frame_PR_AUC`.
+    if 0 < y.sum() < len(y):
+        pr, rc, _ = precision_recall_curve(y, s)
+        pr_trapz = float(auc(rc, pr))
+    else:
+        pr_trapz = float("nan")
     ap_bc = float(average_precision_score(y, v)) if 0 < y.sum() < len(y) else float("nan")
     denom = ap_bc - base
     return dict(
         n_videos=ns_used, n_frames=int(len(y)), n_frames_in_pool=int(n_all),
         coverage=round(cov, 4), base_rate=round(base, 4),
         frame_ROC_AUC=round(roc, 4), frame_PR_AUC=round(ap, 4),
+        frame_PR_AUC_trapz=round(pr_trapz, 4),
         AP_broadcast_pool=round(ap_bc, 4), AP_random_pool=round(base, 4),
         AP_norm=round((ap - base) / denom, 4) if denom > 1e-9 else None,
         n_offgrid_gt8=int(sum(1 for a, b in tpairs if abs(a - b) > 8)),
