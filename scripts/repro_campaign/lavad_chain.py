@@ -287,7 +287,7 @@ class Scorer:
         self.model, self.tok = g.model, g.tokenizer
         self.bs = batch_size
         self.cache: dict[tuple[str, str], str] = {}
-        self.n_gen = self.n_hit = self.n_trunc = 0
+        self.n_gen = self.n_hit = self.n_trunc = self.n_oom = 0
 
     @torch.inference_mode()
     def _run(self, pairs: list[tuple[str, str]]) -> list[str]:
@@ -308,6 +308,27 @@ class Scorer:
         return [t.strip() for t in
                 self.tok.batch_decode(out[:, plen:], skip_special_tokens=True)]
 
+    def _gen_chunk(self, chunk: list) -> None:
+        """Generate a chunk, halving the batch on OOM rather than losing the run.
+
+        Prompt length varies with the caption window, so a batch size that fits
+        on one video can OOM on another; a fixed size is a bet, this is not.
+        Greedy decoding makes the result independent of how the work is split.
+        """
+        try:
+            for k, v in zip(chunk, self._run(chunk)):
+                self.cache[k] = v
+            self.n_gen += len(chunk)
+            return
+        except torch.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            if len(chunk) == 1:
+                raise
+            self.n_oom += 1
+        mid = len(chunk) // 2
+        self._gen_chunk(chunk[:mid])
+        self._gen_chunk(chunk[mid:])
+
     def __call__(self, pairs: list[tuple[str, str]]) -> list[str]:
         need = [p for p in pairs if p not in self.cache]
         uniq = list(dict.fromkeys(need))
@@ -315,10 +336,7 @@ class Scorer:
         # group by prompt length so a batch is not padded to its longest member
         uniq.sort(key=lambda p: len(p[1]))
         for i in range(0, len(uniq), self.bs):
-            chunk = uniq[i: i + self.bs]
-            for k, v in zip(chunk, self._run(chunk)):
-                self.cache[k] = v
-            self.n_gen += len(chunk)
+            self._gen_chunk(uniq[i: i + self.bs])
         return [self.cache[p] for p in pairs]
 
 
@@ -365,11 +383,11 @@ def stage_summarize(args) -> None:
         if n % 5 == 0 or n == len(todo):
             el = time.time() - t0
             print(f"PROGRESS summarize[{sub}] {n}/{len(todo)} calls={ncall} "
-                  f"gen={sc.n_gen} cachehit={sc.n_hit} trunc={sc.n_trunc} "
+                  f"gen={sc.n_gen} cachehit={sc.n_hit} trunc={sc.n_trunc} oom={sc.n_oom} "
                   f"{sc.n_gen/max(el,1e-9):.2f} gen/s elapsed={el/60:.1f}min "
                   f"eta={(len(todo)-n)*el/n/60:.1f}min", flush=True)
     print(f"[done] summarize[{sub}] videos={n} calls={ncall} gen={sc.n_gen} "
-          f"cachehit={sc.n_hit} trunc={sc.n_trunc} n_text={n_text} "
+          f"cachehit={sc.n_hit} trunc={sc.n_trunc} oom={sc.n_oom} n_text={n_text} "
           f"wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
@@ -407,11 +425,11 @@ def stage_score(args) -> None:
         if n % 5 == 0 or n == len(todo):
             el = time.time() - t0
             print(f"PROGRESS score {n}/{len(todo)} calls={ncall} gen={sc.n_gen} "
-                  f"cachehit={sc.n_hit} trunc={sc.n_trunc} {sc.n_gen/max(el,1e-9):.2f} gen/s "
+                  f"cachehit={sc.n_hit} trunc={sc.n_trunc} oom={sc.n_oom} {sc.n_gen/max(el,1e-9):.2f} gen/s "
                   f"elapsed={el/60:.1f}min eta={(len(todo)-n)*el/n/60:.1f}min",
                   flush=True)
     print(f"[done] score[{args.prompt}] videos={n} calls={ncall} gen={sc.n_gen} "
-          f"cachehit={sc.n_hit} trunc={sc.n_trunc} wall={(time.time()-t0)/60:.1f}min", flush=True)
+          f"cachehit={sc.n_hit} trunc={sc.n_trunc} oom={sc.n_oom} wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
 # ------------------------------------------------------ stage 05 + 06 ------
@@ -548,6 +566,12 @@ def stage_curves(args) -> None:
         stats[ds] = dict(st)
         print(f"[curves] {ds} {dict(st)}", flush=True)
     write_json(RUN_DIR / "refusal_stats.json", stats)
+    # A dataset that produced no curve at all is a failed run, not a result:
+    # the 19:51 collapse exited 0 with three of four datasets empty.
+    empty = [d for d, v in stats.items() if not v.get("n_videos")]
+    if empty:
+        raise SystemExit(f"[curves] FAILED: no curves for {empty} -- "
+                         f"the upstream stage did not complete")
 
 
 def _gt(ds: str):

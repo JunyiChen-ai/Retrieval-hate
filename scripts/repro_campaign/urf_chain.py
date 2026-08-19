@@ -162,7 +162,15 @@ def install_decord_fallback():
     print("[patch] decord.VideoReader -> PyAV fallback on open failure", flush=True)
 
 
-def load_vlm():
+def load_vlm(max_tokens: int = 8192):
+    """VideoLLaMA3's image processor defaults to `max_tokens = 16384` vision
+    tokens per clip, i.e. ~1,600 patches per frame for a 10-frame window.  On
+    the low-resolution HateClipSeg video that Phase A smoked, the clip never
+    reaches that cap; on HateMM's higher-resolution files it does, and one
+    forward then asks for 24.8 GiB on a 32 GiB card that already holds 16.9 GiB
+    of weights.  The cap is lowered here, exactly as `MODEL_ASSETS_STATUS §3.7`
+    lowers Qwen2.5-VL's `max_pixels` for the same reason, and the value actually
+    used per call is recorded (`vlm_token_caps`)."""
     install_decord_fallback()
     from transformers import AutoModelForCausalLM, AutoProcessor
 
@@ -170,7 +178,35 @@ def load_vlm():
         VLM, trust_remote_code=True, device_map="cuda:0",
         torch_dtype=torch.bfloat16, attn_implementation="sdpa")
     proc = AutoProcessor.from_pretrained(VLM, trust_remote_code=True)
+    proc.image_processor.max_tokens = max_tokens
+    print(f"[patch] VideoLLaMA3 image_processor.max_tokens 16384 -> {max_tokens}",
+          flush=True)
     return model.eval(), proc
+
+
+TOKEN_CAPS: dict = {}
+
+
+def vlm_infer_safe(model, proc, conversation, max_new_tokens=256,
+                   max_tokens=8192, floor=1024):
+    """Run one generation, halving the vision-token cap on OOM down to `floor`.
+
+    A fixed cap is a bet on the worst-resolution video in the corpus; this is
+    not.  The cap each call succeeded at is counted so the write-up can say how
+    much of the corpus ran at full resolution.
+    """
+    cap = max_tokens
+    while True:
+        proc.image_processor.max_tokens = cap
+        try:
+            out = vlm_infer(model, proc, conversation, max_new_tokens)
+            TOKEN_CAPS[cap] = TOKEN_CAPS.get(cap, 0) + 1
+            return out
+        except torch.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            if cap <= floor:
+                raise
+            cap //= 2
 
 
 @torch.inference_mode()
@@ -186,7 +222,7 @@ def vlm_infer(model, proc, conversation, max_new_tokens=256):
 
 
 def stage_caption(args) -> None:
-    model, proc = load_vlm()
+    model, proc = load_vlm(args.vlm_max_tokens)
     jobs = [(ds, v, p, d) for ds in args.datasets.split(",")
             for v, p, d in videos(ds, args.split)]
     todo = [j for j in jobs if not (WORK / "captions" / j[0] / f"{j[1]}.json").exists()]
@@ -208,7 +244,8 @@ def stage_caption(args) -> None:
                                   "start_time": st, "end_time": en, "max_frames": 10},
                     }]},
                 ]
-                r = vlm_infer(model, proc, conv).strip()
+                r = vlm_infer_safe(model, proc, conv,
+                                   max_tokens=args.vlm_max_tokens).strip()
                 res[str(c)] = r or "No detected activity in this segment."
                 ncall += 1
         except Exception as e:
@@ -225,6 +262,7 @@ def stage_caption(args) -> None:
                   f"{ncall/max(el,1e-9):.2f} call/s elapsed={el/60:.1f}min "
                   f"eta={(len(todo)-n)*el/n/60:.1f}min", flush=True)
     write_json(WORK / "decord_fallback_caption.json", sorted(FALLBACK_HITS))
+    write_json(WORK / "vlm_token_caps_caption.json", TOKEN_CAPS)
     print(f"[done] caption videos={n} calls={ncall} "
           f"decord_fallback={len(FALLBACK_HITS)} "
           f"wall={(time.time()-t0)/60:.1f}min", flush=True)
@@ -241,7 +279,7 @@ class Llama31:
         self.model, self.tok = g.model, g.tokenizer
         self.bs = batch_size
         self.cache: dict[tuple[str, str], str] = {}
-        self.n_gen = self.n_hit = self.n_trunc = 0
+        self.n_gen = self.n_hit = self.n_trunc = self.n_oom = 0
 
     @torch.inference_mode()
     def _run(self, pairs):
@@ -261,15 +299,33 @@ class Llama31:
         return [t.strip() for t in
                 self.tok.batch_decode(out[:, plen:], skip_special_tokens=True)]
 
+    def _gen_chunk(self, chunk: list) -> None:
+        """Generate a chunk, halving the batch on OOM rather than losing the run.
+
+        Prompt length varies with the caption window, so a batch size that fits
+        on one video can OOM on another; a fixed size is a bet, this is not.
+        Greedy decoding makes the result independent of how the work is split.
+        """
+        try:
+            for k, v in zip(chunk, self._run(chunk)):
+                self.cache[k] = v
+            self.n_gen += len(chunk)
+            return
+        except torch.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            if len(chunk) == 1:
+                raise
+            self.n_oom += 1
+        mid = len(chunk) // 2
+        self._gen_chunk(chunk[:mid])
+        self._gen_chunk(chunk[mid:])
+
     def __call__(self, pairs):
         uniq = list(dict.fromkeys(p for p in pairs if p not in self.cache))
         self.n_hit += len(pairs) - len(uniq)
         uniq.sort(key=lambda p: len(p[1]))
         for i in range(0, len(uniq), self.bs):
-            chunk = uniq[i: i + self.bs]
-            for k, v in zip(chunk, self._run(chunk)):
-                self.cache[k] = v
-            self.n_gen += len(chunk)
+            self._gen_chunk(uniq[i: i + self.bs])
         return [self.cache[p] for p in pairs]
 
 
@@ -306,11 +362,11 @@ def _score_pass(args, sub_in: str, sub_out: str, system_of, keep=None) -> None:
         if n % 10 == 0 or n == len(todo):
             el = time.time() - t0
             print(f"PROGRESS {sub_out} {n}/{len(todo)} calls={ncall} gen={llm.n_gen} "
-                  f"cachehit={llm.n_hit} trunc={llm.n_trunc} {llm.n_gen/max(el,1e-9):.2f} gen/s "
+                  f"cachehit={llm.n_hit} trunc={llm.n_trunc} oom={llm.n_oom} {llm.n_gen/max(el,1e-9):.2f} gen/s "
                   f"elapsed={el/60:.1f}min eta={(len(todo)-n)*el/n/60:.1f}min",
                   flush=True)
     print(f"[done] {sub_out} videos={n} calls={ncall} gen={llm.n_gen} "
-          f"cachehit={llm.n_hit} trunc={llm.n_trunc} wall={(time.time()-t0)/60:.1f}min", flush=True)
+          f"cachehit={llm.n_hit} trunc={llm.n_trunc} oom={llm.n_oom} wall={(time.time()-t0)/60:.1f}min", flush=True)
 
 
 def stage_score(args) -> None:
@@ -375,7 +431,7 @@ def stage_filter(args) -> None:
 # ----------------------------------------------------------- stage 4 -------
 def stage_tags(args) -> None:
     iv = json.loads((WORK / "highest_lowest_intervals.json").read_text())
-    model, proc = load_vlm()
+    model, proc = load_vlm(args.vlm_max_tokens)
     outp = WORK / "suspicious_part_phrases.json"
     res = json.loads(outp.read_text()) if outp.exists() else {}
     t0, n = time.time(), 0
@@ -398,7 +454,8 @@ def stage_tags(args) -> None:
                 {"type": "text", "text": TAG_USER}]},
         ]
         try:
-            r = vlm_infer(model, proc, conv, max_new_tokens=1024).strip()
+            r = vlm_infer_safe(model, proc, conv, max_new_tokens=1024,
+                               max_tokens=args.vlm_max_tokens).strip()
         except Exception as ex:
             print(f"[fail] tags {ds}/{vid} {type(ex).__name__}: {ex}", flush=True)
             torch.cuda.empty_cache()
@@ -413,6 +470,7 @@ def stage_tags(args) -> None:
                   flush=True)
     write_json(outp, res)
     write_json(WORK / "decord_fallback_tags.json", sorted(FALLBACK_HITS))
+    write_json(WORK / "vlm_token_caps_tags.json", TOKEN_CAPS)
     print(f"[done] tags videos={n} decord_fallback={len(FALLBACK_HITS)} "
           f"wall={(time.time()-t0)/60:.1f}min", flush=True)
 
@@ -499,6 +557,12 @@ def stage_curves(args) -> None:
         stats[ds] = dict(st)
         print(f"[curves] {ds} {dict(st)}", flush=True)
     write_json(RUN_DIR / "refusal_stats.json", stats)
+    # A dataset that produced no curve at all is a failed run, not a result:
+    # the 19:51 collapse exited 0 with three of four datasets empty.
+    empty = [d for d, v in stats.items() if not v.get("n_videos")]
+    if empty:
+        raise SystemExit(f"[curves] FAILED: no curves for {empty} -- "
+                         f"the upstream stage did not complete")
 
 
 def main() -> int:
@@ -510,6 +574,8 @@ def main() -> int:
     ap.add_argument("--step", type=float, default=10.0)
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--tag-max-frames", type=int, default=180)
+    ap.add_argument("--vlm-max-tokens", type=int, default=8192,
+                    help="VideoLLaMA3 vision-token cap per clip (upstream 16384)")
     args = ap.parse_args()
     {"caption": stage_caption, "score": stage_score, "filter": stage_filter,
      "tags": stage_tags, "refine": stage_refine, "curves": stage_curves}[args.stage](args)
