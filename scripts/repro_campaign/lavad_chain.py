@@ -193,7 +193,7 @@ def ib_vision(model, paths: list[Path], bs: int = 64) -> np.ndarray:
     return v / np.maximum(np.linalg.norm(v, axis=1, keepdims=True), 1e-12)
 
 
-def ib_video(model, clips: list[list[Path]], bs: int = 8) -> np.ndarray:
+def ib_video(model, clips: list[list[Path]], bs: int = 16) -> np.ndarray:
     """ImageBind's VISION path on `load_and_transform_video_data`, which is what
     stage 06 uses: `FrameVideo.from_frame_paths` + ConstantClipsPerVideoSampler
     (5 clips) + UniformTemporalSubsample(2) + SpatialCrop(224, 3 crops)."""
