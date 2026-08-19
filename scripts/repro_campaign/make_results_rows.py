@@ -31,9 +31,9 @@ def fmt(x, nd=4):
     return str(x)
 
 
-def row(r, run_dir, notes, transplant="n/a", gt_conv="§4", seeds="1"):
-    p = r.get("pooled", {})
-    iv = r.get("intervals")
+def row(r, run_dir, notes, transplant="n/a", gt_conv="§4", seeds="1", stratum=None):
+    p = r.get("pooled", {}) if stratum is None else r.get(f"strat_{stratum}", {})
+    iv = r.get("intervals") if stratum is None else r.get(f"strat_{stratum}_intervals")
     f = (lambda k: fmt(iv[k])) if iv else (lambda k: "n/a")
     rate = r["native_rate"]
     rate_s = f"{rate:g} fps"
@@ -77,12 +77,15 @@ def main() -> int:
     ap.add_argument("--run-dir", default="`idea-stage/repro_campaign/`")
     ap.add_argument("--notes", default="")
     ap.add_argument("--controls", action="store_true")
+    ap.add_argument("--split", default="test", help="which split the control rows describe")
+    ap.add_argument("--strata", action="store_true",
+                    help="emit the single_span / multi_span rows instead of the pooled row")
     args = ap.parse_args()
 
     print(HEADER)
     print(SEP)
     if args.controls:
-        for r in control_rows():
+        for r in control_rows(args.split):
             print(r)
     for jf in args.json:
         for r in json.loads(Path(jf).read_text()):
@@ -93,7 +96,17 @@ def main() -> int:
                 note = (note + "; " if note else "") + \
                     f"missing {r['n_videos_missing']}/{r['n_videos_in_split']} " \
                     f"({r['missing_frac']:.1%}) dropped, not interpolated"
-            print(row(r, args.run_dir, note))
+            if args.strata:
+                for st in ("single_span", "multi_span"):
+                    q = r.get(f"strat_{st}")
+                    if not q or q.get("n_videos", 0) == 0:
+                        continue
+                    n = (note + "; " if note else "") + f"stratum={st}"
+                    if q.get("frame_ROC_AUC") is None or q.get("base_rate") in (0.0, 1.0):
+                        n += " single-class pool, metrics undefined"
+                    print(row(r, args.run_dir, n, stratum=st))
+            else:
+                print(row(r, args.run_dir, note))
     return 0
 
 
