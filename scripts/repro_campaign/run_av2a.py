@@ -240,15 +240,24 @@ class PyAVReader:
         return self.arr[torch.as_tensor([int(i) for i in idx])]
 
 
-def open_video(path: Path, duration: float):
-    from decord import VideoReader, cpu
-    try:
-        vr = VideoReader(str(path), ctx=cpu(0))
-        if len(vr) >= BINS_PER_WINDOW:
-            _ = vr.get_batch([0, len(vr) - 1])
-            return vr, "decord"
-    except Exception:
-        pass
+def open_video(path: Path, duration: float, force_pyav: bool = False):
+    """decord if it works, PyAV otherwise.
+
+    The open-time probe (first and last frame) is necessary but **not
+    sufficient**: decord's threaded decoder can pass it and then die on a seek
+    into the middle of the file, which is how three long HateClipSeg videos
+    failed after the corpus run had already accepted them.  `force_pyav` is the
+    caller's retry path for exactly that case.
+    """
+    if not force_pyav:
+        from decord import VideoReader, cpu
+        try:
+            vr = VideoReader(str(path), ctx=cpu(0))
+            if len(vr) >= BINS_PER_WINDOW:
+                _ = vr.get_batch([0, len(vr) - 1])
+                return vr, "decord"
+        except Exception:
+            pass
     return PyAVReader(path, duration), "pyav"
 
 
@@ -279,12 +288,13 @@ def save_npz(path: Path, **arrays):
 
 
 # ---------------------------------------------------------------- the run ---
-def process_video(vparser, model, vision_tf, audio_tf, ds, vid, path, duration, device):
+def process_video(vparser, model, vision_tf, audio_tf, ds, vid, path, duration, device,
+                  force_pyav: bool = False):
     """One video -> (curves dict, all-events dict, meta).  Raises on failure."""
     import torch
     import torchaudio
 
-    vr, backend = open_video(path, duration)
+    vr, backend = open_video(path, duration, force_pyav)
     n_frames_total = len(vr)
     # A clip shorter than the sampler asks for is an answer, not a failure: the
     # window view below repeats the final real frame to fill the window, which is
@@ -545,7 +555,7 @@ def main() -> int:
         signal.signal(_sig, _clear_and_exit)
 
     t0 = time.time()
-    n_ok = n_fail = 0
+    n_ok = n_fail = n_retry = 0
     for i, (ds, vid, dur, path) in enumerate(todo, 1):
         inflight.write_text(f"{ds}\t{vid}")
         # per-video reseed: the published video transform keeps a
@@ -558,12 +568,25 @@ def main() -> int:
             curves, rate, all_events, hate_iv, meta = process_video(
                 vparser, model, vision_tf, audio_tf, ds, vid, path, dur, device)
         except Exception as e:
-            append_jsonl(RAW_DIR / f"failures_{ds}.jsonl",
-                         dict(video_id=vid, dataset=ds,
-                              reason=f"{type(e).__name__}: {str(e)[:200]}"))
-            n_fail += 1
-            inflight.write_text("")
-            continue
+            # decord's open-time probe is not sufficient: its threaded decoder can
+            # accept a file and then die on a seek into the middle of it.  Retry
+            # the whole video once on PyAV before calling it a failure, so a
+            # decoder quirk is not recorded as the method having no answer.
+            try:
+                curves, rate, all_events, hate_iv, meta = process_video(
+                    vparser, model, vision_tf, audio_tf, ds, vid, path, dur,
+                    device, force_pyav=True)
+                n_retry += 1
+                print(f"[pyav-retry] {ds} {vid} recovered after "
+                      f"{type(e).__name__}", flush=True)
+            except Exception as e2:
+                append_jsonl(RAW_DIR / f"failures_{ds}.jsonl",
+                             dict(video_id=vid, dataset=ds,
+                                  reason=f"{type(e).__name__}: {str(e)[:200]}",
+                                  retry_reason=f"{type(e2).__name__}: {str(e2)[:200]}"))
+                n_fail += 1
+                inflight.write_text("")
+                continue
         save_npz(CURVE_DIR / ds / f"{vid}.npz",
                  rate=np.float64(rate), **curves)
         append_jsonl(RAW_DIR / f"av2a_events_{ds}.jsonl", dict(
@@ -584,7 +607,8 @@ def main() -> int:
                   f"vid={vid} sec/vid={el/i:.2f} eta_h={(len(todo)-i)*el/i/3600:.2f}",
                   flush=True)
     inflight.unlink(missing_ok=True)
-    print(f"[done] ok={n_ok} fail={n_fail} wall={time.time()-t0:.0f}s", flush=True)
+    print(f"[done] ok={n_ok} fail={n_fail} pyav_retry={n_retry} "
+          f"wall={time.time()-t0:.0f}s", flush=True)
     return 0
 
 
