@@ -1841,3 +1841,314 @@ prompt family. A three-caption probe was too small a sample to establish either.
    ROC-AUC ~0.55-0.59. Any localisation claim of ours has to clear that, and — far harder — has to
    close some part of the gap to the gold-broadcast ceiling that neither of these two 2024/2025
    methods touches.
+
+## J. Method as run — AV²A (CVPR 2025)
+
+The pipeline is `third_party/AV2A/video_parser_optmizer.py::VideoParserOptimizer`, imported and run
+**unmodified**: `filter_classes` → per-second similarity → `optimize` with the dynamic
+label-shift thresholds → `refine_segments`. Backbone and hyper-parameters are the README's
+LanguageBind row verbatim — `--backbone language_bind --alpha 0.5 --filter_threshold 0.55
+--threshold_stage1 0.75 --threshold_stage2 0.75 --gamma 2.5 --method bbse-cosine --fusion early`,
+with `dataset=LLP` because that selects the multi-label branch of `refine_segments` (the `AVE`
+branch takes an argmax, which a corpus with overlapping hate and background events must not do).
+The driver `scripts/repro_campaign/run_av2a.py` supplies only the corpus loop, the windowing, the
+label list, the read-out and the resume logic. `utils.load_data` is bypassed — it serves LLP/AVE
+only — and `dataset.py` is unused, because it expects an LLP/AVE directory layout rather than our
+raw mp4.
+
+**Label vocabulary — frozen in the script and committed before the run.** AV²A is open-vocabulary,
+and `backbones.py::norm_similarities` z-scores the text-similarity vector **across the label axis**
+before its sigmoid. Scores are therefore relative to the rest of the vocabulary, and the method's
+absolute thresholds (filter 0.55, stage-1/2 0.75) are meaningless for a hate-only list — with one
+class every z-score is 0 and every curve sits flat at `sigmoid(0) = 0.5`. The list pairs 12
+hate-related event words with 20 ordinary background event words, in the style of the 25-class LLP
+list the paper ships with. Strings enter the LanguageBind text encoder through the repo's own
+template, `f"A {label.replace('_',' ').lower()}"`, unmodified.
+
+*Hate subset (the per-second score is the max over these 12):* `racial slur`, `hate speech`,
+`angry shouting insults`, `swastika symbol`, `nazi salute`, `white supremacist rally`, `racist joke`,
+`homophobic remark`, `misogynistic rant`, `threat of violence`, `physical assault`,
+`hateful caption on screen`.
+
+*Background (20):* `speech`, `conversation`, `music`, `singing`, `laughter`, `applause`,
+`cheering crowd`, `car engine`, `dog barking`, `cooking food`, `typing on a keyboard`,
+`news broadcast`, `video game play`, `cartoon animation`, `sports match`, `dancing`,
+`telephone ringing`, `silence`, `walking outdoors`, `person talking to camera`.
+
+The list was written once and never revised; no variant of it was tried and no metric was computed
+while it was being chosen. Only the one list was run, so there is no "best of several" to disclose.
+
+### Deviation — the exactly-10-second window, and why the method forces it
+
+This is a segmentation **we imposed**, not one AV²A chose, and it is worth stating why rather than
+noting it. AV²A was published on LLP and AVE, whose clips are all exactly 10 s, and its code depends
+on that in two places that disagree with each other about what a bin is:
+
+* `data_transforms.py::VisionTransform.__call__` — `fps = len(decord_vr) // 10`, then a bin is one
+  tenth of the clip, **whatever the clip's length**;
+* `video_parser_optmizer.py::refine_segments` — `self.audio_transforms(waveform_and_sr,
+  start_sec=start_time, end_sec=end_time)` where `start_time`/`end_time` are **bin indices**, and
+  `AudioTransform.crop_audio` turns them into samples with `int(start_sec * sample_rate)`, so a bin
+  is one second.
+
+Both readings coincide only at exactly 10 s. On anything shorter the audio crop's `start_sample`
+runs past the end of the waveform, the crop returns empty, and
+`torchaudio.compliance.kaldi.fbank` raises `choose a window size 400 that is [2, 0]`. We hit this on
+a 15.4 s MHC-ZH video in a CPU dry run, before any GPU time was spent.
+
+Each video is therefore cut into `ceil(D/10)` consecutive **exactly 10 s** windows, and the final
+window is **padded rather than compressed**: the last real video frame is repeated and the audio is
+zero-padded to 10 s. The alternative — equal windows of `D/ceil(D/10)` seconds — keeps every bin
+inside real content but reproduces the bug and gives each video its own fractional rate. Padding
+instead makes one bin exactly one second everywhere, so `native_rate = 1.0` is exact rather than
+per-video.
+
+Padding cost, measured: mean `10·ceil(D/10) − D` is 5.06 s (HateMM), 4.77 (MHC-EN), 5.20 (MHC-ZH),
+5.04 (HateClipSeg); the maximum is one window. **The pad cannot reach any score-curve number** — the
+evaluator truncates every curve to `T = min(T_gt, T_feat)` and the pad lies entirely beyond `T_gt`.
+It *can* reach the event decisions, because a segment the pipeline places in the padded tail is a
+real decision taken on repeated-frame, silent content. Hate events beginning at or after `D` are
+therefore dropped, and those merely ending past `D` are clipped to `D`. Dropped: 73 of 41,426
+HateMM hate events (0.18%), 49/9,401 MHC-EN (0.52%), 46/5,102 MHC-ZH (0.90%), 36/24,878 HateClipSeg
+(0.14%). Clipped: 2,498 / 1,787 / 1,401 / 797.
+
+### The two read-outs, and why the audio channel is coarser than 1 Hz
+
+AV²A emits **events**, not curves, so each channel is reported twice and both are in the table:
+
+* `sim_*` — the **continuous** per-second score, `max` over the 12 hate labels of the per-second
+  similarity matrix. It is computed on the frozen **full** label list rather than the per-window
+  filtered subset, because `filter_classes` keeps a different subset for each window and channel and
+  a curve built on a moving vocabulary is not comparable across windows. Same model, same
+  transforms, same `norm_similarities`; one extra forward per window.
+* `evt_*` — the **binary rasterisation** of the hate-labelled segments the published pipeline
+  actually kept after `optimize` and `refine_segments`. These also carry intervals, so `F1@tIoU` is
+  reported for them and reads `n/a` for the `sim_*` curves (freeze §2).
+
+One structural fact to read the audio rows with: `__call__` computes **one** audio embedding per
+window (`similarity_type='audio'`, a single melspectrogram) and then `.repeat`s it across the 10
+bins. The audio channel is therefore piecewise-constant at **0.1 Hz** by construction, and the
+`combined` channel inherits half of that flatness through `(1-α)·video + α·audio` at `α = 0.5`. Its
+`native_rate` column reads 1 fps because that is the grid it is written on, not because it resolves
+anything at that rate.
+
+### Corrections and provenance
+
+**Correction to `PHASE_A_STATUS §5` — HateMM has 15 videos with no audio stream, not 6.** The six
+already named are `hate_video_108`, `hate_video_17`, `non_hate_video_132`, `non_hate_video_2`,
+`non_hate_video_218`, `non_hate_video_252`. ffprobe finds **no audio stream at all** in nine more:
+`non_hate_video_7`, `non_hate_video_70`, `non_hate_video_257`, `non_hate_video_262`,
+`non_hate_video_385`, `non_hate_video_407`, `non_hate_video_420`, `non_hate_video_559`,
+`non_hate_video_585`. **AV²A drops all fifteen.** It is an audio-visual method — `filter_classes`
+and every `combined` score require the audio branch — so a silence-filled row would be a fabricated
+measurement, not a degraded one. None of the fifteen, and neither of the two D2 no-video-stream
+containers, is in any frozen `train`/`val`/`test` split, so no headline row moves.
+
+**Checkpoint provenance.** Both LanguageBind image checkpoints were among the silently corrupted HF
+blobs (right byte count, wrong content). After the repair job reported `repaired=7 failed=0`, the
+four blobs AV²A loads — `LanguageBind/LanguageBind_Image`, `lb203/LanguageBind_Image`,
+`LanguageBind_Video_FT`, `LanguageBind_Audio_FT` — were sha256-matched against their cache
+filenames (an HF blob's filename *is* its sha256); all four match. A full re-audit of the cache
+returned **268 blobs, 0 corrupt**. Smoke additionally confirms the encoders discriminate rather than
+merely run: the per-second curve varies within a video (84 distinct values across 100 bins on a 95 s
+video, range 0.60–0.97), which a constant-embedding checkpoint could not produce, and a collapsed
+label vocabulary would have pinned every curve at 0.5.
+
+**Decode.** 275 of 3,084 containers (8.9%) refuse decord — 202 of 792 MHC-EN alone (25.5%),
+independently reproducing on a full census the ~27% the Qwen2.5-VL run measured on a sample. All are
+read with a PyAV fallback at 4 fps with the short side capped at 256; because `VisionTransform`
+selects its 10 frames by `linspace` over the window, the sampled **timestamps** are unchanged, so
+this is a container workaround and not a scoring difference. Final backends: HateMM 1065 decord / 1
+PyAV, MHC-EN 590/202, MHC-ZH 766/48, HateClipSeg 369/25. decord's open-time probe proved necessary
+but not sufficient — its threaded decoder accepted three long HateClipSeg videos and then died on a
+seek into the middle of the file, one of them (`yt_8sIY4W1hBQM`) in the **test** split; a video that
+raises is now retried once on PyAV before any failure is recorded, and all three recovered.
+
+**Missing videos: 18 of 3,084 (0.58%)**, dropped and never interpolated. HateMM 17 (2 with no video
+stream, freeze §12 D2; 15 with no audio stream) — **none in any split**, so HateMM's test row loses
+nothing. HateClipSeg 1: `yt_NzvfkIYS5Yg`, in the **test** split, whose container header claims
+273.9 s and 8,208 frames while only 138 KB of a truncated download exists; decord, PyAV and the
+ffmpeg CLI all extract zero frames. It is the same id the Qwen2.5-VL run retired as
+`decode_all_backends_failed`, so two independent methods drop the same file for the same reason.
+MHC-EN and MHC-ZH lose nothing. Test-split missing: 0/215, 0/161, 0/149, 1/119 (0.84%).
+
+**Run record.** 3,066 videos, 31,795 windows, **10.5 h** on one RTX 5090 (37,663 s corpus +
+60 s smoke + 90 s recovery pass), seed 20250819. Single seed: the only stochastic element in the
+pipeline is the `RandomHorizontalFlipVideo` left in the repo's *video* transform, which reaches
+`filter_classes` and `refine_segments` — the `sim_*` curves run through the **image** transform and
+are fully deterministic. The driver reseeds per video from the id, so a resumed run is bit-identical
+to an uninterrupted one. Reproduce: `bash scripts/repro_campaign/run_av2a_supervised.sh`, then
+`bash scripts/repro_campaign/eval_av2a.sh`.
+
+### J.1 Headline rows — test split
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| GOLD_BROADCAST | — | HateMM | test | control | control | n/a | video | 0.8857 | 0.5829 | n/a | n/a | n/a | 1.0000 | 116975 | 0.2421 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateMM | test | control | control | n/a | 4 fps | 0.5003 ± 0.0019 | 0.2423 ± 0.0013 | n/a | n/a | n/a | 0.0000 | 116975 | 0.2421 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | MHC-EN | test | control | control | n/a | video | 0.9427 | 0.7664 | n/a | n/a | n/a | 1.0000 | 22337 | 0.2734 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-EN | test | control | control | n/a | 4 fps | 0.5004 ± 0.0034 | 0.2737 ± 0.0026 | n/a | n/a | n/a | 0.0000 | 22337 | 0.2734 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | MHC-ZH | test | control | control | n/a | video | 0.9842 | 0.9191 | n/a | n/a | n/a | 1.0000 | 18199 | 0.2648 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | MHC-ZH | test | control | control | n/a | 4 fps | 0.4985 ± 0.0052 | 0.2646 ± 0.0038 | n/a | n/a | n/a | 0.0000 | 18199 | 0.2648 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| GOLD_BROADCAST | — | HateClipSeg | test | control | control | n/a | video | 0.6260 | 0.5437 | n/a | n/a | n/a | 1.0000 | 114097 | 0.4712 | 1 | n/a | §4+D1 | idea-stage/repro_campaign/ | zero-temporal-resolution ceiling, full GT pool |
+| RANDOM_UNIFORM | — | HateClipSeg | test | control | control | n/a | 4 fps | 0.5009 ± 0.0021 | 0.4721 ± 0.0016 | n/a | n/a | n/a | 0.0000 | 114097 | 0.4712 | 20 | n/a | §4 | idea-stage/repro_campaign/ | U(0,1) per frame, 20 seeds, full GT pool |
+| AV2A | 1 | HateMM | test | label-free | base | sim_video | 1 fps | 0.5591 | 0.2650 | n/a | n/a | n/a | 0.0673 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | HateMM | test | label-free | base | sim_audio | 1 fps | 0.4922 | 0.2509 | n/a | n/a | n/a | 0.0258 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | HateMM | test | label-free | base | sim_combined | 1 fps | 0.5393 | 0.2520 | n/a | n/a | n/a | 0.0291 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | HateMM | test | label-free | base | evt_video | 1 fps | 0.5456 | 0.2606 | 0.0973 | 0.0559 | 0.0378 | 0.0543 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | HateMM | test | label-free | base | evt_audio | 1 fps | 0.4385 | 0.2232 | 0.1705 | 0.1085 | 0.0698 | -0.0554 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | HateMM | test | label-free | base | evt_combined | 1 fps | 0.4824 | 0.2363 | 0.0815 | 0.0408 | 0.0168 | -0.0170 | 116975 | 0.2421 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_video | 1 fps | 0.4957 | 0.2598 | n/a | n/a | n/a | -0.0275 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_audio | 1 fps | 0.5391 | 0.3087 | n/a | n/a | n/a | 0.0716 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_combined | 1 fps | 0.5310 | 0.3224 | n/a | n/a | n/a | 0.0993 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_video | 1 fps | 0.5255 | 0.2843 | 0.1366 | 0.0732 | 0.0341 | 0.0221 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_audio | 1 fps | 0.5567 | 0.2984 | 0.4422 | 0.3417 | 0.2714 | 0.0506 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_combined | 1 fps | 0.5576 | 0.3016 | 0.1277 | 0.0851 | 0.0486 | 0.0571 | 22337 | 0.2734 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_video | 1 fps | 0.6199 | 0.3601 | n/a | n/a | n/a | 0.1456 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_audio | 1 fps | 0.5173 | 0.2877 | n/a | n/a | n/a | 0.0349 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_combined | 1 fps | 0.5595 | 0.3206 | n/a | n/a | n/a | 0.0853 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_video | 1 fps | 0.5722 | 0.3021 | 0.1689 | 0.1067 | 0.0978 | 0.0569 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_audio | 1 fps | 0.4792 | 0.2571 | 0.2983 | 0.2762 | 0.2431 | -0.0118 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_combined | 1 fps | 0.5285 | 0.2791 | 0.0875 | 0.0500 | 0.0250 | 0.0218 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | HateClipSeg | test | label-free | base | sim_video | 1 fps | 0.5135 | 0.4689 | n/a | n/a | n/a | -0.0598 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/119 (0.8%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | test | label-free | base | sim_audio | 1 fps | 0.4815 | 0.4904 | n/a | n/a | n/a | 0.2320 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/119 (0.8%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | test | label-free | base | sim_combined | 1 fps | 0.4860 | 0.4680 | n/a | n/a | n/a | -0.0719 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/119 (0.8%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | test | label-free | base | evt_video | 1 fps | 0.5412 | 0.4953 | 0.1786 | 0.0796 | 0.0349 | 0.2988 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/119 (0.8%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | test | label-free | base | evt_audio | 1 fps | 0.4819 | 0.4646 | 0.1661 | 0.0671 | 0.0283 | -0.1184 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/119 (0.8%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | test | label-free | base | evt_combined | 1 fps | 0.5020 | 0.4743 | 0.1344 | 0.0593 | 0.0138 | 0.0134 | 113002 | 0.4733 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/119 (0.8%) dropped, not interpolated |
+
+### J.2 Full corpus
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| AV2A | 1 | HateMM | all | label-free | base | sim_video | 1 fps | 0.5602 | 0.3214 | n/a | n/a | n/a | 0.0897 | 621701 | 0.2867 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 17/1083 (1.6%) dropped, not interpolated |
+| AV2A | 1 | HateMM | all | label-free | base | sim_audio | 1 fps | 0.4644 | 0.2811 | n/a | n/a | n/a | -0.0144 | 621701 | 0.2867 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 17/1083 (1.6%) dropped, not interpolated |
+| AV2A | 1 | HateMM | all | label-free | base | sim_combined | 1 fps | 0.4659 | 0.2614 | n/a | n/a | n/a | -0.0655 | 621701 | 0.2867 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 17/1083 (1.6%) dropped, not interpolated |
+| AV2A | 1 | HateMM | all | label-free | base | evt_video | 1 fps | 0.5743 | 0.3220 | 0.0992 | 0.0679 | 0.0465 | 0.0911 | 621701 | 0.2867 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 17/1083 (1.6%) dropped, not interpolated |
+| AV2A | 1 | HateMM | all | label-free | base | evt_audio | 1 fps | 0.4148 | 0.2590 | 0.1708 | 0.1139 | 0.0748 | -0.0716 | 621701 | 0.2867 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 17/1083 (1.6%) dropped, not interpolated |
+| AV2A | 1 | HateMM | all | label-free | base | evt_combined | 1 fps | 0.4567 | 0.2731 | 0.0604 | 0.0306 | 0.0139 | -0.0353 | 621701 | 0.2867 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 17/1083 (1.6%) dropped, not interpolated |
+| AV2A | 1 | MHC-EN | all | label-free | base | sim_video | 1 fps | 0.5127 | 0.2462 | n/a | n/a | n/a | 0.0040 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | all | label-free | base | sim_audio | 1 fps | 0.5177 | 0.2487 | n/a | n/a | n/a | 0.0086 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | all | label-free | base | sim_combined | 1 fps | 0.5520 | 0.2772 | n/a | n/a | n/a | 0.0621 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | all | label-free | base | evt_video | 1 fps | 0.5233 | 0.2533 | 0.1290 | 0.0822 | 0.0426 | 0.0173 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | all | label-free | base | evt_audio | 1 fps | 0.5392 | 0.2597 | 0.3658 | 0.3055 | 0.2553 | 0.0293 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-EN | all | label-free | base | evt_combined | 1 fps | 0.5399 | 0.2613 | 0.1076 | 0.0693 | 0.0371 | 0.0322 | 110735 | 0.2441 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | all | label-free | base | sim_video | 1 fps | 0.5532 | 0.2820 | n/a | n/a | n/a | 0.0470 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | all | label-free | base | sim_audio | 1 fps | 0.5032 | 0.2588 | n/a | n/a | n/a | 0.0084 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | all | label-free | base | sim_combined | 1 fps | 0.5352 | 0.2815 | n/a | n/a | n/a | 0.0463 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | all | label-free | base | evt_video | 1 fps | 0.5416 | 0.2727 | 0.1596 | 0.0995 | 0.0632 | 0.0316 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | all | label-free | base | evt_audio | 1 fps | 0.4706 | 0.2435 | 0.2671 | 0.2018 | 0.1651 | -0.0172 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | MHC-ZH | all | label-free | base | evt_combined | 1 fps | 0.5256 | 0.2664 | 0.0749 | 0.0375 | 0.0141 | 0.0210 | 102153 | 0.2538 | 1 | n/a | §4 | idea-stage/repro_av2a/ |  |
+| AV2A | 1 | HateClipSeg | all | label-free | base | sim_video | 1 fps | 0.5176 | 0.4686 | n/a | n/a | n/a | 0.0661 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/395 (0.2%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | all | label-free | base | sim_audio | 1 fps | 0.4931 | 0.4722 | n/a | n/a | n/a | 0.1202 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/395 (0.2%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | all | label-free | base | sim_combined | 1 fps | 0.5015 | 0.4700 | n/a | n/a | n/a | 0.0878 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/395 (0.2%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | all | label-free | base | evt_video | 1 fps | 0.5334 | 0.4817 | 0.1742 | 0.0726 | 0.0291 | 0.2634 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/395 (0.2%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | all | label-free | base | evt_audio | 1 fps | 0.4892 | 0.4590 | 0.1848 | 0.0846 | 0.0365 | -0.0788 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/395 (0.2%) dropped, not interpolated |
+| AV2A | 1 | HateClipSeg | all | label-free | base | evt_combined | 1 fps | 0.5028 | 0.4656 | 0.1422 | 0.0605 | 0.0175 | 0.0215 | 374235 | 0.4642 | 1 | n/a | §4 | idea-stage/repro_av2a/ | missing 1/395 (0.2%) dropped, not interpolated |
+
+### J.3 Stratified — single-span vs multi-span (HateMM / MHC only), test split
+
+| method | wave | dataset | split | supervision | variant | query_set | native_rate | frame_ROC_AUC | frame_PR_AUC | F1@0.3 | F1@0.5 | F1@0.7 | AP_norm | n_frames | base_rate | seeds | transplant | gt_convention | run_dir | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| AV2A | 1 | HateMM | test | label-free | base | sim_video | 1 fps | 0.6048 | 0.2492 | n/a | n/a | n/a | 0.0881 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | HateMM | test | label-free | base | sim_video | 1 fps | 0.5112 | 0.0994 | n/a | n/a | n/a | -0.0160 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | HateMM | test | label-free | base | sim_audio | 1 fps | 0.4463 | 0.1904 | n/a | n/a | n/a | -0.0187 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | HateMM | test | label-free | base | sim_audio | 1 fps | 0.5694 | 0.1326 | n/a | n/a | n/a | 0.0943 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | HateMM | test | label-free | base | sim_combined | 1 fps | 0.5290 | 0.2043 | n/a | n/a | n/a | 0.0066 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | HateMM | test | label-free | base | sim_combined | 1 fps | 0.5914 | 0.1275 | n/a | n/a | n/a | 0.0773 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | HateMM | test | label-free | base | evt_video | 1 fps | 0.5829 | 0.2328 | 0.0833 | 0.0556 | 0.0480 | 0.0582 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | HateMM | test | label-free | base | evt_video | 1 fps | 0.4937 | 0.1031 | 0.0477 | 0.0205 | 0.0045 | -0.0038 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | HateMM | test | label-free | base | evt_audio | 1 fps | 0.3860 | 0.1757 | 0.1702 | 0.1277 | 0.0973 | -0.0453 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | HateMM | test | label-free | base | evt_audio | 1 fps | 0.5214 | 0.1084 | 0.0842 | 0.0368 | 0.0105 | 0.0141 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | HateMM | test | label-free | base | evt_combined | 1 fps | 0.4715 | 0.1932 | 0.0556 | 0.0312 | 0.0174 | -0.0136 | 93315 | 0.2007 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | HateMM | test | label-free | base | evt_combined | 1 fps | 0.5097 | 0.1061 | 0.0540 | 0.0240 | 0.0060 | 0.0064 | 92052 | 0.1042 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_video | 1 fps | 0.4869 | 0.2448 | n/a | n/a | n/a | -0.0349 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_video | 1 fps | 0.6411 | 0.0389 | n/a | n/a | n/a | 0.0195 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_audio | 1 fps | 0.5308 | 0.2915 | n/a | n/a | n/a | 0.0554 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_audio | 1 fps | 0.7094 | 0.0757 | n/a | n/a | n/a | 0.0820 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_combined | 1 fps | 0.5141 | 0.2989 | n/a | n/a | n/a | 0.0697 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | sim_combined | 1 fps | 0.7721 | 0.0812 | n/a | n/a | n/a | 0.0912 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_video | 1 fps | 0.5176 | 0.2700 | 0.1228 | 0.0614 | 0.0307 | 0.0139 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_video | 1 fps | 0.6467 | 0.0399 | 0.0324 | 0.0243 | 0.0081 | 0.0213 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_audio | 1 fps | 0.5549 | 0.2864 | 0.4362 | 0.3298 | 0.2553 | 0.0455 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_audio | 1 fps | 0.6093 | 0.0349 | 0.0606 | 0.0606 | 0.0606 | 0.0128 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_combined | 1 fps | 0.5476 | 0.2849 | 0.1146 | 0.0764 | 0.0446 | 0.0426 | 21669 | 0.2628 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-EN | test | label-free | base | evt_combined | 1 fps | 0.6748 | 0.0463 | 0.0314 | 0.0209 | 0.0105 | 0.0321 | 15037 | 0.0274 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_video | 1 fps | 0.6199 | 0.3601 | n/a | n/a | n/a | 0.1456 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_video | 1 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span single-class pool, metrics undefined |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_audio | 1 fps | 0.5173 | 0.2877 | n/a | n/a | n/a | 0.0349 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_audio | 1 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span single-class pool, metrics undefined |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_combined | 1 fps | 0.5595 | 0.3206 | n/a | n/a | n/a | 0.0853 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-ZH | test | label-free | base | sim_combined | 1 fps | n/a | n/a | n/a | n/a | n/a | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span single-class pool, metrics undefined |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_video | 1 fps | 0.5722 | 0.3021 | 0.1689 | 0.1067 | 0.0978 | 0.0569 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_video | 1 fps | n/a | n/a | 0.0000 | 0.0000 | 0.0000 | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span single-class pool, metrics undefined |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_audio | 1 fps | 0.4792 | 0.2571 | 0.2983 | 0.2762 | 0.2431 | -0.0118 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_audio | 1 fps | n/a | n/a | 0.0000 | 0.0000 | 0.0000 | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span single-class pool, metrics undefined |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_combined | 1 fps | 0.5285 | 0.2791 | 0.0875 | 0.0500 | 0.0250 | 0.0218 | 18199 | 0.2648 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=single_span |
+| AV2A | 1 | MHC-ZH | test | label-free | base | evt_combined | 1 fps | n/a | n/a | 0.0000 | 0.0000 | 0.0000 | n/a | 12955 | 0.0000 | 1 | n/a | §4 | idea-stage/repro_av2a/ | stratum=multi_span single-class pool, metrics undefined |
+
+### J.4 What the numbers say
+
+1. **Every one of the six variants sits at or near chance on all four corpora.** Test-split frame
+   ROC-AUC spans 0.4385–0.6199 across 24 (dataset × variant) cells, against a random floor of 0.500
+   and a gold-broadcast ceiling of 0.8857 / 0.9427 / 0.9842 / 0.6260. The single best cell is
+   MHC-ZH `sim_video` at 0.6199 (AP_norm 0.146); the best cell on HateMM is 0.5591, on MHC-EN 0.5576,
+   on HateClipSeg 0.5412. Oracle-normalised AP is below 0.10 in 21 of 24 cells and negative in 7.
+   AV²A does not localise hate in these corpora.
+
+2. **The visual channel carries what little signal exists; the audio channel is at or below chance.**
+   `sim_video` beats `sim_audio` on HateMM (0.5591 vs 0.4922), MHC-ZH (0.6199 vs 0.5173) and
+   HateClipSeg (0.5135 vs 0.4815); only MHC-EN reverses it (0.4957 vs 0.5391). `evt_audio` falls
+   **below** the random floor on HateMM (0.4385) and MHC-ZH (0.4792). This is the expected shape for
+   a method whose audio branch was trained to find acoustic *events* — a dog, a guitar, an alarm —
+   being asked to find hate, which is a property of language and social context rather than of a
+   sound. The landscape document's caveat that AV²A is "an audio floor, not a hate detector" is
+   borne out.
+
+3. **AV²A's headline contribution — score-level early fusion instead of late fusion — does not
+   transfer.** On frame ROC-AUC, `sim_combined` is **below the better of its two inputs on all four
+   datasets**: HateMM 0.5393 vs 0.5591, MHC-EN 0.5310 vs 0.5391, MHC-ZH 0.5595 vs 0.6199,
+   HateClipSeg 0.4860 vs 0.5135. Fusing at `α = 0.5` mixes a weak visual signal with an
+   at-or-below-chance audio one and lands between them. (On PR-AUC the picture is the same except
+   MHC-EN, where combined 0.3224 edges its inputs.) Nothing here contradicts the paper — LLP and AVE
+   have genuinely audible events for the audio branch to contribute — but the mechanism has no
+   purchase when one modality is uninformative.
+
+4. **`F1@tIoU` is highest exactly where the frame ranking is worst, and that is a length prior
+   rather than localisation.** `evt_audio` has the best F1@0.5 on three of four datasets — MHC-EN
+   0.3417, MHC-ZH 0.2762, HateMM 0.1085 — while having the *worst* frame ROC-AUC, below chance on
+   two of them. The cause is measurable: because AV²A computes one audio embedding per 10 s window,
+   audio events inherit that block structure and come out with a **median predicted length of
+   20–30 s** against a **median gold span of 21–24 s**, whereas visual events are **5–7 s** against
+   the same gold. Matching the gold length prior scores tIoU without locating anything. Any future
+   interval-level claim of ours should report predicted-length distributions beside F1 for this
+   reason.
+
+5. **Do not read HateClipSeg's `AP_norm` column as a small effect.** Its normalising denominator is
+   `AP_broadcast − base = 0.5437 − 0.4712 = 0.0725`, an order of magnitude tighter than HateMM's
+   0.3408, so tiny AP differences are amplified: `sim_audio` shows AP_norm 0.232 while its ROC-AUC
+   is 0.4815, i.e. below chance. The rescaling is descriptive (freeze §2) and on this corpus it is
+   descriptive of a very small denominator.
+
+6. **The stratified split does not tell one story across datasets.** On HateMM the visual signal
+   lives in single-span videos (`sim_video` 0.6048 single vs 0.5112 multi) while the audio channel
+   inverts (0.4463 vs 0.5694). On MHC-EN every variant scores higher on the multi-span stratum
+   (`sim_combined` 0.7721), but that stratum carries a **2.8% positive base rate** (§I.4), so those
+   figures rest on a small positive set and should not be read as a capability. MHC-ZH has no
+   span-bearing multi-span video in its test split at all, so the stratum is single-class and its
+   metrics are undefined — the same cell §I.4 reports as `n/a` for Qwen2.5-VL.
+
+7. **Against the Wave 0 floors, the 2025 audio-visual method does not clear the 2021-era zero-shot
+   ones.** Best AV²A test ROC-AUC per dataset is 0.5591 / 0.5576 / 0.6199 / 0.5412, against ZS-CLIP
+   0.5368 / 0.5013 / 0.6075 / 0.4990, ZS-ImageBind 0.5919 / 0.5938 / 0.5975 / 0.5926 and
+   Qwen2.5-VL grounding 0.5185 / 0.5221 / 0.5113 / 0.5030. AV²A is roughly level with ZS-CLIP,
+   ahead of Qwen's committed intervals, and **behind ZS-ImageBind on three of four datasets** —
+   despite being the more recent method, using more modalities, and running a full
+   threshold-adaptation pipeline on top of its backbone. A training-free open-vocabulary event
+   localiser adds nothing over a plain frame-level similarity here.
+
+8. **Consequence for the campaign.** Wave 1's audio-visual entry joins the Wave 0 floors well below
+   the zero-temporal-resolution ceiling: on HateMM the gap between the best AV²A row (0.5591) and
+   gold broadcast (0.8857) is essentially the whole interval. As with §I, this is a statement about
+   how these benchmarks reward video-level knowledge over temporal precision, and about the distance
+   between generic audio-visual event vocabularies and hate, rather than a verdict on AV²A — which
+   is reported here, not judged (freeze §0).

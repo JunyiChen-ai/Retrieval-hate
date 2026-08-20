@@ -1,0 +1,5 @@
+# Per-video curve arrays: 3,066 npz, 18 MB of float32.  Regenerate with
+#   bash scripts/repro_campaign/run_av2a_supervised.sh
+# The interval JSONs beside them are small and ARE tracked, since F1@tIoU is
+# computed from them.
+curves/*/
