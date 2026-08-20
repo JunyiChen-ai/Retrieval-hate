@@ -359,3 +359,31 @@ actually evaluated them, not a second test call on the same data. Scheduling tha
 amending §I's prose and counts, is left to the campaign owner.
 *Scope:* no protocol clause, split, seed or metric definition changes. Frame GT, controls and every
 other method's pool are untouched.
+
+**D4 — 2026-08-20 — AV²A's event variants are stochastic and were run on one seed, not three.**
+*What §6 says:* any stochastic element (sampling decode, random init, random subsampling, test-time
+adaptation) → 3 seeds, 20250819/20/21, mean ± sd reported.
+*What AV²A actually contains:* one stochastic element, and a small one — the published
+`data_transforms.py::language_bind_video_transform` still carries `RandomHorizontalFlipVideo(p=0.5)`
+in what is an inference-only transform. It is plainly a train-time augmentation left in by the
+authors, but removing it would no longer be the published pipeline, so it was kept. It reaches
+exactly two call sites, `filter_classes` and `refine_segments`, both of which use the **video**
+transform. The `sim_video` / `sim_audio` / `sim_combined` curves are computed through the **image**
+transform (`language_bind_image_transform`), which has no random component, so **half the reported
+variants are fully deterministic and correctly carry `seeds = 1` under §6's first clause.** The
+three `evt_*` variants inherit the flip and are stochastic.
+*Deviation:* the `evt_*` rows are reported from a single seed (20250819) rather than three, so §J
+carries no ± sd on them.
+*Reason:* the corpus run is 10.5 h of GPU on a single shared RTX 5090 that four Wave 0/1/2 methods
+are queueing for; three seeds would be 31 h and would displace other methods' first runs for a
+horizontal flip of an 8-frame tensor. The cost is disproportionate to the quantity being estimated.
+*Why it does not change any conclusion:* the affected variants are the ones §J already reports as
+at-or-below chance (`evt_audio` 0.4385 on HateMM and 0.4792 on MHC-ZH are below the random floor),
+and the §J.4 findings that depend on the `evt_*` rows are about *interval length* — the 20–30 s
+audio events against 5–7 s visual ones — which is set by AV²A computing one audio embedding per 10 s
+window and is invariant to a left-right flip. No claim in §J rests on a seed-sized difference.
+*Reproducibility is preserved despite the single seed:* `run_av2a.py` reseeds per video from
+`SEED ^ crc32(video_id)`, so a resumed or restarted run reproduces the same numbers as an
+uninterrupted one, and the run is re-runnable bit-for-bit.
+*Scope:* affects the `seeds` column of the three AV²A `evt_*` variants only. No protocol clause,
+split, metric definition, GT array or other method's row is touched.
