@@ -54,7 +54,7 @@ HEADLINE = [
      "1 fps / 0.1 fps", "idea-stage/repro_av2a/"),
     ("UniTime", 1, "aux-temporal-pretrain", "eval_UniTime", "UniTime", "window",
      "interval", "idea-stage/repro_unitime/"),
-    ("MULDE", 2, "one-class", "eval_MULDE", "MULDE", "clipL336",
+    ("MULDE", 2, "one-class", "eval_MULDE", "MULDE", "clipL336_s0",
      "4 fps", "idea-stage/repro_mulde/"),
     ("CLAP", 2, "unlabelled", "eval_CLAP", "CLAP", "main",
      "32 seg/video", "idea-stage/repro_clap/"),

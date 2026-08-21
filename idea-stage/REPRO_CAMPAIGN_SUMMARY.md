@@ -34,7 +34,7 @@ python scripts/repro_campaign/summary_table.py --split all
 | LaGoVAD | 1 | aux-temporal-pretrain | **done** |
 | AV²A | 1 | label-free | **done** (evt_* rows single-seed, freeze D4) |
 | UniTime | 1 | aux-temporal-pretrain | **running** — corpus decode in flight |
-| MULDE | 2 | one-class | **running** — selection frozen per dataset, final fits in flight |
+| MULDE | 2 | one-class | **done** (headline `clipL336` stream only, deviation M-1) |
 | CLAP | 2 | unlabelled | **running** — port complete, FedAvg grid in flight |
 | T3AL | 2 | label-free | **queued** behind UniTime on the single card |
 | SeViLA Localizer | 2 | aux-temporal-pretrain | **queued** behind UniTime on the single card |
@@ -51,6 +51,11 @@ Run state, pointers and ETAs for everything still moving are in §8.
 Frame ROC-AUC / frame PR-AUC (average precision), 4 dp, pooled over the whole evaluated split.
 `not run` marks a method whose corpus run has not produced its evaluator JSON yet.
 
+MULDE is stochastic and carries three seeds (freeze §6); the row below shows **seed 20250819** so the
+table stays one number per cell. Its three-seed mean ± sd — HateMM **0.5989 ± 0.0031**, MHC-EN
+**0.4737 ± 0.0117**, MHC-ZH 0.5102 ± 0.0028, HateClipSeg 0.5276 ± 0.0066 — is in §O.3, and the seed
+spread is small enough that no ranking in this table turns on which seed is shown.
+
 | method | wave | supervision | variant | native_rate | HateMM ROC / AP | MHC-EN ROC / AP | MHC-ZH ROC / AP | HateClipSeg ROC / AP |
 |---|---|---|---|---|---|---|---|---|
 | **GOLD_BROADCAST** | — | control | control | video | 0.8857 / 0.5831 | 0.9427 / 0.7664 | 0.9842 / 0.9191 | 0.6260 / 0.5433 |
@@ -65,7 +70,7 @@ Frame ROC-AUC / frame PR-AUC (average precision), 4 dp, pooled over the whole ev
 | **LaGoVAD** | 1 | aux-temporal-pretrain | main | 0.5 fps | 0.5579 / 0.3047 | 0.5239 / 0.2617 | 0.5965 / 0.3118 | 0.5000 / 0.4666 |
 | **AV²A** | 1 | label-free | sim_combined | 1 fps / 0.1 fps | 0.5393 / 0.2520 | 0.5310 / 0.3224 | 0.5595 / 0.3206 | 0.4860 / 0.4680 |
 | **UniTime** | 1 | aux-temporal-pretrain | window | interval | not run | not run | not run | not run |
-| **MULDE** | 2 | one-class | clipL336 | 4 fps | not run | not run | not run | not run |
+| **MULDE** | 2 | one-class | clipL336_s0 | 4 fps | 0.6002 / 0.3090 | 0.4869 / 0.2585 | 0.5129 / 0.2499 | 0.5326 / 0.5000 |
 | **CLAP** | 2 | unlabelled | main | 32 seg/video | not run | not run | not run | not run |
 | **T3AL** | 2 | label-free | main | interval | not run | not run | not run | not run |
 | **SeViLA Localizer** | 2 | aux-temporal-pretrain | main | 1 fps | not run | not run | not run | not run |
@@ -87,6 +92,13 @@ Secondary variants each method's own section calls out (never a substitute for t
 Reported where a method ran the whole corpus. LAVAD and URF-HVAA deliberately did not (§K.2);
 T3AL has no full-corpus row by design (its deviation T-8).
 
+> **MULDE's full-corpus row is contaminated by construction and is not a baseline number.** It was
+> fitted on the non-hateful videos of the train split, and the full corpus contains those very
+> videos, so its 0.8054 / 0.8361 / 0.7028 ROC-AUC is largely the density model recognising its own
+> training data. It is printed only for completeness. **MULDE's honest figures are the test-split
+> rows in §1**, where the gap to the label-free methods narrows to a few hundredths and MHC-EN goes
+> below chance.
+
 | method | wave | supervision | variant | native_rate | HateMM ROC / AP | MHC-EN ROC / AP | MHC-ZH ROC / AP | HateClipSeg ROC / AP |
 |---|---|---|---|---|---|---|---|---|
 | **GOLD_BROADCAST** | — | control | control | video | 0.9033 / 0.6742 | 0.9536 / 0.7767 | 0.9709 / 0.8537 | 0.6164 / 0.5296 |
@@ -101,7 +113,7 @@ T3AL has no full-corpus row by design (its deviation T-8).
 | **LaGoVAD** | 1 | aux-temporal-pretrain | main | 0.5 fps | 0.5225 / 0.3099 | 0.5605 / 0.2780 | 0.5694 / 0.3006 | 0.5433 / 0.4854 |
 | **AV²A** | 1 | label-free | sim_combined | 1 fps / 0.1 fps | 0.4659 / 0.2614 | 0.5520 / 0.2772 | 0.5352 / 0.2815 | 0.5015 / 0.4700 |
 | **UniTime** | 1 | aux-temporal-pretrain | window | interval | not run | not run | not run | not run |
-| **MULDE** | 2 | one-class | clipL336 | 4 fps | not run | not run | not run | not run |
+| **MULDE** | 2 | one-class | clipL336_s0 | 4 fps | 0.8054 / 0.5551 | 0.8361 / 0.5085 | 0.7028 / 0.4374 | 0.5591 / 0.5032 |
 | **CLAP** | 2 | unlabelled | main | 32 seg/video | not run | not run | not run | not run |
 | **T3AL** | 2 | label-free | main | interval | not run | not run | not run | not run |
 | **SeViLA Localizer** | 2 | aux-temporal-pretrain | main | 1 fps | not run | not run | not run | not run |
@@ -116,6 +128,7 @@ Secondary variants each method's own section calls out (never a substitute for t
 | AV²A (sim_video) | 1 | label-free | sim_video | 1 fps | 0.5602 / 0.3214 | 0.5127 / 0.2462 | 0.5532 / 0.2820 | 0.5176 / 0.4686 |
 | AV²A (sim_audio) | 1 | label-free | sim_audio | 0.1 fps | 0.4644 / 0.2811 | 0.5177 / 0.2487 | 0.5032 / 0.2588 | 0.4931 / 0.4722 |
 | UniTime (mr_seg) | 1 | aux-temporal-pretrain | seg | segment | not run | not run | not run | not run |
+
 
 ## 3. Controls (freeze §3), and what they mean
 
@@ -296,7 +309,7 @@ these corpora — it is not a judgement of the method on the benchmarks it was b
 | **LaGoVAD** (§M) | a written definition selects the anomaly at inference | **no** | on MHC-EN and HateClipSeg the strongest row is `bin`, the **text-free** binary head, ahead of all ten text rows, and paraphrasing the same definition swings MHC-ZH ROC from 0.4593 to 0.6432 — what transfers is a generic surveillance-anomaly prior, not the hate definition. |
 | **AV²A** (§J) | training-free open-vocabulary audio-visual event localisation with score-level early fusion | **no** | all 24 (dataset × variant) cells sit at or near chance, the audio branch is at or below the random floor on two corpora, and the headline early fusion is **below the better of its two inputs on all four datasets**; its best F1@tIoU comes from the variant with the *worst* frame ranking, because a 10 s audio window happens to match the gold span length without locating anything. |
 | **UniTime** (§N) | universal temporal grounding, six hate categories as six queries | *pending* | corpus run in flight; §8 of this file carries the state. |
-| **MULDE** (§O) | one-class multi-scale density estimation of normality | *pending* | selection frozen on val per dataset; final three-seed fits in flight. |
+| **MULDE** (§O) | one-class multi-scale density estimation of normality | **partly, and only where the normal pool is homogeneous** | the campaign's best HateMM frame ROC-AUC, 0.5989 ± 0.0031 over three seeds, above every label-free method — but **below chance on MHC-EN (0.4737 ± 0.0117**, more than two seed-sd under 0.500) and at chance on MHC-ZH, so what it models is the training corpus's notion of normal rather than anything about hate; it is also the only row whose HateMM strata run single-span *above* multi-span, i.e. it does not share the coverage-degeneracy pattern. |
 | **CLAP** (§P) | coarse-to-fine pseudo-labels from an unlabelled pool, federated | *pending* | port complete and documented; FedAvg grid in flight. |
 | **T3AL** (§Q) | test-time adaptation of a VLM for zero-shot localisation | *pending* | queued behind UniTime; one finding already recorded, that upstream's `get_indices` degenerates to comparing a set against itself on any video under 400 feature vectors, i.e. **most MHC videos at 4 fps**. |
 | **SeViLA Localizer** (§R) | frame-wise yes/no VQA keyframe scoring | *pending* | queued behind UniTime; the §R verdict is deliberately left unwritten rather than guessed. |
@@ -326,14 +339,13 @@ ceiling, which none of these methods touches.
 
 ## 8. What is still running, and how to collect it
 
-All four pending runs are detached, resume-safe and start unattended. The single RTX 5090 is
+All pending runs are detached, resume-safe and start unattended. The single RTX 5090 is
 serialised by `scripts/repro_campaign/gpu_queue.sh`, so the two queued methods begin by themselves
 when UniTime releases the lock. **Nothing needs to be restarted.**
 
 | method | state | launcher | log | ETA |
 |---|---|---|---|---|
 | UniTime | decoding the corpus, 110/3754 generations at 2026-08-21 22:12 | `scripts/repro_campaign/run_unitime_wave1.sh` | `logging/runs/repro_unitime/run.log` | ~30 h from restart |
-| MULDE | HateMM selection frozen, three-seed final fits in flight | `scripts/repro_campaign/run_mulde.py` | `logging/runs/repro_mulde/run.log` | ~2–3 h |
 | CLAP | FedAvg grid, HateMM chain complete | `scripts/repro_campaign/run_clap_chain.sh` | `logging/runs/repro_clap/run.log` | ~5–7 h |
 | T3AL | parked in the GPU queue | `scripts/repro_campaign/t3al_launch.sh` | `logging/runs/repro_t3al/run.log` | starts when UniTime releases, then ~9 h |
 | SeViLA | parked in the GPU queue | `scripts/repro_campaign/run_sevila_wave2.sh` | `logging/runs/repro_sevila/run.log` | starts when UniTime releases, then ~1–3 h |
