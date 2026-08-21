@@ -21,6 +21,28 @@ the label path is severed in code, not by convention.
 Run record, frozen and committed before any metric existed:
 `idea-stage/repro_t3al/RUN_RECORD.md` (commit `bfa181d`).
 
+### Q.0 Run status
+
+Install, port, feature/caption extractor and driver are complete and smoke-tested;
+the corpus run is **queued behind the Wave 1 UniTime job**, which holds the single
+RTX 5090 and, at its own reported rate, finishes about 24 h after 2026-08-21 21:40
+(+12:00). The T3AL job is parked in `scripts/repro_campaign/gpu_queue.sh` and starts
+by itself when the card is released; it needs about 9 h of GPU after that
+(~2.5 h features and captions, ~1.3 h val sweep, ~5 h test over three seeds).
+
+* launcher `scripts/repro_campaign/t3al_launch.sh` → `scripts/repro_campaign/t3al_stage.sh`
+* log `logging/runs/repro_t3al/run.log`, pid `logging/runs/repro_t3al/run.pid`
+* results land in `idea-stage/repro_t3al/eval/` — `val_<preset>.json` (sweep),
+  `preset_chosen.json`, `test_s<seed>.json`, and the merged `test_agg.md` /
+  `test_agg.json` that fill §Q.5, §Q.7–Q.9 below.
+
+Smoke evidence (shapes and ranges only, per freeze §10 red line 3): one HateClipSeg
+video, all eight variants, on CPU — curves `(798,)` float32 within `[0, 1]`, no
+NaN, `rate = 4.0`; per-variant interval lists parse through
+`eval_frame.curve_dir_front_end` against `T_gt = 798`; the caption-refinement branch
+fires and the segment lists it returns are non-degenerate (1–3 intervals per
+variant). No metric was computed.
+
 ### Q.1 What was ported
 
 Nothing in T3AL's mechanism was rewritten. `scripts/repro_campaign/run_t3al.py`
