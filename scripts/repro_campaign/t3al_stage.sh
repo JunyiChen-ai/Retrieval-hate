@@ -37,7 +37,24 @@ done
 echo "[stage3] select preset $(date -Is)"
 python scripts/repro_campaign/t3al_select.py || exit 1
 PRESET=$(python -c "import json;print(json.load(open('$OUT/preset_chosen.json'))['preset'])")
+[ -n "$PRESET" ] || { echo "[stage3] no preset chosen"; exit 1; }
 echo "[stage3] chosen preset = $PRESET"
+
+# freeze §6 run metadata
+python - "$PRESET" > "$OUT/run_meta.json" <<'PY'
+import json, subprocess, sys, time, torch
+print(json.dumps(dict(
+    method="T3AL", wave=2, supervision="label-free",
+    repo="benedettaliberatori/T3AL@dfbbbc1c",
+    backbone="open_clip coca_ViT-L-14 / mscoco_finetuned_laion2B-s13B-b90k",
+    preset=sys.argv[1], seeds=[20250819, 20250820, 20250821],
+    feature_rate_fps=4.0, caption_rate_fps=1.0,
+    git_commit=subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True,
+                              text=True).stdout.strip(),
+    torch=torch.__version__,
+    gpu=torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+    started=time.strftime("%Y-%m-%dT%H:%M:%S%z")), indent=1))
+PY
 
 echo "[stage4] test, three seeds $(date -Is)"
 # Each seed is scored as soon as it finishes, so an interrupted run still has a
