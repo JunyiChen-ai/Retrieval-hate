@@ -94,10 +94,10 @@ T3AL has no full-corpus row by design (its deviation T-8).
 
 > **MULDE's full-corpus row is contaminated by construction and is not a baseline number.** It was
 > fitted on the non-hateful videos of the train split, and the full corpus contains those very
-> videos, so its 0.8054 / 0.8361 / 0.7028 ROC-AUC is largely the density model recognising its own
-> training data. It is printed only for completeness. **MULDE's honest figures are the test-split
-> rows in §1**, where the gap to the label-free methods narrows to a few hundredths and MHC-EN goes
-> below chance.
+> videos. The size of the inflation tracks the share of the corpus it trained on almost exactly:
+> MHC-EN 48.9% fitted → **+0.358** ROC over its test row, MHC-ZH 47.5% → +0.199, HateMM 41.3% →
+> +0.202, HateClipSeg 7.6% → **+0.030**. That is a memorisation curve, not a generalisation result.
+> **MULDE's honest figures are the test-split rows in §1.**
 
 | method | wave | supervision | variant | native_rate | HateMM ROC / AP | MHC-EN ROC / AP | MHC-ZH ROC / AP | HateClipSeg ROC / AP |
 |---|---|---|---|---|---|---|---|---|
@@ -293,6 +293,25 @@ observation reported as a property of the model.**
   stage transfers to hate video; the filter the paper is named for does not, without inventing a
   step ordering.
 
+### 6.6 Two of the reproduced repos select their read-out on test labels
+
+This one is a property of the released code, not of our port, and it turned up independently in two
+Wave 2 methods:
+
+- **MULDE.** Upstream's own evaluation loop arg-maxes the noise scale and the GMM aggregation on
+  **test** AUC. Freeze §10 red line 1 forbids that, so the selection was moved to the val split. The
+  cost is visible: our HateMM row is 0.5989 where a naive port that kept upstream's loop would have
+  printed a higher number, and the val→test drop is −0.047 to −0.102 on three of four datasets.
+- **CLAP.** `evaluate_ucf` loads UCF-Crime frame labels from `labels/gt-ucf-RTFM.npy` and `test_ucf`
+  reports the **max** AUC over client models before and after local training. The in-loop read-out
+  was disabled and the row reports the single aggregated global model at the frozen round.
+
+Neither repo hides this and neither is unusual in the VAD literature, where "we report the best
+epoch" is common. It matters here for one specific reason: **any published number produced that way
+is not comparable to a number produced under this campaign's protocol**, and the gap is the same
+order as the differences between methods in §1. When one of these rows looks lower than its paper's
+figure, this is the first thing to check.
+
 ## 7. Does the literature mechanism work in the hate domain? One sentence per method
 
 Each verdict rests only on that method's own section; the pointer is given so the evidence is one
@@ -309,7 +328,7 @@ these corpora — it is not a judgement of the method on the benchmarks it was b
 | **LaGoVAD** (§M) | a written definition selects the anomaly at inference | **no** | on MHC-EN and HateClipSeg the strongest row is `bin`, the **text-free** binary head, ahead of all ten text rows, and paraphrasing the same definition swings MHC-ZH ROC from 0.4593 to 0.6432 — what transfers is a generic surveillance-anomaly prior, not the hate definition. |
 | **AV²A** (§J) | training-free open-vocabulary audio-visual event localisation with score-level early fusion | **no** | all 24 (dataset × variant) cells sit at or near chance, the audio branch is at or below the random floor on two corpora, and the headline early fusion is **below the better of its two inputs on all four datasets**; its best F1@tIoU comes from the variant with the *worst* frame ranking, because a 10 s audio window happens to match the gold span length without locating anything. |
 | **UniTime** (§N) | universal temporal grounding, six hate categories as six queries | *pending* | corpus run in flight; §8 of this file carries the state. |
-| **MULDE** (§O) | one-class multi-scale density estimation of normality | **partly, and only where the normal pool is homogeneous** | the campaign's best HateMM frame ROC-AUC, 0.5989 ± 0.0031 over three seeds, above every label-free method — but **below chance on MHC-EN (0.4737 ± 0.0117**, more than two seed-sd under 0.500) and at chance on MHC-ZH, so what it models is the training corpus's notion of normal rather than anything about hate; it is also the only row whose HateMM strata run single-span *above* multi-span, i.e. it does not share the coverage-degeneracy pattern. |
+| **MULDE** (§O) | one-class multi-scale density estimation of normality | **no** | beats the random floor on only two of four corpora (HateMM 0.5989 ± 0.0031, HateClipSeg 0.5276 ± 0.0066), sits at chance on MHC-ZH (0.5102 ± 0.0028) and **below** chance on MHC-EN (0.4737 ± 0.0117); its best result recovers 19% of the chance-to-oracle gap, and the strong-looking 0.80–0.83 full-corpus figure is memorisation of the negatives it was fitted on. Its HateMM row is nonetheless the highest frame ROC-AUC in the campaign — which says a little one-class supervision buys about what a whole captioner-plus-LLM chain does, not that the mechanism transfers. |
 | **CLAP** (§P) | coarse-to-fine pseudo-labels from an unlabelled pool, federated | *pending* | port complete and documented; FedAvg grid in flight. |
 | **T3AL** (§Q) | test-time adaptation of a VLM for zero-shot localisation | *pending* | queued behind UniTime; one finding already recorded, that upstream's `get_indices` degenerates to comparing a set against itself on any video under 400 feature vectors, i.e. **most MHC videos at 4 fps**. |
 | **SeViLA Localizer** (§R) | frame-wise yes/no VQA keyframe scoring | *pending* | queued behind UniTime; the §R verdict is deliberately left unwritten rather than guessed. |
@@ -369,6 +388,9 @@ overlap. The two large-model Wave 2 methods were **not** overlapped, on the camp
 
 One scope cut was made for the same budget reason and is recorded here as well as in §O: MULDE's
 audio (`w2vemo`) and concatenated (`clip+w2vemo`) feature variants were dropped, keeping only the
-headline visual `clipL336` stream. The campaign brief made those two conditional on being cheap;
-measured, the full grid was ~10 h. The cut was decided **before any test number existed and without
+headline visual `clipL336` stream. The campaign brief made those two conditional on being cheap.
+The ~10 h figure the ruling quoted was an overestimate — epoch checkpoints share a single training
+run, so the grid is 4 trainings per (dataset, variant), and the measured all-variants total was
+~6.8 h. The cut still stands on its reason (the priority run was being starved), and the corrected
+arithmetic is recorded here rather than left as a stale number. The cut was decided **before any test number existed and without
 looking at any metric**, so it touches no red line.
