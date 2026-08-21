@@ -48,11 +48,59 @@ def raster(spans, D, T):
     return c
 
 
+HCS6 = ["c0_normal", "c1_hateful", "c2_insulting", "c3_sexual", "c4_violence",
+        "c5_harm"]
+
+
+def merge_hcs6(out: Path) -> None:
+    """Repack the six HateClipSeg per-class query roots into one npz per video.
+
+    The evaluator decides which released class a row is scored against from the
+    *variant name* (`load_gt_hcs_class`, triggered by a `c<digit>` prefix), not
+    from the directory.  The per-query roots this converter writes hold the
+    variant keys `window` / `seg`, which would silently score all six class
+    queries against the any-toxic gold.  So the class curves are repacked here
+    into `curves/hcs6/HateClipSeg/<vid>.npz` with one key per class, which is
+    exactly the layout the LaGoVAD 6-class appendix already used.
+
+    Only the answer window is carried over: `mr_seg` is a property of the video,
+    not of the query, so a per-class `seg` row would repeat one curve six times.
+    A video is written only if all six class queries answered for it, so no cell
+    of the appendix is computed on a different video set than its neighbours.
+    """
+    dst = out / "hcs6" / "HateClipSeg"
+    dst.mkdir(parents=True, exist_ok=True)
+    srcs = {c: out / c / "HateClipSeg" for c in HCS6}
+    absent = [c for c, d in srcs.items() if not d.exists()]
+    if absent:
+        print(f"[hcs6] skipped, no curves for {absent}", flush=True)
+        return
+    ids = set.intersection(*({p.stem for p in d.glob("*.npz")} for d in srcs.values()))
+    for vid in sorted(ids):
+        arrays, T = {}, None
+        for c in HCS6:
+            z = np.load(srcs[c] / f"{vid}.npz", allow_pickle=False)
+            arrays[c] = np.asarray(z["window"], dtype=np.float32)
+            T = len(arrays[c]) if T is None else T
+        if any(len(a) != T for a in arrays.values()):
+            print(f"[hcs6] {vid}: class curves disagree on length, skipped", flush=True)
+            continue
+        p = dst / f"{vid}.npz"
+        tmp = p.with_name(p.name + ".tmp")
+        with open(tmp, "wb") as fh:
+            np.savez(fh, rate=np.float32(FPS), **arrays)
+        os.replace(tmp, p)
+    print(f"[hcs6] videos={len(ids)} -> {dst}", flush=True)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--raw-dir", default=str(ROOT / "idea-stage/repro_unitime/raw"))
     ap.add_argument("--out-dir", default=str(ROOT / "idea-stage/repro_unitime/curves"))
     ap.add_argument("--datasets", default="HateMM,MHC,MHC_zh,HateClipSeg")
+    ap.add_argument("--hcs6-merge", action="store_true",
+                    help="also repack the six HateClipSeg class queries into "
+                         "curves/hcs6 with one variant key per class")
     args = ap.parse_args()
 
     raw, out = Path(args.raw_dir), Path(args.out_dir)
@@ -115,6 +163,8 @@ def main() -> int:
                     f"[FAIL] {ds}/{qk}: {len(last)} raw records but only {n_ok} "
                     f"curves. Refusing to report success -- inspect the run "
                     f"before evaluating.")
+    if args.hcs6_merge:
+        merge_hcs6(out)
     return 0
 
 

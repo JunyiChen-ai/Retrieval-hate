@@ -1,0 +1,17 @@
+diff --git a/proposed_method/ImageBind-main/imagebind/models/imagebind_model.py b/proposed_method/ImageBind-main/imagebind/models/imagebind_model.py
+index 7cc0925..76567dd 100644
+--- a/proposed_method/ImageBind-main/imagebind/models/imagebind_model.py
++++ b/proposed_method/ImageBind-main/imagebind/models/imagebind_model.py
+@@ -504,7 +504,11 @@ def imagebind_huge(pretrained=False):
+     )
+ 
+     if pretrained:
+-        pretrained_path = '/root/autodl-tmp/OV_AVEL/proposed_method/ImageBind-main/.checkpoints/imagebind_huge.pth'
++        # ADAPTED: repo hardcoded the authors' autodl path; use the campaign-local copy
++        # (third_party/_ckpt/imagebind_huge.pth), overridable by $IMAGEBIND_CKPT.
++        pretrained_path = os.environ.get(
++            'IMAGEBIND_CKPT',
++            '/home/jehc223/Retrieval-hate/third_party/_ckpt/imagebind_huge.pth')
+         # if not os.path.exists(".checkpoints/imagebind_huge.pth"):
+         if not os.path.exists(pretrained_path):
+             print(

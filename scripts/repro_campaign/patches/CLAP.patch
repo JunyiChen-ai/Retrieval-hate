@@ -1,0 +1,274 @@
+diff --git a/data/utils/datasets.py b/data/utils/datasets.py
+index 4ed33f8..8d58f11 100644
+--- a/data/utils/datasets.py
++++ b/data/utils/datasets.py
+@@ -662,10 +662,13 @@ def estimate_gauss(X):
+ 
+ def covariance_mat(X):
+     X = np.mean(X , axis= 1)
+-    X =  X.transpose(1,0)
+-    cov  = np.cov(X)
+-
+-    return cov
++    # REPRO campaign: the caller only ever reads `np.diagonal(...)` of this
++    # matrix, and the diagonal of np.cov(X.T) is exactly the per-dimension
++    # variance of X over time with ddof=1.  Materialising the full D x D
++    # covariance costs O(T*D^2) -- ~1.2e10 flops for one 1,024-d, 11.5k-snippet
++    # video -- so the diagonal is computed directly and returned as a diagonal
++    # matrix.  Numerically identical on the only entries that are used.
++    return np.diag(np.var(X, axis=0, ddof=1))
+ 
+ def get_matrix(data):
+ 
+@@ -1535,6 +1538,14 @@ class Dataset_Con_all_feedback_XD(data.Dataset):
+ 
+         if args.dataset == 'ucf':
+             self.no_of_vids = 1608 #1608 
++        elif args.dataset.startswith('hate_'):
++            # REPRO campaign: size of the unlabelled training pool, written next
++            # to the features by the campaign's adapter.
++            self.no_of_vids = int(
++                json.loads(
++                    (PROJECT_DIR / "data" / args.dataset / "meta.json").read_text()
++                )["no_of_vids"]
++            )
+         else:
+             self.no_of_vids = 3954
+ 
+@@ -1543,6 +1554,10 @@ class Dataset_Con_all_feedback_XD(data.Dataset):
+                 self.con_all = np.load("data/datasets/Concat_test_10.npy")
+             if args.dataset == 'XD':
+                 self.con_all = np.load("data/datasets/concat_XD_test.npy")
++            if args.dataset.startswith('hate_'):
++                self.con_all = np.load(
++                    PROJECT_DIR / "data" / args.dataset / "concat_score.npy",
++                    mmap_mode="r")
+             print('self.con_all shape:',self.con_all.shape)
+         else:
+             
+@@ -1551,6 +1566,12 @@ class Dataset_Con_all_feedback_XD(data.Dataset):
+                 self.con_all = np.load('data/datasets/concat_UCF_V2.npy')
+             if args.dataset == 'XD':
+                 self.con_all = np.load("data/datasets/concat_XD.npy")    
++            if args.dataset.startswith('hate_'):
++                # REPRO campaign: the training matrix is read in a scattered
++                # per-client order every local epoch, so it is loaded into RAM
++                # rather than memory-mapped (<= 0.9 GB for the largest corpus).
++                self.con_all = np.load(
++                    PROJECT_DIR / "data" / args.dataset / "concat_train.npy")
+             print('self.con_all shape:',self.con_all.shape)
+             if args.train_mode == 'WS':
+                 self.label_ab = np.load('PL/Pseudo_Lebels_Maximum_AUC_0.8464948944321682.npy')
+@@ -1607,7 +1628,7 @@ class Dataset_Con_all_feedback_XD(data.Dataset):
+ 
+ 
+         # np.save("original_pl.npy",self.label_all )
+-        with open(f"data/ucf/clusters/gmm_params.pkl", "wb") as f:
++        with open(PROJECT_DIR / "data" / args.dataset / "clusters" / "gmm_params.pkl", "wb") as f:
+             pickle.dump(gmm_params, f)
+         # gmm_path = "data/ucf/clusters/gmm_params.pkl"
+         # with open(gmm_path, "rb") as f:
+@@ -1664,4 +1685,8 @@ DATASETS: Dict[str, Type[BaseDataset]] = {
+     "domain": DomainNet,
+     "ucf": Dataset_Con_all_feedback_XD,
+     "XD": Dataset_Con_all_feedback_XD,
++    # REPRO campaign: the hate-video corpora use the same VAD data contract
++    **{f"hate_{d}_{v}": Dataset_Con_all_feedback_XD
++       for d in ("HateMM", "MHC", "MHC_zh", "HateClipSeg")
++       for v in ("fedavg11", "central")},
+ }
+diff --git a/src/client/fedavg.py b/src/client/fedavg.py
+index ada8eec..e526c10 100644
+--- a/src/client/fedavg.py
++++ b/src/client/fedavg.py
+@@ -21,7 +21,8 @@ from torchvision import transforms
+ from tqdm import tqdm
+ PROJECT_DIR = Path(__file__).parent.parent.parent.absolute()
+ 
+-from src.config.utils import trainable_params, get_best_device, evaluate, Logger
++from src.config.utils import (trainable_params, get_best_device, evaluate,
++                              Logger, is_vad)
+ from src.config.models import DecoupledModel
+ from data.utils.constants import MEAN, STD
+ from data.utils.datasets import DATASETS
+@@ -52,7 +53,7 @@ class FedAvgClient:
+         self.data_indices: List[List[int]] = partition["data_indices"]
+ 
+         # --------- you can define your own data transformation strategy here ------------
+-        if self.args.dataset == "ucf" or self.args.dataset == "XD":
++        if is_vad(self.args.dataset):
+             general_data_transform = None
+ 
+         else:
+@@ -63,7 +64,7 @@ class FedAvgClient:
+             train_data_transform = transforms.Compose([])
+             train_target_transform = transforms.Compose([])
+         # --------------------------------------------------------------------------------
+-        if self.args.dataset == "ucf" or self.args.dataset == "XD":
++        if is_vad(self.args.dataset):
+                 
+             self.dataset_train = DATASETS[self.args.dataset](args, transform=None, test_mode=False
+             )
+@@ -102,7 +103,7 @@ class FedAvgClient:
+         ########################
+         self.model = model.to(self.device)
+         self.local_epoch = self.args.local_epoch
+-        if self.args.dataset == "ucf" or self.args.dataset == "XD":
++        if is_vad(self.args.dataset):
+             self.criterion = torch.nn.BCELoss().to(self.device)
+         else:
+             self.criterion = torch.nn.CrossEntropyLoss().to(self.device)
+@@ -457,6 +458,13 @@ class FedAvgClient:
+             Dict[str, float]: The evaluation metric stats.
+         """
+         with torch.no_grad():
++            if self.args.dataset.startswith("hate_"):
++                # REPRO campaign: this routine reads UCF-Crime frame labels from
++                # `labels/gt-ucf-RTFM.npy` and reports AUC.  The campaign never
++                # lets the method see a target-dataset label, and scores the
++                # final global model through its own frozen evaluator, so the
++                # in-loop AUC readout is disabled rather than re-pointed.
++                return {"test_AUC": 0.0}
+             eval_model = self.model if model is None else model
+             eval_model.eval()
+             pred = torch.zeros(0, device=self.device)
+diff --git a/src/config/utils.py b/src/config/utils.py
+index 151c1f8..23f34bd 100644
+--- a/src/config/utils.py
++++ b/src/config/utils.py
+@@ -18,6 +18,13 @@ OUT_DIR = PROJECT_DIR / "out"
+ TEMP_DIR = PROJECT_DIR / "temp"
+ 
+ 
++# REPRO campaign: a dataset served by the VAD (video anomaly detection) data
++# contract -- concatenated snippet features + a video-level partition -- rather
++# than by the image-classification contract the rest of this repo uses.
++def is_vad(ds: str) -> bool:
++    return ds in ("ucf", "XD") or ds.startswith("hate_")
++
++
+ def fix_random_seed(seed: int) -> None:
+     """Fix the random seed of FL training.
+ 
+diff --git a/src/server/fedavg.py b/src/server/fedavg.py
+index 49f765b..b87dca7 100644
+--- a/src/server/fedavg.py
++++ b/src/server/fedavg.py
+@@ -23,6 +23,7 @@ sys.path.append(PROJECT_DIR.joinpath("src").as_posix())
+ 
+ from src.config.utils import (
+     OUT_DIR,
++    is_vad,
+     Logger,
+     fix_random_seed,
+     trainable_params,
+@@ -65,6 +66,17 @@ def get_fedavg_argparser() -> ArgumentParser:
+             "domain",
+             "ucf",
+             "XD",
++            # REPRO campaign: four hate-video datasets x two collaboration
++            # configurations (11-client FedAvg, and the paper's centralized
++            # single-participant configuration), same VAD data contract
++            "hate_HateMM_fedavg11",
++            "hate_HateMM_central",
++            "hate_MHC_fedavg11",
++            "hate_MHC_central",
++            "hate_MHC_zh_fedavg11",
++            "hate_MHC_zh_central",
++            "hate_HateClipSeg_fedavg11",
++            "hate_HateClipSeg_central",
+         ],
+         default="cifar10",
+     )
+@@ -102,6 +114,15 @@ def get_fedavg_argparser() -> ArgumentParser:
+     parser.add_argument("--refine", type=int, default=0)
+     parser.add_argument("--ws_percentage", type=int, default=1)
+     parser.add_argument("--datasplit", type=str, default="scene")
++    # REPRO campaign: write the aggregated global model's per-snippet scores over
++    # the (ordered) global test set to this .npy.  The repo's own `evaluate_ucf`
++    # reads UCF-Crime frame labels off disk and reports the max AUC over client
++    # models, which selects on test labels; the campaign scores externally
++    # through its own evaluator instead.
++    parser.add_argument("--gpu_memory_fraction", type=float, default=0.0)
++    parser.add_argument("--dump_scores", type=str, default="")
++    # comma-separated 1-based global rounds after which to dump; empty = last only
++    parser.add_argument("--dump_rounds", type=str, default="")
+     
+     return parser
+ 
+@@ -140,6 +161,13 @@ class FedAvgServer:
+         # init model(s) parameters
+         self.device = get_best_device(self.args.use_cuda) #torch.device('cuda' if torch.cuda.is_available() else 'cpu') #get_best_device(self.args.use_cuda)
+         print(self.device)
++        if self.device.type == "cuda" and self.args.gpu_memory_fraction > 0:
++            # REPRO campaign: the card is shared with another campaign method's
++            # long run.  CLAP's scorer is a 4-layer MLP over cached feature
++            # vectors and needs a few hundred MB; this is a hard ceiling so a
++            # runaway allocation fails here instead of evicting the neighbour.
++            torch.cuda.set_per_process_memory_fraction(
++                self.args.gpu_memory_fraction, self.device.index or 0)
+         self.model = MODEL_DICT[self.args.model](self.args.dataset).to(self.device) 
+         # self.model.check_avaliability()
+         
+@@ -272,9 +300,15 @@ class FedAvgServer:
+ 
+             self.train_one_round(r, E)
+             self.scheduler.step()
++
++            if self.args.dump_scores and self.args.dump_rounds:
++                rounds = [int(x) for x in self.args.dump_rounds.split(",") if x]
++                if (E + 1) in rounds:
++                    self.dump_test_scores(
++                        self.args.dump_scores.format(round=E + 1))
+             
+             if (E + 1) % self.args.test_gap == 0:
+-                if self.args.dataset == 'ucf' or self.args.dataset == "XD":
++                if is_vad(self.args.dataset):
+                     self.test_ucf()
+                     # break
+                 else:
+@@ -287,7 +321,7 @@ class FedAvgServer:
+         updates = {}
+         for client_id in self.selected_clients:
+             client_local_params = self.generate_client_params(client_id)
+-            if self.args.dataset == 'ucf' or self.args.dataset == "XD" :
++            if is_vad(self.args.dataset):
+                 (delta, weight,self.client_stats[client_id][self.current_epoch], update) = self.trainer.train_ucf(
+                 client_id=client_id,
+                 local_epoch=self.clients_local_epoch[client_id],
+@@ -393,6 +427,25 @@ class FedAvgServer:
+ 
+ 
+ 
++    @torch.no_grad()
++    def dump_test_scores(self, path: str):
++        """REPRO campaign: per-snippet scores of the aggregated global model."""
++        from torch.utils.data import DataLoader
++
++        self.model.load_state_dict(self.global_params_dict, strict=False)
++        self.model.eval()
++        loader = DataLoader(
++            self.trainer.global_testset, self.args.batch_size, shuffle=False
++        )
++        preds = []
++        for x in loader:
++            preds.append(
++                self.model(x.to(self.device)).flatten().detach().cpu().numpy()
++            )
++        preds = np.concatenate(preds)
++        np.save(path, preds)
++        print(f"[dump_scores] {path} shape={preds.shape}")
++
+     @torch.no_grad()
+     def update_client_params(self, client_params_cache: List[List[torch.Tensor]]):
+         """
+@@ -566,6 +619,9 @@ class FedAvgServer:
+ 
+         self.train()
+ 
++        if self.args.dump_scores and not self.args.dump_rounds:
++            self.dump_test_scores(self.args.dump_scores)
++
+         self.logger.log(
+             "=" * 20, self.algo, "TEST RESULTS:", "=" * 20, self.test_results
+         )
