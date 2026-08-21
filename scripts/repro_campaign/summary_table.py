@@ -56,8 +56,8 @@ HEADLINE = [
      "interval", "idea-stage/repro_unitime/"),
     ("MULDE", 2, "one-class", "eval_MULDE", "MULDE", "clipL336_s0",
      "4 fps", "idea-stage/repro_mulde/"),
-    ("CLAP", 2, "unlabelled", "eval_CLAP", "CLAP", "main",
-     "32 seg/video", "idea-stage/repro_clap/"),
+    ("CLAP", 2, "unlabelled", "eval_CLAP", "CLAP", "fedavg11_s0",
+     "2 fps", "idea-stage/repro_clap/"),
     ("T3AL", 2, "label-free", "eval_T3AL", "T3AL", "main",
      "interval", "idea-stage/repro_t3al/"),
     ("SeViLA Localizer", 2, "aux-temporal-pretrain", "eval_SeViLA Localizer",
@@ -79,6 +79,10 @@ SECONDARY = [
      "0.1 fps", "idea-stage/repro_av2a/"),
     ("UniTime (mr_seg)", 1, "aux-temporal-pretrain", "eval_UniTime", "UniTime",
      "seg", "segment", "idea-stage/repro_unitime/"),
+    ("CLAP (centralized, 1 client)", 2, "unlabelled", "eval_CLAP", "CLAP",
+     "central_s0", "2 fps", "idea-stage/repro_clap/"),
+    ("CLAP (normality ablation, no MLP)", 2, "unlabelled", "eval_CLAP", "CLAP",
+     "normality", "2 fps", "idea-stage/repro_clap/"),
 ]
 
 

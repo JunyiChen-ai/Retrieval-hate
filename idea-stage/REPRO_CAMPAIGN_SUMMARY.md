@@ -35,7 +35,7 @@ python scripts/repro_campaign/summary_table.py --split all
 | AV²A | 1 | label-free | **done** (evt_* rows single-seed, freeze D4) |
 | UniTime | 1 | aux-temporal-pretrain | **running** — corpus decode in flight |
 | MULDE | 2 | one-class | **done** (headline `clipL336` stream only, deviation M-1) |
-| CLAP | 2 | unlabelled | **running** — port complete, FedAvg grid in flight |
+| CLAP | 2 | unlabelled | **done** |
 | T3AL | 2 | label-free | **queued** behind UniTime on the single card |
 | SeViLA Localizer | 2 | aux-temporal-pretrain | **queued** behind UniTime on the single card |
 | OV-AVEL, FLAM, FineLAP, BaGLM | 2 | install-gated | **ran** on one video; corpus run not scheduled |
@@ -56,6 +56,10 @@ table stays one number per cell. Its three-seed mean ± sd — HateMM **0.5989 �
 **0.4737 ± 0.0117**, MHC-ZH 0.5102 ± 0.0028, HateClipSeg 0.5276 ± 0.0066 — is in §O.3, and the seed
 spread is small enough that no ranking in this table turns on which seed is shown.
 
+CLAP is likewise three-seeded and shown at **seed 20250819**. Its three-seed means are: collaborative
+HateMM **0.6015 ± 0.0147**, MHC-EN 0.4784, MHC-ZH **0.3213**, HateClipSeg 0.4693; centralized 0.6008 /
+0.5746 / 0.4421 / 0.4379. Both aggregates are in §P.
+
 | method | wave | supervision | variant | native_rate | HateMM ROC / AP | MHC-EN ROC / AP | MHC-ZH ROC / AP | HateClipSeg ROC / AP |
 |---|---|---|---|---|---|---|---|---|
 | **GOLD_BROADCAST** | — | control | control | video | 0.8857 / 0.5831 | 0.9427 / 0.7664 | 0.9842 / 0.9191 | 0.6260 / 0.5433 |
@@ -71,7 +75,7 @@ spread is small enough that no ranking in this table turns on which seed is show
 | **AV²A** | 1 | label-free | sim_combined | 1 fps / 0.1 fps | 0.5393 / 0.2520 | 0.5310 / 0.3224 | 0.5595 / 0.3206 | 0.4860 / 0.4680 |
 | **UniTime** | 1 | aux-temporal-pretrain | window | interval | not run | not run | not run | not run |
 | **MULDE** | 2 | one-class | clipL336_s0 | 4 fps | 0.6002 / 0.3090 | 0.4869 / 0.2585 | 0.5129 / 0.2499 | 0.5326 / 0.5000 |
-| **CLAP** | 2 | unlabelled | main | 32 seg/video | not run | not run | not run | not run |
+| **CLAP** | 2 | unlabelled | fedavg11_s0 | 2 fps | 0.5858 / 0.3521 | 0.4939 / 0.2787 | 0.3278 / 0.1885 | 0.4709 / 0.4527 |
 | **T3AL** | 2 | label-free | main | interval | not run | not run | not run | not run |
 | **SeViLA Localizer** | 2 | aux-temporal-pretrain | main | 1 fps | not run | not run | not run | not run |
 
@@ -85,6 +89,8 @@ Secondary variants each method's own section calls out (never a substitute for t
 | AV²A (sim_video) | 1 | label-free | sim_video | 1 fps | 0.5591 / 0.2650 | 0.4957 / 0.2598 | 0.6199 / 0.3601 | 0.5135 / 0.4689 |
 | AV²A (sim_audio) | 1 | label-free | sim_audio | 0.1 fps | 0.4922 / 0.2509 | 0.5391 / 0.3087 | 0.5173 / 0.2877 | 0.4815 / 0.4904 |
 | UniTime (mr_seg) | 1 | aux-temporal-pretrain | seg | segment | not run | not run | not run | not run |
+| CLAP (centralized, 1 client) | 2 | unlabelled | central_s0 | 2 fps | 0.5974 / 0.3316 | 0.5767 / 0.3202 | 0.4521 / 0.2335 | 0.4385 / 0.4255 |
+| CLAP (normality ablation, no MLP) | 2 | unlabelled | normality | 2 fps | 0.6210 / 0.3137 | 0.4682 / 0.2511 | 0.5383 / 0.2958 | 0.4915 / 0.4587 |
 
 
 ## 2. Master table — full corpus
@@ -114,7 +120,7 @@ T3AL has no full-corpus row by design (its deviation T-8).
 | **AV²A** | 1 | label-free | sim_combined | 1 fps / 0.1 fps | 0.4659 / 0.2614 | 0.5520 / 0.2772 | 0.5352 / 0.2815 | 0.5015 / 0.4700 |
 | **UniTime** | 1 | aux-temporal-pretrain | window | interval | not run | not run | not run | not run |
 | **MULDE** | 2 | one-class | clipL336_s0 | 4 fps | 0.8054 / 0.5551 | 0.8361 / 0.5085 | 0.7028 / 0.4374 | 0.5591 / 0.5032 |
-| **CLAP** | 2 | unlabelled | main | 32 seg/video | not run | not run | not run | not run |
+| **CLAP** | 2 | unlabelled | fedavg11_s0 | 2 fps | not run | not run | not run | not run |
 | **T3AL** | 2 | label-free | main | interval | not run | not run | not run | not run |
 | **SeViLA Localizer** | 2 | aux-temporal-pretrain | main | 1 fps | not run | not run | not run | not run |
 
@@ -128,6 +134,8 @@ Secondary variants each method's own section calls out (never a substitute for t
 | AV²A (sim_video) | 1 | label-free | sim_video | 1 fps | 0.5602 / 0.3214 | 0.5127 / 0.2462 | 0.5532 / 0.2820 | 0.5176 / 0.4686 |
 | AV²A (sim_audio) | 1 | label-free | sim_audio | 0.1 fps | 0.4644 / 0.2811 | 0.5177 / 0.2487 | 0.5032 / 0.2588 | 0.4931 / 0.4722 |
 | UniTime (mr_seg) | 1 | aux-temporal-pretrain | seg | segment | not run | not run | not run | not run |
+| CLAP (centralized, 1 client) | 2 | unlabelled | central_s0 | 2 fps | not run | not run | not run | not run |
+| CLAP (normality ablation, no MLP) | 2 | unlabelled | normality | 2 fps | not run | not run | not run | not run |
 
 
 ## 3. Controls (freeze §3), and what they mean
@@ -148,8 +156,10 @@ method can win, and on HateClipSeg that gap is 0.07 of AP because the annotated 
 all frames.
 
 **Every method reproduced so far sits in the bottom fifth of that interval on every dataset.** The
-best label-free test ROC-AUC in the campaign is URF-HVAA at 0.5744 / 0.5493 / 0.5454 / 0.5863,
-against broadcast ceilings of 0.8857 / 0.9427 / 0.9842 / 0.6260.
+best *label-free* test ROC-AUC is URF-HVAA at 0.5744 / 0.5493 / 0.5454 / 0.5863; the best cell on any
+dataset by any method is ZS-ImageBind's **audio** channel on MHC-ZH (0.6527) and MHC-EN (0.6157), and
+on HateMM it is CLAP's normality ablation (0.6210) — a Gaussian density with no trained scorer at all.
+All of these are against broadcast ceilings of 0.8857 / 0.9427 / 0.9842 / 0.6260.
 
 ## 4. Alignment against LELA's published rows
 
@@ -312,6 +322,30 @@ is not comparable to a number produced under this campaign's protocol**, and the
 order as the differences between methods in §1. When one of these rows looks lower than its paper's
 figure, this is the first thing to check.
 
+### 6.7 Four methods are beaten by their own ablation
+
+With CLAP in, this is the most repeated pattern in the campaign, and it is about the papers'
+*named contributions* rather than about the methods' overall strength:
+
+| method | the paper's headline mechanism | what beats it here |
+|---|---|---|
+| **LaGoVAD** | a written definition selects the anomaly at inference | its own **text-free** binary head `bin` tops MHC-EN (0.6058) and HateClipSeg (0.5431), ahead of all ten definition rows |
+| **AV²A** | score-level **early fusion** of audio and visual | `sim_combined` is **below the better of its two inputs on all four datasets** |
+| **URF-HVAA** | tag-conditioned **re-scoring** of uncertain videos | the gate admits 42 of 642 videos, so 94% of the corpus never reaches the mechanism; `base` and `round1` differ by ≤0.017 |
+| **CLAP** | coarse-to-fine **pseudo-labels** + a federated trained scorer | the `normality` ablation — no pseudo-labels, no MLP, just the aggregated Gaussian density read directly — wins on HateMM (+0.020), MHC-ZH (**+0.217**) and HateClipSeg (+0.022) |
+
+CLAP additionally undercuts its own *federated* premise: the single-client `central` configuration
+beats the 11-client one by **+0.096** on MHC-EN and **+0.121** on MHC-ZH, and loses only marginally on
+the other two (−0.001, −0.031). Collaboration is the thing the paper is named for.
+
+**Why this matters more than any individual row.** Each of these mechanisms was validated on a corpus
+where its assumption holds — an ordered surveillance scene, an audible event, a UCF-Crime score
+distribution, scene-partitioned clients. None of those assumptions survives the move to hate video,
+and in every case the *simpler component underneath* transfers better than the contribution layered
+on top. For our own work the operational reading is: **when porting one of these methods, run its
+ablation first.** The ablation is cheaper, and on this evidence it is more likely to be the number
+worth beating.
+
 ## 7. Does the literature mechanism work in the hate domain? One sentence per method
 
 Each verdict rests only on that method's own section; the pointer is given so the evidence is one
@@ -329,7 +363,7 @@ these corpora — it is not a judgement of the method on the benchmarks it was b
 | **AV²A** (§J) | training-free open-vocabulary audio-visual event localisation with score-level early fusion | **no** | all 24 (dataset × variant) cells sit at or near chance, the audio branch is at or below the random floor on two corpora, and the headline early fusion is **below the better of its two inputs on all four datasets**; its best F1@tIoU comes from the variant with the *worst* frame ranking, because a 10 s audio window happens to match the gold span length without locating anything. |
 | **UniTime** (§N) | universal temporal grounding, six hate categories as six queries | *pending* | corpus run in flight; §8 of this file carries the state. |
 | **MULDE** (§O) | one-class multi-scale density estimation of normality | **no** | beats the random floor on only two of four corpora (HateMM 0.5989 ± 0.0031, HateClipSeg 0.5276 ± 0.0066), sits at chance on MHC-ZH (0.5102 ± 0.0028) and **below** chance on MHC-EN (0.4737 ± 0.0117); its best result recovers 19% of the chance-to-oracle gap, and the strong-looking 0.80–0.83 full-corpus figure is memorisation of the negatives it was fitted on. Its HateMM row is nonetheless the highest frame ROC-AUC in the campaign — which says a little one-class supervision buys about what a whole captioner-plus-LLM chain does, not that the mechanism transfers. |
-| **CLAP** (§P) | coarse-to-fine pseudo-labels from an unlabelled pool, federated | *pending* | port complete and documented; FedAvg grid in flight. |
+| **CLAP** (§P) | coarse-to-fine pseudo-labels from a wholly unlabelled pool, trained federated | **no** | clears the random floor on one corpus of four (HateMM 0.6015 ± 0.0147) and sits far **below** it on MHC-ZH (**0.3213**, an inverted ranking reproduced across all three seeds and across the val sweep); the coarse video-level cluster is informative only on HateMM (P(gold=1 | abnormal) = 0.772 against a 0.400 base) and at chance on the other three, and the fine stage marks 4.8–6.8% of snippets positive against true base rates of 24–47%. **An ablation that deletes the pseudo-labels and the trained scorer outright beats the full method on three of four corpora.** |
 | **T3AL** (§Q) | test-time adaptation of a VLM for zero-shot localisation | *pending* | queued behind UniTime; one finding already recorded, that upstream's `get_indices` degenerates to comparing a set against itself on any video under 400 feature vectors, i.e. **most MHC videos at 4 fps**. |
 | **SeViLA Localizer** (§R) | frame-wise yes/no VQA keyframe scoring | *pending* | queued behind UniTime; the §R verdict is deliberately left unwritten rather than guessed. |
 
@@ -338,7 +372,7 @@ these corpora — it is not a judgement of the method on the benchmarks it was b
 Read as a whole, the table is a statement about the **benchmarks** more than about the methods.
 The interval between chance and a perfect video-level classifier with zero localisation ability is
 narrow — frame AP 0.2424 → 0.5831 on HateMM test, and only 0.4711 → 0.5433 on HateClipSeg — and
-**every one of the eight completed methods sits in the bottom fifth of it.** Three further
+**every completed method sits in the bottom fifth of it.** Four further
 regularities hold across methods:
 
 1. **Coverage degeneracy dominates the stratified numbers.** On MHC-EN test the multi-span stratum
@@ -351,6 +385,9 @@ regularities hold across methods:
    between several of the methods in §1.
 3. **The audio channel is the under-used one.** ZS-ImageBind's audio row is the best zero-shot cell
    on both MultiHateClip halves, and none of the published visual baselines has an audio row at all.
+4. **A method's named contribution is usually not what carries it** (§6.7). In four of them, an
+   ablation that removes the paper's headline mechanism scores at least as well — sometimes far
+   better, as with CLAP's +0.217 on MHC-ZH from deleting its pseudo-labels and scorer outright.
 
 Consequence for any future localisation claim of ours: beating the label-free floor means clearing
 ROC-AUC ~0.55–0.59, which is a low bar; the number worth quoting against is the gold-broadcast
@@ -365,7 +402,6 @@ when UniTime releases the lock. **Nothing needs to be restarted.**
 | method | state | launcher | log | ETA |
 |---|---|---|---|---|
 | UniTime | decoding the corpus, 110/3754 generations at 2026-08-21 22:12 | `scripts/repro_campaign/run_unitime_wave1.sh` | `logging/runs/repro_unitime/run.log` | ~30 h from restart |
-| CLAP | FedAvg grid, HateMM chain complete | `scripts/repro_campaign/run_clap_chain.sh` | `logging/runs/repro_clap/run.log` | ~5–7 h |
 | T3AL | parked in the GPU queue | `scripts/repro_campaign/t3al_launch.sh` | `logging/runs/repro_t3al/run.log` | starts when UniTime releases, then ~9 h |
 | SeViLA | parked in the GPU queue | `scripts/repro_campaign/run_sevila_wave2.sh` | `logging/runs/repro_sevila/run.log` | starts when UniTime releases, then ~1–3 h |
 

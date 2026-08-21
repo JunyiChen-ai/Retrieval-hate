@@ -1,0 +1,57 @@
+{
+ "method": "CLAP (CVPR 2024)",
+ "rule": {
+  "written_before_any_number_exists": true,
+  "date": "2026-08-21",
+  "method": "CLAP (CVPR 2024), REPRO campaign Wave 2",
+  "free_knob": "n_global_rounds",
+  "candidates": [
+   1,
+   2,
+   5,
+   10
+  ],
+  "everything_else": "the published train.sh values: local_epoch=10, batch=128, lr=1e-2 SGD, momentum=0, weight_decay=0, MultiStepLR([5,10], 0.1), join_ratio=1, gmm_pl=1, eta_clustering=0, train_mode=US, model=c2fpl_XD (the repo's 1024-d head, matching our feature width)",
+  "selection_split": "val",
+  "selection_variant": "fedavg11",
+  "selection_seed": 20250819,
+  "selection_metric": "frame_ROC_AUC (CLAP's own paper reports frame-level ROC-AUC)",
+  "tie_break": "smaller n_global_rounds",
+  "scope": "one value per dataset; the same value is then used for the `central` variant and for all three seeds",
+  "test_calls": "one per dataset, after the selected values are written into run_record.json"
+ },
+ "val_frame_ROC_AUC_by_round": {
+  "HateMM": {
+   "r1": 0.7408,
+   "r2": 0.7328,
+   "r5": 0.7122,
+   "r10": 0.703
+  },
+  "MHC": {
+   "r1": 0.481,
+   "r2": 0.5328,
+   "r5": 0.5709,
+   "r10": 0.5546
+  },
+  "MHC_zh": {
+   "r1": 0.2363,
+   "r2": 0.2401,
+   "r5": 0.2871,
+   "r10": 0.32
+  },
+  "HateClipSeg": {
+   "r1": 0.4591,
+   "r2": 0.4507,
+   "r5": 0.4476,
+   "r10": 0.4474
+  }
+ },
+ "frozen_rounds": {
+  "HateMM": 1,
+  "MHC": 5,
+  "MHC_zh": 10,
+  "HateClipSeg": 1
+ },
+ "frozen_at": "2026-08-21T23:48:15+12:00",
+ "git_commit": "4fcb4872ee6b7519f760899e0b0a3092a9f7e37f"
+}

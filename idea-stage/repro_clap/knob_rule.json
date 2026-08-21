@@ -1,0 +1,15 @@
+{
+ "written_before_any_number_exists": true,
+ "date": "2026-08-21",
+ "method": "CLAP (CVPR 2024), REPRO campaign Wave 2",
+ "free_knob": "n_global_rounds",
+ "candidates": [1, 2, 5, 10],
+ "everything_else": "the published train.sh values: local_epoch=10, batch=128, lr=1e-2 SGD, momentum=0, weight_decay=0, MultiStepLR([5,10], 0.1), join_ratio=1, gmm_pl=1, eta_clustering=0, train_mode=US, model=c2fpl_XD (the repo's 1024-d head, matching our feature width)",
+ "selection_split": "val",
+ "selection_variant": "fedavg11",
+ "selection_seed": 20250819,
+ "selection_metric": "frame_ROC_AUC (CLAP's own paper reports frame-level ROC-AUC)",
+ "tie_break": "smaller n_global_rounds",
+ "scope": "one value per dataset; the same value is then used for the `central` variant and for all three seeds",
+ "test_calls": "one per dataset, after the selected values are written into run_record.json"
+}
