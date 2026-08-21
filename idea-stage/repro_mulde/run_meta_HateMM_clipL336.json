@@ -1,0 +1,30 @@
+{
+ "dataset": "HateMM",
+ "variant": "clipL336",
+ "chosen": {
+  "units": [
+   4096,
+   4096
+  ],
+  "sigma_high": 1.0,
+  "epochs": 50,
+  "score_type": "log_density",
+  "agg": "gmm1_nll",
+  "val_roc": 0.6459852645477339
+ },
+ "seeds": [
+  20250819,
+  20250820,
+  20250821
+ ],
+ "git_commit": "9da248420a9210ef3645f4e256edf4e246cec4d6",
+ "upstream_commit": "f821b965",
+ "torch": "2.7.1+cu128",
+ "gpu": "NVIDIA GeForce RTX 5090",
+ "n_curves": 1081,
+ "missing": [
+  "hate_video_147",
+  "hate_video_292"
+ ],
+ "finished": "2026-08-21 22:17:03"
+}

@@ -1,0 +1,27 @@
+{
+ "dataset": "HateClipSeg",
+ "variant": "clipL336",
+ "chosen": {
+  "units": [
+   4096,
+   4096
+  ],
+  "sigma_high": 0.5,
+  "epochs": 50,
+  "score_type": "score_norm",
+  "agg": "gmm5_nll",
+  "val_roc": 0.5241208131873742
+ },
+ "seeds": [
+  20250819,
+  20250820,
+  20250821
+ ],
+ "git_commit": "9da248420a9210ef3645f4e256edf4e246cec4d6",
+ "upstream_commit": "f821b965",
+ "torch": "2.7.1+cu128",
+ "gpu": "NVIDIA GeForce RTX 5090",
+ "n_curves": 395,
+ "missing": [],
+ "finished": "2026-08-21 22:41:51"
+}
