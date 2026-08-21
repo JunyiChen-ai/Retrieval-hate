@@ -267,8 +267,10 @@ def main() -> int:
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if args.mem_frac > 0 and device == "cuda":
         torch.cuda.set_per_process_memory_fraction(args.mem_frac)
-    out_root = Path(args.out_dir) if args.out_dir else (
-        ROOT / f"idea-stage/repro_t3al/curves_s{args.seed}")
+    # absolute: the loop below chdir's into a per-dataset work directory so that
+    # upstream's hardcoded `./captions/<vid>.txt` resolves
+    out_root = (Path(args.out_dir).resolve() if args.out_dir else
+                ROOT / f"idea-stage/repro_t3al/curves_s{args.seed}")
     out_root.mkdir(parents=True, exist_ok=True)
 
     net = build_net(PRESETS[args.preset], device)
@@ -295,7 +297,7 @@ def main() -> int:
         wdir = WORK_DIR / ds
         wdir.mkdir(parents=True, exist_ok=True)
         link = wdir / "captions"
-        if not link.exists():
+        if not link.is_symlink():
             link.symlink_to(CAP_DIR(ds))
         os.chdir(wdir)
 
@@ -333,8 +335,11 @@ def main() -> int:
                     else:
                         k = CLASS_KEYS.index(v)
                         fi, toxic = k, k
+                    tv = time.time()
                     output, pred_mask, sim = run_video(net, ft, vid, fi, device, vseed)
                     seg_c, ivs = curves_from_output(output, T, toxic)
+                    print(f"[var] {ds} {vid} {v} T={T} nseg={len(ivs)} "
+                          f"{time.time()-tv:.1f}s", flush=True)
                     if v == "main":
                         curve = seg_c
                     else:

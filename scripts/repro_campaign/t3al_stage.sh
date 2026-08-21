@@ -40,20 +40,19 @@ PRESET=$(python -c "import json;print(json.load(open('$OUT/preset_chosen.json'))
 echo "[stage3] chosen preset = $PRESET"
 
 echo "[stage4] test, three seeds $(date -Is)"
+# Each seed is scored as soon as it finishes, so an interrupted run still has a
+# complete, aggregatable result for every seed that did complete.
 for S in $SEEDS; do
   python scripts/repro_campaign/run_t3al.py --datasets "$DS" --splits test \
     --preset "$PRESET" --seed "$S" --hcs-classes \
     --variants main,mainq_sim,c1_hateful \
     --out-dir "$OUT/curves_s$S" || exit 1
-done
-ln -sfn curves_s20250819 "$OUT/curves"
-
-for S in $SEEDS; do
+  ln -sfn curves_s20250819 "$OUT/curves"
   python scripts/repro_campaign/eval_frame.py --method curves \
     --curve-dir "$OUT/curves_s$S" \
     --variants main,mainq_sim,c0_normal,c1_hateful,c2_insulting,c3_sexual,c4_violence,c5_harm \
     --method-name "T3AL" --wave 2 --supervision label-free --split test \
     --out "$OUT/eval/test_s$S.json" || exit 1
+  python scripts/repro_campaign/t3al_aggregate.py || true
 done
-python scripts/repro_campaign/t3al_aggregate.py
 echo "[all-done] $(date -Is)"
