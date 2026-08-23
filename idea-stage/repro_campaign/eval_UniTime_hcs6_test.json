@@ -1,0 +1,212 @@
+[
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 2,
+  "missing_frac": 0.0168,
+  "missing_ids": [
+   "yt_8sIY4W1hBQM",
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 117,
+   "n_frames": 112065,
+   "n_frames_in_pool": 112065,
+   "coverage": 1.0,
+   "base_rate": 0.5239,
+   "frame_ROC_AUC": 0.499,
+   "frame_PR_AUC": 0.5234,
+   "frame_PR_AUC_trapz": 0.7394,
+   "AP_broadcast_pool": 0.5388,
+   "AP_random_pool": 0.5239,
+   "AP_norm": -0.0322,
+   "AP_norm_denom": 0.0149,
+   "AP_norm_reliable": false,
+   "n_offgrid_gt8": 0
+  },
+  "method": "UniTime",
+  "variant": "c0_normal",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 2
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 2,
+  "missing_frac": 0.0168,
+  "missing_ids": [
+   "yt_8sIY4W1hBQM",
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 117,
+   "n_frames": 112065,
+   "n_frames_in_pool": 112065,
+   "coverage": 1.0,
+   "base_rate": 0.2019,
+   "frame_ROC_AUC": 0.5883,
+   "frame_PR_AUC": 0.2389,
+   "frame_PR_AUC_trapz": 0.477,
+   "AP_broadcast_pool": 0.4603,
+   "AP_random_pool": 0.2019,
+   "AP_norm": 0.143,
+   "AP_norm_denom": 0.2584,
+   "AP_norm_reliable": true,
+   "n_offgrid_gt8": 0
+  },
+  "method": "UniTime",
+  "variant": "c1_hateful",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 2
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 2,
+  "missing_frac": 0.0168,
+  "missing_ids": [
+   "yt_8sIY4W1hBQM",
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 117,
+   "n_frames": 112065,
+   "n_frames_in_pool": 112065,
+   "coverage": 1.0,
+   "base_rate": 0.2583,
+   "frame_ROC_AUC": 0.5064,
+   "frame_PR_AUC": 0.2608,
+   "frame_PR_AUC_trapz": 0.4891,
+   "AP_broadcast_pool": 0.401,
+   "AP_random_pool": 0.2583,
+   "AP_norm": 0.0175,
+   "AP_norm_denom": 0.1428,
+   "AP_norm_reliable": false,
+   "n_offgrid_gt8": 0
+  },
+  "method": "UniTime",
+  "variant": "c2_insulting",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 2
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 2,
+  "missing_frac": 0.0168,
+  "missing_ids": [
+   "yt_8sIY4W1hBQM",
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 117,
+   "n_frames": 112065,
+   "n_frames_in_pool": 112065,
+   "coverage": 1.0,
+   "base_rate": 0.0577,
+   "frame_ROC_AUC": 0.4047,
+   "frame_PR_AUC": 0.0499,
+   "frame_PR_AUC_trapz": 0.3097,
+   "AP_broadcast_pool": 0.2859,
+   "AP_random_pool": 0.0577,
+   "AP_norm": -0.0342,
+   "AP_norm_denom": 0.2282,
+   "AP_norm_reliable": true,
+   "n_offgrid_gt8": 0
+  },
+  "method": "UniTime",
+  "variant": "c3_sexual",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 2
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 2,
+  "missing_frac": 0.0168,
+  "missing_ids": [
+   "yt_8sIY4W1hBQM",
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 117,
+   "n_frames": 112065,
+   "n_frames_in_pool": 112065,
+   "coverage": 1.0,
+   "base_rate": 0.1376,
+   "frame_ROC_AUC": 0.4608,
+   "frame_PR_AUC": 0.1293,
+   "frame_PR_AUC_trapz": 0.3706,
+   "AP_broadcast_pool": 0.3261,
+   "AP_random_pool": 0.1376,
+   "AP_norm": -0.044,
+   "AP_norm_denom": 0.1885,
+   "AP_norm_reliable": true,
+   "n_offgrid_gt8": 0
+  },
+  "method": "UniTime",
+  "variant": "c4_violence",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 2
+  }
+ },
+ {
+  "dataset": "HateClipSeg",
+  "split": "test",
+  "native_rate": 4.0,
+  "n_videos_in_split": 119,
+  "n_videos_missing": 2,
+  "missing_frac": 0.0168,
+  "missing_ids": [
+   "yt_8sIY4W1hBQM",
+   "yt_NzvfkIYS5Yg"
+  ],
+  "pooled": {
+   "n_videos": 117,
+   "n_frames": 112065,
+   "n_frames_in_pool": 112065,
+   "coverage": 1.0,
+   "base_rate": 0.0118,
+   "frame_ROC_AUC": 0.2173,
+   "frame_PR_AUC": 0.0102,
+   "frame_PR_AUC_trapz": 0.0894,
+   "AP_broadcast_pool": 0.2029,
+   "AP_random_pool": 0.0118,
+   "AP_norm": -0.0079,
+   "AP_norm_denom": 0.1911,
+   "AP_norm_reliable": true,
+   "n_offgrid_gt8": 0
+  },
+  "method": "UniTime",
+  "variant": "c5_harm",
+  "supervision": "aux-temporal-pretrain",
+  "wave": 1,
+  "missing_reasons": {
+   "not_run": 2
+  }
+ }
+]

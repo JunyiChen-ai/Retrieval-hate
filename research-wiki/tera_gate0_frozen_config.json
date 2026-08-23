@@ -1,0 +1,1652 @@
+{
+  "schema_version": "tera-gate0-frozen-config/1",
+  "status": "FROZEN",
+  "hash_algorithm": "sha256-canonical-json-v1",
+  "payload_sha256": "f2caade97712f8421232dee0a9c6b02545e3ac9ce95357e82e664802316a81e0",
+  "_hash_note": "payload_sha256 = sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(',',':'), allow_nan=False).encode('utf-8')). The hash covers cfg['payload'] AND NOTHING ELSE; every sibling key of 'payload' (schema_version, status, hash_algorithm, payload_sha256, and any key beginning with '_') is outside the hashed object by construction, so this file can carry its own digest. Verified at run start; mismatch => HALT_CONFIG_HASH_MISMATCH. RE-FROZEN 2026-08-07 (deviation D-3, see refine-logs/TERA_GATE0_REFREEZE_2026-08-07.md; supersedes payload 7ba80eaf697ac46bb90b30161b1726aba7ee238e73001dd832ce30dba8a1dabe). FROZEN 2026-08-07: every asset-audit and freeze placeholder is resolved and this digest is the hash of the completed payload. Any later payload edit changes this hash and the run_id; prereg sec 12 governs.",
+  "payload": {
+    "study": {
+      "id": "TERA-GATE0",
+      "prereg_path": "research-wiki/EXP_tera_gate0_prereg.md",
+      "prereg_sha256": "f6c1ce6c652bcedd18451d4ee3a490ca2c72c603489e89c6a161855537ed6e98",
+      "appendix_path": "research-wiki/EXP_tera_gate0_impl_appendix.md",
+      "appendix_version": "v4",
+      "appendix_sha256": "06808e12d737bd5b43cb8b0cd4779428c443adfa064e3c7cf750216aa356231e",
+      "review_path": "research-wiki/EXP_tera_gate0_impl_appendix_review.md",
+      "review_verdict": "APPROVE-WITH-FIXES",
+      "review_date": "2026-08-07",
+      "review_rounds": 1,
+      "registered_utc": "2026-08-07",
+      "stage_order": [
+        "C",
+        "A",
+        "B"
+      ],
+      "stop_on_stage_failure": true,
+      "frozen_utc": "2026-08-07",
+      "config_path": "research-wiki/tera_gate0_frozen_config.json",
+      "launch_requirement": "every registered execution MUST pass --config research-wiki/tera_gate0_frozen_config.json explicitly. run_gate0.py's argparse DEFAULT still names the pre-freeze .draft.json path and is deliberately NOT edited: scripts/tera_gate0/*.py is hash-frozen as of the fixture-battery release run, and changing one byte would invalidate both the battery's package_sha256 evidence and fixtures.package_aggregate_sha256 in this payload. The draft path no longer exists, so a default launch fails immediately and can never silently run an unfrozen config; manifest.json records command_line and load_frozen_config re-verifies payload_sha256 at run start. See appendix sec 10.1."
+    },
+    "environment": {
+      "host_class": "single-GPU workstation",
+      "gpu_model_expected": "NVIDIA GeForce RTX 5090",
+      "scheduler": "none",
+      "scheduler_rationale": "one GPU present, sbatch/squeue absent; CLAUDE.md single-GPU exemption applies",
+      "conda_env": "HateVideo",
+      "head_training_device": "cpu",
+      "feature_extraction_device": "cuda:0",
+      "torch_num_threads": 8,
+      "dtype": "float32",
+      "determinism": {
+        "torch_use_deterministic_algorithms": true,
+        "cudnn_deterministic": true,
+        "cudnn_benchmark": false,
+        "PYTHONHASHSEED": "0"
+      },
+      "cloud": {
+        "used": false,
+        "rationale": "Gate-C needs raw video; A/B heads are minutes of CPU"
+      },
+      "detached_run_discipline": {
+        "rule": "every non-instantaneous command runs detached from the SSH session (CLAUDE.md 2026-08-07)",
+        "launch": "mkdir -p logging/runs/$TASK && nohup <command> > logging/runs/$TASK/run.log 2>&1 & echo $! > logging/runs/$TASK/run.pid",
+        "log_path_pattern": "logging/runs/<task>/run.log",
+        "pid_path_pattern": "logging/runs/<task>/run.pid",
+        "tasks": [
+          "tera_gate0_extract",
+          "tera_gate0_fixtures",
+          "tera_gate0_stageC",
+          "tera_gate0_stageA",
+          "tera_gate0_stageB"
+        ],
+        "progress_line_format": "[tera-gate0] stage=<A|B> arm=<id> outer=<k> cfg=<i>/<n> epoch=<e> elapsed=<s>s",
+        "progress_line_min_frequency": "one per outer fold"
+      }
+    },
+    "features": {
+      "encoder_id": "openai/clip-vit-large-patch14-336",
+      "encoder_frozen": true,
+      "encoder_finetuning": "forbidden (prereg sec 7)",
+      "transformers_version_expected": "4.49.0",
+      "visual_readout": "CLIPVisionModel.pooler_output, per frame, mean-pooled within window",
+      "text_readout": "CLIPTextModel.pooler_output, chunked, mean-pooled",
+      "Dv_expected": 1024,
+      "Dv_observed": 1024,
+      "Dt_expected": 768,
+      "Dt_observed": 768,
+      "d_expected": 1792,
+      "empty_transcript_placeholder": "(none)",
+      "normalizer": "l2n(z) = z / max(||z||_2, 1e-12); l2n(0) = 0",
+      "segment_representation": "concat(l2n(subclip_img_feats[v,k]), l2n(text_feats[v]))",
+      "whole_video_representation": "concat(l2n(img_feats[v]), l2n(text_feats[v]))",
+      "text_is_video_level_broadcast_to_all_segments": true,
+      "fitted_preprocessing": "none",
+      "retrieval_memory": "none",
+      "segment_cache_schema": "{video_ids: [V] str (FLAT), subclip_img_feats: [V*K, Dv] float32, subclip_parent: [V*K] long, labels: [V*K] long, num_subclips: K, num_frames: M}",
+      "wholevideo_cache_schema": "{ids: [[V] str] (NESTED - one sublist), img_feats: [V, Dv] float32, text_feats: [V, Dt] float32, labels: [V] long}",
+      "wholevideo_ids_read_convention": "d['ids'][0]",
+      "wholevideo_ids_contract_source": "src/utils/generate_VideoCLIP_embedding_HF.py:14-15,395-397 ('# CONTRACT: ids is a list containing ONE sublist of all string ids.')",
+      "disclosures": [
+        "the text half is constant across k, so all within-video discrimination comes from the visual half; this is not a temporal-text capability",
+        "A0 and A1 do not share a frame budget: A0's whole-video cache was built at num_frames=8, A1-A4's segment cache at M=120; max(A0,A1) absorbs it in criteria 1-3"
+      ],
+      "caches": {
+        "hatemm_train_segments": {
+          "path": "data/CLIP_Embedding/HateMM/train_subclipK30_openai_clip-vit-large-patch14-336_HF.pt",
+          "present_at_v2": true,
+          "bytes_observed": 91800918,
+          "sha256": "8b4a706cec51d106151e57109b24850232239168d5e0ca363341ee76493d7fb7",
+          "num_subclips_expected": 30,
+          "num_frames_expected": 120,
+          "num_frames_verifiable_from_file": true,
+          "present_at_v3": true,
+          "num_subclips_observed": 30,
+          "num_frames_observed": 120
+        },
+        "hatemm_train_wholevideo": {
+          "path": "data/CLIP_Embedding/HateMM/train_openai_clip-vit-large-patch14-336_HF.pt",
+          "present_at_v2": true,
+          "bytes_observed": 5359881,
+          "sha256": "0802b6ba00669ec546e63f36dca1772cb2d7806b969de307235af3450a8176c1",
+          "num_frames": 8,
+          "num_frames_status": "provenance_only",
+          "num_frames_note": "the whole-video cache stores no num_frames key; 8 is the extractor default and is asserted against the extraction command line, never against the artifact",
+          "present_at_v3": true
+        },
+        "hatemm_val_segments": {
+          "path": "data/CLIP_Embedding/HateMM/dev_seen_subclipK30_openai_clip-vit-large-patch14-336_HF.pt",
+          "present_at_v2": false,
+          "status": "extracted_2026-08-07",
+          "sha256": "a2ae105e61478b86193267fe67263d1c26436f0881620222f0aa1544fa380778",
+          "num_subclips_expected": 30,
+          "num_frames_expected": 120,
+          "bytes_observed": 13204954,
+          "present_at_v3": true,
+          "num_subclips_observed": 30,
+          "num_frames_observed": 120
+        },
+        "hatemm_val_wholevideo": {
+          "path": "data/CLIP_Embedding/HateMM/dev_seen_openai_clip-vit-large-patch14-336_HF.pt",
+          "present_at_v2": true,
+          "sha256": "ab9cd8a070b93afbf994ed876e3adfd9c2a139e82d801af21346c29f17c1888d",
+          "num_frames": 8,
+          "num_frames_status": "provenance_only",
+          "bytes_observed": 772382,
+          "present_at_v3": true
+        },
+        "hateclipseg_segments": {
+          "path": "data/CLIP_Embedding/HateClipSeg/test_seen_subclipK30_openai_clip-vit-large-patch14-336_HF.pt",
+          "present_at_v2": true,
+          "bytes_observed": 48739122,
+          "sha256": "df6e1c0434ba4b0fb210c3470b3407e05e041f718834d70ad3bc20bcde34d89e",
+          "num_subclips_expected": 30,
+          "num_frames_expected": 120,
+          "corpus_spanning": true,
+          "present_at_v3": true,
+          "num_subclips_observed": 30,
+          "num_frames_observed": 120
+        },
+        "hateclipseg_wholevideo": {
+          "path": "data/CLIP_Embedding/HateClipSeg/test_seen_openai_clip-vit-large-patch14-336_HF.pt",
+          "present_at_v2": false,
+          "status": "extracted_2026-08-07",
+          "sha256": "43227d527d402e1707f770386667cb39114c861f01345c0ab3b9087abedf6f30",
+          "num_frames": 8,
+          "num_frames_status": "provenance_only",
+          "corpus_spanning": true,
+          "bytes_observed": 2846592,
+          "present_at_v3": true
+        }
+      },
+      "raw_media": {
+        "hatemm": "/home/jehc223/data/HateMM/video (restored from B2, 2026-08-07)",
+        "hateclipseg": "/home/jehc223/data/HateClipSeg/videos (restored from B2, 2026-08-07)",
+        "extractor_expects": "data/video/<DATASET>/All/<id>.mp4 (generate_subclip_embedding_HF.py:294)",
+        "never_uploaded_to_cloud": true
+      },
+      "extraction_commands": {
+        "hatemm_val_segments": "python src/utils/generate_subclip_embedding_HF.py --dataset HateMM --splits val --num_subclips 30 --num_frames 120 --model openai/clip-vit-large-patch14-336 --batch_size 32 --device cuda",
+        "hateclipseg_wholevideo": "python src/utils/generate_VideoCLIP_embedding_HF.py --dataset HateClipSeg --splits test --num_frames 8 --model openai/clip-vit-large-patch14-336",
+        "run_mode": "detached, TASK=tera_gate0_extract, per environment.detached_run_discipline",
+        "recorded_in": "feature_manifest.json (command line, git commit, HF_HUB_OFFLINE, encoder id, output sha256)",
+        "failure_rule": "if extraction fails or its asset-audit assertions fail, the affected confirmation stops with HALT_MISSING_ASSET; never a substituted endpoint, never a performance negative",
+        "executed_utc": "2026-08-07",
+        "logs": [
+          "logging/runs/tera_cache_extract/hatemm_val_subclipK30.log",
+          "logging/runs/tera_cache_extract/hateclipseg_wholevideo.log"
+        ],
+        "realized": {
+          "hatemm_val_segments": "V=107, TotalSub=3210, Dv=1024, zero-vector videos=0",
+          "hateclipseg_wholevideo": "N=395, Dv=1024, Dt=768, zero-vector videos=1 (yt_NzvfkIYS5Yg, undecodable container; a p11_split['test'] id, dropped by the sealed-id restriction before any load returns)"
+        }
+      },
+      "d_observed": 1792
+    },
+    "temporal_grid": {
+      "K": 30,
+      "window_rule": "[k*D/K, (k+1)*D/K), last interval closed at D",
+      "duration_source_hatemm": "data/gt/HateMM/hate_spans.json field 'duration' (ffprobe container duration)",
+      "duration_source_hateclipseg": "data/gt/HateClipSeg/video_durations.jsonl",
+      "second_positive_rule": "second t positive iff (t + 0.5) lies in a gold span",
+      "second_to_window_rule": "w(t) = min(K-1, floor((t+0.5)*K/D))",
+      "frame_time_convention": "endpoint-index: sampled frame j of M sits at normalized time j/(M-1), matching _sample_frame_indices = round(linspace(0, N-1, M)) (generate_subclip_embedding_HF.py:135-147). NOT the frame-midpoint convention (m+0.5)/N.",
+      "sampling_alignment_proof": "M=120, _window_bounds(120,30) gives base=4 rem=0 (generate_subclip_embedding_HF.py:236-259), so window k receives sampled frames 4k..4k+3 at normalized times [4k/119,(4k+3)/119]; 4k/119 >= k/30 for all k>=0 and (4k+3)/119 <= (k+1)/30 for all k<=29, so every sampled frame of window k lies strictly inside nominal window k; the k=29 right edge is exact (119/119=1.0) and the last window is closed at D",
+      "applies_to_hateclipseg": "yes - scripts/slurm/hateclipseg_subclip.sbatch runs the same K=30 / M=120 configuration",
+      "alignment_reasserted_at_asset_audit": true
+    },
+    "data": {
+      "primary_dataset": "HateMM",
+      "secondary_dataset": "HateClipSeg",
+      "mhc_role": "not a Gate-0 development dataset (prereg sec 0)",
+      "hatemm": {
+        "development_split": "train",
+        "val_use": "one-time confirmation after all choices are frozen (see confirmation_protocol)",
+        "test_use": "SEALED - never opened by any code path",
+        "split_files_present_at_v2": true,
+        "split_source_resolution_order": [
+          "1. data/gt/HateMM/train.jsonl exists (LIVE BRANCH): assert set(jsonl_ids) == set(cache['ids'][0]) and per-id label equality -> split_source='gt_jsonl'",
+          "2. else feature-cache embedded ids/labels from cache['ids'][0] and cache['labels'] -> split_source='feature_cache_embedded'",
+          "3. any mismatch in step 1 -> HALT_SPLIT_MISMATCH (never silently prefer one source)"
+        ],
+        "split_source": "gt_jsonl",
+        "split_source_sha256": "73295d4b96d9937dca7787fc59a13561ac15020c1608e196c5685f2a055d7741",
+        "split_id_hash": "54e1e9beb97c3e76fcd5c8f664d9b948dcb368e202c6e686f346e0f8a5e1273c",
+        "gold_spans_path": "data/gt/HateMM/hate_spans.json",
+        "gold_spans_sha256": "f8f2be10856a40c0ef5763b9211ecbed506743792ccddfb3adc92bed460c1846",
+        "gold_spans_record_count_reported_by_review": 1083,
+        "gold_spans_corpus_spanning": true,
+        "gold_spans_observed_schema": "{video_id: {duration: float|null, spans: [[start_s,end_s]], label: 0|1, clipped?: bool, anomaly?: [str]}}",
+        "gold_spans_schema_note": "'parse_error' is emitted by hatemm_spans.py only on a hard parse failure and does NOT occur in the current file; it is not asserted. The observed field set is recorded at asset audit.",
+        "split_id_hash_algorithm": "sha256(utf8('\\n'.join(sorted(ids))))  # common.py:sha256_ids",
+        "train_counts_observed": {
+          "n": 744,
+          "positive": 298,
+          "negative": 446
+        },
+        "val_split_source": "gt_jsonl",
+        "val_split_source_sha256": "33a3768976a68db4fe3da39cacafa6beac11b04f83e5740fef0e4f91b391e2b3",
+        "val_split_id_hash": "9cee85f3db92e816c8e867743d7a87ad6d4043eb7d4ab732f95ce8f11d9fb7b3",
+        "val_counts_observed": {
+          "n": 107,
+          "positive": 43,
+          "negative": 64
+        },
+        "id_label_match_assertion": "PASSED at asset audit 2026-08-07 for BOTH partitions: set(jsonl_ids) == set(cache['ids'][0]) and per-id label equality; HALT_SPLIT_MISMATCH did not fire",
+        "gold_spans_observed_field_counts_on_744_restricted_records": {
+          "anomaly": 1,
+          "clipped": 2,
+          "duration": 744,
+          "label": 744,
+          "spans": 744
+        }
+      },
+      "hateclipseg": {
+        "surviving_corpus": "frozen 395-video subset per DATASET_hateclipseg.md",
+        "surviving_id_hash": "37d852b7f72cc87465bbcc293bb345e46617ac61a105be7a70ad3ff24640ba19",
+        "split_path": "data/gt/HateClipSeg/p11_split.json",
+        "split_sha256": "a279431137feeaf72241e1ca4a7ef76d1e86c8381d08aac47123b4b287db98b1",
+        "split_counts_reported_by_review": {
+          "train": 237,
+          "val": 39,
+          "test": 119
+        },
+        "binding_endpoint": "has at least one segment labelled hateful vs none",
+        "endpoint_source": "data/gt/HateClipSeg/gold_segments.json (id-restricted, recomputed at run time)",
+        "endpoint_supervision_status": "consumed ONLY as a video-level binary label (training target, selection target, evaluation target). No per-segment gold label, no gold segment boundary, and no gold-derived segment mask/weight/pooling set ever enters any deployable path. The endpoint derivation returns a single int per video and discards the segment list before returning. No HateClipSeg temporal metric is computed in Gate-0.",
+        "underpower_rule": "if either class has < 10 videos in the P11 validation split, report the confirmation as underpowered and do not use it to satisfy any criterion",
+        "any_toxic_endpoint": "descriptive only; cannot replace a failed binding confirmation",
+        "surviving_n_observed": 395,
+        "split_counts_observed": {
+          "test": 119,
+          "train": 237,
+          "val": 39
+        },
+        "gold_segments_sha256": "a1dad37e686a5106a1392e8151f0946858bc6086cdfd05efc9457b1d7c634a36",
+        "video_durations_sha256": "d8bd334b90f270a703c8419717c979fddd13da537486bb5699d12400f1c1e292",
+        "binding_endpoint_counts_observed": {
+          "development_p11_train": {
+            "n": 237,
+            "positive": 109,
+            "negative": 128
+          },
+          "confirmation_p11_train_union_val": {
+            "n": 276,
+            "positive": 127,
+            "negative": 149
+          },
+          "implied_p11_val": {
+            "n": 39,
+            "positive": 18,
+            "negative": 21
+          },
+          "underpower_check": "both classes >= 10 in the P11 validation split; rule not triggered"
+        }
+      },
+      "failure_accounting": {
+        "zero_vector_videos_definition": "UNION across both caches: all 30 segment vectors exactly zero OR the whole-video img_feats row exactly zero",
+        "zero_vector_videos_retained_in_every_arm": true,
+        "zero_vector_retention_rationale": "keeps the evaluated video set bit-identical across arms, as prereg sec 5.1 matching requires",
+        "missing_duration_definition": "duration null or <= 0 in the gold duration source",
+        "halt_rule": "|zero_vector_videos union missing_duration_videos| / V > 0.01 on HateMM-train => HALT",
+        "missing_duration_videos_excluded_from_temporal_eligible_set": true,
+        "zero_vector_videos": {
+          "hatemm_train": {
+            "count": 1,
+            "ids": [
+              "hate_video_95"
+            ]
+          },
+          "hatemm_val": {
+            "count": 0,
+            "ids": []
+          },
+          "hateclipseg_development_p11_train": {
+            "count": 0,
+            "ids": []
+          },
+          "hateclipseg_confirmation_p11_train_union_val": {
+            "count": 0,
+            "ids": []
+          },
+          "hateclipseg_corpus_provenance_note": "the extractor reported exactly 1 zero-vector video (yt_NzvfkIYS5Yg) over the full 395-video corpus; it is a p11_split['test'] id and is discarded by the sealed-id restriction, so every restricted count is 0. Recorded from the extraction log, not from a restricted read."
+        },
+        "missing_duration_videos": {
+          "hatemm_train": {
+            "count": 0,
+            "ids": []
+          },
+          "hatemm_val": {
+            "count": 0,
+            "ids": []
+          },
+          "hateclipseg_development_p11_train": {
+            "count": 0,
+            "ids": []
+          },
+          "hateclipseg_confirmation_p11_train_union_val": {
+            "count": 0,
+            "ids": []
+          }
+        },
+        "observed_failure_rate_hatemm_train": 0.0013440860215053765,
+        "halt_evaluation": "1/744 = 0.001344 <= 0.01 -> no HALT"
+      }
+    },
+    "sealed_id_restriction": {
+      "rationale": "hate_spans.json spans the FULL HateMM corpus (1083 records incl. the sealed test set, each with a label); HateClipSeg gold/duration/split files and the whitelisted caches span all 395 videos incl. the 119 p11_split['test'] ids. Prereg sec 2.3 forbids LOADING official test labels/spans/per-example artifacts, which a path guard alone cannot prevent.",
+      "reader": "load_corpus_spanning(path) - the ONLY admissible way to open these artifacts; it restricts the returned object to the currently authorized id set and DISCARDS every other entry BEFORE returning",
+      "unrestricted_handle": "HALT_UNRESTRICTED_GOLD_HANDLE",
+      "artifacts": [
+        "data/gt/HateMM/hate_spans.json",
+        "data/gt/HateClipSeg/gold_segments.json",
+        "data/gt/HateClipSeg/video_durations.jsonl",
+        "data/gt/HateClipSeg/test.jsonl",
+        "data/CLIP_Embedding/HateClipSeg/test_seen_subclipK30_openai_clip-vit-large-patch14-336_HF.pt",
+        "data/CLIP_Embedding/HateClipSeg/test_seen_openai_clip-vit-large-patch14-336_HF.pt"
+      ],
+      "authorized_ids": {
+        "development": {
+          "hatemm": "train.jsonl ids",
+          "hateclipseg": "p11_split['train']"
+        },
+        "confirmation": {
+          "hatemm": "train union val ids",
+          "hateclipseg": "p11_split['train'] union ['val']"
+        }
+      },
+      "phase_switch": "unlock_confirmation() - callable AT MOST ONCE in the whole run; writes confirmation_unlock_utc to manifest.json; a second call is a HALT",
+      "test_ids_never_authorized": true,
+      "assertions": [
+        "ONLY AUTHORIZED IDS SURVIVE: set(restricted_ids) subset of authorized_ids. This is WHITELIST semantics - the reader keeps authorized_ids intersect file_ids and drops everything else - so no sealed id can survive BY CONSTRUCTION, whatever the sealed splits contain",
+        "len(restricted) == len(authorized_ids intersect file_ids)",
+        "sealed_ids_dropped = len(file_ids) - len(restricted) > 0 for every corpus-spanning file (a zero drop count means the restriction did not run)",
+        "no p11_split['test'] id survives the restriction (free - p11_split.json is already read to build the HateClipSeg authorized set and contains ids only)"
+      ],
+      "hatemm_test_jsonl_check": "the review's additional 'no HateMM test.jsonl id survives' assertion is REDUNDANT under whitelist semantics and is deliberately NOT implemented: assertion 1 is strictly stronger (it excludes every unauthorized id, not just the test ones), and the weaker check would require opening a sealed per-example artifact for no additional guarantee. Prereg sec 2.3 is satisfied with ZERO contact: test_contact_count stays 0 and opened_test_paths stays [] with no exception carve-out.",
+      "manifest_fields": [
+        "sealed_ids_dropped",
+        "authorized_id_hash",
+        "confirmation_unlock_utc"
+      ],
+      "fixture": "F15"
+    },
+    "protocol": {
+      "outer_folds": 5,
+      "outer_fold_seed": 20260807,
+      "inner_folds": 4,
+      "inner_fold_seed": 20260808,
+      "fold_implementation": "sklearn.model_selection.StratifiedKFold(n_splits, shuffle=True, random_state=seed) over the SORTED video-id list, stratified by the video-level binary label",
+      "all_segments_of_a_video_share_a_fold": true,
+      "primary_metric_aggregation": "concatenate all outer-query predictions and compute once; never average fold metrics",
+      "folds_shared_across_arms": true,
+      "infeasible_fold_rule": "if either class has fewer members than the fold count => HALT_FOLD_INFEASIBLE",
+      "selection_loop": [
+        "for each outer fold f and each registered config cfg: initialize 4 inner models (seeded per inner fold); advance ALL FOUR IN LOCKSTEP one epoch at a time",
+        "after each epoch: pool the 4 inner-held-out score sets FOR THAT EPOCH, derive theta by the threshold rule, compute pooled inner-OOF macro-F1",
+        "track best-so-far with min_delta=1e-4 and patience=40; break the epoch loop on stall; candidate[cfg] = (best, best_epoch, best_theta)",
+        "(cfg*, epoch*, theta*) = argmax over candidate[.] of best; ties -> smaller epoch, then smaller cfg index",
+        "refit ONCE on the full outer-train with cfg*, exactly epoch* epochs, inner=-1 seed",
+        "score outer-query(f) ONCE and apply theta*",
+        "assert one-query-fold-per-video, zero train/query overlap at video/segment/derived-id level, inner nested in outer-train"
+      ],
+      "epoch_selection_rule": "SINGLE rule: the patience-truncated best-so-far epoch per config, then argmax across configs with the global tie rule. The truncation IS part of the registered rule and is applied identically to every arm, config and fold. (v1's contradictory 'argmax over all epochs' and the false claim that early stopping cannot change the selection are both removed.)"
+    },
+    "optimization": {
+      "optimizer": "torch.optim.AdamW",
+      "betas": [
+        0.9,
+        0.999
+      ],
+      "eps": 1e-08,
+      "amsgrad": false,
+      "lr_grid": [
+        0.01,
+        0.003,
+        0.001,
+        0.0003
+      ],
+      "lr_grid_note": "1e-2 added post-review (OP-6 free recommendation, accepted): costs a few CPU-minutes and removes the 'you under-fit A3' objection from any future NO-GO-A-SELECTOR writeup",
+      "weight_decay_grid": [
+        0.0001,
+        0.01
+      ],
+      "l2_regularization_mechanism": "AdamW weight_decay only, applied to all parameters including biases; no separate explicit L2 term",
+      "lr_schedule": "constant",
+      "batch_size_videos": 64,
+      "drop_last": false,
+      "shuffle_generator": "torch.Generator().manual_seed(derive_seed(scope) + epoch)",
+      "gradient_clipping": "none",
+      "loss": "torch.nn.BCEWithLogitsLoss()",
+      "pos_weight": null,
+      "class_balanced_sampler": false,
+      "label_smoothing": 0.0,
+      "epoch_cap": 200,
+      "early_stopping": {
+        "criterion": "pooled inner-OOF macro-F1",
+        "patience_epochs": 40,
+        "min_delta": 0.0001
+      },
+      "config_enumeration_order": [
+        "arm_local",
+        "lr",
+        "weight_decay"
+      ],
+      "config_id_format": "cfg[_<armlocal>]_lr<lr>_wd<wd>",
+      "selection_rule": "argmax pooled inner-OOF macro-F1",
+      "tie_break_rule": "smaller epoch; then smaller index in the registered config list",
+      "tie_break_consequences": [
+        "A2 ties favour smaller k",
+        "A4 ties favour smaller tau",
+        "lr ties favour the larger lr"
+      ],
+      "budget_alignment": "identical optimizer, grid, epoch cap, patience, min_delta, batch size, loss, dtype, device and loop structure for every arm; arm-local grids (k for A2, tau for A4) are registered by the prereg and are additional; realized run counts and wall-clock are reported per arm in metrics.json.budget_report",
+      "configs_per_arm": {
+        "A0": 8,
+        "A1": 8,
+        "A2": 24,
+        "A3": 8,
+        "A4": 24,
+        "B0": 8,
+        "B1": 8,
+        "B2": 8,
+        "B3": 8,
+        "B4": 8,
+        "B5": 8
+      },
+      "expected_head_trainings": {
+        "stage_A": 1465,
+        "stage_B": 990
+      },
+      "recorded_limitation": "batch_size=64 with drop_last=false means the outer refit takes more gradient steps at epoch* than an inner fit did (outer-train is ~33% larger); standard nested practice, compliant with prereg sec 7 step 3, applied identically to every arm"
+    },
+    "thresholding": {
+      "source": "pooled inner-OOF predictions only",
+      "objective": "macro-F1 (sklearn f1_score average='macro', zero_division=0)",
+      "candidate_set": "midpoints of consecutive unique pooled inner-OOF scores, plus (min - 1e-6) and (max + 1e-6)",
+      "prediction_rule": "yhat = 1 iff score >= threshold",
+      "tie_break": [
+        "smallest |theta - 0.5|",
+        "then smallest theta"
+      ],
+      "carried_unchanged_to_outer_query": true,
+      "never_derived_on_a_confirmation_set": true,
+      "post_hoc_rethresholding": "forbidden"
+    },
+    "seeds": {
+      "outer_folds": 20260807,
+      "inner_folds": 20260808,
+      "video_bootstrap": 20260809,
+      "temporal_bootstrap": 20260809,
+      "temporal_bootstrap_note": "a SEPARATE draw over the sorted eligible video list, not a filtering of the master indices",
+      "gate_c_sampling": 20260807,
+      "gate_c_double_coding_assignment": 20260807,
+      "gate_c_coverage_bootstrap": 20260809,
+      "b4_order_permutation": 20260807,
+      "b5_donor_draw": 20260807,
+      "generator_separation": "rng4 (B4) and rng5 (B5) are SEPARATE numpy.random.default_rng instances so B5's draw cannot be perturbed by B4's consumption; both are consumed in ascending sorted video-id order",
+      "model_init_base": 20260810,
+      "fixture_base": 424242,
+      "model_seed_derivation": "derive_seed(scope) = int(sha256(canonical_json({'base':20260810, **scope}).encode()).hexdigest()[:8], 16) % (2**31 - 1)",
+      "model_seed_scope_keys": [
+        "stage",
+        "arm",
+        "dataset",
+        "outer",
+        "inner",
+        "config"
+      ],
+      "model_seed_inner_value_for_outer_refit": -1,
+      "model_seed_outer_value_for_confirmation_refit": -1
+    },
+    "arms": {
+      "A0": {
+        "role": "primary baseline",
+        "deployable": true,
+        "input": "whole_video_representation",
+        "pooling": "none",
+        "head": "nn.Linear(d, 1)",
+        "init": {
+          "weight": "normal_(0, 0.01)",
+          "bias": "zeros_"
+        },
+        "params_expected": 1793,
+        "arm_local_grid": null
+      },
+      "A1": {
+        "role": "segmentation / no-selection control",
+        "deployable": true,
+        "input": "segment_representations",
+        "pooling": "mean over k of s[v,k], then head",
+        "head": "nn.Linear(d, 1) (separate instance from A0, refit)",
+        "init": {
+          "weight": "normal_(0, 0.01)",
+          "bias": "zeros_"
+        },
+        "params_expected": 1793,
+        "identity_note": "head is affine so head(mean_k s) == mean_k head(s) exactly",
+        "arm_local_grid": null
+      },
+      "A2": {
+        "role": "simple selector (max / top-k MIL)",
+        "deployable": true,
+        "operand": "SCALAR SEGMENT LOGITS",
+        "operand_consistency": "identical definition in training and evaluation",
+        "formula": "z[v,k] = w.s[v,k] + b ; T = indices of k largest z (ties -> smaller window index) ; logit_v = mean_{j in T} z[v,j]",
+        "topk_ties": "smaller window index",
+        "soft_relaxation": "none (hard top-k; gradient flows only through selected segments)",
+        "head": "nn.Linear(d, 1)",
+        "init": {
+          "weight": "normal_(0, 0.01)",
+          "bias": "zeros_"
+        },
+        "params_expected": 1793,
+        "arm_local_grid": {
+          "k": [
+            1,
+            2,
+            4
+          ]
+        },
+        "arm_local_selection": "pooled inner-OOF macro-F1; ties resolve to smaller config index, hence smaller k",
+        "singleton_implementation_note": "the per-segment score reduction must be implemented in closed form (z[v,k]); calling torch.topk(z,k=2) on a one-element tensor raises"
+      },
+      "A3": {
+        "role": "primary recoverability arm",
+        "deployable": true,
+        "operand": "SEGMENT VECTORS",
+        "architecture": "h_k = tanh(W s[v,k] + c) ; a_k = u.h_k ; alpha = softmax(a) ; p_v = sum_k alpha_k s[v,k] ; logit_v = w.p_v + b",
+        "attention_input_dim": "d (expected 1792)",
+        "attention_hidden_dim": 128,
+        "attention_layers": 1,
+        "attention_activation": "tanh",
+        "gated": false,
+        "gated_rationale": "the gated ABMIL variant is a different architecture; exactly one instantiation is registered; non-gated chosen for lower parameter count and simpler fixture-verifiable behaviour",
+        "softmax_temperature": 1.0,
+        "dropout": 0.0,
+        "layernorm": false,
+        "supervision": "video-level BCE only; no entropy/sparsity/auxiliary loss; no segment target",
+        "init": {
+          "W": "nn.Linear default (kaiming_uniform a=sqrt(5))",
+          "u": "nn.Linear(128,1,bias=False) default",
+          "final_w": "normal_(0, 0.01)",
+          "final_b": "zeros_"
+        },
+        "params_expected": 231425,
+        "arm_local_grid": null,
+        "alpha_diagnostic": "the within-video second-level AUROC computed from the attention weights alpha_k is recorded as a PRE-REGISTERED DIAGNOSTIC; it may never rescue a failed criterion 5 and never enters any decision",
+        "capacity_limitation": {
+          "statement": "A3 has ~231k parameters vs ~1.8k for A0/A1/A2/A4; the prereg installs a capacity control only in Gate-B (B3). Adding one to Gate-A would be a new arm, forbidden by prereg sec 11.1.",
+          "bound_1": "prereg criterion 5 is itself the capacity/selection discriminator: a pure capacity effect raises video-level macro-F1 without localizing, and Gate-A requires ALL SIX criteria",
+          "bound_2": "D is chosen among A2/A3/A4 and A2/A4 are ~1.8k-parameter arms; if D is A2 or A4 the confound is moot for the promoted arm",
+          "required_record": "any Gate-A pass with D = A3 must carry the sentence 'the A3 advantage over A0/A1 is not capacity-controlled at Gate-A' in verdict.json"
+        }
+      },
+      "A4": {
+        "role": "smooth-selection control",
+        "deployable": true,
+        "operand": "SCALAR SEGMENT LOGITS (same definition as A2)",
+        "formula": "logit_v = tau * ( logsumexp_k(z[v,k]/tau) - log K )",
+        "formula_rationale": "the -log K term makes the operator interpolate mean (tau -> inf) and max (tau -> 0+) on the same scale as the logits",
+        "implementation": "torch.logsumexp (numerically stable)",
+        "head": "nn.Linear(d, 1)",
+        "init": {
+          "weight": "normal_(0, 0.01)",
+          "bias": "zeros_"
+        },
+        "params_expected": 1793,
+        "arm_local_grid": {
+          "tau": [
+            0.1,
+            0.3,
+            1.0
+          ]
+        },
+        "arm_local_selection": "pooled inner-OOF macro-F1; ties resolve to smaller config index, hence smaller tau"
+      },
+      "O1": {
+        "role": "localization-availability oracle",
+        "deployable": false,
+        "oracle_or_eval_only": true,
+        "segment_scorer": "the A1 fold-trained linear head (no new parameters)",
+        "rule": "pool z over windows having POSITIVE-duration overlap with an annotated hate span; if that set is empty, fall back to registered A1 mean pooling over all K windows",
+        "overlap_test": "min(hi, b) - max(lo, a) > 0.0 (strict)",
+        "span_source": "the ID-RESTRICTED hate_spans.json",
+        "label_branching": "forbidden - the routine may inspect span presence only",
+        "fallback_field": "o1_fallback",
+        "threshold": "own threshold from pooled inner-OOF O1 scores under the registered threshold rule",
+        "threshold_reading_ratified_by_review": "prereg sec 3's 'must not affect thresholds' governs DEPLOYABLE arms; gold spans may be read by the named non-deployable oracle/evaluation routines. A gold-blind threshold would make the oracle bound meaningless since O1's scores live on a different scale.",
+        "may_select_a_deployable_arm": false
+      },
+      "O2": {
+        "role": "candidate-set ceiling / sanity only",
+        "deployable": false,
+        "oracle_or_eval_only": true,
+        "label_leaking": true,
+        "segment_scorer": "the A1 fold-trained linear head (no new parameters)",
+        "rule": "argmax_k z if gold label == 1 else argmin_k z; ties -> smaller k",
+        "justification": "the label-aware optimum of mean_{k in S} z over non-empty subsets S is attained at a singleton",
+        "guaranteed_inequality": "per video, O2_logit >= O1_logit when y=1 and <= when y=0 (asserted at run time)",
+        "threshold": "own threshold from pooled inner-OOF O2 scores under the registered threshold rule",
+        "may_select_a_deployable_arm": false
+      }
+    },
+    "segment_score_definition": {
+      "rule": "seg_score_arm(v,k) = sigmoid( f_arm({ s[v,k] }) ) - the arm's own scoring function on the singleton bag containing only that segment",
+      "consequences": {
+        "A1": "head(s[v,k])",
+        "A2": "z[v,k] (the linear segment logit)",
+        "A3": "head(s[v,k]) because a singleton bag gives alpha = 1; and since p_v = sum_k alpha_k s[v,k] with an affine head, logit_v = sum_k alpha_k * head(s[v,k]) exactly, so head(s[v,k]) IS segment k's own contribution to A3's video logit",
+        "A4": "z[v,k] (the linear segment logit)",
+        "A0": "video score broadcast to every second; within-video AUROC is exactly 0.5 by construction"
+      },
+      "a3_attention_weights": "recorded additionally as a PRE-REGISTERED DIAGNOSTIC; NOT the registered score; may never rescue a failed criterion",
+      "implementation_note": "implement the closed-form reduction per arm; do not route a singleton bag through the generic pooling function",
+      "used_by": [
+        "within-video second-level AUROC",
+        "gold-span recall@n",
+        "selected-vs-unselected separation",
+        "Gate-B top-two selection"
+      ]
+    },
+    "arm_D": {
+      "definition": "argmax over {A2, A3, A4} of POOLED-INNER-OOF-MACRO-F1",
+      "pooled_inner_oof_macro_f1_definition": "concatenate the inner-held-out predictions of ALL 5 OUTER FOLDS, each fold contributing its own selected (cfg*, epoch*) at its own theta*, and compute ONE macro-F1 on that single concatenation; never a mean of per-fold macro-F1 values (same convention as prereg sec 7's primary metric)",
+      "tie_break": "arm id order A2 < A3 < A4",
+      "selection_source": "inner-OOF only; no outer-query prediction, no val, no test, no oracle",
+      "recorded_property": "the quantity is selection-optimistic (each fold's cfg*/epoch*/theta* were chosen to maximize that fold's own inner-OOF macro-F1) but is computed identically for A2/A3/A4, is used only to RANK them, and is never reported as a performance number",
+      "frozen_before_gate_b": true,
+      "written_to": "metrics.json (identity, per-fold cfg*/epoch*/theta*, and the three aggregated numbers) before any Gate-B computation"
+    },
+    "gate_b": {
+      "d_score_source": {
+        "outer_query_videos": "D's outer-fold model at that fold's cfg* and epoch*",
+        "outer_train_videos": "D's INNER-OOF predictions within the outer-train partition, produced by D's inner-fold models AT THAT OUTER FOLD'S SELECTED cfg* AND epoch* (never in-sample)",
+        "recorded_fields": [
+          "d_score_source",
+          "d_config_id",
+          "d_epoch"
+        ]
+      },
+      "pair_selection": {
+        "i1": "argmax over k of D's registered per-segment score; ties -> smaller k",
+        "i2": "argmax over {k : |k - i1| >= 2}; ties -> smaller k",
+        "min_separation_windows": 2,
+        "adjacent_windows_ineligible": true,
+        "slot_order": "temporal (a = min(i1,i2) first, b = max(i1,i2) second)",
+        "supervision": "video labels only (D never saw a span or segment label)",
+        "candidate_set_never_empty_at_K30": true
+      },
+      "shared_trunk": {
+        "projection": "P = nn.Linear(d, r), r = 128, default init, one instance per arm",
+        "mlp": "nn.Linear(in, H) -> ReLU -> nn.Linear(H, 1)",
+        "H": 64,
+        "final_layer_init": {
+          "weight": "normal_(0, 0.01)",
+          "bias": "zeros_"
+        },
+        "hidden_layer_init": "nn.Linear default"
+      },
+      "relative_time_encoding": {
+        "positions": "tA = iA/(K-1), tB = iB/(K-1) computed from the PRESENTED slots",
+        "delta": "delta = tB - tA",
+        "phi": "[tA, tB, delta, |delta|, sin(pi*delta), cos(pi*delta)]",
+        "phi_dim": 6,
+        "odd_components": [
+          "delta",
+          "sin(pi*delta)",
+          "tA/tB order"
+        ],
+        "even_components": [
+          "|delta|",
+          "cos(pi*delta)"
+        ]
+      },
+      "arms": {
+        "B0": {
+          "purpose": "single-evidence baseline",
+          "input": "P(e_top)",
+          "input_dim": 128,
+          "hidden": 64,
+          "params_expected": 237825
+        },
+        "B1": {
+          "purpose": "extra-evidence / no-interaction control",
+          "input": "(P(e_first) + P(e_second))/2",
+          "input_dim": 128,
+          "hidden": 64,
+          "params_expected": 237825,
+          "note": "P linear so this equals P of the mean of the top-two segment representations; no interaction term, no phi"
+        },
+        "B2": {
+          "purpose": "primary pair model",
+          "input": "concat(p, q, p*q, phi)",
+          "input_dim": 390,
+          "hidden": 64,
+          "params_expected": 254593,
+          "interaction_term": "elementwise product p*q in the projected space",
+          "bilinear_rejected": "a full bilinear form is d^2 parameters and is not registered",
+          "projection_shared_between_slots": true
+        },
+        "B3": {
+          "purpose": "capacity control",
+          "input": "P(e_top)",
+          "input_dim": 128,
+          "hidden_rule": "H3 = argmin over positive integers of |params(B3) - params(B2)|; ties -> smaller H3",
+          "hidden_expected_at_d1792": 193,
+          "params_expected": 254595,
+          "assertion": "|params(B3) - params(B2)| / params(B2) <= 0.05 else HALT",
+          "realized_relative_difference_expected": 7.86e-06,
+          "head_capacity_check": "B2's 390->64->1 is 25024 parameters vs B3's 128->193->1 at 25090 (0.26% apart), so the match is NOT an artefact of the shared projection",
+          "computed_at_runtime_from_observed_d": true
+        },
+        "B4": {
+          "purpose": "temporal-order lesion",
+          "base": "B2",
+          "rule": "independent per-video Bernoulli(0.5) swap of the presented slots, drawn once with numpy.random.default_rng(20260807) over the SORTED video-id list; the same draw is used in training and evaluation",
+          "phi_recomputed_from_presented_slots": true,
+          "assertions": [
+            "realized swap fraction in [0.40, 0.60] else HALT",
+            "for every swapped video sign(delta_B4) = -sign(delta_B2) and iA > iB and in_B4 != in_B2",
+            "no downstream code re-sorts slots by time",
+            "unswapped videos have in_B4 bitwise equal to in_B2",
+            "the realized swap set is IDENTICAL between the training pass and the evaluation pass"
+          ],
+          "swap_fraction_bound_rationale": "widened from [0.45,0.55] post-review: at V~744 the fraction has SE~0.018 so [0.45,0.55] is +-2.7 sigma and would trip ~0.7% of the time with NO legal recovery (the seed is prereg-pinned); [0.40,0.60] is +-5.5 sigma and still catches a broken or degenerate draw. The exact realized fraction is recorded in metrics.json regardless.",
+          "always_swap_rejected": "an unconditional swap is an invertible relabelling: phi_B4 = [t_b, t_a, -delta, |delta|, -sin(pi delta), cos(pi delta)] carries the same information as phi_B2, so a B4-trained model relearns the reversed convention, B2 - B4 ~ 0 by construction, and Gate-B would return a near-certain FALSE NO-GO-B regardless of whether temporal order matters",
+          "review_status": "OP-1 RATIFIED 2026-08-07, ex ante"
+        },
+        "B5": {
+          "purpose": "second-evidence lesion without query-label leakage",
+          "base": "B2",
+          "legal_support_partition": "outer_train(f) minus the query itself, for BOTH training rows and held-out query rows; never crosses an outer fold; a query video never donates to another query video",
+          "matching_key": "Dpred - D's frozen binary prediction at D's frozen inner-OOF threshold (inner-OOF for outer-train videos, outer-fold model for query videos)",
+          "query_true_label_used": false,
+          "label_array_closure_assertion": true,
+          "donor_contribution": "the donor's own e_second under D's top-two selection",
+          "replaced": "content of the second slot only",
+          "retained": "the query's own phi (its true positions and offset)",
+          "rationale": "isolates identity of the second evidence unit from the temporal relation, which is B4's job; without this split the two lesions would be confounded and the two +0.015 criteria would not be testing different things",
+          "rng": "numpy.random.default_rng(20260807), a separate generator instance from B4's, consumed in ascending sorted video-id order",
+          "fallback": "if the Dpred-matched stratum is empty, draw uniformly from the full legal pool and set b5_fallback=true",
+          "aggregate_field": "b5_fallback_count"
+        }
+      },
+      "msc_subset": {
+        "membership": "the set of AUDITED VIDEOS OF ANY CATEGORY (audited false negatives AND the 30 TP + 30 FP controls) carrying multi_segment_complementary as PRIMARY OR SECONDARY cause, per prereg sec 4.3's presence rule",
+        "frozen_when": "Gate-C's adjudicated audit is written",
+        "artifact": "msc_subset.json (sha256 in manifest.json)",
+        "rescue": {
+          "population": "label-1 members only",
+          "formula": "|{v in msc, label=1 : B0 predicts 0 and B2 predicts 1}| / |{v in msc, label=1 : B0 predicts 0}|",
+          "criterion": ">= 0.20",
+          "reporting": "exact numerator/denominator and a Wilson 95% interval",
+          "zero_denominator": "record 'not_evaluable' and treat the criterion as NOT SATISFIED (a rescue criterion with nothing to rescue cannot license a pass)"
+        },
+        "false_positive_side_condition": {
+          "population": "label-0 members only",
+          "formula_in_counts": "FP_arm = |{v in msc, label=0 : arm predicts 1}| ; criterion: FP_B2 <= FP_B0 + max(1, ceil(0.10 * FP_B0))",
+          "counts_not_ratio_rationale": "expressed in counts so the 0/0 case cannot arise as a ratio (a nan compares False under every comparison, giving an accidental auto-pass or crash)",
+          "no_label_0_member": "record 'not_evaluable' and treat the side condition as SATISFIED (it is a do-no-harm guard, not a positive requirement)"
+        },
+        "asymmetry_is_deliberate": "the rescue rate is a positive requirement (unmet => fail); the FP condition is a do-no-harm guard (vacuous => pass)",
+        "recorded_note": "with <=120 audited FNs and prereg sec 4.3's msc >= 15% floor the label-1 subset could be ~18 videos; the prereg sets no minimum; exact counts plus a Wilson interval are the registered treatment and the writeup must not over-read the rate"
+      },
+      "decision_inputs": {
+        "primary": "B2 - max(B0,B1,B3) >= +0.020 with paired bootstrap 95% CI excluding zero",
+        "lesions": [
+          "B2 - B4 >= +0.015",
+          "B2 - B5 >= +0.015"
+        ],
+        "rescue": "see msc_subset",
+        "confirmations": [
+          "B2 delta positive on HateMM-val",
+          "B2 delta positive on HateClipSeg-val"
+        ]
+      }
+    },
+    "confirmation_protocol": {
+      "binding": "prereg sec 5.2 item 6 and sec 6 bullet 4 are BINDING pass conditions, so the procedure is registered in full",
+      "timing": "runs ONCE, after every outer-OOF number is computed and every choice is frozen, immediately after the single unlock_confirmation() call",
+      "prohibition": "a confirmation set may not select an arm, threshold, epoch, granularity, config or decision rule (prereg sec 2.1, sec 8.1); no quantity below is derived on val",
+      "hatemm_val": {
+        "scoring_model": "ONE refit on the ENTIRE HateMM-train partition per arm",
+        "cfg_val": "the modal cfg* across the 5 outer folds; ties -> smaller registered config index",
+        "epoch_val": "median of the 5 outer folds' epoch* (odd count -> exact median)",
+        "theta_val": "median of the 5 outer folds' theta* (odd count -> exact median)",
+        "seed": "derive_seed({stage, arm, dataset:'HateMM', outer:-1, inner:-1, config:cfg_val})",
+        "scoring": "score HateMM-val ONCE with that single model and apply theta_val unchanged; the threshold is never re-derived, re-optimized or tie-broken on val",
+        "segment_scores_on_val": "D's per-segment scores come from D's val-refit model under the singleton rule; Gate-B pair selection on val uses those scores through the unchanged selection procedure",
+        "arms_fitted": [
+          "A0",
+          "A1",
+          "D",
+          "B0",
+          "B1",
+          "B2",
+          "B3"
+        ],
+        "b4_b5_on_val": "not needed - prereg sec 6's val condition is on the B2 delta only",
+        "criteria": {
+          "gate_a": "macroF1(D_val) - max(macroF1(A0_val), macroF1(A1_val)) > 0",
+          "gate_b": "macroF1(B2_val) - max(macroF1(B0_val), macroF1(B1_val), macroF1(B3_val)) > 0",
+          "significance_required": false
+        }
+      },
+      "hateclipseg_val": {
+        "development_partition": "p11_split['train'] (237 videos)",
+        "selection": "4 inner video-stratified folds on HateClipSeg-train, seed 20260808, the SAME selection loop, the SAME config list and tie rule, the SAME threshold rule -> (cfg*, epoch*, theta*) from pooled inner-OOF only",
+        "no_outer_loop": "HateClipSeg-val is the evaluation set, not an OOF construction",
+        "refit": "ONCE on all of HateClipSeg-train, cfg*, exactly epoch* epochs, seed = derive_seed({stage, arm, dataset:'HateClipSeg', outer:-1, inner:-1, config:cfg*})",
+        "scoring": "score HateClipSeg-val ONCE and apply theta* unchanged",
+        "arms_fitted": [
+          "A0",
+          "A1",
+          "D",
+          "B0",
+          "B1",
+          "B2",
+          "B3"
+        ],
+        "what_transfers": "ONLY D's arm identity (A2, A3 or A4)",
+        "what_is_reselected": "D's arm-local value (k or tau), lr, weight_decay, epoch and theta are re-selected on HateClipSeg-train inner-OOF under the identical registered grid",
+        "transfer_rationale": "prereg sec 2.2 admits only matched method comparisons on the identical surviving IDs; fitting every arm identically on HateClipSeg-train satisfies that, whereas transferring a HateMM-fitted head would be a domain-transfer experiment that is not the registered comparison. Feature family and dimensions are identical across datasets, so architectures transfer unchanged.",
+        "weak_supervision_statement": "the binding endpoint (has >= 1 segment labelled hateful) is DERIVED from gold segment labels but is consumed ONLY as a video-level binary label - training target, selection target, evaluation target - exactly as prereg sec 3 permits. No per-segment gold label, no gold segment boundary, and no gold-derived segment mask/weight/pooling set enters any deployable path. No HateClipSeg temporal metric is computed in Gate-0, so gold segment boundaries are never read beyond the endpoint derivation, which returns a single int per video and discards the segment list before returning.",
+        "underpower_rule": "report the binding-endpoint class counts in the P11 validation split; if either class has < 10 videos the confirmation is underpowered and cannot satisfy any criterion"
+      },
+      "single_pass_discipline": "manifest.confirmation_passes{hatemm_val, hateclipseg_val} must each be 1; a second pass is a HALT"
+    },
+    "metrics": {
+      "primary": "binary macro-F1 (sklearn f1_score average='macro', zero_division=0)",
+      "secondary": [
+        "balanced_accuracy",
+        "accuracy",
+        "positive_class_f1",
+        "auroc"
+      ],
+      "diagnostic": [
+        "predicted_positive_rate",
+        "confusion_matrix"
+      ],
+      "temporal": {
+        "eligible_video_rule": "label == 1 AND >= 1 parsed gold span AND duration valid AND the video contains at least one positive and at least one negative evaluated second",
+        "eligible_set_frozen_once": true,
+        "eligible_set_shared_across_arms": true,
+        "eligible_set_artifact": "eligible_videos.json (sha256 in manifest.json)",
+        "primary_temporal_metric": "mean over eligible videos of within-video second-level AUROC using the registered per-segment score",
+        "temporal_bootstrap": "a SEPARATE draw from numpy.random.default_rng(20260809) over the sorted eligible video list, 10000 resamples, saved as bootstrap_indices.npz:temporal; not a filtering of the master indices; criterion 5 is a point-estimate threshold and the CI is reported, not binding",
+        "a0_comparator": "video-score broadcast, which is exactly AUROC 0.5 per eligible video",
+        "criterion_checks": [
+          "D mean within-video AUROC >= 0.60",
+          "D mean >= 0.53 (A0 broadcast 0.5 + 0.03)"
+        ],
+        "a3_alpha_diagnostic": "within-video second-level AUROC computed from alpha_k; non-binding",
+        "secondary": [
+          "pooled full second-level AP",
+          "pooled full second-level AUROC"
+        ],
+        "gold_span_recall_at": [
+          1,
+          2,
+          4
+        ],
+        "gold_span_recall_definition": "fraction of eligible videos for which at least one of the n highest-scoring windows has positive-duration overlap with a gold span",
+        "separation_metrics": [
+          "mean(gold-overlapping window scores) - mean(other window scores), averaged over eligible videos",
+          "within-video score standard deviation"
+        ],
+        "per_video_ap_averaging": "forbidden"
+      },
+      "bootstrap": {
+        "n_resamples": 10000,
+        "seed": 20260809,
+        "unit": "video",
+        "stratified_by": "video label",
+        "scheme": "within each label stratum draw n_label indices with replacement over the SORTED outer-OOF video-id list",
+        "indices_precomputed_once": true,
+        "indices_artifact": "bootstrap_indices.npz (int32[10000, N])",
+        "indices_shared_by_all_arms": true,
+        "macro_f1_recomputed_inside_each_resample": true,
+        "ci": "percentile [2.5, 97.5]",
+        "multiple_testing_adjustment": "none (one ordered decision path, one promoted arm)"
+      }
+    },
+    "gate_c": {
+      "prediction_source": "A0 whole-video baseline, HateMM-train only, the same 5 outer folds and the same inner-OOF threshold rule",
+      "val_or_test_used": false,
+      "populations": {
+        "FN": "gold_label == 1 and prediction == 0",
+        "TP": "gold_label == 1 and prediction == 1",
+        "FP": "gold_label == 0 and prediction == 1"
+      },
+      "sampling": {
+        "rng": "numpy.random.default_rng(20260807)",
+        "tercile_basis": "OOF positive-class score WITHIN the FN population",
+        "tercile_cut": "numpy.quantile(scores_FN, [1/3, 2/3], method='linear'); tercile(v) = 0 if s < q33 else (1 if s < q67 else 2)",
+        "audit_all_if": "|FN| <= 120",
+        "fn_target_per_tercile": 40,
+        "fn_total": 120,
+        "deficit_redistribution": "if a tercile has fewer than its target, cap it at its size and reassign the deficit to the other terciles in ascending tercile index order, respecting their capacity",
+        "controls": {
+          "true_positives": 30,
+          "false_positives": 30,
+          "per_tercile": 10,
+          "same_redistribution_rule": true,
+          "drawn_after_the_FN_draw_from_the_same_rng": true
+        },
+        "controls_in_fn_coverage_denominator": false
+      },
+      "weights": {
+        "formula": "w[v] = N_{tercile(v)} / n_{tercile(v)} (full-population count over sampled count)",
+        "frozen_at_sampling_time": true,
+        "coverage_formula": "coverage(M) = sum_{v in audit_FN with mech(v) intersect M nonempty} w[v] / sum_{v in audit_FN} w[v]",
+        "mechanism_presence": "primary cause OR recorded secondary cause",
+        "bootstrap": "10000 resamples, seed 20260809, resample n_t audited items with replacement within each tercile and reapply the FROZEN weights; percentile 95% CI",
+        "unweighted_proportions": "reported separately and labelled diagnostic"
+      },
+      "form_fields": [
+        "video_id",
+        "coder_id",
+        "primary_cause",
+        "secondary_causes",
+        "minimal_sufficient_intervals",
+        "required_modalities",
+        "single_interval_sufficient",
+        "span_video_duration_ratio",
+        "confidence",
+        "notes",
+        "protocol_sha256",
+        "form_version"
+      ],
+      "taxonomy": [
+        "short_localized",
+        "multi_segment_complementary",
+        "cross_modal",
+        "quotation_or_counterstance",
+        "external_knowledge",
+        "global_evidence",
+        "annotation_ambiguity_or_noise",
+        "representation_failure_other"
+      ],
+      "field_constraints": {
+        "primary_cause": "exactly one taxonomy value",
+        "secondary_causes": "zero or more taxonomy values, must not contain primary_cause",
+        "required_modalities": "at least one of visual, speech, on_screen_text, audio_nonspeech, transcript",
+        "confidence": "high | medium | low",
+        "span_video_duration_ratio": "computed as union(minimal_sufficient_intervals)/D_v, not typed by the annotator",
+        "notes": "free text, used by no criterion"
+      },
+      "blinding": {
+        "shown": [
+          "video",
+          "transcript (an ordinary model input)",
+          "official span overlay"
+        ],
+        "hidden": [
+          "model score",
+          "correctness category (FN/TP/FP)",
+          "retrieval output",
+          "TERA output"
+        ],
+        "item_list_shuffled": true,
+        "category_mapping_kept_in_a_separate_file_not_given_to_annotators": true
+      },
+      "double_coding": {
+        "fraction": 0.2,
+        "count_rule": "ceil(0.20 * |audit_FN union controls|)",
+        "selection": "seeded permutation (20260807) of the sorted audited-id list",
+        "raw_pre_adjudication_labels_retained": true,
+        "adjudication_rows_appended_not_rewritten": true,
+        "reliability": [
+          "raw agreement",
+          "Cohen's kappa on primary_cause (sklearn.metrics.cohen_kappa_score)"
+        ]
+      },
+      "hashing_order": [
+        "write annotation_protocol.json -> sha256 -> record",
+        "write the blinded item list -> sha256 -> record",
+        "only then collect labels into gate_c_audit.jsonl, every row carrying protocol_sha256",
+        "adjudicate; append adjudication rows (append-only)",
+        "freeze msc_subset.json -> sha256 -> record",
+        "compute coverage, kappa, bootstrap; write metrics.json; write verdict.json"
+      ],
+      "protocol_edit_after_labelling": "invalidates the audit (prereg sec 12)",
+      "media_dependency": "RESOLVED - raw HateMM video restored to /home/jehc223/data/HateMM/video (2026-08-07). Remaining dependency is human annotator time including the >=20% double-coding. Transcript-only or MLLM-described auditing remains a material deviation and is not an option."
+    },
+    "decision_rules_copied_from_prereg": {
+      "gate_c_pass": [
+        "union(short_localized, multi_segment_complementary, cross_modal) >= 0.30 with video-bootstrap 95% CI lower bound >= 0.20",
+        "multi_segment_complementary >= 0.15",
+        "annotation_ambiguity_or_noise <= 0.25",
+        "double-coded primary-cause Cohen's kappa >= 0.60"
+      ],
+      "gate_a_pass": [
+        "O1 - max(A0,A1) >= +0.050 macro-F1",
+        "O2 - max(A0,A1) >= +0.050 macro-F1",
+        "D - max(A0,A1) >= +0.020 macro-F1",
+        "paired video-bootstrap 95% CI for the D delta excludes zero",
+        "D mean within-video second-level AUROC >= 0.60 over eligible videos and >= A0 broadcast + 0.03",
+        "on HateMM-val the D delta remains positive and on HateClipSeg-val the matched has-hateful-segment delta is positive"
+      ],
+      "gate_b_pass": [
+        "B2 - max(B0,B1,B3) >= +0.020 with paired bootstrap 95% CI excluding zero",
+        "B2 - B4 >= +0.015 and B2 - B5 >= +0.015",
+        "on the frozen Gate-C multi_segment_complementary subset B2 rescues >= 20% of B0 false negatives with the registered false-positive side condition satisfied",
+        "B2 delta positive on HateMM-val and HateClipSeg-val"
+      ],
+      "verdicts": [
+        "NO-GO-C",
+        "NO-GO-A-NO-HEADROOM",
+        "NO-GO-A-SELECTOR",
+        "NO-GO-B",
+        "TEMPORAL-SELECTION-SUPPORTED; COMPOSITION-NOT-SUPPORTED",
+        "GO-TERA"
+      ],
+      "halt_conditions": [
+        "missing or corrupt assets (HALT_MISSING_ASSET)",
+        "zero-vector/missing-duration union above 1% of videos",
+        "train/query overlap",
+        "gold-span access in a deployable path",
+        "any prospective test contact",
+        "HALT_CONFIG_HASH_MISMATCH",
+        "HALT_SPLIT_MISMATCH",
+        "HALT_FOLD_INFEASIBLE",
+        "HALT_UNRESTRICTED_GOLD_HANDLE",
+        "a second unlock_confirmation() call",
+        "a second confirmation pass on either val set",
+        "B3 capacity match outside 5%",
+        "B4 swap fraction outside [0.40, 0.60]",
+        "an existing run-namespace path (non-overwriting violation)"
+      ],
+      "no_partial_credit": true,
+      "no_threshold_relaxation": true
+    },
+    "artifacts": {
+      "namespace": "artifacts/tera_gate0/<run_id>/",
+      "run_id_format": "tera-gate0-<UTC YYYYMMDDTHHMMSSZ>-<first 8 hex of payload_sha256>",
+      "non_overwriting": "os.makedirs(exist_ok=False); every writer opens with mode 'x'; an existing path is a HALT",
+      "files": [
+        "frozen_config.json",
+        "split_manifest.json",
+        "feature_manifest.json",
+        "annotation_protocol.json",
+        "gate_c_audit.jsonl",
+        "folds/fold_<k>/train_ids.json",
+        "folds/fold_<k>/query_ids.json",
+        "folds/fold_<k>/selected_hparams.json",
+        "folds/fold_<k>/segment_scores.jsonl",
+        "folds/fold_<k>/selected_evidence.jsonl",
+        "folds/fold_<k>/video_predictions.jsonl",
+        "oof_predictions.jsonl",
+        "oracle_predictions.jsonl",
+        "metrics.json",
+        "bootstrap_indices.npz",
+        "verdict.json",
+        "manifest.json"
+      ],
+      "additional_files": [
+        "eligible_videos.json",
+        "msc_subset.json",
+        "confirmation_predictions.jsonl"
+      ],
+      "fixture_namespace": "artifacts/tera_gate0/_fixtures/<fixture_run_id>/ (outside the run namespace, referenced by sha256)",
+      "manifest_required_fields": [
+        "git_commit",
+        "git_dirty",
+        "git_diff_sha256",
+        "host",
+        "platform",
+        "cpu_model",
+        "nvidia_smi_device",
+        "gpu_used",
+        "python_version",
+        "conda_env",
+        "package_versions",
+        "torch_num_threads",
+        "deterministic_flags",
+        "command_line",
+        "scheduler",
+        "job_id",
+        "log_path",
+        "pid_file",
+        "start_utc",
+        "end_utc",
+        "wall_clock_s",
+        "seeds",
+        "inputs",
+        "outputs",
+        "split_source",
+        "split_id_hash",
+        "split_manifest_sha256",
+        "hateclipseg_surviving_id_hash",
+        "authorized_id_hash",
+        "sealed_ids_dropped",
+        "confirmation_unlock_utc",
+        "confirmation_passes",
+        "encoder_id",
+        "encoder_revision",
+        "encoder_config_sha256",
+        "duration_rule",
+        "boundary_rule",
+        "frame_time_convention",
+        "sampling_alignment_proof",
+        "zero_vector_videos",
+        "missing_duration_videos",
+        "failure_rate",
+        "test_contact_count",
+        "opened_test_paths",
+        "forbidden_paths",
+        "overlap_assertions",
+        "msc_subset_sha256",
+        "eligible_videos_sha256",
+        "frozen_config_sha256",
+        "appendix_sha256",
+        "fixtures_report_sha256",
+        "fixture_code_sha256",
+        "verdict_sha256"
+      ],
+      "prediction_row_fields": [
+        "video_id",
+        "dataset",
+        "split",
+        "confirmation",
+        "outer_fold",
+        "gold_label",
+        "arm",
+        "score",
+        "prediction",
+        "threshold",
+        "threshold_source",
+        "config_id",
+        "epoch",
+        "seed",
+        "selected_segment_ids",
+        "selected_second_intervals",
+        "d_score_source",
+        "d_config_id",
+        "d_epoch",
+        "b5_donor_id",
+        "b5_fallback",
+        "b4_swapped",
+        "o1_fallback",
+        "oracle_or_eval_only",
+        "label_leaking",
+        "gold_overlap_windows",
+        "gold_span_ratio"
+      ],
+      "gold_derived_fields_populated_only_by_evaluation_or_oracle": [
+        "gold_overlap_windows",
+        "gold_span_ratio"
+      ],
+      "oracle_or_eval_only_sidecar_marker": true,
+      "segment_scores_row_fields": [
+        "video_id",
+        "arm",
+        "outer_fold",
+        "scores",
+        "attention_weights",
+        "second_boundaries"
+      ],
+      "selected_evidence_row_fields": [
+        "video_id",
+        "arm",
+        "i_top",
+        "pair",
+        "presented_slots",
+        "phi",
+        "b4_swapped",
+        "b5_donor_id",
+        "b5_fallback"
+      ]
+    },
+    "test_seal": {
+      "guard": "process-wide file-open wrapper checking resolved absolute paths against forbidden_paths; a match increments test_contact_count, appends to opened_test_paths and raises",
+      "forbidden_paths": [
+        "data/gt/HateMM/test.jsonl",
+        "data/CLIP_Embedding/HateMM/test_seen_*"
+      ],
+      "whitelist_with_rationale": {
+        "data/gt/HateClipSeg/test.jsonl": "HateClipSeg's whole 395-video corpus was extracted under --splits test and SPLIT_TO_OUTNAME maps test -> test_seen; its SEALED split is defined inside p11_split.json, not by the filename. Whitelisted BY EXACT PATH, never by glob, and its sealed ids are removed at load time by sealed_id_restriction.",
+        "data/CLIP_Embedding/HateClipSeg/test_seen_subclipK30_openai_clip-vit-large-patch14-336_HF.pt": "same",
+        "data/CLIP_Embedding/HateClipSeg/test_seen_openai_clip-vit-large-patch14-336_HF.pt": "same"
+      },
+      "whitelist_inside_hashed_payload": true,
+      "hatemm_test_jsonl_contact": "NONE - sealed_id_restriction whitelist semantics make an id-level check of that file redundant, so the run opens it zero times",
+      "required_final_values": {
+        "test_contact_count": 0,
+        "opened_test_paths": []
+      }
+    },
+    "fixtures": {
+      "policy": "synthetic data only; no fixture reads data/, /home/jehc223/data/, or any real label or span",
+      "script_path": "scripts/tera_gate0/fixtures.py",
+      "script_sha256": "d967f78e87fe31e4275ca163834bc304f6314a36f4e031b0de90825f0d282f7c",
+      "report_path": "artifacts/tera_gate0/_fixtures/fix-20260807T083546Z/fixtures_report.json",
+      "report_sha256": "b9161be50cd33227eb1c158e378f32ff0f3624e5f903ad1267a83fca137021e0",
+      "run_mode": "detached, TASK=tera_gate0_fixtures_v2",
+      "seed_base": 424242,
+      "dims": {
+        "Dv_fix": 32,
+        "Dt_fix": 16,
+        "d_fix": 48,
+        "K": 30,
+        "V": 240,
+        "positive_rate": 0.4
+      },
+      "fixture_bootstrap_n": 1000,
+      "exercises_full_pipeline": true,
+      "uses_real_schemas_including_nested_ids": true,
+      "must_all_pass_before_freeze": true,
+      "battery": [
+        {
+          "id": "F1",
+          "name": "span-localized signal",
+          "construction": "each positive video gets one synthetic span covering exactly windows {c, c+1}, c ~ U{2..26}, with +1.2*e1 on those windows; everything else N(0,1); text half is noise for all videos",
+          "assertions": [
+            "O1 - max(A0,A1) >= 0.050",
+            "max(A2,A3,A4) - max(A0,A1) >= 0.020",
+            "A2 selected k in {1,2}",
+            "D mean within-video second-level AUROC >= 0.60",
+            "gold-span recall@1 >= 0.80",
+            "no HALT"
+          ]
+        },
+        {
+          "id": "F2",
+          "name": "global signal only",
+          "construction": "positives get +0.20*e1 on EVERY window; no localization",
+          "assertions": [
+            "O1 - max(A0,A1) < 0.050",
+            "A1 >= A0 - 0.02",
+            "verdict == NO-GO-A-NO-HEADROOM",
+            "no HALT"
+          ]
+        },
+        {
+          "id": "F3",
+          "name": "oracle ordering",
+          "construction": "F1 plus sign-flipped noise spikes on a random 20% of windows",
+          "assertions": [
+            "per-video O2_logit >= O1_logit when y=1 and <= when y=0 for 100% of videos",
+            "O2 - max(A0,A1) >= 0.050"
+          ]
+        },
+        {
+          "id": "F4",
+          "name": "ordered pair interaction",
+          "construction": "patterns pA=+1.5*e1 and pB=+1.5*e2; label 1 iff pA at window i and pB at window j with j-i >= 2; label 0 videos have j < i or only one pattern",
+          "assertions": [
+            "B2 - max(B0,B1,B3) >= 0.020",
+            "B2 - B4 >= 0.015",
+            "B2 - B5 >= 0.015"
+          ],
+          "note": "load-bearing fixture for B4 genuineness"
+        },
+        {
+          "id": "F5",
+          "name": "single segment sufficient",
+          "construction": "label 1 iff pA occurs anywhere; no pair structure",
+          "assertions": [
+            "B2 - max(B0,B1,B3) < 0.020",
+            "verdict == NO-GO-B",
+            "no HALT"
+          ]
+        },
+        {
+          "id": "F6",
+          "name": "B5 fallback",
+          "construction": "force Dpred constant 1 for all but 2 outer-train videos in one fold so the Dpred==0 stratum is empty for some queries",
+          "assertions": [
+            "b5_fallback_count > 0",
+            "every fallback row carries b5_fallback=true",
+            "run completes"
+          ]
+        },
+        {
+          "id": "F7",
+          "name": "degenerate assets",
+          "construction": "3% all-zero segment videos, 2 videos zero only in the whole-video cache, 2 videos with duration=null, 5 positives with an empty span list",
+          "assertions": [
+            "zero_vector_videos equals the UNION count across both caches",
+            "o1_fallback count equals the span-less video count",
+            "missing-duration videos excluded from eligible_videos but still receive video predictions",
+            "zero videos retained in every arm",
+            "run completes"
+          ]
+        },
+        {
+          "id": "F7b",
+          "name": "decode-failure HALT",
+          "construction": "5% zero videos (union)",
+          "assertions": [
+            "HALT raised on the >1% rule"
+          ]
+        },
+        {
+          "id": "F8",
+          "name": "threshold rule",
+          "construction": "hand-built score/label vectors with (a) two equidistant tied thresholds and (b) two tied thresholds at different distances from 0.5",
+          "assertions": [
+            "(a) the smaller threshold is selected",
+            "(b) the one closer to 0.5 is selected",
+            "prediction rule is >="
+          ]
+        },
+        {
+          "id": "F9",
+          "name": "fold and leakage integrity",
+          "construction": "any fixture data",
+          "assertions": [
+            "every video in exactly one outer-query fold",
+            "outer_train intersect outer_query empty at video, segment and derived-id level",
+            "all 30 segments of a video share a fold",
+            "inner folds nest inside outer-train"
+          ]
+        },
+        {
+          "id": "F10",
+          "name": "capacity match",
+          "construction": "pure arithmetic",
+          "assertions": [
+            "|params(B3)-params(B2)|/params(B2) <= 0.05 at d_fix and at d=1792",
+            "H3 at d=1792 equals 193",
+            "head-capacity check |25090-25024|/25024 <= 0.01"
+          ]
+        },
+        {
+          "id": "F11",
+          "name": "Gate-C weighting",
+          "construction": "synthetic FN population of 400 with tercile sizes (150,130,120) and known mechanism flags, forced subsampling to 120",
+          "assertions": [
+            "weighted coverage equals the analytic population value to 1e-9",
+            "tercile-stratified bootstrap CI covers it",
+            "controls excluded from the FN denominator",
+            "deficit redistribution reproduces the registered allocation on an undersized tercile"
+          ]
+        },
+        {
+          "id": "F12",
+          "name": "B4 genuineness",
+          "construction": "F4 data",
+          "assertions": [
+            "swap fraction in [0.40,0.60]",
+            "sign(delta_B4) = -sign(delta_B2) and iA > iB for every swapped video",
+            "in_B4 != in_B2 for swapped videos",
+            "in_B4 bitwise equals in_B2 for unswapped videos",
+            "the realized swap set is identical between the training pass and the evaluation pass"
+          ]
+        },
+        {
+          "id": "F13",
+          "name": "determinism",
+          "construction": "rerun F1 end to end in two separate processes",
+          "assertions": [
+            "byte-identical oof_predictions.jsonl",
+            "identical metrics.json numbers"
+          ]
+        },
+        {
+          "id": "F14",
+          "name": "test-seal guard",
+          "construction": "attempt to open a registered forbidden path",
+          "assertions": [
+            "guard raises",
+            "test_contact_count increments",
+            "run HALTs"
+          ]
+        },
+        {
+          "id": "F15",
+          "name": "sealed-id restriction",
+          "construction": "synthetic corpus-spanning gold files (JSON and .pt variants) whose ids are authorized union sealed, plus a synthetic p11_split with a non-empty test list",
+          "assertions": [
+            "load_corpus_spanning returns an object containing ZERO sealed ids",
+            "sealed_ids_dropped > 0 and equals the planted sealed count",
+            "len(restricted) == len(authorized intersect file_ids)",
+            "a zero drop count raises",
+            "an unauthorized id planted in a corpus-spanning file cannot survive",
+            "holding an unrestricted handle raises HALT_UNRESTRICTED_GOLD_HANDLE",
+            "a second unlock_confirmation() call raises",
+            "authorized_id_hash changes exactly once, at the unlock"
+          ]
+        }
+      ],
+      "script_path_correction": "v2 wrote scripts/analysis/tera_gate0_fixtures.py; the harness was built at scripts/tera_gate0/. Registered implementation reading R-1 (appendix sec 13).",
+      "package_dir": "scripts/tera_gate0/",
+      "package_sha256": {
+        "__init__.py": "d3dd0a435d60e7a6cfb2c70111008187370096781332767c1e6201dddda09248",
+        "arms.py": "09eb566f76878c5bb812af7d07885ea6dbc45abdd4bc79669c37faf5520a3f31",
+        "common.py": "796bce72020a4eac39ebbbf09a231046015025c47be936fa02da9c701083dff9",
+        "data.py": "1a89ea8084eaef6d9bf94548054c776ebb5c5e3c4836d9327d5cc26b3f082bf3",
+        "fixtures.py": "d967f78e87fe31e4275ca163834bc304f6314a36f4e031b0de90825f0d282f7c",
+        "gate_c.py": "811b292dd0aa5831c1b7b2ffd8ea5eeda5b1d755f10c29637cbdad779a42e6f9",
+        "guards.py": "cccdf67700e24b7e32e961d0149fef929e74d4ff92442464fe7b9f72967002f5",
+        "nested.py": "cfd5a5a9cfea0c5b3330745a3ea8e094b31a193c25c4819e37faebadbe3001d0",
+        "oracles.py": "b1f78cc531b7828d505d0ad9c7b8822c5d954170449e967ba6dad4b340698b51",
+        "run_gate0.py": "12a5f10d513983f843e95aefe13bc06f370043b4cd4ccbabe59cc736e5799e9a",
+        "stats.py": "c083ec0075eff8c8d1cf908801c60eb0ba24c6c2042bec27a512ad2db4b88d58",
+        "synthetic.py": "758eab594b22eda1deb019d2e490608bb5919cd9e91af6bb8fef68b66dfcd337",
+        "temporal.py": "84faf410d5e8c890aa29ad47c03559f305a81732dd684855602b4ffdc76d85ac",
+        "verdict.py": "bb992ee7920451656308306f77babd3f259c4bc6e3cda76c0b2132e2ee4dde13"
+      },
+      "package_aggregate_algorithm": "sha256-canonical-json-v1 over the {filename: sha256(file)} map of sorted(scripts/tera_gate0/*.py), i.e. sha256(json.dumps(map, ensure_ascii=False, sort_keys=True, separators=(',',':'), allow_nan=False).encode('utf-8'))",
+      "package_aggregate_sha256": "cb619464b0223ed551f6078d31a67a4a9f832bb42f59d540136fe8d7dd7463aa",
+      "fixture_run_id": "fix-20260807T083546Z",
+      "battery_result": {
+        "requested": 16,
+        "passed": 16,
+        "failed": 0,
+        "wall_clock_s": 965.2,
+        "log": "logging/runs/tera_gate0_fixtures_v2/run.log"
+      }
+    },
+    "review_adjudications": {
+      "verdict": "APPROVE-WITH-FIXES",
+      "date": "2026-08-07",
+      "rounds": 1,
+      "ex_ante": "all adjudications were made before any candidate metric was computed",
+      "blocking_fixes_applied": {
+        "B-1": "confirmation_protocol registered in full (scoring model, threshold source, HateClipSeg fitting procedure, weak-supervision statement)",
+        "B-2": "arm_D.pooled_inner_oof_macro_f1_definition registered; gate_b.d_score_source names the config source for inner-OOF scores",
+        "B-3": "protocol.epoch_selection_rule unified to a single rule; the false 'early stopping cannot change the selection' claim removed",
+        "B-4": "sealed_id_restriction registered with the single reader, whitelist assertions, manifest fields and fixture F15; the review's test.jsonl id-check is superseded by the strictly stronger only-authorized-ids-survive assertion, which needs zero contact with the sealed file",
+        "B-5": "gate_b.msc_subset registered with membership, rescue population, count-based FP side condition and both 0/0 conventions"
+      },
+      "factual_corrections_applied": {
+        "F-1": "wholevideo_cache_schema is nested ([ids]); read convention d['ids'][0]; split resolution updated",
+        "F-2": "whole-video num_frames marked provenance_only (no num_frames key in that cache)",
+        "F-3": "source line ranges corrected (_sample_frame_indices :135-147, _window_bounds :236-259)",
+        "F-4": "gold_spans_observed_schema records the actual field set; parse_error is not asserted"
+      },
+      "notes_applied": [
+        "N-1 frame-time convention",
+        "N-2 A0/A1 frame-budget disclosure",
+        "N-3 A3 alpha diagnostic",
+        "N-4 singleton implementation note",
+        "N-5 B4 swap bound widened to [0.40,0.60]",
+        "N-6 zero-vector union",
+        "N-7 separate temporal bootstrap index set",
+        "N-8 refit step-count limitation recorded",
+        "N-9 hash exclusion wording aligned",
+        "N-10 folded into B-3",
+        "N-11 F15 plus the B4 train/eval swap-set assertion",
+        "N-12 msc small-denominator note",
+        "N-13 stale split-file text corrected"
+      ],
+      "open_points": {
+        "OP-1": {
+          "topic": "B4 lesion semantics",
+          "status": "RATIFIED",
+          "note": "per-video Bernoulli(0.5) retained; always-swap rejected as an invertible relabelling forcing a near-certain false NO-GO-B"
+        },
+        "OP-2": {
+          "topic": "text stream in the feature family",
+          "status": "RATIFIED",
+          "note": "disclosures retained; a per-video additive constant cannot change a within-video ranking, so text cannot inflate the temporal criterion"
+        },
+        "OP-3": {
+          "topic": "Gate-A capacity asymmetry",
+          "status": "CONFIRMED as a recorded limitation",
+          "note": "criterion 5 bounds the confound; a D=A3 pass must carry the required sentence in verdict.json"
+        },
+        "OP-4": {
+          "topic": "previously-missing caches",
+          "status": "RESOLVED to pending extraction",
+          "note": "raw corpora restored 2026-08-07; HALT_MISSING_ASSET remains the rule if extraction or its assertions fail"
+        },
+        "OP-5": {
+          "topic": "raw video for Gate-C",
+          "status": "RESOLVED",
+          "note": "raw HateMM/HateClipSeg video present; remaining dependency is annotator time"
+        },
+        "OP-6": {
+          "topic": "grid width",
+          "status": "RATIFIED, recommendation accepted",
+          "note": "lr grid extended to {1e-2, 3e-3, 1e-3, 3e-4}; A-stage 1465, B-stage 990 head trainings"
+        },
+        "OP-7": {
+          "topic": "r=128, H=64, H_att=128, H3=193",
+          "status": "RATIFIED",
+          "note": "head capacities matched to 0.26%, so the 5% match is not an artefact of the shared projection"
+        }
+      }
+    },
+    "recorded_limitations": [
+      "Gate-A has no capacity control; a D = A3 pass is not capacity-controlled",
+      "A0 and A1 do not share a frame budget (8 vs 120 frames); max(A0,A1) absorbs it",
+      "the outer refit takes more gradient steps than the inner fits at the same epoch*",
+      "POOLED-INNER-OOF-MACRO-F1 is selection-optimistic; it ranks arms and is never reported as performance",
+      "the Gate-B msc label-1 subset may be small (~18 videos); the rate is reported with exact counts and a Wilson interval and must not be over-read",
+      "a negative Gate-A result falsifies only the registered granularity, representation, weak/no-span learners, data, thresholds, and the registered lr grid span"
+    ],
+    "change_log": [
+      {
+        "version": "v1-draft",
+        "date": "2026-08-07",
+        "note": "first draft; reviewed, APPROVE-WITH-FIXES"
+      },
+      {
+        "version": "v2",
+        "date": "2026-08-07",
+        "note": "post-review; B-1..B-5, F-1..F-4 and the accepted NOTEs applied; OP-6 recommendation accepted; environment updated for the restored raw corpora and the detached-run discipline; ready to freeze"
+      },
+      {
+        "version": "v3",
+        "date": "2026-08-07",
+        "note": "FROZEN. Asset audit resolved every placeholder (read-only, zero metrics, zero test contact); fixture battery fix-20260806T231531Z passed 16/16; the two pending caches were extracted; appendix sec 13 registers the implementation readings R-1..R-12; the file is renamed to tera_gate0_frozen_config.json"
+      },
+      {
+        "version": "v4",
+        "date": "2026-08-07",
+        "note": "RE-FROZEN after registered deviation D-3 (refine-logs/TERA_GATE0_DEVIATION_D3_2026-08-07.md): the msc-subset construction in run_gate0.py dropped every double-coded video whose two coders agreed (no adjudication row), contradicting the appendix sec 6.7 registered definition. Fixed by resolving each audited video adjudicated-else-first through the new gate_c.resolve_audit_rows helper. Found before any affected metric was computed; no Gate-C quantity and no verdict changes. Battery fix-20260807T083546Z re-run 16/16 PASS."
+      }
+    ],
+    "registered_implementation_readings": {
+      "registered_utc": "2026-08-07",
+      "where": "appendix sec 13 (full text, including the verbatim Chinese source list)",
+      "classification": "fixture-construction-layer readings plus one path correction and one block of pre-execution observations; NONE adds or removes an arm and NONE changes an endpoint, threshold, split, fold seed or decision rule",
+      "fixture_only_hook": "R-5's d_segment_scores_file is available ONLY under --fixture-mode; outside it the runner raises HALT_D_SCORE_OVERRIDE. Its use is recorded in metrics.json as d_score_override",
+      "items": [
+        {
+          "id": "R-1",
+          "text": "fixture script path: appendix/payload wrote scripts/analysis/tera_gate0_fixtures.py, the actual file is scripts/tera_gate0/fixtures.py -- the payload field is updated",
+          "layer": "path correction"
+        },
+        {
+          "id": "R-2",
+          "text": "the fixture spike amplitude is defined relative to the L2-normalized window vector's scale (read literally as raw N(0,1), F1 could never pass)",
+          "layer": "fixture construction"
+        },
+        {
+          "id": "R-3",
+          "text": "F1's text half is a fixed vector shared by all videos (per-video noise would drown A1's visual block)",
+          "layer": "fixture construction"
+        },
+        {
+          "id": "R-4",
+          "text": "F2 is constructed as within-video same-window signal with amp 0.35 (at the registered 0.20 with independent windows, F2's own A1 >= A0 - 0.02 is unreachable; the O1 == A1 property is unchanged)",
+          "layer": "fixture construction"
+        },
+        {
+          "id": "R-5",
+          "text": "F4's negative-class mixture (20% inverted / 80% single-pattern) was unspecified in the appendix; the D segment scores used for pair selection are injected through a fixture-only hook (d_segment_scores_file, refused outside --fixture-mode, recorded in metrics.json)",
+          "layer": "fixture construction + fixture-only hook"
+        },
+        {
+          "id": "R-6",
+          "text": "F6's empty-stratum construction: inside the fold, force Dpred = 1 for everything except the 2 designated query videos, which are forced to 0",
+          "layer": "fixture construction"
+        },
+        {
+          "id": "R-7",
+          "text": "F7 keeps the registered categories and counts but uses V = 800 so the union is 0.875% <= 1% (the original 3% contradicted F7b's >1% HALT test)",
+          "layer": "fixture construction"
+        },
+        {
+          "id": "R-8",
+          "text": "F11's (150,130,120) tercile split is unreachable under sec 11.3's quantile rule; the assertion is split into three sub-assertions",
+          "layer": "fixture construction"
+        },
+        {
+          "id": "R-9",
+          "text": "F5 needs --fixture-mode's forced_stage_b to reach NO-GO-B",
+          "layer": "fixture harness"
+        },
+        {
+          "id": "R-10",
+          "text": "O1/O2 scores are taken as sigmoid(pooled logit) so they sit on the [0,1] scale the shared threshold rule expects",
+          "layer": "scale convention"
+        },
+        {
+          "id": "R-11",
+          "text": "B5's rng5 is re-instantiated per outer fold and consumed in ascending video-id order; the Gate-B train-side pair construction uses D's outer-OOF segment scores",
+          "layer": "implementation reading of sec 6.6 / sec 6.1"
+        },
+        {
+          "id": "R-12",
+          "text": "three protocol-fragility points observed on synthetic data (A2 refit sign-inversion basin ~20%, theta* transfer collapse when the epoch loop saturates early, A1's 1/sqrt(K) norm disadvantage) -- registered as pre-execution observations only, changing no rule",
+          "layer": "observation, no rule change"
+        }
+      ]
+    },
+    "asset_audit": {
+      "performed_utc": "2026-08-07",
+      "mode": "read-only",
+      "discipline": "id lists, labels, tensor shapes and raw bytes only; NO metric of any kind was computed; the SealGuard of sec 10.4 and the sec 2.8 restricted reader were installed for the whole audit process",
+      "test_contact_count": 0,
+      "opened_test_paths": [],
+      "hatemm_test_jsonl_opened": false,
+      "dims_observed": {
+        "Dv": 1024,
+        "Dt": 768,
+        "d": 1792
+      },
+      "sealed_ids_dropped_last_recorded_phase": {
+        "note": "record_drop keys by path, so the value below is the LAST phase in which each artifact was read (confirmation).",
+        "hatemm/hate_spans.json": 232,
+        "hateclipseg/gold_segments.json": 119,
+        "hateclipseg/video_durations.jsonl": 119,
+        "hateclipseg/test_seen_subclipK30_...pt": 119,
+        "hateclipseg/test_seen_...pt": 119,
+        "consistency": "1083 - 851 (train union val) = 232 and 395 - 276 = 119, which reproduces the review's record counts without an unrestricted handle"
+      },
+      "authorized_id_hash": {
+        "development": {
+          "HateMM": "54e1e9beb97c3e76fcd5c8f664d9b948dcb368e202c6e686f346e0f8a5e1273c",
+          "HateClipSeg": "06949b8bcf6a6376009fe387d2aa79dd22bbee0541510f52938fb321c32f25fa"
+        },
+        "confirmation": {
+          "HateMM": "4a38fb4a534c512cb071de34198b42f70ed86f1f7ce2dd76cc505e2d47857c0b",
+          "HateClipSeg": "28a9b48cd0acaec28a66f7348a10ea77f4fb3eb4f667ad457c1ad4d37219a90c"
+        },
+        "note": "computed in the audit process to record the constants; the RUN builds its own Authorization from scratch and performs its own single unlock_confirmation()"
+      },
+      "documents": {
+        "prereg_sha256": "f6c1ce6c652bcedd18451d4ee3a490ca2c72c603489e89c6a161855537ed6e98",
+        "appendix_v3_sha256": "ea158b2c23bd0a9ed8cecdbaccdecd21e97621f9a88b3db8a7c2dcbba2c42ffc",
+        "review_sha256": "9147ad4c1adacf1160566f0503937d45e0f5205b43549359d3eefe68263637c5"
+      },
+      "findings": "no inconsistency; every registered assertion held; no HALT condition met"
+    }
+  },
+  "frozen_utc": "2026-08-07"
+}

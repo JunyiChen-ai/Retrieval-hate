@@ -1,0 +1,36 @@
+{
+ "rule": "max mean val frame_PR_AUC of variant `main` over the four datasets",
+ "per_preset": {
+  "A_thumos": {
+   "HateMM": 0.2931,
+   "MHC": 0.3636,
+   "MHC_zh": 0.2599,
+   "HateClipSeg": 0.5349
+  },
+  "B_thumos_rescaled": {
+   "HateMM": 0.2846,
+   "MHC": 0.3303,
+   "MHC_zh": 0.2533,
+   "HateClipSeg": 0.5332
+  },
+  "C_thumos_15steps": {
+   "HateMM": 0.2958,
+   "MHC": 0.34,
+   "MHC_zh": 0.2881,
+   "HateClipSeg": 0.5391
+  },
+  "D_anet": {
+   "HateMM": 0.3078,
+   "MHC": 0.2877,
+   "MHC_zh": 0.3779,
+   "HateClipSeg": 0.5894
+  }
+ },
+ "mean": {
+  "A_thumos": 0.36287500000000006,
+  "B_thumos_rescaled": 0.35035000000000005,
+  "C_thumos_15steps": 0.36575,
+  "D_anet": 0.39070000000000005
+ },
+ "preset": "D_anet"
+}

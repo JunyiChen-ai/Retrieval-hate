@@ -1,0 +1,19 @@
+{
+ "method": "T3AL",
+ "wave": 2,
+ "supervision": "label-free",
+ "repo": "benedettaliberatori/T3AL@dfbbbc1c",
+ "backbone": "open_clip coca_ViT-L-14 / mscoco_finetuned_laion2B-s13B-b90k",
+ "preset": "D_anet",
+ "seeds": [
+  20250819,
+  20250820,
+  20250821
+ ],
+ "feature_rate_fps": 4.0,
+ "caption_rate_fps": 1.0,
+ "git_commit": "22c84cff4cbefc72ae202673076538cae9f4adef",
+ "torch": "2.7.1+cu128",
+ "gpu": "NVIDIA GeForce RTX 5090",
+ "started": "2026-08-22T10:56:34+1200"
+}

@@ -1,4 +1,4 @@
-# AGENT.md
+<!-- # AGENT.md
 
 ## 项目
 这是一个 **hateful video detection** 研究项目:把 RGCL / RA-HMD(原本用于 hateful meme detection)适配到仇恨视频检测。
@@ -11,4 +11,4 @@
 
 ## 权责声明(最重要)
 - **主对话 = 你和我讨论、决策、汇报**,主对话本身**不执行任何杂活**。
-- **一切杂活**(写代码、数据处理、提交与监控 SLURM、调试、跑实验)**一律交给 subagent 或 dynamic workflow 去做**。开启subagent之后请等待它们的完成。
+- **一切杂活**(写代码、数据处理、提交与监控 SLURM、调试、跑实验)**一律交给 subagent 或 dynamic workflow 去做**。开启subagent之后请等待它们的完成。 -->

@@ -35,6 +35,10 @@ test,AV²A,1,label-free,sim_combined,1 fps / 0.1 fps,HateMM,idea-stage/repro_av2
 test,AV²A,1,label-free,sim_combined,1 fps / 0.1 fps,MHC-EN,idea-stage/repro_av2a/,0.531,0.3224,0.0993,True,0.2734,22337,161,1.0,0,,,
 test,AV²A,1,label-free,sim_combined,1 fps / 0.1 fps,MHC-ZH,idea-stage/repro_av2a/,0.5595,0.3206,0.0853,True,0.2648,18199,149,1.0,0,,,
 test,AV²A,1,label-free,sim_combined,1 fps / 0.1 fps,HateClipSeg,idea-stage/repro_av2a/,0.486,0.468,-0.0719,False,0.4733,113002,118,1.0,1,,,
+test,UniTime,1,aux-temporal-pretrain,window,interval,HateMM,idea-stage/repro_unitime/,0.4778,0.2345,-0.0223,True,0.2421,116975,215,1.0,0,0.1746,0.1347,0.1047
+test,UniTime,1,aux-temporal-pretrain,window,interval,MHC-EN,idea-stage/repro_unitime/,0.4952,0.2715,-0.0038,True,0.2734,22337,161,1.0,0,0.367,0.3119,0.2661
+test,UniTime,1,aux-temporal-pretrain,window,interval,MHC-ZH,idea-stage/repro_unitime/,0.4884,0.2604,-0.0068,True,0.2648,18199,149,1.0,0,0.4,0.359,0.3282
+test,UniTime,1,aux-temporal-pretrain,window,interval,HateClipSeg,idea-stage/repro_unitime/,0.4528,0.4553,-0.2779,False,0.4761,112065,117,1.0,2,0.1522,0.0719,0.0507
 test,MULDE,2,one-class,clipL336_s0,4 fps,HateMM,idea-stage/repro_mulde/,0.6002,0.309,0.1959,True,0.2422,116908,215,1.0,0,,,
 test,MULDE,2,one-class,clipL336_s0,4 fps,MHC-EN,idea-stage/repro_mulde/,0.4869,0.2585,-0.0302,True,0.2734,22336,161,1.0,0,,,
 test,MULDE,2,one-class,clipL336_s0,4 fps,MHC-ZH,idea-stage/repro_mulde/,0.5129,0.2499,-0.0228,True,0.2649,18195,149,1.0,0,,,
@@ -43,6 +47,10 @@ test,CLAP,2,unlabelled,fedavg11_s0,2 fps,HateMM,idea-stage/repro_clap/,0.5858,0.
 test,CLAP,2,unlabelled,fedavg11_s0,2 fps,MHC-EN,idea-stage/repro_clap/,0.4939,0.2787,0.0098,True,0.2738,22298,161,1.0,0,,,
 test,CLAP,2,unlabelled,fedavg11_s0,2 fps,MHC-ZH,idea-stage/repro_clap/,0.3278,0.1885,-0.1167,True,0.2648,18136,149,1.0,0,,,
 test,CLAP,2,unlabelled,fedavg11_s0,2 fps,HateClipSeg,idea-stage/repro_clap/,0.4709,0.4527,-0.2508,False,0.4709,113987,119,1.0,0,,,
+test,SeViLA Localizer,2,aux-temporal-pretrain,main,1 fps,HateMM,idea-stage/repro_sevila/,0.6271,0.3323,0.2639,True,0.2424,116841,215,1.0,0,,,
+test,SeViLA Localizer,2,aux-temporal-pretrain,main,1 fps,MHC-EN,idea-stage/repro_sevila/,0.6292,0.3296,0.1127,True,0.2739,22298,161,1.0,0,,,
+test,SeViLA Localizer,2,aux-temporal-pretrain,main,1 fps,MHC-ZH,idea-stage/repro_sevila/,0.6699,0.3862,0.1856,True,0.2648,18150,149,1.0,0,,,
+test,SeViLA Localizer,2,aux-temporal-pretrain,main,1 fps,HateClipSeg,idea-stage/repro_sevila/,0.5762,0.5613,1.1997,False,0.4731,112895,118,1.0,1,,,
 test,"LaGoVAD (bin, text-free head)",1,aux-temporal-pretrain,bin,0.5 fps,HateMM,idea-stage/repro_lagovad/,0.4989,0.2317,-0.0306,,0.2421,116975,215,1.0,0,,,
 test,"LaGoVAD (bin, text-free head)",1,aux-temporal-pretrain,bin,0.5 fps,MHC-EN,idea-stage/repro_lagovad/,0.6058,0.349,0.1534,,0.2734,22337,161,1.0,0,,,
 test,"LaGoVAD (bin, text-free head)",1,aux-temporal-pretrain,bin,0.5 fps,MHC-ZH,idea-stage/repro_lagovad/,0.5673,0.2895,0.0377,,0.2648,18199,149,1.0,0,,,
@@ -63,6 +71,10 @@ test,AV²A (sim_audio),1,label-free,sim_audio,0.1 fps,HateMM,idea-stage/repro_av
 test,AV²A (sim_audio),1,label-free,sim_audio,0.1 fps,MHC-EN,idea-stage/repro_av2a/,0.5391,0.3087,0.0716,True,0.2734,22337,161,1.0,0,,,
 test,AV²A (sim_audio),1,label-free,sim_audio,0.1 fps,MHC-ZH,idea-stage/repro_av2a/,0.5173,0.2877,0.0349,True,0.2648,18199,149,1.0,0,,,
 test,AV²A (sim_audio),1,label-free,sim_audio,0.1 fps,HateClipSeg,idea-stage/repro_av2a/,0.4815,0.4904,0.232,False,0.4733,113002,118,1.0,1,,,
+test,UniTime (mr_seg),1,aux-temporal-pretrain,seg,segment,HateMM,idea-stage/repro_unitime/,0.4633,0.23,-0.0354,True,0.2421,116975,215,1.0,0,0.1746,0.1347,0.1047
+test,UniTime (mr_seg),1,aux-temporal-pretrain,seg,segment,MHC-EN,idea-stage/repro_unitime/,0.4952,0.2715,-0.0038,True,0.2734,22337,161,1.0,0,0.367,0.3119,0.2661
+test,UniTime (mr_seg),1,aux-temporal-pretrain,seg,segment,MHC-ZH,idea-stage/repro_unitime/,0.4884,0.2604,-0.0068,True,0.2648,18199,149,1.0,0,0.4,0.359,0.3282
+test,UniTime (mr_seg),1,aux-temporal-pretrain,seg,segment,HateClipSeg,idea-stage/repro_unitime/,0.457,0.4569,-0.2577,False,0.4761,112065,117,1.0,2,0.1522,0.0719,0.0507
 test,"CLAP (centralized, 1 client)",2,unlabelled,central_s0,2 fps,HateMM,idea-stage/repro_clap/,0.5974,0.3316,0.2617,True,0.2424,116832,215,1.0,0,,,
 test,"CLAP (centralized, 1 client)",2,unlabelled,central_s0,2 fps,MHC-EN,idea-stage/repro_clap/,0.5767,0.3202,0.0938,True,0.2738,22298,161,1.0,0,,,
 test,"CLAP (centralized, 1 client)",2,unlabelled,central_s0,2 fps,MHC-ZH,idea-stage/repro_clap/,0.4521,0.2335,-0.0479,True,0.2648,18136,149,1.0,0,,,
