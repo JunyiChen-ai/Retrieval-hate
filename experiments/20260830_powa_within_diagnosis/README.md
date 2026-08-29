@@ -29,6 +29,21 @@ within-video localization. Where and why does it fail?
    within-video discriminative signal there. On the other three corpora the
    ceiling is ~.66-.68, leaving a real objective gap over the weak methods.
 
+5. **True supervised ceiling (train-span-trained, test-evaluated,
+   skyline_train.md):** HateMM .7495, MHC-EN .7692, MHC-ZH .6217 (n=8),
+   HCS .5989 (all 3-modal temporal conv). Compared to the best weak within-ROC
+   (.6315/.6004/.5482/.5619) the objective gap on HateMM/MHC-EN is .12-.17 —
+   the frozen features carry far more ordering signal than any weak objective
+   extracts. On HCS the ceiling itself stays ~.60: feature deficit confirmed.
+   Temporal context (tconv vs linear) and the audio+text modalities are both
+   load-bearing for within-video ordering.
+
+6. **Matched weak-MIL control (same TemporalConv + 3-modal features, top-k MIL,
+   3 seeds, weak_control.md):** within-ROC HateMM .5777±.004, MHC-EN .4592±.014,
+   MHC-ZH .4126±.024, HCS .5234±.006. With architecture and features held fixed,
+   the supervision signal alone accounts for gaps of .17/.31/.21/.08 to the
+   supervised ceiling — the MIL objective is the dominant deficit outside HCS.
+
 ## Conclusions for the next iteration
 
 - Two orthogonal deficits: (a) an objective deficit on HateMM/EN/ZH

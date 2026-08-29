@@ -17,7 +17,12 @@
    **结论:瓶颈不是 video 判别,是弱标签下时序定位的可识别性;下一轮必须以 within-video AP/ROC + shuffle 对照为首要判据。**
    归档:`docs/V20_V26_FINAL_ITERATION_ARCHIVE.md`;教训已写入 `RESEARCH_ITERATION_RULES.md`。
 
-**当前待办:没有进行中的迭代。** 下一轮从"强 video 骨干 + 真正时序性的学习信号"开始,按 `RESEARCH_ITERATION_RULES.md` 流程走。
+**进行中的迭代(2026-08-30 起,目标 = within-video 定位 SOTA + novel):**
+
+- 协议裁定(用户 2026-08-30):test 任何阶段可用于评估,汇报 performance 一律 = test 结果。
+- 第 4 步诊断完成(`experiments/20260830_powa_within_diagnosis/`):POWA within-video 不领先;失败集中在高正例占比视频(MHC-ZH 片头片尾被排最高,反转);监督上限(train 帧标签训练,test 评)HateMM .7495 / MHC-EN .7692 / ZH .6217 / HCS .5989,同架构弱 MIL 对照只有 .578/.459/.413/.523 ⇒ HateMM/EN/ZH 主要矛盾是目标函数,HCS 是特征。
+- 第 5–7 步完成(`NOVELTY_SCOUT.md`):选定候选 C1 = 稠密 VLM 窗口打分 + 视频内排序蒸馏(open-with-differentiation);必须新增 baseline:LELA(2602.09637)、TANDEM(2601.11178)。
+- 第 9 步 pilot 进行中(`experiments/20260830_vlm_order_pilot/`,预案+kill 门已冻结,独立评审 PASS):Stage T = Qwen2.5-VL-7B 给 test hate 视频每 16s 窗口打分,teacher 自身 within-ROC 在 HateMM 和 MHC-EN 双双 < .60 则杀;过门进 Stage D 蒸馏。
 
 ## 最新代码在哪
 
