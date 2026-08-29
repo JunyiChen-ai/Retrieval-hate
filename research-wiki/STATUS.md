@@ -22,7 +22,9 @@
 - 协议裁定(用户 2026-08-30):test 任何阶段可用于评估,汇报 performance 一律 = test 结果。
 - 第 4 步诊断完成(`experiments/20260830_powa_within_diagnosis/`):POWA within-video 不领先;失败集中在高正例占比视频(MHC-ZH 片头片尾被排最高,反转);监督上限(train 帧标签训练,test 评)HateMM .7495 / MHC-EN .7692 / ZH .6217 / HCS .5989,同架构弱 MIL 对照只有 .578/.459/.413/.523 ⇒ HateMM/EN/ZH 主要矛盾是目标函数,HCS 是特征。
 - 第 5–7 步完成(`NOVELTY_SCOUT.md`):选定候选 C1 = 稠密 VLM 窗口打分 + 视频内排序蒸馏(open-with-differentiation);必须新增 baseline:LELA(2602.09637)、TANDEM(2601.11178)。
-- 第 9 步 pilot 进行中(`experiments/20260830_vlm_order_pilot/`,预案+kill 门已冻结,独立评审 PASS):Stage T = Qwen2.5-VL-7B 给 test hate 视频每 16s 窗口打分,teacher 自身 within-ROC 在 HateMM 和 MHC-EN 双双 < .60 则杀;过门进 Stage D 蒸馏。
+- 候选淘汰记录:C1 VLM 排序蒸馏(teacher within .578/.514 < .60,杀,`20260830_vlm_order_pilot/`,其 teacher 行留作 LELA-style 基线);C3 跨视频伪负例(选择精度 ≤ 基率,前提证伪,`20260830_xneg_mil_pilot/KILL_RECORD.md`);外部文本分类器探针(< chance)。
+- **当前晋级候选:C5 跨语料 span 迁移**(`experiments/20260830_spantransfer_pilot/`,pilot 双门 PASS,2026-08-30):LOO 辅助语料 span 预训练 + 目标语料保序弱适配(排序蒸馏 + val 选适配深度)。test within-ROC:HateMM .6801(基线 .6315)、EN .7326(.6004)、ZH .6420(.5482)、HCS .5431(未超 VERA .5619,特征缺口语料)。归因对照全过(naive 毁排序、shuf_span 塌)。查新 open-with-differentiation(最近 AherNet ECCV'20,hate 域无占位;`NOVELTY_C5.md`)。
+- 下一步 = 迭代规则第 12–15 步:深度查新 → 精炼 → 扩大验证(显著性、OSAD/CDL 式对照、源消融)→ 完整性审计。
 
 ## 最新代码在哪
 
