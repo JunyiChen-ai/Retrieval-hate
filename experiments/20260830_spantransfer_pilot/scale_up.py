@@ -222,6 +222,25 @@ def main():
                 res[key] = agg(per_seed)
                 save()
                 print(key, json.dumps(res[key]), flush=True)
+    if "headline" in phases:
+        # loo_naive dense scores (3 seeds) for the promised bootstrap comparison
+        for target in ST.CORPORA:
+            key = "%s/loo_naive/3seed" % target
+            if key in res:
+                continue
+            per_seed = []
+            for s in SEEDS3:
+                rng = np.random.default_rng(s)
+                aux = []
+                for c in ST.CORPORA:
+                    if c != target:
+                        aux += ST.pack_spans(c, rng=rng, shuffle=False)
+                model = ST.pretrain(aux, s)
+                model = ST.adapt(model, ST.pack_weak(target), s, rank_term=False)
+                per_seed.append(score_test(model, target, "loo_naive", s))
+            res[key] = agg(per_seed)
+            save()
+            print(key, json.dumps(res[key]), flush=True)
     if "joint" in phases:
         for target in ST.CORPORA:
             key = "%s/joint/3seed" % target
