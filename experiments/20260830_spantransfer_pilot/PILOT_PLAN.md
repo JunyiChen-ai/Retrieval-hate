@@ -55,6 +55,26 @@ reported row states it.
 - Secondary reporting (no gate): pooled frame AP/ROC, video ROC, hi-pos
   stratum, within-AP macro.
 
+## Amendment A1 (2026-08-30, after first run; frozen before A1's run)
+
+First run outcome vs the frozen gates: success clause PASSED (adapt beats the
+best baseline on HateMM .6659 / EN .6610 / ZH .6263 vs .6315/.6004/.5482; HCS
+fails as anticipated); no-destruction clause FAILED (EN .6610 vs zero-shot
+.7289 = -.068; ZH -.011). Attribution controls all clean (naive < adapt
+everywhere; shuf_span far below zero-shot everywhere). Per iteration rule 11
+branch 3 (mechanism holds, implementation hurts strong-transfer corpora), one
+implementation adjustment, no new mechanism:
+
+- `loo_adapt_valsel`: identical training to loo_adapt, but the adaptation
+  DEPTH is selected per corpus on the validation split's within-ROC macro
+  (frame-labelled val is already sanctioned for checkpoint selection):
+  checkpoints at epochs {0, 1, 2, 4, 8, 15}, pick the epoch with best val
+  within-ROC (epoch 0 = pure zero-shot transfer is in the candidate set).
+- Gate for A1 (frozen): loo_adapt_valsel beats the best reproduced baseline on
+  >=3 of 4 corpora AND >= loo_zero - 0.01 on every corpus (the val selection
+  makes this achievable by construction up to val-test noise; failing it means
+  val does not track test ordering and the candidate dies).
+
 ## Known risks (stated pre-run)
 
 - HateMM-as-target is the weak cell (aux sources EN/ZH/HCS individually
