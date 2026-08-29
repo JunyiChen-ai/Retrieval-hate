@@ -61,8 +61,10 @@ def main():
                 y = np.asarray(gt[v]).astype(int)
                 if v in hate_ids and 0 < y.sum() < len(y):
                     aps.append(average_precision_score(y, sc[v]))
-            lines.append("| %s | %s | %d | %.4f (%d) | %.4f |" % (
-                corpus, how, len(sc), m["per_video"]["macro_auc"],
+            macro = m["per_video"]["macro_auc"]
+            lines.append("| %s | %s | %d | %s (%d) | %.4f |" % (
+                corpus, how, len(sc),
+                ("%.4f" % macro) if macro is not None else "n/a",
                 m["per_video"]["n_videos_both_classes"],
                 float(np.mean(aps)) if aps else float("nan")))
             summary.setdefault(corpus, {})[how] = {
