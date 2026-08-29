@@ -1,3 +1,5 @@
+> **本仓库现为弱监督 hateful video localization 研究仓库(2026-08-30 起)。当前状态入口:`research-wiki/STATUS.md`;目录规范:`CLAUDE.md`。以下为上游 RGCL/RA-HMD 原始 README,仅作参考。**
+
 # RGCL: Improving Hateful Meme Detection through Retrieval-Guided Contrastive Learning
 
 This is the official repository for two research papers:

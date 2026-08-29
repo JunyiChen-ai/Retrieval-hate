@@ -69,3 +69,11 @@ third_party/*
 # single-video smoke tests. Regenerable; the results are recorded in
 # idea-stage/repro_campaign/MODEL_ASSETS_STATUS.md.
 idea-stage/repro_campaign/smoke/lavad_ds/
+
+# experiment outputs (checkpoints, scores, logs, metrics) — never tracked
+runs/
+
+# archived old-era files that were never tracked stay untracked
+archive/idea-stage/
+archive/refine-logs/
+archive/root-2026-08/sout2.txt
