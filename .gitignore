@@ -77,3 +77,6 @@ runs/
 archive/idea-stage/
 archive/refine-logs/
 archive/root-2026-08/sout2.txt
+
+# legacy artifact tree lives in Hate-follow-up; symlinked, never tracked
+results
