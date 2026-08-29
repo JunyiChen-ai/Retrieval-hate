@@ -1,0 +1,2168 @@
+{
+  "classification_rule": "weak: video-label/MIL POWA and Relation development; label-free VERA/audit utilities retained; shared tracked pilot patch copied then source restored",
+  "counts": {
+    "LABEL_FREE_KEEP": 7,
+    "SHARED_PATCH_COPY_RESTORE": 1,
+    "WEAK_MOVE": 271
+  },
+  "entries": [
+    {
+      "action": "patch_copied",
+      "category": "SHARED_PATCH_COPY_RESTORE",
+      "path": "scripts/duplex/masked_parallel_isolation_pilot.py",
+      "sha256": "2a284e8ff5a90410c353a0a5debef1ee18a0631e7effe443c1ded40a65d753e6"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/RELATION_V20_V21_DELIVERY_DRAFT.md",
+      "sha256": "45bffc11e88f9ba42cd42fe51bbd3f14026e361b3279e60c55971f312cf69cdf"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/RELATION_V24_TRAIN_WEAK_FUSION_PROTOCOL.md",
+      "sha256": "65edbde6fe29da5c4b7c65dfc02a7af3335e5ae8a124181609caf3b93aa91e5b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/THVL_EXTERNAL_CONFIRMATION_FROZEN_PROTOCOL.md",
+      "sha256": "aebe93bb758d9fabd0a5f80da2fc46c1ce031164d24ba12378bfa5c74876c272"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/V20_V26_FINAL_ITERATION_ARCHIVE.md",
+      "sha256": "0c7d08f2eca75eff20d861c1933c9741b0796a449dec2ab62dcdee56594ebe6c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/V26_MECHANISM_TRIAGE.md",
+      "sha256": "203960db2e45cd9f4e25eb61f9864ca6ba204fd184ffed1fd415b94cacccc859"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/V26_PRETRAIN_FUNDAMENTAL_AUDIT.md",
+      "sha256": "3661f2ad6389bf0a0c4d727a288205061c2ba5aeaa2c1a7bf1f298d080fc7498"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/V26_PRE_TRAIN_COMPUTE_MIGRATION.md",
+      "sha256": "044358e1cf09c4a7d086eee4bbbe5bbb483c4f77a5f538b6d3717bd09f39b0f8"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/AMENDMENT_V22_THVL_VAL_INFORMED.md",
+      "sha256": "a5a57fafda1e8fe4fbab0f6e8fb26e0e0220efaf7c056b934cd2fdb043111c31"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/DRAFT_DEHATE_APPLICATION_PURPOSE.md",
+      "sha256": "4d788c0a9a7101fe303f47b86b4931dd7d1585396e60bb4b1f48d8c30dc3b7e7"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/FINAL_POWA_NOVELTY_REVIEW.md",
+      "sha256": "dd26a731c255f3df91799dd7b63100a22077c1a687edb9f26aa7315fb51428af"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/FINAL_POWA_REPORT.md",
+      "sha256": "35a93d005572a5ca56ed34f3836476d5bcad3fac4aae375d1b17c5d1c5700538"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/POWA_MACIL_DEVELOPMENT_LOG.md",
+      "sha256": "52c5fe8098f8f42416383d3f3f5240e96d2523c27ba977ea2e142133ca850da8"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/POWA_TEACHER_PROVENANCE.json",
+      "sha256": "30d85772fbb687f0b44de73677af535fb6609a73d137772195c2a8db74c71778"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/PREREG_DEHATE_SELF_SEALED_ACQUISITION.md",
+      "sha256": "dd0879ef67c4153bc3c7df92e95c5ca56f5a9d14e3c2fa7a8ac7de7e313fc9d2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/PREREG_POWA_MACIL.md",
+      "sha256": "4939b85ed258994e0760d8fbc040ee23b263fd0f9349dab4953c7d7c1139ea1a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/PREREG_RELATION_V2_PERFORMANCE.md",
+      "sha256": "875fc0139f93af68afb98b155d52d25b4cdf0a373bf420e8f5f3a8c74f9563f4"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/PREREG_RIFT_MACIL.md",
+      "sha256": "ea4554a88f46c6e811c2938acb8a0caac2b3c47485f73655b10abf6eb87fcc3e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/PREREG_THVL_SELF_SEALED_ACQUISITION.md",
+      "sha256": "01c203506e5c8b005c6d56543d50d29183757a40c48c6c07c52b7a1d0765b801"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/PREREG_V23_THVL_MULTIMODAL_WINDOWS.md",
+      "sha256": "cb7a23299b5592adcca73bf2ab867cfb27089409cade887c03cfd1654b2a945b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/RELATION_V4_DEVELOPMENT.md",
+      "sha256": "69c0289e2d6fc5583e3c5c5af44ea5a8a643baa36a90c1a402278190cc151fe5"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/RELATION_V5_DEVELOPMENT.md",
+      "sha256": "78fea5ce48c46cdda669f6109def306c1fdd94283802053d365628ad8318d210"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "docs/duplex/RELATION_V8_HATEMM_CENTERED_AUDIT.md",
+      "sha256": "c383cd7ca5babfd6f86be6a286ffb9a74e73a0941abbef9d59ec84e7168db740"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/dehate_sealed/README.md",
+      "sha256": "b5f45489fbcf870d71d6b849c320874ec2585aecf54ee07b18f81111a551f93c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/dehate_sealed/__init__.py",
+      "sha256": "366211c07f03ad026d15f812312100577d9e1b8cc9cc0310a6d53145cb6829d5"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/dehate_sealed/core.py",
+      "sha256": "c20d1c62f7869fed488e42425aa9aac96e840466f4161a5282a26afa4bbd721c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/dehate_sealed/test_synthetic.py",
+      "sha256": "dba49cddc913ca40f893f2f37369fc8b5be7db4e191aa6b89238152f6fa3a877"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/duplex/build_val_gt_arrays.py",
+      "sha256": "3bdfbd76f842a26f09a4ff7ad06088409d91e932a9679d31ddd65f75633653ee"
+    },
+    {
+      "action": "kept_in_Hate-follow-up",
+      "category": "LABEL_FREE_KEEP",
+      "path": "scripts/reproduction_baselines/audit_hcs_visual_media.py",
+      "sha256": "e836a5e22e96f7b9a7cd04a911bcb0f2a8d5a70f0828c519263d928b0e60d22d"
+    },
+    {
+      "action": "kept_in_Hate-follow-up",
+      "category": "LABEL_FREE_KEEP",
+      "path": "scripts/reproduction_baselines/compare_vera_raw_exact.py",
+      "sha256": "94dcd3f9686a1405050be0eb7c36dd8876885763c384923383fd8a7a99bcc454"
+    },
+    {
+      "action": "kept_in_Hate-follow-up",
+      "category": "LABEL_FREE_KEEP",
+      "path": "scripts/reproduction_baselines/macilsd/infer_train_label_free.py",
+      "sha256": "f4e25917608b0538c680a532f4edb3fae488d0f55267fc74ef43b738a893902c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/__init__.py",
+      "sha256": "6be6ab9d25958e8e0e3502721fb1326c8e71a0d5a0bc75023931a43b3e265af2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/audit_async_subset.py",
+      "sha256": "b2322bea1dc1cca1cd3cd0269f1270d1fd5945449b2e48e8cb062a3824876dd2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/audit_semantic_grounding.py",
+      "sha256": "21655d011474989699c10a56078c09f6e03770b84d446e672ae0530f92fc9c23"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/audit_teacher_alignment.py",
+      "sha256": "d8a8d6467aaf9674db6198fa7bd3b917468d19dc0f0e31209b74b8dcf67ea3c4"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/build_semantic_prototypes.py",
+      "sha256": "7e1f7bd240e11972549b1167ace892d4cc32a11f366bf247c3694d5ba1a68bb5"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/dataset.py",
+      "sha256": "4c3ade9c60c6e00cb8c4bd8b57d4bc03b9a9a5a1b2f4f0db7904227303ed2734"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/extract_local_teacher.py",
+      "sha256": "ff3194477543ea163974a1ac8b492bc54bbc13ff0aa718c429c0681319f4767d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/infer.py",
+      "sha256": "c8dafd3769bbea5259e86754676140ff90159dce6ce55bb723a3b784cba69618"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/model.py",
+      "sha256": "66ba25f2df54f2da9ce3945cfa6985ba609f2cd2cac4e79d82ae0354dbb0ebc4"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/summarize_final.py",
+      "sha256": "c93c3799194e6373561a84db14de2f64ea01289e68bd266a00716ee062c9d7bc"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/train.py",
+      "sha256": "b3d69b59e98354a953d8dec4eb49b7f86589bb56e6f8889532f28a32bd6e2ed1"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/powa_macil/verify_teacher.py",
+      "sha256": "13fb97893a5a49209e93a8ec5e00613e94cd443622e03b07a163b100b2b81d49"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v10/__init__.py",
+      "sha256": "d44dc238b09ed7200e07d6481d834ee73d6a80b2694d763d3c07cee8101cc0d8"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v10/copula.py",
+      "sha256": "462c691b0e18812113667b30aa04a10f0f5859b335e783143f0aeccda0cbb330"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v10/diagnostic.py",
+      "sha256": "18ae90ec6ee32918649904972dfe5302968f3f5882cb1926064f9aa6a07960d9"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v10/locator_audit.py",
+      "sha256": "6a26b443326f77397aabb6aa0135c4a2e5deb35a2269f97481a86a6c6545f6d4"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v10/run_diagnostics.sh",
+      "sha256": "ad597ce9da7759f95f47f425232b5a72ad135efb44b7004dff2d4b982147e697",
+      "pre_rebase_sha256": "00010970c92594f9b6c3138f62120f57e0a6f9e4efcbee5c8d45aba01dd31e46",
+      "rebased_for_repository_root": true
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v10/run_locator_audit.sh",
+      "sha256": "0e9e71580233024d7d713ac0dbdbf4b4833894bee2e648f249b18fd84351e765",
+      "pre_rebase_sha256": "e331f53259d6f31d3d9d0e63405b97e8e4e025b6f9fbaff5322ba5444ea69c9c",
+      "rebased_for_repository_root": true
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v10/synthetic_tests.py",
+      "sha256": "1e478bdcc16ad742dc6cbe3566ef860e95c799a8ed72b6dbb7ee6454db6b2d15"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v11/__init__.py",
+      "sha256": "b40464d7ffe420bdfcd23166adc414a84d012e69a55d097d62a4425cdc97182a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v11/diagnostic.py",
+      "sha256": "c5dab6a65069d0403a90a0b9a5a761b08849b4e8a70aa81011a56744d7430dd7"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v11/robust.py",
+      "sha256": "f401c335140dc6c2cfc0abdcc61ee8053c1260c4915ebe02d561c3aba487f2c6"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v11/run_all.sh",
+      "sha256": "437c153728060039082b55020e286b1b21c9141de72ae1177c0a9fdc693fa43d",
+      "pre_rebase_sha256": "4fd98308ab4f03c1598b52eb35ff43979606fdca3f4a4c85e3cfd83a4bce892b",
+      "rebased_for_repository_root": true
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v11/score_stream_benchmark.py",
+      "sha256": "8846eed9aeb0273a80daf80ced153141d3173124630707fa9799c75e810e3e14"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v11/synthetic_tests.py",
+      "sha256": "2873120225005801997812330bbc98dc8651edc7b36e291248f4103b9425b351"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v12/__init__.py",
+      "sha256": "ab159fe4b32d6ccfc85f9581e67cf193dadbae71f2433d8abda178a6812391ad"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v12/diagnostic.py",
+      "sha256": "0b0c22aa622bbaf07eab84ffb4e1c9ce61bd408c2be700cd6d4bff6f36c27236"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v13/__init__.py",
+      "sha256": "a80d46a948f0b494b69c01f0055f6ebee0ac0c43fb5f729ac874776df8850f75"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v13/diagnostic.py",
+      "sha256": "185bf1f7ac74ee29d55964e3930db4b95bf96140f4ed68f44a2d38878eb9e652"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v13/synthetic_tests.py",
+      "sha256": "04717a63bac547d56b5067453d426aeffda10f31dde817057cd2cf926fe0187e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v14/__init__.py",
+      "sha256": "cc242ec31b44cdf7d8e0d092114da86a887827b06118f9ca0c102a5c0111fc7b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v14/run.py",
+      "sha256": "7cae41d2516c5c199d8506948cdfa4f37cc3b4a43299caa2402d77cc546fbd1d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v14/synthetic_tests.py",
+      "sha256": "1a5a82226e1584302c0e44f040100b7b59a74848281d937c13adb728bf62d2c7"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v15/__init__.py",
+      "sha256": "9a468bd19a2e4c21412ce1227e4416d0760eaf4e45700f65278773f64999e576"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v15/data.py",
+      "sha256": "227520ed584bd6532870a1d8c6e99c32638a0d23f5e68e70efff5a3bd2f78847"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v15/model.py",
+      "sha256": "840688e58d6f4974d3c749bd160c1175bcd5f863b470f95b3e64e609881e403e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v15/run.py",
+      "sha256": "9b395ecc5b6819047064fa12507cc5d51dc7ba35cb2cbc4cad12b3455160944f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v15/synthetic_tests.py",
+      "sha256": "365e6f16fac284b12ff3c7b4a0958d13ed3da2c791503f592012a8854e73b406"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v16/__init__.py",
+      "sha256": "834241e781c7f54af75732bcb9d32f50ba0835e0ca89860ff1fe6ab4f51aeab7"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v16/analyze.py",
+      "sha256": "736694f04d0171f2e7e8f70cb10d666c1233c4b22137c19be2b35d7973495e48"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v16/forward.py",
+      "sha256": "a027479fb23ec513e329f3d3604430f9279041b7fae5ce6a94c9d95fa395c816"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v16/preregister.py",
+      "sha256": "9687e05513659e5a0361a7fd6a42b7a27b527c9724f425a45b8974bbceb7230b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v17/__init__.py",
+      "sha256": "9a745219b217110c3e8383d335d6dd1c450284c09c521a80d222ec60aa9396ad"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v17/preregister.py",
+      "sha256": "c54a76d2681042d4b81f1934d1b48f0302da7e00d7b5809bd2259202ba1ba23b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v17/select_eval.py",
+      "sha256": "0f2e72a4b97dd1a1511c7fa28aaeda9231c1bde6c6edaed6e52ae34b9ec2da7f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v18/__init__.py",
+      "sha256": "d01820c771b972f3e22dea456c2ad0176370add914c18728f0cb5f29d23bc53f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v18/mhc_eval.py",
+      "sha256": "5b94f6bed68841bb42dd2e7123ca90cb9673c57bdbb86714e69d944ea0ee40ee"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v18/mhc_preregister.py",
+      "sha256": "ebb47a87e83ca26d280ce0c5398b6b3d21d9e9ec425a6d2bae550ae0377054b3"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v18/mhc_select.py",
+      "sha256": "a698971a6ff61280015feb541c6326928060ec29f0aefbdc694cc73e63aa4c00"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v18/run.py",
+      "sha256": "f98bac8c2af52e85242f62554da7c93bc55ca7b1b62f4e695404b0328de8a564"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v19/__init__.py",
+      "sha256": "eb114d1dfa41573db12b0b80de4592d8bc654cc2765eb651d99df9c13791f2f2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v19/eval_frozen.py",
+      "sha256": "f416eee65c5e8634c9331670a6545155ead822f59de79dd03374cda18121d56f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v19/run.py",
+      "sha256": "49e502692752c995584e319bedf742ac74268be11d5e4036d06bbfe38f349fdb"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v2/__init__.py",
+      "sha256": "e94c64a369e17ea043c4228d2e6930298ad1fd36d093e75cd640782622b2d306"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v2/build_scoped_labels.py",
+      "sha256": "37b1a8600f4725e8c1cd9135e36905c8866b2096aabe955e7750b307884c8105"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v2/infer.py",
+      "sha256": "681eb9d0782aab7bfba4db5fc1a625f7dcf1bd91291896c48228881758701041"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v2/model.py",
+      "sha256": "5ab3c5fffd3c4be2d2eab99ab847b89003ea1cbef51b2aba3640287583a71b5a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v2/protocol.py",
+      "sha256": "2a9876bb2ab7bbbbc84dde8e6ce14cee790878587cd46444c06916416bd7ec39"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v2/smoke.py",
+      "sha256": "4249999a82e090cdcf241e19bdbbcab54fa6f096a8550f2498273d263122e671"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v2/test_protocol.py",
+      "sha256": "ff0b16a73309296fb64aa28260fed1e449be8ce724b6c28d3378f405452c2a04"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v2/train.py",
+      "sha256": "5d5b79035a0c955c5718a8b33bb7619b7f1b2275f4247674c54044626496617c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v20/__init__.py",
+      "sha256": "ebb553d5e657004f7a49d691cdb680b402c34d60135b17089b439aff3047937b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v20/audit_eval.py",
+      "sha256": "051158fc9a266ba2ee9d478a1cd1e50ccfa41b5e1d1a16e7c2b492b72a4a6409"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v20/finalize_chain.py",
+      "sha256": "69d60c1cef5eeb2124cf8ea32ac0353cd019aa43cdd94a0b0f2d04c39caabdd6"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v20/migrate_provenance.py",
+      "sha256": "abbb0f70aec3f81f9a35edcd4668b3e8b3c3d41be73460fa5389781f5410f964"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v20/sequential_fidelity.py",
+      "sha256": "0e76e3a85c9de43e525d631a6eaacd529d40247fa268a3134b8447a4a0ecab92"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v21/analyze.py",
+      "sha256": "04ef59dac1a72479a5b1355bc29d6c8883ab62a6f51e79f4f1a00a44dadd6570"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v21/forward_sequential.py",
+      "sha256": "e913407b8e1afd97486216c1b099895810a3f95ab55dafc9a74ec90acd9c22a9"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v21/protocol.py",
+      "sha256": "83ecb9017f98bdf34a03c6c80d969a06f86a95d52d7c3ad34a1f03bde24e9e97"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v21/run_val.sbatch",
+      "sha256": "ed2ef19c1abdb57346b8a47809275a070fdfcb30ae0ccc27f62a6a66d0245da9"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v21/test_properties.py",
+      "sha256": "40cd2f3285ea4acf2177ae6af765ff29eb07782e576a53c17a7237767930ebd2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v23/__init__.py",
+      "sha256": "27f98f7097d4e3f96749251c1e742d263b53ab0ea06d639bf1e47f70247e31d7"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v23/forward.py",
+      "sha256": "ced5b614d645ac1aeaa59925062abbfb0f2a6b8f0343a4ff3a3e52d0ad690d30"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v23/preregister.py",
+      "sha256": "7182f16348cc24884e933d8eda0a1049cd92a996f55f6482033145303fd24cbb"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v23/test_properties.py",
+      "sha256": "2a2abceb632b76e3784010d63171dc00b9056d95f1e66829bf0140d6ab8c8b18"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/__init__.py",
+      "sha256": "ee77ca2ab268f1125acbc59f1cd28d31b3b06259b2876ed87627742dd8b00b1d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/decoder_fallback_audit.py",
+      "sha256": "c6710d50fb6aba236da63249debcd1695a35867d905d52757f014fe148286279"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/docs/V24_FAILURE_ANALYSIS_AND_V25.md",
+      "sha256": "d9fcdb8ca444f849f65827ec950ccf328c3219db36e685b0f7a25d69d592d7d6"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/docs/V24_VAL_JOIN_MIGRATION_REPORT.md",
+      "sha256": "26a8a7d0c74273fca8a08453cb2785794ebcd21334b2a5f34e10dfa926ef6e58"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/evaluate.py",
+      "sha256": "d9124562deabaf212b171e2eefe184a5f34d0377c890a79f54ca7dd060e163dd"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/evidence_producer.py",
+      "sha256": "6290c3d8c6f7faf1b12e01c21778f6c1e2fc3b4412b1e28e29034c075c5365bd"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/finalize.py",
+      "sha256": "5945104c21ec11f79362f18618833530a6b8f4c9589374c48d191f0d76d7907e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/infer.py",
+      "sha256": "0db506a2cf03b829cc62e71888facc9cf816b7bbb4619acec99bcf089bdae82c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/model.py",
+      "sha256": "7d22da52f2cd85c1a1c31d50f7398daa6e58b0844203bca43eae4bfd168ed31b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/protocol_migration.py",
+      "sha256": "a946bc57bdab13c15b94a11f521a4f23b9fa5f0458bade6e2a82897d1468bf0e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/selector.py",
+      "sha256": "216a1715ecac606bb494fdcf52f1a490bbae75e4bd557830c64e58232bf59b74"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/steward_join.py",
+      "sha256": "d96b1a5f1306e1a5f48596e22e2ba6c31a91d33dd81f6b68e55dcc7053c57c62"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/steward_val_join.py",
+      "sha256": "31b56b4fa5e9066215255cedf3e1411e65755d2e44a4e2c61ae76ca3367c6311"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/test_evidence_synthetic.py",
+      "sha256": "00fd014fc3a6e664e41b0613e9923fbc42f1552e38e3f59ba0b572db8d646854"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/test_join_v2_synthetic.py",
+      "sha256": "795fd99ee61a6496c0f5fd55a52a9080c23abe36cab1906bb11d63fff24123f5"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/test_pipeline_synthetic.py",
+      "sha256": "d6e247250c6181ca9be6cd5afd37282f8f6399542c415d292c7fdc90dd23ed1f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/test_synthetic.py",
+      "sha256": "c1a4750626f63f65a3cdba3395c417689df64e8d2f757ea51984babfa13abd4b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v24/train.py",
+      "sha256": "4a116255b8ebf84cc7e1e6aae949fca1bbfd1964139eca4a86100d3b9676bfa1"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/FINAL_PROTOCOL_DECLARATION.json",
+      "sha256": "e21608dce4ab6cbc890fa0670bfd5ab2c4e04cda1a2d9dbb2a75445f6f06e318"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/PERMUTATION_MIGRATION.json",
+      "sha256": "cd174a7452758ce56dbe0a2dd0ec21b611b6940d91343833be2f653e27ace747"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/POST_ACCESS_PROVENANCE_CORRECTION.json",
+      "sha256": "90e1bce94f56a9c958ccc4a75a28ca4c7376d61888047fff00a06e5b10f6193c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/POST_ACCESS_PROVENANCE_CORRECTION_V2.json",
+      "sha256": "ca332cfcf78107ef03fe48003e2362a6c3120093dad1e6d18c8f02321af52204"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/POST_TRAINING_PRE_TEMPORAL_MIGRATION.json",
+      "sha256": "518c83c2aa393c010127c7fdf763e1547d9811de2657ac50f08d6ac4969a61c8"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/PRE_TEMPORAL_EVAL_ADDENDUM.json",
+      "sha256": "9f71355569dc2a9f31d7de3668888cb897381bf6608068e3816545904d853dc8"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/README.md",
+      "sha256": "7f71350f80cdabd895447145fbae1b07139c2da4dc894fd4e0227dcd5bd9bcca"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/core.py",
+      "sha256": "75b504ff2d7acdd95178de3cb0a93544e99cf48718b5d40315b0d714dc5e88b5"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/inference.py",
+      "sha256": "5a20ca6dd4c088de38896010ab1f4dea926de0bf36d60e614bad1df983b012fc"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/post_access_correction.py",
+      "sha256": "28ea4cd2f98c981d72fa386f6b7163b4ca19981374088fff5190e3ea6a13ec60"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/post_training_migration.py",
+      "sha256": "d20730e05fbba6d17e17b02669388f7f27693b4cde0b184584ef8152ee27082c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/reference_builder.py",
+      "sha256": "5e76ea24482b648bb9b01221fa175a0350f4fb86e153834e1fd83773193931cd"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/repair_temporal_report_provenance.py",
+      "sha256": "8d45709d26dde4600dd98776bdb2ec75996e6aead335fab571884f7f6b6ace8f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/seal.py",
+      "sha256": "15e0b65fb575a64a8b982a00e959499b412f0b53f55f3f3b00ba111a000ed5ef"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/selector.py",
+      "sha256": "c78f516ceb38f0c79d70a05507801db2353d7df79e71065935b67138ab3e5b0e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/steward_val_artifact.py",
+      "sha256": "a6cc529c59235210344e9894204ebcaa6af19e760034d18362aecfca9d687081"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/temporal_eval_rule.py",
+      "sha256": "d17378e77900a865711367042f0059819a9671c3f4e262cd29960f8dd8417e35"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/test_post_access_correction.py",
+      "sha256": "72e27f2871a1c723fc25e1d2bc3fe9cb3e9e1077dabad28f85e4e6342ba6ec46"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/test_post_training_migration.py",
+      "sha256": "f91ea26e2af7e5ac29d0323e8cd0645d241c5799ef3bd6e7b6f0bb4673613684"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/test_steward_val_artifact.py",
+      "sha256": "25ee712ffded4a9f3744f65686ba30013385d09d2b2d155bf9ad6999ad0ed271"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/test_synthetic.py",
+      "sha256": "8b16e9f1b1fc8070909923215a0e29714ed4a13ab74be19c298060955b47855b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/train.py",
+      "sha256": "45ec252bf1acd8502cc9516d51802e1ba2f4c8b879c86e4882dd84b84b6e7bdd"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v25/val_predict.py",
+      "sha256": "986f6a6af7956bae144fbd726472bd4933b53df4eae1161933c9d7c745cf2deb"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/artifacts.py",
+      "sha256": "31405493f9c836ea12bd34acfbfa44f41ce52a79e5d06bfe2de5d6fa75834ecd"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/benchmark_first20.py",
+      "sha256": "87ba2b5646273124cfc69ebf11e1fbc7e4f3c10b23a01e86f891c91c2934ed32"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/build_temporal_bootstraps.py",
+      "sha256": "acc94c9929b9d6566eb95b11ad28d846dd6886220c3aba509068ad35a812e8f5"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/compute_migration_audit.py",
+      "sha256": "d686501fc4dcdb4aa75e29bc565bc1d9fe7d66aae559a1895a47bd2139827ab0"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/core.py",
+      "sha256": "baf95b633e6823d6b50e70dc31684ed065c02ee2dd0f86691e916723063dae8d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/extract_thvl_1hz.py",
+      "sha256": "5747f5a77001face14195b44c7925c3d96090633589b23d57f0dcfff803c7ae2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/feature_manifest.py",
+      "sha256": "1b2187f46c04edc9e4b9a2778cc85bd0354e1790e3888ed13c53d4bc0587f828"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/feature_preflight.py",
+      "sha256": "014442d147f3058c2e06950e106b3307677058aefa2a8333e173beb5b5336031"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/finalize_thvl_features.py",
+      "sha256": "590db47edf6b269c851a806abf498eb91ed3145098777b30ede849cd1b59f0f4"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/freeze_compute_migration_protocol.py",
+      "sha256": "011c7685e4821b999249aba5d761a21a642d6d49385dbcf0c099b1e2b8d3b204"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/freeze_steward_key.py",
+      "sha256": "13e3404dfceeb88f0a77584b6570bfdde31ff29ef79ad7e1c8ba94a8eb12f9a6"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/inference.py",
+      "sha256": "d8d9b79585e384c1f2bec49cb71a6c334262331c7f92273ced08f7736b345705"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/join_train_labels.py",
+      "sha256": "e0e8831661ff3c900c6146c0f8fa1fe7885ebe1ab627684d781dac90279c08ba"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/raw_verifier.py",
+      "sha256": "d4b9fa73f1b5fc889b9b6b81b988e75786e801393ab258fd55ee8b9bf89e82ff"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/reference.py",
+      "sha256": "49c10737c041e6ad2fb0ba4f98d1f847900a41aed6d88d38775bef173dfa737b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/selector.py",
+      "sha256": "28198283a2e52fe78441e4a0b22973775c36da056afdacab85f78d4e8f552560"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/selector_confirm.py",
+      "sha256": "4d04f044e0f667e57b417ca4f20f251499025a37a2f58ae1f28ed915536d27fd"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/steward.py",
+      "sha256": "2af1f75868303c12be2eaa38d13010d62374ba5181604bc2e2b015d38d1bd783"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/steward_private_calc.py",
+      "sha256": "d757e6beb5f77a447c8390ab028ee2ca9fa4eeb48471650d66b32ece2128add9"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/test_control_v3.py",
+      "sha256": "0ea775e2332d2f8980543e6a35c925d72c3c2512d9eb91cd09a865040218128b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/test_critical.py",
+      "sha256": "96bdcea512bdd1786056ff3a92cd04aea18c8f8b630b87a03a9cfc24f2f7d6f6"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/test_e2e.py",
+      "sha256": "3c8625889e942bb3313a37246359cea63930615f04e0e50d08025b43ec7ec96a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/test_feature_pipeline.py",
+      "sha256": "742165cab499f923be3b97a137ff2ea9bed2b21c2d07703488a9c05cf6c19332"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/test_steward_private_calc.py",
+      "sha256": "7b2ebcfa2119ef30e1f021bd2eed35b4581c0e623a425200cbce3d14e6a56b3b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/test_train_audit.py",
+      "sha256": "f3ce0010fb4204254d8641b42ac51af2814a1709f5cff414ea5fe62e9ad9a8fb"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/test_video_selection.py",
+      "sha256": "971d76aa2f5c402ba4a5f393cb0218d522c14233644de2d5ac3f5860281e9373"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/train.py",
+      "sha256": "3661746266a2e6b236d51e00eff154fadc023630d5ed1ca83baf430ab875e69f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/train_control_v3.py",
+      "sha256": "581b449273865cdb8e3199a6a69898b08b7dbd4069e7bcca8af3b0e70a26c95b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/val_predict.py",
+      "sha256": "d78ca6d6d9de608eb307e4aee1a8816911c06532f46be6c4aca45048a5833c98"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v26/video_selection.py",
+      "sha256": "871a425bd2e7d52439cc8b24624ec6816180dee876dc3b58cf67131561017d63"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v3/__init__.py",
+      "sha256": "2d075f084cd50ecfc84077382aef0b1ced5607551e455ce4b80454402b633d4a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v3/infer.py",
+      "sha256": "25a80c68952bdedc79f0bde75749e8628aa127b3b6afbaa54ad07aabea826134"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v3/model.py",
+      "sha256": "c89ff1ed6ef5bcf035e7511118ffdfc71572b58427b298ce09aa602755b84ec5"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v3/smoke.py",
+      "sha256": "250226f96f77894fae9aebd30a58e488cdca8f9d046139418aa2f7b3ce68c7eb"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v3/train.py",
+      "sha256": "b90efac016ce03d7571afbc721b11edf7056157e8e66464ca3944878f2867559"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v4/__init__.py",
+      "sha256": "172e559701e4ce14bcc2c83f6ef78dc3f374aff4fed9efa6fd29a792efed5922"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v4/diagnose_shift.py",
+      "sha256": "2625088c2569a7f7adcf42043d1bbe17f91331ac252b357792b12b782af074d1"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v4/infer_eval.py",
+      "sha256": "12d694bf27a5d1147b496af6c840f01569502364a35d62aa0c5abf3dc93542d6"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v4/io.py",
+      "sha256": "e786fe4561c9344e07dacd58f9c2ae5eed25f7f78ed744c681b662b0d5107ea2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v4/model.py",
+      "sha256": "ca36c20230e1b40dce4271fa537ee6494b45422bb4949701e38750b44ff39f93"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v4/select_config.py",
+      "sha256": "7e1457d527d8d2ea4ea0bf18c4496ff4ddf522d72b26bb9e6a37afde7d4495fe"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v4/select_static_weights.py",
+      "sha256": "08d26dc0fefb45a50f9e39fc0e5b120111b33c50d737b6d78804e7cd76b246c7"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v4/smoke.py",
+      "sha256": "c9c611c6fcc38746707f3df7dec4bf81ad19d7daada96feb9c5624c7180d7ccd"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v5/__init__.py",
+      "sha256": "a45cadda12b2b72f31c69b5fcfae13683c5fa222857a018fc4bb21695e085829"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v5/common.py",
+      "sha256": "12c5737d5c26ab4799723af601c288e6c2bd35af0d3faf2e0d0e49e7b24bd8ac"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v5/infer_eval.py",
+      "sha256": "928f5236ffa79a909d2285c6d3c710025b4d2c0273aec8be6b3b34a31983de7d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v5/select_config.py",
+      "sha256": "07a74e679de99985ffff5a9407481781c94065c7e0d9fd2e4725d97f6275b224"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/__init__.py",
+      "sha256": "255cdb6d9490d9256a2636a30e9315526149a3b8befb768f876fcb4533d41597"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/audit_smoke.py",
+      "sha256": "8d8356c4438912d43ca7e5855bce03944070977bd8756376df5bf2d39c4ff03a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/audited_data.py",
+      "sha256": "00578e0028c1174380b65139043fc8a1124cb615c2b18c6b8c9212e67029f82e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/data.py",
+      "sha256": "a71d970e293b6c3c130174d213a116341d7018ed82af536af1f8c639553afc89"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/infer_eval.py",
+      "sha256": "c5a335ba6cb5b0afb5c3a3e96ff02d57f2c465ea6c84a2081d6412b40c4db45d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/model.py",
+      "sha256": "7df84e278693d32817454c56b239b9bf7e4387cc4df130beb304d485538e910c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/outer_select.py",
+      "sha256": "4182de2ceaf375417670e44488aa1dd8fa40c1573830ed9bc28fbcc5214e5d11"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/property_tests.py",
+      "sha256": "6741730cbd889185c0dd6ab1a74be0089816a4ac7bba77442c3fd2cb33624a9a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/ridge_infer.py",
+      "sha256": "a9a1b367f827c5996bbdfda86b6fff72a244be9fd0255883380c937b9a766d0b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/ridge_prior.py",
+      "sha256": "55d7111895d40790e582bcc69dbece9ad9a6fbedcb3fc94a30a01a09f698de2e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/smoke.py",
+      "sha256": "5a8cf890a2e88411be16533fe7980645c85cd05b804a118688401025194c34bd"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v6/train.py",
+      "sha256": "30afde852b8832625a0680480e402d69e0848cd6a8b67ac7cbb53b5e67d16f67"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v7/__init__.py",
+      "sha256": "0703abe33ed0ae61c370ab00b67ddbf81d5669f7bd4517cf0ef44b1a4bafe701"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v7/fixed_consensus.py",
+      "sha256": "6b47555a1645a1170364797b7ba721aa0a9a85dd26bd19c865bd229c4f968505"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v7/hatemm_fixed_consensus.py",
+      "sha256": "cd5be7dff9c94c9b868ce9d2b8665b21c2b013c7d647753f809bec5e48d64c55"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/__init__.py",
+      "sha256": "498cd57080d4a3edb275a4832335eb00de22b6066de4a0cf6efd04a033dd7c95"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/ablation.py",
+      "sha256": "d0d263927ed69173cfb1d1125b4cb76e979e28244dd892c930692f008e7a71ed"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/fair_eval.py",
+      "sha256": "216aa4a7158d476c20fbacf424c577332247c95de7f9bcf7e5a7a157efdbb36d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/fair_eval_synthetic_test.py",
+      "sha256": "8fb6f1fde2cbcca38eed22d42f51b80b4feacfae969fe61c6fadbeb1bcdd9f3b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/model.py",
+      "sha256": "b27e08fd8c0ad6a9eafd1603ce91621622c162b0b2a44c446213a7e9561e16fb"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/property_synthetic_test.py",
+      "sha256": "4eeb437a94eb909333686d1b5dc84994b225e52d62d952c7433648e2186179c8"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/relation_v8_ablation_all.sbatch",
+      "sha256": "8f9317656e6b1dcc47c265a5eb83519693c5a629e96be28fe6f4cee21fe1d74e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/relation_v8_all.sbatch",
+      "sha256": "3721a0adcedca3c29b6b3c88c44a1e02e97b2e00a9e367cd15fce7e55ccbbd22"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/relation_v8_fair_eval_all.sbatch",
+      "sha256": "acdbf8643d5d5df667e95e10de2659e06cfda1a5e6325e1ea07f1808945edf56"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/run.py",
+      "sha256": "dca576229eac8b8369fa198771827c5245e9d8ab2b0e9c16f44a154cb40c8347"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/run_ablation_all.sh",
+      "sha256": "bc3ccd68578877377136ecd2cbb5c88dadeda58c7a818b1fd269e0ee6d599339"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/run_all.sh",
+      "sha256": "9b192e1c1115d121045ba4468cffdee97aa7b320d3191e611fbe0a1d8ec79c55"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/run_fair_eval_all.sh",
+      "sha256": "f74c61458c346349ad3fac7e5605756b98937a96ea6b4b9a48eac2e6c666e75a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v8/smoke.py",
+      "sha256": "ac153f4822da351c7f2558c0a32c8ad704795ee92a921da24f5518856e455a9f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/PILOT.md",
+      "sha256": "56edb56f8ddb935c11feb81c48a3796b1a3a576bd02ed968c7e164f5250af161"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/__init__.py",
+      "sha256": "cb2542f522bb612fb9c5c3a17b0fb5fc2dd453ebf7549e42347cb91b6741ca9a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/build_mhc_manifests.py",
+      "sha256": "76528c016245b9ae8c7bb6a61d5a60db595cc513ed65d158767d7ec642cc0f03"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/continue_hatemm_after_vera.sh",
+      "sha256": "84b216619dff52bcc55ff050d5f7cd5c2e27666e18478d9c1d0581238b99fddb",
+      "pre_rebase_sha256": "ae64466baa3a3db6167a2c97b81008571c00189adf6fa0eb227d1227504eb80e",
+      "rebased_for_repository_root": true
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/finalize_hatemm_vera_train.py",
+      "sha256": "de678c083c09ba06b9b119cff0d758dbeaf5e781b3d6788494975d2c076de55c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/hatemm_pilot.sbatch",
+      "sha256": "c41c1c23959958f98e36d1f2c9c5fd16abcac4782885e1ee895efb29afc0dec7"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/hatemm_preflight.py",
+      "sha256": "2c68719a062f341ac7e686edfc53074d78fa3f3ec09a0b6fae51b835cca4b71c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/hatemm_preflight.sbatch",
+      "sha256": "33d9887bab0c98571d2b369517121c092ed3c4685378c774c9074108df081f3c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/hatemm_train_evidence.sbatch",
+      "sha256": "2ec2f156ec2261682e993538da39090601a62104a9658e7e4ed053b7f545a6aa"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/hatemm_weak_residual_pilot.py",
+      "sha256": "a4ba07e56e02a21c210545062144c7f5469368f09fa8aeeed5492574ad724e9f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/hcs_pilot.sbatch",
+      "sha256": "6ca54e9615ae219cd9b2d7956a4c1878ccec584f95091738be6204e8d38e79f8"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/infer_eval.py",
+      "sha256": "b5f690f057a9d415c68b401d1661a6d8eb4a05baa7e083e7ba3bffa7a6e1652e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/loss.py",
+      "sha256": "ea1c079c033bcb684d7db4be103286c45828a5c07c1e999c5b0c137d35934ed3"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/mhc_en_train_dense.sbatch",
+      "sha256": "79888a576594b31979a9e143294c1b8124b4d830ee92e158c5854c4cd5990257"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/mhc_zh_train_dense.sbatch",
+      "sha256": "cd4a56edc12efb12dcb45a05928a72d98e449f51387577d696ca14b4a2098945"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/model.py",
+      "sha256": "ac00c1e01b74e54d5d887ece368ac23e5c084731dcd0224e1105c0634e4c1fce"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/produce_hatemm_macil_train.py",
+      "sha256": "16ee5b472e89cc0ce17cd0fc848f7322a654fe14a14e170737b215063979b1b8"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/produce_train_dense.py",
+      "sha256": "7d1dd4dd8ec6b4822f031a2c33577b2bfc5e1a3ac94f37ebcb1049a43014408b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/relation_v9_smoke.sbatch",
+      "sha256": "7ef99a4f7de653d7d9f2cbeae32f2b7e60991927d6cc60481e679d0a91b0438c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/role_residual_pilot.py",
+      "sha256": "3726afd74af5fb613b9d1b833d6f31007768dbbae6904cd77a230f5350ccb30f"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/submit_hatemm_pipeline.sh",
+      "sha256": "5c1bc92c8efdb7142131089567544d95d13184b2cd7037c8e395b0c27305079e",
+      "pre_rebase_sha256": "8921eca3ded03c5be3ae4d2edb6102a93d482a0cf3cc4e3010e32aa5cb3a9461",
+      "rebased_for_repository_root": true
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/synthetic_tests.py",
+      "sha256": "2aff07c1cd8cc0bc35cf700738b22fe6494d633d0cde5a4fa654266d50597024"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/tamper_tests.py",
+      "sha256": "b8adc083af4c7214786e1a1d74f9d58305205cac10d58d4ab8d3b634df688f1a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/test_hatemm_label_free_evidence.py",
+      "sha256": "e1b1eecf48459f9ffdf0af7459bd532342425f7bbd88bb63917614392be68a0b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/train.py",
+      "sha256": "75dd57f16f21a635057688935b39ff0716394feac2f20bad70240289fc45f24d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/train_timeline.py",
+      "sha256": "faf2f9c9153b8919bfbcaf5d45c678a48909f8d8f4467011d9d35a946e07b5eb"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/vera_hatemm_batch_ab.py",
+      "sha256": "30461f2f20755f666a314b47c8f72850ec9a2b207cddbb53dd586298f82acb39"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/relation_v9/vera_hatemm_train_label_free.py",
+      "sha256": "3e9998ca0ab5a99c0f472f79661b4b06def715094ee34da477ecdf4b8ba15db4"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/reproduction_baselines/smoke_cpu_powa_macil.py",
+      "sha256": "6ba00f7bc72d5304645cf4835ddbb91108f7aa62748d88a98d45599caf0d1607"
+    },
+    {
+      "action": "kept_in_Hate-follow-up",
+      "category": "LABEL_FREE_KEEP",
+      "path": "scripts/reproduction_baselines/test_vera_fast_infer.py",
+      "sha256": "850f337f5e82df93a9bc29861c829c10af0007dbfd9cb17094bb7b35e1b7fe25"
+    },
+    {
+      "action": "kept_in_Hate-follow-up",
+      "category": "LABEL_FREE_KEEP",
+      "path": "scripts/reproduction_baselines/test_vera_sparse_k16.py",
+      "sha256": "bbda83a945457f09abf5e7ef60b7ffe0d66b12a08f57692c952e0e2030349f6e"
+    },
+    {
+      "action": "kept_in_Hate-follow-up",
+      "category": "LABEL_FREE_KEEP",
+      "path": "scripts/reproduction_baselines/vera_fast_infer.py",
+      "sha256": "c2fd4585e0d537b3758293e619259c4b9feb9ccc23cfd6adaede14cb9263db79"
+    },
+    {
+      "action": "kept_in_Hate-follow-up",
+      "category": "LABEL_FREE_KEEP",
+      "path": "scripts/reproduction_baselines/vera_sparse_k16.py",
+      "sha256": "49352e99c39203bd0c1c97ee8e744569e839f336d736baeb8ec0392ae387120b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/README.md",
+      "sha256": "fe5d63c281044e75356509324ca5d54994d1015d3d1f0c38c24db52eec5e8858"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/__init__.py",
+      "sha256": "f6edcc3d121694a7775bba730944f8433a000455345edf834fa8d7e744cb399d"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/acquire.py",
+      "sha256": "8a06b9badb44387c2cd7bdaf253e67c699526d761a5995ee6f3900e3bc348f04"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/aggregate_val_gate.py",
+      "sha256": "1ee637442e0f31f41d822b814fe530db2de4f36a5a4dce37db541103a9b6bfe5"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/asr.py",
+      "sha256": "a40629319ccc5a8e3c9acaa007d1a608c3eee490909e19711c938d9b9c41d59e"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/build_train_media_manifest.py",
+      "sha256": "868513168531e50b7545c700bb026aec2d27d437437e7fc34fe9f369d2adc0e2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/build_val_media_manifest.py",
+      "sha256": "1dafda1448624ff75fe09a5d7ace71456094aa9592a7df48747b44dc192f7aad"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/core.py",
+      "sha256": "470632baf9f992f60a78eedfed7384ac6849a4fb6ceaa6db6b4ad91de802690a"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/eval_v22_val_informed.py",
+      "sha256": "fba2803d4d4a67522d94b1f124b7f92b351a247d271f0bb87c2efae2ea131433"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/eval_v23_val_informed.py",
+      "sha256": "007162aef19ba5ce06fe85e7c4cf4cd655fd6df4f175f9e8cd457483cc80d5ba"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/evaluator.py",
+      "sha256": "ac3517cab4630300b95153c5b6916c2c1ecaa024a78acd8de06066a2b763b959"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/finalize_report.py",
+      "sha256": "9cbdf38852613ab51cc12b3439f75bc784671df93b0f2a61513d667e50b0d938"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/hf_pipeline.py",
+      "sha256": "85f8303272d9b44a6da16f02aefc0a8cb9f4499dab1a6411c14d76fe4b47e5b2"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/preflight.py",
+      "sha256": "38c93a0611cb0662447bce22905e56315841d6100f96a82bb03f37d1fe354e95"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/prepare_val_atomic.py",
+      "sha256": "7923ebe43e3ac857b0affc7c4fe888bc32b5c3c2d3ec4c3a9709258e5fdc8741"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/preregister_train_v16.py",
+      "sha256": "a0dd8ae6e8db23f87f0da8e9b30ea059a01f9101a93ef42aed7579e44a461490"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/preregister_v16_forward.py",
+      "sha256": "a7f5d23ab6414d4e725eb8b68a73eb4f0c52ebe114ca26bc37a861b19b11249b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/probe_platform_head.py",
+      "sha256": "7b4279ef752d2cf07d981911e9fc6fc6aa5a13c742771be93bffb36f999c2555"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/test_synthetic.py",
+      "sha256": "0c6374686b7132b834d451250601c49a3c2688abab16ab3c3947ea43f32ce8db"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/test_v22_speech_mask.py",
+      "sha256": "997f40d2293010aee006eb062bd40cf33fec48a117a518d957dccb4dacbd302c"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/train_media_asr.py",
+      "sha256": "5e0c3a402b3a4684334f695c0361efaab6d595977b0003ac7d0e6f7dc15af947"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/v22_speech_mask_components.py",
+      "sha256": "f2e000daf568381c212130fe4aa905f5c0d67ce8d080836f8ce57e15da539a0b"
+    },
+    {
+      "action": "moved",
+      "category": "WEAK_MOVE",
+      "path": "scripts/thvl_sealed/watch_train_evidence.sh",
+      "sha256": "65f770257036834ad2a482a89e90343b68edc61ff083c93901d365bb0d3b6425",
+      "pre_rebase_sha256": "4aa1f5c2dd46a103cc4af51b78f3d0741c2c53d5c9034cc79542af5e789ff6d3",
+      "rebased_for_repository_root": true
+    }
+  ],
+  "schema": "weak_supervised_repo_migration_v1",
+  "source_repo": "/home/jehc223/Hate-follow-up",
+  "target_repo": "/home/jehc223/Retrieval-hate",
+  "timestamp_utc": "2026-08-29T20:23:51.012558+00:00",
+  "committed_history_copy": {
+    "source_range": "bf5d58c^..HEAD",
+    "selection": "weakly-supervised and shared evaluation/feature infrastructure; label-free EventVAD/LAVAD/Vad-R1/VERA excluded",
+    "count": 91,
+    "files": [
+      {
+        "path": "docs/duplex/BASELINE_REPRODUCTION_LIST.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "3004c16653bed2895e27838e4b060d48df29c3cb1b261e371dd95a1eb4c66a8d"
+      },
+      {
+        "path": "docs/duplex/BASELINE_RESULTS.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "f692b0dda17b9a446a2953e2f8a3f39476999b421f4414e1869fdced66bf1fb5"
+      },
+      {
+        "path": "docs/duplex/DRAFT_email_multihateloc.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "bfbfb914b08496dc6d1888e453e943ab2ab8a5dc5b82168d434d1f0e98b5f74e"
+      },
+      {
+        "path": "docs/duplex/FRAME_EVAL_PROTOCOL.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "fc095fa5120ff77da3701a9c018d86a2d71e8bef3a90b620fcb24466d1dd27aa"
+      },
+      {
+        "path": "docs/duplex/LOCALIZATION_PROTOCOL_SURVEY.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ca38fbb9f438a0325a597d939922c5239fb7ec97c2a05db7ce9a344bc35b2ada"
+      },
+      {
+        "path": "docs/duplex/OFFICIAL_VAL_RESULTS.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "f5735b9138d127f65398ac16c3167408046b114a18304a47a816bba7630fc7a1"
+      },
+      {
+        "path": "docs/duplex/PAPER_OUTLINE_v1.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "5240eb5b4d9b9f42360eb64c9d0ed5219c182aa3383a8e413e652174e957f545"
+      },
+      {
+        "path": "docs/duplex/official_val_results.json",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "065c37bba5577521baa06f88164d21162c130f32f08075976da99c6f3ad06234"
+      },
+      {
+        "path": "scripts/duplex/build_gt_arrays.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "253a8ad9737d5d2cfdbf7f646dc0e702545aec9e5c782e3d62aa32ef1fea883f"
+      },
+      {
+        "path": "scripts/duplex/build_gt_arrays_hateclipseg.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "e07bda4cf6936d3709cbeb8ced52877a2e3837e29851a03e32aa011b5dcb7ec9"
+      },
+      {
+        "path": "scripts/duplex/extract_clip_features.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "811b69cdf537eaf0c2b527c97d24c93e32ef58668e9ae491e09fbacf58575dae"
+      },
+      {
+        "path": "scripts/duplex/extract_i3d_features.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "162d968f1eebc1293e8b8748cbf48ab284e38d63694b6210eeaad08635003e79"
+      },
+      {
+        "path": "scripts/duplex/extract_vggish_features.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "aa3e73ea5786b656f95516d1e90be56ca17a87001d74bfb250f6ad97a4991be0"
+      },
+      {
+        "path": "scripts/duplex/extract_vit_features.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "c3306dc407afd3d5be217a543d3b3f9385c52a47836841acc1f31a47e4d9ed8c"
+      },
+      {
+        "path": "scripts/duplex/frame_eval_common.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "8b8c07d483af8ca53138a4a6144e9095781cdd563543308a55a4c2b6a03f801b"
+      },
+      {
+        "path": "scripts/duplex/frame_eval_regression_hatemm.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "b0cf42102d56544287927d5e8ac0210b663fbf6af539174207b7db096cffbfc2"
+      },
+      {
+        "path": "scripts/duplex/hateclipseg_asr_coverage.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "28cad98eec56984e23591761d61f546bd3fa4294b9215c7f6a4084d15bd23711"
+      },
+      {
+        "path": "scripts/duplex/i3d_model.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "94cde9cdaa8a83e71b33aca29d975f178f17d57166f85787f1ceb11616a0135d"
+      },
+      {
+        "path": "scripts/duplex/import_retrieval_gt.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "fb7ebb614367e1923614cc1496df73dd68bf8d5d9e3581e4e1557d555d29aa67"
+      },
+      {
+        "path": "scripts/duplex/interleaved_timeline_asr.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "bb74e220a1bff8d243cffb0673efdcb1b7fb4dc023983a99075b5bfe00d78aaa"
+      },
+      {
+        "path": "scripts/duplex/reproduction_splits.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ddf9c98d8f23ee48ff757da3a1dab0c688367606e2786620f045575ed4c4c9a0"
+      },
+      {
+        "path": "scripts/duplex/run_reproduction_asr.sh",
+        "action": "COMMITTED_COPY_THEN_REBASED_ROOT",
+        "sha256": "7eb2c09fbc41d0fcada5b17273e5348a47168a5cec6e20568f328216ea3464ab",
+        "source_sha256": "e8324fcf5f932220e524cdbbef280eadd365fe87abbbc0aac7edfb846bdbe8ed"
+      },
+      {
+        "path": "scripts/duplex/run_reproduction_features.sh",
+        "action": "COMMITTED_COPY_THEN_REBASED_ROOT",
+        "sha256": "d93441e4e5fe4a57a1ae3d0230fc36f39fb3a5240c6c7cd3ea5cf4de72ed1849",
+        "source_sha256": "03adaa1fe7e0b1147ab6618bc41e3d29b0b405043f5b9b5c450f714594db94c1"
+      },
+      {
+        "path": "scripts/reproduction_baselines/PATCHES.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "d33222cebfbd30057694267a91e67a818c37baa12afae6d6d401459051602ac5"
+      },
+      {
+        "path": "scripts/reproduction_baselines/README.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "c077b84df87e4c91e35f57066bf7f748a045d8660f897e67cd21631d6fc047ff"
+      },
+      {
+        "path": "scripts/reproduction_baselines/aggregate_official_val.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "82c18f68beaa46d0833eee98d625e5736e160dd80fea2c424ed1a22ad4cb0e81"
+      },
+      {
+        "path": "scripts/reproduction_baselines/clone_upstream.sh",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "f21d847952e9f1f2497598231e87431153cdfeff7c03d18ae7e2231d84d4b21e"
+      },
+      {
+        "path": "scripts/reproduction_baselines/cmhkf_adapter.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "c86e0ef2d72d2a402e562d31530db3c0f6011d33aa12cd91fd5dd158dd4ed5b6"
+      },
+      {
+        "path": "scripts/reproduction_baselines/confirm_official_val.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "53d1c948b9f771321e59eacd863a96c89b075fe4aeb49435420c2627b5ca6d2c"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/StableAdamW.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "d06d25a7c1aa9717fb73283783fd862b73e613a4eaae67c0427fe3e2115aed6e"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/__init__.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "368e2bb4a97df952f9f7e21e9c9252e8c37ac320a532bcfa0916755d74e486da"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/adapter_modules.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ed55bdea45355fbafa829d7e6ecec0670d997d77f331630477492b618806e5c5"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/descriptions.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "8ccee9e11a50d094707f5186a7f276cb1b99cd7538ba903c3a05070c82047147"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/dnp_vision_transformer.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "704c8c094177bdf1e20a36a076d459f1903a206621d46228d585e092f5d8f9e9"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/infer.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "642044f6be95cdc7fd5dbc4c941d0ebd3c6c298e2461ff034b083edbf20514b9"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/model.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "38324ed68c4037234019b16a08c0002d88c60378a9d8933de2f8901869cf9a3b"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/option.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "797eb50a5208a5af5a3e19785480bae360cf90ab176bb69bcc00f37a4bd73258"
+      },
+      {
+        "path": "scripts/reproduction_baselines/dsanet/train.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "edfb87d0e908091053d0feae9cf132ef804126408018125580ed3b3433bf216d"
+      },
+      {
+        "path": "scripts/reproduction_baselines/eval_baseline_scores.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "2da04398c6e8bb66e275afe5664a06ec7d0f85d0f973ef5f67c01d0252093bdf"
+      },
+      {
+        "path": "scripts/reproduction_baselines/fed_wsvad_adapter.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "73dcfe47b57b0c49afb3e53ead746aa1f7530ad5c4380486b0a70b1eeed6b700"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/__init__.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "cf1e1a372f575dd98bc3b1cd98c540be797daed54eae3dcbc58b1190e9f0d7b7"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/clip/__init__.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "d7930eb290ebed432116795c91473200d098451a94c0aedd4ae0f934f97955e8"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/clip/bpe_simple_vocab_16e6.txt.gz",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "924691ac288e54409236115652ad4aa250f48203de50a9e4722a6ecd48d6804a"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/clip/clip.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "c3f1c09abe0a0d9c429e0d47f2b8d4a4ec09dbd11eec3d7dd9846babd717e43b"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/clip/model.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "7b40a72e75c659b9de2e53bdb25b51551fb11eeb2849b48865718375cf380dc1"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/clip/simple_tokenizer.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "d1b09f10ed3d1e2c343619cb98cbfacb92363dd8607526a43aa7fe2d60d15bad"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/data.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "f53fbeda2f28880f1ef78bc2fe981896c9d03c05a337ec455c3089b04d80d27e"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/layers.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "36c7a47332af8cb68cce94a65895c96b0adb9ef8f7b70d094e63a3c203b89494"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/runtime.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "32ad8c769c3b656e5e636fbf07731546c31a036460e14b9b14ddd82d973deead"
+      },
+      {
+        "path": "scripts/reproduction_baselines/hate_common/tools.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "1f079853afdb5416525d1c6564a1d4cfc568d7e888ead9e628038a030ec11bb2"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/CMA_MIL.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "5b0e6e471449e3f1450bed6004f5386e3f2ed62005c6d79b3c5ffebc8c8a75c8"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/InfoNCE.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "3629ee169b05d5d4f4f4e21cef87b8c2d0f1fc95ce0e2f13d1958fb7900f737e"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/Transformer.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "7fa5bb0b2a870c2239073a109120810e0f886d2682fdffa3f2cfaaede3e9e537"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/__init__.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "61ee1632b4f64681d0563f83eab0e1458618a838a3d34beb8a42a387fe2f01b3"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/align.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "40eed52ba0138df805f2400f153c1c2381768cbd0cdf50894381cba7d2dfcd87"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/avce_network.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "2d49cc740186dace509bac0e1401add22738b956fefbdc4153adb5a413fb6caa"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/dataset.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "261314c67a694cfe15f56dc3e8e5beedba1efdc56f197d5c751754df6c79407f"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/infer.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "bdedc37fe69de700d88a8baf85a986d20b19c90011457ba400daaaaadbc2abe5"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/option.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "8a5f2fb38364de71832edb6e19106fe817509a5b8239b2298537a875dfe4577f"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/train.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ee462155d44bdd5feb7f261493910823cfa23c3e5c76e60870073ddf6f3c6713"
+      },
+      {
+        "path": "scripts/reproduction_baselines/macilsd/utils.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "d97bf2d24897aa261e25578272e3a0a3c53e09167ccc5805c5a5f34cd2cc786f"
+      },
+      {
+        "path": "scripts/reproduction_baselines/multihateloc/DESIGN.md",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "0c986318ec77bfe4e28ba11ca51659fe9e8bd5bca8915e8792f5d2ec955e21ba"
+      },
+      {
+        "path": "scripts/reproduction_baselines/multihateloc/data.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "50bf3ade4a9cdfad26758fb911855bc05da7b53cfe06e2dc52ab18cdaf8dc277"
+      },
+      {
+        "path": "scripts/reproduction_baselines/multihateloc/extract_bert_sentence_features.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "f23f82feeb40802bdebfe0d253ef6ab9379a7af564f8a5b03b807b4303adc263"
+      },
+      {
+        "path": "scripts/reproduction_baselines/multihateloc/model.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "72ded6f76bb495405fb92a7d214fe75d3306b9323540a6ede3fa1f1a9896a446"
+      },
+      {
+        "path": "scripts/reproduction_baselines/multihateloc/run_all.sh",
+        "action": "COMMITTED_COPY_THEN_REBASED_ROOT",
+        "sha256": "98b14db40633282175cd47708a68593943c2ef450791a9462aa6e53e5041c1a8",
+        "source_sha256": "55647e3cae347ea17270093c52bac026d61521e1e47887a48858449b5b3fc28d"
+      },
+      {
+        "path": "scripts/reproduction_baselines/multihateloc/smoke_cpu.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "7d3b9ed936e135b647c82707eb135da757eab00f9915d8829af568e7eab9cfa1"
+      },
+      {
+        "path": "scripts/reproduction_baselines/multihateloc/train.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ef4ff0ad73f19196fb0d3b54bccb0a40becc6bbe768d27246ac9a7453f49ec41"
+      },
+      {
+        "path": "scripts/reproduction_baselines/multihateloc/video_auc.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "9ac660fe12681bcdfea42c4c166fdc0027248643630117c8d7012d05e04252db"
+      },
+      {
+        "path": "scripts/reproduction_baselines/run_all.sh",
+        "action": "COMMITTED_COPY_THEN_REBASED_ROOT",
+        "sha256": "40597d7b2729b11883558541cca36da54c228c26daf68305a893dae01de1e33c",
+        "source_sha256": "72c2fb965030f2938602aed8e6309970ea16a204ab897ce85bf87957c681f897"
+      },
+      {
+        "path": "scripts/reproduction_baselines/run_all_macilsd.sh",
+        "action": "COMMITTED_COPY_THEN_REBASED_ROOT",
+        "sha256": "842d05482678166b619d0039bed571032c07a87b476701f455168d0120f45d2d",
+        "source_sha256": "832b6d5c63dca4be22ec9d6fdccf86bd561466170bdaaef3ae944a75e6ea0aea"
+      },
+      {
+        "path": "scripts/reproduction_baselines/run_hateclipseg_sweep.sh",
+        "action": "COMMITTED_COPY_THEN_REBASED_ROOT",
+        "sha256": "d68a8ccb4c985d52070f1c6e2d9620bd88e014ec6f585f30508399ad45e83e9c",
+        "source_sha256": "ce78152c94a4100872c4b87e6681d147b05c7b3352b0026b1aac8e63196f51f8"
+      },
+      {
+        "path": "scripts/reproduction_baselines/run_official_val_confirmation.sh",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "27c1dcc5f304a0d5b017e3fa78fd96717e6e506794306d9c258d161e5c6b261d"
+      },
+      {
+        "path": "scripts/reproduction_baselines/run_official_val_tuning.sh",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ef3e7fcb151c90859da6f8822a39d07ab7eb082874092524b11ad25cf7d2a6e6"
+      },
+      {
+        "path": "scripts/reproduction_baselines/smoke_cpu.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "8def8b51d8b2fbb7449102741b888ccc8023105f498dd8efc567d50c3a1b353c"
+      },
+      {
+        "path": "scripts/reproduction_baselines/smoke_cpu_macilsd.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "5b972fa8661c2aa699c5f676347083c52b78c518d7e989592d1fc6d25a7a8c2b"
+      },
+      {
+        "path": "scripts/reproduction_baselines/smoke_official_val.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "f6f8b7feccbc2cb730c3d311f7ac9d4e2f558ec0b7d7331e60115a3aafd8ab00"
+      },
+      {
+        "path": "scripts/reproduction_baselines/test_dsanet_hatemm.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "14c46140f774e9e62ad2ff186f41926851e4cf00152c814643be4e556a847798"
+      },
+      {
+        "path": "scripts/reproduction_baselines/test_macilsd_hatemm.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "354799a7f737e54a9a9c2cddfbee4221e4bc93666df8b93a20e09a97d3d977ce"
+      },
+      {
+        "path": "scripts/reproduction_baselines/test_vadclip_hatemm.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "e26d98282666ecb061e779f5d0da19d3f9dc8b0933309269deccdde608cc439e"
+      },
+      {
+        "path": "scripts/reproduction_baselines/train_dsanet_hatemm.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "5408d40202f6dad54bdbb457578ecd2193d30fdad1ec93d76fae3b281e7b0a03"
+      },
+      {
+        "path": "scripts/reproduction_baselines/train_macilsd_hatemm.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "9605ee9334f708a142d8447ffabf23581113717372b20c3e274d63dc75c5cbb4"
+      },
+      {
+        "path": "scripts/reproduction_baselines/train_multihateloc.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "f99e203e46d5824deb256f24dcd379433cb2dd96e709fa2ae0d18ea14904bcbe"
+      },
+      {
+        "path": "scripts/reproduction_baselines/train_vadclip_hatemm.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "7a4ee74c6f0f80df65116a751549287db7acf7f8059b0df37aa00559f8b5f060"
+      },
+      {
+        "path": "scripts/reproduction_baselines/tune_official_val.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "1f7b2149fde3eb53902a9e210e909956b42ac0f51083c388db898fd8b777cb34"
+      },
+      {
+        "path": "scripts/reproduction_baselines/vadclip/__init__.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "eac467e92ad6b0be39664dd060668f09551292f8f74ceb6144725036b1a37162"
+      },
+      {
+        "path": "scripts/reproduction_baselines/vadclip/infer.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ab2c6df410b28bc0e724d70ab1bdc5564361eeec81be0ec828de47682bb15e64"
+      },
+      {
+        "path": "scripts/reproduction_baselines/vadclip/model.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ba3828ef862d02271df551dd1eca0043302decfc4d06d5270c2e0645bf5bec77"
+      },
+      {
+        "path": "scripts/reproduction_baselines/vadclip/option.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "ae2a6a8fa5dbfbf3fe3fdfc1eb317ceab1dd37929f253f7e03a5d3d4a5e25bd0"
+      },
+      {
+        "path": "scripts/reproduction_baselines/vadclip/train.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "9fd119a5bbf1658c2a69593e6a526a194076d25341c410762d2922504c17047e"
+      },
+      {
+        "path": "scripts/reproduction_baselines/verify_official_val_ready.py",
+        "action": "COMMITTED_WEAK_OR_SHARED_COPY",
+        "sha256": "c5a2d3e43b6ec577288b62eedcdfec112f73e2e39ce02c04518ff06a5de70604"
+      }
+    ]
+  }
+}

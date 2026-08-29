@@ -1,0 +1,12 @@
+{
+  "schema": "v25_pre_temporal_eval_addendum_v1",
+  "status": "FROZEN_BEFORE_TEMPORAL_METRICS_ACCESS",
+  "trained_models_changed": false,
+  "temporal_metrics_read_before_freeze": false,
+  "historical_alignment": "V22 1Hz any-overlap: bin [j,j+1) is target iff any target span overlaps it; target overrides other-harm ignore.",
+  "superseded_center_rule_generator_sha256": "adb91c9b697dd1bf422b2d7e895edb62744234bc89317b8fe57b3b9438484cff",
+  "overlap_rule_source": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/temporal_eval_rule.py", "sha256": "d17378e77900a865711367042f0059819a9671c3f4e262cd29960f8dd8417e35"},
+  "generator_source": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/steward_val_artifact.py", "sha256": "cbf26c832453ed17c7986d7ef5a7dcdaa4c8f2bb09cad1cdbf851f78a8a3062f"},
+  "authoritative_val_manifest": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/v24_val_evidence_frozen/evidence_manifest.json", "sha256": "80d1883513cd1cee9d28fb11f1440a722a1aacf25faa7d50aeeea2785929ef51"},
+  "authoritative_val_config": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/v24_val_evidence_frozen/preregistered_config.json", "sha256": "db0d6337ffa850dbffd9a65348af2cf44fc340167abdfe37cface9ffea8e12ca"}
+}

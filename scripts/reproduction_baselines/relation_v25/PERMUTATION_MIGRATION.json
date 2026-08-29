@@ -1,0 +1,13 @@
+{
+  "schema": "v25_permutation_migration_v1",
+  "status": "SUPERSEDED_UNEXECUTED_DRAFT",
+  "old_train_source_sha256": "be3682d72ca8f37b12cf5172b3f8d294e9c538292559cbfc4e7c3a3f741ddbbb",
+  "approved_design_addendum_sha256": "d9fcdb8ca444f849f65827ec950ccf328c3219db36e685b0f7a25d69d592d7d6",
+  "new_protocol_identity_sha256": "65dd4bbf95f2acebaa0f719d0be874455b1c54177ef20b95dd9e7e252a50e29e",
+  "old_group_rule": "crossfit_fold_and_exact_length",
+  "new_group_rule": "exact_length",
+  "coverage_gate": {"moved_video_fraction_min": 0.8, "moved_instance_fraction_min": 0.8},
+  "label_free_rationale": "Grouping uses only opaque ID and local-bag length; no label or temporal annotation enters donor assignment.",
+  "donor_semantics": "Every donor local z was already transformed with the donor video's own out-of-fold negative reference before permutation.",
+  "required_manifest_fields": ["donor_folds", "mapping", "pre_ids_sha256", "post_ids_sha256", "pre_lengths_sha256", "post_lengths_sha256", "pre_instances_sha256", "post_instances_sha256", "nonself_ids"]
+}

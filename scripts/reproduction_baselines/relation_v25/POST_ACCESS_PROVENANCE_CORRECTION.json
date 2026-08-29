@@ -1,0 +1,38 @@
+{
+  "schema": "v25_post_access_provenance_correction_v1",
+  "status": "POST_ACCESS_IDENTITY_REPAIR_ONLY",
+  "aggregate_seen": true,
+  "observed_aggregate": {"within_macro_roc": 0.5667818116520346, "paired_ci_gate_pass": false},
+  "change_scope": ["generator_identity_repair"],
+  "semantic_scoring_changed": false,
+  "gt_arrays_changed": false,
+  "predictions_changed": false,
+  "metrics_or_gates_changed": false,
+  "old_identities": {
+    "pre_addendum_sha256": "9f71355569dc2a9f31d7de3668888cb897381bf6608068e3816545904d853dc8",
+    "pre_addendum_generator_sha256": "cbf26c832453ed17c7986d7ef5a7dcdaa4c8f2bb09cad1cdbf851f78a8a3062f",
+    "migration_sha256": "518c83c2aa393c010127c7fdf763e1547d9811de2657ac50f08d6ac4969a61c8",
+    "selector_sha256": "2c6267c239faf0ea4921c4ad4a8fe006c21992a60bcb53035d2b1b0e59e09b66"
+  },
+  "new_identities": {
+    "official_adapter": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/steward_val_artifact.py", "sha256": "a6cc529c59235210344e9894204ebcaa6af19e760034d18362aecfca9d687081"},
+    "selector": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/selector.py", "sha256": "e9bba2e4f96efc25fa57a4a66004d275f8a0b53a0b57c3c69ca3a1098a6e9510"},
+    "historical_migration_verifier": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/post_training_migration.py", "sha256": "d20730e05fbba6d17e17b02669388f7f27693b4cde0b184584ef8152ee27082c"},
+    "correction_verifier": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/post_access_correction.py", "sha256": "f94855fced8ff947c84613ae65bf8769a37a4cd83e690a6c52d39a76e371edf9"}
+  },
+  "frozen_artifacts": {
+    "encrypted_artifact": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/v25_validation_temporal_artifact_frozen/artifact.aesgcm", "sha256": "ef9d2a77a66eeaa6d29324bfc28f72ec70d11c2cc0c908b63291d46b1729ab54"},
+    "encrypted_manifest": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/v25_validation_temporal_artifact_frozen/manifest.json", "sha256": "aef032a2c52c021b504c6ae71230900fe9c33b486f3c27413116383ce1bd1492"},
+    "access_ledger": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/v25_validation_temporal_artifact_frozen/access_ledger.json", "sha256": "8b111c4b6b7658fe42389c070aaf1625b5fa6e32473c93a5536e0413f4b07874"},
+    "prediction_manifest": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/v25_val_predictions_epoch2_frozen/manifest.json", "sha256": "b428d200ecfe7d073a96b95d711874d49b37a5569917672d447669779764b5c9"},
+    "stale_temporal_report": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/v25_temporal_steward_report.INVALID_STALE_ADDENDUM.json", "sha256": "362848a85cf3d17e3988c5566c94082b59f979b044ed0647982d67f7c3c67346"}
+  },
+  "unchanged_evaluation_bindings": {
+    "taxonomy_sha256": "ca025500f61378ad93a9ac454d05915bcb025efb0542600a5c9f6566dc3ae257",
+    "prediction_manifest_sha256": "b428d200ecfe7d073a96b95d711874d49b37a5569917672d447669779764b5c9",
+    "prediction_reducer_sha256": "5a20ca6dd4c088de38896010ab1f4dea926de0bf36d60e614bad1df983b012fc",
+    "temporal_report_sha256": "362848a85cf3d17e3988c5566c94082b59f979b044ed0647982d67f7c3c67346",
+    "reference_manifest_sha256": "fceb543a7494f2900d3bf0adb849a705e50fa104ed318a33cff264181a716c34",
+    "overlap_rule_sha256": "d17378e77900a865711367042f0059819a9671c3f4e262cd29960f8dd8417e35"
+  }
+}

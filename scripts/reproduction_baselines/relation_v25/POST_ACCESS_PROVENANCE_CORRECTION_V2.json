@@ -1,0 +1,14 @@
+{
+  "schema": "v25_post_access_provenance_correction_v2",
+  "status": "POST_ACCESS_IDENTITY_REPAIR_ONLY",
+  "supersedes": {
+    "path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/POST_ACCESS_PROVENANCE_CORRECTION.json",
+    "sha256": "90e1bce94f56a9c958ccc4a75a28ca4c7376d61888047fff00a06e5b10f6193c",
+    "reason": "Adds correction-aware verification entry points only; no data, prediction, metric, gate, or scoring change."
+  },
+  "new_identities": {
+    "official_adapter": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/steward_val_artifact.py", "sha256": "a6cc529c59235210344e9894204ebcaa6af19e760034d18362aecfca9d687081"},
+    "selector": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/selector.py", "sha256": "c78f516ceb38f0c79d70a05507801db2353d7df79e71065935b67138ab3e5b0e"},
+    "historical_migration_verifier": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/post_training_migration.py", "sha256": "d20730e05fbba6d17e17b02669388f7f27693b4cde0b184584ef8152ee27082c"}
+  }
+}

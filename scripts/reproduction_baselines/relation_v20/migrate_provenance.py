@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+"""One-shot metadata-only migration. Raw score bytes and selected weights are immutable."""
+import json,hashlib,sys
+from pathlib import Path
+HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[2];sys.path[:0]=[str(HERE.parent)]
+from relation_v4.io import sha256
+from relation_v8.run import atomic_json
+
+def htext(x):return hashlib.sha256(x.encode()).hexdigest()
+def bind(paths):return {str(p.relative_to(ROOT)):{'sha256':sha256(p)} for p in paths}
+def main():
+ v20=ROOT/'results/reproduction/relation_v20';formal=v20/'mhclip_zh_formal';history={}
+ raw_sha_before={s:sha256(v20/f'mhclip_zh_{s}_raw/per_chunk_raw.jsonl') for s in ('val','test')}
+ for s in ('val','test'):
+  d=v20/f'mhclip_zh_{s}_raw';cp=d/'preregistered_config.json';mp=d/'raw_manifest.json';history[s]={'config_before':sha256(cp),'manifest_before':sha256(mp)};c=json.load(open(cp));old=c['policy_language_invariant'];c['policy_language_invariant']='semantically matched policy, language-specific surface form';c['metadata_erratum']={'field':'policy_language_invariant','old':old,'new':c['policy_language_invariant'],'raw_scores_changed':False};atomic_json(cp,c);m=json.load(open(mp));m['config_sha256']=sha256(cp);m['metadata_only_migration']=True;atomic_json(mp,m);history[s].update({'config_after':sha256(cp),'manifest_after':sha256(mp)})
+  if sha256(d/'per_chunk_raw.jsonl')!=raw_sha_before[s]:raise RuntimeError('raw changed')
+ back={'status':'FROZEN_MANUAL_SENTENCE_EQUIVALENCE_AUDIT','TEST_INFORMED_LANGUAGE_ADAPTATION':True,'no_dataset_keywords':True,'answer_tokens_unchanged':'Yes/No','items':[]}
+ cfg=json.load(open(v20/'mhclip_zh_val_raw/preregistered_config.json'))
+ bt={'system':'You are a content moderation analyst. Answer strictly according to observable evidence.','policy_lead':'According to this platform’s hate-speech policy, the following kinds of content are prohibited:','policy_rules':'1. Encourage violence against groups with protected status\n2. Incite hatred against groups with protected status\n3. Dehumanize groups by comparing them with non-human entities\n4. Praise or glorify violence against protected groups\n5. Use slurs and stereotypes that incite hatred (including through humor, irony, or coded language)\n6. Claim that some groups are inferior because of protected status\n7. Promote hateful supremacism\n8. Make conspiratorial accusations about groups with protected status\n9. Deny or minimize major violent events','wrapper':'{policy block}\n\nTranscript excerpt from a video:\n{chunk}\n\n{question}','question':'Does this excerpt violate the rules above?\n\nAnswer “Yes” or “No”.'}
+ for k,v in cfg['prompt_translation'].items():back['items'].append({'part':k,'original_english':v['english'],'frozen_chinese':v['chinese'],'manual_back_translation':bt[k],'judgment':'sentence-level semantically equivalent; no policy clause added or removed','back_translation_sha256':htext(bt[k])})
+ atomic_json(formal/'back_translation_equivalence_audit.json',back)
+ code=[ROOT/'scripts/reproduction_baselines/relation_v16/forward.py',ROOT/'scripts/reproduction_baselines/relation_v18/mhc_preregister.py',ROOT/'scripts/reproduction_baselines/relation_v18/run.py',ROOT/'scripts/reproduction_baselines/relation_v19/run.py',ROOT/'scripts/reproduction_baselines/relation_v19/eval_frozen.py',ROOT/'scripts/reproduction_baselines/relation_v20/audit_eval.py',ROOT/'scripts/reproduction_baselines/relation_v20/sequential_fidelity.py',ROOT/'scripts/duplex/masked_parallel_isolation_pilot.py',ROOT/'scripts/duplex/isolated_chunk_diag.py',ROOT/'src/duplex/score_duplex_probe.py',ROOT/'src/our_method/score_holistic_2b.py']
+ prov={'model':{'name':'Qwen/Qwen3-VL-8B-Instruct','hf_snapshot':'0c351dd01ed87e9c1b53cbc748cba10e6187ff3b'},'code':bind(code),'raw_score_sha256_unchanged':raw_sha_before,'metadata_migration':history,'back_translation_artifact':{'path':str((formal/'back_translation_equivalence_audit.json').resolve()),'sha256':sha256(formal/'back_translation_equivalence_audit.json')}};atomic_json(formal/'artifact_provenance.json',prov)
+ # Repair downstream hashes without touching selected alpha/beta or any metric.
+ fp=formal/'frozen_config.json';f=json.load(open(fp));selected_before=json.dumps(f['selected'],sort_keys=True);f['val_raw_manifest_sha256']=sha256(v20/'mhclip_zh_val_raw/raw_manifest.json');f['metadata_provenance_sha256']=sha256(formal/'artifact_provenance.json');atomic_json(fp,f);assert json.dumps(f['selected'],sort_keys=True)==selected_before
+ ep=formal/'test_eval.json';e=json.load(open(ep));e['test_raw_manifest_sha256']=sha256(v20/'mhclip_zh_test_raw/raw_manifest.json');e['frozen_config_sha256']=sha256(fp);e['stable_centered_metrics_artifact']={'path':str((formal/'stable_centered_controls.json').resolve()),'sha256':sha256(formal/'stable_centered_controls.json')};e['artifact_provenance_sha256']=sha256(formal/'artifact_provenance.json');atomic_json(ep,e)
+ # Bind the EN supplementary controls/fidelity and the same implementations.
+ enf=ROOT/'results/reproduction/relation_v19/mhclip_en_formal';enprov={'model':prov['model'],'code':prov['code'],'stable_centered_controls':{'sha256':sha256(enf/'stable_centered_controls.json')},'masked_reset_sequential_fidelity':{'sha256':sha256(enf/'masked_reset_sequential_fidelity.json')}};atomic_json(enf/'artifact_provenance.json',enprov);eep=enf/'test_eval.json';ee=json.load(open(eep));ee['stable_centered_metrics_and_controls_artifact']={'path':str((enf/'stable_centered_controls.json').resolve()),'sha256':sha256(enf/'stable_centered_controls.json')};ee['masked_reset_sequential_fidelity_artifact']={'path':str((enf/'masked_reset_sequential_fidelity.json').resolve()),'sha256':sha256(enf/'masked_reset_sequential_fidelity.json')};ee['artifact_provenance_sha256']=sha256(enf/'artifact_provenance.json');atomic_json(eep,ee)
+ atomic_json(formal/'METADATA_MIGRATION_RECORD.json',{'history':history,'raw_sha256_unchanged':raw_sha_before,'selected_config_unchanged':True,'metrics_unchanged':True,'final_frozen_sha256':sha256(fp),'final_eval_sha256':sha256(ep)})
+ print(json.dumps({'v20_provenance':sha256(formal/'artifact_provenance.json'),'v20_frozen':sha256(fp),'v20_eval':sha256(ep),'en_eval':sha256(eep)},indent=2))
+if __name__=='__main__':main()

@@ -1,0 +1,36 @@
+{
+  "schema": "v25_post_training_pre_temporal_migration_v1",
+  "status": "FROZEN_AFTER_TRAINING_BEFORE_TEMPORAL_METRICS",
+  "temporal_metrics_seen": false,
+  "test_read": false,
+  "change_scope": ["provenance_validation", "gt_discretization_center_to_any_overlap"],
+  "old_training_identities": {
+    "selector_sha256": "0a6ce65fac40c1362c2e64208201c8028b2139a1c5bd3842798f8e8a1b484c91",
+    "protocol_declaration_sha256": "7d1dd8f2ba3129bdd3ab3f237a4d6e3049614be7504a190428245f7a7fd297f8"
+  },
+  "immutable_artifacts": {
+    "training_protocol": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/protocol.json", "sha256": "a1aa074d44f123f9da72e2a38a8882e637f363b516c497055bfcc381847cc12f"},
+    "permutation": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/permutation_manifest.json", "sha256": "1a3cac6d951b992b79f1e5e31334d8c060ee894034c792fddc8d8dd0c61dc190"},
+    "reference": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_train_negative_reference_frozen/manifest.json", "sha256": "fceb543a7494f2900d3bf0adb849a705e50fa104ed318a33cff264181a716c34"},
+    "checkpoint_real_234": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/real_seed234.pt", "sha256": "cdbb4f8b574b1b32993c26504e942e49212fa71a4a51343ae3287f77671421a0"},
+    "checkpoint_real_2025": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/real_seed2025.pt", "sha256": "469f1423e7e7c2c275cc253618590bc76762f38b8f1196b3c428240f1ae8aefa"},
+    "checkpoint_real_3407": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/real_seed3407.pt", "sha256": "38981171577e99f15caa1473bfb8ef8e540cc7177ad0fc4efc1796138ba080b7"},
+    "checkpoint_permuted_234": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/permuted_seed234.pt", "sha256": "cfa7724270299ec0ebc8e4486230487d2a68785765881e002b4eea5f175abe9b"},
+    "checkpoint_permuted_2025": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/permuted_seed2025.pt", "sha256": "bdacc43e3227d78378ebdbdd6b83057e0d297979550a467c592b180385a4483d"},
+    "checkpoint_permuted_3407": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/permuted_seed3407.pt", "sha256": "0ea9bcb5289de2340b208deecb5c0c5519049c5435c3203de1202c41f47abd0b"},
+    "checkpoint_reference_234": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/negative_reference_only_seed234.pt", "sha256": "6529f9bae9cd226e9ab52029899ac01fa4426024e3b59566821d0cfe33536cb6"},
+    "checkpoint_reference_2025": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/negative_reference_only_seed2025.pt", "sha256": "47325fc3681f3330f3a073cc4d7c948db38d9d24bd64469b20519d9006ee03a6"},
+    "checkpoint_reference_3407": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/negative_reference_only_seed3407.pt", "sha256": "d362ad267986f967df9d9d08a748be0ebe04ae8aa8bacfee19a3353fb5a5504b"},
+    "checkpoint_global_234": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/global_only_seed234.pt", "sha256": "7db4f67f46f486540e5fc2074fefe32680ca34e28ea0a7482a3309a3a2bf570a"},
+    "checkpoint_global_2025": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/global_only_seed2025.pt", "sha256": "ecb2b2581bd8eba9902a908821f95d06bd75f06433de5c6b3fb6d64d26e4c374"},
+    "checkpoint_global_3407": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/train314/v25_training_seed234_2025_3407/global_only_seed3407.pt", "sha256": "3124381a17d4d0b0541c76733687f4dca13b6ab21f3d06d1129ce6e7c2d16ee0"},
+    "val_predictions_manifest": {"path": "/home/jehc223/Hate-follow-up/results/steward_private/thvl_bench/v25_val_predictions_epoch2_frozen/manifest.json", "sha256": "b428d200ecfe7d073a96b95d711874d49b37a5569917672d447669779764b5c9"}
+  },
+  "new_evaluation_identities": {
+    "selector": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/selector.py", "sha256": "2c6267c239faf0ea4921c4ad4a8fe006c21992a60bcb53035d2b1b0e59e09b66"},
+    "current_declaration": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/FINAL_PROTOCOL_DECLARATION.json", "sha256": "e21608dce4ab6cbc890fa0670bfd5ab2c4e04cda1a2d9dbb2a75445f6f06e318"},
+    "steward_generator": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/steward_val_artifact.py", "sha256": "a6cc529c59235210344e9894204ebcaa6af19e760034d18362aecfca9d687081"},
+    "overlap_rule": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/temporal_eval_rule.py", "sha256": "d17378e77900a865711367042f0059819a9671c3f4e262cd29960f8dd8417e35"},
+    "pre_temporal_addendum": {"path": "/home/jehc223/Hate-follow-up/scripts/reproduction_baselines/relation_v25/PRE_TEMPORAL_EVAL_ADDENDUM.json", "sha256": "9f71355569dc2a9f31d7de3668888cb897381bf6608068e3816545904d853dc8"}
+  }
+}

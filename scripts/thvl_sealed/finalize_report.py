@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+import json,math,os
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2];P=ROOT/'results/steward_private/thvl_bench'
+def main():
+ m=json.load(open(P/'val32_hf_metadata.json'));q=json.load(open(P/'val32_download_qc.json'));a=json.load(open(P/'val32_asr_provenance.json'));rows=[json.loads(x) for x in open(P/'val32_timestamped_chunks.jsonl')];chunks=[c for r in rows for c in r['chunks']];valid=[c for c in chunks if c['start'] is not None and c['end'] is not None and all(math.isfinite(float(x)) for x in (c['start'],c['end'])) and c['end']>c['start']]
+ report={'dataset':'THVL-Bench','split':'self-sealed validation opaque cohort','revision':m['revision'],'labels_or_gt_opened':False,'coverage':{'cohort':32,'repository_media':q['coverage']['ok'],'missing_repository_path':q['coverage']['missing_path'],'decode_qc_pass':q['coverage']['ok'],'audio_available':q['coverage']['audio_available'],'asr_records':len(rows),'asr_nonempty':sum(bool(r['chunks']) for r in rows),'timestamped_chunks_total':len(chunks),'timestamped_chunks_finite_positive':len(valid),'timestamped_chunks_invalid_or_open_ended':len(chunks)-len(valid)},'cost':{'hf_metadata_total_bytes':m['total_bytes'],'download_qc_wall_seconds':q['elapsed_seconds'],'audio_duration_seconds':sum(p.get('duration_seconds',0) for r in q['rows'] for p in r['paths']),'asr_wall_seconds':a['elapsed_seconds'],'paid_api_usd':0},'subtitle_availability':m['subtitle_availability'],'artifacts':{'metadata':'val32_hf_metadata.json','qc':'val32_download_qc.json','asr':'val32_timestamped_chunks.jsonl','asr_provenance':'val32_asr_provenance.json'}};(P/'val32_coverage_cost.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
+if __name__=='__main__':main()
