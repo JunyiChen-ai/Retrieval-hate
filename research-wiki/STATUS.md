@@ -24,7 +24,9 @@
 - 第 5–7 步完成(`NOVELTY_SCOUT.md`):选定候选 C1 = 稠密 VLM 窗口打分 + 视频内排序蒸馏(open-with-differentiation);必须新增 baseline:LELA(2602.09637)、TANDEM(2601.11178)。
 - 候选淘汰记录:C1 VLM 排序蒸馏(teacher within .578/.514 < .60,杀,`20260830_vlm_order_pilot/`,其 teacher 行留作 LELA-style 基线);C3 跨视频伪负例(选择精度 ≤ 基率,前提证伪,`20260830_xneg_mil_pilot/KILL_RECORD.md`);外部文本分类器探针(< chance)。
 - **当前晋级候选:C5 跨语料 span 迁移**(`experiments/20260830_spantransfer_pilot/`,pilot 双门 PASS,2026-08-30):LOO 辅助语料 span 预训练 + 目标语料保序弱适配(排序蒸馏 + val 选适配深度)。test within-ROC:HateMM .6801(基线 .6315)、EN .7326(.6004)、ZH .6420(.5482)、HCS .5431(未超 VERA .5619,特征缺口语料)。归因对照全过(naive 毁排序、shuf_span 塌)。查新 open-with-differentiation(最近 AherNet ECCV'20,hate 域无占位;`NOVELTY_C5.md`)。
-- 下一步 = 迭代规则第 12–15 步:深度查新 → 精炼 → 扩大验证(显著性、OSAD/CDL 式对照、源消融)→ 完整性审计。
+- 第 12–15 步完成(2026-08-31):深度查新 = 可主张(头条框架让位 LaGoVAD,主张"span 位置载体 + hate 域 LOCO 协议 + MIL 毁序/排序蒸馏修复";`NOVELTY_DEEP.md`);扩大验证 5 seed + joint/naive 对照 + 源消融 + 敏感性 + 配对 bootstrap(`README.md` step-14 节);完整性审计无 CRITICAL,5 项 MAJOR 表述修正已应用(`INTEGRITY_AUDIT.md`)。
+- **当前结论(test,within-video ROC)**:EN 显著超最强基线(+.140*);HateMM 均值领先不显著(+.045);ZH 方向为正(n=8);HCS 未超 VERA。零迁移臂(无任何目标选择)在 EN/ZH 也超基线。机制归因:joint 训练全面更差,排序保护在 EN 显著必要。
+- 已知增强方向(未执行,需新冻结轮):A2 = 源集合并入 val 选择(单源 HateMM→ZH .776、→HCS .569 均高于现行联合源);HCS 特征缺口(OCR/更强每秒特征)是独立后续迭代。
 
 ## 最新代码在哪
 
