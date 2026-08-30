@@ -25,6 +25,12 @@
 | `archive/` | 淘汰的实验、过时文档、历史根目录文件 | 提交(仅文本) |
 | `third_party/` | 外部代码原样克隆,commit 钉死 | 忽略(除 actionformer) |
 
+### 评测指标(裁定 2026-09-01,查证记录 `experiments/20260830_spantransfer_pilot/METRIC_CONVENTIONS.md`)
+本项目 localization 评测固定用三个指标,全部 1fps 帧网格、test 集:
+1. **Frame-level (pooled) ROC-AUC**——全部 test 视频的秒拼一池算一个 AUC。标准指标(Sultani CVPR'18 谱系)。
+2. **Within-video macro ROC-AUC**——对每个同时含两类秒的正例视频单独算 AUC 再平均。先例 = Georgescu TPAMI'21 的 macro-averaged AUC + UBnormal CVPR'22(官方指标);"仅正例视频"限制引 UR-DMU AUC_sub 谱系,理由:单类视频 AUC 无定义。**这是定位主指标**(pooled 在高正例率数据集上近似视频级指标,实证:整段广播的 Vad-R1 拿 pooled 第一、within 恰 .500)。
+3. **Frame-level (pooled) AP**——同池算 average precision。文献惯例即 pooled(XD-Violence 官方实现);macro AP 无先例,如报告必须标注为扩展指标。
+
 ### 代码
 - **评测器全仓库只有一份**(`src/` 内的 frame/video 评测),所有实验、baseline 调用同一份;任何目录不得复制或重写评测逻辑。改评测器 = 全表数字失效,必须显式裁定。
 - 每轮迭代一个目录:`experiments/<YYYYMMDD>_<slug>/`,内含 `README.md`(机制假设、怎么跑、结论与去向)、训练/推理代码、config。实验目录之间不得互相 import;共享逻辑必须先升入 `src/`。
