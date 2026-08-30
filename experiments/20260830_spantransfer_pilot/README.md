@@ -46,8 +46,38 @@ Selected depths (per seed): hatemm 4/1/15, en 15/0/0, zh 2/0/1, hcs 1/15/2.
   corpora contribute span supervision. Every table row must disclose this
   (framing per NOVELTY_C5.md: cross-corpus LOCO protocol).
 
-## Next (iteration steps 12-15)
+## Step-14 scale-up results (2026-08-30/31, scale_results.json, bootstrap_ci.md)
 
-Deep novelty check on the effective mechanism; refinement (module diet);
-scale-up validation (significance, extra baselines: OSAD-style joint
-multitask, CDL-style variant, per-source ablations); integrity audit.
+5-seed headline (within-ROC macro, TEST): valsel .6766/.7405/.6310/.5450,
+loo_zero .6221/.7194/.6834/.5438 (hatemm/en/zh/hcs). 3-of-4 baseline wins hold
+at 5 seeds. On ZH the 5-seed zero-shot (.6834) exceeds valsel (adaptation adds
+nothing there; val n=8 cannot select reliably) — reported honestly.
+
+Comparators: joint multitask (OSAD-style) loses everywhere it matters
+(.5959/.6318/.5024 vs valsel on hatemm/en/zh -> the pretrain+protected-adapt
+structure is load-bearing; disclosed caveat: valsel keeps a val-selected
+epoch-0 fallback that joint lacks). loo_naive rerun confirms MIL destroys
+ordering (en .6077 vs zero .7194).
+
+Source ablations (zero-shot, 3 seeds): HateMM spans are the dominant source
+(en: union .7194, minus-hatemm .5978; zh: hatemm-alone .7761 vs union .6834).
+Single-source hatemm->hcs reaches within .5686 / frame AP .6321 — ABOVE VERA
+(.5619/.6194): the first HCS lead in the study, diluted away by the union.
+Source-set selection (by val) is a legitimate future amendment, not applied
+post-hoc here.
+
+Sensitivity (hatemm, seed 234, one-at-a-time): within-ROC stays .621-.684
+across tau {.25,1}, lambda {.3,3}, top-k {T/4,T/16} — no cliff.
+
+Paired per-video bootstrap (10k, within-AUC):
+- EN: valsel - CMHKF +.1402 [+.0626,+.2147] SIGNIFICANT; valsel - naive
+  +.1328 [+.0798,+.1852] SIGNIFICANT.
+- HateMM: valsel - MultiHateLoc +.0450 [-.0022,+.0938] not significant
+  (frozen flag (c) fires: reported as a mean-level, non-significant lead);
+  valsel - zero +.0544 [+.0283,+.0803] SIGNIFICANT (adaptation helps).
+- ZH: +.0828 vs baseline, CI [-.0912,+.2450] (n=8, underpowered, direction+).
+- HCS: -.0169 vs VERA (ns); note the hatemm-single-source row above.
+
+## Next (iteration step 15-16)
+
+Integrity audit; final report.
