@@ -43,3 +43,12 @@ train splits. Round rescoped:
   CI>0; (ii) HateMM bootstrap vs MultiHateLoc CI>0; (iii) same protocol.
 - Disclosure: the deployed feature stack differs by corpus (L14 where raw video
   exists, B/16 elsewhere) — stated in every table.
+
+## Round-3 outcome (2026-08-31): KILLED at E3
+
+E3 ceilings with CLIP-L/14-336 stack: hatemm .7605±.020 (gate .77; B/16 ref
+.7577 — +.003), hcs .6008±.012 (gate .62; B/16 ref ~.581 — +.02, insufficient).
+Both gates fail; E4 not run. Conclusion: the within-video information ceiling
+is a property of the 1-fps frozen-feature paradigm on these corpora, not of
+the specific encoder (B/16, +OCR, L/14 all land within ~.02). Feature-side
+levers exhausted for this iteration; return to objective-side improvements.
