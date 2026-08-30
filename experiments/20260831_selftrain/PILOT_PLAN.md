@@ -40,3 +40,14 @@ void when the SEED model's ordering comes from external span supervision:
 - Attribution: `st_milseed` must NOT match `st` on HateMM (gap >= .02) —
   otherwise the external-seed story is false.
 - Kill: HateMM mean < .6766 - .005 -> round dead, negative result recorded.
+
+## Round-4 outcome (2026-08-31): no-op on performance, attribution confirmed
+
+st (transfer-seeded): hatemm .6774±.006 (val deployed the seed 4/5 seeds),
+hcs .5510±.012 (seed 5/5). Self-training never beat its seed on val; deployed
+performance is the A1 recipe's (within rerun noise). Partial-success threshold
+(hatemm >= .69) not reached; significance vs MultiHateLoc unchanged (ns).
+st_milseed (attribution): hatemm .5767, hcs .5191 — a .10 gap below the
+transfer seed, empirically confirming that pseudo-label self-training without
+an external ordering seed stays at the MIL level (the circularity prediction).
+Verdict: mechanism claim validated, performance lever dead. Round closed.
