@@ -75,6 +75,25 @@ implementation adjustment, no new mechanism:
   makes this achievable by construction up to val-test noise; failing it means
   val does not track test ordering and the candidate dies).
 
+## Amendment A2 (2026-08-31, frozen before its run)
+
+Motivation: source ablations (step 14) show the fixed union is not always the
+best source set (zh: hatemm-alone zero-shot .7761 vs union .6834; hcs:
+hatemm-alone .5686 vs union .5438). Source-set choice is a configuration, and
+val already sanctions configuration selection. A2 folds it in:
+
+- `full`: per target and seed, the deployed configuration is selected on val
+  within-ROC over the joint candidate grid {source set} x {adaptation depth},
+  source sets = {union of others} + {each single aux corpus} (4 options),
+  depths = {0,1,2,4,8,15}. Everything else identical to valsel.
+- 5 seeds (234/2025/3407/42/20260830), dense test scores saved, TEST eval.
+- Gates (frozen): `full` beats the best reproduced baseline mean within-ROC on
+  >= 3 of 4 corpora, AND >= max(valsel, loo_zero) - 0.015 per corpus (the
+  richer selection must not lose to its own special cases beyond noise), AND
+  paired bootstrap vs best baseline positive (CI excluding 0) on >= 2 corpora.
+- Selection uses val only; test numbers reported for the selected
+  configuration; no post-hoc changes.
+
 ## Known risks (stated pre-run)
 
 - HateMM-as-target is the weak cell (aux sources EN/ZH/HCS individually
