@@ -95,6 +95,22 @@ Paired per-video bootstrap (10k, within-AUC):
 - ZH: +.0828 vs baseline, CI [-.0912,+.2450] (n=8, underpowered, direction+).
 - HCS: -.0169 vs VERA (ns); note the hatemm-single-source row above.
 
-## Next (iteration step 15-16)
+## Amendment A2 outcome (2026-08-31): REJECTED by its frozen gate
 
-Integrity audit; final report.
+Joint val selection over {source set} x {depth} (24 configs): hatemm
+.6582 (loses to valsel .6766 beyond the .015 slack -> clause 2 fails),
+mhclip_en .7945 (± .034 — above even EN's supervised skyline; 4/5 seeds chose
+the hatemm-single source), mhclip_zh .6863, hcs .5566. Verdict: with only
+~10-50 val hate videos, a 24-config grid overfits selection on hatemm; the
+deployed method stays A1 (fixed union + depth-only selection). The EN/ZH/HCS
+upside is recorded as exploration; deploying per-corpus source selection would
+need a selection rule that survives a fresh frozen gate, and A2's failure is
+the evidence it does not, as tried.
+
+## Final method state
+
+**LOCO-ST = A1 valsel** (union-of-others span pretraining + rank-preserving
+MIL adaptation + depth-only val selection). Authoritative numbers: step-14
+section above; artifacts in runs/20260830_spantransfer_pilot/ (dense scores,
+scale_results.json, bootstrap_ci.md); audit INTEGRITY_AUDIT.md (no CRITICAL,
+corrections applied).
