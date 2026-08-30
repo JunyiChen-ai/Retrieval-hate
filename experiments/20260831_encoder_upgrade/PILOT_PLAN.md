@@ -30,3 +30,16 @@ the span-transfer method then converts into test gains.
   feature configs; our feature stack is part of our method, disclosed).
 - Protocol unchanged: test reporting, within-ROC macro primary, shared
   evaluator, seeds 234/2025/3407/42/20260830.
+
+## Scope amendment (2026-08-31, pre-E2, frozen): MHC raw videos unavailable
+
+E1 found 630 (EN) + 663 (ZH) videos with no raw source on this machine (only
+their CLIP-B-era features survive). CLIP-L features therefore cannot cover MHC
+train splits. Round rescoped:
+- Targets: hatemm and hateclipseg only, aux source = the other one (hcs->hatemm
+  and hatemm->hcs were each target's strongest/competitive single source in the
+  B/16 ablations). EN/ZH method rows keep their 3-modal CLIP-B numbers.
+- E3 gates unchanged for these two corpora. E4 gates: (i) HCS beat VERA with
+  CI>0; (ii) HateMM bootstrap vs MultiHateLoc CI>0; (iii) same protocol.
+- Disclosure: the deployed feature stack differs by corpus (L14 where raw video
+  exists, B/16 elsewhere) — stated in every table.
