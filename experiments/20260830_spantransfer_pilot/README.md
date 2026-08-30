@@ -56,15 +56,32 @@ nothing there; val n=8 cannot select reliably) — reported honestly.
 Comparators: joint multitask (OSAD-style) loses everywhere it matters
 (.5959/.6318/.5024 vs valsel on hatemm/en/zh -> the pretrain+protected-adapt
 structure is load-bearing; disclosed caveat: valsel keeps a val-selected
-epoch-0 fallback that joint lacks). loo_naive rerun confirms MIL destroys
-ordering (en .6077 vs zero .7194).
+epoch-0 fallback that joint lacks). The ordering-destruction finding is
+corpus-dependent (audit correction): significant on EN (naive .6077 vs zero
+.7194; valsel-naive +.1328 CI [+.0798,+.1852]) and present on ZH/HCS, but the
+HateMM naive rerun landed ABOVE zero-shot (.6453 vs .6221) and valsel-naive is
+ns there [-.0028,+.0655] — do not claim "destroys everywhere".
+
+Run-to-run nondeterminism (audit): identical code+seed reruns drift up to
+~.06 in a 3-seed within-ROC mean (no deterministic-algorithms flags); treat
+3-seed deltas below .06 as unresolved. Code commit for all scale runs:
+9aa1aab (and 045407d for the pilot arms).
 
 Source ablations (zero-shot, 3 seeds): HateMM spans are the dominant source
 (en: union .7194, minus-hatemm .5978; zh: hatemm-alone .7761 vs union .6834).
-Single-source hatemm->hcs reaches within .5686 / frame AP .6321 — ABOVE VERA
-(.5619/.6194): the first HCS lead in the study, diluted away by the union.
-Source-set selection (by val) is a legitimate future amendment, not applied
-post-hoc here.
+Single-source hatemm->hcs reaches within .5686 / frame AP .6321, nominally
+above VERA (.5619/.6194) — but the margin (.0067) is inside one seed-sd, no
+dense scores were saved for this arm and no paired test exists: a
+within-noise observation, not a claimed lead. Source-set selection (by val)
+is a legitimate future amendment, not applied post-hoc here.
+
+Win decomposition (audit-corrected): one significant baseline win (EN), one
+non-significant mean lead (HateMM), one direction-only n=8 result (ZH — it IS
+arithmetically load-bearing for the 3-of-4 gate), one loss (HCS). The
+"target-span-free" label must always disclose that adaptation-depth selection
+consumes target val frame labels (baselines select on video-level signals
+only); mitigation: loo_zero, which uses no target selection at all, also
+beats the baselines on EN/ZH.
 
 Sensitivity (hatemm, seed 234, one-at-a-time): within-ROC stays .621-.684
 across tau {.25,1}, lambda {.3,3}, top-k {T/4,T/16} — no cliff.
