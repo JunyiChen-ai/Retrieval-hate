@@ -196,6 +196,19 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         % (len(train_ids), len(val_ids), len(test_ids),
            sum(labels[v] for v in train_ids), cache.n_missing_text,
            cache.n_missing_verdict, use_scaffold, use_snico))
+    if use_scaffold:
+        cov = {name: sum(v in verdicts for v in ids)
+               for name, ids in (("train", train_ids), ("val", val_ids),
+                                 ("test", test_ids))}
+        say("verdict coverage: train %d/%d, val %d/%d, test %d/%d"
+            % (cov["train"], len(train_ids), cov["val"], len(val_ids),
+               cov["test"], len(test_ids)))
+        if cache.n_missing_verdict > 0:
+            say("ABORT: %d videos have no K30 verdict; with a partial cache the"
+                " scaffold channel would leak the video label on train"
+                % cache.n_missing_verdict)
+            log.close()
+            raise SystemExit(3)
 
     a = Args(cfg)
     a["a_feature_size"] = ds.A_EXT_DIM

@@ -129,7 +129,7 @@ def main(argv=None):
 
     if budget is None:
         if n_done() == 0:
-            study.optimize(objective, n_trials=1)
+            study.optimize(objective, n_trials=1, catch=(RuntimeError,))
         first = [t for t in study.trials if t.number == 0][0]
         secs = first.user_attrs.get("seconds", 0.0)
         budget = 20 if secs <= 3600 else 5
@@ -138,7 +138,7 @@ def main(argv=None):
         say("budget fixed: %d trials (first trial %.0fs)" % (budget, secs))
     remaining = budget - n_done()
     if remaining > 0:
-        study.optimize(objective, n_trials=remaining)
+        study.optimize(objective, n_trials=remaining, catch=(RuntimeError,))
 
     rows = []
     for t in study.trials:
