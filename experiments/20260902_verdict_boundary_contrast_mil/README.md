@@ -48,7 +48,7 @@
 ## 3. 训练、选择与搜索（规则 7）
 - 训练：MACIL-SD 原训练循环（两优化器交替、EMA 自蒸馏、λ 线性爬升），加 SniCo 项。不做 smoke、不做单元测试。
 - Checkpoint 选择：每 epoch 在**官方 validation split**（`results/reproduction/gt/<corpus>_val.npz`）上用统一评测器算 pooled AP 与 ROC，取均值最高的 epoch。
-- Optuna：每 (语料, seed) 一个 study，TPE，sampler seed = 训练 seed；trial 数按第一个 trial 实测耗时定（≤1 h → 20，>1 h → 5），确定后写回本 README 不再改；目标值 = test (AP+ROC)/2，test within 低于下限的 trial 记 fail。
+- Optuna：每 (语料, seed) 一个 study，TPE，sampler seed = 训练 seed；trial 数按第一个 trial 实测耗时定（≤1 h → 20，>1 h → 5），确定后写回本 README 不再改；**已定：HateClipSeg seed 234 第一个 trial 252 s（uoa-lab1，与 VLM 抽取共用 GPU）→ 20 trials；HateMM 同一代码同一网格，同样 20 trials；**目标值 = test (AP+ROC)/2，test within 低于下限的 trial 记 fail。
 - 搜索空间（两语料共用）：`lr` log[1e-4, 1e-3]；`dropout` {0.1, 0.2, 0.3}；`max_seqlen` {150, 200, 300}；`lamda_a2b`, `lamda_a2n` [0.5, 2.0]；`lamda_cof` [0.02, 0.1]；`λ_snico` log[0.05, 2.0]；`ρ` [0.3, 0.8]；`m` {2, 4, 8, 16}；`τ` {0.07, 0.1, 0.2}；`k_e` = ⌈T/16⌉+1（固定，与 MIL 的 k 相同）。
 - seed 234 筛选；过筛后 seed 2025/3407 各自完整搜索确认。
 - 消融（seed 234，best trial 超参数，test）：`full`；`no_snico`（λ_snico = 0，核心机制消融）；`input_only`（修订 1：裁定只拼输入、无 logit 先验）；`no_scaffold`（无裁定、无位置通道，仍有 SniCo）；`no_scaffold_no_snico`（= MACIL-SD + BERT 文本流）。
@@ -64,3 +64,25 @@
 2. 是否纯 ensemble：否（单模型，五 crop 平均是 MACIL-SD 原推理）。
 3. 是否纯校准/后处理/平滑：否（推理不变）。
 4. 是否纯 engineering trick：核心是带来源的完整训练机制（对比损失 + 硬样本挖掘），不是换编码器/帧率。
+
+## 6. 结果（test，1 fps，统一评测器；来源 = 各目录 `metrics.json`）
+
+### 6.1 HateClipSeg seed 234（修订 2，uoa-lab1，2026-09-02）
+搜索：20 trials（`runs/20260902_verdict_boundary_contrast_mil/hateclipseg/seed234/study_summary.json`）。20 个 trial 的 test AP 范围 .663–.691，ROC .628–.661，within .565–.579，无一低于 within 下限 .524。
+
+| 设定 | AP | ROC | within | 来源 |
+|---|---|---|---|---|
+| best trial（14，rule 7 有效检验值） | .691 | .661 | .579 | `hateclipseg/seed234/trial14/metrics.json` |
+| validation 会选的 trial（2，仅参考） | .682 | .641 | .575 | `hateclipseg/seed234/trial2/metrics.json` |
+| 消融 no_snico（λ_snico = 0） | .679 | .637 | .573 | `ablations/hateclipseg/seed234/no_snico/metrics.json` |
+| 消融 input_only（修订 1：裁定只拼输入） | .551 | .524 | .542 | `ablations/hateclipseg/seed234/input_only/metrics.json` |
+| 消融 no_scaffold（无裁定，有 SniCo） | .561 | .539 | .529 | `ablations/hateclipseg/seed234/no_scaffold/metrics.json` |
+| 消融 no_scaffold_no_snico（MACIL-SD + BERT 文本流） | .587 | .568 | .540 | `ablations/hateclipseg/seed234/no_scaffold_no_snico/metrics.json` |
+| 裁定本身（不训练） | .610 | .616 | .558 | `verdict_only/hateclipseg/test/metrics.json` |
+| 门：Fed-WSVAD-3client AP / DSANet ROC / within 下限 | .562 | .528 | .524 | `RESEARCH_ITERATION_RULES.md` 第 8 条 |
+| VERA（training-free，只报不作门） | .619 | .605 | .562 | 同上 |
+
+消融全部用 trial 14 的超参数、seed 234。读数：
+- 裁定先验是主要来源：no_snico 已达 .679/.637，高于裁定本身（.610/.616）和 MACIL-SD+文本（.587/.568），说明训练把裁定与音视频/文本证据合成了，不是简单转发。
+- SniCo 在有先验时有效：full 比 no_snico 高 AP +.012、ROC +.024、within +.006（单 seed，超过 .005 噪声线，低于 baseline std .036/.023）；无先验时 SniCo 有害（no_scaffold .561 vs no_scaffold_no_snico .587）：边界挖掘只有在 actionness 已有可靠粗结构时才有用。
+- 修订 1（input_only）.551/.524 低于 MACIL-SD+文本 .587/.568：把 7 维裁定拼进 903 维输入不但没被利用，还拖低了结果。
