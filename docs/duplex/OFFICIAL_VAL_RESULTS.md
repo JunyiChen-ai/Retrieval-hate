@@ -1,7 +1,5 @@
 # Weakly supervised baselines — official validation
 
-Code commit: `0e153783fba36f2d5005a327c2caa8d6c1985782`
-
 | Method | Venue | Supervision | Corpus | Seeds | Frame ROC | Frame PR | Video ROC | Video AP | Within-hate ROC |
 |---|---|---|---|---:|---:|---:|---:|---:|---:|
 | vadclip | AAAI 2024 | video-level labels | hatemm | 3 | 0.6423 ± 0.1233 | 0.3683 ± 0.1100 | 0.6767 ± 0.1532 | 0.5769 ± 0.1588 | 0.4420 ± 0.0529 (n=85) |

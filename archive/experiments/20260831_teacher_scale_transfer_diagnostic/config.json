@@ -1,0 +1,45 @@
+{
+  "split": "test",
+  "developmental_test_evidence": true,
+  "implementation_version": "teacher-scale-transfer-v1",
+  "source_artifact": "/home/jehc223/Retrieval-hate/runs/20260831_universal_teacher_simplex_diagnostic/main/metrics.json",
+  "weight_order": [
+    "lexical",
+    "powa",
+    "vera",
+    "multihateloc"
+  ],
+  "frozen_weights": [
+    [0.05, 0.30, 0.30, 0.35],
+    [0.05, 0.30, 0.35, 0.30],
+    [0.10, 0.25, 0.35, 0.30],
+    [0.10, 0.25, 0.40, 0.25],
+    [0.10, 0.30, 0.45, 0.15],
+    [0.15, 0.20, 0.40, 0.25],
+    [0.15, 0.25, 0.45, 0.15]
+  ],
+  "fold_rule": "five folds assigned by sorted video ID index modulo five; each target fold uses all frames from the other four folds as its empirical mid-CDF reference",
+  "normalizations": {
+    "fivefold_video_heldout_ecdf": "reference mid-CDF from the other four video folds only",
+    "per_video_ecdf": "average ranks within each target video",
+    "raw_identity": "stored branch values without mapping"
+  },
+  "input_signals": {
+    "hatemm": {
+      "lexical": {"path": "/home/jehc223/Retrieval-hate/runs/20260831_video_label_lexical_locality/premise/hatemm/scores.jsonl", "branch": "score_lexical", "seed": 234},
+      "powa": {"path": "/home/jehc223/Hate-follow-up/results/reproduction/powa_macil/final_maskfix_finetune_hatemm_seed234_e5/hatemm/scores.jsonl", "branch": "score_powa", "seed": 234},
+      "vera": {"path": "/home/jehc223/Hate-follow-up/results/reproduction/official_val/final/vera/hatemm/seed_234/scores.jsonl", "branch": "score_official_postprocessed", "seed": 234},
+      "multihateloc": {"path": "/home/jehc223/Hate-follow-up/results/reproduction/official_val/final/multihateloc/hatemm/seed_234/hatemm/scores.jsonl", "branch": "score_fused", "seed": 234}
+    },
+    "hateclipseg": {
+      "lexical": {"path": "/home/jehc223/Retrieval-hate/runs/20260831_video_label_lexical_locality/premise/hateclipseg/scores.jsonl", "branch": "score_lexical", "seed": 234},
+      "powa": {"path": "/home/jehc223/Retrieval-hate/runs/20260831_powa_starting_point/hcs_maskfix_seed234/scores.jsonl", "branch": "score_powa", "seed": 234},
+      "vera": {"path": "/home/jehc223/Hate-follow-up/results/reproduction/official_val/final/vera/hateclipseg/seed_234/scores.jsonl", "branch": "score_official_postprocessed", "seed": 234},
+      "multihateloc": {"path": "/home/jehc223/Hate-follow-up/results/reproduction/official_val/final/multihateloc/hateclipseg/seed_234/hateclipseg/scores.jsonl", "branch": "score_fused", "seed": 234}
+    }
+  },
+  "sota_thresholds": {
+    "hatemm": {"pr_auc": 0.5938315566, "roc_auc": 0.8161837922, "within": 0.6315317180},
+    "hateclipseg": {"pr_auc": 0.6193710950, "roc_auc": 0.6050224699, "within": 0.5619078936}
+  }
+}

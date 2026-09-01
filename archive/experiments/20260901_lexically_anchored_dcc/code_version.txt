@@ -1,0 +1,3 @@
+Working-tree implementation reviewed before the formal run on 2026-09-01.
+Method files are archived in archive/experiments/20260901_lexically_anchored_dcc; shared POWA
+representation exposure is in scripts/reproduction_baselines/powa_macil/model.py.

@@ -107,8 +107,10 @@ class PolicyConditionedEvidenceFactorizer(nn.Module):
             self.register_buffer("semantic_en", torch.from_numpy(proto["en"]).float())
             self.register_buffer("semantic_zh", torch.from_numpy(proto["zh"]).float())
 
-    def forward(self, audio_context, visual_context, text_features, policy):
-        text = self.text_temporal(self.text_projection(text_features))
+    def forward(self, audio_context, visual_context, text_features, policy,
+                valid_mask=None):
+        text = self.text_temporal(self.text_projection(text_features),
+                                  valid_mask=valid_mask)
         shared = self.fuse(torch.cat([audio_context, visual_context, text], -1))
         primitive_logits = self.primitive_head(shared)
         semantic_logits = None
@@ -123,7 +125,7 @@ class PolicyConditionedEvidenceFactorizer(nn.Module):
             semantic_logits = semantic_logits * text_present[..., None]
             primitive_logits = primitive_logits + self.semantic_strength * semantic_logits
         return (primitive_logits, self.hostile_query(shared),
-                self.target_key(shared), semantic_logits, text_present)
+                self.target_key(shared), semantic_logits, text_present, shared)
 
 
 class AsynchronousWitnessBinder(nn.Module):
@@ -281,10 +283,10 @@ class POWAMACIL(nn.Module):
         if policy is None:
             raise ValueError("policy is required for a shared POWA model")
         backbone = self.macils[policy] if self.multi_backbone else self.macil
-        base = backbone(f_a, f_v, seq_len)
+        base = backbone(f_a, f_v, seq_len, valid_mask=valid_mask)
         base_bag, audio_logits, visual_logits, av_logits, v_out, a_out = base
-        primitive_logits, hq, tk, semantic_logits, text_present = self.pef(
-            a_out, v_out, f_t, policy)
+        primitive_logits, hq, tk, semantic_logits, text_present, shared = self.pef(
+            a_out, v_out, f_t, policy, valid_mask=valid_mask)
         primitive_prob = torch.sigmoid(primitive_logits)
         hostile = primitive_prob[..., P_HOSTILE]
         target = primitive_prob[..., P_TARGET]
@@ -339,4 +341,7 @@ class POWAMACIL(nn.Module):
             "visual_logits": visual_logits,
             "audio_rep": a_out,
             "visual_rep": v_out,
+            # Exposed for training-only representation objectives. Existing
+            # POWA logits, probabilities and inference behavior are unchanged.
+            "shared_rep": shared,
         }

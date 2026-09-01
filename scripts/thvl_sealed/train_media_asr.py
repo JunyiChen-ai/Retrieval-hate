@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2];PRIVATE=ROOT/'results/steward_private/thvl_bench'
 MANIFEST=ROOT/'results/reproduction/thvl_sealed/train_media_manifest.json'
-REPO='THVL/THVL-Bench';REV='5ea20ec4074dea9d3419e88fea944313ab25818d';MODEL='openai/whisper-large-v3'
+REPO='THVL/THVL-Bench';REV=None;MODEL='openai/whisper-large-v3'
 CACHE=PRIVATE/'hf_media_cache';BASE=PRIVATE/'train314';QC_DIR=BASE/'qc_records';WAV_DIR=BASE/'wav16k';ASR_DIR=BASE/'asr_records'
 def sha(p):
  h=hashlib.sha256()

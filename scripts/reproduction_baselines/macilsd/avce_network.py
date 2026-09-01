@@ -48,9 +48,9 @@ class AVCE_Model(nn.Module):
         self.cma = CrossAttentionBlock(TransformerLayer(hid_dim, MultiHeadAttention(nhead, hid_dim), c(self.feedforward), dropout))
         self.att_mmil = Att_MMIL(hid_dim, args.num_classes)
 
-    def forward(self, f_a, f_v, seq_len):
+    def forward(self, f_a, f_v, seq_len, valid_mask=None):
         f_v, f_a = self.fc_v(f_v), self.fc_a(f_a)
-        v_out, a_out = self.cma(f_v, f_a)
+        v_out, a_out = self.cma(f_v, f_a, valid_mask=valid_mask)
         mmil_logits, audio_logits, visual_logits, av_logits = self.att_mmil(a_out, v_out, seq_len)
         # NOTE (not a patch): upstream returns (..., v_out, a_out) and its
         # caller unpacks that pair as (audio_rep, visual_rep), so the two

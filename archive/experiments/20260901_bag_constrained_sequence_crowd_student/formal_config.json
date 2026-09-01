@@ -1,0 +1,13 @@
+{
+  "method": "bag_constrained_sequence_crowd_student",
+  "seed": 234,
+  "epochs": 30,
+  "batch_size": 8,
+  "width": 128,
+  "dropout": 0.1,
+  "learning_rates": [0.00003, 0.0001, 0.0003],
+  "bag_weights": [0.25, 1.0],
+  "validation_trials_per_corpus": 6,
+  "checkpoint_selection": "validation AP and ROC within 0.01 of best, then maximum within-video ROC",
+  "test_arms": ["core", "token_ds", "unconstrained_bsc"]
+}

@@ -11,8 +11,9 @@ class SelfAttentionBlock(nn.Module):
         self.layer = attention_layer
         self.size = attention_layer.size
 
-    def forward(self, feature):
-        feature_sa = self.layer(feature, feature, feature)
+    def forward(self, feature, valid_mask=None):
+        feature_sa = self.layer(feature, feature, feature,
+                                key_padding_mask=valid_mask)
         return feature_sa
 
 
@@ -22,9 +23,11 @@ class CrossAttentionBlock(nn.Module):
         self.layer = attention_layer
         self.size = attention_layer.size
 
-    def forward(self, video, audio):
-        video_cma = self.layer(video, audio, audio)
-        audio_cma = self.layer(audio, video, video)
+    def forward(self, video, audio, valid_mask=None):
+        video_cma = self.layer(video, audio, audio,
+                               key_padding_mask=valid_mask)
+        audio_cma = self.layer(audio, video, video,
+                               key_padding_mask=valid_mask)
         return video_cma, audio_cma
 
 
@@ -36,8 +39,10 @@ class TransformerLayer(nn.Module):
         self.sublayer = clones(SublayerConnection(size, dropout), 2)
         self.size = size
 
-    def forward(self, q, k, v):
-        q = self.sublayer[0](q, lambda q: self.self_attn(q, k, v)[0])
+    def forward(self, q, k, v, key_padding_mask=None):
+        q = self.sublayer[0](
+            q, lambda q: self.self_attn(
+                q, k, v, key_padding_mask=key_padding_mask)[0])
         return self.sublayer[1](q, self.feed_forward)
 
 
@@ -51,7 +56,8 @@ class SublayerConnection(nn.Module):
         return x + self.dropout(sublayer(self.norm(x)))
 
 
-def attention(query, key, value, masksize, dropout=None):
+def attention(query, key, value, masksize, dropout=None,
+              key_padding_mask=None):
     d_k = query.size(-1)
     scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
     if masksize != 1:
@@ -70,6 +76,12 @@ def attention(query, key, value, masksize, dropout=None):
                 mask[:, :, i, masksize + i + 1:] = 0
         # print(mask[0][0])
         scores = scores.masked_fill(mask == 0, -1e9)
+    if key_padding_mask is not None:
+        if key_padding_mask.ndim != 2 or key_padding_mask.shape != (
+                scores.shape[0], scores.shape[-1]):
+            raise ValueError("key_padding_mask must have shape (batch, key_time)")
+        scores = scores.masked_fill(
+            ~key_padding_mask[:, None, None, :].to(dtype=torch.bool), -1e9)
     p_attn = F.softmax(scores, dim=-1)
     if dropout is not None:
         p_attn = dropout(p_attn)
@@ -92,14 +104,16 @@ class MultiHeadAttention(nn.Module):
         self.layer_norm = nn.LayerNorm(d_model)
         self.dropout = nn.Dropout(p=dropout)
 
-    def forward(self, query, key, value):
+    def forward(self, query, key, value, key_padding_mask=None):
         nbatches = query.size(0)
 
         # 1) Do all the linear projections in batch from d_model => h x d_k
         query, key, value = [l(x).view(nbatches, -1, self.h, self.d_k).transpose(1, 2) for l, x in
                              zip(self.linears, (query, key, value))]
         # 2) Apply attention on all the projected vectors in batch.
-        x, self.attn = attention(query, key, value, self.masksize, dropout=self.dropout)
+        x, self.attn = attention(
+            query, key, value, self.masksize, dropout=self.dropout,
+            key_padding_mask=key_padding_mask)
         # 3) "Concat" using a view and apply a final linear.
         x = x.transpose(1, 2).contiguous().view(nbatches, -1, self.h * self.d_k)
         out = self.linears[-1](x)

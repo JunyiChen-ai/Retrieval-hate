@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 ## 项目
-弱监督 hateful video localization。主数据集:HateMM、MHC-EN、MHC-ZH、HateClipSeg(裁定固定,新数据集只能做 external validation)。研究迭代流程与晋级标准见 `RESEARCH_ITERATION_RULES.md`。
+弱监督 hateful video localization。主数据集:HateMM、HateClipSeg(2026-09-02 裁定;MHC-EN/MHC-ZH 已停用,不跑、不作门、不进论文主表;新数据集只能做 external validation)。研究迭代流程与晋级标准见 `RESEARCH_ITERATION_RULES.md`。
 
 **当前状态唯一入口:`research-wiki/STATUS.md`**(最新代码在哪、权威数字在哪、做到哪了)。每轮迭代结束必须更新它。
 
@@ -9,6 +9,37 @@
 - 单机 RTX 5090,无 SLURM,直接在终端跑;conda 环境 `HateVideo`。
 - 原始视频在 `~/data/`(HateMM、Multihateclip、HateClipSeg),仓库内 `data/` 存派生缓存。
 - 长任务必须与 SSH 会话解耦:`nohup`/`setsid` 后台运行,日志与 PID 写进该 run 的输出目录(见下),随时可 `tail -f` 查进度。
+
+## 多机运行（2026-09-02 立；机器状态为当日核查，变动时更新本表）
+
+| 别名（`~/.ssh/config`） | 主机 | 状态（2026-09-02） |
+|---|---|---|
+| 本机 = `uoa-lab2` | sc474399, 130.216.119.32 | **主机器**。代码最新（本地领先 GitHub 29 个 commit）、派生缓存最全（`data/` 71G，含 `CLIP_Embedding` 50G）、原始视频 `~/data` 34G、conda `HateVideo`、rclone `b2` 已配。RTX 5090 32G。 |
+| `uoa-lab1` | sc474397 | RTX 5090 空闲。`~/Retrieval-hate` 是旧布局（停在 GitHub HEAD，落后本机 29 commit），仓库 `data/` 仅 813M；`~/data` 有 HateMM 12G、Multihateclip 22G、ImpliHateVid，**HateClipSeg 视频缺失**；无 conda、无 torch；rclone `b2` 已配；空盘 1.2T。 |
+| `uoa-lab3` | sc474398 | RTX 5090 空闲。空机：无仓库、无数据、无 conda/torch、无 rclone；空盘 1.7T。 |
+| `lab-server` | sc448960，账号 `junyi`（用户本人账号） | RTX 5090，当前被用户 `ling` 的进程占 19G/88%，需先看空闲。有 miniconda（HVGuard 等旧环境，无 `HateVideo`）、rclone `b2` 与 `gdrive` 已配；无本项目仓库与数据；空盘 941G。 |
+
+### 选机规则
+1. 本机 GPU 可用（`nvidia-smi` 显示占用 < 50% 且空闲显存 ≥ 16G）时一律在本机跑。
+2. 本机被占时，按"代码与数据最完整"排序选远程机：`uoa-lab1` > `uoa-lab3` > `lab-server`；`lab-server` 与他人共用 GPU，放最后，开跑前同样按第 1 条的占用标准判断。远程机首次使用前必须完成下面"远程机准备"，缺一项不得开跑。
+3. 同一实验的 HateMM/HateClipSeg 两个语料尽量在同一台机器上跑，避免环境差异。
+
+### 远程机准备（一次性，按顺序）
+1. **代码**：本机 `git add -A && git commit && git push origin main`，远程 `git clone https://github.com/JunyiChen-ai/Retrieval-hate.git` 或 `git pull`。远程机上不改代码；如必须改，改完立即 commit 并 push，回本机 pull。
+2. **环境**：远程装 miniconda 后 `conda env create -f environment_HateVideo.yml -n HateVideo`；本机 torch 为 cu128 版本，远程按本机 `pip freeze` 对齐。
+3. **派生缓存**：从本机 rsync 实验需要的 `data/<类型>/` 子目录（不整包拷 71G）：`rsync -a --info=progress2 ~/Retrieval-hate/data/<类型>/ <别名>:~/Retrieval-hate/data/<类型>/`。同步 `PROVENANCE.md`。
+4. **原始视频**：优先从本机 rsync `~/data/<数据集>`；本机也缺时从 b2 取：`rclone copy b2:junyi-data/RGCL_video/raw/<HateMM|Multihateclip|HateClipSeg> ~/data/<数据集>/ --transfers 8`。另有 `b2:junyi-data/hate-followup/` 下的 `hatemm_processed.tar`、`mhclip_en_processed.tar`、`mhclip_zh_processed.tar` 为旧仓库处理包。
+5. **rclone**：远程没有 `b2` remote 时，`scp ~/.config/rclone/rclone.conf <别名>:~/.config/rclone/`（含密钥，不写进任何文档或 commit），装 rclone 到 `~/.local/bin`。
+
+### 结果回传（强制）
+- `runs/` 不进 git。远程实验结束后立即回传：`rsync -a --info=progress2 <别名>:~/Retrieval-hate/runs/<exp_id>/ ~/Retrieval-hate/runs/<exp_id>/`，回传完成后才允许更新 `research-wiki/STATUS.md`；STATUS 只引用本机路径。
+- 远程新生成的派生缓存（新特征等）同样 rsync 回本机 `data/<类型>/`，并在 `PROVENANCE.md` 注明生成机器。
+- 每个 run 的 `run.log` 首行与实验 README 写明运行主机名。
+- 远程长任务同样 `nohup`/`setsid`，PID 与日志写进 run 目录；本机用 `ssh <别名> tail -f` 看进度。
+
+## Agent 调用
+- 所有通过 Agent 工具 spawn 的子 agent（proposal review、code review、general-purpose、Explore 等）一律指定 `model: fable`（Claude Fable 5.1），不得降级到 sonnet/haiku/opus。
+- 用户可能要求单独 spawn 一个 agent 并直接交代任务；主 agent 先 spawn 待命，再用 SendMessage 把用户的任务原文转给它。
 
 ## 目录规范(2026-08-30 立;新文件必须遵守,存量逐步迁移)
 
@@ -28,7 +59,7 @@
 ### 评测指标(裁定 2026-09-01,查证记录 `experiments/20260830_spantransfer_pilot/METRIC_CONVENTIONS.md`)
 本项目 localization 评测固定用三个指标,全部 1fps 帧网格、test 集:
 1. **Frame-level (pooled) ROC-AUC**——全部 test 视频的秒拼一池算一个 AUC。标准指标(Sultani CVPR'18 谱系)。
-2. **Within-video macro ROC-AUC**——对每个同时含两类秒的正例视频单独算 AUC 再平均。先例 = Georgescu TPAMI'21 的 macro-averaged AUC + UBnormal CVPR'22(官方指标);"仅正例视频"限制引 UR-DMU AUC_sub 谱系,理由:单类视频 AUC 无定义。**这是定位主指标**(pooled 在高正例率数据集上近似视频级指标,实证:整段广播的 Vad-R1 拿 pooled 第一、within 恰 .500)。
+2. **Within-video macro ROC-AUC**——对每个同时含两类秒的正例视频单独算 AUC 再平均。先例 = Georgescu TPAMI'21 的 macro-averaged AUC + UBnormal CVPR'22(官方指标);"仅正例视频"限制引 UR-DMU AUC_sub 谱系,理由:单类视频 AUC 无定义。**2026-09-02 裁定:SOTA 比较用指标 1 和 3(文献通用);within 作为 shortcut 下限约束与附加分析指标,不作比较主指标**(pooled 在高正例率数据集上近似视频级指标,实证:整段广播的 Vad-R1 拿 pooled 第一、within 恰 .500;hateful video 文献无人报 within,VAD 文献仅 Georgescu TPAMI'21/UBnormal CVPR'22 一支使用)。晋级门数值见 `RESEARCH_ITERATION_RULES.md` 第 8 条。
 3. **Frame-level (pooled) AP**——同池算 average precision。文献惯例即 pooled(XD-Violence 官方实现);macro AP 无先例,如报告必须标注为扩展指标。
 
 ### 代码

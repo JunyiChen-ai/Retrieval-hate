@@ -28,13 +28,16 @@ def main(argv=None):
     ap.add_argument("--split", default="test")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--crop-batch-size", type=int, default=1,
+                    help="evaluate independent visual crops in bounded batches")
     args = ap.parse_args(argv)
     with open(os.path.join(args.checkpoint_dir, "train_meta.json")) as fh:
         meta = json.load(fh)
     cfg = SimpleNamespace(**meta["args"])
     ids = usable_text_ids(args.corpus, hdata.load_split(args.corpus, args.split))
-    gt = hdata.gt_arrays(args.corpus, args.split)
-    ids = [v for v in ids if v in gt]
+    gt = hdata.gt_arrays(args.corpus, args.split) if args.split == "test" else None
+    if gt is not None:
+        ids = [v for v in ids if v in gt]
     ds = PowaTestDataset(args.corpus, ids, cfg.max_seqlen, cfg.grid, "av")
     loader = DataLoader(ds, batch_size=1, shuffle=False,
                         num_workers=getattr(cfg, "num_workers", 0))
@@ -52,18 +55,35 @@ def main(argv=None):
     with torch.no_grad(), open(out_path, "w") as fh:
         for f_v, f_a, f_t, index_map, n_seconds, vid in loader:
             vid = vid[0]
-            f_v, f_a, f_t = f_v[0].to(args.device), f_a[0].to(args.device), f_t[0].to(args.device)
-            lengths = torch.full((f_v.shape[0],), f_v.shape[1], dtype=torch.long)
-            pred = model(f_a, f_v, f_t, lengths, policy=args.corpus)
-            score = pred["frame_prob"].mean(0).cpu().numpy()
+            f_v, f_a, f_t = f_v[0], f_a[0], f_t[0]
+            n_crops = f_v.shape[0]
+            sums = {name: None for name in (
+                "frame_prob", "base_frame_logits", "audio_logits", "visual_logits")}
+            for start in range(0, n_crops, args.crop_batch_size):
+                end = min(start + args.crop_batch_size, n_crops)
+                v = f_v[start:end].to(args.device)
+                a = f_a[start:end].to(args.device)
+                t = f_t[start:end].to(args.device)
+                lengths = torch.full((end - start,), v.shape[1], dtype=torch.long)
+                pred = model(a, v, t, lengths, policy=args.corpus)
+                for name in sums:
+                    value = pred[name]
+                    if value.ndim == 3 and value.shape[-1] == 1:
+                        value = value.squeeze(-1)
+                    if name != "frame_prob":
+                        value = torch.sigmoid(value)
+                    value = value.sum(0).cpu()
+                    sums[name] = value if sums[name] is None else sums[name] + value
+            score = (sums["frame_prob"] / n_crops).numpy()
             score = score[index_map[0].numpy()]
-            base = torch.sigmoid(pred["base_frame_logits"].squeeze(-1)).mean(0)
-            base = base.cpu().numpy()[index_map[0].numpy()]
-            audio = torch.sigmoid(pred["audio_logits"].squeeze(-1)).mean(0)
-            audio = audio.cpu().numpy()[index_map[0].numpy()]
-            visual = torch.sigmoid(pred["visual_logits"].squeeze(-1)).mean(0)
-            visual = visual.cpu().numpy()[index_map[0].numpy()]
-            if len(score) != int(n_seconds) or len(score) != len(gt[vid]):
+            base = (sums["base_frame_logits"] / n_crops).numpy()
+            base = base[index_map[0].numpy()]
+            audio = (sums["audio_logits"] / n_crops).numpy()
+            audio = audio[index_map[0].numpy()]
+            visual = (sums["visual_logits"] / n_crops).numpy()
+            visual = visual[index_map[0].numpy()]
+            if (len(score) != int(n_seconds) or
+                    (gt is not None and len(score) != len(gt[vid]))):
                 raise RuntimeError("alignment mismatch %s" % vid)
             row = {"video_id": vid, "n_frames": len(score),
                    "score_powa": [round(float(x), 6) for x in score],

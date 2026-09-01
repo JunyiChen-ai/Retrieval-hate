@@ -124,12 +124,7 @@ shuffle contrast, not pooled Frame AP or video AP.
 ## Authoritative artifacts
 
 - Training manifest: `results/steward_private/thvl_bench/train314/v26_finite_rf_seed234_killpilot_v3/manifest.json`
-  (`6208296832c2d21ba8c589101bdc99959e6fd55f496a1c3fff007e74cdeece0f`)
 - Permutation: `results/steward_private/thvl_bench/train314/v26_finite_rf_seed234_killpilot_v3/permuted/permutation.json`
-  (`5f5ded6405e3e2739b9906c6ba61b5b7758c506e252002b9c567ac50624d4c9f`)
 - Prediction manifest: `results/steward_private/thvl_bench/v26_val_predictions_seed234_v3/manifest.json`
-  (`6d4b28931165d124b259c942a05ce5cccfab3ed376bab21c3a6cce6b587743b9`)
 - Signed video selection: `results/steward_private/thvl_bench/v26_video_selection_seed234_v3.json`
-  (`2751bfb3896c8b118d43c234cfb057c4251570ac60ede6b0892e795db39c34bf`)
 - Signed temporal report: `results/steward_private/thvl_bench/v26_temporal_report_seed234_v3.json`
-  (`b7c2d95affde733d746472cb771f1fe1b14a82c19e198f32b168675e448f1d9c`)

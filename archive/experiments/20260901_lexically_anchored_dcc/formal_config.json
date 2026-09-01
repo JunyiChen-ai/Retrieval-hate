@@ -1,0 +1,15 @@
+{
+  "method": "lexically_anchored_dcc",
+  "corpora": ["hatemm", "hateclipseg"],
+  "seed": 234,
+  "epochs_per_trial": 5,
+  "learning_rates": [0.0001, 0.0002],
+  "contrast_weights": [0.05, 0.2, 0.5],
+  "support_quantiles": [0.7, 0.85],
+  "core_trials_per_corpus": 12,
+  "anchor_trials_per_corpus": 2,
+  "selected_shifted_trials_per_corpus": 1,
+  "selection": "validation within primary with pooled AP/ROC noninferiority",
+  "test": "selected aligned, matched shifted, matched POWA anchor",
+  "smoke_operations": false
+}

@@ -20,7 +20,7 @@ cd /data/jehc223/RGCL
 source /data/jehc223/miniconda3/etc/profile.d/conda.sh
 conda activate HateVideo
 bash /data/jehc223/RGCL/scripts/disk_guard.sh || true
-# Whisper weights are already on disk (openai/whisper-large-v3, snapshot 06f233fe...) -> stay OFFLINE.
+# Whisper weights are already on disk (openai/whisper-large-v3) -> stay OFFLINE.
 export HF_HUB_OFFLINE=1
 export PYTHONUNBUFFERED=1
 # The PyAV decode path needs NO ffmpeg binary and NO torchaudio, so NO aux env is appended to PATH

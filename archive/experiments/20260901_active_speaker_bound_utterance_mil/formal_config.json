@@ -1,0 +1,15 @@
+{
+  "corpora": ["hatemm", "hateclipseg"],
+  "seed": 234,
+  "learning_rates": [0.00005, 0.0001],
+  "relation_weights": [0.25, 0.5, 1.0],
+  "max_epoch": 5,
+  "batch_size": 24,
+  "max_seqlen": 200,
+  "crop_repeat": 5,
+  "grid": "snippet",
+  "selection": "validation within ROC, pooled AP/ROC noninferiority -0.005",
+  "test_arms": ["anchor", "permuted", "core"],
+  "test_score": "raw frame_prob",
+  "test_labels_used_for_training_or_selection": false
+}

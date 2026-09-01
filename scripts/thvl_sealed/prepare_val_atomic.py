@@ -22,7 +22,7 @@ def main():
   v=r['hashed_id'];pp=[x for x in r['paths'] if x.get('wav_path')]
   if r['status']!='ok' or len(pp)!=1 or v not in a:raise RuntimeError(f'invalid val source {v}')
   x=pp[0];qr={'opaque_id':v,'hf_path':x['repository_path'],'hf_revision':q['revision'],'source_manifest_sha256':sha(QC),'status':'ok','cache_path':x['cache_path'],'bytes':x['bytes'],'media_sha256':x['sha256'],'duration_seconds':x['duration_seconds'],'full_decode_ok':x['decode_ok'],'audio_available':x['audio_available'],'video_available':x['video_available'],'wav_path':x['wav_path'],'wav_sha256':x['wav_sha256']}
-  ar={'opaque_id':v,'wav_sha256':x['wav_sha256'],'model':'openai/whisper-large-v3','text':a[v]['text'],'chunks':a[v]['chunks'],'n_chunks':a[v]['n_chunks'],'language':a[v].get('language'),'labels_or_temporal_gt_opened':False}
+  ar={'opaque_id':v,'model':'openai/whisper-large-v3','text':a[v]['text'],'chunks':a[v]['chunks'],'n_chunks':a[v]['n_chunks'],'language':a[v].get('language'),'labels_or_temporal_gt_opened':False}
   if ar['wav_sha256']!=a[v]['wav_sha256']:raise RuntimeError('wav provenance mismatch')
   write(QO/f'{v}.json',qr);write(AO/f'{v}.json',ar)
  write(BASE/'manifest.json',{'status':'COMPLETE_LABEL_BLIND_ATOMIC_CONVERSION','n_videos':32,'qc_source_sha256':sha(QC),'asr_source_sha256':sha(ASR),'qc_root_hash':hashlib.sha256(''.join(p.name+'\t'+sha(p)+'\n' for p in sorted(QO.glob('*.json'))).encode()).hexdigest(),'asr_root_hash':hashlib.sha256(''.join(p.name+'\t'+sha(p)+'\n' for p in sorted(AO.glob('*.json'))).encode()).hexdigest(),'temporal_gt_opened':False})

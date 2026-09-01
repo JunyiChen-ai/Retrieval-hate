@@ -127,6 +127,47 @@ def build_loaders(args):
     return train, val, split_manifest
 
 
+def compute_powa_loss(out, y, valid, args, teacher_target=None,
+                      teacher_mask=None):
+    """Return the unchanged POWA objective and its named components."""
+    witness_bce = torch.nn.functional.binary_cross_entropy(out["bag_prob"], y)
+    base = out["base_bag_prob"].reshape(-1).clamp(1e-5, 1 - 1e-5)
+    base_bce = torch.nn.functional.binary_cross_entropy(base, y)
+    # A weak negative-video constraint discourages every primitive from
+    # saturating while leaving positive videos to MIL selection.
+    neg = (1.0 - y)[:, None] * valid
+    sparsity = ((out["primitive_prob"].mean(-1) * neg).sum() /
+                neg.sum().clamp_min(1))
+    teacher_loss = torch.zeros((), device=y.device)
+    if teacher_target is not None:
+        teacher_target = teacher_target.float().to(y.device)
+        teacher_mask = teacher_mask.float().to(y.device) * valid
+        elem = torch.nn.functional.binary_cross_entropy_with_logits(
+            out["primitive_logits"], teacher_target, reduction="none")
+        teacher_loss = ((elem.mean(-1) * teacher_mask).sum() /
+                        teacher_mask.sum().clamp_min(1))
+    grounding_loss = torch.zeros((), device=y.device)
+    if out["semantic_logits"] is not None:
+        semantic_target = torch.sigmoid(out["semantic_logits"].detach())
+        semantic_mask = out["semantic_text_mask"] * valid
+        elem = torch.nn.functional.binary_cross_entropy_with_logits(
+            out["primitive_logits"], semantic_target, reduction="none")
+        grounding_loss = ((elem.mean(-1) * semantic_mask).sum() /
+                          semantic_mask.sum().clamp_min(1))
+    loss = (witness_bce + args.base_loss_weight * base_bce +
+            args.sparsity_weight * sparsity +
+            args.teacher_weight * teacher_loss +
+            args.grounding_weight * grounding_loss)
+    components = {
+        "witness_bce": witness_bce,
+        "base_bce": base_bce,
+        "sparsity": sparsity,
+        "teacher": teacher_loss,
+        "grounding": grounding_loss,
+    }
+    return loss, components
+
+
 def train_epoch(model, loaders, optimizer, args, device):
     model.train()
     if args.freeze_macil:
@@ -156,44 +197,18 @@ def train_epoch(model, loaders, optimizer, args, device):
             y = label.float().to(device)
             valid = _mask(lengths, keep, device)
             out = model(f_a, f_v, f_t, lengths, valid, policy=corpus)
-            witness_bce = torch.nn.functional.binary_cross_entropy(out["bag_prob"], y)
-            base = out["base_bag_prob"].reshape(-1).clamp(1e-5, 1 - 1e-5)
-            base_bce = torch.nn.functional.binary_cross_entropy(base, y)
-            # A weak negative-video constraint discourages every primitive
-            # from saturating while leaving positive videos to MIL selection.
-            neg = (1.0 - y)[:, None] * valid
-            sparsity = ((out["primitive_prob"].mean(-1) * neg).sum() /
-                        neg.sum().clamp_min(1))
-            teacher_loss = torch.zeros((), device=device)
             if teacher_target is not None:
                 teacher_target = teacher_target[:, :keep].float().to(device)
-                teacher_mask = teacher_mask[:, :keep].float().to(device) * valid
-                elem = torch.nn.functional.binary_cross_entropy_with_logits(
-                    out["primitive_logits"], teacher_target, reduction="none")
-                teacher_loss = ((elem.mean(-1) * teacher_mask).sum() /
-                                teacher_mask.sum().clamp_min(1))
-            grounding_loss = torch.zeros((), device=device)
-            if out["semantic_logits"] is not None:
-                semantic_target = torch.sigmoid(out["semantic_logits"].detach())
-                semantic_mask = out["semantic_text_mask"] * valid
-                elem = torch.nn.functional.binary_cross_entropy_with_logits(
-                    out["primitive_logits"], semantic_target, reduction="none")
-                grounding_loss = ((elem.mean(-1) * semantic_mask).sum() /
-                                  semantic_mask.sum().clamp_min(1))
-            loss = (witness_bce + args.base_loss_weight * base_bce +
-                    args.sparsity_weight * sparsity +
-                    args.teacher_weight * teacher_loss +
-                    args.grounding_weight * grounding_loss)
+                teacher_mask = teacher_mask[:, :keep].float().to(device)
+            loss, components = compute_powa_loss(
+                out, y, valid, args, teacher_target, teacher_mask)
             if not torch.isfinite(loss):
                 raise FloatingPointError("non-finite training loss in %s" % corpus)
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             optimizer.step()
-            for k, value in (("loss", loss), ("witness_bce", witness_bce),
-                             ("base_bce", base_bce), ("sparsity", sparsity),
-                             ("teacher", teacher_loss),
-                             ("grounding", grounding_loss)):
+            for k, value in (("loss", loss), *components.items()):
                 totals[k] += float(value.detach())
             totals["batches"] += 1
     n = max(1, totals["batches"])

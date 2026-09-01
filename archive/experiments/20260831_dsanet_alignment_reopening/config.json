@@ -1,0 +1,44 @@
+{
+  "experiment": "dsanet_alignment_reopening",
+  "seed": 234,
+  "checkpoint_source": "validation-selected official reproduction",
+  "score_branch": "score_align",
+  "model_common": {
+    "embed_dim": 512,
+    "visual_width": 512,
+    "visual_head": 1,
+    "visual_layers": 1,
+    "prompt_prefix": 10,
+    "prompt_postfix": 10,
+    "classes_num": 2,
+    "visual_length": 256,
+    "decoder_depth": 8,
+    "DNP_use": true,
+    "num_prototypes": 16,
+    "text_adapt_until": 1
+  },
+  "corpora": {
+    "hatemm": {
+      "attn_window": 64,
+      "normal_selection_ratio": 0.8520584184913332,
+      "t_w": 0.3603630171525613,
+      "temp": 0.5,
+      "loss2_weight": 0.9590336491682396
+    },
+    "hateclipseg": {
+      "attn_window": 32,
+      "normal_selection_ratio": 0.6429771254735832,
+      "t_w": 0.4971417254137116,
+      "temp": 2.0,
+      "loss2_weight": 2.2988077955834494
+    }
+  },
+  "controls": {
+    "position_bins": 20,
+    "max_time_shifts": 16,
+    "minimum_carrier_stratum_videos": 5,
+    "required_margin": 0.02,
+    "minimum_reverse_spearman_median": 0.5,
+    "maximum_reverse_within_drop": 0.02
+  }
+}
