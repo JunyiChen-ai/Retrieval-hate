@@ -12,7 +12,17 @@ evaluator.
 
 ``--config`` is a JSON object of hyperparameters; keys missing from it take
 the defaults in DEFAULTS. ``--ablation`` selects the pre-registered ablations
-(full / no_snico / no_scaffold / no_scaffold_no_snico).
+(full / no_snico / input_only / no_scaffold / no_scaffold_no_snico).
+
+Design revision 2 (2026-09-02): the frozen-VLM verdict enters the frame logit
+as an explicit prior, ``av_logit = MACIL_frame_logit + prior(verdict)``, with
+``prior`` a learned linear map of the verdict channels (one-hot + level) that
+starts as ``prior_scale * (level/3 - 1/2)``. The bag logit, the SniCo
+actionness and the inference score all use this combined logit. Revision 1
+only concatenated the verdict into the ``a`` input stream; on HateClipSeg
+seed 234 trial 0 its output had correlation .003 with the verdict channel
+and scored below the verdict alone (README section 3.1). Revision 1 is kept
+as the ``input_only`` ablation.
 """
 
 from __future__ import annotations
@@ -64,8 +74,13 @@ DEFAULTS = {
     # SniCo
     "lambda_snico": 0.5, "rho": 0.5, "morph_m": 4, "tau": 0.1,
     "snico_warmup_epochs": 2,
+    # verdict prior on the frame logit (revision 2)
+    "prior_scale": 4.0,
 }
-ABLATIONS = ("full", "no_snico", "no_scaffold", "no_scaffold_no_snico")
+ABLATIONS = ("full", "no_snico", "input_only", "no_scaffold",
+             "no_scaffold_no_snico")
+SCAF_OFFSET = align.A_DIM + ds.TEXT_DIM  # first scaffold column in f_a
+N_PRIOR_IN = vlm_verdict.N_LEVELS + 1    # one-hot(4) + level/3
 
 
 class Args(dict):
@@ -75,14 +90,24 @@ class Args(dict):
 class Candidate(nn.Module):
     """MACIL-SD audio-visual model plus the SniCo projection head."""
 
-    def __init__(self, cfg):
+    def __init__(self, cfg, use_prior=True):
         super().__init__()
         self.av = AVCE_Model(cfg)
         self.proj = nn.Linear(cfg.hid_dim, cfg.hid_dim)
+        self.use_prior = bool(use_prior)
+        self.prior = nn.Linear(N_PRIOR_IN, 1)
+        with torch.no_grad():
+            self.prior.weight.zero_()
+            self.prior.weight[0, vlm_verdict.N_LEVELS] = float(cfg.prior_scale)
+            self.prior.bias.fill_(-0.5 * float(cfg.prior_scale))
 
     def forward(self, f_a, f_v, seq_len):
         out = self.av(f_a, f_v, seq_len)
         mmil, a_log, v_log, av_log, v_out, a_out = out
+        if self.use_prior:
+            scaf = f_a[..., SCAF_OFFSET:SCAF_OFFSET + N_PRIOR_IN]
+            av_log = av_log + self.prior(scaf)
+            mmil = self.av.att_mmil.clas(av_log, seq_len)
         emb = F.normalize(self.proj(a_out + v_out), dim=-1)
         return mmil, a_log, v_log, av_log, v_out, a_out, emb
 
@@ -181,8 +206,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                 if v in test_gt]
     hate_ids = {v for v, l in labels.items() if l == 1}
 
-    use_scaffold = ablation in ("full", "no_snico")
-    use_snico = ablation in ("full", "no_scaffold")
+    use_scaffold = ablation in ("full", "no_snico", "input_only")
+    use_prior = ablation in ("full", "no_snico")
+    use_snico = ablation in ("full", "input_only", "no_scaffold")
     verdicts = vlm_verdict.load_verdicts(corpus, k=30, tag="qwen")
     if not use_scaffold:
         verdicts = {}
@@ -192,10 +218,10 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         for vid, (f_a, n, snip) in cache.items.items():
             f_a[:, align.A_DIM + ds.TEXT_DIM:] = 0.0
     say("train/val/test %d/%d/%d videos (%d hateful in train); missing text %d,"
-        " missing verdict %d; scaffold %s, snico %s"
+        " missing verdict %d; scaffold %s, prior %s, snico %s"
         % (len(train_ids), len(val_ids), len(test_ids),
            sum(labels[v] for v in train_ids), cache.n_missing_text,
-           cache.n_missing_verdict, use_scaffold, use_snico))
+           cache.n_missing_verdict, use_scaffold, use_prior, use_snico))
     if use_scaffold:
         cov = {name: sum(v in verdicts for v in ids)
                for name, ids in (("train", train_ids), ("val", val_ids),
@@ -222,7 +248,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     test_loader = DataLoader(ds.EvalDataset(corpus, test_ids, cache),
                              batch_size=1, shuffle=False, num_workers=num_workers)
 
-    model = Candidate(a).to(device)
+    model = Candidate(a, use_prior=use_prior).to(device)
     partner = Single_Model(a, n_dim=align.V_DIM).to(device)
     criterion = nn.BCELoss()
     opt_av = optim.Adam(model.parameters(), lr=a.lr)

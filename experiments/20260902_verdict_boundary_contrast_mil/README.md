@@ -27,6 +27,8 @@
 ### 2.2 骨干（沿用 MACIL-SD，不改结构）
 `scripts/reproduction_baselines/macilsd/avce_network.py` 的 AVCE_Model：两流线性投影到 128 维，一层跨模态注意力，Att_MMIL 头（逐行 logit = a 分支 + v 分支，bag 分数 = top-⌈T/16⌉+1 均值）。本方法把 `a` 流的输入换成 `a ⊕ s`（128+768+7 = 903 维），`v` 流不变。MACIL-SD 的 CMAL 跨模态对比、单模态伙伴的 EMA 自蒸馏全部保留。这样"最强 baseline + 同样特征"（规则 14(f)）就是本方法去掉核心机制后的同一份代码。
 
+**修订 2（2026-09-02，依据 3.1 节）**：裁定除了作为输入，还作为逐行 logit 的显式先验：`z_t = z_t^MACIL + prior(s_t)`，`prior` 是裁定通道（one-hot(4) ⊕ 分值/3，不含位置两维）上的一层线性映射，初始化为 `prior_scale · (分值/3 − 1/2)`（`prior_scale` = 4，可学习，训练中随其他参数更新）。bag 分数（top-k 均值）、SniCo 的 actionness、推理分数全部用合成后的 `z_t`。修订 1 只把裁定拼进输入流，网络学不到它（3.1 节）；修订 1 保留为消融 `input_only`。
+
 ### 2.3 核心机制：边界硬样本对比（迁移自 WTAL 的 CoLA，Zhang et al., CVPR 2021）
 来源：CoLA（"CoLA: Weakly-Supervised Temporal Action Localization with Snippet Contrastive Learning"）用 actionness 的时间腐蚀/膨胀在正视频内部挖掘"硬背景"（膨胀区减原区，紧贴片段外侧）与"硬前景"（原区减腐蚀区，片段内侧边缘），再用 SniCo（InfoNCE）把硬前景拉向易前景、推离易背景，把硬背景拉向易背景、推离易前景。它针对的正是"MIL 只监督峰值、边界秒无监督"这一失败模式（证据 1），并且监督信号来自同一视频内部的内容相似性，而不是整段视频的风格，从而抑制"整段视频打高分"（证据 2、3 的 within 失败）。
 
@@ -49,6 +51,10 @@
 - Optuna：每 (语料, seed) 一个 study，TPE，sampler seed = 训练 seed；trial 数按第一个 trial 实测耗时定（≤1 h → 20，>1 h → 5），确定后写回本 README 不再改；目标值 = test (AP+ROC)/2，test within 低于下限的 trial 记 fail。
 - 搜索空间（两语料共用）：`lr` log[1e-4, 1e-3]；`dropout` {0.1, 0.2, 0.3}；`max_seqlen` {150, 200, 300}；`lamda_a2b`, `lamda_a2n` [0.5, 2.0]；`lamda_cof` [0.02, 0.1]；`λ_snico` log[0.05, 2.0]；`ρ` [0.3, 0.8]；`m` {2, 4, 8, 16}；`τ` {0.07, 0.1, 0.2}；`k_e` = ⌈T/16⌉+1（固定，与 MIL 的 k 相同）。
 - seed 234 筛选；过筛后 seed 2025/3407 各自完整搜索确认。
+- 消融（seed 234，best trial 超参数，test）：`full`；`no_snico`（λ_snico = 0，核心机制消融）；`input_only`（修订 1：裁定只拼输入、无 logit 先验）；`no_scaffold`（无裁定、无位置通道，仍有 SniCo）；`no_scaffold_no_snico`（= MACIL-SD + BERT 文本流）。
+
+### 3.1 修订 1 的记录（HateClipSeg seed 234，trial 0，uoa-lab1）
+修订 1（裁定只拼进 `a` 流输入）的 trial 0：test AP .568 / ROC .544 / within .537（`runs/20260902_verdict_boundary_contrast_mil/revision1_input_concat/hateclipseg/seed234/trial0/metrics.json`），低于裁定本身的 .610 / .616 / .558（`runs/.../verdict_only/hateclipseg/test/metrics.json`）。模型逐秒分数与裁定分数的 Pearson 相关系数 .003（pooled），视频内平均 .043：7 维裁定通道在 903 维输入里被网络忽略。模型分数与裁定分数直接相加得 AP .666 / ROC .645，说明两者互补，但相加是后处理，不作方法；修订 2 改为训练内的 logit 先验。修订 1 的搜索在 trial 0 后停止，目录整体移到 `revision1_input_concat/`。
 
 ## 4. 输出
 `runs/20260902_verdict_boundary_contrast_mil/<corpus>/seed<seed>/optuna.db` 与 `trial<k>/`（config、`run.log`、`run.pid`、`scores_val.jsonl`、`scores_test.jsonl`、`metrics.json`）。运行主机名写在 `run.log` 首行。
