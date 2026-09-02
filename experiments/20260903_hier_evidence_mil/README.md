@@ -67,7 +67,7 @@
 - HateMM 上只用 K4 更好（.591 / .851）：EM 把 K30 可靠性估高（q30 .955，而 test 上 K30 判仇恨、K4 判非仇恨的秒阳性率只有 .158）。处理：K30 证据温度 w30 ∈ [0,1] 作标量超参数进搜索（规则 13 允许）；论文如实报告。
 - 估出的参数：HateMM q30 .955 / r30 .088 / q4 .975 / r4 .233，A 对角 .958 / .924，p0(s=0) .649；HateClipSeg q30 .858 / r30 .104 / q4 .920 / r4 .323，A 对角 .985 / .935，p0(s=0) .818。
 
-修订 4 的 prior_only 消融（裁定不拼输入、只走先验；HateMM seed 234 trial 19 超参数，`runs/20260902_verdict_boundary_contrast_mil/ablations/hatemm/seed234/prior_only/metrics.json`）：.633 / .823 / .657，低于 full .667 / .839 与 input_only .655 / .834。HateMM 上裁定拼入输入是必要的（α 只有 1.09 时先验单独太弱）。新方法保留输入路径（拼入 ℓ_t 与二值裁定），并在消融表报告。
+修订 4 的 prior_only 消融（裁定不拼输入、只走先验；HateMM seed 234 trial 19 超参数，`runs/20260902_verdict_boundary_contrast_mil/ablations/hatemm/seed234/prior_only/metrics.json`）：.633 / .823 / .657，低于 full .667 / .839 与 input_only .655 / .834。HateClipSeg 的 prior_only（`ablations/hateclipseg/seed<seed>/prior_only/`）：seed 2025 .696 / .676 / .555（full .700 / .678 / .556），seed 234 .685 / .657 / .538（full .684 / .656 / .539），与 full 相同。即 HateClipSeg 上先验单独就够，HateMM 上裁定拼入输入仍必要（α 只有 1.09 时先验单独太弱）。新方法保留输入路径（拼入 ℓ_t 与二值裁定），并在消融表报告。
 
 ### 模块 2（骨干）：裁定块级 MIL（Verdict-Block MIL）
 改 MACIL-SD 的监督结构，不加新层：
@@ -94,4 +94,4 @@
 lr log[1e-4, 1e-3]；dropout {.1,.2,.3}；max_seqlen {150,200,300}；lamda_a2b / a2n [0.5, 2]；lamda_cof [.02, .1]；α log[.5, 8]；w30 [0, 1]；λ_block log[.05, 2]。每 (语料, seed) 20 trials，目标 test (AP+ROC)/2，within 破下限剪枝，validation (AP+ROC)/2 选 checkpoint。
 
 ## 4. 进度
-- 2026-09-03：提案；离线验证完成并写入 runs/（第 1 节表）；HateMM prior_only 消融完成，HateClipSeg 的在 lab3 运行中；规则 4 复核进行中。
+- 2026-09-03：提案；离线验证完成并写入 runs/（第 1 节表）；prior_only 消融两语料完成；规则 4 复核进行中。
