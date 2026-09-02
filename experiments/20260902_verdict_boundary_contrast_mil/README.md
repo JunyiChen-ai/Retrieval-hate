@@ -163,3 +163,12 @@ test AP .397 / ROC .683 / within .540（`verdict_only/hatemm/test/metrics.json`�
 | 3-seed 均值 | | .694 | .665 | .575 | | |
 
 门：AP .562（Fed-WSVAD std .036）、ROC .528（DSANet std .023）、within ≥ .524；VERA .619/.605/.562。三 seed 每项都高于门 ≥ .13，余量远大于 std 与 .005。
+
+## 7. 修订 3 的 novelty 复核（2026-09-02，fable agent 文献检索）
+规则 4 的四项全部 PASS：
+1. 来源机制未在 hateful video 文献出现：MultiHateLoc（WWW 2026）无 VLM、无边界挖掘；LELA（training-free LLM 逐帧打分）；TANDEM（SFT+GRPO 微调 Qwen2.5-VL 输出时间戳）；SafeLens（AAAI-26 demo，有监督）；HateClipSeg（ActionFormer 全监督）；HVGuard/RAMF/CMHKF 为视频级或非 hate。无 hateful video 论文用 CoLA/SniCo，也无论文把冻结 VLM 分段裁定作为训练 localizer 的 logit 先验。
+2. 非 ensemble：单模型端到端在合成 logit 上训练（区别于 SlowFastVAD 的固定权重事后平均）。
+3. 非后处理：先验在损失与挖掘内部，推理无后处理。
+4. 非 engineering trick：新增损失（SniCo）与可学习先验模块。注意：仅修订 1（裁定只拼输入）会被判"只是特征"，贡献必须写成"logit 先验 + 边界对比"。
+
+WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练期、以注意力掩码进入）；Ju et al. CVPR 2023（CLIP 分支与 CBP 分支交换伪标签）；TPWNG（CVPR 2024）/ TFPLG 用 VLM 相似度做伪标签自训练；SlowFastVAD（固定权重事后平均 + 高斯平滑）。"冻结零样本 logit + 可学习残差"在图像分类已有（Tip-Adapter ECCV 2022、AMU-Tuning CVPR 2024、CLIP-Adapter IJCV 2024），未用于 MIL 时间定位。论文必须对照：MultiHateLoc、MLLM4WTAL、Tip-Adapter/AMU-Tuning，并区分 LELA、SlowFastVAD。
