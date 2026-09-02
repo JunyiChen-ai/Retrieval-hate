@@ -45,6 +45,11 @@ def sample(trial):
         "rho": trial.suggest_float("rho", 0.3, 0.8),
         "morph_m": trial.suggest_categorical("morph_m", [2, 4, 8, 16]),
         "tau": trial.suggest_categorical("tau", [0.07, 0.1, 0.2]),
+        # revision 3 (2026-09-02): the verdict prior's initial scale and
+        # whether the two position channels enter the prior (README 3.2)
+        "prior_scale": trial.suggest_float("prior_scale", 0.5, 8.0, log=True),
+        "prior_dims": trial.suggest_categorical("prior_dims",
+                                                ["verdict", "scaffold"]),
     }
 
 

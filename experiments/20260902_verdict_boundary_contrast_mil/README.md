@@ -53,6 +53,12 @@
 - seed 234 筛选；过筛后 seed 2025/3407 各自完整搜索确认。
 - 消融（seed 234，best trial 超参数，test）：`full`；`no_snico`（λ_snico = 0，核心机制消融）；`input_only`（修订 1：裁定只拼输入、无 logit 先验）；`no_scaffold`（无裁定、无位置通道，仍有 SniCo）；`no_scaffold_no_snico`（= MACIL-SD + BERT 文本流）。
 
+### 3.2 修订 3 搜索空间（2026-09-02，在修订 2 的 HateMM 搜索与诊断之后声明，两语料都按此重跑）
+修订 2 的空间固定 `prior_scale = 4`、先验只看裁定通道。HateMM 修订 2 搜索 12 个 trial 全部 within < .632（.585–.625），AP .50–.59，ROC .76–.825；用 trial 2 超参数做的诊断（`runs/.../diag_within/hatemm/seed234/`）显示 `prior_scale` 与先验输入决定结果：scale 4 仅裁定 .569/.825/.600；scale 4 全 scaffold（含位置两维，权重从 0 学）.539/.805/.593；scale 2 全 scaffold .611/.798/.635。top-k 除数 {3, 6} 与 SniCo 掩码改用内容 logit 都不提高 within（6.4 节）。因此修订 3 把两者加入搜索空间，其余不变：
+- `prior_scale` log[0.5, 8]（先验初始尺度，训练中可学习）；
+- `prior_dims` {verdict, scaffold}（先验输入只用裁定 5 维，或用全部 7 维 scaffold 含 `t/T`、`min(t,T−t)/T`，位置权重从 0 初始化）。
+两语料共用此空间，seed 234 各重跑 20 trials；修订 2 的搜索结果保留在 `hatemm/seed234/`、`hateclipseg/seed234/`（目录改名为 `rev2_*`）。位置通道进先验的 within 贡献必须按 6.3 节的去位置轮廓分析单独报告。
+
 ### 3.1 修订 1 的记录（HateClipSeg seed 234，trial 0，uoa-lab1）
 修订 1（裁定只拼进 `a` 流输入）的 trial 0：test AP .568 / ROC .544 / within .537（`runs/20260902_verdict_boundary_contrast_mil/revision1_input_concat/hateclipseg/seed234/trial0/metrics.json`），低于裁定本身的 .610 / .616 / .558（`runs/.../verdict_only/hateclipseg/test/metrics.json`）。模型逐秒分数与裁定分数的 Pearson 相关系数 .003（pooled），视频内平均 .043：7 维裁定通道在 903 维输入里被网络忽略。模型分数与裁定分数直接相加得 AP .666 / ROC .645，说明两者互补，但相加是后处理，不作方法；修订 2 改为训练内的 logit 先验。修订 1 的搜索在 trial 0 后停止，目录整体移到 `revision1_input_concat/`。
 
