@@ -69,7 +69,10 @@ import dataset as ds                                   # noqa: E402
 EVALUATOR = os.path.join(REPO_ROOT, "scripts", "reproduction_baselines",
                          "eval_baseline_scores.py")
 K_FINE, J_COARSE = vlm_verdict.GRANULARITIES          # (30, 4)
-ELL_CLIP = 3.0        # log-odds clip: p in [.047, .953] saturates the prior
+# Posterior log-odds are bounded by +-log((1-eps)/eps) with eps = 1e-6 in
+# verdict_hmm.posterior_log_odds; dividing by that bound maps them
+# order-preservingly onto [-1, 1], so prior_scale is the maximal logit shift.
+ELL_SCALE = float(np.log((1.0 - 1e-6) / 1e-6))   # ~13.8
 
 DEFAULTS = {
     # MACIL-SD
@@ -118,15 +121,15 @@ class Candidate(nn.Module):
     def forward(self, f_a, f_v, seq_len):
         f_a_in = f_a.clone()
         f_a_in[..., ds.SCAF_OFFSET + ds.N_INPUT_SCAF:] = 0.0   # bookkeeping cols
+        f_a_in[..., ds.SCAF_OFFSET + ds.COL_ELL] /= ELL_SCALE   # input in [-1, 1]
         if self.hide_input:
             f_a_in[..., ds.SCAF_OFFSET:] = 0.0
         mmil, a_log, v_log, av_log, v_out, a_out = self.av(f_a_in, f_v, seq_len)
         content_log = av_log
         ell = f_a[..., ds.SCAF_OFFSET + ds.COL_ELL:ds.SCAF_OFFSET + ds.COL_ELL + 1]
-        # bounded evidence: posterior log-odds clipped to +-ELL_CLIP and
-        # normalised to [-1, 1], so prior_scale is the maximal logit shift
-        # (same range as the revision-4 prior, alpha * (level - 1/2) * 2)
-        av_log = av_log + self.prior_scale * ell.clamp(-ELL_CLIP, ELL_CLIP) / ELL_CLIP
+        # z~ = z + prior_scale * ell / ELL_SCALE  (linear, order preserving;
+        # the revision-4 prior alpha*(level-1/2)*2 has the same [-1, 1] range)
+        av_log = av_log + self.prior_scale * ell / ELL_SCALE
         mmil = self.bag(av_log, seq_len)
         self.last_content_logit = content_log
         return mmil, a_log, v_log, av_log, v_out, a_out
@@ -248,9 +251,12 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine):
         p_s, p_h = hmm.posterior(bf, bc, w_fine=w_fine, **kw)
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
         if ablation == "mean_prior":
-            # revision-4 prior input: mean binary level minus 1/2 (range
-            # [-1/2, 1/2]); stored so that clip(ell)/ELL_CLIP = 2*(mean-1/2)
-            ell = ELL_CLIP * (bf + bc[hmm.block] - 1.0)
+            # revision-4 prior input: 2*(mean binary level - 1/2) in [-1, 1],
+            # stored so that ell/ELL_SCALE equals it; the p_s input column is
+            # replaced by the mean level too, so no HMM quantity remains
+            mean = (bf + bc[hmm.block]) / 2.0
+            ell = ELL_SCALE * (2.0 * mean - 1.0)
+            p_s = mean
         if ablation == "raw_block_label":
             p_h = bc.astype(np.float32)
         return ds.scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
@@ -451,15 +457,11 @@ def main(argv=None):
     ap.add_argument("--ablation", default="full", choices=ABLATIONS)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--num-workers", type=int, default=4)
-    ap.add_argument("--max-epoch", type=int, default=None,
-                    help="override for smoke tests only")
     args = ap.parse_args(argv)
     cfg = dict(DEFAULTS)
     if args.config:
         with open(args.config) as fh:
             cfg.update(json.load(fh))
-    if args.max_epoch is not None:
-        cfg["max_epoch"] = args.max_epoch
     train(args.corpus, args.seed, args.out_dir, cfg, args.ablation,
           args.device, args.num_workers)
     return 0
