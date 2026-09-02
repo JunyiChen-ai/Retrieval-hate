@@ -270,3 +270,15 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 - (i) 两语料三项指标全报。
 
 **结论**：规则 8 确认级两语料全过，规则 14 除 (c) 的 `prior_dims` 读法与 (g) 的 SniCo 主张外全部满足。SOTA 可以汇报；novelty 主张只剩裁定 logit 先验一项（第 7 节的 novelty 复核是按"先验 + 边界对比"过的，先验单独是否够，需要用户或重新复核裁定）。规则 9 的 3 轮修改（修订 2、3、4）已用完，本候选不再修改。
+
+## 9. 收窄主张（只剩裁定 logit 先验）的 novelty 复核（2026-09-02，fable agent 文献检索）
+
+主张：MACIL-SD 骨干上，冻结 Qwen2.5-VL-7B 两粒度（K30、K4）分段裁定作为逐帧 logit 的可学习线性先验，进入 top-k bag 选择、损失与推理；裁定同时拼入 a 流输入。规则 4 四项：
+1. hateful video 文献无先例（PASS）。检索：MultiHateLoc（无 LLM/VLM）、LELA（training-free 逐帧打分，无训练定位器）、TANDEM（SFT+GRPO 微调 MLLM 直接输出时间戳，全监督）、SafeLens、HateClipSeg（ActionFormer 全监督）、HVGuard（MLLM 输出作视频级特征）、RAMF、CMHKF、ImpliHateVid、MM-HSD、LEAF、MARS 等均为视频级或无 MIL。
+2. 非 ensemble（PASS）：单模型，先验参数与骨干在同一损失下联合更新，top-k 选择用合成 logit；对照 SlowFastVAD 的事后融合。
+3. 非后处理（PASS）：先验在训练内部，推理无额外操作。
+4. 非纯工程技巧（PASS，但是边缘）：公式本身是 Tip-Adapter / CLIP-Adapter / AMU-Tuning 的 logit-bias 范式迁移到 MIL 时间定位；新在先验来源（MLLM 离散裁定）、进入 MIL 选择规则（改变哪些实例接收正梯度）、两粒度联合。WSVAD/WTAL 逐一核对无同类：MLLM4WTAL（文本嵌入注意力先验，推理不用 MLLM）、Ju et al. CVPR 2023 / TFPLG / TPWNG / CPL-VAD（伪标签路线）、VadCLIP、DSANet、TbVAD / TEVAD / π-VAD（文本特征拼接 = 本方法 input_only）、Holmes-VAU / ECVT（多粒度是标注或描述层级）、GlanceVAD（人工 glance 先验进 MIL，思路最近但先验来源不同）、SteerVAD、LAVAD / VERA / AnomalyRuler（training-free）。多粒度 MLLM 裁定联合学习未找到先例。
+
+必须如实写：HateMM 上 logit 先验相对拼输入（input_only）的增量 .012 AP / .005 ROC 在 seed std 内，只有 HateClipSeg（.056 / .038）显著；主张应定为"裁定条件化的 MIL 定位"而不是"新的融合公式"，两语料 input_only 对比都要报。论文对照：MultiHateLoc、LELA、TANDEM、MLLM4WTAL、TFPLG / Ju et al.、Tip-Adapter / AMU-Tuning、SlowFastVAD、TEVAD / HVGuard。
+
+不改模型即可加强主张的分析（待做）：(1) top-k 选中集合在骨干 logit 与合成 logit 两种排序下的重叠率，以及被先验换进/换出的秒的 GT 阳性率；(2) K30 单独、K4 单独、联合的 test 三指标与按视频长度分桶；(3) 训练后先验权重相对初始化的偏离与 prior_scale–within 关系。
