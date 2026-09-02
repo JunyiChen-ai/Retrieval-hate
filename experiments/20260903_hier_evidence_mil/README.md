@@ -128,6 +128,18 @@ lr log[1e-4, 1e-3]；dropout {.1,.2,.3}；max_seqlen {150,200,300}；lamda_a2b /
 - 不成立、不作主张：块 OR 层次（flat_coarse 持平，与离线表一致）；块标签去噪（raw_block_label 持平）；裁定拼输入（no_input 持平，与修订 4 的 HateClipSeg 结论一致）。
 - 先验项在 HateClipSeg 上只贡献 AP（no_prior ROC 持平），块级 MIL 是这个语料上主要的增益来源。
 
+### 4.3 HateMM seed 234 搜索（uoa-lab1，2026-09-03）
+来源 `runs/20260903_hier_evidence_mil/hatemm/seed234/study_summary.json`。20 trial 全部完成，11 个因 within < .632 被剪。best = trial 3（prior_scale .72、w_fine .74、λ_block .19、lr 6.9e-4、max_seqlen 200）：test AP .661 / ROC .841 / within .650（val .733/.878/.574）。验证集选出的 trial 5：test .609/.816/.637（val .750/.884）。
+
+| HateMM seed 234 | AP | ROC | within |
+|---|---|---|---|
+| 本候选 best（trial 3） | .661 | .841 | .650 |
+| 修订 4 seed 234（trial 19） | .667 | .839 | .647 |
+| HMM 后验单独，不训练 | .541 | .818 | .570 |
+| 规则 8 门（MACIL-SD） | .573 | .807 | .632 |
+
+对修订 4：AP −.006、ROC +.002，持平。对不训练的 HMM 后验：AP +.120、ROC +.023。
+
 ## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
 **放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
 复核要求（必须执行）：
