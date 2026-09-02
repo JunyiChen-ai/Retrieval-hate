@@ -89,7 +89,10 @@ DEFAULTS = {
     "prior_dims": "verdict",
 }
 ABLATIONS = ("full", "no_snico", "input_only", "no_scaffold",
-             "no_scaffold_no_snico", "no_k4")
+             "no_scaffold_no_snico", "no_k4", "prior_only")
+# prior_only (2026-09-03 diagnostic): the scaffold columns are zeroed on the
+# backbone's input path only; the prior still reads them. Isolates the logit
+# prior from the input concatenation.
 SCAF_OFFSET = align.A_DIM + ds.TEXT_DIM  # first scaffold column in f_a
 N_PRIOR_IN = vlm_verdict.VERDICT_DIMS    # (one-hot(4) + level/3) per K
 LEVEL_COLS = [g * (vlm_verdict.N_LEVELS + 1) + vlm_verdict.N_LEVELS
@@ -120,6 +123,7 @@ class Candidate(nn.Module):
             self.prior.bias.fill_(-0.5 * float(cfg.prior_scale))
 
         self.topk_div = int(cfg.topk_div)
+        self.hide_scaffold_input = False
 
     def bag(self, av_log, seq_len):
         """MACIL-SD's clas() with the top-k divisor as a hyperparameter."""
@@ -137,7 +141,11 @@ class Candidate(nn.Module):
         return torch.sigmoid(torch.cat(out))
 
     def forward(self, f_a, f_v, seq_len):
-        out = self.av(f_a, f_v, seq_len)
+        f_a_in = f_a
+        if self.hide_scaffold_input:
+            f_a_in = f_a.clone()
+            f_a_in[..., SCAF_OFFSET:] = 0.0
+        out = self.av(f_a_in, f_v, seq_len)
         mmil, a_log, v_log, av_log, v_out, a_out = out
         content_log = av_log
         if self.use_prior:
@@ -244,9 +252,11 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                 if v in test_gt]
     hate_ids = {v for v, l in labels.items() if l == 1}
 
-    use_scaffold = ablation in ("full", "no_snico", "input_only", "no_k4")
-    use_prior = ablation in ("full", "no_snico", "no_k4")
-    use_snico = ablation in ("full", "input_only", "no_scaffold", "no_k4")
+    use_scaffold = ablation in ("full", "no_snico", "input_only", "no_k4",
+                                "prior_only")
+    use_prior = ablation in ("full", "no_snico", "no_k4", "prior_only")
+    use_snico = ablation in ("full", "input_only", "no_scaffold", "no_k4",
+                             "prior_only")
     verdicts = [vlm_verdict.load_verdicts(corpus, k=k, tag="qwen")
                 for k in vlm_verdict.GRANULARITIES]
     if not use_scaffold:
@@ -293,6 +303,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
 
     model = Candidate(a, use_prior=use_prior,
                       n_gran=n_verdict_needed).to(device)
+    model.hide_scaffold_input = (ablation == "prior_only")
     partner = Single_Model(a, n_dim=align.V_DIM).to(device)
     criterion = nn.BCELoss()
     opt_av = optim.Adam(model.parameters(), lr=a.lr)
