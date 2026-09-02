@@ -86,3 +86,18 @@
 - 裁定先验是主要来源：no_snico 已达 .679/.637，高于裁定本身（.610/.616）和 MACIL-SD+文本（.587/.568），说明训练把裁定与音视频/文本证据合成了，不是简单转发。
 - SniCo 在有先验时有效：full 比 no_snico 高 AP +.012、ROC +.024、within +.006（单 seed，超过 .005 噪声线，低于 baseline std .036/.023）；无先验时 SniCo 有害（no_scaffold .561 vs no_scaffold_no_snico .587）：边界挖掘只有在 actionness 已有可靠粗结构时才有用。
 - 修订 1（input_only）.551/.524 低于 MACIL-SD+文本 .587/.568：把 7 维裁定拼进 903 维输入不但没被利用，还拖低了结果。
+
+### 6.2 HateMM 裁定本身（不训练，K30 全量抽取后，2026-09-02）
+test AP .397 / ROC .683 / within .540（`verdict_only/hatemm/test/metrics.json`，214 视频，无缺失）。跨视频有信息（ROC .683），视频内几乎没有（within .540，下限 .632）。HateMM 上 within 下限必须靠训练与 SniCo 达到。
+
+### 6.3 HateMM within 门的构成（2026-09-02，`scratchpad` 分析脚本 `pos_removed_within.py`，输入为各 `scores.jsonl`）
+把每个正视频的分数减去"其余正视频在相同相对时间桶（20 桶）的平均分数"（留一视频的共同位置轮廓），再算 within：
+
+| 方法（HateMM test，85 个混合视频） | 原 within | 仅共同位置轮廓 | 去位置轮廓后 |
+|---|---|---|---|
+| MultiHateLoc score_fused，seed 234/2025/3407 | .628/.633/.633 | .681/.657/.668 | .524/.526/.541 |
+| MACIL-SD，seed 234/2025/3407 | .593/.590/.601 | .678/.623/.691 | .523/.546/.555 |
+| 本候选修订 2 trial 2 / 4 / 7 | .600/.625/.620 | .562/.556/.663 | .573/.584/.513 |
+| 裁定本身 | .540 | .568 | .481 |
+
+读数：HateMM 的 within 门 .632 是 MultiHateLoc 的分数随相对位置的共同形状给出的，去掉这个形状后它与 MACIL-SD 一样只有 .52–.55；本候选 trial 4 去位置后 .584，内容驱动的视频内排序高于全部 baseline，但共同位置轮廓弱，所以原 within .625 < .632。规则 8 的 within 门按原 within 判，本轮不改规则；此事实交用户裁定。

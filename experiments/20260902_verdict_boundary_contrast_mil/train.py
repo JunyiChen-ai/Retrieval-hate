@@ -79,6 +79,9 @@ DEFAULTS = {
     # bag = mean of the top ceil(T / topk_div) frame logits (MACIL-SD: 16);
     # SniCo mask source: "combined" (prior + content logit) or "content"
     "topk_div": 16, "snico_mask": "combined",
+    # prior input: "verdict" = one-hot + level (5 dims); "scaffold" = the full
+    # 7-dim scaffold including the two position channels (weights start at 0)
+    "prior_dims": "verdict",
 }
 ABLATIONS = ("full", "no_snico", "input_only", "no_scaffold",
              "no_scaffold_no_snico")
@@ -98,7 +101,9 @@ class Candidate(nn.Module):
         self.av = AVCE_Model(cfg)
         self.proj = nn.Linear(cfg.hid_dim, cfg.hid_dim)
         self.use_prior = bool(use_prior)
-        self.prior = nn.Linear(N_PRIOR_IN, 1)
+        self.n_prior_in = (vlm_verdict.SCAFFOLD_DIM
+                           if cfg.prior_dims == "scaffold" else N_PRIOR_IN)
+        self.prior = nn.Linear(self.n_prior_in, 1)
         with torch.no_grad():
             self.prior.weight.zero_()
             self.prior.weight[0, vlm_verdict.N_LEVELS] = float(cfg.prior_scale)
@@ -126,7 +131,7 @@ class Candidate(nn.Module):
         mmil, a_log, v_log, av_log, v_out, a_out = out
         content_log = av_log
         if self.use_prior:
-            scaf = f_a[..., SCAF_OFFSET:SCAF_OFFSET + N_PRIOR_IN]
+            scaf = f_a[..., SCAF_OFFSET:SCAF_OFFSET + self.n_prior_in]
             av_log = av_log + self.prior(scaf)
         if self.use_prior or self.topk_div != 16:
             mmil = self.bag(av_log, seq_len)
