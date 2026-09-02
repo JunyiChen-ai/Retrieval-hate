@@ -282,3 +282,27 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 必须如实写：HateMM 上 logit 先验相对拼输入（input_only）的增量 .012 AP / .005 ROC 在 seed std 内，只有 HateClipSeg（.056 / .038）显著；主张应定为"裁定条件化的 MIL 定位"而不是"新的融合公式"，两语料 input_only 对比都要报。论文对照：MultiHateLoc、LELA、TANDEM、MLLM4WTAL、TFPLG / Ju et al.、Tip-Adapter / AMU-Tuning、SlowFastVAD、TEVAD / HVGuard。
 
 不改模型即可加强主张的分析（待做）：(1) top-k 选中集合在骨干 logit 与合成 logit 两种排序下的重叠率，以及被先验换进/换出的秒的 GT 阳性率；(2) K30 单独、K4 单独、联合的 test 三指标与按视频长度分桶；(3) 训练后先验权重相对初始化的偏离与 prior_scale–within 关系。
+
+### 9.1 第 9 节三项分析的结果（2026-09-02，本机 CPU；脚本 `analysis_topk_prior.py`、`verdict_only_eval.py --k 30 4`）
+
+**分析 2：裁定本身按粒度（不训练，test，`verdict_only_gran/<corpus>/test/metrics.json`）**
+
+| 语料 | K30 | K4 | K30+K4 均值 |
+|---|---|---|---|
+| HateMM | .397 / .683 / .540 | .457 / .782 / .549 | .500 / .801 / .572 |
+| HateClipSeg | .610 / .616 / .559 | .576 / .585 / .474 | .630 / .633 / .528 |
+
+HateMM 上 K4 单独就比 K30 强（ROC .782 对 .683），两者平均再到 .801；HateClipSeg 上 K4 的 within .474 低于 .5，平均后 within 从 .559 降到 .528。这与训练后的消融同向（6.12、6.14）：K4 的价值是数据集性质，HateMM 视频短、跨视频差异大，粗窗口把视频级判断带进逐帧分；HateClipSeg 视频内需要细粒度。
+
+**分析 1：先验是否改变 MIL 的 top-k 选择（train 正例视频，crop 0，k = ⌈T/16⌉，`analysis/topk_prior_<corpus>_<seed>.txt`）**
+
+| 语料 / seed | Jaccard 均值 | 中位数 |
+|---|---|---|
+| HateMM 234 / 2025 / 3407 | .808 / .614 / .784 | 1.00 / .60 / 1.00 |
+| HateClipSeg 234 / 2025 / 3407 | .222 / .400 / .527 | .05 / .31 / .48 |
+
+HateClipSeg 上先验大幅改变哪些实例进 bag（seed 234 中位数只有 .05 重叠），HateMM 上只在少数视频改变。与 (f) 的观察一致：HateClipSeg 上 logit 先验相对拼输入 +.056 AP，HateMM 上只 +.012。被先验换进/换出的秒的 GT 阳性率没算：train 集没有评测器用的 GT 数组。
+
+**分析 3：训练后先验权重相对初始化**
+
+六个最优 trial 的 `prior.weight`：两个 level 列各 ≈ prior_scale/2（与初始化差 < .03），四个 one-hot 列和位置列 |w| ≤ .04，bias 与初始化差 < .04。也就是说训练几乎没有改动先验，先验实际上等于固定的 `prior_scale · (K30 级别 + K4 级别)/6 − prior_scale/2`，"可学习"三个字在实验里没有内容；起作用的是搜索出的 `prior_scale` 与两粒度。论文写法要如实：先验是尺度由 validation/搜索决定的固定线性先验，进入 bag 选择与损失。

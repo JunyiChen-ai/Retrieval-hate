@@ -25,6 +25,7 @@
 - 修订 3（K30 单粒度）记录：HateClipSeg 确认 .694/.665/.575；HateMM ROC 余量 .009 未确认。修订 4 加 K4 后 HateMM AP +.038、ROC +.020；HateClipSeg within −.026（K4 在 HateClipSeg 无益，消融 no_k4）。
 - within 去位置剖面（README 6.3/6.16）：HateMM 三 seed 去除后 .640，与去除前相同；MultiHateLoc 去除后 .52–.54。
 - novelty：第 7 节复核按"先验 + 边界对比"PASS；收窄为"两粒度冻结 VLM 裁定的可学习 logit 先验"后重新复核（README 第 9 节）：规则 4 四项仍 PASS，第 4 项边缘（公式是 Tip-Adapter/AMU-Tuning 的 logit-bias 迁移，新在先验来源、进 MIL 选择、两粒度）；HateMM 上先验相对拼输入的增量在 std 内，论文必须报两语料 input_only 对比。
+- 附加分析（README 9.1）：先验权重训练后几乎不离初始化（实际是尺度由搜索决定的固定线性先验）；先验改变 top-k 选择的程度 HateClipSeg 大（Jaccard .22–.53）、HateMM 小（.61–.81）；裁定本身 K30/K4/均值 HateMM .397/.457/.500 AP，HateClipSeg .610/.576/.630 AP（`verdict_only_gran/`）。
 - 规则 9 三轮修改（修订 2、3、4）已用完，本候选不再改。下一步候选：见用户裁定。
 
 ## 研究方向
