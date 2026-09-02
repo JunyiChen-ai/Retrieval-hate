@@ -26,7 +26,9 @@
 - within 去位置剖面（README 6.3/6.16）：HateMM 三 seed 去除后 .640，与去除前相同；MultiHateLoc 去除后 .52–.54。
 - novelty：第 7 节复核按"先验 + 边界对比"PASS；收窄为"两粒度冻结 VLM 裁定的可学习 logit 先验"后重新复核（README 第 9 节）：规则 4 四项仍 PASS，第 4 项边缘（公式是 Tip-Adapter/AMU-Tuning 的 logit-bias 迁移，新在先验来源、进 MIL 选择、两粒度）；HateMM 上先验相对拼输入的增量在 std 内，论文必须报两语料 input_only 对比。
 - 附加分析（README 9.1）：先验权重训练后几乎不离初始化（实际是尺度由搜索决定的固定线性先验）；先验改变 top-k 选择的程度 HateClipSeg 大（Jaccard .22–.53）、HateMM 小（.61–.81）；裁定本身 K30/K4/均值 HateMM .397/.457/.500 AP，HateClipSeg .610/.576/.630 AP（`verdict_only_gran/`）。
-- 规则 9 三轮修改（修订 2、3、4）已用完，本候选不再改。下一步候选：见用户裁定。
+- 规则 9 三轮修改（修订 2、3、4）已用完，本候选不再改。
+
+**新候选（2026-09-03 06:50 起，用户三模块计划 `docs/20260903_three_module_program.md`）**：`experiments/20260903_hier_evidence_mil/`。模块 3 = 分层证据 HMM（K30 裁定为马尔可夫仇恨状态的噪声观测、K4 裁定为块级 OR 的噪声观测，参数由 train 视频标签 EM 估计），后验对数几率经线性缩放作固定尺度先验进 MIL logit；模块 2 = 裁定块级 MIL（每个粗块一个 bag，软标签为 HMM 块后验，作用于内容 logit）；SniCo、位置通道删除。规则 4 复核放行 7/10、规则 6 code review 修复后放行（README 第 5、6 节）。裁定单独经 HMM 后验（不训练）已达 HateMM .541/.818、HateClipSeg .698/.661（`runs/20260903_hier_evidence_mil/verdict_hmm_only/`），复核要求完整方法必须明显高于这一行。seed 234 搜索运行中：HateMM 在 uoa-lab1、HateClipSeg 在 uoa-lab3（`runs/20260903_hier_evidence_mil/<corpus>/seed234/`）。违规记录：code review 前跑了三次缩短 epoch 试跑（README 第 4 节），输出已删。
 
 ## 研究方向
 
