@@ -103,7 +103,7 @@ class Args(dict):
 class Candidate(nn.Module):
     """MACIL-SD audio-visual model plus the SniCo projection head."""
 
-    def __init__(self, cfg, use_prior=True):
+    def __init__(self, cfg, use_prior=True, n_gran=len(LEVEL_COLS)):
         super().__init__()
         self.av = AVCE_Model(cfg)
         self.proj = nn.Linear(cfg.hid_dim, cfg.hid_dim)
@@ -113,9 +113,10 @@ class Candidate(nn.Module):
         self.prior = nn.Linear(self.n_prior_in, 1)
         with torch.no_grad():
             # init: prior_scale * (mean over granularities of level/3 - 1/2)
+            # (n_gran = number of active granularities; no_k4 -> 1 = rev 3)
             self.prior.weight.zero_()
-            for c in LEVEL_COLS:
-                self.prior.weight[0, c] = float(cfg.prior_scale) / len(LEVEL_COLS)
+            for c in LEVEL_COLS[:n_gran]:
+                self.prior.weight[0, c] = float(cfg.prior_scale) / n_gran
             self.prior.bias.fill_(-0.5 * float(cfg.prior_scale))
 
         self.topk_div = int(cfg.topk_div)
@@ -290,7 +291,8 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     test_loader = DataLoader(ds.EvalDataset(corpus, test_ids, cache),
                              batch_size=1, shuffle=False, num_workers=num_workers)
 
-    model = Candidate(a, use_prior=use_prior).to(device)
+    model = Candidate(a, use_prior=use_prior,
+                      n_gran=n_verdict_needed).to(device)
     partner = Single_Model(a, n_dim=align.V_DIM).to(device)
     criterion = nn.BCELoss()
     opt_av = optim.Adam(model.parameters(), lr=a.lr)
