@@ -107,3 +107,20 @@ test AP .397 / ROC .683 / within .540（`verdict_only/hatemm/test/metrics.json`�
 | 裁定本身 | .540 | .568 | .481 |
 
 读数：HateMM 的 within 门 .632 是 MultiHateLoc 的分数随相对位置的共同形状给出的，去掉这个形状后它与 MACIL-SD 一样只有 .52–.55；本候选 trial 4 去位置后 .584，内容驱动的视频内排序高于全部 baseline，但共同位置轮廓弱，所以原 within .625 < .632。规则 8 的 within 门按原 within 判，本轮不改规则；此事实交用户裁定。
+
+### 6.4 HateMM 诊断（修订 2 代码，trial 2 超参数，seed 234，uoa-lab1，`rev2_diag_within/hatemm/seed234/<name>/metrics.json`）
+
+| 改动 | AP | ROC | within | 选中 epoch |
+|---|---|---|---|---|
+| 无（= trial 2，prior_scale 4，先验只看裁定） | .569 | .825 | .600 | 15 |
+| top-k 除数 16 → 3 | .566 | .814 | .609 | 37 |
+| top-k 除数 16 → 6 | .544 | .807 | .607 | 22 |
+| SniCo 掩码改用内容 logit | .584 | .775 | .606 | 2 |
+| 除数 3 + 内容掩码 | .538 | .794 | .586 | 49 |
+| prior_scale 8 | .551 | .815 | .597 | 45 |
+| prior_scale 2 | .609 | .798 | .627 | 2 |
+| prior_scale 1 | .611 | .803 | .633 | 2 |
+| prior_scale 4，先验含位置两维（权重从 0 学） | .539 | .805 | .593 | 36 |
+| prior_scale 2，先验含位置两维 | .611 | .798 | .635 | 2 |
+
+读数：HateMM 上 `prior_scale` 是主变量。尺度小（1–2）→ AP .61、within .63（刚到门），ROC .80（差门 .007）；尺度大（4–8）→ ROC .815–.825 过门，AP .55–.57、within .60 不过。位置通道进先验只加 within +.008。top-k 除数与掩码来源不改善 within。修订 3 把 `prior_scale`、`prior_dims` 交给搜索（3.2 节）。
