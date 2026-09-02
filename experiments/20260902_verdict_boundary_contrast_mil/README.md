@@ -228,4 +228,4 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 读数：
 - K4 第二粒度在 HateMM 上有效：同一训练轨迹（都选 epoch 2）AP +.050、ROC +.031。与 HateClipSeg（6.12，K4 使 within −.04）相反。
 - **SniCo 在这一 trial 的选中模型里没有参与**：`snico_warmup_epochs` = 2,epoch 1–2 的 λ_snico = 0,full 与 no_snico 的 epoch 1–2 训练记录逐位相同（`summary.json` 的 `history`）。full 选 epoch 2 是因为 SniCo 开启后 val 准则下降（epoch 3 .768,epoch 17 .751);no_snico 里 val 在 epoch 17 升到 .804,但 test 反而 .606。所以 full 的 .667 = 一个训练 2 个 epoch、无 SniCo 的模型。6.12 HateClipSeg 修订 4 trial 3 同样选 epoch 2。修订 3 的最优 trial 选 epoch 6（HateMM）/ 10（HateClipSeg），SniCo 有参与。这条要进规则 14 清单的组件贡献项：修订 4 seed 234 的最优 checkpoint 在两个语料上都不含 SniCo 贡献。
-- 逻辑先验对比只拼输入：+.012 AP / +.005 ROC（input_only .655/.834）。K30+K4 拼输入比 K30 单独拼输入（6.10 的 .579/.792）高得多，说明修订 1 失败的主因是 K30 单粒度信息太粗而不是拼接位置。
+- 逻辑先验对比只拼输入：+.012 AP / +.005 ROC（input_only .655/.834）。K30+K4 拼输入比修订 3 的 K30 拼输入（6.10 的 .579/.792，trial 14 超参数，不是同一组超参数）高，倾向于修订 1 失败的主因是 K30 单粒度信息太粗，但两组超参数不同，不能定论。
