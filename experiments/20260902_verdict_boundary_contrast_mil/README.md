@@ -146,3 +146,20 @@ test AP .397 / ROC .683 / within .540（`verdict_only/hatemm/test/metrics.json`�
 | no_scaffold_no_snico（MACIL-SD + 文本） | .579 | .563 | .532 |
 
 读数：裁定先验贡献 AP +.108、ROC +.102；SniCo 在有先验时贡献 AP +.014、ROC +.009（单 seed，超过 .005 噪声线，低于 baseline std .036/.023），within −.007；无先验时 SniCo +.021/+.010。本轮 trial 15 的 λ_snico 只有 .106，修订 2 best trial（λ 1.88）时 SniCo 贡献为 +.012/+.024。
+
+### 6.8 修订 3 HateMM seed 234 搜索（20 trials，uoa-lab1，`hatemm/seed234/study_summary.json`）
+- best trial 14：test AP .635 / ROC .832 / within .642（`hatemm/seed234/trial14/metrics.json`；prior_scale 0.57，prior_dims scaffold，λ_snico .10）。三门全过：AP 高出 MACIL-SD .573 共 .062（> std .033），ROC 高出 .807 共 .025（> std .019），within .642 ≥ .632。
+- 20 个 trial 中 11 个 within ≥ .632；其中 9 个 AP > .573 且 ROC > .807。validation 会选 trial 1：.590 / .815 / .638（也过三门，AP 余量 .017 < std）。
+- 去共同位置轮廓分析（6.3 节方法）：trial 14 原 within .642，仅位置轮廓 .626，去位置后 .612（MultiHateLoc .524、MACIL-SD .523）；trial 1 去位置后 .535。best trial 的视频内排序主要来自内容。
+- 消融（trial 14 超参数）见 6.10。
+
+### 6.9 HateClipSeg 确认 seed（修订 3，各自 20 trials，uoa-lab3）
+
+| seed | best trial | AP | ROC | within | prior_scale / dims / λ_snico | validation 会选 |
+|---|---|---|---|---|---|---|
+| 234 | 15 | .701 | .674 | .579 | 1.82 / scaffold / .11 | 18：.694/.666/.577 |
+| 2025 | 1 | .688 | .662 | .576 | 2.00 / scaffold / .33 | 1：同 |
+| 3407 | 19 | .692 | .660 | .571 | 4.59 / verdict / .19 | 3：.674/.654/.574 |
+| 3-seed 均值 | | .694 | .665 | .575 | | |
+
+门：AP .562（Fed-WSVAD std .036）、ROC .528（DSANet std .023）、within ≥ .524；VERA .619/.605/.562。三 seed 每项都高于门 ≥ .13，余量远大于 std 与 .005。
