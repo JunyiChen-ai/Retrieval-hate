@@ -208,3 +208,8 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 - best trial 3：test AP .684 / ROC .656 / within .539（prior_scale 6.73，scaffold，λ_snico .25，选中 epoch 2）；validation 会选同一 trial。20 个 trial AP .640–.684、ROC .629–.665、within .524–.555。仍全部高于门（.562/.528/.524）与 VERA，但低于修订 3（.701/.674/.579）：K4 粗窗口把 within 拉低 .04。
 - 消融（trial 3 超参数）：no_k4（= 修订 3 结构）.680/.641/.568；no_snico .684/.656/.539（与 full 相同：选中 epoch 2 在 SniCo 预热之前，本 trial 的 SniCo 没有参与）；input_only .628/.618/.523；no_scaffold = no_scaffold_no_snico .606/.589/.535（同样 epoch ≤ 2）。
 - 读数：HateClipSeg 不需要 K4；K30 已够细，K4 只加噪声。修订 4 在 HateClipSeg 上是否保留由两语料统一原则（规则 13）和 HateMM 确认结果决定。
+
+### 6.13 修订 4 HateMM seed 234 搜索（20 trials，uoa-lab1，`hatemm/seed234/study_summary.json`）
+- best trial 19：test AP .667 / ROC .839 / within .647（prior_scale 1.09，verdict，λ_snico .15，ρ .73，m 16，选中 epoch 2）；validation 会选 trial 11（.633 / .840 / .648）。三门全过：AP 比 MACIL-SD 高 .094，ROC 高 .032（≥ 基线 std .019），within 高于下限 .632。
+- 修订 3 同 seed 最优是 .646 / .830 / .642（6.8）；修订 4 AP +.021、ROC +.009。20 个 trial 里 11 个 within 通过；within 通过的 trial 全部 prior_scale ≤ 3.1 且大多选 verdict 列（不含位置通道），与 6.8 的读数一致。
+- 位置剖面去除（6.3 方法）：trial 19 去除公共位置剖面后 within 仍 .647（去除前 .647；仅位置剖面 .417），即这一 trial 的 within 不来自位置先验。修订 3 trial 14 同分析是 .642 → .612。
