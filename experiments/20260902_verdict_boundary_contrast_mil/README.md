@@ -240,3 +240,33 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 | 均值 ± std | | .689 ± .010 | .670 ± .012 | .549 ± .008 | | |
 
 门：AP .562（Fed-WSVAD，std .036）、ROC .528（DSANet，std .023）、within ≥ .524。AP 余量 .127 ≥ .036，ROC 余量 .142 ≥ .023，within 全部 seed 通过。修订 4 在 HateClipSeg 上确认通过。与修订 3（6.11：.694 / .665 / .575）相比 AP −.005、ROC +.005、within −.026，差异在 std 内，只有 within 明显下降。seed 2025 / 3407 的最优 trial 选中 epoch 14 / 7，SniCo 有参与；seed 234 没有（6.14）。
+
+### 6.16 修订 4 HateMM 三 seed 确认（各 seed 20 trials 各取最优，uoa-lab1，`hatemm/seed<seed>/study_summary.json`）
+
+| seed | best trial | AP | ROC | within | 选中 epoch | within 过下限的 trial 数 | validation 选 trial 的 test |
+|---|---|---|---|---|---|---|---|
+| 234 | 19 | .667 | .839 | .647 | 2 | 10/20 | trial 11：.633 / .840 / .648 |
+| 2025 | 19 | .663 | .834 | .638 | 2 | 8/20 | trial 3：.620 / .819 / .620（within 低于下限） |
+| 3407 | 0 | .637 | .835 | .634 | 2 | 4/20 | 同一 trial |
+| 均值 ± std | | .656 ± .016 | .836 ± .003 | .640 ± .007 | | | |
+
+门：AP .573（MACIL-SD，std .033）、ROC .807（std .019）、within ≥ .632。AP 余量 .083 ≥ .033，ROC 余量 .029 ≥ .019，within 三 seed 都过下限。**修订 4 在 HateMM 上确认通过**（修订 3 的 ROC 余量 .009 未过，见 6.11）。三个最优 trial 都选 epoch 2、prior_dims 都是 verdict、prior_scale 1.1–3.2。位置剖面去除（6.3 方法）后 within：seed 234 .647、seed 2025 .650、seed 3407 .623，三 seed 均值 .640 与去除前相同，within 不来自位置先验（MultiHateLoc 去除后 .52–.54）。
+
+## 8. 修订 4 两语料确认汇总与规则 14 清单（2026-09-02）
+
+| 语料 | AP | ROC | within | 门（最强训练 baseline） |
+|---|---|---|---|---|
+| HateMM（3 seed） | .656 ± .016 | .836 ± .003 | .640 ± .007 | .573 / .807 / ≥ .632 |
+| HateClipSeg（3 seed） | .689 ± .010 | .670 ± .012 | .549 ± .008 | .562 / .528 / ≥ .524 |
+
+- (a) 两语料三 seed 确认全过，每个数字来自该 seed 完整 20-trial 搜索的最优 trial（6.15、6.16）。
+- (b) std 已报；两语料 pooled 余量都大于 std。
+- (c) 规则 13：两语料同一架构、同一损失、同一训练与推理流程；不同的只有搜索选出的超参数。其中 `prior_dims`（先验读 10 列裁定或 12 列裁定+位置）是搜索空间里的类别项，HateMM 三 seed 选 verdict、HateClipSeg 三 seed 选 scaffold。它由同一份声明的搜索空间自动选出，但不是标量，是否算"按语料换结构"要用户裁定；若按最严格读法，可把 HateClipSeg 限定为 verdict 重跑（6.7 修订 3 的 HateClipSeg 最优 trial 也选 scaffold）。
+- (d) checkpoint 由 validation (AP+ROC)/2 选；搜索空间、trial 数、目标在 3.2/3.3 先于搜索写明；目标为 test，validation 选 trial 的 test 数字同表给出。HateMM validation 选 trial 的 test 均值 .630 / .831 / .634，HateClipSeg .682 / .657 / .541，也都过 pooled 门。
+- (e) 无推理后处理、无 ensemble、无按语料分支。冻结 Qwen2.5-VL-7B 分段裁定（K30 与 K4）在训练与推理都作为输入，不是 train-only teacher；去掉它的数字 = no_scaffold_no_snico（HateMM .562/.783/.621；HateClipSeg .606/.589/.535）。
+- (f) 最强 baseline + 同样输入：MACIL-SD + BERT 文本 + 裁定拼输入 = input_only（HateMM .655/.834/.643；HateClipSeg .628/.618/.523，seed 234）。HateMM 上 logit 先验只比拼输入高 .012 AP / .005 ROC；HateClipSeg 高 .056 / .038。
+- (g) 核心机制去除：裁定先验去除后 pooled AP 在 HateMM −.105、HateClipSeg −.078（seed 234）。**SniCo 边界对比不满足 (g)**：修订 4 seed 234 两语料最优 checkpoint 都在 SniCo 开启前选出（6.12、6.14），HateMM 三 seed 都是如此；no_snico 消融在 HateClipSeg 与 full 相同，在 HateMM 更低只是因为 validation 换选了更晚的 epoch。SniCo 不能作为 novelty 主张；方法主张应写为"两粒度冻结 VLM 裁定的可学习 logit 先验"。SniCo 留在训练里的作用是让 validation 选早期 checkpoint，这是选择副作用，不是机制。
+- (h) 评测器、split、GT、1 fps 协议未改动。
+- (i) 两语料三项指标全报。
+
+**结论**：规则 8 确认级两语料全过，规则 14 除 (c) 的 `prior_dims` 读法与 (g) 的 SniCo 主张外全部满足。SOTA 可以汇报；novelty 主张只剩裁定 logit 先验一项（第 7 节的 novelty 复核是按"先验 + 边界对比"过的，先验单独是否够，需要用户或重新复核裁定）。规则 9 的 3 轮修改（修订 2、3、4）已用完，本候选不再修改。

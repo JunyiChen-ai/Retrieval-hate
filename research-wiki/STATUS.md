@@ -19,12 +19,13 @@
 
 **运行中任务（2026-09-02 08:05 查）**：无方法在训练。`runs/20260902_temporal_mark_erase_observation/formal/orchestrator.pid`（PID 3362154）在等 GPU，GPU 被另一用户进程占满（17 GB, 97%）。该 observation 属旧规则 22 的 premise 门产物，新规则下不需要；是否终止由用户决定。`bag_constrained_sequence_crowd_student` 相关进程已全部结束，该候选因 training ensemble 不合规已淘汰。
 
-**当前候选（2026-09-02，截至 19:00，依据 `runs/20260902_verdict_boundary_contrast_mil/` 已回传目录；README 第 6 节为完整表）**：`experiments/20260902_verdict_boundary_contrast_mil/`，修订 3 = MACIL-SD 骨干 + 冻结 Qwen2.5-VL-7B K30 分段裁定作逐行 logit 可学习先验（`prior_scale`、是否含位置通道由搜索决定）+ 裁定/BERT/位置拼入 a 流 + CoLA 式边界硬样本对比。Optuna 目标 = test (AP+ROC)/2（规则 7/10，开发期上限）。
-- **HateClipSeg：SOTA 确认**。3 seed 各自最优 trial 均值 test AP .694 / ROC .665 / within .575（门 .562/.528/.524；VERA .619/.605/.562）。消融（seed 234）：no_snico .687/.665/.586；MACIL-SD+文本 .579/.563/.532；裁定本身 .610/.616/.558。
-- **HateMM：未确认（差 ROC 余量）**。3 seed 均值 AP .618 / ROC .816 / within .638；AP 领先 MACIL-SD .045（过），ROC 领先 .009（需 ≥ .019，不过），within ≥ .632（过）。seed 234 单独 .635/.832/.642 三门全过。消融（seed 234）：no_snico .611/.811/.635；MACIL-SD+文本 .563/.783/.608。
-- within 门说明（README 6.3）：MultiHateLoc 的 HateMM within .632 去掉共同位置轮廓后 .52–.54；本候选 best trial 去位置后 .612。待用户裁定门的解释。
-- novelty 复核（README 第 7 节）：规则 4 四项 PASS；论文须对照 MultiHateLoc、MLLM4WTAL、Tip-Adapter/AMU-Tuning。
-- 下一步（规则 9 剩 1 轮修改）：给先验加第二粒度裁定（K4，跨视频 ROC 更强）以补 HateMM ROC 余量；需先补抽 K4 裁定（HateMM 非 hate train、HateClipSeg 全部）。
+**当前候选（2026-09-02，截至 23:10，依据 `runs/20260902_verdict_boundary_contrast_mil/` 已回传目录；README 第 6、8 节为完整表）**：`experiments/20260902_verdict_boundary_contrast_mil/`，修订 4 = MACIL-SD 骨干 + 冻结 Qwen2.5-VL-7B 两粒度（K30、K4）分段裁定作逐行 logit 可学习先验（`prior_scale`、`prior_dims` 由搜索决定）+ 裁定/BERT/位置拼入 a 流 + CoLA 式边界硬样本对比（SniCo）。Optuna 目标 = test (AP+ROC)/2（规则 7/10）。
+- **两语料规则 8 确认级全过**（3 seed 各自 20-trial 搜索最优 trial 均值 ± std）：HateMM AP .656 ± .016 / ROC .836 ± .003 / within .640 ± .007（门 .573/.807/≥.632，ROC 余量 .029 ≥ .019）；HateClipSeg .689 ± .010 / .670 ± .012 / .549 ± .008（门 .562/.528/≥.524）。来源 `hatemm/seed<seed>/study_summary.json`、`hateclipseg/seed<seed>/study_summary.json`。
+- 规则 14 清单（README 第 8 节）：(a)(b)(d)(e)(f)(h)(i) 满足。**(g) SniCo 不满足**：修订 4 最优 checkpoint（HateMM 三 seed、HateClipSeg seed 234）都在 SniCo 开启前（epoch 1–2）被 validation 选出，SniCo 对报告数字无贡献；有效机制只有裁定 logit 先验（去掉后 AP HateMM −.105、HateClipSeg −.078）。**(c) 待用户裁定**：`prior_dims` 是搜索空间中的类别项，HateMM 选 verdict、HateClipSeg 选 scaffold（含位置通道）。
+- 修订 3（K30 单粒度）记录：HateClipSeg 确认 .694/.665/.575；HateMM ROC 余量 .009 未确认。修订 4 加 K4 后 HateMM AP +.038、ROC +.020；HateClipSeg within −.026（K4 在 HateClipSeg 无益，消融 no_k4）。
+- within 去位置剖面（README 6.3/6.16）：HateMM 三 seed 去除后 .640，与去除前相同；MultiHateLoc 去除后 .52–.54。
+- novelty：第 7 节复核按"先验 + 边界对比"PASS；SniCo 落选后主张只剩"两粒度冻结 VLM 裁定的可学习 logit 先验"，是否单独够 novelty 待用户裁定或重新复核。
+- 规则 9 三轮修改（修订 2、3、4）已用完，本候选不再改。下一步候选：见用户裁定。
 
 ## 研究方向
 
