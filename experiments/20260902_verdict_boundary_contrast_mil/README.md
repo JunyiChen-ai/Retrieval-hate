@@ -59,6 +59,9 @@
 - `prior_dims` {verdict, scaffold}（先验输入只用裁定 5 维，或用全部 7 维 scaffold 含 `t/T`、`min(t,T−t)/T`，位置权重从 0 初始化）。
 两语料共用此空间，seed 234 各重跑 20 trials；修订 2 的搜索结果保留在 `hatemm/seed234/`、`hateclipseg/seed234/`（目录改名为 `rev2_*`）。位置通道进先验的 within 贡献必须按 6.3 节的去位置轮廓分析单独报告。
 
+### 3.3 修订 4（2026-09-02，规则 9 的第 3 轮也是最后一轮修改；依据 6.11 节）
+修订 3 三 seed 确认：HateClipSeg 过；HateMM AP 与 within 过，ROC 3-seed 均值 .816 只领先 MACIL-SD .009（需 ≥ .019）。ROC 是跨视频分离；裁定粒度越粗跨视频越准（HateMM test 上 K4 裁定单独 ROC .781，K30 只有 .683，README 1 节/`verdict_only`），但 K4 没有视频内信息。修订 4 让 scaffold 同时带 K30 与 K4 两粒度裁定（各 one-hot(4) + 分值/3，共 10 维；位置两维不变，scaffold 12 维），logit 先验读两粒度（初始化 = prior_scale × 两粒度平均分值/3 − prior_scale/2，可学习），其余全部不变。搜索空间与修订 3 相同（3.2 节）。新增消融 `no_k4`（K4 通道置零 = 修订 3）。K4 裁定：HateMM 已有全量（2026-07，同脚本 `--num_subclips 4 --num_frames 16`，val 缺 2 个补抽）；HateClipSeg 需补抽 395 个（uoa-lab1，与 K30 同模型同脚本）。三 seed 各自重跑 20 trials；修订 3 目录改名 `rev3_*`。
+
 ### 3.1 修订 1 的记录（HateClipSeg seed 234，trial 0，uoa-lab1）
 修订 1（裁定只拼进 `a` 流输入）的 trial 0：test AP .568 / ROC .544 / within .537（`runs/20260902_verdict_boundary_contrast_mil/revision1_input_concat/hateclipseg/seed234/trial0/metrics.json`），低于裁定本身的 .610 / .616 / .558（`runs/.../verdict_only/hateclipseg/test/metrics.json`）。模型逐秒分数与裁定分数的 Pearson 相关系数 .003（pooled），视频内平均 .043：7 维裁定通道在 903 维输入里被网络忽略。模型分数与裁定分数直接相加得 AP .666 / ROC .645，说明两者互补，但相加是后处理，不作方法；修订 2 改为训练内的 logit 先验。修订 1 的搜索在 trial 0 后停止，目录整体移到 `revision1_input_concat/`。
 

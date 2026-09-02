@@ -2,9 +2,10 @@
 
 Rows live on MACIL-SD's I3D snippet grid (0.667 s). Per row:
     f_v   I3D RGB, one of five crops (1024)
-    f_a   VGGish (128) ⊕ BERT sentence (768) ⊕ scaffold (7)
-where the scaffold is the frozen-VLM K30 window verdict (one-hot 4 + level/3)
-plus two normalised position channels (src/vlm_verdict.py).
+    f_a   VGGish (128) ⊕ BERT sentence (768) ⊕ scaffold (12)
+where the scaffold is the frozen-VLM window verdict at K = 30 and K = 4
+(one-hot 4 + level/3 each) plus two normalised position channels
+(src/vlm_verdict.py; revision 4 added the K = 4 granularity).
 
 Training items are (video, crop) pairs exactly as in macilsd/dataset.py; the
 validation/test items stack the five crops. Videos without a BERT array or a
@@ -55,18 +56,26 @@ class ScaffoldCache:
     """Per-video (f_a_ext, n_seconds, snip_bounds), computed once."""
 
     def __init__(self, corpus, video_ids, verdicts):
+        """``verdicts``: one dict (video_id -> scores) per granularity in
+        vlm_verdict.GRANULARITIES; a single dict means the first only."""
+        if isinstance(verdicts, dict):
+            verdicts = [verdicts] + [{}] * (len(vlm_verdict.GRANULARITIES) - 1)
         self.corpus = corpus
         self.items = {}
         self.n_missing_text = 0
         self.n_missing_verdict = 0
+        self.n_missing_by_gran = [0] * len(verdicts)
         for vid in video_ids:
             audio, n_seconds, snip = align.aligned_audio(corpus, vid, "snippet")
             text = load_text_rows(corpus, vid, snip)
             if text is None:
                 self.n_missing_text += 1
                 text = np.zeros((audio.shape[0], TEXT_DIM), dtype=np.float32)
-            sc = verdicts.get(vid)
-            if sc is None:
+            sc = [v.get(vid) for v in verdicts]
+            for g, x in enumerate(sc):
+                if x is None:
+                    self.n_missing_by_gran[g] += 1
+            if any(x is None for x in sc):
                 self.n_missing_verdict += 1
             scaf = vlm_verdict.scaffold_features(sc, snip, n_seconds)
             f_a = np.concatenate([audio, text, scaf], axis=1).astype(np.float32)

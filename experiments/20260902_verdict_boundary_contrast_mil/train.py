@@ -12,7 +12,12 @@ evaluator.
 
 ``--config`` is a JSON object of hyperparameters; keys missing from it take
 the defaults in DEFAULTS. ``--ablation`` selects the pre-registered ablations
-(full / no_snico / input_only / no_scaffold / no_scaffold_no_snico).
+(full / no_snico / input_only / no_scaffold / no_scaffold_no_snico / no_k4).
+
+Revision 4 (2026-09-02): the scaffold carries two verdict granularities,
+K = 30 and K = 4 windows per video (src/vlm_verdict.GRANULARITIES); the
+logit prior reads both (initialised as prior_scale times the mean level).
+``no_k4`` zeroes the K = 4 channels and equals revision 3.
 
 Design revision 2 (2026-09-02): the frozen-VLM verdict enters the frame logit
 as an explicit prior, ``av_logit = MACIL_frame_logit + prior(verdict)``, with
@@ -84,9 +89,11 @@ DEFAULTS = {
     "prior_dims": "verdict",
 }
 ABLATIONS = ("full", "no_snico", "input_only", "no_scaffold",
-             "no_scaffold_no_snico")
+             "no_scaffold_no_snico", "no_k4")
 SCAF_OFFSET = align.A_DIM + ds.TEXT_DIM  # first scaffold column in f_a
-N_PRIOR_IN = vlm_verdict.N_LEVELS + 1    # one-hot(4) + level/3
+N_PRIOR_IN = vlm_verdict.VERDICT_DIMS    # (one-hot(4) + level/3) per K
+LEVEL_COLS = [g * (vlm_verdict.N_LEVELS + 1) + vlm_verdict.N_LEVELS
+              for g in range(len(vlm_verdict.GRANULARITIES))]
 
 
 class Args(dict):
@@ -105,8 +112,10 @@ class Candidate(nn.Module):
                            if cfg.prior_dims == "scaffold" else N_PRIOR_IN)
         self.prior = nn.Linear(self.n_prior_in, 1)
         with torch.no_grad():
+            # init: prior_scale * (mean over granularities of level/3 - 1/2)
             self.prior.weight.zero_()
-            self.prior.weight[0, vlm_verdict.N_LEVELS] = float(cfg.prior_scale)
+            for c in LEVEL_COLS:
+                self.prior.weight[0, c] = float(cfg.prior_scale) / len(LEVEL_COLS)
             self.prior.bias.fill_(-0.5 * float(cfg.prior_scale))
 
         self.topk_div = int(cfg.topk_div)
@@ -234,13 +243,17 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                 if v in test_gt]
     hate_ids = {v for v, l in labels.items() if l == 1}
 
-    use_scaffold = ablation in ("full", "no_snico", "input_only")
-    use_prior = ablation in ("full", "no_snico")
-    use_snico = ablation in ("full", "input_only", "no_scaffold")
-    verdicts = vlm_verdict.load_verdicts(corpus, k=30, tag="qwen")
+    use_scaffold = ablation in ("full", "no_snico", "input_only", "no_k4")
+    use_prior = ablation in ("full", "no_snico", "no_k4")
+    use_snico = ablation in ("full", "input_only", "no_scaffold", "no_k4")
+    verdicts = [vlm_verdict.load_verdicts(corpus, k=k, tag="qwen")
+                for k in vlm_verdict.GRANULARITIES]
     if not use_scaffold:
-        verdicts = {}
+        verdicts = [{} for _ in verdicts]
+    if ablation == "no_k4":
+        verdicts = [verdicts[0]] + [{} for _ in verdicts[1:]]
     cache = ds.ScaffoldCache(corpus, train_ids + val_ids + test_ids, verdicts)
+    n_verdict_needed = 1 if ablation == "no_k4" else len(verdicts)
     if not use_scaffold:
         # Drop the two position channels as well: the whole scaffold is off.
         for vid, (f_a, n, snip) in cache.items.items():
@@ -251,16 +264,17 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
            sum(labels[v] for v in train_ids), cache.n_missing_text,
            cache.n_missing_verdict, use_scaffold, use_prior, use_snico))
     if use_scaffold:
-        cov = {name: sum(v in verdicts for v in ids)
-               for name, ids in (("train", train_ids), ("val", val_ids),
-                                 ("test", test_ids))}
-        say("verdict coverage: train %d/%d, val %d/%d, test %d/%d"
-            % (cov["train"], len(train_ids), cov["val"], len(val_ids),
-               cov["test"], len(test_ids)))
-        if cache.n_missing_verdict > 0:
-            say("ABORT: %d videos have no K30 verdict; with a partial cache the"
-                " scaffold channel would leak the video label on train"
-                % cache.n_missing_verdict)
+        for g, vd in enumerate(verdicts[:n_verdict_needed]):
+            cov = {name: sum(v in vd for v in ids)
+                   for name, ids in (("train", train_ids), ("val", val_ids),
+                                     ("test", test_ids))}
+            say("verdict K%d coverage: train %d/%d, val %d/%d, test %d/%d"
+                % (vlm_verdict.GRANULARITIES[g], cov["train"], len(train_ids),
+                   cov["val"], len(val_ids), cov["test"], len(test_ids)))
+        if sum(cache.n_missing_by_gran[:n_verdict_needed]) > 0:
+            say("ABORT: missing verdicts per granularity %s; with a partial"
+                " cache the scaffold channel would leak the video label on"
+                " train" % cache.n_missing_by_gran)
             log.close()
             raise SystemExit(3)
 

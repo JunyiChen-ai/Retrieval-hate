@@ -23,7 +23,9 @@ REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg",
               "mhclip_en": "MHC", "mhclip_zh": "MHC_zh"}
 N_LEVELS = 4          # verdict levels 0..3
-SCAFFOLD_DIM = N_LEVELS + 1 + 2   # one-hot, scalar, position, edge distance
+GRANULARITIES = (30, 4)           # windows per video, coarse-to-fine order fixed
+VERDICT_DIMS = len(GRANULARITIES) * (N_LEVELS + 1)   # per K: one-hot + level/3
+SCAFFOLD_DIM = VERDICT_DIMS + 2   # + position, edge distance (revision 4)
 
 
 def verdict_files(corpus, k=30, tag="qwen"):
@@ -70,11 +72,16 @@ def verdict_rows(scores, row_bounds, duration):
 
 
 def scaffold_features(scores, row_bounds, duration):
-    """(n_rows, SCAFFOLD_DIM) float32: one-hot(4) + level/3 + t/D + min(t, D-t)/D.
+    """(n_rows, SCAFFOLD_DIM) float32.
 
-    ``scores`` may be None (no verdict for this video): the verdict channels
-    are then all zero and only the two position channels carry information.
+    Columns: for each K in GRANULARITIES, one-hot(4) + level/3 (5 columns);
+    then t/D and min(t, D-t)/D. ``scores`` is a sequence with one entry per
+    granularity (array of length K, or None = no verdict: those five columns
+    stay zero). A single array is accepted for the first granularity only.
     """
+    if scores is None or isinstance(scores, np.ndarray):
+        scores = [scores] + [None] * (len(GRANULARITIES) - 1)
+    assert len(scores) == len(GRANULARITIES)
     rb = np.asarray(row_bounds, dtype=np.float64)
     n = rb.shape[0]
     d = max(float(duration), 1e-6)
@@ -82,11 +89,14 @@ def scaffold_features(scores, row_bounds, duration):
     pos = np.clip(mid / d, 0.0, 1.0)
     edge = np.clip(np.minimum(mid, d - mid) / d, 0.0, 1.0)
     out = np.zeros((n, SCAFFOLD_DIM), dtype=np.float32)
-    if scores is not None:
-        lev = verdict_rows(scores, rb, d)
+    for g, sc in enumerate(scores):
+        if sc is None:
+            continue
+        off = g * (N_LEVELS + 1)
+        lev = verdict_rows(sc, rb, d)
         li = np.clip(np.rint(lev).astype(np.int64), 0, N_LEVELS - 1)
-        out[np.arange(n), li] = 1.0
-        out[:, N_LEVELS] = lev / float(N_LEVELS - 1)
-    out[:, N_LEVELS + 1] = pos
-    out[:, N_LEVELS + 2] = edge
+        out[np.arange(n), off + li] = 1.0
+        out[:, off + N_LEVELS] = lev / float(N_LEVELS - 1)
+    out[:, VERDICT_DIMS] = pos
+    out[:, VERDICT_DIMS + 1] = edge
     return out
