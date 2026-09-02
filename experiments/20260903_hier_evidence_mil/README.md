@@ -175,6 +175,18 @@ lr log[1e-4, 1e-3]；dropout {.1,.2,.3}；max_seqlen {150,200,300}；lamda_a2b /
 
 待用户裁定（属规则 9 修改轮次，本候选尚未用过）：是否把原始二值裁定列从骨干输入里去掉，让 VLM 证据只经 HMM 后验（ℓ、P(s)）进入骨干，使模块 3 成为 VLM 与骨干之间唯一的接口，mean_prior 消融在两语料上处于同等条件。风险：HateMM 上原始列可能带有后验以外的信息，AP 可能下降；只能用完整搜索验证（规则 7）。
 
+### 4.6 HateClipSeg 三 seed 确认（uoa-lab3，每 seed 独立 20 trial 搜索；`runs/20260903_hier_evidence_mil/hateclipseg/seed<seed>/study_summary.json`）
+
+| seed | best trial（epoch） | AP | ROC | within | prior_scale / w_fine / λ_block |
+|---|---|---|---|---|---|
+| 234 | 8（3） | .695 | .679 | .546 | 1.98 / .73 / .85 |
+| 2025 | 19（2） | .706 | .698 | .560 | 2.99 / .82 / .27 |
+| 3407 | 19（3） | .696 | .666 | .553 | 2.87 / .92 / .54 |
+| **均值 ± 标准差** | | **.699 ± .006** | **.681 ± .016** | **.553 ± .007** | |
+
+对照：修订 4 三 seed .689 ± .010 / .670 ± .012 / .549 ± .008；HMM 后验单独 .698 / .661 / .554；规则 8 门 .562 / .528，边距要求 ≥ max(std, .005) = .036 / .023，实际边距 .137 / .153，通过；within 三 seed 均 ≥ .524。
+对修订 4：+.010 AP、+.011 ROC。对 HMM 后验单独：AP +.001（持平）、ROC +.020。
+
 ## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
 **放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
 复核要求（必须执行）：
