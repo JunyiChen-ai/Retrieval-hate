@@ -124,3 +124,13 @@ test AP .397 / ROC .683 / within .540（`verdict_only/hatemm/test/metrics.json`�
 | prior_scale 2，先验含位置两维 | .611 | .798 | .635 | 2 |
 
 读数：HateMM 上 `prior_scale` 是主变量。尺度小（1–2）→ AP .61、within .63（刚到门），ROC .80（差门 .007）；尺度大（4–8）→ ROC .815–.825 过门，AP .55–.57、within .60 不过。位置通道进先验只加 within +.008。top-k 除数与掩码来源不改善 within。修订 3 把 `prior_scale`、`prior_dims` 交给搜索（3.2 节）。
+
+### 6.5 修订 2 HateMM seed 234 搜索最终（20 trials，`rev2_hatemm/seed234/study_summary.json`）
+- within ≥ .632 的 trial 只有 16（.565/.792/.640）与 19（.563/.793/.635），两者 AP、ROC 都不过门（.573/.807）；有效最优 = trial 16。
+- validation 会选的 trial 17：AP .616 / ROC .825 / within .625，AP、ROC 都过门（AP 高出 .043 > std .033，ROC 高出 .018 < std .019），within 差门 .007。
+- 结论：修订 2 在 HateMM 上 pooled 能超过 MACIL-SD，但 within 门与 pooled 门没有在同一个 trial 同时达到。
+
+### 6.6 修订 3 HateClipSeg seed 234 搜索（20 trials，uoa-lab3，`hateclipseg/seed234/study_summary.json`）
+- best trial 15：test AP .701 / ROC .674 / within .579（`hateclipseg/seed234/trial15/metrics.json`；prior_scale 1.82，prior_dims scaffold，λ_snico .106，ρ .30，m 16，τ .07）。validation 会选 trial 18：.694 / .666 / .577。
+- 20 个 trial 的 AP .640–.701、ROC .622–.674、within .564–.593，全部高于三门（.562/.528/.524）与 VERA（.619/.605/.562）。
+- 消融（trial 15 超参数）见 6.7。
