@@ -95,3 +95,11 @@ lr log[1e-4, 1e-3]；dropout {.1,.2,.3}；max_seqlen {150,200,300}；lamda_a2b /
 
 ## 4. 进度
 - 2026-09-03：提案；离线验证完成并写入 runs/（第 1 节表）；prior_only 消融两语料完成；规则 4 复核进行中。
+
+## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
+**放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
+复核要求（必须执行）：
+- 论文主表必须报"HMM 后验单独"（training-free）对照行，完整方法须明显高于它（seed 234 消融 + 3 seed）。它现在是 HateMM .541 / .818、HateClipSeg .698 / .661，已过两语料训练 baseline 门；**HateClipSeg 上它与修订 4 完整模型持平，训练模型必须超过它才有可 claim 的增量。**
+- "分层"贡献只能落在模块 2 的块 bag 上，不落在 HMM 的 OR 观测上（离线消融无差异）。
+- 必引并对照：Dugong（最近先例：多分辨率弱源 + 序列潜标签，矩法估参、label model 只用于训练）、linked HMM / CHMM、HHMM（Fine 1998）/ 多尺度 HMT（Crouse 1998）/ factorial HMM / HSMM（结构对照）、noisy-OR MIL（MILBoost）、GlanceVAD、MI-HMM（Wu FG 2015）。
+扣分理由：两模块是 label model → end model 范式向 MIL 定位的迁移；OR 结构无增益；HateMM 上 K30 证据被高估需 w_fine 补丁；裁定单独已过门，增量才是可 claim 的部分。
