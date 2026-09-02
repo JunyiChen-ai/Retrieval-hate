@@ -19,7 +19,10 @@
 
 **运行中任务（2026-09-02 08:05 查）**：无方法在训练。`runs/20260902_temporal_mark_erase_observation/formal/orchestrator.pid`（PID 3362154）在等 GPU，GPU 被另一用户进程占满（17 GB, 97%）。该 observation 属旧规则 22 的 premise 门产物，新规则下不需要；是否终止由用户决定。`bag_constrained_sequence_crowd_student` 相关进程已全部结束，该候选因 training ensemble 不合规已淘汰。
 
-**下一步**：按新流程第 1 步提出候选。两个可选起点：POWA（pooled 已过主门，缺 within 与统一性）；marked temporal splat（HateMM within .728 但 pooled AP `.516` 远低于门）。由用户裁定。
+**当前候选（2026-09-02，截至 14:30，依据 `runs/20260902_verdict_boundary_contrast_mil/` 已回传目录）**：`experiments/20260902_verdict_boundary_contrast_mil/`。修订 2 = MACIL-SD 骨干 + 冻结 Qwen2.5-VL-7B K30 分段裁定作逐行 logit 先验（可学习线性映射）+ 裁定/BERT/位置拼入 a 流 + CoLA 式边界硬样本对比。HateMM K30 裁定已全量抽取（1068 视频，uoa-lab1，`data/MLLM_scores/PROVENANCE.md`）。
+- HateClipSeg seed 234（修订 2，20 trials）：best trial test AP .691 / ROC .661 / within .579（`rev2_hateclipseg/seed234/trial14/metrics.json`），三门全过（.562/.528/.524），高于 VERA .619/.605；消融 no_snico .679/.637/.573，MACIL-SD+文本 .587/.568/.540，裁定本身 .610/.616/.558（`rev2_ablations/…`、`verdict_only/…`）。
+- HateMM seed 234（修订 2，20 trials）：全部 trial within .585–.625 < 门 .632，AP .50–.59，ROC .76–.825（`rev2_hatemm/seed234/search.log`）。分析（README 6.3）：MultiHateLoc 的 within .632 去掉共同位置轮廓后只剩 .52–.54，MACIL-SD 同样；本候选去位置后 .58，内容驱动的视频内排序最高但位置轮廓弱。此事实待用户裁定门的解释；本轮仍按原 within 判。
+- 修订 3（README 3.2）：`prior_scale` 与 `prior_dims`（位置通道是否进先验）加入搜索空间，两语料 seed 234 重跑：HateClipSeg 在 `uoa-lab3`（已配好环境与数据）、HateMM 在 `uoa-lab1`。结果回传后更新此处。
 
 ## 研究方向
 
