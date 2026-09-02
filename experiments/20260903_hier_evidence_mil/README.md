@@ -140,6 +140,41 @@ lr log[1e-4, 1e-3]；dropout {.1,.2,.3}；max_seqlen {150,200,300}；lamda_a2b /
 
 对修订 4：AP −.006、ROC +.002，持平。对不训练的 HMM 后验：AP +.120、ROC +.023。
 
+### 4.4 HateMM seed 234 消融（uoa-lab1，trial 3 超参，`runs/20260903_hier_evidence_mil/ablations/hatemm/seed234/<ablation>/metrics.json`）
+
+| 消融 | AP | ROC | within | 选中 epoch | 相对 full |
+|---|---|---|---|---|---|
+| full（trial 3） | .661 | .841 | .650 | 3 | — |
+| mean_prior（先验换两粒度平均等级） | .661 | .845 | .641 | 3 | .000 / +.004 |
+| indep_hmm（无转移耦合） | .645 | .833 | .646 | 3 | −.016 / −.008 |
+| flat_coarse（无块 OR 结构） | .646 | .837 | .645 | 9 | −.015 / −.004 |
+| no_block（λ_block = 0） | .640 | .828 | .646 | 6 | −.021 / −.013 |
+| raw_block_label（块标签用原始 b4） | .660 | .840 | .655 | 2 | −.001 / −.001 |
+| no_input（裁定不拼输入） | .605 | .806 | .639 | 4 | −.056 / −.035 |
+| no_prior（无先验项） | .644 | .836 | .644 | 6 | −.017 / −.005 |
+| no_verdict（无裁定） | .555 | .787 | .619 | 4 | −.106 / −.054 |
+
+### 4.5 seed 234 筛选结论（两语料合看）
+
+规则 8 门：两语料 seed 234 全部通过（HateMM .661/.841/.650 对门 .573/.807/.632；HateClipSeg .695/.679/.546 对门 .562/.528/.524）。确认 seed 2025/3407 的完整搜索已于 2026-09-03 09:32 在 uoa-lab1（HateMM）与 uoa-lab3（HateClipSeg）启动。
+
+每条主张按规则 14(g)（消融后 pooled 下降，seed 234）：
+
+| 主张 | 消融 | HateMM AP/ROC 变化 | HateClipSeg AP/ROC 变化 | 结论 |
+|---|---|---|---|---|
+| 模块 2：块级 MIL 给骨干视频内监督 | no_block | −.021 / −.013 | −.038 / −.055 | **两语料成立** |
+| 模块 3：证据模型的时间耦合有贡献 | indep_hmm | −.016 / −.008 | −.013 / −.001 | 两语料 AP 成立；HateClipSeg ROC 只降 .001 |
+| 模块 3：HMM 后验优于平均等级先验 | mean_prior | .000 / +.004 | −.016 / −.020 | **HateMM 不成立** |
+| 模块 3：块 OR 层次有贡献 | flat_coarse | −.015 / −.004 | −.001 / .000 | HateClipSeg 不成立（与离线表一致），不作主张 |
+| 块标签去噪 | raw_block_label | −.001 / −.001 | −.003 / .000 | 不成立，不作主张 |
+| 裁定拼输入 | no_input | −.056 / −.035 | −.002 / −.003 | 语料相关，与修订 4 一致，不作方法主张 |
+
+对修订 4 seed 234：HateClipSeg +.011 / +.023；HateMM −.006 / +.002（持平）。对不训练的 HMM 后验单独：HateMM +.120 / +.023；HateClipSeg −.003 / +.018（AP 未超过）。
+
+解释 mean_prior 在 HateMM 上不降：mean_prior 只替换 ℓ、P(s) 两列与先验项，原始二值裁定列 b_fine、b_coarse 仍拼在输入里；HateMM 上输入路径起作用（no_input −.056），骨干的时间层能从原始裁定列自己学到时间平滑，HMM 后验因此在这个语料上是冗余的。HateClipSeg 上输入路径不起作用（no_input 持平），裁定信息只经先验项进入，HMM 后验对平均等级的优势才能显现。
+
+待用户裁定（属规则 9 修改轮次，本候选尚未用过）：是否把原始二值裁定列从骨干输入里去掉，让 VLM 证据只经 HMM 后验（ℓ、P(s)）进入骨干，使模块 3 成为 VLM 与骨干之间唯一的接口，mean_prior 消融在两语料上处于同等条件。风险：HateMM 上原始列可能带有后验以外的信息，AP 可能下降；只能用完整搜索验证（规则 7）。
+
 ## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
 **放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
 复核要求（必须执行）：
