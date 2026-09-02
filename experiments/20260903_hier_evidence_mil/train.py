@@ -69,6 +69,7 @@ import dataset as ds                                   # noqa: E402
 EVALUATOR = os.path.join(REPO_ROOT, "scripts", "reproduction_baselines",
                          "eval_baseline_scores.py")
 K_FINE, J_COARSE = vlm_verdict.GRANULARITIES          # (30, 4)
+ELL_CLIP = 3.0        # log-odds clip: p in [.047, .953] saturates the prior
 
 DEFAULTS = {
     # MACIL-SD
@@ -122,7 +123,10 @@ class Candidate(nn.Module):
         mmil, a_log, v_log, av_log, v_out, a_out = self.av(f_a_in, f_v, seq_len)
         content_log = av_log
         ell = f_a[..., ds.SCAF_OFFSET + ds.COL_ELL:ds.SCAF_OFFSET + ds.COL_ELL + 1]
-        av_log = av_log + self.prior_scale * ell
+        # bounded evidence: posterior log-odds clipped to +-ELL_CLIP and
+        # normalised to [-1, 1], so prior_scale is the maximal logit shift
+        # (same range as the revision-4 prior, alpha * (level - 1/2) * 2)
+        av_log = av_log + self.prior_scale * ell.clamp(-ELL_CLIP, ELL_CLIP) / ELL_CLIP
         mmil = self.bag(av_log, seq_len)
         self.last_content_logit = content_log
         return mmil, a_log, v_log, av_log, v_out, a_out
@@ -244,9 +248,9 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine):
         p_s, p_h = hmm.posterior(bf, bc, w_fine=w_fine, **kw)
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
         if ablation == "mean_prior":
-            # revision-4 prior input: mean binary level minus 1/2, per row via
-            # the same window/block maps
-            ell = (bf + bc[hmm.block]) / 2.0 - 0.5
+            # revision-4 prior input: mean binary level minus 1/2 (range
+            # [-1/2, 1/2]); stored so that clip(ell)/ELL_CLIP = 2*(mean-1/2)
+            ell = ELL_CLIP * (bf + bc[hmm.block] - 1.0)
         if ablation == "raw_block_label":
             p_h = bc.astype(np.float32)
         return ds.scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
