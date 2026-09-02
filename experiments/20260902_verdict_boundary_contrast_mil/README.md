@@ -213,3 +213,19 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 - best trial 19：test AP .667 / ROC .839 / within .647（prior_scale 1.09，verdict，λ_snico .15，ρ .73，m 16，选中 epoch 2）；validation 会选 trial 11（.633 / .840 / .648）。三门全过：AP 比 MACIL-SD 高 .094，ROC 高 .032（≥ 基线 std .019），within 高于下限 .632。
 - 修订 3 同 seed 最优是 .646 / .830 / .642（6.8）；修订 4 AP +.021、ROC +.009。20 个 trial 里 11 个 within 通过；within 通过的 trial 全部 prior_scale ≤ 3.1 且大多选 verdict 列（不含位置通道），与 6.8 的读数一致。
 - 位置剖面去除（6.3 方法）：trial 19 去除公共位置剖面后 within 仍 .647（去除前 .647；仅位置剖面 .417），即这一 trial 的 within 不来自位置先验。修订 3 trial 14 同分析是 .642 → .612。
+
+### 6.14 修订 4 HateMM 消融（trial 19 超参数，seed 234，uoa-lab1，`ablations/hatemm/seed234/<name>/metrics.json`）
+
+| 设定 | AP | ROC | within | 选中 epoch |
+|---|---|---|---|---|
+| full（trial 19） | .667 | .839 | .647 | 2 |
+| no_k4（= 修订 3 结构） | .617 | .808 | .638 | 2 |
+| no_snico | .606 | .826 | .640 | 17 |
+| input_only（K30+K4 只拼输入，有 SniCo） | .655 | .834 | .643 | 2 |
+| no_scaffold = no_scaffold_no_snico | .562 | .783 | .621 | 2 |
+| 门 / MACIL-SD 3-seed | .573 | .807 | .632 / .595 | |
+
+读数：
+- K4 第二粒度在 HateMM 上有效：同一训练轨迹（都选 epoch 2）AP +.050、ROC +.031。与 HateClipSeg（6.12，K4 使 within −.04）相反。
+- **SniCo 在这一 trial 的选中模型里没有参与**：`snico_warmup_epochs` = 2,epoch 1–2 的 λ_snico = 0,full 与 no_snico 的 epoch 1–2 训练记录逐位相同（`summary.json` 的 `history`）。full 选 epoch 2 是因为 SniCo 开启后 val 准则下降（epoch 3 .768,epoch 17 .751);no_snico 里 val 在 epoch 17 升到 .804,但 test 反而 .606。所以 full 的 .667 = 一个训练 2 个 epoch、无 SniCo 的模型。6.12 HateClipSeg 修订 4 trial 3 同样选 epoch 2。修订 3 的最优 trial 选 epoch 6（HateMM）/ 10（HateClipSeg），SniCo 有参与。这条要进规则 14 清单的组件贡献项：修订 4 seed 234 的最优 checkpoint 在两个语料上都不含 SniCo 贡献。
+- 逻辑先验对比只拼输入：+.012 AP / +.005 ROC（input_only .655/.834）。K30+K4 拼输入比 K30 单独拼输入（6.10 的 .579/.792）高得多，说明修订 1 失败的主因是 K30 单粒度信息太粗而不是拼接位置。
