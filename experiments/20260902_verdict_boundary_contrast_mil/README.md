@@ -203,3 +203,8 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 来源：`<corpus>/seed<seed>/study_summary.json`（best）。seed 2025 HateMM（uoa-lab1）、seed 3407 HateMM（uoa-lab3）；HateClipSeg 三 seed 均在 uoa-lab3。seed 3407 HateMM 的 20 个 trial 中 within ≥ .632 的 4 个 ROC 都在 .798–.804，没有一个过 .807。
 
 **判定（规则 8）**：HateClipSeg SOTA 确认（三项余量远大于 std）。HateMM：AP 与 within 确认，ROC 3-seed 均值 .816 只领先 MACIL-SD .009，低于要求的 .019，未确认。按规则 9，方法保留，已用 2 轮修改（修订 2、3），还剩 1 轮。
+
+### 6.12 修订 4 HateClipSeg seed 234（20 trials，uoa-lab3，`hateclipseg/seed234/`；消融 `ablations/hateclipseg/seed234/`）
+- best trial 3：test AP .684 / ROC .656 / within .539（prior_scale 6.73，scaffold，λ_snico .25，选中 epoch 2）；validation 会选同一 trial。20 个 trial AP .640–.684、ROC .629–.665、within .524–.555。仍全部高于门（.562/.528/.524）与 VERA，但低于修订 3（.701/.674/.579）：K4 粗窗口把 within 拉低 .04。
+- 消融（trial 3 超参数）：no_k4（= 修订 3 结构）.680/.641/.568；no_snico .684/.656/.539（与 full 相同：选中 epoch 2 在 SniCo 预热之前，本 trial 的 SniCo 没有参与）；input_only .628/.618/.523；no_scaffold = no_scaffold_no_snico .606/.589/.535（同样 epoch ≤ 2）。
+- 读数：HateClipSeg 不需要 K4；K30 已够细，K4 只加噪声。修订 4 在 HateClipSeg 上是否保留由两语料统一原则（规则 13）和 HateMM 确认结果决定。
