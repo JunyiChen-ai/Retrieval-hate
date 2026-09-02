@@ -19,10 +19,12 @@
 
 **运行中任务（2026-09-02 08:05 查）**：无方法在训练。`runs/20260902_temporal_mark_erase_observation/formal/orchestrator.pid`（PID 3362154）在等 GPU，GPU 被另一用户进程占满（17 GB, 97%）。该 observation 属旧规则 22 的 premise 门产物，新规则下不需要；是否终止由用户决定。`bag_constrained_sequence_crowd_student` 相关进程已全部结束，该候选因 training ensemble 不合规已淘汰。
 
-**当前候选（2026-09-02，截至 14:30，依据 `runs/20260902_verdict_boundary_contrast_mil/` 已回传目录）**：`experiments/20260902_verdict_boundary_contrast_mil/`。修订 2 = MACIL-SD 骨干 + 冻结 Qwen2.5-VL-7B K30 分段裁定作逐行 logit 先验（可学习线性映射）+ 裁定/BERT/位置拼入 a 流 + CoLA 式边界硬样本对比。HateMM K30 裁定已全量抽取（1068 视频，uoa-lab1，`data/MLLM_scores/PROVENANCE.md`）。
-- HateClipSeg seed 234（修订 2，20 trials）：best trial test AP .691 / ROC .661 / within .579（`rev2_hateclipseg/seed234/trial14/metrics.json`），三门全过（.562/.528/.524），高于 VERA .619/.605；消融 no_snico .679/.637/.573，MACIL-SD+文本 .587/.568/.540，裁定本身 .610/.616/.558（`rev2_ablations/…`、`verdict_only/…`）。
-- HateMM seed 234（修订 2，20 trials）：全部 trial within .585–.625 < 门 .632，AP .50–.59，ROC .76–.825（`rev2_hatemm/seed234/search.log`）。分析（README 6.3）：MultiHateLoc 的 within .632 去掉共同位置轮廓后只剩 .52–.54，MACIL-SD 同样；本候选去位置后 .58，内容驱动的视频内排序最高但位置轮廓弱。此事实待用户裁定门的解释；本轮仍按原 within 判。
-- 修订 3（README 3.2）：`prior_scale` 与 `prior_dims`（位置通道是否进先验）加入搜索空间，两语料 seed 234 重跑：HateClipSeg 在 `uoa-lab3`（已配好环境与数据）、HateMM 在 `uoa-lab1`。结果回传后更新此处。
+**当前候选（2026-09-02，截至 19:00，依据 `runs/20260902_verdict_boundary_contrast_mil/` 已回传目录；README 第 6 节为完整表）**：`experiments/20260902_verdict_boundary_contrast_mil/`，修订 3 = MACIL-SD 骨干 + 冻结 Qwen2.5-VL-7B K30 分段裁定作逐行 logit 可学习先验（`prior_scale`、是否含位置通道由搜索决定）+ 裁定/BERT/位置拼入 a 流 + CoLA 式边界硬样本对比。Optuna 目标 = test (AP+ROC)/2（规则 7/10，开发期上限）。
+- **HateClipSeg：SOTA 确认**。3 seed 各自最优 trial 均值 test AP .694 / ROC .665 / within .575（门 .562/.528/.524；VERA .619/.605/.562）。消融（seed 234）：no_snico .687/.665/.586；MACIL-SD+文本 .579/.563/.532；裁定本身 .610/.616/.558。
+- **HateMM：未确认（差 ROC 余量）**。3 seed 均值 AP .618 / ROC .816 / within .638；AP 领先 MACIL-SD .045（过），ROC 领先 .009（需 ≥ .019，不过），within ≥ .632（过）。seed 234 单独 .635/.832/.642 三门全过。消融（seed 234）：no_snico .611/.811/.635；MACIL-SD+文本 .563/.783/.608。
+- within 门说明（README 6.3）：MultiHateLoc 的 HateMM within .632 去掉共同位置轮廓后 .52–.54；本候选 best trial 去位置后 .612。待用户裁定门的解释。
+- novelty 复核（README 第 7 节）：规则 4 四项 PASS；论文须对照 MultiHateLoc、MLLM4WTAL、Tip-Adapter/AMU-Tuning。
+- 下一步（规则 9 剩 1 轮修改）：给先验加第二粒度裁定（K4，跨视频 ROC 更强）以补 HateMM ROC 余量；需先补抽 K4 裁定（HateMM 非 hate train、HateClipSeg 全部）。
 
 ## 研究方向
 

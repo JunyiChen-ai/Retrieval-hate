@@ -185,3 +185,18 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 | 门 / MACIL-SD 3-seed | .573 | .807 | .632 / .595 |
 
 读数：HateMM 上 SniCo 贡献 AP +.025、ROC +.022（ROC 差值 > std .019）、within +.007；裁定先验贡献 AP +.072、ROC +.049、within +.034（full 对比 no_scaffold_no_snico）。no_scaffold 上 SniCo 仍有害（−.024 AP），与 HateClipSeg 修订 2 一致：边界挖掘需要先验给出的粗结构。no_snico 单独已过三门（.611/.811/.635，ROC 余量 .004 < std）；full 三门余量都大于 std。
+
+### 6.11 三 seed 确认（修订 3，各 seed 20 trials 各取最优；规则 8 确认门）
+
+| 语料 | seed 234 | seed 2025 | seed 3407 | 3-seed 均值（std） | 门 | 判定 |
+|---|---|---|---|---|---|---|
+| HateMM AP | .635 | .624 | .594 | .618（.022） | .573，需领先 ≥ .033 | 领先 .045 **过** |
+| HateMM ROC | .832 | .812 | .804 | .816（.015） | .807，需领先 ≥ .019 | 领先 .009 **不过** |
+| HateMM within | .642 | .637 | .636 | .638 | ≥ .632 | 过 |
+| HateClipSeg AP | .701 | .688 | .692 | .694（.007） | .562，需 ≥ .036 | 领先 .132 过 |
+| HateClipSeg ROC | .674 | .662 | .660 | .665（.007） | .528，需 ≥ .023 | 领先 .137 过 |
+| HateClipSeg within | .579 | .576 | .571 | .575 | ≥ .524 | 过 |
+
+来源：`<corpus>/seed<seed>/study_summary.json`（best）。seed 2025 HateMM（uoa-lab1）、seed 3407 HateMM（uoa-lab3）；HateClipSeg 三 seed 均在 uoa-lab3。seed 3407 HateMM 的 20 个 trial 中 within ≥ .632 的 4 个 ROC 都在 .798–.804，没有一个过 .807。
+
+**判定（规则 8）**：HateClipSeg SOTA 确认（三项余量远大于 std）。HateMM：AP 与 within 确认，ROC 3-seed 均值 .816 只领先 MACIL-SD .009，低于要求的 .019，未确认。按规则 9，方法保留，已用 2 轮修改（修订 2、3），还剩 1 轮。
