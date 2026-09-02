@@ -76,6 +76,9 @@ DEFAULTS = {
     "snico_warmup_epochs": 2,
     # verdict prior on the frame logit (revision 2)
     "prior_scale": 4.0,
+    # bag = mean of the top ceil(T / topk_div) frame logits (MACIL-SD: 16);
+    # SniCo mask source: "combined" (prior + content logit) or "content"
+    "topk_div": 16, "snico_mask": "combined",
 }
 ABLATIONS = ("full", "no_snico", "input_only", "no_scaffold",
              "no_scaffold_no_snico")
@@ -101,14 +104,34 @@ class Candidate(nn.Module):
             self.prior.weight[0, vlm_verdict.N_LEVELS] = float(cfg.prior_scale)
             self.prior.bias.fill_(-0.5 * float(cfg.prior_scale))
 
+        self.topk_div = int(cfg.topk_div)
+
+    def bag(self, av_log, seq_len):
+        """MACIL-SD's clas() with the top-k divisor as a hyperparameter."""
+        if self.topk_div == 16:
+            return self.av.att_mmil.clas(av_log, seq_len)
+        logits = av_log.squeeze(-1)
+        out = []
+        for i in range(logits.shape[0]):
+            if seq_len is None:
+                out.append(logits[i].mean().view(1))
+            else:
+                t = int(seq_len[i])
+                k = max(1, int(-(-t // self.topk_div)))
+                out.append(torch.topk(logits[i][:t], k=k).values.mean().view(1))
+        return torch.sigmoid(torch.cat(out))
+
     def forward(self, f_a, f_v, seq_len):
         out = self.av(f_a, f_v, seq_len)
         mmil, a_log, v_log, av_log, v_out, a_out = out
+        content_log = av_log
         if self.use_prior:
             scaf = f_a[..., SCAF_OFFSET:SCAF_OFFSET + N_PRIOR_IN]
             av_log = av_log + self.prior(scaf)
-            mmil = self.av.att_mmil.clas(av_log, seq_len)
+        if self.use_prior or self.topk_div != 16:
+            mmil = self.bag(av_log, seq_len)
         emb = F.normalize(self.proj(a_out + v_out), dim=-1)
+        self.last_content_logit = content_log
         return mmil, a_log, v_log, av_log, v_out, a_out, emb
 
 
@@ -293,9 +316,13 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                      + lam_a2n * c2 + lam_a2n * c4)
             s_fg = s_bg = 0.0
             if lam_snico > 0:
-                act = torch.sigmoid(av_log.squeeze(-1))
+                src = (model.last_content_logit if a.snico_mask == "content"
+                       else av_log)
+                act = torch.sigmoid(src.squeeze(-1))
                 s_fg, s_bg, _ = snico_loss(act, emb, seq_len, label, a.rho,
-                                           int(a.morph_m), a.tau)
+                                           int(a.morph_m), a.tau,
+                                           k_fn=lambda t: max(
+                                               1, int(-(-t // a.topk_div))))
                 total = total + lam_snico * (s_fg + s_bg)
             uni = partner(f_v, seq_len).reshape(-1)
             loss_uni = criterion(uni, label)
