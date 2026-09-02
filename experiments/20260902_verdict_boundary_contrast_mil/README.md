@@ -205,8 +205,8 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 **判定（规则 8）**：HateClipSeg SOTA 确认（三项余量远大于 std）。HateMM：AP 与 within 确认，ROC 3-seed 均值 .816 只领先 MACIL-SD .009，低于要求的 .019，未确认。按规则 9，方法保留，已用 2 轮修改（修订 2、3），还剩 1 轮。
 
 ### 6.12 修订 4 HateClipSeg seed 234（20 trials，uoa-lab3，`hateclipseg/seed234/`；消融 `ablations/hateclipseg/seed234/`）
-- best trial 3：test AP .684 / ROC .656 / within .539（prior_scale 6.73，scaffold，λ_snico .25，选中 epoch 2）；validation 会选同一 trial。20 个 trial AP .640–.684、ROC .629–.665、within .524–.555。仍全部高于门（.562/.528/.524）与 VERA，但低于修订 3（.701/.674/.579）：K4 粗窗口把 within 拉低 .04。
-- 消融（trial 3 超参数）：no_k4（= 修订 3 结构）.680/.641/.568；no_snico .684/.656/.539（与 full 相同：选中 epoch 2 在 SniCo 预热之前，本 trial 的 SniCo 没有参与）；input_only .628/.618/.523；no_scaffold = no_scaffold_no_snico .606/.589/.535（同样 epoch ≤ 2）。
+- best trial 3：test AP .684 / ROC .656 / within .539（prior_scale 6.73，scaffold，λ_snico .25，选中 epoch 1，即训练一个 epoch、SniCo 尚未开启）；validation 会选同一 trial。20 个 trial AP .640–.684、ROC .629–.665、within .524–.555。仍全部高于门（.562/.528/.524）与 VERA，但低于修订 3（.701/.674/.579）：K4 粗窗口把 within 拉低 .04。
+- 消融（trial 3 超参数）：no_k4（= 修订 3 结构）.680/.641/.568；no_snico .684/.656/.539（与 full 相同：选中 epoch 1 在 SniCo 预热之前，本 trial 的 SniCo 没有参与）；input_only .628/.618/.523；no_scaffold = no_scaffold_no_snico .606/.589/.535（同样 epoch ≤ 2）。
 - 读数：HateClipSeg 不需要 K4；K30 已够细，K4 只加噪声。修订 4 在 HateClipSeg 上是否保留由两语料统一原则（规则 13）和 HateMM 确认结果决定。
 
 ### 6.13 修订 4 HateMM seed 234 搜索（20 trials，uoa-lab1，`hatemm/seed234/study_summary.json`）
@@ -227,5 +227,16 @@ WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练�
 
 读数：
 - K4 第二粒度在 HateMM 上有效：同一训练轨迹（都选 epoch 2）AP +.050、ROC +.031。与 HateClipSeg（6.12，K4 使 within −.04）相反。
-- **SniCo 在这一 trial 的选中模型里没有参与**：`snico_warmup_epochs` = 2,epoch 1–2 的 λ_snico = 0,full 与 no_snico 的 epoch 1–2 训练记录逐位相同（`summary.json` 的 `history`）。full 选 epoch 2 是因为 SniCo 开启后 val 准则下降（epoch 3 .768,epoch 17 .751);no_snico 里 val 在 epoch 17 升到 .804,但 test 反而 .606。所以 full 的 .667 = 一个训练 2 个 epoch、无 SniCo 的模型。6.12 HateClipSeg 修订 4 trial 3 同样选 epoch 2。修订 3 的最优 trial 选 epoch 6（HateMM）/ 10（HateClipSeg），SniCo 有参与。这条要进规则 14 清单的组件贡献项：修订 4 seed 234 的最优 checkpoint 在两个语料上都不含 SniCo 贡献。
+- **SniCo 在这一 trial 的选中模型里没有参与**：`snico_warmup_epochs` = 2,epoch 1–2 的 λ_snico = 0,full 与 no_snico 的 epoch 1–2 训练记录逐位相同（`summary.json` 的 `history`）。full 选 epoch 2 是因为 SniCo 开启后 val 准则下降（epoch 3 .768,epoch 17 .751);no_snico 里 val 在 epoch 17 升到 .804,但 test 反而 .606。所以 full 的 .667 = 一个训练 2 个 epoch、无 SniCo 的模型。6.12 HateClipSeg 修订 4 trial 3 选 epoch 1，同样在 SniCo 开启前。修订 3 的最优 trial 选 epoch 6（HateMM）/ 10（HateClipSeg），SniCo 有参与。这条要进规则 14 清单的组件贡献项：修订 4 seed 234 的最优 checkpoint 在两个语料上都不含 SniCo 贡献。
 - 逻辑先验对比只拼输入：+.012 AP / +.005 ROC（input_only .655/.834）。K30+K4 拼输入比修订 3 的 K30 拼输入（6.10 的 .579/.792，trial 14 超参数，不是同一组超参数）高，倾向于修订 1 失败的主因是 K30 单粒度信息太粗，但两组超参数不同，不能定论。
+
+### 6.15 修订 4 HateClipSeg 三 seed 确认（各 seed 20 trials 各取最优，uoa-lab3，`hateclipseg/seed<seed>/study_summary.json`）
+
+| seed | best trial | AP | ROC | within | 选中 epoch | validation 选 trial 的 test |
+|---|---|---|---|---|---|---|
+| 234 | 3 | .684 | .656 | .539 | 1 | 同一 trial |
+| 2025 | 6 | .700 | .678 | .556 | 14 | trial 2：.684 / .665 / .548 |
+| 3407 | 15 | .683 | .676 | .552 | 7 | trial 4：.678 / .651 / .535 |
+| 均值 ± std | | .689 ± .010 | .670 ± .012 | .549 ± .008 | | |
+
+门：AP .562（Fed-WSVAD，std .036）、ROC .528（DSANet，std .023）、within ≥ .524。AP 余量 .127 ≥ .036，ROC 余量 .142 ≥ .023，within 全部 seed 通过。修订 4 在 HateClipSeg 上确认通过。与修订 3（6.11：.694 / .665 / .575）相比 AP −.005、ROC +.005、within −.026，差异在 std 内，只有 within 明显下降。seed 2025 / 3407 的最优 trial 选中 epoch 14 / 7，SniCo 有参与；seed 234 没有（6.14）。
