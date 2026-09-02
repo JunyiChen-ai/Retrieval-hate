@@ -172,3 +172,16 @@ test AP .397 / ROC .683 / within .540（`verdict_only/hatemm/test/metrics.json`�
 4. 非 engineering trick：新增损失（SniCo）与可学习先验模块。注意：仅修订 1（裁定只拼输入）会被判"只是特征"，贡献必须写成"logit 先验 + 边界对比"。
 
 WSVAD/WTAL 中最近的工作：MLLM4WTAL（CVPR 2025，MLLM 先验只在训练期、以注意力掩码进入）；Ju et al. CVPR 2023（CLIP 分支与 CBP 分支交换伪标签）；TPWNG（CVPR 2024）/ TFPLG 用 VLM 相似度做伪标签自训练；SlowFastVAD（固定权重事后平均 + 高斯平滑）。"冻结零样本 logit + 可学习残差"在图像分类已有（Tip-Adapter ECCV 2022、AMU-Tuning CVPR 2024、CLIP-Adapter IJCV 2024），未用于 MIL 时间定位。论文必须对照：MultiHateLoc、MLLM4WTAL、Tip-Adapter/AMU-Tuning，并区分 LELA、SlowFastVAD。
+
+### 6.10 修订 3 HateMM 消融（trial 14 超参数，seed 234，uoa-lab1，`ablations/hatemm/seed234/<name>/metrics.json`）
+
+| 设定 | AP | ROC | within |
+|---|---|---|---|
+| full（trial 14） | .635 | .832 | .642 |
+| no_snico | .611 | .811 | .635 |
+| input_only（裁定只拼输入） | .579 | .792 | .617 |
+| no_scaffold（无裁定、无位置，有 SniCo） | .539 | .777 | .620 |
+| no_scaffold_no_snico（MACIL-SD + 文本） | .563 | .783 | .608 |
+| 门 / MACIL-SD 3-seed | .573 | .807 | .632 / .595 |
+
+读数：HateMM 上 SniCo 贡献 AP +.025、ROC +.022（ROC 差值 > std .019）、within +.007；裁定先验贡献 AP +.072、ROC +.049、within +.034（full 对比 no_scaffold_no_snico）。no_scaffold 上 SniCo 仍有害（−.024 AP），与 HateClipSeg 修订 2 一致：边界挖掘需要先验给出的粗结构。no_snico 单独已过三门（.611/.811/.635，ROC 余量 .004 < std）；full 三门余量都大于 std。
