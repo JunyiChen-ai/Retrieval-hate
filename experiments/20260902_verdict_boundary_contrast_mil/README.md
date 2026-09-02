@@ -134,3 +134,15 @@ test AP .397 / ROC .683 / within .540（`verdict_only/hatemm/test/metrics.json`�
 - best trial 15：test AP .701 / ROC .674 / within .579（`hateclipseg/seed234/trial15/metrics.json`；prior_scale 1.82，prior_dims scaffold，λ_snico .106，ρ .30，m 16，τ .07）。validation 会选 trial 18：.694 / .666 / .577。
 - 20 个 trial 的 AP .640–.701、ROC .622–.674、within .564–.593，全部高于三门（.562/.528/.524）与 VERA（.619/.605/.562）。
 - 消融（trial 15 超参数）见 6.7。
+
+### 6.7 修订 3 HateClipSeg 消融（trial 15 超参数，seed 234，uoa-lab3，`ablations/hateclipseg/seed234/<name>/metrics.json`）
+
+| 设定 | AP | ROC | within |
+|---|---|---|---|
+| full（trial 15） | .701 | .674 | .579 |
+| no_snico | .687 | .665 | .586 |
+| input_only（裁定只拼输入） | .604 | .581 | .545 |
+| no_scaffold（无裁定、无位置，有 SniCo） | .600 | .573 | .536 |
+| no_scaffold_no_snico（MACIL-SD + 文本） | .579 | .563 | .532 |
+
+读数：裁定先验贡献 AP +.108、ROC +.102；SniCo 在有先验时贡献 AP +.014、ROC +.009（单 seed，超过 .005 噪声线，低于 baseline std .036/.023），within −.007；无先验时 SniCo +.021/+.010。本轮 trial 15 的 λ_snico 只有 .106，修订 2 best trial（λ 1.88）时 SniCo 贡献为 +.012/+.024。
