@@ -175,3 +175,17 @@ HateMM（uoa-lab1）前 5 个 trial：test AP .44–.53、ROC .78–.80、within
 - 搜索空间不变（lr、dropout、max_seqlen）；`ref/shape_check.py` 所有臂通过（梯度有限、蒸馏目标 q ≥ 后验且 ≤ 1、负例 q ≡ 0）。
 
 预注册预期：HateClipSeg seed 234 val 选中 trial test AP ≥ .693、ROC ≥ .665、within ≥ .524；HateMM val 选中 trial AP ≥ .644、ROC ≥ .837、within ≥ .632（均 = hier_evidence_mil 修订 1 减一个标准差）。机制预期：`no_distill` 和 `chain_output` 两语料 pooled 都低于 full（蒸馏是有效机制）；`distill_unconditioned` 低于 full（标签条件必要）；val 曲线不再在第 6 个 epoch 前到顶。若两语料任一不过 → 规则 9 第 3 次（最后一次）修改，或候选淘汰。输出目录 `runs/20260904_evidence_chain_net_rev3/`。
+
+### 5.7 修订 3 结果
+**HateClipSeg seed 234（uoa-lab3，2026-09-04 06:05–07:50，20 trial；`runs/20260904_evidence_chain_net_rev3/hateclipseg/seed234/study_summary.json`）**：0/20 被剪；全部 trial test AP .652–.687、ROC .625–.663、within .535–.567。
+
+| 选法 | trial | 超参 | test AP / ROC / within | val AP / ROC | 选中 epoch |
+|---|---|---|---|---|---|
+| test 目标最高 | 19 | lr 5.28e-4, dropout .1, max_seqlen 300 | .682 / .663 / .567 | .681 / .704 | 19 |
+| val 选中 | 18 | lr 6.84e-4, dropout .1, max_seqlen 300 | .673 / .634 / .548 | .710 / .733 | 4 |
+
+对照预注册（5.5）：AP ≥ .693、ROC ≥ .665 都不过（最好 trial .682/.663；val 选中 .673/.634）。机制层面：训练动态改善了——选中 epoch 从修订 2 的 1–6 变为 8–41（20 个 trial 里 19 个 ≥ 8），val 曲线在第 19 个 epoch 到顶；within .567 高于对照 .553。但 pooled 水平仍低于对照且低于不训练的固定链（.694/.658）。门仍停在初始值（(1,0) .988、(1,1) .991）；密度与 GT 密度相关 .22。
+
+**HateMM seed 234（uoa-lab1）**：（搜索完成后填写；前 7 个 trial AP .516–.570、ROC .798–.830、within .535–.594，全部低于 within 下限。）
+
+诊断消融（lab3，trial 19 超参，`runs/20260904_evidence_chain_net_rev3/diag/hateclipseg/seed234/<arm>/`）：`macilsd_encoder`（编码器换回 MACIL-SD AVCE，其余不变：编码器是不是差距来源）、`topk_head`（加法分数 u + 门控势能 + logit d，top-k MIL 训练，不跑链：链训练是否不如加法 + top-k）、`chain_output`（修订 2 输出方式）、`no_distill`（去掉蒸馏）。（完成后填写。）
