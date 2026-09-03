@@ -1,4 +1,10 @@
-"""Evidence-chain network (README section 1; revision 2 after the seed-234 screening, 2026-09-04).
+"""Evidence-chain network (README section 1; revision 3, 2026-09-04).
+
+Revision-3 change (README section 5.5): the chain is the training target, the
+network evidence is the output.  score_t = u_t (the encoder reads content and
+verdict context); the chain's label-conditioned posterior q_t = P(s_t = 1 | y,
+evidence) is distilled into u_t (train.py, distill loss).  The chain log-odds
+output of revision 2 is kept as the `chain_output` ablation arm.
 
 Revision-2 changes (README section 5): (i) the encoder also reads the verdict
 context columns [bf, bc, bfp, bfn, phi_f*n_w/3, phi_c/3] (the previous
@@ -45,9 +51,9 @@ import dataset as ds                           # noqa: E402
 
 MODEL_ABLATIONS = ("full", "no_density", "density_bias", "density_content", "no_gate",
                    "gate_with_content", "no_content", "no_vlm", "indep", "flat_coarse",
-                   "topk_head", "macilsd_encoder", "no_text", "no_vctx")
+                   "topk_head", "macilsd_encoder", "no_text", "no_vctx", "chain_output")
 LOSS_ABLATIONS = ("no_block_mil", "no_contrast", "contrast_self_topk", "contrast_vlm_thresh",
-                  "no_density_loss")
+                  "no_density_loss", "no_distill", "distill_unconditioned")
 ABLATIONS = MODEL_ABLATIONS + LOSS_ABLATIONS
 N_VCTX = 6                    # verdict-context columns fed to the encoder
 GATE_INIT_BIAS = 3.0          # sigmoid(3) = .953: gates start open (README constants table)
@@ -120,6 +126,8 @@ class EvidenceChainNet(nn.Module):
         """returns fused h [B,T,d] and the two modality embeddings (for the contrast)."""
         if self.ablation == "no_text":
             f_a = torch.cat([f_a[..., :ds.A_DIM], torch.zeros_like(f_a[..., ds.A_DIM:])], -1)
+        if self.ablation == "no_content":          # encoder sees the verdict context only
+            f_v, f_a = torch.zeros_like(f_v), torch.zeros_like(f_a)
         if self.ablation == "macilsd_encoder":
             _, _, _, _, v_out, a_out = self.av(f_a, f_v, None)
             h = self.drop(self.fuse(torch.cat([v_out, a_out], -1)))
@@ -143,15 +151,15 @@ class EvidenceChainNet(nn.Module):
         vctx = torch.stack([batch["bf"], batch["bc"], batch["bfp"], batch["bfn"],
                             batch["phi_f"] * batch["n_w"] / 3.0, batch["phi_c"] / 3.0], -1)
         vctx = vctx * mask.unsqueeze(-1).float()
-        if abl == "no_vctx":
+        if abl in ("no_vctx", "no_vlm"):
             vctx = torch.zeros_like(vctx)
         h, hv, hat = self.encode(f_v, f_a, mask, vctx)
-        # P1 content evidence
+        # P1 network evidence (content + verdict context)
         u = self.u_head(h).squeeze(-1)
-        if abl == "no_content":
-            u = torch.zeros_like(u)
         # P2 density
         dens_in = batch["profile"]
+        if abl == "no_vlm":
+            dens_in = torch.zeros_like(dens_in)
         if abl == "density_content":
             dens_in = torch.cat([dens_in, masked_mean(h, mask)], -1)
         d_logit = self.dens_head(dens_in).squeeze(-1)
@@ -207,6 +215,8 @@ class EvidenceChainNet(nn.Module):
         out["log_p_video"] = ch["log_p_video"]
         out["log_rho"] = ch["log_rho"]
         out["post"] = ch["post_s1"]
-        out["score"] = ch["logodds_s1"]
+        out["chain_logodds"] = ch["logodds_s1"]
+        # revision 3: the network evidence is the output; the chain is the training target
+        out["score"] = ch["logodds_s1"] if abl == "chain_output" else u
         out["log_Z"], out["log_Z0"] = ch["log_Z"], ch["log_Z0"]
         return out

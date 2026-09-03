@@ -144,3 +144,29 @@ HateMM（uoa-lab1）前 5 个 trial：test AP .44–.53、ROC .78–.80、within
 3. **门只作用于触发的裁定**：γ 只缩放 b = 1 的势能，b = 0 的否定证据不可缩放。门的语义从"可靠性"收窄为"阳性裁定的可靠性"，与机制 B（K30 单独触发不可信）一致。
 
 预注册预期：HateMM within 回到 ≥ .632（网络证据带裁定模式）；d_v 对 test 视频标签 ROC ≥ .85、与 GT 密度相关 > 0；门在 HateMM 的 (b_f=1, b_c=0) 格明显低于 (1,1) 格，HateClipSeg 两格接近；pooled 不低于 hier_evidence_mil 修订 1 减一个标准差（HateMM AP ≥ .644 / ROC ≥ .837、HateClipSeg AP ≥ .693 / ROC ≥ .665）。若 within 仍低于下限，链头作输出层的设计淘汰（回到"链作训练目标、网络证据作输出"的形式作第 2 次修改）。输出目录 `runs/20260904_evidence_chain_net_rev2/`。
+
+### 5.4 修订 2 结果（HateClipSeg seed 234；HateMM 在 uoa-lab1 运行中）
+**HateClipSeg seed 234（uoa-lab3，2026-09-04 03:58–05:45，20 trial；`runs/20260904_evidence_chain_net_rev2/hateclipseg/seed234/study_summary.json`）**：1/20 被剪；全部 trial test AP .621–.706、ROC .561–.660、within .506–.563。
+
+| 选法 | trial | 超参 | test AP / ROC / within | val AP / ROC | 选中 epoch |
+|---|---|---|---|---|---|
+| test 目标最高 | 12 | lr 4.91e-4, dropout .2, max_seqlen 300 | .706 / .660 / .563 | .689 / .695 | 6 |
+| val 选中（被剪） | 15 | lr 9.97e-4, dropout .1, max_seqlen 300 | .679 / .639 / .506 | .708 / .739 | 1 |
+
+对照预注册（5.3）：AP ≥ .693 过（.706），**ROC ≥ .665 不过（.660）**，val 选中的 trial within .506 < .524。三处改动各自的效果（trial 12 test 诊断 `trial12/summary.json` → `test_diagnostics`）：密度头对 GT 密度的相关从负转正（.31；trial 15 .39），密度反转已修；门在四个格上都停在初始值附近（(1,0) .953、(1,1) .950，(0,·) 恒 1），**门没有学到任何东西**；训练曲线（trial 12 `history`）：视频边际似然损失第 9 个 epoch 起 ≈ 0（正例 .01、负例 .00），val 指标在第 4–6 个 epoch 到顶（.69/.70）后回落到 .60 左右——**视频标签目标在几个 epoch 内就被满足，此后训练只让定位变差**；被剪的 trial 都选中 epoch 1–6。
+
+结论：修订 2 没有通过预注册，按 5.3 的预注册进入第 2 次修改：链作训练目标、网络证据作输出（5.5）。判定依据是 HateClipSeg 一个语料（规则 13：一种方法两语料都要过，一处不过即不过）；HateMM 修订 2 搜索让它跑完作记录（4 h），结果填在下面。
+
+**HateMM seed 234（uoa-lab1）**：（搜索完成后填写。）
+
+### 5.5 修订 3（规则 9 第 2/3 次修改）：链后验蒸馏，网络证据作输出（2026-09-04 06:20 起）
+修订 1、2 的共同问题：链作输出层时，输出被 VLM 势能和链的平滑主导（不训练的固定链 HateClipSeg .694/.658 与训练后的最好 trial .706/.660 几乎一样），而唯一的视频级目标（边际似然）几个 epoch 内被满足，之后对每个片段的 u_t 没有约束。修订 3 把链从输出层改成训练目标：
+
+- **输出**：score_t = u_t，即读内容和裁定上下文的编码器的片段证据（`model.py` `out["score"] = u`）。测试时不跑链。
+- **训练目标（新增，权重 1，不搜索）**：链的**带视频标签条件的后验** q_t = P(s_t = 1 | y, 证据) 蒸馏进 u_t：y = 1 时 q_t = P(s_t=1) / (1 − Z0/Z)（"视频含仇恨"事件下的后验，s_t = 1 蕴含该事件，故只需除以事件概率）；y = 0 时 q_t ≡ 0。损失 = 掩码平均 BCE(σ(u_t), q_t)，教师（链后验）detach（`train.py` `distill_loss`）。这是隐变量模型的 EM 视角：E 步 = 前向后向算带标签条件的后验，M 步 = 让网络证据拟合该后验；测试时网络单独给出摊销后的推断结果。与边际似然的区别：边际似然对 u_t 的梯度是 P(s_t=1|y) − P(s_t=1)，两者一致时（标签容易时）梯度为 0；蒸馏的梯度是 q_t − σ(u_t)，只要网络自己没有复现链的信念就不为 0。
+- **保留**：边际似然（训练密度头、门；权重 1）、块级 MIL（对 u_t）、CMAL 配对对比、密度 BCE。链的密度、门、时间耦合都留在教师里。
+- **与 MACIL-SD 的 KD 的关系**：MACIL-SD 把音视频教师蒸馏进视觉学生；这里把结构化的证据链后验（VLM 裁定 + 密度 + 可靠性 + 时间耦合 + 视频标签）蒸馏进片段网络。修订 1 的 no_ema 消融已证明 MACIL-SD 的 EMA 自蒸馏无效（README 9.6），故不保留。
+- **新消融臂**：`chain_output`（修订 2 的输出方式：链 log-odds 作输出，无蒸馏）、`no_distill`（网络输出但只用边际似然 + 块级 MIL 训练）、`distill_unconditioned`（教师用无标签条件的后验 P(s_t=1)，两类标签都一样；检验标签条件是否必要）。`no_content` 改为编码器只读裁定上下文（内容特征置零）；`no_vlm` 改为势能、裁定上下文、密度输入全部置零。其余臂不变。
+- 搜索空间不变（lr、dropout、max_seqlen）；`ref/shape_check.py` 所有臂通过（梯度有限、蒸馏目标 q ≥ 后验且 ≤ 1、负例 q ≡ 0）。
+
+预注册预期：HateClipSeg seed 234 val 选中 trial test AP ≥ .693、ROC ≥ .665、within ≥ .524；HateMM val 选中 trial AP ≥ .644、ROC ≥ .837、within ≥ .632（均 = hier_evidence_mil 修订 1 减一个标准差）。机制预期：`no_distill` 和 `chain_output` 两语料 pooled 都低于 full（蒸馏是有效机制）；`distill_unconditioned` 低于 full（标签条件必要）；val 曲线不再在第 6 个 epoch 前到顶。若两语料任一不过 → 规则 9 第 3 次（最后一次）修改，或候选淘汰。输出目录 `runs/20260904_evidence_chain_net_rev3/`。

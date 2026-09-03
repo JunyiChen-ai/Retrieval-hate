@@ -52,6 +52,7 @@ sys.path.insert(0, HERE)
 from hate_common import data as hdata                  # noqa: E402
 from macilsd import align                              # noqa: E402
 import frame_eval_common as fec                        # noqa: E402
+import evidence_chain as ec                            # noqa: E402
 import vlm_verdict                                     # noqa: E402
 import verdict_hmm                                     # noqa: E402
 import dataset as ds                                   # noqa: E402
@@ -68,6 +69,7 @@ DEFAULTS = {
     "block_weight": 1.0, "topk_div": 16, "density_weight": 1.0,
     "contrast_weight": 1.0, "contrast_ramp_epochs": 10, "contrast_tau": 0.1,
     "contrast_max_normal": 256,
+    "distill_weight": 1.0,
     # MACIL-SD AVCE fields (macilsd_encoder ablation only)
     "num_classes": 1, "a_feature_size": ds.F_A_DIM, "v_feature_size": ds.V_DIM,
 }
@@ -107,6 +109,26 @@ def video_loss(out, y):
     pos = per[y > 0.5].mean() if (y > 0.5).any() else per.sum() * 0.0
     neg = per[y < 0.5].mean() if (y < 0.5).any() else per.sum() * 0.0
     return per.mean(), pos.detach(), neg.detach()
+
+
+def distill_loss(out, batch, conditioned=True):
+    """Revision 3 (README 5.5): distil the chain's posterior into the network evidence.
+    Target q_t = P(s_t = 1 | y, evidence): for y = 1 the posterior conditioned on the
+    video containing hate, P(s_t=1) / (1 - Z0/Z) (s_t = 1 implies the event); for
+    y = 0 the posterior is 0 everywhere.  `conditioned=False` uses the unconditioned
+    posterior P(s_t = 1) for both labels (ablation distill_unconditioned).  The
+    teacher is detached; the loss is the masked mean BCE between sigmoid(u_t) and q_t."""
+    u, mask, y = out["u"], batch["mask"], batch["label"]
+    log_post = F.logsigmoid(out["chain_logodds"].detach())
+    if conditioned:
+        log_q = log_post - ec.log1mexp(out["log_rho"].detach().clamp(max=-1e-6))[:, None]
+        q = torch.exp(log_q.clamp(max=0.0))
+        q = torch.where((y > 0.5)[:, None], q, torch.zeros_like(q))
+    else:
+        q = torch.exp(log_post)
+    per = F.binary_cross_entropy_with_logits(u, q, reduction="none")
+    m = mask.float()
+    return (per * m).sum() / m.sum().clamp(min=1.0)
 
 
 def block_mil_loss(out, batch, topk_div):
@@ -332,6 +354,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                      "contrast_vlm_thresh": "vlm_thresh"}.get(ablation, "posterior")
     block_weight = 0.0 if ablation == "no_block_mil" else float(a.block_weight)
     density_weight = 0.0 if ablation in ("no_density", "no_density_loss") else float(a.density_weight)
+    distill_weight = 0.0 if ablation in ("no_distill", "chain_output", "topk_head") \
+        else float(a.distill_weight)
+    distill_conditioned = ablation != "distill_unconditioned"
     opt = optim.Adam(model.parameters(), lr=a.lr)
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=a.sched_tmax)
     say("model params %d | model ablation %s | contrast %s | block weight %.1f | "
@@ -344,7 +369,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         t0 = time.time()
         model.train()
         lam_c = a.contrast_weight * min(1.0, epoch / float(a.contrast_ramp_epochs))
-        tot = np.zeros(7)
+        tot = np.zeros(8)
         nb = 0
         for batch in train_loader:
             batch = to_device(batch, device)
@@ -358,13 +383,16 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
             lc = contrast_loss(out, batch, contrast_mode, a.contrast_tau, a.topk_div,
                                a.contrast_max_normal) if (contrast_mode and lam_c > 0) \
                 else torch.zeros((), device=device)
-            total = lv + block_weight * lb + lam_c * lc + density_weight * ld
+            lds = distill_loss(out, batch, distill_conditioned) if distill_weight > 0 \
+                else torch.zeros((), device=device)
+            total = lv + block_weight * lb + lam_c * lc + density_weight * ld \
+                + distill_weight * lds
             opt.zero_grad()
             total.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             opt.step()
             tot += [_scalar(lv), _scalar(lb), _scalar(lc), _scalar(out["d_v"].mean()),
-                    _scalar(lv_pos), _scalar(lv_neg), _scalar(ld)]
+                    _scalar(lv_pos), _scalar(lv_neg), _scalar(ld), _scalar(lds)]
             nb += 1
         sched.step()
         tot /= max(nb, 1)
@@ -373,11 +401,11 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         crit = (vm["pooled_ap"] + vm["pooled_roc"]) / 2.0
         history.append({"epoch": epoch + 1, "video": tot[0], "video_pos": tot[4],
                         "video_neg": tot[5], "block": tot[1], "density": tot[6],
-                        "contrast": tot[2], "d_v_mean": tot[3], "val": vm,
+                        "contrast": tot[2], "distill": tot[7], "d_v_mean": tot[3], "val": vm,
                         "val_criterion": crit, "seconds": round(time.time() - t0, 1)})
         say("epoch %2d | video %.4f (pos %.4f neg %.4f) | block %.4f | contrast %.4f | "
-            "density %.4f | d_v %.3f | val AP %.4f ROC %.4f within %.4f | %.0fs"
-            % (epoch + 1, tot[0], tot[4], tot[5], tot[1], tot[2], tot[6], tot[3],
+            "density %.4f | distill %.4f | d_v %.3f | val AP %.4f ROC %.4f within %.4f | %.0fs"
+            % (epoch + 1, tot[0], tot[4], tot[5], tot[1], tot[2], tot[6], tot[7], tot[3],
                vm["pooled_ap"], vm["pooled_roc"], vm["within_roc"], time.time() - t0))
         if crit > best:
             best, best_epoch = crit, epoch + 1

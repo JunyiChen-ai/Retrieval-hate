@@ -34,13 +34,18 @@ for abl in M.MODEL_ABLATIONS:
     out = m(b)
     lv, _, _ = T.video_loss(out, b["label"]); lb = T.block_mil_loss(out, b, 16)
     lc = T.contrast_loss(out, b, "posterior", 0.1, 16, 256)
-    tot = lv + lb + lc
+    if abl == "topk_head":   # no chain in this arm: distill weight is 0 in train.py
+        ldc = ldu = torch.zeros(())
+    else:
+        ldc = T.distill_loss(out, b, True); ldu = T.distill_loss(out, b, False)
+    assert torch.isfinite(ldc) and torch.isfinite(ldu), abl
+    tot = lv + lb + lc + ldc + ldu
     tot.backward()
     g = [p.grad for p in m.parameters() if p.grad is not None]
     fin = all(torch.isfinite(x).all() for x in g)
     assert out["score"].shape == (B, L) and torch.isfinite(out["score"][b["mask"]]).all(), abl
-    print("%-18s video %.3f block %.3f contrast %.3f | grads finite %s | n_grad %d | d_v %s | a_step %s"
-          % (abl, lv.item(), lb.item(), lc.item(), fin, len(g), np.round(out["d_v"].detach().numpy(), 3), np.round(out["a_step"].detach().numpy(), 3)))
+    print("%-18s video %.3f block %.3f contrast %.3f distill %.3f/%.3f | grads finite %s | n_grad %d | d_v %s | a_step %s | score is u %s"
+          % (abl, lv.item(), lb.item(), lc.item(), ldc.item(), ldu.item(), fin, len(g), np.round(out["d_v"].detach().numpy(), 3), np.round(out["a_step"].detach().numpy(), 3), bool(torch.equal(out["score"], out["u"]))))
 m = M.EvidenceChainNet(cfg, Pot, "full"); b = make_batch(); out = m(b)
 for mode in ("self_topk", "vlm_thresh"):
     print(mode, T.contrast_loss(out, b, mode, 0.1, 16, 256).item())
@@ -54,4 +59,8 @@ fv, fa, o, mk = ds.fit_length(np.random.rand(97, ds.V_DIM).astype(np.float32), n
 print("fit_length long: phi_f sum before %.4f after %.4f | j monotone %s | mask all %s" % (vt["phi_f"].sum(), o["phi_f"].sum(), bool((np.diff(o["j"])>=0).all()), mk.all()))
 fv, fa, o, mk = ds.fit_length(np.random.rand(20, ds.V_DIM).astype(np.float32), np.random.rand(20, ds.F_A_DIM).astype(np.float32), {k: v[:20] for k, v in vt.items()}, 40)
 print("fit_length short: pad j value %d (J=%d), w %d (K=%d), mask sum %d" % (o["j"][-1], ds.J, o["w"][-1], ds.K, mk.sum()))
+m = M.EvidenceChainNet(cfg, Pot, "full"); b = make_batch(); out = m(b)
+lp = torch.sigmoid(out["chain_logodds"]).detach(); rho = torch.exp(out["log_rho"]).detach()
+q = (lp / (1 - rho)[:, None]).clamp(max=1)
+print("distill target: pos rows q>=post %s | q<=1 %s | rho %s" % (bool((q[[0, 2]] >= lp[[0, 2]] - 1e-6).all()), bool((q <= 1).all()), np.round(rho.numpy(), 4)))
 print("OK")
