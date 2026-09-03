@@ -188,4 +188,14 @@ HateMM（uoa-lab1）前 5 个 trial：test AP .44–.53、ROC .78–.80、within
 
 **HateMM seed 234（uoa-lab1）**：（搜索完成后填写；前 7 个 trial AP .516–.570、ROC .798–.830、within .535–.594，全部低于 within 下限。）
 
-诊断消融（lab3，trial 19 超参，`runs/20260904_evidence_chain_net_rev3/diag/hateclipseg/seed234/<arm>/`）：`macilsd_encoder`（编码器换回 MACIL-SD AVCE，其余不变：编码器是不是差距来源）、`topk_head`（加法分数 u + 门控势能 + logit d，top-k MIL 训练，不跑链：链训练是否不如加法 + top-k）、`chain_output`（修订 2 输出方式）、`no_distill`（去掉蒸馏）。（完成后填写。）
+诊断消融（lab3，trial 19 超参，`runs/20260904_evidence_chain_net_rev3/diag/hateclipseg/seed234/<arm>/`）：`macilsd_encoder`（编码器换回 MACIL-SD AVCE，其余不变：编码器是不是差距来源）、`topk_head`（加法分数 u + 门控势能 + logit d，top-k MIL 训练，不跑链：链训练是否不如加法 + top-k）、`chain_output`（修订 2 输出方式）、`no_distill`（去掉蒸馏）。结果（test AP / ROC / within，val AP / ROC，选中 epoch；`<arm>/summary.json`）：
+
+| 臂 | test | val | 选中 epoch | 说明 |
+|---|---|---|---|---|
+| full（trial 19） | .682 / .663 / .567 | .681 / .704 | 19 | |
+| topk_head | .679 / .653 / .547 | .697 / .747 | 10 | 不跑链、加法分数 + top-k MIL：与 full 差 .003/.010，链训练带来的增益很小 |
+| chain_output | .669 / .627 / .553 | .649 / .687 | 5 | 链后验作输出比网络证据作输出低 .013/.036 |
+| no_distill | .649 / .588 / .528 | .655 / .656 | 9 | 蒸馏是修订 3 里唯一明显有效的机制：−.033 / −.075 / −.039 |
+| macilsd_encoder | .597 / .570 / .531 | .575 / .621 | 16 | AVCE 编码器不读裁定上下文（该臂等于 no_vctx + AVCE），再次证明网络必须读裁定序列 |
+
+结论：在这个候选内部，有效机制只有"链后验蒸馏进网络证据"；链作为输出层或作为训练目标（相对 top-k MIL）都没有可观察的增益；门三版都没学到东西。整个候选 HateClipSeg 最好也只到旧骨干（hier_evidence_mil 修订 1）减 .02 ROC，HateMM within 从未超过 .60（旧骨干 .646）。within 低的结构原因：蒸馏目标 q_t 是链的后验，链自身的视频内排序（HateMM within .575）限制了网络能学到的视频内排序，而旧骨干用 top-k MIL + 原始裁定列学到了超过 HMM 的视频内排序。
