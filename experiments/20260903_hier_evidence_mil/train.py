@@ -91,7 +91,9 @@ ABLATIONS = ("full", "mean_prior", "indep_hmm", "flat_coarse", "no_block",
              "raw_block_label", "no_input", "no_prior", "no_verdict",
              # distillation ablations (2026-09-03, what does the backbone use)
              "no_ps", "no_hmm_input", "no_text", "no_audio", "no_visual",
-             "no_cmal", "no_ema")
+             "no_cmal", "no_ema",
+             # backbone structure ablations (2026-09-04, which AVCE part works)
+             "self_attn", "no_attn", "unshared_cma")
 # input-path column ranges zeroed per distillation ablation (f_a columns)
 HIDE_COLS = {
     "no_ps": [(ds.SCAF_OFFSET + ds.COL_PS, ds.SCAF_OFFSET + ds.COL_PS + 1)],
@@ -103,6 +105,39 @@ HIDE_COLS = {
 
 class Args(dict):
     __getattr__ = dict.__getitem__
+
+
+class _SelfAttnBoth(nn.Module):
+    """AVCE's shared transformer layer applied as self-attention per stream
+    (video attends video, audio attends audio): no cross-modal attention."""
+
+    def __init__(self, layer):
+        super().__init__()
+        self.layer = layer
+
+    def forward(self, video, audio, valid_mask=None):
+        return (self.layer(video, video, video, key_padding_mask=valid_mask),
+                self.layer(audio, audio, audio, key_padding_mask=valid_mask))
+
+
+class _NoAttn(nn.Module):
+    """No attention layer: the projected per-row features go straight to the head."""
+
+    def forward(self, video, audio, valid_mask=None):
+        return video, audio
+
+
+class _UnsharedCMA(nn.Module):
+    """Cross-modal attention with a separate layer per direction (AVCE shares one)."""
+
+    def __init__(self, layer):
+        super().__init__()
+        self.layer = layer
+        self.layer_a = copy.deepcopy(layer)
+
+    def forward(self, video, audio, valid_mask=None):
+        return (self.layer(video, audio, audio, key_padding_mask=valid_mask),
+                self.layer_a(audio, video, video, key_padding_mask=valid_mask))
 
 
 class Candidate(nn.Module):
@@ -363,6 +398,12 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                              batch_size=1, shuffle=False, num_workers=num_workers)
 
     model = Candidate(a, prior_scale, hide_input, hide_cols, hide_visual).to(device)
+    if ablation == "self_attn":
+        model.av.cma = _SelfAttnBoth(model.av.cma.layer)
+    elif ablation == "no_attn":
+        model.av.cma = _NoAttn()
+    elif ablation == "unshared_cma":
+        model.av.cma = _UnsharedCMA(model.av.cma.layer).to(device)
     partner = Single_Model(a, n_dim=align.V_DIM).to(device)
     criterion = nn.BCELoss()
     opt_av = optim.Adam(model.parameters(), lr=a.lr)
