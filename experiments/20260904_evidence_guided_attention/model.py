@@ -26,7 +26,9 @@ This backbone makes the three mechanisms explicit, ablatable parts:
 
 Arms (train.py --ablation): avce = candidate 1's backbone (verdicts
 concatenated into the audio stream, no A/B/C) under this file's training;
-no_enc / evid_audio_only / no_cell / no_bias / no_context switch A, D, B, C.
+no_enc / evid_audio_only / no_cell / no_bias / no_context switch A, D, B, C;
+scalar_bias (rule-4 review requirement) replaces beta_h(e_j) by one scalar
+gamma * ell_j / ELL_SCALE shared by all heads.
 Key padding is masked in the attention (candidate 1 / MACIL-SD did not).
 """
 
@@ -42,7 +44,7 @@ import hier_evidence_common as hc
 
 N_EVID = 4     # ell, p_s, b_fine, b_coarse
 STRUCT_ARMS = ("full", "avce", "no_enc", "evid_audio_only", "no_cell",
-               "no_bias", "no_context")
+               "no_bias", "scalar_bias", "no_context")
 
 
 class EvidenceEncoder(nn.Module):
@@ -98,26 +100,34 @@ class EvidenceGuidedCMA(nn.Module):
     the query, residual + dropout, position-wise FFN) shared by both cross-modal
     directions, with the evidence bias on the key seconds (part B)."""
 
-    def __init__(self, hid, nhead, ffn, dropout, use_bias=True):
+    def __init__(self, hid, nhead, ffn, dropout, use_bias=True, scalar_bias=False):
         super().__init__()
+        self.nhead = nhead
         self.attn = BiasedMultiHeadAttention(nhead, hid)
         self.ff = nn.Sequential(nn.Linear(hid, ffn), nn.ReLU(), nn.Dropout(0.1),
                                 nn.Linear(ffn, hid))
         self.norm_attn = nn.LayerNorm(hid)
         self.norm_ff = nn.LayerNorm(hid)
         self.drop = nn.Dropout(dropout)
-        self.bias = nn.Linear(hid, nhead) if use_bias else None
-        if use_bias:
+        # rule-4 review arm `scalar_bias`: one learnable gamma shared by all heads,
+        # bias = gamma * ell_j / ELL_SCALE (no learned function of the evidence encoding)
+        self.gamma = nn.Parameter(torch.zeros(1)) if scalar_bias else None
+        self.bias = nn.Linear(hid, nhead) if (use_bias and not scalar_bias) else None
+        if self.bias is not None:
             nn.init.zeros_(self.bias.weight)          # starts as plain shared CMA
             nn.init.zeros_(self.bias.bias)
 
-    def one(self, x, y, e, mask):
-        kb = self.bias(e).transpose(1, 2) if (self.bias is not None and e is not None) else None
+    def one(self, x, y, e, mask, ell=None):
+        kb = None
+        if self.gamma is not None and ell is not None:
+            kb = (self.gamma * ell)[:, None, :].expand(-1, self.nhead, -1)
+        elif self.bias is not None and e is not None:
+            kb = self.bias(e).transpose(1, 2)
         h = x + self.drop(self.attn(self.norm_attn(x), y, y, key_bias=kb, key_mask=mask))
         return h + self.drop(self.ff(self.norm_ff(h)))
 
-    def forward(self, v, a, e, mask):
-        return self.one(v, a, e, mask), self.one(a, v, e, mask)
+    def forward(self, v, a, e, mask, ell=None):
+        return self.one(v, a, e, mask, ell), self.one(a, v, e, mask, ell)
 
 
 class EGCA(nn.Module):
@@ -140,7 +150,8 @@ class EGCA(nn.Module):
         self.fc_a = nn.Linear(a_in, hid)
         self.enc = None if self.concat else EvidenceEncoder(hid, cell=(arm != "no_cell"))
         self.cma = EvidenceGuidedCMA(hid, nhead, ffn, dropout,
-                                     use_bias=(arm not in ("avce", "no_bias")))
+                                     use_bias=(arm not in ("avce", "no_bias")),
+                                     scalar_bias=(arm == "scalar_bias"))
         self.ctx = nn.Linear(hid, hid) if arm not in ("avce", "no_context") else None
         self.fc = nn.Linear(hid, cfg.num_classes)      # shared head (Att_MMIL)
         self.last_content_logit = None
@@ -180,7 +191,7 @@ class EGCA(nn.Module):
                 h_a = h_a + e
                 if self.arm != "evid_audio_only":
                     h_v = h_v + e
-        v_out, a_out = self.cma(h_v, h_a, e, mask)
+        v_out, a_out = self.cma(h_v, h_a, e, mask, ell=evid[..., hc.COL_ELL] * mask.float())
         if self.ctx is not None and e is not None:
             m = mask[..., None].float()
             c = self.ctx((e * m).sum(1) / m.sum(1).clamp(min=1.0))      # (B, hid)

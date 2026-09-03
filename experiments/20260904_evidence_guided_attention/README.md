@@ -43,6 +43,7 @@
 | `evid_audio_only` | e_t 只加进音频流 | "模态共享"是否必要（对应候选 1 只进音频流） |
 | `no_cell` | 格子嵌入换成四列线性映射 | 显式可靠性格子是否有贡献 |
 | `no_bias` | β_h ≡ 0 | 证据偏置注意力是否有贡献 |
+| `scalar_bias` | β_h(e_j) 换成单个可学习标量 γ·ℓ_j/L，各头共用（规则 4 复核要求） | B 的增益是否来自"按证据编码学出的逐头偏置"，还是任何按后验的重加权都行；B 只在 full 两语料三 seed pooled 都高于本臂时才作主张 |
 | `no_context` | 无 C | 显式视频级密度项是否有贡献 |
 | `no_block` / `no_prior` / `no_cmal` / `mean_prior` / `no_verdict` | 同候选 1 定义 | 训练项与模块 3 的贡献（论文全表） |
 
@@ -54,7 +55,7 @@
 1. 规则 8 筛选（seed 234）与确认（三 seed）两语料全过（门 HateMM .573/.807/≥.632，HateClipSeg .562/.528/≥.524）。
 2. **相对候选 1 修订 1 三 seed**（HateMM .657 ± .013 / .842 ± .005 / .646；HateClipSeg .699 ± .006 / .681 ± .016 / .553）：HateMM pooled AP 或 ROC 至少一项高 ≥ .005 且另一项不低于候选 1 减一个 std；HateClipSeg 两项都不低于候选 1 减一个 std；within 两语料不低于下限。
 3. **相对 avce 臂三 seed**（同训练同超参）：HateMM pooled AP 或 ROC 至少一项高 ≥ .005 且另一项不低；HateClipSeg 不低。这一条不成立则"提升不是设计导致"，本候选按规则 9 修改或归档。
-4. 主张只落在三 seed 两语料 pooled 均值都下降的部件上；一个部件都不成立则本骨干不能作 novelty 主张。
+4. 主张只落在三 seed 两语料 pooled 均值都下降的部件上；一个部件都不成立则本骨干不能作 novelty 主张。B 额外要求 full 高于 `scalar_bias` 臂（规则 4 复核）。C 在论文里写作"视频级证据偏移"（头是线性的，C 等价于每视频一个由 mean e_t 线性映射的 logit 偏移），对照 GIG-VAD、PEL4VAD 的视频级上下文。
 5. 若 (1) 不过：按规则 9，某语料比最强训练 baseline 高 .01 以上且 within 未破可修改（≤ 3 轮），否则归档。
 
 ## 5. 运行
@@ -68,3 +69,4 @@ python experiments/20260904_evidence_guided_attention/train.py --corpus hatemm -
 
 ## 6. 进度
 - 2026-09-04 10:20：提案、`model.py`/`train.py`/`search.py` 写完，七个结构臂前向/反向形状检查通过；等规则 4、规则 6 复核。
+- 2026-09-04 10:45：规则 6 code review PASS 无 BLOCKER（`REVIEW_RULE6.md`：avce 臂与候选 1 前向数值一致 ≤ 6e-8，无泄漏，共享评测器）。规则 4 复核 GO 6/10（`REVIEW_RULE4.md`）：四类都不触发；最近先例 A+B 合起来是 Graphormer（离散属性嵌入 + 逐头加性注意力偏置，这里把图结构换成 VLM 裁定），B 的谱系 ALiBi / T5 偏置 / Yang 2018 / MLLM4WTAL，C 最近 GIG-VAD / PEL4VAD；无先例用另一个模型的逐秒裁定作跨模态 key 偏置。必须项：加 `scalar_bias` 臂（已加）；novelty 表述为"裁定来源 + 2×2 粒度一致格子 + 一份共享证据编码经三个入口进弱监督跨模态 MIL 骨干"，不是"注意力偏置"本身；引用并对照 Graphormer、ALiBi、T5、Yang 2018、Lin 综述、MLLM4WTAL、GIG-VAD、PEL4VAD；相关工作对照 VLM 分段分数进 WSVAD/WTAL 的三种方式（伪标签损失 TPWNG/TFPLG/LAVAD、注意力调制 MLLM4WTAL、输入编码=本文）；主表保留 avce 臂、HMM 后验单独行、MultiHateLoc。搜索启动。
