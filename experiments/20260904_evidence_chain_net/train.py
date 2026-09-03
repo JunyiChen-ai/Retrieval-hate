@@ -101,7 +101,12 @@ def to_device(batch, device):
 
 # ----------------------------------------------------------------- losses
 def video_loss(out, y):
-    return -(y * out["log_p_video"] + (1.0 - y) * out["log_rho"]).mean()
+    """Mean over the batch; also returns the positive-video and negative-video means
+    (logged separately: the positive term has almost no gradient when Z0/Z -> 0)."""
+    per = -(y * out["log_p_video"] + (1.0 - y) * out["log_rho"])
+    pos = per[y > 0.5].mean() if (y > 0.5).any() else per.sum() * 0.0
+    neg = per[y < 0.5].mean() if (y < 0.5).any() else per.sum() * 0.0
+    return per.mean(), pos.detach(), neg.detach()
 
 
 def block_mil_loss(out, batch, topk_div):
@@ -338,13 +343,13 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         t0 = time.time()
         model.train()
         lam_c = a.contrast_weight * min(1.0, epoch / float(a.contrast_ramp_epochs))
-        tot = np.zeros(4)
+        tot = np.zeros(6)
         nb = 0
         for batch in train_loader:
             batch = to_device(batch, device)
             out = model(batch)
             y = batch["label"]
-            lv = video_loss(out, y)
+            lv, lv_pos, lv_neg = video_loss(out, y)
             lb = block_mil_loss(out, batch, a.topk_div) if block_weight > 0 \
                 else torch.zeros((), device=device)
             lc = contrast_loss(out, batch, contrast_mode, a.contrast_tau, a.topk_div,
@@ -355,20 +360,22 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
             total.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             opt.step()
-            tot += [_scalar(lv), _scalar(lb), _scalar(lc), _scalar(out["d_v"].mean())]
+            tot += [_scalar(lv), _scalar(lb), _scalar(lc), _scalar(out["d_v"].mean()),
+                    _scalar(lv_pos), _scalar(lv_neg)]
             nb += 1
         sched.step()
         tot /= max(nb, 1)
         val_scores = score_split(model, val_loader, device)
         vm = frame_metrics(val_scores, val_gt, hate_ids)
         crit = (vm["pooled_ap"] + vm["pooled_roc"]) / 2.0
-        history.append({"epoch": epoch + 1, "video": tot[0], "block": tot[1],
+        history.append({"epoch": epoch + 1, "video": tot[0], "video_pos": tot[4],
+                        "video_neg": tot[5], "block": tot[1],
                         "contrast": tot[2], "d_v_mean": tot[3], "val": vm,
                         "val_criterion": crit, "seconds": round(time.time() - t0, 1)})
-        say("epoch %2d | video %.4f | block %.4f | contrast %.4f | d_v %.3f | "
-            "val AP %.4f ROC %.4f within %.4f | %.0fs"
-            % (epoch + 1, tot[0], tot[1], tot[2], tot[3], vm["pooled_ap"], vm["pooled_roc"],
-               vm["within_roc"], time.time() - t0))
+        say("epoch %2d | video %.4f (pos %.4f neg %.4f) | block %.4f | contrast %.4f | "
+            "d_v %.3f | val AP %.4f ROC %.4f within %.4f | %.0fs"
+            % (epoch + 1, tot[0], tot[4], tot[5], tot[1], tot[2], tot[3], vm["pooled_ap"],
+               vm["pooled_roc"], vm["within_roc"], time.time() - t0))
         if crit > best:
             best, best_epoch = crit, epoch + 1
             best_state = copy.deepcopy(model.state_dict())
