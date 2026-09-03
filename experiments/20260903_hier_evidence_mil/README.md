@@ -341,6 +341,22 @@ HateMM 上网络 z 对四个格子的排序与 GT 一致（K30 单独触发排�
 
 新骨干应把这三件事做成显式、可消融的部件，而不是让一个通用注意力网络隐式学：视频级证据分布编码器（估密度，调链的先验）、粒度可靠性门、密度条件的证据链头、内容残差。
 
+### 9.6 Distillation 消融：骨干的训练项与输入到底哪些有用（修订 1，三 seed，每 seed 用该 seed best trial 超参；`runs/20260903_hier_evidence_mil/ablations/<corpus>/seed<seed>/<ablation>/`）
+
+HateClipSeg（uoa-lab3，2026-09-04）：
+
+| 去掉 | 三 seed 均值 AP / ROC / within | 对 full（.699/.681/.553） | AP 下降 seed 数 |
+|---|---|---|---|
+| no_ema（MACIL-SD 参数 EMA 自蒸馏） | .698 / .681 / .548 | −.001 / −.001 | 3/3（幅度 ≈ 0） |
+| no_cmal（MACIL-SD 跨模态对比损失） | .684 / .656 / .544 | **−.015 / −.026** | 3/3 |
+| no_text（BERT 文本列置零） | .692 / .665 / .548 | −.007 / −.016 | 2/3 |
+| no_visual（I3D 置零） | .690 / .671 / .552 | −.009 / −.010 | 3/3 |
+| no_audio（VGGish 置零） | .697 / .676 / .550 | −.002 / −.005 | 2/3 |
+| no_ps（输入去 P(s) 列，留 ℓ） | .697 / .679 / .553 | −.002 / −.002 | 2/3 |
+| no_hmm_input（输入去 ℓ、P(s) 两列，留原始两列） | .689 / .672 / .552 | −.010 / −.009 | 3/3 |
+
+读法（HateClipSeg）：EMA 自蒸馏没有作用（新骨干不带）；CMAL 对比损失是这个语料上骨干训练项里唯一明显有用的（它把视频内 top-k 与 bottom-k 的表示拉开，是唯一带视频内结构的训练信号）；文本对 ROC 有 .016；视觉 .01；音频 ≈ 0；P(s) 列冗余（去掉不掉），HMM 两列合起来 .01。HateMM 部分运行中。
+
 ## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
 **放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
 复核要求（必须执行）：
