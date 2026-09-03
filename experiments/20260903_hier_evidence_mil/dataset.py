@@ -11,11 +11,9 @@ VLM verdicts (src/verdict_hmm.py):
     3  b_coarse binary K=4 verdict of the row's block
     4  p_h     posterior P(h_j=1) of the row's coarse block (block-bag label)
     5  block   coarse block index j of the row (0..J-1)
-Revision 2 (2026-09-03): only columns 0-1 (the evidence-model posterior) are
-the backbone's input channels; columns 2-5 are hidden from the backbone
-(train.py zeroes them on the input path).  The raw binary verdicts therefore
-reach the localizer only through the evidence model.  Revision 1 fed columns
-0-3 (raw verdicts included).
+Columns 0-3 are the backbone's input channels; columns 4-5 are training
+bookkeeping and are always hidden from the backbone (train.py zeroes them on
+the input path).  (The eliminated revision 2 fed only columns 0-1.)
 
 Training items are (video, crop) pairs exactly as in macilsd/dataset.py; the
 validation/test items stack the five crops.
@@ -43,7 +41,7 @@ TEXT_ROOT = os.path.join(REPO_ROOT, "results", "reproduction", "features",
 TEXT_DIM = 768
 SCAF_DIM = 6
 COL_ELL, COL_PS, COL_BF, COL_BC, COL_PH, COL_BLOCK = range(SCAF_DIM)
-N_INPUT_SCAF = 2                      # columns fed to the backbone (ell, p_s); rev 1 = 4
+N_INPUT_SCAF = 4                      # columns fed to the backbone (rev 1; the eliminated rev 2 used 2)
 A_EXT_DIM = align.A_DIM + TEXT_DIM + SCAF_DIM
 SCAF_OFFSET = align.A_DIM + TEXT_DIM
 

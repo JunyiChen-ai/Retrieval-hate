@@ -88,7 +88,17 @@ DEFAULTS = {
     "lambda_block": 0.5, "topk_div": 16,
 }
 ABLATIONS = ("full", "mean_prior", "indep_hmm", "flat_coarse", "no_block",
-             "raw_block_label", "no_input", "no_prior", "no_verdict")
+             "raw_block_label", "no_input", "no_prior", "no_verdict",
+             # distillation ablations (2026-09-03, what does the backbone use)
+             "no_ps", "no_hmm_input", "no_text", "no_audio", "no_visual",
+             "no_cmal", "no_ema")
+# input-path column ranges zeroed per distillation ablation (f_a columns)
+HIDE_COLS = {
+    "no_ps": [(ds.SCAF_OFFSET + ds.COL_PS, ds.SCAF_OFFSET + ds.COL_PS + 1)],
+    "no_hmm_input": [(ds.SCAF_OFFSET + ds.COL_ELL, ds.SCAF_OFFSET + ds.COL_PS + 1)],
+    "no_text": [(align.A_DIM, align.A_DIM + ds.TEXT_DIM)],
+    "no_audio": [(0, align.A_DIM)],
+}
 
 
 class Args(dict):
@@ -98,11 +108,14 @@ class Args(dict):
 class Candidate(nn.Module):
     """MACIL-SD audio-visual model with the fixed HMM-posterior prior."""
 
-    def __init__(self, cfg, prior_scale, hide_input=False):
+    def __init__(self, cfg, prior_scale, hide_input=False, hide_cols=(),
+                 hide_visual=False):
         super().__init__()
         self.av = AVCE_Model(cfg)
         self.prior_scale = float(prior_scale)
         self.hide_input = bool(hide_input)
+        self.hide_cols = list(hide_cols)
+        self.hide_visual = bool(hide_visual)
         self.topk_div = int(cfg.topk_div)
 
     def bag(self, logits, seq_len):
@@ -124,6 +137,10 @@ class Candidate(nn.Module):
         f_a_in[..., ds.SCAF_OFFSET + ds.COL_ELL] /= ELL_SCALE   # input in [-1, 1]
         if self.hide_input:
             f_a_in[..., ds.SCAF_OFFSET:] = 0.0
+        for lo, hi in self.hide_cols:
+            f_a_in[..., lo:hi] = 0.0
+        if self.hide_visual:
+            f_v = torch.zeros_like(f_v)
         mmil, a_log, v_log, av_log, v_out, a_out = self.av(f_a_in, f_v, seq_len)
         content_log = av_log
         ell = f_a[..., ds.SCAF_OFFSET + ds.COL_ELL:ds.SCAF_OFFSET + ds.COL_ELL + 1]
@@ -296,6 +313,12 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     prior_scale = 0.0 if ablation in ("no_prior", "no_verdict") else a.prior_scale
     lambda_block = 0.0 if ablation in ("no_block", "no_verdict") else a.lambda_block
     hide_input = ablation in ("no_input", "no_verdict")
+    hide_cols = HIDE_COLS.get(ablation, [])
+    hide_visual = ablation == "no_visual"
+    if ablation == "no_cmal":
+        a["lamda_a2b"] = 0.0
+        a["lamda_a2n"] = 0.0
+    use_ema = ablation != "no_ema"
 
     # module 3: verdict HMM fitted on train video labels only
     V = {k: vlm_verdict.load_verdicts(corpus, k=k, tag="qwen")
@@ -316,12 +339,12 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                              ("test", test_ids))}
     say("train/val/test %d/%d/%d videos (%d hateful in train); missing text %d;"
         " verdict coverage train %d/%d val %d/%d test %d/%d; prior_scale %.3f,"
-        " lambda_block %.3f, w_fine %.3f, hide_input %s"
+        " lambda_block %.3f, w_fine %.3f, hide_input %s, hide_cols %s, hide_visual %s, ema %s"
         % (len(train_ids), len(val_ids), len(test_ids),
            sum(labels[v] for v in train_ids), cache.n_missing_text,
            cov["train"], len(train_ids), cov["val"], len(val_ids),
            cov["test"], len(test_ids), prior_scale, lambda_block, a.w_fine,
-           hide_input))
+           hide_input, hide_cols, hide_visual, use_ema))
     if cache.n_missing_verdict > 0:
         say("ABORT: %d videos without verdicts; a partial scaffold would leak"
             " the video label on train" % cache.n_missing_verdict)
@@ -339,7 +362,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     test_loader = DataLoader(ds.EvalDataset(corpus, test_ids, cache),
                              batch_size=1, shuffle=False, num_workers=num_workers)
 
-    model = Candidate(a, prior_scale, hide_input).to(device)
+    model = Candidate(a, prior_scale, hide_input, hide_cols, hide_visual).to(device)
     partner = Single_Model(a, n_dim=align.V_DIM).to(device)
     criterion = nn.BCELoss()
     opt_av = optim.Adam(model.parameters(), lr=a.lr)
@@ -395,7 +418,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
             nb += 1
         sched_av.step()
         sched_uni.step()
-        m = distil_step(a, model.av, partner, epoch)
+        m = distil_step(a, model.av, partner, epoch) if use_ema else 1.0
         tot /= max(nb, 1)
         val_scores = score_split(model, val_loader, device)
         vm = frame_metrics(val_scores, val_gt, hate_ids)
