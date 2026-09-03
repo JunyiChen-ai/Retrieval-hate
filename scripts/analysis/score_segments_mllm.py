@@ -89,6 +89,16 @@ CONTEXT_PROMPT = (
     "No words, no explanation."
 )
 NO_CONTEXT = "(no speech in the surrounding part)"
+# System prompt for the context mode: same rating scope, but the sentence "do not
+# guess about other parts of the video" is replaced by the scope rule for context.
+SYSTEM_PROMPT_CONTEXT = SYSTEM_PROMPT.replace(
+    "Rate ONLY what is visible/audible in THIS segment; do not guess "
+    "about other parts of the video.",
+    "Rate ONLY what is visible/audible in THIS segment. You are also given the "
+    "transcript of the wider part of the video around this segment: use it only "
+    "to interpret ambiguous or coded cues in this segment, never rate the "
+    "surrounding part itself.")
+assert SYSTEM_PROMPT_CONTEXT != SYSTEM_PROMPT
 
 
 def parse_args(argv=None):
@@ -154,11 +164,13 @@ def build_messages(frames, asr_text, context_text=None):
     asr = asr_text.strip() if asr_text and asr_text.strip() else NO_SPEECH
     if context_text is None:
         text = USER_PROMPT.format(asr=asr)
+        system = SYSTEM_PROMPT
     else:
         ctx = context_text.strip() if context_text and context_text.strip() else NO_CONTEXT
         text = CONTEXT_PROMPT.format(ctx=ctx, asr=asr)
+        system = SYSTEM_PROMPT_CONTEXT
     return [
-        {"role": "system", "content": [{"type": "text", "text": SYSTEM_PROMPT}]},
+        {"role": "system", "content": [{"type": "text", "text": system}]},
         {
             "role": "user",
             "content": [
