@@ -1,6 +1,6 @@
 # 20260904_evidence_chain_net — 证据链网络（Evidence-Chain Network）提案
 
-状态：**提案 + 实现（2026-09-04）。规则 4 复核 GO-with-changes 7/10（`REVIEW_RULE4.md`），9 项必须修改已全部落实（第 1.5 节）；等规则 6 code review。**上一候选 `experiments/20260903_hier_evidence_mil/`（修订 1）用户裁定"暂不作论文方法"：超参太多、骨干架构没改、有冗余部件。本候选的设计原则：**只做骨干机制分析里证明在 work 的事，每件做成显式、可消融的部件；方法级超参数 0。**
+状态：**实现完成，搜索中（2026-09-04 02:15 起）。规则 4 复核 GO-with-changes 7/10（`REVIEW_RULE4.md`），9 项必须修改已落实（第 1.5 节）；规则 6 code review PASS、无 BLOCKER（`REVIEW_RULE6.md`，fork 会话执行，两条消融臂尺度建议已改）。seed 234 搜索：HateMM uoa-lab1、HateClipSeg uoa-lab3，`runs/20260904_evidence_chain_net/<corpus>/seed234/`。**上一候选 `experiments/20260903_hier_evidence_mil/`（修订 1）用户裁定"暂不作论文方法"：超参太多、骨干架构没改、有冗余部件。本候选的设计原则：**只做骨干机制分析里证明在 work 的事，每件做成显式、可消融的部件；方法级超参数 0。**
 
 ## 0. 依据（全部来自修订 1 的 test 分析与三 seed 消融；README 第 4、7、9 节）
 
@@ -25,7 +25,7 @@
 - K4：φ^c_j 在块末片段发射，作用在块 OR 变量 h_j 上（增广状态 (s,h) 三态链，与修订 1 相同）。
 
 ### 模块 2（骨干，新）：证据链网络，四个部件
-**P1 内容编码器 + 内容证据。** 三路特征线性投影到 d = 128 后拼接，一层时间自注意力（4 头，dropout 搜索）。输出每片段内容证据 u_t ∈ ℝ（内容对 s_t = 1 的对数似然比），由一层 MLP 给出。（对应机制 C）
+**P1 内容编码器 + 内容证据。** 三路特征线性投影到 d = 128 后拼接，一层时间自注意力（4 头，dropout 搜索）。输出每片段内容证据 u_t ∈ ℝ（内容对 s_t = 1 的对数似然比），由两层 MLP（d → d → 1）给出。（对应机制 C）
 
 **P2 视频级证据分布编码器（密度）。** 输入 = 裁定分布向量（K30 触发比例、K4 触发比例、两粒度同触发比例、K30 单独触发比例、K4 单独触发比例、K30 触发段数 / K、块触发数 one-hot，共 11 维）→ MLP → d_v ∈ [.01, .99]。**只读裁定分布，不读内容**（规则 4 审查第 4 点：读内容会给目标函数一条只靠 P2 的捷径；"加池化内容"作消融臂 density_content）。d_v 条件化链：初始分布 p0 = (1 − d_v, d_v)，转移 A(d_v) = [[1 − a·d_v, a·d_v], [a·(1 − d_v), 1 − a·(1 − d_v)]]，平稳分布正好是 (1 − d_v, d_v)，切换率 a 固定为 EM 值。视频密度是链的先验，不是加在分数上的偏置。（对应机制 A）
 
@@ -41,7 +41,7 @@
 不带 EMA 参数自蒸馏（HateClipSeg 三 seed ≈ 0；HateMM 2 seed −.019/−.003），不带 P5 蒸馏（预检：单独 novelty 弱、有自增强回路风险）。
 
 ### 超参数：方法级不搜索，固定常数逐项列值（审查第五节）
-搜索（规则 7 声明，先于搜索）：lr log[1e-4, 1e-3]、dropout {.1, .2, .3}、max_seqlen {150, 200, 300}；每（语料, seed）20 trial，目标 test (AP+ROC)/2，within 破下限剪枝，validation (AP+ROC)/2 选 checkpoint，epoch 50。修订 1 的 9 个搜索量减到 3 个。
+搜索（规则 7 声明，先于搜索）：lr log[1e-4, 1e-3]、dropout {.1, .2, .3}、max_seqlen {150, 200, 300}；每（语料, seed）20 trial（首 trial 超过 1 小时则 5 trial，与修订 1 相同），目标 test (AP+ROC)/2，within 破下限剪枝，validation (AP+ROC)/2 选 checkpoint（frame_eval_common，与修订 1 相同），epoch 50。修订 1 的 9 个搜索量减到 3 个。
 
 | 常数 | 值 | 来源 |
 |---|---|---|
@@ -78,7 +78,7 @@ x, b → P1 u_t，P2 d_v，P3 γ → P4 后验 p_t → logit 重采样到 1 fps�
 | 块 OR 层次 | K4 作逐片段平铺观测 | HateMM 下降；HateClipSeg ≈ 0 | 修订 1 flat_coarse |
 | 跨模态对比 | no_contrast | HateClipSeg −.015、HateMM −.053 量级 | 机制 D（no_cmal） |
 | 对比的选段方式 | contrast_self_topk（模型自身内容分数，MACIL-SD 方式）/ contrast_vlm_thresh（VLM 裁定，LAP 方式） | 后验选不劣于两者 | 差异性检验 |
-| VLM 势能 | φ ≡ 0（网络 + 链，无 VLM） | 两语料大幅下降 | no_verdict |
+| VLM 势能 | no_vlm：φ ≡ 0（链里无 VLM 势能；密度先验仍读裁定分布、块级 MIL 目标仍用固定块后验，所以不等于修订 1 的 no_verdict） | 两语料大幅下降 | no_verdict（修订 1） |
 | 整个骨干 | MACIL-SD AVCE 编码器 + 同一链头、同一目标 | 我们的编码器不劣；差别主要来自 P2/P3 | 骨干对照 |
 
 文献预检（`docs/20260904_evidence_chain_backbone_novelty_precheck.md`，2026-09-04）要求补进预注册的退化对照与必要条件：

@@ -136,6 +136,9 @@ def fit_length(f_v, f_a, vt, length):
                 out[k] = np.array([vt[k][s] for s, e in seg], np.float32)
         for k in IDX_KEYS:
             out[k] = np.array([vt[k][s] for s, e in seg], np.int64)
+        # rows per window / block on the truncated grid (used by topk_head / flat_coarse)
+        out["n_w"] = np.bincount(out["w"], minlength=K).astype(np.float32)[out["w"]]
+        out["n_j"] = np.bincount(out["j"], minlength=J).astype(np.float32)[out["j"]]
         mask = np.ones(length, bool)
     else:
         pad = length - T
