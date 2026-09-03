@@ -37,6 +37,7 @@ def main(argv=None):
     ap.add_argument("--corpus", required=True)
     ap.add_argument("--splits", default="val,test")
     ap.add_argument("--out-root", default=os.path.join(ROOT, "runs", "20260903_hier_evidence_mil", "verdict_hmm_only"))
+    ap.add_argument("--w-fine", default="", help="comma list of extra K30 tempering exponents, e.g. 0.25,0.5,0.75 (branches score_hmm_wf<value>)")
     args = ap.parse_args(argv)
     B = load_binary(args.corpus)
     m, n_pos, n_neg = fit(args.corpus, B)
@@ -51,6 +52,8 @@ def main(argv=None):
         "score_hmm_independent": dict(independent=True),
         "score_hmm_flat_coarse": dict(flat_coarse=True),
     }
+    for w in [float(x) for x in args.w_fine.split(",") if x]:
+        variants["score_hmm_wf%03d" % int(round(w * 100))] = dict(w_fine=w)
     for split in args.splits.split(","):
         gt = hdata.gt_arrays(args.corpus, split)
         sd = os.path.join(out_dir, split); os.makedirs(sd, exist_ok=True)

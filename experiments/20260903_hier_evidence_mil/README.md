@@ -209,6 +209,21 @@ HateMM 上 within 下限剪掉 11–17/20 个 trial，搜索的有效样本很�
 
 规则 14 对照：(g) 模块 2 块级 MIL 两语料 seed 234 消融成立；模块 3 时间耦合 AP 两语料成立；模块 3“HMM 后验优于平均等级”HateMM 不成立（第 4.5 节）。复核要求“完整方法明显高于 HMM 后验单独”：HateMM 成立；HateClipSeg 只有 ROC（+.020），AP 持平。
 
+### 4.9 训练无关对照行的 w_fine 选择（`runs/20260903_hier_evidence_mil/verdict_hmm_only_wfine/<corpus>/<split>/metrics.json`，2026-09-03）
+
+复核要求的“HMM 后验单独”对照行只有一个可选量 w_fine（K30 证据的调温指数）。按 val 选：
+
+| w_fine | HateMM val AP/ROC | HateMM test AP/ROC | HateClipSeg val AP/ROC | HateClipSeg test AP/ROC |
+|---|---|---|---|---|
+| 1.0（原对照行） | **.486 / .742** | .541 / .818 | .727 / .757 | **.698 / .661** |
+| 0.75 | .482 / .738 | .546 / .820 | **.728** / .758 | .696 / .657 |
+| 0.5 | .477 / .735 | .553 / .823 | .726 / .759 | .692 / .651 |
+| 0.25 | .474 / .730 | .563 / .828 | .725 / .761 | .687 / .644 |
+| 0.1 | .481 / .737 | .582 / .843 | .727 / **.763** | .685 / .637 |
+| 0（仅 K4） | .504 / .740 | .591 / .851 | .673 / .747 | .671 / .625 |
+
+HateClipSeg val/test 一致，w_fine = 1 最优，对照行不变（.698/.661）。HateMM val 选 w_fine = 1（AP .486，最高），对照行仍为 .541/.818；但 test 上越不信 K30 越好（w_fine 0.1 为 .582/.843，仅 K4 为 .591/.851），val 与 test 对 K30 可靠性的判断相反。训练后的完整方法 HateMM 三 seed .657/.842 高于其中任何一行。
+
 ## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
 **放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
 复核要求（必须执行）：
