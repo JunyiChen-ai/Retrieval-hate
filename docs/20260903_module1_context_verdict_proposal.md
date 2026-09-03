@@ -1,6 +1,6 @@
 # 模块 1 提案：上下文条件化的 K30 裁定引出（Context-conditioned verdict elicitation）
 
-日期 2026-09-03。状态：**提案，未开跑**（等用户裁定；本文件冻结，结果写回 `experiments/20260903_hier_evidence_mil/README.md`）。基线代码：commit 2026-09-03 17:45 "hier_evidence_mil rev 2: HateClipSeg ablations recorded"。分支 `worktree-module1-context-verdict`。
+日期 2026-09-03。状态：**第 4 节第一阶段（裁定抽取，不训练）已于 2026-09-03 21:07 在 uoa-lab1 开跑**（代码 = 本分支 2026-09-03 21:04 commit，克隆在 lab1 `~/Retrieval-hate-m1`，输出写 lab1 `~/Retrieval-hate/data/MLLM_scores/<Corpus>/*_segscoreK30_qwenctx.jsonl`，日志 `runs/20260903_hier_evidence_mil/module1_elicitation/<corpus>/extract.log`）。是否进入训练阶段按第 3 节判据决定。HateMM val 的 K4 转录文件只有 107/109 个视频，缺的 2 个视频窗口全部按“无上下文”处理（脚本记录 asr_used，加载端无影响）。本文件冻结，结果写回 `experiments/20260903_hier_evidence_mil/README.md`。基线代码：commit 2026-09-03 17:45 "hier_evidence_mil rev 2: HateClipSeg ablations recorded"。分支 `worktree-module1-context-verdict`。
 
 ## 1. 要解决的失败模式（test 上的 developmental evidence，README 8.2）
 
