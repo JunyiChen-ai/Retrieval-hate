@@ -298,7 +298,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     hide_input = ablation in ("no_input", "no_verdict")
 
     # module 3: verdict HMM fitted on train video labels only
-    tags = {30: cfg.get("fine_tag", "qwen"), 4: cfg.get("coarse_tag", "qwen")}
+    tags = {K_FINE: cfg.get("fine_tag", "qwen"), J_COARSE: cfg.get("coarse_tag", "qwen")}
     V = {k: vlm_verdict.load_verdicts(corpus, k=k, tag=tags[k])
          for k in (K_FINE, J_COARSE)}
     binary = {v: (verdict_hmm.binarize(V[K_FINE][v]),

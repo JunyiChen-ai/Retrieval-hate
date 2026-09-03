@@ -42,6 +42,11 @@
 - `experiments/20260903_hier_evidence_mil/search.py`：`--fine-tag`，写入每个 trial 的 hparams.json（消融复用同一 hparams，自动带 tag）。
 - `experiments/20260903_hier_evidence_mil/verdict_hmm_eval.py`：`--fine-tag`。
 
-## 6. 规则 4 novelty 复核
+## 6. 规则 6 code review（2026-09-03，独立 fable agent）
+无 BLOCKER。逐项：默认参数下抽取脚本字节级不变（提示、输出路径、记录字段）；块索引 (k·4)//30 与 `_block_map` 逐元素相同；K4/K30 ASR 文件全部恰好 4/30 个窗口，无越界；CONTEXT_PROMPT 转义正确（渲染文本已核）；train/search/verdict_hmm_eval 的 tag 传递正确，消融复用 hparams.json 自动带 tag；训练代码不写 data/；断点续跑读的是新 tag 文件。
+要求修改并已改：(1) `verdict_hmm_eval.py` 在 tag ≠ qwen 时输出目录自动加后缀（否则会覆盖修订 1 的对照行文件）；(2) 抽取脚本在 `block_asr` 下上下文 ASR 文件缺失/为空/窗口数不等于 K_c 时硬失败（原来只 WARN 后全用"无上下文"照跑）；(3) 注释"midpoint rule"改为"start-of-window rule"；(4) train.py 用 K_FINE/J_COARSE 作键。
+既有偏差记录（不改，与模块 3 一致）：K30 窗口 7 按起点规则归块 0，但其 90% 时长在块 1 内，该窗口的"上下文"块不含它自己的大部分转录；窗口 15、22 无此问题。回传时 PROVENANCE 必须写明 context 模式与命令。
+
+## 7. 规则 4 novelty 复核
 
 见本文件末尾追加的复核记录（独立 fable agent）。

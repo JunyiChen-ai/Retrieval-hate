@@ -247,7 +247,16 @@ def main(args):
         if args.context == "block_asr":
             ctx_path = os.path.join(
                 args.asr_dir, args.dataset, "{}_{}.jsonl".format(outname, args.context_asr_tag))
+            if not os.path.exists(ctx_path):
+                raise SystemExit("context ASR file missing: {}".format(ctx_path))
             ctx_asr = load_asr_windows(ctx_path, Kc)
+            if not ctx_asr:
+                raise SystemExit("context ASR file empty: {}".format(ctx_path))
+            with open(ctx_path) as fh:
+                for line in fh:
+                    if line.strip():
+                        n_ctx = len(json.loads(line).get("window_text") or [])
+                        assert n_ctx == Kc, "context ASR has {} windows, expected {}".format(n_ctx, Kc)
             print("[{}] context = block ASR ({} ids, K_c={})".format(split, len(ctx_asr), Kc), flush=True)
 
         out_path = os.path.join(out_ds, "{}_segscoreK{}_{}.jsonl".format(outname, K, args.out_tag))
@@ -275,7 +284,7 @@ def main(args):
                         atext = wtext[k] if k < len(wtext) else ""
                         ctxt = None
                         if ctext is not None:
-                            # block index of window k (same midpoint rule as src/verdict_hmm._block_map)
+                            # block index of window k (start-of-window rule, identical to src/verdict_hmm._block_map)
                             ctxt = ctext[min((k * Kc) // K, Kc - 1)]
                         raw = score_window(
                             win_frames, atext, processor, model, device, args.max_new_tokens,

@@ -41,6 +41,8 @@ def main(argv=None):
     ap.add_argument("--fine-tag", default="qwen", help="K30 verdict cache tag (qwenctx = context-conditioned)")
     ap.add_argument("--w-fine", default="", help="comma list of extra K30 tempering exponents, e.g. 0.25,0.5,0.75 (branches score_hmm_wf<value>)")
     args = ap.parse_args(argv)
+    if args.fine_tag != "qwen" and args.out_root == ap.get_default("out_root"):
+        args.out_root = args.out_root + "_" + args.fine_tag   # never overwrite the qwen reference row
     B = load_binary(args.corpus, args.fine_tag)
     m, n_pos, n_neg = fit(args.corpus, B)
     out_dir = os.path.join(args.out_root, args.corpus)
