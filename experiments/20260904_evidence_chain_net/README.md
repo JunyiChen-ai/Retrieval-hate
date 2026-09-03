@@ -119,7 +119,16 @@ HateMM（uoa-lab1）前 5 个 trial：test AP .44–.53、ROC .78–.80、within
 4. **within 低于修订 1**：固定链的 within（HateMM test .575）本来就低于 hier_evidence_mil 骨干的 z（.646）；新骨干的 u_t 只看内容、不看裁定序列，学不到 hier_evidence_mil 骨干从原始裁定列学到的时间模式（该候选修订 2 去掉原始列掉 .036，正是这个信息），链的平滑又把 u 的视频内变化压平。
 
 ### 5.2 修订 1 搜索完整结果
-（搜索完成后填写。）
+**HateClipSeg seed 234（uoa-lab3，2026-09-04 02:16–03:55，20 trial，每 trial 270–330 s；`runs/20260904_evidence_chain_net/hateclipseg/seed234/study_summary.json`）**：7/20 trial 被 within 下限（.524）剪掉；全部 trial 的范围 test AP .626–.694、ROC .597–.659、within .388–.599。
+
+| 选法 | trial | 超参 | test AP / ROC / within | val AP / ROC | 选中 epoch |
+|---|---|---|---|---|---|
+| test 目标最高（未剪） | 12 | lr 1.69e-4, dropout .3, max_seqlen 200 | .694 / .651 / .599 | .662 / .675 | 21 |
+| val 选中（规则 7 报告口径） | 2 | lr 6.61e-4, dropout .2, max_seqlen 150 | .638 / .620 / .517（被剪） | .704 / .739 | 28 |
+
+对照 hier_evidence_mil 修订 1 HateClipSeg seed 234：.699 / .681 / .553；固定链（u≡0，门≡1）.694 / .658。**结论：修订 1 未通过规则 8 的 SOTA 门（ROC .651 < .681 已是最好 trial），val 选中的 trial 甚至低于固定链，训练把链弄坏（5.1 的诊断 2、3）。** 淘汰，进入修订 2（5.3）。
+
+**HateMM seed 234（uoa-lab1）**：（搜索完成后填写。）
 
 ### 5.3 修订 2（规则 9 第 1/3 次修改）的三处改动与预注册
 1. **编码器读裁定上下文**：编码器输入增加 6 列 [b_f, b_c, b_f−1, b_f+1, 窗 LLR/3, 块 LLR/3]，u_t 成为"内容 + 裁定上下文"的网络证据（对应 hier_evidence_mil 的机制 5：网络需要原始裁定序列）。消融臂 no_vctx。
