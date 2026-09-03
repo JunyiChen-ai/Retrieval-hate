@@ -384,7 +384,18 @@ HateMM（uoa-lab3，2026-09-04）：
 
 预注册预期：`no_attn` 与 full 差别小（视频级信息主要来自输入列与密度）；`self_attn` 若不降，跨模态注意力不能作主张，骨干结构改动方向就应放在"裁定序列的专用编码分支"而不是跨模态；`chain_distill` 两语料三 seed 均值不低于 full 且 within 不低于 full 才算可用机制，否则链蒸馏在本骨干上不成立。结果填在下面。
 
-（结果：运行中。）
+**HateClipSeg 结构臂结果（三 seed 均值 AP / ROC / within 与 full 的差；括号内为 AP、ROC 下降的 seed 数）**：
+
+| 臂 | 三 seed 均值 | 差 | 说明 |
+|---|---|---|---|
+| full | .699 / .681 / .553 | | |
+| self_attn | .689 / .660 / .542 | −.010 / −.021 / −.011（3/3、3/3） | 跨模态注意力换自注意力：三 seed 都降 |
+| no_attn | .695 / .669 / .553 | −.004 / −.012 / .000（2/3、2/3） | 完全不要注意力比自注意力还好；seed 3407 反升 |
+| unshared_cma | .696 / .673 / .546 | −.003 / −.008 / −.006（3/3、3/3） | 各方向一层不如共享一层 |
+| 参照 no_ema（9.6） | .698 / .681 / .548 | −.001 / −.001 / −.005 | |
+| 参照 no_cmal（9.6） | .684 / .656 / .544 | −.015 / −.026 / −.009 | |
+
+读法：HateClipSeg 上 AVCE 结构里能确认的只有"共享一层跨模态注意力"值 .01–.02 ROC（与 CMAL 对比同量级）；自注意力没有用（不如不要注意力）；注意力层整体的贡献 ≤ .012 ROC。**骨干在 HateClipSeg 上几乎是"投影 + 头"在工作，时间建模贡献很小**，与 9.3（z 方差 79% 在视频之间）一致。HateMM 结构臂与两语料链蒸馏臂：运行中。
 
 ## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
 **放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
