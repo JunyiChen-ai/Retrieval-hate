@@ -43,8 +43,9 @@ def block_layout(block_of_t: torch.Tensor):
     return block_of_t != prev, block_of_t != nxt
 
 
-def log_transitions(d: torch.Tensor, a: float, new_block: torch.Tensor, mask: torch.Tensor):
-    """d [B] in (0,1); returns log T [B,T,3,3] (row = previous state, col = next).
+def log_transitions(d: torch.Tensor, a, new_block: torch.Tensor, mask: torch.Tensor):
+    """d [B] in (0,1); a float or [B] switching rate in (0,1]; returns log T [B,T,3,3]
+    (row = previous state, col = next).
 
     Step 0 uses p0(d) (from a virtual all-zero predecessor); padded steps use
     the identity.
@@ -52,6 +53,9 @@ def log_transitions(d: torch.Tensor, a: float, new_block: torch.Tensor, mask: to
     B, T = new_block.shape
     eps = 1e-6
     d = d.clamp(eps, 1 - eps)
+    a = torch.as_tensor(a, dtype=d.dtype, device=d.device).expand(B) if not torch.is_tensor(a) \
+        else a.to(d.dtype).expand(B)
+    assert bool((a > 0).all()) and bool((a <= 1).all()), "switching rate must be in (0, 1]"
     A00 = torch.log(1 - a * d)
     A01 = torch.log(a * d)
     A10 = torch.log(a * (1 - d))
@@ -93,7 +97,7 @@ def emissions(u, phi_f, gf, phi_c_rows, gc_rows, block_end, mask):
 
 
 def forward_backward(log_e, logT):
-    """log_e [B,T,3], logT [B,T,3,3] -> (log_Z [B], posterior [B,T,3])."""
+    """log_e [B,T,3], logT [B,T,3,3] -> (log_Z [B], log posterior [B,T,3])."""
     B, T, S = log_e.shape
     alphas = []
     # step 0: predecessor is the virtual all-zero state (row 0 of logT[:,0])
@@ -110,8 +114,8 @@ def forward_backward(log_e, logT):
         lb = torch.logsumexp(logT[:, t + 1] + (log_e[:, t + 1] + lb)[:, None, :], dim=2)
         betas.append(lb)
     log_beta = torch.stack(betas[::-1], 1)
-    post = torch.softmax(log_alpha + log_beta, dim=-1)
-    return log_Z, post
+    log_post = torch.log_softmax(log_alpha + log_beta, dim=-1)
+    return log_Z, log_post
 
 
 def log_Z0(logT, mask):
@@ -120,16 +124,28 @@ def log_Z0(logT, mask):
     return torch.where(mask, z, torch.zeros_like(z)).sum(1)
 
 
+def log1mexp(x):
+    """log(1 - exp(x)) for x <= 0, numerically stable."""
+    x = x.clamp(max=-1e-12)
+    return torch.where(x > -0.693, torch.log(-torch.expm1(x)), torch.log1p(-torch.exp(x)))
+
+
 def chain(u, phi_f, gf, phi_c_rows, gc_rows, d, a, block_of_t, mask):
-    """Convenience wrapper. Returns dict(log_Z, log_Z0, p_video, post_s1 [B,T])."""
+    """Convenience wrapper. Returns dict(log_Z, log_Z0, log_rho = log Z0 - log Z,
+    log_p_video = log P(y=1), p_video, log_post [B,T,3], post [B,T,3], post_s1,
+    logodds_s1 = log P(s_t=1) - log P(s_t=0) computed in the log domain)."""
     new_block, block_end = block_layout(block_of_t)
     logT = log_transitions(d, a, new_block, mask)
     log_e = emissions(u, phi_f, gf, phi_c_rows, gc_rows, block_end, mask)
-    lz, post = forward_backward(log_e, logT)
+    lz, log_post = forward_backward(log_e, logT)
     lz0 = log_Z0(logT, mask)
-    p_video = 1.0 - torch.exp((lz0 - lz).clamp(max=0.0))
-    return {"log_Z": lz, "log_Z0": lz0, "p_video": p_video,
-            "post_s1": post[..., 1], "post": post}
+    log_rho = (lz0 - lz).clamp(max=0.0)
+    log_p_video = log1mexp(log_rho)
+    post = log_post.exp()
+    logodds = log_post[..., 1] - torch.logaddexp(log_post[..., 0], log_post[..., 2])
+    return {"log_Z": lz, "log_Z0": lz0, "log_rho": log_rho, "log_p_video": log_p_video,
+            "p_video": log_p_video.exp(), "log_post": log_post, "post": post,
+            "post_s1": post[..., 1], "logodds_s1": logodds, "block_end": block_end}
 
 
 # ----------------------------------------------------------- self-check
@@ -192,6 +208,9 @@ def self_check(n_cases=20, seed=0):
         assert abs(out["log_Z"].item() - bl) < 1e-8, (out["log_Z"].item(), bl)
         assert abs(out["log_Z0"].item() - bz0) < 1e-8, (out["log_Z0"].item(), bz0)
         assert np.abs(out["post_s1"][0].numpy() - bs1).max() < 1e-8
+        assert abs(out["p_video"].item() - (1 - math.exp(bz0 - bl))) < 1e-8
+        lo = out["logodds_s1"][0].numpy()
+        assert np.abs(1 / (1 + np.exp(-lo)) - bs1).max() < 1e-8
     # padding invariance: appending padded steps must not change Z or posteriors
     T = 5
     u = torch.randn(1, T, dtype=torch.float64)

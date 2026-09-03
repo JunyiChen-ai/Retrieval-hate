@@ -1,14 +1,21 @@
-"""Evidence-chain network (README section 1).
+"""Evidence-chain network (README section 1, after the rule-4 review).
 
-P1 content encoder + content evidence u_t
-P2 video-level evidence-profile encoder -> density d_v (chain prior)
-P3 granularity reliability gates gf (per window), gc (per block)
-P4 differentiable evidence chain head (src/evidence_chain) -> posterior = score
+P1 content encoder (visual / audio-text projections, one temporal self-attention
+   layer) + content evidence u_t
+P2 video-level evidence-profile encoder -> density d_v (chain prior); reads the
+   verdict profile only (no content), bounded to [D_LO, D_HI]
+P3 granularity reliability gates gf (per window), gc (per block); read the
+   verdict context (own / neighbour verdicts, block verdict) and d_v only
+P4 differentiable evidence chain head (src/evidence_chain) -> log-odds = score
 
-Ablations are switches on the same module (README section 2):
-  full, no_density, density_bias, no_gate, gate_content_only, no_content,
-  no_vlm, indep, flat_coarse, topk_head, macilsd_encoder
-(the contrastive-loss ablations live in train.py).
+Switching rate: the EM value a is estimated on the K=30 window grid; per video
+it is converted to the chain's step grid, a_step = 1 - (1 - a)^(K / L) with L
+the number of valid steps, so the expected number of switches is preserved.
+
+Model-level ablations (README section 2): full, no_density, density_bias,
+density_content, no_gate, gate_with_content, no_content, no_vlm, indep,
+flat_coarse, topk_head, macilsd_encoder, no_text.  Loss-level ablations
+(train.py): no_block_mil, no_contrast, contrast_self_topk, contrast_vlm_thresh.
 """
 
 from __future__ import annotations
@@ -19,7 +26,6 @@ import sys
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
@@ -29,25 +35,24 @@ sys.path.insert(0, os.path.join(REPO_ROOT, "src"))
 import evidence_chain as ec                    # noqa: E402
 import dataset as ds                           # noqa: E402
 
-ABLATIONS = ("full", "no_density", "density_bias", "no_gate", "gate_content_only",
-             "no_content", "no_vlm", "indep", "flat_coarse", "topk_head",
-             "macilsd_encoder",
-             # train-time only (model = full)
-             "no_contrast", "contrast_self_topk", "contrast_vlm_thresh")
-GATE_INIT_BIAS = 4.0          # sigmoid(4) = .982: gates start (almost) open
+MODEL_ABLATIONS = ("full", "no_density", "density_bias", "density_content", "no_gate",
+                   "gate_with_content", "no_content", "no_vlm", "indep", "flat_coarse",
+                   "topk_head", "macilsd_encoder", "no_text")
+LOSS_ABLATIONS = ("no_block_mil", "no_contrast", "contrast_self_topk", "contrast_vlm_thresh")
+ABLATIONS = MODEL_ABLATIONS + LOSS_ABLATIONS
+GATE_INIT_BIAS = 3.0          # sigmoid(3) = .953: gates start open (README constants table)
+D_LO, D_HI = 0.01, 0.99       # density bounds
 EPS = 1e-6
 
 
 def masked_mean(x, mask):
-    """x [B,T,d], mask [B,T] -> [B,d]."""
     m = mask.float().unsqueeze(-1)
     return (x * m).sum(1) / m.sum(1).clamp(min=1.0)
 
 
 def group_mean(x, idx, n_groups, mask):
-    """Mean of x [B,T,d] over rows sharing idx [B,T] (values in [0, n_groups)),
-    returned per row: [B,T,d] (each row gets its group's mean). Padded rows
-    (mask False) carry idx == n_groups and are excluded."""
+    """Mean of x [B,T,d] over rows sharing idx [B,T] (values in [0, n_groups]),
+    returned per row [B,T,d]; padded rows carry idx == n_groups and mask False."""
     B, T, d = x.shape
     flat_idx = (idx + torch.arange(B, device=x.device)[:, None] * (n_groups + 1)).reshape(-1)
     xm = (x * mask.float().unsqueeze(-1)).reshape(B * T, d)
@@ -55,8 +60,7 @@ def group_mean(x, idx, n_groups, mask):
     cnt = torch.zeros(B * (n_groups + 1), 1, device=x.device, dtype=x.dtype)
     sums.index_add_(0, flat_idx, xm)
     cnt.index_add_(0, flat_idx, mask.float().reshape(-1, 1))
-    means = sums / cnt.clamp(min=1.0)
-    return means[flat_idx].reshape(B, T, d)
+    return (sums / cnt.clamp(min=1.0))[flat_idx].reshape(B, T, d)
 
 
 class MLP(nn.Sequential):
@@ -69,12 +73,13 @@ class MLP(nn.Sequential):
 class EvidenceChainNet(nn.Module):
     def __init__(self, cfg, pot, ablation="full"):
         super().__init__()
-        assert ablation in ABLATIONS, ablation
+        assert ablation in MODEL_ABLATIONS, ablation
         self.ablation = ablation
         d = int(cfg.hid_dim)
         p = float(cfg.dropout)
         self.d = d
-        self.a_switch = float(pot.a)
+        self.a_window = float(pot.a)
+        assert 0.0 < self.a_window <= 1.0
         self.p0_hate = float(pot.p0_hate)
         self.topk_div = int(cfg.topk_div)
         # ---- P1 encoder
@@ -84,60 +89,70 @@ class EvidenceChainNet(nn.Module):
             self.fuse = nn.Linear(2 * d, d)
         else:
             self.proj_v = nn.Linear(ds.V_DIM, d)
-            self.proj_a = nn.Linear(ds.A_DIM, d)
-            self.proj_x = nn.Linear(ds.TEXT_DIM, d)
-            self.fuse = nn.Linear(3 * d, d)
+            self.proj_at = nn.Linear(ds.F_A_DIM, d)
+            self.fuse = nn.Linear(2 * d, d)
             self.enc = nn.TransformerEncoderLayer(d, nhead=int(cfg.nhead),
                                                   dim_feedforward=int(cfg.ffn_dim),
                                                   dropout=p, batch_first=True)
         self.drop = nn.Dropout(p)
         self.u_head = MLP(d, d, 1, p)
-        # ---- P2 density
-        self.dens_head = MLP(ds.PROFILE_DIM + d, d, 1, p)
-        # ---- P3 gates
-        self.gate_f = MLP(d + 4 + 1, d, 1, p, out_bias=GATE_INIT_BIAS)
-        self.gate_c = MLP(d + 1 + 1, d, 1, p, out_bias=GATE_INIT_BIAS)
+        # ---- P2 density (verdict profile only; + pooled content in the density_content arm)
+        n_dens_in = ds.PROFILE_DIM + (d if ablation == "density_content" else 0)
+        self.dens_head = MLP(n_dens_in, d, 1, p)
+        # ---- P3 gates (verdict context + d_v; + content in the gate_with_content arm)
+        n_ctx = d if ablation == "gate_with_content" else 0
+        self.gate_f = MLP(4 + 1 + n_ctx, d, 1, p, out_bias=GATE_INIT_BIAS)
+        self.gate_c = MLP(1 + 1 + n_ctx, d, 1, p, out_bias=GATE_INIT_BIAS)
 
     # ------------------------------------------------------------------ parts
     def encode(self, f_v, f_a, mask):
+        """returns fused h [B,T,d] and the two modality embeddings (for the contrast)."""
+        if self.ablation == "no_text":
+            f_a = torch.cat([f_a[..., :ds.A_DIM], torch.zeros_like(f_a[..., ds.A_DIM:])], -1)
         if self.ablation == "macilsd_encoder":
             _, _, _, _, v_out, a_out = self.av(f_a, f_v, None)
-            h = self.fuse(torch.cat([v_out, a_out], -1))
-            return self.drop(h)
+            h = self.drop(self.fuse(torch.cat([v_out, a_out], -1)))
+            return h, v_out, a_out
         hv = self.proj_v(f_v)
-        ha = self.proj_a(f_a[..., :ds.A_DIM])
-        hx = self.proj_x(f_a[..., ds.A_DIM:ds.A_DIM + ds.TEXT_DIM])
-        h = self.fuse(torch.cat([hv, ha, hx], -1))
+        hat = self.proj_at(f_a)
+        h = self.fuse(torch.cat([hv, hat], -1))
         h = self.enc(h, src_key_padding_mask=~mask)
-        return self.drop(h)
+        return self.drop(h), hv, hat
+
+    def step_switching_rate(self, mask):
+        L = mask.float().sum(1).clamp(min=1.0)
+        return 1.0 - (1.0 - self.a_window) ** (ds.K / L)
 
     def forward(self, batch):
         f_v, f_a, mask = batch["f_v"], batch["f_a"], batch["mask"]
         w, j = batch["w"], batch["j"]
         B, T = mask.shape
         abl = self.ablation
-        h = self.encode(f_v, f_a, mask)                        # [B,T,d]
+        h, hv, hat = self.encode(f_v, f_a, mask)
         # P1 content evidence
         u = self.u_head(h).squeeze(-1)
         if abl == "no_content":
             u = torch.zeros_like(u)
         # P2 density
-        pooled = masked_mean(h, mask)
-        d_v = torch.sigmoid(self.dens_head(torch.cat([batch["profile"], pooled], -1))).squeeze(-1)
+        dens_in = batch["profile"]
+        if abl == "density_content":
+            dens_in = torch.cat([dens_in, masked_mean(h, mask)], -1)
+        d_v = D_LO + (D_HI - D_LO) * torch.sigmoid(self.dens_head(dens_in)).squeeze(-1)
         d_chain = d_v
         if abl in ("no_density", "density_bias"):
             d_chain = torch.full_like(d_v, self.p0_hate)
         if abl == "density_bias":
-            u = u + torch.logit(d_v.clamp(EPS, 1 - EPS))[:, None]
-        # P3 gates (window / block level: per-row logits averaged within the group)
+            u = u + torch.logit(d_v)[:, None]
+        # P3 gates: per-row logits from verdict context, averaged within window / block
         vcols = torch.stack([batch["bf"], batch["bc"], batch["bfp"], batch["bfn"]], -1)
-        if abl == "gate_content_only":
-            vcols = torch.zeros_like(vcols)
         dv_rows = d_v.detach()[:, None, None].expand(B, T, 1)
-        gf_logit = self.gate_f(torch.cat([h, vcols, dv_rows], -1))          # [B,T,1]
-        gc_logit = self.gate_c(torch.cat([h, vcols[..., 1:2], dv_rows], -1))
-        gf = torch.sigmoid(group_mean(gf_logit, w, ds.K, mask)).squeeze(-1)
-        gc = torch.sigmoid(group_mean(gc_logit, j, ds.J, mask)).squeeze(-1)
+        gin_f = [vcols, dv_rows]
+        gin_c = [vcols[..., 1:2], dv_rows]
+        if abl == "gate_with_content":
+            gin_f.append(h)
+            gin_c.append(h)
+        gf = torch.sigmoid(group_mean(self.gate_f(torch.cat(gin_f, -1)), w, ds.K, mask)).squeeze(-1)
+        gc = torch.sigmoid(group_mean(self.gate_c(torch.cat(gin_c, -1)), j, ds.J, mask)).squeeze(-1)
         if abl == "no_gate":
             gf, gc = torch.ones_like(gf), torch.ones_like(gc)
         # VLM potentials
@@ -146,30 +161,31 @@ class EvidenceChainNet(nn.Module):
             phi_f, phi_c = torch.zeros_like(phi_f), torch.zeros_like(phi_c)
         gf_chain, gc_chain = gf, gc
         if abl == "flat_coarse":
-            # coarse verdict spread over the rows of its block, on s (no OR variable);
-            # gates folded into the potentials, chain gates set to 1
             phi_f = gf * phi_f + gc * phi_c / batch["n_j"].clamp(min=1.0)
             phi_c = torch.zeros_like(phi_c)
             gf_chain, gc_chain = torch.ones_like(gf), torch.ones_like(gc)
-        a_eff = 1.0 if abl == "indep" else self.a_switch
-        out = {"h": h, "u": u, "d_v": d_v, "gf": gf, "gc": gc}
+        a_step = torch.ones(B, device=u.device, dtype=u.dtype) if abl == "indep" \
+            else self.step_switching_rate(mask)
+        out = {"h": h, "hv": hv, "hat": hat, "u": u, "d_v": d_v, "gf": gf, "gc": gc,
+               "a_step": a_step}
         if abl == "topk_head":
-            score = u + gf * phi_f * batch["n_w"] + gc * phi_c \
-                + torch.logit(d_v.clamp(EPS, 1 - EPS))[:, None]
+            score = u + gf * phi_f * batch["n_w"] + gc * phi_c + torch.logit(d_v)[:, None]
             score = torch.where(mask, score, torch.full_like(score, -1e4))
             bags = []
             for i in range(B):
                 t = int(mask[i].sum())
                 k = max(1, int(math.ceil(t / self.topk_div)))
                 bags.append(torch.topk(score[i, :t], k=k).values.mean().view(1))
-            out["p_video"] = torch.sigmoid(torch.cat(bags))
+            logit_video = torch.cat(bags)
+            out["log_p_video"] = nn.functional.logsigmoid(logit_video)
+            out["log_rho"] = nn.functional.logsigmoid(-logit_video)
             out["score"] = score
             out["post"] = torch.sigmoid(score)
             return out
-        ch = ec.chain(u, phi_f, gf_chain, phi_c, gc_chain, d_chain, a_eff, j, mask)
-        post = ch["post_s1"].clamp(EPS, 1 - EPS)
-        out["p_video"] = ch["p_video"].clamp(EPS, 1 - EPS)
-        out["post"] = post
-        out["score"] = torch.logit(post)
+        ch = ec.chain(u, phi_f, gf_chain, phi_c, gc_chain, d_chain, a_step, j, mask)
+        out["log_p_video"] = ch["log_p_video"]
+        out["log_rho"] = ch["log_rho"]
+        out["post"] = ch["post_s1"]
+        out["score"] = ch["logodds_s1"]
         out["log_Z"], out["log_Z0"] = ch["log_Z"], ch["log_Z0"]
         return out

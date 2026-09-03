@@ -11,6 +11,8 @@ evidence-model constants (Potentials):
     phi_c         coarse-verdict log-likelihood ratio of the row's block
     bf, bc        the raw binary verdicts of the window / block
     bfp, bfn      fine verdict of the previous / next window (0 outside)
+    ph            fixed evidence-model block posterior P(h_j=1 | verdicts) of the row's
+                  block (block-MIL soft target; train-time constant)
 and a per-video verdict profile vector (PROFILE_DIM) for the density head.
 
 Training items are (video, crop) pairs as in MACIL-SD; sequences longer than
@@ -46,7 +48,7 @@ F_A_DIM = A_DIM + TEXT_DIM
 K, J = vlm_verdict.GRANULARITIES          # (30, 4)
 BLOCK_OF_WINDOW = verdict_hmm._block_map(K, J)
 PROFILE_DIM = 6 + (J + 1)
-ROW_KEYS = ("phi_f", "phi_c", "bf", "bc", "bfp", "bfn", "n_w", "n_j")   # float rows
+ROW_KEYS = ("phi_f", "phi_c", "bf", "bc", "bfp", "bfn", "n_w", "n_j", "ph")   # float rows
 IDX_KEYS = ("w", "j")                                                  # long rows
 
 
@@ -54,6 +56,7 @@ class Potentials:
     """Fixed evidence-model constants from the train-label EM (src/verdict_hmm)."""
 
     def __init__(self, hmm):
+        self.hmm = hmm
         self.q_f, self.r_f, self.q_c, self.r_c = hmm.q_f, hmm.r_f, hmm.q_c, hmm.r_c
         self.a = float(hmm.A[0, 1] + hmm.A[1, 0])        # switching rate
         self.p0_hate = float(hmm.p0[1])
@@ -105,7 +108,9 @@ def verdict_rows(bf, bc, snip, n_seconds, pot):
     bfn = np.concatenate([bf[1:], [0]])
     llr_f = np.array(pot.llr_f, np.float32)[bf]           # (K,)
     llr_c = np.array(pot.llr_c, np.float32)[bc]           # (J,)
+    _, p_h = pot.hmm.posterior(bf, bc)                    # (J,) fixed block posterior
     return {
+        "ph": np.asarray(p_h, np.float32)[j],
         "w": w, "j": j,
         "n_w": n_w[w], "n_j": n_j[j],
         "phi_f": (llr_f[w] / np.maximum(n_w[w], 1.0)).astype(np.float32),
