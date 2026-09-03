@@ -1,3 +1,5 @@
+> **淘汰（用户裁定 2026-09-04 08:50）**：三个修订（链作输出；加裁定上下文/密度监督/门限触发；链后验蒸馏、网络作输出）在 seed 234 都没通过规则 8 或预注册（第 5 节）。最好数字 HateClipSeg .682/.663/.567、HateMM .578/.819/.602，都低于 hier_evidence_mil 修订 1（.699/.681/.553、.661/.841/.646）；HateMM within 从未超过 .62。候选内部有效的机制只有"链的带标签条件后验蒸馏进网络证据"（HateClipSeg −.033/−.075）；链作输出、链作训练目标（相对 top-k MIL）、可靠性门都没有可观察增益。规则 9 最后一次修改不使用。可复用部分：`src/evidence_chain.py`（可微三态证据链，数值已验证）和蒸馏目标的构造（`train.py` `distill_loss`），供在 hier_evidence_mil 骨干上替换 EMA 自蒸馏时使用。
+
 # 20260904_evidence_chain_net — 证据链网络（Evidence-Chain Network）提案
 
 状态：**实现完成，搜索中（2026-09-04 02:15 起）。规则 4 复核 GO-with-changes 7/10（`REVIEW_RULE4.md`），9 项必须修改已落实（第 1.5 节）；规则 6 code review PASS、无 BLOCKER（`REVIEW_RULE6.md`，fork 会话执行，两条消融臂尺度建议已改）。seed 234 搜索：HateMM uoa-lab1、HateClipSeg uoa-lab3，`runs/20260904_evidence_chain_net/<corpus>/seed234/`。**上一候选 `experiments/20260903_hier_evidence_mil/`（修订 1）用户裁定"暂不作论文方法"：超参太多、骨干架构没改、有冗余部件。本候选的设计原则：**只做骨干机制分析里证明在 work 的事，每件做成显式、可消融的部件；方法级超参数 0。**
@@ -186,7 +188,7 @@ HateMM（uoa-lab1）前 5 个 trial：test AP .44–.53、ROC .78–.80、within
 
 对照预注册（5.5）：AP ≥ .693、ROC ≥ .665 都不过（最好 trial .682/.663；val 选中 .673/.634）。机制层面：训练动态改善了——选中 epoch 从修订 2 的 1–6 变为 8–41（20 个 trial 里 19 个 ≥ 8），val 曲线在第 19 个 epoch 到顶；within .567 高于对照 .553。但 pooled 水平仍低于对照且低于不训练的固定链（.694/.658）。门仍停在初始值（(1,0) .988、(1,1) .991）；密度与 GT 密度相关 .22。
 
-**HateMM seed 234（uoa-lab1）**：（搜索完成后填写；前 7 个 trial AP .516–.570、ROC .798–.830、within .535–.594，全部低于 within 下限。）
+**HateMM seed 234（uoa-lab1，06:05–08:45，候选淘汰时停在 16/20 trial；`runs/20260904_evidence_chain_net_rev3/hatemm/seed234/search.log`）**：16/16 低于 within 下限 .632；test AP .503–.578、ROC .783–.833、within .535–.614；test 目标最高 .578/.819/.602（对照 hier_evidence_mil 修订 1 .661/.841/.646）。
 
 诊断消融（lab3，trial 19 超参，`runs/20260904_evidence_chain_net_rev3/diag/hateclipseg/seed234/<arm>/`）：`macilsd_encoder`（编码器换回 MACIL-SD AVCE，其余不变：编码器是不是差距来源）、`topk_head`（加法分数 u + 门控势能 + logit d，top-k MIL 训练，不跑链：链训练是否不如加法 + top-k）、`chain_output`（修订 2 输出方式）、`no_distill`（去掉蒸馏）。结果（test AP / ROC / within，val AP / ROC，选中 epoch；`<arm>/summary.json`）：
 
