@@ -187,6 +187,28 @@ lr log[1e-4, 1e-3]；dropout {.1,.2,.3}；max_seqlen {150,200,300}；lamda_a2b /
 对照：修订 4 三 seed .689 ± .010 / .670 ± .012 / .549 ± .008；HMM 后验单独 .698 / .661 / .554；规则 8 门 .562 / .528，边距要求 ≥ max(std, .005) = .036 / .023，实际边距 .137 / .153，通过；within 三 seed 均 ≥ .524。
 对修订 4：+.010 AP、+.011 ROC。对 HMM 后验单独：AP +.001（持平）、ROC +.020。
 
+### 4.7 HateMM 三 seed 确认（uoa-lab1，每 seed 独立 20 trial 搜索；`runs/20260903_hier_evidence_mil/hatemm/seed<seed>/study_summary.json`）
+
+| seed | best trial（epoch） | AP | ROC | within | 被剪 trial 数 | prior_scale / w_fine / λ_block |
+|---|---|---|---|---|---|---|
+| 234 | 3（3） | .661 | .841 | .650 | 11 | .72 / .74 / .19 |
+| 2025 | 18（14） | .643 | .838 | .644 | 17 | .61 / .83 / .25 |
+| 3407 | 15（3） | .668 | .848 | .646 | 16 | .93 / .46 / .09 |
+| **均值 ± 标准差** | | **.657 ± .013** | **.842 ± .005** | **.646 ± .004** | | |
+
+对照：修订 4 三 seed .656 ± .016 / .836 ± .003 / .640 ± .007；HMM 后验单独 .541 / .818 / .570；规则 8 门 .573 / .807，边距要求 ≥ max(std, .005) = .033 / .019，实际边距 .084 / .035，通过；within 三 seed 均 ≥ .632。
+对修订 4：AP +.001（持平）、ROC +.006、within +.006。对 HMM 后验单独：AP +.116、ROC +.024。
+HateMM 上 within 下限剪掉 11–17/20 个 trial，搜索的有效样本很少；被剪 trial 的 pooled 常更高（seed 234 trial 0 .636/.846、trial 18 .629/.845），within 下限在这个语料上是主要约束。
+
+### 4.8 两语料汇总（三 seed，规则 8 全部通过）
+
+| | AP | ROC | within | 修订 4 | HMM 后验单独 |
+|---|---|---|---|---|---|
+| HateMM | .657 ± .013 | .842 ± .005 | .646 ± .004 | .656 / .836 / .640 | .541 / .818 |
+| HateClipSeg | .699 ± .006 | .681 ± .016 | .553 ± .007 | .689 / .670 / .549 | .698 / .661 |
+
+规则 14 对照：(g) 模块 2 块级 MIL 两语料 seed 234 消融成立；模块 3 时间耦合 AP 两语料成立；模块 3“HMM 后验优于平均等级”HateMM 不成立（第 4.5 节）。复核要求“完整方法明显高于 HMM 后验单独”：HateMM 成立；HateClipSeg 只有 ROC（+.020），AP 持平。
+
 ## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
 **放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
 复核要求（必须执行）：
