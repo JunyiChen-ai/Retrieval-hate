@@ -1,7 +1,7 @@
 """Fixed Optuna search for one (corpus, seed), rule 7 of RESEARCH_ITERATION_RULES.md.
 
     python experiments/20260904_evidence_guided_attention/search.py \
-        --corpus hatemm --seed 234 --out-root runs/20260903_hier_evidence_mil
+        --corpus hatemm --seed 234 --out-root runs/20260904_evidence_guided_attention
 
 Each trial trains once (train.py), selects its checkpoint on the official
 validation split, scores test, and reports the test pooled AP/ROC/within.
