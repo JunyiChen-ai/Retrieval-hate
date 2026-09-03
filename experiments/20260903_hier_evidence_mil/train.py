@@ -67,6 +67,9 @@ import frame_eval_common as fec                        # noqa: E402
 import vlm_verdict                                     # noqa: E402
 import verdict_hmm                                     # noqa: E402
 import dataset as ds                                   # noqa: E402
+from hier_evidence_common import (  # noqa: E402,F401
+    block_bag_loss, _scalar, _git_describe, usable, score_split, frame_metrics,
+    write_scores, run_evaluator, fit_hmm, make_scaffold_fn)
 
 EVALUATOR = os.path.join(REPO_ROOT, "scripts", "reproduction_baselines",
                          "eval_baseline_scores.py")
@@ -244,133 +247,9 @@ def chain_distill_loss(av_log, content_log, f_a, w, seq_len, labels, teacher):
     return (per * m).sum() / m.sum().clamp(min=1.0)
 
 
-def block_bag_loss(content_log, f_a, seq_len, labels, topk_div):
-    """Verdict-block MIL: one bag per coarse block, label P(h_j=1) (column
-    COL_PH, exact 0 on negative videos), weight |2p-1|, top-k mean of the
-    content logit inside the block. Returns the weighted mean BCE."""
-    z = content_log.squeeze(-1)
-    blk = f_a[..., ds.SCAF_OFFSET + ds.COL_BLOCK]
-    ph = f_a[..., ds.SCAF_OFFSET + ds.COL_PH]
-    num = z.new_zeros(())
-    den = z.new_zeros(())
-    for i in range(z.shape[0]):
-        t = int(seq_len[i])
-        zi, bi, pi = z[i, :t], blk[i, :t], ph[i, :t]
-        for j in torch.unique(bi):
-            m = bi == j
-            n_j = int(m.sum())
-            if n_j == 0:
-                continue
-            k = max(1, int(-(-n_j // topk_div)))
-            bag = torch.topk(zi[m], k=k).values.mean()
-            p = pi[m][0] if labels[i] > 0.5 else zi.new_zeros(())
-            w = (2.0 * p - 1.0).abs()
-            num = num + w * nn.functional.binary_cross_entropy_with_logits(
-                bag, p)
-            den = den + w
-    return num / den.clamp_min(1e-6)
-
-
-def _scalar(x):
-    return float(x.detach()) if torch.is_tensor(x) else float(x)
-
-
-def _git_describe():
-    try:
-        return subprocess.check_output(
-            ["git", "log", "-1", "--format=%cd %s", "--date=short"],
-            cwd=REPO_ROOT, text=True).strip()
-    except Exception:
-        return "unknown"
-
-
-def usable(corpus, ids):
-    return [v for v in ids if align.has_features(corpus, v)]
-
-
-def score_split(model, loader, device):
-    """video_id -> scores on the 1 fps grid (five-crop mean of sigmoid(z~))."""
-    model.eval()
-    out = {}
-    with torch.no_grad():
-        for f_v, f_a, index_map, n_seconds, vid in loader:
-            vid = vid[0]
-            n_seconds = int(n_seconds)
-            index_map = index_map[0].numpy()
-            f_v = f_v[0].to(device)
-            f_a = f_a[0].to(device)
-            _, _, _, av_logits, _, _ = model(f_a, f_v, seq_len=None)
-            av = torch.sigmoid(av_logits.squeeze(-1)).mean(0).cpu().numpy()
-            s = np.asarray(av, dtype=np.float64)[index_map]
-            if s.shape[0] != n_seconds:
-                raise RuntimeError("%s: %d rows for %d seconds"
-                                   % (vid, s.shape[0], n_seconds))
-            out[vid] = s
-    model.train()
-    return out
-
-
-def frame_metrics(scores, gt, hate_ids):
-    per_video = {v: (scores[v], np.asarray(gt[v])) for v in scores if v in gt}
-    res = fec.evaluate(per_video, macro_over={v for v in per_video
-                                              if v in hate_ids})
-    return {"pooled_ap": res["pr_auc"], "pooled_roc": res["roc_auc"],
-            "within_roc": res["per_video"]["macro_auc"],
-            "n_videos": res["n_videos"]}
-
-
-def write_scores(path, scores):
-    with open(path, "w") as fh:
-        for vid in sorted(scores):
-            fh.write(json.dumps({"video_id": vid,
-                                 "n_frames": int(len(scores[vid])),
-                                 "score_av": [round(float(x), 6)
-                                              for x in scores[vid]]}) + "\n")
-
-
-def run_evaluator(corpus, split, scores_path, json_out):
-    subprocess.run([sys.executable, EVALUATOR, "--corpus", corpus,
-                    "--split", split, "--scores", scores_path,
-                    "--json-out", json_out], check=True, cwd=REPO_ROOT,
-                   stdout=subprocess.DEVNULL)
-    with open(json_out) as fh:
-        return json.load(fh)
-
-
-def fit_hmm(corpus, train_ids, labels, binary):
-    pos = [binary[v] for v in train_ids if labels[v] == 1 and v in binary]
-    neg = [binary[v] for v in train_ids if labels[v] == 0 and v in binary]
-    return verdict_hmm.HierEvidenceHMM(K_FINE, J_COARSE).fit(pos, neg), \
-        len(pos), len(neg)
-
-
-def make_scaffold_fn(hmm, binary, ablation, w_fine):
-    """Per-video scaffold builder (README dataset.py column layout)."""
-    block_of_window = hmm.block.astype(np.float32)
-    kw = {}
-    if ablation == "indep_hmm":
-        kw["independent"] = True
-    if ablation == "flat_coarse":
-        kw["flat_coarse"] = True
-
-    def fn(vid, snip, n_seconds):
-        if vid not in binary:
-            return None
-        bf, bc = binary[vid]
-        p_s, p_h = hmm.posterior(bf, bc, w_fine=w_fine, **kw)
-        ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
-        if ablation == "mean_prior":
-            # revision-4 prior input: 2*(mean binary level - 1/2) in [-1, 1],
-            # stored so that ell/ELL_SCALE equals it; the p_s input column is
-            # replaced by the mean level too, so no HMM quantity remains
-            mean = (bf + bc[hmm.block]) / 2.0
-            ell = ELL_SCALE * (2.0 * mean - 1.0)
-            p_s = mean
-        if ablation == "raw_block_label":
-            p_h = bc.astype(np.float32)
-        return ds.scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
-                                snip, n_seconds)
-    return fn
+# block_bag_loss, _scalar, _git_describe, usable, score_split, frame_metrics,
+# write_scores, run_evaluator, fit_hmm, make_scaffold_fn: promoted verbatim to
+# src/hier_evidence_common.py on 2026-09-04 (imported above).
 
 
 def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
