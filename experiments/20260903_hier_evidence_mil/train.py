@@ -45,6 +45,7 @@ import time
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
 
@@ -61,6 +62,7 @@ from macilsd import align                              # noqa: E402
 from macilsd.avce_network import AVCE_Model, Single_Model  # noqa: E402
 from macilsd.CMA_MIL import CMAL                       # noqa: E402
 from macilsd.train import distil_step, _seq_len_of     # noqa: E402
+import evidence_chain as ec                             # noqa: E402
 import frame_eval_common as fec                        # noqa: E402
 import vlm_verdict                                     # noqa: E402
 import verdict_hmm                                     # noqa: E402
@@ -93,7 +95,10 @@ ABLATIONS = ("full", "mean_prior", "indep_hmm", "flat_coarse", "no_block",
              "no_ps", "no_hmm_input", "no_text", "no_audio", "no_visual",
              "no_cmal", "no_ema",
              # backbone structure ablations (2026-09-04, which AVCE part works)
-             "self_attn", "no_attn", "unshared_cma")
+             "self_attn", "no_attn", "unshared_cma",
+             # evidence-chain posterior distillation (2026-09-04): replaces the
+             # EMA self-distillation (chain_distill) or is added to it (chain_distill_ema)
+             "chain_distill", "chain_distill_ema")
 # input-path column ranges zeroed per distillation ablation (f_a columns)
 HIDE_COLS = {
     "no_ps": [(ds.SCAF_OFFSET + ds.COL_PS, ds.SCAF_OFFSET + ds.COL_PS + 1)],
@@ -185,6 +190,58 @@ class Candidate(nn.Module):
         mmil = self.bag(av_log, seq_len)
         self.last_content_logit = content_log
         return mmil, a_log, v_log, av_log, v_out, a_out
+
+
+class ChainTeacher:
+    """Fixed evidence-chain constants from the train-label HMM (src/verdict_hmm), used by
+    chain_distill_loss. Same constants as the eliminated evidence_chain_net candidate."""
+
+    def __init__(self, hmm):
+        self.k, self.j = int(hmm.k), int(hmm.j)
+        self.a = float(hmm.A[0, 1] + hmm.A[1, 0])
+        self.p0_hate = float(hmm.p0[1])
+        self.llr_f = (float(np.log((1 - hmm.q_f) / (1 - hmm.r_f))), float(np.log(hmm.q_f / hmm.r_f)))
+        self.llr_c = (float(np.log((1 - hmm.q_c) / (1 - hmm.r_c))), float(np.log(hmm.q_c / hmm.r_c)))
+
+
+LABEL_NOISE_EPS = 1e-3
+
+
+def chain_distill_loss(av_log, content_log, f_a, w, seq_len, labels, teacher):
+    """Evidence-chain posterior distillation (from the eliminated evidence_chain_net
+    candidate, its only effective mechanism): the fixed three-state chain combines the
+    network's content evidence (detached) with the VLM verdict potentials; its posterior
+    conditioned on the video label, q_t = P(s_t=1 | y, evidence) (y=1: P(s_t=1)/(1-Z0/Z);
+    y=0: 0), is the target of a masked BCE on the output logit av_log."""
+    B, T = w.shape
+    dev = av_log.device
+    ar = torch.arange(T, device=dev)[None, :]
+    mask = ar < seq_len.to(dev)[:, None]
+    w_idx = torch.floor(w + 0.5).long().clamp(0, teacher.k - 1)
+    w_idx = torch.where(mask, w_idx, torch.full_like(w_idx, teacher.k))
+    j = torch.floor(f_a[..., ds.SCAF_OFFSET + ds.COL_BLOCK] + 0.5).long().clamp(0, teacher.j - 1)
+    j = torch.where(mask, j, torch.full_like(j, teacher.j))
+    bf = (f_a[..., ds.SCAF_OFFSET + ds.COL_BF] > 0.5).long()
+    bc = (f_a[..., ds.SCAF_OFFSET + ds.COL_BC] > 0.5).long()
+    n_w = torch.zeros(B, teacher.k + 1, device=dev).scatter_add_(
+        1, w_idx, mask.float()).gather(1, w_idx).clamp(min=1.0)
+    llr_f = torch.tensor(teacher.llr_f, device=dev)[bf]
+    llr_c = torch.tensor(teacher.llr_c, device=dev)[bc]
+    phi_f = llr_f / n_w * mask.float()
+    phi_c = llr_c * mask.float()
+    ones = torch.ones(B, T, device=dev)
+    d = torch.full((B,), teacher.p0_hate, device=dev)
+    L = mask.float().sum(1).clamp(min=1.0)
+    a_step = 1.0 - (1.0 - teacher.a) ** (teacher.k / L)
+    u = content_log.detach().squeeze(-1)
+    ch = ec.chain(u, phi_f, ones, phi_c, ones, d, a_step, j, mask)
+    log_post = F.logsigmoid(ch["logodds_s1"])
+    log_q = log_post - ec.log1mexp(ch["log_rho"].clamp(max=-1e-6))[:, None]
+    q = torch.exp(log_q.clamp(max=0.0))
+    q = torch.where((labels > 0.5)[:, None], q, torch.zeros_like(q))
+    per = F.binary_cross_entropy_with_logits(av_log.squeeze(-1), q, reduction="none")
+    m = mask.float()
+    return (per * m).sum() / m.sum().clamp(min=1.0)
 
 
 def block_bag_loss(content_log, f_a, seq_len, labels, topk_div):
@@ -353,7 +410,8 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     if ablation == "no_cmal":
         a["lamda_a2b"] = 0.0
         a["lamda_a2n"] = 0.0
-    use_ema = ablation != "no_ema"
+    use_ema = ablation not in ("no_ema", "chain_distill")
+    chain_weight = 1.0 if ablation in ("chain_distill", "chain_distill_ema") else 0.0
 
     # module 3: verdict HMM fitted on train video labels only
     V = {k: vlm_verdict.load_verdicts(corpus, k=k, tag="qwen")
@@ -363,6 +421,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
               for v in V[K_FINE] if v in V[J_COARSE]}
     hmm, n_pos, n_neg = fit_hmm(corpus, train_ids, labels, binary)
     hmm.save(os.path.join(out_dir, "hmm_params.json"))
+    teacher = ChainTeacher(hmm)
     say("verdict HMM fitted on %d positive / %d negative train videos: %s"
         % (n_pos, n_neg, json.dumps({k: (round(v, 4) if isinstance(v, float)
                                          else v) for k, v in hmm.params().items()
@@ -418,13 +477,14 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         partner.train()
         lam_a2b = min(a.lamda_a2b, a.lamda_cof * epoch)
         lam_a2n = min(a.lamda_a2n, a.lamda_cof * epoch)
-        tot = np.zeros(4)
+        tot = np.zeros(5)
         nb = 0
-        for f_v, f_a, label in train_loader:
+        for f_v, f_a, w_rows, label in train_loader:
             seq_len = _seq_len_of(f_v)
             keep = int(torch.max(seq_len))
             f_v = f_v[:, :keep, :].float().to(device)
             f_a = f_a[:, :keep, :].float().to(device)
+            w_rows = w_rows[:, :keep].float().to(device)
             label = label.float().to(device)
             mmil, a_log, v_log, av_log, v_out, a_out = model(f_a, f_v, seq_len)
             if a.fix_rep_swap:
@@ -444,6 +504,11 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                 bl = block_bag_loss(model.last_content_logit, f_a, seq_len,
                                     label, a.topk_div)
                 total = total + lambda_block * bl
+            cd = 0.0
+            if chain_weight > 0:
+                cd = chain_distill_loss(av_log, model.last_content_logit, f_a, w_rows,
+                                        seq_len, label, teacher)
+                total = total + chain_weight * cd
             uni = partner(f_v, seq_len).reshape(-1)
             loss_uni = criterion(uni, label)
             opt_av.zero_grad()
@@ -455,7 +520,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
             loss_uni.backward()
             opt_uni.step()
             tot += [_scalar(clsloss), _scalar(c1) + _scalar(c2) + _scalar(c3)
-                    + _scalar(c4), _scalar(bl), _scalar(loss_uni)]
+                    + _scalar(c4), _scalar(bl), _scalar(loss_uni), _scalar(cd)]
             nb += 1
         sched_av.step()
         sched_uni.step()
@@ -465,12 +530,12 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         vm = frame_metrics(val_scores, val_gt, hate_ids)
         crit = (vm["pooled_ap"] + vm["pooled_roc"]) / 2.0
         history.append({"epoch": epoch + 1, "cls": tot[0], "cma": tot[1],
-                        "block": tot[2], "uni": tot[3], "ema_m": m,
+                        "block": tot[2], "uni": tot[3], "chain_distill": tot[4], "ema_m": m,
                         "val": vm, "val_criterion": crit,
                         "seconds": round(time.time() - t0, 1)})
-        say("epoch %2d | cls %.4f | cma %.4f | block %.4f | uni %.4f | "
+        say("epoch %2d | cls %.4f | cma %.4f | block %.4f | uni %.4f | distill %.4f | "
             "val AP %.4f ROC %.4f within %.4f | %.0fs"
-            % (epoch + 1, tot[0], tot[1], tot[2], tot[3],
+            % (epoch + 1, tot[0], tot[1], tot[2], tot[3], tot[4],
                vm["pooled_ap"], vm["pooled_roc"], vm["within_roc"],
                time.time() - t0))
         if crit > best:

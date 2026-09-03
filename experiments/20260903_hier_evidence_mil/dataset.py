@@ -86,10 +86,14 @@ class ScaffoldCache:
     def __init__(self, corpus, video_ids, scaffold_fn):
         self.corpus = corpus
         self.items = {}
+        self.window_rows = {}          # per-row fine-window index (K,) grid -> rows
         self.n_missing_text = 0
         self.n_missing_verdict = 0
+        k_fine = vlm_verdict.GRANULARITIES[0]
         for vid in video_ids:
             audio, n_seconds, snip = align.aligned_audio(corpus, vid, "snippet")
+            self.window_rows[vid] = vlm_verdict.verdict_rows(
+                np.arange(k_fine, dtype=np.float32), snip, n_seconds).astype(np.float32)
             text = load_text_rows(corpus, vid, snip)
             if text is None:
                 self.n_missing_text += 1
@@ -124,10 +128,13 @@ class TrainDataset(data.Dataset):
         f_a, n_seconds, snip = self.cache[vid]
         f_v = align.aligned_visual_crop(self.corpus, vid, crop, "snippet",
                                         n_seconds, snip)
+        w = self.cache.window_rows[vid][:, None]
         f_v = process_feat(f_v, self.max_seqlen, is_random=False)
         f_a = process_feat(f_a, self.max_seqlen, is_random=False)
+        w = process_feat(w, self.max_seqlen, is_random=False)[:, 0]
         return (torch.from_numpy(np.ascontiguousarray(f_v, dtype=np.float32)),
                 torch.from_numpy(np.ascontiguousarray(f_a, dtype=np.float32)),
+                torch.from_numpy(np.ascontiguousarray(w, dtype=np.float32)),
                 float(self.labels[vid]))
 
 
