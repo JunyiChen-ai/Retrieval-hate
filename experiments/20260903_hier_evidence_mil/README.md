@@ -371,6 +371,21 @@ HateMM（uoa-lab3，2026-09-04）：
 
 读法（HateClipSeg）：EMA 自蒸馏没有作用（新骨干不带）；CMAL 对比损失是这个语料上骨干训练项里唯一明显有用的（它把视频内 top-k 与 bottom-k 的表示拉开，是唯一带视频内结构的训练信号）；文本对 ROC 有 .016；视觉 .01；音频 ≈ 0；P(s) 列冗余（去掉不掉），HMM 两列合起来 .01。HateMM 部分运行中。
 
+### 9.7 骨干结构消融与链蒸馏臂（2026-09-04 08:40 起；候选 2 淘汰后回到本骨干改结构，先补"哪个结构部件在起作用"的证据）
+候选 2（`archive/experiments/20260904_evidence_chain_net/`）三修订都低于本候选，用户裁定淘汰；其中唯一有效的机制是"链的带标签条件后验蒸馏进网络证据"（HateClipSeg 去掉 −.033/−.075）。9.6 只消融了输入与损失，AVCE 结构本身没消融过。本节新增五个臂，协议同 9.6（三 seed、每 seed 用该 seed best trial 超参，其余不变；HateClipSeg 在 uoa-lab3、HateMM 在 uoa-lab1，输出 `runs/20260903_hier_evidence_mil/ablations/<corpus>/seed<seed>/<arm>/`）：
+
+| 臂 | 改动 | 回答的问题 |
+|---|---|---|
+| `self_attn` | AVCE 的共享注意力层改为各模态自注意力（视频看视频、音频看音频），权重仍共享 | 跨模态注意力是否起作用 |
+| `no_attn` | 去掉注意力层，投影后直接进头 | 时间注意力是否起作用（9.3：z 方差 92%/79% 在视频之间，可能作用很小） |
+| `unshared_cma` | 两个方向各一层（原版共用一层） | 共享是否损失容量 |
+| `chain_distill` | 去掉 EMA 自蒸馏，加证据链后验蒸馏：固定三态链（`src/evidence_chain.py`，常数来自本候选的 HMM）把 detach 的内容 logit 与 VLM 势能合成后验，取带视频标签条件的 q_t（y=1：P(s_t=1)/(1−Z0/Z)；y=0：0），对输出 logit 做掩码 BCE，权重 1 | 链蒸馏在本骨干上是否叠加增益，能否替换无效的 EMA（9.6：no_ema ≈ 0） |
+| `chain_distill_ema` | 链蒸馏 + 保留 EMA | 两者是否冗余 |
+
+预注册预期：`no_attn` 与 full 差别小（视频级信息主要来自输入列与密度）；`self_attn` 若不降，跨模态注意力不能作主张，骨干结构改动方向就应放在"裁定序列的专用编码分支"而不是跨模态；`chain_distill` 两语料三 seed 均值不低于 full 且 within 不低于 full 才算可用机制，否则链蒸馏在本骨干上不成立。结果填在下面。
+
+（结果：运行中。）
+
 ## 5. 规则 4 复核（2026-09-03，独立 fable agent，文献检索）
 **放行，7/10。** 四项：(1) hateful video 文献无 HMM / 概率时间融合、无 VLM 派生块级 MIL（核对 MultiHateLoc、LELA、TANDEM、SafeLens、HateClipSeg、HVGuard、RAMF、CMFusion、MARS、ImpliHateVid、MM-HSD、DeHate 等；WWW'26 Companion agentic framework 仅见摘要）；(2) 非 ensemble；(3) 非后处理：HMM 作用于输入裁定、参数由 train 视频标签 EM 拟合、后验进实例选择与损失，同 programmatic weak supervision 的 label model（Lison ACL 2020、Safranchik AAAI 2020、CHMM ACL 2021、Dugong NeurIPS 2019）而非 VERA / SlowFastVAD / LAVAD / HMM-Viterbi 那类输出后处理；(4) 块级 MIL 是新监督结构 + 新损失 + 新标签来源，定位在 GlanceVAD 与 Snorkel/Dugong 之间。
 复核要求（必须执行）：
