@@ -69,7 +69,22 @@ for epoch in range(n_epoch):
             print("epoch %d step %d NON-FINITE LOSS video %.3f block %.3f contrast %.3f density %.3f distill %.3f | u [%.1f,%.1f] log_rho min %.3f"
                   % (epoch + 1, step, lv, lb, lc, ld, lds, out["u"].min(), out["u"].max(), out["log_rho"].min()), flush=True)
             sys.exit(0)
-        opt.zero_grad(); total.backward(); torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0); opt.step(); step += 1
+        opt.zero_grad(); total.backward()
+        gn = torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+        if not torch.isfinite(gn):
+            print("epoch %d step %d NON-FINITE GRAD NORM %s | losses video %.3f block %.3f contrast %.3f density %.3f distill %.3f | log_rho min %.4g max %.4g | y %s"
+                  % (epoch + 1, step, gn.item(), lv, lb, lc, ld, lds, out["log_rho"].min(), out["log_rho"].max(), y.int().tolist()), flush=True)
+            for name, l in (("video", lv), ("block", lb), ("contrast", lc), ("density", ld), ("distill", lds)):
+                if not l.requires_grad: continue
+                opt.zero_grad(); l.backward(retain_graph=True)
+                g = [p.grad for p in model.parameters() if p.grad is not None]
+                mx = max(float(x.abs().max()) for x in g) if g else 0.0
+                print("   %s: grad max %.4g finite %s" % (name, mx, all(torch.isfinite(x).all() for x in g)), flush=True)
+            per = -(y * out["log_p_video"] + (1 - y) * out["log_rho"])
+            print("   per-video loss", np.round(per.detach().cpu().numpy(), 3).tolist(), flush=True)
+            print("   log_rho", np.round(out["log_rho"].detach().cpu().numpy(), 6).tolist(), flush=True)
+            sys.exit(0)
+        opt.step(); step += 1
         if w_nonfinite():
             print("epoch %d step %d NON-FINITE WEIGHTS after step" % (epoch + 1, step), flush=True); sys.exit(0)
     print("epoch %d done %.0fs | last losses video %.3f block %.3f contrast %.3f density %.3f distill %.3f | u [%.1f,%.1f]"
