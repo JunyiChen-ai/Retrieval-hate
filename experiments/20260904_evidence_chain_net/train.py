@@ -102,10 +102,18 @@ def to_device(batch, device):
 
 
 # ----------------------------------------------------------------- losses
+LABEL_NOISE_EPS = 1e-3     # P(y=1 | evidence) >= eps: bounds the positive-term gradient
+
+
 def video_loss(out, y):
     """Mean over the batch; also returns the positive-video and negative-video means
-    (logged separately: the positive term has almost no gradient when Z0/Z -> 0)."""
-    per = -(y * out["log_p_video"] + (1.0 - y) * out["log_rho"])
+    (logged separately: the positive term has almost no gradient when Z0/Z -> 0).
+    The positive term uses log(1 - rho) with rho = Z0/Z floored at log(1 - eps): a
+    positive video whose evidence says "no hate anywhere" (rho -> 1) otherwise has
+    gradient 1 / (1 - rho) -> inf (revision-2 HateMM crash, README 5.6)."""
+    log_rho = out["log_rho"]
+    log_p_video = ec.log1mexp(log_rho.clamp(max=math.log1p(-LABEL_NOISE_EPS)))
+    per = -(y * log_p_video + (1.0 - y) * log_rho)
     pos = per[y > 0.5].mean() if (y > 0.5).any() else per.sum() * 0.0
     neg = per[y < 0.5].mean() if (y < 0.5).any() else per.sum() * 0.0
     return per.mean(), pos.detach(), neg.detach()

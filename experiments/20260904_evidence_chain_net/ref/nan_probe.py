@@ -69,7 +69,7 @@ for epoch in range(n_epoch):
             print("epoch %d step %d NON-FINITE LOSS video %.3f block %.3f contrast %.3f density %.3f distill %.3f | u [%.1f,%.1f] log_rho min %.3f"
                   % (epoch + 1, step, lv, lb, lc, ld, lds, out["u"].min(), out["u"].max(), out["log_rho"].min()), flush=True)
             sys.exit(0)
-        opt.zero_grad(); total.backward()
+        opt.zero_grad(); total.backward(retain_graph=True)
         gn = torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
         if not torch.isfinite(gn):
             print("epoch %d step %d NON-FINITE GRAD NORM %s | losses video %.3f block %.3f contrast %.3f density %.3f distill %.3f | log_rho min %.4g max %.4g | y %s"
