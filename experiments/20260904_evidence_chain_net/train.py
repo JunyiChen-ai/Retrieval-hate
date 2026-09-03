@@ -65,7 +65,7 @@ DEFAULTS = {
     "hid_dim": 128, "ffn_dim": 128, "nhead": 4, "dropout": 0.2,
     "lr": 5e-4, "batch_size": 32, "max_epoch": 50, "max_seqlen": 200,
     "sched_tmax": 60, "crop_repeat": 5,
-    "block_weight": 1.0, "topk_div": 16,
+    "block_weight": 1.0, "topk_div": 16, "density_weight": 1.0,
     "contrast_weight": 1.0, "contrast_ramp_epochs": 10, "contrast_tau": 0.1,
     "contrast_max_normal": 256,
     # MACIL-SD AVCE fields (macilsd_encoder ablation only)
@@ -331,6 +331,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     contrast_mode = {"no_contrast": None, "contrast_self_topk": "self_topk",
                      "contrast_vlm_thresh": "vlm_thresh"}.get(ablation, "posterior")
     block_weight = 0.0 if ablation == "no_block_mil" else float(a.block_weight)
+    density_weight = 0.0 if ablation in ("no_density", "no_density_loss") else float(a.density_weight)
     opt = optim.Adam(model.parameters(), lr=a.lr)
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=a.sched_tmax)
     say("model params %d | model ablation %s | contrast %s | block weight %.1f | "
@@ -343,25 +344,27 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         t0 = time.time()
         model.train()
         lam_c = a.contrast_weight * min(1.0, epoch / float(a.contrast_ramp_epochs))
-        tot = np.zeros(6)
+        tot = np.zeros(7)
         nb = 0
         for batch in train_loader:
             batch = to_device(batch, device)
             out = model(batch)
             y = batch["label"]
             lv, lv_pos, lv_neg = video_loss(out, y)
+            ld = F.binary_cross_entropy_with_logits(out["d_logit"], y) if density_weight > 0 \
+                else torch.zeros((), device=device)
             lb = block_mil_loss(out, batch, a.topk_div) if block_weight > 0 \
                 else torch.zeros((), device=device)
             lc = contrast_loss(out, batch, contrast_mode, a.contrast_tau, a.topk_div,
                                a.contrast_max_normal) if (contrast_mode and lam_c > 0) \
                 else torch.zeros((), device=device)
-            total = lv + block_weight * lb + lam_c * lc
+            total = lv + block_weight * lb + lam_c * lc + density_weight * ld
             opt.zero_grad()
             total.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             opt.step()
             tot += [_scalar(lv), _scalar(lb), _scalar(lc), _scalar(out["d_v"].mean()),
-                    _scalar(lv_pos), _scalar(lv_neg)]
+                    _scalar(lv_pos), _scalar(lv_neg), _scalar(ld)]
             nb += 1
         sched.step()
         tot /= max(nb, 1)
@@ -369,13 +372,13 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         vm = frame_metrics(val_scores, val_gt, hate_ids)
         crit = (vm["pooled_ap"] + vm["pooled_roc"]) / 2.0
         history.append({"epoch": epoch + 1, "video": tot[0], "video_pos": tot[4],
-                        "video_neg": tot[5], "block": tot[1],
+                        "video_neg": tot[5], "block": tot[1], "density": tot[6],
                         "contrast": tot[2], "d_v_mean": tot[3], "val": vm,
                         "val_criterion": crit, "seconds": round(time.time() - t0, 1)})
         say("epoch %2d | video %.4f (pos %.4f neg %.4f) | block %.4f | contrast %.4f | "
-            "d_v %.3f | val AP %.4f ROC %.4f within %.4f | %.0fs"
-            % (epoch + 1, tot[0], tot[4], tot[5], tot[1], tot[2], tot[3], vm["pooled_ap"],
-               vm["pooled_roc"], vm["within_roc"], time.time() - t0))
+            "density %.4f | d_v %.3f | val AP %.4f ROC %.4f within %.4f | %.0fs"
+            % (epoch + 1, tot[0], tot[4], tot[5], tot[1], tot[2], tot[6], tot[3],
+               vm["pooled_ap"], vm["pooled_roc"], vm["within_roc"], time.time() - t0))
         if crit > best:
             best, best_epoch = crit, epoch + 1
             best_state = copy.deepcopy(model.state_dict())

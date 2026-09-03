@@ -1,4 +1,12 @@
-"""Evidence-chain network (README section 1, after the rule-4 review).
+"""Evidence-chain network (README section 1; revision 2 after the seed-234 screening, 2026-09-04).
+
+Revision-2 changes (README section 5): (i) the encoder also reads the verdict
+context columns [bf, bc, bfp, bfn, phi_f*n_w/3, phi_c/3] (the previous
+candidate showed the network needs the raw verdict sequence: revision 2 of
+hier_evidence_mil lost .036 without it); (ii) the density head is trained with
+BCE on the video label (its logit is returned as `d_logit`); (iii) reliability
+gates act only on fired verdicts (b = 1), so a gate can never delete the
+VLM's negative evidence.
 
 P1 content encoder (visual / audio-text projections, one temporal self-attention
    layer) + content evidence u_t
@@ -37,9 +45,11 @@ import dataset as ds                           # noqa: E402
 
 MODEL_ABLATIONS = ("full", "no_density", "density_bias", "density_content", "no_gate",
                    "gate_with_content", "no_content", "no_vlm", "indep", "flat_coarse",
-                   "topk_head", "macilsd_encoder", "no_text")
-LOSS_ABLATIONS = ("no_block_mil", "no_contrast", "contrast_self_topk", "contrast_vlm_thresh")
+                   "topk_head", "macilsd_encoder", "no_text", "no_vctx")
+LOSS_ABLATIONS = ("no_block_mil", "no_contrast", "contrast_self_topk", "contrast_vlm_thresh",
+                  "no_density_loss")
 ABLATIONS = MODEL_ABLATIONS + LOSS_ABLATIONS
+N_VCTX = 6                    # verdict-context columns fed to the encoder
 GATE_INIT_BIAS = 3.0          # sigmoid(3) = .953: gates start open (README constants table)
 D_LO, D_HI = 0.01, 0.99       # density bounds
 EPS = 1e-6
@@ -90,7 +100,8 @@ class EvidenceChainNet(nn.Module):
         else:
             self.proj_v = nn.Linear(ds.V_DIM, d)
             self.proj_at = nn.Linear(ds.F_A_DIM, d)
-            self.fuse = nn.Linear(2 * d, d)
+            self.proj_ctx = nn.Linear(N_VCTX, d)
+            self.fuse = nn.Linear(3 * d, d)
             self.enc = nn.TransformerEncoderLayer(d, nhead=int(cfg.nhead),
                                                   dim_feedforward=int(cfg.ffn_dim),
                                                   dropout=p, batch_first=True)
@@ -105,7 +116,7 @@ class EvidenceChainNet(nn.Module):
         self.gate_c = MLP(1 + 1 + n_ctx, d, 1, p, out_bias=GATE_INIT_BIAS)
 
     # ------------------------------------------------------------------ parts
-    def encode(self, f_v, f_a, mask):
+    def encode(self, f_v, f_a, mask, vctx):
         """returns fused h [B,T,d] and the two modality embeddings (for the contrast)."""
         if self.ablation == "no_text":
             f_a = torch.cat([f_a[..., :ds.A_DIM], torch.zeros_like(f_a[..., ds.A_DIM:])], -1)
@@ -115,7 +126,8 @@ class EvidenceChainNet(nn.Module):
             return h, v_out, a_out
         hv = self.proj_v(f_v)
         hat = self.proj_at(f_a)
-        h = self.fuse(torch.cat([hv, hat], -1))
+        hc = self.proj_ctx(vctx)
+        h = self.fuse(torch.cat([hv, hat, hc], -1))
         h = self.enc(h, src_key_padding_mask=~mask)
         return self.drop(h), hv, hat
 
@@ -128,7 +140,12 @@ class EvidenceChainNet(nn.Module):
         w, j = batch["w"], batch["j"]
         B, T = mask.shape
         abl = self.ablation
-        h, hv, hat = self.encode(f_v, f_a, mask)
+        vctx = torch.stack([batch["bf"], batch["bc"], batch["bfp"], batch["bfn"],
+                            batch["phi_f"] * batch["n_w"] / 3.0, batch["phi_c"] / 3.0], -1)
+        vctx = vctx * mask.unsqueeze(-1).float()
+        if abl == "no_vctx":
+            vctx = torch.zeros_like(vctx)
+        h, hv, hat = self.encode(f_v, f_a, mask, vctx)
         # P1 content evidence
         u = self.u_head(h).squeeze(-1)
         if abl == "no_content":
@@ -137,7 +154,8 @@ class EvidenceChainNet(nn.Module):
         dens_in = batch["profile"]
         if abl == "density_content":
             dens_in = torch.cat([dens_in, masked_mean(h, mask)], -1)
-        d_v = D_LO + (D_HI - D_LO) * torch.sigmoid(self.dens_head(dens_in)).squeeze(-1)
+        d_logit = self.dens_head(dens_in).squeeze(-1)
+        d_v = D_LO + (D_HI - D_LO) * torch.sigmoid(d_logit)
         d_chain = d_v
         if abl in ("no_density", "density_bias"):
             d_chain = torch.full_like(d_v, self.p0_hate)
@@ -155,6 +173,9 @@ class EvidenceChainNet(nn.Module):
         gc = torch.sigmoid(group_mean(self.gate_c(torch.cat(gin_c, -1)), j, ds.J, mask)).squeeze(-1)
         if abl == "no_gate":
             gf, gc = torch.ones_like(gf), torch.ones_like(gc)
+        # gates act on fired verdicts only: negative evidence (b = 0) is never scaled
+        gf = torch.where(batch["bf"] > 0.5, gf, torch.ones_like(gf))
+        gc = torch.where(batch["bc"] > 0.5, gc, torch.ones_like(gc))
         # VLM potentials
         phi_f, phi_c = batch["phi_f"], batch["phi_c"]
         if abl == "no_vlm":
@@ -166,8 +187,8 @@ class EvidenceChainNet(nn.Module):
             gf_chain, gc_chain = torch.ones_like(gf), torch.ones_like(gc)
         a_step = torch.ones(B, device=u.device, dtype=u.dtype) if abl == "indep" \
             else self.step_switching_rate(mask)
-        out = {"h": h, "hv": hv, "hat": hat, "u": u, "d_v": d_v, "gf": gf, "gc": gc,
-               "a_step": a_step}
+        out = {"h": h, "hv": hv, "hat": hat, "u": u, "d_v": d_v, "d_logit": d_logit,
+               "gf": gf, "gc": gc, "a_step": a_step}
         if abl == "topk_head":
             score = u + gf * phi_f * batch["n_w"] + gc * phi_c + torch.logit(d_v)[:, None]
             score = torch.where(mask, score, torch.full_like(score, -1e4))

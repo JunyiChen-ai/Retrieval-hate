@@ -106,3 +106,24 @@ x, b → P1 u_t，P2 d_v，P3 γ → P4 后验 p_t → logit 重采样到 1 fps�
 
 ## 4. 流程
 提案 → 规则 4 复核（fork 会话已在做文献预检 `docs/20260904_evidence_chain_backbone_novelty_precheck.md`）→ 实现（`src/` 放可复用的 torch 前向后向）→ 规则 6 code review → 两语料 seed 234 完整搜索 → 规则 8 筛选 → seed 2025/3407 → 三 seed 消融 → 规则 14。不做 smoke。
+
+## 5. seed 234 筛选与修订 2（2026-09-04）
+
+### 5.1 修订 1 的 seed 234 搜索（进行中时的诊断；完整结果见 5.2）
+HateMM（uoa-lab1）前 5 个 trial：test AP .44–.53、ROC .78–.80、within .54–.58，全部低于 within 下限 .632；val 却是 AP .74–.80 / ROC .87–.90（修订 1 的 hier_evidence_mil：val .73/.88 → test .66/.84）。HateClipSeg（uoa-lab3）前 11 个 trial：AP .63–.68、ROC .60–.66、within .39–.57。
+
+诊断（推理分析，不训练；`ref/`、scratch 脚本，输出见本节数字）：
+1. **片段格固定链 = 窗格 HMM**：u ≡ 0、门 ≡ 1、d = p0 的片段链在 val/test 上与修订 1 的窗格 HMM 后验一致（HateMM test .546/.813 对 .546/.819；HateClipSeg .694/.658 对 .699/.661），链的公式与实现没有问题。
+2. **密度头学反了**：训练后 d_v 对视频标签的 ROC 在 val/test 上是 .46 / .38（trial 1）、.15 / .08（trial 2），负例视频的 d_v 高于正例；而裁定分布的逻辑回归本身 val/test 视频 ROC .87 / .90。原因是边际似然目标的梯度不对称：证据强的正例（ρ→0）和负例（ρ→1）都没有梯度，只有证据弱的正例有，它们把"稀疏裁定分布 → 高密度"学进了密度头。
+3. **门被当作捷径**：trial 2 的门在未触发窗（b_f = 0）上关到 .004，在触发窗上 .76–.86：门把 VLM 的**否定证据**删掉，让正例的 ρ 更小；负例饱和后不抵抗。within 因此坍缩。
+4. **within 低于修订 1**：固定链的 within（HateMM test .575）本来就低于 hier_evidence_mil 骨干的 z（.646）；新骨干的 u_t 只看内容、不看裁定序列，学不到 hier_evidence_mil 骨干从原始裁定列学到的时间模式（该候选修订 2 去掉原始列掉 .036，正是这个信息），链的平滑又把 u 的视频内变化压平。
+
+### 5.2 修订 1 搜索完整结果
+（搜索完成后填写。）
+
+### 5.3 修订 2（规则 9 第 1/3 次修改）的三处改动与预注册
+1. **编码器读裁定上下文**：编码器输入增加 6 列 [b_f, b_c, b_f−1, b_f+1, 窗 LLR/3, 块 LLR/3]，u_t 成为"内容 + 裁定上下文"的网络证据（对应 hier_evidence_mil 的机制 5：网络需要原始裁定序列）。消融臂 no_vctx。
+2. **密度头由视频标签监督**：d_v 的 logit 加 BCE(视频标签)，权重 1；d_v 仍只读裁定分布、仍作链的平稳先验。消融臂 no_density_loss（只靠边际似然，即修订 1 的做法）、density_bias、no_density 不变。
+3. **门只作用于触发的裁定**：γ 只缩放 b = 1 的势能，b = 0 的否定证据不可缩放。门的语义从"可靠性"收窄为"阳性裁定的可靠性"，与机制 B（K30 单独触发不可信）一致。
+
+预注册预期：HateMM within 回到 ≥ .632（网络证据带裁定模式）；d_v 对 test 视频标签 ROC ≥ .85、与 GT 密度相关 > 0；门在 HateMM 的 (b_f=1, b_c=0) 格明显低于 (1,1) 格，HateClipSeg 两格接近；pooled 不低于 hier_evidence_mil 修订 1 减一个标准差（HateMM AP ≥ .644 / ROC ≥ .837、HateClipSeg AP ≥ .693 / ROC ≥ .665）。若 within 仍低于下限，链头作输出层的设计淘汰（回到"链作训练目标、网络证据作输出"的形式作第 2 次修改）。输出目录 `runs/20260904_evidence_chain_net_rev2/`。
