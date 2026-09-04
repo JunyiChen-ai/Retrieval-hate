@@ -10,7 +10,7 @@ official validation split, test scored through the shared evaluator.
         --corpus hatemm --seed 234 --out-dir runs/.../trial0 --config cfg.json
 
 --ablation (README section 3):
-  structure     full | avce | no_enc | evid_audio_only | no_cell | no_bias | no_context
+  structure     full | avce | stream_enc | no_qk_enc | no_cell | no_bias | scalar_bias | no_context
   training      mean_prior | no_block | no_prior | no_cmal | no_verdict
 """
 

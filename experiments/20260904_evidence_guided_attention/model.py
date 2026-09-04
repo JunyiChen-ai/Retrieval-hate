@@ -15,9 +15,13 @@ into the 896-dim audio+text vector and pass through fc_a.
 This backbone makes the three mechanisms explicit, ablatable parts:
 
   A  evidence encoding shared by both modalities: e_t = Emb[cell(b_fine_t,
-     b_coarse_t)] + W [ell_t / ELL_SCALE, P(s_t)] is ADDED to both projected
-     streams (like a positional encoding; the 2x2 agreement cell embedding is
-     the reliability correction of README 9.2 made explicit);
+     b_coarse_t)] + W [ell_t / ELL_SCALE, P(s_t)]. Revision 1 added it to both
+     residual streams (like a positional encoding) -- that made the bag loss
+     collapse onto the evidence within three epochs (README section 7).
+     Revision 2 adds it to the attention queries and keys only: the residual
+     streams and the attention values stay content-only, evidence decides
+     WHERE content is aggregated from, never replaces it. The 2x2 agreement
+     cell embedding is the reliability correction of README 9.2 made explicit;
   B  evidence-biased attention: the shared cross-modal layer adds, for every
      query of either modality, a per-head bias beta_h(e_j) on key second j,
      so both modalities attend to evidence-bearing seconds;
@@ -26,7 +30,8 @@ This backbone makes the three mechanisms explicit, ablatable parts:
 
 Arms (train.py --ablation): avce = candidate 1's backbone (verdicts
 concatenated into the audio stream, no A/B/C) under this file's training;
-no_enc / evid_audio_only / no_cell / no_bias / no_context switch A, D, B, C;
+no_qk_enc / no_cell / no_bias / no_context switch A, D, B, C; stream_enc is
+revision 1's residual-stream encoding (record only);
 scalar_bias (rule-4 review requirement) replaces beta_h(e_j) by one scalar
 gamma * ell_j / ELL_SCALE shared by all heads.
 Key padding is masked in the attention (candidate 1 / MACIL-SD did not).
@@ -43,7 +48,11 @@ import torch.nn.functional as F
 import hier_evidence_common as hc
 
 N_EVID = 4     # ell, p_s, b_fine, b_coarse
-STRUCT_ARMS = ("full", "avce", "no_enc", "evid_audio_only", "no_cell",
+# revision 2 (2026-09-04 18:40, README section 7): the evidence encoding enters
+# the attention QUERIES and KEYS only; the residual streams and the attention
+# values stay content-only. `stream_enc` = revision 1's full (e_t added to both
+# residual streams), `no_qk_enc` = revision 1's no_enc (e_t only via bias + context).
+STRUCT_ARMS = ("full", "avce", "stream_enc", "no_qk_enc", "no_cell",
                "no_bias", "scalar_bias", "no_context")
 
 
@@ -100,9 +109,11 @@ class EvidenceGuidedCMA(nn.Module):
     the query, residual + dropout, position-wise FFN) shared by both cross-modal
     directions, with the evidence bias on the key seconds (part B)."""
 
-    def __init__(self, hid, nhead, ffn, dropout, use_bias=True, scalar_bias=False):
+    def __init__(self, hid, nhead, ffn, dropout, use_bias=True, scalar_bias=False,
+                 qk_enc=True):
         super().__init__()
         self.nhead = nhead
+        self.qk_enc = bool(qk_enc)
         self.attn = BiasedMultiHeadAttention(nhead, hid)
         self.ff = nn.Sequential(nn.Linear(hid, ffn), nn.ReLU(), nn.Dropout(0.1),
                                 nn.Linear(ffn, hid))
@@ -123,7 +134,11 @@ class EvidenceGuidedCMA(nn.Module):
             kb = (self.gamma * ell)[:, None, :].expand(-1, self.nhead, -1)
         elif self.bias is not None and e is not None:
             kb = self.bias(e).transpose(1, 2)
-        h = x + self.drop(self.attn(self.norm_attn(x), y, y, key_bias=kb, key_mask=mask))
+        q_in, k_in = self.norm_attn(x), y
+        if self.qk_enc and e is not None:            # revision 2: evidence in q/k only
+            q_in = q_in + e
+            k_in = y + e
+        h = x + self.drop(self.attn(q_in, k_in, y, key_bias=kb, key_mask=mask))
         return h + self.drop(self.ff(self.norm_ff(h)))
 
     def forward(self, v, a, e, mask, ell=None):
@@ -151,7 +166,8 @@ class EGCA(nn.Module):
         self.enc = None if self.concat else EvidenceEncoder(hid, cell=(arm != "no_cell"))
         self.cma = EvidenceGuidedCMA(hid, nhead, ffn, dropout,
                                      use_bias=(arm not in ("avce", "no_bias")),
-                                     scalar_bias=(arm == "scalar_bias"))
+                                     scalar_bias=(arm == "scalar_bias"),
+                                     qk_enc=(arm not in ("avce", "stream_enc", "no_qk_enc")))
         self.ctx = nn.Linear(hid, hid) if arm not in ("avce", "no_context") else None
         self.fc = nn.Linear(hid, cfg.num_classes)      # shared head (Att_MMIL)
         self.last_content_logit = None
@@ -187,10 +203,9 @@ class EGCA(nn.Module):
         else:
             h_a = self.fc_a(content_a)
             e = self.enc(evid) * mask[..., None].float()
-            if self.arm != "no_enc":
+            if self.arm == "stream_enc":               # revision 1 design (record only)
                 h_a = h_a + e
-                if self.arm != "evid_audio_only":
-                    h_v = h_v + e
+                h_v = h_v + e
         v_out, a_out = self.cma(h_v, h_a, e, mask, ell=evid[..., hc.COL_ELL] * mask.float())
         if self.ctx is not None and e is not None:
             m = mask[..., None].float()

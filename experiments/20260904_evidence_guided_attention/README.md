@@ -70,3 +70,51 @@ python experiments/20260904_evidence_guided_attention/train.py --corpus hatemm -
 ## 6. 进度
 - 2026-09-04 10:20：提案、`model.py`/`train.py`/`search.py` 写完，七个结构臂前向/反向形状检查通过；等规则 4、规则 6 复核。
 - 2026-09-04 10:45：规则 6 code review PASS 无 BLOCKER（`REVIEW_RULE6.md`：avce 臂与候选 1 前向数值一致 ≤ 6e-8，无泄漏，共享评测器）。规则 4 复核 GO 6/10（`REVIEW_RULE4.md`）：四类都不触发；最近先例 A+B 合起来是 Graphormer（离散属性嵌入 + 逐头加性注意力偏置，这里把图结构换成 VLM 裁定），B 的谱系 ALiBi / T5 偏置 / Yang 2018 / MLLM4WTAL，C 最近 GIG-VAD / PEL4VAD；无先例用另一个模型的逐秒裁定作跨模态 key 偏置。必须项：加 `scalar_bias` 臂（已加）；novelty 表述为"裁定来源 + 2×2 粒度一致格子 + 一份共享证据编码经三个入口进弱监督跨模态 MIL 骨干"，不是"注意力偏置"本身；引用并对照 Graphormer、ALiBi、T5、Yang 2018、Lin 综述、MLLM4WTAL、GIG-VAD、PEL4VAD；相关工作对照 VLM 分段分数进 WSVAD/WTAL 的三种方式（伪标签损失 TPWNG/TFPLG/LAVAD、注意力调制 MLLM4WTAL、输入编码=本文）；主表保留 avce 臂、HMM 后验单独行、MultiHateLoc。搜索启动。
+
+### 6.1 修订 1 结果（2026-09-04；`runs/20260904_evidence_guided_attention/`）
+
+**HateClipSeg**（uoa-lab3，三 seed 各 20 trial，5/6/7 个被 within 下限剪掉；best trial 都在第 1 个 epoch 被选出）：
+
+| | AP / ROC / within | 对候选 1（.699 ± .006 / .681 ± .016 / .553） |
+|---|---|---|
+| seed 234 best（trial 19） | .693 / .659 / .549 | |
+| seed 2025 best（trial 12） | .689 / .660 / .555 | |
+| seed 3407 best（trial 12） | .700 / .660 / .554 | |
+| 三 seed 均值 | .694 ± .006 / .660 ± .000 / .553 | AP −.005、**ROC −.021（超过一个 std）** |
+| validation 选 trial 的 test | .681/.653/.538、.671/.630/.447、.692/.656/.536 | |
+
+规则 8 门过（.562/.528/.524），预注册第 2 条（不低于候选 1 减一个 std：ROC ≥ .665）**不成立**。
+
+三 seed 消融（每 seed 用该 seed best trial 超参；`ablations/hateclipseg/seed<seed>/<arm>/`）：
+
+| 臂 | 三 seed 均值 | 对 full（.694/.660/.553） | 选中 epoch |
+|---|---|---|---|
+| avce（候选 1 骨干，同训练） | .696 / .667 / .555 | +.002 / +.007 / +.003 | 3, 4, 1 |
+| no_enc（e_t 不进残差流） | .694 / .666 / .548 | .000 / +.006 / −.005 | 4, 1, 1 |
+| evid_audio_only | .692 / .665 / .550 | −.002 / +.005 / −.002 | 1, 7, 1 |
+| no_cell | .690 / .656 / .554 | −.004 / −.004 / +.001 | 1, 1, 1 |
+| no_bias | .696 / .661 / .556 | +.003 / +.001 / +.004 | 1, 1, 1 |
+| scalar_bias | .696 / .661 / .556 | +.003 / +.001 / +.004 | 1, 1, 1 |
+| no_context | .695 / .660 / .557 | +.002 / .000 / +.004 | 1, 1, 1 |
+| no_block | .674 / .652 / .559 | −.020 / −.007 / +.006 | |
+| no_prior | .673 / .654 / .540 | −.020 / −.006 / −.013 | |
+| no_cmal | .694 / .660 / .553 | .000 / .000 / .000（第 1 个 epoch CMAL 权重为 0，与 full 同一模型） | 1, 1, 1 |
+| mean_prior | .653 / .624 / .530 | −.040 / −.035 / −.023 | |
+| no_verdict | .584 / .556 / .529 | −.110 / −.104 / −.024 | |
+
+**HateMM**（uoa-lab1，三 seed 各 20 trial）：56/60 个 trial within 低于 .632 下限（seed 234、3407 全部 20 个被剪），没有有效 best；不看约束的最好 seed 234 .656/.840/.595（trial 8）、2025 .685/.862/.608（trial 5）、3407 .660/.843/.595（trial 17），within 最高 .629/.642/.612（候选 1 .646）。消融链因 best 为空未运行。
+
+**读法（修订 1 淘汰）**：修订 1 的骨干比候选 1 骨干（avce 臂）没有任何增益，所有结构臂差异在 ±.005 内；HateMM 上 pooled 持平但 within 掉 .05，破下限。原因看 validation 轨迹（三 seed 一致）：凡是 e_t 加进残差流的臂（full、no_bias、no_context、evid_audio_only、no_cell、scalar_bias）val ROC 从第 1 个 epoch 的 .74–.76 三个 epoch 内掉到 .66–.68，视频级 bag 损失同时下降一倍快（.52→.27 对 avce 的 .52→.43）；不进残差流的 avce、no_enc 保持 .75–.77（no_enc 3407 例外）。即：证据编码直接进内容表示后，网络一两个 epoch 内就靠证据把视频级 bag 拟合掉，跨视频的帧分数排序（pooled ROC）和视频内排序（HateMM within）随后退化；候选 1 之所以没这个问题，是裁定四列只占 fc_a 输入 902 维中的 4 维，初始化下贡献很小，相当于隐式的弱化。
+
+## 7. 修订 2（规则 9 第 1/3 次修改，2026-09-04 18:40）：证据只进注意力的 query/key，不进内容表示
+
+**改动（一处）**：`model.py` `EvidenceGuidedCMA.one`：q_in = LayerNorm(x) + e，k_in = y + e，**value 仍是 y**，残差流不加 e。证据编码 e_t 决定"内容从哪些秒聚合"（q/k 相似度里多出 content·e、e·content、e·e 三项），加上 B 的 key 偏置和 C 的视频级上下文；内容表示（CMAL 对比的对象、头的输入）保持纯内容。B、C、D、头、损失、搜索空间不变。
+
+**臂**：`full`（q/k 编码 + B + C）、`avce`（候选 1 骨干）、`stream_enc`（= 修订 1 full，只作记录）、`no_qk_enc`（= 修订 1 no_enc：证据只经 B、C）、`no_cell`、`no_bias`、`scalar_bias`、`no_context`、训练臂同前。`evid_audio_only` 删除（残差流不再加 e）。
+
+**预注册（可证伪）**：
+1. 规则 8 两语料 seed 234 过门；HateMM within 恢复到候选 1 水平（≥ .632，多数 trial 不被剪）。
+2. 三 seed：HateMM pooled AP 或 ROC 相对 avce 臂高 ≥ .005 且另一项不低；HateClipSeg 不低于 avce 臂；full 不低于候选 1 减一个 std（HateMM AP ≥ .644、ROC ≥ .837；HateClipSeg AP ≥ .693、ROC ≥ .665）。
+3. 若 (2) 在两语料都不成立：修订 2 淘汰，剩两次修改机会；若结构臂仍全部在 ±.005 内，本方向（把证据显式接进 AVCE 注意力）归档，换候选。
+
+输出 `runs/20260904_evidence_guided_attention_rev2/`；HateClipSeg 在 uoa-lab3，HateMM 在本机（GPU 空闲）。
