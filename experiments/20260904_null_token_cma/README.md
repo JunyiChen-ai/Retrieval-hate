@@ -325,3 +325,14 @@ HateClipSeg 上空 token 与普通 key 一样只拿 1/T 的注意力；token 的
 | HateClipSeg 2025 | trial 19 .697/.694/.548 | trial 19 .706/.698/.560 | .697/.695/.548 | .697/.695/.547 | .696/.696/.546 |
 
 读数：搜索 best 对候选 1 记录：HateMM 234 −.001/+.003，HateClipSeg 234 .000/−.001，HateClipSeg 2025 −.009/−.004。HateMM 同超参各臂差到 ±.05（full .605 对 null_token .660、const .569），远大于 HateClipSeg 的 ±.002，是 HateMM 超参敏感加单次流噪声，不作机制读数。预注册第 2 条（HateMM 与 HateClipSeg 都要 ≥ +.005）到目前没有一个 (语料, seed) 成立。
+
+### 8.4 修订 1 HateClipSeg 三 seed（uoa-lab3，2026-09-04 04:31–07:24 机器时间；`rev1/hateclipseg/seed<seed>/study_summary.json`、`rev1/ablations/hateclipseg/seed<seed>/<arm>/metrics.json`）
+
+| seed | null_token 搜索 best | 候选 1 记录 | 同超参 null_token_const | 同超参 masked_no_token | 同超参 full |
+|---|---|---|---|---|---|
+| 234 | .695/.678/.544 | .695/.679/.546 | .693/.679 | .695/.679 | .695/.679 |
+| 2025 | .697/.694/.548 | .706/.698/.560 | .697/.695 | .697/.695 | .696/.696 |
+| 3407 | .695/.671/.534 | .696/.666/.553 | .695/.672 | .689/.662 | .693/.668 |
+| 均值 | **.696 / .681 / .542** | .699 / .681 / .553 | .695/.682 | .694/.679 | .695/.681 |
+
+HateClipSeg 判定（第 8 节预注册第 2、3 条）：对候选 1 记录 −.003 AP / .000 ROC，within −.011；同超参四臂两两差 ≤ .003（seed 3407 masked_no_token −.006）。**空 token 在候选 1 的训练设置里对 HateClipSeg 没有作用**，与 8.2 的 +.014（无 EMA 设置）不能叠加。第 2 条 HateClipSeg 一侧不成立。
