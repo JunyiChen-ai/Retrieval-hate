@@ -67,6 +67,7 @@ import frame_eval_common as fec                        # noqa: E402
 import vlm_verdict                                     # noqa: E402
 import verdict_hmm                                     # noqa: E402
 import dataset as ds                                   # noqa: E402
+from null_token_cma import NullTokenKeys               # noqa: E402
 from hier_evidence_common import (  # noqa: E402,F401
     block_bag_loss, _scalar, _git_describe, usable, score_split, frame_metrics,
     write_scores, run_evaluator, fit_hmm, make_scaffold_fn)
@@ -101,7 +102,13 @@ ABLATIONS = ("full", "mean_prior", "indep_hmm", "flat_coarse", "no_block",
              "self_attn", "no_attn", "unshared_cma",
              # evidence-chain posterior distillation (2026-09-04): replaces the
              # EMA self-distillation (chain_distill) or is added to it (chain_distill_ema)
-             "chain_distill", "chain_distill_ema")
+             "chain_distill", "chain_distill_ema",
+             # candidate 4 revision 1 (2026-09-05): null-token keys on the shared
+             # cross-modal layer, everything else (partner EMA, CMAL weights,
+             # search space) exactly this file's `full`
+             "null_token", "null_token_const", "masked_no_token")
+NULL_TOKEN_ARMS = {"null_token": "evidence", "null_token_const": "const",
+                   "masked_no_token": "none"}
 # input-path column ranges zeroed per distillation ablation (f_a columns)
 HIDE_COLS = {
     "no_ps": [(ds.SCAF_OFFSET + ds.COL_PS, ds.SCAF_OFFSET + ds.COL_PS + 1)],
@@ -184,6 +191,20 @@ class Candidate(nn.Module):
             f_a_in[..., lo:hi] = 0.0
         if self.hide_visual:
             f_v = torch.zeros_like(f_v)
+        if getattr(self.av.cma, "needs_context", False):
+            # null-token arms: validity mask from seq_len and the video-level
+            # summary of the four verdict input columns (valid rows only; zero
+            # when the input path is hidden, like the columns themselves)
+            B, T = f_a_in.shape[:2]
+            if seq_len is None:
+                mask = torch.ones(B, T, dtype=torch.bool, device=f_a_in.device)
+            else:
+                mask = (torch.arange(T, device=f_a_in.device)[None, :]
+                        < seq_len.to(f_a_in.device)[:, None])
+            evid = f_a_in[..., ds.SCAF_OFFSET:ds.SCAF_OFFSET + ds.N_INPUT_SCAF]
+            m = mask[..., None].float()
+            c = (evid * m).sum(1) / m.sum(1).clamp(min=1.0)
+            self.av.cma.set_context(c, mask)
         mmil, a_log, v_log, av_log, v_out, a_out = self.av(f_a_in, f_v, seq_len)
         content_log = av_log
         ell = f_a[..., ds.SCAF_OFFSET + ds.COL_ELL:ds.SCAF_OFFSET + ds.COL_ELL + 1]
@@ -344,6 +365,13 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     elif ablation == "unshared_cma":
         model.av.cma = _UnsharedCMA(model.av.cma.layer).to(device)
     partner = Single_Model(a, n_dim=align.V_DIM).to(device)
+    if ablation in NULL_TOKEN_ARMS:
+        # created after model and partner so every parameter they share with the
+        # `full` run of the same seed is initialised identically; the wrapper keeps
+        # the attribute name `layer`, so distil_step's name matching is unchanged
+        # and the token parameters (no partner counterpart) are left out of the EMA
+        model.av.cma = NullTokenKeys(model.av.cma.layer, a.hid_dim,
+                                     token=NULL_TOKEN_ARMS[ablation]).to(device)
     criterion = nn.BCELoss()
     opt_av = optim.Adam(model.parameters(), lr=a.lr)
     opt_uni = optim.Adam(partner.parameters(), lr=a.lr * a.single_lr_scale)

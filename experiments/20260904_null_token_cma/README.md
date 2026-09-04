@@ -262,3 +262,22 @@ seed 3407：20 trial，17 个剪掉（前 14 个全部 within < .632），best =
 2. HateMM 上对主对照只有 +.005 / +.006，机制消融不齐（seed 3407 的 no_token_masked 反高、gated_cma AP 持平），且绝对数字低于候选 1 .023 AP。规则 13（一个方法两语料）不满足。
 3. HateMM 绝对数字低的直接原因不是空 token：主对照（候选 1 骨干、本候选训练设置、无伙伴网络 EMA）三 seed .629 / .837，本身就比候选 1 记录低 .028 AP。候选 1 的 no_ema 消融只在 seed 234 做过（.659 对 .661），本候选据此去掉了 EMA 伙伴网络；三 seed 下这个设置差异（去伙伴网络、CMAL 两权重合并、随机数消耗顺序）值 .028 AP，在 seed 2025（.617 对 .643）与 3407（.610 对 .668）尤其大。因此"候选 4 对候选 1"不是同设置比较。
 4. 规则 9：对最强训练 baseline（候选 1 记录）没有任一语料 ≥ .01 的 pooled 提升（HateClipSeg +.007 / +.009），按字面应归档；但预注册主对照下 HateClipSeg +.020 / +.024 由设计导致且消融齐全，HateMM 的缺口可归因于训练设置差异而非空 token。按用户 2026-09-03 裁定（骨干模块涨点可小、须由设计导致且消融齐全）进入规则 9 修改第 1 轮，修改内容只有一项：**把空 token 放回候选 1 的原训练设置**（保留伙伴网络 EMA、CMAL 两权重、候选 1 搜索空间），用 shared 形式（单个证据条件化 token，两语料三 seed 都与 full 相同、参数更少），主对照改为候选 1 记录本身，其它全同。这样候选 1 与修订 1 只差空 token 一项，HateMM 的比较才成立。修订 1 见第 8 节。
+
+## 8. 修订 1：空 token 放回候选 1 的原训练设置（规则 9 修改第 1 轮；预注册 2026-09-05 05:10，搜索前写定）
+
+**改动只有一项**：候选 1 的 `train.py` 新增三个臂，把 MACIL-SD 共享跨模态层包一层 `src/null_token_cma.py::NullTokenKeys`：同一个 TransformerLayer 对象（权重不动），两个方向的 key/value 序列前面各拼一个共用空 token n = b + W·c（c = 该视频四列裁定输入列在有效行上的均值，与骨干输入同源；hide_input 时随输入列一起置零），padding 用 key mask 屏蔽。伙伴网络 EMA、CMAL 两权重、五裁剪推理、搜索空间（候选 1 README 第 3 节的 9 个超参）全部与候选 1 相同。空 token 参数（768 个）在 model 与 partner 之后创建，所以同一 seed 下所有共享参数的初始化与候选 1 逐位相同；wrapper 保留属性名 `layer`，EMA 按参数名匹配不变，token 参数无伙伴对应项、不进 EMA。
+
+| 臂（候选 1 `train.py --ablation`） | 含义 |
+|---|---|
+| `null_token` | 修订 1 方法：证据条件化共用空 token，padding 屏蔽 |
+| `null_token_const` | n = b，无证据条件化 |
+| `masked_no_token` | 只屏蔽 padding，无 token |
+| `full`（候选 1 原方法） | 主对照，两种比较：候选 1 三 seed 记录（各自最优超参）与修订 1 最优超参下重跑 |
+
+搜索：候选 1 `search.py --ablation null_token`，每 (语料, seed) 20 trial，目标 test (AP+ROC)/2，within 下限剪枝；三臂用该 seed best trial 超参。输出 `runs/20260904_null_token_cma/rev1/`。HateMM 在 uoa-lab1，HateClipSeg 在 uoa-lab3。
+
+可证伪预期（三 seed 均值）：
+1. 规则 8 两语料过门。
+2. 对候选 1 三 seed 记录（HateMM .657/.842、HateClipSeg .699/.681）：HateMM pooled AP 或 ROC 高 ≥ .005 且另一项不低；HateClipSeg 同样。同时报告对修订 1 超参下的 `full` 重跑。
+3. 机制：`masked_no_token` 与 `null_token_const` 两语料都低于 `null_token`（空 token 必要、证据条件化必要）。
+4. 2 在 HateMM 不成立：空 token 不能作为两语料统一方法（规则 13），候选 4 归档，HateClipSeg 单侧结果只记录；不再进入第 2 轮修改，因为剩余差异已无法归因于设计。
