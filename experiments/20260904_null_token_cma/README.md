@@ -60,3 +60,23 @@ HateMM 在 uoa-lab1（空闲），HateClipSeg 在 uoa-lab3（候选 3 修订 2 �
 ## 6. 进度
 - 2026-09-04 20:45：规则 6 code review PASS 无 BLOCKER（`REVIEW_RULE6.md`：no_token_unmasked 与候选 1 前向逐位一致，含 dropout 状态）。规则 4 复核 GO 5/10（`REVIEW_RULE4.md`）：四类不触发；最近先例 Mask-Align 的 leaky attention（ACL 2021，可学习 k_NULL/v_NULL 拼在交叉注意力 K/V 前；`const_token` 臂即此形式）、Sukhbaatar 2019 persistent memory、PyTorch add_bias_kv、sink/register 谱系（Xiao 2023、Darcet 2023、gpt-oss、Bondarenko、Miller）、条件化形式同 CoCoOp；同任务最近先例 Leaky Gated Cross-Attention（Lee et al. WACV 2022，弱监督多模态 TAL 的逐帧门控）。novelty 只能表述为"诊断（padding 是训练有测试无的偶然空 token、屏蔽有害）+ 裁定条件化的空 token 来源 + 在弱监督跨模态 MIL 骨干上的验证"，不是"空 token"本身。必须项：加 `gated_cma`、`zero_value_sink` 两臂（已加）；引用并对照上述先例；`no_token_unmasked` 仍是主对照；padding 屏蔽本身不作主张。搜索启动。
 - 2026-09-04 20:10：提案、`model.py`（`NTCA`、`NullTokenCMA`）、`train.py`、`search.py`；五个结构臂前向/反向检查：token 拼在 key 位置 0，padding 屏蔽后 padding 注意力为 0，`no_token_unmasked` 与 MACIL-SD 相同（padding 注意力 .247 于随机输入）。等规则 4、规则 6 复核。
+
+### 6.1 HateMM seed 234 诊断与确定性检查（2026-09-04 21:30–22:05，本机；`runs/20260904_null_token_cma/diag/hatemm/seed234/`）
+
+用候选 1 seed 234 最优超参（trial 3，λ_cma 取 a2b/a2n 均值 .793）跑四个臂各一次（四个并行）：
+
+| 臂 | AP / ROC / within |
+|---|---|
+| full | .655 / .841 / .634 |
+| const_token | .654 / .843 / .646 |
+| no_token_unmasked（候选 1 骨干） | .636 / .842 / .654 |
+| no_token_masked | .625 / .825 / .643 |
+| 参照：候选 1 no_ema 臂（同超参，README 9.6） | .659 / .844 / .646 |
+
+同一设置串行重跑 3 次（GPU 上无其它任务）：no_token_unmasked 三次都是 .6358/.8416/.6536，full 三次都是 .6550/.8405/.6340，与并行跑的那次逐位相同。**训练是确定性的**，同一臂的数字不含单次随机波动；候选 1 骨干在本候选训练设置下比候选 1 自己记录的 no_ema 低 .023 AP，是设置差异（去掉伙伴网络改变了随机数消耗顺序、CMAL 两权重合并）造成的确定性偏移，不是噪声。因此 `no_token_unmasked` 是本候选内唯一有效的对照，候选 1 的记录数字只作参照；臂之间的比较仍要按协议看三 seed（每 seed 各自最优超参）的均值，因为超参点与 seed 的变化才是这里的主要方差来源（候选 1 三 seed AP std .013）。
+
+单点读数：空 token 相对屏蔽 padding +.030 AP / +.016 ROC，相对候选 1 骨干 +.019 AP / ROC 持平 / within −.020（const_token −.008）；证据条件化相对常量 token 无增益。
+
+### 6.2 HateMM seed 234 搜索（uoa-lab1，2026-09-04 20:07–21:49；`runs/20260904_null_token_cma/hatemm/seed234/`）
+
+20 trial，12 个被 within 下限剪掉。best = trial 13（epoch 14；lr 1e-3、max_seqlen 150、λ_cma .93、prior_scale 7.95、w_fine .03、λ_block .11）：**.646 / .860 / .639**；validation 选中的也是 trial 13。规则 8 门过。对候选 1 seed 234（.661/.841/.650）：AP −.015、ROC +.019。消融（trial 13 超参）陆续出：no_token_unmasked .660/.854/.641（full 对它 −.014 / +.006 / −.002）。
