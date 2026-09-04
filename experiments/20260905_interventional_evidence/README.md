@@ -47,3 +47,19 @@ I3D/VGGish/BERT投影为内容token；干预证据投影为局部证据token。�
 - RAMF/MARS/MATCH/CLARA已占用宽泛的证据推理、VLM引导及融合主张，不能以三段式命名声称首次范式。具体差异与有效性待实验。
 - 输入抽取固定max_pixels=151200、每窗4帧、Yes/No单token条件分布、空白RGB=(0,0,0)；所有固定设计参数与三维搜索空间分别报告。
 - 启动检查发现HateMM validation的 `non_hate_video_559`、`non_hate_video_585` 无已有ASR（K30/K4），原裁定脚本也是空转录回退。新抽取保留样本，提示为transcript absent并在`input_coverage.json`及各视频输出显式标记，不声称已观测无语音。首次抽取在任何VLM推理前退出；修复后恢复，不评价方法。
+
+## 5. 实现与运行记录
+
+训练入口 `train.py`，搜索入口 `search.py`；共享搜索协议 `src/fixed_optuna_protocol.py`，完整50epoch、Adam及cosine T_max=50、5crop，与提案固定参数一致。核心替换臂及full_input_only/four_logits/no_interaction/no_block/dempster_fusion均已实现；最强baseline+同输入对照尚未实现，不能宣布整体目标完成。冻结VLM输入抽取依规则5先行，训练须等唯一[code review](REVIEW_RULE6.md)修复确认与输入完成。
+
+2026-09-05 code review识别Qwen默认repetition_penalty=1.05，而v1读取generate的processed scores。两机v1抽取已人工停止，已有缓存移到 `data/interventional_evidence_v1/<corpus>/` 保留，旧日志保留；不作为方法失败。v2改读`output_logits=True`的原始`out.logits`，新版本字符串与训练端严格检查防止混用，输出重新写 `data/interventional_evidence/`，运行目录 `runs/20260905_interventional_evidence/extract_<corpus>_v2/`。旧完成monitor随任务停用，新任务重新绑定独立monitor。
+
+固定评测队列：HateMM train744/val109/test214（原test split215中`hate_video_427`无既有GT，沿用baseline排除）；HateClipSeg251/63/79。其它缺GT/缺特征均拒绝，不静默评测子集。补seed继承seed234的冻结trial预算，不按各机耗时改变。
+
+lab3准备覆盖核验：393个视频头可解析、两粒度ASR全覆盖、5个模型分片可解析。原视频混有webm，以 `scripts/prepare_hcs_video_links.py` 创建规范mp4别名，不转码、不删除原视频。依据：`runs/20260905_interventional_evidence/prepare_lab3/coverage.json`。
+
+运行命令（搜索尚未启动）：
+```bash
+python experiments/20260905_interventional_evidence/search.py --corpus hatemm --seed 234 --out-root runs/20260905_interventional_evidence
+python experiments/20260905_interventional_evidence/search.py --corpus hateclipseg --seed 234 --out-root runs/20260905_interventional_evidence
+```

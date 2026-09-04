@@ -15,7 +15,7 @@ from utils.generate_subclip_embedding_HF import load_video_frames
 import torch
 from PIL import Image
 
-VERSION = '2026-09-05 four-input evidence v1'
+VERSION = '2026-09-05 four-input evidence v2 raw logits'
 SYSTEM = (
     'Assess only the supplied video segment and its transcript. Hate evidence '
     'means attacking, dehumanising, demeaning, threatening or inciting against '
@@ -112,8 +112,8 @@ def main():
         prompt = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         inputs = processor(text=[prompt], videos=[frames], return_tensors='pt').to('cuda')
         out = model.generate(**inputs, max_new_tokens=1, do_sample=False,
-                             output_scores=True, return_dict_in_generate=True)
-        pair = out.scores[0][0, token_ids].float()
+                             output_logits=True, return_dict_in_generate=True)
+        pair = out.logits[0][0, token_ids].float()
         lp = pair.log_softmax(0)
         return float(pair[1] - pair[0]), float(-(lp.exp() * lp).sum())
 
