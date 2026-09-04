@@ -80,3 +80,30 @@ HateMM 在 uoa-lab1（空闲），HateClipSeg 在 uoa-lab3（候选 3 修订 2 �
 ### 6.2 HateMM seed 234 搜索（uoa-lab1，2026-09-04 20:07–21:49；`runs/20260904_null_token_cma/hatemm/seed234/`）
 
 20 trial，12 个被 within 下限剪掉。best = trial 13（epoch 14；lr 1e-3、max_seqlen 150、λ_cma .93、prior_scale 7.95、w_fine .03、λ_block .11）：**.646 / .860 / .639**；validation 选中的也是 trial 13。规则 8 门过。对候选 1 seed 234（.661/.841/.650）：AP −.015、ROC +.019。消融（trial 13 超参）陆续出：no_token_unmasked .660/.854/.641（full 对它 −.014 / +.006 / −.002）。
+
+### 6.3 HateMM seed 234 全部臂（uoa-lab1，2026-09-04 21:50–22:41；`runs/20260904_null_token_cma/ablations/hatemm/seed234/`）
+
+全部用 trial 13 超参。数字来自各臂 `metrics.json`。
+
+| 臂 | AP / ROC / within | 对 full |
+|---|---|---|
+| full | .646 / .860 / .639 | — |
+| no_token_unmasked（候选 1 骨干，主对照） | .660 / .854 / .641 | +.014 / −.006 / +.002 |
+| no_token_masked | .605 / .842 / .636 | −.041 / −.018 / −.003 |
+| const_token | .623 / .839 / .646 | −.023 / −.021 / +.007 |
+| shared_token | .662 / .851 / .643 | +.016 / −.009 / +.004 |
+| zero_value_sink | .631 / .846 / .647 | −.015 / −.014 / +.008 |
+| gated_cma | .635 / .838 / .645 | −.011 / −.022 / +.006 |
+| no_input | .603 / .814 / .638 | −.043 / −.046 / −.001 |
+| no_block | .662 / .846 / .646 | +.016 / −.014 / +.007 |
+| no_prior | .592 / .837 / .616 | −.054 / −.023 / −.023 |
+| mean_prior | .618 / .824 / .606 | −.028 / −.036 / −.033 |
+| no_cmal | .645 / .840 / .643 | −.001 / −.020 / +.004 |
+| no_verdict | .524 / .773 / .587 | −.122 / −.087 / −.052 |
+
+单 seed 读数（判定等三 seed）：
+- 屏蔽 padding 且不给空 token 最差（−.041 AP），与诊断一致：候选 1 骨干靠 padding 当空 token。
+- full 对候选 1 骨干 AP 低 .014、ROC 高 .006；预注册第 2 条（pooled 一项高 ≥ .005 且另一项不低）在此 seed 不成立。
+- 机制链 `no_token_masked` < `zero_value_sink` ≤ `const_token` < full 不成立：zero_value_sink (.631) 高于 const_token (.623)，shared_token (.662) 高于 full。按 seed 234，空 token 有用但"证据条件化"和"每模态独立 token"都没有增益，最简单的 shared_token 与候选 1 骨干持平。
+- gated_cma 低于 full（−.011 AP / −.022 ROC），逐行门控在此 seed 不如空 key。
+- 输入路径各臂（no_prior、mean_prior、no_verdict、no_input）方向与候选 1 一致。
