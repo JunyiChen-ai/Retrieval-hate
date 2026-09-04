@@ -43,6 +43,7 @@
 - **一次性抽取/打分输出**（MLLM 裁定、gt jsonl 等）进 `data/<类型>/` 并写 `PROVENANCE.md`，或进 `runs/<exp_id>/`；不得用 `--out_dir ~/xxx`。
 - **第二份 checkout**：只允许命名 `~/Retrieval-hate-<分支名>`，只用于分支代码，输出仍写主仓库 `runs/`、`data/`；分支合入 main 后立即删除该 checkout 与本机 `git worktree`。
 - 环境安装日志（conda/pip）写 `runs/_setup_<机器>/`。
+- 检查：`bash scripts/check_layout.sh` 列出三台机器的 commit、脏文件数、`~` 下不该有的条目；每次开跑前和汇报前跑一次，输出有 STRAY 或 commit 不一致就先处理。
 
 ## Agent 调用
 - 所有通过 Agent 工具 spawn 的子 agent（proposal review、code review、general-purpose、Explore 等）一律指定 `model: fable`（Claude Fable 5.1），不得降级到 sonnet/haiku/opus。
