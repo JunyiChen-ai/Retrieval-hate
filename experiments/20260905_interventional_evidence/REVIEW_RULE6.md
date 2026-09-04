@@ -42,3 +42,13 @@
 - Optuna使用每seed固定TPE、test AP/ROC目标、within剪枝并保留输出；validation选trial参考包含有完整输出的pruned trial。失败/遗留RUNNING会拒绝自动resume，正常resume保留sampler状态和已消耗trial数，无自动重复旧trial。
 
 最强baseline+同输入尚未实现，三seed模块替换结果尚无；这是完整目标缺口，不是当前全方法训练的额外门。修复本记录的问题也不等于三模块novelty或整体paradigm已成立。
+
+## 修复确认：GO（2026-09-05）
+
+本次仅回看上述三项修复，不重开review，未执行任何训练或测试。
+
+1. 抽取已改为`output_logits=True`与`out.logits[0]`，版本为`2026-09-05 four-input evidence v2 raw logits`；训练读取新缓存时严格检查此版本。主agent已报告停止两机旧抽取、隔离v1缓存并记录README；v2同步与实际运行由主agent核验，不将旧缓存视为新版本。
+2. 训练保留固定split，只允许既有`hate_video_427`无GT排除，显式检查val/test等于完整GT名单，全部所需baseline特征缺失时报错；最终评测结果检查完整视频数。静默缩小队列的问题已修复。
+3. 非234 seed要求存在同语料seed234预算并继承，现存预算不一致即停止；不再按确认seed自身耗时重新选择5/20。
+
+结论：本次列出的实现阻断已修复，GO。完成v2输入覆盖与多机同步后可直接执行正式完整训练；此GO不证明实验成功或novelty成立。
