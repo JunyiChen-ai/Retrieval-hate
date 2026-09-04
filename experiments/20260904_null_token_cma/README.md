@@ -139,3 +139,32 @@ HateMM 在 uoa-lab1（空闲），HateClipSeg 在 uoa-lab3（候选 3 修订 2 �
 - 输入路径各臂方向与候选 1 一致。
 
 两语料 seed 234 合并读数（判定仍等三 seed）：证据条件化空 token 在 HateClipSeg 上 +.030/+.027，在 HateMM 上 −.014/+.006；const_token 两语料都低于 full 约 .02 AP；shared_token 两语料都不低于 full。若三 seed 维持此模式，方法主张应改为"单个证据条件化空 token"（shared 形式），full 的按模态分不作主张。
+
+### 6.5 HateClipSeg seed 2025 搜索与全部臂（uoa-lab3，2026-09-04 23:14–2026-09-05 00:15；`runs/20260904_null_token_cma/hateclipseg/seed2025/`、`ablations/hateclipseg/seed2025/`）
+
+20 trial，6 个被 within 下限剪掉。best = trial 4（epoch 3；lr 3.3e-4、max_seqlen 150、λ_cma 1.20、prior_scale 4.13、w_fine .92、λ_block .21）：**.707 / .685 / .550**。规则 8 门过。对候选 1 seed 2025（.700 / .678 / .556，候选 1 README 主表）：AP +.007、ROC +.007。
+
+全部臂用 trial 4 超参：
+
+| 臂 | AP / ROC / within | 对 full |
+|---|---|---|
+| full | .707 / .685 / .550 | — |
+| no_token_unmasked（候选 1 骨干，主对照） | .695 / .666 / .554 | −.012 / −.020 / +.004 |
+| no_token_masked | .695 / .666 / .554 | −.012 / −.020 / +.004 |
+| const_token | .695 / .666 / .554 | −.012 / −.020 / +.003 |
+| shared_token | .706 / .684 / .551 | −.001 / −.001 / .000 |
+| zero_value_sink | .691 / .657 / .552 | −.016 / −.029 / +.002 |
+| gated_cma | .692 / .659 / .551 | −.015 / −.026 / +.001 |
+| no_input | .706 / .685 / .559 | −.001 / .000 / +.008 |
+| no_block | .694 / .662 / .553 | −.013 / −.024 / +.003 |
+| no_prior | .649 / .647 / .550 | −.058 / −.038 / .000 |
+| mean_prior | .668 / .664 / .523 | −.039 / −.021 / −.028 |
+| no_cmal | .693 / .663 / .551 | −.013 / −.022 / .000 |
+| no_verdict | .597 / .570 / .535 | −.109 / −.116 / −.016 |
+
+单 seed 读数：
+- max_seqlen 150 下 HateClipSeg 片段无 padding，no_token_masked 与 no_token_unmasked 逐位相同（.69481/.6655）。const_token 与它们只差第五位小数（.69482/.66553）：常量 token 在此设置下学成了没有作用的位置。
+- full 对候选 1 骨干 +.012 AP / +.020 ROC；shared_token 与 full 相同（−.001）。
+- **与 seed 234 不一致的一点**：no_input（裁定四列不拼入输入、c 置零，即空 token 只剩常量）.706/.685，与 full 相同。也就是说 seed 2025 这个超参点上（w_fine .92，先验路径占主导），去掉输入路径不掉分，而 const_token（保留输入路径、去掉条件化）掉 .012/.020。这两个臂都没有证据条件化，一个与 full 持平、一个低 .012，说明此 seed 上 .01–.02 的差异不能单独归因于证据条件化；"证据条件化是增益来源"要看三 seed 均值是否稳定高于 const_token。
+- zero_value_sink、gated_cma 都低于 full（−.016 / −.015 AP）。
+- no_prior、mean_prior、no_verdict 方向与候选 1 一致；no_block、no_cmal 各 −.013。
