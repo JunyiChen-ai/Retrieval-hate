@@ -283,3 +283,19 @@ seed 3407：20 trial，17 个剪掉（前 14 个全部 within < .632），best =
 4. 2 在 HateMM 不成立：空 token 不能作为两语料统一方法（规则 13），候选 4 归档，HateClipSeg 单侧结果只记录；不再进入第 2 轮修改，因为剩余差异已无法归因于设计。
 
 规则 6 review PASS 无 BLOCKER（`REVIEW_RULE6_REV1.md`，2026-09-05 05:40）。review 的非阻断意见：token 的条件化线性层初始化会消耗全局随机数，使空 token 臂的数据顺序与 dropout 抽样和同 seed `full` 不同。已改：创建该层时保存并恢复全局随机数状态（`src/null_token_cma.py`），空 token 臂与同 seed `full` 的数据顺序、dropout 抽样一致。搜索启动：HateMM uoa-lab1、HateClipSeg uoa-lab3。
+
+### 8.1 修订 1 HateClipSeg seed 234 与诊断（2026-09-05 05:15–06:00；`runs/20260904_null_token_cma/rev1/hateclipseg/seed234/`、`diag/hateclipseg/seed234/stream_noise/`）
+
+修订 1 搜索（候选 1 训练 + 空 token）：best = trial 8，.695 / .678 / .544；TPE 抽到的 20 组超参与候选 1 seed 234 的搜索逐 trial 相同，每个 trial 的 test 数字与候选 1 相差 ±.001–.008。三臂（trial 8 超参）：null_token_const .693/.679/.543、masked_no_token .695/.679/.546、full .695/.679/.546（= 候选 1 记录 trial 8）。**在候选 1 的训练设置里空 token 没有作用。**
+
+诊断 1：测试时空 token 拿到的注意力（`diag_token_mass.py`，crop 0，全序列，对有效 query 平均）：
+
+| 模型 | 视觉 query | 音频 query | 对照 1/T |
+|---|---|---|---|
+| 候选 4 HateClipSeg seed 234 trial 15 | .0033 | .0032 | .0028（T 中位 355） |
+| 候选 4 HateMM seed 234 trial 13 | .046 | .133（.9% 的 query 超过 .5，单视频最高 .44） | .0057（T 中位 175） |
+| 修订 1 HateClipSeg seed 234 trial 8 | .0028 | .0028 | .0028 |
+
+HateClipSeg 上空 token 与普通 key 一样只拿 1/T 的注意力；token 的 value 范数也只是普通行的 1.5 倍，按 1/T 加权后对每个 query 的贡献是普通 key 的 .4%。**HateClipSeg 上"不看另一模态"的机制在测试时不存在**；HateMM 上存在（音频 query 平均 13%，与候选 1 训练时 padding 吃掉 .25 注意力一致）。
+
+诊断 2：随机数流噪声。候选 4 full 臂、trial 15 超参不变，只把全局随机数流在 seed 后推进 1–4 步（`train.py` 的 `rng_burn`），4 次：.688/.679、.694/.692、.701/.696、.695/.681，均值 .694 / .687 / .551；搜索选出的 .702 / .687 在这 4 次之上 .008 AP（test 选 best trial 的选择偏差量级）。同超参对照臂 no_token_unmasked .672 / .660 比这 4 次的最低值还低 .016，单靠随机数流噪声解释不了。对照臂的随机数流重复（no_token_unmasked、no_token_masked 各 4 次）进行中；若对照臂重复均值仍在 .67 附近，空 token 在候选 4 训练设置里的作用发生在训练过程而非测试时注意力；若回到 .69，候选 4 的 HateClipSeg 增益就是选择偏差与设置噪声。
