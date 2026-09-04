@@ -83,6 +83,11 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                    "hparams": cfg, "device": device}, fh, indent=2)
 
     runtime.setup_seed(seed)
+    # diagnostic only (README 8.1): advance the global RNG by `rng_burn` draws after
+    # seeding, so the same arm and hparams run on a different random stream (init,
+    # data order, dropout) -- measures how much of an arm difference is stream noise
+    for _ in range(int(cfg.get("rng_burn", 0))):
+        torch.rand(1)
     labels = hdata.load_labels(corpus)
     train_ids = hc.usable(corpus, hdata.load_split(corpus, "train"))
     val_gt = hdata.gt_arrays(corpus, "val")
