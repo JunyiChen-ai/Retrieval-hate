@@ -1,5 +1,7 @@
 # 候选 4：空 token 跨模态注意力骨干（Null-Token Cross-Modal Attention，2026-09-04 20:10 提案）
 
+已淘汰（2026-09-05）：修订 1 三 seed 未达到相对候选 1 的预注册提升，HateClipSeg 结构消融不支持空 token；不进入下一次修改。
+
 上游：候选 1 `experiments/20260903_hier_evidence_mil/`（修订 1，两语料规则 8 确认；用户裁定"骨干架构没改，不能作论文方法"）。候选 3 `experiments/20260904_evidence_guided_attention/`（证据引导注意力）两次修订后归档，本候选来自它的诊断（其 README 7.1）。模块 3（HMM 先验）、块级 MIL、CMAL、裁定四列拼入音频流的输入路径、搜索协议全部沿用；EMA 与伙伴网络删除（候选 1 no_ema 两语料 ≈ 0）；搜索超参 6 个。
 
 ## 0. 出发点：候选 1 的跨模态注意力靠一个训练时有、测试时没有的空 token（test 作 developmental evidence）
@@ -336,3 +338,14 @@ HateClipSeg 上空 token 与普通 key 一样只拿 1/T 的注意力；token 的
 | 均值 | **.696 / .681 / .542** | .699 / .681 / .553 | .695/.682 | .694/.679 | .695/.681 |
 
 HateClipSeg 判定（第 8 节预注册第 2、3 条）：对候选 1 记录 −.003 AP / .000 ROC，within −.011；同超参四臂两两差 ≤ .003（seed 3407 masked_no_token −.006）。**空 token 在候选 1 的训练设置里对 HateClipSeg 没有作用**，与 8.2 的 +.014（无 EMA 设置）不能叠加。第 2 条 HateClipSeg 一侧不成立。
+
+### 8.5 最终核验与归档（2026-09-05 11:00）
+
+两语料每 seed 20 trial，共120个 trial 的 evaluator `metrics.json` 均可解析，与搜索记录数字一致；18项消融输出齐全。HateMM 远端链10:54结束，结果已回传。核验脚本 `scripts/analysis/audit_search_outputs.py`；转录汇总 `runs/20260904_null_token_cma/rev1/artifact_audit.json`，来源仍为各 trial/消融的 `metrics.json`。标准差采用 ddof=1。
+
+| 语料 | 修订1三seed（AP / ROC / within，均值±std） | validation选trial的test均值 | const / masked / 原骨干 三seed AP均值 |
+|---|---|---|---|
+| HateMM | .644±.025 / .840±.004 / .642±.007 | .611 / .825 / .627 | .593 / .626 / .609 |
+| HateClipSeg | .696±.001 / .681±.012 / .542±.007 | .686 / .664 / .538 | .695 / .694 / .695 |
+
+相对候选1记录：HateMM AP −.014、ROC −.002；HateClipSeg AP −.003、ROC约0。按本轮预注册第2/4项归档；HateClipSeg模块消融同时不满足规则14(g)。HateMM在full最优超参下的去模块掉分不等于方法相对各自完整搜索的优势。当前结果不支持三模块novelty或新范式，不能作为目标完成依据。
