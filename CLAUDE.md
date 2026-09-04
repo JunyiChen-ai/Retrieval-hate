@@ -37,6 +37,13 @@
 - 每个 run 的 `run.log` 首行与实验 README 写明运行主机名。
 - 远程长任务同样 `nohup`/`setsid`，PID 与日志写进 run 目录；本机用 `ssh <别名> tail -f` 看进度。
 
+### 文件落位（2026-09-04 补，三台机器同一规则；违规记录：此前链脚本与 MLLM 输出散落在各机 `~`，已挪到 `runs/_home_stray_20260904/`）
+- **家目录 `~` 只放**：`~/data`（原始视频）、`~/miniconda3`、`~/Retrieval-hate`。任何脚本、日志、`.out`、打分输出、gt 文件都不得写到 `~` 或仓库外。
+- **启动/链脚本**进 git：`experiments/<id>/launch/run_<corpus>_<机器>.sh`，三台机器用同一份（`git pull` 后运行），不得在 `~` 或 scratchpad 里留独立副本运行。启动方式：`cd ~/Retrieval-hate && setsid nohup bash experiments/<id>/launch/run_<corpus>_<机器>.sh > runs/<exp_id>/launch_<corpus>.out 2>&1 &`；链日志、`search.pid`、DONE 标记全部在 `runs/<exp_id>/`。
+- **一次性抽取/打分输出**（MLLM 裁定、gt jsonl 等）进 `data/<类型>/` 并写 `PROVENANCE.md`，或进 `runs/<exp_id>/`；不得用 `--out_dir ~/xxx`。
+- **第二份 checkout**：只允许命名 `~/Retrieval-hate-<分支名>`，只用于分支代码，输出仍写主仓库 `runs/`、`data/`；分支合入 main 后立即删除该 checkout 与本机 `git worktree`。
+- 环境安装日志（conda/pip）写 `runs/_setup_<机器>/`。
+
 ## Agent 调用
 - 所有通过 Agent 工具 spawn 的子 agent（proposal review、code review、general-purpose、Explore 等）一律指定 `model: fable`（Claude Fable 5.1），不得降级到 sonnet/haiku/opus。
 - 用户可能要求单独 spawn 一个 agent 并直接交代任务；主 agent 先 spawn 待命，再用 SendMessage 把用户的任务原文转给它。
