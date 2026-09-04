@@ -281,3 +281,5 @@ seed 3407：20 trial，17 个剪掉（前 14 个全部 within < .632），best =
 2. 对候选 1 三 seed 记录（HateMM .657/.842、HateClipSeg .699/.681）：HateMM pooled AP 或 ROC 高 ≥ .005 且另一项不低；HateClipSeg 同样。同时报告对修订 1 超参下的 `full` 重跑。
 3. 机制：`masked_no_token` 与 `null_token_const` 两语料都低于 `null_token`（空 token 必要、证据条件化必要）。
 4. 2 在 HateMM 不成立：空 token 不能作为两语料统一方法（规则 13），候选 4 归档，HateClipSeg 单侧结果只记录；不再进入第 2 轮修改，因为剩余差异已无法归因于设计。
+
+规则 6 review PASS 无 BLOCKER（`REVIEW_RULE6_REV1.md`，2026-09-05 05:40）。review 的非阻断意见：token 的条件化线性层初始化会消耗全局随机数，使空 token 臂的数据顺序与 dropout 抽样和同 seed `full` 不同。已改：创建该层时保存并恢复全局随机数状态（`src/null_token_cma.py`），空 token 臂与同 seed `full` 的数据顺序、dropout 抽样一致。搜索启动：HateMM uoa-lab1、HateClipSeg uoa-lab3。

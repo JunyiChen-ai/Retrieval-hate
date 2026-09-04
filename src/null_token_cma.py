@@ -43,7 +43,13 @@ class NullTokenKeys(nn.Module):
         self.size = layer.size
         self.token = token
         self.base = nn.Parameter(torch.zeros(1, hid)) if token != "none" else None
-        self.cond = nn.Linear(N_EVID, hid) if token == "evidence" else None
+        self.cond = None
+        if token == "evidence":
+            # keep the global RNG stream identical to the run without the token,
+            # so data order and dropout draws match the same-seed `full` arm
+            state = torch.get_rng_state()
+            self.cond = nn.Linear(N_EVID, hid)
+            torch.set_rng_state(state)
         self.context = None
         self.mask = None
 
