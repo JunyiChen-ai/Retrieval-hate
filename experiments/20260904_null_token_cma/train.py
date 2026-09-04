@@ -10,7 +10,7 @@ official validation split, test scored through the shared evaluator.
         --corpus hatemm --seed 234 --out-dir runs/.../trial0 --config cfg.json
 
 --ablation (README section 3):
-  structure     full | const_token | shared_token | no_token_masked | no_token_unmasked
+  structure     full | const_token | shared_token | no_token_masked | no_token_unmasked | zero_value_sink | gated_cma
   training      mean_prior | no_block | no_prior | no_cmal | no_verdict | no_input
 """
 

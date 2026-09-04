@@ -34,6 +34,8 @@ n_m = b_m + W_m · c，c = 有效行上裁定四列 [ℓ_t/L, P(s_t), b_fine_t, 
 | `no_token_masked` | 屏蔽 padding、无 token | 空 token 是否必要（预期两语料都降，HateMM 明显） |
 | `const_token` | n_m = b_m（无证据摘要） | 证据摘要经空 token 进入是否有贡献 |
 | `shared_token` | 两个 key 模态共用一个 token | 按模态分是否必要 |
+| `zero_value_sink` | 可学习空 key，value 固定为 0（纯"分母"空 token，gpt-oss 形式；规则 4 复核要求） | "什么都不看"是否只需要一个吸收注意力的位置；主张链 no_token_masked < zero_value_sink ≤ const_token < full |
+| `gated_cma` | 无 token、屏蔽 padding、注意力输出乘以按 query 算的逐行 sigmoid 门（最小形式的 Leaky Gated Cross-Attention，Lee et al. WACV 2022；规则 4 复核要求） | 空 key 形式是否优于"逐行门控"这个同任务先例；full 不低于它才能主张空 key 形式 |
 | `no_input` | 裁定四列不拼入输入（c 也置零，先验保留） | 输入路径（候选 1 结论：HateMM 必要） |
 | `no_block` / `no_prior` / `no_cmal` / `mean_prior` / `no_verdict` | 同候选 1 | 论文全表 |
 
@@ -46,6 +48,7 @@ n_m = b_m + W_m · c，c = 有效行上裁定四列 [ℓ_t/L, P(s_t), b_fine_t, 
 2. 三 seed：HateMM 相对 `no_token_unmasked` 臂 pooled AP 或 ROC 高 ≥ .005 且另一项不低；HateClipSeg 不低；full 不低于候选 1 减一个 std（HateMM AP ≥ .644、ROC ≥ .837；HateClipSeg AP ≥ .693、ROC ≥ .665）。
 3. 机制：`no_token_masked` 两语料三 seed pooled 都低于 full（空 token 必要）；`const_token` 低于 full 才能主张"证据摘要经空 token 进入"，否则只主张空 token 本身。
 4. (2) 两语料都不成立则按规则 9 修改（≤ 3 轮）或归档；若 `no_token_masked` 也不低于 full，说明空 token 不起作用，方向归档。
+5. 规则 4 复核追加：full 不低于 `gated_cma`（否则不能主张空 key 形式优于逐行门控）；`zero_value_sink` 与 `const_token` 之间的差决定"空 token 内容"是否可主张，`const_token` 与 full 之间的差决定"证据条件化"是否可主张。
 
 ## 5. 运行
 ```
@@ -55,4 +58,5 @@ python experiments/20260904_null_token_cma/train.py --corpus hatemm --seed 234 -
 HateMM 在 uoa-lab1（空闲），HateClipSeg 在 uoa-lab3（候选 3 修订 2 记录链结束后）；本机在跑候选 3 修订 2 HateMM 的记录搜索。共享代码 `src/hier_evidence_common.py`。
 
 ## 6. 进度
+- 2026-09-04 20:45：规则 6 code review PASS 无 BLOCKER（`REVIEW_RULE6.md`：no_token_unmasked 与候选 1 前向逐位一致，含 dropout 状态）。规则 4 复核 GO 5/10（`REVIEW_RULE4.md`）：四类不触发；最近先例 Mask-Align 的 leaky attention（ACL 2021，可学习 k_NULL/v_NULL 拼在交叉注意力 K/V 前；`const_token` 臂即此形式）、Sukhbaatar 2019 persistent memory、PyTorch add_bias_kv、sink/register 谱系（Xiao 2023、Darcet 2023、gpt-oss、Bondarenko、Miller）、条件化形式同 CoCoOp；同任务最近先例 Leaky Gated Cross-Attention（Lee et al. WACV 2022，弱监督多模态 TAL 的逐帧门控）。novelty 只能表述为"诊断（padding 是训练有测试无的偶然空 token、屏蔽有害）+ 裁定条件化的空 token 来源 + 在弱监督跨模态 MIL 骨干上的验证"，不是"空 token"本身。必须项：加 `gated_cma`、`zero_value_sink` 两臂（已加）；引用并对照上述先例；`no_token_unmasked` 仍是主对照；padding 屏蔽本身不作主张。搜索启动。
 - 2026-09-04 20:10：提案、`model.py`（`NTCA`、`NullTokenCMA`）、`train.py`、`search.py`；五个结构臂前向/反向检查：token 拼在 key 位置 0，padding 屏蔽后 padding 注意力为 0，`no_token_unmasked` 与 MACIL-SD 相同（padding 注意力 .247 于随机输入）。等规则 4、规则 6 复核。

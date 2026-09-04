@@ -32,6 +32,9 @@ Arms (train.py --ablation):
   shared_token       one null token for both key modalities
   no_token_masked    padding masked, no token (candidate 3's setting)
   no_token_unmasked  candidate 1 / MACIL-SD exactly (padding as accidental sink)
+  zero_value_sink    learnable null key, value fixed to zero (pure sink; rule-4 review)
+  gated_cma          no token, padding masked, per-row sigmoid gate on the attention
+                     output (minimal Leaky Gated Cross-Attention; rule-4 review)
 """
 
 from __future__ import annotations
@@ -46,7 +49,12 @@ import hier_evidence_common as hc
 
 N_EVID = 4
 STRUCT_ARMS = ("full", "const_token", "shared_token", "no_token_masked",
-               "no_token_unmasked")
+               "no_token_unmasked",
+               # rule-4 review arms: zero_value_sink = learnable null KEY with value 0
+               # (pure denominator sink, gpt-oss form); gated_cma = no token, padding
+               # masked, per-row sigmoid gate on the attention output (minimal
+               # Leaky Gated Cross-Attention, Lee et al. WACV 2022)
+               "zero_value_sink", "gated_cma")
 
 
 class MultiHeadAttention(nn.Module):
@@ -83,9 +91,10 @@ class NullTokenCMA(nn.Module):
     cross-modal directions. The key sequence of modality m is extended by the
     null token n_m (prepended at position 0); padded keys are masked."""
 
-    def __init__(self, hid, nhead, ffn, dropout, token="evidence", mask=True):
+    def __init__(self, hid, nhead, ffn, dropout, token="evidence", mask=True, gate=False):
         super().__init__()
-        assert token in ("evidence", "const", "shared", "none")
+        assert token in ("evidence", "const", "shared", "zero_value", "none")
+        self.gate = nn.Linear(hid, 1) if gate else None
         self.attn = MultiHeadAttention(nhead, hid)
         self.ff = nn.Sequential(nn.Linear(hid, ffn), nn.ReLU(), nn.Dropout(0.1),
                                 nn.Linear(ffn, hid))
@@ -102,6 +111,8 @@ class NullTokenCMA(nn.Module):
         else:
             self.base = nn.Parameter(torch.zeros(2, hid))        # [visual, audio]
             self.cond = nn.Linear(N_EVID, hid) if token == "evidence" else None
+            if token == "zero_value":
+                nn.init.normal_(self.base, std=0.02)              # key must not start identical to fc bias
 
     def null_token(self, which, c):
         """(B, 1, hid) null token of key modality `which` (0 visual, 1 audio)."""
@@ -116,11 +127,18 @@ class NullTokenCMA(nn.Module):
     def one(self, x, y, which_y, c, mask):
         n = self.null_token(which_y, c)
         keys = y if n is None else torch.cat([n, y], dim=1)
+        values = keys
+        if n is not None and self.token == "zero_value":
+            values = torch.cat([torch.zeros_like(n), y], dim=1)
         km = None
         if self.mask:
             km = mask if n is None else torch.cat(
                 [torch.ones(mask.shape[0], 1, dtype=torch.bool, device=mask.device), mask], dim=1)
-        h = x + self.drop(self.attn(self.norm_attn(x), keys, keys, key_mask=km))
+        q = self.norm_attn(x)
+        ctx = self.attn(q, keys, values, key_mask=km)
+        if self.gate is not None:
+            ctx = torch.sigmoid(self.gate(q)) * ctx
+        h = x + self.drop(ctx)
         return h + self.drop(self.ff(self.norm_ff(h)))
 
     def forward(self, v, a, c, mask):
@@ -144,9 +162,10 @@ class NTCA(nn.Module):
         self.fc_v = nn.Linear(hc.align.V_DIM, hid)
         self.fc_a = nn.Linear(hc.SCAF_OFFSET + N_EVID, hid)     # audio ⊕ text ⊕ 4 verdict columns
         token = {"full": "evidence", "const_token": "const", "shared_token": "shared",
-                 "no_token_masked": "none", "no_token_unmasked": "none"}[arm]
+                 "no_token_masked": "none", "no_token_unmasked": "none",
+                 "zero_value_sink": "zero_value", "gated_cma": "none"}[arm]
         self.cma = NullTokenCMA(hid, nhead, ffn, dropout, token=token,
-                                mask=(arm != "no_token_unmasked"))
+                                mask=(arm != "no_token_unmasked"), gate=(arm == "gated_cma"))
         self.fc = nn.Linear(hid, cfg.num_classes)               # shared head (Att_MMIL)
         self.last_content_logit = None
 
