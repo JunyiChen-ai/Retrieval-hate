@@ -159,6 +159,7 @@ class EGCA(nn.Module):
         self.no_verdict = bool(no_verdict)
         self.prior_scale = float(prior_scale)
         self.topk_div = int(cfg.topk_div)
+        self.key_mask = bool(cfg.get("key_mask", True))   # diagnostic: False = MACIL-SD's unmasked padded keys
         self.concat = arm == "avce"
         a_in = hc.SCAF_OFFSET + (N_EVID if self.concat else 0)
         self.fc_v = nn.Linear(hc.align.V_DIM, hid)
@@ -206,7 +207,8 @@ class EGCA(nn.Module):
             if self.arm == "stream_enc":               # revision 1 design (record only)
                 h_a = h_a + e
                 h_v = h_v + e
-        v_out, a_out = self.cma(h_v, h_a, e, mask, ell=evid[..., hc.COL_ELL] * mask.float())
+        v_out, a_out = self.cma(h_v, h_a, e, mask if self.key_mask else None,
+                                ell=evid[..., hc.COL_ELL] * mask.float())
         if self.ctx is not None and e is not None:
             m = mask[..., None].float()
             c = self.ctx((e * m).sum(1) / m.sum(1).clamp(min=1.0))      # (B, hid)
