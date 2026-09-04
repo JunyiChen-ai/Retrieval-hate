@@ -107,3 +107,35 @@ HateMM 在 uoa-lab1（空闲），HateClipSeg 在 uoa-lab3（候选 3 修订 2 �
 - 机制链 `no_token_masked` < `zero_value_sink` ≤ `const_token` < full 不成立：zero_value_sink (.631) 高于 const_token (.623)，shared_token (.662) 高于 full。按 seed 234，空 token 有用但"证据条件化"和"每模态独立 token"都没有增益，最简单的 shared_token 与候选 1 骨干持平。
 - gated_cma 低于 full（−.011 AP / −.022 ROC），逐行门控在此 seed 不如空 key。
 - 输入路径各臂（no_prior、mean_prior、no_verdict、no_input）方向与候选 1 一致。
+
+### 6.4 HateClipSeg seed 234 搜索与全部臂（uoa-lab3，2026-09-04 22:05–23:14；`runs/20260904_null_token_cma/hateclipseg/seed234/`、`ablations/hateclipseg/seed234/`）
+
+20 trial，2 个被 within 下限剪掉。best = trial 15（epoch 3；lr 2.3e-4、max_seqlen 300、λ_cma 1.70、prior_scale .96、w_fine .52、λ_block .57）：**.702 / .687 / .550**。规则 8 门过。对候选 1 seed 234（README 9.x 记录 .70/.68 量级）持平。
+
+全部臂用 trial 15 超参：
+
+| 臂 | AP / ROC / within | 对 full |
+|---|---|---|
+| full | .702 / .687 / .550 | — |
+| no_token_unmasked（候选 1 骨干，主对照） | .672 / .660 / .548 | −.030 / −.027 / −.002 |
+| no_token_masked | .673 / .661 / .548 | −.029 / −.026 / −.002 |
+| const_token | .680 / .668 / .551 | −.022 / −.019 / +.001 |
+| shared_token | .702 / .687 / .551 | .000 / .000 / +.001 |
+| zero_value_sink | .673 / .657 / .522 | −.029 / −.030 / −.028 |
+| gated_cma | .683 / .676 / .531 | −.019 / −.011 / −.019 |
+| no_input | .664 / .651 / .543 | −.038 / −.036 / −.007 |
+| no_block | .606 / .569 / .535 | −.096 / −.118 / −.015 |
+| no_prior | .667 / .660 / .535 | −.035 / −.027 / −.015 |
+| mean_prior | .683 / .675 / .536 | −.019 / −.012 / −.014 |
+| no_cmal | .682 / .666 / .533 | −.020 / −.021 / −.017 |
+| no_verdict | .582 / .567 / .527 | −.120 / −.120 / −.023 |
+
+单 seed 读数：
+- HateClipSeg 上 padding 屏蔽与否无差别（no_token_masked ≈ no_token_unmasked），与 HateMM 不同：HateClipSeg 片段短、max_seqlen 300 时 padding 占比小。
+- full 对候选 1 骨干 +.030 AP / +.027 ROC，within 持平；预注册第 2 条 HateClipSeg 一侧成立。
+- 机制链 no_token_masked (.673) < zero_value_sink (.673) ≤ const_token (.680) < full (.702)：成立（前两者持平）。纯吸收位置无增益，常量 token +.008，证据条件化再 +.022。
+- shared_token 与 full 逐位相同数字（.702/.687/.551）：两语料 seed 234 都显示按模态分两个 token 没有必要，起作用的是"证据条件化的空 token"。
+- gated_cma 低于 full（−.019 AP），且 within −.019。
+- 输入路径各臂方向与候选 1 一致。
+
+两语料 seed 234 合并读数（判定仍等三 seed）：证据条件化空 token 在 HateClipSeg 上 +.030/+.027，在 HateMM 上 −.014/+.006；const_token 两语料都低于 full 约 .02 AP；shared_token 两语料都不低于 full。若三 seed 维持此模式，方法主张应改为"单个证据条件化空 token"（shared 形式），full 的按模态分不作主张。
