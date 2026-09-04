@@ -74,6 +74,7 @@ def main():
     (cache / f'PROVENANCE_shard{args.shard}.md').write_text(provenance)
     (cache / 'PROVENANCE.md').write_text('# Provenance\n\nSee PROVENANCE_shard*.md and the referenced run configs.\n')
     asr = {}
+    missing_asr = {}
     for k in [30, 4]:
         rows = {}
         for path in sorted((ROOT / 'data/ASR' / ds).glob(f'*_asrK{k}_whisper-large-v3.jsonl')):
@@ -87,9 +88,12 @@ def main():
                     raise ValueError(f'conflicting ASR: {vid}')
                 rows[vid] = texts
         missing = set(ids) - rows.keys()
+        missing_asr[k] = sorted(missing)
         if missing:
-            raise ValueError(f'missing ASR K{k}: {sorted(missing)}')
+            print(f'ASR absent K{k}: {sorted(missing)}; explicitly use transcript absent, keep video', flush=True)
+            rows.update({vid: [''] * k for vid in missing})
         asr[k] = rows
+    write_json(run / 'input_coverage.json', dict(expected_ids=ids, missing_asr=missing_asr))
     from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
     processor = AutoProcessor.from_pretrained(args.model, max_pixels=151200)
     tokens = [processor.tokenizer.encode(x, add_special_tokens=False) for x in ['No', 'Yes']]
@@ -142,6 +146,7 @@ def main():
                                     log_odds=[v[0] for v in values], entropy=[v[1] for v in values]))
                 print(f'{vid} K{k} window={i + 1}/{k}', flush=True)
             write_json(output, dict(version=VERSION, id=vid, model=args.model, video=str(video),
+                                    asr_missing=vid in missing_asr[k],
                                     order=ORDER, windows=windows))
         completed += 1
         print(f'completed={completed}/{len(ids)} video={vid}', flush=True)

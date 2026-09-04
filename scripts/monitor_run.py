@@ -40,8 +40,10 @@ def main():
     )
     while True:
         try:
-            result = subprocess.run(['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10',
-                                     a.host, 'python3 -c ' + shlex.quote(probe)],
+            command = (['python3', '-c', probe] if a.host == 'local' else
+                       ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10',
+                        a.host, 'python3 -c ' + shlex.quote(probe)])
+            result = subprocess.run(command,
                                     text=True, capture_output=True, timeout=45)
             state = result.stdout.strip() if result.returncode == 0 else 'SSH_UNAVAILABLE'
         except subprocess.TimeoutExpired:

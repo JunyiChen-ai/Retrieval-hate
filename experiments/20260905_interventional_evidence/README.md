@@ -46,3 +46,4 @@ I3D/VGGish/BERT投影为内容token；干预证据投影为局部证据token。�
 - 模块3适配[Yager 1987](https://doi.org/10.1016/0020-0255(87)90007-7)：`C=b1[0]*b2[1]+b1[1]*b2[0]`，`b[k]=b1[k]*b2[k]+b1[k]*u2+u1*b2[k]`，`u=u1*u2+C`，`p[k]=b[k]+u/2`。不除以`1-C`，不声称相关分支独立或概率已校准。补 `dempster_fusion` 对照。
 - RAMF/MARS/MATCH/CLARA已占用宽泛的证据推理、VLM引导及融合主张，不能以三段式命名声称首次范式。具体差异与有效性待实验。
 - 输入抽取固定max_pixels=151200、每窗4帧、Yes/No单token条件分布、空白RGB=(0,0,0)；所有固定设计参数与三维搜索空间分别报告。
+- 启动检查发现HateMM validation的 `non_hate_video_559`、`non_hate_video_585` 无已有ASR（K30/K4），原裁定脚本也是空转录回退。新抽取保留样本，提示为transcript absent并在`input_coverage.json`及各视频输出显式标记，不声称已观测无语音。首次抽取在任何VLM推理前退出；修复后恢复，不评价方法。
