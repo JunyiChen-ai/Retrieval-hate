@@ -315,3 +315,13 @@ HateClipSeg 上空 token 与普通 key 一样只拿 1/T 的注意力；token 的
 4. 修订 1（候选 1 训练 + 空 token，8.1）作用为 0：+.014 不能迁移到带伙伴网络 EMA 的训练。
 
 对流程的含义（提交用户裁定，不自行改规则）：规则 14(g) 的消融现在是"best trial 超参下每臂单次"，其噪声 ±.01、full 臂再带 +.006 的选择偏差，**±.02 以内的臂差不可解读**；候选 1（README 9.x）、候选 3（7.2）里 ±.02 以内的结构臂结论都要按这个标准重新看。可选修法：每臂 3 个随机数流取均值（成本 ×3）；或每臂各自 20 trial 搜索后比 best（成本 ×20）；或三 seed 均值加上流重复。
+
+### 8.3 修订 1 逐 seed 结果（进行中；`rev1/<corpus>/seed<seed>/study_summary.json`、`rev1/ablations/<corpus>/seed<seed>/<arm>/metrics.json`）
+
+| 语料 / seed | null_token 搜索 best | 候选 1 记录 | 同超参 null_token_const | 同超参 masked_no_token | 同超参 full（候选 1） |
+|---|---|---|---|---|---|
+| HateMM 234 | trial 15 .660/.844/.650 | trial 3 .661/.841/.650 | .569/.806/.612 | .651/.838/.656 | .605/.815/.634 |
+| HateClipSeg 234 | trial 8 .695/.678/.544 | trial 8 .695/.679/.546（同超参） | .693/.679/.543 | .695/.679/.546 | .695/.679/.546 |
+| HateClipSeg 2025 | trial 19 .697/.694/.548 | trial 19 .706/.698/.560 | .697/.695/.548 | .697/.695/.547 | .696/.696/.546 |
+
+读数：搜索 best 对候选 1 记录：HateMM 234 −.001/+.003，HateClipSeg 234 .000/−.001，HateClipSeg 2025 −.009/−.004。HateMM 同超参各臂差到 ±.05（full .605 对 null_token .660、const .569），远大于 HateClipSeg 的 ±.002，是 HateMM 超参敏感加单次流噪声，不作机制读数。预注册第 2 条（HateMM 与 HateClipSeg 都要 ≥ +.005）到目前没有一个 (语料, seed) 成立。
