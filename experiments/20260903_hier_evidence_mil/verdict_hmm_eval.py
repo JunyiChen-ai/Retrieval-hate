@@ -17,8 +17,9 @@ EVALUATOR = os.path.join(ROOT, "scripts", "reproduction_baselines", "eval_baseli
 K, J = vlm_verdict.GRANULARITIES  # (30, 4)
 
 
-def load_binary(corpus):
-    V = {k: vlm_verdict.load_verdicts(corpus, k=k, tag="qwen") for k in (K, J)}
+def load_binary(corpus, fine_tag="qwen", coarse_tag="qwen"):
+    V = {K: vlm_verdict.load_verdicts(corpus, k=K, tag=fine_tag),
+         J: vlm_verdict.load_verdicts(corpus, k=J, tag=coarse_tag)}
     return {v: (verdict_hmm.binarize(V[K][v]), verdict_hmm.binarize(V[J][v]))
             for v in V[K] if v in V[J]}
 
@@ -37,9 +38,12 @@ def main(argv=None):
     ap.add_argument("--corpus", required=True)
     ap.add_argument("--splits", default="val,test")
     ap.add_argument("--out-root", default=os.path.join(ROOT, "runs", "20260903_hier_evidence_mil", "verdict_hmm_only"))
+    ap.add_argument("--fine-tag", default="qwen", help="K30 verdict cache tag (qwenctx = context-conditioned)")
     ap.add_argument("--w-fine", default="", help="comma list of extra K30 tempering exponents, e.g. 0.25,0.5,0.75 (branches score_hmm_wf<value>)")
     args = ap.parse_args(argv)
-    B = load_binary(args.corpus)
+    if args.fine_tag != "qwen" and args.out_root == ap.get_default("out_root"):
+        args.out_root = args.out_root + "_" + args.fine_tag   # never overwrite the qwen reference row
+    B = load_binary(args.corpus, args.fine_tag)
     m, n_pos, n_neg = fit(args.corpus, B)
     out_dir = os.path.join(args.out_root, args.corpus)
     os.makedirs(out_dir, exist_ok=True)

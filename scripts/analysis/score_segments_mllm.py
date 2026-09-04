@@ -71,6 +71,35 @@ USER_PROMPT = (
 
 NO_SPEECH = "(no speech in this segment)"
 
+# --- context-conditioned elicitation (module 1 proposal, 2026-09-03) ---------
+# The segment is still rated on its own frames + transcript, but the prompt also
+# carries the transcript of the enclosing coarse block (K4 window) so that the
+# rater can resolve who is being talked about and whether a coded or ambiguous
+# cue in this segment is actually hateful in its immediate context.
+CONTEXT_PROMPT = (
+    "Surrounding context (speech in the wider part of the video that contains "
+    "this segment; for reference only, do NOT rate it): \"{ctx}\"\n\n"
+    "Segment transcript (speech in this segment): \"{asr}\"\n\n"
+    + RUBRIC
+    + "\nRate ONLY the hate evidence present in THIS segment (its frames and its "
+    "own transcript). Use the surrounding context only to interpret ambiguous or "
+    "coded cues in this segment: a cue that the context shows to be benign is "
+    "NOT hate evidence; a cue that the context shows to target a protected group "
+    "IS. Respond with ONLY the single integer 0, 1, 2, or 3 for this segment. "
+    "No words, no explanation."
+)
+NO_CONTEXT = "(no speech in the surrounding part)"
+# System prompt for the context mode: same rating scope, but the sentence "do not
+# guess about other parts of the video" is replaced by the scope rule for context.
+SYSTEM_PROMPT_CONTEXT = SYSTEM_PROMPT.replace(
+    "Rate ONLY what is visible/audible in THIS segment; do not guess "
+    "about other parts of the video.",
+    "Rate ONLY what is visible/audible in THIS segment. You are also given the "
+    "transcript of the wider part of the video around this segment: use it only "
+    "to interpret ambiguous or coded cues in this segment, never rate the "
+    "surrounding part itself.")
+assert SYSTEM_PROMPT_CONTEXT != SYSTEM_PROMPT
+
 
 def parse_args(argv=None):
     ap = argparse.ArgumentParser(description="MLLM evidence-density segment scoring (P3).")
@@ -89,6 +118,13 @@ def parse_args(argv=None):
     ap.add_argument("--limit", type=int, default=0, help="If >0, first N videos per split (smoke).")
     ap.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--resume", type=lambda x: str(x).lower() == "true", default=True)
+    ap.add_argument("--context", type=str, default="none", choices=("none", "block_asr"),
+                    help="block_asr: add the enclosing coarse block's transcript as context")
+    ap.add_argument("--context_subclips", type=int, default=4,
+                    help="number of coarse blocks whose ASR is used as context (K_c)")
+    ap.add_argument("--context_asr_tag", type=str, default="asrK4_whisper-large-v3")
+    ap.add_argument("--out_tag", type=str, default="qwen",
+                    help="output file suffix tag (use e.g. qwenctx for context runs)")
     return ap.parse_args(argv)
 
 
@@ -124,15 +160,22 @@ def load_asr_windows(asr_path, K):
     return out
 
 
-def build_messages(frames, asr_text):
+def build_messages(frames, asr_text, context_text=None):
     asr = asr_text.strip() if asr_text and asr_text.strip() else NO_SPEECH
+    if context_text is None:
+        text = USER_PROMPT.format(asr=asr)
+        system = SYSTEM_PROMPT
+    else:
+        ctx = context_text.strip() if context_text and context_text.strip() else NO_CONTEXT
+        text = CONTEXT_PROMPT.format(ctx=ctx, asr=asr)
+        system = SYSTEM_PROMPT_CONTEXT
     return [
-        {"role": "system", "content": [{"type": "text", "text": SYSTEM_PROMPT}]},
+        {"role": "system", "content": [{"type": "text", "text": system}]},
         {
             "role": "user",
             "content": [
                 {"type": "video", "video": frames},
-                {"type": "text", "text": USER_PROMPT.format(asr=asr)},
+                {"type": "text", "text": text},
             ],
         },
     ]
@@ -152,8 +195,9 @@ def parse_score(raw):
 
 
 @torch.no_grad()
-def score_window(frames, asr_text, processor, model, device, max_new_tokens):
-    messages = build_messages(frames, asr_text)
+def score_window(frames, asr_text, processor, model, device, max_new_tokens,
+                 context_text=None):
+    messages = build_messages(frames, asr_text, context_text)
     text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     inputs = processor(text=[text], images=None, videos=[frames], return_tensors="pt").to(device)
     out_ids = model.generate(**inputs, max_new_tokens=max_new_tokens, do_sample=False)
@@ -211,8 +255,23 @@ def main(args):
         asr_path = os.path.join(
             args.asr_dir, args.dataset, "{}_{}.jsonl".format(outname, args.asr_tag))
         asr = load_asr_windows(asr_path, K)
+        ctx_asr, Kc = {}, args.context_subclips
+        if args.context == "block_asr":
+            ctx_path = os.path.join(
+                args.asr_dir, args.dataset, "{}_{}.jsonl".format(outname, args.context_asr_tag))
+            if not os.path.exists(ctx_path):
+                raise SystemExit("context ASR file missing: {}".format(ctx_path))
+            ctx_asr = load_asr_windows(ctx_path, Kc)
+            if not ctx_asr:
+                raise SystemExit("context ASR file empty: {}".format(ctx_path))
+            with open(ctx_path) as fh:
+                for line in fh:
+                    if line.strip():
+                        n_ctx = len(json.loads(line).get("window_text") or [])
+                        assert n_ctx == Kc, "context ASR has {} windows, expected {}".format(n_ctx, Kc)
+            print("[{}] context = block ASR ({} ids, K_c={})".format(split, len(ctx_asr), Kc), flush=True)
 
-        out_path = os.path.join(out_ds, "{}_segscoreK{}_qwen.jsonl".format(outname, K))
+        out_path = os.path.join(out_ds, "{}_segscoreK{}_{}.jsonl".format(outname, K, args.out_tag))
         done = load_done_ids(out_path) if args.resume else set()
         print("[{}] {} videos ({} already done), ASR windows for {} ids -> {}".format(
             split, len(items), len(done), len(asr), out_path), flush=True)
@@ -226,6 +285,7 @@ def main(args):
                 vpath = os.path.join(video_root, "{}.mp4".format(vid))
                 frames, ok = load_video_frames(vpath, M)
                 wtext = asr.get(vid, [""] * K)
+                ctext = ctx_asr.get(vid, [""] * Kc) if args.context == "block_asr" else None
                 scores, raws, used, nfr, oks = [], [], [], [], []
                 if ok:
                     bounds = _window_bounds(len(frames), K)
@@ -234,8 +294,13 @@ def main(args):
                             e = s + 1
                         win_frames = frames[s:e]
                         atext = wtext[k] if k < len(wtext) else ""
+                        ctxt = None
+                        if ctext is not None:
+                            # block index of window k (start-of-window rule, identical to src/verdict_hmm._block_map)
+                            ctxt = ctext[min((k * Kc) // K, Kc - 1)]
                         raw = score_window(
-                            win_frames, atext, processor, model, device, args.max_new_tokens)
+                            win_frames, atext, processor, model, device, args.max_new_tokens,
+                            context_text=ctxt)
                         sc, pok = parse_score(raw)
                         scores.append(sc)
                         raws.append(raw)

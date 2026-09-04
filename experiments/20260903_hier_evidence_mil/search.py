@@ -56,6 +56,8 @@ def main(argv=None):
     ap.add_argument("--ablation", default="full")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--num-workers", type=int, default=4)
+    ap.add_argument("--fine-tag", default="qwen",
+                    help="K30 verdict cache tag written into every trial's hparams.json (qwenctx = module 1)")
     args = ap.parse_args(argv)
 
     root = os.path.join(args.out_root, args.corpus, "seed%d" % args.seed)
@@ -86,6 +88,7 @@ def main(argv=None):
 
     def objective(trial):
         cfg = sample(trial)
+        cfg["fine_tag"] = args.fine_tag
         out_dir = os.path.join(root, "trial%d" % trial.number)
         os.makedirs(out_dir, exist_ok=True)
         cfg_path = os.path.join(out_dir, "hparams.json")
