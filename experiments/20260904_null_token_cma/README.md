@@ -142,7 +142,7 @@ HateMM 在 uoa-lab1（空闲），HateClipSeg 在 uoa-lab3（候选 3 修订 2 �
 
 ### 6.5 HateClipSeg seed 2025 搜索与全部臂（uoa-lab3，2026-09-04 23:14–2026-09-05 00:15；`runs/20260904_null_token_cma/hateclipseg/seed2025/`、`ablations/hateclipseg/seed2025/`）
 
-20 trial，6 个被 within 下限剪掉。best = trial 4（epoch 3；lr 3.3e-4、max_seqlen 150、λ_cma 1.20、prior_scale 4.13、w_fine .92、λ_block .21）：**.707 / .685 / .550**。规则 8 门过。对候选 1 seed 2025（.700 / .678 / .556，候选 1 README 主表）：AP +.007、ROC +.007。
+20 trial，6 个被 within 下限剪掉。best = trial 4（epoch 3；lr 3.3e-4、max_seqlen 150、λ_cma 1.20、prior_scale 4.13、w_fine .92、λ_block .21）：**.707 / .685 / .550**。规则 8 门过。对候选 1 seed 2025（.706 / .698 / .560，`runs/20260903_hier_evidence_mil/hateclipseg/seed2025/study_summary.json` trial 19）：AP +.001、ROC −.013。
 
 全部臂用 trial 4 超参：
 
