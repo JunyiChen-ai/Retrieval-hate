@@ -86,7 +86,7 @@
    - (d) checkpoint 来自 validation；超参数来自第 7 条的固定 Optuna 搜索，搜索空间、trial 数、目标值定义在搜索前写进 README，不得事后改；报告中写明超参数搜索目标为 test，并同时给出 validation 选 trial 的 test 数字；
    - (e) 无 inference 后处理、无 ensemble、无按语料分支选择；若用了 train-only 单一 teacher（如 VLM 伪标签），必须写明，并在消融中报去掉 teacher 的数字；
    - (f) 用了比 baseline 更强的特征时，报"最强 baseline + 同样特征"的数字；
-   - (g) 消融在 test 上（至少 seed 234）显示核心机制去掉后 pooled 明显下降；否则该机制不能作为 novelty 主张；
+   - (g) 消融在 test 上显示核心机制去掉后 pooled 下降：**三 seed 均值下降 ≥ .01（AP 或 ROC），且三个 seed 每个都下降，两语料都满足**；否则该机制不能作为 novelty 主张。单 seed 或均值 < .01 的差异只作记录（用户裁定 2026-09-05；依据：同超参只换随机数流单次分数 std .006–.009、极差最大 .024，搜索选出的 best trial 比自身流均值高 .006，见 `experiments/20260904_null_token_cma/README.md` 8.2）。
    - (h) 评测器、split、GT、1 fps 协议未改动；
    - (i) HateMM 与 HateClipSeg 两语料全部三项指标都报，不挑语料、不挑指标。
 
