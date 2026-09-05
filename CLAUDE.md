@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+## 哈希限制（用户裁定 2026-09-05）
+- 禁止计算、记录、比较或依赖哈希、checksum、digest；唯一例外是下文多机代码同步：允许 Git commit 标识及 Git 同步操作，配合未提交修改、未跟踪文件检查确认各机代码版本一致。
+- 例外仅用于多机同步及其检查记录，不用于一般 run/结果溯源、数据、缓存、模型或其它文件校验。此裁定覆盖下文旧 commit 溯源要求；其它溯源使用可读代码版本说明、日期、路径与生成命令。完整约束见 `AGENTS.md` 的“禁止哈希”。
+
 ## 项目
 弱监督 hateful video localization。主数据集:HateMM、HateClipSeg(2026-09-02 裁定;MHC-EN/MHC-ZH 已停用,不跑、不作门、不进论文主表;新数据集只能做 external validation)。研究迭代流程与晋级标准见 `RESEARCH_ITERATION_RULES.md`。
 
@@ -45,6 +49,11 @@
 - 环境安装日志（conda/pip）写 `runs/_setup_<机器>/`。
 - 检查：`bash scripts/check_layout.sh` 列出三台机器的 commit、脏文件数、`~` 下不该有的条目；每次开跑前和汇报前跑一次，输出有 STRAY 或 commit 不一致就先处理。
 
+## 长任务监控（用户裁定 2026-09-06）
+- 监控一律用 harness 自带机制：等待单个事件用 Bash `run_in_background` 加 `until ... ; do sleep 60; done`（本机或经 `ssh <别名>`），任务结束自动收到通知；需要逐条事件用 Monitor 工具。
+- **不再手写监控脚本/线程**（`scripts/monitor_run.py`、`scripts/monitor_thread.py` 一类停止新用，不再新建 `runs/*/monitor/`、`thread_monitor` 目录）。训练进程本身仍按上文 `setsid nohup` 与 SSH 解耦，监控进程随会话生灭，不影响训练。
+- 监控命令必须同时匹配完成与失败（进程消失、`Traceback`、`FAILED`、DONE 标记），不能只等成功标记。
+
 ## Agent 调用
 - 所有通过 Agent 工具 spawn 的子 agent（proposal review、code review、general-purpose、Explore 等）一律指定 `model: fable`（Claude Fable 5.1），不得降级到 sonnet/haiku/opus。
 - 用户可能要求单独 spawn 一个 agent 并直接交代任务；主 agent 先 spawn 待命，再用 SendMessage 把用户的任务原文转给它。
@@ -78,17 +87,17 @@
 
 ### 数据
 - `data/` 对实验代码只读:任何训练/推理脚本不得向 `data/` 写文件。
-- 新建派生缓存放 `data/<类型>/`,同目录放 `PROVENANCE.md`:生成脚本路径、代码 commit、日期、上游输入。没有出处的缓存视为不可信。
+- 新建派生缓存放 `data/<类型>/`,同目录放 `PROVENANCE.md`:生成脚本路径、代码版本说明、日期、上游输入。没有出处的缓存视为不可信。
 - 大文件(视频、特征、checkpoint)永不进 git。
 
 ### 输出
-- 每次运行写 `runs/<exp_id>/<run_name>/`:config 快照、代码 commit 哈希、`run.log`、`run.pid`、`metrics.json`(评测器直接输出)。
+- 每次运行写 `runs/<exp_id>/<run_name>/`:config 快照、代码版本说明、`run.log`、`run.pid`、`metrics.json`(评测器直接输出)。
 - **权威数字只认 `runs/` 里的评测器输出文件**;markdown 表格一律是转录,引用时注明来源文件路径。
 
 ### 文档
 - 根目录白名单:`CLAUDE.md`、`Readme.md`、`RESEARCH_ITERATION_RULES.md`、`LICENSE`、环境文件、`.gitignore` 等配置。**其余任何 markdown/JSON/txt 不得新增到根目录**;报告进 `docs/`,状态进 `research-wiki/`。
 - 三层文档,各司其职:
-  1. `research-wiki/` = 现状,可原地更新,每份写明"截至日期 + 依据的 commit/结果文件";
+  1. `research-wiki/` = 现状,可原地更新,每份写明"截至日期 + 依据的代码版本说明/结果文件";
   2. `docs/` = 冻结记录(预注册、协议、最终报告),只新增不改写;
   3. `experiments/<id>/README.md` = 单轮实验的自述。
 - 同一事实不写第三份。发现两份文档数字冲突,以 `runs/` 原始输出为准,当场修正并注明。

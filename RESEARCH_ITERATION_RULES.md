@@ -6,7 +6,7 @@
 
 做出一个弱监督 hateful video localization 方法，同时满足：
 
-- **SOTA**：按第 8 条定义，在 HateMM 和 HateClipSeg 的 test 上，pooled frame AP 与 ROC 超过固定 baseline 表，within ROC 不低于 MultiHateLoc。
+- **SOTA**：按第 8 条定义，在 HateMM 和 HateClipSeg 的 test 上，pooled frame AP 与 ROC 超过固定 baseline 表；within ROC 只报告（2026-09-06 起不作门）。
 - **Novel**：按第 4 条定义。迁移自其他任务、没在 hateful video detection/localization 用过、且有效的方法即算 novel。
 
 ## 前一版流程的教训（只记结论）
@@ -22,7 +22,7 @@
 
 1. **数据集固定**：主数据集只有 HateMM 和 HateClipSeg（2026-09-02 裁定）。MHC-EN、MHC-ZH 不再作为实验数据集，不跑、不作门、不进论文主表；旧文档里的 MHC 数字只作历史记录。每个数据集独立 train/validation/test，永远不混合不同数据集的 train set。新数据集只做 external validation，加入前须用户同意。
 
-2. **指标固定**：`CLAUDE.md` 裁定的三项（pooled AP、pooled ROC、within-video macro ROC），1 fps、test 集。SOTA 比较用 pooled AP/ROC（文献通用），within 作 shortcut 下限与附加分析（见第 8 条）。评测器全仓库只有一份（`scripts/reproduction_baselines/eval_baseline_scores.py`，核心 `scripts/duplex/frame_eval_common.py`），不得复制或改写。
+2. **指标固定**：`CLAUDE.md` 裁定的三项（pooled AP、pooled ROC、within-video macro ROC），1 fps、test 集。SOTA 比较用 pooled AP/ROC（文献通用），within 只作附加分析（2026-09-06 起不作下限）（见第 8 条）。评测器全仓库只有一份（`scripts/reproduction_baselines/eval_baseline_scores.py`，核心 `scripts/duplex/frame_eval_common.py`），不得复制或改写。
 
 3. **禁止 multi-model ensemble，训练阶段同样禁止。** 主方法不得在 inference 或 training 的任何阶段组合多个独立模型的 prediction、feature、posterior、pseudo-label 或 decision；multi-teacher aggregation、training-only ensemble、ensemble distillation、"先聚合多模型生成训练目标再部署单 student"均不合规。单一预训练编码器/VLM 作为特征来源不算 ensemble。禁止 inference 时的后处理（平滑、calibration、按语料路由）。
 
@@ -42,7 +42,7 @@
    - **搜索工具固定**：Optuna，TPE sampler，sampler seed 固定为当前训练 seed。每个 seed 单独建一个 study，两语料各自一个 study。study 存 `runs/<exp_id>/<corpus>/seed<seed>/optuna.db`（sqlite），每个 trial 输出 `runs/<exp_id>/<corpus>/seed<seed>/trial<k>/`（config、`run.log`、`metrics.json`）。
    - **trial 数固定，按单 trial 耗时定**：单个 trial（一次完整训练 + validation 选 ckpt + test 评测，含该 trial 需要重跑的 MLLM/VLM 推理）不超过 1 小时的方法，每个 seed 跑 20 个 trial；超过 1 小时的方法统一每个 seed 跑 5 个 trial。耗时按第 1 个 trial 实测归档，trial 数随即写进 README，之后不加不减；机器被占可以暂停，不可以缩减。
    - **每个 trial 的流程一样**：train set 训练，validation set 选 checkpoint（validation pooled AP 与 ROC 均值最高的 epoch），然后用该 checkpoint 在 test 上跑全部三项指标。
-   - **搜索目标由 test 定**：Optuna 目标值是一个标量 = (test pooled AP + test pooled ROC) / 2，只用于给 Optuna 排序 trial；第 8 条过门仍按 AP、ROC 各自单独对照各自的门，不看均值。test within 低于第 8 条下限的 trial 目标值记为失败（Optuna 标为 pruned/fail），不参与 best 但保留输出。这是开发期上限测量，与论文报什么无关：目的是记录每个 develop 出来的方法能到哪里。
+   - **搜索目标由 test 定**：Optuna 目标值是一个标量 = (test pooled AP + test pooled ROC) / 2，只用于给 Optuna 排序 trial；第 8 条过门仍按 AP、ROC 各自单独对照各自的门，不看均值。**不按 within 剪枝**（用户裁定 2026-09-06：within 不是弱监督视频定位的通用指标，且该下限是 C3/C6/C8 全部 trial 被剪的直接原因）；每个 trial 的 within 照常记录并写进 STATUS，只作附加分析。2026-09-06 之前的搜索按旧规则剪过 within，其 best trial 与新规则不可直接比较。这是开发期上限测量，与论文报什么无关：目的是记录每个 develop 出来的方法能到哪里。
    - **有效最终检验值** = 该 seed 全部 trial 中目标值最高者的 test 三项指标；第 8 条筛选与确认都用这个数。
    - 搜索空间（超参数名、范围、分布）在搜索开始前写进 README，两语料共用同一搜索空间（第 13 条），不得中途改。
    - 同时记录"若只按 validation 均值选 trial 会选到哪个 trial、它的 test 数字"，写进 STATUS 供参考，不作门。
@@ -50,16 +50,16 @@
 
 8. **SOTA 定义（唯一晋级门）**。对照表固定为 `docs/duplex/OFFICIAL_VAL_RESULTS.md`（3 seed 均值），不重训 baseline，不做 matched control。
    - **主门（pooled，文献通用指标）**：HateMM 与 HateClipSeg 的 pooled frame AP 和 pooled frame ROC 四个数都超过表中最强训练方法的 3 seed 均值：HateMM AP `.573` / ROC `.807`（MACIL-SD）；HateClipSeg AP `.562`（Fed-WSVAD 3-client）/ ROC `.528`（DSANet）。
-   - **约束（within，防止整段视频打高分的 shortcut）**：两语料 within ROC 都不低于 MultiHateLoc 3 seed 均值：HateMM `.632`、HateClipSeg `.524`。within 只作下限，不参与"谁更高"的比较；论文中作为附加分析指标报告。
+   - **within（附加分析，不作门；用户裁定 2026-09-06）**：两语料 within ROC 照常报告，并与 MultiHateLoc 3 seed 均值（HateMM `.632`、HateClipSeg `.524`）并列给出作参考；不参与筛选、确认或"谁更高"的比较。2026-09-06 之前它是硬下限（旧文本见 git 历史）。
    - VERA 只汇报（HateClipSeg `.619/.605/.562`），不作门：其分数是 0/1 加固定后处理，规则 3 禁止候选用同类后处理追它。
-   - **筛选（单 seed 234）**：seed 234 的 Optuna 最优 trial（第 7 条）四个 pooled 数与两个 within 约束全部满足。
+   - **筛选（单 seed 234）**：seed 234 的 Optuna 最优 trial（第 7 条）四个 pooled 数全部超过主门。
    - **确认（补 seed 2025、3407）**：每个 seed 各自跑同样 trial 数的完整 Optuna 搜索，取各自最优 trial；3 seed 均值仍全部满足，且每个 pooled 领先幅度不小于候选与 baseline 两者 seed 标准差中较大者（最低 .005）。
    - 单 seed 差异在 .005 以内视为噪声，既不算赢也不算输。
 
 9. **分流**。
    - 确认 SOTA：按第 14 条核对后向用户汇报；随后为论文补消融与独立 novelty 复查。
-   - 筛选未过，但某语料 pooled AP 或 ROC 比最强训练 baseline 高 .01 以上且 within 约束未破：方法保留，用 test error analysis 找原因后修改再训，同一方法最多 3 轮修改；仍未过则归档，写明最好数字。
-   - 没有 .01 以上 pooled 提升，或提升靠破 within 约束得来：归档，写一行负结果，换候选。
+   - 筛选未过，但某语料 pooled AP 或 ROC 比最强训练 baseline 高 .01 以上：方法保留，用 test error analysis 找原因后修改再训，同一方法最多 3 轮修改；仍未过则归档，写明最好数字。
+   - 没有 .01 以上 pooled 提升：归档，写一行负结果，换候选。
    - 实现不可靠：修复重跑，不评价 idea。
 
 10. **Test error analysis 合规使用**。允许读取 test predictions 与 test GT 做 error analysis 并 inform 后续设计；每次记录看了哪些 artifact、发现什么、影响了哪个设计决策。由此得到的 test 结果属于 developmental evidence，不表述为未揭盲 confirmatory 结果。test 标签不得参与梯度训练或 checkpoint 选择；test 指标可作为第 7 条 Optuna 搜索的目标值（开发期上限测量），必须在 README 与 STATUS 写明。
@@ -86,7 +86,7 @@
    - (d) checkpoint 来自 validation；超参数来自第 7 条的固定 Optuna 搜索，搜索空间、trial 数、目标值定义在搜索前写进 README，不得事后改；报告中写明超参数搜索目标为 test，并同时给出 validation 选 trial 的 test 数字；
    - (e) 无 inference 后处理、无 ensemble、无按语料分支选择；若用了 train-only 单一 teacher（如 VLM 伪标签），必须写明，并在消融中报去掉 teacher 的数字；
    - (f) 用了比 baseline 更强的特征时，报"最强 baseline + 同样特征"的数字；
-   - (g) 消融在 test 上显示核心机制去掉后 pooled 下降：**三 seed 均值下降 ≥ .01（AP 或 ROC），且三个 seed 每个都下降，两语料都满足**；否则该机制不能作为 novelty 主张。单 seed 或均值 < .01 的差异只作记录（用户裁定 2026-09-05；依据：同超参只换随机数流单次分数 std .006–.009、极差最大 .024，搜索选出的 best trial 比自身流均值高 .006，见 `experiments/20260904_null_token_cma/README.md` 8.2）。
+   - (g) 消融在 test 上显示核心机制去掉后 pooled 下降：**三 seed 均值下降 ≥ .01（AP 或 ROC），两语料都满足**；不要求每个 seed 都降（用户裁定 2026-09-06，取消 09-05 的"每 seed 都降"要求）；否则该机制不能作为 novelty 主张。单 seed 或均值 < .01 的差异只作记录（用户裁定 2026-09-05；依据：同超参只换随机数流单次分数 std .006–.009、极差最大 .024，搜索选出的 best trial 比自身流均值高 .006，见 `experiments/20260904_null_token_cma/README.md` 8.2）。
    - (h) 评测器、split、GT、1 fps 协议未改动；
    - (i) HateMM 与 HateClipSeg 两语料全部三项指标都报，不挑语料、不挑指标。
 

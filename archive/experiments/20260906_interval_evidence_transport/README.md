@@ -1,6 +1,8 @@
+> **归档（2026-09-06）**：用户裁定回到候选 1 做减法，本候选不再继续。最终数字（seed 234，AP/ROC/within）：HateMM best trial 11 `.614455/.815451/.649858`（20/20 完整，19 COMPLETE/1 PRUNED，`runs/20260906_interval_evidence_transport/hatemm/seed234/study_summary.json`）；HCS best trial 18 `.605771/.589308/.547480`。两语料都低于候选 1（.661/.841、.695/.679）。HCS 预声明观察诊断已回传：no_observation_loss `.604428/.576500/.545003`、categorical_noise `.605562/.589480/.547365`、no_vlm `.595586/.560222/.527899`，与 full 差均在 .03 以内、M1/M2 主替换差 < .005。seed 2025/3407 确认搜索被用户中止，部分输出已回传本机同目录，不作结果。
+
 # 候选9：区间证据的内容条件分配
 
-2026-09-06 08:31 NZST。状态：独立规则4 review及一次code review均GO（见 REVIEW_RULE4.md、REVIEW_RULE6.md）；双语料seed234完整筛选通过，08:27已并行启动两语料seed2025/3407确认搜索。不是候选7重启，不声称三模块已经有效或已有novel paradigm证据。
+2026-09-06 08:35 NZST。状态：用户要求停止实验及一切monitor，四项确认搜索与全部monitor已停止，输出保留。双语料seed234完整筛选通过，但确认未完成；用户中止不算方法失败，不自动恢复。独立review见 REVIEW_RULE4.md、REVIEW_RULE6.md；不声称三模块已经有效或已有novel paradigm证据。
 
 ## 依据与问题
 

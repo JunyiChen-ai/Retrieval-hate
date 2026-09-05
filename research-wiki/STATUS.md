@@ -1,14 +1,14 @@
 # 当前研究状态
 
-截至 **2026-09-06 08:31 NZST**。依据：候选9两语料seed234各20trial、HCS六臂消融均完整回传审计；两语料seed2025/3407四项确认搜索已启动。权威数字均引用本机runs原评测。
+截至 **2026-09-06 08:35 NZST**。依据：用户要求停止当前实验及一切monitor；四项确认搜索及全部五个monitor均已停止，进程组和GPU进程核验无残留。权威数字均引用本机runs原评测。
 
 ## 当前目标与结论
 
-**目标未完成，无硬阻塞。** 仍需两语料确认级SOTA、VLM/骨干/融合三个模块有效性与novelty、整体统一方法、尽少方法超参数。validation选checkpoint，test(AP+ROC)/2选trial；within下限沿现行研究规则，不擅改。
+**用户主动停止，目标未完成；不得自动继续或重建monitor，等待用户新指令。** 仍缺两语料确认级SOTA、VLM/骨干/融合三个模块有效性与novelty、整体统一方法证据。validation选checkpoint，test(AP+ROC)/2选trial；within下限沿现行研究规则，不擅改。
 
 C8两语料各20trial全部完整50epoch后within剪枝，没有合格best；按规则9归档，不追加确认/消融。C5数值确认通过但HCS核心模块有效性失败；C1仍是可靠性能起点。C7因每窗口四次VLM成本被用户停止，不恢复，其缓存保留不表示授权补训。
 
-**C9已通过双语料单seed完整搜索筛选，正在补两语料seed2025/3407确认；尚非确认级SOTA。** HCS M1/M2主替换的pooled差小于.005，未显示明确贡献；M3及VLM整体只有单seed正向信号。HateMM单seed ROC领先.008451，小于baseline seed标准差.0194，确认仍有风险；不把单seed噪声当永久失败或三模块成立。
+**C9已通过双语料单seed完整搜索筛选；两语料seed2025/3407确认被用户中止，尚非确认级SOTA。** HCS M1/M2主替换的pooled差小于.005，未显示明确贡献；M3及VLM整体只有单seed正向信号。HateMM单seed ROC领先.008451，小于baseline seed标准差.0194，确认仍有风险；用户中止不算方法失败。
 
 ## 当前方法：候选9三个模块
 
@@ -44,21 +44,17 @@ C9 HCS六臂全部50epoch、同配置、val63/test79、checkpoint选择及预测
 
 | 任务 | 当前状态 | 位置 |
 |---|---|---|
-| C9 HateMM seed2025，lab1 | PGID3205219，monitor1758204；08:27启动，固定20trial，首次RUNNING成功 | [monitor](../runs/20260906_interval_evidence_transport/hatemm/seed2025/monitor/run.log) |
-| C9 HateMM seed3407，lab1 | PGID3205402，monitor1758210；08:27启动，固定20trial，首次RUNNING成功 | [monitor](../runs/20260906_interval_evidence_transport/hatemm/seed3407/monitor/run.log) |
-| C9 HCS seed2025，lab3 | PGID3592512，monitor1758225；08:27启动，固定20trial，首trial完整结束 | [monitor](../runs/20260906_interval_evidence_transport/hateclipseg/seed2025/monitor/run.log) |
-| C9 HCS seed3407，lab3 | PGID3592699，monitor1758235；08:27启动，固定20trial，首trial完整结束 | [monitor](../runs/20260906_interval_evidence_transport/hateclipseg/seed3407/monitor/run.log) |
+| C9 HateMM seed2025/3407，lab1 | 用户中止；原PGID3205219/3205402及所有子进程已结束，monitor1758204/1758210已停 | 部分输出保留远端原runs目录，不作完整确认结果 |
+| C9 HCS seed2025/3407，lab3 | 用户中止；原PGID3592512/3592699及所有子进程已结束，monitor1758225/1758235已停 | 部分输出保留远端原runs目录，不作完整确认结果 |
 | C9两语料seed234及HCS六臂 | 全部结束/回传/审计，无残留进程；对应monitor通知已处理，不重启 | 审计来源见上表及消融条目 |
-| 资源 | lab1/lab3各并行两项独立确认搜索；本机他人GPU任务；lab-server无HateVideo环境/项目 | 无新抽取，不重复旧任务或增加trial |
-| 长期目标monitor | PID1177638存活，07:04通知已处理；目标未完成，保留 | [日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/run.log) |
+| 资源 | lab1/lab3 GPU计算进程为空；本机及lab-server无本项目实验/monitor进程 | 不调度新任务，不干扰他人进程 |
+| 长期目标monitor | 原PID1177638已按用户要求停止；每三小时提醒已关闭 | [保留日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/run.log) |
 
 多机同步：本次四项确认启动前三台均6976c19（仅同步用途），运行代码无脏文件或相关未跟踪文件、家目录无STRAY。两机torch2.7.1+cu128/transformers4.49对齐，原VLM两尺度各split全覆盖。CLAUDE.md既有修改、tandem.html、lab1 idea-stage/repro_t3al保留。本轮仅同步结果文档，不替换活动训练模型/损失/采样/评测；CLAUDE.md及研究规则未改。
 
 ## 下一步
 
-1. 接四项确认完成事件，核验进程、回传完整20trial输出并审计，再计算各语料三seed均值/标准差及确认门；不模型轮询等待。
-2. seed234两语料各20输出已实际解析ID/秒长/finite：[HCS](../runs/20260906_interval_evidence_transport/error_analysis/hcs_seed234_all_trials.json)、[HateMM](../runs/20260906_interval_evidence_transport/error_analysis/hatemm_seed234_all_trials.json)。确认预算继承各自seed234，不重新定预算，不改搜索空间。
-3. 三个主消融的双语料三seed、no_vlm及同输入最强baseline证据未齐，不宣称SOTA/目标完成；按确认结果继续规则9分流。显著增耗先说明成本和廉价替代，不堆VLM调用。
+等待用户新指令。不得因旧完成通知、排队消息或周期提醒自动重启实验或monitor。已有checkpoint、日志、数据库及缓存全部保留；未完成的确认搜索不得当作完整20trial结果。
 
 ## 资料与历史
 
