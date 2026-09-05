@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-05 23:52 NZST**。依据：候选5两语料三seed全部回传审计、候选6提案/实现及实时多机检查。每轮结束替换对应条目，不追加流水账。
+截至 **2026-09-05 23:57 NZST**。依据：候选5两语料三seed全部回传审计、候选6独立评审及两语料正式搜索/monitor首次检查。每轮结束替换对应条目，不追加流水账。
 
 ## 目标与当前结论
 
@@ -8,7 +8,7 @@
 
 候选5[干预证据方法](../experiments/20260905_interventional_evidence/README.md)两语料均通过三seed数值确认门，但三个核心模块均未通过HCS三seed有效性要求：seed3407替换后AP/ROC均略升，融合平均AP增益也不足.01。HateMM seed234三个核心替换AP降.161/.025/.028，仅为该seed支持，不能抵消HCS结果。停止为其主张追加旧消融，保留性能参照；最强baseline+同输入及整体范式证据仍缺。
 
-当前进入候选6：**视频标签约束的局部证据状态模型**，独立proposal review已GO，数学与消融对应问题已修正；代码已实现，正在唯一code review，尚未正式训练。目标未完成，无硬阻塞，不能把提案GO称为novelty成立。
+当前进入候选6：**视频标签约束的局部证据状态模型**，独立proposal/code review均GO，数学与消融对应问题已修正；23:56在lab1/lab3启动两语料seed234完整Optuna，均已正常输出epoch日志。目标未完成，无硬阻塞，评审GO不等于novelty成立。
 
 协议唯一来源：[研究规则](../RESEARCH_ITERATION_RULES.md)。主数据集为 HateMM、HateClipSeg；within 硬门仍有效，取消硬门的讨论尚未裁定。三个模块均须 novelty 的新要求覆盖[旧计划](../docs/20260903_three_module_program.md)中模块 1 可选的要求。
 
@@ -20,7 +20,7 @@
 | 2 骨干 | 内容时间卷积与相邻内容差异决定潜状态转移 | 内容条件转移是否优于静态转移，保留相同内容初始概率 |
 | 3 融合/训练 | 精确视频事件概率+归一化观测NLL联合训练，最终输出同模型局部后验 | 相对同模型top-k训练是否有贡献；不是推理平滑 |
 
-当前代码：[候选6提案与实现](../experiments/20260905_latent_evidence_sequence/README.md)、[独立proposal review](../experiments/20260905_latent_evidence_sequence/REVIEW_RULE4.md)。共享训练/评测调用在 `src/fixed_training_protocol.py`，v2缓存解析在 `src/interventional_observations.py`；评测器未改，候选5仅改调用升入共享目录的既有循环/解析，不重跑其结果。可靠起点：[候选1](../experiments/20260903_hier_evidence_mil/README.md)；候选4负结果：[归档结论](../archive/experiments/20260904_null_token_cma/README.md)。
+当前代码：[候选6提案与实现](../experiments/20260905_latent_evidence_sequence/README.md)、[proposal review](../experiments/20260905_latent_evidence_sequence/REVIEW_RULE4.md)、[code review](../experiments/20260905_latent_evidence_sequence/REVIEW_RULE6.md)。共享训练/评测调用在 `src/fixed_training_protocol.py`，v2缓存解析在 `src/interventional_observations.py`；评测器未改，候选5仅改调用升入共享目录的既有循环/解析，不重跑其结果。可靠起点：[候选1](../experiments/20260903_hier_evidence_mil/README.md)；候选4负结果：[归档结论](../archive/experiments/20260904_null_token_cma/README.md)。
 
 ## 已核验结果
 
@@ -56,8 +56,9 @@ HateMM seed234消融8/8完整回传审计。AP/ROC/within：原裁定替换 `.46
 | HateClipSeg确认搜索 | seed2025/3407均已结束、各20trial完整回传审计；两个结束通知均已处理，不重启 | [2025审计](../runs/20260905_interventional_evidence/hateclipseg/seed2025/artifact_audit.json)、[3407审计](../runs/20260905_interventional_evidence/hateclipseg/seed3407/artifact_audit.json) |
 | HateClipSeg确认seed消融，lab3 | 进程组3110708已退出，16/16回传审计通过；22:22结束通知已处理，不重启 | [2025审计](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed2025/artifact_audit.json)、[3407审计](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed3407/artifact_audit.json) |
 | HateMM seed234消融，lab3 | 进程退出，8/8完整回传审计，23:04通知已处理，不重启 | [完整审计](../runs/20260905_interventional_evidence/ablations/hatemm/seed234/artifact_audit.json) |
-| 候选6 code review | 独立agent `code_review_c6`核对概率递推/梯度、数据与搜索链；尚无正式训练 | [候选6目录](../experiments/20260905_latent_evidence_sequence/) |
-| GPU资源 | lab1/lab3空闲且torch2.7.1+cu128一致；本机他人任务97%；lab-server GPU空闲但无项目/环境，当前未就绪 | 就绪后两语料独立并行，不为占满GPU重复实验 |
+| 候选6 HateMM seed234，lab1 | PID/PGID1887909，完整50epoch/trial；首trial训练正常，预算待首trial完整结束冻结；monitor PID1475001存活、首次RUNNING | [训练日志](../runs/20260905_latent_evidence_sequence/hatemm/seed234/run.log)、[monitor](../runs/20260905_latent_evidence_sequence/hatemm/seed234/monitor/run.log) |
+| 候选6 HCS seed234，lab3 | PID/PGID3170219，同一协议/空间，首trial训练正常；monitor PID1475002存活、首次RUNNING | [训练日志](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/run.log)、[monitor](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/monitor/run.log) |
+| GPU资源 | lab1/lab3运行上述两搜索，torch2.7.1+cu128一致；本机他人任务97%；lab-server GPU空闲但无项目/环境，当前未就绪 | 当前无其它通过启动条件的独立任务；不为占满GPU重复实验 |
 | 候选5 HateClipSeg v2输入 | 抽取进程已退出；393/393视频、786/786文件完整回传并解析通过 | [完整输入审计](../runs/20260905_interventional_evidence/extract_hateclipseg_v2/input_audit.json) |
 | 候选5 HateClipSeg seed234，lab3 | 搜索进程已退出；20trial全部完整回传审计，首trial118.659秒 | [完整输出](../runs/20260905_interventional_evidence/hateclipseg/seed234/) |
 | 候选5 HateClipSeg seed234消融 | 8/8完成并完整回传；单seed初步支持已被三seed结果修正，不再单独用来主张模块有效 | [消融审计与原始来源](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed234/artifact_audit.json) |
@@ -72,7 +73,7 @@ python3 scripts/monitor_thread.py --thread 01a06df5-3e92-79b0-be30-820db943e551 
 
 ## 下一步
 
-1. 完成候选6唯一code review及必要bug修复；同步代码并检查工作树后，lab1/HateMM和lab3/HCS并行seed234完整Optuna，每项自动绑定独立monitor。首trial实测冻结20/5预算，不做smoke/短跑。
+1. 候选6两个完整搜索结束后核验进程/预算/每trial原始输出并回传；首trial实测冻结20/5预算，不按早期epoch指标决定方向，不做smoke/短跑。异常退出先诊断，不重复启动旧任务。
 2. 按两语料完整test结果分流，再决定确认seed/消融；不重跑候选5搜索或为偶然同向加seed。最强baseline+同输入仍为最终声明的必要缺口。
 3. 只搜索lr/dropout/max_seqlen；固定hidden128/kernel3/两状态/两粒度/损失等权等仍是设计参数，不称无超参数。等待由monitor事件唤醒；目标未完成、无硬阻塞，长期monitor保留。
 

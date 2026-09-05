@@ -1,6 +1,6 @@
 # 候选6：视频标签约束的局部证据状态模型
 
-2026-09-05 提案；独立[proposal review](REVIEW_RULE4.md)及唯一[code review](REVIEW_RULE6.md)均GO，数学/消融修正已落实，可启动两语料完整搜索；尚无正式结果，不主张已有效/novel。目标仍为两语料SOTA、三个模块独立有效、统一新范式、尽少方法超参数。
+2026-09-05 提案；独立[proposal review](REVIEW_RULE4.md)及唯一[code review](REVIEW_RULE6.md)均GO，数学/消融修正已落实，23:56已启动两语料seed234完整搜索；尚无正式结果，不主张已有效/novel。目标仍为两语料SOTA、三个模块独立有效、统一新范式、尽少方法超参数。
 
 ## 1. 来源与失败观察
 
@@ -63,3 +63,5 @@ I3D/VGGish/BERT内容输入映射为128维h_t，单层kernel3的一维时间卷�
 训练仍沿用既有均匀抽取的max_seqlen网格，validation/test保留完整snippet网格并按统一映射升至1fps；这是离散观测索引状态模型，不能声称转移是可跨采样率解释的每秒物理发生率。训练/评测采样密度差异、对齐观测时间相关性均为已披露的限制，不因此更改评测协议。
 
 运行主机：HateMM在sc474397/uoa-lab1，HateClipSeg在sc474398/uoa-lab3；正式入口 `launch/run_search.sh <corpus> 234`，输出 `runs/20260905_latent_evidence_sequence/<corpus>/seed234/`。唯一code review已通过，按该入口启动并自动绑定当前会话monitor；首trial完成后记录实测耗时/预算。
+
+23:56正式启动，两搜索与SSH解耦，PID/PGID分别1887909/3170219；自动monitor首次检查均RUNNING，首trial已正常输出epoch日志。同步前后检查了commit一致性和工作树，已有CLAUDE.md脏改动、tandem.html及远端idea-stage未跟踪目录均保留。仅同步本候选/共享实现与本轮文档，未修改CLAUDE.md或研究规则。
