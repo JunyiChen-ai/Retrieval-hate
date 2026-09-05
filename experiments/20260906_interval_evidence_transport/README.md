@@ -1,6 +1,6 @@
 # 候选9：区间证据的内容条件分配
 
-2026-09-06。状态：独立规则4 review及一次code review均GO（见 REVIEW_RULE4.md、REVIEW_RULE6.md）；07:24 NZST已双机启动正式seed234搜索。不是候选7重启，不声称三模块已经有效或已有novel paradigm证据。
+2026-09-06 08:31 NZST。状态：独立规则4 review及一次code review均GO（见 REVIEW_RULE4.md、REVIEW_RULE6.md）；双语料seed234完整筛选通过，08:27已并行启动两语料seed2025/3407确认搜索。不是候选7重启，不声称三模块已经有效或已有novel paradigm证据。
 
 ## 依据与问题
 
@@ -48,7 +48,7 @@ HCS单语料数值筛选通过，但弱于C1；不能据此说完整方法或三
 
 实际消融主机uoa-lab3/sc474398，入口 `bash scripts/run_locked_ablations.sh 20260906_interval_evidence_transport hateclipseg 234 hard_observation uniform_assignment additive_readout no_vlm`，前三臂同时运行，之后no_vlm；输出 `runs/20260906_interval_evidence_transport/ablations/hateclipseg/seed234/`，独立完成monitor的位置只在STATUS维护。不改活动HateMM模型、不重复HCS旧搜索、无新增VLM或特征抽取。
 
-## HCS seed234四臂结果与内部描述诊断
+## HCS seed234六臂结果与内部描述诊断
 
 四臂于07:59通知完成，全部输出/checkpoint已回传；相同trial18超参、50epoch、val checkpoint选择、val63/test79及原预测ID/秒长度/finite均核对通过。来源 `runs/20260906_interval_evidence_transport/ablations/hateclipseg/seed234/artifact_audit.json`（含每臂metrics.json路径）及 `error_analysis/hcs_seed234_ablations.json`。
 
@@ -59,9 +59,21 @@ HCS单语料数值筛选通过，但弱于C1；不能据此说完整方法或三
 | uniform_assignment | .604569/.585902/.545370 | .001201/.003406 |
 | additive_readout | .593375/.572121/.554614 | .012396/.017187 |
 | no_vlm | .595643/.560195/.527893 | .010127/.029113 |
+| no_observation_loss | .604373/.576451/.545021 | .001398/.012857 |
+| categorical_noise | .605614/.589468/.547414 | .000157/−.000160 |
 
 M1/M2两项pooled差均小于.005，目前不支持独立贡献；不能从一个seed裁定永久无效。M3及单一VLM整体有初步正向信号，仍不满足两语料三seed要求，no_vlm也不能代替M1软观察更新消融。完整模型及四臂均由val选中epoch1，不事后重选checkpoint或以此为由缩短50epoch。
 
 为区分“算子没变化”与“变化无性能作用”，新增只读 `diagnose_assignment.py`，加载已选checkpoint，在全部79个HCS test视频crop0取原forward hooks；不读GT、不训练、不重算AP/AUC。命令 `python experiments/20260906_interval_evidence_transport/diagnose_assignment.py --run runs/20260906_interval_evidence_transport/hateclipseg/seed234/trial18 --out runs/20260906_interval_evidence_transport/error_analysis/hcs_seed234_assignment.json`。观察到输入grade的平均后验概率 .988679，MAP仅 .005585比例窗口不同于原grade，软观察在此checkpoint接近硬等级；观察更新相对prior的TV为 .379628，不是完全没有读取VLM。音频/文本与视觉的分配相对纯交叠分配平均TV为 .066401/.157809，说明不是数学上相同的均匀分配，但该变化尚未转化为清楚的pooled收益。以上为crop0内部描述，不是五crop新性能指标或真正噪声可辨识证据。
 
 设计/执行影响：不盲目再加损失或更高VLM调用。追加提案已声明的 `no_observation_loss`、`categorical_noise`，同trial18配置、同seed234各完整50epoch，检查观察监督及序数约束是否相关；不是新增trial搜索或确认seed。两臂通过 `launch/run_hcs_aux.sh` 并行；共享launcher的可选链名只把日志/PID/completion分离到 `ablations/hateclipseg/seed234/auxiliary_chain/`，各新臂仍在原消融目录、旧四臂和完成标记均保留，monitor不复用旧完成状态。训练模型与活动HateMM代码不改。
+
+两项辅助臂08:10通知完成，均50epoch、val选epoch1，已回传并合入六臂 `artifact_audit.json`；两臂全部79视频预测覆盖检查见 `runs/20260906_interval_evidence_transport/error_analysis/hcs_seed234_auxiliary.json`。去观察损失的ROC下降.012857，提示该训练项有单seed贡献；自由类别噪声与序数通道pooled差小于.0002，未支持序数约束的收益。不能事后以辅助臂替代M1预声明主消融，M1/M2独立有效性仍缺。
+
+## HateMM完整筛选与双语料确认
+
+HateMM seed234于08:22:54结束，08:24收到通知；主进程及子进程均结束。全部20trial完整50epoch，19 COMPLETE/1 PRUNED；checkpoint、指标、数据库及预测均回传本机。最佳trial11由val选epoch2，test **.614455/.815451/.649858**（AP/ROC/within），lr .00010110272002418906/dropout .3/max_seqlen200。来源 `runs/20260906_interval_evidence_transport/hatemm/seed234/trial11/metrics.json`。全部trial的训练长度、val选择链与覆盖率见同study `artifact_audit.json`，test214视频ID/秒长/finite实际解析见 `runs/20260906_interval_evidence_transport/error_analysis/hatemm_seed234_all_trials.json`。仅val排序参考trial16：.604240/.807359/.652269，不用于选trial或额外训练。
+
+至此两语料seed234完整搜索同时满足规则8筛选六项数值。尚未确认SOTA：HateMM ROC单seed领先.008451，小于baseline seed标准差.0194，必须等三seed确认；HCS主消融也没有证明M1/M2贡献。
+
+08:27 NZST按规则8启动四项独立确认：uoa-lab1/sc474397运行HateMM seed2025和3407，uoa-lab3/sc474398运行HCS seed2025和3407，每GPU两项并行。命令均为 `bash experiments/20260906_interval_evidence_transport/launch/run_search.sh <corpus> <seed>`。各study继承本语料seed234的20trial预算，沿用相同预声明搜索空间与50epoch/val checkpoint/test选trial协议，不按并发后的速度重新定预算。全部任务与SSH解耦、独立monitor首次RUNNING成功；具体进程/monitor位置仅在STATUS维护。没有重复旧搜索/抽取；完成后回传审计并计算三seed均值、样本标准差与确认门，再按规则9分流。
