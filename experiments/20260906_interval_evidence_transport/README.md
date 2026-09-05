@@ -35,3 +35,5 @@ C8 HCS20trial完整输出均未达到within下限，最高无约束test配置为
 实现细节：单轮双向消息使用同一个key和更新网络；MLP第一仿射层严格分解内容/区间两部分，推断按34个区间累加，避免T×34重复大矩阵乘及四维输出常驻。初始观察精度1，初始类别噪声臂与同一序数矩阵相同；probability floor1e-6、归一化std下限1e-4、分母下限1e-12均为固定数值参数。骨干没有EMA或独立teacher网络。
 
 实际运行主机：HateMM=uoa-lab1/sc474397，HCS=uoa-lab3/sc474398；两机07:24启动50epoch正式trial，首epoch与validation输出正常，独立monitor首次RUNNING成功。首trial预算尚未实测时不宣称20/5已定，由search完成完整训练+val checkpoint+test后自动写各 `runs/20260906_interval_evidence_transport/<corpus>/seed234/budget.json`，再转录此处。没有新增特征/VLM抽取、预试跑或缩短训练。
+
+首trial预算与输出：HCS trial0完整50epoch+val checkpoint+test耗时88.886395秒，冻结每seed20trial，来源 `runs/20260906_interval_evidence_transport/hateclipseg/seed234/budget.json`。该trial val选epoch1，test .556560/.541946/.510151（AP/ROC/within），within剪枝；不是搜索最终结果，不基于首trial缩减预算。原评测及summary已回传，val63/test79覆盖和50epoch/ckpt选择核对一致。HateMM首trial仍运行，预算以完成后的实测为准。
