@@ -76,3 +76,7 @@ python experiments/20260905_interventional_evidence/search.py --corpus hateclips
 - 仅按validation选trial4，其test=`.650030751/.632801129/.540282000`。
 - HateMM尚未完成，暂不启动seed2025/3407。为检验三模块目标，锁定trial18的lr=.0008097806125316698/dropout=.3/max_seqlen=150，先跑已评审的8个seed234诊断臂，三任务一组并行，每臂仍完整50epoch/validation选checkpoint。来源配置固定为`trial18/hparams.json`；不再用消融结果改本轮搜索空间。
 - 启动脚本 `launch/run_hcs_ablations_seed234_lab3.sh`，输出 `runs/20260905_interventional_evidence/ablations/hateclipseg/seed234/`。这些单seed诊断不替代规则14(g)的两语料三seed验证。
+
+8臂已全部完成/回传/核验，来源该输出目录`artifact_audit.json`及各臂`metrics.json`。AP/ROC/within：raw_verdict `.614/.603/.519`，ordinary_attention `.591/.576/.550`，additive_fusion `.632/.621/.573`，full_input_only `.509/.455/.442`，four_logits `.531/.498/.466`，no_interaction `.650/.637/.531`，dempster_fusion `.641/.628/.582`，no_block `.611/.613/.577`。三个核心替换的pooled下降仅是单seed初步支持；交互项的AP下降仅.00463，不支持必要性。四logits与差分可逆，当前差距体现有限训练下表示/优化差异，不是增加信息的证明。不得据此宣称三模块novelty已确认。
+
+为复用空闲lab3，准备HateMM剩余奇数分片视频（14:33快照256个、约1.38GB）；仅传未完成项，不重算缓存。准备脚本首次因本机缺`non_hate_video_585.mp4`别名退出，原视频存在且与lab1大小一致，已补别名并恢复（未进入GPU任务）。完成准备后才停止旧全列表抽取，回传最新缓存并复制lab3，再按固定排序奇偶分片0/1各534个ID续跑，使用同一v2代码和已有resume校验。两片完成后合并审计1068个视频，再训练；不改变方法、split或输入协议。
