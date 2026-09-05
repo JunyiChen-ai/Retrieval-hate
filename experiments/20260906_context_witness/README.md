@@ -61,3 +61,5 @@ VLM视频processor沿冻结模型默认2fps编码这8张采样帧；这是归一
 正式抽取已启动：HateMM运行主机uoa-lab1/sc474397，HCS运行主机uoa-lab3/sc474398；全部固定split IDs分别1068/393，输入文件存在、环境已核对。各输出 `runs/20260906_context_witness/extract_<corpus>/`，本机同run下monitor独立后台通知当前会话；具体PID和当前状态只在STATUS维护。新方法尚无训练结果，首trial预算尚未产生。
 
 01:21首次正式抽取在两机均于首窗口vision SDPA发生OOM（25.16GiB已占用，需再分配7.91GiB），进程退出、0视频JSON，无可用缓存。已诊断并将四模式batch4改为顺序batch1，问题/帧数/分辨率/模型/六答案条件协议保持不变。失败日志与原config保留；修复后正式输出目录用 `extract_<corpus>_serial`，入口第二参数指定目录名，不将失败当作方法结果或搜索trial。
+
+01:25修复版在两机正式续跑，后续窗口连续推进、约18GB显存，两个新monitor首次RUNNING；新运行配置和出处已回传本机。完成后仍须全量解析/覆盖率审计再开训，不把首次窗口成功当完成。

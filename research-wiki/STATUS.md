@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 01:21 NZST**。依据：候选6两语料全量回传审计、候选7两项独立评审GO及双机正式抽取启动。权威数字均指向本机 runs 原始评测。
+截至 **2026-09-06 01:27 NZST**。依据：候选6两语料全量回传审计、候选7两项独立评审GO、正式抽取OOM修复后双机推进。权威数字均指向本机 runs 原始评测。
 
 ## 当前目标与结论
 
@@ -43,15 +43,17 @@ C5两语料120trial和已有消融全部回传；HCS三个核心替换在seed340
 
 | 任务 | 当前状态 | 位置 |
 |---|---|---|
-| C7 HateMM输入，lab1 | 首次batch4抽取OOM退出，0缓存；batch1修复已确认，待新run续跑 | [失败日志](../runs/20260906_context_witness/extract_hatemm/run.log) |
-| C7 HCS输入，lab3 | 首次batch4抽取OOM退出，0缓存；batch1修复已确认，待新run续跑 | [失败日志](../runs/20260906_context_witness/extract_hateclipseg/run.log) |
+| C7 HateMM输入，lab1 | batch1修复后01:25续跑，PID/PGID1986754；连续窗口正常，monitor1511203首次RUNNING | [run目录](../runs/20260906_context_witness/extract_hatemm_serial/)、[monitor](../runs/20260906_context_witness/extract_hatemm_serial/monitor/run.log) |
+| C7 HCS输入，lab3 | batch1修复后01:25续跑，PID/PGID3244050；连续窗口正常，monitor1511218首次RUNNING | [run目录](../runs/20260906_context_witness/extract_hateclipseg_serial/)、[monitor](../runs/20260906_context_witness/extract_hateclipseg_serial/monitor/run.log) |
 | C5/C6全部旧任务 | 已结束核验，通知已处理；不重复启动 | 各 runs 下 artifact_audit.json |
 | GPU | lab1/lab3正式抽取并行；本机01:17他人任务97%/余13GB不足加载当前VLM；lab-server GPU空闲但无项目/环境 | 不干扰他人或重复实验 |
 | 长期会话monitor | PID1177638存活；目标未完成、无硬阻塞，保留，不重复创建 | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
 
 两个抽取进程均与SSH解耦，monitor绑定本会话、120秒观察一次，结束/确认异常自动通知。完成标记不替代缓存全量解析；新数据生成于 data/context_witness/<corpus>/K30/，训练待各自完整输入。长期monitor保留，01:04提醒时已在推进。等待由事件唤醒，不由模型持续轮询。
 
-多机同步检查：启动时本机/lab1/lab3均为Git commit cbc572f（仅同步用途）；影响实验的代码无未提交/未跟踪差异，家目录无STRAY。本机CLAUDE.md既有修改/tandem.html及lab1 idea-stage/repro_t3al属无关存量，未动；两个远端均torch2.7.1+cu128、transformers4.49。
+首次batch4抽取两机均于首窗口vision SDPA发生OOM，原进程退出、0视频JSON；失败日志保留在 extract_<corpus>/，01:22旧monitor异常通知已处理，后到通知不重复启动。四路改顺序执行，问题/模型/输入/方法不变，修复经同次review确认；新run首次检查与实际窗口推理均成功。
+
+多机同步检查：修复启动时本机/lab1/lab3均为Git commit 2fed913（仅同步用途）；影响实验的代码无未提交/未跟踪差异，家目录无STRAY。本机CLAUDE.md既有修改/tandem.html及lab1 idea-stage/repro_t3al属无关存量，未动；两个远端均torch2.7.1+cu128、transformers4.49。启动后只更新运行文档，不在活动抽取中替换代码。
 
 ## 下一步
 
