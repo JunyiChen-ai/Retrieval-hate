@@ -7,7 +7,7 @@ import random
 import socket
 import sys
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = next(p for p in Path(__file__).resolve().parents if (p/'src/hier_evidence_common.py').is_file())
 sys.path.insert(0, str(ROOT/'src'))
 import numpy as np
 import torch
