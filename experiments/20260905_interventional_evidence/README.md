@@ -108,3 +108,15 @@ HateClipSeg三个seed现均完整20trial（60 COMPLETE）并已回传审计。se
 三个核心臂在seed3407的ROC也全部反向，不能改用ROC补足。`full_input_only`在seed3407为AP .697629/ROC .667300，也优于完整模型；其余两seed较差，所以平均增益不证明逐seed稳定。差分与四logits可逆，`four_logits`差距只反映当前训练下表示/优化差异；不能据此宣称增加信息或交互机制已验证。各seed采用各自搜索最优超参，seed与配置共同变化，不能从三点观察直接诊断为随机性或lr原因。
 
 结论：HCS性能确认仍成立，但三模块novelty主张当前不成立。不得重复旧消融寻找偶然同向。为定位是否跨语料失效，在已就绪且空闲的lab3于22:27启动HateMM seed234八臂完整诊断，锁定其test最优trial16，入口 `launch/run_module_ablations.sh hatemm 234`；主机sc474398，输出 `runs/20260905_interventional_evidence/ablations/hatemm/seed234/`，独立monitor已首次检查RUNNING。lab1两确认搜索不变，等待完整结果后做跨语料错误分析与方法分流。
+
+## 8. HateMM诊断与跨语料错误分析
+
+23:04通知后确认lab3进程退出，8臂全部回传：每臂50epoch、validation选checkpoint、trial16超参、val109/test214覆盖及原始评测一致性均通过 `artifact_audit.json` 核验。完整模型 AP/ROC/within `.623969/.849230/.671588`；原裁定替换 `.463147/.744635/.607294`、普通注意力 `.598809/.819538/.670525`、加法融合 `.595570/.823837/.671072`。完整输入单路 `.607594/.829128/.668801`、四logits `.547277/.802005/.665957`、去交互 `.603688/.825907/.670546`、Dempster `.597849/.823961/.675874`、去块监督 `.545509/.780297/.691070`。来源 `runs/20260905_interventional_evidence/ablations/hatemm/seed234/<arm>/metrics.json`。这只能支持HateMM该seed的pooled贡献，不能修复HCS三seed失败。
+
+随后使用 `scripts/analysis/diagnose_interventional_errors.py` 读取两语料已完成主模型/消融的 `scores_test.jsonl`、`metrics.json`、`summary.json`，固定test GT及split/video标签；输出 `runs/20260905_interventional_evidence/error_analysis/saved_prediction_diagnostics.json`。这是规则10允许的developmental error analysis，不重算AP/AUC、不训练、不用于checkpoint选择。
+
+- 训练正视频比例：HCS219/251，HateMM298/744。两语料的视频级监督分布差异大，但单凭比例不能证明失效原因。
+- 完整模型在HCS三seed的正秒/正视频背景秒均分分别 `.7933/.7699`、`.7928/.7664`、`.6641/.6146`；HateMM seed234为 `.4686/.3196`。这些是描述性均分、不是新增评测门。HCS含两类秒的视频内时间标准差均值仅 `.0223/.0294/.0487`，HateMM为 `.1028`；绝对分差受分数尺度影响，不能单独当作排序性能。
+- 从统一评测器已有逐视频AUC读取，HCS完整模型有32/30/21个混合视频AUC低于.5（共67个），HateMM为18个。HCS存在大量局部排序反向的视频；不能凭pooled过门称定位机制已解决。
+- HCS完整模型选中epoch1/2/5，训练loss从首epoch至末epoch分别 `1.086→.365`、`1.206→.409`、`1.412→.565`；各自validation AP从最佳 `.668/.681/.689` 降到末epoch `.566/.581/.645`。HateMM同样有后期泛化下降。这支持研究训练监督与定位目标的差异，不证明某个模块是原因，更不授权改validation checkpoint协议。
+- 设计决策：停止为当前三模块主张追加无必要旧消融；保留正在运行的固定预算确认搜索。下一修订优先检验正视频内部局部正负证据如何进入训练，必须超出已有块MIL/单纯类别重加权/更换融合算子。当前尚无可直接启动的新提案，不因GPU空闲重复实验。旧条件HMM比例目标在 `experiments/20260905_verdict_conditioned_density/README.md` 已失败，不直接复用该比例作新监督。
