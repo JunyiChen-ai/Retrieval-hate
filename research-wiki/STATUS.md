@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 11:00 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
+截至 **2026-09-06 11:45 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -33,7 +33,8 @@
 | 任务 | 状态 | 位置 |
 |---|---|---|
 | 精简版 v2 HateMM seed234，lab1 | 10:56 启动，search PID 3350496，20 trial（v1 首 trial 366 s） | `runs/20260906_hier_evidence_clean_v2/hatemm/seed234/`（远端，结束后 rsync） |
-| 精简版 v2 HCS seed234，lab3 | 10:56 启动，search PID 3685222 | `runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/` |
+| 精简版 v2 HCS seed234，lab3 | 完成并回传：**.703024/.683522/.562335**（trial 13），过主门，与 C1 持平 | [原评测](../runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/trial13/metrics.json) |
+| 精简版 v2 HCS seed2025/3407，lab3 | 11:42 并行启动，PID 3732961/3732963，各 20 trial | `runs/20260906_hier_evidence_clean_v2/hateclipseg/seed<seed>/`（远端） |
 | 精简版 v1 两语料 | 完成，已回传本机，数字见上表；v1 与 v2 不混算 | `runs/20260906_hier_evidence_clean/` |
 | 监控 | 本会话 harness 后台等待 `SEARCH_DONE` 或进程消失，不再有 monitor 脚本/线程 | — |
 | C9 | 两语料 seed234 与 HCS 全部诊断已回传；seed2025/3407 被用户中止的部分输出也已回传，不作结果 | [归档](../archive/experiments/20260906_interval_evidence_transport/README.md) |
