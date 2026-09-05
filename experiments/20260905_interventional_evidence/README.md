@@ -36,7 +36,7 @@ I3D/VGGish/BERT投影为内容token；干预证据投影为局部证据token。�
 
 ## 3. 状态
 
-独立proposal/code review均已通过，输入已完整核验，正在正式确认。HCS三seed数值确认通过，但三核心模块均未通过三seed有效性要求；HateMM确认搜索和seed234消融进行中。当前运行与下一步只见 `research-wiki/STATUS.md`；下文保留本轮详细记录。
+两语料各三seed完整20trial已全部结束、回传审计，均通过数值确认；HCS三核心模块未通过三seed有效性要求，不能作为最终三模块方法。保留为性能/诊断参照，不追加旧消融，继续候选6。当前运行与下一步只见 `research-wiki/STATUS.md`；下文保留本轮详细记录。
 
 ## 4. 评审落实（覆盖上文提案中的未核验表述）
 
@@ -120,3 +120,11 @@ HateClipSeg三个seed现均完整20trial（60 COMPLETE）并已回传审计。se
 - 从统一评测器已有逐视频AUC读取，HCS完整模型有32/30/21个混合视频AUC低于.5（共67个），HateMM为18个。HCS存在大量局部排序反向的视频；不能凭pooled过门称定位机制已解决。
 - HCS完整模型选中epoch1/2/5，训练loss从首epoch至末epoch分别 `1.086→.365`、`1.206→.409`、`1.412→.565`；各自validation AP从最佳 `.668/.681/.689` 降到末epoch `.566/.581/.645`。HateMM同样有后期泛化下降。这支持研究训练监督与定位目标的差异，不证明某个模块是原因，更不授权改validation checkpoint协议。
 - 设计决策：停止为当前三模块主张追加无必要旧消融；保留正在运行的固定预算确认搜索。下一修订优先检验正视频内部局部正负证据如何进入训练，必须超出已有块MIL/单纯类别重加权/更换融合算子。当前尚无可直接启动的新提案，不因GPU空闲重复实验。旧条件HMM比例目标在 `experiments/20260905_verdict_conditioned_density/README.md` 已失败，不直接复用该比例作新监督。
+
+## 9. 最终数值确认与去向
+
+23:34通知后核验lab1两个确认进程均退出，两seed各20trial完整回传、50epoch/validation checkpoint/原始评测/覆盖审计通过，均20 COMPLETE。seed2025/3407按test均选trial13，AP/ROC/within分别 `.631655699/.839611941/.652235706`、`.638296542/.848411267/.655993148`。HateMM三seed均值 `.631307136/.845751111/.659939070`，样本std `.007170045/.005332418/.010262017`；pooled领先固定门 `.058307/.038751`，超过所需std幅度 `.033/.0194`，within高于.632。来源 `runs/20260905_interventional_evidence/hatemm/confirmation_summary.json` 及其中各trial原始metrics路径。
+
+HCS最终均值/std见第6节。两语料共120trial（119 COMPLETE/1 within剪枝）全量回传核验。仅按validation排序trial的零额外训练参考：HateMM三seed均值 `.613349602/.838257012/.663449771`，HCS `.651619146/.635777955/.556582865`；不用于选方法或方向。
+
+第8条数值确认已全过，不等于第14条最终声明全过：HCS三核心机制消融不满足14(g)，最强baseline+同输入亦未齐。停止为当前三模块主张追加旧实验，保留本轮作为性能/诊断参照；下一候选为 `experiments/20260905_latent_evidence_sequence/`，视频标签约束的局部证据状态模型，独立proposal review已GO，待code review后正式实验。旧输入可直接复用，无需再抽取。

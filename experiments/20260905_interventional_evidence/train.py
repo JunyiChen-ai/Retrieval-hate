@@ -18,6 +18,8 @@ from torch.utils.data import DataLoader
 import hier_evidence_common as common
 import vlm_verdict
 import verdict_hmm
+from interventional_observations import load_observations
+from fixed_training_protocol import fit_and_evaluate
 from hate_common import data as hdata
 from macilsd.train import _seq_len_of
 from model import Candidate
@@ -32,18 +34,7 @@ def evidence_rows(path, k, vid, arm, raw):
         out = np.zeros((k, 8), dtype=np.float32)
         out[:, 0] = np.asarray(raw, dtype=np.float32) / 3
         return out
-    obj = json.loads(path.read_text())
-    if obj.get('version') != '2026-09-05 four-input evidence v2 raw logits':
-        raise ValueError(f'input version is not raw logits v2: {path}')
-    if obj['id'] != vid or obj['order'] != ['av', 'v', 'a', 'empty']:
-        raise ValueError(f'input identity/order: {path}')
-    windows = obj['windows']
-    if len(windows) != k or [w['index'] for w in windows] != list(range(k)):
-        raise ValueError(f'window alignment: {path}')
-    logits = np.asarray([w['log_odds'] for w in windows], dtype=np.float32)
-    entropy = np.asarray([w['entropy'] for w in windows], dtype=np.float32)
-    if logits.shape != (k, 4) or entropy.shape != (k, 4):
-        raise ValueError(f'input shape: {path}')
+    logits, entropy = load_observations(path, k, vid)
     av, v, a, empty = logits.T
     features = np.stack([empty, v-empty, a-empty, av-v-a+empty], -1)
     out = np.concatenate([features, entropy], -1)
@@ -125,56 +116,13 @@ def train(args, cfg):
     eval_loaders = {s: DataLoader(common.EvalDataset(corpus, ids[s], cache), batch_size=1,
                                   num_workers=args.num_workers) for s in ['val', 'test']}
     model = Candidate(cfg['dropout'], args.ablation).to(args.device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=cfg['lr'])
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50)
-    hate_ids = {v for v, label in labels.items() if label == 1}
-    best, best_state, best_epoch = -math.inf, None, None
-    history = []
-    for epoch in range(50):
-        start = time.monotonic()
-        model.train()
-        losses = []
-        for visual, audio, _, label in loader:
-            lengths = _seq_len_of(visual)
-            keep = int(lengths.max())
-            visual, audio = visual[:, :keep].to(args.device), audio[:, :keep].to(args.device)
-            label = label.float().to(args.device)
-            bags, *_ = model(audio, visual, lengths)
-            loss = F.binary_cross_entropy(bags, label)
-            if args.ablation != 'no_block':
-                loss = loss + common.block_bag_loss(model.last_content_logit, audio, lengths, label, 16)
-            if not torch.isfinite(loss):
-                raise RuntimeError('nonfinite training loss')
-            optimizer.zero_grad(); loss.backward(); optimizer.step()
-            losses.append(float(loss.detach()))
-        scheduler.step()
-        val = common.frame_metrics(common.score_split(model, eval_loaders['val'], args.device), gt['val'], hate_ids)
-        criterion = (val['pooled_ap'] + val['pooled_roc']) / 2
-        if not math.isfinite(criterion):
-            raise RuntimeError('nonfinite validation criterion')
-        history.append(dict(epoch=epoch+1, loss=float(np.mean(losses)), val=val,
-                            seconds=time.monotonic()-start))
-        say(json.dumps(history[-1]))
-        if criterion > best:
-            best, best_epoch = criterion, epoch+1
-            best_state = copy.deepcopy(model.state_dict())
-    model.load_state_dict(best_state)
-    torch.save(best_state, out / 'model.pth')
-    summary = dict(corpus=corpus, seed=args.seed, ablation=args.ablation, hparams=cfg,
-                   selected_epoch=best_epoch, val_criterion=best, history=history,
-                   host=socket.gethostname())
-    for split in ['val', 'test']:
-        scores = out / f'scores_{split}.jsonl'
-        common.write_scores(str(scores), common.score_split(model, eval_loaders[split], args.device))
-        metrics = common.run_evaluator(corpus, split, str(scores),
-            str(out / ('metrics.json' if split == 'test' else 'metrics_val.json')))
-        r = metrics['results']['score_av']
-        if r['n_videos'] != len(ids[split]):
-            raise RuntimeError(f'evaluator coverage differs from fixed {split} set')
-        summary[split] = dict(pooled_ap=r['pr_auc'], pooled_roc=r['roc_auc'],
-                              within_roc=r['per_video']['macro_auc'], n_videos=r['n_videos'])
-    (out / 'summary.json').write_text(json.dumps(summary, indent=2, allow_nan=False))
-    say('TEST ' + json.dumps(summary['test']))
+    def loss_fn(model, output, audio, lengths, label):
+        loss = F.binary_cross_entropy(output[0], label)
+        if args.ablation != 'no_block':
+            loss = loss + common.block_bag_loss(model.last_content_logit, audio, lengths, label, 16)
+        return loss
+
+    fit_and_evaluate(model, loader, eval_loaders, gt, labels, args, cfg, say, loss_fn)
     log.close()
 
 
