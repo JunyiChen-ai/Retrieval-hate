@@ -36,7 +36,7 @@ I3D/VGGish/BERT投影为内容token；干预证据投影为局部证据token。�
 
 ## 3. 状态
 
-独立[规则4 review](REVIEW_RULE4.md)裁定 GO；进入实现与输入准备，尚未训练。候选4已归档，原输出全部保留。
+独立proposal/code review均已通过，输入已完整核验，正在正式确认。HCS三seed数值确认通过，但三核心模块均未通过三seed有效性要求；HateMM确认搜索和seed234消融进行中。当前运行与下一步只见 `research-wiki/STATUS.md`；下文保留本轮详细记录。
 
 ## 4. 评审落实（覆盖上文提案中的未核验表述）
 
@@ -80,3 +80,31 @@ python experiments/20260905_interventional_evidence/search.py --corpus hateclips
 8臂已全部完成/回传/核验，来源该输出目录`artifact_audit.json`及各臂`metrics.json`。AP/ROC/within：raw_verdict `.614/.603/.519`，ordinary_attention `.591/.576/.550`，additive_fusion `.632/.621/.573`，full_input_only `.509/.455/.442`，four_logits `.531/.498/.466`，no_interaction `.650/.637/.531`，dempster_fusion `.641/.628/.582`，no_block `.611/.613/.577`。三个核心替换的pooled下降仅是单seed初步支持；交互项的AP下降仅.00463，不支持必要性。四logits与差分可逆，当前差距体现有限训练下表示/优化差异，不是增加信息的证明。不得据此宣称三模块novelty已确认。
 
 为复用空闲lab3，准备HateMM剩余奇数分片视频（14:33快照256个、约1.38GB）；仅传未完成项，不重算缓存。准备脚本首次因本机缺`non_hate_video_585.mp4`别名退出，原视频存在且与lab1大小一致，已补别名并恢复（未进入GPU任务）。完成准备后才停止旧全列表抽取，回传最新缓存并复制lab3，再按固定排序奇偶分片0/1各534个ID续跑，使用同一v2代码和已有resume校验。两片完成后合并审计1068个视频，再训练；不改变方法、split或输入协议。
+
+HateMM两片均534/534正常结束。2026-09-05 19:05处理通知时已回传合并1068视频/2136文件，严格输入审计通过，合并PROVENANCE保留初始lab1生成与后续两机分片来源。19:06在lab1用`launch/run_hatemm_lab1.sh`启动seed234完整搜索；输出 `runs/20260905_interventional_evidence/hatemm/seed234/`。预算待首trial完整耗时冻结；完成前不提前补确认seed。
+
+HateMM seed234完整搜索已结束并回传：20trial（19 COMPLETE/1 within剪枝），首trial296.590秒，预算20。按test选trial16，test AP/ROC/within=`.623969167/.849230124/.671588356`，validation选epoch4；参考性的validation排序会选trial17，test=`.614934171/.843600194/.671201480`。来源 `runs/20260905_interventional_evidence/hatemm/seed234/artifact_audit.json` 及对应原始metrics。两语料均通过规则8单seed筛选。
+
+2026-09-05 20:37补确认：lab1并行HateMM seed2025/3407，lab3并行HateClipSeg seed2025/3407；每项继承各语料seed234的20trial预算，全部使用`launch/run_search.sh <corpus> <seed>`。每项独立输出/monitor，未重跑seed234。完成后仍须三seed均值/std及核心模块消融，不凭单seed结果宣布novelty。
+
+HateClipSeg三个seed现均完整20trial（60 COMPLETE）并已回传审计。seed2025/3407按test均选trial12，test分别 `.649604234/.633045705/.553784217`、`.657898852/.644432031/.578979123`；三seed均值 `.654090358/.638275481/.557699900`，样本std `.004188622/.005749460/.019616707`。依据 `runs/20260905_interventional_evidence/hateclipseg/confirmation_summary.json`：HCS数值确认门通过，不等同整体目标完成。HateMM确认仍在进行。
+
+21:54前在lab3启动HCS确认seed2025/3407各8臂消融，均锁定其自身trial12配置。共16次完整训练、每批3任务，入口`launch/run_hcs_confirmation_ablations_lab3.sh`，监控输出`runs/20260905_interventional_evidence/ablations/hateclipseg/confirmation_chain/`；不重跑seed234。结束后合并三seed按规则14(g)判断模块贡献。
+
+## 7. HCS三seed模块结论与HateMM接续
+
+2026-09-05 22:22确认消融链结束；实际进程组已退出，新增16臂全部回传，连同seed234共24臂均通过完整50epoch、锁定超参、validation checkpoint和两split评测一致性/覆盖率审计。聚合脚本 `scripts/analysis/summarize_module_ablations.py` 只读取统一评测器输出，不重算帧指标；来源 `runs/20260905_interventional_evidence/ablations/hateclipseg/three_seed_summary.json`。
+
+| 替换/移除臂 | 完整模型减消融AP，seed234 / 2025 / 3407 | 平均AP差 | HCS规则14(g) |
+|---|---|---|---|
+| raw_verdict | +.040485 / +.055432 / −.004473 | +.030481 | 不满足，每seed同向失败 |
+| ordinary_attention | +.063331 / +.015249 / −.003086 | +.025165 | 不满足，每seed同向失败 |
+| additive_fusion | +.022521 / +.005442 / −.002368 | +.008532 | 不满足，均值及同向失败 |
+| four_logits | +.123367 / +.096071 / +.092987 | +.104142 | 本语料满足，非信息增益证明 |
+| no_interaction | +.004629 / −.005267 / +.013816 | +.004393 | 不满足 |
+| dempster_fusion | +.014030 / +.009382 / −.000216 | +.007732 | 不满足 |
+| no_block | +.044163 / +.057148 / +.033557 | +.044956 | 本语料满足，但为已有监督 |
+
+三个核心臂在seed3407的ROC也全部反向，不能改用ROC补足。`full_input_only`在seed3407为AP .697629/ROC .667300，也优于完整模型；其余两seed较差，所以平均增益不证明逐seed稳定。差分与四logits可逆，`four_logits`差距只反映当前训练下表示/优化差异；不能据此宣称增加信息或交互机制已验证。各seed采用各自搜索最优超参，seed与配置共同变化，不能从三点观察直接诊断为随机性或lr原因。
+
+结论：HCS性能确认仍成立，但三模块novelty主张当前不成立。不得重复旧消融寻找偶然同向。为定位是否跨语料失效，在已就绪且空闲的lab3于22:27启动HateMM seed234八臂完整诊断，锁定其test最优trial16，入口 `launch/run_module_ablations.sh hatemm 234`；主机sc474398，输出 `runs/20260905_interventional_evidence/ablations/hatemm/seed234/`，独立monitor已首次检查RUNNING。lab1两确认搜索不变，等待完整结果后做跨语料错误分析与方法分流。
