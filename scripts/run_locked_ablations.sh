@@ -15,9 +15,13 @@ study="runs/${experiment}/${corpus}/seed${seed}"
 python_bin="$HOME/miniconda3/envs/HateVideo/bin/python"
 trial=$("$python_bin" -c 'import json,sys; s=json.load(open(sys.argv[1])); assert len(s["trials"])==s["n_trials"] and all(t["state"] in ["COMPLETE","PRUNED"] for t in s["trials"]); assert s["best"] is not None; print(s["best"]["number"])' "$study/study_summary.json")
 config="$study/trial${trial}/hparams.json"
-trainer="experiments/${experiment}/train.py"
+# runs dir may carry a search-space / revision suffix (e.g. _v2, _rev2) that the
+# experiment directory does not have; the trainer is the same file.
+exp_dir="${experiment%_v[0-9]*}"
+exp_dir="${exp_dir%_rev[0-9]*}"
+trainer="experiments/${exp_dir}/train.py"
 if [[ ! -f "$trainer" ]]; then
-  trainer="archive/experiments/${experiment}/train.py"
+  trainer="archive/experiments/${exp_dir}/train.py"
 fi
 test -f "$trainer"
 mkdir -p "$run"

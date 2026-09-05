@@ -28,15 +28,23 @@ REPO_ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 TRAIN = os.path.join(HERE, "train.py")
 
 
-def sample(trial):
-    # README section 3 (declared before any search, 2026-09-06)
-    return {
+def sample(trial, space):
+    # README section 3. v1: declared 2026-09-06 09:00 (five scalars; CMAL weights
+    # fixed at MACIL-SD's published values). v2: declared 2026-09-06 after the v1
+    # seed-234 results (README section 6), MACIL-SD's three CMAL training weights
+    # searched again over candidate 1's ranges; the two method scalars are unchanged.
+    cfg = {
         "lr": trial.suggest_float("lr", 1e-4, 1e-3, log=True),
         "dropout": trial.suggest_categorical("dropout", [0.1, 0.2, 0.3]),
         "max_seqlen": trial.suggest_categorical("max_seqlen", [150, 200, 300]),
         "prior_scale": trial.suggest_float("prior_scale", 0.5, 8.0, log=True),
         "lambda_block": trial.suggest_float("lambda_block", 0.05, 2.0, log=True),
     }
+    if space == "v2":
+        cfg["lamda_a2b"] = trial.suggest_float("lamda_a2b", 0.5, 2.0)
+        cfg["lamda_a2n"] = trial.suggest_float("lamda_a2n", 0.5, 2.0)
+        cfg["lamda_cof"] = trial.suggest_float("lamda_cof", 0.02, 0.1)
+    return cfg
 
 
 def main(argv=None):
@@ -46,6 +54,8 @@ def main(argv=None):
     ap.add_argument("--out-root", required=True)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--num-workers", type=int, default=4)
+    ap.add_argument("--space", default="v1", choices=("v1", "v2"),
+                    help="declared search space (README section 3 / 6)")
     args = ap.parse_args(argv)
 
     root = os.path.join(args.out_root, args.corpus, "seed%d" % args.seed)
@@ -59,8 +69,8 @@ def main(argv=None):
         log.write(msg + "\n")
         log.flush()
 
-    say("host %s | corpus %s | seed %d | %s"
-        % (socket.gethostname(), args.corpus, args.seed, time.strftime("%Y-%m-%d %H:%M:%S")))
+    say("host %s | corpus %s | seed %d | space %s | %s"
+        % (socket.gethostname(), args.corpus, args.seed, args.space, time.strftime("%Y-%m-%d %H:%M:%S")))
     storage = "sqlite:///" + os.path.join(root, "optuna.db")
     study = optuna.create_study(
         study_name="%s_seed%d" % (args.corpus, args.seed), storage=storage,
@@ -73,7 +83,7 @@ def main(argv=None):
             budget = json.load(fh)["n_trials"]
 
     def objective(trial):
-        cfg = sample(trial)
+        cfg = sample(trial, args.space)
         out_dir = os.path.join(root, "trial%d" % trial.number)
         os.makedirs(out_dir, exist_ok=True)
         cfg_path = os.path.join(out_dir, "hparams.json")
@@ -136,7 +146,7 @@ def main(argv=None):
         val_pick = {"number": v.number, "user_attrs": v.user_attrs}
     with open(os.path.join(root, "study_summary.json"), "w") as fh:
         json.dump({"corpus": args.corpus, "seed": args.seed, "ablation": "full",
-                   "n_trials": budget, "within_floor": None, "best": best,
+                   "n_trials": budget, "within_floor": None, "space": args.space, "best": best,
                    "validation_selected": val_pick, "trials": rows,
                    "host": socket.gethostname()}, fh, indent=2, default=float)
     say("done: best %s | validation-selected %s"

@@ -57,3 +57,18 @@ bash scripts/run_locked_ablations.sh 20260906_hier_evidence_clean <corpus> <seed
 
 - 2026-09-06：实现、import 检查；code review 见 `REVIEW_RULE6.md`。
 - 2026-09-06 09:10 用户澄清：**搜索超参数（lr、dropout、CMAL 权重等训练超参）不设数量限制，限制的只是方法本身引入的超参数**（本版 = α、λ_block 两个）。本轮 seed 234 已按第 3 节的 5 维空间开跑，先跑完再看；把 lamda_a2b/a2n/cof 加回搜索空间不违反该约束，是否加回在 seed 234 结果出来后决定，加回则作为新的搜索声明重跑、不与本轮混算。
+
+## 6. seed 234 结果（搜索空间 v1，第 3 节；2026-09-06，lab1 HateMM / lab3 HCS；`runs/20260906_hier_evidence_clean/<corpus>/seed234/`）
+
+两语料各 20 trial 全部完整，无剪枝。AP / ROC / within：
+
+| | 精简版 v1 best | 候选 1 seed 234（within 剪枝下） | 规则 8 门 |
+|---|---|---|---|
+| HateMM | **.647900 / .833380 / .628441**（trial 19，epoch 2；[原评测](../../runs/20260906_hier_evidence_clean/hatemm/seed234/trial19/metrics.json)） | .661 / .841 / .650 | .573 / .807 |
+| HCS | **.696499 / .688134 / .554490**（trial 10，epoch 3；[原评测](../../runs/20260906_hier_evidence_clean/hateclipseg/seed234/trial10/metrics.json)） | .695 / .679 / .546 | .562 / .528 |
+
+只按 validation 选 trial：HateMM trial 6 .5758/.8084/.6169；HCS trial 5 .6967/.6741/.5577。首 trial 耗时 HateMM 366 s、HCS 142 s，预算 20。
+
+读法：主门两语料都过。HCS 与候选 1 持平（ROC +.009）。HateMM AP −.013、ROC −.008，低于预注册第 2 条的 ROC 下限 .837（单 seed 数字，第 2 条是三 seed 均值，但方向明确）。按预注册第 3 条查固定的 CMAL 权重：候选 1 HateMM 前五名 trial（3、11、12、15、16，AP .646–.661）的 lamda_cof 全在 .087–.099、lamda_a2b/a2n 多在 .7–1.15；候选 1 里 cof 在 .05–.06 的 trial（0、4、7）为 .636/.631/.618，与本版 best 同一水平。HateMM 选中 epoch 都是 2–3，CMAL 权重 = min(λ, cof·epoch)，cof 从 .095 降到 .05 意味着前几个 epoch 的 CMAL 权重减半。这是训练超参，不是方法超参（用户 09-06 澄清）。
+
+**决定：搜索空间 v2 = v1 + MACIL-SD 三个 CMAL 训练权重（lamda_a2b [0.5,2]、lamda_a2n [0.5,2]、lamda_cof [.02,.1]，与候选 1 同区间）**，方法级标量仍只有 α、λ_block；w_fine 不加回。两语料 seed 234 按 v2 重跑（规则 13 两语料同一空间），输出 `runs/20260906_hier_evidence_clean_v2/`，v1 结果保留不混算。启动：`bash experiments/20260906_hier_evidence_clean/launch/run_search.sh <corpus> 234 v2`。后续 seed 2025/3407 与消融都在 v2 上做；消融链 `bash scripts/run_locked_ablations.sh 20260906_hier_evidence_clean_v2 <corpus> <seed> <arms>`（脚本已支持 `_v2` 后缀定位 trainer）。
