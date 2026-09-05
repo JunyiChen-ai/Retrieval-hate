@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 01:14 NZST**。依据：候选6两语料全量回传审计、候选7首版实现及独立提案评审。权威数字均指向本机 runs 原始评测。
+截至 **2026-09-06 01:21 NZST**。依据：候选6两语料全量回传审计、候选7两项独立评审GO及双机正式抽取启动。权威数字均指向本机 runs 原始评测。
 
 ## 当前目标与结论
 
@@ -8,7 +8,7 @@
 
 候选5两语料通过三seed数值确认，但HCS三个核心模块未通过三seed有效性要求，保留性能参照。候选6完整结束并归档：HateMM 20trial全部within剪枝、没有合格best；HCS虽然过单语料数值门，但新骨干/训练贡献未成立。**不追加这两候选的旧搜索或确认seed。**
 
-当前推进[候选7：上下文条件化的局部证据保留/删除学习](../experiments/20260906_context_witness/README.md)。独立[proposal review GO](../experiments/20260906_context_witness/REVIEW_RULE4.md)，首版代码已实现、一次code review进行中；尚无候选7实验数字。最强baseline+同输入及整体novel paradigm证据仍缺。
+当前推进[候选7：上下文条件化的局部证据保留/删除学习](../experiments/20260906_context_witness/README.md)。独立[proposal review GO](../experiments/20260906_context_witness/REVIEW_RULE4.md)、[code review GO](../experiments/20260906_context_witness/REVIEW_RULE6.md)，评分接口bug在启动前修复；已双机正式抽取新输入，尚无候选7训练数字。最强baseline+同输入及整体novel paradigm证据仍缺。
 
 ## 当前三个模块
 
@@ -43,17 +43,19 @@ C5两语料120trial和已有消融全部回传；HCS三个核心替换在seed340
 
 | 任务 | 当前状态 | 位置 |
 |---|---|---|
-| C7 code review | 独立agent code_review_c7审查中，尚未开训 | experiments/20260906_context_witness/ |
-| C7输入抽取 | 待代码检查与多机同步后，HMM→lab1、HCS→lab3并行；尚未启动 | 计划 runs/20260906_context_witness/extract_<corpus>/ |
+| C7 HateMM输入，lab1 | 首次batch4抽取OOM退出，0缓存；batch1修复已确认，待新run续跑 | [失败日志](../runs/20260906_context_witness/extract_hatemm/run.log) |
+| C7 HCS输入，lab3 | 首次batch4抽取OOM退出，0缓存；batch1修复已确认，待新run续跑 | [失败日志](../runs/20260906_context_witness/extract_hateclipseg/run.log) |
 | C5/C6全部旧任务 | 已结束核验，通知已处理；不重复启动 | 各 runs 下 artifact_audit.json |
-| GPU | 01:13实时lab1/lab3空闲，各约31GB可用；本机上次为他人任务；lab-server尚无可用项目环境 | 新输入正式抽取就绪后并行 |
+| GPU | lab1/lab3正式抽取并行；本机01:17他人任务97%/余13GB不足加载当前VLM；lab-server GPU空闲但无项目/环境 | 不干扰他人或重复实验 |
 | 长期会话monitor | PID1177638存活；目标未完成、无硬阻塞，保留，不重复创建 | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
 
-每项新长任务配置独立monitor，进程身份/首次检查成功后更新本表；不会声称未启动任务已受监控。等待由事件唤醒，不由模型持续轮询。完成目标或确认无法推进的硬阻塞时关闭长期monitor并报告。
+两个抽取进程均与SSH解耦，monitor绑定本会话、120秒观察一次，结束/确认异常自动通知。完成标记不替代缓存全量解析；新数据生成于 data/context_witness/<corpus>/K30/，训练待各自完整输入。长期monitor保留，01:04提醒时已在推进。等待由事件唤醒，不由模型持续轮询。
+
+多机同步检查：启动时本机/lab1/lab3均为Git commit cbc572f（仅同步用途）；影响实验的代码无未提交/未跟踪差异，家目录无STRAY。本机CLAUDE.md既有修改/tandem.html及lab1 idea-stage/repro_t3al属无关存量，未动；两个远端均torch2.7.1+cu128、transformers4.49。
 
 ## 下一步
 
-1. 处理C7唯一code review发现的结论级bug；同步代码和工作树检查后，双机正式抽取新输入并自动监控。新缓存回传后检查解析、shape、全部ID及split隔离。
+1. 接抽取完成通知后核验主/子进程，回传新缓存和运行输出，检查解析、shape、全部ID及split隔离。异常先诊断，不重复启动旧任务。
 2. 每语料输入就绪后完整seed234搜索；首trial实测冻结20/5预算，不做smoke。仅搜索lr/dropout/max_seqlen，其余固定设计参数照实披露，不称无超参数。
 3. 按完整结果分流。先满足两语料筛选，再补确认seed；三个模块、同输入最强baseline及整体范式证据未齐前不声明完成。
 

@@ -1,6 +1,6 @@
 # 候选7：上下文条件化的局部证据保留/删除学习
 
-2026-09-06提案，独立proposal/code review均GO；首版已实现，评分接口bug在正式运行前修复，待双机正式抽取，不声称novelty已成立。目标仍为两语料性能、三个模块各有有效性支持、统一范式、尽少方法超参数。
+2026-09-06提案，独立proposal/code review均GO；首版已实现，评分接口bug在正式运行前修复，01:20 NZST已双机正式抽取，不声称novelty已成立。目标仍为两语料性能、三个模块各有有效性支持、统一范式、尽少方法超参数。
 
 ## 1. 为什么换方向
 
@@ -50,10 +50,14 @@ Code review一次，只查影响结论的bug；通过后完整两语料seed234 O
 
 ## 6. 实现与运行
 
-抽取：`bash experiments/20260906_context_witness/launch/run_extract.sh <hatemm|hateclipseg>`；计划HateMM在uoa-lab1/sc474397、HCS在uoa-lab3/sc474398，启动前实时核验。每窗口四模式同一冻结模型batch，强制11token（六个Yes/No加五个换行），读取生成器raw logits，不读受grammar掩码的scores。六项条件于此前生成答案。源码 `scripts/analysis/extract_context_witness.py`，严格解析与30维映射 `src/context_witness.py`。
+抽取：`bash experiments/20260906_context_witness/launch/run_extract.sh <hatemm|hateclipseg>`；计划HateMM在uoa-lab1/sc474397、HCS在uoa-lab3/sc474398，启动前实时核验。每窗口四模式顺序调用同一冻结模型，强制11token（六个Yes/No加五个换行），读取生成器raw logits，不读受grammar掩码的scores。六项条件于此前生成答案。源码 `scripts/analysis/extract_context_witness.py`，严格解析与30维映射 `src/context_witness.py`。
 
 完整搜索：`bash experiments/20260906_context_witness/launch/run_search.sh <corpus> 234`。输入解析/覆盖率通过且code review GO后启动；输出 `runs/20260906_context_witness/<corpus>/seed234/`。首完整trial前未决定20/5，不额外计数试跑。训练归一化用train的完整snippet序列、visual crop0，五crop训练/评测沿既有共享实现。GT、split和统一评测器不改。仅将C5/C6重复cohort校验与抽取ID/ASR读取升入共享代码，不重跑旧结果。
 
 M2主消融只支持“残差输入＋重建训练”整体；不能单独归因留一位置。三分类调用复用同一次dropout后的token特征，分类器完全共享，防止给不同视图额外引入随机差别。
 
 VLM视频processor沿冻结模型默认2fps编码这8张采样帧；这是归一化采样序列，不是原视频真实秒时间。prompt用frame positions、cache用相对窗口，最终定位仍通过共享snippet/1fps映射，不能声称VLM接收了真实秒时间。
+
+正式抽取已启动：HateMM运行主机uoa-lab1/sc474397，HCS运行主机uoa-lab3/sc474398；全部固定split IDs分别1068/393，输入文件存在、环境已核对。各输出 `runs/20260906_context_witness/extract_<corpus>/`，本机同run下monitor独立后台通知当前会话；具体PID和当前状态只在STATUS维护。新方法尚无训练结果，首trial预算尚未产生。
+
+01:21首次正式抽取在两机均于首窗口vision SDPA发生OOM（25.16GiB已占用，需再分配7.91GiB），进程退出、0视频JSON，无可用缓存。已诊断并将四模式batch4改为顺序batch1，问题/帧数/分辨率/模型/六答案条件协议保持不变。失败日志与原config保留；修复后正式输出目录用 `extract_<corpus>_serial`，入口第二参数指定目录名，不将失败当作方法结果或搜索trial。

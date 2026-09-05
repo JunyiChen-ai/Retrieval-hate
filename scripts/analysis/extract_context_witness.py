@@ -45,7 +45,7 @@ def main():
     cache.mkdir(parents=True, exist_ok=True)
     config = dict(vars(args), version=VERSION, model=MODEL, host=socket.gethostname(),
                   order=ORDER, attributes=ATTRIBUTES, system=SYSTEM, windows=30,
-                  frames_per_target=4, frames_per_neighbor=2, max_pixels=151200,
+                  frames_per_target=4, frames_per_neighbor=2, max_pixels=151200, mode_batch_size=1,
                   answer_protocol='six autoregressive Yes/No lines, raw pre-processor logits',
                   expected_ids=ids, missing_asr=missing,
                   sampling='120 uniform endpoint-inclusive video frames; target4, previous last2, next first2',
@@ -57,7 +57,7 @@ def main():
         f'Inputs: data/video/{ds}/All; data/ASR/{ds} K30; results/reproduction/splits/{args.corpus}_*.txt (IDs only).\n'
         f'Full questions, missing transcripts, sampling and command: {run}/config.json\n'
         'No labels or GT spans consumed. Six answers are autoregressive, not independent marginal queries.\n'
-        'Four modes processed as a batch by the same frozen model; no model ensemble.\n')
+        'Four modes processed sequentially by the same frozen model; no model ensemble.\n')
     (cache/'PROVENANCE.md').write_text('# Provenance\n\nSee PROVENANCE_shard*.md and the referenced full run configs.\n')
     from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration, LogitsProcessor
     processor = AutoProcessor.from_pretrained(MODEL, max_pixels=151200)
@@ -103,16 +103,24 @@ def main():
                         dict(role='user', content=[dict(type='video', video=supplied), dict(type='text', text=query)])]
             prompts.append(processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True))
             videos.append(supplied)
-        inputs = processor(text=prompts, videos=videos, padding=True, return_tensors='pt').to('cuda')
-        prefix = inputs.input_ids.shape[1]
-        output = model.generate(**inputs, max_new_tokens=11, do_sample=False, repetition_penalty=1.0,
-            logits_processor=[AnswerGrammar(prefix)], output_logits=True, return_dict_in_generate=True)
-        answers = output.sequences[:, prefix:]
-        if answers.shape != (4, 11) or len(output.logits) != 11:
-            raise RuntimeError('incomplete six-answer generation')
-        if not torch.isin(answers[:, ::2], answers.new_tensor([no, yes])).all() or not (answers[:, 1::2] == newline).all():
-            raise RuntimeError('invalid constrained answer format')
-        pairs = torch.stack([output.logits[i][:, [no, yes]].float() for i in range(0, 11, 2)], 1)
+        mode_pairs, mode_answers = [], []
+        # Qwen vision SDPA forms large attention tensors across the video batch;
+        # sequential modes preserve the measurements and fit the 32GB devices.
+        for prompt, video_frames in zip(prompts, videos):
+            inputs = processor(text=[prompt], videos=[video_frames], return_tensors='pt').to('cuda')
+            prefix = inputs.input_ids.shape[1]
+            output = model.generate(**inputs, max_new_tokens=11, do_sample=False, repetition_penalty=1.0,
+                logits_processor=[AnswerGrammar(prefix)], output_logits=True, return_dict_in_generate=True)
+            answer = output.sequences[:, prefix:]
+            if answer.shape != (1, 11) or len(output.logits) != 11:
+                raise RuntimeError('incomplete six-answer generation')
+            if not torch.isin(answer[:, ::2], answer.new_tensor([no, yes])).all() or not (answer[:, 1::2] == newline).all():
+                raise RuntimeError('invalid constrained answer format')
+            mode_answers.append(answer)
+            mode_pairs.append(torch.stack([output.logits[i][:, [no, yes]].float() for i in range(0, 11, 2)], 1))
+            del output, inputs
+        answers = torch.cat(mode_answers, 0)
+        pairs = torch.cat(mode_pairs, 0)
         if not torch.isfinite(pairs).all():
             raise RuntimeError('raw logits are missing/nonfinite')
         lp = pairs.log_softmax(-1)

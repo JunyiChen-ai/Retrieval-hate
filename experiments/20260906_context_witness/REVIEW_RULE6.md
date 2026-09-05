@@ -32,3 +32,11 @@
 - README 已补明：processor 默认2fps只给采样8帧编码归一化时间，不代表真实原视频秒时长；不得声称模型收到真实秒时间。prompt 是 frame positions，缓存是相对窗口，最终仍使用既有1fps映射。
 - 加权归一化、共享分类器和非零梯度不能排除 selector/classifier 共同利用捷径；删除目标0也是方法假设。这些由完整结果判断，不作实现前否决。
 - 以上检查不验证 GPU 显存峰值或全部原始文件的可解码性；正式抽取的真实解析、覆盖率和结束审计仍必须执行。不得把完成标记或本记录当作缓存完整性证明。
+
+## 同次审查的 OOM 修复确认
+
+正式四模式 batch 抽取在两台32GB GPU 的 vision SDPA 处 OOM，未产出视频 JSON；主 agent 将四模式改为按 `ORDER` 顺序、每次 batch size 1 调用同一冻结模型，并使用新运行目录保留失败日志。这里只确认该修复，不重开泛化 review。
+
+已检查修改后的 `extract_context_witness.py`：四份 prompt、帧、ASR、缺失模式和问题构建未变；每个模式独立设置自身 prefix，仍生成六个自回归 Yes/No（11 token），并取位置0/2/4/6/8/10的原始 No/Yes logits。单模式 `pairs` 为 `[1,6,2]`，按原顺序沿 batch 轴拼接为 `[4,6,2]`，最终 log-odds/entropy 仍为 `[4,6]`、answers 为 `[4,6]`，每视频30窗缓存协议不变。`del output, inputs` 后仅保留小型答案和抽取后的二元 logits，不累积四模式完整模型输出。config 已记录 `mode_batch_size=1`，provenance 已改成 sequential。
+
+结论仍为 **GO**：这是保持逐模式测量定义的内存调度修复，不改变方法、属性或下游形状。不同 batch/padding 下底层浮点实现可能有微小数值差异，不能据此声称逐位等同；此前无成品缓存，因此不存在混入旧 batch 结果的问题。是否足以消除实际 OOM，仍以正式运行结果为准；本确认未启动 VLM 或训练。
