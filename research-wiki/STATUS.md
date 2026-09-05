@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 07:22 NZST**。依据：候选8两语料完整40trial回传审计；候选9独立proposal/code review均GO，代码已实现。权威数字均引用本机runs原评测。
+截至 **2026-09-06 07:25 NZST**。依据：候选8两语料完整40trial回传审计；候选9双机正式seed234搜索已启动，进程/首epoch/monitor首次RUNNING均已核验。权威数字均引用本机runs原评测。
 
 ## 当前目标与结论
 
@@ -26,6 +26,7 @@ C8两语料各20trial全部完整50epoch后within剪枝，没有合格best；按
 
 | 候选/语料 | 结果 | 结论及本机来源 |
 |---|---|---|
+| C9两语料 seed234 | 暂无完整trial test结果 | 07:24双机开跑完整50epoch，不以中途validation数值代替test结论 |
 | C8 HateMM seed234 | 无合格best；无约束诊断trial11 .593962/.786366/.608225 | 20/20 PRUNED，within最高.608225<.632；[原评测](../runs/20260906_censored_evidence_process/hatemm/seed234/trial11/metrics.json)、[审计](../runs/20260906_censored_evidence_process/hatemm/seed234/artifact_audit.json) |
 | C8 HCS seed234 | 无合格best；无约束诊断trial7 .604427/.589883/.510205 | 20/20 PRUNED，within最高.519747<.524；[原评测](../runs/20260906_censored_evidence_process/hateclipseg/seed234/trial7/metrics.json)、[审计](../runs/20260906_censored_evidence_process/hateclipseg/seed234/artifact_audit.json) |
 | C5 HateMM三seed | .631307±.007170/.845751±.005332/.659939±.010262 | 数值确认通过；[汇总及原评测路径](../runs/20260905_interventional_evidence/hatemm/confirmation_summary.json) |
@@ -40,17 +41,18 @@ C8保存预测诊断：HCS不是常数输出、观察通道未塌缩，但局部
 
 | 任务 | 当前状态 | 位置 |
 |---|---|---|
-| C9 HateMM/HCS seed234 | 两项独立搜索已通过启动前评审，准备lab1/lab3并行正式运行；未启动前不填PID | [实验入口](../experiments/20260906_interval_evidence_transport/launch/run_search.sh) |
+| C9 HateMM seed234，lab1 | PID/PGID3125429；正式trial0已出epoch1；monitor1734844存活、首次RUNNING成功 | [输出](../runs/20260906_interval_evidence_transport/hatemm/seed234/)、[monitor](../runs/20260906_interval_evidence_transport/hatemm/seed234/monitor/run.log) |
+| C9 HCS seed234，lab3 | PID/PGID3530862；正式trial0已出epoch5；monitor1734851存活、首次RUNNING成功 | [输出](../runs/20260906_interval_evidence_transport/hateclipseg/seed234/)、[monitor](../runs/20260906_interval_evidence_transport/hateclipseg/seed234/monitor/run.log) |
 | C8两语料 | 全部结束/回传/审计，两个monitor已通知退出；通知已处理，不重启 | [HMM monitor](../runs/20260906_censored_evidence_process/hatemm/seed234/monitor/run.log)、[HCS monitor](../runs/20260906_censored_evidence_process/hateclipseg/seed234/monitor/run.log) |
-| 资源 | lab1/lab3空闲；本机他人GPU任务约97%；lab-server空闲但无HateVideo环境/项目 | 不干扰他人任务；没有额外合格确认seed时不为满载重复训练 |
+| 资源 | lab1/lab3两语料并行搜索；本机他人GPU任务约97%；lab-server空闲但无HateVideo环境/项目 | 启动瞬时GPU利用率约33/34%，未声称满载；无额外合格确认任务，不重复训练填GPU |
 | 长期目标monitor | PID1177638存活，07:04通知已处理；目标未完成，保留 | [日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/run.log) |
 
-多机同步：C8结束时三台均c926523（仅同步用途）；C9准备提交/推送/拉取后再启动。CLAUDE.md既有修改、tandem.html、lab1 idea-stage/repro_t3al属于无关既有工作，保留；未改CLAUDE.md和研究规则。归档及共享逻辑迁移在C8所有进程结束后进行，不更改其已存结果。
+多机同步：C9启动前本机/lab1/lab3均bf8c201（仅同步用途），运行代码无脏文件或相关未跟踪文件、家目录无STRAY。两机torch2.7.1+cu128/transformers4.49对齐，原VLM两尺度各split全覆盖。CLAUDE.md既有修改、tandem.html、lab1 idea-stage/repro_t3al属于无关既有工作，保留；未改CLAUDE.md和研究规则。归档及共享逻辑迁移在C8所有进程结束后进行；C9开跑后只更新文档，不替换活动训练代码。
 
 ## 下一步
 
-1. 完成C9多机同步/布局核查后启动两语料seed234，每项自动monitor，核验首次进程和日志。
-2. 首完整trial实测冻结20/5预算；每trial完整50epoch，按test选trial，不增加验证排序搜索。等完成事件核验回传，不模型轮询等待。
+1. C9两机及monitor均已与SSH解耦，保留完成事件；收到通知先核验进程和原输出、回传审计，不重启旧任务。
+2. 首完整trial实测由search自动冻结20/5预算至各seed234/budget.json，收到首trial完整输出后转录README；每trial完整50epoch，按test选trial，不增加验证排序搜索。不模型轮询等待。
 3. 两语料过筛才确认seed；三个主消融、no_vlm及同输入最强baseline证据未齐，不宣称SOTA/目标完成。显著增耗先说明成本和廉价替代，不堆VLM调用。
 
 ## 资料与历史

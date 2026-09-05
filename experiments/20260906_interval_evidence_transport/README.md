@@ -1,6 +1,6 @@
 # 候选9：区间证据的内容条件分配
 
-2026-09-06。状态：独立规则4 review及一次code review均GO（见 REVIEW_RULE4.md、REVIEW_RULE6.md）；模型及训练入口已实现，准备双机正式seed234搜索。不是候选7重启，不声称三模块已经有效或已有novel paradigm证据。
+2026-09-06。状态：独立规则4 review及一次code review均GO（见 REVIEW_RULE4.md、REVIEW_RULE6.md）；07:24 NZST已双机启动正式seed234搜索。不是候选7重启，不声称三模块已经有效或已有novel paradigm证据。
 
 ## 依据与问题
 
@@ -33,3 +33,5 @@ C8 HCS20trial完整输出均未达到within下限，最高无约束test配置为
 `model.py` 为唯一候选网络；共享输入时间单元与可选观察在 `src/interval_observation_data.py`（train重采样、eval原网格），归一化仅统计train/crop0。`train.py` 调用现有完整50epoch训练协议和唯一评测器，`search.py` 调用现有固定预算TPE。正式启动命令 `bash experiments/20260906_interval_evidence_transport/launch/run_search.sh <corpus> 234`；运行主机和monitor在STATUS记录，首trial耗时及冻结预算完成后补本节。
 
 实现细节：单轮双向消息使用同一个key和更新网络；MLP第一仿射层严格分解内容/区间两部分，推断按34个区间累加，避免T×34重复大矩阵乘及四维输出常驻。初始观察精度1，初始类别噪声臂与同一序数矩阵相同；probability floor1e-6、归一化std下限1e-4、分母下限1e-12均为固定数值参数。骨干没有EMA或独立teacher网络。
+
+实际运行主机：HateMM=uoa-lab1/sc474397，HCS=uoa-lab3/sc474398；两机07:24启动50epoch正式trial，首epoch与validation输出正常，独立monitor首次RUNNING成功。首trial预算尚未实测时不宣称20/5已定，由search完成完整训练+val checkpoint+test后自动写各 `runs/20260906_interval_evidence_transport/<corpus>/seed234/budget.json`，再转录此处。没有新增特征/VLM抽取、预试跑或缩短训练。
