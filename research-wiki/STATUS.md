@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 00:24 NZST**。依据：候选6 HCS完整搜索已回传审计、HateMM搜索进度、HCS锁定配置消融与monitor首次检查。每轮结束替换对应条目，不追加流水账。
+截至 **2026-09-06 00:39 NZST**。依据：候选6 HCS八臂消融及完整test初始化参照已回传核验、HateMM搜索进度。每轮结束替换对应条目，不追加流水账。
 
 ## 目标与当前结论
 
@@ -8,7 +8,7 @@
 
 候选5[干预证据方法](../experiments/20260905_interventional_evidence/README.md)两语料均通过三seed数值确认门，但三个核心模块均未通过HCS三seed有效性要求：seed3407替换后AP/ROC均略升，融合平均AP增益也不足.01。HateMM seed234三个核心替换AP降.161/.025/.028，仅为该seed支持，不能抵消HCS结果。停止为其主张追加旧消融，保留性能参照；最强baseline+同输入及整体范式证据仍缺。
 
-当前候选6：**视频标签约束的局部证据状态模型**，独立proposal/code review均GO。HCS seed234完整20trial结果 `.6908/.6649/.5803`，过本语料单seed门；HateMM仍搜索，最近11个已完成trial全部within剪枝、尚无合格trial，不能提前补确认seed。lab3已接续HCS八臂锁定配置消融。目标未完成，无硬阻塞，单seed过门不等于novelty成立。
+当前候选6：**视频标签约束的局部证据状态模型**，独立proposal/code review均GO。HCS完整20trial结果 `.6908/.6649/.5803`，过单语料门；但八臂消融不支持M2/M3，train统计初始化且未经梯度优化已达 `.6924/.6666/.5843`，与完整模型基本相当，不能把高分归因于新训练机制。HateMM仍搜索，最近15个完成trial全部within剪枝。不补确认seed，待完整结果按规则分流；目标未完成，无硬阻塞。
 
 协议唯一来源：[研究规则](../RESEARCH_ITERATION_RULES.md)。主数据集为 HateMM、HateClipSeg；within 硬门仍有效，取消硬门的讨论尚未裁定。三个模块均须 novelty 的新要求覆盖[旧计划](../docs/20260903_three_module_program.md)中模块 1 可选的要求。
 
@@ -16,15 +16,17 @@
 
 | 模块 | 实现 | 尚缺证据 |
 |---|---|---|
-| 1 VLM | 候选6复用同一冻结Qwen四路干预，两粒度联合8维状态条件高斯 | 完整协方差是否优于同输入对角协方差；不声称真实因果效应 |
-| 2 骨干 | 内容时间卷积与相邻内容差异决定潜状态转移 | 内容条件转移是否优于静态转移，保留相同内容初始概率 |
-| 3 融合/训练 | 精确视频事件概率+归一化观测NLL联合训练，最终输出同模型局部后验 | 相对同模型top-k训练是否有贡献；不是推理平滑 |
+| 1 VLM | 候选6复用同一冻结Qwen四路干预，两粒度联合8维状态条件高斯 | HCS对角替换AP降.0136，仅单seed；未经优化的初始化已与完整模型相当 |
+| 2 骨干 | 内容时间卷积与相邻内容差异决定潜状态转移 | HCS静态转移AP反而高.0028，无收益证据；分数确有变化，不能说代码未运行 |
+| 3 融合/训练 | 精确视频事件概率+归一化观测NLL联合训练，最终输出同模型局部后验 | HCS换top-k后AP仅降.0031/ROC降.0064，去生成项近似不变；不足以支持novelty |
 
 当前代码：[候选6提案与实现](../experiments/20260905_latent_evidence_sequence/README.md)、[proposal review](../experiments/20260905_latent_evidence_sequence/REVIEW_RULE4.md)、[code review](../experiments/20260905_latent_evidence_sequence/REVIEW_RULE6.md)。共享训练/评测调用在 `src/fixed_training_protocol.py`，v2缓存解析在 `src/interventional_observations.py`；评测器未改，候选5仅改调用升入共享目录的既有循环/解析，不重跑其结果。可靠起点：[候选1](../experiments/20260903_hier_evidence_mil/README.md)；候选4负结果：[归档结论](../archive/experiments/20260904_null_token_cma/README.md)。
 
 ## 已核验结果
 
 候选6 HCS seed234：20/20 COMPLETE、50epoch/validation checkpoint/val63/test79覆盖与原始指标一致性均已回传核验。按test选trial17，**AP .690827 / ROC .664875 / within .580322**，validation选epoch2；lr=.00042073384058945477/dropout=.2/max_seqlen=300。首trial78.196859秒，预算20。仅validation排序参考trial0 `.685846/.663355/.581215`，不作门。来源：[完整审计](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/artifact_audit.json)、[原始评测](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/trial17/metrics.json)。尚无两语料确认或模块有效性结论。
+
+候选6 HCS八臂全部完整回传审计；三个主替换结果 `.6772/.6608/.5717`、`.6936/.6650/.5888`、`.6877/.6585/.5825`，不支持三个模块均有效。来源：[八臂审计](../runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/artifact_audit.json)。完整test初始化参照（train标签分组均值、单位协方差、未梯度优化）`.692374/.666562/.584348`；完整模型差值 `−.001547/−.001687/−.004026`，结论是优化未显示收益，不是初始化显著更优。来源：[初始化原始评测](../runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/metrics.json)、[79视频/18839秒审计](../runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/artifact_audit.json)。
 
 候选 1 三 seed 均值，顺序为 **pooled AP / pooled ROC / within ROC**。每 seed 20 trial，trial 内 validation 选 checkpoint；开发搜索按 test 选 trial，不是未揭盲确认结果。
 
@@ -58,10 +60,11 @@ HateMM seed234消融8/8完整回传审计。AP/ROC/within：原裁定替换 `.46
 | HateClipSeg确认搜索 | seed2025/3407均已结束、各20trial完整回传审计；两个结束通知均已处理，不重启 | [2025审计](../runs/20260905_interventional_evidence/hateclipseg/seed2025/artifact_audit.json)、[3407审计](../runs/20260905_interventional_evidence/hateclipseg/seed3407/artifact_audit.json) |
 | HateClipSeg确认seed消融，lab3 | 进程组3110708已退出，16/16回传审计通过；22:22结束通知已处理，不重启 | [2025审计](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed2025/artifact_audit.json)、[3407审计](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed3407/artifact_audit.json) |
 | HateMM seed234消融，lab3 | 进程退出，8/8完整回传审计，23:04通知已处理，不重启 | [完整审计](../runs/20260905_interventional_evidence/ablations/hatemm/seed234/artifact_audit.json) |
-| 候选6 HateMM seed234，lab1 | PID/PGID1887909正常；00:23检查11/20完成且全部PRUNED（within），非异常退出；首trial176.022892秒，固定20预算继续；monitor保留 | [训练日志](../runs/20260905_latent_evidence_sequence/hatemm/seed234/run.log)、[monitor](../runs/20260905_latent_evidence_sequence/hatemm/seed234/monitor/run.log) |
+| 候选6 HateMM seed234，lab1 | PID/PGID1887909正常；00:32检查15/20完成且全部PRUNED（within），非异常退出；首trial176.022892秒，固定20预算继续；monitor保留 | [训练日志](../runs/20260905_latent_evidence_sequence/hatemm/seed234/run.log)、[monitor](../runs/20260905_latent_evidence_sequence/hatemm/seed234/monitor/run.log) |
 | 候选6 HCS seed234搜索 | 进程退出、20trial完整回传核验；00:20通知已处理，不重启 | [完整审计](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/artifact_audit.json) |
-| 候选6 HCS八臂消融，lab3 | 00:24启动PID/PGID3214907，锁定trial17，每批3项、每臂完整50epoch；首批正常；monitor PID1486996首次RUNNING | [训练日志](../runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/run.log)、[monitor](../runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/monitor/run.log) |
-| GPU资源 | lab1搜索、lab3消融并行，torch2.7.1+cu128一致；本机与lab-server最近检查见前轮记录，未向其派新任务 | 当前无其它通过启动条件的独立任务；不为占满GPU重复实验 |
+| 候选6 HCS八臂消融，lab3 | 进程退出，8/8完整回传审计；00:32通知已处理，不重启 | [完整审计](../runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/artifact_audit.json) |
+| HCS初始化完整test诊断，lab3 | PID3227824已退出、79视频全部回传核验；monitor首次即OUTPUT_FINISHED，已通知并处理，后到通知不重启 | [诊断及审计](../runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/) |
+| GPU资源 | lab1搜索继续；lab3诊断已结束，暂无就绪新实验；本机上次检查为他人任务，lab-server无项目/环境，本轮未向其派任务 | 不为占满GPU重复实验 |
 | 候选5 HateClipSeg v2输入 | 抽取进程已退出；393/393视频、786/786文件完整回传并解析通过 | [完整输入审计](../runs/20260905_interventional_evidence/extract_hateclipseg_v2/input_audit.json) |
 | 候选5 HateClipSeg seed234，lab3 | 搜索进程已退出；20trial全部完整回传审计，首trial118.659秒 | [完整输出](../runs/20260905_interventional_evidence/hateclipseg/seed234/) |
 | 候选5 HateClipSeg seed234消融 | 8/8完成并完整回传；单seed初步支持已被三seed结果修正，不再单独用来主张模块有效 | [消融审计与原始来源](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed234/artifact_audit.json) |
@@ -76,8 +79,8 @@ python3 scripts/monitor_thread.py --thread 01a06df5-3e92-79b0-be30-820db943e551 
 
 ## 下一步
 
-1. 候选6 HateMM完整搜索结束后核验回传全部trial，若全部within剪枝则如实记录无合格trial，不把审计脚本的空best误认为训练失败；HCS消融结束后核验回传八臂。两语料筛选未齐，不提前启动确认seed；不按早期epoch指标决定方向。
-2. 按两语料完整test结果分流，再决定确认seed/消融；不重跑候选5搜索或为偶然同向加seed。最强baseline+同输入仍为最终声明的必要缺口。
+1. 候选6 HateMM完整搜索结束后核验回传全部trial，若全部within剪枝则如实记录无合格trial，不把空best误认为训练失败。结合HCS消融/初始化参照按规则分流，不追加确认seed或旧消融。
+2. 后续设计必须说明相对train统计初始化增加了什么有效学习；不得把有分数变化等同于有性能贡献，不用新术语包装相同性能。最强baseline+同输入仍为最终声明的必要缺口。
 3. 只搜索lr/dropout/max_seqlen；固定hidden128/kernel3/两状态/两粒度/损失等权等仍是设计参数，不称无超参数。等待由monitor事件唤醒；目标未完成、无硬阻塞，长期monitor保留。
 
 ## 历史与资料

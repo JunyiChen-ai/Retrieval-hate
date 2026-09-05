@@ -1,6 +1,6 @@
 # 候选6：视频标签约束的局部证据状态模型
 
-2026-09-05 提案；独立[proposal review](REVIEW_RULE4.md)及唯一[code review](REVIEW_RULE6.md)均GO。HCS seed234完整搜索已回传核验，过本语料单seed门；HateMM仍在完整搜索，尚不能补确认seed。三个模块与整体novelty仍待实证。
+2026-09-05 提案；独立[proposal review](REVIEW_RULE4.md)及唯一[code review](REVIEW_RULE6.md)均GO。HCS seed234完整搜索过本语料单seed门，但八臂消融及完整test初始化参照不支持三个新增机制有效；HateMM仍在完整搜索，不补确认seed。不能把HCS高分归因于训练/新范式。
 
 ## 1. 来源与失败观察
 
@@ -77,3 +77,29 @@ HateMM搜索未结束，不启动2025/3407确认seed。利用空闲lab3，锁定
 已复用两次的锁定配置启动逻辑升入 `scripts/run_locked_ablations.sh`，两候选launcher只提供各自已评审臂列表，不修改模型或训练代码。启动前检查所有目标不存在，并用进程锁防重复；共享消融审计支持显式 `--arms`。完整搜索审计允许全部trial因within被剪枝而best=null，报告“无合格trial”而非把审计脚本异常误认为训练失败。
 
 00:24在lab3启动HCS八臂诊断，PID/PGID3214907；monitor PID1486996首次检查RUNNING，首批训练正常。HateMM首trial176.022892秒，预算固定20；00:23快照11个完成trial均within剪枝，搜索进程正常，继续既定预算，不据不完整搜索宣布方法失败。此时不启动确认seed。
+
+## 7. HCS消融和初始化参照：训练收益未成立
+
+2026-09-06 00:32通知后核验lab3进程退出，八臂均完整50epoch、validation checkpoint及val63/test79输出回传审计通过，来源 `runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/artifact_audit.json` 及各臂原始 `metrics.json`。
+
+| 臂 | AP / ROC / within | 完整模型减消融AP / ROC |
+|---|---|---|
+| full | .690827 / .664875 / .580322 | — |
+| diagonal_emission | .677191 / .660832 / .571722 | +.013636 / +.004043 |
+| static_transition | .693588 / .665009 / .588832 | −.002761 / −.000134 |
+| event_to_topk | .687680 / .658473 / .582514 | +.003148 / +.006402 |
+| full_input_emission | .687406 / .659157 / .577105 | +.003422 / +.005718 |
+| raw_verdict | .669567 / .641180 / .541090 | +.021261 / +.023695 |
+| no_temporal_content | .687216 / .664850 / .582054 | +.003612 / +.000025 |
+| independent_state | .688660 / .664415 / .577652 | +.002168 / +.000460 |
+| no_observation_likelihood | .690589 / .664779 / .579259 | +.000238 / +.000096 |
+
+仅M1对角替换在该seed有AP>.01下降，不能当三seed证据；M2没有正收益，M3差距不足.01，生成项几乎无贡献。未满足三模块目标，不因单语料pooled过门追加确认seed。
+
+保存输出诊断 `scripts/analysis/diagnose_latent_predictions.py` 读取上述完整预测/指标/参数与train初始化统计，输出 `runs/20260905_latent_evidence_sequence/error_analysis/hcs_seed234_saved_predictions.json`。静态转移相对完整模型的逐秒分数MAE=.4405、相关=.6419，但pooled指标近似；这说明模型确实改变分数，不能说内容支路根本未运行，只能说未有性能收益。去生成NLL的分数MAE约.0001、相关接近1，是其作用很小的描述性证据。数值并不证明所有变体只是单调映射。
+
+据此补做完整test初始化参照，**不是试训、不是缩短训练、不是新增搜索trial**：入口 `scripts/analysis/score_latent_initialization.py`，锁定已经test选出的trial17配置及其train-only统计；不加载优化后的权重，背景/目标均值仅由train视频标签分组估计，Cholesky为初始单位矩阵。初始content→transition/initial权重严格为零，因此内容/crop不影响输出，一个crop与五crop平均数学等价；仍用完整79视频/18839秒及唯一评测器。是有train统计的未梯度优化参照，不能称无监督或完全无训练数据。
+
+lab3运行PID3227824；诊断在monitor首次观察前已完成，monitor送出OUTPUT_FINISHED，实际进程退出、结果完整回传核验，此通知已处理。输出 `runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/metrics.json`：**.692373949/.666562425/.584347518**。完整模型相对它为 **−.001547/−.001687/−.004026**，均为小差异；结论是梯度优化未显示收益，而非初始化显著更优。覆盖/来源比较见同目录 `artifact_audit.json`。
+
+设计决策：当前HCS表现不能支撑新增联合训练/内容条件转移/整体范式；不追加旧消融或确认seed来寻找偶然支持。保留HateMM正在执行的固定20trial预算，结束后核验并按规则分流；后续方案必须明确相对train统计初始化增加了什么有效学习，不靠新术语包装同样性能。
