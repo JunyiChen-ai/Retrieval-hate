@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 09:05 NZST**。依据：用户 2026-09-06 三条裁定（within 不剪枝不作门；回候选 1 做减法；监控用 harness）；候选 1 精简版 code review PASS 后两语料 seed 234 搜索已启动。权威数字均引用本机 runs 原评测。
+截至 **2026-09-06 11:00 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -20,6 +20,8 @@
 
 | 候选/语料 | 结果 | 来源 |
 |---|---|---|
+| 精简版 v1 HateMM seed234 | .647900/.833380/.628441，trial 19 | 过主门，比 C1 seed234 低 .013/.008；[原评测](../runs/20260906_hier_evidence_clean/hatemm/seed234/trial19/metrics.json) |
+| 精简版 v1 HCS seed234 | .696499/.688134/.554490，trial 10 | 过主门，与 C1 持平（ROC +.009）；[原评测](../runs/20260906_hier_evidence_clean/hateclipseg/seed234/trial10/metrics.json) |
 | C1 三 seed（within 剪枝下搜索） | HMM .657±.013/.842±.005/.646±.004；HCS .699±.006/.681±.016/.553±.007 | [搜索](../runs/20260903_hier_evidence_mil/) |
 | C9 HateMM seed234 | .614455/.815451/.649858，trial 11 | [原评测](../runs/20260906_interval_evidence_transport/hatemm/seed234/trial11/metrics.json) |
 | C9 HCS seed234 | .605771/.589308/.547480，trial 18 | [原评测](../runs/20260906_interval_evidence_transport/hateclipseg/seed234/trial18/metrics.json) |
@@ -30,8 +32,9 @@
 
 | 任务 | 状态 | 位置 |
 |---|---|---|
-| 精简版 HateMM seed234，lab1 | 08:59 启动，search PID 3235062，20 trial 待首 trial 定预算 | `runs/20260906_hier_evidence_clean/hatemm/seed234/`（远端，结束后 rsync 回本机） |
-| 精简版 HCS seed234，lab3 | 09:02 启动，search PID 3620235 | `runs/20260906_hier_evidence_clean/hateclipseg/seed234/` |
+| 精简版 v2 HateMM seed234，lab1 | 10:56 启动，search PID 3350496，20 trial（v1 首 trial 366 s） | `runs/20260906_hier_evidence_clean_v2/hatemm/seed234/`（远端，结束后 rsync） |
+| 精简版 v2 HCS seed234，lab3 | 10:56 启动，search PID 3685222 | `runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/` |
+| 精简版 v1 两语料 | 完成，已回传本机，数字见上表；v1 与 v2 不混算 | `runs/20260906_hier_evidence_clean/` |
 | 监控 | 本会话 harness 后台等待 `SEARCH_DONE` 或进程消失，不再有 monitor 脚本/线程 | — |
 | C9 | 两语料 seed234 与 HCS 全部诊断已回传；seed2025/3407 被用户中止的部分输出也已回传，不作结果 | [归档](../archive/experiments/20260906_interval_evidence_transport/README.md) |
 | 本机 GPU | 他人任务占用（18G/97%），按选机规则用 lab1/lab3 | — |
@@ -40,9 +43,9 @@
 
 ## 下一步
 
-1. 两语料 seed 234 搜索结束后 rsync 回本机，按规则 8 主门筛选（不看 within），与候选 1 对照（注意候选 1 搜索剪过 within，HateMM 不可直接比）。
-2. 过筛则 seed 2025/3407 同样搜索；三 seed 后按 README 第 4 节九个消融臂跑 `scripts/run_locked_ablations.sh`，按新 14(g) 判定可主张部件。
-3. 预注册第 2 条不成立时先查固定的 lamda_cof，不加回 w_fine，不换架构。
+1. v2 两语料 seed 234 结束后回传，按规则 8 主门筛选；HateMM 对照 C1 seed 234 .661/.841 与 v1 .648/.833，看加回 CMAL 权重搜索是否补回差距。
+2. 过筛则 v2 补 seed 2025/3407；三 seed 后按 README 第 4 节九个消融臂跑 `scripts/run_locked_ablations.sh 20260906_hier_evidence_clean_v2 ...`，按 14(g)（三 seed 均值降 ≥ .01、两语料）判定可主张部件。
+3. 方法级标量保持 α、λ_block 两个；不加回 w_fine，不换架构。
 
 ## 资料与历史
 
