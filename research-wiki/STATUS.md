@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 01:27 NZST**。依据：候选6两语料全量回传审计、候选7两项独立评审GO、正式抽取OOM修复后双机推进。权威数字均指向本机 runs 原始评测。
+截至 **2026-09-06 04:06 NZST**。依据：候选7双机实际进程/日志、已回传部分缓存解析、现有monitor状态。候选7尚未开训，既有权威数字均指向本机 runs 原始评测。
 
 ## 当前目标与结论
 
@@ -43,13 +43,13 @@ C5两语料120trial和已有消融全部回传；HCS三个核心替换在seed340
 
 | 任务 | 当前状态 | 位置 |
 |---|---|---|
-| C7 HateMM输入，lab1 | batch1修复后01:25续跑，PID/PGID1986754；连续窗口正常，monitor1511203首次RUNNING | [run目录](../runs/20260906_context_witness/extract_hatemm_serial/)、[monitor](../runs/20260906_context_witness/extract_hatemm_serial/monitor/run.log) |
-| C7 HCS输入，lab3 | batch1修复后01:25续跑，PID/PGID3244050；连续窗口正常，monitor1511218首次RUNNING | [run目录](../runs/20260906_context_witness/extract_hateclipseg_serial/)、[monitor](../runs/20260906_context_witness/extract_hateclipseg_serial/monitor/run.log) |
+| C7 HateMM输入，lab1 | 169/1068已回传解析通过，仍抽取；PID/PGID1986754，monitor1511203正常 | [部分输入审计](../runs/20260906_context_witness/extract_hatemm_serial/input_audit_partial.json)、[monitor](../runs/20260906_context_witness/extract_hatemm_serial/monitor/run.log) |
+| C7 HCS输入，lab3 | 177/393已回传解析通过，仍抽取；PID/PGID3244050，monitor1511218正常 | [部分输入审计](../runs/20260906_context_witness/extract_hateclipseg_serial/input_audit_partial.json)、[monitor](../runs/20260906_context_witness/extract_hateclipseg_serial/monitor/run.log) |
 | C5/C6全部旧任务 | 已结束核验，通知已处理；不重复启动 | 各 runs 下 artifact_audit.json |
-| GPU | lab1/lab3正式抽取并行；本机01:17他人任务97%/余13GB不足加载当前VLM；lab-server GPU空闲但无项目/环境 | 不干扰他人或重复实验 |
+| GPU | 04:05 lab1/lab3利用率79%/83%，各余约11GB；本机他人任务97%/余13GB不足加载当前VLM；lab-server空闲但仍无项目/环境 | 缓存未齐，无就绪训练；不重复抽取或干扰他人 |
 | 长期会话monitor | PID1177638存活；目标未完成、无硬阻塞，保留，不重复创建 | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
 
-两个抽取进程均与SSH解耦，monitor绑定本会话、120秒观察一次，结束/确认异常自动通知。完成标记不替代缓存全量解析；新数据生成于 data/context_witness/<corpus>/K30/，训练待各自完整输入。长期monitor保留，01:04提醒时已在推进。等待由事件唤醒，不由模型持续轮询。
+两个抽取进程均与SSH解耦，monitor绑定本会话、120秒观察一次，结束/确认异常自动通知。已回传文件的版本、ID/split、30×4×6形状、窗口/答案及有限数值均通过，但总覆盖率不足，不当成完成。训练待各自完整输入；HCS先就绪则先开训，不等HateMM。04:04长期提醒已处理，目标未完成、无硬阻塞，保留monitor；等待由事件唤醒，不由模型持续轮询。
 
 首次batch4抽取两机均于首窗口vision SDPA发生OOM，原进程退出、0视频JSON；失败日志保留在 extract_<corpus>/，01:22旧monitor异常通知已处理，后到通知不重复启动。四路改顺序执行，问题/模型/输入/方法不变，修复经同次review确认；新run首次检查与实际窗口推理均成功。
 
