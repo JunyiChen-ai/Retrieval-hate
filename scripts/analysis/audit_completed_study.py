@@ -34,7 +34,10 @@ for t in s['trials']:
     for filename in ['model.pth', 'run.log', 'config.json', 'scores_test.jsonl', 'scores_val.jsonl']:
         assert (root / prefix / filename).stat().st_size > 0
 complete = [t for t in s['trials'] if t['state'] == 'COMPLETE']
-assert s['best']['number'] == max(complete, key=lambda t:t['value'])['number']
+if complete:
+    assert s['best']['number'] == max(complete, key=lambda t:t['value'])['number']
+else:
+    assert s['best'] is None  # Fully audited search can legitimately have no eligible trial.
 assert s['validation_selected']['number'] == max(s['trials'], key=lambda t:
     (t['user_attrs']['val_pooled_ap']+t['user_attrs']['val_pooled_roc'])/2)['number']
 report = dict(study=str(root), n_trials=budget, states=dict(Counter(t['state'] for t in s['trials'])),

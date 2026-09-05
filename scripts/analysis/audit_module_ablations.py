@@ -6,10 +6,12 @@ from pathlib import Path
 p = argparse.ArgumentParser()
 p.add_argument('--root', type=Path, required=True)
 p.add_argument('--reference', type=Path, required=True)
+p.add_argument('--arms', nargs='+', default=['raw_verdict','ordinary_attention','additive_fusion',
+    'full_input_only','four_logits','no_interaction','dempster_fusion','no_block'])
 args = p.parse_args()
 reference = json.loads((args.reference / 'summary.json').read_text())
-arms = ['raw_verdict','ordinary_attention','additive_fusion','full_input_only',
-        'four_logits','no_interaction','dempster_fusion','no_block']
+arms = args.arms
+assert len(arms) == len(set(arms))
 report = dict(reference=str(args.reference / 'metrics.json'), full=reference['test'], arms={})
 for arm in arms:
     folder = args.root / arm

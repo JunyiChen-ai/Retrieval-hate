@@ -1,6 +1,6 @@
 # 候选6：视频标签约束的局部证据状态模型
 
-2026-09-05 提案；独立[proposal review](REVIEW_RULE4.md)及唯一[code review](REVIEW_RULE6.md)均GO，数学/消融修正已落实，23:56已启动两语料seed234完整搜索；尚无正式结果，不主张已有效/novel。目标仍为两语料SOTA、三个模块独立有效、统一新范式、尽少方法超参数。
+2026-09-05 提案；独立[proposal review](REVIEW_RULE4.md)及唯一[code review](REVIEW_RULE6.md)均GO。HCS seed234完整搜索已回传核验，过本语料单seed门；HateMM仍在完整搜索，尚不能补确认seed。三个模块与整体novelty仍待实证。
 
 ## 1. 来源与失败观察
 
@@ -65,3 +65,13 @@ I3D/VGGish/BERT内容输入映射为128维h_t，单层kernel3的一维时间卷�
 运行主机：HateMM在sc474397/uoa-lab1，HateClipSeg在sc474398/uoa-lab3；正式入口 `launch/run_search.sh <corpus> 234`，输出 `runs/20260905_latent_evidence_sequence/<corpus>/seed234/`。唯一code review已通过，按该入口启动并自动绑定当前会话monitor；首trial完成后记录实测耗时/预算。
 
 23:56正式启动，两搜索与SSH解耦，PID/PGID分别1887909/3170219；自动monitor首次检查均RUNNING，首trial已正常输出epoch日志。同步前后检查了commit一致性和工作树，已有CLAUDE.md脏改动、tandem.html及远端idea-stage未跟踪目录均保留。仅同步本候选/共享实现与本轮文档，未修改CLAUDE.md或研究规则。
+
+## 6. HCS seed234完整结果与接续诊断
+
+2026-09-06 00:20通知后核验lab3进程退出，20/20 trial均COMPLETE并全量回传；50epoch、validation checkpoint、配置、val63/test79覆盖与原始指标一致性通过 `runs/20260905_latent_evidence_sequence/hateclipseg/seed234/artifact_audit.json`。首trial78.196859秒，预算固定20，来源 `budget.json`。
+
+按test选trial17（lr=.00042073384058945477/dropout=.2/max_seqlen=300），validation选epoch2；test AP/ROC/within=`.690827333/.664875187/.580321710`，通过本语料固定单seed门。原始来源 `trial17/metrics.json`。仅validation排序会选trial0，test=`.685845940/.663355041/.581215112`，零额外训练参考、不作门。不能把HCS单seed结果与旧候选三seed均值直接视为已确认提升。
+
+HateMM搜索未结束，不启动2025/3407确认seed。利用空闲lab3，锁定HCS trial17配置跑已评审八臂完整诊断：diagonal_emission、static_transition、event_to_topk、full_input_emission、raw_verdict、no_temporal_content、independent_state、no_observation_likelihood。每臂50epoch/validation checkpoint/test，最多3项并行，不另搜消融超参。主机sc474398，入口 `launch/run_module_ablations.sh hateclipseg 234`，输出 `runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/`，自动配置独立monitor。
+
+已复用两次的锁定配置启动逻辑升入 `scripts/run_locked_ablations.sh`，两候选launcher只提供各自已评审臂列表，不修改模型或训练代码。启动前检查所有目标不存在，并用进程锁防重复；共享消融审计支持显式 `--arms`。完整搜索审计允许全部trial因within被剪枝而best=null，报告“无合格trial”而非把审计脚本异常误认为训练失败。
