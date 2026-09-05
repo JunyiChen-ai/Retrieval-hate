@@ -7,7 +7,7 @@ import random
 import socket
 import sys
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT/'src'))
 import numpy as np
 import torch
@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader
 import hier_evidence_common as common
 import vlm_verdict
 from fixed_training_protocol import fit_and_evaluate
+from interval_observation_data import content_normalization
 from dataset import TrainDataset, EvalDataset
 from model import Candidate
 
@@ -55,18 +56,7 @@ def train(args, cfg):
             raise ValueError('negative train videos required for noise initialization')
         false_positive = [(sum(float((raw[k][v] >= 2).sum()) for v in negative)+1)/(len(negative)*k+2) for k in [30, 4]]
     # Streaming statistics use train content only, no VLM or held-out features.
-    total = np.zeros(1920, dtype=np.float64)
-    squares = total.copy()
-    count = 0
-    for vid in ids['train']:
-        audio, duration, snip = cache[vid]
-        visual = common.align.aligned_visual_crop(args.corpus, vid, 0, 'snippet', duration, snip)
-        rows = np.concatenate([visual, audio[:, :common.SCAF_OFFSET]], -1).astype(np.float64)
-        if rows.shape[1] != 1920 or not np.isfinite(rows).all():
-            raise ValueError(f'invalid train content: {vid}')
-        total += rows.sum(0); squares += np.square(rows).sum(0); count += len(rows)
-    mean = total/count
-    std = np.sqrt(np.maximum(squares/count-mean**2, 0)).clip(1e-4)
+    mean, std = content_normalization(cache, ids['train'])
     (out/'normalization.json').write_text(json.dumps(dict(source_split='train', visual_crop=0,
         video_ids=ids['train'], mean=mean.tolist(), std=std.tolist(),
         initial_false_positive=false_positive, initial_sensitivity_fraction=.9,

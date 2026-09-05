@@ -1,6 +1,8 @@
 # 候选8：带噪窗口证据监督的局部事件强度学习
 
-2026-09-06提案，独立proposal/code review均GO；06:31 NZST双机启动完整seed234搜索。HCS20trial已完整结束、全部within剪枝；HateMM仍按固定预算运行。尚未支持有效性/novelty。候选7已被用户因成本叫停，不恢复或换名续跑。
+淘汰原因：2026-09-06两语料各20trial完整50epoch，全部within剪枝，无合格best；按规则9归档。HateMM无约束最高 .593962/.786366/.608225，HCS .604427/.589883/.510205，均不是过门配置。
+
+独立proposal/code review均GO；06:31 NZST双机启动，07:15两机均结束并回传审计。尚未支持有效性/novelty。候选7已被用户因成本叫停，不恢复或换名续跑。
 
 ## 1. 出发点与成本
 
@@ -69,3 +71,11 @@ python scripts/analysis/describe_saved_predictions.py --corpus hateclipseg --run
 全部20trial内分数标准差均值范围 .051638–.277939，噪声通道q-r最小 .713008，不能归因为常数输出或q=r通道塌缩。14/20个checkpoint在epoch1–2，但没有保存每epoch test预测，不能据此声称后期test退化或更换checkpoint规则。**目前只支持C8这套训练监督未取得有效局部排序，不足以证明所有train-only VLM都不可行，也不能把某个模块单独定罪。**
 
 设计影响：下一候选优先保留原单次VLM局部证据作为推断输入，并研究内容与证据的局部交互；不把部署VLM=0作为用户硬要求，不恢复C7四次观察，不通过改within下限掩盖本轮性能落差。具体下一提案仍需独立review，未启动新候选或新抽取。
+
+## 6. 最终HateMM结果与归档
+
+HateMM在07:15:38完成固定20trial，主进程及子进程退出；完整目录回传本机并通过 `runs/20260906_censored_evidence_process/hatemm/seed234/artifact_audit.json` 审计：全部50epoch、val109/test214完整、val checkpoint选择一致。20个均PRUNED，within范围 .554816–.608225（下限.632）。最高无约束test目标trial11：.593962/.786366/.608225，epoch1；仅val排序trial19：.579398/.771111/.585330，epoch1。原始数字各见 `seed234/trial11/metrics.json` 与 `trial19/metrics.json`。
+
+两语料全部40trial都通过保存预测实际解析、ID/秒长度/finite检查，产物 `runs/20260906_censored_evidence_process/error_analysis/{hatemm,hcs}_seed234_all_trials.json`。无合格best不是运行错误；不追加确认或消融，结果和checkpoint均保留。模型本身没有经过因果模块消融，不能把失败单独归于某一项。
+
+归档后入口移至 `archive/experiments/20260906_censored_evidence_process/`，仓库根路径随之适配；共同的时间输入/归一化及三参数搜索空间升入 `src/interval_observation_data.py`、`src/content_search_space.py`，不再复制到第二候选。C8 eval默认观察仍为None，无推断VLM读取；这些归档维护发生在所有旧进程结束之后，不改变已存结果。历史命令为原运行记录，不授权重启；当前可解析归档入口的输出根仍指原runs目录，不覆盖重跑。

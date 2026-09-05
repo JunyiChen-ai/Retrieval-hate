@@ -1,4 +1,4 @@
-"""One content model: normalized-time intensity and noisy aggregate supervision."""
+"""Archived content model: normalized-time intensity and noisy aggregate supervision."""
 import math
 import torch
 from torch import nn
