@@ -1,6 +1,6 @@
 # 候选8：带噪窗口证据监督的局部事件强度学习
 
-2026-09-06提案，独立proposal/code review均GO；首版已实现，待同步后双机完整搜索，不声称有效性/novelty成立。候选7已被用户因成本叫停，不恢复或换名续跑。
+2026-09-06提案，独立proposal/code review均GO；06:31 NZST已同步并双机启动完整seed234搜索，不声称有效性/novelty成立。候选7已被用户因成本叫停，不恢复或换名续跑。
 
 ## 1. 出发点与成本
 
@@ -45,3 +45,9 @@ Proposal review须实际检索noisy label observation、learning from aggregate 
 已在本机核对固定cohort：HateMM train744/val109/test214（保留原test无GT视频427排除），HCS251/63/79。train两尺度裁定完整、等级可解析；观察噪声的负视频原始阳性比例为HateMM K30 .085501/K4 .165359、HCS .171875/.203125，初始化另用Beta(1,1)平滑。只用train标签与裁定，不用test/val统计拟合。
 
 推理输入只含1920维基础内容和时间区间；VLM裁定虽通过训练batch的独立尾列送入loss，forward显式不读取该列。val/test尾列为零，不读取相应裁定。最终checkpoint严格由val pooled指标选择；原缓存初始生成成本仍应在论文披露，不能因当前复用而省略。
+
+实际运行主机：HateMM=uoa-lab1/sc474397；HCS=uoa-lab3/sc474398。06:31启动正式50epoch trial，两机首trial epoch/validation输出均正常，独立monitor首次检查RUNNING。首trial完成前不预先宣称20/5预算，固定预算会由shared search写入budget.json，完成后转录本节。无新增抽取、无smoke、无缩短训练。
+
+首完整trial实测：HCS69.634405秒、HateMM167.251563秒，均固定每seed20trial，来源 `runs/20260906_censored_evidence_process/<corpus>/seed234/budget.json`。不以单epoch时长替代完整trial计时，预算后续不增减。
+
+首trial0完整50epoch且原始评测已回传：HMM .581852/.773846/.582817（AP/ROC/within，val选epoch1），HCS .602207/.588575/.508023（epoch2）。两者within均低于固定下限，按规则PRUNED；这不是搜索最优或完整方法结论。来源各corpus的 `seed234/trial0/metrics.json`、`summary.json`，val/test覆盖与50epoch已核对。搜索继续完整20trial，不基于首trial提前停。

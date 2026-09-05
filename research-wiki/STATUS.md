@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 06:29 NZST**。依据：候选8独立提案评审GO、首版实现、两机完整train裁定/基础cohort核对，唯一code review进行中。既有权威数字均指向本机 runs 原始评测。
+截至 **2026-09-06 06:35 NZST**。依据：候选8双机首trial完整50epoch及评测已回传核对，两语料20trial预算已冻结，搜索继续。权威数字均指向本机 runs 原始评测。
 
 ## 当前目标与结论
 
@@ -12,7 +12,7 @@
 
 ## 当前方法：候选8的三个模块
 
-[带噪窗口证据监督的局部事件强度学习](../experiments/20260906_censored_evidence_process/README.md)。独立[proposal review GO](../experiments/20260906_censored_evidence_process/REVIEW_RULE4.md)，首版实现完成、一次code review进行中，尚无训练数字。
+[带噪窗口证据监督的局部事件强度学习](../experiments/20260906_censored_evidence_process/README.md)。独立[proposal review GO](../experiments/20260906_censored_evidence_process/REVIEW_RULE4.md)、[code review GO](../experiments/20260906_censored_evidence_process/REVIEW_RULE6.md)，06:31已双机启动完整seed234搜索，尚无完整搜索结果。
 
 | 模块 | 实现 | 待验证 |
 |---|---|---|
@@ -30,6 +30,8 @@
 
 | 候选/语料 | 结果 | 结论与本机来源 |
 |---|---|---|
+| C8 HateMM 首trial0（非最终） | .581852/.773846/.582817，epoch1 | 完整50epoch、within剪枝；20trial搜索继续；[原评测](../runs/20260906_censored_evidence_process/hatemm/seed234/trial0/metrics.json) |
+| C8 HCS 首trial0（非最终） | .602207/.588575/.508023，epoch2 | 完整50epoch、within剪枝；20trial搜索继续；[原评测](../runs/20260906_censored_evidence_process/hateclipseg/seed234/trial0/metrics.json) |
 | C6 HateMM seed234 | 无合格trial；无within约束的诊断trial8为 .601467/.817607/.589623 | 20/20完整训练后PRUNED，within范围 .523138–.606444，低于.632；[审计](../runs/20260905_latent_evidence_sequence/hatemm/seed234/artifact_audit.json)、[trial8原评测](../runs/20260905_latent_evidence_sequence/hatemm/seed234/trial8/metrics.json) |
 | C6 HCS seed234 | .690827/.664875/.580322，trial17/epoch2 | 20/20 COMPLETE；[审计](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/artifact_audit.json)、[原评测](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/trial17/metrics.json) |
 | C6 HCS初始化参照 | .692374/.666562/.584348 | train统计初始化、未经梯度优化，与完整模型相当；[原评测及完整79视频审计](../runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/) |
@@ -47,19 +49,19 @@ C5两语料120trial和已有消融全部回传；HCS三个核心替换在seed340
 
 | 任务 | 当前状态 | 位置 |
 |---|---|---|
-| C8 code review | 独立agent code_review_c8审查中；不做smoke或缩短训练 | experiments/20260906_censored_evidence_process/ |
-| C8 HateMM/HCS seed234 | 计划lab1/lab3并行完整搜索；输入已齐，待code review GO及同步 | runs/20260906_censored_evidence_process/<corpus>/seed234/ |
+| C8 HateMM seed234，lab1 | PID/PGID2352168；首trial167.251563秒，固定20trial继续；monitor1713728正常 | [预算](../runs/20260906_censored_evidence_process/hatemm/seed234/budget.json)、[monitor](../runs/20260906_censored_evidence_process/hatemm/seed234/monitor/run.log) |
+| C8 HCS seed234，lab3 | PID/PGID3440097；首trial69.634405秒，固定20trial继续；monitor1713743正常 | [预算](../runs/20260906_censored_evidence_process/hateclipseg/seed234/budget.json)、[monitor](../runs/20260906_censored_evidence_process/hateclipseg/seed234/monitor/run.log) |
 | C7 | 两机抽取和对应monitor已停止；302/316份缓存保留，不恢复或补训 | [停止审计](../runs/20260906_context_witness/cancellation_audit.json) |
-| GPU | 06:27 lab1/lab3均空闲、各约31GB可用；已有输入满足准备条件 | 下一正式任务为C8两语料seed234 |
+| GPU | lab1/lab3并行正式搜索；本机仍有他人任务；lab-server有miniconda但无HateVideo环境/项目 | 未满足两语料筛选，不提前启动确认seed |
 | 长期目标monitor | PID1177638存活，总体目标未完成 | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
 
-新长搜索启动时各配独立monitor，先确认实际进程和首次观察成功再记录PID。不等待模型轮询；任务完成后核验全输出并回传。C7旧通知均不授权重启。
+两个搜索及对应monitor均与SSH解耦，进程身份/首次RUNNING/实际epoch输出已核对；首trial及预算已回传，无新增抽取或预试跑。不等待模型轮询；结束通知后核验全输出并回传。C7旧通知均不授权重启。
 
-多机同步：06:27本机/lab1/lab3 commit均为2f9a159（仅同步用途）；本机新增C8相关代码待提交同步。CLAUDE.md既有修改、tandem.html及lab1 idea-stage/repro_t3al保留，均无关运行；家目录无STRAY。用户计算成本要求已在AGENTS.md，CLAUDE.md和研究规则未改。
+多机同步：C8启动时本机/lab1/lab3 commit均为89472f1（仅同步用途），无影响运行的脏代码或未跟踪代码。CLAUDE.md既有修改、tandem.html及lab1 idea-stage/repro_t3al保留，均无关运行；家目录无STRAY。启动后仅更新运行文档，不替换活动训练代码。用户计算成本要求已在AGENTS.md，CLAUDE.md和研究规则未改。
 
 ## 下一步
 
-1. 完成候选8唯一代码审查并修复结论级bug；同步后双机完整seed234搜索，不新增VLM抽取。
+1. 接候选8搜索结束通知后核验进程、回传并审计全部trial/50epoch/ckpt/评测覆盖；异常先诊断，不重复启动。
 2. 首trial50epoch+val checkpoint+test实测冻结20/5预算，按test选trial、within约束沿现行规则。两语料都过筛后再补确认seed。
 3. 验证三个主替换与no_vlm；同输入最强baseline和整体方法证据未齐前不宣称完成。显著增耗方案先说明必要性及廉价替代，不再默认堆VLM调用。
 
