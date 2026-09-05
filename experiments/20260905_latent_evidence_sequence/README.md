@@ -75,3 +75,5 @@ I3D/VGGish/BERT内容输入映射为128维h_t，单层kernel3的一维时间卷�
 HateMM搜索未结束，不启动2025/3407确认seed。利用空闲lab3，锁定HCS trial17配置跑已评审八臂完整诊断：diagonal_emission、static_transition、event_to_topk、full_input_emission、raw_verdict、no_temporal_content、independent_state、no_observation_likelihood。每臂50epoch/validation checkpoint/test，最多3项并行，不另搜消融超参。主机sc474398，入口 `launch/run_module_ablations.sh hateclipseg 234`，输出 `runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/`，自动配置独立monitor。
 
 已复用两次的锁定配置启动逻辑升入 `scripts/run_locked_ablations.sh`，两候选launcher只提供各自已评审臂列表，不修改模型或训练代码。启动前检查所有目标不存在，并用进程锁防重复；共享消融审计支持显式 `--arms`。完整搜索审计允许全部trial因within被剪枝而best=null，报告“无合格trial”而非把审计脚本异常误认为训练失败。
+
+00:24在lab3启动HCS八臂诊断，PID/PGID3214907；monitor PID1486996首次检查RUNNING，首批训练正常。HateMM首trial176.022892秒，预算固定20；00:23快照11个完成trial均within剪枝，搜索进程正常，继续既定预算，不据不完整搜索宣布方法失败。此时不启动确认seed。
