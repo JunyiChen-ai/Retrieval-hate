@@ -1,6 +1,6 @@
 # 候选8：带噪窗口证据监督的局部事件强度学习
 
-2026-09-06提案，独立proposal/code review均GO；06:31 NZST已同步并双机启动完整seed234搜索，不声称有效性/novelty成立。候选7已被用户因成本叫停，不恢复或换名续跑。
+2026-09-06提案，独立proposal/code review均GO；06:31 NZST双机启动完整seed234搜索。HCS20trial已完整结束、全部within剪枝；HateMM仍按固定预算运行。尚未支持有效性/novelty。候选7已被用户因成本叫停，不恢复或换名续跑。
 
 ## 1. 出发点与成本
 
@@ -51,3 +51,21 @@ Proposal review须实际检索noisy label observation、learning from aggregate 
 首完整trial实测：HCS69.634405秒、HateMM167.251563秒，均固定每seed20trial，来源 `runs/20260906_censored_evidence_process/<corpus>/seed234/budget.json`。不以单epoch时长替代完整trial计时，预算后续不增减。
 
 首trial0完整50epoch且原始评测已回传：HMM .581852/.773846/.582817（AP/ROC/within，val选epoch1），HCS .602207/.588575/.508023（epoch2）。两者within均低于固定下限，按规则PRUNED；这不是搜索最优或完整方法结论。来源各corpus的 `seed234/trial0/metrics.json`、`summary.json`，val/test覆盖与50epoch已核对。搜索继续完整20trial，不基于首trial提前停。
+
+## 5. HCS完整筛选与保存预测诊断
+
+HCS搜索06:51 NZST结束，主进程及子进程均退出；20trial全部回传本机，全部完整50epoch、val63/test79视频覆盖及checkpoint选择通过 `runs/20260906_censored_evidence_process/hateclipseg/seed234/artifact_audit.json` 审计。20个均为PRUNED，没有合格best，不是任务异常。within范围 .496378–.519747，低于 .524。
+
+忽略within、仅供诊断的最高test(AP+ROC)/2为trial7：**AP .604427 / ROC .589883 / within .510205**，val选epoch2。来源 `runs/20260906_censored_evidence_process/hateclipseg/seed234/trial7/metrics.json`。仅validation排序也选trial7，不增加训练；该结果不计作通过筛选。不追加HCS确认seed或消融；HateMM仍完成已冻结20trial，最终按规则9分流，不在活动训练期间归档代码。
+
+已读上述20trial全部test预测与GT，以及C1 HCS seed234/trial8原预测作开发期诊断；没有重新训练、改checkpoint或重写评测。共享描述逻辑升入 `src/saved_prediction_diagnostics.py`，旧C5诊断入口复用；运行命令：
+
+```bash
+python scripts/analysis/describe_saved_predictions.py --corpus hateclipseg --run C8_trial7=runs/20260906_censored_evidence_process/hateclipseg/seed234/trial7 --run C1_trial8=runs/20260903_hier_evidence_mil/hateclipseg/seed234/trial8 --out runs/20260906_censored_evidence_process/error_analysis/hcs_seed234_saved_predictions.json
+```
+
+诊断产物在同目录 `hcs_seed234_saved_predictions.json`、`hcs_seed234_all_trials.json`，逐一记录输入路径。C8 trial7在67个混合标签视频中32个AUC<.5，C1为25个；原评测器的视频均分ROC分别 .762319/.807246，说明C8有视频级区分但局部排序弱，并非只有within一项的微小门槛落差（C1该trial pooled .695235/.679345）。C8 trial7视频内分数标准差均值 .082567，不是恒定输出；同视频阳性/背景均分差的macro均值仅 .001513。不同模型分数尺度不一致，分数差/方差不能单独作为跨模型性能判据。
+
+全部20trial内分数标准差均值范围 .051638–.277939，噪声通道q-r最小 .713008，不能归因为常数输出或q=r通道塌缩。14/20个checkpoint在epoch1–2，但没有保存每epoch test预测，不能据此声称后期test退化或更换checkpoint规则。**目前只支持C8这套训练监督未取得有效局部排序，不足以证明所有train-only VLM都不可行，也不能把某个模块单独定罪。**
+
+设计影响：下一候选优先保留原单次VLM局部证据作为推断输入，并研究内容与证据的局部交互；不把部署VLM=0作为用户硬要求，不恢复C7四次观察，不通过改within下限掩盖本轮性能落差。具体下一提案仍需独立review，未启动新候选或新抽取。
