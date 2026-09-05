@@ -58,8 +58,21 @@ I3D/VGGish/BERT投影为内容token；干预证据投影为局部证据token。�
 
 lab3准备覆盖核验：393个视频头可解析、两粒度ASR全覆盖、5个模型分片可解析。原视频混有webm，以 `scripts/prepare_hcs_video_links.py` 创建规范mp4别名，不转码、不删除原视频。依据：`runs/20260905_interventional_evidence/prepare_lab3/coverage.json`。
 
-运行命令（搜索尚未启动）：
+HateClipSeg于2026-09-05 13:36在lab3启动seed234正式搜索，入口`launch/run_hateclipseg_lab3.sh`；启动前393视频/786文件完整v2审计通过，输出已回传本机。首trial完整耗时118.659秒，预算冻结20 trial，确认seed继承；依据 `runs/20260905_interventional_evidence/hateclipseg/seed234/budget.json`，不根据中途epoch指标作方向决定。
+
+HateMM于13:48因lab1原视频`hate_video_95.mp4`截断退出。已回传422个完整视频的v2缓存并解析通过。逐文件大小对照仅此文件不同（远端37,537,689字节，本机79,748,606字节）；完整本机副本及补传副本均用正式120帧采样器成功解码。远端损坏副本保留在`runs/20260905_interventional_evidence/input_repair/hate_video_95.truncated.mp4`，修复原路径后恢复相同v2任务，自动跳过已验证输出，不重算422个视频。不修改输入协议或抽取代码；新monitor位于`extract_hatemm_v2/monitor_resume1/`。
+
+运行命令：
 ```bash
 python experiments/20260905_interventional_evidence/search.py --corpus hatemm --seed 234 --out-root runs/20260905_interventional_evidence
 python experiments/20260905_interventional_evidence/search.py --corpus hateclipseg --seed 234 --out-root runs/20260905_interventional_evidence
 ```
+
+## 6. HateClipSeg seed234搜索与下一步
+
+20/20 trial均COMPLETE，全部50epoch；checkpoint选择、超参、原始评测和完整覆盖已核验，来源 `runs/20260905_interventional_evidence/hateclipseg/seed234/artifact_audit.json`。
+
+- 开发期按test选trial18，AP/ROC/within=`.654767988/.637348708/.540336361`，validation选epoch1。通过本语料固定单seed门，但低于候选1；不是两语料确认SOTA。
+- 仅按validation选trial4，其test=`.650030751/.632801129/.540282000`。
+- HateMM尚未完成，暂不启动seed2025/3407。为检验三模块目标，锁定trial18的lr=.0008097806125316698/dropout=.3/max_seqlen=150，先跑已评审的8个seed234诊断臂，三任务一组并行，每臂仍完整50epoch/validation选checkpoint。来源配置固定为`trial18/hparams.json`；不再用消融结果改本轮搜索空间。
+- 启动脚本 `launch/run_hcs_ablations_seed234_lab3.sh`，输出 `runs/20260905_interventional_evidence/ablations/hateclipseg/seed234/`。这些单seed诊断不替代规则14(g)的两语料三seed验证。

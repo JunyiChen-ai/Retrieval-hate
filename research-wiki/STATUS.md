@@ -1,12 +1,12 @@
 # 当前研究状态
 
-截至 **2026-09-05 11:05 NZST**。依据：候选1源码、候选4已回传并核验的120个trial/18个消融输出、候选5提案。每轮结束替换对应条目，不追加流水账。
+截至 **2026-09-05 14:15 NZST**。依据：HateClipSeg seed234完整20trial原始输出核验、HateMM抽取实时进程。每轮结束替换对应条目，不追加流水账。
 
 ## 目标与当前结论
 
 **目标尚未完成。** 等当前实验完成后继续开发：两语料达到研究规则的 SOTA；VLM、骨干、融合三个模块各有消融支持的 novelty；整体有统一机制支撑 novel paradigm；方法超参数尽可能少。
 
-可靠起点是候选1。候选4空token修订1已按预注册淘汰并归档；候选5[干预证据方法提案](../experiments/20260905_interventional_evidence/README.md)正在独立proposal review，尚未实现。候选1达到开发期性能门，但三模块创新证据不足。
+可靠起点是候选1。候选4已淘汰；候选5[干预证据方法](../experiments/20260905_interventional_evidence/README.md)HateClipSeg seed234搜索完成并通过本语料门，但低于候选1；HateMM仍抽取，尚不能做两语料筛选或确认。候选1达到开发期性能门，但三模块创新证据不足。
 
 协议唯一来源：[研究规则](../RESEARCH_ITERATION_RULES.md)。主数据集为 HateMM、HateClipSeg；within 硬门仍有效，取消硬门的讨论尚未裁定。三个模块均须 novelty 的新要求覆盖[旧计划](../docs/20260903_three_module_program.md)中模块 1 可选的要求。
 
@@ -18,7 +18,7 @@
 | 2 骨干 | MACIL-SD + 裁定块级 MIL；最新尝试空 token 跨模态注意力 | 块级 MIL 有效；新结构尚未在两语料稳定成立 |
 | 3 融合 | 分层证据 HMM 后验作为 logit 先验，与骨干分数融合 | 先验路径有效；HMM 相对简单平均先验在 HateMM 的优势未成立 |
 
-代码入口：候选1 [README](../experiments/20260903_hier_evidence_mil/README.md) / [train.py](../experiments/20260903_hier_evidence_mil/train.py)。候选4 [归档README](../archive/experiments/20260904_null_token_cma/README.md)第8.5节为最终结果。共享实现：[输入/损失/评测调用](../src/hier_evidence_common.py)、[HMM](../src/verdict_hmm.py)、[空token](../src/null_token_cma.py)。上表描述已运行方法；候选5计划分别改为VLM干预证据、支持/反证双向读出骨干、冲突转未知的训练内融合，均尚未验证。
+代码入口：候选1 [README](../experiments/20260903_hier_evidence_mil/README.md) / [train.py](../experiments/20260903_hier_evidence_mil/train.py)。候选4 [归档README](../archive/experiments/20260904_null_token_cma/README.md)第8.5节为最终结果。共享实现：[输入/损失/评测调用](../src/hier_evidence_common.py)、[HMM](../src/verdict_hmm.py)。上表描述已运行方法；候选5为VLM干预证据、正/负关联双向读出骨干、Yager冲突转未知的训练内融合。[训练入口](../experiments/20260905_interventional_evidence/train.py)、[搜索入口](../experiments/20260905_interventional_evidence/search.py)已通过[code review修复确认](../experiments/20260905_interventional_evidence/REVIEW_RULE6.md)，尚无训练结果；负关联不等于语义反证。
 
 ## 已核验结果
 
@@ -35,13 +35,16 @@
 
 ## 运行与监控
 
+候选5 HateClipSeg seed234：按test选trial18 **.655/.637/.540**，仅按validation选trial4 **.650/.633/.540**。20 trial全部COMPLETE且原始输出齐全；单seed、开发期test搜索，不是确认结果。来源：[完整审计](../runs/20260905_interventional_evidence/hateclipseg/seed234/artifact_audit.json)、[trial18评测](../runs/20260905_interventional_evidence/hateclipseg/seed234/trial18/metrics.json)、[trial4评测](../runs/20260905_interventional_evidence/hateclipseg/seed234/trial4/metrics.json)。
+
 | 任务 | 当前状态 | 输出/日志 |
 |---|---|---|
-| lab1：候选4修订1，HateMM | 10:54全部完成，链进程已退出；结果已回传并核验 | [输出](../runs/20260904_null_token_cma/rev1/hatemm/) |
-| lab3：同修订 HateClipSeg | 三 seed 搜索与消融全部结束 | [已回传输出](../runs/20260904_null_token_cma/rev1/hateclipseg/) |
-| 实验完成 monitor | 10:56通知已送达本会话，单次监控完成 | [日志](../runs/20260904_null_token_cma/rev1/monitor_codex/run.log) |
-| 候选5 proposal review | 独立agent进行中；通过后才实现和抽取 | [提案](../experiments/20260905_interventional_evidence/README.md) |
-| 长期会话 monitor | 本机 PID 1177638 存活，每3小时提醒推进目标；首次今天13:04 NZST | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
+| 候选5 HateMM v2抽取，lab1 | 修复截断的hate_video_95后续跑，PID/PGID 1284916；422/1068完整缓存已回传审计通过，自动跳过已完成项 | [输入审计](../runs/20260905_interventional_evidence/extract_hatemm_v2/input_audit.json)、[恢复monitor](../runs/20260905_interventional_evidence/extract_hatemm_v2/monitor_resume1/run.log)；诊断见候选5README第5节 |
+| 候选5 HateClipSeg v2输入 | 抽取进程已退出；393/393视频、786/786文件完整回传并解析通过 | [完整输入审计](../runs/20260905_interventional_evidence/extract_hateclipseg_v2/input_audit.json) |
+| 候选5 HateClipSeg seed234，lab3 | 搜索进程已退出；20trial全部完整回传审计，首trial118.659秒 | [完整输出](../runs/20260905_interventional_evidence/hateclipseg/seed234/) |
+| 候选5 HateClipSeg单seed消融，lab3 | 锁定trial18配置，准备8个已评审诊断臂、三任务并行；不提前补确认seed | [启动脚本](../experiments/20260905_interventional_evidence/launch/run_hcs_ablations_seed234_lab3.sh) |
+| lab3输入准备 | 已完成；393视频头、K30/K4 ASR全覆盖、5模型分片可解析；webm规范别名已修复 | [本机核验输出](../runs/20260905_interventional_evidence/prepare_lab3/coverage.json) |
+| 长期会话 monitor | 13:04提醒已送达并处理；目标未完成、无硬阻塞，保留；下次16:04 NZST | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
 
 等待时不由模型持续轮询、不重复创建 monitor，用户无需手动设置 Goal。目标完成或确认无法推进的硬阻塞时关闭长期 monitor 并报告；正常等待和暂时断连不算硬阻塞。关闭命令：
 
@@ -51,8 +54,8 @@ python3 scripts/monitor_thread.py --thread 01a06df5-3e92-79b0-be30-820db943e551 
 
 ## 下一步
 
-1. 完成候选5独立proposal review，落实修改；若触发规则4 STOP则更换提案。
-2. 放行后实现并做一次code review，准备VLM输入；独立抽取/两语料任务尽量分配所有可用GPU并自动配置monitor。
+1. 并行推进HateClipSeg锁定配置的模块诊断与HateMM输入抽取；后者完成后审计并独立启动seed234。两语料筛选齐全前不提前补确认seed；单seed消融不用于宣称novelty。
+2. 唯一code review三项修复已确认：原始logits/版本隔离、固定评测覆盖、补seed继承234预算。v1进程与monitor已停，缓存/日志保留并回传（详见候选5README第5节），不得混入训练。无需重审。
 3. 完整搜索、三seed确认及三个模块替换消融；分别列出方法超参数与通用优化参数，以实验检验范式主张，不凭包装判定完成。
 
 ## 历史与资料
