@@ -6,7 +6,7 @@ import random
 import socket
 import sys
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = next(p for p in Path(__file__).resolve().parents if (p/'src/hier_evidence_common.py').is_file())
 sys.path.insert(0, str(ROOT / 'src'))
 import numpy as np
 import torch
@@ -39,24 +39,8 @@ def train(args, cfg):
     torch.manual_seed(args.seed); torch.cuda.manual_seed_all(args.seed)
     np.random.seed(args.seed); random.seed(args.seed)
     corpus = args.corpus
-    labels = hdata.load_labels(corpus)
-    ids = {s: hdata.load_split(corpus,s) for s in ['train','val','test']}
-    gt = {s: hdata.gt_arrays(corpus,s) for s in ['val','test']}
-    excluded = {}
-    for split in ['val','test']:
-        excluded[split] = sorted(set(ids[split]) - gt[split].keys())
-        allowed = ['hate_video_427'] if corpus == 'hatemm' and split == 'test' else []
-        if excluded[split] != allowed:
-            raise ValueError(f'unexpected GT exclusion {split}: {excluded[split]}')
-        ids[split] = [v for v in ids[split] if v in gt[split]]
-        if set(ids[split]) != set(gt[split]):
-            raise ValueError('fixed GT coverage mismatch')
+    labels, ids, gt, excluded = common.load_fixed_cohort(corpus)
     all_ids = sum(ids.values(), [])
-    if len(all_ids) != len(set(all_ids)):
-        raise ValueError('duplicate video or split overlap')
-    for split, videos in ids.items():
-        if set(common.usable(corpus,videos)) != set(videos):
-            raise ValueError(f'missing baseline features in {split}')
     cache = common.ScaffoldCache(corpus, all_ids,
         lambda vid,snip,duration: np.zeros((len(snip),common.SCAF_DIM),dtype=np.float32))
     raw = {k: vlm_verdict.load_verdicts(corpus,k=k,tag='qwen') for k in [30,4]} if args.ablation == 'raw_verdict' else None

@@ -12,6 +12,7 @@ from datetime import datetime
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / 'src'))
 from utils.generate_subclip_embedding_HF import load_video_frames
+from measurement_inputs import fixed_ids, window_transcripts
 import torch
 from PIL import Image
 
@@ -50,14 +51,7 @@ def main():
     (run / 'run.pid').write_text(str(os.getpid()) + '\n')
     print(f'host={socket.gethostname()} version={VERSION}', flush=True)
     ds = {'hatemm': 'HateMM', 'hateclipseg': 'HateClipSeg'}[args.corpus]
-    splits = {}
-    for split in ['train', 'val', 'test']:
-        ids = (ROOT / 'results/reproduction/splits' / f'{args.corpus}_{split}.txt').read_text().splitlines()
-        splits[split] = [x.strip() for x in ids if x.strip()]
-    flat = sum(splits.values(), [])
-    if len(flat) != len(set(flat)):
-        raise ValueError('duplicate id or split overlap')
-    ids = sorted(flat)[args.shard::args.shards]
+    ids = fixed_ids(ROOT, args.corpus)[args.shard::args.shards]
     cache = ROOT / 'data/interventional_evidence' / args.corpus
     cache.mkdir(parents=True, exist_ok=True)
     config = dict(vars(args), version=VERSION, max_pixels=151200, frames_per_window=4,
@@ -76,22 +70,10 @@ def main():
     asr = {}
     missing_asr = {}
     for k in [30, 4]:
-        rows = {}
-        for path in sorted((ROOT / 'data/ASR' / ds).glob(f'*_asrK{k}_whisper-large-v3.jsonl')):
-            for line in path.read_text().splitlines():
-                obj = json.loads(line)
-                vid = str(obj['id'])
-                texts = obj['window_text']
-                if len(texts) != k or not all(isinstance(x, str) for x in texts):
-                    raise ValueError(f'invalid ASR shape: {path} {vid}')
-                if vid in rows and rows[vid] != texts:
-                    raise ValueError(f'conflicting ASR: {vid}')
-                rows[vid] = texts
-        missing = set(ids) - rows.keys()
-        missing_asr[k] = sorted(missing)
+        rows, missing = window_transcripts(ROOT / 'data/ASR' / ds, k, ids)
+        missing_asr[k] = missing
         if missing:
-            print(f'ASR absent K{k}: {sorted(missing)}; explicitly use transcript absent, keep video', flush=True)
-            rows.update({vid: [''] * k for vid in missing})
+            print(f'ASR absent K{k}: {missing}; explicitly use transcript absent, keep video', flush=True)
         asr[k] = rows
     write_json(run / 'input_coverage.json', dict(expected_ids=ids, missing_asr=missing_asr))
     from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration

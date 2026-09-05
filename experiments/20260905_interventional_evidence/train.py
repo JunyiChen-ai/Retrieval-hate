@@ -69,24 +69,8 @@ def train(args, cfg):
     import random
     random.seed(args.seed)
     corpus = args.corpus
-    labels = hdata.load_labels(corpus)
-    ids = {s: hdata.load_split(corpus, s) for s in ['train', 'val', 'test']}
-    gt = {s: hdata.gt_arrays(corpus, s) for s in ['val', 'test']}
-    excluded_no_gt = {}
-    for s in ['val', 'test']:
-        excluded_no_gt[s] = sorted(set(ids[s]) - gt[s].keys())
-        expected_exclusion = ['hate_video_427'] if corpus == 'hatemm' and s == 'test' else []
-        if excluded_no_gt[s] != expected_exclusion:
-            raise ValueError(f'unexpected fixed GT coverage: {s} {excluded_no_gt[s]}')
-        ids[s] = [v for v in ids[s] if v in gt[s]]
-        if set(ids[s]) != set(gt[s]):
-            raise ValueError(f'evaluation IDs do not cover the fixed GT: {s}')
-    for s in ids:
-        if set(common.usable(corpus, ids[s])) != set(ids[s]):
-            raise ValueError(f'missing baseline features in {s}; cannot evaluate a subset')
+    labels, ids, gt, excluded_no_gt = common.load_fixed_cohort(corpus)
     flattened = sum(ids.values(), [])
-    if len(flattened) != len(set(flattened)):
-        raise ValueError('duplicate video or split overlap')
     raw = {k: vlm_verdict.load_verdicts(corpus, k=k, tag='qwen') for k in [30, 4]}
     if any(v not in raw[k] for v in flattened for k in [30, 4]):
         raise ValueError('missing original verdict')

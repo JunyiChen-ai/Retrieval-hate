@@ -15,6 +15,11 @@ study="runs/${experiment}/${corpus}/seed${seed}"
 python_bin="$HOME/miniconda3/envs/HateVideo/bin/python"
 trial=$("$python_bin" -c 'import json,sys; s=json.load(open(sys.argv[1])); assert len(s["trials"])==s["n_trials"] and all(t["state"] in ["COMPLETE","PRUNED"] for t in s["trials"]); assert s["best"] is not None; print(s["best"]["number"])' "$study/study_summary.json")
 config="$study/trial${trial}/hparams.json"
+trainer="experiments/${experiment}/train.py"
+if [[ ! -f "$trainer" ]]; then
+  trainer="archive/experiments/${experiment}/train.py"
+fi
+test -f "$trainer"
 mkdir -p "$run"
 exec 9> "$run/launch.lock"
 flock -n 9
@@ -31,7 +36,7 @@ pids=()
 failed=0
 for arm in "${arms[@]}"; do
   mkdir "$run/$arm"
-  "$python_bin" -u "experiments/${experiment}/train.py" --corpus "$corpus" --seed "$seed" --ablation "$arm" --config "$config" --out-dir "$run/$arm" --num-workers 2 > "$run/$arm/stdout.log" 2>&1 &
+  "$python_bin" -u "$trainer" --corpus "$corpus" --seed "$seed" --ablation "$arm" --config "$config" --out-dir "$run/$arm" --num-workers 2 > "$run/$arm/stdout.log" 2>&1 &
   pids+=("$!")
   if [[ ${#pids[@]} -eq 3 ]]; then
     for pid in "${pids[@]}"; do wait "$pid" || failed=1; done

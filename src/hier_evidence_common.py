@@ -229,6 +229,32 @@ def usable(corpus, ids):
     return [v for v in ids if align.has_features(corpus, v)]
 
 
+def load_fixed_cohort(corpus):
+    """Fixed dataset/GT coverage, shared by current full-training candidates."""
+    from hate_common import data as hdata
+    labels = hdata.load_labels(corpus)
+    ids = {s: hdata.load_split(corpus, s) for s in ['train', 'val', 'test']}
+    original = sum(ids.values(), [])
+    if len(original) != len(set(original)):
+        raise ValueError('duplicate video or split overlap')
+    gt = {s: hdata.gt_arrays(corpus, s) for s in ['val', 'test']}
+    excluded = {}
+    for split in ['val', 'test']:
+        excluded[split] = sorted(set(ids[split])-gt[split].keys())
+        allowed = ['hate_video_427'] if corpus == 'hatemm' and split == 'test' else []
+        if excluded[split] != allowed:
+            raise ValueError(f'unexpected GT exclusion {split}: {excluded[split]}')
+        ids[split] = [v for v in ids[split] if v in gt[split]]
+        if set(ids[split]) != set(gt[split]):
+            raise ValueError('fixed GT coverage mismatch')
+    for split, videos in ids.items():
+        if set(usable(corpus, videos)) != set(videos):
+            raise ValueError(f'missing baseline features in {split}')
+        if any(v not in labels or labels[v] not in [0, 1] for v in videos):
+            raise ValueError(f'missing/nonbinary video labels in {split}')
+    return labels, ids, gt, excluded
+
+
 def score_split(model, loader, device):
     """video_id -> scores on the 1 fps grid (five-crop mean of sigmoid(z~))."""
     model.eval()
@@ -312,4 +338,3 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine):
         return scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
                                 snip, n_seconds)
     return fn
-

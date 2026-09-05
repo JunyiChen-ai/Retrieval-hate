@@ -1,89 +1,62 @@
 # 当前研究状态
 
-截至 **2026-09-06 00:39 NZST**。依据：候选6 HCS八臂消融及完整test初始化参照已回传核验、HateMM搜索进度。每轮结束替换对应条目，不追加流水账。
+截至 **2026-09-06 01:14 NZST**。依据：候选6两语料全量回传审计、候选7首版实现及独立提案评审。权威数字均指向本机 runs 原始评测。
 
-## 目标与当前结论
+## 当前目标与结论
 
-**目标尚未完成。** 等当前实验完成后继续开发：两语料达到研究规则的 SOTA；VLM、骨干、融合三个模块各有消融支持的 novelty；整体有统一机制支撑 novel paradigm；方法超参数尽可能少。
+**目标未完成，无硬阻塞。** 两语料确认级SOTA、VLM/骨干/融合三个模块各有有效性支持、整体统一范式、尽少方法超参数，缺一不可。沿现行规则：validation选checkpoint，test(AP+ROC)/2选trial；within仍是下限，不私改研究规则。
 
-候选5[干预证据方法](../experiments/20260905_interventional_evidence/README.md)两语料均通过三seed数值确认门，但三个核心模块均未通过HCS三seed有效性要求：seed3407替换后AP/ROC均略升，融合平均AP增益也不足.01。HateMM seed234三个核心替换AP降.161/.025/.028，仅为该seed支持，不能抵消HCS结果。停止为其主张追加旧消融，保留性能参照；最强baseline+同输入及整体范式证据仍缺。
+候选5两语料通过三seed数值确认，但HCS三个核心模块未通过三seed有效性要求，保留性能参照。候选6完整结束并归档：HateMM 20trial全部within剪枝、没有合格best；HCS虽然过单语料数值门，但新骨干/训练贡献未成立。**不追加这两候选的旧搜索或确认seed。**
 
-当前候选6：**视频标签约束的局部证据状态模型**，独立proposal/code review均GO。HCS完整20trial结果 `.6908/.6649/.5803`，过单语料门；但八臂消融不支持M2/M3，train统计初始化且未经梯度优化已达 `.6924/.6666/.5843`，与完整模型基本相当，不能把高分归因于新训练机制。HateMM仍搜索，最近15个完成trial全部within剪枝。不补确认seed，待完整结果按规则分流；目标未完成，无硬阻塞。
+当前推进[候选7：上下文条件化的局部证据保留/删除学习](../experiments/20260906_context_witness/README.md)。独立[proposal review GO](../experiments/20260906_context_witness/REVIEW_RULE4.md)，首版代码已实现、一次code review进行中；尚无候选7实验数字。最强baseline+同输入及整体novel paradigm证据仍缺。
 
-协议唯一来源：[研究规则](../RESEARCH_ITERATION_RULES.md)。主数据集为 HateMM、HateClipSeg；within 硬门仍有效，取消硬门的讨论尚未裁定。三个模块均须 novelty 的新要求覆盖[旧计划](../docs/20260903_three_module_program.md)中模块 1 可选的要求。
+## 当前三个模块
 
-## 当前方法：三个模块
-
-| 模块 | 实现 | 尚缺证据 |
+| 模块 | 候选7实现 | 必须验证的缺口 |
 |---|---|---|
-| 1 VLM | 候选6复用同一冻结Qwen四路干预，两粒度联合8维状态条件高斯 | HCS对角替换AP降.0136，仅单seed；未经优化的初始化已与完整模型相当 |
-| 2 骨干 | 内容时间卷积与相邻内容差异决定潜状态转移 | HCS静态转移AP反而高.0028，无收益证据；分数确有变化，不能说代码未运行 |
-| 3 融合/训练 | 精确视频事件概率+归一化观测NLL联合训练，最终输出同模型局部后验 | HCS换top-k后AP仅降.0031/ROC降.0064，去生成项近似不变；不足以支持novelty |
+| VLM | 同一冻结Qwen对target/context四种可见性测量六属性；raw logits/entropy形成30维输入 | 相对同语义target-only的贡献；raw_four区分表示作用。改prompt本身不算novelty |
+| 骨干 | 双向GRU排除当前位置，重建冻结内容；残差与内容/VLM共同生成局部selector | no_residual及visible_reconstruction；不能把残差+辅助loss合并效应单独归因残差 |
+| 融合/训练 | 同一共享分类器对全视频、保留、删除三视图训练，最终仅输出selector q | 删除项的独立增益、避免共同作弊；最终仍需两语料三seed消融 |
 
-当前代码：[候选6提案与实现](../experiments/20260905_latent_evidence_sequence/README.md)、[proposal review](../experiments/20260905_latent_evidence_sequence/REVIEW_RULE4.md)、[code review](../experiments/20260905_latent_evidence_sequence/REVIEW_RULE6.md)。共享训练/评测调用在 `src/fixed_training_protocol.py`，v2缓存解析在 `src/interventional_observations.py`；评测器未改，候选5仅改调用升入共享目录的既有循环/解析，不重跑其结果。可靠起点：[候选1](../experiments/20260903_hier_evidence_mil/README.md)；候选4负结果：[归档结论](../archive/experiments/20260904_null_token_cma/README.md)。
+代码位于当前实验目录；新输入抽取 `scripts/analysis/extract_context_witness.py`、严格解析 `src/context_witness.py`。共用训练/搜索协议位于 `src/fixed_training_protocol.py`、`src/fixed_optuna_protocol.py`，统一评测器未改。新缓存不复用C5 logits冒充上下文观测。
 
-## 已核验结果
+## 最新权威结果
 
-候选6 HCS seed234：20/20 COMPLETE、50epoch/validation checkpoint/val63/test79覆盖与原始指标一致性均已回传核验。按test选trial17，**AP .690827 / ROC .664875 / within .580322**，validation选epoch2；lr=.00042073384058945477/dropout=.2/max_seqlen=300。首trial78.196859秒，预算20。仅validation排序参考trial0 `.685846/.663355/.581215`，不作门。来源：[完整审计](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/artifact_audit.json)、[原始评测](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/trial17/metrics.json)。尚无两语料确认或模块有效性结论。
+以下顺序均为 **AP / ROC / within**，全部属于按test选trial的开发期结果。
 
-候选6 HCS八臂全部完整回传审计；三个主替换结果 `.6772/.6608/.5717`、`.6936/.6650/.5888`、`.6877/.6585/.5825`，不支持三个模块均有效。来源：[八臂审计](../runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/artifact_audit.json)。完整test初始化参照（train标签分组均值、单位协方差、未梯度优化）`.692374/.666562/.584348`；完整模型差值 `−.001547/−.001687/−.004026`，结论是优化未显示收益，不是初始化显著更优。来源：[初始化原始评测](../runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/metrics.json)、[79视频/18839秒审计](../runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/artifact_audit.json)。
-
-候选 1 三 seed 均值，顺序为 **pooled AP / pooled ROC / within ROC**。每 seed 20 trial，trial 内 validation 选 checkpoint；开发搜索按 test 选 trial，不是未揭盲确认结果。
-
-| 语料 | 按 test 选 trial（均值 ± std） | 仅按 validation 选 trial（均值） |
+| 候选/语料 | 结果 | 结论与本机来源 |
 |---|---|---|
-| HateMM | .657 ± .013 / .842 ± .005 / .646 ± .004 | .601 / .821 / .627 |
-| HateClipSeg | .699 ± .006 / .681 ± .016 / .553 ± .007 | .686 / .665 / .538 |
+| C6 HateMM seed234 | 无合格trial；无within约束的诊断trial8为 .601467/.817607/.589623 | 20/20完整训练后PRUNED，within范围 .523138–.606444，低于.632；[审计](../runs/20260905_latent_evidence_sequence/hatemm/seed234/artifact_audit.json)、[trial8原评测](../runs/20260905_latent_evidence_sequence/hatemm/seed234/trial8/metrics.json) |
+| C6 HCS seed234 | .690827/.664875/.580322，trial17/epoch2 | 20/20 COMPLETE；[审计](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/artifact_audit.json)、[原评测](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/trial17/metrics.json) |
+| C6 HCS初始化参照 | .692374/.666562/.584348 | train统计初始化、未经梯度优化，与完整模型相当；[原评测及完整79视频审计](../runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/) |
+| C5 HateMM三seed | .631307±.007170 / .845751±.005332 / .659939±.010262 | 数值确认通过；[汇总及各原评测路径](../runs/20260905_interventional_evidence/hatemm/confirmation_summary.json) |
+| C5 HCS三seed | .654090±.004189 / .638275±.005749 / .557700±.019617 | 数值确认通过，核心模块证据不通过；[汇总及各原评测路径](../runs/20260905_interventional_evidence/hateclipseg/confirmation_summary.json) |
 
-来源：[候选 1 输出](../runs/20260903_hier_evidence_mil/)，`<hatemm|hateclipseg>/seed<234|2025|3407>/study_summary.json` 的 `best`、`validation_selected`；对应 trial 的 `metrics.json` 为评测器原始输出。Baseline 对照：[固定表](../docs/duplex/OFFICIAL_VAL_RESULTS.md)。
+C6 HCS主替换：对角观测 .6772/.6608/.5717，静态转移 .6936/.6650/.5888，事件训练换top-k .6877/.6585/.5825；后两者不支持有效性，去观测NLL也近似不变。[八臂审计及原评测路径](../runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/artifact_audit.json)。C6两语料40trial、HCS八消融及初始化输出均已回传；[最终汇总](../runs/20260905_latent_evidence_sequence/final_audit.json)、[归档结论](../archive/experiments/20260905_latent_evidence_sequence/README.md)。
 
-候选4修订1最终三seed：HateMM **.644±.025 / .840±.004 / .642±.007**；HateClipSeg **.696±.001 / .681±.012 / .542±.007**（std ddof=1）。validation选trial分别为 **.611/.825/.627**、**.686/.664/.538**。未达到相对候选1的预注册提升；HateClipSeg结构消融不支持空token，归档。来源：[核验汇总](../runs/20260904_null_token_cma/rev1/artifact_audit.json)指向各trial/消融的原始`metrics.json`，120 trial与18消融均齐全。
+C5两语料120trial和已有消融全部回传；HCS三个核心替换在seed3407均略升，融合平均AP增益不足.01，故不能声明三个模块有效。[三seed消融汇总](../runs/20260905_interventional_evidence/ablations/hateclipseg/three_seed_summary.json)。HateMM单seed消融不抵消HCS失败，不再重复补跑。
 
-## 运行与监控
+仅validation排序的零额外训练参考、不作门：C6 HMM trial1 .573789/.795177/.569116（仍PRUNED），HCS trial0 .685846/.663355/.581215；C5三seed均值HMM .6133/.8383/.6634，HCS .6516/.6358/.5566。各study_summary.json/confirmation_summary.json存选择依据。
+可靠性能起点C1三seed：HMM .657±.013/.842±.005/.646±.004，HCS .699±.006/.681±.016/.553±.007；仅validation排序 .601/.821/.627 与 .686/.665/.538。[原始study与评测](../runs/20260903_hier_evidence_mil/)。C4负结果见[归档](../archive/experiments/20260904_null_token_cma/README.md)。
 
-候选5 HateMM三seed按test选trial16/13/13：**AP .6313±.0072 / ROC .8458±.0053 / within .6599±.0103**（std ddof=1）。60trial（59 COMPLETE/1 within剪枝）全部回传审计，pooled领先固定门.0583/.0388，大于所需std幅度.033/.0194，within不破下限，数值确认通过。仅validation排序的零额外训练参考均值 `.6133/.8383/.6634`，不作门。来源：[三seed汇总及原始评测路径](../runs/20260905_interventional_evidence/hatemm/confirmation_summary.json)。
+## 运行任务与监控
 
-候选5 HateClipSeg三seed按test选trial：**AP .6541±.0042 / ROC .6383±.0057 / within .5577±.0196**（std ddof=1）。60trial均COMPLETE并回传核验；pooled领先固定门.0921/.1103，大于所需std幅度.0358/.0230，within不破下限，故HCS数值确认通过。仍属开发期test搜索，不代表整体目标完成。来源：[三seed汇总及各原始评测路径](../runs/20260905_interventional_evidence/hateclipseg/confirmation_summary.json)。
-
-HCS仅validation排序的零额外训练参考均值 `.6516/.6358/.5566`，不作门。两语料120trial全量完成；最终声明仍缺模块有效性、最强baseline+同输入及整体范式证据。
-
-HCS消融24/24完整50epoch，配置/validation checkpoint/val及test覆盖率/原始指标一致性审计通过。核心三臂均不满足规则14(g)；`four_logits`与`no_block`在HCS满足同向下降要求，但前者只支持当前训练下的表示差异，后者是已有块监督，不能替代三个新模块的证据。来源：[三seed消融汇总及原始评测路径](../runs/20260905_interventional_evidence/ablations/hateclipseg/three_seed_summary.json)。
-
-HateMM seed234消融8/8完整回传审计。AP/ROC/within：原裁定替换 `.463/.745/.607`，普通注意力 `.599/.820/.671`，加法融合 `.596/.824/.671`；完整模型 `.624/.849/.672`。来源：[八臂审计及原始评测路径](../runs/20260905_interventional_evidence/ablations/hatemm/seed234/artifact_audit.json)。
-
-开发期错误分析：HCS训练正视频219/251，HateMM298/744；HCS完整模型正秒与正视频内背景秒均分差仅.023/.026/.049（三seed），HateMM seed234为.149。HCS最佳checkpoint在epoch1/2/5，此后训练loss下降但validation AP下降。提示局部区分与监督目标值得优先检查，不证明类别比例是原因，也不据此调整checkpoint规则。来源：[已保存预测/GT/训练曲线诊断](../runs/20260905_interventional_evidence/error_analysis/saved_prediction_diagnostics.json)，只分析原输出，未重训或改评测器。
-
-| 任务 | 当前状态 | 输出/日志 |
+| 任务 | 当前状态 | 位置 |
 |---|---|---|
-| HateMM v2输入 | 两片各534/534完成，进程均退出；合并1068视频/2136文件已完整回传、解析通过并同步lab1。旧抽取通知均已处理，不重启 | [完整输入审计](../runs/20260905_interventional_evidence/extract_hatemm_v2/input_audit.json)、[合并出处](../data/interventional_evidence/hatemm/PROVENANCE.md) |
-| HateMM确认搜索，lab1 | seed2025/3407均退出，各20trial完整回传核验；两个结束状态均已处理，后到通知不重启 | [2025审计](../runs/20260905_interventional_evidence/hatemm/seed2025/artifact_audit.json)、[3407审计](../runs/20260905_interventional_evidence/hatemm/seed3407/artifact_audit.json) |
-| HateClipSeg确认搜索 | seed2025/3407均已结束、各20trial完整回传审计；两个结束通知均已处理，不重启 | [2025审计](../runs/20260905_interventional_evidence/hateclipseg/seed2025/artifact_audit.json)、[3407审计](../runs/20260905_interventional_evidence/hateclipseg/seed3407/artifact_audit.json) |
-| HateClipSeg确认seed消融，lab3 | 进程组3110708已退出，16/16回传审计通过；22:22结束通知已处理，不重启 | [2025审计](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed2025/artifact_audit.json)、[3407审计](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed3407/artifact_audit.json) |
-| HateMM seed234消融，lab3 | 进程退出，8/8完整回传审计，23:04通知已处理，不重启 | [完整审计](../runs/20260905_interventional_evidence/ablations/hatemm/seed234/artifact_audit.json) |
-| 候选6 HateMM seed234，lab1 | PID/PGID1887909正常；00:32检查15/20完成且全部PRUNED（within），非异常退出；首trial176.022892秒，固定20预算继续；monitor保留 | [训练日志](../runs/20260905_latent_evidence_sequence/hatemm/seed234/run.log)、[monitor](../runs/20260905_latent_evidence_sequence/hatemm/seed234/monitor/run.log) |
-| 候选6 HCS seed234搜索 | 进程退出、20trial完整回传核验；00:20通知已处理，不重启 | [完整审计](../runs/20260905_latent_evidence_sequence/hateclipseg/seed234/artifact_audit.json) |
-| 候选6 HCS八臂消融，lab3 | 进程退出，8/8完整回传审计；00:32通知已处理，不重启 | [完整审计](../runs/20260905_latent_evidence_sequence/ablations/hateclipseg/seed234/artifact_audit.json) |
-| HCS初始化完整test诊断，lab3 | PID3227824已退出、79视频全部回传核验；monitor首次即OUTPUT_FINISHED，已通知并处理，后到通知不重启 | [诊断及审计](../runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/) |
-| GPU资源 | lab1搜索继续；lab3诊断已结束，暂无就绪新实验；本机上次检查为他人任务，lab-server无项目/环境，本轮未向其派任务 | 不为占满GPU重复实验 |
-| 候选5 HateClipSeg v2输入 | 抽取进程已退出；393/393视频、786/786文件完整回传并解析通过 | [完整输入审计](../runs/20260905_interventional_evidence/extract_hateclipseg_v2/input_audit.json) |
-| 候选5 HateClipSeg seed234，lab3 | 搜索进程已退出；20trial全部完整回传审计，首trial118.659秒 | [完整输出](../runs/20260905_interventional_evidence/hateclipseg/seed234/) |
-| 候选5 HateClipSeg seed234消融 | 8/8完成并完整回传；单seed初步支持已被三seed结果修正，不再单独用来主张模块有效 | [消融审计与原始来源](../runs/20260905_interventional_evidence/ablations/hateclipseg/seed234/artifact_audit.json) |
-| lab3输入准备 | 已完成；393视频头、K30/K4 ASR全覆盖、5模型分片可解析；webm规范别名已修复 | [本机核验输出](../runs/20260905_interventional_evidence/prepare_lab3/coverage.json) |
-| 长期会话 monitor | 22:04提醒已处理；目标未完成、无硬阻塞，保留 | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
+| C7 code review | 独立agent code_review_c7审查中，尚未开训 | experiments/20260906_context_witness/ |
+| C7输入抽取 | 待代码检查与多机同步后，HMM→lab1、HCS→lab3并行；尚未启动 | 计划 runs/20260906_context_witness/extract_<corpus>/ |
+| C5/C6全部旧任务 | 已结束核验，通知已处理；不重复启动 | 各 runs 下 artifact_audit.json |
+| GPU | 01:13实时lab1/lab3空闲，各约31GB可用；本机上次为他人任务；lab-server尚无可用项目环境 | 新输入正式抽取就绪后并行 |
+| 长期会话monitor | PID1177638存活；目标未完成、无硬阻塞，保留，不重复创建 | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
 
-等待时不由模型持续轮询、不重复创建 monitor，用户无需手动设置 Goal。目标完成或确认无法推进的硬阻塞时关闭长期 monitor 并报告；正常等待和暂时断连不算硬阻塞。关闭命令：
-
-```bash
-python3 scripts/monitor_thread.py --thread 01a06df5-3e92-79b0-be30-820db943e551 --out-dir runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551 --stop
-```
+每项新长任务配置独立monitor，进程身份/首次检查成功后更新本表；不会声称未启动任务已受监控。等待由事件唤醒，不由模型持续轮询。完成目标或确认无法推进的硬阻塞时关闭长期monitor并报告。
 
 ## 下一步
 
-1. 候选6 HateMM完整搜索结束后核验回传全部trial，若全部within剪枝则如实记录无合格trial，不把空best误认为训练失败。结合HCS消融/初始化参照按规则分流，不追加确认seed或旧消融。
-2. 后续设计必须说明相对train统计初始化增加了什么有效学习；不得把有分数变化等同于有性能贡献，不用新术语包装相同性能。最强baseline+同输入仍为最终声明的必要缺口。
-3. 只搜索lr/dropout/max_seqlen；固定hidden128/kernel3/两状态/两粒度/损失等权等仍是设计参数，不称无超参数。等待由monitor事件唤醒；目标未完成、无硬阻塞，长期monitor保留。
+1. 处理C7唯一code review发现的结论级bug；同步代码和工作树检查后，双机正式抽取新输入并自动监控。新缓存回传后检查解析、shape、全部ID及split隔离。
+2. 每语料输入就绪后完整seed234搜索；首trial实测冻结20/5预算，不做smoke。仅搜索lr/dropout/max_seqlen，其余固定设计参数照实披露，不称无超参数。
+3. 按完整结果分流。先满足两语料筛选，再补确认seed；三个模块、同输入最强baseline及整体范式证据未齐前不声明完成。
 
-## 历史与资料
+## 资料
 
-- [整理前 STATUS 完整快照](../archive/research-wiki/STATUS_20260905_before_cleanup.md)：旧候选、旧规则、数据与归档路径索引，仅供追溯。
-- [评测协议](../docs/duplex/FRAME_EVAL_PROTOCOL.md)、[缓存出处](../data/MLLM_scores/PROVENANCE.md)。原始视频在 `~/data/`；冻结的 Hate-follow-up 溯源路径保持不动。
+[研究规则](../RESEARCH_ITERATION_RULES.md)（不改写）、[固定baseline表](../docs/duplex/OFFICIAL_VAL_RESULTS.md)、[评测协议](../docs/duplex/FRAME_EVAL_PROTOCOL.md)、[旧状态索引](../archive/research-wiki/STATUS_20260905_before_cleanup.md)。C5缓存完整：HMM1068视频/2136文件、HCS393视频/786文件，出处在 data/interventional_evidence/<corpus>/PROVENANCE.md。冻结的Hate-follow-up引用不动。

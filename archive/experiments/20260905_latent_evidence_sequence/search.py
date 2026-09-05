@@ -2,7 +2,8 @@
 from pathlib import Path
 import sys
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0,str(HERE.parents[1]/'src'))
+ROOT = next(p for p in HERE.parents if (p/'src/fixed_optuna_protocol.py').is_file())
+sys.path.insert(0,str(ROOT/'src'))
 from fixed_optuna_protocol import run_search
 from train import ARMS
 

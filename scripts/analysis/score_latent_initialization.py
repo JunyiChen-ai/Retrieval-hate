@@ -8,7 +8,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'src'))
-sys.path.insert(0,str(ROOT/'experiments/20260905_latent_evidence_sequence'))
+sys.path.insert(0,str(ROOT/'archive/experiments/20260905_latent_evidence_sequence'))
 import numpy as np
 import torch
 import hier_evidence_common as common

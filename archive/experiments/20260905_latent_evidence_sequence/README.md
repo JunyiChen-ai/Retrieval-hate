@@ -1,5 +1,7 @@
 # 候选6：视频标签约束的局部证据状态模型
 
+**已归档（2026-09-06）：HateMM完整20trial均within剪枝、无合格配置；HCS消融及train统计初始化参照不支持三模块/新训练收益。全部输出保留，不重跑。**
+
 2026-09-05 提案；独立[proposal review](REVIEW_RULE4.md)及唯一[code review](REVIEW_RULE6.md)均GO。HCS seed234完整搜索过本语料单seed门，但八臂消融及完整test初始化参照不支持三个新增机制有效；HateMM仍在完整搜索，不补确认seed。不能把HCS高分归因于训练/新范式。
 
 ## 1. 来源与失败观察
@@ -103,3 +105,9 @@ HateMM搜索未结束，不启动2025/3407确认seed。利用空闲lab3，锁定
 lab3运行PID3227824；诊断在monitor首次观察前已完成，monitor送出OUTPUT_FINISHED，实际进程退出、结果完整回传核验，此通知已处理。输出 `runs/20260905_latent_evidence_sequence/diagnostics/hcs_seed234_initialization/metrics.json`：**.692373949/.666562425/.584347518**。完整模型相对它为 **−.001547/−.001687/−.004026**，均为小差异；结论是梯度优化未显示收益，而非初始化显著更优。覆盖/来源比较见同目录 `artifact_audit.json`。
 
 设计决策：当前HCS表现不能支撑新增联合训练/内容条件转移/整体范式；不追加旧消融或确认seed来寻找偶然支持。保留HateMM正在执行的固定20trial预算，结束后核验并按规则分流；后续方案必须明确相对train统计初始化增加了什么有效学习，不靠新术语包装同样性能。
+
+## 8. 最终失败结果与归档
+
+00:44通知后核验lab1主进程退出，HateMM20/20完整50epoch/validation checkpoint/val109/test214结果均回传审计，全部PRUNED、best=null，无异常退出。所有trial的test within范围 `.523138–.606444`，均低于.632；不能用去门排序冒充合格结果。仅作失败诊断的无约束test(AP+ROC)/2最优trial8为 `.601466546/.817607111/.589623290`；validation排序参考trial1 `.573788710/.795176677/.569115543`，均非合格trial。
+
+两语料最终来源 `runs/20260905_latent_evidence_sequence/final_audit.json`，指向HateMM trial8/HCS trial17的原始 `metrics.json` 及各study完整审计。HCS虽有pooled提升，HateMM全部破within，且HCS核心模块/训练收益未建立，按现行规则9归档。目录移至 `archive/experiments/20260905_latent_evidence_sequence/`；全部40trial、8消融、初始化诊断与输入cache保留。后续为候选7新提案review，不自动运行本归档目录。
