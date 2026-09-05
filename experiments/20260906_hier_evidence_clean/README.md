@@ -56,3 +56,4 @@ bash scripts/run_locked_ablations.sh 20260906_hier_evidence_clean <corpus> <seed
 ## 6. 进度与结果
 
 - 2026-09-06：实现、import 检查；code review 见 `REVIEW_RULE6.md`。
+- 2026-09-06 09:10 用户澄清：**搜索超参数（lr、dropout、CMAL 权重等训练超参）不设数量限制，限制的只是方法本身引入的超参数**（本版 = α、λ_block 两个）。本轮 seed 234 已按第 3 节的 5 维空间开跑，先跑完再看；把 lamda_a2b/a2n/cof 加回搜索空间不违反该约束，是否加回在 seed 234 结果出来后决定，加回则作为新的搜索声明重跑、不与本轮混算。
