@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 06:12 NZST**。依据：用户叫停候选7、两机进程退出/GPU释放、302/316份缓存回传解析及停止审计。既有权威数字均指向本机 runs 原始评测。
+截至 **2026-09-06 06:29 NZST**。依据：候选8独立提案评审GO、首版实现、两机完整train裁定/基础cohort核对，唯一code review进行中。既有权威数字均指向本机 runs 原始评测。
 
 ## 当前目标与结论
 
@@ -8,17 +8,21 @@
 
 候选5两语料通过三seed数值确认，但HCS三个核心模块未通过三seed有效性要求，保留性能参照。候选6完整结束并归档：HateMM 20trial全部within剪枝、没有合格best；HCS虽然过单语料数值门，但新骨干/训练贡献未成立。**不追加这两候选的旧搜索或确认seed。**
 
-**候选7已按用户指令停止并归档，不恢复抽取或训练。** 每窗口四次VLM、每视频120次调用，计算成本过高；收益尚未验证，不能记成性能失败。HateMM302/1068、HCS316/393份完整视频缓存已回传解析，未开训、无候选7性能数字。[停止审计](../runs/20260906_context_witness/cancellation_audit.json)、[归档说明](../archive/experiments/20260906_context_witness/README.md)。当前没有运行中的研究实验；下一方案尚未确定。
+**候选7已按用户指令停止并归档，不恢复抽取或训练。** 每窗口四次VLM、每视频120次调用，计算成本过高；收益尚未验证，不能记成性能失败。HateMM302/1068、HCS316/393份完整视频缓存已回传解析，未开训、无候选7性能数字。[停止审计](../runs/20260906_context_witness/cancellation_audit.json)、[归档说明](../archive/experiments/20260906_context_witness/README.md)。当前推进候选8，候选7不恢复。
 
-## 最近候选的三个模块（候选7已停止）
+## 当前方法：候选8的三个模块
 
-| 模块 | 候选7实现 | 必须验证的缺口 |
+[带噪窗口证据监督的局部事件强度学习](../experiments/20260906_censored_evidence_process/README.md)。独立[proposal review GO](../experiments/20260906_censored_evidence_process/REVIEW_RULE4.md)，首版实现完成、一次code review进行中，尚无训练数字。
+
+| 模块 | 实现 | 待验证 |
 |---|---|---|
-| VLM | 同一冻结Qwen对target/context四种可见性测量六属性；raw logits/entropy形成30维输入 | 相对同语义target-only的贡献；raw_four区分表示作用。改prompt本身不算novelty |
-| 骨干 | 双向GRU排除当前位置，重建冻结内容；残差与内容/VLM共同生成局部selector | no_residual及visible_reconstruction；不能把残差+辅助loss合并效应单独归因残差 |
-| 融合/训练 | 同一共享分类器对全视频、保留、删除三视图训练，最终仅输出selector q | 删除项的独立增益、避免共同作弊；最终仍需两语料三seed消融 |
+| VLM观测 | 仅用train的原始单窗口Qwen K30/K4裁定，学习尺度相关假阳率/灵敏度 | 对hard_observation和no_vlm；噪声参数不声称真实可辨识 |
+| 内容骨干 | 1920维基础内容、轻量时间卷积；总强度与局部分配显式分离 | 对unfactorized；不能把softmax/卷积本身称创新 |
+| 融合/监督 | 视频及粗细窗口的至少一次事件概率，带噪观察复合似然；推断只读同一内容模型局部强度 | 对topk_event；是复合似然，不是嵌套观察精确联合似然 |
 
-候选7代码移至 `archive/experiments/20260906_context_witness/`，已有缓存/日志保留，不补齐、不训练。共享训练/搜索协议和唯一评测器未改。后续优先复用已完整的输入，方法设计需认真考虑成本；不能以冻结/离线为由忽略部署新视频仍需VLM推理。
+**当前新增VLM抽取=0；部署新视频VLM调用=0。** 复用最初模块1完整缓存，不用C5/C7四路观察；原训练数据34次/视频的历史VLM成本仍需披露。I3D/VGGish/BERT基础特征预处理仍存在，不能称端到端零成本。只搜索lr/dropout/max_seqlen，其余固定设计参数照实报告。
+
+代码在 experiments/20260906_censored_evidence_process/；时间积分单元在 src/temporal_measure.py，沿现有uniform采样建立覆盖全视频的区间，避免采样密度改变定位分数。VLM仅进入train loss，不进forward或val/test。唯一评测器未改。三个模块和整体有效性均待完整结果，不提前声称novel paradigm成立。
 
 ## 最新权威结果
 
@@ -43,20 +47,21 @@ C5两语料120trial和已有消融全部回传；HCS三个核心替换在seed340
 
 | 任务 | 当前状态 | 位置 |
 |---|---|---|
-| C7 HateMM，lab1 | 用户取消；PGID1986754及monitor1511203已停止；302份JSON回传并解析 | [停止审计](../runs/20260906_context_witness/cancellation_audit.json)、[日志](../runs/20260906_context_witness/extract_hatemm_serial/run.log) |
-| C7 HCS，lab3 | 用户取消；PGID3244050及monitor1511218已停止；316份JSON回传并解析 | [停止审计](../runs/20260906_context_witness/cancellation_audit.json)、[日志](../runs/20260906_context_witness/extract_hateclipseg_serial/run.log) |
-| GPU | 06:10两机抽取及相关子进程退出，GPU利用率0%，显存约185/116MiB；没有就绪的新方法实验 | 不为占GPU恢复已取消任务 |
-| 长期目标monitor | 保留PID1177638；总体目标未完成，用户本次叫停的是候选7 | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
+| C8 code review | 独立agent code_review_c8审查中；不做smoke或缩短训练 | experiments/20260906_censored_evidence_process/ |
+| C8 HateMM/HCS seed234 | 计划lab1/lab3并行完整搜索；输入已齐，待code review GO及同步 | runs/20260906_censored_evidence_process/<corpus>/seed234/ |
+| C7 | 两机抽取和对应monitor已停止；302/316份缓存保留，不恢复或补训 | [停止审计](../runs/20260906_context_witness/cancellation_audit.json) |
+| GPU | 06:27 lab1/lab3均空闲、各约31GB可用；已有输入满足准备条件 | 下一正式任务为C8两语料seed234 |
+| 长期目标monitor | PID1177638存活，总体目标未完成 | [状态与日志](../runs/thread_monitor/01a06df5-3e92-79b0-be30-820db943e551/) |
 
-**候选7的旧完成/异常通知均不授权重启。** 两个对应实验monitor已关闭；不创建替代monitor，不将用户取消标记为成功完成。原batch4 OOM及后续serial运行日志均已保留；未删除任何缓存、模型或实验输出。局部缓存不足全split覆盖，不拿来冒充完整输入训练。
+新长搜索启动时各配独立monitor，先确认实际进程和首次观察成功再记录PID。不等待模型轮询；任务完成后核验全输出并回传。C7旧通知均不授权重启。
 
-多机同步：停止前本机/lab1/lab3 commit均为ace4f4e（仅同步检查用途），候选7归档后同步更新；无影响运行的脏代码或STRAY。本机CLAUDE.md既有修改/tandem.html及lab1 idea-stage/repro_t3al未动。CLAUDE.md和研究规则未修改。
+多机同步：06:27本机/lab1/lab3 commit均为2f9a159（仅同步用途）；本机新增C8相关代码待提交同步。CLAUDE.md既有修改、tandem.html及lab1 idea-stage/repro_t3al保留，均无关运行；家目录无STRAY。用户计算成本要求已在AGENTS.md，CLAUDE.md和研究规则未改。
 
 ## 下一步
 
-1. 不再向候选7投入GPU。先基于现有完整缓存重新设计低成本方法，说明三个模块相互作用及相对廉价基线的具体改进假设，而不是再堆VLM调用。
-2. 若后续需要新增VLM输入，先明确可复用部分、调用次数和预计GPU时间；不能把更昂贵输入默认视为更好的科研方案。当前尚未选定或启动下一候选。
-3. 原目标和科学评测规则保留：validation选checkpoint、test选trial，三个模块有效性与最强baseline+同输入证据未齐前不宣称完成。
+1. 完成候选8唯一代码审查并修复结论级bug；同步后双机完整seed234搜索，不新增VLM抽取。
+2. 首trial50epoch+val checkpoint+test实测冻结20/5预算，按test选trial、within约束沿现行规则。两语料都过筛后再补确认seed。
+3. 验证三个主替换与no_vlm；同输入最强baseline和整体方法证据未齐前不宣称完成。显著增耗方案先说明必要性及廉价替代，不再默认堆VLM调用。
 
 ## 资料
 

@@ -35,13 +35,14 @@ def verdict_files(corpus, k=30, tag="qwen"):
                   if f.endswith(suffix))
 
 
-def load_verdicts(corpus, k=30, tag="qwen"):
+def load_verdicts(corpus, k=30, tag="qwen", video_ids=None, strict=False):
     """video_id -> float array of length k (verdict levels), across all splits.
 
     A video that appears in several files keeps the first record read; the
     files are read in sorted name order so the choice is deterministic.
     """
     out = {}
+    requested = None if video_ids is None else set(video_ids)
     for path in verdict_files(corpus, k, tag):
         with open(path) as fh:
             for line in fh:
@@ -50,6 +51,14 @@ def load_verdicts(corpus, k=30, tag="qwen"):
                     continue
                 rec = json.loads(line)
                 vid = str(rec["id"])
+                if requested is not None and vid not in requested:
+                    continue
+                if strict:
+                    values = np.asarray(rec['scores'], dtype=np.float64)
+                    if values.shape != (k,) or not np.isfinite(values).all() or not np.isin(values, [0, 1, 2, 3]).all():
+                        raise ValueError(f'invalid requested verdict: {path} {vid}')
+                    if vid in out and not np.array_equal(values, out[vid]):
+                        raise ValueError(f'conflicting requested verdict: {path} {vid}')
                 if vid in out:
                     continue
                 scores = [0.0 if s is None else float(s) for s in rec["scores"]]
