@@ -47,3 +47,21 @@ HateMM首完整trial耗时212.884198秒，同样固定每seed20trial，来源 `r
 HCS单语料数值筛选通过，但弱于C1；不能据此说完整方法或三个模块有效。HateMM固定搜索仍进行，确认seed等待两语料均过筛。利用已锁定HCS配置独立运行三个预声明主替换 `hard_observation/uniform_assignment/additive_readout`，并接 `no_vlm`；每臂完整50epoch、独立val选checkpoint/test，都是seed234初步机制诊断，不能替代最终两语料三seed有效性要求。
 
 实际消融主机uoa-lab3/sc474398，入口 `bash scripts/run_locked_ablations.sh 20260906_interval_evidence_transport hateclipseg 234 hard_observation uniform_assignment additive_readout no_vlm`，前三臂同时运行，之后no_vlm；输出 `runs/20260906_interval_evidence_transport/ablations/hateclipseg/seed234/`，独立完成monitor的位置只在STATUS维护。不改活动HateMM模型、不重复HCS旧搜索、无新增VLM或特征抽取。
+
+## HCS seed234四臂结果与内部描述诊断
+
+四臂于07:59通知完成，全部输出/checkpoint已回传；相同trial18超参、50epoch、val checkpoint选择、val63/test79及原预测ID/秒长度/finite均核对通过。来源 `runs/20260906_interval_evidence_transport/ablations/hateclipseg/seed234/artifact_audit.json`（含每臂metrics.json路径）及 `error_analysis/hcs_seed234_ablations.json`。
+
+| 版本 | AP/ROC/within | full减该臂 AP/ROC |
+|---|---|---|
+| full | .605771/.589308/.547480 | — |
+| hard_observation | .605742/.586075/.547270 | .000029/.003233 |
+| uniform_assignment | .604569/.585902/.545370 | .001201/.003406 |
+| additive_readout | .593375/.572121/.554614 | .012396/.017187 |
+| no_vlm | .595643/.560195/.527893 | .010127/.029113 |
+
+M1/M2两项pooled差均小于.005，目前不支持独立贡献；不能从一个seed裁定永久无效。M3及单一VLM整体有初步正向信号，仍不满足两语料三seed要求，no_vlm也不能代替M1软观察更新消融。完整模型及四臂均由val选中epoch1，不事后重选checkpoint或以此为由缩短50epoch。
+
+为区分“算子没变化”与“变化无性能作用”，新增只读 `diagnose_assignment.py`，加载已选checkpoint，在全部79个HCS test视频crop0取原forward hooks；不读GT、不训练、不重算AP/AUC。命令 `python experiments/20260906_interval_evidence_transport/diagnose_assignment.py --run runs/20260906_interval_evidence_transport/hateclipseg/seed234/trial18 --out runs/20260906_interval_evidence_transport/error_analysis/hcs_seed234_assignment.json`。观察到输入grade的平均后验概率 .988679，MAP仅 .005585比例窗口不同于原grade，软观察在此checkpoint接近硬等级；观察更新相对prior的TV为 .379628，不是完全没有读取VLM。音频/文本与视觉的分配相对纯交叠分配平均TV为 .066401/.157809，说明不是数学上相同的均匀分配，但该变化尚未转化为清楚的pooled收益。以上为crop0内部描述，不是五crop新性能指标或真正噪声可辨识证据。
+
+设计/执行影响：不盲目再加损失或更高VLM调用。追加提案已声明的 `no_observation_loss`、`categorical_noise`，同trial18配置、同seed234各完整50epoch，检查观察监督及序数约束是否相关；不是新增trial搜索或确认seed。两臂通过 `launch/run_hcs_aux.sh` 并行；共享launcher的可选链名只把日志/PID/completion分离到 `ablations/hateclipseg/seed234/auxiliary_chain/`，各新臂仍在原消融目录、旧四臂和完成标记均保留，monitor不复用旧完成状态。训练模型与活动HateMM代码不改。

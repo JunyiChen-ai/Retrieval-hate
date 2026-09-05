@@ -21,10 +21,16 @@ if [[ ! -f "$trainer" ]]; then
 fi
 test -f "$trainer"
 mkdir -p "$run"
+meta="$run"
+if [[ -n "${ABLATION_CHAIN_NAME:-}" ]]; then
+  [[ "$ABLATION_CHAIN_NAME" =~ ^[a-z0-9_]+$ ]]
+  meta="$run/$ABLATION_CHAIN_NAME"
+  mkdir -p "$meta"
+fi
 exec 9> "$run/launch.lock"
 flock -n 9
 echo "host=$(hostname) date=$(date -Is) locked_trial=$trial"
-echo "$$" > "$run/run.pid"
+echo "$$" > "$meta/run.pid"
 # Validate all destinations before starting any arm, never partly rerun a chain.
 for arm in "${arms[@]}"; do
   [[ "$arm" =~ ^[a-z0-9_]+$ ]]
@@ -46,4 +52,4 @@ for arm in "${arms[@]}"; do
 done
 for pid in "${pids[@]}"; do wait "$pid" || failed=1; done
 [[ $failed -eq 0 ]] || exit 1
-"$python_bin" -c 'import json,pathlib,sys; (pathlib.Path(sys.argv[1])/"completion.json").write_text(json.dumps({"state":"ABLATIONS_FINISHED","expected_arms":len(sys.argv)-2,"arms":sys.argv[2:]}))' "$run" "${arms[@]}"
+"$python_bin" -c 'import json,pathlib,sys; (pathlib.Path(sys.argv[1])/"completion.json").write_text(json.dumps({"state":"ABLATIONS_FINISHED","expected_arms":len(sys.argv)-2,"arms":sys.argv[2:]}))' "$meta" "${arms[@]}"
