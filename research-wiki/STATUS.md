@@ -1,10 +1,10 @@
 # 当前研究状态
 
-截至 **2026-09-06 16:25 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
+截至 **2026-09-06 17:10 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
-**目标未完成。** 目标不变：两语料 pooled AP/ROC 过固定 baseline 表（三 seed 确认），VLM/骨干/融合三模块各有可主张的贡献（规则 14(g)：三 seed 均值降 ≥ .01、两语料；09-06 起不要求每 seed 都降），方法统一、超参少。within 从 09-06 起只报告，不剪枝、不作门（`RESEARCH_ITERATION_RULES.md` 第 7/8/9 条）。
+**精简版 v2 两语料三 seed 过规则 8 确认，8/9 消融两语料成立；按规则 14 只差两项：HateMM 比候选 1 低 .025 AP 的处理（等用户裁定 w_fine），以及 09-03 计划要求的骨干结构 novelty 仍未做。** 目标不变：两语料 pooled AP/ROC 过固定 baseline 表（三 seed 确认），VLM/骨干/融合三模块各有可主张的贡献（规则 14(g)：三 seed 均值降 ≥ .01、两语料；09-06 起不要求每 seed 都降），方法统一、方法级超参少（现在 α、λ_block 两个）。within 从 09-06 起只报告，不剪枝、不作门。
 
 09-03 到 09-06 的 C2–C9 九个候选没有一个在任一语料超过候选 1（C1 三 seed HateMM .657/.842、HCS .699/.681），已全部归档；C9 最终数字见其归档 README。用户裁定停止换新架构，回到候选 1 做减法。
 
@@ -34,7 +34,8 @@
 |---|---|---|
 | 精简版 v2 HateMM seed234，lab1 | 完成并回传：**.633476/.839300/.618039**（trial 1），过主门；低于 v1 .648/.833 与 C1 .661/.841，差在搜索噪声内，cof 假设未证实（README 第 8 节） | [原评测](../runs/20260906_hier_evidence_clean_v2/hatemm/seed234/trial1/metrics.json) |
 | 精简版 v2 HateMM 三 seed | 完成并回传：**.6324±.0026 / .8353±.0035 / .6249±.0063**，规则 8 确认通过（边距 .059/.028）；比 C1 三 seed 低 .025 AP / .007 ROC，真实差距，候选原因 = 固定 w_fine=1 或不剪 within（README 第 12 节） | [seed 目录](../runs/20260906_hier_evidence_clean_v2/hatemm/) |
-| 精简版 v2 HateMM seed2025（lab1）/3407（lab3）九臂消融 | 16:21 启动 | `runs/20260906_hier_evidence_clean_v2/ablations/hatemm/seed<seed>/` |
+| 精简版 v2 两语料三 seed 九臂消融 | 全部完成回传；**8/9 部件两语料三 seed 均值降 ≥ .01**，只有块 OR 层次在 HCS 无差；规则 14 逐项见 README 第 13 节 | [汇总](../runs/20260906_hier_evidence_clean_v2/ablations/three_seed_summary.json) |
+| lab1 / lab3 | 空闲 | — |
 | 精简版 v2 HCS seed234，lab3 | 完成并回传：**.703024/.683522/.562335**（trial 13），过主门，与 C1 持平 | [原评测](../runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/trial13/metrics.json) |
 | 精简版 v2 HCS 三 seed | 完成并回传：**.7060±.0071 / .6895±.0053 / .5649±.0030**，规则 8 确认通过，高于 C1 三 seed .699/.681/.553 | README 第 9 节，[seed 目录](../runs/20260906_hier_evidence_clean_v2/hateclipseg/) |
 | 精简版 v2 HCS 九臂消融 × 3 seed | 完成并回传；九臂里八个三 seed 均值降 ≥ .01（只有块 OR 层次 flat_coarse 无贡献），表见 README 第 10 节 | [目录](../runs/20260906_hier_evidence_clean_v2/ablations/hateclipseg/) |
@@ -48,9 +49,8 @@
 
 ## 下一步
 
-1. HateMM seed 2025/3407 消融结束后回传，做两语料三 seed 合并 14(g) 判定与规则 14 逐项核对，向用户汇报。
-2. 待用户裁定：HateMM 比 C1 低 .025 AP，是否为此加回 w_fine（K30 证据调温，第三个方法标量）；不自行加回。
-3. 方法级标量保持 α、λ_block；不换架构。
+1. 待用户裁定：(i) HateMM 比 C1 低 .025 AP，是否为此加回 w_fine（第三个方法标量）；(ii) 骨干结构 novelty 是否仍要做，以及以本版为起点怎么做。
+2. 不自行加回 w_fine，不换架构，不加搜索 trial。
 
 ## 资料与历史
 
