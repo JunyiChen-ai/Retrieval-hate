@@ -104,7 +104,32 @@ bash scripts/run_locked_ablations.sh 20260907_c3_rev3_interval_evidence <corpus>
 | 2026-09-07 09:05 | HCS seed 2025/3407 完成：seed 2025 best trial 19 AP .6984 / ROC .6826 / within .5638；seed 3407 best trial 6 AP .7081 / ROC .6999 / within .5678。三 seed 均值 AP .7045 / ROC .6924 / within .5678（修订 2：.6976 / .6843 / .5488）。启动 HCS seed 2025/3407 消融（lab3）。 |
 | 2026-09-07 09:15 | HCS 三个 full checkpoint 的证据打乱检验（第 7 节）在本机 CPU 完成：打乱后 pooled 与 within 变化都在 .001 以内（seed 2025 within 降 .004）。 |
 | 2026-09-07 10:10 | HCS seed 234 的 17 组消融完成并回传（`runs/20260907_c3_rev3_interval_evidence/ablations/hateclipseg/seed234/<arm>/metrics.json`）。相对 full（.7070 / .6948 / .5718）的 AP / ROC 下降：avce .016/.025、no_cell .016/.020、no_bias .011/.013、key_bias .017/.028、shared_bias .012/.021、ctx_in_rep .017/.019、mean_prior .028/.042、mean_prior_all .050/.050、no_block .018/.032、no_prior .027/.050、no_cmal .011/.018、no_verdict .112/.120、index_hmm .009/.030、no_constraint .010/.030；接近 0 的：no_qk_enc .002/.001、seconds_time .003/.002、no_context .008/.006。单 seed，待三 seed 汇总再判。HateMM seed 2025/3407 搜索因与消融共用 lab1，每 trial 约 28 分钟，预计 4–5 小时后完成。 |
+| 2026-09-07 10:30 | HCS 三 seed 17 组消融完成并回传；配对 bootstrap（`.../ablations/hateclipseg/paired_bootstrap.json`，1000 次按视频重采样，三 seed 均值），表见第 6.1 节。只有 `no_qk_enc` 不达 .01（与打乱检验一致：HCS 上 q/k 里的证据不起作用）；`no_context`、`no_cell`、`shared_bias`、`ctx_in_rep`、`avce`、`key_bias`、`seconds_time`、`index_hmm`、`no_constraint`、`no_cmal` 只在 ROC 上达 .01，AP 在 .006–.009；三 seed 均值明显小于 seed 234 单 seed 的下降。lab3 空出，HateMM seed 3407 搜索从 lab1（trial 3，与消融共用 GPU 每 trial 28 分钟）改到 lab3 从头跑（10:32 启动，删除了 lab1 上的 3 个 trial 目录）。 |
 | 待 | 规则 8 筛选 → seed 2025/3407 搜索 → 每 seed 每语料 17 臂锁定消融 → 三 seed 汇总、配对 bootstrap、证据打乱检验（第 7 节）→ 规则 14 清单（第 9 节）。 |
+
+### 6.1 HCS 三 seed 消融（full − arm；来源 `runs/20260907_c3_rev3_interval_evidence/ablations/hateclipseg/seed<seed>/<arm>/metrics.json` 与 `paired_bootstrap.json`）
+
+full 三 seed：AP .7070 / .6984 / .7081，ROC .6948 / .6826 / .6999，within .5718 / .5638 / .5678。
+
+| arm | 三 seed 均值下降 AP / ROC / within | 下降的 seed 数 AP / ROC | 95% 区间 AP / ROC | 达 .01 |
+|---|---|---|---|---|
+| avce | +0.007 / +0.018 / +0.011 | 2 / 3 | [-0.005, +0.025] / [+0.003, +0.033] | 是 |
+| no_qk_enc | +0.001 / +0.002 / -0.002 | 3 / 3 | [-0.004, +0.006] / [-0.006, +0.010] | 否 |
+| no_cell | +0.008 / +0.012 / +0.003 | 2 / 2 | [-0.002, +0.021] / [-0.002, +0.026] | 是 |
+| no_bias | +0.010 / +0.014 / +0.001 | 3 / 2 | [+0.003, +0.019] / [+0.005, +0.023] | 是 |
+| key_bias | +0.007 / +0.012 / +0.002 | 2 / 2 | [-0.001, +0.018] / [+0.003, +0.020] | 是 |
+| shared_bias | +0.006 / +0.011 / +0.001 | 2 / 2 | [-0.006, +0.023] / [-0.007, +0.030] | 是 |
+| no_context | +0.008 / +0.015 / +0.003 | 3 / 3 | [-0.000, +0.020] / [+0.003, +0.026] | 是 |
+| ctx_in_rep | +0.009 / +0.010 / +0.004 | 2 / 2 | [-0.001, +0.021] / [-0.002, +0.023] | 是 |
+| mean_prior | +0.033 / +0.044 / +0.042 | 3 / 3 | [+0.005, +0.078] / [+0.011, +0.076] | 是 |
+| mean_prior_all | +0.044 / +0.051 / +0.045 | 3 / 3 | [+0.018, +0.085] / [+0.021, +0.079] | 是 |
+| no_block | +0.017 / +0.029 / +0.002 | 3 / 3 | [-0.008, +0.050] / [+0.001, +0.057] | 是 |
+| no_prior | +0.047 / +0.053 / +0.015 | 3 / 3 | [+0.016, +0.083] / [+0.019, +0.089] | 是 |
+| no_cmal | +0.009 / +0.017 / +0.003 | 2 / 3 | [-0.006, +0.029] / [-0.004, +0.040] | 是 |
+| no_verdict | +0.110 / +0.129 / +0.032 | 3 / 3 | [+0.041, +0.188] / [+0.061, +0.192] | 是 |
+| index_hmm | +0.007 / +0.024 / +0.016 | 2 / 3 | [-0.011, +0.032] / [+0.002, +0.048] | 是 |
+| no_constraint | +0.008 / +0.024 / +0.016 | 3 / 3 | [-0.008, +0.032] / [+0.001, +0.049] | 是 |
+| seconds_time | +0.007 / +0.012 / +0.002 | 3 / 3 | [-0.001, +0.019] / [+0.001, +0.024] | 是 |
 
 ## 7. 机制检验：证据时间对应打乱（不训练；`evidence_shuffle_test.py`；`runs/20260907_c3_rev3_interval_evidence/mechanism/<corpus>/seed<seed>/summary.json`）
 
