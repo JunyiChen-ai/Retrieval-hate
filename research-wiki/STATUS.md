@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 13:50 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
+截至 **2026-09-06 14:30 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -37,7 +37,8 @@
 | 精简版 v2 HCS seed234，lab3 | 完成并回传：**.703024/.683522/.562335**（trial 13），过主门，与 C1 持平 | [原评测](../runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/trial13/metrics.json) |
 | 精简版 v2 HCS 三 seed | 完成并回传：**.7060±.0071 / .6895±.0053 / .5649±.0030**，规则 8 确认通过，高于 C1 三 seed .699/.681/.553 | README 第 9 节，[seed 目录](../runs/20260906_hier_evidence_clean_v2/hateclipseg/) |
 | 精简版 v2 HCS 九臂消融 × 3 seed | 完成并回传；九臂里八个三 seed 均值降 ≥ .01（只有块 OR 层次 flat_coarse 无贡献），表见 README 第 10 节 | [目录](../runs/20260906_hier_evidence_clean_v2/ablations/hateclipseg/) |
-| 精简版 v2 HateMM seed234 九臂消融，lab3 | 13:50 启动（best trial 1 超参） | `runs/20260906_hier_evidence_clean_v2/ablations/hatemm/seed234/` |
+| 精简版 v2 HateMM seed234 九臂消融 | 完成并回传；除 mean_prior（−.003/−.007）外八臂 pooled 降 ≥ .01（README 第 11 节，单 seed 只记录） | [目录](../runs/20260906_hier_evidence_clean_v2/ablations/hatemm/seed234/) |
+| lab3 | 空闲，等 HateMM seed 2025/3407 搜索结束后跑其消融 | — |
 | 精简版 v1 两语料 | 完成，已回传本机，数字见上表；v1 与 v2 不混算 | `runs/20260906_hier_evidence_clean/` |
 | 监控 | 本会话 harness 后台等待 `SEARCH_DONE` 或进程消失，不再有 monitor 脚本/线程 | — |
 | C9 | 两语料 seed234 与 HCS 全部诊断已回传；seed2025/3407 被用户中止的部分输出也已回传，不作结果 | [归档](../archive/experiments/20260906_interval_evidence_transport/README.md) |
