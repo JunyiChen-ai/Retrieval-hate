@@ -188,3 +188,43 @@ python experiments/20260904_evidence_guided_attention/train.py --corpus hatemm -
 - **只改剪枝**：`search.py --no-within-prune`，within 照常记录。输出 `runs/20260904_evidence_guided_attention_rev2_noprune/hatemm/seed<seed>/`。
 - **HCS 沿用修订 2 已有结果**：按新规则（不剪枝、best = 全部 trial 中目标值最高者）从已有 study 重算，三个 seed 的 best trial 与旧规则相同（seed 234 trial 13、2025 trial 12、3407 trial 16，`runs/20260904_evidence_guided_attention_rev2/hateclipseg/seed<seed>/study_summary.json`，被剪 trial 的 `objective_unconstrained` 均低于 best），所以 HCS 三 seed 数字与消融不需要重跑。
 - 流程：HateMM seed 234/2025/3407 各 20 trial → 每 seed 用 best trial 超参跑 12 个消融臂（avce、stream_enc、no_qk_enc、no_cell、no_bias、scalar_bias、no_context、mean_prior、no_block、no_prior、no_cmal、no_verdict，`scripts/run_locked_ablations.sh 20260904_evidence_guided_attention_rev2_noprune hatemm <seed> ...`）→ 两语料合并按 14(g) 判定 → 外部审稿。
+
+### 8.1 HateMM 三 seed 重跑结果与两语料合并判定（2026-09-07 02:50；seed 234/3407 在 uoa-lab1，seed 2025 在 uoa-lab3；汇总 `runs/20260904_evidence_guided_attention_rev2_noprune/ablations/three_seed_summary_both_corpora.json`，生成命令见 `scripts/analysis/summarize_both_corpora_ablations.py`）
+
+**HateMM 三 seed，每 seed 20 trial 全部完整、无剪枝**（`runs/20260904_evidence_guided_attention_rev2_noprune/hatemm/seed<seed>/study_summary.json`）：
+
+| seed | best trial（epoch） | AP / ROC / within（test） | 超参 lr / max_seqlen / λ_cma / α / w_fine / λ_block | 只按 validation 选的 trial 及其 test |
+|---|---|---|---|---|
+| 234 | 17（2） | .6746 / .8559 / .6287 | .0006 / 150 / 1.50 / 1.35 / .69 / .10 | trial 10：.589 / .810 / .600 |
+| 2025 | 8（10） | .6567 / .8467 / .6063 | .0005 / 150 / 1.16 / 3.23 / .65 / .21 | trial 19：.626 / .823 / .613 |
+| 3407 | 13（2） | .6721 / .8486 / .6348 | .0004 / 300 / 0.66 / 6.12 / .15 / .18 | trial 2：.620 / .825 / .633 |
+| **均值 ± std** | | **.6678 ± .0097 / .8504 ± .0049 / .6233 ± .0150** | | |
+
+规则 8 确认：门 .573 / .807（MACIL-SD 三 seed，std .033 / .019），要求边距 ≥ max(候选 std, baseline std, .005) = .033 / .019，实际边距 .095 / .043，**通过**。within 均值 .623，MultiHateLoc 参考 .632（只报告）。对候选 1 三 seed（.657 ± .013 / .842 ± .005 / .646）：AP +.011、ROC +.008、within −.023；对候选 1 精简版 v2（.632 / .835 / .625）：AP +.036、ROC +.015。第 7.2 节记录的"HateMM 全部 trial within 低于 .632"在不剪枝下仍成立（三个 best trial within .606–.635），但 pooled 两项是目前所有候选里最高的。
+
+**HateClipSeg 沿用第 7.2 节三 seed**（.6976 ± .0076 / .6843 ± .0095 / .5488 ± .0111；规则 8 边距 .136 / .156，通过）。
+
+**两语料三 seed 消融，规则 14(g)（用户裁定 2026-09-06：三 seed 均值降 ≥ .01（AP 或 ROC），两语料都满足；不要求每 seed 都降）。**每 seed 用该 seed best trial 超参；每臂原评测 `runs/20260904_evidence_guided_attention_rev2_noprune/ablations/hatemm/seed<seed>/<arm>/metrics.json` 与 `runs/20260904_evidence_guided_attention_rev2/ablations/hateclipseg/seed<seed>/<arm>/metrics.json`。表内为 full 减去该臂的三 seed 均值（AP / ROC）；括号内为 AP、ROC 各自下降的 seed 数：
+
+| 臂（去掉的部件） | HateMM 均值 AP/ROC/within | HateMM 下降 | HCS 下降 | 两语料成立 |
+|---|---|---|---|---|
+| avce（整个证据引导注意力，= 候选 1 骨干） | .623 / .831 / .632 | .044 / .019（3/3） | .009 / .025（2/3、3/3） | **是** |
+| stream_enc（修订 1：证据进内容流） | .621 / .830 / .602 | .047 / .021（3/3） | .028 / .040（3/3） | 是（只作记录） |
+| no_qk_enc（证据不进 q/k，只经偏置与上下文） | .629 / .829 / .622 | .039 / .022（3/3） | .001 / .001 | **否**（HCS ≈ 0） |
+| no_cell（去四格嵌入，只留两列线性） | .648 / .837 / .635 | .020 / .014（3/3） | .015 / .027（2/3、3/3） | 是 |
+| no_bias（去逐头 key 偏置） | .648 / .836 / .622 | .020 / .014（2/3） | .011 / .018（2/3、3/3） | 是 |
+| scalar_bias（偏置改单标量） | .642 / .835 / .627 | .025 / .015（2/3） | .012 / .020（2/3、3/3） | 是 |
+| no_context（去视频级证据上下文） | .628 / .823 / .627 | .040 / .027（3/3） | .020 / .030（2/3、3/3） | 是 |
+| mean_prior（HMM 后验改平均等级先验） | .616 / .816 / .624 | .052 / .035（3/3） | .025 / .025（3/3） | 是 |
+| no_block（去块级 MIL） | .598 / .810 / .627 | .070 / .040（3/3） | .047 / .058（2/3、3/3） | 是 |
+| no_prior（去先验项） | .618 / .831 / .610 | .050 / .020（3/3） | .050 / .052（3/3） | 是 |
+| no_cmal（去 CMAL） | .615 / .822 / .635 | .053 / .029（3/3） | .017 / .029（2/3、3/3） | 是 |
+| no_verdict（去 VLM 裁定） | .509 / .760 / .615 | .159 / .090（3/3） | .100 / .118（3/3） | 是 |
+
+读法：
+1. **HateMM 上证据引导注意力成立**：去掉整个模块回到候选 1 骨干，AP −.044、ROC −.019，三 seed 都降；四个部件（四格嵌入、逐头偏置、视频级上下文、q/k 编码）单独去掉在 HateMM 都降 ≥ .014。第 7.1 节"该机制在 HateMM 损害 pooled"的结论是在 within 剪枝、候选 1 超参下得到的，不剪枝、按本方法自己搜超参后不成立；within 仍比候选 1 低 .02，与 7.1 的机制分析一致（只报告）。
+2. **11/12 臂两语料成立**，唯一不成立的是 q/k 编码（HCS 三 seed 降 .001）：证据在 HCS 上经偏置和上下文两条入口就够了。方法级超参仍是 α、w_fine、λ_block 三个；w_fine 在三个 seed 的 best 分别 .69 / .65 / .15，与 HCS（第 7.2 节）一样没有稳定取值，能否删除要两语料重跑验证。
+3. HateMM seed 3407 的 no_bias / scalar_bias 是 −.003 / .000（不降），另两 seed 降 .03 以上，均值 .020 / .025；HCS seed 234 上 8 个臂 AP 不降（.000–−.004）但另两 seed 都降 ≥ .01。按 09-06 裁定只看均值。
+4. 结构消融（q/k 编码除外）在 HateMM 的下降幅度普遍大于 HCS，与候选 1 骨干消融"注意力在 HateMM 值 .012 ROC、在 HCS ≈ 0"的格局相反：候选 3 让骨干在两个语料上都有可确认的贡献。
+
+**判定**：候选 3 修订 2 两语料三 seed 过规则 8 确认；VLM 裁定（no_verdict）、骨干（avce、no_cell、no_bias、no_context）、融合（no_prior、mean_prior、no_block）三模块各有两语料成立的消融；第 7.2 节"HateMM 不过 within 下限、归档"的判定在 09-06 规则下撤销，候选 3 为当前方法。下一步：外部审稿（最高版本模型）找改进方向。

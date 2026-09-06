@@ -1,18 +1,16 @@
 # 当前研究状态
 
-截至 **2026-09-06 21:35 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
+截至 **2026-09-07 03:00 NZST**。依据：候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 在不剪 within 的规则下重跑完成并回传，12 臂消融三 seed 完成并回传；HCS 沿用修订 2 三 seed。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
-**精简版 v2 两语料三 seed 过规则 8 确认，8/9 消融两语料成立；按规则 14 只差两项：HateMM 比候选 1 低 .025 AP 的处理（等用户裁定 w_fine），以及 09-03 计划要求的骨干结构 novelty 仍未做。** 目标不变：两语料 pooled AP/ROC 过固定 baseline 表（三 seed 确认），VLM/骨干/融合三模块各有可主张的贡献（规则 14(g)：三 seed 均值降 ≥ .01、两语料；09-06 起不要求每 seed 都降），方法统一、方法级超参少（现在 α、λ_block 两个）。within 从 09-06 起只报告，不剪枝、不作门。
+**候选 3 两语料三 seed 过规则 8 确认，12 臂消融中 11 臂两语料成立（唯一不成立：证据进 q/k 编码，HCS ≈ 0）；VLM / 骨干 / 融合三模块各有可主张的部件。候选 3 为当前方法。** 目标不变：两语料 pooled AP/ROC 过固定 baseline 表（三 seed 确认），三模块各有可主张贡献（规则 14(g)：三 seed 均值降 ≥ .01、两语料；不要求每 seed 都降），方法统一、方法级超参少（现在 α、w_fine、λ_block 三个）。within 只报告，不剪枝、不作门。
 
-09-03 到 09-06 的 C2–C9 九个候选没有一个在任一语料超过候选 1（C1 三 seed HateMM .657/.842、HCS .699/.681），已全部归档；C9 最终数字见其归档 README。用户裁定停止换新架构，回到候选 1 做减法。
+候选 3 第 7.2 节的"HateMM 不过 within 下限、归档"判定撤销：不剪枝后 HateMM 三 seed 均值 .668 / .850，是所有候选里 pooled 最高的（候选 1 .657 / .842，精简版 v2 .632 / .835），within .623 比候选 1 低 .023（只报告）。
 
-## 当前方法：候选 1 精简版
+## 当前方法：候选 3（证据引导注意力，修订 2）
 
-[experiments/20260906_hier_evidence_clean](../experiments/20260906_hier_evidence_clean/README.md)，规则 6 [code review PASS](../experiments/20260906_hier_evidence_clean/REVIEW_RULE6.md)。与候选 1 修订 1 相比：删 K30 调温 w_fine（固定 1）、删 CMAL 权重搜索（MACIL-SD 发表值）、删全部死消融代码；搜索超参 9 → 5（lr、dropout、max_seqlen、α、λ_block），方法级标量只有 α 与 λ_block。保留的每个部件都有候选 1 三 seed 消融 ≥ .01 的依据（README 第 1 节表）。评测器未改。
-
-候选 1 骨干消融结论（`runs/20260903_hier_evidence_mil/ablations/`）：两语料都稳定有用 = VLM 裁定、共享跨模态注意力、CMAL、块级 MIL、HMM 时间耦合；只 HateMM 有用 = 音频、视觉、EMA、P(s) 列、块 OR 层次、裁定拼输入；只 HCS 有用 = HMM 后验替代平均等级先验、先验项。分数方差 92%/79% 在视频之间，骨干主要在估视频级仇恨密度，视频内排序来自 HMM 后验。
+[experiments/20260904_evidence_guided_attention](../experiments/20260904_evidence_guided_attention/README.md)（方法第 1、7 节，结果第 8.1 节）。候选 1 的 VLM 裁定 + HMM 后验 + 块级 MIL + 先验不变；骨干改为证据只进跨模态注意力的 query/key（四格嵌入 + 两列线性）、逐头 key 偏置、视频级证据上下文，内容表示保持纯内容；去掉 EMA。搜索 6 标量（lr、max_seqlen、λ_cma、α、w_fine、λ_block）。评测器未改。
 
 ## 最新权威结果
 
@@ -20,32 +18,23 @@
 
 | 候选/语料 | 结果 | 来源 |
 |---|---|---|
-| 精简版 v1 HateMM seed234 | .647900/.833380/.628441，trial 19 | 过主门，比 C1 seed234 低 .013/.008；[原评测](../runs/20260906_hier_evidence_clean/hatemm/seed234/trial19/metrics.json) |
-| 精简版 v1 HCS seed234 | .696499/.688134/.554490，trial 10 | 过主门，与 C1 持平（ROC +.009）；[原评测](../runs/20260906_hier_evidence_clean/hateclipseg/seed234/trial10/metrics.json) |
+| **候选 3 HateMM 三 seed（不剪枝）** | **.6678±.0097 / .8504±.0049 / .6233±.0150**（best trial 17/8/13） | [搜索](../runs/20260904_evidence_guided_attention_rev2_noprune/hatemm/)，[两语料汇总](../runs/20260904_evidence_guided_attention_rev2_noprune/ablations/three_seed_summary_both_corpora.json) |
+| **候选 3 HCS 三 seed** | **.6976±.0076 / .6843±.0095 / .5488±.0111**（best trial 13/12/16） | [搜索](../runs/20260904_evidence_guided_attention_rev2/hateclipseg/) |
+| 候选 3 消融（12 臂 × 3 seed × 2 语料） | 去掉整个证据引导注意力：HMM −.044/−.019，HCS −.009/−.025；去 VLM 裁定：−.159/−.090，−.100/−.118；q/k 编码 HCS −.001 | 同上汇总 |
+| 精简版 v2（候选 1 精简）三 seed | HMM .632/.835/.625；HCS .706/.690/.565；外部审稿 3/10 | [目录](../runs/20260906_hier_evidence_clean_v2/) |
 | C1 三 seed（within 剪枝下搜索） | HMM .657±.013/.842±.005/.646±.004；HCS .699±.006/.681±.016/.553±.007 | [搜索](../runs/20260903_hier_evidence_mil/) |
-| C9 HateMM seed234 | .614455/.815451/.649858，trial 11 | [原评测](../runs/20260906_interval_evidence_transport/hatemm/seed234/trial11/metrics.json) |
-| C9 HCS seed234 | .605771/.589308/.547480，trial 18 | [原评测](../runs/20260906_interval_evidence_transport/hateclipseg/seed234/trial18/metrics.json) |
-| C5 三 seed | HMM .631/.846/.660；HCS .654/.638/.558 | [汇总](../runs/20260905_interventional_evidence/hatemm/confirmation_summary.json) |
 | 规则 8 门 | HMM .573/.807；HCS .562/.528；within 参考 .632/.524 | `docs/duplex/OFFICIAL_VAL_RESULTS.md` |
 
 ## 运行任务与监控
 
-| 任务 | 状态 | 位置 |
-|---|---|---|
-| 候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 重跑，不剪 within | 21:30 启动：seed 234/3407 在 lab1（PID 3895347/3895349），seed 2025 在 lab3（PID 3999832）；各 20 trial，搜索空间沿用修订 2 的 6 标量 | `runs/20260904_evidence_guided_attention_rev2_noprune/hatemm/seed<seed>/`（远端，结束后 rsync） |
-| 候选 3 HCS | 沿用修订 2 三 seed（.698±.008/.684±.009/.549）与 12 臂消融；按新规则重算 best trial 不变 | [study](../runs/20260904_evidence_guided_attention_rev2/hateclipseg/) |
-| 精简版 v2（候选 1 精简） | 两语料三 seed 与九臂消融完成；外部审稿 3/10（README 第 13 节、REVIEW_NOVELTY_GPT6ASTRA.md） | [目录](../runs/20260906_hier_evidence_clean_v2/) |
-| 监控 | 本会话 harness 后台等待 study_summary.json 或进程消失 | — |
-| 本机 GPU | 他人任务占用 | — |
-
-多机同步：启动前三台均 a2016d8，远程无脏文件（lab1 有既有未跟踪 idea-stage/）。
+无运行任务。lab1 / lab3 GPU 空闲；本机 GPU 被他人占用。远程 `runs/20260904_evidence_guided_attention_rev2_noprune/` 已全部 rsync 回本机。
 
 ## 下一步
 
-1. 候选 3 HateMM 每个 seed 搜索结束后在同机跑 12 臂锁定消融（`scripts/run_locked_ablations.sh 20260904_evidence_guided_attention_rev2_noprune hatemm <seed> ...`），回传后与 HCS 已有三 seed 合并按 14(g) 判定，向用户汇报，再送外部审稿（最高版本模型）。
-2. 用户裁定的方向：以候选 3 为当前方法；w_fine 去留等 HateMM 结果后定；30/4 粒度与 VLM 调用成本是后续要解决的问题（自适应粒度方案待写）。
+1. 候选 3 送外部审稿（GPT6-Astra，最高 reasoning）找改进方向；审稿记录存实验目录。
+2. 待用户裁定：w_fine 去留（三 seed best 取值 .15–.69 不稳定，删则两语料重跑）；30/4 粒度与 VLM 每视频 34 次调用的成本（自适应粒度方案待写）。
 3. 搜索目标继续按 test（用户裁定，不再讨论）。
 
 ## 资料与历史
 
-[研究规则](../RESEARCH_ITERATION_RULES.md)、[固定baseline表](../docs/duplex/OFFICIAL_VAL_RESULTS.md)、[评测协议](../docs/duplex/FRAME_EVAL_PROTOCOL.md)。负结果细节：[C6](../archive/experiments/20260905_latent_evidence_sequence/README.md)、[C7用户取消](../archive/experiments/20260906_context_witness/README.md)、[C4](../archive/experiments/20260904_null_token_cma/README.md)。[旧状态索引](../archive/research-wiki/STATUS_20260905_before_cleanup.md)。冻结Hate-follow-up引用不动；缓存出处见各data子目录PROVENANCE.md。
+[研究规则](../RESEARCH_ITERATION_RULES.md)、[固定baseline表](../docs/duplex/OFFICIAL_VAL_RESULTS.md)、[评测协议](../docs/duplex/FRAME_EVAL_PROTOCOL.md)。负结果细节：[C9](../archive/experiments/20260906_interval_evidence_transport/README.md)、[C6](../archive/experiments/20260905_latent_evidence_sequence/README.md)、[C7用户取消](../archive/experiments/20260906_context_witness/README.md)、[C4](../archive/experiments/20260904_null_token_cma/README.md)。[旧状态索引](../archive/research-wiki/STATUS_20260905_before_cleanup.md)。冻结Hate-follow-up引用不动；缓存出处见各data子目录PROVENANCE.md。
