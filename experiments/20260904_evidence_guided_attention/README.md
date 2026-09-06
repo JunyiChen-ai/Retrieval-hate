@@ -178,3 +178,13 @@ python experiments/20260904_evidence_guided_attention/train.py --corpus hatemm -
 **HateMM**（本机记录搜索，9/20 trial 后停止让出 GPU）：9 个 trial within .582–.627 全部低于 .632 下限；不看约束最好 .646/.846/.626（trial 7）。与 7.1 诊断一致：同一机制在 HateMM 抹平视频内排序。
 
 **判定不变但理由修正**：候选 3 修订 2 在 HateClipSeg 通过预注册第 2、3 条（相对 avce +.009/+.025，四个部件中三个三 seed 都降），在 HateMM 不过规则 8 的 within 下限（机制本身损害视频内排序，7.1 诊断）。规则 13 要求一法两语料，所以本候选不能作方法；归档。可复用的结论：视频级证据上下文与证据偏置在注意力本身贡献小的语料（HateClipSeg）有 +.02–.03 ROC 的增益，在注意力贡献大、within 靠内容的语料（HateMM）损害 within；候选 4 的空 token 是把视频级证据上下文改成"每行按自己 query 决定拿多少"的形式，正是为了保留前者、避免后者。
+
+## 8. 现行规则下重跑 HateMM（2026-09-06 晚，用户裁定）
+
+背景：修订 2 在 HateMM 只跑了 seed 234 的 9 个 trial，且当时按 within < .632 剪枝；09-06 起 within 不再剪枝、不作门，规则 14(g) 只看三 seed 均值。用户裁定：按现行流程重跑 HateMM 三 seed 并补消融。
+
+- **模型不变**：修订 2（证据只进 q/k + key 偏置 + 视频级上下文，第 7 节）。
+- **搜索空间不变**：第 4 节的 6 个标量（lr、max_seqlen、λ_cma、α、w_fine、λ_block），与 HCS 已有的三 seed 研究保持同一空间（规则 13）。w_fine 暂保留，是否删除等 HateMM 结果出来再定，删则两语料一起重跑。
+- **只改剪枝**：`search.py --no-within-prune`，within 照常记录。输出 `runs/20260904_evidence_guided_attention_rev2_noprune/hatemm/seed<seed>/`。
+- **HCS 沿用修订 2 已有结果**：按新规则（不剪枝、best = 全部 trial 中目标值最高者）从已有 study 重算，三个 seed 的 best trial 与旧规则相同（seed 234 trial 13、2025 trial 12、3407 trial 16，`runs/20260904_evidence_guided_attention_rev2/hateclipseg/seed<seed>/study_summary.json`，被剪 trial 的 `objective_unconstrained` 均低于 best），所以 HCS 三 seed 数字与消融不需要重跑。
+- 流程：HateMM seed 234/2025/3407 各 20 trial → 每 seed 用 best trial 超参跑 12 个消融臂（avce、stream_enc、no_qk_enc、no_cell、no_bias、scalar_bias、no_context、mean_prior、no_block、no_prior、no_cmal、no_verdict，`scripts/run_locked_ablations.sh 20260904_evidence_guided_attention_rev2_noprune hatemm <seed> ...`）→ 两语料合并按 14(g) 判定 → 外部审稿。

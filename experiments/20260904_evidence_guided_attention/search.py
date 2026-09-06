@@ -55,6 +55,8 @@ def main(argv=None):
     ap.add_argument("--ablation", default="full")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--num-workers", type=int, default=4)
+    ap.add_argument("--no-within-prune", action="store_true",
+                    help="rule 7 as amended 2026-09-06: record within, never prune on it")
     args = ap.parse_args(argv)
 
     root = os.path.join(args.out_root, args.corpus, "seed%d" % args.seed)
@@ -81,7 +83,7 @@ def main(argv=None):
     if os.path.exists(budget_path):
         with open(budget_path) as fh:
             budget = json.load(fh)["n_trials"]
-    floor = WITHIN_FLOOR[args.corpus]
+    floor = None if args.no_within_prune else WITHIN_FLOOR[args.corpus]
 
     def objective(trial):
         cfg = sample(trial)
@@ -114,8 +116,8 @@ def main(argv=None):
         say("trial %d | %.0fs | test AP %.4f ROC %.4f within %.4f | obj %.4f%s"
             % (trial.number, elapsed, t["pooled_ap"], t["pooled_roc"],
                t["within_roc"], obj,
-               "" if t["within_roc"] >= floor else " | BELOW WITHIN FLOOR"))
-        if t["within_roc"] < floor:
+               "" if (floor is None or t["within_roc"] >= floor) else " | BELOW WITHIN FLOOR"))
+        if floor is not None and t["within_roc"] < floor:
             trial.set_user_attr("objective_unconstrained", obj)
             raise optuna.TrialPruned("within %.4f < floor %.3f"
                                      % (t["within_roc"], floor))
