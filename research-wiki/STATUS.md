@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 14:30 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
+截至 **2026-09-06 16:25 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -33,12 +33,12 @@
 | 任务 | 状态 | 位置 |
 |---|---|---|
 | 精简版 v2 HateMM seed234，lab1 | 完成并回传：**.633476/.839300/.618039**（trial 1），过主门；低于 v1 .648/.833 与 C1 .661/.841，差在搜索噪声内，cof 假设未证实（README 第 8 节） | [原评测](../runs/20260906_hier_evidence_clean_v2/hatemm/seed234/trial1/metrics.json) |
-| 精简版 v2 HateMM seed2025/3407，lab1 | 12:50 并行启动，各 20 trial | `runs/20260906_hier_evidence_clean_v2/hatemm/seed<seed>/`（远端） |
+| 精简版 v2 HateMM 三 seed | 完成并回传：**.6324±.0026 / .8353±.0035 / .6249±.0063**，规则 8 确认通过（边距 .059/.028）；比 C1 三 seed 低 .025 AP / .007 ROC，真实差距，候选原因 = 固定 w_fine=1 或不剪 within（README 第 12 节） | [seed 目录](../runs/20260906_hier_evidence_clean_v2/hatemm/) |
+| 精简版 v2 HateMM seed2025（lab1）/3407（lab3）九臂消融 | 16:21 启动 | `runs/20260906_hier_evidence_clean_v2/ablations/hatemm/seed<seed>/` |
 | 精简版 v2 HCS seed234，lab3 | 完成并回传：**.703024/.683522/.562335**（trial 13），过主门，与 C1 持平 | [原评测](../runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/trial13/metrics.json) |
 | 精简版 v2 HCS 三 seed | 完成并回传：**.7060±.0071 / .6895±.0053 / .5649±.0030**，规则 8 确认通过，高于 C1 三 seed .699/.681/.553 | README 第 9 节，[seed 目录](../runs/20260906_hier_evidence_clean_v2/hateclipseg/) |
 | 精简版 v2 HCS 九臂消融 × 3 seed | 完成并回传；九臂里八个三 seed 均值降 ≥ .01（只有块 OR 层次 flat_coarse 无贡献），表见 README 第 10 节 | [目录](../runs/20260906_hier_evidence_clean_v2/ablations/hateclipseg/) |
 | 精简版 v2 HateMM seed234 九臂消融 | 完成并回传；除 mean_prior（−.003/−.007）外八臂 pooled 降 ≥ .01（README 第 11 节，单 seed 只记录） | [目录](../runs/20260906_hier_evidence_clean_v2/ablations/hatemm/seed234/) |
-| lab3 | 空闲，等 HateMM seed 2025/3407 搜索结束后跑其消融 | — |
 | 精简版 v1 两语料 | 完成，已回传本机，数字见上表；v1 与 v2 不混算 | `runs/20260906_hier_evidence_clean/` |
 | 监控 | 本会话 harness 后台等待 `SEARCH_DONE` 或进程消失，不再有 monitor 脚本/线程 | — |
 | C9 | 两语料 seed234 与 HCS 全部诊断已回传；seed2025/3407 被用户中止的部分输出也已回传，不作结果 | [归档](../archive/experiments/20260906_interval_evidence_transport/README.md) |
@@ -48,9 +48,9 @@
 
 ## 下一步
 
-1. v2 两语料 seed 234 均过主门（HateMM .634/.839、HCS .703/.684）；四个确认 seed 搜索在跑（lab1 HateMM、lab3 HCS 各两 seed）。
-2. 确认 seed 结束后回传，算三 seed 均值/标准差对照规则 8 与 C1；三 seed 后按 README 第 4 节九个消融臂跑 `scripts/run_locked_ablations.sh 20260906_hier_evidence_clean_v2 ...`，按 14(g)（三 seed 均值降 ≥ .01、两语料）判定可主张部件。
-3. 方法级标量保持 α、λ_block 两个；不加回 w_fine，不换架构。
+1. HateMM seed 2025/3407 消融结束后回传，做两语料三 seed 合并 14(g) 判定与规则 14 逐项核对，向用户汇报。
+2. 待用户裁定：HateMM 比 C1 低 .025 AP，是否为此加回 w_fine（K30 证据调温，第三个方法标量）；不自行加回。
+3. 方法级标量保持 α、λ_block；不换架构。
 
 ## 资料与历史
 
