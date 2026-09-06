@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-07 04:30 NZST**。依据：候选 3 外部审稿完成（4/10，`experiments/20260904_evidence_guided_attention/REVIEW_NOVELTY_GPT6ASTRA.md`）；候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 在不剪 within 的规则下重跑完成并回传，12 臂消融三 seed 完成并回传；HCS 沿用修订 2 三 seed。权威数字均引用本机 runs 原评测。
+截至 **2026-09-07 06:50 NZST**。依据：候选 3 修订 3 代码提交（76ef6f0）并在 lab1/lab3 启动 seed 234 搜索（运行中，无新训练结果）；候选 3 外部审稿完成（4/10，`experiments/20260904_evidence_guided_attention/REVIEW_NOVELTY_GPT6ASTRA.md`）；候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 在不剪 within 的规则下重跑完成并回传，12 臂消融三 seed 完成并回传；HCS 沿用修订 2 三 seed。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -8,7 +8,7 @@
 
 候选 3 第 7.2 节的"HateMM 不过 within 下限、归档"判定撤销：不剪枝后 HateMM 三 seed 均值 .668 / .850，是所有候选里 pooled 最高的（候选 1 .657 / .842，精简版 v2 .632 / .835），within .623 比候选 1 低 .023（只报告）。
 
-## 当前方法：候选 3（证据引导注意力，修订 2）
+## 当前方法：候选 3（证据引导注意力，修订 2；修订 3 搜索中）
 
 [experiments/20260904_evidence_guided_attention](../experiments/20260904_evidence_guided_attention/README.md)（方法第 1、7 节，结果第 8.1 节）。候选 1 的 VLM 裁定 + HMM 后验 + 块级 MIL + 先验不变；骨干改为证据只进跨模态注意力的 query/key（四格嵌入 + 两列线性）、逐头 key 偏置、视频级证据上下文，内容表示保持纯内容；去掉 EMA。搜索 6 标量（lr、max_seqlen、λ_cma、α、w_fine、λ_block）。评测器未改。
 
@@ -27,12 +27,14 @@
 
 ## 运行任务与监控
 
-无运行任务。lab1 / lab3 GPU 空闲；本机 GPU 被他人占用。远程 `runs/20260904_evidence_guided_attention_rev2_noprune/` 已全部 rsync 回本机。
+截至 2026-09-07 06:50。候选 3 修订 3（`experiments/20260907_c3_rev3_interval_evidence/`，commit 76ef6f0）seed 234 搜索运行中：HateMM 在 uoa-lab1、HCS 在 uoa-lab3，各 20 trial，输出 `runs/20260907_c3_rev3_interval_evidence/<corpus>/seed234/`（远程，结束后 rsync 回本机）。查看：`ssh uoa-lab1 tail -f ~/Retrieval-hate/runs/20260907_c3_rev3_interval_evidence/hatemm/seed234/search.log`（lab3 同理）。本机 GPU 被他人占用。会话内 heartbeat 每 3 小时检查一次。
+
+已有的不训练结果（本机 CPU，权威文件在 `runs/20260907_c3_rev3_interval_evidence/{hmm_only,adaptive_replay}/`）：区间证据 HMM（归一化时间 + 正例约束）两语料 test 不低于索引版（门 A1 通过）；自适应查询回放见实验 README 第 8 节。
 
 ## 下一步
 
-1. 外部审稿（4/10，拒稿）给的四个方向，等用户选：① 不训练的机制检验（固定 checkpoint 打乱证据时间对应、视频标量对照，0 次新 VLM 调用，< 1 个 trial 的算力）；② 补隔离逐头偏置、四格交互项的对照臂（约 12 个训练 trial）；③ 自适应查询（先粗块后按定位不确定性选细窗，未观测裁定边缘化；先用缓存回放，0 次新 VLM）；④ 真实区间连续时间 HMM 替代 30/4 索引层次。审稿人指出"内容表示始终纯内容"的说法与代码不符（视频级上下文 c 加进两流后才进 CMAL 和块 MIL），论文表述要改。
-2. 待用户裁定：w_fine 去留（三 seed best 取值 .15–.69 不稳定，删则两语料重跑）；30/4 粒度与 VLM 每视频 34 次调用的成本（自适应粒度方案待写）。
+1. 修订 3 = 骨干改动（视频级校准只加 logit、query 门控逐头偏置、删 w_fine）+ 区间证据 HMM 融合，一次搜索流程：seed 234 规则 8 筛选 → seed 2025/3407 → 17 臂消融 × 3 seed × 2 语料 → 配对 bootstrap、证据打乱检验 → 规则 14 清单 → 汇报。预注册预期与臂表见实验 README 第 2、3 节。
+2. 待用户裁定（不阻塞）：减少 VLM 调用预算（4 / 22 次）下训练一次完整模型确认；视频随机效应的 M 步（回放里 σ 发散，已弃）。
 3. 搜索目标继续按 test（用户裁定，不再讨论）。
 
 ## 资料与历史

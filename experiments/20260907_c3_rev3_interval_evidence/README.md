@@ -94,7 +94,12 @@ bash scripts/run_locked_ablations.sh 20260907_c3_rev3_interval_evidence <corpus>
 
 ## 6. 进度
 
-（搜索启动后填写）
+| 日期 | 事项 |
+|---|---|
+| 2026-09-07 上午 | 区间 HMM 实现、不训练评估、门 A1 通过（第 4 节）；自适应查询回放（第 8 节）。 |
+| 2026-09-07 | 规则 4 novelty review PASS（`REVIEW_RULE4.md`）；规则 6 code review 一处必修（`scripts/run_locked_ablations.sh` 后缀剥离在 id 中间的 `_rev3_` 上出错，消融启动不了），已修，其余通过（`REVIEW_RULE6.md`）。代码提交 76ef6f0，lab1/lab3 已 pull 到同一 commit。 |
+| 2026-09-07 06:47 | seed 234 搜索启动：HateMM 在 uoa-lab1（sc474397），HCS 在 uoa-lab3（sc474398）；`runs/20260907_c3_rev3_interval_evidence/<corpus>/seed234/{search.log,search.pid,optuna.db}`。每 seed 20 trial。 |
+| 待 | 规则 8 筛选 → seed 2025/3407 搜索 → 每 seed 每语料 17 臂锁定消融 → 三 seed 汇总、配对 bootstrap、证据打乱检验（第 7 节）→ 规则 14 清单（第 9 节）。 |
 
 ## 8. 自适应查询回放（不训练，2026-09-07；`runs/20260907_c3_rev3_interval_evidence/adaptive_replay/<corpus>/<policy>_b<budget>/metrics.json`，`adaptive_query_replay.py`，0 次新 VLM 调用）
 
