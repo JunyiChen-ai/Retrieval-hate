@@ -65,6 +65,8 @@ def main(argv=None):
     ap.add_argument("--trial-dir", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--n-perm", type=int, default=5)
+    ap.add_argument("--zero-ctx", action="store_true",
+                    help="also score with the video-level calibration c zeroed at inference (no retraining)")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--num-workers", type=int, default=2)
     args = ap.parse_args(argv)
@@ -121,6 +123,13 @@ def main(argv=None):
         model.enc.forward = permuted
         score_and_eval("perm%d" % p)
     model.enc.forward = orig_forward
+    if args.zero_ctx and model.ctx is not None:
+        orig_ctx = model.ctx.forward
+        model.ctx.forward = lambda x, _f=orig_ctx: torch.zeros_like(_f(x))
+        score_and_eval("zero_ctx")
+        model.ctx.forward = orig_ctx
+        results["drop_baseline_minus_zero_ctx"] = {k: results["baseline"][k] - results["zero_ctx"][k]
+                                                  for k in results["baseline"]}
     perms = [results["perm%d" % p] for p in range(args.n_perm)]
     results["perm_mean"] = {k: float(np.mean([r[k] for r in perms])) for k in perms[0]}
     results["drop_baseline_minus_perm"] = {k: results["baseline"][k] - results["perm_mean"][k]
