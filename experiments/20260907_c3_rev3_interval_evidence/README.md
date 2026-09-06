@@ -99,7 +99,25 @@ bash scripts/run_locked_ablations.sh 20260907_c3_rev3_interval_evidence <corpus>
 | 2026-09-07 上午 | 区间 HMM 实现、不训练评估、门 A1 通过（第 4 节）；自适应查询回放（第 8 节）。 |
 | 2026-09-07 | 规则 4 novelty review PASS（`REVIEW_RULE4.md`）；规则 6 code review 一处必修（`scripts/run_locked_ablations.sh` 后缀剥离在 id 中间的 `_rev3_` 上出错，消融启动不了），已修，其余通过（`REVIEW_RULE6.md`）。代码提交 76ef6f0，lab1/lab3 已 pull 到同一 commit。 |
 | 2026-09-07 06:47 | seed 234 搜索启动：HateMM 在 uoa-lab1（sc474397），HCS 在 uoa-lab3（sc474398）；`runs/20260907_c3_rev3_interval_evidence/<corpus>/seed234/{search.log,search.pid,optuna.db}`。每 seed 20 trial。 |
+| 2026-09-07 07:30 | HCS seed 234 完成（20 trial，每 trial 约 2 分钟）：best trial 1，test AP .7070 / ROC .6948 / within .5718（`runs/20260907_c3_rev3_interval_evidence/hateclipseg/seed234/trial1/metrics.json`），过规则 8。随即启动 HCS seed 2025/3407（lab3）。 |
+| 2026-09-07 08:40 | HateMM seed 234 完成（每 trial 约 6 分钟）：best trial 3，test AP .6209 / ROC .8346 / within .6195（`.../hatemm/seed234/trial3/metrics.json`），过规则 8 筛选（AP .573 / ROC .807），但低于修订 2 的 seed 均值 .668 / .850，搜索内最高单 trial AP 也只有 .632（修订 2 搜索里有 .655–.675）。按协议继续：启动 HateMM seed 2025/3407 与 seed 234 的 17 组消融（lab1），HCS seed 234 消融（lab3）。哪一处改动造成 HateMM 下降由消融里 `index_hmm` / `key_bias` / `ctx_in_rep` / `seconds_time` / `no_constraint` 判定。 |
+| 2026-09-07 09:05 | HCS seed 2025/3407 完成：seed 2025 best trial 19 AP .6984 / ROC .6826 / within .5638；seed 3407 best trial 6 AP .7081 / ROC .6999 / within .5678。三 seed 均值 AP .7045 / ROC .6924 / within .5678（修订 2：.6976 / .6843 / .5488）。启动 HCS seed 2025/3407 消融（lab3）。 |
+| 2026-09-07 09:15 | HCS 三个 full checkpoint 的证据打乱检验（第 7 节）在本机 CPU 完成：打乱后 pooled 与 within 变化都在 .001 以内（seed 2025 within 降 .004）。 |
 | 待 | 规则 8 筛选 → seed 2025/3407 搜索 → 每 seed 每语料 17 臂锁定消融 → 三 seed 汇总、配对 bootstrap、证据打乱检验（第 7 节）→ 规则 14 清单（第 9 节）。 |
+
+## 7. 机制检验：证据时间对应打乱（不训练；`evidence_shuffle_test.py`；`runs/20260907_c3_rev3_interval_evidence/mechanism/<corpus>/seed<seed>/summary.json`）
+
+做法：取各 seed 的 full checkpoint，只把进入 q/k 编码与路由项的证据码 e_t 在每个视频内随机打乱时间（5 次，固定随机序），视频级校准 c（对 t 取均值，打乱不变）与先验 α·ℓ_t/L（读未打乱的 scaffold 列）不动，重打 test 分数过统一评测器。如果 pooled / within 不掉，说明注意力路径没有用到证据的时间对应，只剩先验和视频级校准在起作用。
+
+HCS（本机 CPU，2026-09-07）：
+
+| seed | baseline AP / ROC / within | 打乱均值 AP / ROC / within | 差（baseline − 打乱） | 视频间方差占比 |
+|---|---|---|---|---|
+| 234 | .7070 / .6948 / .5718 | .7066 / .6947 / .5717 | +.0003 / +.0002 / +.0001 | .665 |
+| 2025 | .6984 / .6826 / .5638 | .6979 / .6833 / .5600 | +.0005 / −.0008 / +.0038 | .676 |
+| 3407 | .7081 / .6999 / .5678 | .7082 / .7000 / .5677 | −.0001 / −.0001 / +.0001 | .700 |
+
+读法：在 HCS 上，打乱证据的时间对应对 pooled 指标没有影响（三 seed 差都在 ±.001 内），within 只在 seed 2025 掉 .004。也就是说 HCS 上"证据决定从哪聚合"这条主张不成立：模型的分数由先验 α·ℓ_t/L、视频级校准 c 和纯内容路径决定，注意力里的证据路由没有贡献时间信息。这与 HCS 的 `no_qk_enc` 消融在修订 2 上 ≈ 0 一致。HateMM 结果待 seed 2025/3407 完成后补（HateMM 上修订 2 的 `no_qk_enc` 有 .01 以上的下降，预期打乱会掉分）。
 
 ## 8. 自适应查询回放（不训练，2026-09-07；`runs/20260907_c3_rev3_interval_evidence/adaptive_replay/<corpus>/<policy>_b<budget>/metrics.json`，`adaptive_query_replay.py`，0 次新 VLM 调用）
 

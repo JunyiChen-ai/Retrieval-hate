@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-07 06:50 NZST**。依据：候选 3 修订 3 代码提交（76ef6f0）并在 lab1/lab3 启动 seed 234 搜索（运行中，无新训练结果）；候选 3 外部审稿完成（4/10，`experiments/20260904_evidence_guided_attention/REVIEW_NOVELTY_GPT6ASTRA.md`）；候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 在不剪 within 的规则下重跑完成并回传，12 臂消融三 seed 完成并回传；HCS 沿用修订 2 三 seed。权威数字均引用本机 runs 原评测。
+截至 **2026-09-07 09:20 NZST**。依据：候选 3 修订 3（76ef6f0）HCS 三 seed 搜索与 HateMM seed 234 搜索完成并回传，消融与 HateMM 其余 seed 运行中；候选 3 外部审稿完成（4/10，`experiments/20260904_evidence_guided_attention/REVIEW_NOVELTY_GPT6ASTRA.md`）；候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 在不剪 within 的规则下重跑完成并回传，12 臂消融三 seed 完成并回传；HCS 沿用修订 2 三 seed。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -27,9 +27,11 @@
 
 ## 运行任务与监控
 
-截至 2026-09-07 06:50。候选 3 修订 3（`experiments/20260907_c3_rev3_interval_evidence/`，commit 76ef6f0）seed 234 搜索运行中：HateMM 在 uoa-lab1、HCS 在 uoa-lab3，各 20 trial，输出 `runs/20260907_c3_rev3_interval_evidence/<corpus>/seed234/`（远程，结束后 rsync 回本机）。查看：`ssh uoa-lab1 tail -f ~/Retrieval-hate/runs/20260907_c3_rev3_interval_evidence/hatemm/seed234/search.log`（lab3 同理）。本机 GPU 被他人占用。会话内 heartbeat 每 3 小时检查一次。
-
-已有的不训练结果（本机 CPU，权威文件在 `runs/20260907_c3_rev3_interval_evidence/{hmm_only,adaptive_replay}/`）：区间证据 HMM（归一化时间 + 正例约束）两语料 test 不低于索引版（门 A1 通过）；自适应查询回放见实验 README 第 8 节。
+截至 2026-09-07 09:20。候选 3 修订 3（`experiments/20260907_c3_rev3_interval_evidence/`，commit 76ef6f0）：
+- HCS 三 seed 搜索完成并回传：AP .7045 / ROC .6924 / within .5678（三 seed 均值；单 seed 见实验 README 第 6 节），高于修订 2 的 .6976 / .6843 / .5488。HCS 三 seed 17 组消融在 lab3 运行中（`runs/20260907_c3_rev3_interval_evidence/ablations/hateclipseg/seed<seed>/`）。
+- HateMM seed 234 完成并回传：AP .6209 / ROC .8346 / within .6195，过规则 8 筛选但低于修订 2 的 .668 / .850；seed 2025/3407 搜索与 seed 234 消融在 lab1 运行中（`.../hatemm/seed<seed>/search.log`，`.../ablations/hatemm/seed234/`）。
+- HCS 证据打乱检验完成（本机 CPU）：打乱证据时间对应不掉分（实验 README 第 7 节）。
+查看：`ssh uoa-lab1 tail -f ~/Retrieval-hate/runs/20260907_c3_rev3_interval_evidence/hatemm/seed2025/search.log`。本机 GPU 被他人占用。会话内 heartbeat 每 3 小时检查一次。
 
 ## 下一步
 
