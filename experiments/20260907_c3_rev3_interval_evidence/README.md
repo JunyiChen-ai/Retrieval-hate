@@ -151,6 +151,15 @@ HateMM（本机 CPU，2026-09-07；seed 2025/3407 待搜索完成后补）：
 |---|---|---|---|---|
 | 234 | .6209 / .8346 / .6195 | .6055 / .8185 / .5931 | +.0155 / +.0161 / +.0265 | .820 |
 
+视频级校准 c 推断时置零（同一 checkpoint，不重训；`--zero-ctx`，seed 234，`.../mechanism/<corpus>/seed234/metrics_zero_ctx.json`）：
+
+| 语料 | baseline AP / ROC / within | c 置零 AP / ROC / within | 差（置零 − baseline） |
+|---|---|---|---|
+| HateMM | .6209 / .8346 / .6195 | .6298 / .8361 / .6198 | +.009 / +.002 / +.000 |
+| HCS | .7070 / .6948 / .5718 | .7116 / .7020 / .5718 | +.005 / +.007 / .000 |
+
+读法：训练好的 c 在推断时对两语料都没有正贡献（置零反而各涨 .005–.009 AP）。HateMM 上 `no_context` 消融比 full 高 .051 AP，远大于推断置零的 .009，所以 c 对 HateMM 的伤害主要发生在训练过程（有 c 时其余部分学到的东西更差），不是推断时 c 本身把分数排错。这与 HCS 上 `no_context` 消融掉 .008/.015 并不矛盾：HCS 上 c 在训练时有帮助，推断时同样可去。
+
 读法：HateMM 上打乱证据的时间对应后三项指标都掉（AP .015、ROC .016、within .026，5 次打乱一致），说明 HateMM 上注意力路径确实用到了证据在时间上的位置，within 掉得最多，符合"证据决定从哪聚合"的主张。两语料结论不同：HateMM 成立，HCS 不成立；论文里这条主张只能限定在 HateMM，并把 HCS 的不成立写进 limitation。
 
 ## 8. 自适应查询回放（不训练，2026-09-07；`runs/20260907_c3_rev3_interval_evidence/adaptive_replay/<corpus>/<policy>_b<budget>/metrics.json`，`adaptive_query_replay.py`，0 次新 VLM 调用）
