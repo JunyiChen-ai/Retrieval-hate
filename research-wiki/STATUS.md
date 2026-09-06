@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 17:10 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
+截至 **2026-09-06 21:35 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -32,25 +32,19 @@
 
 | 任务 | 状态 | 位置 |
 |---|---|---|
-| 精简版 v2 HateMM seed234，lab1 | 完成并回传：**.633476/.839300/.618039**（trial 1），过主门；低于 v1 .648/.833 与 C1 .661/.841，差在搜索噪声内，cof 假设未证实（README 第 8 节） | [原评测](../runs/20260906_hier_evidence_clean_v2/hatemm/seed234/trial1/metrics.json) |
-| 精简版 v2 HateMM 三 seed | 完成并回传：**.6324±.0026 / .8353±.0035 / .6249±.0063**，规则 8 确认通过（边距 .059/.028）；比 C1 三 seed 低 .025 AP / .007 ROC，真实差距，候选原因 = 固定 w_fine=1 或不剪 within（README 第 12 节） | [seed 目录](../runs/20260906_hier_evidence_clean_v2/hatemm/) |
-| 精简版 v2 两语料三 seed 九臂消融 | 全部完成回传；**8/9 部件两语料三 seed 均值降 ≥ .01**，只有块 OR 层次在 HCS 无差；规则 14 逐项见 README 第 13 节 | [汇总](../runs/20260906_hier_evidence_clean_v2/ablations/three_seed_summary.json) |
-| lab1 / lab3 | 空闲 | — |
-| 精简版 v2 HCS seed234，lab3 | 完成并回传：**.703024/.683522/.562335**（trial 13），过主门，与 C1 持平 | [原评测](../runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/trial13/metrics.json) |
-| 精简版 v2 HCS 三 seed | 完成并回传：**.7060±.0071 / .6895±.0053 / .5649±.0030**，规则 8 确认通过，高于 C1 三 seed .699/.681/.553 | README 第 9 节，[seed 目录](../runs/20260906_hier_evidence_clean_v2/hateclipseg/) |
-| 精简版 v2 HCS 九臂消融 × 3 seed | 完成并回传；九臂里八个三 seed 均值降 ≥ .01（只有块 OR 层次 flat_coarse 无贡献），表见 README 第 10 节 | [目录](../runs/20260906_hier_evidence_clean_v2/ablations/hateclipseg/) |
-| 精简版 v2 HateMM seed234 九臂消融 | 完成并回传；除 mean_prior（−.003/−.007）外八臂 pooled 降 ≥ .01（README 第 11 节，单 seed 只记录） | [目录](../runs/20260906_hier_evidence_clean_v2/ablations/hatemm/seed234/) |
-| 精简版 v1 两语料 | 完成，已回传本机，数字见上表；v1 与 v2 不混算 | `runs/20260906_hier_evidence_clean/` |
-| 监控 | 本会话 harness 后台等待 `SEARCH_DONE` 或进程消失，不再有 monitor 脚本/线程 | — |
-| C9 | 两语料 seed234 与 HCS 全部诊断已回传；seed2025/3407 被用户中止的部分输出也已回传，不作结果 | [归档](../archive/experiments/20260906_interval_evidence_transport/README.md) |
-| 本机 GPU | 他人任务占用（18G/97%），按选机规则用 lab1/lab3 | — |
+| 候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 重跑，不剪 within | 21:30 启动：seed 234/3407 在 lab1（PID 3895347/3895349），seed 2025 在 lab3（PID 3999832）；各 20 trial，搜索空间沿用修订 2 的 6 标量 | `runs/20260904_evidence_guided_attention_rev2_noprune/hatemm/seed<seed>/`（远端，结束后 rsync） |
+| 候选 3 HCS | 沿用修订 2 三 seed（.698±.008/.684±.009/.549）与 12 臂消融；按新规则重算 best trial 不变 | [study](../runs/20260904_evidence_guided_attention_rev2/hateclipseg/) |
+| 精简版 v2（候选 1 精简） | 两语料三 seed 与九臂消融完成；外部审稿 3/10（README 第 13 节、REVIEW_NOVELTY_GPT6ASTRA.md） | [目录](../runs/20260906_hier_evidence_clean_v2/) |
+| 监控 | 本会话 harness 后台等待 study_summary.json 或进程消失 | — |
+| 本机 GPU | 他人任务占用 | — |
 
 多机同步：启动前三台均 a2016d8，远程无脏文件（lab1 有既有未跟踪 idea-stage/）。
 
 ## 下一步
 
-1. 待用户裁定：(i) HateMM 比 C1 低 .025 AP，是否为此加回 w_fine（第三个方法标量）；(ii) 骨干结构 novelty 是否仍要做，以及以本版为起点怎么做。
-2. 不自行加回 w_fine，不换架构，不加搜索 trial。
+1. 候选 3 HateMM 每个 seed 搜索结束后在同机跑 12 臂锁定消融（`scripts/run_locked_ablations.sh 20260904_evidence_guided_attention_rev2_noprune hatemm <seed> ...`），回传后与 HCS 已有三 seed 合并按 14(g) 判定，向用户汇报，再送外部审稿（最高版本模型）。
+2. 用户裁定的方向：以候选 3 为当前方法；w_fine 去留等 HateMM 结果后定；30/4 粒度与 VLM 调用成本是后续要解决的问题（自适应粒度方案待写）。
+3. 搜索目标继续按 test（用户裁定，不再讨论）。
 
 ## 资料与历史
 
