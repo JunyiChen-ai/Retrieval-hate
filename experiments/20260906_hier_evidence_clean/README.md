@@ -76,3 +76,15 @@ bash scripts/run_locked_ablations.sh 20260906_hier_evidence_clean <corpus> <seed
 ## 7. v2 seed 234 HCS 与确认 seed 启动（2026-09-06 11:45）
 
 HCS v2 seed 234（lab3，20/20 完整）：best trial 13，epoch 3，**.703024 / .683522 / .562335**（[原评测](../../runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/trial13/metrics.json)）；只按 validation 选 trial 10 .7013/.6677/.5573。对候选 1 seed 234 .695/.679 持平偏高，过主门。HateMM v2 仍在跑（8/20 时已有 trial 5 .6208/.8349，主门已经不可能不过），因此按第 3 节流程在 lab3 启动 HCS v2 seed 2025、3407 各 20 trial（并行，11:42 启动，PID 3732961 / 3732963）。HateMM seed 2025/3407 等 seed 234 结束后在 lab1 启动。
+
+## 8. v2 seed 234 HateMM 与确认 seed 启动（2026-09-06 12:50）
+
+HateMM v2 seed 234（lab1，20/20 完整）：best trial 1，epoch 8，**.633476 / .839300 / .618039**（[原评测](../../runs/20260906_hier_evidence_clean_v2/hatemm/seed234/trial1/metrics.json)）；只按 validation 选 trial 17 .5979/.8285/.6168。过主门（.573/.807）。
+
+| HateMM seed 234 | AP / ROC / within | 备注 |
+|---|---|---|
+| 候选 1（9 维搜索，within 剪枝） | .661 / .841 / .650 | |
+| 精简版 v1（5 维） | .648 / .833 / .628 | |
+| 精简版 v2（8 维，加回 CMAL 权重） | .634 / .839 / .618 | |
+
+读法：第 6 节"cof 固定 .05 造成 HateMM 差距"的推断**没有被 v2 证实**：v2 的 best trial cof = .02，前六名 cof 在 .02–.06，没有一个落在候选 1 偏好的 .09 附近。v1、v2、候选 1 三次搜索的 HateMM seed 234 best 在 .634–.661 之间，差在 20 trial TPE 搜索的选择噪声内（候选 4 README 8.2 量出同超参换随机数流 std .006–.009、best trial 选择偏差 +.006；20 trial 在 8 维空间不会收敛）。不再为 HateMM seed 234 的 .01–.02 差距改搜索空间；按第 6 节声明的 v2 补 seed 2025/3407（lab1，12:50 并行启动），三 seed 均值再与候选 1 三 seed（.657±.013 / .842±.005）对照。若三 seed 均值低于候选 1 减一个标准差，问题记为"搜索预算不足以在 8 维空间稳定选出好配置"，处理方向是减搜索维度或加 trial，不是改方法。

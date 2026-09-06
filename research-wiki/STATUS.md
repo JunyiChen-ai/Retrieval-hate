@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-06 11:45 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
+截至 **2026-09-06 12:50 NZST**。依据：候选 1 精简版搜索空间 v1 两语料 seed 234 各 20 trial 完成并回传；按预注册第 3 条与用户"只限制方法超参"的澄清，v2（加回 CMAL 三个训练权重）两语料 seed 234 已启动。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -32,7 +32,8 @@
 
 | 任务 | 状态 | 位置 |
 |---|---|---|
-| 精简版 v2 HateMM seed234，lab1 | 10:56 启动，search PID 3350496，20 trial（v1 首 trial 366 s） | `runs/20260906_hier_evidence_clean_v2/hatemm/seed234/`（远端，结束后 rsync） |
+| 精简版 v2 HateMM seed234，lab1 | 完成并回传：**.633476/.839300/.618039**（trial 1），过主门；低于 v1 .648/.833 与 C1 .661/.841，差在搜索噪声内，cof 假设未证实（README 第 8 节） | [原评测](../runs/20260906_hier_evidence_clean_v2/hatemm/seed234/trial1/metrics.json) |
+| 精简版 v2 HateMM seed2025/3407，lab1 | 12:50 并行启动，各 20 trial | `runs/20260906_hier_evidence_clean_v2/hatemm/seed<seed>/`（远端） |
 | 精简版 v2 HCS seed234，lab3 | 完成并回传：**.703024/.683522/.562335**（trial 13），过主门，与 C1 持平 | [原评测](../runs/20260906_hier_evidence_clean_v2/hateclipseg/seed234/trial13/metrics.json) |
 | 精简版 v2 HCS seed2025/3407，lab3 | 11:42 并行启动，PID 3732961/3732963，各 20 trial | `runs/20260906_hier_evidence_clean_v2/hateclipseg/seed<seed>/`（远端） |
 | 精简版 v1 两语料 | 完成，已回传本机，数字见上表；v1 与 v2 不混算 | `runs/20260906_hier_evidence_clean/` |
@@ -44,8 +45,8 @@
 
 ## 下一步
 
-1. v2 两语料 seed 234 结束后回传，按规则 8 主门筛选；HateMM 对照 C1 seed 234 .661/.841 与 v1 .648/.833，看加回 CMAL 权重搜索是否补回差距。
-2. 过筛则 v2 补 seed 2025/3407；三 seed 后按 README 第 4 节九个消融臂跑 `scripts/run_locked_ablations.sh 20260906_hier_evidence_clean_v2 ...`，按 14(g)（三 seed 均值降 ≥ .01、两语料）判定可主张部件。
+1. v2 两语料 seed 234 均过主门（HateMM .634/.839、HCS .703/.684）；四个确认 seed 搜索在跑（lab1 HateMM、lab3 HCS 各两 seed）。
+2. 确认 seed 结束后回传，算三 seed 均值/标准差对照规则 8 与 C1；三 seed 后按 README 第 4 节九个消融臂跑 `scripts/run_locked_ablations.sh 20260906_hier_evidence_clean_v2 ...`，按 14(g)（三 seed 均值降 ≥ .01、两语料）判定可主张部件。
 3. 方法级标量保持 α、λ_block 两个；不加回 w_fine，不换架构。
 
 ## 资料与历史
