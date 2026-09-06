@@ -15,15 +15,19 @@ study="runs/${experiment}/${corpus}/seed${seed}"
 python_bin="$HOME/miniconda3/envs/HateVideo/bin/python"
 trial=$("$python_bin" -c 'import json,sys; s=json.load(open(sys.argv[1])); assert len(s["trials"])==s["n_trials"] and all(t["state"] in ["COMPLETE","PRUNED"] for t in s["trials"]); assert s["best"] is not None; print(s["best"]["number"])' "$study/study_summary.json")
 config="$study/trial${trial}/hparams.json"
-# runs dir may carry a search-space / revision suffix (e.g. _v2, _rev2) that the
-# experiment directory does not have; the trainer is the same file.
-exp_dir="${experiment%_v[0-9]*}"
-exp_dir="${exp_dir%_rev[0-9]*}"
-trainer="experiments/${exp_dir}/train.py"
-if [[ ! -f "$trainer" ]]; then
-  trainer="archive/experiments/${exp_dir}/train.py"
-fi
-test -f "$trainer"
+# The experiment directory itself wins. Only when it does not exist may the runs
+# id carry a trailing search-space / revision suffix (e.g. _v2, _rev2,
+# _rev2_noprune) that the experiment directory does not have; the suffix is
+# stripped from the END only (a glob like %_rev[0-9]* would also eat a
+# mid-name _rev3_...).
+trainer=""
+for cand in "$experiment" "$(sed -E 's/_(v|rev)[0-9]+(_[a-z0-9]+)?$//' <<< "$experiment")"; do
+  for base in experiments archive/experiments; do
+    if [[ -z "$trainer" && -f "$base/$cand/train.py" ]]; then trainer="$base/$cand/train.py"; fi
+  done
+done
+[[ -n "$trainer" ]] || { echo "no train.py for experiment id $experiment" >&2; exit 1; }
+echo "trainer=$trainer"
 mkdir -p "$run"
 meta="$run"
 if [[ -n "${ABLATION_CHAIN_NAME:-}" ]]; then

@@ -304,16 +304,61 @@ def run_evaluator(corpus, split, scores_path, json_out):
         return json.load(fh)
 
 
-def fit_hmm(corpus, train_ids, labels, binary):
-    pos = [binary[v] for v in train_ids if labels[v] == 1 and v in binary]
-    neg = [binary[v] for v in train_ids if labels[v] == 0 and v in binary]
-    return verdict_hmm.HierEvidenceHMM(K_FINE, J_COARSE).fit(pos, neg), \
-        len(pos), len(neg)
+def video_duration(corpus, vid):
+    """Seconds of the video = rows of its VGGish array (the verdict windows are
+    fractions of this duration; vlm_verdict.verdict_rows uses the same D)."""
+    return int(align.load_audio(corpus, vid).shape[0])
+
+
+def fit_hmm(corpus, train_ids, labels, binary, model="index", **opts):
+    """model = "index": src/verdict_hmm.HierEvidenceHMM (fine window t -> block
+    floor(4t/30)); "interval": src/interval_evidence_hmm.IntervalEvidenceHMM
+    (true verdict intervals, time-length transitions; opts =
+    positive_constraint / video_effect). Train video labels only."""
+    pos_ids = [v for v in train_ids if labels[v] == 1 and v in binary]
+    neg_ids = [v for v in train_ids if labels[v] == 0 and v in binary]
+    if model == "index":
+        hmm = verdict_hmm.HierEvidenceHMM(K_FINE, J_COARSE).fit(
+            [binary[v] for v in pos_ids], [binary[v] for v in neg_ids])
+    elif model == "interval":
+        import interval_evidence_hmm
+        pos = [binary[v] + (video_duration(corpus, v),) for v in pos_ids]
+        neg = [binary[v] + (video_duration(corpus, v),) for v in neg_ids]
+        hmm = interval_evidence_hmm.IntervalEvidenceHMM(K_FINE, J_COARSE, **opts).fit(pos, neg)
+    else:
+        raise ValueError(model)
+    return hmm, len(pos_ids), len(neg_ids)
+
+
+def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
+                           snip, n_seconds):
+    """Scaffold from per-segment posteriors of an IntervalEvidenceHMM: rows
+    take the segment containing their midpoint; the block index is the coarse
+    interval containing the row midpoint (no fine-window -> block table)."""
+    import interval_evidence_hmm as ieh
+    seg = lambda arr: ieh.rows_from_segments(np.asarray(arr, np.float32),  # noqa: E731
+                                             hmm.grid, snip, n_seconds)
+    rows = lambda arr: vlm_verdict.verdict_rows(np.asarray(arr, np.float32),  # noqa: E731
+                                                snip, n_seconds)
+    blk = hmm.coarse_of_rows(snip, n_seconds).astype(int)
+    out = np.stack([seg(ell_seg), seg(ps_seg), rows(b_fine),
+                    np.asarray(b_coarse, np.float32)[blk],
+                    np.asarray(p_h, np.float32)[blk],
+                    blk.astype(np.float32)], axis=1)
+    assert out.shape[1] == SCAF_DIM
+    return out.astype(np.float32)
 
 
 def make_scaffold_fn(hmm, binary, ablation, w_fine):
-    """Per-video scaffold builder (README dataset.py column layout)."""
-    block_of_window = hmm.block.astype(np.float32)
+    """Per-video scaffold builder (README dataset.py column layout).
+
+    ablation mean_prior: prior / input columns use the plain mean verdict
+    level instead of the HMM posterior (block label still P(h_j));
+    mean_prior_all: additionally the block label is the raw coarse verdict,
+    so no HMM quantity is used anywhere (candidate 3 revision 3);
+    raw_block_label: block label only."""
+    interval = hmm.params().get("model") == "interval"
+    block_of_window = None if interval else hmm.block.astype(np.float32)
     kw = {}
     if ablation == "indep_hmm":
         kw["independent"] = True
@@ -324,17 +369,25 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine):
         if vid not in binary:
             return None
         bf, bc = binary[vid]
-        p_s, p_h = hmm.posterior(bf, bc, w_fine=w_fine, **kw)
+        if interval:
+            p_s, p_h = hmm.posterior(bf, bc, n_seconds, w_fine=w_fine)
+        else:
+            p_s, p_h = hmm.posterior(bf, bc, w_fine=w_fine, **kw)
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
-        if ablation == "mean_prior":
-            # revision-4 prior input: 2*(mean binary level - 1/2) in [-1, 1],
-            # stored so that ell/ELL_SCALE equals it; the p_s input column is
-            # replaced by the mean level too, so no HMM quantity remains
-            mean = (bf + bc[hmm.block]) / 2.0
+        if ablation in ("mean_prior", "mean_prior_all"):
+            # prior input: 2*(mean binary level - 1/2) in [-1, 1], stored so
+            # that ell/ELL_SCALE equals it; the p_s input column is replaced by
+            # the mean level too, so no HMM quantity remains in the input
+            if interval:
+                mean = (bf[hmm.grid["fine_of"]] + bc[hmm.grid["coarse_of"]]) / 2.0
+            else:
+                mean = (bf + bc[hmm.block]) / 2.0
             ell = ELL_SCALE * (2.0 * mean - 1.0)
             p_s = mean
-        if ablation == "raw_block_label":
+        if ablation in ("raw_block_label", "mean_prior_all"):
             p_h = bc.astype(np.float32)
+        if interval:
+            return scaffold_rows_interval(hmm, ell, p_s, bf, bc, p_h, snip, n_seconds)
         return scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
                                 snip, n_seconds)
     return fn
