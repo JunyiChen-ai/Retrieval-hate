@@ -379,6 +379,27 @@ class IntervalEvidenceHMM:
         p_h = np.array([gamma[g, HC_OF == 1].sum() for g in ends])
         return p_s, p_h
 
+    def posterior_gamma(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0):
+        """Full augmented-state posterior gamma (G, 8); MISSING verdicts emit
+        nothing. Used by the adaptive-query module (0 labels)."""
+        gamma, _, _, _ = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse)
+        return gamma
+
+    def summarize_gamma(self, gamma):
+        """(P(s_g=1) (G,), P(h_fine_w=1) (k,), P(h_coarse_j=1) (j,)) from gamma."""
+        p_s = gamma[:, S_OF == 1].sum(1)
+        fe = np.where(self.grid["fine_end"])[0]
+        ce = np.where(self.grid["coarse_end"])[0]
+        p_hf = np.array([gamma[g, HF_OF == 1].sum() for g in fe])
+        p_hc = np.array([gamma[g, HC_OF == 1].sum() for g in ce])
+        return p_s, p_hf, p_hc
+
+    def predictive_fine(self, gamma):
+        """p(b_w = 1 | observed verdicts) for every fine window w (k,):
+        q_f * P(h_w=1) + r_f * (1 - P(h_w=1)). Meaningful for unobserved w."""
+        _, p_hf, _ = self.summarize_gamma(gamma)
+        return self.q_f * p_hf + self.r_f * (1.0 - p_hf)
+
     def posterior_log_odds(self, b_fine, b_coarse, duration, eps=1e-6, **kw):
         p_s, _ = self.posterior(b_fine, b_coarse, duration, **kw)
         return np.log(p_s + eps) - np.log(1.0 - p_s + eps)

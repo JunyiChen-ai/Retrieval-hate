@@ -103,12 +103,19 @@ class ScaffoldCache:
     """Per-video (f_a_ext, n_seconds, snip_bounds), computed once.
 
     ``scaffold_fn(vid, snip, n_seconds)`` returns the (rows, SCAF_DIM) scaffold
-    or None (then zeros; counted in n_missing_verdict)."""
+    or None (then zeros; counted in n_missing_verdict).
 
-    def __init__(self, corpus, video_ids, scaffold_fn):
+    ``masked_fn(vid, b_fine_masked, snip, n_seconds)`` (optional) rebuilds the
+    scaffold from a fine-verdict vector with MISSING (-1) entries; when given,
+    the audio+text block is kept so ``build(vid, b_fine_masked)`` returns a
+    fresh f_a_ext without touching the stored default (adaptive-query module)."""
+
+    def __init__(self, corpus, video_ids, scaffold_fn, masked_fn=None):
         self.corpus = corpus
         self.items = {}
+        self.base = {}                 # vid -> audio+text rows (only with masked_fn)
         self.window_rows = {}          # per-row fine-window index (K,) grid -> rows
+        self.masked_fn = masked_fn
         self.n_missing_text = 0
         self.n_missing_verdict = 0
         k_fine = vlm_verdict.GRANULARITIES[0]
@@ -124,22 +131,42 @@ class ScaffoldCache:
             if scaf is None:
                 self.n_missing_verdict += 1
                 scaf = np.zeros((audio.shape[0], SCAF_DIM), dtype=np.float32)
-            f_a = np.concatenate([audio, text, scaf], axis=1).astype(np.float32)
+            at = np.concatenate([audio, text], axis=1).astype(np.float32)
+            f_a = np.concatenate([at, scaf], axis=1).astype(np.float32)
             self.items[vid] = (np.ascontiguousarray(f_a), n_seconds, snip)
+            if masked_fn is not None:
+                self.base[vid] = np.ascontiguousarray(at)
 
     def __getitem__(self, vid):
         return self.items[vid]
 
+    def build(self, vid, b_fine_masked):
+        """f_a_ext for ``vid`` with the scaffold recomputed from ``b_fine_masked``
+        (MISSING = -1 for windows not asked). Requires masked_fn."""
+        f_a, n_seconds, snip = self.items[vid]
+        scaf = self.masked_fn(vid, np.asarray(b_fine_masked), snip, n_seconds)
+        if scaf is None:
+            return f_a
+        out = np.concatenate([self.base[vid], scaf], axis=1).astype(np.float32)
+        return np.ascontiguousarray(out)
+
 
 class TrainDataset(data.Dataset):
+    """``mask_sampler(vid, rng)`` (optional) returns a fine-verdict vector with
+    MISSING entries; the scaffold is then rebuilt per item (evidence dropout,
+    adaptive-query module). ``seed`` fixes the sampler's random stream."""
+
     def __init__(self, corpus, video_ids, labels, cache, max_seqlen,
-                 crop_repeat=align.N_CROPS):
+                 crop_repeat=align.N_CROPS, mask_sampler=None, seed=0):
         self.corpus = corpus
         self.video_ids = list(video_ids)
         self.labels = labels
         self.cache = cache
         self.max_seqlen = int(max_seqlen)
         self.crop_repeat = int(crop_repeat)
+        self.mask_sampler = mask_sampler
+        self.seed = int(seed)
+        self._rng = None
 
     def __len__(self):
         return len(self.video_ids) * self.crop_repeat
@@ -148,6 +175,11 @@ class TrainDataset(data.Dataset):
         vid = self.video_ids[index // self.crop_repeat]
         crop = index % self.crop_repeat
         f_a, n_seconds, snip = self.cache[vid]
+        if self.mask_sampler is not None:
+            if self._rng is None:      # one stream per worker process
+                wi = data.get_worker_info()
+                self._rng = np.random.RandomState(self.seed + (wi.id if wi else 0))
+            f_a = self.cache.build(vid, self.mask_sampler(vid, self._rng))
         f_v = align.aligned_visual_crop(self.corpus, vid, crop, "snippet",
                                         n_seconds, snip)
         w = self.cache.window_rows[vid][:, None]
@@ -161,12 +193,15 @@ class TrainDataset(data.Dataset):
 
 
 class EvalDataset(data.Dataset):
-    """One item per video: five crops stacked, full untruncated sequence."""
+    """One item per video: five crops stacked, full untruncated sequence.
+    ``masks`` (optional): vid -> fine-verdict vector with MISSING entries; the
+    scaffold is rebuilt from it (adaptive-query module)."""
 
-    def __init__(self, corpus, video_ids, cache):
+    def __init__(self, corpus, video_ids, cache, masks=None):
         self.corpus = corpus
         self.video_ids = list(video_ids)
         self.cache = cache
+        self.masks = masks
 
     def __len__(self):
         return len(self.video_ids)
@@ -174,6 +209,8 @@ class EvalDataset(data.Dataset):
     def __getitem__(self, index):
         vid = self.video_ids[index]
         f_a, n_seconds, snip = self.cache[vid]
+        if self.masks is not None and vid in self.masks:
+            f_a = self.cache.build(vid, self.masks[vid])
         crops = [align.aligned_visual_crop(self.corpus, vid, c, "snippet",
                                            n_seconds, snip)
                  for c in range(align.N_CROPS)]
@@ -347,6 +384,24 @@ def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
                     blk.astype(np.float32)], axis=1)
     assert out.shape[1] == SCAF_DIM
     return out.astype(np.float32)
+
+
+def make_masked_scaffold_fn(hmm, binary):
+    """Scaffold builder from a masked fine-verdict vector (interval HMM only):
+    ``fn(vid, b_fine_masked, snip, n_seconds)``. Columns: ell / P(s) from the
+    HMM posterior with MISSING emissions, b_fine column keeps -1 for windows
+    not asked (the model maps it to its own "not asked" state), coarse verdict,
+    block posterior, block index."""
+    assert hmm.params().get("model") == "interval"
+
+    def fn(vid, b_fine_masked, snip, n_seconds):
+        if vid not in binary:
+            return None
+        _, bc = binary[vid]
+        p_s, p_h = hmm.posterior(b_fine_masked, bc, n_seconds)
+        ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
+        return scaffold_rows_interval(hmm, ell, p_s, b_fine_masked, bc, p_h, snip, n_seconds)
+    return fn
 
 
 def make_scaffold_fn(hmm, binary, ablation, w_fine):
