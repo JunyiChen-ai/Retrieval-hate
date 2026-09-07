@@ -28,7 +28,8 @@ import interval_evidence_hmm as ieh
 from macilsd import align
 
 POLICIES = ("eoc", "conflict", "entropy", "localization", "uniform", "random")
-CHUNK = 12          # candidate scaffolds per forward chunk (x5 crops)
+CHUNK = 12          # max candidate scaffolds per forward chunk (x5 crops)
+SEQ_T2_BUDGET = 3e7  # max (sequences x T^2) per chunk: attention scores are B x H x T x T
 
 
 def bit_reversal_order(k):
@@ -81,8 +82,10 @@ class Acquirer:
         sigmoid(full logit) and of sigmoid(content logit)."""
         self.model.eval()
         outs, couts = [], []
-        for i in range(0, len(fa_list), CHUNK):
-            chunk = fa_list[i:i + CHUNK]
+        T = int(f_v5.shape[1])
+        rows = max(1, min(CHUNK, int(SEQ_T2_BUDGET // (align.N_CROPS * T * T))))   # long videos: fewer per chunk
+        for i in range(0, len(fa_list), rows):
+            chunk = fa_list[i:i + rows]
             n = len(chunk)
             f_a = torch.from_numpy(np.stack(chunk, 0)).to(self.device)
             f_a = f_a.repeat_interleave(align.N_CROPS, 0)

@@ -7,4 +7,5 @@ set -euo pipefail
 cd "$HOME/Retrieval-hate"
 export OMP_NUM_THREADS=4
 export MKL_NUM_THREADS=4
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 exec "$HOME/miniconda3/envs/HateVideo/bin/python" -u experiments/20260908_adaptive_vlm_query/search.py --corpus "$1" --seed "$2" --out-root runs/20260908_adaptive_vlm_query --num-workers 4
