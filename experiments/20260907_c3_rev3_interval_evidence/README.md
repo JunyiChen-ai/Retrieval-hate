@@ -107,7 +107,7 @@ bash scripts/run_locked_ablations.sh 20260907_c3_rev3_interval_evidence <corpus>
 | 2026-09-07 10:30 | HCS 三 seed 17 组消融完成并回传；配对 bootstrap（`.../ablations/hateclipseg/paired_bootstrap.json`，1000 次按视频重采样，三 seed 均值），表见第 6.1 节。只有 `no_qk_enc` 不达 .01（与打乱检验一致：HCS 上 q/k 里的证据不起作用）；`no_context`、`no_cell`、`shared_bias`、`ctx_in_rep`、`avce`、`key_bias`、`seconds_time`、`index_hmm`、`no_constraint`、`no_cmal` 只在 ROC 上达 .01，AP 在 .006–.009；三 seed 均值明显小于 seed 234 单 seed 的下降。lab3 空出，HateMM seed 3407 搜索从 lab1（trial 3，与消融共用 GPU 每 trial 28 分钟）改到 lab3 从头跑（10:32 启动，删除了 lab1 上的 3 个 trial 目录）。 |
 | 2026-09-07 11:05 | HateMM seed 234 的 17 组消融完成并回传（`.../ablations/hatemm/seed234/<arm>/metrics.json`）。相对 full（.6209 / .8346 / .6195）的 AP / ROC 变化（正 = arm 更差）：no_qk_enc +.074/+.038、no_verdict +.157/+.080、index_hmm +.049/+.023、seconds_time +.039/+.029、no_cmal +.029/+.037、mean_prior +.019/+.019、no_constraint +.016/+.008、shared_bias +.014/+.027、no_block +.013/+.003、no_prior +.009/+.012；**比 full 更好的**：no_context −.051/−.012（.6724 / .8466，接近修订 2 的水平）、key_bias −.031/−.005、mean_prior_all −.031/−.007、no_bias −.026/−.001、ctx_in_rep −.025/−.010、avce −.023/−.004、no_cell −.001/+.001。单 seed；但方向明确：修订 3 在 HateMM 上比修订 2 掉的 .047 AP 主要来自"视频级校准 c 只加在 logit"这一处改动（去掉 c 或按修订 2 放回表示都回到 .646–.672），其次是 query 门控（key_bias 更好）。与 HCS 相反（HCS 上 ctx_in_rep、no_context、key_bias 都比 full 差）。已在本机 CPU 上追加一项不训练检查：对同一 checkpoint 在推断时把 c 置零，看 c 是在推断时直接伤害还是通过训练动态伤害（`evidence_shuffle_test.py --zero-ctx`）。 |
 | 2026-09-07 12:18 | HateMM seed 2025（lab1）、3407（lab3）搜索完成并回传：seed 2025 best trial 16 AP .6521 / ROC .8506 / within .6349；seed 3407 best trial 12 AP .6498 / ROC .8410 / within .6385。HateMM 三 seed 均值 AP 0.6410 ± 0.0174 / ROC 0.8421 ± 0.0080 / within 0.6310 ± 0.0101；规则 8 确认：AP 超 MACIL-SD .573 达 0.068（要求 ≥ .033），ROC 超 .807 达 0.035（要求 ≥ .019），通过。相对修订 2（.668 / .850 / .623）：AP 低 .027（超过一个 std），ROC 低 .008，within 高 .008；预注册预期 (2) 在 HateMM 的 pooled 上不成立。seed 234 是三 seed 里明显最差的一个。启动 HateMM seed 2025 消融（lab1）、seed 3407 消融（lab3）；本机 CPU 上跑其余 seed 的打乱与 c 置零检验。 |
-| 待 | 规则 8 筛选 → seed 2025/3407 搜索 → 每 seed 每语料 17 臂锁定消融 → 三 seed 汇总、配对 bootstrap、证据打乱检验（第 7 节）→ 规则 14 清单（第 9 节）。 |
+| 2026-09-07 13:10 | HateMM seed 2025 / 3407 消融完成并回传；两语料三 seed 汇总（`runs/20260907_c3_rev3_interval_evidence/ablations/three_seed_summary_both_corpora.json`）与 HateMM 配对 bootstrap（`.../ablations/hatemm/paired_bootstrap.json`）完成，见 6.2、6.3；规则 14 清单见第 9 节。全部远程结果已 rsync 回本机。 |
 
 ### 6.1 HCS 三 seed 消融（full − arm；来源 `runs/20260907_c3_rev3_interval_evidence/ablations/hateclipseg/seed<seed>/<arm>/metrics.json` 与 `paired_bootstrap.json`）
 
@@ -132,6 +132,60 @@ full 三 seed：AP .7070 / .6984 / .7081，ROC .6948 / .6826 / .6999，within .5
 | index_hmm | +0.007 / +0.024 / +0.016 | 2 / 3 | [-0.011, +0.032] / [+0.002, +0.048] | 是 |
 | no_constraint | +0.008 / +0.024 / +0.016 | 3 / 3 | [-0.008, +0.032] / [+0.001, +0.049] | 是 |
 | seconds_time | +0.007 / +0.012 / +0.002 | 3 / 3 | [-0.001, +0.019] / [+0.001, +0.024] | 是 |
+
+### 6.2 HateMM 三 seed 消融（full − arm；来源 `runs/20260907_c3_rev3_interval_evidence/ablations/hatemm/seed<seed>/<arm>/metrics.json` 与 `paired_bootstrap.json`）
+
+full 三 seed：AP .6209 / .6521 / .6498，ROC .8346 / .8506 / .8410，within .6195 / .6349 / .6385。
+
+| arm | 三 seed 均值下降 AP / ROC / within | 下降的 seed 数 AP / ROC | 95% 区间 AP / ROC | 达 .01 |
+|---|---|---|---|---|
+| avce | +0.005 / +0.009 / -0.012 | 2 / 2 | [-0.031, +0.033] / [-0.009, +0.026] | 否 |
+| no_qk_enc | +0.089 / +0.040 / +0.003 | 3 / 3 | [+0.016, +0.154] / [+0.009, +0.073] | 是 |
+| no_cell | +0.035 / +0.021 / +0.000 | 2 / 3 | [+0.014, +0.055] / [+0.010, +0.034] | 是 |
+| no_bias | +0.022 / +0.018 / -0.003 | 2 / 2 | [-0.009, +0.049] / [+0.001, +0.037] | 是 |
+| key_bias | -0.010 / +0.001 / +0.000 | 1 / 2 | [-0.031, +0.009] / [-0.009, +0.011] | 否 |
+| shared_bias | +0.021 / +0.022 / -0.007 | 3 / 3 | [-0.014, +0.055] / [+0.006, +0.038] | 是 |
+| no_context | -0.002 / +0.014 / -0.002 | 1 / 2 | [-0.037, +0.024] / [-0.003, +0.032] | 是 |
+| ctx_in_rep | -0.023 / -0.006 / -0.007 | 0 / 1 | [-0.056, +0.004] / [-0.024, +0.013] | 否 |
+| mean_prior | +0.018 / +0.014 / +0.006 | 2 / 2 | [-0.012, +0.049] / [+0.000, +0.028] | 是 |
+| mean_prior_all | +0.015 / +0.015 / +0.002 | 2 / 2 | [-0.008, +0.038] / [+0.002, +0.028] | 是 |
+| no_block | +0.013 / +0.005 / -0.012 | 2 / 3 | [-0.015, +0.043] / [-0.007, +0.016] | 是 |
+| no_prior | +0.026 / +0.013 / +0.011 | 3 / 2 | [-0.001, +0.058] / [-0.000, +0.027] | 是 |
+| no_cmal | +0.064 / +0.049 / +0.012 | 3 / 3 | [+0.027, +0.099] / [+0.026, +0.073] | 是 |
+| no_verdict | +0.141 / +0.072 / +0.013 | 3 / 3 | [+0.030, +0.231] / [+0.035, +0.112] | 是 |
+| index_hmm | +0.037 / +0.020 / +0.007 | 3 / 3 | [+0.008, +0.065] / [+0.008, +0.032] | 是 |
+| no_constraint | +0.023 / +0.010 / +0.004 | 2 / 2 | [-0.004, +0.050] / [-0.002, +0.023] | 是 |
+| seconds_time | +0.040 / +0.030 / +0.006 | 3 / 3 | [+0.015, +0.066] / [+0.017, +0.044] | 是 |
+
+HateMM 上 seed 间差异大：seed 234 的 full 是三个里最差的，同一组超参下 `no_context`、`key_bias`、`ctx_in_rep`、`no_bias`、`avce`、`mean_prior_all` 都比它好 .02–.05 AP；seed 3407 上这些 arm 又都比 full 差 .01–.08。三 seed 均值上只有 `key_bias`（−.010 AP）、`ctx_in_rep`（−.023 AP）、`no_context`（−.002 AP，ROC +.014）不比 full 差。
+
+### 6.3 两语料合并判定（规则 14(g)：三 seed 均值 AP 或 ROC 下降 ≥ .01，两语料都满足；`three_seed_summary_both_corpora.json`）
+
+| arm | 主张 | HateMM AP / ROC | HCS AP / ROC | 两语料成立 |
+|---|---|---|---|---|
+| avce | 证据路由注意力整体（换回候选 1 骨干） | +0.005 / +0.009 | +0.007 / +0.018 | 否 |
+| no_qk_enc | 证据进 q/k 编码 | +0.089 / +0.040 | +0.001 / +0.002 | 否 |
+| no_cell | 四格嵌入（换成四列线性） | +0.035 / +0.021 | +0.008 / +0.012 | **是** |
+| no_bias | 逐头证据偏置 | +0.022 / +0.018 | +0.010 / +0.014 | **是** |
+| key_bias | query 门控（g ≡ 1 = 修订 2 的 key 偏置） | -0.010 / +0.001 | +0.007 / +0.012 | 否 |
+| shared_bias | 逐头（各头共用一个偏置） | +0.021 / +0.022 | +0.006 / +0.011 | **是** |
+| no_context | 视频级校准 c | -0.002 / +0.014 | +0.008 / +0.015 | **是** |
+| ctx_in_rep | c 放 logit 而非表示（修订 2 放法） | -0.023 / -0.006 | +0.009 / +0.010 | 否 |
+| mean_prior | HMM 后验作先验/输入（换平均等级） | +0.018 / +0.014 | +0.033 / +0.044 | **是** |
+| mean_prior_all | HMM 完全不用（块标签也换粗裁定） | +0.015 / +0.015 | +0.044 / +0.051 | **是** |
+| no_block | 块级 MIL | +0.013 / +0.005 | +0.017 / +0.029 | **是** |
+| no_prior | 先验项 α·ℓ/L | +0.026 / +0.013 | +0.047 / +0.053 | **是** |
+| no_cmal | CMAL 对比损失 | +0.064 / +0.049 | +0.009 / +0.017 | **是** |
+| no_verdict | VLM 裁定整体 | +0.141 / +0.072 | +0.110 / +0.129 | **是** |
+| index_hmm | 区间证据 HMM（换回索引 HMM） | +0.037 / +0.020 | +0.007 / +0.024 | **是** |
+| no_constraint | 正例约束 | +0.023 / +0.010 | +0.008 / +0.024 | **是** |
+| seconds_time | 归一化时间（换秒） | +0.040 / +0.030 | +0.007 / +0.012 | **是** |
+
+13 / 17 个 arm 两语料成立。不成立的四个：
+- `no_qk_enc`：HCS 上 ≈ 0（与 7.1 打乱检验一致）。HateMM 上是最大的结构项（.089 / .040）。
+- `avce`：两语料都是正向但 HateMM 只有 .005 / .009；证据路由注意力整体相对候选 1 骨干的增益不到 .01。
+- `key_bias`：HateMM 上 query 门控反而伤 .010 AP，HCS 上帮 .007 / .012。预注册预期 (3) 不成立。
+- `ctx_in_rep`：HateMM 上修订 2 的放法好 .023 AP，HCS 上 logit 放法好 .009 / .010。预注册预期 (4)（±.005）不成立，且方向两语料相反。
 
 ## 7. 机制检验（不训练；`evidence_shuffle_test.py`；`runs/20260907_c3_rev3_interval_evidence/mechanism/<corpus>/seed<seed>/summary.json`，本机 CPU，2026-09-07）
 
@@ -184,3 +238,38 @@ random、coarse_pos 见 summary.json。读法：
 1. **HateMM：不训练时 4 个粗块的后验比 34 条全观测还高**（AP +.038、ROC +.031、within +.096），任何加细窗的策略都在 4 之下。即对标签模型而言，HateMM 的细窗裁定（每窗 4 帧）是负贡献；细窗的价值只在训练后的骨干里出现（修订 2 三 seed .668 对本节 .589 无法直接比，需要一个"只粗块 + 训练"的对照，列为后续任务）。
 2. **HCS：细窗单调有用**，34 比 4 高 .065 AP / .056 ROC；同预算下各策略差 ≤ .01，我们的定位目标策略没有稳定优势（8、12 最高，16、22 不是）。
 3. 门 C1（≤ 16 次时某策略 pooled 与 34 次在 ±.01 内）：HateMM 平凡通过（4 次即超过），HCS 不通过（16 次最好 AP −.017；22 次 uniform −.006）。**不能作效率主张**；本节只回答"34 次买到了什么"：HateMM 上不训练时什么都没买到，HCS 上买到 .065 AP，且需要接近全部细窗。后续任务：训练后的模型在预算 4 / 22 下各跑一次完整训练确认（需要用户裁定）。
+
+## 9. 规则 14 清单、预注册预期核对与去向（2026-09-07）
+
+### 9.1 预注册预期（第 2 节）
+
+| # | 预期 | 结果 |
+|---|---|---|
+| 1 | 两语料 seed 234 过规则 8 | 成立（HateMM .6209 / .8346，HCS .7070 / .6948）。 |
+| 2 | 三 seed pooled 不低于修订 2 减一个 std；HateMM within 高于修订 2（目标 ≥ 候选 1 的 .646） | HCS 成立（.7045 / .6924 / .5678 vs .6976 / .6843 / .5488，三项都高）。HateMM 不成立：AP .6409 ± .0174 比修订 2 的 .6678 低 .027（超过一个 std），ROC .8421 ± .0080 低 .008；within .6310 高 .008 但未到 .646。 |
+| 3 | `key_bias` within 低于 full 且 pooled 不高于 full | HCS 成立（within 低 .005 / .000 / .001，pooled 低 .007 / .012）；HateMM 不成立（AP 高 .010）。 |
+| 4 | `ctx_in_rep` 与 full 在 ±.005 内 | 两语料都不成立，方向相反（HateMM ctx_in_rep 高 .023 AP；HCS 低 .009 / .010）。 |
+| 5 | 门 A1 过时 `index_hmm` pooled 低于 full ≥ .005 或持平 | 成立：HateMM .037 / .020，HCS .007 / .024；`no_constraint`（.023 / .010，.008 / .024）与 `seconds_time`（.040 / .030，.007 / .012）同样两语料成立。 |
+| 6 | 打乱证据时间对应后 pooled 下降 | HateMM 成立（.012 / .013 / within .023）；HCS 不成立（0）。 |
+
+### 9.2 规则 14 (a)–(i)
+
+| 项 | 状态 |
+|---|---|
+| (a) 三 seed 规则 8 确认，每 seed 数字来自该 seed 完整 20-trial 搜索的最优 trial | 满足。HateMM best trial 3 / 16 / 12，HCS 1 / 19 / 6；HateMM 领先 MACIL-SD .068 AP / .035 ROC（要求 ≥ .033 / .019），HCS 领先 Fed-WSVAD .142 AP、DSANet .164 ROC。 |
+| (b) 报 seed 标准差 | HateMM AP ± .0174 / ROC ± .0080 / within ± .0101；HCS ± .0053 / ± .0089 / ± .0040。 |
+| (c) 方法统一 | 同一架构、损失、训练、推理；语料间只有 5 个搜索标量不同。 |
+| (d) validation 选 checkpoint；搜索空间 / 20 trial / 目标 test (AP+ROC)/2 在第 2 节搜索前写定；validation 选 trial 的 test 数字 | 满足；validation 选 trial 的 test 数字（各 `study_summary.json` 的 `validation_selected`）：HateMM trial 7 / 15 / 12 → test AP .6194 / .6603 / .6498、ROC .8055 / .8422 / .8410（均值 .6432 / .8296）；HCS trial 1 / 19 / 13 → .7070 / .6984 / .6943、.6948 / .6826 / .6765（均值 .6999 / .6846）。HateMM seed 3407、HCS seed 234 / 2025 与 test 选出的 trial 相同。 |
+| (e) 无后处理、无 ensemble、无按语料分支；train-only teacher（Qwen VLM 裁定）已写明，`no_verdict` 消融两语料掉 .141 / .072 与 .110 / .129 | 满足。 |
+| (f) 特征与 baseline 相同（I3D / VGGish / BERT），VLM 裁定是额外输入，已按 (e) 报去掉的数字 | 满足；"最强 baseline + VLM 裁定输入"的对照属第一批（用户跳过），未做。 |
+| (g) 核心机制消融两语料 ≥ .01 | 13 / 17 成立（6.3）；不成立的四项不能作主张。 |
+| (h) 评测器、split、GT、1 fps 未改 | 满足。 |
+| (i) 两语料三项指标全报 | 满足（6.2、6.1、第 6 节进度表）。 |
+
+### 9.3 结论与去向
+
+- 修订 3 两语料三 seed 都过规则 8 确认；HCS 三项全面高于修订 2，HateMM AP 低 .027（主要原因：视频级校准 c 只加 logit 与 query 门控这两处骨干改动在 HateMM 上有害，在 HCS 上有益）。
+- 可主张的部件（两语料 ≥ .01）：区间证据 HMM 及其两个设计（归一化时间、正例约束）、HMM 后验作先验与块标签、块级 MIL、先验项、CMAL、四格嵌入、逐头偏置本身（`no_bias`、`shared_bias`）、视频级校准 c（`no_context`，HateMM 只有 ROC 达标）。
+- 不能主张：query 门控（B.2）、c 移到 logit（C′）、证据进 q/k（HCS 无效）、证据路由注意力整体相对候选 1 骨干（< .01）。
+- 机制主张"证据决定从哪聚合"只在 HateMM 成立（7.1），HCS 上写 limitation。
+- 规则 9：候选 3 已用 2 次修改，剩 1 次。下一步的选择（是否用掉最后一次修改：保留区间 HMM 融合，把 query 门控与 c 的放法退回修订 2 或去掉 c；w_fine 去留）交用户裁定；自适应查询回放（第 8 节）与 4 / 22 次预算下训练确认同样待裁定。
