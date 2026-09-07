@@ -38,7 +38,7 @@ z_t 为骨干完整每秒 logit（含先验与 c，五 crop 均值）；p(b_w = 
 
 - **checkpoint 选择**：validation 上用固定 uniform 掩码（bit-reversal 前 B_max = 8 个细窗，`train.py` 的 `val_masks`）算 (AP+ROC)/2 选 epoch，不跑策略。这对 uniform 对照有利、对 EOC 不利，是保守方向。
 - **骨干变体钉死**（第一个 trial 前写定）：`bias_mode` / `ctx_mode` 取修订 4 P2 判定的胜者，判定依据 `experiments/20260908_c3_rev4_rev2_backbone_interval_hmm/README.md` 第 2 节，结果与日期记在下面"起点"一行。写定后不再改。
-- **起点（E2 的对照）**：待修订 4 三 seed 出来后填：路径、三 seed 均值 ± std（pooled AP、ROC，两语料）。修订 4 过 P2 → `runs/20260908_c3_rev4_rev2_backbone_interval_hmm/` 三 seed best-trial；否则修订 3 `runs/20260907_c3_rev3_interval_evidence/`：HateMM .6409 ± .0174 / .8421 ± .0080，HCS .7045 ± .0053 / .6924 ± .0089。本实验自己的 `fixed34` 行（dropout 训练的模型看全部 34 条）只是附加行，不是 E2 的对照。
+- **起点（E2 的对照，2026-09-08 06:10 写定，早于本实验第一个 trial）**：修订 4 通过 P2（`runs/20260908_c3_rev4_rev2_backbone_interval_hmm/p2_decision.json`），骨干钉为 `bias_mode=key`、`ctx_mode=rep`（`train.py` DEFAULTS）。E2 对照 = 修订 4 三 seed best-trial：HateMM AP .6630 ± .0173 / ROC .8486 ± .0097；HCS AP .7024 ± .0080 / ROC .6972 ± .0129。E2 下限 = 均值 − 该项 std：HateMM AP ≥ .6457、ROC ≥ .8389；HCS AP ≥ .6944、ROC ≥ .6843。原判定规则：路径、三 seed 均值 ± std（pooled AP、ROC，两语料）。修订 4 过 P2 → `runs/20260908_c3_rev4_rev2_backbone_interval_hmm/` 三 seed best-trial；否则修订 3 `runs/20260907_c3_rev3_interval_evidence/`：HateMM .6409 ± .0174 / .8421 ± .0080，HCS .7045 ± .0053 / .6924 ± .0089。本实验自己的 `fixed34` 行（dropout 训练的模型看全部 34 条）只是附加行，不是 E2 的对照。
 - 曲线：各策略在平均调用 {4, 6, 8, 12, 16, 22} 的 AP / ROC / within（test），34 次点 = `fixed34` 行（`eval_max_picks` = 18）；自适应策略按实际平均调用画点。
 - **E1 = 操作点定义**，不是检验：操作点 B_max = 8、τ = 0，每视频恰 4 + 8 = 12 次。效率主张 = E2（12 次不低于 34 次起点）+ 调用数–指标曲线。
 - E2 效果门：三 seed 均值 pooled AP 与 ROC 两语料都 ≥ 起点模型（上一行）− 该项起点模型的 seed std。

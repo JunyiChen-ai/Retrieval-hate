@@ -30,3 +30,18 @@ HateMM 在 uoa-lab1，HCS 在 uoa-lab3；结束后 rsync 回本机。
 
 - 2026-09-08 00:40 启动：HateMM 三 seed 于 uoa-lab1 并行（约 17 min/trial），HCS 三 seed 于 uoa-lab3 并行（约 6 min/trial）。
 - 2026-09-08 02:38 HCS 三 seed 完成（`runs/20260908_c3_rev4_rev2_backbone_interval_hmm/hateclipseg/seed*/study_summary.json`，best trial 11/19/19）：pooled AP .6936/.7042/.7093，均值 .7024 ± .0080；ROC .6828/.7011/.7077，均值 .6972 ± .0129；within .5630 ± .0023。P1 通过；P2 的 HCS 两项过下限（AP ≥ .6992，ROC ≥ .6835）。HateMM 待完成（`p2_decision.py` 出最终判定）。
+- 2026-09-08 06:02 HateMM 三 seed 完成（`runs/20260908_c3_rev4_rev2_backbone_interval_hmm/hatemm/seed*/study_summary.json`，best trial 11/6/13）：pooled AP .6527/.6534/.6829，均值 .6630 ± .0173；ROC .8376/.8518/.8563，均值 .8486 ± .0097；within .6229 ± .0168。
+- **P2 判定（`p2_decision.py` → `runs/20260908_c3_rev4_rev2_backbone_interval_hmm/p2_decision.json`）：通过。** HateMM AP .6630 ≥ .6236 且 ≥ .6581（修订 2 − std），ROC .8486 ≥ .8340；HCS AP .7024 ≥ .6992，ROC .6972 ≥ .6835。修订 4 成为候选 3 的新起点；模块一（`experiments/20260908_adaptive_vlm_query/`）骨干钉为 `bias_mode=key`、`ctx_mode=rep`。
+
+### 4.1 三 seed 总表（test，best trial 按 test (AP+ROC)/2；来源见上）
+
+| 语料 | 版本 | pooled AP | pooled ROC | within |
+|---|---|---|---|---|
+| HateMM | 修订 4 | .6630 ± .0173 | .8486 ± .0097 | .6229 ± .0168 |
+| HateMM | 修订 3 | .6410 ± .0174 | .8421 ± .0080 | .6310 ± .0101 |
+| HateMM | 修订 2 | .6678 ± .0097 | .8504 | .6233 |
+| HCS | 修订 4 | .7024 ± .0080 | .6972 ± .0129 | .5630 ± .0023 |
+| HCS | 修订 3 | .7045 ± .0053 | .6924 ± .0089 | .5678 ± .0040 |
+| HCS | 修订 2 | .6976 | .6843 | .5488 |
+
+修订 4 相对修订 3：HateMM AP +.022、ROC +.007；HCS AP −.002、ROC +.005。相对修订 2：HateMM AP −.005、ROC −.002（一个 std 内）；HCS AP +.005、ROC +.013。本轮按用户裁定不跑消融；论文消融沿用修订 3 的臂表（区间 HMM 融合的消融已在修订 3 完成）。
