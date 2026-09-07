@@ -28,4 +28,5 @@ HateMM 在 uoa-lab1，HCS 在 uoa-lab3；结束后 rsync 回本机。
 
 ## 4. 进度
 
-（启动后填写）
+- 2026-09-08 00:40 启动：HateMM 三 seed 于 uoa-lab1 并行（约 17 min/trial），HCS 三 seed 于 uoa-lab3 并行（约 6 min/trial）。
+- 2026-09-08 02:38 HCS 三 seed 完成（`runs/20260908_c3_rev4_rev2_backbone_interval_hmm/hateclipseg/seed*/study_summary.json`，best trial 11/19/19）：pooled AP .6936/.7042/.7093，均值 .7024 ± .0080；ROC .6828/.7011/.7077，均值 .6972 ± .0129；within .5630 ± .0023。P1 通过；P2 的 HCS 两项过下限（AP ≥ .6992，ROC ≥ .6835）。HateMM 待完成（`p2_decision.py` 出最终判定）。
