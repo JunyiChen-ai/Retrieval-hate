@@ -221,6 +221,26 @@ HateMM 上 seed 间差异大：seed 234 的 full 是三个里最差的，同一�
 
 读法：训练好的 c 在推断时贡献很小且方向不定：HateMM 三 seed 置零后 AP +.009 / −.000 / −.006，HCS 三 seed 都略涨 .003–.005。HateMM seed 234 上 `no_context` 消融比 full 高 .051 AP，远大于推断置零的 .009，所以 c 对 HateMM 的伤害主要发生在训练过程（有 c 时其余部分学到的东西更差），不是推断时 c 本身把分数排错；HCS 上 c 在训练时有帮助（`no_context` 消融掉 .008/.015），推断时同样可去。within 两语料都不受 c 影响（c 是视频级常数，不改变视频内排序）。
 
+### 7.3 为什么机制只在 HateMM 成立（test error analysis，规则 10 记录，2026-09-07）
+
+看了的 artifact：两语料 test 的 GT 数组、缓存的 VLM 裁定（k=30 / 4）、`hmm_only/<corpus>/test/interval_norm_constraint_metrics.json`、`ablations/<corpus>/seed*/{no_verdict,no_prior,avce}/metrics.json`。只读，没有改任何设计。
+
+先排除一个假设：HCS 的裁定在视频内变化不比 HateMM 小（正视频 30 个细窗全同的比例 HCS .17 vs HateMM .21–.23；细窗裁定对 GT 的视频内 AUC HCS .567 vs HateMM .553，都弱）。所以"打乱不掉分"不是因为 e_t 在视频内本来就一样。
+
+真正的差别在内容特征（三 seed 均值 AP / ROC / within）：
+
+| | HateMM | HCS |
+|---|---|---|
+| 只内容，无裁定（no_verdict） | .500 / .770 / .618 | .595 / .563 / .536 |
+| 只 HMM 后验，不训练 | .551 / .820 / .584 | .700 / .664 / .565 |
+| full | .641 / .842 / .631 | .705 / .692 / .568 |
+
+HCS 上 I3D / VGGish / BERT 内容特征几乎分不出视频内哪一秒 hateful（within .536，接近 .5；固定 baseline 表里 DSANet / MultiHateLoc 的 within 也只有 .52–.53），训练好的完整模型比不训练的 HMM 后验只多 .005 AP / .028 ROC / .003 within。证据路由决定的是"从哪几秒取内容"，内容本身没有视频内区分度时，从哪里取都一样，所以打乱时间对应不掉分、q/k 编码 ≈ 0。HateMM 上内容特征有视频内信号（within .618，ROC .770），路由才有东西可路由：full 比 HMM 后验多 .090 AP / .047 within，q/k 编码消融掉 .089。
+
+顺带解释两处骨干改动为什么伤 HateMM 不伤 HCS：c 只加 logit 给了一条直接用证据均值拟合视频标签的路，训练时内容路径学得更弱（7.2：推断时置零几乎不变，伤害在训练）；HateMM 内容路径本来有用，削弱它就掉分（no_context 回到 .643），HCS 内容路径本来没用，削弱它没有代价。query 门控同理只影响内容取回，HCS 上无内容可取。
+
+数据集侧的背景：HCS train 正/负视频 219 / 32，test 69 / 10，视频中位时长 237 s（细窗 7.9 s）；HateMM train 298 / 446，test 86 / 129，中位 118 s（细窗 3.9 s）。
+
 ## 8. 自适应查询回放（不训练，2026-09-07；`runs/20260907_c3_rev3_interval_evidence/adaptive_replay/<corpus>/<policy>_b<budget>/metrics.json`，`adaptive_query_replay.py`，0 次新 VLM 调用）
 
 区间 HMM（归一化时间 + 正视频约束，训练集拟合）在缓存上回放：起点 4 个粗块，逐个揭示细窗裁定到预算，分数 = HMM 后验（无骨干）。test，AP / ROC / within：
