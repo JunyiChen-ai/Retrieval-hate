@@ -60,6 +60,7 @@ class Acquirer:
         self.binary = binary
         self.device = device
         self.k = hmm.k
+        assert hmm.normalized_time, "Acquirer assumes normalized time (one transition matrix for all videos)"
         self.Tm = hmm._transitions(1.0)             # normalized time: one matrix for all videos
         gr = hmm.grid
         self.fine_end_of = {int(gr["fine_of"][g]): g for g in np.where(gr["fine_end"])[0]}
