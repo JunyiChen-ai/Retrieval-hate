@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-07 10:40 NZST**。依据：候选 3 修订 3（76ef6f0）HCS 三 seed 搜索与 HateMM seed 234 搜索完成并回传，消融与 HateMM 其余 seed 运行中；候选 3 外部审稿完成（4/10，`experiments/20260904_evidence_guided_attention/REVIEW_NOVELTY_GPT6ASTRA.md`）；候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 在不剪 within 的规则下重跑完成并回传，12 臂消融三 seed 完成并回传；HCS 沿用修订 2 三 seed。权威数字均引用本机 runs 原评测。
+截至 **2026-09-07 12:25 NZST**。依据：候选 3 修订 3（76ef6f0）HCS 三 seed 搜索与 HateMM seed 234 搜索完成并回传，消融与 HateMM 其余 seed 运行中；候选 3 外部审稿完成（4/10，`experiments/20260904_evidence_guided_attention/REVIEW_NOVELTY_GPT6ASTRA.md`）；候选 3（证据引导注意力，修订 2 模型）HateMM 三 seed 在不剪 within 的规则下重跑完成并回传，12 臂消融三 seed 完成并回传；HCS 沿用修订 2 三 seed。权威数字均引用本机 runs 原评测。
 
 ## 当前目标与结论
 
@@ -27,9 +27,9 @@
 
 ## 运行任务与监控
 
-截至 2026-09-07 10:40。候选 3 修订 3（`experiments/20260907_c3_rev3_interval_evidence/`，commit 76ef6f0）：
+截至 2026-09-07 12:25。候选 3 修订 3（`experiments/20260907_c3_rev3_interval_evidence/`，commit 76ef6f0）：
 - HCS 三 seed 搜索完成并回传：AP .7045 / ROC .6924 / within .5678（三 seed 均值；单 seed 见实验 README 第 6 节），高于修订 2 的 .6976 / .6843 / .5488。HCS 三 seed 17 组消融完成并回传（`runs/20260907_c3_rev3_interval_evidence/ablations/hateclipseg/seed<seed>/`，配对 bootstrap 同目录 `paired_bootstrap.json`）：17 组里 16 组三 seed 均值 AP 或 ROC 下降 ≥ .01，只有 no_qk_enc 不达。
-- HateMM seed 234 完成并回传：AP .6209 / ROC .8346 / within .6195，过规则 8 筛选但低于修订 2 的 .668 / .850；seed 2025 搜索与 seed 234 消融在 lab1、seed 3407 搜索在 lab3 运行中（`.../hatemm/seed<seed>/search.log`，`.../ablations/hatemm/seed234/`）。
+- HateMM 三 seed 搜索完成并回传：AP 0.6410 ± 0.0174 / ROC 0.8421 ± 0.0080 / within 0.6310（seed 234/2025/3407 = .6209/.6521/.6498，.8346/.8506/.8410），过规则 8 确认，但 AP 比修订 2 的 .668 低 .027。seed 234 的 17 组消融完成：去掉视频级校准 c 的 no_context 反而高 .051 AP（实验 README 第 6 节）。seed 2025 消融在 lab1、seed 3407 消融在 lab3 运行中。
 - HCS 证据打乱检验完成（本机 CPU）：打乱证据时间对应不掉分（实验 README 第 7 节）。
 查看：`ssh uoa-lab1 tail -f ~/Retrieval-hate/runs/20260907_c3_rev3_interval_evidence/hatemm/seed2025/search.log`。本机 GPU 被他人占用。会话内 heartbeat 每 3 小时检查一次。
 
