@@ -271,14 +271,18 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     results = {"curves": {}, "eoc_grid": {}, "calls": calls}
     full_masks = {v: binary[v][0] for v in test_ids}
     none_masks = {v: masked(binary[v][0], []) for v in test_ids}
+    # coarse4_train never observes a fine verdict, so its HMM has no fine emission
+    # parameters: only the coarse-only evaluation is defined for that arm.
     for name, masks in (("fixed34", full_masks), ("coarse4", none_masks)):
+        if ablation == "coarse4_train" and name == "fixed34":
+            continue
         loader = DataLoader(hc.EvalDataset(corpus, test_ids, cache, masks=masks), batch_size=1,
                             shuffle=False, num_workers=num_workers)
         results[name] = evaluate_scores(corpus, "test", out_dir, name, hc.score_split(model, loader, device))
         say("test %-8s AP %.4f ROC %.4f within %.4f" % (name, results[name]["pooled_ap"],
                                                          results[name]["pooled_roc"], results[name]["within_roc"]))
     budgets = [int(b) for b in a.budgets]
-    policies = list(a.policies) if ablation != "coarse4_train" else ["eoc", "uniform"]
+    policies = list(a.policies) if ablation != "coarse4_train" else []
     for policy in policies:
         n_steps = int(a.eval_max_picks) if policy == "eoc" else int(a.control_max_picks)
         t0 = time.time()
@@ -313,6 +317,20 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     # largest tau in the grid whose validation pooled AP and ROC are both >= the tau = 0
     # values - .005. The test number at tau_val is reported next to the tau = 0 operating point.
     op_key = "cap%d_tau0" % b_max
+    if ablation == "coarse4_train":
+        test_op = dict(results["coarse4"], mean_calls=4.0)
+        summary = {"corpus": corpus, "seed": seed, "ablation": ablation,
+                   "operating_point": {"policy": "none", "b_max": 0, "tau": 0.0, "key": "coarse4"},
+                   "test": test_op, "val": None, "stop_rule": None,
+                   "selected_epoch": fit_info["selected_epoch"],
+                   "val_criterion": fit_info["val_criterion"], "history": fit_info["history"],
+                   "results": results, "hparams": cfg, "hmm": hmm.params(), "host": socket.gethostname()}
+        with open(os.path.join(out_dir, "summary.json"), "w") as fh:
+            json.dump(summary, fh, indent=2, default=float)
+        say("TEST (coarse4_train; 4 calls) pooled AP %.4f | pooled ROC %.4f | within %.4f"
+            % (test_op["pooled_ap"], test_op["pooled_roc"], test_op["within_roc"]))
+        log.close()
+        return summary
     vruns = acq.run_split(val_ids, "eoc", max(int(c) for c in a.b_caps), seed=seed)
     val_grid = {}
     for cap in [int(c) for c in a.b_caps]:

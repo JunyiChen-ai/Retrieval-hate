@@ -79,7 +79,7 @@ def main():
                     sm = json.load(open(p))
                     if arm == "coarse4_train":
                         c = sm["results"]["coarse4"]
-                        vals.append((4.0, c["pooled_ap"], c["pooled_roc"], sm["results"]["fixed34"]["pooled_ap"], sm["results"]["fixed34"]["pooled_roc"]))
+                        vals.append((4.0, c["pooled_ap"], c["pooled_roc"], float("nan"), float("nan")))
                     else:
                         t = sm["test"]
                         vals.append((t["mean_calls"], t["pooled_ap"], t["pooled_roc"], sm["results"]["fixed34"]["pooled_ap"], sm["results"]["fixed34"]["pooled_roc"]))
