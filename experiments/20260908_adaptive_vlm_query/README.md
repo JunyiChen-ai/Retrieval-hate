@@ -4,7 +4,13 @@
 
 ## 0. 文献调研与 novelty
 
-（调研文档 `docs/20260908_adaptive_query_survey.md`，完成后在此摘要；规则 4 复核 `REVIEW_RULE4.md`。）
+调研文档 `docs/20260908_adaptive_query_survey.md`（37 条引用逐条核实）。最近的先例与差别：
+1. Dynamic feature selection：Covert et al. ICML 2023（arXiv 2301.00557）与 DIME（Gadgil et al. ICLR 2024，2306.03301）：预测器在随机特征掩码上训练（= 我们的证据 dropout），选择器打分"哪个特征最能改变输出"（= 我们的反事实 EOC），可变预算停止。差别：我们的"特征"是一个冻结 VLM 在真实时间区间上的裁定，由区间 HMM 做精确的缺失推断，输出是逐秒定位而不是单个分类。
+2. EDDI（Ma et al. ICML 2019，1809.11142）：对缺失特征的生成模型积分后再打分；区间 HMM 在我们这里承担这个角色，且是精确推断而非 VAE 近似。
+3. Shim et al. NeurIPS 2018（1709.05964）、Janisch et al. AAAI 2019（1711.07364）：RL 获取带显式停止动作、与分类器联合训练。差别：我们不用 RL，停止是阈值规则。
+4. VideoAgent（Wang et al. ECCV 2024，2403.10517）：看少量帧，不够再取；判断者是 LLM 自评，输出是一个答案而不是逐秒分数。
+5. VADTree（NeurIPS 2025，2510.22693）、Holmes-VAU 的 ATS（CVPR 2025，2412.06171）：粗到细地问 VLM 做异常定位，但展开由边界检测器 / 固定打分驱动，无交互、无停止规则、不报调用数–AP 曲线。
+没有已发表工作在弱监督时序定位上做逐视频、带停止规则、由训练后的定位网络驱动的 VLM 自适应查询。调研建议：按自研设计做；把 Covert 式的"一次前向给所有窗打分的获取头"作为对 EOC 两次反事实前向的消融备选（第 5 节迭代表里的备选设计已有）；论文里按"结构化观测上的动态特征选择"来写，引 DIME 的条件互信息视角解释停止阈值。调研的风险提醒：HateMM 上不训练的 HMM 只用 4 个粗块已超过 34 条，所以模块价值必须经训练后的骨干体现，臂表加 `coarse4_train`（只用粗块训练）。规则 4 复核见 `REVIEW_RULE4.md`。
 
 ## 1. 机制（初版，迭代表见第 5 节）
 
@@ -50,7 +56,17 @@ z_t 为骨干完整每秒 logit（含先验与 c，五 crop 均值）；p(b_w = 
 
 ## 4. 运行
 
-（实现后填写。）
+```
+bash experiments/20260908_adaptive_vlm_query/launch/run_search.sh <hatemm|hateclipseg> <seed>
+# 输出 runs/20260908_adaptive_vlm_query/<corpus>/seed<seed>/trial<k>/：
+#   model_round0.pth, model_round1.pth, model.pth, hmm_params_round*.json, hmm_params.json
+#   metrics_test_{fixed34,coarse4}.json, metrics_test_<policy>_k<picks>.json（曲线）
+#   metrics_test_eoc_cap<B>_tau<τ>.json（停止规则网格，summary.json 的 results.eoc_grid 里有实际平均调用数与直方图）
+#   eoc_runs_test.json（每视频选窗顺序与每步 EOC），summary.json（test = eoc, b_max 细窗, τ = 0）
+```
+代码：`model.py`（六格证据编码，骨干变体 config bias_mode / ctx_mode）、`acquire.py`（六种策略，EOC 反事实前向）、`train.py`（两轮驱动、证据 dropout、调用计数、曲线评估）、`search.py`（同修订 3 的 5 个标量，20 trial，目标 test (AP+ROC)/2 在操作点）。共享部分已升入 `src/hier_evidence_common.py`（`ScaffoldCache.build`、`TrainDataset.mask_sampler`、`EvalDataset.masks`、`make_masked_scaffold_fn`）与 `src/interval_evidence_hmm.py`（`posterior_gamma`、`summarize_gamma`、`predictive_fine`）。
+
+消融臂表补一项：`coarse4_train`（训练与测试都只用 4 个粗块；回答"细窗经训练后到底买到了什么"）。
 
 ## 5. 迭代表
 

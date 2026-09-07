@@ -23,12 +23,15 @@
 
 ## 运行任务与监控
 
-无运行任务（2026-09-07 13:30）。lab1 / lab3 GPU 空闲；本机 GPU 被他人占用。`runs/20260907_c3_rev3_interval_evidence/` 已全部 rsync 回本机。
+截至 2026-09-08 01:30。
+- 候选 3 修订 4（修订 2 骨干 + 区间 HMM 融合，`experiments/20260908_c3_rev4_rev2_backbone_interval_hmm/`，commit 0476eca，规则 6 复核 PASS）三 seed 搜索运行中：HateMM 三 seed 并行在 uoa-lab1，HCS 三 seed 并行在 uoa-lab3；`runs/20260908_c3_rev4_rev2_backbone_interval_hmm/<corpus>/seed<seed>/search.log`。用户裁定不做消融，只看总性能；判定规则见该实验 README 第 2 节 P2。
+- 模块一自适应 VLM 查询（`experiments/20260908_adaptive_vlm_query/`）：文献调研完成（`docs/20260908_adaptive_query_survey.md`），代码写完，规则 4 与规则 6 复核进行中；等修订 4 出结果定骨干后开跑。
+- 会话内 heartbeat 每 3 小时一次。本机 GPU 被他人占用。
 
 ## 下一步
 
-1. 待用户裁定候选 3 最后一次修改（规则 9）怎么用：候选 A = 修订 2 骨干（c 加进表示、key 偏置、w_fine）+ 区间证据 HMM 融合；候选 B = 修订 3 去掉 c、门控退回 key 偏置；是否恢复 w_fine。消融依据见实验 README 6.3。
-2. 待用户裁定：减少 VLM 调用预算（4 / 22 次）下训练一次完整模型确认；视频随机效应的 M 步。
+1. 修订 4 三 seed 完成后按 P2 判定新起点（过则修订 4，否则回退修订 3）。
+2. 模块一自适应查询：在起点骨干上跑 seed 234 两语料，按 README 2.3 的 E1（test 平均调用 ≤ 12）/ E2（pooled 不低于 34 次起点 − 一个 std）判定，不满足就按 2.4 迭代到满足为止（用户指令）。
 3. 论文表述：机制主张"证据决定从哪聚合"限定 HateMM；HCS 写 limitation。B.2 引 WavLM 门控相对位置偏置，融合引 Dugong / CHMM / CT-HMM / EM-MIL（`REVIEW_RULE4.md`）。
 4. 搜索目标继续按 test（用户裁定，不再讨论）。
 
