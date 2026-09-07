@@ -6,7 +6,7 @@ Rounds (default 2, README section 1.3):
   round 0  allowed = 4 seed fine windows (+ the 4 coarse blocks): 8 calls per
            training video; train M0 with random subsets of the allowed set;
   policy   M0 runs the eoc policy on the training videos (b_max picks each);
-           allowed |= picks (train-time calls = 8 + picks);
+           allowed |= picks (policy starts from the seed windows; train-time calls = 8 + new picks);
   round 1  HMM refitted on the observed verdicts, M1 trained with dropout
            inside the new allowed set (half random subsets, half policy-order
            prefixes).
@@ -252,14 +252,16 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         if r < rounds - 1:
             acq = Acquirer(model, hmm, cache, corpus, binary, device)
             t0 = time.time()
-            runs = acq.run_split(train_ids, "eoc", b_max, seed=seed, log=say)
-            picks = [len(runs[v]["picks"]) for v in train_ids]
+            # the policy starts from the seed windows already paid for in round 0,
+            # so every pick is a new call (tau = 0: exactly b_max new calls per video)
+            runs = acq.run_split(train_ids, "eoc", b_max, seed=seed, log=say, initial=seed_w)
+            picks = [len(set(runs[v]["picks"]) - set(seed_w)) for v in train_ids]
             for v in train_ids:
                 allowed[v] |= set(runs[v]["picks"])
                 policy_order[v] = list(seed_w) + [w for w in runs[v]["picks"] if w not in seed_w]
             calls["train_policy_picks_mean"] = float(np.mean(picks))
             calls["train_total_per_video"] = 4 + len(seed_w) + float(np.mean(picks))
-            say("policy on train: %.1f picks per video in %.0fs; train-time calls %.1f per video"
+            say("policy on train: %.1f new picks per video in %.0fs; train-time calls %.1f per video"
                 % (np.mean(picks), time.time() - t0, calls["train_total_per_video"]))
     torch.save(model.state_dict(), os.path.join(out_dir, "model.pth"))
     hmm.save(os.path.join(out_dir, "hmm_params.json"))
@@ -306,14 +308,39 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                     say("test eoc %-14s mean calls %5.2f | AP %.4f ROC %.4f within %.4f"
                         % (key, m["mean_calls"], m["pooled_ap"], m["pooled_roc"], m["within_roc"]))
         say("  %s done in %.0fs" % (policy, time.time() - t0))
-    # validation at the operating point (reference; checkpoint used the uniform mask)
-    vruns = acq.run_split(val_ids, "eoc", b_max, seed=seed)
-    val_op = evaluate_scores(corpus, "val", out_dir, "eoc_k%d" % b_max, scores_at(vruns, b_max))
+    # validation: eoc (cap, tau) grid (checkpoint itself was selected under the uniform mask).
+    # Pre-registered stop-rule selection (README section 2): at cap = b_max, tau_val = the
+    # largest tau in the grid whose validation pooled AP and ROC are both >= the tau = 0
+    # values - .005. The test number at tau_val is reported next to the tau = 0 operating point.
     op_key = "cap%d_tau0" % b_max
+    vruns = acq.run_split(val_ids, "eoc", max(int(c) for c in a.b_caps), seed=seed)
+    val_grid = {}
+    for cap in [int(c) for c in a.b_caps]:
+        for tau in [float(t) for t in a.tau_grid]:
+            stops = {v: stop_index(r, cap, tau) for v, r in vruns.items()}
+            key = "cap%d_tau%g" % (cap, tau)
+            m = evaluate_scores(corpus, "val", out_dir, "eoc_" + key, {v: vruns[v]["scores"][stops[v]] for v in vruns})
+            m["mean_calls"] = 4 + float(np.mean(list(stops.values())))
+            val_grid[key] = m
+    results["val_eoc_grid"] = val_grid
+    val_op = val_grid[op_key]
+    tau_val = 0.0
+    for tau in sorted(float(t) for t in a.tau_grid):
+        m = val_grid["cap%d_tau%g" % (b_max, tau)]
+        if m["pooled_ap"] >= val_op["pooled_ap"] - 0.005 and m["pooled_roc"] >= val_op["pooled_roc"] - 0.005:
+            tau_val = tau
+    stop_key = "cap%d_tau%g" % (b_max, tau_val)
+    results["stop_rule"] = {"tau_val": tau_val, "key": stop_key, "val": val_grid[stop_key],
+                            "test": results["eoc_grid"][stop_key]}
+    say("stop rule: tau_val %g (val calls %.2f AP %.4f ROC %.4f) -> test calls %.2f AP %.4f ROC %.4f within %.4f"
+        % (tau_val, val_grid[stop_key]["mean_calls"], val_grid[stop_key]["pooled_ap"], val_grid[stop_key]["pooled_roc"],
+           results["eoc_grid"][stop_key]["mean_calls"], results["eoc_grid"][stop_key]["pooled_ap"],
+           results["eoc_grid"][stop_key]["pooled_roc"], results["eoc_grid"][stop_key]["within_roc"]))
     test_op = dict(results["eoc_grid"][op_key])
     summary = {"corpus": corpus, "seed": seed, "ablation": ablation,
                "operating_point": {"policy": "eoc", "b_max": b_max, "tau": 0.0, "key": op_key},
-               "test": test_op, "val": val_op, "selected_epoch": fit_info["selected_epoch"],
+               "test": test_op, "val": val_op, "stop_rule": results["stop_rule"],
+               "selected_epoch": fit_info["selected_epoch"],
                "val_criterion": fit_info["val_criterion"], "history": fit_info["history"],
                "results": results, "hparams": cfg, "hmm": hmm.params(), "host": socket.gethostname()}
     with open(os.path.join(out_dir, "summary.json"), "w") as fh:

@@ -70,3 +70,11 @@
 | VIBES | Zoom In, Reason Out: Efficient Far-field Anomaly Detection in Expressway Surveillance Videos via Focused VLM Reasoning Guided by Bayesian Inference | Xiaowei Mao | 预印本 2026 | arXiv 2604.23724 | 已核实 |
 | VERA | VERA: Explainable Video Anomaly Detection via Verbalized Learning of Vision-Language Models | Muchao Ye | CVPR 2025 | arXiv 2412.01095 | 已核实 |
 | Heilbron 2018 | What do I Annotate Next? An Empirical Study of Active Learning for Action Localization | Fabian Caba Heilbron | ECCV 2018 | DOI 10.1007/978-3-030-01252-6_13 | 已核实 |
+
+## 补录（2026-09-08，规则 4 复核 `experiments/20260908_adaptive_vlm_query/REVIEW_RULE4.md` 指出的漏项）
+
+| 缩写 | 标题 | 第一作者 | 出处 | 标识 | 核实 |
+|---|---|---|---|---|---|
+| A2MT | Active Acquisition for Multimodal Temporal Data: A Challenging Decision-Making Task | Jannik Kossen | TMLR 2023 | arXiv 2211.05039 | 复核 agent 已核实（arxiv.org/pdf/2211.05039） |
+
+它做什么：多模态时序数据（Kinetics / AudioSet 分类）上逐时刻决定获取哪个模态，Perceiver IO 骨干，强化学习式的获取策略。我们哪里不同：观测是一个冻结 VLM 在时间区间上的 0/1 裁定（两粒度），任务是弱监督逐秒定位，价值非摊销、由骨干输出的期望变化给出，缺失推断用区间 HMM。论文必引。

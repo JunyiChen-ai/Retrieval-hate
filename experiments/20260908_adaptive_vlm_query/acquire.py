@@ -103,12 +103,16 @@ class Acquirer:
         return gamma[:, ieh.S_OF == 1].sum(1)
 
     # ------------------------------------------------------------ one video
-    def run_video(self, vid, policy, n_steps, rng):
-        """Greedy reveal. Returns dict(picks, scores (list over k of per-second
-        arrays), content (list), gains (eoc: max gain before each pick))."""
+    def run_video(self, vid, policy, n_steps, rng, initial=None):
+        """Greedy reveal starting from the fine windows in `initial` (already
+        observed, not counted as picks; None = only the coarse blocks).
+        Returns dict(picks, scores (list over k of per-second arrays),
+        gains (eoc: max gain before each pick))."""
         bf_true, bc = self.binary[vid]
         bf = np.full(self.k, ieh.MISSING, dtype=int)
-        unobserved = set(range(self.k))
+        for w in (initial or []):
+            bf[int(w)] = int(bf_true[int(w)])
+        unobserved = set(range(self.k)) - set(int(w) for w in (initial or []))
         f_v5, index_map, n_seconds = self.video_inputs(vid)
         window_rows = self.cache.window_rows[vid].astype(int)
         order = bit_reversal_order(self.k) if policy == "uniform" else (
@@ -179,13 +183,13 @@ class Acquirer:
             scores.append(sig[0][index_map])
         return {"picks": picks, "scores": scores, "gains": gains}
 
-    def run_split(self, vids, policy, n_steps, seed=0, log=None):
+    def run_split(self, vids, policy, n_steps, seed=0, log=None, initial=None):
         rng = np.random.RandomState(seed)
         out = {}
         for i, vid in enumerate(vids):
             if vid not in self.binary:
                 continue
-            out[vid] = self.run_video(vid, policy, n_steps, rng)
+            out[vid] = self.run_video(vid, policy, n_steps, rng, initial=initial)
             if log is not None and (i + 1) % 100 == 0:
                 log("  %s: %d/%d videos" % (policy, i + 1, len(vids)))
         return out

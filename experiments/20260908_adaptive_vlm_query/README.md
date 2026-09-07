@@ -10,7 +10,7 @@
 3. Shim et al. NeurIPS 2018（1709.05964）、Janisch et al. AAAI 2019（1711.07364）：RL 获取带显式停止动作、与分类器联合训练。差别：我们不用 RL，停止是阈值规则。
 4. VideoAgent（Wang et al. ECCV 2024，2403.10517）：看少量帧，不够再取；判断者是 LLM 自评，输出是一个答案而不是逐秒分数。
 5. VADTree（NeurIPS 2025，2510.22693）、Holmes-VAU 的 ATS（CVPR 2025，2412.06171）：粗到细地问 VLM 做异常定位，但展开由边界检测器 / 固定打分驱动，无交互、无停止规则、不报调用数–AP 曲线。
-没有已发表工作在弱监督时序定位上做逐视频、带停止规则、由训练后的定位网络驱动的 VLM 自适应查询。调研建议：按自研设计做；把 Covert 式的"一次前向给所有窗打分的获取头"作为对 EOC 两次反事实前向的消融备选（第 5 节迭代表里的备选设计已有）；论文里按"结构化观测上的动态特征选择"来写，引 DIME 的条件互信息视角解释停止阈值。调研的风险提醒：HateMM 上不训练的 HMM 只用 4 个粗块已超过 34 条，所以模块价值必须经训练后的骨干体现，臂表加 `coarse4_train`（只用粗块训练）。规则 4 复核见 `REVIEW_RULE4.md`。
+没有已发表工作在弱监督时序定位上做逐视频、带停止规则、由训练后的定位网络驱动的 VLM 自适应查询。调研建议：按自研设计做；把 Covert 式的"一次前向给所有窗打分的获取头"作为对 EOC 两次反事实前向的消融备选（第 5 节迭代表里的备选设计已有）；论文里按"结构化观测上的动态特征选择"来写，引 DIME 的条件互信息视角解释停止阈值。调研的风险提醒：HateMM 上不训练的 HMM 只用 4 个粗块已超过 34 条，所以模块价值必须经训练后的骨干体现，臂表加 `coarse4_train`（只用粗块训练）。规则 4 复核见 `REVIEW_RULE4.md`：PASS；复核补了一条调研漏项 Kossen 等 A2MT（TMLR 2023，arXiv 2211.05039：多模态时序数据上的主动获取，Perceiver IO，选的是模态、做分类）；复核指出"没问过"显式状态相对动态特征选择文献不是新的（Covert 2023 / DIME 的预测器本来就吃掩码 m），只相对修订 3 的四格编码是新的，论文按"沿用 DFS 的掩码输入惯例"写；EOC 是 DIME 目标量的非摊销变体，不写成新准则。
 
 ## 1. 机制（初版，迭代表见第 5 节）
 
@@ -29,30 +29,38 @@ z_t 为骨干完整每秒 logit（含先验与 c，五 crop 均值）；p(b_w = 
 ### 1.3 训练期预算（两轮）
 - Round 0：每个训练视频 4 粗块 + 4 个固定细窗（bit-reversal 顺序前四：0, 15, 7, 22）= 8 次；在此集合内 dropout 训练 M0；HMM 只用这些拟合。
 - 用 M0 在训练视频上跑 1.2 的策略（同 B_max，τ = 0）得到观测集 S_v；Round 1：HMM 重拟合于 S_v，M1 在 S_v 内 dropout 重训（一半随机子集、一半策略前缀）。
-- 测试：M1 从 4 粗块起跑策略。报告：训练期平均调用（8 + 平均新增）、validation 调用、测试平均调用与直方图。
+- 训练期策略从 8 个已付费的 seed 窗起跑（`Acquirer.run_split(..., initial=seed_w)`），每次 pick 都是新调用；τ = 0 时训练期预算是常数 4 + 4 + B_max = 16 次/视频，不是自适应。
+- 测试：M1 从 4 粗块起跑策略。报告：训练期平均调用（8 + 平均新增 pick）、validation 调用、测试平均调用与直方图。
 
-## 2. 预注册（搜索前写定）
+## 2. 预注册（搜索前写定；按 `REVIEW_RULE4.md` 第 4 节修正于 2026-09-08）
 
-搜索：骨干原 5 个标量，20 trial/seed，目标 test (AP+ROC)/2（在预注册操作点 B_max = 8、τ = 0 下的 test 指标），checkpoint 按 validation（同操作点）选；seed 234 → 规则 8 → 2025/3407。
+搜索：骨干原 5 个标量，20 trial/seed，目标 test (AP+ROC)/2（在预注册操作点 B_max = 8、τ = 0 下的 test 指标）；seed 234 → 规则 8 → 2025/3407。
 
-- 曲线：各策略在平均调用 {4, 6, 8, 12, 16, 22, 34} 的 AP / ROC / within（test 与 val）；自适应策略按实际平均调用画点。
-- E1 效率门：test 平均调用 ≤ 12（两语料）；备用 ≤ 16 报为主目标未达。
-- E2 效果门：三 seed 均值 pooled AP 与 ROC 两语料都 ≥ 固定 34 次的起点模型 − 该项一个 seed std。
-- E3 提升判定：同实际调用数下 EOC 比 uniform 高 ≥ .01（AP 或 ROC）两语料；不达则主张改为"预算鲁棒训练 + 停止规则"。
-- 终止条件（用户指令：迭代到 work）：E1 与 E2 同时满足。
-- 对照（同一模型、同一实际调用数）：uniform、random、entropy、localization（HMM 不确定性下降，修订 3 第 8 节已有）、conflict（|mean_t σ(content logit) − P_w|，不做反事实前向）、fixed34、coarse4。
+- **checkpoint 选择**：validation 上用固定 uniform 掩码（bit-reversal 前 B_max = 8 个细窗，`train.py` 的 `val_masks`）算 (AP+ROC)/2 选 epoch，不跑策略。这对 uniform 对照有利、对 EOC 不利，是保守方向。
+- **骨干变体钉死**（第一个 trial 前写定）：`bias_mode` / `ctx_mode` 取修订 4 P2 判定的胜者，判定依据 `experiments/20260908_c3_rev4_rev2_backbone_interval_hmm/README.md` 第 2 节，结果与日期记在下面"起点"一行。写定后不再改。
+- **起点（E2 的对照）**：待修订 4 三 seed 出来后填：路径、三 seed 均值 ± std（pooled AP、ROC，两语料）。修订 4 过 P2 → `runs/20260908_c3_rev4_rev2_backbone_interval_hmm/` 三 seed best-trial；否则修订 3 `runs/20260907_c3_rev3_interval_evidence/`：HateMM .6409 ± .0174 / .8421 ± .0080，HCS .7045 ± .0053 / .6924 ± .0089。本实验自己的 `fixed34` 行（dropout 训练的模型看全部 34 条）只是附加行，不是 E2 的对照。
+- 曲线：各策略在平均调用 {4, 6, 8, 12, 16, 22} 的 AP / ROC / within（test），34 次点 = `fixed34` 行（`eval_max_picks` = 18）；自适应策略按实际平均调用画点。
+- **E1 = 操作点定义**，不是检验：操作点 B_max = 8、τ = 0，每视频恰 4 + 8 = 12 次。效率主张 = E2（12 次不低于 34 次起点）+ 调用数–指标曲线。
+- E2 效果门：三 seed 均值 pooled AP 与 ROC 两语料都 ≥ 起点模型（上一行）− 该项起点模型的 seed std。
+- E3 提升判定：同实际调用数下 EOC 比 uniform 高 ≥ .01（AP 或 ROC）两语料。同调用数的比较规则：τ = 0 时 EOC 12 次 对 uniform k = 8（12 次）；τ > 0 时平均调用非整数，uniform 值在相邻 pick 数 {0, 2, 4, 8, 12, 18, 30} 之间线性插值。不达则主张改为"预算鲁棒训练 + 停止规则"。
+- **停止规则的 τ**（不看 test 选）：validation 上跑 EOC 到 12 步，算 (cap, τ) 网格；τ_val = cap = B_max 下 validation AP 与 ROC 都 ≥ τ = 0 值 − .005 的最大 τ（`summary.json["stop_rule"]`）。test 在 τ_val 的调用数与指标作为第二个操作点报告。停止规则可主张的条件：三 seed 均值 test 平均调用比 τ = 0 少 ≥ 1 次/视频，且 AP、ROC 均值降幅都 < .01，两语料。
+- 终止条件（用户指令：迭代到 work）：E1（操作点定义，自动成立）与 E2 同时满足；E3 是加分。
+- 对照（同一模型、同一实际调用数）：uniform、random、entropy、localization（HMM 不确定性下降，修订 3 第 8 节已有）、conflict（|mean_t σ(content logit) − P_w|，不做反事实前向，也不含 HMM 预测概率加权）、fixed34、coarse4。
 
 ## 3. 机制消融（每臂三 seed 均值 ≥ .01、两语料、同实际调用数）
 
-| arm | 回答的问题 |
-|---|---|
-| uniform_at_matched | 选窗有没有用（EOC vs 均匀） |
-| no_stop | 停止规则有没有用（τ = 0，固定预算） |
-| conflict | 反事实前向有没有必要 |
-| no_missing_state | 显式缺失状态有没有用 |
-| no_dropout | 预算鲁棒训练有没有用（训练用全 34，只测试遮蔽） |
-| round0_only | 在策略观测集上重训有没有用 |
-| train34 | 训练期诚实预算的代价（训练全 34，测试用策略） |
+评估级臂（同一模型换策略/τ）直接从 full 的 `summary.json` 读；训练级臂（no_missing_state、no_dropout、train34、round0_only、coarse4_train）按修订 3 惯例用各 seed best-trial 超参跑三 seed。
+
+| arm | 回答的问题 | 对照对象与读数 |
+|---|---|---|
+| uniform_at_matched | 选窗有没有用（EOC vs 均匀） | full 的 `curves.uniform` 在同调用数（第 2 节 E3 规则） |
+| no_stop | 停止规则有没有用 | τ = 0 操作点 vs τ_val 点（调用数与指标同时报，判定规则见第 2 节） |
+| conflict | 反事实前向有没有必要（同时去掉 HMM 预测概率加权，两处差异） | full 的 `curves.conflict` 同调用数 |
+| no_missing_state | 显式缺失状态有没有用（ℓ、P(s) 列仍隐含缺失信息） | vs full |
+| no_dropout | 预算鲁棒训练有没有用 | **vs train34**（两者只差 dropout；与 full 还差允许集合与轮数） |
+| round0_only | 在策略观测集上重训有没有用 | vs full |
+| train34 | 训练期诚实预算的代价（训练全 34，测试用策略） | vs full |
+| coarse4_train | 细窗经训练后买到了什么（训练与测试都只用 4 粗块） | 读 `metrics_test_coarse4.json`（该臂 `summary.json["test"]` 是 eoc 策略结果，不用） |
 
 ## 4. 运行
 
@@ -62,11 +70,12 @@ bash experiments/20260908_adaptive_vlm_query/launch/run_search.sh <hatemm|hatecl
 #   model_round0.pth, model_round1.pth, model.pth, hmm_params_round*.json, hmm_params.json
 #   metrics_test_{fixed34,coarse4}.json, metrics_test_<policy>_k<picks>.json（曲线）
 #   metrics_test_eoc_cap<B>_tau<τ>.json（停止规则网格，summary.json 的 results.eoc_grid 里有实际平均调用数与直方图）
+#   metrics_val_eoc_cap<B>_tau<τ>.json（validation 网格，results.val_eoc_grid；summary.json["stop_rule"] = τ_val 与其 test 数）
 #   eoc_runs_test.json（每视频选窗顺序与每步 EOC），summary.json（test = eoc, b_max 细窗, τ = 0）
 ```
 代码：`model.py`（六格证据编码，骨干变体 config bias_mode / ctx_mode）、`acquire.py`（六种策略，EOC 反事实前向）、`train.py`（两轮驱动、证据 dropout、调用计数、曲线评估）、`search.py`（同修订 3 的 5 个标量，20 trial，目标 test (AP+ROC)/2 在操作点）。共享部分已升入 `src/hier_evidence_common.py`（`ScaffoldCache.build`、`TrainDataset.mask_sampler`、`EvalDataset.masks`、`make_masked_scaffold_fn`）与 `src/interval_evidence_hmm.py`（`posterior_gamma`、`summarize_gamma`、`predictive_fine`）。
 
-消融臂表补一项：`coarse4_train`（训练与测试都只用 4 个粗块；回答"细窗经训练后到底买到了什么"）。
+消融臂表含 `coarse4_train`（训练与测试都只用 4 个粗块；回答"细窗经训练后到底买到了什么"），已列入第 3 节。
 
 ## 5. 迭代表
 
