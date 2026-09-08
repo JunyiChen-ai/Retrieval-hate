@@ -6,7 +6,8 @@ Rounds (default 2, README section 1.3):
   round 0  allowed = 4 seed fine windows (+ the 4 coarse blocks): 8 calls per
            training video; train M0 with random subsets of the allowed set;
   policy   M0 runs the eoc policy on the training videos (b_max picks each);
-           allowed |= picks (policy starts from the seed windows; train-time calls = 8 + new picks);
+           allowed |= picks (policy_start: coarse = same start state as test [iteration 1],
+           seeds = start from the seed windows [iteration 0]; train-time calls = 8 + picks outside seeds);
   round 1  HMM refitted on the observed verdicts, M1 trained with dropout
            inside the new allowed set (half random subsets, half policy-order
            prefixes).
@@ -71,7 +72,7 @@ DEFAULTS = {
     # backbone variant (revision 2 by default; revision 3 = gated / logit)
     "bias_mode": "key", "ctx_mode": "rep",
     # adaptive query module (method-level: b_max; the rest fixed grids / protocol)
-    "b_max": 8, "seed_windows": [0, 15, 7, 22], "rounds": 2, "prefix_mix": 0.5,
+    "b_max": 8, "seed_windows": [0, 15, 7, 22], "rounds": 2, "prefix_mix": 0.5, "policy_start": "coarse",
     "eval_max_picks": 18, "control_max_picks": 30,
     "budgets": [0, 2, 4, 8, 12, 18, 30], "b_caps": [4, 8, 12],
     "tau_grid": [0.0, 0.005, 0.01, 0.02, 0.03, 0.05, 0.08],
@@ -252,13 +253,20 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         if r < rounds - 1:
             acq = Acquirer(model, hmm, cache, corpus, binary, device)
             t0 = time.time()
-            # the policy starts from the seed windows already paid for in round 0,
-            # so every pick is a new call (tau = 0: exactly b_max new calls per video)
-            runs = acq.run_split(train_ids, "eoc", b_max, seed=seed, log=say, initial=seed_w)
+            # policy_start (README section 5): "coarse" (iteration 1) runs the train-time
+            # policy from the 4 coarse blocks only, exactly as at test time, so the
+            # round-1 policy prefixes have the same start state as test trajectories;
+            # "seeds" (iteration 0) starts from the seed windows. Calls are counted as
+            # 8 + picks outside the seed set either way.
+            start = str(getattr(a, "policy_start", "coarse"))
+            assert start in ("coarse", "seeds"), start
+            runs = acq.run_split(train_ids, "eoc", b_max, seed=seed, log=say,
+                                 initial=(seed_w if start == "seeds" else None))
             picks = [len(set(runs[v]["picks"]) - set(seed_w)) for v in train_ids]
             for v in train_ids:
                 allowed[v] |= set(runs[v]["picks"])
-                policy_order[v] = list(seed_w) + [w for w in runs[v]["picks"] if w not in seed_w]
+                policy_order[v] = (list(runs[v]["picks"]) if start == "coarse"
+                                   else list(seed_w) + [w for w in runs[v]["picks"] if w not in seed_w])
             calls["train_policy_picks_mean"] = float(np.mean(picks))
             calls["train_total_per_video"] = 4 + len(seed_w) + float(np.mean(picks))
             say("policy on train: %.1f new picks per video in %.0fs; train-time calls %.1f per video"
