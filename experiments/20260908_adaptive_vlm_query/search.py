@@ -51,6 +51,9 @@ def main(argv=None):
     ap.add_argument("--corpus", required=True, choices=("hatemm", "hateclipseg"))
     ap.add_argument("--seed", type=int, default=234)
     ap.add_argument("--out-root", required=True)
+    ap.add_argument("--extra-config", default=None,
+                    help="JSON dict of fixed (non-searched) settings written into every trial's hparams.json, "
+                         "e.g. the iteration's policy_start; ablation chains then replay the same settings")
     ap.add_argument("--ablation", default="full")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--num-workers", type=int, default=4)
@@ -84,8 +87,12 @@ def main(argv=None):
             budget = json.load(fh)["n_trials"]
     floor = None if args.no_within_prune else WITHIN_FLOOR[args.corpus]
 
+    extra = json.loads(args.extra_config) if args.extra_config else {}
+    assert not set(extra) & set(sample.__code__.co_names), extra
+
     def objective(trial):
-        cfg = sample(trial)
+        cfg = dict(extra)
+        cfg.update(sample(trial))
         out_dir = os.path.join(root, "trial%d" % trial.number)
         os.makedirs(out_dir, exist_ok=True)
         cfg_path = os.path.join(out_dir, "hparams.json")

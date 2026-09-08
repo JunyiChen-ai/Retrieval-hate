@@ -21,7 +21,7 @@ config="$study/trial${trial}/hparams.json"
 # stripped from the END only (a glob like %_rev[0-9]* would also eat a
 # mid-name _rev3_...).
 trainer=""
-for cand in "$experiment" "$(sed -E 's/_(v|rev)[0-9]+(_[a-z0-9]+)?$//' <<< "$experiment")"; do
+for cand in "$experiment" "$(sed -E 's/_(v|rev|it)[0-9]+(_[a-z0-9]+)?$//' <<< "$experiment")"; do
   for base in experiments archive/experiments; do
     if [[ -z "$trainer" && -f "$base/$cand/train.py" ]]; then trainer="$base/$cand/train.py"; fi
   done
