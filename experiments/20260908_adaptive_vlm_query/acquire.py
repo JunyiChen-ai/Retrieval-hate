@@ -29,7 +29,7 @@ from macilsd import align
 
 POLICIES = ("eoc", "conflict", "entropy", "localization", "uniform", "random")
 CHUNK = 12          # max candidate scaffolds per forward chunk (x5 crops)
-SEQ_T2_BUDGET = 3e7  # max (sequences x T^2) per chunk: attention scores are B x H x T x T
+SEQ_T2_BUDGET = 1e7  # max (sequences x T^2) per chunk: attention scores are B x H x T x T (1e7: two searches share one 32 GB GPU)
 
 
 def bit_reversal_order(k):
@@ -185,6 +185,8 @@ class Acquirer:
             picks.append(int(w))
             sig, csig = self.forward(f_v5, [self.cache.build(vid, bf)])
             scores.append(sig[0][index_map])
+        if torch.device(self.device).type == "cuda":
+            torch.cuda.empty_cache()        # release the per-video attention blocks (videos differ in T)
         return {"picks": picks, "scores": scores, "gains": gains}
 
     def run_split(self, vids, policy, n_steps, seed=0, log=None, initial=None):
