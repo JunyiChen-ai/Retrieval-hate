@@ -88,11 +88,16 @@ def main(argv=None):
     floor = None if args.no_within_prune else WITHIN_FLOOR[args.corpus]
 
     extra = json.loads(args.extra_config) if args.extra_config else {}
-    assert not set(extra) & set(sample.__code__.co_names), extra
+    if extra:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from train import DEFAULTS
+        assert set(extra) <= set(DEFAULTS), "extra config keys not in train.DEFAULTS: %s" % sorted(set(extra) - set(DEFAULTS))
 
     def objective(trial):
+        sampled = sample(trial)
+        assert not set(extra) & set(sampled), "extra config overrides searched hparams %s" % sorted(set(extra) & set(sampled))
         cfg = dict(extra)
-        cfg.update(sample(trial))
+        cfg.update(sampled)
         out_dir = os.path.join(root, "trial%d" % trial.number)
         os.makedirs(out_dir, exist_ok=True)
         cfg_path = os.path.join(out_dir, "hparams.json")

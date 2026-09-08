@@ -72,7 +72,7 @@ DEFAULTS = {
     # backbone variant (revision 2 by default; revision 3 = gated / logit)
     "bias_mode": "key", "ctx_mode": "rep",
     # adaptive query module (method-level: b_max; the rest fixed grids / protocol)
-    "b_max": 8, "seed_windows": [0, 15, 7, 22], "rounds": 2, "prefix_mix": 0.5,
+    "b_max": 8, "seed_windows": [0, 15, 7, 22], "rounds": 2, "prefix_mix": 0.5, "policy_start": "seeds",   # seeds = iteration 0; coarse = iteration 1+
     "eval_max_picks": 18, "control_max_picks": 30,
     "budgets": [0, 2, 4, 8, 12, 18, 30], "b_caps": [4, 8, 12],
     "tau_grid": [0.0, 0.005, 0.01, 0.02, 0.03, 0.05, 0.08],
@@ -258,7 +258,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
             # round-1 policy prefixes have the same start state as test trajectories;
             # "seeds" (iteration 0) starts from the seed windows. Calls are counted as
             # 8 + picks outside the seed set either way.
-            start = str(getattr(a, "policy_start", "seeds"))      # absent in iteration-0 configs = seeds
+            start = str(a.policy_start)
             assert start in ("coarse", "seeds"), start
             runs = acq.run_split(train_ids, "eoc", b_max, seed=seed, log=say,
                                  initial=(seed_w if start == "seeds" else None))
@@ -394,7 +394,10 @@ def main(argv=None):
     cfg = dict(DEFAULTS)
     if args.config:
         with open(args.config) as fh:
-            cfg.update(json.load(fh))
+            given = json.load(fh)
+        unknown = set(given) - set(DEFAULTS)
+        assert not unknown, "unknown config keys %s" % sorted(unknown)
+        cfg.update(given)
     train(args.corpus, args.seed, args.out_dir, cfg, args.ablation, args.device, args.num_workers)
     return 0
 
