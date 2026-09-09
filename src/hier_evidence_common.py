@@ -61,8 +61,9 @@ ELL_SCALE = float(np.log((1.0 - 1e-6) / 1e-6))   # ~13.8
 TEXT_ROOT = os.path.join(REPO_ROOT, "results", "reproduction", "features",
                          "bert_sentence_1fps")
 TEXT_DIM = 768
-SCAF_DIM = 6
-COL_ELL, COL_PS, COL_BF, COL_BC, COL_PH, COL_BLOCK = range(SCAF_DIM)
+SCAF_DIM = 7
+COL_ELL, COL_PS, COL_BF, COL_BC, COL_PH, COL_BLOCK, COL_TEXT = range(SCAF_DIM)
+LLR_SCALE = 5.0                       # per-second text log-likelihood ratio is fed as llr / LLR_SCALE (clipped to [-1, 1])
 N_INPUT_SCAF = 4                      # columns fed to the backbone (rev 1; the eliminated rev 2 used 2)
 A_EXT_DIM = align.A_DIM + TEXT_DIM + SCAF_DIM
 SCAF_OFFSET = align.A_DIM + TEXT_DIM
@@ -84,6 +85,34 @@ def load_text_rows(corpus, vid, snip):
                                     snip)
 
 
+TEXT_HATE_ROOT = os.path.join(REPO_ROOT, "data", "text_hate")
+
+
+def load_text_hate(corpus, vid):
+    """Per-second text-classifier hate probabilities (data/text_hate, built by
+    scripts/build_text_hate_scores.py): dict p_asr / w_asr / p_ocr / w_ocr, or None."""
+    p = os.path.join(TEXT_HATE_ROOT, corpus, "%s.npz" % vid)
+    if not os.path.exists(p):
+        return None
+    with np.load(p) as z:
+        return {k: np.asarray(z[k]) for k in z.files}
+
+
+def text_observations(corpus, video_ids, grid):
+    """vid -> interval_evidence_hmm.text_observation(...) (binned segment counts)
+    for the videos with any text; videos without text are absent."""
+    import interval_evidence_hmm as ieh
+    out = {}
+    for vid in video_ids:
+        arr = load_text_hate(corpus, vid)
+        if arr is None:
+            continue
+        xt = ieh.text_observation(grid, arr)
+        if xt:
+            out[vid] = xt
+    return out
+
+
 def scaffold_rows(ell, p_s, b_fine, b_coarse, p_h, block_of_window,
                   snip, n_seconds):
     """Per-row scaffold from per-fine-window arrays (K,) and per-block (J,)."""
@@ -94,7 +123,8 @@ def scaffold_rows(ell, p_s, b_fine, b_coarse, p_h, block_of_window,
     out = np.stack([rows(ell), rows(p_s), rows(b_fine),
                     np.asarray(b_coarse, np.float32)[blk],
                     np.asarray(p_h, np.float32)[blk],
-                    blk.astype(np.float32)], axis=1)
+                    blk.astype(np.float32),
+                    np.zeros(len(blk), np.float32)], axis=1)
     assert out.shape[1] == SCAF_DIM and k > 0
     return out.astype(np.float32)
 
@@ -388,7 +418,7 @@ def video_duration(corpus, vid):
     return int(align.load_audio(corpus, vid).shape[0])
 
 
-def fit_hmm(corpus, train_ids, labels, binary, model="index", **opts):
+def fit_hmm(corpus, train_ids, labels, binary, model="index", text_obs=None, **opts):
     """model = "index": src/verdict_hmm.HierEvidenceHMM (fine window t -> block
     floor(4t/30)); "interval": src/interval_evidence_hmm.IntervalEvidenceHMM
     (true verdict intervals, time-length transitions; opts =
@@ -400,16 +430,45 @@ def fit_hmm(corpus, train_ids, labels, binary, model="index", **opts):
             [binary[v] for v in pos_ids], [binary[v] for v in neg_ids])
     elif model == "interval":
         import interval_evidence_hmm
-        pos = [binary[v] + (video_duration(corpus, v),) for v in pos_ids]
-        neg = [binary[v] + (video_duration(corpus, v),) for v in neg_ids]
+        text_obs = text_obs or {}
+        pos = [binary[v] + (video_duration(corpus, v), text_obs.get(v)) for v in pos_ids]
+        neg = [binary[v] + (video_duration(corpus, v), text_obs.get(v)) for v in neg_ids]
         hmm = interval_evidence_hmm.IntervalEvidenceHMM(K_FINE, J_COARSE, **opts).fit(pos, neg)
     else:
         raise ValueError(model)
     return hmm, len(pos_ids), len(neg_ids)
 
 
+def text_llr_seconds(hmm, arrays):
+    """Per-second text log-likelihood ratio log p(x_t | s=1) / p(x_t | s=0) under the
+    HMM's fitted categorical tables (sum over the asr / ocr families; 0 where no
+    text). arrays = load_text_hate(...) dict; returns (T,) float32 or None."""
+    import interval_evidence_hmm as ieh
+    if arrays is None or not getattr(hmm, "text", False):
+        return None
+    T = len(arrays["p_asr"])
+    out = np.zeros(T, np.float64)
+    for fam in ieh.TEXT_FAMILIES:
+        p = np.asarray(arrays["p_" + fam], np.float64)
+        ok = np.isfinite(p)
+        if not ok.any():
+            continue
+        b = np.searchsorted(ieh.TEXT_BINS, np.clip(p[ok], 0.0, 1.0), side="right")
+        t = np.clip(hmm.text_emit[fam], 1e-6, 1.0)
+        out[ok] += np.log(t[1, b]) - np.log(t[0, b])
+    return (hmm.text_weight * out).astype(np.float32)
+
+
+def text_llr_rows(llr_seconds, snip):
+    """(T,) per-second LLR resampled onto the snippet rows (rows, )."""
+    if llr_seconds is None:
+        return None
+    arr = np.asarray(llr_seconds, np.float32)[:, None]
+    return align.resample_intervals(arr, align.second_bounds(arr.shape[0]), snip)[:, 0]
+
+
 def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
-                           snip, n_seconds):
+                           snip, n_seconds, text_llr=None):
     """Scaffold from per-segment posteriors of an IntervalEvidenceHMM: rows
     take the segment containing their midpoint; the block index is the coarse
     interval containing the row midpoint (no fine-window -> block table)."""
@@ -419,15 +478,19 @@ def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
     rows = lambda arr: vlm_verdict.verdict_rows(np.asarray(arr, np.float32),  # noqa: E731
                                                 snip, n_seconds)
     blk = hmm.coarse_of_rows(snip, n_seconds).astype(int)
+    tl = text_llr_rows(text_llr, snip)
+    if tl is None:
+        tl = np.zeros(len(blk), np.float32)
     out = np.stack([seg(ell_seg), seg(ps_seg), rows(b_fine),
                     np.asarray(b_coarse, np.float32)[blk],
                     np.asarray(p_h, np.float32)[blk],
-                    blk.astype(np.float32)], axis=1)
+                    blk.astype(np.float32),
+                    np.asarray(tl, np.float32)], axis=1)
     assert out.shape[1] == SCAF_DIM
     return out.astype(np.float32)
 
 
-def make_masked_scaffold_fn(hmm, binary):
+def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None):
     """Scaffold builder from a masked fine-verdict vector (interval HMM only):
     ``fn(vid, b_fine_masked, snip, n_seconds)``. Columns: ell / P(s) from the
     HMM posterior with MISSING emissions, b_fine column keeps -1 for windows
@@ -439,13 +502,14 @@ def make_masked_scaffold_fn(hmm, binary):
         if vid not in binary:
             return None
         _, bc = binary[vid]
-        p_s, p_h = hmm.posterior(b_fine_masked, bc, n_seconds)
+        p_s, p_h = hmm.posterior(b_fine_masked, bc, n_seconds, xt=(text or {}).get(vid))
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
-        return scaffold_rows_interval(hmm, ell, p_s, b_fine_masked, bc, p_h, snip, n_seconds)
+        return scaffold_rows_interval(hmm, ell, p_s, b_fine_masked, bc, p_h, snip, n_seconds,
+                                      text_llr=(text_llr or {}).get(vid))
     return fn
 
 
-def make_scaffold_fn(hmm, binary, ablation, w_fine):
+def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None):
     """Per-video scaffold builder (README dataset.py column layout).
 
     ablation mean_prior: prior / input columns use the plain mean verdict
@@ -466,7 +530,7 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine):
             return None
         bf, bc = binary[vid]
         if interval:
-            p_s, p_h = hmm.posterior(bf, bc, n_seconds, w_fine=w_fine)
+            p_s, p_h = hmm.posterior(bf, bc, n_seconds, w_fine=w_fine, xt=(text or {}).get(vid))
         else:
             p_s, p_h = hmm.posterior(bf, bc, w_fine=w_fine, **kw)
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
@@ -483,7 +547,8 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine):
         if ablation in ("raw_block_label", "mean_prior_all"):
             p_h = bc.astype(np.float32)
         if interval:
-            return scaffold_rows_interval(hmm, ell, p_s, bf, bc, p_h, snip, n_seconds)
+            return scaffold_rows_interval(hmm, ell, p_s, bf, bc, p_h, snip, n_seconds,
+                                          text_llr=(text_llr or {}).get(vid))
         return scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
                                 snip, n_seconds)
     return fn

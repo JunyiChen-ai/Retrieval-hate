@@ -74,9 +74,10 @@ def window_bags(clog, window_rows, k, topk_div):
 
 
 class Acquirer:
-    def __init__(self, model, hmm, cache, corpus, binary, device, weight="model", topk_div=16):
+    def __init__(self, model, hmm, cache, corpus, binary, device, weight="model", topk_div=16, text=None):
         self.model = model
         self.hmm = hmm
+        self.text = text or {}                    # vid -> HMM text observation (free evidence), or absent
         self.cache = cache
         self.corpus = corpus
         self.binary = binary
@@ -123,8 +124,8 @@ class Acquirer:
         return np.concatenate(outs, 0), np.concatenate(couts, 0), np.concatenate(clogs, 0)
 
     # ------------------------------------------------------------ HMM side
-    def state(self, bf, bc):
-        return self.hmm.infer(bf, bc, Tm=self.Tm)
+    def state(self, bf, bc, vid=None):
+        return self.hmm.infer(bf, bc, Tm=self.Tm, xt=self.text.get(vid))
 
     # ------------------------------------------------------------ one video
     def run_video(self, vid, policy, n_steps, rng, initial=None):
@@ -151,11 +152,11 @@ class Acquirer:
             if policy in ("uniform", "random"):
                 w = next(x for x in order if x in unobserved)
             elif policy == "entropy":
-                p = self.state(bf, bc)["p_s"]
+                p = self.state(bf, bc, vid)["p_s"]
                 u = [float(np.sum(p[self.win_segments[c]] * (1 - p[self.win_segments[c]]))) for c in cands]
                 w = cands[int(np.argmax(u))]
             elif policy == "localization":
-                st = self.state(bf, bc)
+                st = self.state(bf, bc, vid)
                 p = st["p_s"]
                 u_now = float(np.sum(p * (1 - p)))
                 pred = st["pred_fine"]
@@ -167,12 +168,12 @@ class Acquirer:
                             continue
                         bf2 = bf.copy()
                         bf2[c] = b
-                        p2 = self.state(bf2, bc)["p_s"]
+                        p2 = self.state(bf2, bc, vid)["p_s"]
                         exp_u += pb * float(np.sum(p2 * (1 - p2)))
                     if u_now - exp_u > best:
                         best, w = u_now - exp_u, c
             elif policy == "conflict":
-                p_hf = self.state(bf, bc)["p_hf"]
+                p_hf = self.state(bf, bc, vid)["p_hf"]
                 cur_c = csig[0]
                 u = []
                 for c in cands:
@@ -184,7 +185,7 @@ class Acquirer:
                 if self.weight == "model":
                     pred = window_bags(clog[0], window_rows, self.k, self.topk_div)
                 else:
-                    pred = self.state(bf, bc)["pred_fine"]
+                    pred = self.state(bf, bc, vid)["pred_fine"]
                 fa_list = []
                 for c in cands:
                     for b in (0, 1):

@@ -103,3 +103,35 @@ HateMM（trial 0 超参，uoa-lab1）：
 5. HateMM 的 .04 差距不来自 C、A 或 checkpoint 限制：五个变体在 8 次都在 .60–.64，第 1 轮同 seed 8 次点 .662、三 seed 均值 .669。共同点是**训练期每视频只见 4 个细窗**（第 1 轮 round 1 平均 11.3 个），HateMM 上细窗越多 pooled 越差（所有变体 4 次 > 8 次 > 34 条），训练时见得少、测试时给得多，模型没有学会不被细窗裁定带偏。训练期调用降到 8（E1 的训练项）在 HateMM 上代价约 .03–.04 AP。
 
 结论：8 次调用下 within 的上限（≈ .54）低于 W1 的 .562；要到 .56 以上需要 12–16 次且用 HMM 不确定性策略，或内容流本身学会视频内排序（两轮尝试——块级 MIL、窗裁定预测——都没做到）。HateMM 的 pooled 差距（.04）来自训练期细窗数从 11.3 降到 4（第 5 点）。
+
+## 7. 第 2 轮：文本证据（2026-09-10，用户裁定"换视频内监督来源"，不问自迭代）
+
+**起因**（第 6 节）：within 由裁定证据决定，VLM 细窗裁定本身 within 只有 .558，8 次调用下 within ≤ .54；训练期细窗少（4 个）在 HateMM 上代价 AP .03–.04。要另找一个**免费、逐秒、始终可用**的视频内信号。
+
+**离线核查**（`runs/20260910_online_query_within_it1/within_oracle/summary*.json`，test，各信号原样当分数）：冻结文本仇恨分类器（`cardiffnlp/twitter-roberta-base-hate-latest`，P(HATE)）在 Whisper ASR 分块上逐秒展开的分数 within HateMM .601 / HCS .555；加 PaddleOCR K30 窗文本（取二者较大）HCS .568（均值 .573）；VLM 30 细窗原样 .538 / .558，4 粗块 .547 / .473（HCS 粗块反向）。位置先验此处 .50 / .54（不用）。文本 + 4 个均匀细窗（无粗块）HCS .577、HateMM .609；再加粗块 HCS 掉到 .530（粗块把整段拉平），HateMM .622。
+
+**机制 T（文本证据流）**：
+- 缓存 `data/text_hate/<corpus>/<id>.npz`（`scripts/build_text_hate_scores.py`，PROVENANCE 在同目录）：逐秒 p_asr / p_ocr（NaN = 无文本）与权重 w = 1 / 分块（窗）覆盖秒数。0 次 VLM 调用，不读标签。
+- 区间 HMM（`src/interval_evidence_hmm.py`，`text=True`）：ASR、OCR 两个新观测族，逐秒概率分 10 档（`TEXT_BINS`），在该秒所在段按 s_g 发射（2 × 10 分类表 / 族，EM 闭式更新；负例视频计入 s = 0 行，和 r_f 同理），每条 ASR 分块 / 每个 OCR 窗总共只计一次（权重 w），`text_weight` = 1 为协议常数。`text=False` 与原模型数值完全一致（已断言）；EM 训练集对数似然逐轮单调（已断言）。VLM 裁定仍是唯一付费证据；EOC 自动在免费证据留下不确定的地方问。
+- 骨干输入：scaffold 新增第 7 列 `COL_TEXT` = 逐秒文本对数似然比 log p(x_t | s=1) / p(x_t | s=0)（用 HMM 拟合的分类表，无文本为 0），证据编码器的线性映射读 [ell, P(s), LLR / 5]（`text_input`，臂 `no_text_input`）。先验项仍是 α·ell（ell 来自含文本的 HMM 后验），方法级标量不变（α、λ_block）。
+- 窗损失（C）目标默认改为含文本的 HMM 后验 P(h_w | E ∪ b_w)（`window_target=posterior`；臂 `window_target_verdict` 回到原始裁定）。这就是新的视频内监督来源：目标由文本证据与已问裁定共同决定，而不只是单条 VLM 裁定。
+- 调用不变：训练 8、测试 8（b_max = 4）、停止点 ≤ 8。
+
+**门 T1（不训练，`text_eval.py`，`runs/20260910_online_query_within_it1/hmm_text/<corpus>/summary.json`；规则 6 复核后 ASR word 级记录先合并成句再打分，下表为重建缓存后的数字）**：HMM 后验单独当分数，test，4 粗块 + 4 均匀细窗（8 次状态）：
+
+| 语料 | 变体 | AP / ROC / within（8 次） | masked-8 logloss |
+|---|---|---|---|
+| HCS | 无文本 | .657 / .641 / .493 | .364 |
+| HCS | 文本 w 1 / 0.5 / 0.25 | .671 / .646 / .515；.674 / .653 / .510；.667 / .649 / .506 | .357 / .352 / .356 |
+| HateMM | 无文本 | .540 / .814 / .570 | .237 |
+| HateMM | 文本 w 1 / 0.5 / 0.25 | .507 / .825 / .594；.528 / .827 / .594；.539 / .825 / .582 | .262 / .237 / .235 |
+
+HCS pooled 升（w 0.5：AP +.017、ROC +.012）、within +.017；HateMM AP 持平到降（w 1 降 .033，w 0.5 降 .012，w 0.25 持平）、ROC +.011、within +.02。T1 的 within 门（HCS ≥ .56，HateMM ≥ .62）**两语料都未过**：HMM 段级后验把逐秒文本平滑掉，且粗块证据在 HCS 上反向（4 粗块单独 within .47）。逐秒 LLR 直接加进 ell 的对照（`within_oracle/summary_llr.json`，旧缓存）也只到 HCS .517 / HateMM .589。裁定：`text_weight` = 0.5（协议常数，按 T1 pooled 两语料折中选定，不搜索）；within 靠骨干 + 逐秒 LLR 输入列（训练模型历史上比 HMM 单独高 .04），预注册目标不改，直接跑训练搜索验证。
+
+**预注册**（不变）：P1 / W1 / E1 同第 2 节；搜索同第 2 节（20 trial / seed，目标 test (AP + ROC + within)/3 在 8 次点）；输出 `runs/20260910_online_query_within_it2/`。臂只作诊断：`no_text`、`no_text_input`、`window_target_verdict`。
+
+| 轮 | 改动 | 结果 | 判定与下一步 |
+|---|---|---|---|
+| 2 | 机制 T（文本证据：HMM 观测族 + 逐秒 LLR 输入列 + 后验窗目标） | 待 seed 234 两语料 | |
+
+规则 4 复核（`REVIEW_RULE4_T.md`）：PASS-with-phrasing。各部件各有先例（Dugong NeurIPS'19 的多分辨率弱源生成模型；cost-sensitive active feature acquisition：Greiner 2002 / Ji & Carin 2007 / Contardo 2016；Snorkel / linked HMM / skweak 的"外部分类器输出作 HMM 观测、EM 学发射表"），只能主张组合：异成本证据模型 + 在已含免费证据的后验上做获取 + 同一 HMM 同时给骨干输入与窗监督；不主张"首个融合文本与 VLM 证据"。仇恨视频 baseline 里没有一个把外部文本仇恨分类器的逐句 / 逐秒分数当定位证据用（MultiHateLoc 用 BERT 句向量、MM-HSD 用 Detoxify 向量都是视频级）。**待用户裁定的一点（规则 3）**：T 引入第二个冻结模型（文本仇恨分类器）的预测分数作观测；我按"观测源由发射表建模、不与 VLM 平均"判为非 ensemble，先按此跑，用户可否决。

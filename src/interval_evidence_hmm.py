@@ -51,6 +51,24 @@ Options (each a separate ablation arm of the candidate):
                        emissions and pi, unchanged L-BFGS step for the rates.
                        R = 1 is numerically identical to the model above.
 
+  text = True          (2026-09-10, module-1 iteration 2 "text evidence") a
+                       third and fourth observation family that is FREE and
+                       always available: the per-second hate probability of a
+                       frozen text classifier over the ASR chunk (family "asr")
+                       and over the OCR text of the fine window (family "ocr")
+                       covering the second (data/text_hate/<corpus>/<id>.npz).
+                       Each second's probability is binned into 10 levels
+                       (10 levels, edges TEXT_BINS) and emitted at its segment conditioned
+                       on s_g alone (categorical tables t_fam[s, bin], 2 x 10
+                       per family), weighted so that one ASR chunk / one OCR
+                       window counts once in total (weights w_t = 1 / seconds
+                       covered), tempered by text_weight (protocol constant
+                       1). Missing text (NaN) emits nothing. M-step: weighted
+                       counts by P(s_g), negatives count under s = 0 (like r_f).
+                       VLM verdicts remain the only PAID evidence; the
+                       acquisition policy asks where the free evidence leaves
+                       the output uncertain.
+
 No frame labels are used anywhere.
 """
 
@@ -126,11 +144,52 @@ def _sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
 
 
+TEXT_BINS = np.array([0.01, 0.03, 0.1, 0.3, 0.5, 0.7, 0.9, 0.97, 0.99])   # 10 levels of the text classifier's hate probability
+N_TEXT_BINS = len(TEXT_BINS) + 1
+TEXT_FAMILIES = ("asr", "ocr")
+
+
+def text_counts(grid, p, w, bins=TEXT_BINS):
+    """Weighted bin counts (G, N_TEXT_BINS) of per-second probabilities p (T,)
+    (NaN = no text) with per-second weights w (T,); second t belongs to the
+    segment containing its midpoint fraction (t + 0.5) / T."""
+    p = np.asarray(p, dtype=np.float64)
+    w = np.asarray(w, dtype=np.float64)
+    T = len(p)
+    C = np.zeros((grid["G"], N_TEXT_BINS))
+    if T == 0:
+        return C
+    frac = (np.arange(T) + 0.5) / T
+    seg = np.clip(np.searchsorted(grid["start"], frac, side="right") - 1, 0, grid["G"] - 1)
+    ok = np.isfinite(p) & (w > 0)
+    b = np.searchsorted(bins, np.clip(p[ok], 0.0, 1.0), side="right")
+    np.add.at(C, (seg[ok], b), w[ok])
+    return C
+
+
+def text_observation(grid, arrays):
+    """dict family -> (G, N_TEXT_BINS) counts from the text_hate npz arrays
+    (keys p_asr / w_asr / p_ocr / w_ocr), or None when no text at all."""
+    out = {}
+    for fam in TEXT_FAMILIES:
+        p, w = arrays.get("p_" + fam), arrays.get("w_" + fam)
+        if p is None or w is None:
+            continue
+        C = text_counts(grid, p, w)
+        if C.sum() > 0:
+            out[fam] = C
+    return out or None
+
+
 class IntervalEvidenceHMM:
     def __init__(self, k=30, j=4, positive_constraint=False, video_effect=False,
-                 normalized_time=False, regimes=1):
+                 normalized_time=False, regimes=1, text=False, text_weight=1.0):
         self.k, self.j = int(k), int(j)
         self.grid = make_grid(self.k, self.j)
+        # free text evidence families (module-1 iteration 2): categorical tables t[s, bin]
+        self.text = bool(text)
+        self.text_weight = float(text_weight)
+        self.text_emit = {fam: np.full((2, N_TEXT_BINS), 1.0 / N_TEXT_BINS) for fam in TEXT_FAMILIES}
         # normalized_time: transitions run over fractions of the video instead
         # of seconds (state persistence scales with the video's own length)
         self.normalized_time = bool(normalized_time)
@@ -177,7 +236,11 @@ class IntervalEvidenceHMM:
              "q_fine": self.q_f, "r_fine": self.r_f, "q_coarse": self.q_c,
              "r_coarse": self.r_c, "positive_constraint": self.positive_constraint,
              "video_effect": self.video_effect, "sigma": self.sigma,
-             "normalized_time": self.normalized_time, "regimes": self.R}
+             "normalized_time": self.normalized_time, "regimes": self.R,
+             "text": self.text, "text_weight": self.text_weight}
+        if self.text:
+            d["text_emit"] = {fam: self.text_emit[fam].tolist() for fam in TEXT_FAMILIES}
+            d["text_bins"] = TEXT_BINS.tolist()
         if self.R > 1:
             d.update({"pi": self.pi.tolist(), "q_fine_z": self.q_f_z.tolist(),
                       "r_fine_z": self.r_f_z.tolist(), "q_coarse_z": self.q_c_z.tolist(),
@@ -190,7 +253,9 @@ class IntervalEvidenceHMM:
     def from_params(cls, d):
         m = cls(d["k"], d["j"], d.get("positive_constraint", False),
                 d.get("video_effect", False), d.get("normalized_time", False),
-                int(d.get("regimes", 1)))
+                int(d.get("regimes", 1)), bool(d.get("text", False)), float(d.get("text_weight", 1.0)))
+        if m.text:
+            m.text_emit = {fam: np.asarray(d["text_emit"][fam], float) for fam in TEXT_FAMILIES}
         m.lam01, m.lam10 = float(d["lam01"]), float(d["lam10"])
         m.p0 = np.asarray(d["p0"], float)
         if m.R > 1:
@@ -256,8 +321,19 @@ class IntervalEvidenceHMM:
             Tm[g] = allowed[g] * P[g - 1][S_OF[:, None], S_OF[None, :]]
         return Tm
 
-    def _emissions(self, b_fine, b_coarse, delta=0.0, w_fine=1.0, w_coarse=1.0, z=0):
-        """e[g, state] = product of the OR-factors emitted at segment g under regime z."""
+    def _text_loglik(self, xt):
+        """(G, 2) tempered log-likelihood of the text observations under s = 0 / 1
+        (zeros when the model has no text or the video no text)."""
+        ll = np.zeros((self.grid["G"], 2))
+        if not self.text or not xt:
+            return ll
+        for fam, C in xt.items():
+            ll += C @ np.log(np.clip(self.text_emit[fam], 1e-6, 1.0)).T
+        return self.text_weight * ll
+
+    def _emissions(self, b_fine, b_coarse, delta=0.0, w_fine=1.0, w_coarse=1.0, z=0, xt=None):
+        """e[g, state] = product of the OR-factors emitted at segment g under regime z
+        (times the text factors of the segment, conditioned on s only)."""
         gr = self.grid
         G = gr["G"]
         e = np.ones((G, N_STATES))
@@ -277,7 +353,18 @@ class IntervalEvidenceHMM:
                 if b != MISSING:
                     p1 = np.where(HC_OF == 1, q_c, r_c)
                     e[g] *= (p1 if b else 1.0 - p1) ** w_coarse
+        if self.text and xt:
+            ll = self._text_loglik(xt)                       # (G, 2)
+            ll = ll - ll.max(1, keepdims=True)               # per-segment scale is irrelevant to the posterior
+            e *= np.exp(ll[:, S_OF])                         # (_posterior_video adds the shift back into logmarg)
         return e
+
+    def _text_shift(self, xt):
+        """Sum over segments of the per-segment maximum text log-likelihood that
+        _emissions divides out (a per-video constant)."""
+        if not (self.text and xt):
+            return 0.0
+        return float(self._text_loglik(xt).max(1).sum())
 
     @staticmethod
     def _fb(Tm, e):
@@ -320,7 +407,7 @@ class IntervalEvidenceHMM:
         return np.zeros(1), np.ones(1)
 
     def _posterior_video(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0,
-                         constrain=False, Tm=None):
+                         constrain=False, Tm=None, xt=None):
         """Mixture over (quadrature node, regime) components of (gamma, xi).
 
         Returns dict: gamma (G,8) and xi mixed over all components; post_w and
@@ -330,10 +417,11 @@ class IntervalEvidenceHMM:
         least one s = 1" when constrain), including the pi_z / node weights."""
         Tm = self._transitions(duration) if Tm is None else Tm
         deltas, wts = self._nodes()
+        shift = self._text_shift(xt)
         gammas, xis, logw, comp_delta, comp_z = [], [], [], [], []
         for z in range(self.R):
             for d, wt in zip(deltas, wts):
-                e = self._emissions(b_fine, b_coarse, d, w_fine, w_coarse, z=z)
+                e = self._emissions(b_fine, b_coarse, d, w_fine, w_coarse, z=z, xt=xt)
                 g, x, lz = self._fb(Tm, e)
                 if constrain:
                     lz0 = self._log_all_zero(Tm, e)
@@ -345,6 +433,7 @@ class IntervalEvidenceHMM:
                     m[0, 0] = False
                     x[1:, m] /= (1.0 - w0)
                     lz = lz + np.log1p(-np.exp(min(lz0 - lz, -1e-12)))
+                lz = lz + shift
                 gammas.append(g)
                 xis.append(x)
                 logw.append(np.log(wt) + np.log(self.pi[z]) + lz)
@@ -367,9 +456,10 @@ class IntervalEvidenceHMM:
                 "rho": rho, "gamma_z": gamma_z, "logmarg": float(logmarg)}
 
     # -------------------------------------------------------------------- fit
-    def _neg_loglik_z(self, bf, bc):
+    def _neg_loglik_z(self, bf, bc, xt=None):
         """Per-regime log-likelihood of a negative video (h = 0 everywhere, only
-        observed verdicts): (R,)."""
+        observed verdicts; plus the text factors under s = 0): (R,)."""
+        text_ll = float(self._text_loglik(xt)[:, 0].sum()) if (self.text and xt) else 0.0
         bf = np.asarray(bf)
         bc = np.asarray(bc)
         of = bf[bf != MISSING]
@@ -377,16 +467,20 @@ class IntervalEvidenceHMM:
         n1f, n0f = int((of == 1).sum()), int((of == 0).sum())
         n1c, n0c = int((oc == 1).sum()), int((oc == 0).sum())
         return (n1f * np.log(self.r_f_z) + n0f * np.log1p(-self.r_f_z)
-                + n1c * np.log(self.r_c_z) + n0c * np.log1p(-self.r_c_z))
+                + n1c * np.log(self.r_c_z) + n0c * np.log1p(-self.r_c_z) + text_ll)
 
     def fit(self, pos_videos, neg_videos, n_iter=30):
-        """pos/neg_videos: lists of (b_fine (k,), b_coarse (j,), duration_seconds)."""
+        """pos/neg_videos: lists of (b_fine (k,), b_coarse (j,), duration_seconds[, text
+        observation dict from text_observation() or None])."""
         gr = self.grid
         R = self.R
+        pos_videos = [tuple(v) + (None,) * (4 - len(v)) for v in pos_videos]
+        neg_videos = [tuple(v) + (None,) * (4 - len(v)) for v in neg_videos]
+        any_text = self.text and any(xt for *_, xt in pos_videos + neg_videos)
         obs_f = lambda bf: int(np.sum(np.asarray(bf) != MISSING))     # noqa: E731
         obs_c = lambda bc: int(np.sum(np.asarray(bc) != MISSING))     # noqa: E731
         neg_stats = [(int(np.sum(np.asarray(bf) == 1)), obs_f(bf),
-                      int(np.sum(np.asarray(bc) == 1)), obs_c(bc)) for bf, bc, _ in neg_videos]
+                      int(np.sum(np.asarray(bc) == 1)), obs_c(bc)) for bf, bc, _, _ in neg_videos]
         neg_f = sum(s[0] for s in neg_stats)
         neg_nf = sum(s[1] for s in neg_stats)
         neg_c = sum(s[2] for s in neg_stats)
@@ -406,15 +500,19 @@ class IntervalEvidenceHMM:
             e_delta2 = 0.0
             rho_sum = np.zeros(R)
             loglik = 0.0
-            for bf, bc, dur in pos_videos:
+            tc = {fam: np.zeros((2, N_TEXT_BINS)) + 1e-3 for fam in TEXT_FAMILIES}   # text counts by P(s)
+            for bf, bc, dur, xt in pos_videos:
                 Tm = self._transitions(dur)
-                post = self._posterior_video(bf, bc, dur, constrain=self.positive_constraint, Tm=Tm)
+                post = self._posterior_video(bf, bc, dur, constrain=self.positive_constraint, Tm=Tm, xt=xt)
                 gamma, xi = post["gamma"], post["xi"]
                 loglik += post["logmarg"]
                 rho_sum += post["rho"]
                 e_delta2 += float(np.sum(post["post_w"] * post["deltas"] ** 2))
                 ps = np.stack([gamma[:, S_OF == 0].sum(1), gamma[:, S_OF == 1].sum(1)], 1)
                 g0 += ps[0]
+                if self.text and xt:
+                    for fam, C in xt.items():
+                        tc[fam] += ps.T @ C                                   # (2, G) @ (G, bins)
                 dt = self._segment_dt(dur)[:-1]
                 for g in range(1, gr["G"]):
                     x2 = np.zeros((2, 2))
@@ -443,8 +541,11 @@ class IntervalEvidenceHMM:
                         cc[z] += rz * ph * b
             # negative videos: h = 0 everywhere; regime responsibilities in closed form
             neg_rho = np.zeros((len(neg_videos), R))
-            for i, (bf, bc, _) in enumerate(neg_videos):
-                lw = np.log(self.pi) + self._neg_loglik_z(bf, bc)
+            for i, (bf, bc, _, xt) in enumerate(neg_videos):
+                if self.text and xt:
+                    for fam, C in xt.items():
+                        tc[fam][0] += C.sum(0)
+                lw = np.log(self.pi) + self._neg_loglik_z(bf, bc, xt)
                 m = lw.max()
                 loglik += m + np.log(np.exp(lw - m).sum())
                 neg_rho[i] = np.exp(lw - m) / np.exp(lw - m).sum()
@@ -456,10 +557,13 @@ class IntervalEvidenceHMM:
             self.fit_history.append(float(loglik))
             # M-step: emissions per regime (a family with no observed verdict at
             # all keeps its parameters: nothing to estimate them from)
-            if any(obs_f(bf) for bf, _, _ in pos_videos) or neg_nf > 0:
+            if any_text:
+                for fam in TEXT_FAMILIES:
+                    self.text_emit[fam] = tc[fam] / tc[fam].sum(1, keepdims=True)
+            if any(obs_f(bf) for bf, _, _, _ in pos_videos) or neg_nf > 0:
                 self.q_f_z = cf[:, 1] / nf[:, 1]
                 self.r_f_z = (cf[:, 0] + negf_z) / (nf[:, 0] + negnf_z)
-            if any(obs_c(bc) for _, bc, _ in pos_videos) or neg_nc > 0:
+            if any(obs_c(bc) for _, bc, _, _ in pos_videos) or neg_nc > 0:
                 self.q_c_z = cc[:, 1] / nh[:, 1]
                 self.r_c_z = (cc[:, 0] + negc_z) / (nh[:, 0] + negnc_z)
             if R > 1:                                # mixture: keep emissions off exact 0 / 1 (0 * log 0 in the E-step)
@@ -487,12 +591,12 @@ class IntervalEvidenceHMM:
         return self
 
     # -------------------------------------------------------------- inference
-    def infer(self, b_fine, b_coarse, duration=1.0, w_fine=1.0, w_coarse=1.0, Tm=None):
+    def infer(self, b_fine, b_coarse, duration=1.0, w_fine=1.0, w_coarse=1.0, Tm=None, xt=None):
         """Label-free inference for one video. Returns dict: gamma (G,8) regime-
         mixed posterior, gamma_z (R,G,8), rho (R,), p_s (G,), p_hf (k,),
         p_hc (j,), pred_fine (k,) = p(b_w = 1 | observed verdicts) under the
         mixture (meaningful for unobserved w). MISSING verdicts emit nothing."""
-        post = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse, Tm=Tm)
+        post = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse, Tm=Tm, xt=xt)
         p_s, p_hf, p_hc = self.summarize_gamma(post["gamma"])
         fe = np.where(self.grid["fine_end"])[0]
         pred = np.zeros(self.k)
@@ -503,18 +607,18 @@ class IntervalEvidenceHMM:
                 "p_s": p_s, "p_hf": p_hf, "p_hc": p_hc, "pred_fine": pred,
                 "logmarg": post["logmarg"]}
 
-    def posterior(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0):
+    def posterior(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0, xt=None):
         """(segment P(s_g=1) (G,), coarse-interval P(h_j=1) (J,)). Never uses a label."""
-        gamma = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse)["gamma"]
+        gamma = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse, xt=xt)["gamma"]
         p_s = gamma[:, S_OF == 1].sum(1)
         ends = np.where(self.grid["coarse_end"])[0]
         p_h = np.array([gamma[g, HC_OF == 1].sum() for g in ends])
         return p_s, p_h
 
-    def posterior_gamma(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0):
+    def posterior_gamma(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0, xt=None):
         """Full augmented-state posterior gamma (G, 8), regime-mixed; MISSING
         verdicts emit nothing. Used by the adaptive-query module (0 labels)."""
-        return self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse)["gamma"]
+        return self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse, xt=xt)["gamma"]
 
     def summarize_gamma(self, gamma):
         """(P(s_g=1) (G,), P(h_fine_w=1) (k,), P(h_coarse_j=1) (j,)) from gamma."""

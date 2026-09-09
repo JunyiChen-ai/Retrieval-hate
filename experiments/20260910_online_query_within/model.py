@@ -2,6 +2,12 @@
 experiments/20260908_adaptive_vlm_query/model.py, experiments may not import
 each other).
 
+Module-1 iteration 2 (2026-09-10, "text evidence"): the evidence encoder's linear
+map also reads the per-second text log-likelihood ratio (scaffold column
+hc.COL_TEXT, divided by hc.LLR_SCALE and clipped to [-1, 1]) when cfg.text_input;
+arm no_text_input switches it off. The prior term stays alpha * ell, where ell now
+comes from the HMM posterior that includes the text families.
+
 Same network as candidate 3 (revision-2 backbone by default: evidence e_t in
 q/k, per-head KEY bias, video-level context c added to both streams; the
 variant is a config: cfg.bias_mode in {key, gated}, cfg.ctx_mode in {rep,
@@ -21,8 +27,8 @@ import torch.nn.functional as F
 
 import hier_evidence_common as hc
 
-N_EVID = 4     # ell, p_s, b_fine, b_coarse
-STRUCT_ARMS = ("full", "no_missing_state")
+N_EVID = 4     # ell, p_s, b_fine, b_coarse (+ the per-second text LLR column hc.COL_TEXT when text_input)
+STRUCT_ARMS = ("full", "no_missing_state", "no_text_input")
 
 
 class EvidenceEncoder(nn.Module):
@@ -30,14 +36,15 @@ class EvidenceEncoder(nn.Module):
     missing_state=True: b_fine in {-1 (not asked), 0, 1} -> 6 cells;
     False: -1 treated as 0 -> 4 cells (revision 2/3 encoder)."""
 
-    def __init__(self, hid, missing_state=True):
+    def __init__(self, hid, missing_state=True, text_input=False):
         super().__init__()
         self.missing_state = missing_state
+        self.text_input = bool(text_input)
         self.cell = nn.Embedding(6 if missing_state else 4, hid)
         nn.init.zeros_(self.cell.weight)      # starts as the linear map
-        self.lin = nn.Linear(2, hid)
+        self.lin = nn.Linear(3 if self.text_input else 2, hid)
 
-    def forward(self, evid):                       # evid: (B, T, 4), ell already / ELL_SCALE
+    def forward(self, evid, text_llr=None):        # evid: (B, T, 4), ell already / ELL_SCALE; text_llr (B, T) already / LLR_SCALE
         bf = evid[..., 2]
         bc = (evid[..., 3] > 0.5).long()
         if self.missing_state:
@@ -46,7 +53,10 @@ class EvidenceEncoder(nn.Module):
             idx = 3 * bc + fi
         else:
             idx = 2 * (bf > 0.5).long() + bc
-        return self.cell(idx) + self.lin(evid[..., :2])
+        lin_in = evid[..., :2]
+        if self.text_input:
+            lin_in = torch.cat([lin_in, text_llr[..., None]], dim=-1)
+        return self.cell(idx) + self.lin(lin_in)
 
 
 class BiasedMultiHeadAttention(nn.Module):
@@ -154,7 +164,8 @@ class ERCA(nn.Module):
         a_in = hc.SCAF_OFFSET
         self.fc_v = nn.Linear(hc.align.V_DIM, hid)
         self.fc_a = nn.Linear(a_in, hid)
-        self.enc = EvidenceEncoder(hid, missing_state=(arm != "no_missing_state"))
+        self.text_input = bool(getattr(cfg, "text_input", False)) and arm != "no_text_input"
+        self.enc = EvidenceEncoder(hid, missing_state=(arm != "no_missing_state"), text_input=self.text_input)
         bias_mode = str(getattr(cfg, "bias_mode", "key"))               # key (rev 2) | gated (rev 3)
         self.cma = EvidenceRoutedCMA(hid, nhead, ffn, dropout, bias_mode=bias_mode,
                                      qk_enc=(arm not in ("avce", "no_qk_enc")))
@@ -190,8 +201,10 @@ class ERCA(nn.Module):
         evid = f_a[..., hc.SCAF_OFFSET:hc.SCAF_OFFSET + N_EVID].clone()
         evid[..., hc.COL_ELL] = evid[..., hc.COL_ELL] / hc.ELL_SCALE     # in [-1, 1]
         ell = f_a[..., hc.SCAF_OFFSET + hc.COL_ELL:hc.SCAF_OFFSET + hc.COL_ELL + 1]
+        text_llr = torch.clamp(f_a[..., hc.SCAF_OFFSET + hc.COL_TEXT] / hc.LLR_SCALE, -1.0, 1.0)
         if self.no_verdict:
             evid = torch.zeros_like(evid)
+            text_llr = torch.zeros_like(text_llr)
         content_a = f_a[..., :hc.SCAF_OFFSET]
         h_v = self.fc_v(f_v)
         if self.concat:
@@ -199,7 +212,7 @@ class ERCA(nn.Module):
             e = None
         else:
             h_a = self.fc_a(content_a)
-            e = self.enc(evid) * mask[..., None].float()
+            e = self.enc(evid, text_llr) * mask[..., None].float()
         v_out, a_out = self.cma(h_v, h_a, e, mask)
         c = None
         if self.ctx is not None and e is not None:

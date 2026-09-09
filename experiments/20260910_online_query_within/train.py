@@ -45,6 +45,17 @@ Arms (--ablation; diagnostics only in this iteration, README section 3):
   window_target_posterior   window-loss target = HMM posterior P(h_w | E + b_w)
   fixed_uniform_train       no online acquisition: allowed = bit-reversal first
                             len(acq_epochs) windows from the start (same 8 calls)
+  window_target_verdict     window-loss target = raw cached verdict (iteration-1 default)
+  no_text                   iteration-2 text evidence off (HMM families and input column)
+  no_text_input             text in the HMM only, no per-second LLR input column
+
+Iteration 2 (README section 7, "text evidence"): the frozen text classifier's
+per-second hate probability over the ASR chunks and the OCR windows is a FREE
+observation family of the interval HMM (text=True, categorical 10-level
+emissions fitted by EM on train video labels), so ell / P(s) and the window-
+loss posterior target include it, the acquisition asks the VLM where the free
+evidence leaves the output uncertain, and the backbone's evidence encoder reads
+the per-second text LLR (hc.COL_TEXT). Calls are unchanged (8 train / 8 test).
 """
 from __future__ import annotations
 
@@ -93,13 +104,17 @@ DEFAULTS = {
     # online-query module: b_max (method-level protocol constant), acquisition schedule, dropout mix
     "b_max": 4, "acq_epochs": [1, 2, 3, 4], "prefix_mix": 0.5,   # iteration 1: events in the first epochs (README section 5)
     "ckpt_from": "after_acq",   # checkpoint eligible from epoch max(acq_epochs) + 1 on ("after_acq") or from epoch 1 ("any")
-    "eoc_weight": "model", "window_loss": True, "window_target": "verdict",
+    "eoc_weight": "model", "window_loss": True, "window_target": "posterior",   # iteration 2: text-informed posterior target
+    # iteration 2 (README section 7): free text evidence (frozen text classifier over ASR / OCR) as HMM
+    # observation families, per-second text LLR as an evidence-encoder input; text_weight is a protocol constant
+    "text": True, "text_weight": 0.5, "text_input": True,
     "eval_max_picks": 18, "control_max_picks": 30,
     "budgets": [0, 2, 4, 8, 12, 18, 30], "b_caps": [2, 4, 8],
     "tau_grid": [0.0, 0.005, 0.01, 0.02, 0.03, 0.05, 0.08],
     "policies": list(POLICIES),
 }
-TRAIN_ARMS = ("no_window_loss", "hmm_weight", "regimes3", "window_target_posterior", "fixed_uniform_train")
+TRAIN_ARMS = ("no_window_loss", "hmm_weight", "regimes3", "window_target_posterior", "window_target_verdict",
+              "fixed_uniform_train", "no_text")
 ABLATIONS = STRUCT_ARMS + TRAIN_ARMS
 
 
@@ -147,7 +162,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     a = Args(cfg)
     arm = ablation if ablation in STRUCT_ARMS else "full"
     window_loss = bool(a.window_loss) and ablation != "no_window_loss"
-    window_target = "posterior" if ablation == "window_target_posterior" else str(a.window_target)
+    window_target = {"window_target_posterior": "posterior", "window_target_verdict": "verdict"}.get(ablation, str(a.window_target))
+    use_text = bool(a.text) and ablation != "no_text"
+    text_input = use_text and bool(a.text_input) and ablation != "no_text_input"
     assert window_target in ("verdict", "posterior"), window_target
     eoc_weight = "hmm" if ablation == "hmm_weight" else str(a.eoc_weight)
     regimes = 3 if ablation == "regimes3" else int(a.regimes)
@@ -166,6 +183,13 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     if missing:
         say("ABORT: %d videos without verdicts" % len(missing))
         raise SystemExit(3)
+    # free text evidence (README section 7): HMM observations + per-second arrays for the LLR input column
+    all_ids = train_ids + val_ids + test_ids
+    grid = ieh.make_grid(K_FINE, J_COARSE)
+    text_obs = hc.text_observations(corpus, all_ids, grid) if use_text else {}
+    text_arrays = {v: hc.load_text_hate(corpus, v) for v in all_ids} if text_input else {}
+    say("text evidence: %s | videos with text %d / %d | LLR input column %s"
+        % (use_text, len(text_obs), len(all_ids), text_input))
 
     # ------------------------------------------------ allowed sets, HMM, scaffold cache
     acq_epochs = sorted(int(e) for e in a.acq_epochs)
@@ -182,23 +206,25 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
              "train_fixed_fine_per_video": 0 if online else len(acq_epochs),
              "train_total_per_video": 4 + len(acq_epochs)}
     fopts = {"normalized_time": bool(a.normalized_time), "positive_constraint": bool(a.positive_constraint),
-             "regimes": regimes}
+             "regimes": regimes, "text": use_text, "text_weight": float(a.text_weight)}
     durations = {v: hc.video_duration(corpus, v) for v in train_ids}
     state = {"hmm": None, "cache": None}
 
     def refit(tag):
         bin_train = {v: (masked(binary[v][0], allowed[v]), binary[v][1]) for v in train_ids}
-        hmm, n_pos, n_neg = hc.fit_hmm(corpus, train_ids, labels, bin_train, model="interval", **fopts)
+        hmm, n_pos, n_neg = hc.fit_hmm(corpus, train_ids, labels, bin_train, model="interval", text_obs=text_obs, **fopts)
         hmm.save(os.path.join(out_dir, "hmm_params_%s.json" % tag))
+        text_llr = ({v: hc.text_llr_seconds(hmm, text_arrays[v]) for v in all_ids if text_arrays.get(v) is not None}
+                    if text_input else {})
         say("%s: HMM fitted on %d pos / %d neg train videos with %.2f fine verdicts observed per video: %s"
             % (tag, n_pos, n_neg, np.mean([len(allowed[v]) for v in train_ids]),
                json.dumps({k: round(v, 4) for k, v in hmm.params().items() if isinstance(v, float)})))
         if state["cache"] is None:
-            state["cache"] = hc.ScaffoldCache(corpus, train_ids + val_ids + test_ids,
-                                              hc.make_scaffold_fn(hmm, binary, "full", 1.0),
-                                              masked_fn=hc.make_masked_scaffold_fn(hmm, binary))
+            state["cache"] = hc.ScaffoldCache(corpus, all_ids,
+                                              hc.make_scaffold_fn(hmm, binary, "full", 1.0, text=text_obs, text_llr=text_llr),
+                                              masked_fn=hc.make_masked_scaffold_fn(hmm, binary, text=text_obs, text_llr=text_llr))
         else:
-            state["cache"].masked_fn = hc.make_masked_scaffold_fn(hmm, binary)
+            state["cache"].masked_fn = hc.make_masked_scaffold_fn(hmm, binary, text=text_obs, text_llr=text_llr)
         state["hmm"] = hmm
 
     refit("init")
@@ -239,7 +265,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
             for w in hidden:
                 b2 = b_input.copy()
                 b2[w] = int(bf_true[w])
-                tgt[w] = float(hmm.infer(b2, bc, durations[vid])["p_hf"][w])
+                tgt[w] = float(hmm.infer(b2, bc, durations[vid], xt=text_obs.get(vid))["p_hf"][w])
         return tgt
 
     train_set = hc.TrainDataset(corpus, train_ids, labels, cache, a.max_seqlen, a.crop_repeat,
@@ -249,6 +275,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                               num_workers=num_workers, drop_last=False)
     val_loader = DataLoader(hc.EvalDataset(corpus, val_ids, cache, masks=val_masks),
                             batch_size=1, shuffle=False, num_workers=num_workers)
+    a["text_input"] = bool(text_input)          # the no_text arm builds the two-input encoder
     model = ERCA(a, a.prior_scale, arm=arm).to(device)
     criterion = nn.BCELoss()
     opt = optim.Adam(model.parameters(), lr=a.lr)
@@ -319,7 +346,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         # ---------------------------------------------- acquisition event (plan section A)
         if online and (epoch + 1) in acq_epochs:
             t1 = time.time()
-            acq = Acquirer(model, state["hmm"], cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div)
+            acq = Acquirer(model, state["hmm"], cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs)
             runs = acq.run_split(train_ids, "eoc", 1, seed=seed * 1000 + epoch, log=say,
                                  initial={v: sorted(allowed[v]) for v in train_ids})
             n_new = 0
@@ -347,8 +374,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     calls["train_fine_observed_per_video"] = float(np.mean([len(allowed[v]) for v in train_ids]))
 
     # ------------------------------------------------------------ evaluation
-    acq = Acquirer(model, hmm, cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div)
-    results = {"curves": {}, "eoc_grid": {}, "calls": calls}
+    acq = Acquirer(model, hmm, cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs)
+    results = {"curves": {}, "eoc_grid": {}, "calls": calls,
+               "text": {"hmm": use_text, "input": text_input, "videos_with_text": len(text_obs), "videos": len(all_ids)}}
     full_masks = {v: binary[v][0] for v in test_ids}
     none_masks = {v: masked(binary[v][0], []) for v in test_ids}
     for name, masks in (("fixed34", full_masks), ("coarse4", none_masks)):
