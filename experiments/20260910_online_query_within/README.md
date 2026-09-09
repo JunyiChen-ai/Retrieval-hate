@@ -70,4 +70,24 @@ python experiments/20260910_online_query_within/screen.py --seeds 234 2025 3407
 | 轮 | 改动 | 结果 | 判定与下一步 |
 |---|---|---|---|
 | 0 | 初版（1 节 A–C、E；D 关）。规则 4 复核 `REVIEW_RULE4.md`：PASS（措辞：训练期主动获取 VLM 窗裁定，先例 Melville 2004 / Saar-Tsechansky 2009 + EMOC 2014 / DIME 2024；B 不单独主张；C 写成 masked verdict prediction，先例 UniMP 2021 / Rodrigues 2018；D 写成 Dawid–Skene 式档混合的负结果）。规则 6 复核 `REVIEW_RULE6.md`：一处 must-fix（允许集合为空时 HMM 初始化把 r_f 置成 .001 而非保留初值，已改：无观测的族保留初值；R = 1 有观测时与旧代码数值完全一致）；should-fix 已做：混合版发射参数裁到 [1e-4, 1 − 1e-4]。2026-09-10 开跑：HateMM 本机（GPU 空闲），HCS uoa-lab3。 | 部分搜索（HCS 12 trial、HateMM 4 trial，`runs/20260910_online_query_within/<corpus>/seed234/`，2026-09-10 02:00–04:00 停）：HCS 8 次 AP .63–.67、within .51–.54（最好 trial 4：.6703 / .6636 / .5141）；HateMM 8 次 AP .62–.64、within .59–.62。 | 两语料都低于 P1、W1。诊断：选中的 checkpoint 全在 epoch 3–10（HCS 12 个 trial 里 11 个 ≤ 7），即第一次或第二次获取事件之前，模型训练时每视频只见过 0–1 个细窗；validation AP 在 epoch 21–50 比 epoch 1–5 低 .03–.11，第 1 轮同样如此（round-1 选中 epoch 1–8 居多），是这个骨干本身的特性：最优点在前 10 个 epoch。于是获取事件放在 5/10/15/20 全部落在模型峰值之后，A 与 C 都没有起作用；HateMM 上细窗越多越差（4 次 .655 → 34 次 .599）也是同一原因（测试时给的证据量训练时没见过）。第 1 轮改动（协议常数，不加超参）：获取事件改到 epoch 1–4 结束后各一次（allowed 集合在 epoch 5 前齐全），checkpoint 只在 epoch ≥ 5 里选（`ckpt_from=after_acq`）。 |
-| 1 | `acq_epochs=[1,2,3,4]`，checkpoint 从 epoch 5 起可选；其余同第 0 轮。输出 `runs/20260910_online_query_within_it1/`。 | 待 seed 234 两语料 | |
+| 1 | `acq_epochs=[1,2,3,4]`，checkpoint 从 epoch 5 起可选；其余同第 0 轮。输出 `runs/20260910_online_query_within_it1/`。 | seed 234。HCS（uoa-lab3，20 trial，最好 trial 14）8 次固定点 AP .6822 / ROC .6716 / within .5344；停止点 7.76 次 .6844 / .6713 / .5309；34 条 .7036 / .6947 / .5756；4 粗块 .6566 / .6441 / .4852。HateMM（本机，跑到 trial 8 时记录）最好 8 次点 .6306 / .8466 / .6074（trial 1）、.6297 / .8422 / .6192（trial 0）。 | **P1 / W1 都不过**：HCS AP −.003、ROC −.011、within −.028；HateMM AP 低 .02 以上、within 低 .014 以上。与第 1 轮同样 8 次调用的点比（三 seed 均值 HCS .675 / .670 / .521，HateMM .669 / .848 / .640）：HCS 持平（within +.013），HateMM AP 低 .04。诊断见第 6 节。 |
+
+## 6. 第 1 轮诊断（2026-09-10，seed 234，单次运行，用各语料最好 trial 的超参；`runs/20260910_online_query_within_it1/diag/<corpus>/seed234/<tag>/summary.json`）
+
+HCS（trial 14 超参，uoa-lab3）：
+
+| 变体 | 选中 epoch | 8 次 AP / ROC / within | uniform 8 次 | 34 条 |
+|---|---|---|---|---|
+| full（trial 14 原样） | 5 | .682 / .672 / .534 | .678 / .674 / .517 | .704 / .695 / .576 |
+| no_window_loss | 5 | .671 / .661 / .538 | .664 / .664 / .525 | .704 / .693 / .578 |
+| fixed_uniform_train（训练期 4 个均匀窗，不在线选） | 2 | .671 / .663 / .503 | .666 / .660 / .505 | .700 / .685 / .564 |
+| ckpt_from=any（允许在获取事件前选 checkpoint） | 3 | .674 / .659 / .511 | .672 / .668 / .518 | .702 / .691 / .576 |
+| hmm_weight（EOC 权重用 HMM 预测概率） | 5 | .660 / .657 / .503 | .669 / .668 / .510 | .704 / .697 / .570 |
+
+单次运行差异 ≈ .01 量级，只看方向：
+1. 在线选窗（A）对 within 有用（+.03，fixed_uniform_train .503 → .534），对 AP +.011；窗裁定预测损失（C）对 AP +.011，对 within 无作用（.538 → .534）。checkpoint 限制在获取事件之后是对的（ckpt_any 更差）。骨干权重比 HMM 权重好。
+2. **within 仍由裁定证据决定，不由内容流决定**：4 粗块 .485（低于 .5），8 次 .534，34 条 .576，各策略在 8 次都在 .50–.54；只有 12–16 次调用下 entropy / localization 策略到 .55–.59（trial 14：entropy 16 次 .575，no_window_loss 的 localization 12 次 .568、entropy 16 次 .592）。把预算按视频重新分配（cap 8 + τ，平均 7.4 次）也不涨 within（.530）。
+3. C 的损失在选中 checkpoint 时仍 ≈ .80（起点 .69），即到 epoch 5 内容流还没学会预测被遮蔽窗的裁定；学得下去的 trial（高 lr，损失降到 .1）pooled 更差、within 不升。原因：VLM 细窗裁定本身的 within 只有 .558，作为视频内监督目标信噪比低。
+4. 调用曲线：HCS 从 6 次起基本平（.690 → .696 到 22 次）；HateMM 细窗越多越差（trial 1：4 次 .653 → 8 次 .631 → 12 次 .636 → 34 条 .618），第 1 轮 HateMM 也如此（4 次 .676 / 34 条 .668），HateMM 的细窗裁定对 pooled 没有增益。
+
+结论：8 次调用下 within 的上限（≈ .54）低于 W1 的 .562；要到 .56 以上需要 12–16 次且用 HMM 不确定性策略，或内容流本身学会视频内排序（两轮尝试——块级 MIL、窗裁定预测——都没做到）。HateMM 的 pooled 差距（.04）由 HateMM 诊断行确定来源（待补）。
