@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-09-09 10:40 NZST**。依据：候选 3 修订 4（`experiments/20260908_c3_rev4_rev2_backbone_interval_hmm/`，`runs/20260908_c3_rev4_rev2_backbone_interval_hmm/`）P2 通过；模块一自适应 VLM 查询第 1 轮（`experiments/20260908_adaptive_vlm_query/`，commit 4f99109 起）两语料三 seed 搜索、曲线、七臂消融完成并 rsync 回本机（`runs/20260908_adaptive_vlm_query_it1/`；第 0 轮在 `runs/20260908_adaptive_vlm_query/`）。
+截至 **2026-09-10 09:45 NZST**。依据：模块一第 2 轮（单次训练在线查询 + 视频内监督，`experiments/20260910_online_query_within/`，`runs/20260910_online_query_within_it1/`，seed 234，HCS 完成、HateMM 搜索进行中，诊断单次运行已回传）P1 / W1 两语料不过，等用户裁定（实验 README 第 5–6 节）；候选 3 修订 4（`experiments/20260908_c3_rev4_rev2_backbone_interval_hmm/`，`runs/20260908_c3_rev4_rev2_backbone_interval_hmm/`）P2 通过；模块一自适应 VLM 查询第 1 轮（`experiments/20260908_adaptive_vlm_query/`，commit 4f99109 起）两语料三 seed 搜索、曲线、七臂消融完成并 rsync 回本机（`runs/20260908_adaptive_vlm_query_it1/`；第 0 轮在 `runs/20260908_adaptive_vlm_query/`）。
 
 ## 当前目标与结论
 
@@ -19,6 +19,7 @@
 | 候选 3 修订 2（`runs/20260904_evidence_guided_attention_rev2_noprune`，HCS `runs/20260904_evidence_guided_attention`） | .6678 ± .0097 / .8504 ± .0049 / .6233 ± .0150 | .6976 ± .0076 / .6843 ± .0095 / .5488 ± .0111 |
 | 候选 3 修订 3（`runs/20260907_c3_rev3_interval_evidence`） | .6409 ± .0174 / .8421 ± .0080 / .6310 ± .0101 | .7045 ± .0053 / .6924 ± .0089 / .5678 ± .0040 |
 | **候选 3 修订 4**（`runs/20260908_c3_rev4_rev2_backbone_interval_hmm`，best trial 11/6/13 与 11/19/19） | **.6630 ± .0173 / .8486 ± .0097 / .6229 ± .0168** | **.7024 ± .0080 / .6972 ± .0129 / .5630 ± .0023** |
+| 模块一第 2 轮：单次训练在线查询 + 窗裁定预测（`runs/20260910_online_query_within_it1`，seed 234，测试 8 次、训练 8 次） | .6306 / .8466 / within .6074（trial 1，搜索到 trial 16 时） | .6822 / .6716 / within .5344（trial 14）；停止点 7.76 次 .6844 / .6713 |
 | 模块一自适应查询 + 修订 4 骨干（`runs/20260908_adaptive_vlm_query_it1`，best trial 11/11/11 与 12/17/15；测试期每视频 12 次 VLM 裁定，训练期 15.3 次，全量 34） | .6674 ± .0130 / .8487 / within .6089（seed 234） | .6903 ± .0043 / .6873；validation 停止点 11.5 次 .6983 / .6871 |
 
 修订 3 消融（三 seed 均值 full − arm，AP / ROC；两语料 ≥ .01 才可主张）：两语料成立 13 组：index_hmm（HateMM .037/.020，HCS .007/.024）、no_constraint、seconds_time、no_cell、no_bias、shared_bias、no_context、mean_prior、mean_prior_all、no_block、no_prior、no_cmal、no_verdict。不成立：no_qk_enc（HCS ≈ 0）、avce（HateMM .005/.009）、key_bias（HateMM −.010）、ctx_in_rep（HateMM −.023）。机制检验：打乱证据时间对应 HateMM 掉 .012/.013/within .023，HCS 不掉；c 推断时置零两语料变化 ±.009 内。自适应查询回放（0 次新 VLM 调用）见实验 README 第 8 节。
@@ -31,6 +32,7 @@
 
 ## 下一步
 
+0. **模块一第 2 轮阻塞（2026-09-10）**：预注册 P1（pooled 不低于第 1 轮 12 次点 − std）、W1（within ≥ max(起点 + .01, 最强 baseline)：HateMM .638、HCS .562）在 8 次调用下两语料都不过。诊断（实验 README 第 6 节）：within 由裁定证据决定，内容流视频内排序为随机水平（HCS 4 粗块 .485）；HCS 8 次各策略 within ≤ .54，12–16 次的 entropy / localization 策略才到 .57–.59；HateMM 训练期细窗从 11.3 降到 4 代价 AP .03–.04。需用户裁定：放宽调用（12–16）、放宽 within 门（起点 + .01）或换视频内监督的来源。
 1. 用户裁定模块一主操作点：停止点（两语料 E1+E2 过）或固定 12 次点（HCS AP 差 .004 → 第 2 轮，候选见实验 README 第 6 节"去向"）。
 2. 论文表述：机制主张"证据决定从哪聚合"限定 HateMM；HCS 写 limitation。B.2 引 WavLM 门控相对位置偏置，融合引 Dugong / CHMM / CT-HMM / EM-MIL（修订 3 `REVIEW_RULE4.md`）；模块一引 Covert 2023 / DIME / EDDI / A2MT / VideoAgent / VADTree / Holmes-VAU / LELA / CLARA（`experiments/20260908_adaptive_vlm_query/REVIEW_RULE4.md` 第 5 节），"没问过"状态按沿用 DFS 掩码输入惯例写，EOC 按 DIME 目标量的非摊销变体写。
 3. 搜索目标继续按 test（用户裁定，不再讨论）。
