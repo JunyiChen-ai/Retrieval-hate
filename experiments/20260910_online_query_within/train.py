@@ -22,8 +22,15 @@ Training (single model, max_epoch epochs):
                window's cached verdict is revealed: allowed[v] += {w}. The HMM
                is refitted on the observed verdicts and the scaffold builder
                swapped. Train-time calls per video = 4 + len(acq_epochs).
+               Iteration 1 (README section 5): acq_epochs = [1, 2, 3, 4], so
+               the allowed sets are complete before the backbone peaks (this
+               backbone's validation optimum is at epoch 1-10; iteration 0's
+               events at 5/10/15/20 came after it and every trial's checkpoint
+               had trained with <= 1 fine window per video).
 Checkpoint: validation (AP + ROC + within) / 3 with the deterministic uniform
-mask of b_max windows (bit-reversal order), never the policy, never test.
+mask of b_max windows (bit-reversal order), never the policy, never test;
+epochs before the last acquisition event are not eligible (ckpt_from =
+"after_acq"), so the selected model has trained on the complete allowed sets.
 Evaluation on test (shared evaluator): fixed34, coarse4, every policy at fine-
 pick budgets, eoc under the (cap, tau) grid with realized calls;
 summary["test"] = eoc at the pre-registered operating point (b_max = 4 fine
@@ -84,7 +91,8 @@ DEFAULTS = {
     "fusion": "interval", "normalized_time": True, "positive_constraint": True, "regimes": 1,
     "bias_mode": "key", "ctx_mode": "rep",
     # online-query module: b_max (method-level protocol constant), acquisition schedule, dropout mix
-    "b_max": 4, "acq_epochs": [5, 10, 15, 20], "prefix_mix": 0.5,
+    "b_max": 4, "acq_epochs": [1, 2, 3, 4], "prefix_mix": 0.5,   # iteration 1: events in the first epochs (README section 5)
+    "ckpt_from": "after_acq",   # checkpoint eligible from epoch max(acq_epochs) + 1 on ("after_acq") or from epoch 1 ("any")
     "eoc_weight": "model", "window_loss": True, "window_target": "verdict",
     "eval_max_picks": 18, "control_max_picks": 30,
     "budgets": [0, 2, 4, 8, 12, 18, 30], "b_caps": [2, 4, 8],
@@ -247,6 +255,8 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=a.sched_tmax)
     best, best_state, best_epoch, history = -1.0, None, -1, []
     acq_log = []
+    assert str(a.ckpt_from) in ("after_acq", "any"), a.ckpt_from
+    ckpt_from = (max(acq_epochs) + 1 if (online and str(a.ckpt_from) == "after_acq") else 1)
     for epoch in range(a.max_epoch):
         t0 = time.time()
         model.train()
@@ -303,7 +313,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         say("epoch %2d | cls %.4f | cma %.4f | block %.4f | window %.4f | fine/video %.2f | val AP %.4f ROC %.4f within %.4f | %.0fs"
             % (epoch + 1, tot[0], tot[1], tot[2], tot[3], history[-1]["fine_observed_per_video"],
                vm["pooled_ap"], vm["pooled_roc"], vm["within_roc"], time.time() - t0))
-        if crit > best:
+        if crit > best and epoch + 1 >= ckpt_from:
             best, best_epoch = crit, epoch + 1
             best_state = copy.deepcopy(model.state_dict())
         # ---------------------------------------------- acquisition event (plan section A)
