@@ -34,6 +34,22 @@ Options (each a separate ablation arm of the candidate):
                        video, integrated by 5-point Gauss-Hermite quadrature;
                        sigma estimated in EM (r_f, r_c updated by the same
                        counts as without the effect: approximate M-step).
+                       Diverged in revision 3 (README section 4.1); kept for
+                       the record only.
+  regimes = R > 1      (2026-09-10, module-1 iteration 2) video-level
+                       reliability mixture: a latent z_v in {0..R-1} per video
+                       with its own emission parameters (q_f, r_f, q_c, r_c)^z
+                       and mixing weights pi_z; rates, p0 shared. Verdicts of a
+                       video are conditionally independent given (s, z_v), so
+                       the video-level correlation of VLM errors (a video is
+                       rated all-hate or all-benign as a whole) is modelled
+                       instead of assumed away. Exact inference: one
+                       forward-backward per regime, mixed by the regime's
+                       marginal likelihood times pi_z. EM: regime
+                       responsibilities per video (positive AND negative
+                       videos), closed-form weighted-count M-step for the
+                       emissions and pi, unchanged L-BFGS step for the rates.
+                       R = 1 is numerically identical to the model above.
 
 No frame labels are used anywhere.
 """
@@ -112,7 +128,7 @@ def _sigmoid(x):
 
 class IntervalEvidenceHMM:
     def __init__(self, k=30, j=4, positive_constraint=False, video_effect=False,
-                 normalized_time=False):
+                 normalized_time=False, regimes=1):
         self.k, self.j = int(k), int(j)
         self.grid = make_grid(self.k, self.j)
         # normalized_time: transitions run over fractions of the video instead
@@ -120,30 +136,74 @@ class IntervalEvidenceHMM:
         self.normalized_time = bool(normalized_time)
         self.lam01, self.lam10 = (2.0, 2.0) if normalized_time else (0.02, 0.02)
         self.p0 = np.array([0.6, 0.4])
-        self.q_f, self.r_f, self.q_c, self.r_c = 0.8, 0.1, 0.9, 0.2
+        self.R = int(regimes)
+        assert self.R >= 1
+        # per-regime emission parameters (regime 0 = nominal; R = 1 is the plain model)
+        if self.R == 1:
+            init = [(0.8, 0.1, 0.9, 0.2)]
+        else:
+            init = [(0.8, 0.1, 0.9, 0.2),          # nominal
+                    (0.9, 0.6, 0.95, 0.7),         # over-firing: high false-alarm rates
+                    (0.3, 0.05, 0.4, 0.1)]         # under-firing: low hit rates
+            init = (init + [(0.8, 0.1, 0.9, 0.2)] * self.R)[:self.R]
+        self.q_f_z = np.array([x[0] for x in init])
+        self.r_f_z = np.array([x[1] for x in init])
+        self.q_c_z = np.array([x[2] for x in init])
+        self.r_c_z = np.array([x[3] for x in init])
+        self.pi = np.ones(self.R) / self.R if self.R == 1 else np.array(([0.6] + [0.4 / (self.R - 1)] * (self.R - 1)))
         self.positive_constraint = bool(positive_constraint)
         self.video_effect = bool(video_effect)
         self.sigma = 0.5 if video_effect else 0.0
+        self.fit_history = []
         self._masks = self._build_masks()
+
+    # scalar views of regime 0 (the plain model's parameters; setters require R = 1)
+    def _get(self, name):
+        return float(getattr(self, name + "_z")[0])
+
+    def _set(self, name, value):
+        assert self.R == 1, "set %s_z for a regime mixture" % name
+        getattr(self, name + "_z")[0] = float(value)
+
+    q_f = property(lambda self: self._get("q_f"), lambda self, v: self._set("q_f", v))
+    r_f = property(lambda self: self._get("r_f"), lambda self, v: self._set("r_f", v))
+    q_c = property(lambda self: self._get("q_c"), lambda self, v: self._set("q_c", v))
+    r_c = property(lambda self: self._get("r_c"), lambda self, v: self._set("r_c", v))
 
     # ------------------------------------------------------------------ model
     def params(self):
-        return {"model": "interval", "k": self.k, "j": self.j,
-                "lam01": self.lam01, "lam10": self.lam10, "p0": self.p0.tolist(),
-                "q_fine": self.q_f, "r_fine": self.r_f, "q_coarse": self.q_c,
-                "r_coarse": self.r_c, "positive_constraint": self.positive_constraint,
-                "video_effect": self.video_effect, "sigma": self.sigma,
-                "normalized_time": self.normalized_time}
+        d = {"model": "interval", "k": self.k, "j": self.j,
+             "lam01": self.lam01, "lam10": self.lam10, "p0": self.p0.tolist(),
+             "q_fine": self.q_f, "r_fine": self.r_f, "q_coarse": self.q_c,
+             "r_coarse": self.r_c, "positive_constraint": self.positive_constraint,
+             "video_effect": self.video_effect, "sigma": self.sigma,
+             "normalized_time": self.normalized_time, "regimes": self.R}
+        if self.R > 1:
+            d.update({"pi": self.pi.tolist(), "q_fine_z": self.q_f_z.tolist(),
+                      "r_fine_z": self.r_f_z.tolist(), "q_coarse_z": self.q_c_z.tolist(),
+                      "r_coarse_z": self.r_c_z.tolist()})
+        if self.fit_history:
+            d["fit_loglik"] = [float(x) for x in self.fit_history]
+        return d
 
     @classmethod
     def from_params(cls, d):
         m = cls(d["k"], d["j"], d.get("positive_constraint", False),
-                d.get("video_effect", False), d.get("normalized_time", False))
+                d.get("video_effect", False), d.get("normalized_time", False),
+                int(d.get("regimes", 1)))
         m.lam01, m.lam10 = float(d["lam01"]), float(d["lam10"])
         m.p0 = np.asarray(d["p0"], float)
-        m.q_f, m.r_f = float(d["q_fine"]), float(d["r_fine"])
-        m.q_c, m.r_c = float(d["q_coarse"]), float(d["r_coarse"])
+        if m.R > 1:
+            m.pi = np.asarray(d["pi"], float)
+            m.q_f_z = np.asarray(d["q_fine_z"], float)
+            m.r_f_z = np.asarray(d["r_fine_z"], float)
+            m.q_c_z = np.asarray(d["q_coarse_z"], float)
+            m.r_c_z = np.asarray(d["r_coarse_z"], float)
+        else:
+            m.q_f, m.r_f = float(d["q_fine"]), float(d["r_fine"])
+            m.q_c, m.r_c = float(d["q_coarse"]), float(d["r_coarse"])
         m.sigma = float(d.get("sigma", 0.0))
+        m.fit_history = [float(x) for x in d.get("fit_loglik", [])]
         return m
 
     def save(self, path):
@@ -196,25 +256,26 @@ class IntervalEvidenceHMM:
             Tm[g] = allowed[g] * P[g - 1][S_OF[:, None], S_OF[None, :]]
         return Tm
 
-    def _emissions(self, b_fine, b_coarse, delta=0.0, w_fine=1.0, w_coarse=1.0):
-        """e[g, state] = product of the OR-factors emitted at segment g."""
+    def _emissions(self, b_fine, b_coarse, delta=0.0, w_fine=1.0, w_coarse=1.0, z=0):
+        """e[g, state] = product of the OR-factors emitted at segment g under regime z."""
         gr = self.grid
         G = gr["G"]
         e = np.ones((G, N_STATES))
-        r_f = _sigmoid(_logit(self.r_f) + delta) if delta else self.r_f
-        r_c = _sigmoid(_logit(self.r_c) + delta) if delta else self.r_c
+        q_f, q_c = self.q_f_z[z], self.q_c_z[z]
+        r_f = _sigmoid(_logit(self.r_f_z[z]) + delta) if delta else self.r_f_z[z]
+        r_c = _sigmoid(_logit(self.r_c_z[z]) + delta) if delta else self.r_c_z[z]
         b_fine = np.asarray(b_fine)
         b_coarse = np.asarray(b_coarse)
         for g in range(G):
             if gr["fine_end"][g] and w_fine > 0:
                 b = int(b_fine[gr["fine_of"][g]])
                 if b != MISSING:
-                    p1 = np.where(HF_OF == 1, self.q_f, r_f)
+                    p1 = np.where(HF_OF == 1, q_f, r_f)
                     e[g] *= (p1 if b else 1.0 - p1) ** w_fine
             if gr["coarse_end"][g] and w_coarse > 0:
                 b = int(b_coarse[gr["coarse_of"][g]])
                 if b != MISSING:
-                    p1 = np.where(HC_OF == 1, self.q_c, r_c)
+                    p1 = np.where(HC_OF == 1, q_c, r_c)
                     e[g] *= (p1 if b else 1.0 - p1) ** w_coarse
         return e
 
@@ -260,68 +321,98 @@ class IntervalEvidenceHMM:
 
     def _posterior_video(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0,
                          constrain=False, Tm=None):
-        """Mixture over quadrature nodes of (gamma, xi); also node weights."""
+        """Mixture over (quadrature node, regime) components of (gamma, xi).
+
+        Returns dict: gamma (G,8) and xi mixed over all components; post_w and
+        deltas per component (for the video-effect sigma step); rho (R,) regime
+        responsibilities; gamma_z (R,G,8) node-mixed posterior per regime;
+        logmarg = log marginal likelihood of the video (conditional on "at
+        least one s = 1" when constrain), including the pi_z / node weights."""
         Tm = self._transitions(duration) if Tm is None else Tm
         deltas, wts = self._nodes()
-        gammas, xis, logZs, logZ0s = [], [], [], []
-        for d in deltas:
-            e = self._emissions(b_fine, b_coarse, d, w_fine, w_coarse)
-            g, x, lz = self._fb(Tm, e)
-            gammas.append(g)
-            xis.append(x)
-            logZs.append(lz)
-            logZ0s.append(self._log_all_zero(Tm, e) if constrain else -np.inf)
-        logZs = np.asarray(logZs)
-        logZ0s = np.asarray(logZ0s)
-        if constrain:
-            # remove the all-zero path from every node's posterior
-            for n in range(len(deltas)):
-                w0 = np.exp(logZ0s[n] - logZs[n])
-                w0 = min(w0, 1.0 - 1e-9)
-                gammas[n][:, 0] = (gammas[n][:, 0] - w0) / (1.0 - w0)
-                gammas[n][:, 1:] /= (1.0 - w0)
-                xis[n][1:, 0, 0] = (xis[n][1:, 0, 0] - w0) / (1.0 - w0)
-                m = np.ones((N_STATES, N_STATES), bool)
-                m[0, 0] = False
-                xis[n][1:, m] /= (1.0 - w0)
-            logmarg = logZs + np.log1p(-np.exp(np.minimum(logZ0s - logZs, -1e-12)))
-        else:
-            logmarg = logZs
-        lw = np.log(wts) + logmarg
-        lw -= lw.max()
-        post_w = np.exp(lw) / np.exp(lw).sum()
-        gamma = sum(p * g for p, g in zip(post_w, gammas))
+        gammas, xis, logw, comp_delta, comp_z = [], [], [], [], []
+        for z in range(self.R):
+            for d, wt in zip(deltas, wts):
+                e = self._emissions(b_fine, b_coarse, d, w_fine, w_coarse, z=z)
+                g, x, lz = self._fb(Tm, e)
+                if constrain:
+                    lz0 = self._log_all_zero(Tm, e)
+                    w0 = min(np.exp(lz0 - lz), 1.0 - 1e-9)
+                    g[:, 0] = (g[:, 0] - w0) / (1.0 - w0)
+                    g[:, 1:] /= (1.0 - w0)
+                    x[1:, 0, 0] = (x[1:, 0, 0] - w0) / (1.0 - w0)
+                    m = np.ones((N_STATES, N_STATES), bool)
+                    m[0, 0] = False
+                    x[1:, m] /= (1.0 - w0)
+                    lz = lz + np.log1p(-np.exp(min(lz0 - lz, -1e-12)))
+                gammas.append(g)
+                xis.append(x)
+                logw.append(np.log(wt) + np.log(self.pi[z]) + lz)
+                comp_delta.append(d)
+                comp_z.append(z)
+        logw = np.asarray(logw)
+        lmax = logw.max()
+        logmarg = lmax + np.log(np.exp(logw - lmax).sum())
+        post_w = np.exp(logw - logmarg)
+        gamma = np.clip(sum(p * g for p, g in zip(post_w, gammas)), 0.0, 1.0)
         xi = sum(p * x for p, x in zip(post_w, xis))
-        gamma = np.clip(gamma, 0.0, 1.0)
-        return gamma, xi, post_w, deltas
+        comp_z = np.asarray(comp_z)
+        rho = np.array([post_w[comp_z == z].sum() for z in range(self.R)])
+        gamma_z = np.zeros((self.R, gamma.shape[0], N_STATES))
+        for z in range(self.R):
+            idx = np.where(comp_z == z)[0]
+            wz = post_w[idx] / max(rho[z], 1e-300)
+            gamma_z[z] = np.clip(sum(wz[i] * gammas[j] for i, j in enumerate(idx)), 0.0, 1.0)
+        return {"gamma": gamma, "xi": xi, "post_w": post_w, "deltas": np.asarray(comp_delta),
+                "rho": rho, "gamma_z": gamma_z, "logmarg": float(logmarg)}
 
     # -------------------------------------------------------------------- fit
+    def _neg_loglik_z(self, bf, bc):
+        """Per-regime log-likelihood of a negative video (h = 0 everywhere, only
+        observed verdicts): (R,)."""
+        bf = np.asarray(bf)
+        bc = np.asarray(bc)
+        of = bf[bf != MISSING]
+        oc = bc[bc != MISSING]
+        n1f, n0f = int((of == 1).sum()), int((of == 0).sum())
+        n1c, n0c = int((oc == 1).sum()), int((oc == 0).sum())
+        return (n1f * np.log(self.r_f_z) + n0f * np.log1p(-self.r_f_z)
+                + n1c * np.log(self.r_c_z) + n0c * np.log1p(-self.r_c_z))
+
     def fit(self, pos_videos, neg_videos, n_iter=30):
         """pos/neg_videos: lists of (b_fine (k,), b_coarse (j,), duration_seconds)."""
         gr = self.grid
-        k, j = self.k, self.j
+        R = self.R
         obs_f = lambda bf: int(np.sum(np.asarray(bf) != MISSING))     # noqa: E731
         obs_c = lambda bc: int(np.sum(np.asarray(bc) != MISSING))     # noqa: E731
-        neg_f = sum(int(np.sum(np.asarray(bf) == 1)) for bf, _, _ in neg_videos)
-        neg_c = sum(int(np.sum(np.asarray(bc) == 1)) for _, bc, _ in neg_videos)
-        neg_nf = sum(obs_f(bf) for bf, _, _ in neg_videos)
-        neg_nc = sum(obs_c(bc) for _, bc, _ in neg_videos)
-        if neg_videos:
-            self.r_f = (neg_f + 1e-3) / max(neg_nf, 1)
-            self.r_c = (neg_c + 1e-3) / max(neg_nc, 1)
+        neg_stats = [(int(np.sum(np.asarray(bf) == 1)), obs_f(bf),
+                      int(np.sum(np.asarray(bc) == 1)), obs_c(bc)) for bf, bc, _ in neg_videos]
+        neg_f = sum(s[0] for s in neg_stats)
+        neg_nf = sum(s[1] for s in neg_stats)
+        neg_c = sum(s[2] for s in neg_stats)
+        neg_nc = sum(s[3] for s in neg_stats)
+        if neg_videos and neg_nf > 0:          # a family with no observed verdict keeps its init (rule-6 must-fix)
+            self.r_f_z[0] = (neg_f + 1e-3) / neg_nf
+        if neg_videos and neg_nc > 0:
+            self.r_c_z[0] = (neg_c + 1e-3) / neg_nc
+        self.fit_history = []
         for _ in range(n_iter):
             g0 = np.zeros(2) + 1e-3
-            nf = np.zeros(2) + 1e-3      # observed fine verdicts by P(h_fine)
-            cf = np.zeros(2) + 1e-3      # ... that were 1
-            nh = np.zeros(2) + 1e-3      # observed coarse verdicts by P(h_coarse)
-            cc = np.zeros(2) + 1e-3
+            nf = np.zeros((R, 2)) + 1e-3      # observed fine verdicts by P(h_fine), per regime
+            cf = np.zeros((R, 2)) + 1e-3      # ... that were 1
+            nh = np.zeros((R, 2)) + 1e-3      # observed coarse verdicts by P(h_coarse)
+            cc = np.zeros((R, 2)) + 1e-3
             trans = []               # (dt, xi_s (2x2)) per gap, for the rate M-step
             e_delta2 = 0.0
+            rho_sum = np.zeros(R)
+            loglik = 0.0
             for bf, bc, dur in pos_videos:
                 Tm = self._transitions(dur)
-                gamma, xi, pw, deltas = self._posterior_video(
-                    bf, bc, dur, constrain=self.positive_constraint, Tm=Tm)
-                e_delta2 += float(np.sum(pw * deltas ** 2))
+                post = self._posterior_video(bf, bc, dur, constrain=self.positive_constraint, Tm=Tm)
+                gamma, xi = post["gamma"], post["xi"]
+                loglik += post["logmarg"]
+                rho_sum += post["rho"]
+                e_delta2 += float(np.sum(post["post_w"] * post["deltas"] ** 2))
                 ps = np.stack([gamma[:, S_OF == 0].sum(1), gamma[:, S_OF == 1].sum(1)], 1)
                 g0 += ps[0]
                 dt = self._segment_dt(dur)[:-1]
@@ -333,26 +424,51 @@ class IntervalEvidenceHMM:
                     trans.append((dt[g - 1], x2))
                 bf = np.asarray(bf)
                 bc = np.asarray(bc)
-                for g in np.where(gr["fine_end"])[0]:
-                    b = int(bf[gr["fine_of"][g]])
-                    if b == MISSING:
-                        continue
-                    ph = np.array([gamma[g, HF_OF == 0].sum(), gamma[g, HF_OF == 1].sum()])
-                    nf += ph
-                    cf += ph * b
-                for g in np.where(gr["coarse_end"])[0]:
-                    b = int(bc[gr["coarse_of"][g]])
-                    if b == MISSING:
-                        continue
-                    ph = np.array([gamma[g, HC_OF == 0].sum(), gamma[g, HC_OF == 1].sum()])
-                    nh += ph
-                    cc += ph * b
-            # M-step: emissions (negative videos: h = 0 everywhere)
-            self.q_f = float(cf[1] / nf[1])
-            self.q_c = float(cc[1] / nh[1])
-            self.r_f = float((cf[0] + neg_f) / (nf[0] + neg_nf))
-            self.r_c = float((cc[0] + neg_c) / (nh[0] + neg_nc))
+                for z in range(R):
+                    gz = post["gamma_z"][z]
+                    rz = post["rho"][z]
+                    for g in np.where(gr["fine_end"])[0]:
+                        b = int(bf[gr["fine_of"][g]])
+                        if b == MISSING:
+                            continue
+                        ph = np.array([gz[g, HF_OF == 0].sum(), gz[g, HF_OF == 1].sum()])
+                        nf[z] += rz * ph
+                        cf[z] += rz * ph * b
+                    for g in np.where(gr["coarse_end"])[0]:
+                        b = int(bc[gr["coarse_of"][g]])
+                        if b == MISSING:
+                            continue
+                        ph = np.array([gz[g, HC_OF == 0].sum(), gz[g, HC_OF == 1].sum()])
+                        nh[z] += rz * ph
+                        cc[z] += rz * ph * b
+            # negative videos: h = 0 everywhere; regime responsibilities in closed form
+            neg_rho = np.zeros((len(neg_videos), R))
+            for i, (bf, bc, _) in enumerate(neg_videos):
+                lw = np.log(self.pi) + self._neg_loglik_z(bf, bc)
+                m = lw.max()
+                loglik += m + np.log(np.exp(lw - m).sum())
+                neg_rho[i] = np.exp(lw - m) / np.exp(lw - m).sum()
+            ns = np.asarray(neg_stats, dtype=float).reshape(-1, 4)
+            negf_z = neg_rho.T @ ns[:, 0] if len(neg_videos) else np.zeros(R)
+            negnf_z = neg_rho.T @ ns[:, 1] if len(neg_videos) else np.zeros(R)
+            negc_z = neg_rho.T @ ns[:, 2] if len(neg_videos) else np.zeros(R)
+            negnc_z = neg_rho.T @ ns[:, 3] if len(neg_videos) else np.zeros(R)
+            self.fit_history.append(float(loglik))
+            # M-step: emissions per regime (a family with no observed verdict at
+            # all keeps its parameters: nothing to estimate them from)
+            if any(obs_f(bf) for bf, _, _ in pos_videos) or neg_nf > 0:
+                self.q_f_z = cf[:, 1] / nf[:, 1]
+                self.r_f_z = (cf[:, 0] + negf_z) / (nf[:, 0] + negnf_z)
+            if any(obs_c(bc) for _, bc, _ in pos_videos) or neg_nc > 0:
+                self.q_c_z = cc[:, 1] / nh[:, 1]
+                self.r_c_z = (cc[:, 0] + negc_z) / (nh[:, 0] + negnc_z)
+            if R > 1:                                # mixture: keep emissions off exact 0 / 1 (0 * log 0 in the E-step)
+                for name in ("q_f_z", "r_f_z", "q_c_z", "r_c_z"):
+                    setattr(self, name, np.clip(getattr(self, name), 1e-4, 1.0 - 1e-4))
             self.p0 = g0 / g0.sum()
+            if R > 1:
+                tot = rho_sum + neg_rho.sum(0)
+                self.pi = tot / tot.sum()
             if self.video_effect:
                 self.sigma = float(np.sqrt(max(e_delta2 / max(len(pos_videos), 1), 1e-6)))
             # M-step: rates by L-BFGS on the expected complete-data log-likelihood
@@ -371,19 +487,34 @@ class IntervalEvidenceHMM:
         return self
 
     # -------------------------------------------------------------- inference
+    def infer(self, b_fine, b_coarse, duration=1.0, w_fine=1.0, w_coarse=1.0, Tm=None):
+        """Label-free inference for one video. Returns dict: gamma (G,8) regime-
+        mixed posterior, gamma_z (R,G,8), rho (R,), p_s (G,), p_hf (k,),
+        p_hc (j,), pred_fine (k,) = p(b_w = 1 | observed verdicts) under the
+        mixture (meaningful for unobserved w). MISSING verdicts emit nothing."""
+        post = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse, Tm=Tm)
+        p_s, p_hf, p_hc = self.summarize_gamma(post["gamma"])
+        fe = np.where(self.grid["fine_end"])[0]
+        pred = np.zeros(self.k)
+        for z in range(self.R):
+            phz = np.array([post["gamma_z"][z][g, HF_OF == 1].sum() for g in fe])
+            pred += post["rho"][z] * (self.q_f_z[z] * phz + self.r_f_z[z] * (1.0 - phz))
+        return {"gamma": post["gamma"], "gamma_z": post["gamma_z"], "rho": post["rho"],
+                "p_s": p_s, "p_hf": p_hf, "p_hc": p_hc, "pred_fine": pred,
+                "logmarg": post["logmarg"]}
+
     def posterior(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0):
         """(segment P(s_g=1) (G,), coarse-interval P(h_j=1) (J,)). Never uses a label."""
-        gamma, _, _, _ = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse)
+        gamma = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse)["gamma"]
         p_s = gamma[:, S_OF == 1].sum(1)
         ends = np.where(self.grid["coarse_end"])[0]
         p_h = np.array([gamma[g, HC_OF == 1].sum() for g in ends])
         return p_s, p_h
 
     def posterior_gamma(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0):
-        """Full augmented-state posterior gamma (G, 8); MISSING verdicts emit
-        nothing. Used by the adaptive-query module (0 labels)."""
-        gamma, _, _, _ = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse)
-        return gamma
+        """Full augmented-state posterior gamma (G, 8), regime-mixed; MISSING
+        verdicts emit nothing. Used by the adaptive-query module (0 labels)."""
+        return self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse)["gamma"]
 
     def summarize_gamma(self, gamma):
         """(P(s_g=1) (G,), P(h_fine_w=1) (k,), P(h_coarse_j=1) (j,)) from gamma."""
@@ -395,8 +526,10 @@ class IntervalEvidenceHMM:
         return p_s, p_hf, p_hc
 
     def predictive_fine(self, gamma):
-        """p(b_w = 1 | observed verdicts) for every fine window w (k,):
-        q_f * P(h_w=1) + r_f * (1 - P(h_w=1)). Meaningful for unobserved w."""
+        """p(b_w = 1 | observed verdicts) for every fine window w (k,) from a
+        plain (R = 1) posterior gamma: q_f * P(h_w=1) + r_f * (1 - P(h_w=1)).
+        Regime mixtures need the per-regime posteriors: use infer()["pred_fine"]."""
+        assert self.R == 1, "predictive_fine(gamma) is the R = 1 formula; use infer() for a mixture"
         _, p_hf, _ = self.summarize_gamma(gamma)
         return self.q_f * p_hf + self.r_f * (1.0 - p_hf)
 

@@ -157,7 +157,8 @@ class TrainDataset(data.Dataset):
     adaptive-query module). ``seed`` fixes the sampler's random stream."""
 
     def __init__(self, corpus, video_ids, labels, cache, max_seqlen,
-                 crop_repeat=align.N_CROPS, mask_sampler=None, seed=0):
+                 crop_repeat=align.N_CROPS, mask_sampler=None, seed=0,
+                 window_targets=None):
         self.corpus = corpus
         self.video_ids = list(video_ids)
         self.labels = labels
@@ -167,6 +168,10 @@ class TrainDataset(data.Dataset):
         self.mask_sampler = mask_sampler
         self.seed = int(seed)
         self._rng = None
+        # window_targets(vid, b_fine_input) -> (K,) float targets for the
+        # fine-window bag loss (NaN = no target for that window); when given the
+        # item carries a fifth element (K,) (module-1 iteration 2, window_bag_loss)
+        self.window_targets = window_targets
 
     def __len__(self):
         return len(self.video_ids) * self.crop_repeat
@@ -175,21 +180,27 @@ class TrainDataset(data.Dataset):
         vid = self.video_ids[index // self.crop_repeat]
         crop = index % self.crop_repeat
         f_a, n_seconds, snip = self.cache[vid]
+        b_input = None
         if self.mask_sampler is not None:
             if self._rng is None:      # one stream per worker process
                 wi = data.get_worker_info()
                 self._rng = np.random.RandomState(self.seed + (wi.id if wi else 0))
-            f_a = self.cache.build(vid, self.mask_sampler(vid, self._rng))
+            b_input = self.mask_sampler(vid, self._rng)
+            f_a = self.cache.build(vid, b_input)
         f_v = align.aligned_visual_crop(self.corpus, vid, crop, "snippet",
                                         n_seconds, snip)
         w = self.cache.window_rows[vid][:, None]
         f_v = process_feat(f_v, self.max_seqlen, is_random=False)
         f_a = process_feat(f_a, self.max_seqlen, is_random=False)
         w = process_feat(w, self.max_seqlen, is_random=False)[:, 0]
-        return (torch.from_numpy(np.ascontiguousarray(f_v, dtype=np.float32)),
+        item = (torch.from_numpy(np.ascontiguousarray(f_v, dtype=np.float32)),
                 torch.from_numpy(np.ascontiguousarray(f_a, dtype=np.float32)),
                 torch.from_numpy(np.ascontiguousarray(w, dtype=np.float32)),
                 float(self.labels[vid]))
+        if self.window_targets is not None:
+            tgt = np.asarray(self.window_targets(vid, b_input), dtype=np.float32)
+            item = item + (torch.from_numpy(np.ascontiguousarray(tgt)),)
+        return item
 
 
 class EvalDataset(data.Dataset):
@@ -247,6 +258,36 @@ def block_bag_loss(content_log, f_a, seq_len, labels, topk_div):
                 bag, p)
             den = den + w
     return num / den.clamp_min(1e-6)
+
+
+def window_bag_loss(content_log, w_rows, seq_len, targets, topk_div):
+    """Fine-window bag loss (module-1 iteration 2, plan section C): one bag per
+    fine window w with a target (targets[i, w] not NaN), top-k mean of the
+    content logit over the window's rows, BCE against the target. Mean over
+    the targeted windows of each item, then mean over the items that have a
+    target (every video weighs the same whatever its number of targets).
+    w_rows (B, T) = fine-window index of each row (TrainDataset's third
+    element); targets (B, K). Returns 0 when no window has a target."""
+    z = content_log.squeeze(-1)
+    per_item = []
+    for i in range(z.shape[0]):
+        t = int(seq_len[i])
+        zi, wi = z[i, :t], w_rows[i, :t]
+        tg = targets[i]
+        terms = []
+        for w in torch.nonzero(~torch.isnan(tg)).flatten().tolist():
+            m = wi == w
+            n_w = int(m.sum())
+            if n_w == 0:
+                continue
+            k = max(1, int(-(-n_w // topk_div)))
+            bag = torch.topk(zi[m], k=k).values.mean()
+            terms.append(nn.functional.binary_cross_entropy_with_logits(bag, tg[w]))
+        if terms:
+            per_item.append(torch.stack(terms).mean())
+    if not per_item:
+        return z.new_zeros(())
+    return torch.stack(per_item).mean()
 
 
 def _scalar(x):
