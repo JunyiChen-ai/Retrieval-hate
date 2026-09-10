@@ -160,6 +160,6 @@ E_t = ell_fine(t) + x_t + v，
 
 | 轮 | 改动 | 结果 | 判定与下一步 |
 |---|---|---|---|
-| 3 | 机制 D（证据分解：ell_fine + x_t + v），其余同第 1 轮 | 待 seed 234 两语料 | |
+| 3 | 机制 D（证据分解：ell_fine + x_t + v），其余同第 1 轮 | seed 234 HCS（本机，20 trial，最好 trial 17）8 次固定点 **.6884 / .6808 / .5770**，停止点 8.00 次同；34 条 .7093 / .7005 / .5953；4 粗块 .6806 / .6677 / .5739；uniform 8 次 .6905 / .6799 / .5784。20 个 trial 里 within ≥ .56 的 11 个。HateMM（lab1）进行中（trial 11–14 因他人进程占显存 OOM 失败，预算改 24 续跑）。 | HCS 单 seed：规则 8 过；W1 过（+.015）；P1 AP 过（+.003）、ROC −.0015（噪声内，三 seed 判）；E1 过。EOC 与 uniform 在 8 次持平（AP −.002、within −.001）。已起 HCS seed 2025 / 3407（本机并行）。 |
 
 规则 4 复核（`REVIEW_RULE4_D.md`）：PASS-with-phrasing。视频级 + 视频内分解在仇恨视频文献里没有先例；相关先例：MSL（AAAI'22，视频级概率抑制片段分数）、弱监督 TAL 的视频级类别门 × T-CAS（UntrimmedNet / W-TALC / CoLA）、TCVADS 的粗到细门、VADTree（NeurIPS'25）与 Dugong 的多粒度融合、noisy-OR MIL 的 P(至少一段为正)、sum-rule / logarithmic opinion pool（加 centred 文本 logit 是已知做法，只作实现细节不主张）。论文写法："按粒度分解证据"，可证伪的结构主张 = 粗块证据只在视频级、细窗与文本逐秒；为此加臂 `no_video_term`（v = 0）。**待用户裁定（规则 3）**：E 里的文本项经 α·ell 直接进最终分数，α 是搜索的，等于把冻结文本分类器的预测按搜索权重加到输出；已加诊断臂 `text_prior_off`（x_t 只作编码器输入列，不进 E）供裁定时对照。
