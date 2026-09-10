@@ -607,6 +607,18 @@ class IntervalEvidenceHMM:
                 "p_s": p_s, "p_hf": p_hf, "p_hc": p_hc, "pred_fine": pred,
                 "logmarg": post["logmarg"]}
 
+    def any_hate_logodds(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0, xt=None):
+        """logit P(at least one segment has s = 1 | observed verdicts) for one video
+        (R = 1): the video-level evidence term of the decomposed log-odds (module-1
+        iteration 3). Uses the all-zero path probability of the same chain."""
+        assert self.R == 1, "any_hate_logodds is the R = 1 formula"
+        Tm = self._transitions(duration)
+        e = self._emissions(b_fine, b_coarse, 0.0, w_fine, w_coarse, z=0, xt=xt)
+        _, _, lz = self._fb(Tm, e)
+        lz0 = self._log_all_zero(Tm, e)
+        p0 = float(np.clip(np.exp(lz0 - lz), 1e-6, 1.0 - 1e-6))
+        return float(np.log1p(-p0) - np.log(p0))
+
     def posterior(self, b_fine, b_coarse, duration, w_fine=1.0, w_coarse=1.0, xt=None):
         """(segment P(s_g=1) (G,), coarse-interval P(h_j=1) (J,)). Never uses a label."""
         gamma = self._posterior_video(b_fine, b_coarse, duration, w_fine, w_coarse, xt=xt)["gamma"]

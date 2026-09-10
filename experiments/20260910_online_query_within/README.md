@@ -135,3 +135,31 @@ HCS pooled 升（w 0.5：AP +.017、ROC +.012）、within +.017；HateMM AP 持�
 | 2 | 机制 T（文本证据：HMM 观测族 + 逐秒 LLR 输入列 + 后验窗目标），`text_weight` 0.5 | seed 234：HCS（本机，20 trial）前 17 个 trial 8 次点 AP .62–.65、within .47–.52，都低于第 1 轮；HateMM（lab1，跑到 trial 8 手动停）AP .57–.62 / within .60–.63，与第 1 轮相当。诊断单次运行（第 1 轮 trial 14 超参，`runs/20260910_online_query_within_it2/diag/hateclipseg/seed234/`）：full .655 / .648 / .497；窗目标改回裁定 .655 / .648 / .499；去掉 LLR 输入列 .664 / .661 / .513；完全无文本 .682 / .672 / .534（= 第 1 轮复现）。 | **失败，原因在 HMM 文本观测**：EM 把隐状态归给文本，细窗裁定的命中率 q_fine 从 .83 掉到 .48–.51，ell 主要由文本 + 粗块决定；训练模型的 validation 从 epoch 1 起单调下降，within 反而比无文本低 .03。LLR 输入列与后验目标都不起作用（差 ≤ .016）。文本不能作为 HMM 的观测族与裁定同层融合；下一步试"粗块只进视频级、细窗 + 文本逐秒"的分解（离线核查 `within_oracle/summary_decomp.json`）。 |
 
 规则 4 复核（`REVIEW_RULE4_T.md`）：PASS-with-phrasing。各部件各有先例（Dugong NeurIPS'19 的多分辨率弱源生成模型；cost-sensitive active feature acquisition：Greiner 2002 / Ji & Carin 2007 / Contardo 2016；Snorkel / linked HMM / skweak 的"外部分类器输出作 HMM 观测、EM 学发射表"），只能主张组合：异成本证据模型 + 在已含免费证据的后验上做获取 + 同一 HMM 同时给骨干输入与窗监督；不主张"首个融合文本与 VLM 证据"。仇恨视频 baseline 里没有一个把外部文本仇恨分类器的逐句 / 逐秒分数当定位证据用（MultiHateLoc 用 BERT 句向量、MM-HSD 用 Detoxify 向量都是视频级）。**待用户裁定的一点（规则 3）**：T 引入第二个冻结模型（文本仇恨分类器）的预测分数作观测；我按"观测源由发射表建模、不与 VLM 平均"判为非 ensemble，先按此跑，用户可否决。
+
+## 8. 第 3 轮：证据分解（2026-09-10）
+
+**起因**（第 7 节第 2 轮的诊断与离线核查）：文本放进 HMM 当观测族会让 EM 把隐状态归给文本（q_fine .83 → .5），训练模型 within 反而降；但离线看，文本原始分数（centred logit）直接加进逐秒证据对数几率、粗块裁定只在视频级起作用，两语料 pooled 与 within 都大幅上升（`runs/20260910_online_query_within_it1/within_oracle/summary_decomp{,2}.json`，HMM 后验单独当分数，test，4 粗块 + 4 均匀细窗）：
+
+| 语料 | 第 1 轮融合 ell（粗块逐秒） | + 文本 x_t | 分解：ell_fine + x_t + v（粗块只在视频级） |
+|---|---|---|---|
+| HCS | .657 / .641 / .493 | .681 / .653 / .540 | **.696 / .669 / .576** |
+| HateMM | .540 / .814 / .570 | .567 / .838 / .629 | **.585 / .859 / .615** |
+
+粗块裁定在 HCS 上逐秒反向（4 粗块单独 within .47），在 HateMM 上逐秒有用（within .68），分解后 HateMM within 比"粗块逐秒 + 文本"低 .014 但 AP 高 .02；两语料都远高于第 1 轮融合。
+
+**机制 D（证据分解）**：喂给骨干的逐秒证据对数几率（ell 列、P(s) 列、先验项 α·ell）改为
+E_t = ell_fine(t) + x_t + v，
+- ell_fine：区间 HMM 后验对数几率，粗块发射关掉（w_coarse = 0），HMM 拟合不变（只用裁定，训练视频标签）；
+- x_t：冻结文本分类器的 centred 对数几率 max(ASR, OCR)(logit p_t − centre)，无文本为 0，centre = 训练集所有有文本秒的中位数（不读标签；HCS −5.54，HateMM −5.72）；
+- v：同一 HMM 只给粗块裁定时"至少一段为仇恨"的对数几率 logit(1 − P(全 0 路径))，视频内常数。
+块级 MIL 目标 P(h_j) 仍来自完整后验；窗损失目标回到原始裁定；HMM 不含文本；获取（EOC）与调用数不变（训练 8、测试 8）。方法级标量仍是 α、λ_block。`evidence=hmm` 臂回到第 1 轮融合，`no_text_term` 臂去掉 x_t（只作诊断）。
+
+**门 T2（代码路径复现离线核查，`hc.make_masked_scaffold_fn(evidence="decomp")` 的 ell 列直接评测）**：HCS .696 / .669 / .576，HateMM .585 / .859 / .615（与上表一致；E 不截断，只有证据编码器输入按 ±ELL_SCALE 截到 [−1, 1]，先验项用原始 E；超出 ELL_SCALE 的行 HCS 10%、HateMM 13%）。pooled 两语料均高于第 1 轮融合 ≥ .04 AP，within 高 .08 / .045 → 过。规则 6 复核（`REVIEW_RULE6_D.md`）：PASS，无 must-fix；两条 should-fix（臂组合断言）已加。
+
+**预注册**：P1 / W1 / E1 与搜索同第 2 节；输出 `runs/20260910_online_query_within_it3/`。
+
+| 轮 | 改动 | 结果 | 判定与下一步 |
+|---|---|---|---|
+| 3 | 机制 D（证据分解：ell_fine + x_t + v），其余同第 1 轮 | 待 seed 234 两语料 | |
+
+规则 4 复核（`REVIEW_RULE4_D.md`）：PASS-with-phrasing。视频级 + 视频内分解在仇恨视频文献里没有先例；相关先例：MSL（AAAI'22，视频级概率抑制片段分数）、弱监督 TAL 的视频级类别门 × T-CAS（UntrimmedNet / W-TALC / CoLA）、TCVADS 的粗到细门、VADTree（NeurIPS'25）与 Dugong 的多粒度融合、noisy-OR MIL 的 P(至少一段为正)、sum-rule / logarithmic opinion pool（加 centred 文本 logit 是已知做法，只作实现细节不主张）。论文写法："按粒度分解证据"，可证伪的结构主张 = 粗块证据只在视频级、细窗与文本逐秒；为此加臂 `no_video_term`（v = 0）。**待用户裁定（规则 3）**：E 里的文本项经 α·ell 直接进最终分数，α 是搜索的，等于把冻结文本分类器的预测按搜索权重加到输出；已加诊断臂 `text_prior_off`（x_t 只作编码器输入列，不进 E）供裁定时对照。

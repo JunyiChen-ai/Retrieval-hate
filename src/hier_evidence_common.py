@@ -459,6 +459,38 @@ def text_llr_seconds(hmm, arrays):
     return (hmm.text_weight * out).astype(np.float32)
 
 
+def text_centre(corpus, video_ids):
+    """Median logit of the text classifier's hate probability over all seconds with
+    text of the given videos (train ids; no label is read): the zero level of the
+    centred text log-odds x_t."""
+    vals = []
+    for vid in video_ids:
+        arr = load_text_hate(corpus, vid)
+        if arr is None:
+            continue
+        for fam in ("asr", "ocr"):
+            p = np.asarray(arr["p_" + fam], np.float64)
+            p = np.clip(p[np.isfinite(p)], 1e-4, 1.0 - 1e-4)
+            if len(p):
+                vals.append(np.log(p) - np.log1p(-p))
+    return float(np.median(np.concatenate(vals))) if vals else 0.0
+
+
+def text_logit_seconds(arrays, centre):
+    """Centred text log-odds per second x_t = max over the asr / ocr families of
+    (logit p_t - centre); 0 where no text. (T,) float32 or None."""
+    if arrays is None:
+        return None
+    T = len(arrays["p_asr"])
+    best = np.full(T, np.nan)
+    for fam in ("asr", "ocr"):
+        p = np.clip(np.asarray(arrays["p_" + fam], np.float64), 1e-4, 1.0 - 1e-4)
+        ok = np.isfinite(np.asarray(arrays["p_" + fam], np.float64))
+        l = np.log(p) - np.log1p(-p) - centre
+        best[ok] = np.where(np.isnan(best[ok]), l[ok], np.maximum(best[ok], l[ok]))
+    return np.where(np.isfinite(best), best, 0.0).astype(np.float32)
+
+
 def text_llr_rows(llr_seconds, snip):
     """(T,) per-second LLR resampled onto the snippet rows (rows, )."""
     if llr_seconds is None:
@@ -468,7 +500,7 @@ def text_llr_rows(llr_seconds, snip):
 
 
 def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
-                           snip, n_seconds, text_llr=None):
+                           snip, n_seconds, text_llr=None, decomposed=False):
     """Scaffold from per-segment posteriors of an IntervalEvidenceHMM: rows
     take the segment containing their midpoint; the block index is the coarse
     interval containing the row midpoint (no fine-window -> block table)."""
@@ -481,7 +513,11 @@ def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
     tl = text_llr_rows(text_llr, snip)
     if tl is None:
         tl = np.zeros(len(blk), np.float32)
-    out = np.stack([seg(ell_seg), seg(ps_seg), rows(b_fine),
+    ell_rows, ps_rows = seg(ell_seg), seg(ps_seg)
+    if decomposed:                       # iteration 3: E_t = ell_fine + x_t + v; P(s) column = sigmoid(E_t)
+        ell_rows = ell_rows + tl                       # not clipped: the ordering of saturated rows is kept
+        ps_rows = 1.0 / (1.0 + np.exp(-np.clip(ell_rows, -50.0, 50.0)))
+    out = np.stack([ell_rows, ps_rows, rows(b_fine),
                     np.asarray(b_coarse, np.float32)[blk],
                     np.asarray(p_h, np.float32)[blk],
                     blk.astype(np.float32),
@@ -490,7 +526,21 @@ def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
     return out.astype(np.float32)
 
 
-def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None):
+def decomposed_logodds(hmm, b_fine, b_coarse, n_seconds, video_term=True):
+    """Module-1 iteration 3 evidence decomposition (segment level, before the per-
+    second text term): ell_fine = posterior log-odds with the coarse emissions off
+    (w_coarse = 0) plus v = logit P(any s = 1 | coarse verdicts only). Coarse
+    verdicts thus act at the video level only; fine verdicts and text per second."""
+    import interval_evidence_hmm as ieh
+    p_s, _ = hmm.posterior(b_fine, b_coarse, n_seconds, w_coarse=0.0)
+    ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
+    if not video_term:                                   # diagnostic arm no_video_term
+        return ell
+    v = hmm.any_hate_logodds(np.full(len(b_fine), ieh.MISSING, dtype=int), b_coarse, n_seconds)
+    return ell + v
+
+
+def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None, evidence="hmm", video_term=True, text_in_ell=True):
     """Scaffold builder from a masked fine-verdict vector (interval HMM only):
     ``fn(vid, b_fine_masked, snip, n_seconds)``. Columns: ell / P(s) from the
     HMM posterior with MISSING emissions, b_fine column keeps -1 for windows
@@ -504,12 +554,15 @@ def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None):
         _, bc = binary[vid]
         p_s, p_h = hmm.posterior(b_fine_masked, bc, n_seconds, xt=(text or {}).get(vid))
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
+        if evidence == "decomp":
+            ell = decomposed_logodds(hmm, b_fine_masked, bc, n_seconds, video_term=video_term)
+            p_s = 1.0 / (1.0 + np.exp(-ell))
         return scaffold_rows_interval(hmm, ell, p_s, b_fine_masked, bc, p_h, snip, n_seconds,
-                                      text_llr=(text_llr or {}).get(vid))
+                                      text_llr=(text_llr or {}).get(vid), decomposed=(evidence == "decomp" and text_in_ell))
     return fn
 
 
-def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None):
+def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None, evidence="hmm", video_term=True, text_in_ell=True):
     """Per-video scaffold builder (README dataset.py column layout).
 
     ablation mean_prior: prior / input columns use the plain mean verdict
@@ -547,8 +600,11 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None):
         if ablation in ("raw_block_label", "mean_prior_all"):
             p_h = bc.astype(np.float32)
         if interval:
+            if evidence == "decomp":
+                ell = decomposed_logodds(hmm, bf, bc, n_seconds, video_term=video_term)
+                p_s = 1.0 / (1.0 + np.exp(-ell))
             return scaffold_rows_interval(hmm, ell, p_s, bf, bc, p_h, snip, n_seconds,
-                                          text_llr=(text_llr or {}).get(vid))
+                                          text_llr=(text_llr or {}).get(vid), decomposed=(evidence == "decomp" and text_in_ell))
         return scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
                                 snip, n_seconds)
     return fn

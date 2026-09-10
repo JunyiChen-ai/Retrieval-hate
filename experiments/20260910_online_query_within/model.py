@@ -199,7 +199,7 @@ class ERCA(nn.Module):
         else:
             mask = torch.arange(T, device=f_a.device)[None, :] < seq_len.to(f_a.device)[:, None]
         evid = f_a[..., hc.SCAF_OFFSET:hc.SCAF_OFFSET + N_EVID].clone()
-        evid[..., hc.COL_ELL] = evid[..., hc.COL_ELL] / hc.ELL_SCALE     # in [-1, 1]
+        evid[..., hc.COL_ELL] = torch.clamp(evid[..., hc.COL_ELL] / hc.ELL_SCALE, -1.0, 1.0)   # encoder input in [-1, 1]; the prior term uses the raw ell
         ell = f_a[..., hc.SCAF_OFFSET + hc.COL_ELL:hc.SCAF_OFFSET + hc.COL_ELL + 1]
         text_llr = torch.clamp(f_a[..., hc.SCAF_OFFSET + hc.COL_TEXT] / hc.LLR_SCALE, -1.0, 1.0)
         if self.no_verdict:
