@@ -132,6 +132,6 @@ HCS pooled 升（w 0.5：AP +.017、ROC +.012）、within +.017；HateMM AP 持�
 
 | 轮 | 改动 | 结果 | 判定与下一步 |
 |---|---|---|---|
-| 2 | 机制 T（文本证据：HMM 观测族 + 逐秒 LLR 输入列 + 后验窗目标） | 待 seed 234 两语料 | |
+| 2 | 机制 T（文本证据：HMM 观测族 + 逐秒 LLR 输入列 + 后验窗目标），`text_weight` 0.5 | seed 234：HCS（本机，20 trial）前 17 个 trial 8 次点 AP .62–.65、within .47–.52，都低于第 1 轮；HateMM（lab1，跑到 trial 8 手动停）AP .57–.62 / within .60–.63，与第 1 轮相当。诊断单次运行（第 1 轮 trial 14 超参，`runs/20260910_online_query_within_it2/diag/hateclipseg/seed234/`）：full .655 / .648 / .497；窗目标改回裁定 .655 / .648 / .499；去掉 LLR 输入列 .664 / .661 / .513；完全无文本 .682 / .672 / .534（= 第 1 轮复现）。 | **失败，原因在 HMM 文本观测**：EM 把隐状态归给文本，细窗裁定的命中率 q_fine 从 .83 掉到 .48–.51，ell 主要由文本 + 粗块决定；训练模型的 validation 从 epoch 1 起单调下降，within 反而比无文本低 .03。LLR 输入列与后验目标都不起作用（差 ≤ .016）。文本不能作为 HMM 的观测族与裁定同层融合；下一步试"粗块只进视频级、细窗 + 文本逐秒"的分解（离线核查 `within_oracle/summary_decomp.json`）。 |
 
 规则 4 复核（`REVIEW_RULE4_T.md`）：PASS-with-phrasing。各部件各有先例（Dugong NeurIPS'19 的多分辨率弱源生成模型；cost-sensitive active feature acquisition：Greiner 2002 / Ji & Carin 2007 / Contardo 2016；Snorkel / linked HMM / skweak 的"外部分类器输出作 HMM 观测、EM 学发射表"），只能主张组合：异成本证据模型 + 在已含免费证据的后验上做获取 + 同一 HMM 同时给骨干输入与窗监督；不主张"首个融合文本与 VLM 证据"。仇恨视频 baseline 里没有一个把外部文本仇恨分类器的逐句 / 逐秒分数当定位证据用（MultiHateLoc 用 BERT 句向量、MM-HSD 用 Detoxify 向量都是视频级）。**待用户裁定的一点（规则 3）**：T 引入第二个冻结模型（文本仇恨分类器）的预测分数作观测；我按"观测源由发射表建模、不与 VLM 平均"判为非 ensemble，先按此跑，用户可否决。
