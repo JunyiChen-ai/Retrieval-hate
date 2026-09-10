@@ -189,10 +189,10 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     if text_column:
         text_input = True
     assert not (text_input and text_term), "x_t would enter both the encoder column and E (double counting)"
-    assert not (evidence == "decomp" and regimes > 1), "the decomposition's video-level term is the R = 1 formula"
     assert window_target in ("verdict", "posterior"), window_target
     eoc_weight = "hmm" if ablation == "hmm_weight" else str(a.eoc_weight)
     regimes = 3 if ablation == "regimes3" else int(a.regimes)
+    assert not (evidence == "decomp" and regimes > 1), "the decomposition's video-level term is the R = 1 formula"
     online = ablation != "fixed_uniform_train"
     labels = hdata.load_labels(corpus)
     train_ids = hc.usable(corpus, hdata.load_split(corpus, "train"))
