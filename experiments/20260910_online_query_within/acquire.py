@@ -27,6 +27,8 @@ per-video allowed sets, plan section A).
 """
 from __future__ import annotations
 
+import os
+
 import numpy as np
 import torch
 
@@ -36,7 +38,7 @@ from macilsd import align
 
 POLICIES = ("eoc", "conflict", "entropy", "localization", "uniform", "random")
 CHUNK = 12          # max candidate scaffolds per forward chunk (x5 crops)
-SEQ_T2_BUDGET = 1e7  # max (sequences x T^2) per chunk: attention scores are B x H x T x T
+SEQ_T2_BUDGET = float(os.environ.get("ACQ_SEQ_T2_BUDGET", 1e7))   # max (sequences x T^2) per forward chunk (attention scores are B x H x T x T); lower it via the env var when another process occupies the GPU. Chunking changes only the batching of the counterfactual forwards, not their values.
 
 
 def bit_reversal_order(k):
