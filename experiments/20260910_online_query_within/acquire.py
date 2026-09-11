@@ -117,9 +117,20 @@ class Acquirer:
             f_a = torch.from_numpy(np.stack(chunk, 0)).to(self.device)
             f_a = f_a.repeat_interleave(align.N_CROPS, 0)
             f_v = f_v5.repeat(n, 1, 1)
-            _, _, _, av_log, _, _ = self.model(f_a, f_v, seq_len=None)
+            if n == 1 and align.N_CROPS * T * T > SEQ_T2_BUDGET:
+                # very long video: one crop at a time (batching only; the per-crop outputs are identical)
+                av_parts, cl_parts = [], []
+                for c in range(align.N_CROPS):
+                    _, _, _, av_c, _, _ = self.model(f_a[c:c + 1], f_v[c:c + 1], seq_len=None)
+                    av_parts.append(av_c)
+                    cl_parts.append(self.model.last_content_logit)
+                av_log = torch.cat(av_parts, 0)
+                content_logit = torch.cat(cl_parts, 0)
+            else:
+                _, _, _, av_log, _, _ = self.model(f_a, f_v, seq_len=None)
+                content_logit = self.model.last_content_logit
             sig = torch.sigmoid(av_log.squeeze(-1)).view(n, align.N_CROPS, -1).mean(1)
-            cl = self.model.last_content_logit.squeeze(-1).view(n, align.N_CROPS, -1)
+            cl = content_logit.squeeze(-1).view(n, align.N_CROPS, -1)
             outs.append(sig.cpu().numpy())
             couts.append(torch.sigmoid(cl).mean(1).cpu().numpy())
             clogs.append(cl.mean(1).cpu().numpy())
