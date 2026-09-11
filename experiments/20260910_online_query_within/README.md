@@ -172,3 +172,15 @@ E_t = ell_fine(t) + x_t + v，
 与第 1 轮同 8 次点的三 seed 均值比：HCS .675 / .670 / .521 → AP +.020、ROC +.012、within +.044；HateMM .669 / .848 / .640 → AP −.025、ROC +.003、within +.002。within 两语料首次都超过最强 baseline（HCS VERA .562、HateMM MultiHateLoc .632）。EOC 对 uniform 在 8 次持平（HCS AP −.000、HateMM +.002）。**阶段未完成**：HateMM AP 差 .011（第 1 轮诊断：训练期每视频只见 4 个细窗的代价约 .03；搜索目标 (AP+ROC+within)/3 选中的 trial 以 AP 换 within）。下一轮：预注册候选"训练期预算自适应分配"（第 9 节）。EOC 与 uniform 在 8 次持平（HCS AP −.002、HateMM +.002）。 |
 
 规则 4 复核（`REVIEW_RULE4_D.md`）：PASS-with-phrasing。视频级 + 视频内分解在仇恨视频文献里没有先例；相关先例：MSL（AAAI'22，视频级概率抑制片段分数）、弱监督 TAL 的视频级类别门 × T-CAS（UntrimmedNet / W-TALC / CoLA）、TCVADS 的粗到细门、VADTree（NeurIPS'25）与 Dugong 的多粒度融合、noisy-OR MIL 的 P(至少一段为正)、sum-rule / logarithmic opinion pool（加 centred 文本 logit 是已知做法，只作实现细节不主张）。论文写法："按粒度分解证据"，可证伪的结构主张 = 粗块证据只在视频级、细窗与文本逐秒；为此加臂 `no_video_term`（v = 0）。**待用户裁定（规则 3）**：E 里的文本项经 α·ell 直接进最终分数，α 是搜索的，等于把冻结文本分类器的预测按搜索权重加到输出；已加诊断臂 `text_prior_off`（x_t 只作编码器输入列，不进 E）供裁定时对照。
+
+## 9. 第 4 轮：训练期预算自适应分配（2026-09-12）
+
+**起因**：第 3 轮三 seed HateMM AP .6438 比 P1 floor .6544 低 .011；第 1 轮诊断定位训练期每视频只见 4 个细窗（第 1 轮 round 1 是 11.3 个）代价约 .03，且训练期的 4 个窗按"每视频每事件恰 1 个"平均分配，与视频无关。预注册候选"τ_train 自适应训练预算"。
+
+**机制 B'（跨视频分配）**：每次获取事件的总预算不变（= 训练视频数，4 次事件共 4 × N），但不再每视频恰 1 个：对每个视频用当前模型贪心算 2 步 EOC（第 1 步、第 2 步的期望输出变化），把全部 (视频, 步) 候选按增益排序，取总预算个，视频的第 2 步只有在第 1 步被取后才可取。一个视频每次事件可得 0、1 或 2 个窗；平均训练调用仍 8 次/视频（E1 训练项按平均计，记每视频分布）。候选窗的裁定仍只在被选中后才读。`acq_alloc=per_video` 臂 = 第 1–3 轮。协议常数：lookahead 2。方法级标量不变。
+
+**预注册**：P1 / W1 / E1 同第 2 节（E1 训练项 = 平均 8）；输出 `runs/20260910_online_query_within_it4/`；两语料 seed 234 → 单 seed 预判 → 三 seed。
+
+| 轮 | 改动 | 结果 | 判定与下一步 |
+|---|---|---|---|
+| 4 | 机制 B'（跨视频分配，lookahead 2），其余同第 3 轮 | 待 seed 234 两语料 | |

@@ -53,6 +53,13 @@ Arms (--ablation; diagnostics only in this iteration, README section 3):
   no_video_term             iteration-3 decomposition without the video-level term v
   text_prior_off            x_t only as an evidence-encoder input column, not in E (rule-3 diagnostic)
 
+Iteration 4 (README section 9, "training-time budget allocation"): each
+acquisition event reveals len(train_ids) windows in total, allocated across
+videos by expected output change with a two-window greedy lookahead per video
+(acq_alloc = "global", acq_lookahead = 2) instead of exactly one window per
+video; the average training calls stay 4 + len(acq_epochs) = 8. Arm
+acq_alloc = "per_video" reproduces iterations 1-3.
+
 Iteration 3 (README section 8, "evidence decomposition"): the per-second
 evidence log-odds fed to the backbone (ell column, P(s) column, prior term
 alpha * ell) is E_t = ell_fine(t) + x_t + v, where ell_fine is the HMM posterior
@@ -117,6 +124,11 @@ DEFAULTS = {
     "bias_mode": "key", "ctx_mode": "rep",
     # online-query module: b_max (method-level protocol constant), acquisition schedule, dropout mix
     "b_max": 4, "acq_epochs": [1, 2, 3, 4], "prefix_mix": 0.5,   # iteration 1: events in the first epochs (README section 5)
+    # iteration 4 (README section 9): training-time budget allocation across videos. "per_video": one window per video
+    # per event (iterations 1-3); "global": each event reveals len(train_ids) windows in total, chosen by expected
+    # output change across all videos with a greedy lookahead of acq_lookahead windows per video (same average of
+    # 4 + len(acq_epochs) calls per training video; a video may get 0 .. acq_lookahead windows per event)
+    "acq_alloc": "global", "acq_lookahead": 2,
     "ckpt_from": "after_acq",   # checkpoint eligible from epoch max(acq_epochs) + 1 on ("after_acq") or from epoch 1 ("any")
     "eoc_weight": "model", "window_loss": True, "window_target": "verdict",
     # iteration 2 (README section 7, failed): text as HMM observation families (text) + LLR input column (text_input)
@@ -143,6 +155,31 @@ def masked(bf, allowed):
     for w in allowed:
         out[w] = int(bf[w])
     return out
+
+
+def allocate_global(runs, vids, budget):
+    """Iteration-4 training-time allocation: from the greedy lookahead runs (picks and
+    per-step expected output change per video) choose `budget` (video, step) pairs with
+    the largest gains, a video's step j being eligible only after its steps < j (the
+    gains were computed along that path). Returns vid -> list of windows to reveal."""
+    cands = []
+    for v in vids:
+        for j, g in enumerate(runs[v]["gains"]):
+            cands.append((float(g), v, j))
+    cands.sort(key=lambda t: -t[0])
+    taken = {v: 0 for v in vids}
+    total = 0
+    progress = True
+    while total < budget and progress:
+        progress = False
+        for g, v, j in cands:
+            if total >= budget:
+                break
+            if j == taken[v] and j < len(runs[v]["picks"]):
+                taken[v] += 1
+                total += 1
+                progress = True
+    return {v: [int(w) for w in runs[v]["picks"][:taken[v]]] for v in vids}
 
 
 def val_criterion(vm):
@@ -380,22 +417,32 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         if online and (epoch + 1) in acq_epochs:
             t1 = time.time()
             acq = Acquirer(model, state["hmm"], cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs)
-            runs = acq.run_split(train_ids, "eoc", 1, seed=seed * 1000 + epoch, log=say,
+            lookahead = int(a.acq_lookahead) if str(a.acq_alloc) == "global" else 1
+            runs = acq.run_split(train_ids, "eoc", lookahead, seed=seed * 1000 + epoch, log=say,
                                  initial={v: sorted(allowed[v]) for v in train_ids})
+            if str(a.acq_alloc) == "global":
+                chosen = allocate_global(runs, train_ids, len(train_ids))
+            else:
+                chosen = {v: runs[v]["picks"][:1] for v in train_ids}
             n_new = 0
             for v in train_ids:
-                for w in runs[v]["picks"]:
+                for w in chosen[v]:
                     if w not in allowed[v]:
                         allowed[v].add(int(w))
                         policy_order[v].append(int(w))
                         n_new += 1
+            alloc_hist = np.bincount([len(chosen[v]) for v in train_ids], minlength=lookahead + 1).tolist()
             model.train()
             refit("epoch%d" % (epoch + 1))
-            acq_log.append({"epoch": epoch + 1, "new_windows": n_new,
+            acq_log.append({"epoch": epoch + 1, "new_windows": n_new, "alloc": str(a.acq_alloc),
+                            "windows_per_video_hist": alloc_hist,
                             "fine_observed_per_video": float(np.mean([len(allowed[v]) for v in train_ids])),
+                            "fine_observed_pos": float(np.mean([len(allowed[v]) for v in train_ids if labels[v] == 1])),
+                            "fine_observed_neg": float(np.mean([len(allowed[v]) for v in train_ids if labels[v] == 0])),
                             "seconds": round(time.time() - t1, 1)})
-            say("acquisition after epoch %d: %d windows revealed (%.2f fine/video) in %.0fs"
-                % (epoch + 1, n_new, acq_log[-1]["fine_observed_per_video"], time.time() - t1))
+            say("acquisition after epoch %d: %d windows revealed (%.2f fine/video; pos %.2f neg %.2f; per-video hist %s) in %.0fs"
+                % (epoch + 1, n_new, acq_log[-1]["fine_observed_per_video"], acq_log[-1]["fine_observed_pos"],
+                   acq_log[-1]["fine_observed_neg"], alloc_hist, time.time() - t1))
     model.load_state_dict(best_state)
     say("selected epoch %d (val criterion %.4f)" % (best_epoch, best))
     torch.save(best_state, os.path.join(out_dir, "model.pth"))
@@ -405,6 +452,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         json.dump({v: policy_order[v] for v in train_ids}, fh)
     fit_info = {"selected_epoch": best_epoch, "val_criterion": best, "history": history, "acquisition": acq_log}
     calls["train_fine_observed_per_video"] = float(np.mean([len(allowed[v]) for v in train_ids]))
+    calls["train_fine_hist"] = np.bincount([len(allowed[v]) for v in train_ids]).tolist()
 
     # ------------------------------------------------------------ evaluation
     acq = Acquirer(model, hmm, cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs)
