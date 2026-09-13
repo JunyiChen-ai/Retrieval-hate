@@ -19,8 +19,9 @@ with MISSING (-1) entries. Every policy reveals one fine window per step:
   localization HMM-only: expected reduction of sum_g P(s_g)(1-P(s_g))
   uniform      fixed evenly spread order (bit reversal of 0..29)
   random       random order
-After every step the backbone scores the video (five-crop mean of sigmoid of
-the full per-second logit); for eoc the max gain at each step is kept so any
+After every step (reveal=True; with reveal=False the single scoring step ends
+at the pick and reads no verdict) the backbone scores the video (five-crop mean
+of sigmoid of the full per-second logit); for eoc the max gain at each step is kept so any
 stopping threshold tau can be read off the same run. `initial` may be one
 list for all videos or a dict video -> list (training-time growth of the
 per-video allowed sets, plan section A).
@@ -141,11 +142,16 @@ class Acquirer:
         return self.hmm.infer(bf, bc, Tm=self.Tm, xt=self.text.get(vid))
 
     # ------------------------------------------------------------ one video
-    def run_video(self, vid, policy, n_steps, rng, initial=None):
+    def run_video(self, vid, policy, n_steps, rng, initial=None, reveal=True):
         """Greedy reveal starting from the fine windows in `initial` (already
         observed, not counted as picks; None = only the coarse blocks).
         Returns dict(picks, scores (list over k of per-second arrays),
-        gains (eoc: max gain before each pick))."""
+        gains (eoc: max gain before each pick)).
+        reveal=False (n_steps must be 1): only score and pick; the chosen
+        window's verdict is NOT read (the caller decides whether to reveal it,
+        e.g. the iteration-4 global allocation in train.py), and no post-pick
+        forward is run."""
+        assert reveal or n_steps == 1, "reveal=False is a single-step scoring call"
         bf_true, bc = self.binary[vid]
         bf = np.full(self.k, ieh.MISSING, dtype=int)
         for w in (initial or []):
@@ -216,23 +222,25 @@ class Acquirer:
                 gains.append(float(eoc[j]))
             else:
                 raise ValueError(policy)
+            picks.append(int(w))
+            if not reveal:
+                break                        # scoring only: the verdict of w stays unread
             bf[w] = int(bf_true[w])          # the verdict is read only for the chosen window
             unobserved.discard(w)
-            picks.append(int(w))
             sig, csig, clog = self.forward(f_v5, [self.cache.build(vid, bf)])
             scores.append(sig[0][index_map])
         if torch.device(self.device).type == "cuda":
             torch.cuda.empty_cache()        # release the per-video attention blocks (videos differ in T)
         return {"picks": picks, "scores": scores, "gains": gains}
 
-    def run_split(self, vids, policy, n_steps, seed=0, log=None, initial=None):
+    def run_split(self, vids, policy, n_steps, seed=0, log=None, initial=None, reveal=True):
         rng = np.random.RandomState(seed)
         out = {}
         for i, vid in enumerate(vids):
             if vid not in self.binary:
                 continue
             init = initial.get(vid, []) if isinstance(initial, dict) else initial
-            out[vid] = self.run_video(vid, policy, n_steps, rng, initial=init)
+            out[vid] = self.run_video(vid, policy, n_steps, rng, initial=init, reveal=reveal)
             if log is not None and (i + 1) % 100 == 0:
                 log("  %s: %d/%d videos" % (policy, i + 1, len(vids)))
         return out

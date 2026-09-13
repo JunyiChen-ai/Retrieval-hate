@@ -55,10 +55,17 @@ Arms (--ablation; diagnostics only in this iteration, README section 3):
 
 Iteration 4 (README section 9, "training-time budget allocation"): each
 acquisition event reveals len(train_ids) windows in total, allocated across
-videos by expected output change with a two-window greedy lookahead per video
-(acq_alloc = "global", acq_lookahead = 2) instead of exactly one window per
-video; the average training calls stay 4 + len(acq_epochs) = 8. Arm
-acq_alloc = "per_video" reproduces iterations 1-3.
+videos by expected output change (acq_alloc = "global") instead of exactly one
+window per video; the average training calls stay 4 + len(acq_epochs) = 8.
+The event is split into acq_rounds sub-rounds (default 2): in each sub-round
+every video scores its best unasked window by EOC WITHOUT reading any verdict,
+the len(train_ids) / acq_rounds videos with the largest gains are chosen, and
+only their chosen windows are revealed (verdict read, counted); the next
+sub-round re-scores from the updated state. A verdict is therefore never read
+before the decision to ask for it (fix of 2026-09-14: the first iteration-4 code
+ran a two-step greedy per video that read the first pick's verdict to score the
+second step before the allocation; its runs are recorded as invalid in README
+section 9). Arm acq_alloc = "per_video" reproduces iterations 1-3.
 
 Iteration 3 (README section 8, "evidence decomposition"): the per-second
 evidence log-odds fed to the backbone (ell column, P(s) column, prior term
@@ -125,10 +132,11 @@ DEFAULTS = {
     # online-query module: b_max (method-level protocol constant), acquisition schedule, dropout mix
     "b_max": 4, "acq_epochs": [1, 2, 3, 4], "prefix_mix": 0.5,   # iteration 1: events in the first epochs (README section 5)
     # iteration 4 (README section 9): training-time budget allocation across videos. "per_video": one window per video
-    # per event (iterations 1-3); "global": each event reveals len(train_ids) windows in total, chosen by expected
-    # output change across all videos with a greedy lookahead of acq_lookahead windows per video (same average of
-    # 4 + len(acq_epochs) calls per training video; a video may get 0 .. acq_lookahead windows per event)
-    "acq_alloc": "global", "acq_lookahead": 2,
+    # per event (iterations 1-3); "global": each event reveals len(train_ids) windows in total in acq_rounds
+    # sub-rounds, each sub-round giving one window to the len(train_ids) / acq_rounds videos with the largest single-step
+    # expected output change (same average of 4 + len(acq_epochs) calls per training video; a video may get
+    # 0 .. acq_rounds windows per event; verdicts are read only after the allocation)
+    "acq_alloc": "global", "acq_rounds": 2,
     "ckpt_from": "after_acq",   # checkpoint eligible from epoch max(acq_epochs) + 1 on ("after_acq") or from epoch 1 ("any")
     "eoc_weight": "model", "window_loss": True, "window_target": "verdict",
     # iteration 2 (README section 7, failed): text as HMM observation families (text) + LLR input column (text_input)
@@ -158,10 +166,12 @@ def masked(bf, allowed):
 
 
 def allocate_global(runs, vids, budget):
-    """Iteration-4 training-time allocation: from the greedy lookahead runs (picks and
-    per-step expected output change per video) choose `budget` (video, step) pairs with
-    the largest gains, a video's step j being eligible only after its steps < j (the
-    gains were computed along that path). Returns vid -> list of windows to reveal."""
+    """Iteration-4 training-time allocation for one sub-round: from single-step scoring
+    runs (reveal=False: one candidate window and its expected output change per video,
+    no verdict read) choose the `budget` videos with the largest gains. Returns
+    vid -> list of windows to reveal (0 or 1 window per video). Written for runs with
+    any number of steps (a video's step j is eligible only after its steps < j), but
+    the trainer only passes single-step runs."""
     cands = []
     for v in vids:
         for j, g in enumerate(runs[v]["gains"]):
@@ -417,21 +427,29 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         if online and (epoch + 1) in acq_epochs:
             t1 = time.time()
             acq = Acquirer(model, state["hmm"], cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs)
-            lookahead = int(a.acq_lookahead) if str(a.acq_alloc) == "global" else 1
-            runs = acq.run_split(train_ids, "eoc", lookahead, seed=seed * 1000 + epoch, log=say,
-                                 initial={v: sorted(allowed[v]) for v in train_ids})
-            if str(a.acq_alloc) == "global":
-                chosen = allocate_global(runs, train_ids, len(train_ids))
-            else:
-                chosen = {v: runs[v]["picks"][:1] for v in train_ids}
+            n_rounds = int(a.acq_rounds) if str(a.acq_alloc) == "global" else 1
+            assert n_rounds >= 1
             n_new = 0
-            for v in train_ids:
-                for w in chosen[v]:
-                    if w not in allowed[v]:
-                        allowed[v].add(int(w))
-                        policy_order[v].append(int(w))
-                        n_new += 1
-            alloc_hist = np.bincount([len(chosen[v]) for v in train_ids], minlength=lookahead + 1).tolist()
+            n_chosen = {v: 0 for v in train_ids}
+            for r in range(n_rounds):
+                # score only: every video names its best unasked window, no verdict is read here
+                runs = acq.run_split(train_ids, "eoc", 1, seed=seed * 1000 + epoch * 10 + r, log=say,
+                                     initial={v: sorted(allowed[v]) for v in train_ids}, reveal=False)
+                if str(a.acq_alloc) == "global":
+                    budget = len(train_ids) // n_rounds + (len(train_ids) % n_rounds if r == n_rounds - 1 else 0)
+                    chosen = allocate_global(runs, train_ids, budget)
+                else:
+                    chosen = {v: runs[v]["picks"][:1] for v in train_ids}
+                for v in train_ids:            # reveal = read the verdict of the allocated window (counted)
+                    for w in chosen[v]:
+                        if w not in allowed[v]:
+                            allowed[v].add(int(w))
+                            policy_order[v].append(int(w))
+                            n_new += 1
+                            n_chosen[v] += 1
+                # the next sub-round scores from the updated allowed sets (cache.build reads them through the
+                # masked verdict vectors); the HMM is refitted once per event, after all sub-rounds
+            alloc_hist = np.bincount([n_chosen[v] for v in train_ids], minlength=n_rounds + 1).tolist()
             model.train()
             refit("epoch%d" % (epoch + 1))
             acq_log.append({"epoch": epoch + 1, "new_windows": n_new, "alloc": str(a.acq_alloc),
