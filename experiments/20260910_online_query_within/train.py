@@ -136,21 +136,28 @@ DEFAULTS = {
     # sub-rounds, each sub-round giving one window to the len(train_ids) / acq_rounds videos with the largest single-step
     # expected output change (same average of 4 + len(acq_epochs) calls per training video; a video may get
     # 0 .. acq_rounds windows per event; verdicts are read only after the allocation)
-    "acq_alloc": "global", "acq_rounds": 2,
+    "acq_alloc": "per_video", "acq_rounds": 2,     # iteration 5 default: per_video (iteration 4b used "global")
     "ckpt_from": "after_acq",   # checkpoint eligible from epoch max(acq_epochs) + 1 on ("after_acq") or from epoch 1 ("any")
-    "eoc_weight": "model", "window_loss": True, "window_target": "verdict",
+    "eoc_weight": "model_cal", "window_loss": True, "window_target": "verdict",
     # iteration 2 (README section 7, failed): text as HMM observation families (text) + LLR input column (text_input)
     "text": False, "text_weight": 0.5, "text_input": False,
     # iteration 3 (README section 8): evidence = "decomp": per-second evidence log-odds E_t = ell_fine (coarse
     # emissions off) + centred text log-odds x_t + logit P(any hate | coarse verdicts); "hmm" = iteration-1 fusion
     "evidence": "decomp",
+    # iteration 5 (README section 11, reviewer round): fine_temper = within-video error correlation rho of the fine
+    # verdicts used to temper their emissions (hc.fine_kappa; "icc" = estimated on the negative training videos by
+    # hc.fine_verdict_icc, a number = fixed, 0 = off); prior_mode "split" = three learned fusion scalars on
+    # (ell_fine, x_t, v) initialised to prior_scale ("single" = one alpha on E_t); eoc_weight "model_cal" = the
+    # backbone's window hate probability mapped to a verdict probability r_f + (q_f - r_f) p ("model" = raw).
+    "fine_temper": 0.0, "prior_mode": "split",      # tempering off by default (gate T5, README section 11); arm temper_icc
     "eval_max_picks": 18, "control_max_picks": 30,
     "budgets": [0, 2, 4, 8, 12, 18, 30], "b_caps": [2, 4, 8],
     "tau_grid": [0.0, 0.005, 0.01, 0.02, 0.03, 0.05, 0.08],
     "policies": list(POLICIES),
 }
 TRAIN_ARMS = ("no_window_loss", "hmm_weight", "regimes3", "window_target_posterior", "window_target_verdict",
-              "fixed_uniform_train", "no_text", "evidence_hmm", "no_text_term", "no_video_term", "text_prior_off")
+              "fixed_uniform_train", "no_text", "evidence_hmm", "no_text_term", "no_video_term", "text_prior_off",
+              "no_temper", "temper_icc", "eoc_model_raw")   # iteration 5 arms: rho = 0 / rho = ICC; eoc_weight = "model"
 ABLATIONS = STRUCT_ARMS + TRAIN_ARMS
 
 
@@ -236,8 +243,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     if text_column:
         text_input = True
     assert not (text_input and text_term), "x_t would enter both the encoder column and E (double counting)"
+    a["text_in_ell"] = bool(text_term)              # iteration 5: the split prior subtracts COL_TEXT from COL_ELL only when E_t contains x_t
     assert window_target in ("verdict", "posterior"), window_target
-    eoc_weight = "hmm" if ablation == "hmm_weight" else str(a.eoc_weight)
+    eoc_weight = "hmm" if ablation == "hmm_weight" else ("model" if ablation == "eoc_model_raw" else str(a.eoc_weight))
     regimes = 3 if ablation == "regimes3" else int(a.regimes)
     assert not (evidence == "decomp" and regimes > 1), "the decomposition's video-level term is the R = 1 formula"
     online = ablation != "fixed_uniform_train"
@@ -255,6 +263,17 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     if missing:
         say("ABORT: %d videos without verdicts" % len(missing))
         raise SystemExit(3)
+    # iteration 5: within-video correlation of the fine-verdict errors -> tempering (hc.fine_kappa). "icc": re-estimated
+    # at every HMM refit from the fine verdicts of the negative training videos that are already revealed (inside the
+    # training query budget; 0 until at least two verdicts per video are revealed); a number: fixed; 0: off.
+    ft = "icc" if ablation == "temper_icc" else a.fine_temper
+    if ablation == "no_temper" or ft in (0, 0.0, None, "0", "off"):
+        rho_mode, rho = "off", 0.0
+    elif ft == "icc":
+        rho_mode, rho = "icc", 0.0
+    else:
+        rho_mode, rho = "fixed", float(ft)
+    rho_log = []
     # free text evidence (README section 7): HMM observations + per-second arrays for the LLR input column
     all_ids = train_ids + val_ids + test_ids
     grid = ieh.make_grid(K_FINE, J_COARSE)
@@ -286,7 +305,12 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     state = {"hmm": None, "cache": None}
 
     def refit(tag):
+        nonlocal rho
         bin_train = {v: (masked(binary[v][0], allowed[v]), binary[v][1]) for v in train_ids}
+        if rho_mode == "icc":                       # only revealed verdicts of negative train videos are read
+            rho = hc.fine_verdict_icc(bin_train, train_ids, labels)
+        rho_log.append({"tag": tag, "rho": rho})
+        say("%s: fine-verdict tempering rho = %.4f (%s); kappa(4) = %.3f" % (tag, rho, rho_mode, hc.fine_kappa(np.zeros(4, int), rho)))
         hmm, n_pos, n_neg = hc.fit_hmm(corpus, train_ids, labels, bin_train, model="interval", text_obs=text_obs, **fopts)
         hmm.save(os.path.join(out_dir, "hmm_params_%s.json" % tag))
         text_llr = ({v: hc.text_llr_seconds(hmm, text_arrays[v]) for v in all_ids if text_arrays.get(v) is not None}
@@ -299,12 +323,12 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         if state["cache"] is None:
             state["cache"] = hc.ScaffoldCache(corpus, all_ids,
                                               hc.make_scaffold_fn(hmm, binary, "full", 1.0, text=text_obs, text_llr=text_llr, evidence=evidence,
-                                                                  video_term=video_term, text_in_ell=text_term),
+                                                                  video_term=video_term, text_in_ell=text_term, rho=rho),
                                               masked_fn=hc.make_masked_scaffold_fn(hmm, binary, text=text_obs, text_llr=text_llr, evidence=evidence,
-                                                                                   video_term=video_term, text_in_ell=text_term))
+                                                                                   video_term=video_term, text_in_ell=text_term, rho=rho))
         else:
             state["cache"].masked_fn = hc.make_masked_scaffold_fn(hmm, binary, text=text_obs, text_llr=text_llr, evidence=evidence,
-                                                                  video_term=video_term, text_in_ell=text_term)
+                                                                  video_term=video_term, text_in_ell=text_term, rho=rho)
         state["hmm"] = hmm
 
     refit("init")
@@ -426,7 +450,8 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         # ---------------------------------------------- acquisition event (plan section A)
         if online and (epoch + 1) in acq_epochs:
             t1 = time.time()
-            acq = Acquirer(model, state["hmm"], cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs)
+            acq = Acquirer(model, state["hmm"], cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs,
+                           rho=rho)
             n_rounds = int(a.acq_rounds) if str(a.acq_alloc) == "global" else 1
             assert n_rounds >= 1
             n_new = 0
@@ -473,8 +498,12 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     calls["train_fine_hist"] = np.bincount([len(allowed[v]) for v in train_ids]).tolist()
 
     # ------------------------------------------------------------ evaluation
-    acq = Acquirer(model, hmm, cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs)
+    acq = Acquirer(model, hmm, cache, corpus, binary, device, weight=eoc_weight, topk_div=a.topk_div, text=text_obs, rho=rho)
+    prior_w = (model.prior_w.detach().cpu().tolist() if getattr(model, "prior_mode", "single") == "split" else None)
     results = {"curves": {}, "eoc_grid": {}, "calls": calls,
+               "iteration5": {"rho": rho, "rho_mode": rho_mode, "rho_log": rho_log, "fine_temper": str(a.fine_temper),
+                              "prior_mode": str(getattr(model, "prior_mode", "single")),
+                              "prior_w_fine_text_video": prior_w, "eoc_weight": eoc_weight, "acq_alloc": str(a.acq_alloc)},
                "text": {"hmm": use_text, "input": text_input, "videos_with_text": len(text_obs), "videos": len(all_ids)},
                "evidence": {"mode": evidence, "text_term": text_term, "video_term": video_term, "text_column": text_column,
                             "centre": centre, "videos_with_text_term": len(text_x)}}

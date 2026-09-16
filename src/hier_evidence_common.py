@@ -61,8 +61,10 @@ ELL_SCALE = float(np.log((1.0 - 1e-6) / 1e-6))   # ~13.8
 TEXT_ROOT = os.path.join(REPO_ROOT, "results", "reproduction", "features",
                          "bert_sentence_1fps")
 TEXT_DIM = 768
-SCAF_DIM = 7
-COL_ELL, COL_PS, COL_BF, COL_BC, COL_PH, COL_BLOCK, COL_TEXT = range(SCAF_DIM)
+SCAF_DIM = 8
+COL_ELL, COL_PS, COL_BF, COL_BC, COL_PH, COL_BLOCK, COL_TEXT, COL_V = range(SCAF_DIM)
+# COL_V (module-1 iteration 5): the video-level term v of the decomposed evidence E_t = ell_fine + x_t + v,
+# constant over the rows of a video (0 when the evidence is not decomposed); COL_TEXT carries x_t.
 LLR_SCALE = 5.0                       # per-second text log-likelihood ratio is fed as llr / LLR_SCALE (clipped to [-1, 1])
 N_INPUT_SCAF = 4                      # columns fed to the backbone (rev 1; the eliminated rev 2 used 2)
 A_EXT_DIM = align.A_DIM + TEXT_DIM + SCAF_DIM
@@ -124,6 +126,7 @@ def scaffold_rows(ell, p_s, b_fine, b_coarse, p_h, block_of_window,
                     np.asarray(b_coarse, np.float32)[blk],
                     np.asarray(p_h, np.float32)[blk],
                     blk.astype(np.float32),
+                    np.zeros(len(blk), np.float32),
                     np.zeros(len(blk), np.float32)], axis=1)
     assert out.shape[1] == SCAF_DIM and k > 0
     return out.astype(np.float32)
@@ -499,8 +502,57 @@ def text_llr_rows(llr_seconds, snip):
     return align.resample_intervals(arr, align.second_bounds(arr.shape[0]), snip)[:, 0]
 
 
+def fine_kappa(b_fine, rho):
+    """Module-1 iteration 5 evidence tempering: the n observed fine verdicts of a
+    video are treated as n_eff = n / (1 + (n - 1) rho) independent observations
+    (Kish design effect for exchangeable within-video correlation rho of the
+    verdict errors); every fine emission is raised to kappa = n_eff / n. rho = 0
+    or n <= 1 -> 1 (the iteration 1-4 behaviour)."""
+    import interval_evidence_hmm as ieh
+    n = int(np.sum(np.asarray(b_fine) != ieh.MISSING))
+    if rho <= 0.0 or n <= 1:
+        return 1.0
+    return 1.0 / (1.0 + (n - 1) * float(rho))
+
+
+def fine_verdict_icc(binary, train_ids, labels, min_videos=2):
+    """Within-video correlation of the fine-verdict ERRORS, estimated on the
+    negative training videos (every fine verdict there is an error when it is 1):
+    one-way ANOVA intraclass correlation ICC(1) of the OBSERVED (non-MISSING)
+    binary fine verdicts grouped by video, unbalanced design (k0 = (N - sum
+    n_i^2 / N) / (n - 1)); videos with fewer than two observed verdicts are
+    skipped. Reads video labels only and only verdicts already revealed in
+    `binary` (so it stays inside the training query budget when called on the
+    masked training verdicts). Returns 0.0 when fewer than `min_videos` videos
+    qualify; clipped to [0, 1]."""
+    import interval_evidence_hmm as ieh
+    groups = []
+    for v in train_ids:
+        if labels[v] != 0 or v not in binary:
+            continue
+        x = np.asarray(binary[v][0], np.float64)
+        x = x[np.asarray(binary[v][0]) != ieh.MISSING]
+        if len(x) >= 2:
+            groups.append(x)
+    n = len(groups)
+    if n < min_videos:
+        return 0.0
+    sizes = np.array([len(g) for g in groups], np.float64)
+    N = sizes.sum()
+    grand = np.concatenate(groups).mean()
+    means = np.array([g.mean() for g in groups])
+    ssb = float(np.sum(sizes * (means - grand) ** 2))
+    ssw = float(sum(np.sum((g - g.mean()) ** 2) for g in groups))
+    msb = ssb / (n - 1)
+    msw = ssw / (N - n)
+    k0 = (N - np.sum(sizes ** 2) / N) / (n - 1)
+    den = msb + (k0 - 1) * msw
+    icc = (msb - msw) / den if den > 0 else 0.0
+    return float(np.clip(icc, 0.0, 1.0))
+
+
 def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
-                           snip, n_seconds, text_llr=None, decomposed=False):
+                           snip, n_seconds, text_llr=None, decomposed=False, v_video=0.0):
     """Scaffold from per-segment posteriors of an IntervalEvidenceHMM: rows
     take the segment containing their midpoint; the block index is the coarse
     interval containing the row midpoint (no fine-window -> block table)."""
@@ -521,26 +573,30 @@ def scaffold_rows_interval(hmm, ell_seg, ps_seg, b_fine, b_coarse, p_h,
                     np.asarray(b_coarse, np.float32)[blk],
                     np.asarray(p_h, np.float32)[blk],
                     blk.astype(np.float32),
-                    np.asarray(tl, np.float32)], axis=1)
+                    np.asarray(tl, np.float32),
+                    np.full(len(blk), float(v_video), np.float32)], axis=1)
     assert out.shape[1] == SCAF_DIM
     return out.astype(np.float32)
 
 
-def decomposed_logodds(hmm, b_fine, b_coarse, n_seconds, video_term=True):
+def decomposed_logodds(hmm, b_fine, b_coarse, n_seconds, video_term=True, rho=0.0):
     """Module-1 iteration 3 evidence decomposition (segment level, before the per-
     second text term): ell_fine = posterior log-odds with the coarse emissions off
     (w_coarse = 0) plus v = logit P(any s = 1 | coarse verdicts only). Coarse
-    verdicts thus act at the video level only; fine verdicts and text per second."""
+    verdicts thus act at the video level only; fine verdicts and text per second.
+    Iteration 5: the fine emissions are tempered by fine_kappa(b_fine, rho).
+    Returns (ell_fine + v, v) with v = 0.0 for the no_video_term arm."""
     import interval_evidence_hmm as ieh
-    p_s, _ = hmm.posterior(b_fine, b_coarse, n_seconds, w_coarse=0.0)
+    p_s, _ = hmm.posterior(b_fine, b_coarse, n_seconds, w_fine=fine_kappa(b_fine, rho), w_coarse=0.0)
     ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
     if not video_term:                                   # diagnostic arm no_video_term
-        return ell
-    v = hmm.any_hate_logodds(np.full(len(b_fine), ieh.MISSING, dtype=int), b_coarse, n_seconds)
-    return ell + v
+        return ell, 0.0
+    v = float(hmm.any_hate_logodds(np.full(len(b_fine), ieh.MISSING, dtype=int), b_coarse, n_seconds))
+    return ell + v, v
 
 
-def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None, evidence="hmm", video_term=True, text_in_ell=True):
+def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None, evidence="hmm", video_term=True, text_in_ell=True,
+                            rho=0.0):
     """Scaffold builder from a masked fine-verdict vector (interval HMM only):
     ``fn(vid, b_fine_masked, snip, n_seconds)``. Columns: ell / P(s) from the
     HMM posterior with MISSING emissions, b_fine column keeps -1 for windows
@@ -552,17 +608,21 @@ def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None, evidence="hmm
         if vid not in binary:
             return None
         _, bc = binary[vid]
-        p_s, p_h = hmm.posterior(b_fine_masked, bc, n_seconds, xt=(text or {}).get(vid))
+        kappa = fine_kappa(b_fine_masked, rho)          # iteration 5: tempered fine emissions (block labels too)
+        p_s, p_h = hmm.posterior(b_fine_masked, bc, n_seconds, w_fine=kappa, xt=(text or {}).get(vid))
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
+        v = 0.0
         if evidence == "decomp":
-            ell = decomposed_logodds(hmm, b_fine_masked, bc, n_seconds, video_term=video_term)
+            ell, v = decomposed_logodds(hmm, b_fine_masked, bc, n_seconds, video_term=video_term, rho=rho)
             p_s = 1.0 / (1.0 + np.exp(-ell))
         return scaffold_rows_interval(hmm, ell, p_s, b_fine_masked, bc, p_h, snip, n_seconds,
-                                      text_llr=(text_llr or {}).get(vid), decomposed=(evidence == "decomp" and text_in_ell))
+                                      text_llr=(text_llr or {}).get(vid), decomposed=(evidence == "decomp" and text_in_ell),
+                                      v_video=v)
     return fn
 
 
-def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None, evidence="hmm", video_term=True, text_in_ell=True):
+def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None, evidence="hmm", video_term=True, text_in_ell=True,
+                     rho=0.0):
     """Per-video scaffold builder (README dataset.py column layout).
 
     ablation mean_prior: prior / input columns use the plain mean verdict
@@ -583,8 +643,9 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None, ev
             return None
         bf, bc = binary[vid]
         if interval:
-            p_s, p_h = hmm.posterior(bf, bc, n_seconds, w_fine=w_fine, xt=(text or {}).get(vid))
+            p_s, p_h = hmm.posterior(bf, bc, n_seconds, w_fine=w_fine * fine_kappa(bf, rho), xt=(text or {}).get(vid))
         else:
+            assert rho == 0.0, "fine-verdict tempering is implemented for the interval HMM only"
             p_s, p_h = hmm.posterior(bf, bc, w_fine=w_fine, **kw)
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
         if ablation in ("mean_prior", "mean_prior_all"):
@@ -600,11 +661,13 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None, ev
         if ablation in ("raw_block_label", "mean_prior_all"):
             p_h = bc.astype(np.float32)
         if interval:
+            v = 0.0
             if evidence == "decomp":
-                ell = decomposed_logodds(hmm, bf, bc, n_seconds, video_term=video_term)
+                ell, v = decomposed_logodds(hmm, bf, bc, n_seconds, video_term=video_term, rho=rho)
                 p_s = 1.0 / (1.0 + np.exp(-ell))
             return scaffold_rows_interval(hmm, ell, p_s, bf, bc, p_h, snip, n_seconds,
-                                          text_llr=(text_llr or {}).get(vid), decomposed=(evidence == "decomp" and text_in_ell))
+                                          text_llr=(text_llr or {}).get(vid), decomposed=(evidence == "decomp" and text_in_ell),
+                                          v_video=v)
         return scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
                                 snip, n_seconds)
     return fn

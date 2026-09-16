@@ -8,6 +8,12 @@ hc.COL_TEXT, divided by hc.LLR_SCALE and clipped to [-1, 1]) when cfg.text_input
 arm no_text_input switches it off. The prior term stays alpha * ell, where ell now
 comes from the HMM posterior that includes the text families.
 
+Module-1 iteration 5 (2026-09-17, reviewer round): cfg.prior_mode = "split" replaces the
+single prior term alpha * E_t by three learned scalars on the components of the
+decomposed evidence, a_f * ell_fine + a_x * x_t + a_v * v (all divided by ELL_SCALE),
+each initialised to alpha (prior_scale); ell_fine = COL_ELL - COL_TEXT - COL_V,
+x_t = COL_TEXT, v = COL_V. "single" = the iteration 1-4 term (arm single_prior).
+
 Same network as candidate 3 (revision-2 backbone by default: evidence e_t in
 q/k, per-head KEY bias, video-level context c added to both streams; the
 variant is a config: cfg.bias_mode in {key, gated}, cfg.ctx_mode in {rep,
@@ -28,7 +34,7 @@ import torch.nn.functional as F
 import hier_evidence_common as hc
 
 N_EVID = 4     # ell, p_s, b_fine, b_coarse (+ the per-second text LLR column hc.COL_TEXT when text_input)
-STRUCT_ARMS = ("full", "no_missing_state", "no_text_input")
+STRUCT_ARMS = ("full", "no_missing_state", "no_text_input", "single_prior")
 
 
 class EvidenceEncoder(nn.Module):
@@ -159,6 +165,13 @@ class ERCA(nn.Module):
         self.arm = arm
         self.no_verdict = bool(no_verdict)
         self.prior_scale = float(prior_scale)
+        self.prior_mode = "single" if arm == "single_prior" else str(getattr(cfg, "prior_mode", "single"))
+        assert self.prior_mode in ("single", "split"), self.prior_mode
+        if self.prior_mode == "split":            # iteration 5: learned per-component fusion scalars, init = alpha
+            self.prior_w = nn.Parameter(torch.full((3,), float(prior_scale)))
+        # whether COL_ELL includes x_t (train.py: text_term); when it does not (arms no_text_term / text_prior_off /
+        # evidence_hmm) the split prior has no text term and ell_fine = COL_ELL - COL_V
+        self.text_in_ell = bool(getattr(cfg, "text_in_ell", True))
         self.topk_div = int(cfg.topk_div)
         self.concat = False
         a_in = hc.SCAF_OFFSET
@@ -201,6 +214,8 @@ class ERCA(nn.Module):
         evid = f_a[..., hc.SCAF_OFFSET:hc.SCAF_OFFSET + N_EVID].clone()
         evid[..., hc.COL_ELL] = torch.clamp(evid[..., hc.COL_ELL] / hc.ELL_SCALE, -1.0, 1.0)   # encoder input in [-1, 1]; the prior term uses the raw ell
         ell = f_a[..., hc.SCAF_OFFSET + hc.COL_ELL:hc.SCAF_OFFSET + hc.COL_ELL + 1]
+        x_text = f_a[..., hc.SCAF_OFFSET + hc.COL_TEXT:hc.SCAF_OFFSET + hc.COL_TEXT + 1]
+        v_video = f_a[..., hc.SCAF_OFFSET + hc.COL_V:hc.SCAF_OFFSET + hc.COL_V + 1]
         text_llr = torch.clamp(f_a[..., hc.SCAF_OFFSET + hc.COL_TEXT] / hc.LLR_SCALE, -1.0, 1.0)
         if self.no_verdict:
             evid = torch.zeros_like(evid)
@@ -230,6 +245,15 @@ class ERCA(nn.Module):
         if c is not None:                                              # ctx_on_logit arm only
             av_log = av_log + c[:, None, :]
         if not self.no_verdict:
-            av_log = av_log + self.prior_scale * ell / hc.ELL_SCALE
+            if self.prior_mode == "split":
+                if self.text_in_ell:
+                    ell_fine = ell - x_text - v_video
+                    prior = (self.prior_w[0] * ell_fine + self.prior_w[1] * x_text + self.prior_w[2] * v_video) / hc.ELL_SCALE
+                else:
+                    ell_fine = ell - v_video
+                    prior = (self.prior_w[0] * ell_fine + self.prior_w[2] * v_video) / hc.ELL_SCALE
+            else:
+                prior = self.prior_scale * ell / hc.ELL_SCALE
+            av_log = av_log + prior
         mmil = self.bag(av_log, seq_len)
         return mmil, torch.sigmoid(a_log), torch.sigmoid(v_log), av_log, v_out, a_out

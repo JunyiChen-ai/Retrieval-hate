@@ -77,16 +77,17 @@ def window_bags(clog, window_rows, k, topk_div):
 
 
 class Acquirer:
-    def __init__(self, model, hmm, cache, corpus, binary, device, weight="model", topk_div=16, text=None):
+    def __init__(self, model, hmm, cache, corpus, binary, device, weight="model", topk_div=16, text=None, rho=0.0):
         self.model = model
         self.hmm = hmm
+        self.rho = float(rho)                     # iteration 5: fine-emission tempering (hc.fine_kappa) in the HMM states
         self.text = text or {}                    # vid -> HMM text observation (free evidence), or absent
         self.cache = cache
         self.corpus = corpus
         self.binary = binary
         self.device = device
         self.k = hmm.k
-        assert weight in ("model", "hmm"), weight
+        assert weight in ("model", "model_cal", "hmm"), weight
         self.weight = weight
         self.topk_div = int(topk_div)
         assert hmm.normalized_time, "Acquirer assumes normalized time (one transition matrix for all videos)"
@@ -139,7 +140,14 @@ class Acquirer:
 
     # ------------------------------------------------------------ HMM side
     def state(self, bf, bc, vid=None):
-        return self.hmm.infer(bf, bc, Tm=self.Tm, xt=self.text.get(vid))
+        return self.hmm.infer(bf, bc, w_fine=hc.fine_kappa(bf, self.rho), Tm=self.Tm, xt=self.text.get(vid))
+
+    def verdict_prob(self, p_hate):
+        """iteration 5 (eoc_weight = "model_cal"): the probability that the VLM answers 1
+        for a window whose hate probability under the backbone is p_hate, through the
+        HMM's fitted fine emission parameters: r_f + (q_f - r_f) p_hate."""
+        q, r = float(self.hmm.q_f_z[0]), float(self.hmm.r_f_z[0])
+        return r + (q - r) * np.asarray(p_hate, dtype=np.float64)
 
     # ------------------------------------------------------------ one video
     def run_video(self, vid, policy, n_steps, rng, initial=None, reveal=True):
@@ -203,6 +211,8 @@ class Acquirer:
             elif policy == "eoc":
                 if self.weight == "model":
                     pred = window_bags(clog[0], window_rows, self.k, self.topk_div)
+                elif self.weight == "model_cal":
+                    pred = self.verdict_prob(window_bags(clog[0], window_rows, self.k, self.topk_div))
                 else:
                     pred = self.state(bf, bc, vid)["pred_fine"]
                 fa_list = []

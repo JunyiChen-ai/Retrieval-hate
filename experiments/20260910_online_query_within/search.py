@@ -56,6 +56,9 @@ def main(argv=None):
                     help="JSON dict of fixed (non-searched) settings written into every trial's hparams.json, "
                          "ablation chains then replay the same settings")
     ap.add_argument("--ablation", default="full")
+    ap.add_argument("--enqueue-json", default=None,
+                    help="iteration 5: JSON dict of searched hparams enqueued as trial 0 of a NEW study (warm start "
+                         "from a previous iteration's best trial); ignored when the study already has trials")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--num-workers", type=int, default=4)
     ap.add_argument("--no-within-prune", action="store_true", default=True,
@@ -81,6 +84,10 @@ def main(argv=None):
         study_name="%s_seed%d" % (args.corpus, args.seed), storage=storage,
         direction="maximize", load_if_exists=True,
         sampler=optuna.samplers.TPESampler(seed=args.seed))
+    if args.enqueue_json and len(study.trials) == 0:
+        enq = json.loads(args.enqueue_json)
+        study.enqueue_trial(enq)
+        say("enqueued trial 0 (warm start): %s" % json.dumps(enq))
     budget_path = os.path.join(root, "budget.json")
     budget = None
     if os.path.exists(budget_path):
