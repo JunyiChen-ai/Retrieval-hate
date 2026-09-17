@@ -252,4 +252,6 @@ E_t = ell_fine(t) + x_t + v，
 - 判定 P1 / W1 / E1 同第 2 节。相对 4b（HateMM .6448 / .8624 / .6420，HCS .6893 / .6809 / .5802）：预期 HateMM pooled 不低于 4b − std，within 可能回到第 3 轮水平（.642，跨视频分配去掉）；HCS within 预期回落到第 3 轮的 .565 附近（分配去掉），pooled 不低于 4b − std。
 - 可证伪：(1) 三个标量学出来 a_f < a_v（模型压低细窗、保留视频级项），否则"独立加权"没有起作用；(2) 34 次点不低于 8 次点 − .005 两语料（4b HateMM 34 次 .6423 < 8 次 .6448）。
 - 主搜索完成后三 seed 补跑臂（各 seed best trial 超参）：`temper_icc`、`text_prior_off`、`single_prior`。判定按规则 14(g)（两语料 ≥ .01）。
+- 2026-09-17 19:40 补充（三 seed 主搜索出来后加，目的是把 it5 对 4b 的差归到具体改动）：再跑 `eoc_model_raw`（EOC 权重回到内容头概率，其余同默认）和 `global_alloc`（`acq_alloc = global`，即 4b 的跨视频分配，其余同默认；每视频训练上限随之回到 8）。两者同样用各 seed best trial 超参，与前三个臂同表报告。
+- 2026-09-17 19:30 运行记录：本机 GPU 被其他用户进程占用（27.6 GB），HateMM seed 234 的 trial 10、11 因显存不足失败；该 study 目录同步到 uoa-lab3，`budget.json` 改 14（失败 trial 计入预算）续跑 2 个有效 trial，之后在同机跑它的五个臂（`launch/run_it5_chain.sh`）。HateMM seed 2025/3407 的两个补充臂在 uoa-lab3，HCS 三 seed 的补充臂在 uoa-lab1（`launch/run_it5_arms.sh`）。
 - 机器：本机 HateMM seed 234 + HCS 三 seed；uoa-lab1 HateMM seed 2025；uoa-lab3 HateMM seed 3407。规则 6 代码复核见 `REVIEW_RULE6_5.md`。
