@@ -6,7 +6,7 @@ import numpy as np
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 suffix = sys.argv[1] if len(sys.argv) > 1 else "_it5"
 R = os.path.join(ROOT, "runs", "20260910_online_query_within" + suffix)
-ARMS = ("temper_icc", "text_prior_off", "single_prior")
+ARMS = ("temper_icc", "text_prior_off", "single_prior", "eoc_model_raw", "global_alloc")
 KEYS = ("pooled_ap", "pooled_roc", "within_roc")
 out = {}
 for corpus in ("hatemm", "hateclipseg"):
