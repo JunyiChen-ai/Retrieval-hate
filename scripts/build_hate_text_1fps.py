@@ -26,6 +26,11 @@ timestamped_chunks.jsonl, chunk-level, max 64 tokens), so "bert" -> "hate_robert
 transcript source, the units and the encoder at once; "bert_utterance" -> "hate_roberta" changes the
 encoder only.
 
+--units asr (default): the data/ASR utterances above. --units chunks (iteration 6b, 2026-09-22): the
+sentence-level Whisper chunks of results/reproduction/asr/<corpus>_all/timestamped_chunks.jsonl, i.e. the
+transcript and units of the BERT rows being replaced (same load_chunks); with --encoder hate_roberta the
+output goes to data/hate_text_chunks_1fps/ and pairs with data/text_hate_chunks (x_t on the same chunks).
+
 Output: <root>/<corpus>/<video_id>.npy float32 (T, 768); <corpus>/index.json with per-video coverage.
 No label is read.
 """
@@ -33,7 +38,7 @@ import argparse, json, os, sys
 import numpy as np, torch
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts/reproduction_baselines")); sys.path.insert(0, os.path.join(ROOT, "src"))
-sys.path.insert(0, os.path.join(ROOT, "scripts")); sys.path.insert(0, os.path.join(ROOT, "scripts/reproduction_baselines/multihateloc"))
+sys.path.insert(0, os.path.join(ROOT, "scripts")); sys.path.insert(0, os.path.join(ROOT, "scripts/reproduction_baselines/multihateloc")); sys.path.insert(0, os.path.join(ROOT, "scripts/duplex"))
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
 from hate_common import data as hdata
 import hier_evidence_common as hc
@@ -43,6 +48,7 @@ from transformers import AutoTokenizer, AutoModel, AutoModelForSequenceClassific
 
 ENCODERS = {"hate_roberta": (MODEL, os.path.join(ROOT, "data", "hate_text_1fps")),
             "bert_utterance": ("bert-base-uncased", os.path.join(ROOT, "data", "bert_utterance_1fps"))}
+CHUNK_ROOTS = {"hate_roberta": os.path.join(ROOT, "data", "hate_text_chunks_1fps")}   # --units chunks
 DIM = 768
 
 
@@ -52,8 +58,11 @@ def main():
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--batch", type=int, default=64)
     ap.add_argument("--encoder", default="hate_roberta", choices=sorted(ENCODERS))
+    ap.add_argument("--units", default="asr", choices=("asr", "chunks"))
     a = ap.parse_args()
     model_id, out_root = ENCODERS[a.encoder]
+    if a.units == "chunks":
+        out_root = CHUNK_ROOTS[a.encoder]
     out_dir = os.path.join(out_root, a.corpus)
     os.makedirs(out_dir, exist_ok=True)
     tok = AutoTokenizer.from_pretrained(model_id)
@@ -93,11 +102,18 @@ def main():
         except Exception:
             pass
     asr = {}
-    for p in ASR[a.corpus]:
-        for line in open(os.path.join(ROOT, p)):
-            r = json.loads(line)
-            if r["id"] in T and r["id"] not in asr:
-                asr[r["id"]] = [(s, e, t) for s, e, t in utterances(r) if str(t).strip()]
+    if a.units == "asr":
+        for p in ASR[a.corpus]:
+            for line in open(os.path.join(ROOT, p)):
+                r = json.loads(line)
+                if r["id"] in T and r["id"] not in asr:
+                    asr[r["id"]] = [(s, e, t) for s, e, t in utterances(r) if str(t).strip()]
+    else:
+        from extract_bert_sentence_features import load_chunks
+        from extract_clip_features import CORPORA
+        for v, chunks in load_chunks(CORPORA[a.corpus]).items():
+            if v in T:
+                asr[v] = [(float(c["start"]), max(float(c["end"]), float(c["start"]) + 1.0), c["text"]) for c in chunks if c["text"].strip()]
     index, max_diff, n_units, n_cov = {}, 0.0, 0, 0
     for v in T:
         n = T[v]
@@ -126,8 +142,8 @@ def main():
         n_cov += int(covered > 0)
     with open(os.path.join(out_dir, "index.json"), "w") as fh:
         json.dump(index, fh, indent=1, sort_keys=True)
-    print("%s [%s]: %d videos written, %d with speech rows, %d utterances embedded, head-vs-model logit max abs diff %.2e"
-          % (a.corpus, a.encoder, len(T), n_cov, n_units, max_diff))
+    print("%s [%s, units %s -> %s]: %d videos written, %d with speech rows, %d utterances embedded, head-vs-model logit max abs diff %.2e"
+          % (a.corpus, a.encoder, a.units, out_dir, len(T), n_cov, n_units, max_diff))
 
 
 if __name__ == "__main__":

@@ -2,7 +2,14 @@
 and the K=30 OCR windows (module-1 iteration 2 "text evidence", 2026-09-10; word-level
 Whisper records are merged into utterances first, see utterances()).
 
-Output: data/text_hate/<corpus>/<video_id>.npz with
+--asr-source asr (default): the ASR chunks of data/ASR (word records merged into utterances, see
+utterances()); output data/text_hate/. --asr-source chunks (module-1 iteration 6b, 2026-09-22): the
+sentence-level Whisper chunks of results/reproduction/asr/<corpus>_all/timestamped_chunks.jsonl (the
+transcript the backbone's BERT rows were built from; read with the same load_chunks as
+scripts/reproduction_baselines/multihateloc/extract_bert_sentence_features.py, spans < 1 s widened to 1 s);
+output data/text_hate_chunks/. OCR windows are the same in both.
+
+Output: <out root>/<corpus>/<video_id>.npz with
   p_asr (T,)  hate probability of the ASR chunk covering second t, NaN = no speech
   w_asr (T,)  1 / (seconds covered by that chunk): one chunk counts once in total
   p_ocr (T,)  hate probability of the OCR text of the K=30 window covering t, NaN = no text
@@ -15,6 +22,7 @@ import argparse, json, os, sys
 import numpy as np, torch
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts/reproduction_baselines")); sys.path.insert(0, os.path.join(ROOT, "src"))
+sys.path.insert(0, os.path.join(ROOT, "scripts/reproduction_baselines/multihateloc")); sys.path.insert(0, os.path.join(ROOT, "scripts/duplex"))
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
 from hate_common import data as hdata
 import hier_evidence_common as hc
@@ -60,8 +68,9 @@ def main():
     ap.add_argument("--corpus", required=True, choices=("hatemm", "hateclipseg"))
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--min-ocr-conf", type=float, default=0.5)
+    ap.add_argument("--asr-source", default="asr", choices=("asr", "chunks"))
     a = ap.parse_args()
-    out_dir = os.path.join(ROOT, "data/text_hate", a.corpus)
+    out_dir = os.path.join(ROOT, "data/text_hate" if a.asr_source == "asr" else "data/text_hate_chunks", a.corpus)
     os.makedirs(out_dir, exist_ok=True)
     tok = AutoTokenizer.from_pretrained(MODEL)
     mod = AutoModelForSequenceClassification.from_pretrained(MODEL).to(a.device).eval()
@@ -85,11 +94,18 @@ def main():
         except Exception:
             pass
     asr = {}
-    for p in ASR[a.corpus]:
-        for line in open(os.path.join(ROOT, p)):
-            r = json.loads(line)
-            if r["id"] in T and r["id"] not in asr:
-                asr[r["id"]] = utterances(r)
+    if a.asr_source == "asr":
+        for p in ASR[a.corpus]:
+            for line in open(os.path.join(ROOT, p)):
+                r = json.loads(line)
+                if r["id"] in T and r["id"] not in asr:
+                    asr[r["id"]] = utterances(r)
+    else:
+        from extract_bert_sentence_features import load_chunks
+        from extract_clip_features import CORPORA
+        for v, chunks in load_chunks(CORPORA[a.corpus]).items():
+            if v in T:
+                asr[v] = [(float(c["start"]), max(float(c["end"]), float(c["start"]) + 1.0), c["text"]) for c in chunks]
     ocr = {}
     for p in OCR[a.corpus]:
         for line in open(os.path.join(ROOT, p)):
@@ -130,8 +146,8 @@ def main():
         arr[v]["p_asr"][m] = (sp[m] / c[m]).astype(np.float32)
         n_asr += int(m.any()); n_ocr += int(np.isfinite(arr[v]["p_ocr"]).any())
         np.savez(os.path.join(out_dir, "%s.npz" % v), **arr[v])
-    print("%s: %d videos written, %d with speech text, %d with OCR text, %d texts scored"
-          % (a.corpus, len(T), n_asr, n_ocr, len(texts)))
+    print("%s [asr-source %s -> %s]: %d videos written, %d with speech text, %d with OCR text, %d texts scored"
+          % (a.corpus, a.asr_source, out_dir, len(T), n_asr, n_ocr, len(texts)))
 
 
 if __name__ == "__main__":

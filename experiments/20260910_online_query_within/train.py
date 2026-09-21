@@ -155,6 +155,9 @@ DEFAULTS = {
     # classification head gives x_t, on x_t's utterance units: one text encoder, two read-outs) or "bert_utterance"
     # (bert-base-uncased CLS on those same utterances: the control that isolates the encoder)
     "text_feat": "bert",
+    # iteration 6b: ASR source of the per-second text scores x_t (hc.TEXT_HATE_ROOTS key): "asr" = data/ASR utterances
+    # (all runs before 2026-09-22), "chunks" = the sentence-level Whisper chunks the "bert" rows come from
+    "text_hate_source": "asr",
     "eval_max_picks": 18, "control_max_picks": 30,
     "budgets": [0, 2, 4, 8, 12, 18, 30], "b_caps": [2, 4, 8],
     "tau_grid": [0.0, 0.005, 0.01, 0.02, 0.03, 0.05, 0.08],
@@ -282,13 +285,17 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     # free text evidence (README section 7): HMM observations + per-second arrays for the LLR input column
     all_ids = train_ids + val_ids + test_ids
     grid = ieh.make_grid(K_FINE, J_COARSE)
-    text_obs = hc.text_observations(corpus, all_ids, grid) if use_text else {}
-    text_arrays = {v: hc.load_text_hate(corpus, v) for v in all_ids} if (text_input or text_term) else {}
-    centre = hc.text_centre(corpus, train_ids) if (text_term or text_column) else 0.0
+    xt_src = str(a.text_hate_source)
+    assert xt_src in hc.TEXT_HATE_ROOTS, xt_src
+    text_obs = hc.text_observations(corpus, all_ids, grid, xt_src) if use_text else {}
+    text_arrays = {v: hc.load_text_hate(corpus, v, xt_src) for v in all_ids} if (text_input or text_term) else {}
+    if text_input or text_term:
+        assert any(v is not None for v in text_arrays.values()), "no text scores found for text_hate_source=%s (cache not synced?)" % xt_src
+    centre = hc.text_centre(corpus, train_ids, xt_src) if (text_term or text_column) else 0.0
     text_x = ({v: hc.text_logit_seconds(text_arrays[v], centre) for v in all_ids if text_arrays.get(v) is not None}
               if (text_term or text_column) else {})
-    say("evidence %s | text term %s (centre %.3f, %d / %d videos with text) | HMM text families %s (%d videos) | LLR input column %s"
-        % (evidence, text_term, centre, len(text_x), len(all_ids), use_text, len(text_obs), text_input))
+    say("evidence %s | text term %s (source %s, centre %.3f, %d / %d videos with text) | HMM text families %s (%d videos) | LLR input column %s"
+        % (evidence, text_term, xt_src, centre, len(text_x), len(all_ids), use_text, len(text_obs), text_input))
 
     # ------------------------------------------------ allowed sets, HMM, scaffold cache
     acq_epochs = sorted(int(e) for e in a.acq_epochs)

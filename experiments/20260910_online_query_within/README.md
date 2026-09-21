@@ -313,3 +313,18 @@ E_t = ell_fine(t) + x_t + v，
 3. **x_t 进先验是否冗余**（hate − hate_prior_off）：HateMM AP +.007 / ROC +.005 / within +.021；HCS AP −.010 / ROC +.004 / within +.055。pooled 上两语料都没到 .01，即文本流换成 hate 编码器后，先验里的校准分数对 pooled 的增量基本被流特征吸收（对比 BERT 行时去掉 x_t 掉 .042 / .013 AP）；但 within 两语料都明显掉（−.021 / −.055），逐秒校准分数进先验仍是视频内排序的来源。审稿人"ensemble"的说法对 pooled 部分成立，对 within 不成立。
 
 **去向**：默认文本行不变（BERT 行）。可选后续（未跑，待裁定）：(a) 在旧 Whisper 记录（`results/reproduction/asr/<corpus>_all/timestamped_chunks.jsonl`）上统一：x_t 和文本行都改用这份转录与 hate-RoBERTa，检验 HCS 的掉分是否全来自转录来源；(b) 只在 HateMM 用 hate 行会违反规则 13（两语料同一方法），不做。
+
+### 12b. 在句子级转录上统一（2026-09-22，用户指令）
+
+**起因**：12 节的判定 2 表明 HCS 的掉分一半来自把文本流的转录换成 `data/ASR` 的粗话语。用户指令：反过来，把 x_t 也换到骨干原来用的句子级 Whisper 片段（`results/reproduction/asr/<corpus>_all/timestamped_chunks.jsonl`，中位 2 s）上，在那份转录上统一后重跑。
+
+**机制**：x_t 改由同一分类器在句子级片段上打分（`data/text_hate_chunks`，`text_hate_source = chunks`；OCR 部分不变），骨干文本行改为 hate-RoBERTa `<s>` 向量在同样片段上（`data/hate_text_chunks_1fps`，`text_feat = hate_chunks`）。这样一份转录、一个冻结文本编码器、两个读出，且转录单位与此前所有默认运行的骨干文本流相同。其余不变。实现：`build_text_hate_scores.py --asr-source chunks`、`build_hate_text_1fps.py --units chunks`、`hc.TEXT_HATE_ROOTS` / `load_text_hate(source)` / `text_observations(source)` / `text_centre(source)`、`train.py` 键 `text_hate_source`。
+
+**预注册（开跑前写定）**：第 5 轮各 seed best trial 超参，两语料三 seed 各两个运行：
+- `unified_chunks` = `text_feat = hate_chunks` + `text_hate_source = chunks`（完全统一）；
+- `xt_chunks` = 默认 BERT 行 + `text_hate_source = chunks`（只把 x_t 换到句子级转录，分离"x_t 换转录"与"文本流换编码器"两个效应）。
+输出 `runs/20260910_online_query_within_it5/diag/<corpus>/seed<s>/{unified_chunks,xt_chunks}/`；uoa-lab3 跑 HateMM，uoa-lab1 跑 HCS。判定：
+1. `unified_chunks` 对默认（HateMM .6444 / .8500，HCS .6837 / .6809）两语料 AP、ROC 都 ≥ −.005 → 换成默认（一份转录一个编码器）；任一低于 .005 以上 → 不换，记录。
+2. `xt_chunks` − 默认 = x_t 换到句子级转录的效应；`unified_chunks` − `xt_chunks` = 在同一转录上文本流换成 hate-RoBERTa 的效应（与 12 节 HateMM +.0125 / HCS −.0115 对照，检验编码器效应是否与转录无关）。
+3. 缓存自检（2026-09-22）：两语料新行的形状与 BERT 行一致；有语音掩码与 `data/text_hate_chunks` 的 p_asr 掩码逐秒一致，与 BERT 行掩码差 0.2% 的秒（< 1 s 片段加宽到 1 s；复核补充：另有 0.2% 的秒因加宽换了归属片段，无秒丢失）；OCR 部分与 `data/text_hate` 数值差 ≤ 1.4e-5。
+- 规则 6 代码复核：`REVIEW_RULE6_6.md` 第 2 部分。

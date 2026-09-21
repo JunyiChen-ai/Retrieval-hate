@@ -26,3 +26,17 @@
 5. 继承自 `utterances()`：词级时间戳非单调（HateMM 205 / HCS 137 条记录）使合并后的话语可跨整段视频，配合"并列取更早"，一条 > 60 s 的话语占 58.6%（HateMM）/ 63.4%（HCS）的有语音帧，且截断到前 128 token。BERT 行有同样性质（55.4% / 63.8%，64 token），不是退化，但"逐秒文本行"多数是长跨度开头的嵌入。
 6. `except Exception: pass` 在 `video_duration` 失败时静默丢视频（沿用打分脚本；当前 index 1068 / 393 齐全）。
 7. 原 docstring 的 HateMM / HCS 不对称说法已删。
+
+## 第 2 部分：第 6b 轮"在句子级转录上统一"（2026-09-22）
+
+审稿人：独立子 agent（Claude Fable 5.1），只读。对象：未提交 diff（`scripts/build_text_hate_scores.py --asr-source chunks`、`scripts/build_hate_text_1fps.py --units chunks`、`src/hier_evidence_common.py` 的 `TEXT_HATE_ROOTS` / `load_text_hate(source)` / `text_observations(source)` / `text_centre(source)` / `TEXT_ROOTS["hate_chunks"]`、`train.py` 键 `text_hate_source`）。**结论：PASS，无 BLOCKER、无 MUST-FIX，四条 NOTE。**
+
+核对项：
+1. x_t 的全部消费者都随 `text_hate_source`：`text_obs`（HMM 观测族）、`text_arrays`（→ `text_llr_seconds`、`text_x` → `text_llr` → 两个 scaffold 构造器）、`centre` 都取所选来源；`interval_evidence_hmm.py` 不读文件；`fit_hmm`、`ScaffoldCache` 只接收已算好的 `text_obs` / `text_llr`；`screen.py`、`acquire.py`、`hmm_eval.py`、`model.py`、`search.py` 无文本分数读取；`text_prior_off` 路径下 `text_arrays` 同样按所选来源读。
+2. 默认行为不变：三个函数默认 `source="asr"`，`TEXT_HATE_ROOTS["asr"] == TEXT_HATE_ROOT`；`temper_eval.py`、`text_eval.py` 不传 source；其它实验与脚本不导入这些函数。
+3. 打分脚本 chunks 分支：`load_chunks` 去掉空文本 / None / 非有限跨度，`end <= start` 时置 `end = start + 1`；< 1 s 再加宽到 1 s（与 `utterances()` 同规则）；逐秒规则与 `w_asr` 不变；`--asr-source` 只改输出根目录与 ASR 字典；OCR 不动。
+4. 行抽取 chunks 分支：同 `load_chunks`、同 `assign_frames`、同 T；审稿人核对 `index.json`：`n_frames` 与 BERT 行在全部 1068 / 393 视频一致，片段数一致。NOTE：加宽到 1 s 也作用于行，BERT 行用的是原始跨度（HateMM 2348 / HCS 952 个片段长度在 0–1 s 之间）：HateMM 新增覆盖 286 秒（0.19%，158 视频）另有 285 秒（0.19%，136 视频）换了归属片段；HCS 154 + 144 秒；无秒丢失。行与 `data/text_hate_chunks` 用同样加宽后的单位（掩码差 0），统一成立。已补进 README 12b 第 3 条。
+5. 配置流向：`DEFAULTS["text_hate_source"]`；`run_diag.sh` 的 JSON 覆盖能到达；`config.json`、`summary.json` 快照含该键；`run.log` 打印来源；`search.py --extra-config` 也接受。
+6. 不读标签；训练代码不向 `data/` 写文件；两个新缓存都有 PROVENANCE.md。
+
+NOTE（已处理 / 记录）：`--units chunks --encoder bert_utterance` 会 KeyError（可接受，输出前失败）；`extract_clip_features` 的导入依赖前一行导入的 sys.path 副作用——已在两个脚本显式加 `scripts/duplex`；`arms_summary.py` 已加 `unified_chunks` / `xt_chunks`；`interval_evidence_hmm.py:59` docstring 只提 `data/text_hate`（未改）。

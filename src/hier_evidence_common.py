@@ -66,9 +66,12 @@ TEXT_ROOT = os.path.join(REPO_ROOT, "results", "reproduction", "features",
 #   "hate_roberta" <s> hidden state of cardiffnlp/twitter-roberta-base-hate-latest per ASR utterance, the same model
 #                  and units whose classification head gives the text term x_t (scripts/build_hate_text_1fps.py)
 #   "bert_utterance" bert-base-uncased CLS on the same data/ASR utterances as "hate_roberta" (control: encoder only)
+#   "hate_chunks"    hate-RoBERTa <s> state on the sentence-level Whisper chunks the "bert" rows use (iteration 6b;
+#                  pairs with text_hate_source = "chunks": one transcript, one encoder, two read-outs)
 TEXT_ROOTS = {"bert": TEXT_ROOT,
               "hate_roberta": os.path.join(REPO_ROOT, "data", "hate_text_1fps"),
-              "bert_utterance": os.path.join(REPO_ROOT, "data", "bert_utterance_1fps")}
+              "bert_utterance": os.path.join(REPO_ROOT, "data", "bert_utterance_1fps"),
+              "hate_chunks": os.path.join(REPO_ROOT, "data", "hate_text_chunks_1fps")}
 TEXT_DIM = 768
 SCAF_DIM = 8
 COL_ELL, COL_PS, COL_BF, COL_BC, COL_PH, COL_BLOCK, COL_TEXT, COL_V = range(SCAF_DIM)
@@ -97,25 +100,30 @@ def load_text_rows(corpus, vid, snip, source="bert"):
 
 
 TEXT_HATE_ROOT = os.path.join(REPO_ROOT, "data", "text_hate")
+# Per-second text-classifier scores by ASR source (scripts/build_text_hate_scores.py --asr-source):
+#   "asr"    data/ASR utterances (all runs before 2026-09-22)
+#   "chunks" sentence-level Whisper chunks of results/reproduction/asr (the "bert" rows' transcript; iteration 6b)
+TEXT_HATE_ROOTS = {"asr": TEXT_HATE_ROOT,
+                   "chunks": os.path.join(REPO_ROOT, "data", "text_hate_chunks")}
 
 
-def load_text_hate(corpus, vid):
-    """Per-second text-classifier hate probabilities (data/text_hate, built by
+def load_text_hate(corpus, vid, source="asr"):
+    """Per-second text-classifier hate probabilities (TEXT_HATE_ROOTS[source], built by
     scripts/build_text_hate_scores.py): dict p_asr / w_asr / p_ocr / w_ocr, or None."""
-    p = os.path.join(TEXT_HATE_ROOT, corpus, "%s.npz" % vid)
+    p = os.path.join(TEXT_HATE_ROOTS[source], corpus, "%s.npz" % vid)
     if not os.path.exists(p):
         return None
     with np.load(p) as z:
         return {k: np.asarray(z[k]) for k in z.files}
 
 
-def text_observations(corpus, video_ids, grid):
+def text_observations(corpus, video_ids, grid, source="asr"):
     """vid -> interval_evidence_hmm.text_observation(...) (binned segment counts)
     for the videos with any text; videos without text are absent."""
     import interval_evidence_hmm as ieh
     out = {}
     for vid in video_ids:
-        arr = load_text_hate(corpus, vid)
+        arr = load_text_hate(corpus, vid, source)
         if arr is None:
             continue
         xt = ieh.text_observation(grid, arr)
@@ -472,13 +480,13 @@ def text_llr_seconds(hmm, arrays):
     return (hmm.text_weight * out).astype(np.float32)
 
 
-def text_centre(corpus, video_ids):
+def text_centre(corpus, video_ids, source="asr"):
     """Median logit of the text classifier's hate probability over all seconds with
     text of the given videos (train ids; no label is read): the zero level of the
     centred text log-odds x_t."""
     vals = []
     for vid in video_ids:
-        arr = load_text_hate(corpus, vid)
+        arr = load_text_hate(corpus, vid, source)
         if arr is None:
             continue
         for fam in ("asr", "ocr"):
