@@ -294,3 +294,22 @@ E_t = ell_fine(t) + x_t + v，
 - 判定 2（差别来自编码器还是转录单位）：`text_feat_hate` − `bert_utterance` 是编码器的贡献，`bert_utterance` − 默认是转录来源/单位的贡献；只有前者 ≥ .01 才能说"hate 微调编码器有用"。
 - 判定 3（x_t 进先验是否冗余）：`text_feat_hate` − `text_feat_hate_prior_off` 两语料 AP 或 ROC ≥ .01 → 先验里的校准分数与流特征不可互相替代，"ensemble"的说法不成立（同一编码器，差别在校准的读出方式）；两语料都 < .005 → 先验文本项可以去掉、由流特征承担，审稿人第 2 条问题消失。
 - 规则 6 代码复核：`REVIEW_RULE6_6.md`（无 BLOCKER；两处 must-fix 已改：文档里关于 BERT 行来源的说法、远程机缺特征目录时的断言）。
+
+**结果（2026-09-22 00:40；两语料三 seed 全部 18 个运行完成，无失败；来源 `runs/20260910_online_query_within_it5/diag/<corpus>/seed<s>/{text_feat_hate,text_feat_hate_prior_off,bert_utterance}/summary.json`，汇总 `arms_summary.py _it5` → `arms_summary.json`；8 次调用点，三 seed 均值 ± std）**
+
+| 文本行 | 先验里的 x_t | HateMM AP / ROC / within | HCS AP / ROC / within |
+|---|---|---|---|
+| 默认：BERT（旧 Whisper 记录 chunk，bert-base-uncased） | 有 | .6444 ± .0067 / .8500 ± .0018 / .6492 ± .0069 | .6837 ± .0016 / .6809 ± .0037 / .5597 ± .0081 |
+| `bert_utterance`：同 x_t 的话语单位，bert-base-uncased | 有 | .6412 ± .0156 / .8558 ± .0030 / .6368 ± .0064 | .6730 ± .0069 / .6607 ± .0028 / .5532 ± .0068 |
+| `text_feat_hate`：同 x_t 的话语单位，hate-RoBERTa `<s>` | 有 | **.6537 ± .0065 / .8681 ± .0022** / .6402 ± .0059 | .6615 ± .0045 / .6388 ± .0030 / .5644 ± .0057 |
+| `text_feat_hate_prior_off`：同上 | 无（只作流输入） | .6469 ± .0087 / .8632 ± .0028 / .6197 ± .0095 | .6714 ± .0120 / .6344 ± .0090 / .5090 ± .0147 |
+| （第 11 节）`text_prior_off`：BERT 行 | 无 | .6020 / .8263 / .6005 | .6713 / .6630 / .5185 |
+
+34 次调用点 AP：HateMM 默认 .6406、hate 行 .6473；HCS 默认 .7056、hate 行 .6866。
+
+**判定**：
+1. **不换默认**。hate 行对 BERT 行：HateMM AP +.009、ROC +.018（HateMM 8 次点 AP .6537 离 P1 floor .6544 只差 .0007，ROC 过）；HCS AP −.022、ROC −.042，超过 −.005 的容忍。两语料方向相反，按预注册保留 BERT 行。
+2. **编码器与转录单位分开看**：HateMM 上编码器贡献（hate − bert_utterance）= AP +.0125 / ROC +.012，转录单位贡献（bert_utterance − 默认）= −.003 / +.006：hate 微调编码器在 HateMM 上 ≥ .01 有用。HCS 上编码器 −.0115 / −.022，转录单位 −.011 / −.020：两项各掉一半。HCS 的 `data/ASR` 转录（x_t 现在用的）本身就比旧 Whisper 记录差（旧记录覆盖率 .868 对 .816、单位数 9196 对 5296），而 hate-RoBERTa 在 HCS 这种仇恨集中、文本更长的语料上作为流特征不如通用 BERT。
+3. **x_t 进先验是否冗余**（hate − hate_prior_off）：HateMM AP +.007 / ROC +.005 / within +.021；HCS AP −.010 / ROC +.004 / within +.055。pooled 上两语料都没到 .01，即文本流换成 hate 编码器后，先验里的校准分数对 pooled 的增量基本被流特征吸收（对比 BERT 行时去掉 x_t 掉 .042 / .013 AP）；但 within 两语料都明显掉（−.021 / −.055），逐秒校准分数进先验仍是视频内排序的来源。审稿人"ensemble"的说法对 pooled 部分成立，对 within 不成立。
+
+**去向**：默认文本行不变（BERT 行）。可选后续（未跑，待裁定）：(a) 在旧 Whisper 记录（`results/reproduction/asr/<corpus>_all/timestamped_chunks.jsonl`）上统一：x_t 和文本行都改用这份转录与 hate-RoBERTa，检验 HCS 的掉分是否全来自转录来源；(b) 只在 HateMM 用 hate 行会违反规则 13（两语料同一方法），不做。
