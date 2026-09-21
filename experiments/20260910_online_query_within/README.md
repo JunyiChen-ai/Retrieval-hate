@@ -328,3 +328,23 @@ E_t = ell_fine(t) + x_t + v，
 2. `xt_chunks` − 默认 = x_t 换到句子级转录的效应；`unified_chunks` − `xt_chunks` = 在同一转录上文本流换成 hate-RoBERTa 的效应（与 12 节 HateMM +.0125 / HCS −.0115 对照，检验编码器效应是否与转录无关）。
 3. 缓存自检（2026-09-22）：两语料新行的形状与 BERT 行一致；有语音掩码与 `data/text_hate_chunks` 的 p_asr 掩码逐秒一致，与 BERT 行掩码差 0.2% 的秒（< 1 s 片段加宽到 1 s；复核补充：另有 0.2% 的秒因加宽换了归属片段，无秒丢失）；OCR 部分与 `data/text_hate` 数值差 ≤ 1.4e-5。
 - 规则 6 代码复核：`REVIEW_RULE6_6.md` 第 2 部分。
+
+**结果（12b，2026-09-22 08:15；12 个运行全部完成，无失败；来源 `runs/20260910_online_query_within_it5/diag/<corpus>/seed<s>/{unified_chunks,xt_chunks}/summary.json`，`arms_summary.json`；8 次调用点，三 seed 均值 ± std）**
+
+| 文本流 | x_t 的转录 | HateMM AP / ROC / within | HCS AP / ROC / within |
+|---|---|---|---|
+| 默认：BERT 行（句子级片段） | `data/ASR` 话语 | .6444 ± .0067 / .8500 ± .0018 / .6492 ± .0069 | .6837 ± .0016 / .6809 ± .0037 / .5597 ± .0081 |
+| `xt_chunks`：BERT 行 | 句子级片段 | .6232 ± .0154 / .8424 ± .0028 / .6181 ± .0027 | **.6910 ± .0019 / .6869 ± .0005** / .5464 ± .0019 |
+| `unified_chunks`：hate-RoBERTa 行（句子级片段） | 句子级片段 | **.6613 ± .0044 / .8694 ± .0079** / .6319 ± .0193 | .6659 ± .0093 / .6593 ± .0082 / .5280 ± .0148 |
+| （12 节）`text_feat_hate`：hate-RoBERTa 行（`data/ASR` 话语） | `data/ASR` 话语 | .6537 / .8681 / .6402 | .6615 / .6388 / .5644 |
+
+34 次调用点 AP：HateMM 默认 .6406、xt_chunks .6239、unified .6586；HCS 默认 .7056、xt_chunks .7119、unified .6923。
+
+**判定**：
+1. **不换默认**（预注册判定 1）：`unified_chunks` 对默认 HateMM AP +.017 / ROC +.019，HCS AP −.018 / ROC −.022。两语料方向相反，与 12 节相同。
+2. 两个效应分开（判定 2）：
+   - x_t 换到句子级转录（`xt_chunks` − 默认）：HateMM AP −.021 / ROC −.008 / within −.031；HCS +.007 / +.006 / −.013。HateMM 上 `data/ASR` 合并话语给出的 x_t 明显更好（句子级记录在 HateMM 上有 34 个视频零覆盖、覆盖率更低）；HCS 相反。
+   - 同一转录上文本流 BERT → hate-RoBERTa（`unified` − `xt_chunks`）：HateMM AP +.038 / ROC +.027；HCS −.025 / −.028。与 12 节（HateMM +.0125、HCS −.0115）同号且更大：hate 微调编码器作为流特征在 HateMM 上有用、在 HCS 上有害，与转录无关。
+3. 单语料看：HateMM 的最好配置是 `unified_chunks`（.6613 / .8694，P1 两项都过：floor .6544 / .8420；within .6319 低于 W1 floor .6379）；HCS 的最好配置是 `xt_chunks`（.6910 / .6869，P1 两项都过：floor .6853 / .6823；within .5464 低于 .562）。两个语料各自过 P1 用的是不同的文本配置，规则 13 要求两语料同一方法，所以任一都不能作为统一默认；把文本配置当搜索超参（按 validation 选）是唯一合规的合并方式，需要用户裁定。
+
+**去向**：默认不变（BERT 行 + `data/ASR` x_t）。待用户裁定：(a) 文本行来源 / x_t 转录来源是否允许作为搜索超参逐语料选（规则 13 的解释）；(b) 否则保留默认，把 12/12b 作为分析写进论文（文本编码器与转录来源对两语料的相反作用）。
