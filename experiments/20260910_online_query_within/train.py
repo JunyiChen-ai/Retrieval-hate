@@ -150,6 +150,11 @@ DEFAULTS = {
     # (ell_fine, x_t, v) initialised to prior_scale ("single" = one alpha on E_t); eoc_weight "model_cal" = the
     # backbone's window hate probability mapped to a verdict probability r_f + (q_f - r_f) p ("model" = raw).
     "fine_temper": 0.0, "prior_mode": "split",      # tempering off by default (gate T5, README section 11); arm temper_icc
+    # iteration 6 (README section 12): text rows of the audio+text stream, hc.TEXT_ROOTS key: "bert" (bert-base-uncased
+    # CLS per Whisper chunk, all runs before 2026-09-21), "hate_roberta" (<s> state of the hate-tuned RoBERTa whose
+    # classification head gives x_t, on x_t's utterance units: one text encoder, two read-outs) or "bert_utterance"
+    # (bert-base-uncased CLS on those same utterances: the control that isolates the encoder)
+    "text_feat": "bert",
     "eval_max_picks": 18, "control_max_picks": 30,
     "budgets": [0, 2, 4, 8, 12, 18, 30], "b_caps": [2, 4, 8],
     "tau_grid": [0.0, 0.005, 0.01, 0.02, 0.03, 0.05, 0.08],
@@ -321,11 +326,15 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
             % (tag, n_pos, n_neg, np.mean([len(allowed[v]) for v in train_ids]),
                json.dumps({k: round(v, 4) for k, v in hmm.params().items() if isinstance(v, float)})))
         if state["cache"] is None:
+            assert str(a.text_feat) in hc.TEXT_ROOTS, a.text_feat
             state["cache"] = hc.ScaffoldCache(corpus, all_ids,
                                               hc.make_scaffold_fn(hmm, binary, "full", 1.0, text=text_obs, text_llr=text_llr, evidence=evidence,
                                                                   video_term=video_term, text_in_ell=text_term, rho=rho),
                                               masked_fn=hc.make_masked_scaffold_fn(hmm, binary, text=text_obs, text_llr=text_llr, evidence=evidence,
-                                                                                   video_term=video_term, text_in_ell=text_term, rho=rho))
+                                                                                   video_term=video_term, text_in_ell=text_term, rho=rho),
+                                              text_source=str(a.text_feat))
+            say("%s: text rows source %s (%d videos without text rows)" % (tag, a.text_feat, state["cache"].n_missing_text))
+            assert state["cache"].n_missing_text < len(all_ids), "no text rows found for text_feat=%s (cache not synced?)" % a.text_feat
         else:
             state["cache"].masked_fn = hc.make_masked_scaffold_fn(hmm, binary, text=text_obs, text_llr=text_llr, evidence=evidence,
                                                                   video_term=video_term, text_in_ell=text_term, rho=rho)

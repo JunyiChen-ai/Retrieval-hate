@@ -281,3 +281,16 @@ E_t = ell_fine(t) + x_t + v，
 
 **去向（2026-09-18）**：审稿人 7 条里 4 条改了机制（1、2、3、4），1 条改表述（6），2 条记 limitation（5、7）；机制改动都有三 seed 两语料臂。P1 的 HateMM AP 缺口（−.010）与第 3、4b 轮相同，本轮没有补回；审稿人指向 AP 的唯一建议（有界累积）在 HMM 层面（门 T5）与训练层面（臂）都掉分，已按证据否定。可主张的部件：文本分数进先验（两语料）；EOC 校准（只 HateMM）。待用户裁定（同第 10 节）：主方法取修订 4 / 4b / it5 哪一版；审稿人"路由注意力换拼接"的简化建议与 2026-09-03"骨干架构须可 claim"的裁定冲突；论文把查询写成"预算鲁棒 + 停止规则"而不主张选窗。
 
+
+## 12. 第 6 轮：统一文本编码器（2026-09-21）
+
+**起因**：(1) 用户要求把 transcript 的两处嵌入统一成同一种模型，用 hate 微调的文本模型；(2) 第 11 节审稿人第 2 条：文本项 x_t 是外部分类器的分数，等于和外部分类器做 ensemble，而臂 `text_prior_off` 表明它是仅次于 VLM 裁定的第二大部件（HateMM +.042 / HCS +.013 AP）；(3) 规则 6 复核核实：骨干文本流现用的 BERT 行（`results/reproduction/features/bert_sentence_1fps`，MultiHateLoc 复现的 bert-base-uncased CLS）来自另一份 Whisper 记录（`results/reproduction/asr/<corpus>_all/timestamped_chunks.jsonl`，chunk 级、最大 64 token），与 x_t 用的 `data/ASR` 转录只在 HateMM 370/1066、HCS 132/393 个视频上文本相同；也就是说现在的方法里同一段语音有两份不同的转录和两个不同的编码器。
+
+**机制**：骨干音频+文本流的逐秒文本行改为 `cardiffnlp/twitter-roberta-base-hate-latest` 最后一层 `<s>` 位置的隐状态（768 维，正是该模型分类头读的向量），文本单位与 x_t 的打分单位完全相同（`scripts/build_text_hate_scores.py` 的话语合并规则，作用于 `data/ASR`）。于是同一个冻结文本编码器、同一份转录有两个读出：隐状态进内容流（经骨干输入投影参与跨模态注意力），分类头的概率经 HMM 校准成 x_t 进先验项。x_t 的计算、HMM、先验项、损失都不变；无新超参；维度不变（768）。实现：`scripts/build_hate_text_1fps.py` → `data/hate_text_1fps/`（`PROVENANCE.md`）；`src/hier_evidence_common.TEXT_ROOTS` + `ScaffoldCache(text_source=...)`；`train.py` 配置键 `text_feat`（默认 `bert`，此前全部运行不变）。对照特征 `data/bert_utterance_1fps/`（同脚本 `--encoder bert_utterance`：bert-base-uncased CLS，同样的话语单位和 128 token），用来把"换编码器"和"换转录来源/单位"分开。
+
+**预注册（2026-09-21，开跑前写定）**：
+- 不做新搜索：用第 5 轮各 seed best trial 超参（`runs/20260910_online_query_within_it5/diag/<corpus>/seed<s>/hparams_trial*.json`），两语料三 seed 各跑三个：`text_feat_hate` = 默认配置 + `text_feat = hate_roberta`；`text_feat_hate_prior_off` = 臂 `text_prior_off` + `text_feat = hate_roberta`（文本编码器换成 hate 微调后，先验里的 x_t 是否还有增量）；`bert_utterance` = 默认配置 + `text_feat = bert_utterance`（只换转录单位不换编码器）。输出 `runs/20260910_online_query_within_it5/diag/<corpus>/seed<s>/{text_feat_hate,text_feat_hate_prior_off,bert_utterance}/`。机器：uoa-lab1 跑 HCS 的前两个，uoa-lab3 跑 HateMM 的前两个，本机跑两语料的 `bert_utterance`（`launch/run_it5_arms.sh`）。对照基准 = 第 5 轮默认（BERT 行）三 seed：HateMM .6444 / .8500 / .6492，HCS .6837 / .6809 / .5597。
+- 判定 1（换不换默认）：`text_feat_hate` 三 seed 均值 AP、ROC 两语料都 ≥ 第 5 轮默认 − .005 → 换成默认文本行，方法表述改为"一份转录、一个文本编码器、两个读出"；任一语料任一指标低于 .005 以上 → 保留 BERT，如实记录。任一语料 AP 或 ROC 高 ≥ .01 → 作为涨点报告。
+- 判定 2（差别来自编码器还是转录单位）：`text_feat_hate` − `bert_utterance` 是编码器的贡献，`bert_utterance` − 默认是转录来源/单位的贡献；只有前者 ≥ .01 才能说"hate 微调编码器有用"。
+- 判定 3（x_t 进先验是否冗余）：`text_feat_hate` − `text_feat_hate_prior_off` 两语料 AP 或 ROC ≥ .01 → 先验里的校准分数与流特征不可互相替代，"ensemble"的说法不成立（同一编码器，差别在校准的读出方式）；两语料都 < .005 → 先验文本项可以去掉、由流特征承担，审稿人第 2 条问题消失。
+- 规则 6 代码复核：`REVIEW_RULE6_6.md`（无 BLOCKER；两处 must-fix 已改：文档里关于 BERT 行来源的说法、远程机缺特征目录时的断言）。

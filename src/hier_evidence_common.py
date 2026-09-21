@@ -60,6 +60,15 @@ ELL_SCALE = float(np.log((1.0 - 1e-6) / 1e-6))   # ~13.8
 
 TEXT_ROOT = os.path.join(REPO_ROOT, "results", "reproduction", "features",
                          "bert_sentence_1fps")
+# Text rows of the audio+text stream, by source (module-1 iteration 6 "unified text encoder"):
+#   "bert"         bert-base-uncased CLS per Whisper chunk of results/reproduction/asr/<corpus>_all (MultiHateLoc
+#                  reproduction, max 64 tokens; default, all runs before 2026-09-21)
+#   "hate_roberta" <s> hidden state of cardiffnlp/twitter-roberta-base-hate-latest per ASR utterance, the same model
+#                  and units whose classification head gives the text term x_t (scripts/build_hate_text_1fps.py)
+#   "bert_utterance" bert-base-uncased CLS on the same data/ASR utterances as "hate_roberta" (control: encoder only)
+TEXT_ROOTS = {"bert": TEXT_ROOT,
+              "hate_roberta": os.path.join(REPO_ROOT, "data", "hate_text_1fps"),
+              "bert_utterance": os.path.join(REPO_ROOT, "data", "bert_utterance_1fps")}
 TEXT_DIM = 768
 SCAF_DIM = 8
 COL_ELL, COL_PS, COL_BF, COL_BC, COL_PH, COL_BLOCK, COL_TEXT, COL_V = range(SCAF_DIM)
@@ -71,13 +80,13 @@ A_EXT_DIM = align.A_DIM + TEXT_DIM + SCAF_DIM
 SCAF_OFFSET = align.A_DIM + TEXT_DIM
 
 
-def text_path(corpus, vid):
-    return os.path.join(TEXT_ROOT, corpus, "%s.npy" % vid)
+def text_path(corpus, vid, source="bert"):
+    return os.path.join(TEXT_ROOTS[source], corpus, "%s.npy" % vid)
 
 
-def load_text_rows(corpus, vid, snip):
-    """BERT rows resampled from the 1 s grid onto the snippet grid, or None."""
-    p = text_path(corpus, vid)
+def load_text_rows(corpus, vid, snip, source="bert"):
+    """Text rows (TEXT_ROOTS[source]) resampled from the 1 s grid onto the snippet grid, or None."""
+    p = text_path(corpus, vid, source)
     if not os.path.exists(p):
         return None
     arr = np.load(p).astype(np.float32)
@@ -143,8 +152,9 @@ class ScaffoldCache:
     the audio+text block is kept so ``build(vid, b_fine_masked)`` returns a
     fresh f_a_ext without touching the stored default (adaptive-query module)."""
 
-    def __init__(self, corpus, video_ids, scaffold_fn, masked_fn=None):
+    def __init__(self, corpus, video_ids, scaffold_fn, masked_fn=None, text_source="bert"):
         self.corpus = corpus
+        self.text_source = text_source
         self.items = {}
         self.base = {}                 # vid -> audio+text rows (only with masked_fn)
         self.window_rows = {}          # per-row fine-window index (K,) grid -> rows
@@ -156,7 +166,7 @@ class ScaffoldCache:
             audio, n_seconds, snip = align.aligned_audio(corpus, vid, "snippet")
             self.window_rows[vid] = vlm_verdict.verdict_rows(
                 np.arange(k_fine, dtype=np.float32), snip, n_seconds).astype(np.float32)
-            text = load_text_rows(corpus, vid, snip)
+            text = load_text_rows(corpus, vid, snip, text_source)
             if text is None:
                 self.n_missing_text += 1
                 text = np.zeros((audio.shape[0], TEXT_DIM), dtype=np.float32)
