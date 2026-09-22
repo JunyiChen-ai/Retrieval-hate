@@ -21,6 +21,13 @@ logit}) with ONE change: the evidence cell embedding has a third fine-verdict
 value "not asked" (b_fine = -1), so e_t = Emb[3 * b_coarse + (b_fine + 1)] +
 W [ell / ELL_SCALE, P(s)]; ell and P(s) come from the interval HMM run with
 missing emissions. Arms: full | no_missing_state (-1 mapped to 0, four cells).
+
+Iteration-5 ablation table (README section 13, 2026-09-23): structure arms ported from
+revision 4 -- avce (candidate-1 backbone: the four evidence columns concatenated into the
+audio stream, no evidence code, no bias, no context), no_qk_enc (e_t not added to q/k),
+no_cell (cell embedding replaced by a linear map of all four columns); ERCA flags
+no_prior (no prior term) and no_verdict (evidence columns zeroed; the prior keeps only
+the text term a_x * x_t).
 """
 
 from __future__ import annotations
@@ -34,23 +41,35 @@ import torch.nn.functional as F
 import hier_evidence_common as hc
 
 N_EVID = 4     # ell, p_s, b_fine, b_coarse (+ the per-second text LLR column hc.COL_TEXT when text_input)
-STRUCT_ARMS = ("full", "no_missing_state", "no_text_input", "single_prior")
+STRUCT_ARMS = ("full", "no_missing_state", "no_text_input", "single_prior", "avce", "no_qk_enc", "no_cell")
 
 
 class EvidenceEncoder(nn.Module):
     """e_t = Emb[cell(b_fine, b_coarse)] + W [ell/ELL_SCALE, p_s].
     missing_state=True: b_fine in {-1 (not asked), 0, 1} -> 6 cells;
-    False: -1 treated as 0 -> 4 cells (revision 2/3 encoder)."""
+    False: -1 treated as 0 -> 4 cells (revision 2/3 encoder).
+    cell=False (arm no_cell): no cell embedding, a linear map of all four columns
+    [ell/ELL_SCALE, p_s, b_fine (-1 / 0 / 1), b_coarse] (revision-4 no_cell)."""
 
-    def __init__(self, hid, missing_state=True, text_input=False):
+    def __init__(self, hid, missing_state=True, text_input=False, cell=True):
         super().__init__()
         self.missing_state = missing_state
         self.text_input = bool(text_input)
-        self.cell = nn.Embedding(6 if missing_state else 4, hid)
-        nn.init.zeros_(self.cell.weight)      # starts as the linear map
-        self.lin = nn.Linear(3 if self.text_input else 2, hid)
+        self.use_cell = bool(cell)
+        if self.use_cell:
+            self.cell = nn.Embedding(6 if missing_state else 4, hid)
+            nn.init.zeros_(self.cell.weight)      # starts as the linear map
+            self.lin = nn.Linear(3 if self.text_input else 2, hid)
+        else:
+            self.cell = None
+            self.lin = nn.Linear((N_EVID + 1) if self.text_input else N_EVID, hid)
 
     def forward(self, evid, text_llr=None):        # evid: (B, T, 4), ell already / ELL_SCALE; text_llr (B, T) already / LLR_SCALE
+        if not self.use_cell:
+            lin_in = evid
+            if self.text_input:
+                lin_in = torch.cat([lin_in, text_llr[..., None]], dim=-1)
+            return self.lin(lin_in)
         bf = evid[..., 2]
         bc = (evid[..., 3] > 0.5).long()
         if self.missing_state:
@@ -158,12 +177,13 @@ class ERCA(nn.Module):
     fc(a_out) + fc(v_out) without the video-level calibration and without the
     prior (CMAL uses a_out / v_out; the verdict-block MIL reads this logit)."""
 
-    def __init__(self, cfg, prior_scale, arm="full", no_verdict=False):
+    def __init__(self, cfg, prior_scale, arm="full", no_verdict=False, no_prior=False):
         super().__init__()
         assert arm in STRUCT_ARMS, arm
         hid, nhead, ffn, dropout = cfg.hid_dim, cfg.nhead, cfg.ffn_dim, cfg.dropout
         self.arm = arm
         self.no_verdict = bool(no_verdict)
+        self.no_prior = bool(no_prior)
         self.prior_scale = float(prior_scale)
         self.prior_mode = "single" if arm == "single_prior" else str(getattr(cfg, "prior_mode", "single"))
         assert self.prior_mode in ("single", "split"), self.prior_mode
@@ -173,16 +193,18 @@ class ERCA(nn.Module):
         # evidence_hmm) the split prior has no text term and ell_fine = COL_ELL - COL_V
         self.text_in_ell = bool(getattr(cfg, "text_in_ell", True))
         self.topk_div = int(cfg.topk_div)
-        self.concat = False
-        a_in = hc.SCAF_OFFSET
+        self.concat = arm == "avce"                    # candidate-1 backbone: evidence columns into the audio stream
+        a_in = hc.SCAF_OFFSET + (N_EVID if self.concat else 0)
         self.fc_v = nn.Linear(hc.align.V_DIM, hid)
         self.fc_a = nn.Linear(a_in, hid)
         self.text_input = bool(getattr(cfg, "text_input", False)) and arm != "no_text_input"
-        self.enc = EvidenceEncoder(hid, missing_state=(arm != "no_missing_state"), text_input=self.text_input)
-        bias_mode = str(getattr(cfg, "bias_mode", "key"))               # key (rev 2) | gated (rev 3)
+        assert not (self.concat and self.text_input), "avce concatenates the four evidence columns only"
+        self.enc = None if self.concat else EvidenceEncoder(hid, missing_state=(arm != "no_missing_state"),
+                                                            text_input=self.text_input, cell=(arm != "no_cell"))
+        bias_mode = "none" if self.concat else str(getattr(cfg, "bias_mode", "key"))   # key (rev 2) | gated (rev 3) | shared | none
         self.cma = EvidenceRoutedCMA(hid, nhead, ffn, dropout, bias_mode=bias_mode,
                                      qk_enc=(arm not in ("avce", "no_qk_enc")))
-        self.ctx_mode = str(getattr(cfg, "ctx_mode", "rep"))              # rep (rev 2) | logit (rev 3)
+        self.ctx_mode = "none" if self.concat else str(getattr(cfg, "ctx_mode", "rep"))   # rep (rev 2) | logit (rev 3) | none
         if self.ctx_mode == "logit":
             self.ctx = nn.Linear(hid, cfg.num_classes)
         elif self.ctx_mode == "rep":
@@ -244,7 +266,12 @@ class ERCA(nn.Module):
         self.last_calibration = c
         if c is not None:                                              # ctx_on_logit arm only
             av_log = av_log + c[:, None, :]
-        if not self.no_verdict:
+        if self.no_verdict and not self.no_prior:
+            # arm no_verdict: every VLM-derived column is zeroed above; the prior keeps only the
+            # per-second text term (the text classifier is not a VLM verdict)
+            if self.prior_mode == "split" and self.text_in_ell:
+                av_log = av_log + self.prior_w[1] * x_text / hc.ELL_SCALE
+        elif not self.no_prior:
             if self.prior_mode == "split":
                 if self.text_in_ell:
                     ell_fine = ell - x_text - v_video

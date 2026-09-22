@@ -53,6 +53,29 @@ Arms (--ablation; diagnostics only in this iteration, README section 3):
   no_video_term             iteration-3 decomposition without the video-level term v
   text_prior_off            x_t only as an evidence-encoder input column, not in E (rule-3 diagnostic)
 
+Iteration-5 ablation table (README section 13, 2026-09-23; each seed's best-trial hparams, no search):
+  no_verdict                no VLM verdict anywhere: evidence columns zeroed in the model, the prior keeps
+                            only a_x * x_t, no block MIL (its labels come from the verdicts), no acquisition
+                            (allowed sets stay empty); the window loss keeps its label-only part (negative
+                            videos -> 0)
+  coarse_only               the 4 coarse blocks only, at training and at test (allowed sets stay empty, no
+                            acquisition, validation masks without fine windows); summary["test"] = the
+                            coarse4 evaluation (4 calls per video)
+  no_dropout                no evidence dropout: every item shows all of allowed[v] (the window loss then has
+                            targets on negative videos only, because no known window is ever masked)
+  no_hmm                    the HMM posterior is replaced by the raw verdicts (revision-3 mean_prior_all in the
+                            decomposed form): ell_fine = ELL_SCALE (2 b_fine - 1) on asked windows, 0 elsewhere;
+                            v = ELL_SCALE (2 mean(b_coarse) - 1); block labels = raw coarse verdicts. The HMM is
+                            still fitted for the acquisition's verdict-probability calibration (q_f, r_f) only
+  no_decomp                 coarse verdicts per second again: E_t = HMM posterior log-odds with coarse emissions
+                            + x_t, v = 0 (the decomposition is the only change; x_t stays in E)
+  no_block                  block MIL off (the window loss keeps weight lambda_block)
+  no_prior                  no prior term (evidence enters only through the encoder / attention and the losses)
+  structure arms avce, no_qk_enc, no_cell: model.py
+  config-only arms (launch/run_it5_ablations.sh): seconds_time {"normalized_time": false},
+  no_constraint {"positive_constraint": false}, no_bias {"bias_mode": "none"}, no_context {"ctx_mode": "none"},
+  no_cmal {"lamda_cma": 0}
+
 Iteration 4 (README section 9, "training-time budget allocation"): each
 acquisition event reveals len(train_ids) windows in total, allocated across
 videos by expected output change (acq_alloc = "global") instead of exactly one
@@ -165,7 +188,8 @@ DEFAULTS = {
 }
 TRAIN_ARMS = ("no_window_loss", "hmm_weight", "regimes3", "window_target_posterior", "window_target_verdict",
               "fixed_uniform_train", "no_text", "evidence_hmm", "no_text_term", "no_video_term", "text_prior_off",
-              "no_temper", "temper_icc", "eoc_model_raw")   # iteration 5 arms: rho = 0 / rho = ICC; eoc_weight = "model"
+              "no_temper", "temper_icc", "eoc_model_raw",   # iteration 5 arms: rho = 0 / rho = ICC; eoc_weight = "model"
+              "no_verdict", "coarse_only", "no_dropout", "no_hmm", "no_decomp", "no_block", "no_prior")   # README section 13
 ABLATIONS = STRUCT_ARMS + TRAIN_ARMS
 
 
@@ -243,9 +267,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     window_target = {"window_target_posterior": "posterior", "window_target_verdict": "verdict"}.get(ablation, str(a.window_target))
     use_text = bool(a.text) and ablation != "no_text"
     text_input = use_text and bool(a.text_input) and ablation != "no_text_input"
-    evidence = "hmm" if ablation == "evidence_hmm" else str(a.evidence)
-    assert evidence in ("hmm", "decomp"), evidence
-    text_term = evidence == "decomp" and ablation not in ("no_text_term", "no_text", "text_prior_off")
+    evidence = {"evidence_hmm": "hmm", "no_decomp": "hmm_text", "no_hmm": "mean_decomp"}.get(ablation, str(a.evidence))
+    assert evidence in ("hmm", "decomp", "hmm_text", "mean_decomp"), evidence
+    text_term = evidence in ("decomp", "hmm_text", "mean_decomp") and ablation not in ("no_text_term", "no_text", "text_prior_off")
     video_term = ablation != "no_video_term"
     text_column = ablation == "text_prior_off"          # x_t only as an encoder input column (rule-3 diagnostic)
     if text_column:
@@ -256,7 +280,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     eoc_weight = "hmm" if ablation == "hmm_weight" else ("model" if ablation == "eoc_model_raw" else str(a.eoc_weight))
     regimes = 3 if ablation == "regimes3" else int(a.regimes)
     assert not (evidence == "decomp" and regimes > 1), "the decomposition's video-level term is the R = 1 formula"
-    online = ablation != "fixed_uniform_train"
+    online = ablation not in ("fixed_uniform_train", "coarse_only", "no_verdict")
+    no_fine = ablation in ("coarse_only", "no_verdict")      # allowed sets stay empty (no fine verdict is ever shown)
+    use_block = ablation not in ("no_block", "no_verdict")
     labels = hdata.load_labels(corpus)
     train_ids = hc.usable(corpus, hdata.load_split(corpus, "train"))
     val_gt = hdata.gt_arrays(corpus, "val")
@@ -304,13 +330,16 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     if online:
         allowed = {v: set() for v in train_ids}
         policy_order = {v: [] for v in train_ids}
+    elif no_fine:
+        allowed = {v: set() for v in train_ids}
+        policy_order = {v: [] for v in train_ids}
     else:
         allowed = {v: set(uni[:len(acq_epochs)]) for v in train_ids}
         policy_order = {v: list(uni[:len(acq_epochs)]) for v in train_ids}
-    val_masks = {v: masked(binary[v][0], uni[:b_max]) for v in val_ids}
+    val_masks = {v: masked(binary[v][0], [] if no_fine else uni[:b_max]) for v in val_ids}
     calls = {"train_coarse_per_video": 4, "train_acq_events": len(acq_epochs) if online else 0,
-             "train_fixed_fine_per_video": 0 if online else len(acq_epochs),
-             "train_total_per_video": 4 + len(acq_epochs)}
+             "train_fixed_fine_per_video": 0 if (online or no_fine) else len(acq_epochs),
+             "train_total_per_video": 4 + (0 if no_fine else len(acq_epochs))}
     fopts = {"normalized_time": bool(a.normalized_time), "positive_constraint": bool(a.positive_constraint),
              "regimes": regimes, "text": use_text, "text_weight": float(a.text_weight)}
     durations = {v: hc.video_duration(corpus, v) for v in train_ids}
@@ -355,6 +384,8 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
         al = sorted(allowed[vid])
         if not al:
             return masked(binary[vid][0], [])
+        if ablation == "no_dropout":                 # README section 13: every allowed window is always shown
+            return masked(binary[vid][0], al)
         if rng.rand() < float(a.prefix_mix):
             order = [w for w in policy_order[vid] if w in allowed[vid]]
             m = rng.randint(0, len(order) + 1)
@@ -396,14 +427,17 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     val_loader = DataLoader(hc.EvalDataset(corpus, val_ids, cache, masks=val_masks),
                             batch_size=1, shuffle=False, num_workers=num_workers)
     a["text_input"] = bool(text_input)          # the no_text arm builds the two-input encoder
-    model = ERCA(a, a.prior_scale, arm=arm).to(device)
+    model = ERCA(a, a.prior_scale, arm=arm, no_verdict=(ablation == "no_verdict"),
+                 no_prior=(ablation == "no_prior")).to(device)
     criterion = nn.BCELoss()
     opt = optim.Adam(model.parameters(), lr=a.lr)
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=a.sched_tmax)
     best, best_state, best_epoch, history = -1.0, None, -1, []
     acq_log = []
     assert str(a.ckpt_from) in ("after_acq", "any"), a.ckpt_from
-    ckpt_from = (max(acq_epochs) + 1 if (online and str(a.ckpt_from) == "after_acq") else 1)
+    # README section 13 (rule-6 review): the epoch >= max(acq_epochs) + 1 window applies to every arm, also those
+    # without acquisition (fixed_uniform_train, coarse_only, no_verdict), so an arm changes only its component
+    ckpt_from = (max(acq_epochs) + 1 if str(a.ckpt_from) == "after_acq" else 1)
     for epoch in range(a.max_epoch):
         t0 = time.time()
         model.train()
@@ -439,8 +473,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
                 total = total + lam * cm
             bl, wl = 0.0, 0.0
             if a.lambda_block > 0:
-                bl = hc.block_bag_loss(model.last_content_logit, f_a, seq_len, label, a.topk_div)
-                total = total + a.lambda_block * bl
+                if use_block:
+                    bl = hc.block_bag_loss(model.last_content_logit, f_a, seq_len, label, a.topk_div)
+                    total = total + a.lambda_block * bl
                 if window_loss:
                     wl = hc.window_bag_loss(model.last_content_logit, w_rows, seq_len, tgt.to(device), a.topk_div)
                     total = total + a.lambda_block * wl
@@ -588,6 +623,9 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
            results["eoc_grid"][stop_key]["mean_calls"], results["eoc_grid"][stop_key]["pooled_ap"],
            results["eoc_grid"][stop_key]["pooled_roc"], results["eoc_grid"][stop_key]["within_roc"]))
     test_op = dict(results["eoc_grid"][op_key])
+    if ablation in ("coarse_only", "no_verdict"):    # README section 13: operating point = coarse4 (4 calls; no_verdict: 0 calls,
+        test_op = dict(results["coarse4"])            # its model is invariant to every verdict, so coarse4 == eoc cap4)
+        test_op["mean_calls"] = 4.0 if ablation == "coarse_only" else 0.0
     summary = {"corpus": corpus, "seed": seed, "ablation": ablation,
                "operating_point": {"policy": "eoc", "b_max": b_max, "tau": 0.0, "key": op_key},
                "test": test_op, "val": val_op, "stop_rule": results["stop_rule"],

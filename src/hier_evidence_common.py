@@ -613,6 +613,41 @@ def decomposed_logodds(hmm, b_fine, b_coarse, n_seconds, video_term=True, rho=0.
     return ell + v, v
 
 
+def mean_decomposed_logodds(hmm, b_fine, b_coarse):
+    """Arm no_hmm of the iteration-5 ablation table (README section 13 of
+    experiments/20260910_online_query_within): the decomposition with the raw verdicts
+    in place of the HMM posterior (revision-3 mean_prior_all in the decomposed form).
+    Per segment ell_fine = ELL_SCALE (2 b_fine - 1) where the segment's fine window was
+    asked, 0 where it was not; v = ELL_SCALE (2 mean(b_coarse) - 1). The HMM object is
+    used only for the segment geometry (grid). Returns (ell_fine + v, v)."""
+    import interval_evidence_hmm as ieh
+    bf = np.asarray(b_fine)[hmm.grid["fine_of"]]
+    asked = bf != ieh.MISSING
+    ell_fine = ELL_SCALE * (2.0 * np.where(asked, bf, 0).astype(np.float64) - 1.0) * asked
+    v = float(ELL_SCALE * (2.0 * np.mean(np.asarray(b_coarse, np.float64)) - 1.0))
+    return ell_fine + v, v
+
+
+DECOMPOSED_MODES = ("decomp", "hmm_text", "mean_decomp")   # evidence modes whose ell column adds x_t
+
+
+def _evidence_logodds(hmm, bf, bc, n_seconds, evidence, ell, p_s, p_h, video_term, rho):
+    """ell / P(s) / block labels / v for one video under an evidence mode.
+    "hmm": posterior with coarse emissions (iteration 1); "decomp": iteration-3
+    decomposition; "hmm_text" (arm no_decomp): the "hmm" posterior plus x_t, v = 0;
+    "mean_decomp" (arm no_hmm): raw verdicts, block labels = raw coarse verdicts.
+    ell / p_s / p_h come in as computed by the caller (unchanged for "hmm" / "hmm_text")."""
+    v = 0.0
+    if evidence == "decomp":
+        ell, v = decomposed_logodds(hmm, bf, bc, n_seconds, video_term=video_term, rho=rho)
+        p_s = 1.0 / (1.0 + np.exp(-ell))
+    elif evidence == "mean_decomp":
+        ell, v = mean_decomposed_logodds(hmm, bf, bc)
+        p_s = 1.0 / (1.0 + np.exp(-np.clip(ell, -50.0, 50.0)))
+        p_h = np.asarray(bc, np.float32)
+    return ell, p_s, p_h, v
+
+
 def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None, evidence="hmm", video_term=True, text_in_ell=True,
                             rho=0.0):
     """Scaffold builder from a masked fine-verdict vector (interval HMM only):
@@ -629,12 +664,9 @@ def make_masked_scaffold_fn(hmm, binary, text=None, text_llr=None, evidence="hmm
         kappa = fine_kappa(b_fine_masked, rho)          # iteration 5: tempered fine emissions (block labels too)
         p_s, p_h = hmm.posterior(b_fine_masked, bc, n_seconds, w_fine=kappa, xt=(text or {}).get(vid))
         ell = np.log(p_s + 1e-6) - np.log(1.0 - p_s + 1e-6)
-        v = 0.0
-        if evidence == "decomp":
-            ell, v = decomposed_logodds(hmm, b_fine_masked, bc, n_seconds, video_term=video_term, rho=rho)
-            p_s = 1.0 / (1.0 + np.exp(-ell))
+        ell, p_s, p_h, v = _evidence_logodds(hmm, b_fine_masked, bc, n_seconds, evidence, ell, p_s, p_h, video_term, rho)
         return scaffold_rows_interval(hmm, ell, p_s, b_fine_masked, bc, p_h, snip, n_seconds,
-                                      text_llr=(text_llr or {}).get(vid), decomposed=(evidence == "decomp" and text_in_ell),
+                                      text_llr=(text_llr or {}).get(vid), decomposed=(evidence in DECOMPOSED_MODES and text_in_ell),
                                       v_video=v)
     return fn
 
@@ -679,12 +711,11 @@ def make_scaffold_fn(hmm, binary, ablation, w_fine, text=None, text_llr=None, ev
         if ablation in ("raw_block_label", "mean_prior_all"):
             p_h = bc.astype(np.float32)
         if interval:
-            v = 0.0
-            if evidence == "decomp":
-                ell, v = decomposed_logodds(hmm, bf, bc, n_seconds, video_term=video_term, rho=rho)
-                p_s = 1.0 / (1.0 + np.exp(-ell))
+            assert not (evidence in ("hmm_text", "mean_decomp") and ablation in ("mean_prior", "mean_prior_all", "raw_block_label")), \
+                "revision-3 prior arms and the iteration-5 evidence modes are exclusive"
+            ell, p_s, p_h, v = _evidence_logodds(hmm, bf, bc, n_seconds, evidence, ell, p_s, p_h, video_term, rho)
             return scaffold_rows_interval(hmm, ell, p_s, bf, bc, p_h, snip, n_seconds,
-                                          text_llr=(text_llr or {}).get(vid), decomposed=(evidence == "decomp" and text_in_ell),
+                                          text_llr=(text_llr or {}).get(vid), decomposed=(evidence in DECOMPOSED_MODES and text_in_ell),
                                           v_video=v)
         return scaffold_rows(ell, p_s, bf, bc, p_h, block_of_window,
                                 snip, n_seconds)

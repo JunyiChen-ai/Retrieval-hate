@@ -390,3 +390,47 @@ E_t = ell_fine(t) + x_t + v，
 **D. 行的几何**（视频内方差占比 / 相邻秒余弦 / 与视频均值余弦 / 范数）：HateMM bert .45 / .987 / .956 / 14.7，hate_chunks .38 / .972 / .909 / 21.3；HCS bert .46 / .990 / .947 / 14.7，hate_chunks .40 / .982 / .887 / 21.0。hate 行方向上离视频均值更远、方差占比略低，没有"视频内几乎不变"的情况。
 
 **结论**：(1) HCS 掉分的位置是视频级（负例被推高），不是行里缺信息；(2) 原因与分类器在 HCS 上域不匹配一致（仇恨秒检出率只有 HateMM 的一半，负例误判两倍），而流这条路对它没有校准；(3) 对应的修法是给流的文本块加校准 / 归一化或可学习门（12b 去向的方案 1、2），而不是换转录；(4) HateMM 上 `xt_chunks` 掉 .021 的原因本分析没有定位。
+
+## 13. 默认方法（第 5 轮配置）的完整消融表（2026-09-23，用户指令："补所有必要的消融，不跑超参搜索"）
+
+**目的**：按规则 14(g) 给默认方法（第 5 轮 `_it5` 配置：证据分解、三个可学习融合标量、EOC 校准、每视频分配、BERT 文本行 + `data/ASR` 的 x_t）每个部件一个三 seed 两语料的消融。此前骨干与 HMM 的消融只在修订 3（34 次调用）上做过，第 5 轮只跑了 5 个臂。
+
+**协议（开跑前写定）**：
+- 不搜索：每个 seed 用第 5 轮该 seed best trial 的五个超参（`runs/20260910_online_query_within_it5/diag/<corpus>/seed<s>/hparams_trial*.json`），只加各臂的改动；test 只评 eoc 与 uniform 两个策略（其余策略只用于曲线，训练后才评，不影响 8 次操作点）。
+- 对照：(1) 惯例对照 = 各 seed best trial 本身（`arms_summary.json` 的 `full_minus_arm`）；(2) 同机重跑对照 `full_rerun`（默认配置、同超参，与各臂同机同批跑；`rerun_minus_arm`），用来看 best trial 的挑选偏差与跨机差异。两种对照都报，判定按 (1)，(2) 与 (1) 结论不同时如实写。
+- 判定：规则 14(g)，三 seed 均值 AP 或 ROC 下降 ≥ .01，两语料都满足 → 可主张；within 只报告。
+- 机器：seed 234 本机、seed 2025 uoa-lab1、seed 3407 uoa-lab3，每机两语料 21 个运行 × 2、GPU 上 3 个并行（`launch/run_it5_ablations.sh <seed>`）；输出 `runs/20260910_online_query_within_it5/diag/<corpus>/seed<s>/<arm>/`，汇总 `arms_summary.py _it5`。
+
+**臂**（21 个新运行 / seed / 语料；已有的 `text_prior_off`、`single_prior`、`eoc_model_raw` 沿用第 11 节）：
+
+| 模块 | 臂 | 去掉 / 换成 | 回答的问题 |
+|---|---|---|---|
+| 参照 | `full_rerun` | 无改动 | 同机重跑的噪声参照 |
+| VLM 裁定 | `no_verdict` | 不用任何 VLM 裁定：证据列置零，先验只留 a_x·x_t，无块级 MIL，无获取；窗损失只剩负例视频全 0 的部分 | VLM 裁定整体（规则 14(e) 的去 teacher 数字） |
+| 查询 | `coarse_only` | 训练与测试都只有 4 个粗块（4 次调用），无细窗 | 额外 4 个细窗（查询模块整体）是否有用 |
+| 查询 | `fixed_uniform_train` | 训练期不在线选窗，一开始固定 4 个均匀细窗（同 8 次） | 训练期按 EOC 选窗 |
+| 查询 | `no_dropout` | 训练不做证据 dropout，每步给出全部已问细窗（窗损失因此只剩负例部分） | 预算鲁棒训练 |
+| 查询 | `no_missing_state` | 六格改四格（"没问过"当作 0） | "没问过"状态 |
+| 融合 | `no_hmm` | HMM 后验换成原始裁定：已问细窗 ±ELL_SCALE、未问 0；v = ELL_SCALE(2·粗块均值 − 1)；块标签 = 原始粗裁定（修订 3 `mean_prior_all` 的分解形式）。HMM 只剩 EOC 校准用的 q_f、r_f | HMM 整体 |
+| 融合 | `seconds_time` | HMM 转移按秒 | 归一化时间 |
+| 融合 | `no_constraint` | EM 不加正例约束 | 正例约束 |
+| 分解 | `no_decomp` | 粗块回到逐秒（含粗块发射的 HMM 后验 + x_t，v = 0） | 粗块只进视频级 |
+| 分解 | `no_video_term` | v = 0 | 视频级项 |
+| 文本 | `no_text_term` | x_t 完全不用（不进先验、不作输入列） | 外部文本分类器整体（`text_prior_off` 只移出先验） |
+| 骨干 | `avce` | 候选 1 骨干：四列证据拼进音频流，无证据码 / 偏置 / 上下文（先验项保留） | 证据引导注意力整体 |
+| 骨干 | `no_qk_enc` | e_t 不进 q/k | 证据进 q/k |
+| 骨干 | `no_cell` | 格子嵌入换成四列线性 | 格子嵌入 |
+| 骨干 | `no_bias` | 无 key 偏置 | 证据偏置 |
+| 骨干 | `no_context` | 无视频级上下文 c | 视频级上下文 |
+| 损失 | `no_cmal` | λ_cma = 0 | CMAL |
+| 损失 | `no_block` | 无块级 MIL（窗损失保留） | 块级 MIL |
+| 损失 | `no_window_loss` | 无细窗裁定预测损失 | 窗损失 |
+| 先验 | `no_prior` | 无先验项（证据只经编码器、注意力与损失） | 先验项 |
+
+**评估级（不训练，从各 seed best trial 的 `summary.json` 读，`arms_summary.json` 的 `eval_level`）**：EOC 8 次对 uniform 8 次（选窗）、停止规则、同一模型只给 4 个粗块、34 次全给。
+
+**规则 6 复核（2026-09-23，独立 agent）**：一处 must-fix 已改——没有获取的臂（`fixed_uniform_train`、`coarse_only`、`no_verdict`）原来允许在 epoch 1–4 选 checkpoint，其余臂只能从 epoch 5 起选，等于多改了一处；现在所有臂统一 epoch ≥ 5。三处 should-fix 已做：`no_verdict` 报告点改为 coarse4（调用记 0；该模型对裁定不变，数值与 eoc 8 次相同）；启动脚本缺超参文件时写 FAILED；`avce` 注明保留先验。另记：`coarse_only` 的 `summary["val"]` 与 `stop_rule` 仍是给细窗时的量，只有 `test` 是只粗块的数字。默认路径数值不变已由复核对 960 组比较确认（0 处不同）。
+
+**不做的消融及原因**：`index_hmm`（缺失裁定推断只有区间 HMM 实现，在线查询依赖它）；`shared_bias`、`gated_bias`、`ctx_on_logit`（不作主张的设计变体）；`prefix_mix`、`b_max`、获取时机等协议常数（不作部件主张）；`temper_icc`、`global_alloc`（不在默认方法里，第 11 节已跑）。
+
+**实现**（2026-09-23）：`model.py` 加 `avce` / `no_qk_enc` / `no_cell` 结构臂与 `no_prior`、`no_verdict` 开关；`train.py` 加 `no_verdict` / `coarse_only` / `no_dropout` / `no_hmm` / `no_decomp` / `no_block` / `no_prior`；`src/hier_evidence_common.py` 加证据模式 `hmm_text`（no_decomp）与 `mean_decomp`（no_hmm），默认 `decomp` 与 `hmm` 路径数值不变；`acquire.py` 允许非归一化时间的 HMM（只在 eoc / uniform 策略下）。检查（不训练）：各臂前向 / 反向形状、`no_verdict` 的先验只含 a_x·x_t、`no_prior` 的输出等于内容 logit、三种证据模式在真实裁定上的取值。

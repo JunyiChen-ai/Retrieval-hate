@@ -90,8 +90,9 @@ class Acquirer:
         assert weight in ("model", "model_cal", "hmm"), weight
         self.weight = weight
         self.topk_div = int(topk_div)
-        assert hmm.normalized_time, "Acquirer assumes normalized time (one transition matrix for all videos)"
-        self.Tm = hmm._transitions(1.0)             # normalized time: one matrix for all videos
+        # normalized time: one transition matrix for all videos. Arm seconds_time (README section 13) has no shared
+        # matrix; it runs only the eoc / uniform policies with eoc_weight model / model_cal, which never call state().
+        self.Tm = hmm._transitions(1.0) if hmm.normalized_time else None
         gr = hmm.grid
         self.win_segments = {w: np.where(gr["fine_of"] == w)[0] for w in range(self.k)}
 
@@ -140,6 +141,7 @@ class Acquirer:
 
     # ------------------------------------------------------------ HMM side
     def state(self, bf, bc, vid=None):
+        assert self.Tm is not None, "HMM-state policies / eoc_weight hmm need normalized time"
         return self.hmm.infer(bf, bc, w_fine=hc.fine_kappa(bf, self.rho), Tm=self.Tm, xt=self.text.get(vid))
 
     def verdict_prob(self, p_hate):
