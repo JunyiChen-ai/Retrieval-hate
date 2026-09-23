@@ -434,3 +434,42 @@ E_t = ell_fine(t) + x_t + v，
 **不做的消融及原因**：`index_hmm`（缺失裁定推断只有区间 HMM 实现，在线查询依赖它）；`shared_bias`、`gated_bias`、`ctx_on_logit`（不作主张的设计变体）；`prefix_mix`、`b_max`、获取时机等协议常数（不作部件主张）；`temper_icc`、`global_alloc`（不在默认方法里，第 11 节已跑）。
 
 **实现**（2026-09-23）：`model.py` 加 `avce` / `no_qk_enc` / `no_cell` 结构臂与 `no_prior`、`no_verdict` 开关；`train.py` 加 `no_verdict` / `coarse_only` / `no_dropout` / `no_hmm` / `no_decomp` / `no_block` / `no_prior`；`src/hier_evidence_common.py` 加证据模式 `hmm_text`（no_decomp）与 `mean_decomp`（no_hmm），默认 `decomp` 与 `hmm` 路径数值不变；`acquire.py` 允许非归一化时间的 HMM（只在 eoc / uniform 策略下）。检查（不训练）：各臂前向 / 反向形状、`no_verdict` 的先验只含 a_x·x_t、`no_prior` 的输出等于内容 logit、三种证据模式在真实裁定上的取值。
+
+### 13.1 结果（2026-09-23 17:40 全部 126 个运行完成，无失败，远程结果已 rsync 回本机；来源 `runs/20260910_online_query_within_it5/diag/<corpus>/seed<s>/<arm>/summary.json`，汇总 `arms_summary.py _it5` → `runs/20260910_online_query_within_it5/arms_summary.json`）
+
+`full_rerun` 在三台机器上与各 seed best trial 数值完全相同（两语料三 seed），训练可复现，`rerun_minus_arm` 与 `full_minus_arm` 相同，下表只列一种。默认：HateMM .6444 / .8500 / .6492，HCS .6837 / .6809 / .5597（8 次调用）。表内 = 默认 − 该臂，三 seed 均值（AP / ROC / within），正 = 部件有用；判定按规则 14(g)。
+
+| 模块 | 臂 | HateMM | HCS | 两语料 ≥ .01 |
+|---|---|---|---|---|
+| VLM 裁定 | `no_verdict` | .116 / .074 / .030 | .070 / .088 / .012 | **是**（6 个 seed 全降） |
+| 查询 | `coarse_only`（4 次） | −.001 / .003 / .006 | .034 / .040 / −.005 | 否：细窗只在 HCS 有用 |
+| 查询 | `fixed_uniform_train` | .022 / .004 / .025 | .009 / .005 / −.012 | 否（HCS 差 .001） |
+| 查询 | `no_dropout` | .012 / .009 / .024 | .024 / .023 / .006 | **是** |
+| 查询 | `no_missing_state` | .030 / .023 / .007 | .006 / .005 / .002 | 否：只 HateMM |
+| 查询 | `eoc_model_raw`（第 11 节） | .022 / .010 / .024 | −.000 / .002 / .005 | 否：只 HateMM |
+| 融合 | `no_hmm` | .024 / .014 / .013 | .003 / .016 / .005 | **是**（HCS 只 ROC） |
+| 融合 | `seconds_time` | .015 / .007 / .009 | .001 / .004 / −.002 | 否：只 HateMM |
+| 融合 | `no_constraint` | .019 / .002 / .013 | **−.019 / −.013** / .003 | 否：方向相反，HCS 去掉约束更好（三 seed 都是） |
+| 分解 | `no_decomp` | .005 / .001 / .003 | .010 / .014 / .013 | 否：只 HCS |
+| 分解 | `no_video_term` | .033 / .019 / .019 | .014 / .019 / .002 | **是** |
+| 分解 | `single_prior`（第 11 节） | .008 / .007 / .017 | .002 / .001 / .002 | 否 |
+| 文本 | `no_text_term` | .018 / .008 / .054 | .012 / .013 / .049 | **是** |
+| 文本 | `text_prior_off`（第 11 节） | .042 / .024 / .049 | .013 / .018 / .041 | **是** |
+| 骨干 | `avce`（整体） | .017 / −.004 / .023 | −.002 / .005 / .002 | 否：HCS ≈ 0 |
+| 骨干 | `no_qk_enc` | .039 / .019 / .012 | .003 / .002 / .003 | 否：只 HateMM |
+| 骨干 | `no_cell` | .007 / .004 / .024 | .001 / .006 / .002 | 否 |
+| 骨干 | `no_bias` | .018 / −.002 / .017 | .004 / .008 / −.003 | 否：只 HateMM |
+| 骨干 | `no_context` | .019 / −.002 / .017 | .008 / .011 / .004 | **是**（刚过：HateMM 靠 AP，HCS 靠 ROC） |
+| 损失 | `no_cmal` | .022 / .017 / .046 | .022 / .024 / .013 | **是** |
+| 损失 | `no_block` | .024 / .007 / .010 | −.001 / .008 / .005 | 否：只 HateMM |
+| 损失 | `no_window_loss` | .018 / .006 / .019 | .014 / .012 / .011 | **是** |
+| 先验 | `no_prior` | .036 / .012 / .028 | .041 / .036 / .038 | **是**（6 个 seed 全降） |
+
+评估级（同一模型，不训练，默认 − 该行）：EOC 8 次 − uniform 8 次 HateMM .004 / .005，HCS .001 / .001（选窗无作用）；停止规则 HateMM 5.33 次 .006 / .004，HCS 7.26 次 −.001 / .001；同一模型只给 4 粗块 HateMM .009 / .006，HCS .009 / .012；34 次全给 HateMM .004 / .012，HCS **−.022 / −.021**（HCS 多问更好）。
+
+**结论**：
+1. 两语料可主张（10 项）：VLM 裁定整体、证据 dropout（预算鲁棒训练）、HMM 整体（HCS 只靠 ROC）、视频级项 v、文本分数（去掉整体或移出先验）、视频级上下文 c（刚过线）、CMAL、细窗裁定预测损失、先验项。
+2. 只在 HateMM 成立：没问过状态、EOC 校准、按归一化时间、证据进 q/k、key 偏置、块级 MIL、训练期在线选窗（HCS .009）。只在 HCS 成立：额外 4 个细窗（`coarse_only`）、粗块只进视频级（`no_decomp`）。方向相反：正例约束（HateMM 有用、HCS 有害 .019 AP）。无作用：格子嵌入、三个融合标量、测试期 EOC 选窗。
+3. **骨干模块（证据引导注意力）整体在默认方法里不可主张**：换回候选 1 骨干（先验保留）HateMM AP −.017 但 ROC +.004，HCS 不变；部件里只有视频级上下文 c 刚过线。与修订 3 的 `avce`（.005 / .009、.007 / .018，不成立）一致。
+4. **查询模块**：HateMM 上只问 4 个粗块与默认 8 次持平（−.001 / .003），细窗的价值只在 HCS（.034 / .040）；测试期 EOC 选窗与均匀选窗无差别；可主张的只有训练侧的证据 dropout。
+5. 规则 14(e)：去掉 VLM teacher 后 HateMM .528 / .776，HCS .614 / .594，仍高于规则 8 的 baseline 门（.573 / .807 与 .562 / .528）中的 HCS 两项与 HateMM 无一项——HateMM 去掉 VLM 后 AP、ROC 都低于 MACIL-SD。
