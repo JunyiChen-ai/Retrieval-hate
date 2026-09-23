@@ -488,3 +488,14 @@ E_t = ell_fine(t) + x_t + v，
 - 读法：默认 − 随机 ≥ .01（AP 或 ROC）的语料 → 该语料上"模型挑窗"本身有用；两语料都 < .005 → 训练期的增益来自每视频窗位置不同，EOC 在训练期可以换成随机窗（方法里的选窗整体可去掉）；介于之间 → 如实报告为不确定。
 - 机器：seed 234 本机、2025 uoa-lab1、3407 uoa-lab3，每机两语料并行。
 - 规则 6 复核（独立 agent）：PASS，无 must-fix；已用空跑的 optuna study 核对 48/48 组超参与第 5 轮 trial 0–7 完全一致。按复核建议，配对不再依赖 sampler 复现：trial 0–7 直接按顺序排入第 5 轮 trial 0–7 的超参（`launch/randtrain_enqueue.json`，`search.py --enqueue-json` 接受列表），进程重启也不破坏配对。某个 trial 失败（如显存不足）时，用同一组超参重跑该 trial，不用第 9 个 trial 替代。
+
+### 14.1 结果（2026-09-24 00:55；48 个 trial 全部完成，远程已回传；来源 `runs/20260910_online_query_within_it5_randtrain/<corpus>/seed<s>/trial<k>/summary.json`，`randtrain_compare.py` → `runs/20260910_online_query_within_it5_randtrain/compare.json`；配对核对：48 个 trial 的搜索超参与第 5 轮 trial 0–7 逐一相同）
+
+HateMM seed 234 的 trial 6 首次运行时另一进程占用 29.7 GB 显存导致 OOM，按预注册用同一组超参重跑（失败日志留在 `trial6/stdout_failed_oom.log`）。
+
+| 语料 | 默认前 8 trial 最优（AP / ROC / within） | 随机窗 8 trial 最优 | 默认 − 随机 | 24 对逐 trial 配对差均值（AP 为正的对数） |
+|---|---|---|---|---|
+| HateMM | .6472 / .8511 / .6431 | .6297 / .8539 / .6312 | **+.0175** / −.0028 / +.0119 | +.0233 / +.0026 / +.0036（21/24） |
+| HCS | .6820 / .6792 / .5594 | .6823 / .6819 / .5652 | −.0003 / −.0027 / −.0058 | +.0100 / +.0026 / −.0042（18/24） |
+
+**判定（按 14 节预注册）**：HateMM 默认 − 随机 AP ≥ .01 → 在 HateMM 上"模型挑窗"本身有用（不只是每视频窗位置不同）；HCS 各自取最优后两者无差别（< .005），同超参配对时默认平均高 .010。训练期 EOC 选窗只在 HateMM 成立，不是两语料可主张的部件。与 13.1 一致（固定均匀窗：HateMM .022，HCS .009）。
