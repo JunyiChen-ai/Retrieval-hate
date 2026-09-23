@@ -71,6 +71,9 @@ Iteration-5 ablation table (README section 13, 2026-09-23; each seed's best-tria
                             + x_t, v = 0 (the decomposition is the only change; x_t stays in E)
   no_block                  block MIL off (the window loss keeps weight lambda_block)
   no_prior                  no prior term (evidence enters only through the encoder / attention and the losses)
+  random_train              (README section 14) like fixed_uniform_train, but each training video gets its own
+                            len(acq_epochs) fine windows drawn uniformly at random without replacement
+                            (np.random.RandomState(seed), videos in sorted order), not chosen by the model
   structure arms avce, no_qk_enc, no_cell: model.py
   config-only arms (launch/run_it5_ablations.sh): seconds_time {"normalized_time": false},
   no_constraint {"positive_constraint": false}, no_bias {"bias_mode": "none"}, no_context {"ctx_mode": "none"},
@@ -189,7 +192,8 @@ DEFAULTS = {
 TRAIN_ARMS = ("no_window_loss", "hmm_weight", "regimes3", "window_target_posterior", "window_target_verdict",
               "fixed_uniform_train", "no_text", "evidence_hmm", "no_text_term", "no_video_term", "text_prior_off",
               "no_temper", "temper_icc", "eoc_model_raw",   # iteration 5 arms: rho = 0 / rho = ICC; eoc_weight = "model"
-              "no_verdict", "coarse_only", "no_dropout", "no_hmm", "no_decomp", "no_block", "no_prior")   # README section 13
+              "no_verdict", "coarse_only", "no_dropout", "no_hmm", "no_decomp", "no_block", "no_prior",   # README section 13
+              "random_train")                                                                              # README section 14
 ABLATIONS = STRUCT_ARMS + TRAIN_ARMS
 
 
@@ -280,7 +284,7 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     eoc_weight = "hmm" if ablation == "hmm_weight" else ("model" if ablation == "eoc_model_raw" else str(a.eoc_weight))
     regimes = 3 if ablation == "regimes3" else int(a.regimes)
     assert not (evidence == "decomp" and regimes > 1), "the decomposition's video-level term is the R = 1 formula"
-    online = ablation not in ("fixed_uniform_train", "coarse_only", "no_verdict")
+    online = ablation not in ("fixed_uniform_train", "coarse_only", "no_verdict", "random_train")
     no_fine = ablation in ("coarse_only", "no_verdict")      # allowed sets stay empty (no fine verdict is ever shown)
     use_block = ablation not in ("no_block", "no_verdict")
     labels = hdata.load_labels(corpus)
@@ -333,6 +337,10 @@ def train(corpus, seed, out_dir, cfg, ablation, device, num_workers):
     elif no_fine:
         allowed = {v: set() for v in train_ids}
         policy_order = {v: [] for v in train_ids}
+    elif ablation == "random_train":                 # README section 14: per-video random windows, fixed for the whole run
+        rrng = np.random.RandomState(seed)
+        policy_order = {v: [int(w) for w in rrng.choice(K_FINE, size=len(acq_epochs), replace=False)] for v in sorted(train_ids)}
+        allowed = {v: set(policy_order[v]) for v in train_ids}
     else:
         allowed = {v: set(uni[:len(acq_epochs)]) for v in train_ids}
         policy_order = {v: list(uni[:len(acq_epochs)]) for v in train_ids}

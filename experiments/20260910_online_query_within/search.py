@@ -86,8 +86,11 @@ def main(argv=None):
         sampler=optuna.samplers.TPESampler(seed=args.seed))
     if args.enqueue_json and len(study.trials) == 0:
         enq = json.loads(args.enqueue_json)
-        study.enqueue_trial(enq)
-        say("enqueued trial 0 (warm start): %s" % json.dumps(enq))
+        # a dict = warm start (trial 0, iteration 5); a list = trials 0..n-1 fixed in order (README section 14:
+        # the paired hyperparameters of the iteration-5 study's first trials)
+        for i, e in enumerate(enq if isinstance(enq, list) else [enq]):
+            study.enqueue_trial(e)
+            say("enqueued trial %d: %s" % (i, json.dumps(e)))
     budget_path = os.path.join(root, "budget.json")
     budget = None
     if os.path.exists(budget_path):

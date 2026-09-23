@@ -473,3 +473,18 @@ E_t = ell_fine(t) + x_t + v，
 3. **骨干模块（证据引导注意力）整体在默认方法里不可主张**：换回候选 1 骨干（先验保留）HateMM AP −.017 但 ROC +.004，HCS 不变；部件里只有视频级上下文 c 刚过线。与修订 3 的 `avce`（.005 / .009、.007 / .018，不成立）一致。
 4. **查询模块**：HateMM 上只问 4 个粗块与默认 8 次持平（−.001 / .003），细窗的价值只在 HCS（.034 / .040）；测试期 EOC 选窗与均匀选窗无差别；可主张的只有训练侧的证据 dropout。
 5. 规则 14(e)（去掉 VLM teacher 的数字）：HateMM .528 / .776，低于规则 8 的门（MACIL-SD .573 / .807）；HCS .614 / .594，仍高于门（.562 / .528）。
+
+## 14. 训练期选窗对照：每视频随机窗（2026-09-23，用户要求，带小规模搜索）
+
+**起因**（13.1）：训练期 EOC 选窗对固定均匀窗 HateMM +.022 / +.004、HCS +.009 / +.005；已排除"测试时窗不匹配"（固定窗模型用自己的均匀窗测试同样更差：HateMM .618 对 .640）和"EOC 挑到更多仇恨窗"（正例视频选中窗的仇恨率 EOC .36–.40 对均匀 .38）。剩下两种解释分不开：模型挑窗有用，还是只是"每个视频的窗位置各不相同"（EOC 选的窗每视频不同，与均匀 4 窗重合约 12%）。
+
+**臂 `random_train`**：训练期每个训练视频一开始就给 4 个随机细窗（`np.random.RandomState(seed)`，视频按 id 排序依次抽，不放回），整个训练固定，不经模型选择；调用数同默认（每视频 8 次）；其余全同默认（dropout 在这 4 窗内、测试期 EOC 选窗、checkpoint 从 epoch 5 起）。
+
+**搜索（用户要求"稍微搜一下"）**：沿用第 5 轮搜索协议——同一搜索空间、TPE sampler seed = 训练 seed、trial 0 热启动为 4b 同 seed best trial（与第 5 轮相同）——每 seed 8 个 trial（`launch/run_it5_randtrain.sh`；输出 `runs/20260910_online_query_within_it5_randtrain/<corpus>/seed<s>/`）。TPE 前 10 个 trial 是按 sampler seed 的随机采样，与目标值无关，所以本搜索的 trial 0–7 与第 5 轮默认搜索的 trial 0–7 超参完全相同（开跑后核对 `hparams.json`），构成逐 trial 配对。
+
+**对照与判定（开跑前写定）**：
+- 主比较：默认第 5 轮搜索前 8 个 trial 的最优（按同一目标 (AP + ROC + within)/3）三 seed 均值——HateMM .6472 / .8511 / .6431，HCS .6820 / .6792 / .5594——对 `random_train` 8 个 trial 的最优三 seed 均值。
+- 辅助：24 对（8 trial × 3 seed）逐 trial 配对差的均值，每语料一个数。
+- 读法：默认 − 随机 ≥ .01（AP 或 ROC）的语料 → 该语料上"模型挑窗"本身有用；两语料都 < .005 → 训练期的增益来自每视频窗位置不同，EOC 在训练期可以换成随机窗（方法里的选窗整体可去掉）；介于之间 → 如实报告为不确定。
+- 机器：seed 234 本机、2025 uoa-lab1、3407 uoa-lab3，每机两语料并行。
+- 规则 6 复核（独立 agent）：PASS，无 must-fix；已用空跑的 optuna study 核对 48/48 组超参与第 5 轮 trial 0–7 完全一致。按复核建议，配对不再依赖 sampler 复现：trial 0–7 直接按顺序排入第 5 轮 trial 0–7 的超参（`launch/randtrain_enqueue.json`，`search.py --enqueue-json` 接受列表），进程重启也不破坏配对。某个 trial 失败（如显存不足）时，用同一组超参重跑该 trial，不用第 9 个 trial 替代。
