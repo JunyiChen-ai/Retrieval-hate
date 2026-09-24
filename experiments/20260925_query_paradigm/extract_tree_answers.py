@@ -138,7 +138,7 @@ def main():
                 raw = o.outputs[0].text.strip()
                 by_vid.setdefault(j[0], []).append([j[1], j[2], parse(raw), raw])
             for r in batch:
-                fh.write(json.dumps({"id": r["id"], "split": r["split"], "T": r["T"], "nodes": by_vid[r["id"]]}) + "\n")
+                fh.write(json.dumps({"id": r["id"], "split": r["split"], "T": r["T"], "nodes": by_vid.get(r["id"], [])}) + "\n")
             fh.flush()
             n_calls += len(jobs)
             el = time.time() - t0
