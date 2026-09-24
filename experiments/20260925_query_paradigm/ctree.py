@@ -34,10 +34,11 @@ class Chain(nn.Module):
     the video pays one transition fewer, so the prior piles harmful mass on the first and last seconds). The initial
     distribution is not used when closed."""
 
-    def __init__(self, closed=False, zero_inflated=False):
+    def __init__(self, closed=False, zero_inflated=False, normalized=False):
         super().__init__()
         self.closed = bool(closed)
         self.zero_inflated = bool(zero_inflated)
+        self.normalized = bool(normalized)
         self.trans = nn.Parameter(torch.tensor([[2.0, -2.0], [-2.0, 2.0]]))   # start: stay with p ~ .98
         self.init = nn.Parameter(torch.zeros(2))
 
@@ -123,6 +124,8 @@ def up(forest, s, g, A3, chain, eta=None):
     Returns (logW1, logW0), each (B,): log-weights (up to a common per-video constant) of Y = 1 with the answers
     under the Y = 1 answer states, and of Y = 0 with the answers under state 0.
     Coupled chain (revisions 1-2): P(y) proportional to exp(g any(y) + sum_t s_t y_t) x chain; Y = any(y).
+    Normalized chain (chain.normalized, README section 10): as coupled, with the chain's prior mass of Y = 1 and of
+    Y = 0 each rescaled to 1/2 for every video length (no length bias of the video decision).
     Zero-inflated chain (chain.zero_inflated, README section 10): P(G = 1 | x) = sigmoid(g) whatever the length;
     given G = 1 the seconds follow the chain with unary s_t conditioned on at least one harmful second; given G = 0
     all seconds are 0. Then logW1 = g + log V1(answers) - log V1(no answers), logW0 = answers under state 0."""
@@ -130,6 +133,13 @@ def up(forest, s, g, A3, chain, eta=None):
     if getattr(chain, "zero_inflated", False):
         v1_prior, _, _ = _up(forest, s, torch.zeros_like(A3), chain, None)
         return g + v1 - v1_prior, lp0
+    if getattr(chain, "normalized", False):
+        # README section 10: the chain's own prior mass of "some harmful second" and of "none" are both rescaled to
+        # 1/2 for every length: P(y) prop. to exp(g any(y) + s.y) chain(y) / chain(any(y)), where chain(1) is the
+        # chain's total weight of paths with a harmful second and chain(0) its all-zero weight (both at s = 0).
+        # The per-second logits still move the video decision; the length of the video no longer does.
+        v1_flat, w0_flat, _ = _up(forest, torch.zeros_like(s), torch.zeros_like(A3), chain, None)
+        return g + v1 - v1_flat, w0_chain - w0_flat + lp0
     return g + v1, w0_chain + lp0
 
 
@@ -217,6 +227,7 @@ class _DoubleChain:
         self._chain = chain
         self.closed = chain.closed
         self.zero_inflated = getattr(chain, "zero_inflated", False)
+        self.normalized = getattr(chain, "normalized", False)
 
     def logA_for(self, forest):
         return self._chain.logA_for(forest).detach().double()

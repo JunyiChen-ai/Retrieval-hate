@@ -188,7 +188,8 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     if use_chain:
         closed = cfg["boundary"] == "closed"
         chain = (ctree.HazardChain(closed) if cfg["chain"] == "hazard"
-                 else ctree.Chain(closed, cfg["chain_form"] == "zero_inflated")).to(device)
+                 else ctree.Chain(closed, cfg["chain_form"] == "zero_inflated",
+                                  cfg["chain_form"] == "normalized")).to(device)
     # the answer model and the chain have few parameters and start from data-driven values; with the network's
     # learning rate they did not move from their start (README section 7.3), so they get their own rate
     small = ([] if anchored else list(am.parameters())) + (list(chain.parameters()) if use_chain else [])
