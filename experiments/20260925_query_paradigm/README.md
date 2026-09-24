@@ -85,7 +85,10 @@
 
 ## 4. 训练与搜索（规则 7）
 
-待实现后按首个 trial 耗时定 trial 数，并在搜索前写入本节：搜索空间、Optuna TPE、目标 = (test AP + test ROC)/2（主比较点 B = 8），validation 选 checkpoint（validation AP 与 ROC 均值，B = 8）。
+- 搜索脚本 `search.py`；Optuna TPE，sampler seed = 训练 seed；每 seed 每语料一个 study，`runs/20260925_query_paradigm/<corpus>/seed<seed>/optuna.db`。
+- 搜索空间（2026-09-25 搜索前声明，两语料相同）：lr ∈ [1e-4, 1e-3]（log），λ_cma ∈ [0.5, 2.0]，dropout ∈ [0.1, 0.5]。其余固定为 `train.py` DEFAULTS：hid 128、ffn 128、4 头、batch 32（长视频批按注意力显存缩小）、50 epoch、cosine T_max 60、λ_cma 预热 min(λ_cma, .05·epoch)、crop_repeat 5。
+- 目标 = (test pooled AP + test pooled ROC) / 2，test 在主比较点（自适应阈值，validation 上平均 8 次调用校准）。trial 数：首个 trial ≤ 1 小时则 20 个，否则 5 个（`budget.json`）。
+- checkpoint：每个 epoch 在 validation 上每视频按 EIG 问 8 次，取 (AP + ROC)/2 最高的 epoch。同时记录"只按 validation 选 trial"会选到的 trial。
 
 ## 5. 预注册判定
 
