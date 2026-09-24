@@ -11,6 +11,11 @@ fixed per-video budgets, and the adaptive threshold rule at mean budgets B (thre
 validation videos so that their mean number of calls is <= B). summary["test"] = fixed primary_budget questions
 per video (README section 2.4, pre-registered primary point). Test numbers go through the shared evaluator.
 
+Revision 1 (README section 7, default prior "chain"): the per-second prior is a CRF over the seconds with a learned
+2-state transition (ctree.py); training loss -log P(Y | x) - log P(answers | Y, x) / n_answers, both exact on the
+tree; evaluation runs the policy for many videos at once (cpolicy.py) and the adaptive rule stops on the expected
+squared-error risk reduction of the chosen question (stop "voi", stopping.py). prior "independent" = revision 0.
+
 Arms (config keys): categories [0] (hate only), n_state 2, length_term false, objective "mil" (backbone trained by
 top-k MIL + CMAL; the answer model by the tree likelihood with the network's logits detached), order "bfs"
 (evaluation-time question order), fusion "flat" (ablation b: questions still chosen by EIG on the tree posterior,
@@ -47,6 +52,8 @@ import vlm_verdict                              # noqa: E402
 import data as qdata                            # noqa: E402
 import qtree                                    # noqa: E402
 import policy                                   # noqa: E402
+import ctree                                    # noqa: E402
+import cpolicy                                  # noqa: E402
 from model import PriorNet                      # noqa: E402
 
 DEFAULTS = {
@@ -56,7 +63,7 @@ DEFAULTS = {
     "val_budget": 8, "max_calls": 32, "fixed_budgets": [0, 1, 2, 4, 8, 16, 32], "mean_budgets": [2, 4, 8],
     "primary_budget": 8,
     "n_state": 3, "length_term": True, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
-    "fusion": "tree",
+    "fusion": "tree", "prior": "chain", "eval_chunk": 64,
 }
 
 
@@ -88,9 +95,18 @@ class Evaluator:
             self.trees[v] = qtree.VideoTree(self.store.T[v])
         return self.trees[v]
 
-    def run(self, model, am, ids, max_calls, order=None):
+    def run(self, model, am, ids, max_calls, order=None, chain=None, record_voi=False):
         model.eval()
         out = {}
+        if chain is not None:
+            ids = sorted(ids, key=lambda v: self.store.T[v])
+            k = int(self.cfg["eval_chunk"])
+            for i in range(0, len(ids), k):
+                out.update(cpolicy.run_batch(model, self.store, ids[i:i + k], am, chain, self.answers,
+                                             self.cfg["categories"], max_calls, self.device,
+                                             order or self.cfg["order"], self.cfg["fusion"], record_voi))
+            model.train()
+            return out
         for v in ids:
             s, g = policy.video_prior(model, self.store, v, self.device)
             vt = self.vt(v)
@@ -105,8 +121,8 @@ def at_budget(runs, B):
     return {v: r["scores"][min(B, len(r["eig"]))] for v, r in runs.items()}
 
 
-def at_threshold(runs, c):
-    calls = {v: policy.stop_calls(r["eig"], c) for v, r in runs.items()}
+def at_threshold(runs, c, rule="eig"):
+    calls = {v: policy.stop_calls(r[rule], c) for v, r in runs.items()}
     return {v: r["scores"][calls[v]] for v, r in runs.items()}, calls
 
 
@@ -143,7 +159,10 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     am = qtree.AnswerModel(theta0, loglen.mean(), loglen.std(), bool(cfg["length_term"]), n_state,
                            cfg["categories"]).to(device)
     model = PriorNet(cfg).to(device)
-    opt = optim.Adam(list(model.parameters()) + list(am.parameters()), lr=float(cfg["lr"]))
+    use_chain = cfg["prior"] == "chain"
+    chain = ctree.Chain().to(device) if use_chain else None
+    params = list(model.parameters()) + list(am.parameters()) + (list(chain.parameters()) if use_chain else [])
+    opt = optim.Adam(params, lr=float(cfg["lr"]))
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=int(cfg["sched_tmax"]))
     ds = qdata.TrainSet(store, ids["train"], labels, int(cfg["crop_repeat"]))
     lengths = np.repeat([store.T[v] for v in ds.ids], int(cfg["crop_repeat"]))
@@ -164,12 +183,34 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
             mask = torch.arange(Tm, device=device)[None, :] < seq.to(device)[:, None]
             s, g, a_log, v_log, v_out, a_out = model(f_a, f_v, mask)
             vids = [ds.ids[i] for i in vidx.tolist()]
-            tb = qtree.TreeBatch([store.T[v] for v in vids], [train_obs[v] for v in vids], Tm)
             s_tree = s if cfg["objective"] == "tree" else s.detach()
-            lp1, lp0 = tb.log_evidence(s_tree, mask, am)
-            n_obs = tb.n_obs.clamp(min=1).to(device).float()
-            loss_ans = -(torch.where(label > 0.5, lp1, lp0) / n_obs).mean()
-            loss_g = F.binary_cross_entropy_with_logits(g, label)
+            if use_chain:
+                fo = ctree.Forest([store.T[v] for v in vids], Tm)
+                ids_g, ans, lens = [], [], []
+                for b, v in enumerate(vids):
+                    o = train_obs[v]
+                    if len(o[0]):
+                        ids_g.append(o[0] + fo.offs[b]); ans.append(o[1]); lens.append(o[2])
+                A3 = torch.zeros(fo.N, 3, device=device)
+                n_obs = torch.zeros(len(vids), device=device)
+                if ids_g:
+                    ll = am.loglik(torch.as_tensor(np.concatenate(ans)), torch.as_tensor(np.concatenate(lens)))
+                    A3 = A3.index_put((torch.as_tensor(np.concatenate(ids_g)).to(device),), ll.to(A3.dtype))
+                    n_obs = torch.as_tensor([len(train_obs[v][0]) for v in vids], device=device).float()
+                g_tree = g if cfg["objective"] == "tree" else g.detach()
+                l1, l0, lo1, lo0 = ctree.log_evidence(fo, s_tree, g_tree, A3, chain)
+                loss_g = -torch.where(label > 0.5, l1, l0).mean()
+                loss_ans = -(torch.where(label > 0.5, lo1, lo0) / n_obs.clamp(min=1)).mean()
+                p_video = torch.exp(l1)
+                if cfg["objective"] == "mil":        # arm: g trained by BCE outside the tree as in revision 0
+                    loss_g = F.binary_cross_entropy_with_logits(g, label)
+            else:
+                tb = qtree.TreeBatch([store.T[v] for v in vids], [train_obs[v] for v in vids], Tm)
+                lp1, lp0 = tb.log_evidence(s_tree, mask, am)
+                n_obs = tb.n_obs.clamp(min=1).to(device).float()
+                loss_ans = -(torch.where(label > 0.5, lp1, lp0) / n_obs).mean()
+                loss_g = F.binary_cross_entropy_with_logits(g, label)
+                p_video = torch.sigmoid(g)
             total = loss_g + loss_ans
             if cfg["objective"] == "mil":            # arm: top-k MIL on the per-second logits trains the backbone
                 bag = []
@@ -180,7 +221,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
                 total = total + F.binary_cross_entropy_with_logits(torch.stack(bag), label)
             cm = torch.zeros((), device=device)
             if lam > 0:
-                c1, c2, c3, c4 = CMAL(torch.sigmoid(g), torch.sigmoid(a_log), torch.sigmoid(v_log), seq,
+                c1, c2, c3, c4 = CMAL(p_video.detach(), torch.sigmoid(a_log), torch.sigmoid(v_log), seq,
                                       v_out, a_out)      # upstream audio/visual rep order (fix_rep_swap False)
                 cm = c1 + c2 + c3 + c4
                 total = total + lam * cm
@@ -191,7 +232,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
             nb += 1
         sched.step()
         tot /= max(nb, 1)
-        runs = ev.run(model, am, ids["val"], int(cfg["val_budget"]))
+        runs = ev.run(model, am, ids["val"], int(cfg["val_budget"]), chain=chain)
         vm = hc.frame_metrics(at_budget(runs, int(cfg["val_budget"])), gt["val"], hate_val)
         crit = 0.5 * (vm["pooled_ap"] + vm["pooled_roc"])
         history.append({"epoch": epoch + 1, "loss_g": tot[0], "loss_answers": tot[1], "cma": tot[2],
@@ -201,12 +242,17 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
             time.time() - t0))
         if best is None or crit > best["crit"]:
             best = {"crit": crit, "epoch": epoch + 1, "model": copy.deepcopy(model.state_dict()),
-                    "am": copy.deepcopy(am.state_dict())}
+                    "am": copy.deepcopy(am.state_dict()),
+                    "chain": copy.deepcopy(chain.state_dict()) if use_chain else None}
     model.load_state_dict(best["model"])
     am.load_state_dict(best["am"])
-    torch.save({"model": best["model"], "am": best["am"], "epoch": best["epoch"]}, os.path.join(out_dir, "model.pth"))
+    if use_chain:
+        chain.load_state_dict(best["chain"])
+        say("chain: logA %s logpi %s" % (chain.logA().exp().tolist(), chain.logpi().exp().tolist()))
+    torch.save({"model": best["model"], "am": best["am"], "chain": best["chain"], "epoch": best["epoch"]},
+               os.path.join(out_dir, "model.pth"))
     say("checkpoint: epoch %d (val criterion %.4f)" % (best["epoch"], best["crit"]))
-    summary = evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say)
+    summary = evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain)
     summary.update({"corpus": corpus, "seed": seed, "cfg": cfg, "best_epoch": best["epoch"],
                     "val_criterion": best["crit"], "history": history, "host": socket.gethostname(),
                     "code": git_describe()})
@@ -215,12 +261,12 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     return summary
 
 
-def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say):
+def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=None):
     max_calls = int(cfg["max_calls"])
-    val_runs = ev.run(model, am, ids["val"], max_calls)
-    test_runs = ev.run(model, am, ids["test"], max_calls)
+    val_runs = ev.run(model, am, ids["val"], max_calls, chain=chain, record_voi=chain is not None)
+    test_runs = ev.run(model, am, ids["test"], max_calls, chain=chain, record_voi=chain is not None)
     hate_val = {v for v in ids["val"] if labels[v] == 1}
-    res = {"fixed": {}, "adaptive": {}}
+    res = {"fixed": {}, "adaptive": {}, "adaptive_voi": {}}
 
     def test_eval(name, scores):
         sp = os.path.join(out_dir, "scores_test_%s.jsonl" % name)
@@ -237,20 +283,21 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say):
             "test_mean_calls": float(np.mean([min(B, len(r["eig"])) for r in test_runs.values()]))}
         say("fixed %2d calls | test AP %.4f ROC %.4f within %.4f" % (B, *[res["fixed"][str(B)]["test"][k] for k in
                                                                         ("pooled_ap", "pooled_roc", "within_roc")]))
-    for B in cfg["mean_budgets"]:
-        c, val_mean = policy.calibrate([r["eig"] for r in val_runs.values()], float(B))
-        sv, _ = at_threshold(val_runs, c)
-        st, calls = at_threshold(test_runs, c)
+    rules = [("adaptive", "eig")] + ([("adaptive_voi", "voi")] if chain is not None else [])
+    for (key, rule), B in [(kr, B) for kr in rules for B in cfg["mean_budgets"]]:
+        c, val_mean = policy.calibrate([r[rule] for r in val_runs.values()], float(B))
+        sv, _ = at_threshold(val_runs, c, rule)
+        st, calls = at_threshold(test_runs, c, rule)
         cv = np.array(list(calls.values()))
-        res["adaptive"][str(B)] = {
+        res[key][str(B)] = {
             "c_bits": c, "val_mean_calls": val_mean, "val": hc.frame_metrics(sv, gt["val"], hate_val),
-            "test": test_eval("adaptive%d" % B, st), "test_mean_calls": float(cv.mean()),
+            "test": test_eval("%s%d" % (key, B), st), "test_mean_calls": float(cv.mean()),
             "test_calls_quantiles": [float(x) for x in np.percentile(cv, [0, 25, 50, 75, 100])],
             "test_mean_calls_pos": float(np.mean([calls[v] for v in calls if labels[v] == 1])),
             "test_mean_calls_neg": float(np.mean([calls[v] for v in calls if labels[v] == 0]))}
-        r = res["adaptive"][str(B)]
-        say("adaptive mean %d (c = %.4f bits) | test calls %.2f (pos %.2f, neg %.2f) | AP %.4f ROC %.4f within %.4f"
-            % (B, c, r["test_mean_calls"], r["test_mean_calls_pos"], r["test_mean_calls_neg"],
+        r = res[key][str(B)]
+        say("%s mean %d (c = %.4g) | test calls %.2f (pos %.2f, neg %.2f) | AP %.4f ROC %.4f within %.4f"
+            % (key, B, c, r["test_mean_calls"], r["test_mean_calls_pos"], r["test_mean_calls_neg"],
                r["test"]["pooled_ap"], r["test"]["pooled_roc"], r["test"]["within_roc"]))
     pb = int(cfg["primary_budget"])
     primary = res["fixed"][str(pb)]
@@ -261,7 +308,8 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say):
     res["silent_group"] = {"n": len(silent), "n_pos": int(sum(labels[v] for v in silent)),
                            "ap_primary": group_ap(st, gt["test"], silent),
                            "ap_prior_only": group_ap(at_budget(test_runs, 0), gt["test"], silent)}
-    res["test_runs"] = {v: {"eig": r["eig"], "asked": r["asked"], "p_G": r["p_G"]} for v, r in test_runs.items()}
+    res["test_runs"] = {v: {"eig": r["eig"], "voi": r.get("voi", []), "asked": r["asked"], "p_G": r["p_G"]}
+                        for v, r in test_runs.items()}
     with open(os.path.join(out_dir, "metrics.json"), "w") as fh:
         json.dump({"test": primary["test"], "test_mean_calls": primary["test_mean_calls"],
                    "primary_budget": int(cfg["primary_budget"])}, fh, indent=2)

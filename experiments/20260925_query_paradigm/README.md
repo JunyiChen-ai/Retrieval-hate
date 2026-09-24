@@ -109,3 +109,22 @@
 1. `python experiments/20260925_query_paradigm/build_tree_manifest.py`（本机）
 2. uoa-lab1 / uoa-lab3（conda `vlm` = OmniVTG 克隆，vLLM 0.9.2）：`setsid nohup bash experiments/20260925_query_paradigm/launch/lab_extract.sh <corpus> test,val,train <i>/2 > runs/20260925_query_paradigm/extract/<...>.log 2>&1 &`（两台各一半，约 20 次调用/秒/卡），完成后 rsync `data/vlm_tree/` 回本机。campus 用 `launch/campus_extract.sbatch`（需管理员批准）。
 3. 搜索：`setsid nohup bash experiments/20260925_query_paradigm/launch/run_search.sh <corpus> <seed> > runs/20260925_query_paradigm/launch_<corpus>_seed<seed>.out 2>&1 &`。
+
+## 7. 第 1 次修改（规则 9）：链先验 + 按输出变化停止（2026-09-25 04:10）
+
+### 7.1 第 0 版的问题（seed 234 trial 0，开发期 test 分析；`runs/20260925_query_paradigm/<corpus>/seed234/trial0/`）
+
+- HateMM 固定 8 次 .513 / .807 / within .550（it5 .644 / .850 / .649）；调用越多 AP 越低（1 次 .543 → 32 次 .476）。HCS 固定 8 次 .681 / .679（it5 .684 / .681）。
+- 视频级判断正常：HateMM P(G=1 | 答案) 的视频 AUC 0 次 .847 → 8 次 .913。
+- 每秒分数太低：正例视频每秒平均分 HateMM .09–.12、HCS .04，而 GT 在正例视频里平均覆盖 61% / 60% 的秒。原因：逐秒独立先验下，标签与答案都只说"区间里至少一秒"，模型学成稀疏；三状态答案模型里"正例视频中无仇恨节点"的误报率（HateMM .52）接近"含仇恨节点"（.68），答案几乎不约束哪一秒。逐秒头只在正例视频上训练，从没见过负例视频（零膨胀下负例的 y 全为 0，与 π 无关）。只用先验时 within .521（it5 不用 VLM 的模型 .620）。
+- 自适应停止：每步最大 EIG 几乎恒定（HCS 约 .48 比特），EIG 阈值不能区分"还需要问"与"不需要问"；同平均调用下比固定次数差。
+
+### 7.2 改动
+
+1. **先验改为秒级链**（`ctree.py`）：P(y | x) ∝ exp(g·any(y) + Σ_t s_t y_t) · π0(y_1) · Π_t A(y_{t−1}, y_t)，A（2×2）与 π0 学习。仇恨成段出现；"整段无仇恨"是全 0 路径，其概率就是视频为负的概率；负例视频要求全 0 路径概率高，逐秒 logit s_t 在负例上也得到训练。视频标签 Y = any(y)；答案三状态不变。
+2. **精确推断**：树节点保存 (首秒状态, 末秒状态, 是否含仇恨) 的 8 个对数权重，两子节点经一次转移合并，O(64T)；每秒与每节点的后验用自动求导得到（∂ log W / ∂ s_t、∂ log W / ∂ η_n）。已对 T ≤ 12 穷举核对（误差 ~1e-16）。
+3. **训练目标**：−log P(Y | x) − log P(答案 | Y, x) / n_answers，均在树上精确计算；g 不再单独做 BCE，进入链的 any 因子。
+4. **停止规则**（评估期，`stopping.py` / `cpolicy.py`）：仍按 EIG 选问题；停止看所选问题的"输出期望平方变化" VOI = Σ_t E_o[(p_t^o − p_t)²]，用两次钳住节点状态的推断精确计算（已与穷举核对）。在第 0 版 HCS trial 0 上重评：平均 1.24 次调用 AP .669 / ROC .678（固定 8 次 .681 / .679；EIG 阈值平均 2.7 次 .626 / .606）。
+5. 评估按视频批量运行（`cpolicy.run_batch`，每步一次批量推断）。
+
+方法级常数不变（二分、F = 4、五类）；新增的 A、π0 是学习参数。搜索空间、trial 数规则、主比较点（固定 8 次）与预注册 P1–P3 不变；消融 (b)–(f) 在链先验上做，另加 (g) 链先验 → 逐秒独立（第 0 版）。
