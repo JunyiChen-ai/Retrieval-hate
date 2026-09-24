@@ -27,10 +27,16 @@ BIG = 1e4
 
 
 class Chain(nn.Module):
-    """Learned 2-state transition (rows: from state) and initial distribution."""
+    """Learned 2-state transition (rows: from state) and initial distribution.
+    closed (revision 2, README section 9.1): the chain starts from and ends in a virtual non-harmful second, i.e.
+    P(y) proportional to A(0, y_1) prod_t A(y_{t-1}, y_t) A(y_T, 0); every harmful run then pays one entry and one
+    exit transition wherever it lies (with free ends, pi0 and no exit factor, a run touching the start or the end of
+    the video pays one transition fewer, so the prior piles harmful mass on the first and last seconds). The initial
+    distribution is not used when closed."""
 
-    def __init__(self):
+    def __init__(self, closed=False):
         super().__init__()
+        self.closed = bool(closed)
         self.trans = nn.Parameter(torch.tensor([[2.0, -2.0], [-2.0, 2.0]]))   # start: stay with p ~ .98
         self.init = nn.Parameter(torch.zeros(2))
 
@@ -45,10 +51,14 @@ class Chain(nn.Module):
 
 
 class HazardChain(nn.Module):
-    """Revision 2 (README section 9): no learned transition. Symmetric per-video switch probability 1/T, i.e. a
+    """Diagnostic (README section 8): no learned transition. Symmetric per-video switch probability 1/T, i.e. a
     priori one expected change of state over the video whatever its length (the constant-hazard change-point prior
     with expected run length T), and a uniform initial state. The per-second logits s_t and the video logit g carry
     everything the data says."""
+
+    def __init__(self, closed=False):
+        super().__init__()
+        self.closed = bool(closed)
 
     def logA_for(self, forest):
         h = torch.as_tensor([1.0 / max(T, 2) for T in forest.Ts], dtype=torch.float64)
@@ -147,9 +157,18 @@ def up(forest, s, g, A3, chain, eta=None):
         prev = (tab - c[:, None, None, None], lz + c)
     pr = forest.pos_root.to(dev)
     root = prev[0][pr]                                                   # B, f, l, a
-    logW1 = prev[1][pr] + torch.logsumexp(logpi[None, :, None] + root[:, :, :, 1], dim=(1, 2)) + g
     lp0 = torch.zeros(forest.B, device=dev, dtype=s.dtype).index_add(0, forest.node_video.to(dev), A3[:, 0])
-    logW0 = logpi[0] + forest.Tm1.to(dev).to(s.dtype) * (logA[:, 0, 0] if per_video else logA[0, 0]) + lp0
+    a00 = logA[:, 0, 0] if per_video else logA[0, 0]
+    Tm1 = forest.Tm1.to(dev).to(s.dtype)
+    if chain.closed:                                                     # enter from and exit to a virtual 0
+        enter = logA[:, 0, :] if per_video else logA[0, :][None].expand(forest.B, -1)
+        leave = logA[:, :, 0] if per_video else logA[:, 0][None].expand(forest.B, -1)
+        logW1 = prev[1][pr] + torch.logsumexp(enter[:, :, None] + root[:, :, :, 1] + leave[:, None, :],
+                                              dim=(1, 2)) + g
+        logW0 = (Tm1 + 2) * a00 + lp0
+    else:
+        logW1 = prev[1][pr] + torch.logsumexp(logpi[None, :, None] + root[:, :, :, 1], dim=(1, 2)) + g
+        logW0 = logpi[0] + Tm1 * a00 + lp0
     return logW1, logW0
 
 
@@ -180,6 +199,7 @@ def marginals(forest, s, g, A3, chain):
 class _DoubleChain:
     def __init__(self, chain):
         self._chain = chain
+        self.closed = chain.closed
 
     def logA_for(self, forest):
         return self._chain.logA_for(forest).detach().double()

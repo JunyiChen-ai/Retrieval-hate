@@ -72,7 +72,7 @@ DEFAULTS = {
     "primary_budget": 8,
     "n_state": 2, "length_term": False, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
     "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "anchored", "g_head": True,
-    "text_sources": ["bert"], "chain": "learned",
+    "text_sources": ["bert"], "chain": "learned", "boundary": "closed",
 }
 # Revision 2 (README section 9): anchored two-state answer model without length term, learned chain, BERT text row.
 # Revision 0/1 settings: n_state 3, length_term True, answer_model "joint" (prior "independent" for revision 0).
@@ -181,7 +181,8 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     use_chain = cfg["prior"] == "chain"
     chain = None
     if use_chain:
-        chain = (ctree.HazardChain() if cfg["chain"] == "hazard" else ctree.Chain()).to(device)
+        closed = cfg["boundary"] == "closed"
+        chain = (ctree.HazardChain(closed) if cfg["chain"] == "hazard" else ctree.Chain(closed)).to(device)
     # the answer model and the chain have few parameters and start from data-driven values; with the network's
     # learning rate they did not move from their start (README section 7.3), so they get their own rate
     small = ([] if anchored else list(am.parameters())) + (list(chain.parameters()) if use_chain else [])
