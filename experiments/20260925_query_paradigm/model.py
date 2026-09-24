@@ -70,6 +70,10 @@ class PriorNet(nn.Module):
         self.fc = nn.Linear(hid, 1)
         self.att = nn.Linear(hid, 1)
         self.vid = nn.Linear(hid, 1)
+        # g_head false (README section 8): no video head; g is one learned constant, so only the per-second
+        # logits can separate positive from negative videos
+        self.g_head = bool(cfg.get("g_head", True))
+        self.g0 = nn.Parameter(torch.zeros(()))
 
     def forward(self, f_a, f_v, mask):
         """f_a (B, T, A_IN), f_v (B, T, V_DIM), mask (B, T) bool. Returns s (B, T), g_logit (B,), a_log (B, T),
@@ -81,5 +85,5 @@ class PriorNet(nn.Module):
         h = a_out + v_out
         w = self.att(h).squeeze(-1).masked_fill(~mask, -1e9)
         pooled = torch.einsum("bt,bth->bh", torch.softmax(w, dim=1), h)
-        g_logit = self.vid(pooled).squeeze(-1)
+        g_logit = self.vid(pooled).squeeze(-1) if self.g_head else self.g0.expand(s.shape[0])
         return s, g_logit, a_log, v_log, v_out, a_out

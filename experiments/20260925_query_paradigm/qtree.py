@@ -76,11 +76,13 @@ def leaf_levels(tr):
 class AnswerModel(nn.Module):
     """log P(o_n | s_n, u_n) for the three states; theta, omega of shape (N_CAT, N_STATE, N_LEV)."""
 
-    def __init__(self, theta0, len_mu, len_sd, length_term=True, n_state=N_STATE, categories=tuple(range(N_CAT))):
+    def __init__(self, theta0, len_mu, len_sd, length_term=True, n_state=N_STATE, categories=tuple(range(N_CAT)),
+                 omega0=None):
         super().__init__()
         self.cats = list(categories)
         self.theta = nn.Parameter(torch.as_tensor(theta0, dtype=torch.float32).clone())
-        self.omega = nn.Parameter(torch.zeros_like(self.theta)) if length_term else None
+        om = torch.zeros_like(self.theta) if omega0 is None else torch.as_tensor(omega0, dtype=torch.float32).clone()
+        self.omega = nn.Parameter(om) if length_term else None
         self.len_mu, self.len_sd = float(len_mu), float(len_sd)
         self.n_state = n_state
 
@@ -125,6 +127,47 @@ def init_theta(train_answers, n_state=N_STATE):
     if n_state == 2:
         return np.stack([ln, lr], axis=1)
     return np.stack([ln, ln, lr], axis=1)                                # C, S, L
+
+
+def fit_anchored(train_answers, len_mu, len_sd, length_term=True):
+    """Two-state answer model fitted only on the training answers whose state is known from the video label
+    (README section 8): every node of a negative video is state 0 (no harmful second); the root of a positive
+    video is state 1 (it contains the harmful seconds). Per category and state, a multinomial logistic regression
+    of the level on the standardised log length (theta + omega * u), maximum likelihood with one Laplace
+    pseudo-count per level at u = 0. The answer model is then fixed: no latent variable enters its estimate.
+    Returns theta, omega (N_CAT, 2, N_LEV) and the number of answers per state."""
+    rows = {0: ([], []), 1: ([], [])}
+    for label, nodes in train_answers:
+        for a, b, T, o in nodes:
+            if o is None:
+                continue
+            if label == 0:
+                s = 0
+            elif a == 0 and b == T:
+                s = 1
+            else:
+                continue
+            rows[s][0].append(o)
+            rows[s][1].append((np.log(b - a) - len_mu) / len_sd)
+    theta, omega = np.zeros((N_CAT, 2, N_LEV)), np.zeros((N_CAT, 2, N_LEV))
+    for s in (0, 1):
+        O = torch.as_tensor(np.array(rows[s][0]), dtype=torch.long)
+        U = torch.as_tensor(np.array(rows[s][1]), dtype=torch.float64)
+        th = torch.zeros(N_CAT, N_LEV, dtype=torch.float64, requires_grad=True)
+        om = torch.zeros(N_CAT, N_LEV, dtype=torch.float64, requires_grad=bool(length_term))
+        opt = torch.optim.LBFGS([th, om] if length_term else [th], max_iter=500, tolerance_grad=1e-10,
+                                tolerance_change=1e-12, line_search_fn="strong_wolfe")
+
+        def closure():
+            opt.zero_grad()
+            lp = F.log_softmax(th[None] + om[None] * U[:, None, None], dim=-1)
+            nll = -lp.gather(2, O[:, :, None]).sum() - F.log_softmax(th, dim=-1).sum()
+            nll.backward()
+            return nll
+
+        opt.step(closure)
+        theta[:, s], omega[:, s] = th.detach().numpy(), om.detach().numpy()
+    return theta, omega, {s: len(rows[s][0]) for s in (0, 1)}
 
 
 # ------------------------------------------------------------------ batched upward pass (training, autograd)

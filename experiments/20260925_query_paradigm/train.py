@@ -63,7 +63,7 @@ DEFAULTS = {
     "val_budget": 8, "max_calls": 32, "fixed_budgets": [0, 1, 2, 4, 8, 16, 32], "mean_budgets": [2, 4, 8],
     "primary_budget": 8,
     "n_state": 3, "length_term": True, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
-    "fusion": "tree", "prior": "chain", "eval_chunk": 64,
+    "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "joint", "g_head": True,
 }
 
 
@@ -154,16 +154,24 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     train_obs = {v: qdata.observed(answers[v], store.T[v]) for v in ids["train"]}
     ta = [(labels[v], [(a, b, store.T[v], o) for (a, b), o in answers[v].items()]) for v in ids["train"]]
     n_state = int(cfg["n_state"])
-    theta0 = qtree.init_theta(ta, n_state)
     loglen = np.log([b - a for v in ids["train"] for (a, b) in answers[v]])
+    anchored = cfg["answer_model"] == "anchored"
+    if anchored:                  # README section 8: fitted once on the answers whose state the label fixes
+        assert n_state == 2, "the anchored answer model has two states"
+        theta0, omega0, n_fit = qtree.fit_anchored(ta, loglen.mean(), loglen.std(), bool(cfg["length_term"]))
+        say("anchored answer model: fitted on %d state-0 and %d state-1 answers" % (n_fit[0], n_fit[1]))
+    else:
+        theta0, omega0 = qtree.init_theta(ta, n_state), None
     am = qtree.AnswerModel(theta0, loglen.mean(), loglen.std(), bool(cfg["length_term"]), n_state,
-                           cfg["categories"]).to(device)
+                           cfg["categories"], omega0).to(device)
+    if anchored:
+        am.requires_grad_(False)
     model = PriorNet(cfg).to(device)
     use_chain = cfg["prior"] == "chain"
     chain = ctree.Chain().to(device) if use_chain else None
     # the answer model and the chain have few parameters and start from data-driven values; with the network's
     # learning rate they did not move from their start (README section 7.3), so they get their own rate
-    small = list(am.parameters()) + (list(chain.parameters()) if use_chain else [])
+    small = ([] if anchored else list(am.parameters())) + (list(chain.parameters()) if use_chain else [])
     opt = optim.Adam([{"params": list(model.parameters()), "lr": float(cfg["lr"])},
                       {"params": small, "lr": float(cfg["lr_answer"])}])
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=int(cfg["sched_tmax"]))
@@ -186,7 +194,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
             mask = torch.arange(Tm, device=device)[None, :] < seq.to(device)[:, None]
             s, g, a_log, v_log, v_out, a_out = model(f_a, f_v, mask)
             vids = [ds.ids[i] for i in vidx.tolist()]
-            s_tree = s if cfg["objective"] == "tree" else s.detach()
+            s_tree = s if cfg["objective"] in ("tree", "label") else s.detach()
             if use_chain:
                 fo = ctree.Forest([store.T[v] for v in vids], Tm)
                 ids_g, ans, lens = [], [], []
@@ -200,10 +208,16 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
                     ll = am.loglik(torch.as_tensor(np.concatenate(ans)), torch.as_tensor(np.concatenate(lens)))
                     A3 = A3.index_put((torch.as_tensor(np.concatenate(ids_g)).to(device),), ll.to(A3.dtype))
                     n_obs = torch.as_tensor([len(train_obs[v][0]) for v in vids], device=device).float()
-                g_tree = g if cfg["objective"] == "tree" else g.detach()
-                l1, l0, lo1, lo0 = ctree.log_evidence(fo, s_tree, g_tree, A3, chain)
+                g_tree = g if cfg["objective"] in ("tree", "label") else g.detach()
+                if cfg["objective"] == "label":      # README section 8: the prior is trained by the label only
+                    w1, w0 = ctree.up(fo, s_tree, g_tree, torch.zeros_like(A3), chain)
+                    logZ = torch.logaddexp(w1, w0)
+                    l1, l0 = w1 - logZ, w0 - logZ
+                    loss_ans = torch.zeros((), device=device)
+                else:
+                    l1, l0, lo1, lo0 = ctree.log_evidence(fo, s_tree, g_tree, A3, chain)
+                    loss_ans = -(torch.where(label > 0.5, lo1, lo0) / n_obs.clamp(min=1)).mean()
                 loss_g = -torch.where(label > 0.5, l1, l0).mean()
-                loss_ans = -(torch.where(label > 0.5, lo1, lo0) / n_obs.clamp(min=1)).mean()
                 p_video = torch.exp(l1)
                 if cfg["objective"] == "mil":        # arm: g trained by BCE outside the tree as in revision 0
                     loss_g = F.binary_cross_entropy_with_logits(g, label)
