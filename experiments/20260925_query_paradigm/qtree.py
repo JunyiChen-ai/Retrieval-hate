@@ -76,8 +76,9 @@ def leaf_levels(tr):
 class AnswerModel(nn.Module):
     """log P(o_n | s_n, u_n) for the three states; theta, omega of shape (N_CAT, N_STATE, N_LEV)."""
 
-    def __init__(self, theta0, len_mu, len_sd, length_term=True, n_state=N_STATE):
+    def __init__(self, theta0, len_mu, len_sd, length_term=True, n_state=N_STATE, categories=tuple(range(N_CAT))):
         super().__init__()
+        self.cats = list(categories)
         self.theta = nn.Parameter(torch.as_tensor(theta0, dtype=torch.float32).clone())
         self.omega = nn.Parameter(torch.zeros_like(self.theta)) if length_term else None
         self.len_mu, self.len_sd = float(len_mu), float(len_sd)
@@ -99,7 +100,7 @@ class AnswerModel(nn.Module):
         lp = self.level_logp(length)                                     # N, C, S, L
         idx = answers.long().to(lp.device)[:, :, None, None].expand(-1, -1, lp.shape[2], 1)
         per = torch.gather(lp, 3, idx).squeeze(-1)                       # N, C, S
-        ll = per.sum(1)                                                  # N, S
+        ll = per[:, self.cats].sum(1)                                    # N, S (arm hate_only: category 0 only)
         if self.n_state == 2:                                            # arm two_state: s=1 shares s=0's table
             ll = torch.stack([ll[:, 0], ll[:, 0], ll[:, 1]], dim=1)
         return ll

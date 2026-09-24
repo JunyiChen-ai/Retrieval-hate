@@ -22,6 +22,7 @@
 | `uoa-lab1` | sc474397 | RTX 5090 空闲。`~/Retrieval-hate` 是旧布局（停在 GitHub HEAD，落后本机 29 commit），仓库 `data/` 仅 813M；`~/data` 有 HateMM 12G、Multihateclip 22G、ImpliHateVid，**HateClipSeg 视频缺失**；无 conda、无 torch；rclone `b2` 已配；空盘 1.2T。 |
 | `uoa-lab3` | sc474398 | RTX 5090 空闲。空机：无仓库、无数据、无 conda/torch、无 rclone；空盘 1.7T。 |
 | `lab-server` | sc448960，账号 `junyi`（用户本人账号） | RTX 5090，当前被用户 `ling` 的进程占 19G/88%，需先看空闲。有 miniconda（HVGuard 等旧环境，无 `HateVideo`）、rclone `b2` 与 `gdrive` 已配；无本项目仓库与数据；空盘 941G。 |
+| `uoa-campus1/2/3` | foscsmlprd01/02/03 | 8×A100 / 7×A100 / 7×H200，**Slurm 集群**（2026-09-25 补）。只能 token 登录，自动化靠 ControlMaster（socket 断了请用户 `! ssh uoa-campusN true` 登录一次）；`$HOME` = `/data/jehc223/home`，仓库 `~/Retrieval-hate`。**登录节点不跑 python**，只用 `sbatch`（sbatch 文件进 git，`--gres=gpu:1 --cpus-per-task=8 --mem=64G`，不 chain job）；三台合计最多 2 个 job。2026-09-25 实测：新提交的 job 显示"pending administrator approval"，不能立即运行。campus3 有 conda 环境 `vlm`（vLLM 0.11 + transformers 4.57.1）。 |
 
 ### 选机规则
 1. 本机 GPU 可用（`nvidia-smi` 显示占用 < 50% 且空闲显存 ≥ 16G）时一律在本机跑。
