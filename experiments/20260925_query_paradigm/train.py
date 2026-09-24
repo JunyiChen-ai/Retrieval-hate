@@ -16,10 +16,18 @@ Revision 1 (README section 7, default prior "chain"): the per-second prior is a 
 tree; evaluation runs the policy for many videos at once (cpolicy.py) and the adaptive rule stops on the expected
 squared-error risk reduction of the chosen question (stop "voi", stopping.py). prior "independent" = revision 0.
 
-Arms (config keys): categories [0] (hate only), n_state 2, length_term false, objective "mil" (backbone trained by
-top-k MIL + CMAL; the answer model by the tree likelihood with the network's logits detached), order "bfs"
-(evaluation-time question order), fusion "flat" (ablation b: questions still chosen by EIG on the tree posterior,
-the score is logit(g pi_t) + mean over asked nodes covering t of [log P(o|s=2) - log P(o|s=0)]).
+Revision 2 (README section 9, the defaults): the answer model is fitted once on the training answers whose state
+the label fixes (qtree.fit_anchored: every node of a negative video is state 0, the root of a positive video is
+state 1) and then fixed; two states, no length term; the chain is learned (its own learning rate lr_answer); the
+network is trained by -log P(Y | x) - log P(answers | Y, x) / n_answers on the tree.
+
+Arms (config keys; README section 9 ablations): categories [0] (a, hate only), fusion "flat" (b: questions still
+chosen by EIG on the tree posterior, the score is logit(prior) + mean over asked nodes covering t of
+[log P(o|s=1) - log P(o|s=0)]), objective "label" (c: the network is trained by the label only, answers used at test
+only), order "bfs" (d: evaluation-time question order), prior "independent" (e: seconds independent given the
+video state, revision 0), answer_model "joint" (f: the answer model learned jointly with the network from the
+data-driven start, revision 1). Diagnostic switches (README section 8): objective "mil" / "posterior", g_head,
+chain "hazard", text_sources, n_state 3, length_term.
 
     python experiments/20260925_query_paradigm/train.py --corpus hatemm --seed 234 --out-dir runs/... [--config c.json]
 """
@@ -62,10 +70,12 @@ DEFAULTS = {
     "lamda_cma": 1.0, "lamda_cof": 0.05, "crop_repeat": 5, "long_T": 512, "topk_div": 16,
     "val_budget": 8, "max_calls": 32, "fixed_budgets": [0, 1, 2, 4, 8, 16, 32], "mean_budgets": [2, 4, 8],
     "primary_budget": 8,
-    "n_state": 3, "length_term": True, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
-    "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "joint", "g_head": True,
+    "n_state": 2, "length_term": False, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
+    "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "anchored", "g_head": True,
     "text_sources": ["bert"], "chain": "learned",
 }
+# Revision 2 (README section 9): anchored two-state answer model without length term, learned chain, BERT text row.
+# Revision 0/1 settings: n_state 3, length_term True, answer_model "joint" (prior "independent" for revision 0).
 
 
 def git_describe():
