@@ -64,7 +64,7 @@ DEFAULTS = {
     "primary_budget": 8,
     "n_state": 3, "length_term": True, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
     "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "joint", "g_head": True,
-    "text_sources": ["bert"],
+    "text_sources": ["bert"], "chain": "learned",
 }
 
 
@@ -169,12 +169,14 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
         am.requires_grad_(False)
     model = PriorNet(cfg).to(device)
     use_chain = cfg["prior"] == "chain"
-    chain = ctree.Chain().to(device) if use_chain else None
+    chain = None
+    if use_chain:
+        chain = (ctree.HazardChain() if cfg["chain"] == "hazard" else ctree.Chain()).to(device)
     # the answer model and the chain have few parameters and start from data-driven values; with the network's
     # learning rate they did not move from their start (README section 7.3), so they get their own rate
     small = ([] if anchored else list(am.parameters())) + (list(chain.parameters()) if use_chain else [])
-    opt = optim.Adam([{"params": list(model.parameters()), "lr": float(cfg["lr"])},
-                      {"params": small, "lr": float(cfg["lr_answer"])}])
+    opt = optim.Adam([{"params": list(model.parameters()), "lr": float(cfg["lr"])}]
+                     + ([{"params": small, "lr": float(cfg["lr_answer"])}] if small else []))
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=int(cfg["sched_tmax"]))
     ds = qdata.TrainSet(store, ids["train"], labels, int(cfg["crop_repeat"]))
     lengths = np.repeat([store.T[v] for v in ds.ids], int(cfg["crop_repeat"]))
@@ -291,7 +293,8 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     am.load_state_dict(best["am"])
     if use_chain:
         chain.load_state_dict(best["chain"])
-        say("chain: logA %s logpi %s" % (chain.logA().exp().tolist(), chain.logpi().exp().tolist()))
+        if cfg["chain"] != "hazard":
+            say("chain: logA %s logpi %s" % (chain.logA().exp().tolist(), chain.logpi().exp().tolist()))
     torch.save({"model": best["model"], "am": best["am"], "chain": best["chain"], "epoch": best["epoch"]},
                os.path.join(out_dir, "model.pth"))
     say("checkpoint: epoch %d (val criterion %.4f)" % (best["epoch"], best["crit"]))

@@ -40,6 +40,24 @@ class Chain(nn.Module):
     def logpi(self):
         return F.log_softmax(self.init, dim=0)
 
+    def logA_for(self, forest):
+        return self.logA()
+
+
+class HazardChain(nn.Module):
+    """Revision 2 (README section 9): no learned transition. Symmetric per-video switch probability 1/T, i.e. a
+    priori one expected change of state over the video whatever its length (the constant-hazard change-point prior
+    with expected run length T), and a uniform initial state. The per-second logits s_t and the video logit g carry
+    everything the data says."""
+
+    def logA_for(self, forest):
+        h = torch.as_tensor([1.0 / max(T, 2) for T in forest.Ts], dtype=torch.float64)
+        stay, move = torch.log1p(-h), torch.log(h)
+        return torch.stack([torch.stack([stay, move], -1), torch.stack([move, stay], -1)], 1)
+
+    def logpi(self):
+        return torch.log(torch.full((2,), 0.5, dtype=torch.float64))
+
 
 class Forest:
     """Batched tree structure for videos of lengths Ts (padded logits of width Tmax). Node ids are global
@@ -78,8 +96,10 @@ class Forest:
 
 
 def _merge(L, R, logA):
-    """L, R: (n, f, l, a) log tables of two adjacent intervals -> (n, f, l, a) of their union."""
-    X = L[:, :, :, :, None, None, None] + logA[None, None, :, None, :, None, None] + R[:, None, None, None, :, :, :]
+    """L, R: (n, f, l, a) log tables of two adjacent intervals -> (n, f, l, a) of their union. logA (2, 2), or
+    (n, 2, 2) with one transition per merged pair."""
+    la = logA[None] if logA.dim() == 2 else logA
+    X = L[:, :, :, :, None, None, None] + la[:, None, :, None, :, None, None] + R[:, None, None, None, :, :, :]
     X = torch.logsumexp(X, dim=(2, 4))                                   # n, f, aL, l, aR
     a0 = X[:, :, 0, :, 0]
     a1 = torch.logsumexp(torch.stack([X[:, :, 0, :, 1], X[:, :, 1, :, 0], X[:, :, 1, :, 1]]), dim=0)
@@ -93,7 +113,9 @@ def up(forest, s, g, A3, chain, eta=None):
     answers under the Y = 1 answer states, and of the all-zero path with the answers under state 0."""
     dev = s.device
     flat = s.reshape(-1)
-    logA, logpi = chain.logA(), chain.logpi()
+    logA, logpi = chain.logA_for(forest).to(dev).to(s.dtype), chain.logpi().to(dev).to(s.dtype)
+    per_video = logA.dim() == 3
+    nv = forest.node_video.to(dev)
     a1 = A3[:, 1:]
     if eta is not None:
         a1 = a1 + torch.stack([torch.zeros_like(eta), eta], dim=1)
@@ -116,7 +138,7 @@ def up(forest, s, g, A3, chain, eta=None):
             lzs.append(torch.zeros(n_leaf, device=dev, dtype=s.dtype))
         if len(nodes) > n_leaf:
             L, R = lev["L"].to(dev), lev["R"].to(dev)
-            tabs.append(_merge(prev[0][L], prev[0][R], logA))
+            tabs.append(_merge(prev[0][L], prev[0][R], logA[nv[nodes[n_leaf:]]] if per_video else logA))
             lzs.append(prev[1][L] + prev[1][R])
         tab = torch.cat(tabs)
         lz = torch.cat(lzs)
@@ -127,7 +149,7 @@ def up(forest, s, g, A3, chain, eta=None):
     root = prev[0][pr]                                                   # B, f, l, a
     logW1 = prev[1][pr] + torch.logsumexp(logpi[None, :, None] + root[:, :, :, 1], dim=(1, 2)) + g
     lp0 = torch.zeros(forest.B, device=dev, dtype=s.dtype).index_add(0, forest.node_video.to(dev), A3[:, 0])
-    logW0 = logpi[0] + forest.Tm1.to(dev).to(s.dtype) * logA[0, 0] + lp0
+    logW0 = logpi[0] + forest.Tm1.to(dev).to(s.dtype) * (logA[:, 0, 0] if per_video else logA[0, 0]) + lp0
     return logW1, logW0
 
 
@@ -157,11 +179,10 @@ def marginals(forest, s, g, A3, chain):
 
 class _DoubleChain:
     def __init__(self, chain):
-        self._A = chain.logA().detach().double()
-        self._pi = chain.logpi().detach().double()
+        self._chain = chain
 
-    def logA(self):
-        return self._A
+    def logA_for(self, forest):
+        return self._chain.logA_for(forest).detach().double()
 
     def logpi(self):
-        return self._pi
+        return self._chain.logpi().detach().double()
