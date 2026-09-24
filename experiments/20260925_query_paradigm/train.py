@@ -191,6 +191,9 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     use_chain = cfg["prior"] == "chain"
     chain = None
     if use_chain:
+        assert cfg["boundary"] in ("closed", "free") and cfg["chain"] in ("learned", "hazard")
+        assert cfg["chain_form"] in ("zero_inflated", "coupled", "normalized")
+        assert cfg["chain"] == "learned" or cfg["chain_form"] == "coupled", "the hazard chain is coupled only"
         closed = cfg["boundary"] == "closed"
         chain = (ctree.HazardChain(closed) if cfg["chain"] == "hazard"
                  else ctree.Chain(closed, cfg["chain_form"] == "zero_inflated",
