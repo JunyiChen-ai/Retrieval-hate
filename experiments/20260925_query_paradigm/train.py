@@ -166,14 +166,18 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     ta = [(labels[v], [(a, b, store.T[v], o) for (a, b), o in answers[v].items()]) for v in ids["train"]]
     n_state = int(cfg["n_state"])
     loglen = np.log([b - a for v in ids["train"] for (a, b) in answers[v]])
-    anchored = cfg["answer_model"] == "anchored"
+    anchored = cfg["answer_model"] in ("anchored", "refit")
     if anchored:                  # README section 8: fitted once on the answers whose state the label fixes
         assert n_state == 2, "the anchored answer model has two states"
         theta0, omega0, n_fit = qtree.fit_anchored(ta, loglen.mean(), loglen.std(), bool(cfg["length_term"]))
         say("anchored answer model: fitted on %d state-0 and %d state-1 answers" % (n_fit[0], n_fit[1]))
+        if cfg["answer_model"] == "refit":       # diagnostic: refitted with a length term after every epoch
+            assert not cfg["length_term"]
+            omega0 = np.zeros_like(theta0)
     else:
         theta0, omega0 = qtree.init_theta(ta, n_state), None
-    am = qtree.AnswerModel(theta0, loglen.mean(), loglen.std(), bool(cfg["length_term"]), n_state,
+    am = qtree.AnswerModel(theta0, loglen.mean(), loglen.std(),
+                           bool(cfg["length_term"]) or cfg["answer_model"] == "refit", n_state,
                            cfg["categories"], omega0).to(device)
     if anchored:
         am.requires_grad_(False)
@@ -287,6 +291,8 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
             tot += [float(loss_g), float(loss_ans), float(cm)]
             nb += 1
         sched.step()
+        if cfg["answer_model"] == "refit":
+            refit_answer_model(model, am, chain, store, ids["train"], train_obs, labels, device, say)
         tot /= max(nb, 1)
         runs = ev.run(model, am, ids["val"], int(cfg["val_budget"]), chain=chain)
         vm = hc.frame_metrics(at_budget(runs, int(cfg["val_budget"])), gt["val"], hate_val)
@@ -316,6 +322,43 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     with open(os.path.join(out_dir, "summary.json"), "w") as fh:
         json.dump(summary, fh, indent=2, default=float)
     return summary
+
+
+def refit_answer_model(model, am, chain, store, vids, train_obs, labels, device, say):
+    """Diagnostic (README section 10): refit the two-state answer model with a length term on the training answers.
+    State of each answered node: negative video -> 0; positive video -> P(z_n = 1 | Y = 1, x) from the chain prior
+    WITHOUT any answer (so an answer never decides its own state); weighted maximum likelihood (qtree.fit_weighted)."""
+    model.eval()
+    vids = sorted(vids, key=lambda v: store.T[v])
+    O, U, W1 = [], [], []
+    with torch.no_grad():
+        pri = {v: policy.video_prior(model, store, v, device) for v in vids}
+    for i in range(0, len(vids), 64):
+        vs = vids[i:i + 64]
+        Ts = [store.T[v] for v in vs]
+        Tm = max(Ts)
+        S = torch.zeros(len(vs), Tm, dtype=torch.float64)
+        G = torch.zeros(len(vs), dtype=torch.float64)
+        for b, v in enumerate(vs):
+            S[b, :Ts[b]] = torch.from_numpy(pri[v][0])
+            G[b] = pri[v][1]
+        fo = ctree.Forest(Ts, Tm)
+        _, m, _ = ctree.marginals(fo, S.to(device), G.to(device), torch.zeros(fo.N, 3, device=device), chain)
+        m = m.cpu().numpy()
+        for b, v in enumerate(vs):
+            nid, oo, ln = train_obs[v]
+            if not len(nid):
+                continue
+            O.append(oo)
+            U.append((np.log(ln) - am.len_mu) / am.len_sd)
+            W1.append(np.zeros(len(nid)) if labels[v] == 0 else m[fo.offs[b] + nid])
+    O, U, W1 = np.concatenate(O), np.concatenate(U), np.concatenate(W1)
+    t0, o0 = qtree.fit_weighted(O, U, 1.0 - W1)
+    t1, o1 = qtree.fit_weighted(O, U, W1)
+    with torch.no_grad():
+        am.theta.copy_(torch.as_tensor(np.stack([t0, t1], 1), dtype=am.theta.dtype))
+        am.omega.copy_(torch.as_tensor(np.stack([o0, o1], 1), dtype=am.omega.dtype))
+    model.train()
 
 
 def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=None):

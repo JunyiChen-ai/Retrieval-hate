@@ -129,6 +129,29 @@ def init_theta(train_answers, n_state=N_STATE):
     return np.stack([ln, ln, lr], axis=1)                                # C, S, L
 
 
+def fit_weighted(O, U, W, length_term=True):
+    """Multinomial logistic per category of the level on the standardised log length, maximum weighted likelihood
+    (weights W per answer) with one Laplace pseudo-count per level at u = 0. O (n, N_CAT) int, U (n,), W (n,).
+    Returns theta, omega (N_CAT, N_LEV)."""
+    O = torch.as_tensor(O, dtype=torch.long)
+    U = torch.as_tensor(U, dtype=torch.float64)
+    W = torch.as_tensor(W, dtype=torch.float64)
+    th = torch.zeros(N_CAT, N_LEV, dtype=torch.float64, requires_grad=True)
+    om = torch.zeros(N_CAT, N_LEV, dtype=torch.float64, requires_grad=bool(length_term))
+    opt = torch.optim.LBFGS([th, om] if length_term else [th], max_iter=500, tolerance_grad=1e-10,
+                            tolerance_change=1e-12, line_search_fn="strong_wolfe")
+
+    def closure():
+        opt.zero_grad()
+        lp = F.log_softmax(th[None] + om[None] * U[:, None, None], dim=-1)
+        nll = -(W[:, None] * lp.gather(2, O[:, :, None]).squeeze(-1)).sum() - F.log_softmax(th, dim=-1).sum()
+        nll.backward()
+        return nll
+
+    opt.step(closure)
+    return th.detach().numpy(), om.detach().numpy()
+
+
 def fit_anchored(train_answers, len_mu, len_sd, length_term=True):
     """Two-state answer model fitted only on the training answers whose state is known from the video label
     (README section 8): every node of a negative video is state 0 (no harmful second); the root of a positive
