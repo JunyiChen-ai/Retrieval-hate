@@ -58,7 +58,7 @@ from model import PriorNet                      # noqa: E402
 
 DEFAULTS = {
     "hid_dim": 128, "ffn_dim": 128, "nhead": 4, "dropout": 0.2,
-    "lr": 4e-4, "batch_size": 32, "max_epoch": 50, "sched_tmax": 60,
+    "lr": 4e-4, "lr_answer": 0.03, "batch_size": 32, "max_epoch": 50, "sched_tmax": 60,
     "lamda_cma": 1.0, "lamda_cof": 0.05, "crop_repeat": 5, "long_T": 512, "topk_div": 16,
     "val_budget": 8, "max_calls": 32, "fixed_budgets": [0, 1, 2, 4, 8, 16, 32], "mean_budgets": [2, 4, 8],
     "primary_budget": 8,
@@ -161,8 +161,11 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     model = PriorNet(cfg).to(device)
     use_chain = cfg["prior"] == "chain"
     chain = ctree.Chain().to(device) if use_chain else None
-    params = list(model.parameters()) + list(am.parameters()) + (list(chain.parameters()) if use_chain else [])
-    opt = optim.Adam(params, lr=float(cfg["lr"]))
+    # the answer model and the chain have few parameters and start from data-driven values; with the network's
+    # learning rate they did not move from their start (README section 7.3), so they get their own rate
+    small = list(am.parameters()) + (list(chain.parameters()) if use_chain else [])
+    opt = optim.Adam([{"params": list(model.parameters()), "lr": float(cfg["lr"])},
+                      {"params": small, "lr": float(cfg["lr_answer"])}])
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=int(cfg["sched_tmax"]))
     ds = qdata.TrainSet(store, ids["train"], labels, int(cfg["crop_repeat"]))
     lengths = np.repeat([store.T[v] for v in ds.ids], int(cfg["crop_repeat"]))

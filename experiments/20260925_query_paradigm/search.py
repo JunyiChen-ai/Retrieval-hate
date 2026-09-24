@@ -30,6 +30,8 @@ def sample(trial):
         "lr": trial.suggest_float("lr", 1e-4, 1e-3, log=True),
         "lamda_cma": trial.suggest_float("lamda_cma", 0.5, 2.0),
         "dropout": trial.suggest_float("dropout", 0.1, 0.5),
+        # revision 1 (README section 7.3): learning rate of the answer model and the chain
+        "lr_answer": trial.suggest_float("lr_answer", 3e-3, 3e-1, log=True),
     }
 
 

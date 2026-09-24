@@ -128,3 +128,9 @@
 5. 评估按视频批量运行（`cpolicy.run_batch`，每步一次批量推断）。
 
 规则 6 复核 PASS（`REVIEW_RULE6_R1.md`，无必须修）。消融 (b) 在链先验下的先验项是无答案时的链后验 P(y_t = 1 | x)（代替 g·π_t）。方法级常数不变（二分、F = 4、五类）；新增的 A、π0 是学习参数。搜索空间、trial 数规则、主比较点（固定 8 次）与预注册 P1–P3 不变；消融 (b)–(f) 在链先验上做，另加 (g) 链先验 → 逐秒独立（第 0 版）。
+
+### 7.3 实现修正：答案模型没有被学习（2026-09-25 04:40）
+
+第 1 版 HCS seed 234 trial 0 固定 8 次 .630 / .618，问 0 次 .623，答案几乎不改变输出。检查 checkpoint：答案模型各状态的分布、长度项 ω、链的转移都停在初始值附近（hate 类 P(≥2)：s0 .28、s1 .28、s2 .86，ω ≈ 0；转移停留概率 .982 = 初始值）。原因：答案模型与链只有 120 + 6 个参数，和网络共用 Adam 学习率 4e-4，50 个 epoch 移动不到 0.1 个 logit。第 0 版同样如此，所以第 0 版的数字对应"答案模型取初始值"。按规则 9"实现不可靠：修复重跑"：答案模型与链单独一个学习率 lr_answer，加入搜索空间 lr_answer ∈ [3e-3, 3e-1]（log），其余不变；第 1 版搜索从头重跑（输出 `runs/20260925_query_paradigm_r1/`，旧的第 1 版 trial 0 移到 `runs/20260925_query_paradigm_r1_void/`）。
+
+第 0 版记录（答案模型未学习，只作记录）：HCS seed 234 20 trial 完成，最优 trial .6848 / .6891 / within .5406（`runs/20260925_query_paradigm/hateclipseg/seed234/study_summary.json`）；HateMM seed 234 在 10/20 trial 时停止，最优 trial 9 .6169 / .8593 / within .5990（`runs/20260925_query_paradigm/hatemm/seed234/search.log`）。
