@@ -16,6 +16,7 @@ import torch.nn.functional as F
 
 from macilsd import align                 # noqa: F401  (V_DIM)
 import data as qdata
+import hier_evidence_common as hc
 
 
 class MultiHeadAttention(nn.Module):
@@ -65,7 +66,7 @@ class PriorNet(nn.Module):
         super().__init__()
         hid = int(cfg["hid_dim"])
         self.fc_v = nn.Linear(align.V_DIM, hid)
-        self.fc_a = nn.Linear(qdata.A_IN, hid)
+        self.fc_a = nn.Linear(qdata.A_IN + hc.TEXT_DIM * (len(cfg.get("text_sources", ["bert"])) - 1), hid)
         self.cma = CrossModalLayer(hid, int(cfg["nhead"]), int(cfg["ffn_dim"]), float(cfg["dropout"]))
         self.fc = nn.Linear(hid, 1)
         self.att = nn.Linear(hid, 1)

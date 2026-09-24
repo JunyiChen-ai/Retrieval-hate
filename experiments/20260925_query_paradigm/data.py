@@ -22,7 +22,7 @@ import hier_evidence_common as hc          # noqa: E402
 import qtree                               # noqa: E402
 
 CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg"}
-A_IN = align.A_DIM + hc.TEXT_DIM
+A_IN = align.A_DIM + hc.TEXT_DIM             # one text row; model.PriorNet adds TEXT_DIM per extra text source
 
 
 def resample_matrix(src_bounds, dst_bounds):
@@ -52,22 +52,26 @@ def resample_matrix(src_bounds, dst_bounds):
 class Store:
     """Per video: audio+text rows (T, A_IN) on seconds, T, the snippet->second resampling matrix."""
 
-    def __init__(self, corpus, video_ids, text_source="bert"):
+    def __init__(self, corpus, video_ids, text_sources=("bert",)):
         self.corpus = corpus
         self.at, self.T, self.W = {}, {}, {}
         self.n_missing_text = 0
         for v in video_ids:
             audio, T, snip = align.aligned_audio(corpus, v, "second")
-            p = hc.text_path(corpus, v, text_source)
-            text = None
-            if os.path.exists(p):
-                arr = np.load(p).astype(np.float32)
-                if arr.ndim == 2 and arr.shape[1] == hc.TEXT_DIM and arr.shape[0] > 0:
-                    text = align.resample_intervals(arr, align.second_bounds(arr.shape[0]), align.second_bounds(T))
-            if text is None:
-                self.n_missing_text += 1
-                text = np.zeros((T, hc.TEXT_DIM), dtype=np.float32)
-            self.at[v] = np.ascontiguousarray(np.concatenate([audio, text], axis=1), dtype=np.float32)
+            rows = [audio]
+            for src in text_sources:                 # one 768-d row per text encoder (hc.TEXT_ROOTS)
+                p = hc.text_path(corpus, v, src)
+                text = None
+                if os.path.exists(p):
+                    arr = np.load(p).astype(np.float32)
+                    if arr.ndim == 2 and arr.shape[1] == hc.TEXT_DIM and arr.shape[0] > 0:
+                        text = align.resample_intervals(arr, align.second_bounds(arr.shape[0]),
+                                                        align.second_bounds(T))
+                if text is None:
+                    self.n_missing_text += 1
+                    text = np.zeros((T, hc.TEXT_DIM), dtype=np.float32)
+                rows.append(text)
+            self.at[v] = np.ascontiguousarray(np.concatenate(rows, axis=1), dtype=np.float32)
             self.T[v] = int(T)
             self.W[v] = resample_matrix(snip, align.second_bounds(T))
 

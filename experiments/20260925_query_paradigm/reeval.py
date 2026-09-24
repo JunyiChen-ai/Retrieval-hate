@@ -40,7 +40,7 @@ def main():
     os.makedirs(out, exist_ok=True)
     labels, ids, gt, _ = hc.load_fixed_cohort(corpus)
     answers, T_ans = qdata.load_answers(corpus)
-    store = qdata.Store(corpus, ids["train"] + ids["val"] + ids["test"])
+    store = qdata.Store(corpus, ids["train"] + ids["val"] + ids["test"], cfg.get("text_sources", ["bert"]))
     ck = torch.load(os.path.join(a.trial, "model.pth"), map_location=a.device)
     model = PriorNet(cfg).to(a.device)
     model.load_state_dict(ck["model"])

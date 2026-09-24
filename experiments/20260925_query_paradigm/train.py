@@ -64,6 +64,7 @@ DEFAULTS = {
     "primary_budget": 8,
     "n_state": 3, "length_term": True, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
     "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "joint", "g_head": True,
+    "text_sources": ["bert"],
 }
 
 
@@ -146,7 +147,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     all_ids = ids["train"] + ids["val"] + ids["test"]
     missing = [v for v in all_ids if v not in answers]
     assert not missing, "videos without tree answers: %d (%s)" % (len(missing), missing[:5])
-    store = qdata.Store(corpus, all_ids)
+    store = qdata.Store(corpus, all_ids, cfg["text_sources"])
     bad = [v for v in all_ids if store.T[v] != T_ans[v]]
     assert not bad, "tree T differs from the 1-fps grid for %s" % bad[:5]
     say("videos train/val/test %d/%d/%d; missing text rows %d" % (len(ids["train"]), len(ids["val"]),
