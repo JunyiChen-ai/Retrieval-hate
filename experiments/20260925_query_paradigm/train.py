@@ -181,6 +181,9 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     loader = DataLoader(ds, batch_sampler=sampler, collate_fn=qdata.collate, num_workers=num_workers,
                         persistent_workers=num_workers > 0)
     ev = Evaluator(store, answers, cfg, device)
+    if cfg["objective"] == "posterior":
+        assert use_chain and anchored, "the posterior objective needs the chain prior and the anchored answer model"
+    budget_rng = np.random.RandomState(seed)
     hate_val = {v for v in ids["val"] if labels[v] == 1}
     history, best = [], None
     for epoch in range(int(cfg["max_epoch"])):
@@ -188,33 +191,55 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
         model.train()
         lam = min(float(cfg["lamda_cma"]), float(cfg["lamda_cof"]) * epoch)
         tot, nb = np.zeros(3), 0
+        if cfg["objective"] == "posterior":      # the questions the policy would ask each training video now
+            asked_train = {v: r["asked"] for v, r in
+                           ev.run(model, am, ids["train"], int(cfg["primary_budget"]), chain=chain).items()}
         for f_v, f_a, seq, label, vidx in loader:
             Tm = f_v.shape[1]
             f_v, f_a, label = f_v.to(device), f_a.to(device), label.to(device)
             mask = torch.arange(Tm, device=device)[None, :] < seq.to(device)[:, None]
             s, g, a_log, v_log, v_out, a_out = model(f_a, f_v, mask)
             vids = [ds.ids[i] for i in vidx.tolist()]
-            s_tree = s if cfg["objective"] in ("tree", "label") else s.detach()
+            direct = cfg["objective"] in ("tree", "label", "posterior")
+            s_tree = s if direct else s.detach()
             if use_chain:
                 fo = ctree.Forest([store.T[v] for v in vids], Tm)
-                ids_g, ans, lens = [], [], []
-                for b, v in enumerate(vids):
-                    o = train_obs[v]
-                    if len(o[0]):
-                        ids_g.append(o[0] + fo.offs[b]); ans.append(o[1]); lens.append(o[2])
-                A3 = torch.zeros(fo.N, 3, device=device)
-                n_obs = torch.zeros(len(vids), device=device)
-                if ids_g:
-                    ll = am.loglik(torch.as_tensor(np.concatenate(ans)), torch.as_tensor(np.concatenate(lens)))
-                    A3 = A3.index_put((torch.as_tensor(np.concatenate(ids_g)).to(device),), ll.to(A3.dtype))
-                    n_obs = torch.as_tensor([len(train_obs[v][0]) for v in vids], device=device).float()
-                g_tree = g if cfg["objective"] in ("tree", "label") else g.detach()
-                if cfg["objective"] == "label":      # README section 8: the prior is trained by the label only
-                    w1, w0 = ctree.up(fo, s_tree, g_tree, torch.zeros_like(A3), chain)
+                g_tree = g if direct else g.detach()
+                if cfg["objective"] in ("label", "posterior"):
+                    # README section 8: the prior is trained by the label only ("label"), or by the label given the
+                    # answers to the first k questions the policy asks now, k uniform in 0..primary_budget
+                    # ("posterior")
+                    A3 = torch.zeros(fo.N, 3, device=device)
+                    if cfg["objective"] == "posterior":
+                        rows, obs_, lens_ = [], [], []
+                        for b, v in enumerate(vids):
+                            tr = qtree.tree(store.T[v])
+                            k = int(budget_rng.randint(0, int(cfg["primary_budget"]) + 1))
+                            for node in asked_train[v][:k]:
+                                o = answers[v].get((int(tr["a"][node]), int(tr["b"][node])))
+                                if o is not None:
+                                    rows.append(int(fo.offs[b]) + int(node))
+                                    obs_.append(o)
+                                    lens_.append(float(tr["b"][node] - tr["a"][node]))
+                        if rows:
+                            ll = am.loglik(torch.as_tensor(np.stack(obs_)), torch.as_tensor(np.array(lens_)))
+                            A3 = A3.index_put((torch.as_tensor(rows).to(device),), ll.to(A3.dtype))
+                    w1, w0 = ctree.up(fo, s_tree, g_tree, A3, chain)
                     logZ = torch.logaddexp(w1, w0)
                     l1, l0 = w1 - logZ, w0 - logZ
                     loss_ans = torch.zeros((), device=device)
                 else:
+                    ids_g, ans, lens = [], [], []
+                    for b, v in enumerate(vids):
+                        o = train_obs[v]
+                        if len(o[0]):
+                            ids_g.append(o[0] + fo.offs[b]); ans.append(o[1]); lens.append(o[2])
+                    A3 = torch.zeros(fo.N, 3, device=device)
+                    n_obs = torch.zeros(len(vids), device=device)
+                    if ids_g:
+                        ll = am.loglik(torch.as_tensor(np.concatenate(ans)), torch.as_tensor(np.concatenate(lens)))
+                        A3 = A3.index_put((torch.as_tensor(np.concatenate(ids_g)).to(device),), ll.to(A3.dtype))
+                        n_obs = torch.as_tensor([len(train_obs[v][0]) for v in vids], device=device).float()
                     l1, l0, lo1, lo0 = ctree.log_evidence(fo, s_tree, g_tree, A3, chain)
                     loss_ans = -(torch.where(label > 0.5, lo1, lo0) / n_obs.clamp(min=1)).mean()
                 loss_g = -torch.where(label > 0.5, l1, l0).mean()
