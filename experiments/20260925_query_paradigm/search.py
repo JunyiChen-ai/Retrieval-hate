@@ -4,7 +4,7 @@
         --out-root runs/20260925_query_paradigm
 
 Each trial trains once (train.py): validation selects the checkpoint, test is scored at the primary operating
-point (adaptive threshold rule, mean budget 8 calls calibrated on validation). Objective = (test pooled AP + test
+point (fixed 8 EIG questions per video, README section 2.4). Objective = (test pooled AP + test
 pooled ROC) / 2. Trial budget after the first trial: 20 if it took <= 1 h, else 5 (budget.json, never changed).
 """
 from __future__ import annotations
@@ -88,7 +88,7 @@ def main(argv=None):
         s = json.load(open(os.path.join(out_dir, "summary.json")))
         t = s["test"]
         pb = str(s["cfg"]["primary_budget"])
-        v = s["adaptive"][pb]["val"]
+        v = s["fixed"][pb]["val"]
         for k in ("pooled_ap", "pooled_roc", "within_roc"):
             trial.set_user_attr("test_" + k, t[k])
             trial.set_user_attr("val_" + k, v[k])

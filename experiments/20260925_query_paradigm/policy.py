@@ -49,12 +49,28 @@ class Asker:
         return (h - np.sum(w * self.h_s[cand_pos], axis=1)) / np.log(2.0)
 
 
-def run_video(vt, s, g, asker, answers_v, max_calls, order="eig"):
-    """Returns dict: scores (list of (T,) arrays after 0..n calls), eig (EIG of each asked question), asked
-    (node ids), p_G (after each number of calls)."""
+def flat_scores(vt, s, g, logA, asked):
+    """Ablation (b): no tree structure. logit p_t = logit(g pi_t) + mean over the asked nodes covering t of
+    [log P(o | s=2) - log P(o | s=0)] (same model, same asked nodes)."""
+    T = vt.T
+    log_p = -np.logaddexp(0.0, -g) - np.logaddexp(0.0, -s)                # log(g pi_t)
+    prior = log_p - np.log(-np.expm1(np.minimum(log_p, -1e-12)))         # logit(g pi_t)
+    llr, cnt = np.zeros(T), np.zeros(T)
+    for n in asked:
+        a, b = vt.tr["a"][n], vt.tr["b"][n]
+        llr[a:b] += logA[n, 2] - logA[n, 0]
+        cnt[a:b] += 1
+    return 1.0 / (1.0 + np.exp(-(prior + llr / np.maximum(cnt, 1))))
+
+
+def run_video(vt, s, g, asker, answers_v, max_calls, order="eig", fusion="tree"):
+    """Returns dict: scores (list of (T,) arrays after 0..n calls; the tree posterior, or the flat score of
+    ablation b when fusion == "flat"), eig (EIG of each asked question), asked (node ids), p_G (after each number
+    of calls)."""
     logA = np.zeros((vt.N, 3))
     pG, m, p = vt.infer(s, g, logA)
-    scores, eigs, asked, pgs = [p], [], [], [pG]
+    first = p if fusion == "tree" else flat_scores(vt, s, g, logA, [])
+    scores, eigs, asked, pgs = [first], [], [], [pG]
     remaining = list(asker.q) if order == "eig" else list(asker.q)      # q ids are in breadth-first order
     rem_mask = np.ones(len(asker.q), dtype=bool)
     tr = vt.tr
@@ -78,9 +94,9 @@ def run_video(vt, s, g, asker, answers_v, max_calls, order="eig"):
         if o is not None:
             logA[node] = asker.loglik(node, o)
         pG, m, p = vt.infer(s, g, logA)
-        scores.append(p)
         eigs.append(e_best)
         asked.append(node)
+        scores.append(p if fusion == "tree" else flat_scores(vt, s, g, logA, asked))
         pgs.append(pG)
     del remaining
     return {"scores": scores, "eig": eigs, "asked": asked, "p_G": pgs}

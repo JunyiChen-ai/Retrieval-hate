@@ -1,6 +1,6 @@
 # 20260925_query_paradigm — 按需提问定位（Query-Tree Localization, QTL）
 
-状态：2026-09-25 提案，自主迭代（用户 2026-09-25 指令：修掉 it5 默认方法的 11 个问题，性能不掉、最好上涨；重点是 VLM 调用最少且必要、去掉拍脑袋的窗口/K 值、骨干与范式要 novel）。
+状态：2026-09-25 提案；规则 4 审稿 GO（`REVIEW_RULE4.md`，最近先例 VADTree、FV-Action，论文 related work 须对照）；规则 6 代码审查 PASS（`REVIEW_RULE6.md`），两条必须修已改：主比较点改为固定 8 次、补消融 (b) 的 fusion "flat" 臂；自主迭代（用户 2026-09-25 指令：修掉 it5 默认方法的 11 个问题，性能不掉、最好上涨；重点是 VLM 调用最少且必要、去掉拍脑袋的窗口/K 值、骨干与范式要 novel）。
 
 上游：`experiments/20260910_online_query_within/`（it5 默认方法；第 13–15 节消融、训练期选窗对照、方向 1 离线检验）。
 
@@ -55,14 +55,14 @@
 
 - 编码器：MACIL-SD 的音频+文本 / 视觉双流跨模态注意力层（去掉证据编码、key 偏置、上下文项），在 1 秒网格上运行（每行 = 树的一个叶子）。输入：I3D 视觉、VGGish 音频、BERT 文本行（两语料同一配置）。
 - 两个头：g = sigmoid(注意力池化后的线性层)；π_t = sigmoid(每秒线性层)。g 负责"视频是否有害"（跨视频排序），π 负责"视频内哪里"。
-- **训练目标**：每个训练视频 −log P(Y | x) − log P(该视频全部缓存答案 | G = Y, x)，按 2.2 的树精确计算，梯度经树传到 π、g 与答案模型参数。负例视频上答案项只训练 G=0 状态的答案分布；π 只由正例视频的多尺度答案训练。另加 MACIL-SD 的 CMAL（沿用的骨干部件，权重 λ_cma 在搜索空间里）。
+- **训练目标**：每个训练视频 −log P(Y | x) − log P(该视频全部缓存答案 | G = Y, x) / n_answers，答案项按 2.2 的树精确计算，除以该视频的答案个数使每个视频权重相同（长视频有上千个节点答案；这是按视频加权的似然，不是整个训练集的严格联合似然），梯度经树传到 π、g 与答案模型参数。负例视频上答案项只训练 G=0 状态的答案分布；π 只由正例视频的多尺度答案训练。另加 MACIL-SD 的 CMAL（沿用的骨干部件，权重 λ_cma 在搜索空间里）。
 - 骨干不读任何 VLM 答案，训练与测试输入一致；因此不需要训练期选窗、证据 dropout、日程、被遮住答案的预测损失。
 
 ### 2.4 提问策略与停止
 
 - 状态：已问的节点和答案。每一步对所有未问的可问节点计算期望信息增益 EIG(n) = I(o_n; (G, y) | 已问) = H(o_n | 已问) − Σ_s P(s_n = s | 已问) H(o_n | s)。因为 o_n 只经过 s_n 依赖 (G, y)，这就是答案对整个未知标注的精确互信息，由一次上下行传递得到的节点后验算出。
 - 问 EIG 最大的节点；更新后验；重复。最大 EIG < c（比特）时停止。c 是"一次调用值多少比特"的价格，是部署预算，不是模型超参数：报告 c 从大到小的整条 AP–平均调用次数曲线。
-- 主比较点：c 取在 validation 集上平均调用 = B 的值，B = 8（与 it5 同预算）和 B = 4（一半预算）。另报每视频固定 B 次（不自适应）作对照。
+- 主比较点（2026-09-25 按规则 4 审稿意见定，搜索开始前）：**每视频固定问 B = 8 次**（按 EIG 顺序），不含任何在 validation 上校准的量；Optuna 目标与 checkpoint 选择都用它。自适应停止（"最少必要调用"）：c 取在 validation 上平均调用 = B 的值（B = 8、4、2），c 只决定问几次，不改变分数；报告其 test 平均调用次数与分数，并预注册"同平均调用下自适应不低于固定"。
 
 ### 2.5 方法级常数
 
@@ -76,31 +76,36 @@
 
 搜索超参（训练用，规则 7）：lr、dropout、λ_cma、batch_size、max_epoch、hid 等，见第 4 节。
 
-## 3. 来源与 novelty（规则 4 待审）
+## 3. 来源与 novelty（规则 4 审稿 GO，`REVIEW_RULE4.md`）
 
 - 带噪二分查找 / 带噪 20 问题：Jedynak, Frazier & Sznitman 2012；Waeber, Frazier & Henderson 2013（probabilistic bisection）。
 - 带噪 OR 网络 / 分组检测解码：Pearl 1988 noisy-OR；group testing 的贝叶斯解码。
 - 期望信息增益选问题：Lindley 1956；BALD（Houlsby et al. 2011）。
 - 从带噪标注者学真实标签：Dawid & Skene 1979；Raykar et al. 2010（神经先验 + 标注者模型联合似然）。
 - 零膨胀模型：Lambert 1992。
-- 需审稿人检索：以上是否已用于 hateful video detection / localization。
+- 审稿检索（34 次搜索）：以上均未用于 hateful video detection / localization；最近的任务外先例 VADTree（arXiv 2510.22693：时间二叉树 + 每节点 VLM 打分，训练无关、全节点查询、启发式融合）与 FV-Action（2608.08315：两层均匀网格 yes/no 扫描、固定预算），论文须对照。
 
 ## 4. 训练与搜索（规则 7）
 
 - 搜索脚本 `search.py`；Optuna TPE，sampler seed = 训练 seed；每 seed 每语料一个 study，`runs/20260925_query_paradigm/<corpus>/seed<seed>/optuna.db`。
 - 搜索空间（2026-09-25 搜索前声明，两语料相同）：lr ∈ [1e-4, 1e-3]（log），λ_cma ∈ [0.5, 2.0]，dropout ∈ [0.1, 0.5]。其余固定为 `train.py` DEFAULTS：hid 128、ffn 128、4 头、batch 32（长视频批按注意力显存缩小）、50 epoch、cosine T_max 60、λ_cma 预热 min(λ_cma, .05·epoch)、crop_repeat 5。
-- 目标 = (test pooled AP + test pooled ROC) / 2，test 在主比较点（自适应阈值，validation 上平均 8 次调用校准）。trial 数：首个 trial ≤ 1 小时则 20 个，否则 5 个（`budget.json`）。
+- 目标 = (test pooled AP + test pooled ROC) / 2，test 在主比较点（每视频固定按 EIG 问 8 次）。trial 数：首个 trial ≤ 1 小时则 20 个，否则 5 个（`budget.json`）。
 - checkpoint：每个 epoch 在 validation 上每视频按 EIG 问 8 次，取 (AP + ROC)/2 最高的 epoch。同时记录"只按 validation 选 trial"会选到的 trial。
 
 ## 5. 预注册判定
 
-- P1：B = 8 时两语料 pooled AP 与 ROC 不低于 it5 三 seed 均值 − .005（HateMM .6444 / .8500，HCS .6837 / .6809）。
-- P2：B = 4 时两语料 pooled AP 与 ROC 不低于 it5 − .01。
+- P1：固定 B = 8 时两语料 pooled AP 与 ROC 不低于 it5 三 seed 均值 − .005（HateMM .6444 / .8500，HCS .6837 / .6809）。
+- P2：自适应、平均 4 次调用时两语料 pooled AP 与 ROC 不低于 it5 − .01。
+- P2b：自适应平均 8 次不低于固定 8 次 − .005。
 - P3：HCS"VLM 沉默"组（旧细窗说"有"比例 < .1 的 test 视频）AP 高于 it5 的 .495。
-- 消融（规则 14(g)，两语料三 seed 均值降 ≥ .01）：(a) 五类答案 → 只用 hate 一类；(b) OR 树融合 → 每秒取覆盖它的已问节点答案的平均（同样的已问节点）；(c) 树似然训练 → MACIL-SD top-k MIL 训练（同编码器，π 头 = top-k 头）；(d) EIG 提问 → 按层从上到下、层内从左到右提问（同平均调用）；(e) 三种答案状态 → 两种（正例视频中无仇恨区间与负例视频共享答案分布）；(f) 长度项 → 去掉。
+- 消融（规则 14(g)，两语料三 seed 均值降 ≥ .01）：(a) 五类答案 → 只用 hate 一类；(b) OR 树融合 → 不用树结构的逐秒相加：logit p_t = logit(g·π_t) + Σ_{已问节点 n 覆盖 t} [log P(o_n | s=2) − log P(o_n | s=0)] / (覆盖 t 的已问节点数)，同一模型、同样的已问节点，先验 g·π_t 照样进入；(c) 树似然训练 → MACIL-SD top-k MIL 训练（同编码器，π 头 = top-k 头）；(d) EIG 提问 → 按层从上到下、层内从左到右提问（固定 B = 8，同样报自适应不适用）；(e) 三种答案状态 → 两种（正例视频中无仇恨区间与负例视频共享答案分布）；(f) 长度项 → 去掉。
+
+离线检查（HCS test，不训练网络：π 取常数 .3、g 取训练集正例率、答案模型取初始值、无长度项；开发期证据）：每视频固定问 0/1/2/4/8/16 次，AP .551/.592/.617/.662/.676/.681，ROC .544/.561/.581/.646/.650/.671（it5 .684/.681）。树融合 + EIG 提问本身已接近 it5，训练的内容先验在此基础上加分。
+
+诊断（不作门）：validation 上按测试预算的答案模型对数似然（训练用全部嵌套节点，答案条件独立假设在训练期更强地被违反）；被问节点的长度 / 深度分布（`summary.json` 的 `test_runs[v]["asked"]`）。
 
 ## 6. 怎么跑
 
 1. `python experiments/20260925_query_paradigm/build_tree_manifest.py`（本机）
-2. campus3：`CUDA_VISIBLE_DEVICES=<空卡> ~/miniconda3/envs/vlm/bin/python experiments/20260925_query_paradigm/extract_tree_answers.py --corpus <c> --splits test,val,train`，日志 `runs/20260925_query_paradigm/extract/`，完成后 rsync `data/vlm_tree/` 回本机。
-3. 训练与搜索：待实现。
+2. uoa-lab1 / uoa-lab3（conda `vlm` = OmniVTG 克隆，vLLM 0.9.2）：`setsid nohup bash experiments/20260925_query_paradigm/launch/lab_extract.sh <corpus> test,val,train <i>/2 > runs/20260925_query_paradigm/extract/<...>.log 2>&1 &`（两台各一半，约 20 次调用/秒/卡），完成后 rsync `data/vlm_tree/` 回本机。campus 用 `launch/campus_extract.sbatch`（需管理员批准）。
+3. 搜索：`setsid nohup bash experiments/20260925_query_paradigm/launch/run_search.sh <corpus> <seed> > runs/20260925_query_paradigm/launch_<corpus>_seed<seed>.out 2>&1 &`。

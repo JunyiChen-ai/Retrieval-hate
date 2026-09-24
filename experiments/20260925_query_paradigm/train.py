@@ -8,12 +8,13 @@ Checkpoint: the epoch with the highest validation (pooled AP + pooled ROC) / 2, 
 scored after `val_budget` questions chosen by expected information gain.
 Evaluation (val and test, same checkpoint): the policy runs up to `max_calls` questions per video; reported are
 fixed per-video budgets, and the adaptive threshold rule at mean budgets B (threshold c_B calibrated on the
-validation videos so that their mean number of calls is <= B). summary["test"] = adaptive rule at
-primary_budget. Test numbers go through the shared evaluator.
+validation videos so that their mean number of calls is <= B). summary["test"] = fixed primary_budget questions
+per video (README section 2.4, pre-registered primary point). Test numbers go through the shared evaluator.
 
 Arms (config keys): categories [0] (hate only), n_state 2, length_term false, objective "mil" (backbone trained by
 top-k MIL + CMAL; the answer model by the tree likelihood with the network's logits detached), order "bfs"
-(evaluation-time question order).
+(evaluation-time question order), fusion "flat" (ablation b: questions still chosen by EIG on the tree posterior,
+the score is logit(g pi_t) + mean over asked nodes covering t of [log P(o|s=2) - log P(o|s=0)]).
 
     python experiments/20260925_query_paradigm/train.py --corpus hatemm --seed 234 --out-dir runs/... [--config c.json]
 """
@@ -55,6 +56,7 @@ DEFAULTS = {
     "val_budget": 8, "max_calls": 32, "fixed_budgets": [0, 1, 2, 4, 8, 16, 32], "mean_budgets": [2, 4, 8],
     "primary_budget": 8,
     "n_state": 3, "length_term": True, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
+    "fusion": "tree",
 }
 
 
@@ -93,7 +95,8 @@ class Evaluator:
             s, g = policy.video_prior(model, self.store, v, self.device)
             vt = self.vt(v)
             asker = policy.Asker(vt, am, self.cfg["categories"])
-            out[v] = policy.run_video(vt, s, g, asker, self.answers[v], max_calls, order or self.cfg["order"])
+            out[v] = policy.run_video(vt, s, g, asker, self.answers[v], max_calls, order or self.cfg["order"],
+                                      self.cfg["fusion"])
         model.train()
         return out
 
@@ -249,11 +252,12 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say):
         say("adaptive mean %d (c = %.4f bits) | test calls %.2f (pos %.2f, neg %.2f) | AP %.4f ROC %.4f within %.4f"
             % (B, c, r["test_mean_calls"], r["test_mean_calls_pos"], r["test_mean_calls_neg"],
                r["test"]["pooled_ap"], r["test"]["pooled_roc"], r["test"]["within_roc"]))
-    primary = res["adaptive"][str(int(cfg["primary_budget"]))]
+    pb = int(cfg["primary_budget"])
+    primary = res["fixed"][str(pb)]
     # P3: VLM-silent group of the old fine verdicts (fine rate of level >= 2 below .1)
     old = vlm_verdict.load_verdicts(corpus, k=30, tag="qwen")
     silent = [v for v in ids["test"] if v in old and np.mean(old[v] >= 2) < 0.1]
-    st, _ = at_threshold(test_runs, primary["c_bits"])
+    st = at_budget(test_runs, pb)
     res["silent_group"] = {"n": len(silent), "n_pos": int(sum(labels[v] for v in silent)),
                            "ap_primary": group_ap(st, gt["test"], silent),
                            "ap_prior_only": group_ap(at_budget(test_runs, 0), gt["test"], silent)}
