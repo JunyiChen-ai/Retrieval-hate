@@ -34,9 +34,10 @@ class Chain(nn.Module):
     the video pays one transition fewer, so the prior piles harmful mass on the first and last seconds). The initial
     distribution is not used when closed."""
 
-    def __init__(self, closed=False):
+    def __init__(self, closed=False, zero_inflated=False):
         super().__init__()
         self.closed = bool(closed)
+        self.zero_inflated = bool(zero_inflated)
         self.trans = nn.Parameter(torch.tensor([[2.0, -2.0], [-2.0, 2.0]]))   # start: stay with p ~ .98
         self.init = nn.Parameter(torch.zeros(2))
 
@@ -119,8 +120,23 @@ def _merge(L, R, logA):
 def up(forest, s, g, A3, chain, eta=None):
     """Upward pass. s (B, Tmax) per-second logits, g (B,) video logits, A3 (N, 3) answer log-likelihoods per state
     (0 rows for unasked nodes), eta (N,) optional (added to the z = 1 factor, for node marginals).
-    Returns (logW1, logW0), each (B,): log-weights (up to the common partition function) of Y = 1 with the
-    answers under the Y = 1 answer states, and of the all-zero path with the answers under state 0."""
+    Returns (logW1, logW0), each (B,): log-weights (up to a common per-video constant) of Y = 1 with the answers
+    under the Y = 1 answer states, and of Y = 0 with the answers under state 0.
+    Coupled chain (revisions 1-2): P(y) proportional to exp(g any(y) + sum_t s_t y_t) x chain; Y = any(y).
+    Zero-inflated chain (chain.zero_inflated, README section 10): P(G = 1 | x) = sigmoid(g) whatever the length;
+    given G = 1 the seconds follow the chain with unary s_t conditioned on at least one harmful second; given G = 0
+    all seconds are 0. Then logW1 = g + log V1(answers) - log V1(no answers), logW0 = answers under state 0."""
+    v1, w0_chain, lp0 = _up(forest, s, A3, chain, eta)
+    if getattr(chain, "zero_inflated", False):
+        v1_prior, _, _ = _up(forest, s, torch.zeros_like(A3), chain, None)
+        return g + v1 - v1_prior, lp0
+    return g + v1, w0_chain + lp0
+
+
+def _up(forest, s, A3, chain, eta=None):
+    """Returns log V1 (B,): log-weight of the paths with at least one harmful second, answers under states 1/2,
+    without the video factor g; the log-weight of the all-zero path under the chain (without answers); and the
+    answers' log-likelihood under state 0, lp0 (B,)."""
     dev = s.device
     flat = s.reshape(-1)
     logA, logpi = chain.logA_for(forest).to(dev).to(s.dtype), chain.logpi().to(dev).to(s.dtype)
@@ -163,13 +179,12 @@ def up(forest, s, g, A3, chain, eta=None):
     if chain.closed:                                                     # enter from and exit to a virtual 0
         enter = logA[:, 0, :] if per_video else logA[0, :][None].expand(forest.B, -1)
         leave = logA[:, :, 0] if per_video else logA[:, 0][None].expand(forest.B, -1)
-        logW1 = prev[1][pr] + torch.logsumexp(enter[:, :, None] + root[:, :, :, 1] + leave[:, None, :],
-                                              dim=(1, 2)) + g
-        logW0 = (Tm1 + 2) * a00 + lp0
+        v1 = prev[1][pr] + torch.logsumexp(enter[:, :, None] + root[:, :, :, 1] + leave[:, None, :], dim=(1, 2))
+        w0 = (Tm1 + 2) * a00
     else:
-        logW1 = prev[1][pr] + torch.logsumexp(logpi[None, :, None] + root[:, :, :, 1], dim=(1, 2)) + g
-        logW0 = logpi[0] + Tm1 * a00 + lp0
-    return logW1, logW0
+        v1 = prev[1][pr] + torch.logsumexp(logpi[None, :, None] + root[:, :, :, 1], dim=(1, 2))
+        w0 = logpi[0] + Tm1 * a00
+    return v1, w0, lp0
 
 
 def log_evidence(forest, s, g, A3, chain):
@@ -190,8 +205,9 @@ def marginals(forest, s, g, A3, chain):
         eta = torch.zeros(forest.N, dtype=torch.float64, device=s.device, requires_grad=True)
         g = g.detach().double()
         chain_d = _DoubleChain(chain)
-        w1, w0 = up(forest, s, g, A3.double(), chain_d, eta)
-        gs, ge = torch.autograd.grad(w1.sum(), (s, eta))
+        w1, w0 = up(forest, s, g, A3.double(), chain_d)
+        v1, _, _ = _up(forest, s, A3.double(), chain_d, eta)
+        gs, ge = torch.autograd.grad(v1.sum(), (s, eta))
     pG = torch.sigmoid(w1 - w0).detach()
     return pG, ge.detach(), (pG[:, None] * gs).detach()
 
@@ -200,6 +216,7 @@ class _DoubleChain:
     def __init__(self, chain):
         self._chain = chain
         self.closed = chain.closed
+        self.zero_inflated = getattr(chain, "zero_inflated", False)
 
     def logA_for(self, forest):
         return self._chain.logA_for(forest).detach().double()
