@@ -21,6 +21,11 @@ the label fixes (qtree.fit_anchored: every node of a negative video is state 0, 
 state 1) and then fixed; two states, no length term; the chain is learned (its own learning rate lr_answer); the
 network is trained by -log P(Y | x) - log P(answers | Y, x) / n_answers on the tree.
 
+Revision 3 (README section 10, the defaults): chain_form "zero_inflated": P(G = 1 | x) = sigmoid(g) for every video
+length; given G = 1 the seconds follow the closed chain with unary logits s_t conditioned on at least one harmful
+second; given G = 0 all seconds are 0 (revisions 1-2: "coupled", where the chain's all-zero weight shrinks with the
+length and long videos were pushed to "harmful").
+
 Arms (config keys; README section 9 ablations): categories [0] (a, hate only), fusion "flat" (b: questions still
 chosen by EIG on the tree posterior, the score is logit(prior) + mean over asked nodes covering t of
 [log P(o|s=1) - log P(o|s=0)]), objective "label" (c: the network is trained by the label only, answers used at test
@@ -73,7 +78,7 @@ DEFAULTS = {
     "n_state": 2, "length_term": False, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
     "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "anchored", "g_head": True,
     "text_sources": ["bert"], "chain": "learned", "boundary": "closed",
-    "chain_form": "coupled",
+    "chain_form": "zero_inflated",
 }
 # Revision 2 (README section 9): anchored two-state answer model without length term, learned chain, BERT text row.
 # Revision 0/1 settings: n_state 3, length_term True, answer_model "joint" (prior "independent" for revision 0).
