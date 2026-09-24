@@ -43,7 +43,7 @@ def main():
     store = qdata.Store(corpus, ids["train"] + ids["val"] + ids["test"], cfg.get("text_sources", ["bert"]))
     ck = torch.load(os.path.join(a.trial, "model.pth"), map_location=a.device)
     model = PriorNet(cfg).to(a.device)
-    model.load_state_dict(ck["model"])
+    model.load_state_dict(ck["model"], strict=False)       # revision 0/1 checkpoints have no g0
     model.eval()
     th = ck["am"]["theta"]
     am = qtree.AnswerModel(th.cpu().numpy(), 0.0, 1.0, bool(cfg["length_term"]), int(cfg["n_state"]),

@@ -4,7 +4,7 @@
 # README section 4: fixed Optuna search of one (corpus, seed). DONE / FAILED markers in <out_root>/<corpus>/seed<seed>/.
 set -uo pipefail
 cd "$HOME/Retrieval-hate"
-corpus="$1"; seed="$2"; out_root="${3:-runs/20260925_query_paradigm}"; extra="${4:-}"
+corpus="$1"; seed="$2"; out_root="${3:?out_root required (revision 2: runs/20260925_query_paradigm_r2)}"; extra="${4:-}"
 root="$out_root/$corpus/seed$seed"
 mkdir -p "$root"
 echo "$(date) $(hostname) search $corpus seed $seed extra=${extra:-none}"
