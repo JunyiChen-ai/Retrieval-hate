@@ -290,6 +290,8 @@ class VideoTree:
 def outcome_table(level_logp):
     """level_logp (n, C, S, L) -> (n, S, L**C) log P(o | s) over all answer vectors (row-major over categories)."""
     n, C, S, L = level_logp.shape
+    if n == 0:                                   # video shorter than F_FRAMES seconds: nothing to ask
+        return np.zeros((0, S, L ** C))
     out = np.zeros((n, S, 1))
     for k in range(C):
         out = (out[:, :, :, None] + level_logp[:, k, :, None, :]).reshape(n, S, -1)
