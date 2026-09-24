@@ -243,4 +243,4 @@ HateMM 同一配置（`C2`）三个 seed 的 test AP .671 / .614 / .532，差距
 - 训练目标形式不变：−log P(Y | x) − log P(答案 | Y, x) / n_answers；在零膨胀下第一项只训练视频头 g（BCE），第二项在正例视频上训练逐秒 logit 与链、在负例视频上为常数。
 - 其余同第 9 节（锚定两状态答案模型、首尾闭合的学习链、BERT 文本行、EIG、固定 8 次主比较点）。
 
-搜索：输出 `runs/20260925_query_paradigm_r3/<corpus>/seed<seed>/`，空间与 trial 数规则同第 9 节。消融同第 9 节 (a)–(f)，另加 (g) 零膨胀链 → 耦合链（第 2 版形式）。预注册 P1、P2、P2b、P3 不变。第 2 版 HateMM seed 234 搜索继续跑完作记录。
+搜索：输出 `runs/20260925_query_paradigm_r3/<corpus>/seed<seed>/`，空间与 trial 数规则同第 9 节。消融同第 9 节 (a)–(f)，另加 (g) 零膨胀链 → 耦合链（第 2 版形式）。预注册 P1、P2、P2b、P3 不变。第 2 版 HateMM seed 234 搜索跑完作记录：20 trial，最优 trial 13 .6581 / .8561 / .6841（高于 it5 .6444 / .8500）；只按 validation 选 trial 19 .5933 / .8345（`runs/20260925_query_paradigm_r2/hatemm/seed234/`；trial 13–19 的 config 记录 chain_form "coupled"，与 0–12 同一计算）。
