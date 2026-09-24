@@ -7,4 +7,4 @@ cd "$HOME/Retrieval-hate"
 hostname; nvidia-smi --query-gpu=name,memory.used --format=csv,noheader
 echo $$ > "runs/20260925_query_paradigm/extract/$1_${3//\//of}_$(hostname).pid"
 "$HOME/miniconda3/envs/vlm/bin/python" experiments/20260925_query_paradigm/extract_tree_answers.py \
-  --corpus "$1" --splits "$2" --shard "$3" --gpu-mem 0.85
+  --corpus "$1" --splits "$2" --shard "$3" --gpu-mem "${GPU_MEM:-0.75}"

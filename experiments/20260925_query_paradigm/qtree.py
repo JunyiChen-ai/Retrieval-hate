@@ -156,6 +156,7 @@ class TreeBatch:
             internal = nd[n_leaf:]
             self.levels.append({
                 "leaf_row": torch.as_tensor(vid[leaves] * Tmax + a[leaves]),
+                "leaves": torch.as_tensor(leaves),
                 "internal": torch.as_tensor(internal),
                 "n_leaf": n_leaf,
             })
@@ -196,9 +197,13 @@ class TreeBatch:
             parts_lu, parts_lv, parts_lz = [], [], []
             if lev["n_leaf"]:
                 sl = flat[lev["leaf_row"].to(dev)]
-                parts_lu.append(F.logsigmoid(sl))
-                parts_lv.append(F.logsigmoid(-sl))
-                parts_lz.append(torch.zeros_like(sl))
+                a = A1[lev["leaves"].to(dev)]
+                lP0 = a[:, 0] + F.logsigmoid(-sl)
+                lP1 = a[:, 1] + F.logsigmoid(sl)
+                lZ = torch.logaddexp(lP0, lP1)
+                parts_lu.append(lP1 - lZ)
+                parts_lv.append(lP0 - lZ)
+                parts_lz.append(lZ)
             if len(lev["internal"]):
                 L, R = lev["L"].to(dev), lev["R"].to(dev)
                 luL, lvL, lzL = prev[0][L], prev[1][L], prev[2][L]
@@ -239,8 +244,11 @@ class VideoTree:
         lu = np.zeros(N); lv = np.zeros(N); lz = np.zeros(N)
         leaf = tr["left"] < 0
         sec = tr["a"][leaf]
-        lu[leaf] = -np.logaddexp(0.0, -s[sec])
-        lv[leaf] = -np.logaddexp(0.0, s[sec])
+        # leaves (a leaf can carry an answer only if F_FRAMES == 1; kept exact in general)
+        lP0 = logA[leaf, 1] - np.logaddexp(0.0, s[sec])
+        lP1 = logA[leaf, 2] - np.logaddexp(0.0, -s[sec])
+        lZ = np.logaddexp(lP0, lP1)
+        lu[leaf], lv[leaf], lz[leaf] = lP1 - lZ, lP0 - lZ, lZ
         for d in range(len(self.levels) - 1, -1, -1):
             nd, n_leaf = self.levels[d]
             it = nd[n_leaf:]
