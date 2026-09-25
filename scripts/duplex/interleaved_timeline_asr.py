@@ -33,7 +33,10 @@ ROOT = os.path.abspath(os.path.join(_THIS_DIR, "..", ".."))
 sys.path.insert(0, _THIS_DIR)
 sys.path.insert(0, os.path.join(ROOT, "src", "our_method"))
 
-from channel_restoration_asr import MODEL_ID  # noqa: E402
+# The frozen Whisper model of every timestamped-chunk manifest. It was imported from
+# src/our_method/channel_restoration_asr.py, which is now archived at
+# ~/Hate-follow-up/archive/detection-2026-08/scripts/duplex/channel_restoration_asr.py (MODEL_ID there, line 31).
+MODEL_ID = "openai/whisper-large-v3"
 
 # Corpus slug -> (dataset name, frozen working directory holding wav/ and the
 # frozen ASR + gate outputs).
