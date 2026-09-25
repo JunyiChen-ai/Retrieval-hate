@@ -2,9 +2,10 @@
 abl_full (the method), abl_noback (no content backbone: constant prior), abl_lvl{4,8,16} (questions only from one
 tree depth = equal non-overlapping windows of L to 2L seconds, in training and at test).
 
-    python experiments/20260925_query_paradigm/summarize_controls.py
-Reads runs/20260925_query_paradigm_diag/<corpus>/seed<s>/abl_*/summary.json (evaluator-written test metrics);
-writes runs/20260925_query_paradigm_diag/controls_summary.json and prints 3-seed means.
+    python experiments/20260925_query_paradigm/summarize_controls.py [--root R] [--corpus c ...]
+Reads <R>/<corpus>/seed<s>/abl_*/summary.json (evaluator-written test metrics; default R =
+runs/20260925_query_paradigm_diag, DeHate: runs/20260926_dehate_external/diag); writes <R>/controls_summary.json and
+prints 3-seed means.
 """
 from __future__ import annotations
 
@@ -23,14 +24,19 @@ KEYS = ("pooled_ap", "pooled_roc", "within_roc")
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--root", default=D)
+    ap.add_argument("--corpus", nargs="+", default=["hatemm", "hateclipseg"])
+    a = ap.parse_args()
     out = {}
-    for c in ("hatemm", "hateclipseg"):
+    for c in a.corpus:
         out[c] = {}
         print("== %s" % c)
         for tag in TAGS:
             runs = []
             for s in SEEDS:
-                p = os.path.join(D, c, "seed%d" % s, tag, "summary.json")
+                p = os.path.join(a.root, c, "seed%d" % s, tag, "summary.json")
                 if os.path.exists(p):
                     runs.append(json.load(open(p)))
             if not runs:
@@ -45,7 +51,7 @@ def main():
             print("  %-11s (%d seeds) " % (tag, len(runs)) + " | ".join(
                 "%s: %.4f/%.4f w%.3f c%.2f" % (B, row[B]["pooled_ap"], row[B]["pooled_roc"], row[B]["within_roc"],
                                                 row[B]["mean_calls"]) for B in BUDGETS))
-    json.dump(out, open(os.path.join(D, "controls_summary.json"), "w"), indent=2)
+    json.dump(out, open(os.path.join(a.root, "controls_summary.json"), "w"), indent=2)
 
 
 if __name__ == "__main__":
