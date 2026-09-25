@@ -193,13 +193,19 @@ def main():
                          "starting at i, into timestamped_chunks.shard<i>of<n>.jsonl "
                          "(DeHate on three machines, 2026-09-26; the shards are "
                          "concatenated into timestamped_chunks.jsonl afterwards)")
+    ap.add_argument("--subshard", default="0/1",
+                    help="j/k: split this shard's videos again (every k-th, starting at j) into "
+                         "timestamped_chunks.shard<i>of<n>.sub<j>of<k>.jsonl; videos already in the "
+                         "shard's own file count as done")
     args = ap.parse_args()
     shard_i, shard_n = (int(x) for x in args.shard.split("/"))
+    sub_j, sub_k = (int(x) for x in args.subshard.split("/"))
 
     out_dir = os.path.join(args.out_root, args.corpus)
     os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, "timestamped_chunks.jsonl" if shard_n == 1 else
-                            "timestamped_chunks.shard%dof%d.jsonl" % (shard_i, shard_n))
+    shard_path = os.path.join(out_dir, "timestamped_chunks.jsonl" if shard_n == 1 else
+                              "timestamped_chunks.shard%dof%d.jsonl" % (shard_i, shard_n))
+    out_path = shard_path if sub_k == 1 else shard_path.replace(".jsonl", ".sub%dof%d.jsonl" % (sub_j, sub_k))
     missing_wav = []
 
     if args.corpus in CORPORA:
@@ -245,11 +251,13 @@ def main():
                   f"{missing_wav}", flush=True)
 
     done = set(load_jsonl(out_path))
+    if sub_k > 1 and os.path.isfile(shard_path):
+        done |= set(load_jsonl(shard_path))
     # A video container may legitimately have no audio stream.  Keep such a
     # video in the experiment and record an explicit empty transcript instead
     # of silently dropping it (the downstream text grid then stays all-zero).
     # This is also resumable: never append the sentinel twice.
-    missing_records = [v for v in missing_wav if v not in done] if shard_i == 0 else []
+    missing_records = [v for v in missing_wav if v not in done] if shard_i == 0 and sub_j == 0 else []
     if missing_records:
         with open(out_path, "a", encoding="utf-8") as handle:
             for vid in missing_records:
@@ -272,7 +280,7 @@ def main():
             if os.path.isfile(os.path.join(wav_dir, v + ".wav"))]
     todo.sort(key=lambda v: (meta.get(v, {}).get("wav_duration") or 0.0))
     # shard membership is fixed by the full sorted list, so a resumed shard keeps the same videos
-    todo = [v for v in todo[shard_i::shard_n] if v not in done]
+    todo = [v for v in todo[shard_i::shard_n][sub_j::sub_k] if v not in done]
     total_sec = sum(meta.get(v, {}).get("wav_duration") or 0.0 for v in todo)
     print(f"stage A [{args.corpus}/{dataset}]: {len(wanted)} videos wanted, "
           f"{len(done)} already timestamped, {len(todo)} to run "
