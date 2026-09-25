@@ -49,6 +49,13 @@ DeHate is external validation only (CLAUDE.md: new corpora never gate the method
   - One deviation: the VLM node transcript uses the same sentence chunks. The word-level Whisper run
     (`src/utils/generate_segment_asr_HF.py`) runs out of memory on the 32 GB GPU for DeHate's 5-minute videos. On
     HateMM and HateClipSeg it had already fallen back to sentence chunks for 51% and 62% of videos.
+- **One training video has no I3D features.** 8bAfN6vXoIZp (non-hateful) has 4 frames (0.14 s) of video over 134 s
+  of audio, so the I3D extractor forms no 16-frame snippet. Every other DeHate video has at least 3 s of video.
+  - The two I3D methods (MACIL-SD and the query-tree method) train without it. This is MACIL-SD's existing rule
+    (`scripts/reproduction_baselines/macilsd/train.py`, `usable_ids`); for the query-tree method it is
+    `src/hier_evidence_common.load_fixed_cohort`, which still raises on any other missing feature.
+  - CLIP and ViT features exist for it (the last frame repeated), so DSANet, Fed-WSVAD and MultiHateLoc keep it.
+  - It is a training video, so the evaluation cohort does not change.
 - **Machines:** uoa-lab2 holds the raw videos and extracts media and features. VLM answers and searches are spread
   over uoa-lab1, uoa-lab2 and uoa-lab3. Only derived files (frames, wav, features, the label file) are copied; the
   raw videos stay on uoa-lab2.
@@ -69,7 +76,18 @@ DeHate is external validation only (CLAUDE.md: new corpora never gate the method
 
 ## 4. Runs
 
-(to be filled)
+Baselines (`launch/baseline.sh <method>`; logs in `runs/20260926_dehate_external/baselines/`):
+
+| Method | Host | Started | Log |
+|---|---|---|---|
+| DSANet | uoa-lab1 | 2026-09-26 10:32 | `dsanet_sc474397.out` |
+| Fed-WSVAD, 3 clients | uoa-lab3 | 2026-09-26 10:33 | `fed_wsvad_3client_sc474398.out` |
+
+Fed-WSVAD's first launch failed: all 10 attempts stopped within 12 s with `ModuleNotFoundError: No module named
+'ftfy'`, because the HateVideo environment on uoa-lab3 lacked the package.
+- ftfy 6.3.1 and wcwidth 0.8.2 were installed to match uoa-lab2 (`runs/_setup_uoa-lab3/pip_ftfy.log`).
+- The failed study was deleted, so the relaunch starts from the same sampler seed, 234.
+- The first log is kept as `fed_wsvad_3client_sc474398_ftfy_missing.out`.
 
 ## 5. Results
 

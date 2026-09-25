@@ -381,7 +381,16 @@ def load_fixed_cohort(corpus):
         if set(ids[split]) != set(gt[split]):
             raise ValueError('fixed GT coverage mismatch')
     for split, videos in ids.items():
-        if set(usable(corpus, videos)) != set(videos):
+        have = set(usable(corpus, videos))
+        if corpus == 'dehate' and split == 'train':
+            # 8bAfN6vXoIZp (non-hateful) has 4 frames (0.14 s) of video over 134 s of audio, so the I3D extractor
+            # forms no 16-frame snippet. Training drops it, as the MACIL-SD trainer does (macilsd/train.py
+            # usable_ids); any other missing feature still raises.
+            excluded[split] = sorted(set(videos) - have)
+            if excluded[split] != ['8bAfN6vXoIZp']:
+                raise ValueError(f'unexpected missing features in train: {excluded[split][:5]}')
+            ids[split] = [v for v in videos if v in have]
+        elif have != set(videos):
             raise ValueError(f'missing baseline features in {split}')
         if any(v not in labels or labels[v] not in [0, 1] for v in videos):
             raise ValueError(f'missing/nonbinary video labels in {split}')
