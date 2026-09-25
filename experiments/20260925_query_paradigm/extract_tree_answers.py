@@ -24,7 +24,7 @@ from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg"}
+CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg", "dehate": "DeHate"}
 CATEGORIES = ("hate", "harassment", "sexual", "violence", "self-harm")
 MAX_PIXELS = 360 * 420
 MAX_WORDS = 2000

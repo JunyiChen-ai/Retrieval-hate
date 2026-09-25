@@ -371,6 +371,10 @@ def load_fixed_cohort(corpus):
     for split in ['val', 'test']:
         excluded[split] = sorted(set(ids[split])-gt[split].keys())
         allowed = ['hate_video_427'] if corpus == 'hatemm' and split == 'test' else []
+        if corpus == 'dehate':
+            # frame-protocol rule (b): hateful videos without a usable span, listed by scripts/dehate/prepare_dehate.py gt
+            with open(os.path.join(hdata.GT_ROOT, 'dehate_%s.json' % split)) as fh:
+                allowed = json.load(fh)['excluded_positive_without_span']
         if excluded[split] != allowed:
             raise ValueError(f'unexpected GT exclusion {split}: {excluded[split]}')
         ids[split] = [v for v in ids[split] if v in gt[split]]

@@ -153,8 +153,8 @@ def add_common_args(parser):
     return parser
 
 
-VISUAL_LENGTH = {"hatemm": 256, "hateclipseg": 256}
-ATTN_WINDOW = {"hatemm": 64, "hateclipseg": 64}
+VISUAL_LENGTH = {"hatemm": 256, "hateclipseg": 256, "dehate": 256}
+ATTN_WINDOW = {"hatemm": 64, "hateclipseg": 64, "dehate": 64}
 
 
 def default_visual_length(corpus):
@@ -175,6 +175,8 @@ def default_visual_length(corpus):
               minutes long, so the mhclip argument for shrinking the window
               (mostly-padding batches) does not apply and the HateMM setting
               of 256 / 64 is kept, which is also the published number.
+    dehate    median 67 s, p90 232 s, max 300 s (external validation,
+              2026-09-26): the HateMM shape, so HateMM's 256 / 64.
     """
     return VISUAL_LENGTH.get(corpus, 64)
 

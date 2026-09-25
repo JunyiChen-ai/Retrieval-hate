@@ -9,8 +9,15 @@ Frames: 1-fps frame a + floor((b - a) * (i + .5) / F), i = 0..F-1, clipped to th
 Transcript: Whisper large-v3 word chunks (data/ASR/<Corpus>/*_asrK30_whisper-large-v3.jsonl, `chunks`) whose
 midpoint lies in [a, b) (the midpoint rule of src/utils/generate_segment_asr_HF.py).
 
-    python experiments/20260925_query_paradigm/build_tree_manifest.py
+    python experiments/20260925_query_paradigm/build_tree_manifest.py [--corpus hatemm hateclipseg dehate]
 Output: data/vlm_tree/<Corpus>/manifest.jsonl (+ PROVENANCE.md written by hand)
+
+DeHate (external validation, 2026-09-26; experiments/20260926_dehate_external/README.md): the transcript is the
+sentence-level Whisper large-v3 run of the reproduction study (results/reproduction/asr/dehate_all, the chunks behind
+the BERT rows), assigned to nodes by the same midpoint rule. The word-level run above does not fit on the 32 GB GPU
+for DeHate's 5-minute videos (it fell back to sentence chunks for 51% of HateMM and 62% of HateClipSeg videos
+already). The DeHate manifest is built before the I3D features exist, so it lists every video with a VGGish array
+(which fixes T); training and evaluation keep only videos with all features (hc.usable).
 """
 from __future__ import annotations
 
@@ -25,9 +32,11 @@ sys.path.insert(0, os.path.join(ROOT, "scripts", "reproduction_baselines"))
 sys.path.insert(0, os.path.join(ROOT, "src"))
 from hate_common import data as hdata  # noqa: E402
 import hier_evidence_common as hc      # noqa: E402
+from macilsd import align              # noqa: E402
 
 F = 4
-CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg"}
+CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg", "dehate": "DeHate"}
+REPRO_ASR = {"dehate": os.path.join(ROOT, "results", "reproduction", "asr", "dehate_all", "timestamped_chunks.jsonl")}
 
 
 def tree_nodes(T, min_len=F):
@@ -51,6 +60,13 @@ def frame_idx(a, b, n_frames):
 
 def load_words(corpus):
     words = {}
+    if corpus in REPRO_ASR:
+        for line in open(REPRO_ASR[corpus]):
+            r = json.loads(line)
+            words[r["video_id"]] = [(0.5 * (c["start"] + c["end"]), c["text"]) for c in (r.get("chunks") or [])
+                                    if c.get("text") and c["text"].strip() and c.get("start") is not None
+                                    and c.get("end") is not None]
+        return words
     for path in sorted(glob.glob(os.path.join(ROOT, "data", "ASR", CORPUS_DIR[corpus], "*_asrK30_whisper-large-v3.jsonl"))):
         for line in open(path):
             r = json.loads(line)
@@ -59,8 +75,9 @@ def load_words(corpus):
     return words
 
 
-def main():
-    for corpus, d in CORPUS_DIR.items():
+def main(corpora):
+    for corpus in corpora:
+        d = CORPUS_DIR[corpus]
         words = load_words(corpus)
         out_dir = os.path.join(ROOT, "data", "vlm_tree", d)
         os.makedirs(out_dir, exist_ok=True)
@@ -68,7 +85,10 @@ def main():
         missing_asr = 0
         with open(os.path.join(out_dir, "manifest.jsonl"), "w") as fh:
             for split in ("train", "val", "test"):
-                for v in hc.usable(corpus, hdata.load_split(corpus, split)):
+                ids = hdata.load_split(corpus, split)
+                ids = ([v for v in ids if os.path.exists(os.path.join(align.AUDIO_ROOT, corpus, v + ".npy"))]
+                       if corpus in REPRO_ASR else hc.usable(corpus, ids))
+                for v in ids:
                     fdir = os.path.join(ROOT, "data", "frames_1fps", d, v)
                     if not os.path.isdir(fdir):
                         print("no frames", corpus, v)
@@ -90,4 +110,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--corpus", nargs="+", default=["hatemm", "hateclipseg"], choices=tuple(CORPUS_DIR))
+    main(ap.parse_args().corpus)

@@ -80,6 +80,7 @@ BERT_ID = {
     "mhclip_en": "bert-base-uncased",
     "mhclip_zh": "bert-base-chinese",
     "hateclipseg": "bert-base-uncased",
+    "dehate": "bert-base-uncased",   # English BitChute / TikTok videos (external validation, 2026-09-26)
 }
 MAX_TOKENS = 64  # ASR fragments are short; 64 word-pieces covers them.
 

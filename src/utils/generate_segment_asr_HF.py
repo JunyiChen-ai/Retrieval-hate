@@ -47,6 +47,7 @@ DATASET_LANGUAGE = {
     "HateMM": "en",
     "ImpliHateVid": "en",
     "HateClipSeg": "en",
+    "DeHate": "en",
 }
 
 

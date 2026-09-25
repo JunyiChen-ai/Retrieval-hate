@@ -110,6 +110,16 @@ CORPORA = {
             "timestamped_chunks.jsonl",
         ],
     },
+    # External validation (2026-09-26): scripts/dehate/prepare_dehate.py media
+    # writes the flat symlink directory and the wav files.
+    "dehate": {
+        "video_dir": os.path.join(DATA_ROOT, "DeHate", "video"),
+        "wav_dirs": ["/home/jehc223/Retrieval-hate/data/AV2A_wav/DeHate"],
+        "splits": ["dehate_train.txt", "dehate_val.txt", "dehate_test.txt"],
+        "chunk_manifests": [
+            "results/reproduction/asr/dehate_all/timestamped_chunks.jsonl",
+        ],
+    },
     "mhclip_zh": {
         "video_dir": os.path.join(DATA_ROOT, "Multihateclip", "Chinese",
                                   "video"),

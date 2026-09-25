@@ -64,7 +64,9 @@ HCS_SEGMENT_CSV_CANDIDATES = (
     "/home/jehc223/data/HateClipSeg/Dataset/segment_level_annotation.csv",
 )
 
-CORPORA = ("hatemm", "mhclip_en", "mhclip_zh", "hateclipseg")
+DEHATE_LABELS_CSV = "/home/jehc223/data/DeHate/DeHate_labels.csv"
+
+CORPORA = ("hatemm", "mhclip_en", "mhclip_zh", "hateclipseg", "dehate")
 
 # Class order is load bearing: slot 0 is the normal class everywhere. See
 # dsanet/descriptions.py for the full argument.
@@ -145,6 +147,17 @@ def load_labels(corpus):
                     continue
                 out[row["Video Id"].strip()] = int(any(
                     any(int(x) == 1 for x in lab[1:6]) for lab in labels))
+        return out
+
+    if corpus == "dehate":
+        # External validation (2026-09-26): the released binary `Hate` column.
+        csv.field_size_limit(1 << 30)
+        out = {}
+        with open(DEHATE_LABELS_CSV, encoding="utf-8", newline="") as fh:
+            for row in csv.DictReader(fh):
+                if row["Hate"] not in ("0", "1"):
+                    raise ValueError("unexpected DeHate label %r" % row["Hate"])
+                out[row["Video ID"].strip()] = int(row["Hate"])
         return out
 
     raise ValueError("unknown corpus %r (expected one of %s)"

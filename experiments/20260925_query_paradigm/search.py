@@ -38,7 +38,7 @@ def sample(trial):
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--corpus", required=True, choices=("hatemm", "hateclipseg"))
+    ap.add_argument("--corpus", required=True, choices=("hatemm", "hateclipseg", "dehate"))
     ap.add_argument("--seed", type=int, default=234)
     ap.add_argument("--out-root", required=True)
     ap.add_argument("--extra-config", default=None, help="JSON dict of fixed settings (arms) for every trial")

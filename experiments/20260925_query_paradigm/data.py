@@ -21,7 +21,7 @@ from macilsd import align                  # noqa: E402
 import hier_evidence_common as hc          # noqa: E402
 import qtree                               # noqa: E402
 
-CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg"}
+CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg", "dehate": "DeHate"}
 A_IN = align.A_DIM + hc.TEXT_DIM             # one text row; model.PriorNet adds TEXT_DIM per extra text source
 
 

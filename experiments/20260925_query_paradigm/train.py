@@ -458,7 +458,7 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--corpus", required=True, choices=("hatemm", "hateclipseg"))
+    ap.add_argument("--corpus", required=True, choices=("hatemm", "hateclipseg", "dehate"))
     ap.add_argument("--seed", type=int, default=234)
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--config", default=None)

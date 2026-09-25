@@ -160,7 +160,7 @@ def main(argv=None):
                              "macilsd", "macilsd_audio", "macilsd_visual",
                              "multihateloc"))
     ap.add_argument("--corpus", required=True,
-                    choices=("hatemm", "mhclip_en", "mhclip_zh", "hateclipseg"))
+                    choices=("hatemm", "mhclip_en", "mhclip_zh", "hateclipseg", "dehate"))
     ap.add_argument("--trials", type=int, default=40)
     ap.add_argument(
         "--max-new-attempts", type=int, default=None,

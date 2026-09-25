@@ -255,18 +255,15 @@ def main():
     if not todo:
         return 0
 
-    import hashlib
-
     import torch
     from i3d_model import InceptionI3d
 
     if not torch.cuda.is_available():
         raise SystemExit("ABORT: CUDA is not available; this stage is CUDA-only")
 
-    digest = hashlib.sha256(open(args.weights, "rb").read()).hexdigest()
-    if digest != WEIGHTS_SHA256:
-        raise SystemExit("ABORT: %s has sha256 %s, expected %s (%s)"
-                         % (args.weights, digest, WEIGHTS_SHA256, WEIGHTS_URL))
+    # The weights file is the one every earlier corpus was extracted with (DEFAULT_WEIGHTS). No digest check:
+    # hashing is not used in this repository (CLAUDE.md, 2026-09-05); the strict load below still rejects any file
+    # whose state dict does not match the vendored architecture.
     model = InceptionI3d(400, in_channels=3)
     # strict: the vendored definition must match the released state dict
     # exactly. A partial load would produce features that look fine and mean
