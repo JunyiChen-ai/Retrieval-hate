@@ -29,7 +29,9 @@ DeHate is external validation only (CLAUDE.md: new corpora never gate the method
 ## 2. Protocol (user decisions, 2026-09-26)
 
 - **Search protocol:** each method keeps its own, as on HateMM and HateClipSeg.
-  - Baselines: 40 Optuna trials at seed 234, selected on validation video AP
+  - Baselines: 5 Optuna trials at seed 234 (user, 2026-09-26; HateMM and HateClipSeg had 40), selected on
+    validation video AP. Optuna's TPE sampler starts from 10 random trials, so the 5 configurations are random
+    draws from each method's search space
     (`scripts/reproduction_baselines/tune_official_val.py`), then the selected configuration is retrained at seeds
     234 / 2025 / 3407 and scored on test once.
   - The retraining uses `experiments/20260926_dehate_external/confirm_baselines.py`. It is the same procedure as
