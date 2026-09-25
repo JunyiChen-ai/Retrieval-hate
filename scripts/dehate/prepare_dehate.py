@@ -7,6 +7,8 @@ DeHate_labels.csv), a video label (`Hate`) and hate spans in seconds (`Hate Segm
     python scripts/dehate/prepare_dehate.py media    # flat symlink dir, 16 kHz mono wav, 1-fps JPEG frames (CPU)
     python scripts/dehate/prepare_dehate.py splits   # results/reproduction/splits/dehate_{train,val,test}.txt
     python scripts/dehate/prepare_dehate.py gt       # results/reproduction/gt/dehate_{val,test}.npz (+ test sidecar)
+    python scripts/dehate/prepare_dehate.py merge_asr  # shard files -> results/reproduction/asr/dehate_all/
+                                                       # timestamped_chunks.jsonl (every video exactly once)
 
 media writes the same artifacts, with the same commands, as the other corpora:
     ~/data/DeHate/video/<id>.mp4          symlink to ../<split>/<id>.mp4 (one directory, as the extractors expect)
@@ -145,6 +147,35 @@ def splits():
         print(s, len(ids))
 
 
+# ------------------------------------------------------------------ transcripts
+def merge_asr():
+    import glob
+    d = os.path.join(ROOT, "results", "reproduction", "asr", "dehate_all")
+    want = [l.strip() for s in SPLITS for l in open(os.path.join(SPLIT_DIR, "dehate_%s.txt" % s)) if l.strip()]
+    recs, src = {}, {}
+    for path in sorted(glob.glob(os.path.join(d, "timestamped_chunks.shard*.jsonl"))):
+        for line in open(path, encoding="utf-8"):
+            if not line.strip():
+                continue
+            r = json.loads(line)
+            if r["video_id"] in recs:
+                raise ValueError("%s in %s and %s" % (r["video_id"], src[r["video_id"]], path))
+            recs[r["video_id"]], src[r["video_id"]] = r, os.path.basename(path)
+    missing = [v for v in want if v not in recs]
+    extra = [v for v in recs if v not in set(want)]
+    if missing or extra:
+        raise ValueError("missing %d (%s) extra %d" % (len(missing), missing[:5], len(extra)))
+    with open(os.path.join(d, "timestamped_chunks.jsonl"), "w", encoding="utf-8") as fh:
+        for v in want:
+            fh.write(json.dumps(recs[v], ensure_ascii=False) + "\n")
+    err = [v for v in want if recs[v].get("error")]
+    empty = sum(1 for v in want if not recs[v]["chunks"])
+    per = {}
+    for v in want:
+        per[src[v]] = per.get(src[v], 0) + 1
+    print("merged %d videos (%s); error records %d %s; no speech chunks %d" % (len(want), per, len(err), err[:5], empty))
+
+
 # ------------------------------------------------------------------ gold
 def gt():
     sys.path.insert(0, os.path.join(ROOT, "scripts", "duplex"))
@@ -191,7 +222,7 @@ def gt():
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=("media", "splits", "gt"))
+    ap.add_argument("stage", choices=("media", "splits", "gt", "merge_asr"))
     ap.add_argument("--workers", type=int, default=12)
     a = ap.parse_args()
-    {"media": lambda: media(a.workers), "splits": splits, "gt": gt}[a.stage]()
+    {"media": lambda: media(a.workers), "splits": splits, "gt": gt, "merge_asr": merge_asr}[a.stage]()
