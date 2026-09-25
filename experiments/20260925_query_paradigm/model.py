@@ -88,3 +88,20 @@ class PriorNet(nn.Module):
         pooled = torch.einsum("bt,bth->bh", torch.softmax(w, dim=1), h)
         g_logit = self.vid(pooled).squeeze(-1) if self.g_head else self.g0.expand(s.shape[0])
         return s, g_logit, a_log, v_log, v_out, a_out
+
+
+class ConstPrior(nn.Module):
+    """Diagnostic arm (README section 12): no content backbone. Every second gets the same logit s0 and every video
+    the same video logit g0 (two learned scalars; g0 starts at the logit of the training positive rate); the chain
+    and the VLM answers do the rest."""
+
+    def __init__(self):
+        super().__init__()
+        self.s0 = nn.Parameter(torch.zeros(()))
+        self.g0 = nn.Parameter(torch.zeros(()))
+
+    def forward(self, f_a, f_v, mask):
+        B, T = mask.shape
+        s = self.s0 + torch.zeros(B, T, device=mask.device)
+        z = torch.zeros(B, T, device=mask.device)
+        return s, self.g0 + torch.zeros(B, device=mask.device), z, z, None, None

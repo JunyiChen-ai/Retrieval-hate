@@ -29,7 +29,9 @@ def _flat(p0, llr, cnt):
 
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
-              record_voi=False):
+              record_voi=False, allowed=None):
+    """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
+    queryable node)."""
     Ts = [store.T[v] for v in vids]
     Tm = max(Ts)
     S = torch.zeros(len(vids), Tm, dtype=torch.float64)
@@ -44,7 +46,8 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     askers = [policy.Asker(vt, am, cats) for vt in vts]
     A3 = torch.zeros(fo.N, 3, dtype=torch.float64, device=device)
     out = [{"scores": [], "eig": [], "voi": [], "asked": [], "p_G": []} for _ in vids]
-    rem = [np.ones(len(a.q), dtype=bool) for a in askers]
+    rem = [np.ones(len(a.q), dtype=bool) if allowed is None else np.isin(a.q, np.asarray(sorted(allowed[b])))
+           for b, a in enumerate(askers)]
     llr = [np.zeros(T) for T in Ts]
     cnt = [np.zeros(T) for T in Ts]
     p0 = None

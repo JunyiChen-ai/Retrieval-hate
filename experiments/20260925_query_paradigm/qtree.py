@@ -57,6 +57,17 @@ def tree(T):
     return out
 
 
+
+def level_nodes(T, L):
+    """Diagnostic arm (README section 12): the nodes of ONE depth of the tree of [0, T), i.e. equal-length
+    non-overlapping windows. The depth is the deepest one whose nodes are all at least L seconds long (node lengths
+    at depth d are floor or ceil of T / 2^d, so they lie in [L, 2L + 1)); the root when T < 2L."""
+    T = int(T)
+    d = 0
+    while T // (2 ** (d + 1)) >= L:
+        d += 1
+    return np.where(tree(T)["depth"] == d)[0]
+
 def leaf_levels(tr):
     """Per depth d (deepest first): node ids ordered leaves first, then internal nodes; and each node's
     position inside its level."""

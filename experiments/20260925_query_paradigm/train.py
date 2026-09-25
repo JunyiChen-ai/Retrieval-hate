@@ -67,7 +67,7 @@ import qtree                                    # noqa: E402
 import policy                                   # noqa: E402
 import ctree                                    # noqa: E402
 import cpolicy                                  # noqa: E402
-from model import PriorNet                      # noqa: E402
+from model import PriorNet, ConstPrior         # noqa: E402
 
 DEFAULTS = {
     "hid_dim": 128, "ffn_dim": 128, "nhead": 4, "dropout": 0.2,
@@ -78,8 +78,11 @@ DEFAULTS = {
     "n_state": 2, "length_term": False, "categories": [0, 1, 2, 3, 4], "objective": "tree", "order": "eig",
     "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "anchored", "g_head": True,
     "text_sources": ["bert"], "chain": "learned", "boundary": "closed",
-    "chain_form": "zero_inflated",
+    "chain_form": "zero_inflated", "backbone": "macil", "query_level": 0,
 }
+# Diagnostic arms (README section 12): backbone "const" = no content network (two learned scalars, ConstPrior);
+# query_level L > 0 = only the nodes of one tree depth (equal windows of L to 2L seconds, qtree.level_nodes) are
+# asked, in training (answers used as targets) and at validation / test.
 # Revision 2 (README section 9): anchored two-state answer model without length term, learned chain, BERT text row.
 # Revision 0/1 settings: n_state 3, length_term True, answer_model "joint" (prior "independent" for revision 0).
 
@@ -103,8 +106,9 @@ def group_ap(scores, gt, ids):
 class Evaluator:
     """Runs the question policy for a set of videos with the current model / answer model."""
 
-    def __init__(self, store, answers, cfg, device):
+    def __init__(self, store, answers, cfg, device, allowed=None):
         self.store, self.answers, self.cfg, self.device = store, answers, cfg, device
+        self.allowed = allowed
         self.trees = {}
 
     def vt(self, v):
@@ -121,9 +125,12 @@ class Evaluator:
             for i in range(0, len(ids), k):
                 out.update(cpolicy.run_batch(model, self.store, ids[i:i + k], am, chain, self.answers,
                                              self.cfg["categories"], max_calls, self.device,
-                                             order or self.cfg["order"], self.cfg["fusion"], record_voi))
+                                             order or self.cfg["order"], self.cfg["fusion"], record_voi,
+                                             None if self.allowed is None else
+                                             [self.allowed[v] for v in ids[i:i + k]]))
             model.train()
             return out
+        assert self.allowed is None, "query_level needs the chain prior"
         for v in ids:
             s, g = policy.video_prior(model, self.store, v, self.device)
             vt = self.vt(v)
@@ -169,6 +176,15 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     say("videos train/val/test %d/%d/%d; missing text rows %d" % (len(ids["train"]), len(ids["val"]),
                                                                   len(ids["test"]), store.n_missing_text))
     train_obs = {v: qdata.observed(answers[v], store.T[v]) for v in ids["train"]}
+    allowed = None
+    if int(cfg["query_level"]) > 0:              # diagnostic arm: one tree depth only (README section 12)
+        allowed = {v: set(qtree.level_nodes(store.T[v], int(cfg["query_level"])).tolist()) for v in all_ids}
+        for v, (n_id, o_, l_) in list(train_obs.items()):
+            keep = np.isin(n_id, np.asarray(sorted(allowed[v])))
+            train_obs[v] = (n_id[keep], o_[keep], l_[keep])
+        say("query_level %d: %.1f training answers per video (median windows per test video %d)" % (
+            int(cfg["query_level"]), np.mean([len(o[0]) for o in train_obs.values()]),
+            int(np.median([len(allowed[v]) for v in ids["test"]]))))
     ta = [(labels[v], [(a, b, store.T[v], o) for (a, b), o in answers[v].items()]) for v in ids["train"]]
     n_state = int(cfg["n_state"])
     loglen = np.log([b - a for v in ids["train"] for (a, b) in answers[v]])
@@ -187,7 +203,15 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
                            cfg["categories"], omega0).to(device)
     if anchored:
         am.requires_grad_(False)
-    model = PriorNet(cfg).to(device)
+    assert cfg["backbone"] in ("macil", "const")
+    if cfg["backbone"] == "const":               # diagnostic arm: no content network (README section 12)
+        assert float(cfg["lamda_cma"]) == 0.0, "the constant prior has no audio/visual branches for CMAL"
+        model = ConstPrior().to(device)
+        pos_rate = float(np.mean([labels[v] for v in ids["train"]]))
+        with torch.no_grad():
+            model.g0.fill_(float(np.log(pos_rate / (1.0 - pos_rate))))
+    else:
+        model = PriorNet(cfg).to(device)
     use_chain = cfg["prior"] == "chain"
     chain = None
     if use_chain:
@@ -201,7 +225,10 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     # the answer model and the chain have few parameters and start from data-driven values; with the network's
     # learning rate they did not move from their start (README section 7.3), so they get their own rate
     small = ([] if anchored else list(am.parameters())) + (list(chain.parameters()) if use_chain else [])
-    opt = optim.Adam([{"params": list(model.parameters()), "lr": float(cfg["lr"])}]
+    const = cfg["backbone"] == "const"           # its two scalars get the small-parameter rate, like the chain
+    if const:
+        small = small + list(model.parameters())
+    opt = optim.Adam(([] if const else [{"params": list(model.parameters()), "lr": float(cfg["lr"])}])
                      + ([{"params": small, "lr": float(cfg["lr_answer"])}] if small else []))
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=int(cfg["sched_tmax"]))
     ds = qdata.TrainSet(store, ids["train"], labels, int(cfg["crop_repeat"]))
@@ -209,7 +236,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     sampler = qdata.LengthBatches(lengths, int(cfg["batch_size"]), seed, int(cfg["long_T"]))
     loader = DataLoader(ds, batch_sampler=sampler, collate_fn=qdata.collate, num_workers=num_workers,
                         persistent_workers=num_workers > 0)
-    ev = Evaluator(store, answers, cfg, device)
+    ev = Evaluator(store, answers, cfg, device, allowed)
     if cfg["objective"] == "posterior":
         assert use_chain and anchored, "the posterior objective needs the chain prior and the anchored answer model"
     budget_rng = np.random.RandomState(seed)
