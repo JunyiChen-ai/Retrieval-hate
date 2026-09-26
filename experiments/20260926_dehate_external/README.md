@@ -1,6 +1,7 @@
 # DeHate external validation (2026-09-26)
 
-Status: preparation in progress (media, transcripts, features). No results yet.
+Status (2026-09-26 20:10): baselines, control arms, answer rates and the propagation check are done; the three
+20-trial searches run until about 03:00 on 2026-09-27.
 
 ## 1. Why this run
 
@@ -132,4 +133,95 @@ Query-tree searches (`launch/run_search.sh dehate <seed> runs/20260926_dehate_ex
 
 ## 5. Results
 
-(to be filled)
+Numbers are test means over seeds 234 / 2025 / 3407 on the 1-fps frame grid. Each triple is pooled AP / pooled ROC /
+within-video ROC. The DeHate frame base rate is .076 (8,386 hateful of 110,839 test seconds). Sources:
+- baselines: `runs/20260926_dehate_external/baselines/final/<method>/dehate/seed_<s>/frame_eval.json`;
+- controls: `runs/20260926_dehate_external/diag/controls_summary.json`, and
+  `runs/20260925_query_paradigm_diag/controls_summary.json` for HateMM and HateClipSeg;
+- answer rates: `runs/20260926_dehate_external/answer_rates/dehate.json`;
+- propagation check: `runs/20260926_dehate_external/propagation_check/abl_full/dehate_propagation.json`.
+
+### 5.1 Baselines and the query tree with default hyperparameters
+
+| Method | AP | ROC | within |
+|---|---|---|---|
+| Fed-WSVAD, 3 clients | .174 | .701 | .508 |
+| MultiHateLoc | .129 | .611 | .546 |
+| DSANet | .120 | .632 | .486 |
+| MACIL-SD | .088 | .562 | .530 |
+| Query tree, default hyperparameters (`abl_full`), 8 calls | .198 | .730 | .601 |
+| Query tree, default hyperparameters, 0 calls (backbone only) | .179 | .691 | .593 |
+
+The searched query tree (20 trials per seed) is still running; section 5.3 will hold it.
+
+### 5.2 Do the query-paradigm findings carry over?
+
+The control arms use default hyperparameters and 8 calls per video.
+
+| Arm | HateMM | HateClipSeg | DeHate |
+|---|---|---|---|
+| full | .594 / .847 / .649 | .661 / .672 / .536 | .198 / .730 / .601 |
+| no backbone | .543 / .822 / .679 | .658 / .634 / .571 | .142 / .700 / .633 |
+| one level, 4-8 s | .563 / .803 / .598 | .665 / .659 / .550 | .172 / .696 / .574 |
+| one level, 8-16 s | .587 / .827 / .618 | .657 / .649 / .554 | .191 / .734 / .562 |
+| one level, 16-32 s | .590 / .826 / .661 | .662 / .654 / .557 | .191 / .732 / .586 |
+
+**(a) Backbone.** Full minus no-backbone:
+
+| Corpus | AP | ROC | within |
+|---|---|---|---|
+| HateMM | +.051 | +.026 | -.030 |
+| HateClipSeg | +.003 | +.038 | -.035 |
+| DeHate | +.056 | +.031 | -.032 |
+
+- DeHate behaves like HateMM: the backbone raises both pooled metrics.
+- On all three corpora the backbone lowers within-video ROC.
+
+**(b) Tree versus one-level windows.**
+- On HateMM and HateClipSeg the tree beats the best single level on ROC only: +.020 and +.013.
+- On DeHate it does not: ROC -.002 to -.003, and AP +.007, below the .01 threshold. It beats every single level on
+  within ROC instead: +.015 against 16-32 s, +.039 against 8-16 s.
+- DeHate videos are short, so a single level runs out of nodes: 8-16 s windows used 5.3 calls on average and
+  16-32 s windows 4.0, against 7.3 for the tree.
+
+**More calls.** Full arm at 8, 16 and 32 calls:
+
+| Corpus | AP | ROC |
+|---|---|---|
+| HateMM | .594, .576, .566 | .847, .839, .827 |
+| HateClipSeg | .661, .668, .664 | .672, .674, .665 |
+| DeHate | .198, .196, .196 | .730, .725, .723 |
+
+- DeHate falls in the same direction, but by less than .01.
+- The one-level arms on DeHate do not fall.
+- Within-video ROC rises with more calls on DeHate: .601, .609, .612.
+
+**(c) Short-node answers.** Nodes of 4-8 s on test:
+
+| Measure | HateMM | HateClipSeg | DeHate |
+|---|---|---|---|
+| All-zero answers on nodes that contain harm | .41 | .50 | .61 |
+| Separation inside hateful videos, logit(yes \| harm) - logit(yes \| no harm) | .37 | .68 | .75 |
+
+- The answer table's harmful row comes from the roots of positive training videos. On DeHate, those roots give the
+  all-zero answer .29 of the time (HateMM .04-.10).
+- So the table still counts an all-zero answer as stronger evidence against harm than it is. The gap is smaller on
+  DeHate than on HateMM, because many DeHate roots are themselves short.
+
+**(d) Proposed fix: propagating an answer through backbone features.** The measure is within-video ROC of the
+remaining seconds, averaged over the three default models.
+
+| Pairs | Corpus | prior | time | feat | feat_c | raw |
+|---|---|---|---|---|---|---|
+| oracle | HateMM (336 pairs) | .592 | .692 | .643 | .655 | .712 |
+| oracle | HateClipSeg (335) | .513 | .653 | .602 | .602 | .632 |
+| oracle | DeHate (773 pairs, 166 videos) | .544 | .804 | .749 | .761 | .802 |
+| real VLM answers | HateMM (281) | .581 | .549 | .549 | .539 | .551 |
+| real VLM answers | HateClipSeg (314) | .514 | .531 | .523 | .534 | .546 |
+| real VLM answers | DeHate (878 pairs, 191 videos) | .553 | .514 | .528 | .526 | .532 |
+
+- As on HateMM and HateClipSeg, backbone features spread a true answer worse than distance in time does (.749-.761
+  against .804). The fix needs features to beat time, so its precondition does not hold.
+- With the real answers every method is near .5. The backbone's own ranking (.553) is the best on DeHate too.
+- HateMM and HateClipSeg used the best search trial of each seed, while this DeHate check uses the default models.
+  The rerun on the DeHate search winners goes in section 5.3.
