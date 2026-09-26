@@ -83,6 +83,7 @@ Baselines (`launch/baseline.sh <method>`; logs in `runs/20260926_dehate_external
 | DSANet | uoa-lab1 | 2026-09-26 10:32 | 12:59 | `dsanet_sc474397.out` |
 | Fed-WSVAD, 3 clients | uoa-lab3 | 2026-09-26 10:33 | 14:21 | `fed_wsvad_3client_sc474398.out` |
 | MACIL-SD | uoa-lab2 | 2026-09-26 11:50 | 14:14 | `macilsd_sc474399.out` |
+| MultiHateLoc | uoa-lab2 | 2026-09-26 15:58 | 16:25 | `multihateloc_sc474399.out` |
 
 Fed-WSVAD's first launch failed: all 10 attempts stopped within 12 s with `ModuleNotFoundError: No module named
 'ftfy'`, because the HateVideo environment on uoa-lab3 lacked the package.
@@ -110,7 +111,7 @@ Query-tree nodes and VLM answers (`data/vlm_tree/DeHate/PROVENANCE.md`):
   - A duplicate launch of shard 0/3 on uoa-lab2 was stopped at 14:43, before it wrote any answer.
 
 Query-tree searches (`launch/run_search.sh dehate <seed> runs/20260926_dehate_external/qtl`), started 2026-09-26 at
-16:00:
+16:28:
 - seed 234 on uoa-lab2, seed 2025 on uoa-lab1, seed 3407 on uoa-lab3;
 - logs: `runs/20260926_dehate_external/qtl/launch_dehate_seed<seed>_<host>.out`;
 - MultiHateLoc (`launch/baseline.sh multihateloc`) runs next to seed 234 on uoa-lab2 from 15:58.
@@ -122,6 +123,12 @@ Query-tree searches (`launch/run_search.sh dehate <seed> runs/20260926_dehate_ex
   - The run was resumed as the script is designed to be: the Optuna study keeps the 4 completed trials, and the
     sampler is re-seeded from the attempt count.
   - The first log is kept as `multihateloc_sc474399_first_10_attempts.out`.
+- The first search launch (16:00) failed at the end of every first trial, after training and evaluation had finished.
+  - The cause was `KeyError: 'dehate'` in the silent-group comparison of `train.py`, which reads the old K30
+    verdicts; DeHate has none.
+  - `train.py` now skips that comparison when a corpus has no K30 verdicts.
+  - The seed directories were deleted and the searches restarted at 16:28, so each seed starts from a new study.
+  - The logs of the failed launch are in `runs/20260926_dehate_external/qtl/first_attempt_keyerror/`.
 
 ## 5. Results
 
