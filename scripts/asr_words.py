@@ -10,19 +10,19 @@ positive videos get no transcript at all.
 Method (the WhisperX recipe: Whisper for the words, a CTC model for their times):
 1. Each video's 16 kHz audio (data/AV2A_wav/<Corpus>/<id>.wav) is cut into n = ceil(duration / 30 s) equal,
    non-overlapping windows (each <= 30 s, Whisper's context). Each window is transcribed on its own by
-   whisper-large-v3 (English; beam search with 5 beams, the transformers ASR-pipeline default that follows OpenAI's
-   Whisper) with segment timestamps; no long-form stitching. A batch that runs out of GPU memory is retried with
-   smaller batches (same decoding).
-2. Each segment's words are aligned to the window audio inside the segment's time span (+-0.2 s) by CTC forced
-   alignment with torchaudio's WAV2VEC2_ASR_BASE_960H (letters and apostrophe; torchaudio.functional.forced_align).
-   Words without a letter (numbers, symbols) take the time between their aligned neighbours. A segment that cannot
-   be aligned (no letters, or more letters than audio frames) has its words spread evenly over the segment
-   (counted in `spread_segments`).
+   whisper-large-v3 (English, greedy, text only); no long-form stitching. (Segment timestamps and 5-beam search were
+   15x slower on the 5090s: 6.5 s against 0.4 s per window.) A batch that runs out of GPU memory is retried with
+   smaller batches.
+2. The window's words are aligned to the window audio by CTC forced alignment with torchaudio's
+   WAV2VEC2_ASR_BASE_960H (letters and apostrophe; torchaudio.functional.forced_align). Words without a letter
+   (numbers, symbols) take the time between their aligned neighbours. A window whose text cannot be aligned (no
+   letters, or more letters than audio frames, e.g. a Whisper repetition loop) has its words spread evenly over the
+   window (counted in `spread_windows`).
 
     python scripts/asr_words.py --corpus hatemm --splits test [--shard 0/2] [--batch 24]
 Only videos of the listed splits (scripts/reproduction_baselines/hate_common split lists) are transcribed, in the
 listed order. Output: data/ASR_words/<Corpus>/words[.shard<i>of<n>].jsonl, one line per video:
-    {"id", "duration", "n_windows", "n_segments", "spread_segments", "align_score", "words": [[start_s, end_s, text]]}
+    {"id", "duration", "n_windows", "spread_windows", "align_score", "words": [[start_s, end_s, text]]}
 (text has a leading space; join with "" to rebuild the transcript; align_score = mean CTC probability of the
 aligned letters). Resumes: videos already written to any words*.jsonl of the corpus are skipped. Merge shards with
 --merge.
@@ -43,27 +43,12 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 CORPUS_DIR = {"hatemm": "HateMM", "hateclipseg": "HateClipSeg", "dehate": "DeHate"}
 SR = 16000
 WIN = 30.0
-PAD = 0.2
 
 
 def windows(duration):
     n = max(1, int(math.ceil(duration / WIN - 1e-9)))
     edges = np.linspace(0.0, duration, n + 1)
     return list(zip(edges[:-1], edges[1:]))
-
-
-def segments(result, dur):
-    out = []
-    for c in result.get("chunks") or []:
-        text = (c.get("text") or "").strip()
-        if not text:
-            continue
-        s, e = c.get("timestamp") or (None, None)
-        s = 0.0 if s is None else float(s)
-        e = dur if e is None else float(e)
-        s, e = min(max(s, 0.0), dur), min(max(e, 0.0), dur)
-        out.append((s, max(e, s), text))
-    return out
 
 
 class Aligner:
@@ -84,11 +69,12 @@ class Aligner:
             em, _ = self.model(self.torch.from_numpy(np.ascontiguousarray(clip)).to(self.device)[None])
         return self.torch.log_softmax(em.float(), -1)[0]
 
-    def words(self, lp, dur, s, e, text):
-        """Word times (seconds from the window start) of one segment; None when it cannot be aligned."""
+    def words(self, lp, dur, text):
+        """Word times (seconds from the window start) of one window's text; None when it cannot be aligned."""
         toks = text.split()
+        s, e = 0.0, dur
         fps = lp.shape[0] / dur
-        f0, f1 = max(0, int(math.floor((s - PAD) * fps))), min(lp.shape[0], int(math.ceil((e + PAD) * fps)))
+        f0, f1 = 0, lp.shape[0]
         ids = [self.norm(t) for t in toks]
         keep = [i for i, x in enumerate(ids) if x]
         target = [c for i in keep for c in ids[i]]
@@ -125,7 +111,7 @@ def main():
     ap.add_argument("--corpus", required=True, choices=tuple(CORPUS_DIR))
     ap.add_argument("--shard", default="0/1")
     ap.add_argument("--splits", default="test,val,train")
-    ap.add_argument("--batch", type=int, default=8)
+    ap.add_argument("--batch", type=int, default=16)
     ap.add_argument("--model", default="openai/whisper-large-v3")
     ap.add_argument("--merge", action="store_true")
     a = ap.parse_args()
@@ -167,7 +153,7 @@ def main():
     print("%s shard %s: %d videos to do, %d done" % (a.corpus, a.shard, len(todo), len(done)), flush=True)
     asr = pipeline("automatic-speech-recognition", model=a.model, dtype=torch.float16, device="cuda:0")
     al = Aligner("cuda:0")
-    gk = {"task": "transcribe", "language": "en"}
+    gk = {"task": "transcribe", "language": "en", "num_beams": 1}
     t0, n_win = time.time(), 0
     with open(out_path, "a") as fh:
         for k, p in enumerate(todo):
@@ -179,12 +165,12 @@ def main():
             dur = len(audio) / SR
             wins = windows(dur) if dur > 0.1 else []
             clips = [audio[int(round(s * SR)):int(round(e * SR))] for s, e in wins]
-            words, n_seg, n_spread, scores = [], 0, 0, []
+            words, n_spread, scores = [], 0, []
             if clips:
-                for bs in (a.batch, 2, 1):
+                for bs in (a.batch, 4, 1):
                     try:
                         res = asr([{"raw": c, "sampling_rate": SR} for c in clips], batch_size=bs,
-                                  return_timestamps=True, generate_kwargs=gk)
+                                  generate_kwargs=gk)
                         break
                     except torch.OutOfMemoryError:
                         if bs == 1:
@@ -192,21 +178,18 @@ def main():
                         print("[OOM] %s at batch %d, retrying smaller" % (v, bs), flush=True)
                         torch.cuda.empty_cache()
                 for (ws, we), c, r in zip(wins, clips, res):
-                    segs = segments(r, we - ws)
-                    if not segs:
+                    text = (r.get("text") or "").strip()
+                    if not text:
                         continue
-                    lp = al.emission(c)
-                    for s, e, text in segs:
-                        n_seg += 1
-                        w, sc = al.words(lp, we - ws, s, e, text)
-                        if w is None:
-                            n_spread += 1
-                            w = spread(s, e, text)
-                        else:
-                            scores.append(sc)
-                        words += [[round(ws + x, 3), round(ws + y, 3), t] for x, y, t in w]
-            fh.write(json.dumps({"id": v, "duration": round(dur, 3), "n_windows": len(wins), "n_segments": n_seg,
-                                 "spread_segments": n_spread,
+                    w, sc = al.words(al.emission(c), we - ws, text)
+                    if w is None:
+                        n_spread += 1
+                        w = spread(0.0, we - ws, text)
+                    else:
+                        scores.append(sc)
+                    words += [[round(ws + x, 3), round(ws + y, 3), t] for x, y, t in w]
+            fh.write(json.dumps({"id": v, "duration": round(dur, 3), "n_windows": len(wins),
+                                 "spread_windows": n_spread,
                                  "align_score": round(float(np.mean(scores)), 4) if scores else None,
                                  "words": words}) + "\n")
             fh.flush()
