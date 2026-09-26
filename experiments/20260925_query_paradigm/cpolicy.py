@@ -29,9 +29,12 @@ def _flat(p0, llr, cnt):
 
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
-              record_voi=False, allowed=None):
+              record_voi=False, allowed=None, answer_ll=None, make_asker=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
-    queryable node)."""
+    queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
+    log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
+    (None = the cached answers, the method). make_asker (diagnostic, answer_model_ceiling.py): function (video index,
+    video tree) -> an Asker with per-node outcome tables (None = policy.Asker under `am`, the method)."""
     Ts = [store.T[v] for v in vids]
     Tm = max(Ts)
     S = torch.zeros(len(vids), Tm, dtype=torch.float64)
@@ -43,7 +46,8 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     S, G = S.to(device), G.to(device)
     fo = ctree.Forest(Ts, Tm)
     vts = [_vt(T) for T in Ts]
-    askers = [policy.Asker(vt, am, cats) for vt in vts]
+    askers = [policy.Asker(vt, am, cats) if make_asker is None else make_asker(b, vt)
+              for b, vt in enumerate(vts)]
     A3 = torch.zeros(fo.N, 3, dtype=torch.float64, device=device)
     out = [{"scores": [], "eig": [], "voi": [], "asked": [], "p_G": []} for _ in vids]
     rem = [np.ones(len(a.q), dtype=bool) if allowed is None else np.isin(a.q, np.asarray(sorted(allowed[b])))
@@ -101,9 +105,12 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
         for b, pos, node, w, e in chosen:
             rem[b][pos] = False
             tr = vts[b].tr
-            o = answers[vids[b]].get((int(tr["a"][node]), int(tr["b"][node])))
-            if o is not None:
-                ll = askers[b].loglik(node, o)
+            if answer_ll is None:
+                o = answers[vids[b]].get((int(tr["a"][node]), int(tr["b"][node])))
+                ll = None if o is None else askers[b].loglik(node, o)
+            else:
+                ll = answer_ll(b, node)
+            if ll is not None:
                 A3[fo.offs[b] + node] = torch.as_tensor(ll, dtype=torch.float64, device=device)
                 a_, b_ = int(tr["a"][node]), int(tr["b"][node])
                 llr[b][a_:b_] += ll[2] - ll[0]
