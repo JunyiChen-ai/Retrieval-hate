@@ -14,11 +14,12 @@ stitching, which is where the old run crashed. A window whose word-timestamp dec
 still fails, it is decoded with segment timestamps and each segment's words are spread evenly over the segment
 (counted in `fallback_windows`).
 
-    python scripts/asr_words.py --corpus hatemm [--shard 0/2] [--batch 16]
-Output: data/ASR_words/<Corpus>/words[.shard<i>of<n>].jsonl, one line per video:
+    python scripts/asr_words.py --corpus hatemm --splits test [--shard 0/2] [--batch 16]
+Only videos of the listed splits (scripts/reproduction_baselines/hate_common split lists) are transcribed, in the
+listed order. Output: data/ASR_words/<Corpus>/words[.shard<i>of<n>].jsonl, one line per video:
     {"id", "duration", "n_windows", "fallback_windows", "words": [[start_s, end_s, text], ...]}
-(text keeps Whisper's leading space; join with "" to rebuild the transcript). Resumes: videos already written are
-skipped. Merge shards with --merge.
+(text keeps Whisper's leading space; join with "" to rebuild the transcript). Resumes: videos already written to any
+words*.jsonl of the corpus are skipped. Merge shards with --merge.
 """
 from __future__ import annotations
 
@@ -79,6 +80,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", required=True, choices=tuple(CORPUS_DIR))
     ap.add_argument("--shard", default="0/1")
+    ap.add_argument("--splits", default="test,val,train")
     ap.add_argument("--batch", type=int, default=16)
     ap.add_argument("--model", default="openai/whisper-large-v3")
     ap.add_argument("--merge", action="store_true")
@@ -105,14 +107,20 @@ def main():
     si, sn = (int(x) for x in a.shard.split("/"))
     out_path = os.path.join(out_dir, "words.jsonl" if sn == 1 else "words.shard%dof%d.jsonl" % (si, sn))
     done = set()
-    if os.path.exists(out_path):
-        for line in open(out_path):
+    for p in glob.glob(os.path.join(out_dir, "words*.jsonl")):
+        for line in open(p):
             try:
                 done.add(json.loads(line)["id"])
             except Exception:
                 pass
-    wavs = sorted(glob.glob(os.path.join(ROOT, "data", "AV2A_wav", d, "*.wav")))
-    todo = [p for i, p in enumerate(wavs) if i % sn == si and os.path.basename(p)[:-4] not in done]
+    import sys
+    sys.path.insert(0, os.path.join(ROOT, "scripts", "reproduction_baselines"))
+    from hate_common import data as hdata
+    wav_dir = os.path.join(ROOT, "data", "AV2A_wav", d)
+    todo = []
+    for split in a.splits.split(","):
+        ids = [v for v in hdata.load_split(a.corpus, split) if os.path.exists(os.path.join(wav_dir, v + ".wav"))]
+        todo += [os.path.join(wav_dir, v + ".wav") for i, v in enumerate(ids) if i % sn == si and v not in done]
     print("%s shard %s: %d videos to do, %d done" % (a.corpus, a.shard, len(todo), len(done)), flush=True)
     asr = pipeline("automatic-speech-recognition", model=a.model, torch_dtype=torch.float16, device="cuda:0")
     gk = {"task": "transcribe", "language": "en"}
