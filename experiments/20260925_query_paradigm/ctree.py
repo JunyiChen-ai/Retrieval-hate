@@ -13,6 +13,11 @@ Exact inference: each tree node carries a table over (first second's state, last
 node) = 8 log-weights; two children merge through one transition A(last_L, first_R); OR combines the "any" flags.
 Upward pass: O(64 T). Marginals by automatic differentiation: E[y_t] = d logW / d s_t, E[z_n] = d logW / d eta_n
 (eta_n added to the node's z = 1 factor).
+
+Revision 4 (README section 15): optional node potentials phi (N,) of the prior network (model.PriorNet.node_logits),
+a factor exp(phi_n z_n) on every node given G = 1, zero-inflated chain only: P(y | G = 1, x) is proportional to
+exp(s . y) chain(y) prod_n exp(phi_n z_n) restricted to any(y) = 1. They enter the upward pass exactly where eta
+does and are part of the prior (also in the "no answers" normalizer).
 """
 from __future__ import annotations
 
@@ -118,9 +123,10 @@ def _merge(L, R, logA):
     return torch.stack([a0, a1], dim=-1)
 
 
-def up(forest, s, g, A3, chain, eta=None):
+def up(forest, s, g, A3, chain, eta=None, phi=None):
     """Upward pass. s (B, Tmax) per-second logits, g (B,) video logits, A3 (N, 3) answer log-likelihoods per state
-    (0 rows for unasked nodes), eta (N,) optional (added to the z = 1 factor, for node marginals).
+    (0 rows for unasked nodes), eta (N,) optional (added to the z = 1 factor, for node marginals), phi (N,) optional
+    node potentials of the prior (revision 4; zero-inflated chain only).
     Returns (logW1, logW0), each (B,): log-weights (up to a common per-video constant) of Y = 1 with the answers
     under the Y = 1 answer states, and of Y = 0 with the answers under state 0.
     Coupled chain (revisions 1-2): P(y) proportional to exp(g any(y) + sum_t s_t y_t) x chain; Y = any(y).
@@ -129,9 +135,10 @@ def up(forest, s, g, A3, chain, eta=None):
     Zero-inflated chain (chain.zero_inflated, README section 10): P(G = 1 | x) = sigmoid(g) whatever the length;
     given G = 1 the seconds follow the chain with unary s_t conditioned on at least one harmful second; given G = 0
     all seconds are 0. Then logW1 = g + log V1(answers) - log V1(no answers), logW0 = answers under state 0."""
-    v1, w0_chain, lp0 = _up(forest, s, A3, chain, eta)
+    assert phi is None or getattr(chain, "zero_inflated", False), "node potentials need the zero-inflated chain"
+    v1, w0_chain, lp0 = _up(forest, s, A3, chain, eta, phi)
     if getattr(chain, "zero_inflated", False):
-        v1_prior, _, _ = _up(forest, s, torch.zeros_like(A3), chain, None)
+        v1_prior, _, _ = _up(forest, s, torch.zeros_like(A3), chain, None, phi)
         return g + v1 - v1_prior, lp0
     if getattr(chain, "normalized", False):
         # README section 10: the chain's own prior mass of "some harmful second" and of "none" are both rescaled to
@@ -143,10 +150,10 @@ def up(forest, s, g, A3, chain, eta=None):
     return g + v1, w0_chain + lp0
 
 
-def _up(forest, s, A3, chain, eta=None):
+def _up(forest, s, A3, chain, eta=None, phi=None):
     """Returns log V1 (B,): log-weight of the paths with at least one harmful second, answers under states 1/2,
     without the video factor g; the log-weight of the all-zero path under the chain (without answers); and the
-    answers' log-likelihood under state 0, lp0 (B,)."""
+    answers' log-likelihood under state 0, lp0 (B,). phi (N,): node potentials on z = 1 (revision 4)."""
     dev = s.device
     flat = s.reshape(-1)
     logA, logpi = chain.logA_for(forest).to(dev).to(s.dtype), chain.logpi().to(dev).to(s.dtype)
@@ -155,6 +162,9 @@ def _up(forest, s, A3, chain, eta=None):
     a1 = A3[:, 1:]
     if eta is not None:
         a1 = a1 + torch.stack([torch.zeros_like(eta), eta], dim=1)
+    if phi is not None:
+        phi = phi.to(a1.dtype)
+        a1 = a1 + torch.stack([torch.zeros_like(phi), phi], dim=1)
     prev = None
     for d in range(len(forest.levels) - 1, -1, -1):
         lev = forest.levels[d]
@@ -197,26 +207,27 @@ def _up(forest, s, A3, chain, eta=None):
     return v1, w0, lp0
 
 
-def log_evidence(forest, s, g, A3, chain):
+def log_evidence(forest, s, g, A3, chain, phi=None):
     """Training quantities per video: log P(Y = 1 | x), log P(Y = 0 | x) (no answers) and the answer
-    log-likelihoods log P(o | Y = 1, x), log P(o | Y = 0, x)."""
+    log-likelihoods log P(o | Y = 1, x), log P(o | Y = 0, x). phi: node potentials (revision 4)."""
     zero = torch.zeros_like(A3)
-    w1n, w0n = up(forest, s, g, zero, chain)
-    w1a, w0a = up(forest, s, g, A3, chain)
+    w1n, w0n = up(forest, s, g, zero, chain, phi=phi)
+    w1a, w0a = up(forest, s, g, A3, chain, phi=phi)
     logZ = torch.logaddexp(w1n, w0n)
     return w1n - logZ, w0n - logZ, w1a - w1n, w0a - w0n
 
 
-def marginals(forest, s, g, A3, chain):
+def marginals(forest, s, g, A3, chain, phi=None):
     """Posterior under the answers: p_G (B,), node marginals m (N,) = P(z_n = 1 | Y = 1, o), second posteriors
-    p (B, Tmax) = P(Y = 1 | o) P(y_t = 1 | Y = 1, o). No gradient to the caller."""
+    p (B, Tmax) = P(Y = 1 | o) P(y_t = 1 | Y = 1, o). No gradient to the caller. phi: node potentials (revision 4)."""
     with torch.enable_grad():
         s = s.detach().double().requires_grad_(True)
         eta = torch.zeros(forest.N, dtype=torch.float64, device=s.device, requires_grad=True)
         g = g.detach().double()
+        phi = None if phi is None else phi.detach().double()
         chain_d = _DoubleChain(chain)
-        w1, w0 = up(forest, s, g, A3.double(), chain_d)
-        v1, _, _ = _up(forest, s, A3.double(), chain_d, eta)
+        w1, w0 = up(forest, s, g, A3.double(), chain_d, phi=phi)
+        v1, _, _ = _up(forest, s, A3.double(), chain_d, eta, phi)
         gs, ge = torch.autograd.grad(v1.sum(), (s, eta))
     pG = torch.sigmoid(w1 - w0).detach()
     return pG, ge.detach(), (pG[:, None] * gs).detach()

@@ -23,6 +23,23 @@ def video_prior(model, store, v, device):
     return s.mean(0).double().cpu().numpy(), float(g.mean().item())
 
 
+@torch.no_grad()
+def video_prior_nodes(model, store, v, device):
+    """video_prior plus the revision-4 node potentials phi (five-crop mean, qtree.tree(T) node order; None when the
+    model has no node prior)."""
+    import ctree
+    T = store.T[v]
+    f_v = torch.from_numpy(np.stack([store.visual(v, c) for c in range(5)])).to(device)
+    f_a = torch.from_numpy(np.repeat(store.at[v][None], 5, axis=0)).to(device)
+    mask = torch.ones(5, T, dtype=torch.bool, device=device)
+    s, g, _, _, v_out, a_out = model(f_a, f_v, mask)
+    phi = None
+    if getattr(model, "node_prior", False):
+        fo = ctree.Forest([T] * 5, T)
+        phi = model.node_logits(v_out, a_out, fo).view(5, -1).mean(0).double().cpu().numpy()
+    return s.mean(0).double().cpu().numpy(), float(g.mean().item()), phi
+
+
 class Asker:
     """Outcome tables of one video's queryable nodes under the current answer model."""
 

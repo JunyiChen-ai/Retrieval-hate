@@ -39,12 +39,18 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     Tm = max(Ts)
     S = torch.zeros(len(vids), Tm, dtype=torch.float64)
     G = torch.zeros(len(vids), dtype=torch.float64)
+    fo = ctree.Forest(Ts, Tm)
+    PHI = None                                   # revision 4 node potentials (README section 15)
     for b, v in enumerate(vids):
-        s, g = policy.video_prior(model, store, v, device)
+        s, g, phi = policy.video_prior_nodes(model, store, v, device)
         S[b, :len(s)] = torch.from_numpy(s)
         G[b] = g
+        if phi is not None:
+            if PHI is None:
+                PHI = torch.zeros(fo.N, dtype=torch.float64)
+            PHI[int(fo.offs[b]):int(fo.offs[b]) + len(phi)] = torch.from_numpy(phi)
     S, G = S.to(device), G.to(device)
-    fo = ctree.Forest(Ts, Tm)
+    PHI = None if PHI is None else PHI.to(device)
     vts = [_vt(T) for T in Ts]
     askers = [policy.Asker(vt, am, cats) if make_asker is None else make_asker(b, vt)
               for b, vt in enumerate(vts)]
@@ -56,7 +62,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     cnt = [np.zeros(T) for T in Ts]
     p0 = None
     for step in range(max_calls + 1):
-        pG, m, p = ctree.marginals(fo, S, G, A3, chain)
+        pG, m, p = ctree.marginals(fo, S, G, A3, chain, PHI)
         pG, m, p = pG.cpu().numpy(), m.cpu().numpy(), p.cpu().numpy()
         if p0 is None:
             p0 = [p[b, :T].copy() for b, T in enumerate(Ts)]
@@ -91,7 +97,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                     keep = torch.full((3,), -BIG, dtype=torch.float64, device=device)
                     keep[state] = 0.0
                     Ac[fo.offs[b] + node] += keep
-                _, _, pc = ctree.marginals(fo, S, G, Ac, chain)
+                _, _, pc = ctree.marginals(fo, S, G, Ac, chain, PHI)
                 q[state] = pc.cpu().numpy()
             for b, pos, node, w, e in chosen:
                 T = Ts[b]

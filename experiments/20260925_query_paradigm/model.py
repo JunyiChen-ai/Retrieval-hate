@@ -5,7 +5,12 @@ and audio+text->visual directions; the plain layer of experiments/20260910_onlin
 evidence code, no key bias, no context term), on the 1-second grid.
 Heads: per-second logit s_t = fc(a_out_t) + fc(v_out_t) (MACIL-SD's shared head), pi_t = sigmoid(s_t); video logit
 g = w . sum_t softmax(att(h_t)) h_t + b with h_t = a_out_t + v_out_t (attention pooling).
-The network never reads a VLM answer."""
+The network never reads a VLM answer.
+
+Revision 4 (README section 15, node_prior): the video head's attention pooling is applied to every node of the query
+tree, bottom-up along the tree (a node's pooled vector and log-sum of attention weights follow from its two
+children's; the root's is exactly the video head's pooled vector), and a linear head, initialised at zero, turns
+each internal node's pooled vector into a node potential phi_n on "the node contains harm" (ctree.up)."""
 from __future__ import annotations
 
 import math
@@ -75,6 +80,11 @@ class PriorNet(nn.Module):
         # logits can separate positive from negative videos
         self.g_head = bool(cfg.get("g_head", True))
         self.g0 = nn.Parameter(torch.zeros(()))
+        self.node_prior = bool(cfg.get("node_prior", False))
+        if self.node_prior:
+            self.node = nn.Linear(hid, 1)
+            nn.init.zeros_(self.node.weight)
+            nn.init.zeros_(self.node.bias)
 
     def forward(self, f_a, f_v, mask):
         """f_a (B, T, A_IN), f_v (B, T, V_DIM), mask (B, T) bool. Returns s (B, T), g_logit (B,), a_log (B, T),
@@ -88,6 +98,35 @@ class PriorNet(nn.Module):
         pooled = torch.einsum("bt,bth->bh", torch.softmax(w, dim=1), h)
         g_logit = self.vid(pooled).squeeze(-1) if self.g_head else self.g0.expand(s.shape[0])
         return s, g_logit, a_log, v_log, v_out, a_out
+
+    def node_logits(self, v_out, a_out, forest):
+        """Revision 4: node potentials phi (forest.N,) for the videos of the batch (row b of v_out / a_out = video
+        b of `forest`); 0 on the leaves (single seconds, which have s_t). Attention pooling over each node's seconds
+        with the video head's attention logits, computed bottom-up along the tree."""
+        h = a_out + v_out
+        w = self.att(h).squeeze(-1)
+        dev = h.device
+        flat_h, flat_w = h.reshape(-1, h.shape[-1]), w.reshape(-1)
+        phi = torch.zeros(forest.N, device=dev, dtype=h.dtype)
+        prev = None
+        for d in range(len(forest.levels) - 1, -1, -1):
+            lev = forest.levels[d]
+            nodes, n_leaf = lev["nodes"].to(dev), lev["n_leaf"]
+            vec, lse = [], []
+            if n_leaf:
+                rows = lev["leaf_row"].to(dev)
+                vec.append(flat_h[rows])
+                lse.append(flat_w[rows])
+            if len(nodes) > n_leaf:
+                L, R = lev["L"].to(dev), lev["R"].to(dev)
+                lL, lR = prev[1][L], prev[1][R]
+                l = torch.logaddexp(lL, lR)
+                v_int = prev[0][L] * torch.exp(lL - l)[:, None] + prev[0][R] * torch.exp(lR - l)[:, None]
+                vec.append(v_int)
+                lse.append(l)
+                phi = phi.index_put((nodes[n_leaf:],), self.node(v_int).squeeze(-1))
+            prev = (torch.cat(vec), torch.cat(lse))
+        return phi
 
 
 class ConstPrior(nn.Module):

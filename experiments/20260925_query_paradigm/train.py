@@ -79,7 +79,11 @@ DEFAULTS = {
     "fusion": "tree", "prior": "chain", "eval_chunk": 64, "answer_model": "anchored", "g_head": True,
     "text_sources": ["bert"], "chain": "learned", "boundary": "closed",
     "chain_form": "zero_inflated", "backbone": "macil", "query_level": 0,
+    "answer_source": "k30", "node_prior": False,
 }
+# Revision 4 (README section 15): answer_source "words" = the same questions asked with word-timestamp transcripts
+# (README section 14.4; data.load_answers); node_prior true = node potentials of the prior network on every internal
+# tree node (model.PriorNet.node_logits, ctree.up phi).
 # Diagnostic arms (README section 12): backbone "const" = no content network (two learned scalars, ConstPrior);
 # query_level L > 0 = only the nodes of one tree depth (equal windows of L to 2L seconds, qtree.level_nodes) are
 # asked, in training (answers used as targets) and at validation / test.
@@ -166,7 +170,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
         fh.write(str(os.getpid()))
     runtime.setup_seed(seed)
     labels, ids, gt, _ = hc.load_fixed_cohort(corpus)
-    answers, T_ans = qdata.load_answers(corpus)
+    answers, T_ans = qdata.load_answers(corpus, cfg["answer_source"])
     all_ids = ids["train"] + ids["val"] + ids["test"]
     missing = [v for v in all_ids if v not in answers]
     assert not missing, "videos without tree answers: %d (%s)" % (len(missing), missing[:5])
@@ -212,6 +216,9 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
             model.g0.fill_(float(np.log(pos_rate / (1.0 - pos_rate))))
     else:
         model = PriorNet(cfg).to(device)
+    if cfg["node_prior"]:
+        assert cfg["backbone"] == "macil" and cfg["prior"] == "chain" and cfg["chain_form"] == "zero_inflated"
+        assert cfg["objective"] == "tree" and cfg["answer_model"] != "refit" and int(cfg["query_level"]) == 0
     use_chain = cfg["prior"] == "chain"
     chain = None
     if use_chain:
@@ -296,7 +303,8 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
                         ll = am.loglik(torch.as_tensor(np.concatenate(ans)), torch.as_tensor(np.concatenate(lens)))
                         A3 = A3.index_put((torch.as_tensor(np.concatenate(ids_g)).to(device),), ll.to(A3.dtype))
                         n_obs = torch.as_tensor([len(train_obs[v][0]) for v in vids], device=device).float()
-                    l1, l0, lo1, lo0 = ctree.log_evidence(fo, s_tree, g_tree, A3, chain)
+                    phi = model.node_logits(v_out, a_out, fo) if cfg["node_prior"] else None
+                    l1, l0, lo1, lo0 = ctree.log_evidence(fo, s_tree, g_tree, A3, chain, phi)
                     loss_ans = -(torch.where(label > 0.5, lo1, lo0) / n_obs.clamp(min=1)).mean()
                 loss_g = -torch.where(label > 0.5, l1, l0).mean()
                 p_video = torch.exp(l1)
