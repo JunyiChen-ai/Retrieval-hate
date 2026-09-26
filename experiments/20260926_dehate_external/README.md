@@ -78,16 +78,34 @@ DeHate is external validation only (CLAUDE.md: new corpora never gate the method
 
 Baselines (`launch/baseline.sh <method>`; logs in `runs/20260926_dehate_external/baselines/`):
 
-| Method | Host | Started | Log |
-|---|---|---|---|
-| DSANet | uoa-lab1 | 2026-09-26 10:32 | `dsanet_sc474397.out` |
-| Fed-WSVAD, 3 clients | uoa-lab3 | 2026-09-26 10:33 | `fed_wsvad_3client_sc474398.out` |
+| Method | Host | Started | Finished | Log |
+|---|---|---|---|---|
+| DSANet | uoa-lab1 | 2026-09-26 10:32 | 12:59 | `dsanet_sc474397.out` |
+| Fed-WSVAD, 3 clients | uoa-lab3 | 2026-09-26 10:33 | 14:21 | `fed_wsvad_3client_sc474398.out` |
+| MACIL-SD | uoa-lab2 | 2026-09-26 11:50 | 14:14 | `macilsd_sc474399.out` |
 
 Fed-WSVAD's first launch failed: all 10 attempts stopped within 12 s with `ModuleNotFoundError: No module named
 'ftfy'`, because the HateVideo environment on uoa-lab3 lacked the package.
 - ftfy 6.3.1 and wcwidth 0.8.2 were installed to match uoa-lab2 (`runs/_setup_uoa-lab3/pip_ftfy.log`).
 - The failed study was deleted, so the relaunch starts from the same sampler seed, 234.
 - The first log is kept as `fed_wsvad_3client_sc474398_ftfy_missing.out`.
+
+Transcripts (Whisper large-v3 sentence chunks, `launch/asr_shard.sh`, logs in `runs/20260926_dehate_external/prep/`):
+- The duration-sorted video list was split into 3 shards; shard 0 was split again so that idle GPUs could take parts
+  of it.
+- Parts and hosts:
+  - uoa-lab2: 448 videos in `shard0of3`, 891 in `shard0of3.sub0of2` and 446 in `shard0of3.sub1of4`.
+  - uoa-lab1: 2230 videos in `shard1of3`.
+  - uoa-lab3: 2229 videos in `shard2of3` and 445 in `shard0of3.sub3of4`.
+- `prepare_dehate.py merge_asr` merged them on 2026-09-26 at 14:40: 6689 videos, each exactly once, 0 error records.
+- A first attempt at `shard0of3.sub1of2` on uoa-lab1 ran out of GPU memory for all 891 videos while shard 1 was
+  running on the same GPU. Its output was deleted; its log is kept as `asr_shard0of3_sub1of2_sc474397_oom_attempt.log`.
+
+Features: CLIP, ViT, VGGish and BERT have 6689/6689 videos; I3D has 6688 (section 2).
+
+Query-tree nodes and VLM answers (`data/vlm_tree/DeHate/PROVENANCE.md`):
+- Manifest: 6688 videos and 268,990 queryable nodes, 4.2 times HateMM's 63,963.
+- Answers: shards 0/3, 1/3 and 2/3 on uoa-lab2, uoa-lab1 and uoa-lab3, started 2026-09-26 at 14:45.
 
 ## 5. Results
 
