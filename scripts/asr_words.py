@@ -10,7 +10,9 @@ positive videos get no transcript at all.
 Method (the WhisperX recipe: Whisper for the words, a CTC model for their times):
 1. Each video's 16 kHz audio (data/AV2A_wav/<Corpus>/<id>.wav) is cut into n = ceil(duration / 30 s) equal,
    non-overlapping windows (each <= 30 s, Whisper's context). Each window is transcribed on its own by
-   whisper-large-v3 (English, greedy) with segment timestamps; no long-form stitching.
+   whisper-large-v3 (English; beam search with 5 beams, the transformers ASR-pipeline default that follows OpenAI's
+   Whisper) with segment timestamps; no long-form stitching. A batch that runs out of GPU memory is retried with
+   smaller batches (same decoding).
 2. Each segment's words are aligned to the window audio inside the segment's time span (+-0.2 s) by CTC forced
    alignment with torchaudio's WAV2VEC2_ASR_BASE_960H (letters and apostrophe; torchaudio.functional.forced_align).
    Words without a letter (numbers, symbols) take the time between their aligned neighbours. A segment that cannot
@@ -123,7 +125,7 @@ def main():
     ap.add_argument("--corpus", required=True, choices=tuple(CORPUS_DIR))
     ap.add_argument("--shard", default="0/1")
     ap.add_argument("--splits", default="test,val,train")
-    ap.add_argument("--batch", type=int, default=24)
+    ap.add_argument("--batch", type=int, default=8)
     ap.add_argument("--model", default="openai/whisper-large-v3")
     ap.add_argument("--merge", action="store_true")
     a = ap.parse_args()
@@ -179,8 +181,16 @@ def main():
             clips = [audio[int(round(s * SR)):int(round(e * SR))] for s, e in wins]
             words, n_seg, n_spread, scores = [], 0, 0, []
             if clips:
-                res = asr([{"raw": c, "sampling_rate": SR} for c in clips], batch_size=a.batch,
-                          return_timestamps=True, generate_kwargs=gk)
+                for bs in (a.batch, 2, 1):
+                    try:
+                        res = asr([{"raw": c, "sampling_rate": SR} for c in clips], batch_size=bs,
+                                  return_timestamps=True, generate_kwargs=gk)
+                        break
+                    except torch.OutOfMemoryError:
+                        if bs == 1:
+                            raise
+                        print("[OOM] %s at batch %d, retrying smaller" % (v, bs), flush=True)
+                        torch.cuda.empty_cache()
                 for (ws, we), c, r in zip(wins, clips, res):
                     segs = segments(r, we - ws)
                     if not segs:

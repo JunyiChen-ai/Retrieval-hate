@@ -7,6 +7,7 @@ set -euo pipefail
 cd "$HOME/Retrieval-hate"
 hostname; nvidia-smi --query-gpu=name,memory.used --format=csv,noheader
 echo $$ > "runs/20260927_query_paradigm_r4/asr/launch_$(hostname).pid"
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 for job in "$@"; do
   IFS=: read -r c s sp <<< "$job"
   "$HOME/miniconda3/envs/HateVideo/bin/python" -u scripts/asr_words.py --corpus "$c" --shard "$s" --splits "$sp" \
