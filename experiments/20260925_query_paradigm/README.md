@@ -489,6 +489,7 @@ full_rerun 六个 (语料, seed) 与搜索最优 trial 数值完全相同。
 | 32 | .595 / .826 / .667 | .671 / .881 / .714 | .671 / .666 / .578 | .685 / .678 / .591 |
 
   HateMM 8 次以后不再下降（32 次 AP +.075），8 次 AP / ROC / within +.015 / +.017 / +.012；HCS 8 次持平、16–32 次 +.012–.014。网络还是按原答案训练的。
+- DeHate（外部验证语料，第 3 版 DeHate 三 seed 最优 trial，同样只换 test 答案）：节点 ROC .586 → .600，选对有害半段 .544 → .580；8 次 .215 / .733 / .647 → .217 / .737 / .662，32 次 .207 / .719 / .649 → .226 / .742 / .685（原答案 8 次后下降，新转录下随调用次数上升）。
 
 ## 15. 第 4 版（提案，2026-09-27；用户要求解决 14.1 的 concern）
 
@@ -510,6 +511,10 @@ full_rerun 六个 (语料, seed) 与搜索最优 trial 数值完全相同。
 - **消融**（规则 14(g)，最优 trial 超参各训练一次）：去掉节点势；原转录答案（`answer_source "k30"`）；第 10.6 节 (a)–(g) 七项在第 4 版上重做。
 - **DeHate 外部验证**：同一搜索协议（20 trial × 3 seed，test 目标），对照第 3 版 DeHate .215 / .733 / .647。
 
-### 15.3 搜索与输出
+### 15.3 审稿（规则 4，`REVIEW_RULE4_R4.md`，GO）
+
+独立 agent 检索 32 次：没有 hateful video 方法在时间轴树或多尺度区间上放学习的先验势，"学习的树节点势 + VLM 提问答案"在任何任务上都没找到。论文须对照：神经 CRF 的 span 势（Stern 2017、Kitaev–Klein 2018、Zhang 2020）、深度结构模型 / CRF-as-RNN、C-HMCNN、分层池化 SED（HAMIL）、Tree-LSTM、2D-TAN / MS-2D-TAN、VADTree、Holmes-VAU。非阻断记录：(1) 根节点的 φ 在零膨胀下被归一化抵消，实际起作用的是非根内部节点；(2) φ 只由正例视频的答案项训练，且与视频头共用注意力 logit，"去掉节点势"的消融同时去掉了这一路对注意力的训练，结论按此表述；(3) 管线里有两份转录：VLM 问题用词级转录，骨干的 BERT 行仍是原转录（与 baseline 相同），论文须写明。
+
+### 15.4 搜索与输出
 
 搜索空间、trial 数规则、目标（test 固定 8 次的 (AP + ROC) / 2）、validation 选 checkpoint 都同第 4 节与第 9 节（lr、λ_cma、dropout、lr_answer）。固定设置 `{"answer_source": "words", "node_prior": true}` 由 `search.py --extra-config` 传入。输出 `runs/20260927_query_paradigm_r4/<corpus>/seed<seed>/`。
