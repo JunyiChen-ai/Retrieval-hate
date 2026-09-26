@@ -8,6 +8,9 @@ max_pixels 360*420 per frame); vLLM backend.
 Output: data/vlm_tree/<Corpus>/answers_qwen7b_mod5.jsonl, one line per video:
     {"id", "split", "T", "nodes": [[a, b, [hate, harassment, sexual, violence, self_harm] or null, raw], ...]}
 Resumes: videos already in the output file are skipped.
+Revision 4 (README section 14): --manifest manifest_words.jsonl --out-prefix answers_words_qwen7b_mod5 asks the same
+questions with the word-timestamp transcripts; the prefix must not start with answers_qwen7b_mod5 (data.load_answers
+globs that for the revision-3 answers).
 """
 from __future__ import annotations
 
@@ -86,6 +89,8 @@ def main():
     ap.add_argument("--gpu-mem", type=float, default=0.85)
     ap.add_argument("--max-model-len", type=int, default=8192)
     ap.add_argument("--shard", default="0/1", help="i/n: this process takes videos with index %% n == i")
+    ap.add_argument("--manifest", default="manifest.jsonl")
+    ap.add_argument("--out-prefix", default="answers_qwen7b_mod5")
     a = ap.parse_args()
     from transformers import AutoProcessor
     from vllm import LLM, SamplingParams
@@ -93,7 +98,7 @@ def main():
     d = CORPUS_DIR[a.corpus]
     base = os.path.join(ROOT, "data", "vlm_tree", d)
     si, sn = (int(x) for x in a.shard.split("/"))
-    out_path = os.path.join(base, "answers_qwen7b_mod5%s.jsonl" % ("" if sn == 1 else ".shard%dof%d" % (si, sn)))
+    out_path = os.path.join(base, "%s%s.jsonl" % (a.out_prefix, "" if sn == 1 else ".shard%dof%d" % (si, sn)))
     done = set()
     if os.path.exists(out_path):
         for line in open(out_path):
@@ -102,7 +107,7 @@ def main():
             except Exception:
                 pass
     splits = a.splits.split(",")
-    todo = [json.loads(l) for l in open(os.path.join(base, "manifest.jsonl"))]
+    todo = [json.loads(l) for l in open(os.path.join(base, a.manifest))]
     todo = [r for i, r in enumerate(todo) if i % sn == si]
     todo = sorted([r for r in todo if r["split"] in splits and r["id"] not in done], key=lambda r: splits.index(r["split"]))
     print("%s shard %s: %d videos to do, %d done" % (a.corpus, a.shard, len(todo), len(done)), flush=True)

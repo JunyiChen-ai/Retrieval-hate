@@ -80,11 +80,15 @@ class Store:
         return np.ascontiguousarray(self.W[v] @ x, dtype=np.float32)
 
 
-def load_answers(corpus):
-    """video id -> {(a, b): answer vector (5,) int or None}; from answers_qwen7b_mod5.jsonl (and shards)."""
+ANSWER_SOURCES = {"k30": "answers_qwen7b_mod5", "words": "answers_words_qwen7b_mod5"}
+
+
+def load_answers(corpus, source="k30"):
+    """video id -> {(a, b): answer vector (5,) int or None}; from answers_qwen7b_mod5.jsonl (and shards).
+    source "words" (revision 4, README section 14): the same questions with word-timestamp transcripts."""
     base = os.path.join(ROOT, "data", "vlm_tree", CORPUS_DIR[corpus])
     out, T = {}, {}
-    for path in sorted(glob.glob(os.path.join(base, "answers_qwen7b_mod5*.jsonl"))):
+    for path in sorted(glob.glob(os.path.join(base, ANSWER_SOURCES[source] + "[.]*jsonl"))):
         for line in open(path):
             r = json.loads(line)
             if r["id"] in out:

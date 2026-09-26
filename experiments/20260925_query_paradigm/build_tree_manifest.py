@@ -9,8 +9,12 @@ Frames: 1-fps frame a + floor((b - a) * (i + .5) / F), i = 0..F-1, clipped to th
 Transcript: Whisper large-v3 word chunks (data/ASR/<Corpus>/*_asrK30_whisper-large-v3.jsonl, `chunks`) whose
 midpoint lies in [a, b) (the midpoint rule of src/utils/generate_segment_asr_HF.py).
 
-    python experiments/20260925_query_paradigm/build_tree_manifest.py [--corpus hatemm hateclipseg dehate]
+    python experiments/20260925_query_paradigm/build_tree_manifest.py [--corpus hatemm hateclipseg dehate] [--asr words]
 Output: data/vlm_tree/<Corpus>/manifest.jsonl (+ PROVENANCE.md written by hand)
+
+--asr words (revision 4, README section 14): the transcript comes from data/ASR_words/<Corpus>/words.jsonl
+(scripts/asr_words.py: whisper-large-v3 word timestamps on independent 30 s windows), words assigned by their
+midpoint; output data/vlm_tree/<Corpus>/manifest_words.jsonl. Frames and nodes are the same as manifest.jsonl.
 
 DeHate (external validation, 2026-09-26; experiments/20260926_dehate_external/README.md): the transcript is the
 sentence-level Whisper large-v3 run of the reproduction study (results/reproduction/asr/dehate_all, the chunks behind
@@ -58,8 +62,13 @@ def frame_idx(a, b, n_frames):
     return [min(a + int((b - a) * (i + 0.5) / F), n_frames - 1) for i in range(F)]
 
 
-def load_words(corpus):
+def load_words(corpus, asr="k30"):
     words = {}
+    if asr == "words":
+        for line in open(os.path.join(ROOT, "data", "ASR_words", CORPUS_DIR[corpus], "words.jsonl")):
+            r = json.loads(line)
+            words[r["id"]] = [(0.5 * (s + e), t) for s, e, t in r["words"] if t and t.strip()]
+        return words
     if corpus in REPRO_ASR:
         for line in open(REPRO_ASR[corpus]):
             r = json.loads(line)
@@ -75,15 +84,15 @@ def load_words(corpus):
     return words
 
 
-def main(corpora):
+def main(corpora, asr="k30"):
     for corpus in corpora:
         d = CORPUS_DIR[corpus]
-        words = load_words(corpus)
+        words = load_words(corpus, asr)
         out_dir = os.path.join(ROOT, "data", "vlm_tree", d)
         os.makedirs(out_dir, exist_ok=True)
         n_vid = n_node = 0
         missing_asr = 0
-        with open(os.path.join(out_dir, "manifest.jsonl"), "w") as fh:
+        with open(os.path.join(out_dir, "manifest.jsonl" if asr == "k30" else "manifest_words.jsonl"), "w") as fh:
             for split in ("train", "val", "test"):
                 ids = hdata.load_split(corpus, split)
                 ids = ([v for v in ids if os.path.exists(os.path.join(align.AUDIO_ROOT, corpus, v + ".npy"))]
@@ -113,4 +122,6 @@ if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", nargs="+", default=["hatemm", "hateclipseg"], choices=tuple(CORPUS_DIR))
-    main(ap.parse_args().corpus)
+    ap.add_argument("--asr", default="k30", choices=("k30", "words"))
+    a = ap.parse_args()
+    main(a.corpus, a.asr)
