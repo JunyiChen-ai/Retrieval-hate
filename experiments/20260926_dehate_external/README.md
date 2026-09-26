@@ -1,7 +1,6 @@
 # DeHate external validation (2026-09-26)
 
-Status (2026-09-26 20:10): baselines, control arms, answer rates and the propagation check are done; the three
-20-trial searches run until about 03:00 on 2026-09-27.
+Status (2026-09-27 02:10): complete. Every result is on uoa-lab2 under `runs/20260926_dehate_external/`.
 
 ## 1. Why this run
 
@@ -139,20 +138,28 @@ within-video ROC. The DeHate frame base rate is .076 (8,386 hateful of 110,839 t
 - controls: `runs/20260926_dehate_external/diag/controls_summary.json`, and
   `runs/20260925_query_paradigm_diag/controls_summary.json` for HateMM and HateClipSeg;
 - answer rates: `runs/20260926_dehate_external/answer_rates/dehate.json`;
-- propagation check: `runs/20260926_dehate_external/propagation_check/abl_full/dehate_propagation.json`.
+- propagation check: `runs/20260926_dehate_external/propagation_check/{abl_full,best_trials}/dehate_propagation.json`;
+- searched query tree: `runs/20260926_dehate_external/summary.json` (from `summarize.py`, which reads each seed's
+  `study_summary.json` and best-trial `summary.json`).
 
 ### 5.1 Baselines and the query tree with default hyperparameters
 
 | Method | AP | ROC | within |
 |---|---|---|---|
-| Fed-WSVAD, 3 clients | .174 | .701 | .508 |
+| Fed-WSVAD, 3 clients | .174 ± .017 | .701 ± .010 | .508 |
 | MultiHateLoc | .129 | .611 | .546 |
 | DSANet | .120 | .632 | .486 |
 | MACIL-SD | .088 | .562 | .530 |
+| **Query tree, 20-trial search, best trial per seed, 8 calls** | **.215 ± .005** | **.733 ± .009** | **.647** |
+| Query tree, 20-trial search, trial selected on validation | .201 ± .005 | .731 ± .010 | .646 |
 | Query tree, default hyperparameters (`abl_full`), 8 calls | .198 | .730 | .601 |
 | Query tree, default hyperparameters, 0 calls (backbone only) | .179 | .691 | .593 |
 
-The searched query tree (20 trials per seed) is still running; section 5.3 will hold it.
+The searched method is above the strongest baseline, Fed-WSVAD:
+- best trial: AP +.041, ROC +.033, within +.139;
+- trial selected on validation: AP +.026, ROC +.031.
+
+The best trials are 11, 13 and 11 (seeds 234, 2025, 3407); the validation-selected trials are 18, 17 and 18.
 
 ### 5.2 Do the query-paradigm findings carry over?
 
@@ -223,5 +230,24 @@ remaining seconds, averaged over the three default models.
 - As on HateMM and HateClipSeg, backbone features spread a true answer worse than distance in time does (.749-.761
   against .804). The fix needs features to beat time, so its precondition does not hold.
 - With the real answers every method is near .5. The backbone's own ranking (.553) is the best on DeHate too.
-- HateMM and HateClipSeg used the best search trial of each seed, while this DeHate check uses the default models.
-  The rerun on the DeHate search winners goes in section 5.3.
+- On the three best search trials (the model choice used for HateMM and HateClipSeg) the numbers are the same:
+  - oracle pairs: prior .538, time .804, feat .742, feat_c .755, raw .802;
+  - real-answer pairs: prior .553, time .514, feat .521, feat_c .524, raw .532.
+
+### 5.3 Searched query tree: calls per video
+
+Best trial of each seed, three-seed mean, from `runs/20260926_dehate_external/summary.json`:
+
+| Calls per video | AP | ROC | within |
+|---|---|---|---|
+| 0 (backbone only) | .200 | .710 | .647 |
+| 2 | .198 | .737 | .638 |
+| 4 | .213 | .738 | .647 |
+| 8 | .215 | .733 | .647 |
+| 16 | .215 | .729 | .645 |
+| 32 (21.96 on average) | .207 | .719 | .649 |
+
+- Asking helps the pooled metrics: from 0 to 8 calls, AP rises by .015 and ROC by .023.
+- It does not help within-video ROC on DeHate: .647 at both 0 and 8 calls.
+- Beyond 8 calls the scores fall, as on HateMM: at 32 calls AP is .009 lower and ROC .014 lower.
+  - With default hyperparameters the fall stays under .01 (section 5.2).
