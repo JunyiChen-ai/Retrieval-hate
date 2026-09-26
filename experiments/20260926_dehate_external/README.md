@@ -114,6 +114,14 @@ Query-tree searches (`launch/run_search.sh dehate <seed> runs/20260926_dehate_ex
 - seed 234 on uoa-lab2, seed 2025 on uoa-lab1, seed 3407 on uoa-lab3;
 - logs: `runs/20260926_dehate_external/qtl/launch_dehate_seed<seed>_<host>.out`;
 - MultiHateLoc (`launch/baseline.sh multihateloc`) runs next to seed 234 on uoa-lab2 from 15:58.
+  - The first run stopped at 16:16 with 4/5 completed trials.
+  - `tune_official_val.py` allows max(2 x trials, trials + 5) attempts, which is 10 at 5 trials (80 at the 40 trials
+    used on HateMM and HateClipSeg).
+  - Six of the 10 random draws had batch size 64. The script skips that setting before training because it does
+    not fit in GPU memory, the same guard as on the other corpora.
+  - The run was resumed as the script is designed to be: the Optuna study keeps the 4 completed trials, and the
+    sampler is re-seeded from the attempt count.
+  - The first log is kept as `multihateloc_sc474399_first_10_attempts.out`.
 
 ## 5. Results
 

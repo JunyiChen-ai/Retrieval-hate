@@ -439,13 +439,15 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
                r["test"]["pooled_ap"], r["test"]["pooled_roc"], r["test"]["within_roc"]))
     pb = int(cfg["primary_budget"])
     primary = res["fixed"][str(pb)]
-    # P3: VLM-silent group of the old fine verdicts (fine rate of level >= 2 below .1)
-    old = vlm_verdict.load_verdicts(corpus, k=30, tag="qwen")
-    silent = [v for v in ids["test"] if v in old and np.mean(old[v] >= 2) < 0.1]
-    st = at_budget(test_runs, pb)
-    res["silent_group"] = {"n": len(silent), "n_pos": int(sum(labels[v] for v in silent)),
-                           "ap_primary": group_ap(st, gt["test"], silent),
-                           "ap_prior_only": group_ap(at_budget(test_runs, 0), gt["test"], silent)}
+    # P3: VLM-silent group of the old fine verdicts (fine rate of level >= 2 below .1). DeHate has no old verdicts
+    # (experiments/20260926_dehate_external/README.md section 2), so the group is not formed there.
+    if corpus in vlm_verdict.CORPUS_DIR:
+        old = vlm_verdict.load_verdicts(corpus, k=30, tag="qwen")
+        silent = [v for v in ids["test"] if v in old and np.mean(old[v] >= 2) < 0.1]
+        st = at_budget(test_runs, pb)
+        res["silent_group"] = {"n": len(silent), "n_pos": int(sum(labels[v] for v in silent)),
+                               "ap_primary": group_ap(st, gt["test"], silent),
+                               "ap_prior_only": group_ap(at_budget(test_runs, 0), gt["test"], silent)}
     res["test_runs"] = {v: {"eig": r["eig"], "voi": r.get("voi", []), "asked": r["asked"], "p_G": r["p_G"]}
                         for v, r in test_runs.items()}
     with open(os.path.join(out_dir, "metrics.json"), "w") as fh:
