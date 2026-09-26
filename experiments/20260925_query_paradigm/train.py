@@ -218,7 +218,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
         model = PriorNet(cfg).to(device)
     if cfg["node_prior"]:
         assert cfg["backbone"] == "macil" and cfg["prior"] == "chain" and cfg["chain_form"] == "zero_inflated"
-        assert cfg["objective"] == "tree" and cfg["answer_model"] != "refit" and int(cfg["query_level"]) == 0
+        assert cfg["objective"] == "tree" and cfg["answer_model"] != "refit"
     use_chain = cfg["prior"] == "chain"
     chain = None
     if use_chain:
