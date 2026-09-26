@@ -105,7 +105,15 @@ Features: CLIP, ViT, VGGish and BERT have 6689/6689 videos; I3D has 6688 (sectio
 
 Query-tree nodes and VLM answers (`data/vlm_tree/DeHate/PROVENANCE.md`):
 - Manifest: 6688 videos and 268,990 queryable nodes, 4.2 times HateMM's 63,963.
-- Answers: shards 0/3, 1/3 and 2/3 on uoa-lab2, uoa-lab1 and uoa-lab3, started 2026-09-26 at 14:45.
+- Answers: shards 0/3, 1/3 and 2/3 on uoa-lab2, uoa-lab1 and uoa-lab3, from 14:45 to 15:58 on 2026-09-26.
+  - There are 268,990 answers and 0 are unparsed.
+  - A duplicate launch of shard 0/3 on uoa-lab2 was stopped at 14:43, before it wrote any answer.
+
+Query-tree searches (`launch/run_search.sh dehate <seed> runs/20260926_dehate_external/qtl`), started 2026-09-26 at
+16:00:
+- seed 234 on uoa-lab2, seed 2025 on uoa-lab1, seed 3407 on uoa-lab3;
+- logs: `runs/20260926_dehate_external/qtl/launch_dehate_seed<seed>_<host>.out`;
+- MultiHateLoc (`launch/baseline.sh multihateloc`) runs next to seed 234 on uoa-lab2 from 15:58.
 
 ## 5. Results
 
