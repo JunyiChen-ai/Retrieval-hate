@@ -29,12 +29,14 @@ def _flat(p0, llr, cnt):
 
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
-              record_voi=False, allowed=None, answer_ll=None, make_asker=None):
+              record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
     (None = the cached answers, the method). make_asker (diagnostic, answer_model_ceiling.py): function (video index,
-    video tree) -> an Asker with per-node outcome tables (None = policy.Asker under `am`, the method)."""
+    video tree) -> an Asker with per-node outcome tables (None = policy.Asker under `am`, the method). no_nested
+    (diagnostic, asking_check.py): after each question, the nodes that contain or lie inside it can no longer be
+    asked."""
     Ts = [store.T[v] for v in vids]
     Tm = max(Ts)
     S = torch.zeros(len(vids), Tm, dtype=torch.float64)
@@ -111,6 +113,10 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
         for b, pos, node, w, e in chosen:
             rem[b][pos] = False
             tr = vts[b].tr
+            if no_nested:
+                qa, qb = tr["a"][askers[b].q], tr["b"][askers[b].q]
+                a_, b_ = tr["a"][node], tr["b"][node]
+                rem[b] &= ~(((a_ <= qa) & (qb <= b_)) | ((qa <= a_) & (b_ <= qb)))
             if answer_ll is None:
                 o = answers[vids[b]].get((int(tr["a"][node]), int(tr["b"][node])))
                 ll = None if o is None else askers[b].loglik(node, o)
