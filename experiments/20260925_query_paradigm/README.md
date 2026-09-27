@@ -515,6 +515,10 @@ full_rerun 六个 (语料, seed) 与搜索最优 trial 数值完全相同。
 
 独立 agent 检索 32 次：没有 hateful video 方法在时间轴树或多尺度区间上放学习的先验势，"学习的树节点势 + VLM 提问答案"在任何任务上都没找到。论文须对照：神经 CRF 的 span 势（Stern 2017、Kitaev–Klein 2018、Zhang 2020）、深度结构模型 / CRF-as-RNN、C-HMCNN、分层池化 SED（HAMIL）、Tree-LSTM、2D-TAN / MS-2D-TAN、VADTree、Holmes-VAU。非阻断记录：(1) 根节点的 φ 在零膨胀下被归一化抵消，实际起作用的是非根内部节点；(2) φ 只由正例视频的答案项训练，且与视频头共用注意力 logit，"去掉节点势"的消融同时去掉了这一路对注意力的训练，结论按此表述；(3) 管线里有两份转录：VLM 问题用词级转录，骨干的 BERT 行仍是原转录（与 baseline 相同），论文须写明。
 
-### 15.4 搜索与输出
+### 15.4 代码审查（规则 6，`REVIEW_RULE6_R4.md`，PASS，无 must-fix）
+
+独立 agent 核对：带 φ 的精确推断对穷举误差 2.7e-15；默认配置（`answer_source "k30"`、`node_prior false`）与第 3 版代码在同一输入上逐位一致；φ 进入训练损失（有答案与无答案两次上行传递）、validation 选 checkpoint、test 后验与 EIG；`answer_source` 只有一个加载点；词时间偏移与中点规则正确；`manifest_words.jsonl` 与 `manifest.jsonl` 视频、节点、帧完全一致。记录项：(1) `node_prior true` 多建一个线性层，改变随机数流，"去掉节点势"的消融差值含随机流噪声；(2) `c_label`、`e_independent`、`g_coupled` 三个消融同时关掉节点势（节点势需要答案似然与零膨胀链），是复合消融，节点势的单独贡献看 `no_node`；(3) HateMM val 的 non_hate_video_559、585 没有音频，两版都无转录。test 节点转录两次构建相同：HateMM 直接核对；HCS、DeHate 的 test 词来自同一批分片记录（合并时按视频取第一条，续跑跳过已完成视频），构建方式相同。
+
+### 15.5 搜索与输出
 
 搜索空间、trial 数规则、目标（test 固定 8 次的 (AP + ROC) / 2）、validation 选 checkpoint 都同第 4 节与第 9 节（lr、λ_cma、dropout、lr_answer）。固定设置 `{"answer_source": "words", "node_prior": true}` 由 `search.py --extra-config` 传入。输出 `runs/20260927_query_paradigm_r4/<corpus>/seed<seed>/`。
