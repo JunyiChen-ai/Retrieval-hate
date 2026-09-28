@@ -31,6 +31,8 @@
 
 ## 运行任务与监控
 
+截至 2026-09-29 09:50 NZDT：第 5 版软答案搜索 HateMM 三 seed 在 uoa-lab1（`runs/20260929_query_paradigm_r5/hatemm/`，HCS 三 seed 接在后面）；DeHate 软答案抽取 shard 0 在 uoa-lab3（2400/3344），shard 1 待接；uoa-lab3 CPU 上停止规则 + 复制似然检查（第 4 版 trial）。本机不跑。
+
 截至 2026-09-28 08:40：DeHate 第 4 版搜索 seed 234（uoa-lab2）、seed 2025（uoa-lab1）进行中，seed 3407 完成；DeHate 对照（uoa-lab3）进行中；输出 `runs/20260927_query_paradigm_r4/dehate/`、`diag/dehate/`。此前：截至 2026-09-27 02:10 无运行中任务。DeHate 全部结果已回传本机（`runs/20260926_dehate_external/`）。三台机器 GPU 空闲，其中 uoa-lab3 有其它项目进程占 5G 显存。三台机器 GPU 空闲（uoa-lab3 有 9 月 8 日起的其它项目进程占 5G 显存）。
 
 ## 下一步
