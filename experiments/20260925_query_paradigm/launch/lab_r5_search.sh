@@ -8,7 +8,7 @@
 # trial on a shared GPU cannot cut the search to 5 trials.
 set -uo pipefail
 cd "$HOME/Retrieval-hate"
-OUT=runs/20260929_query_paradigm_r5
+OUT="${OUT_ROOT:-runs/20260929_query_paradigm_r5}"   # OUT_ROOT=<dir> for the ablation searches (soft_levels 4 / 16)
 extra="$1"; shift
 hostname; echo $$ > "$OUT/launch_search_$(hostname).pid"
 for c in "$@"; do
