@@ -9,6 +9,8 @@ equals the target budget (policy.calibrate), then applied to test:
   stab1  1 - Spearman(per-second scores after the last call, after the call before): stop when the output stopped
          moving (needs no calibrated posterior; README 17.4 "output-stability stop")
   stab2  the larger of the last two such changes (two consecutive stable steps)
+  variants of README 17.4: voi_norm (VOI / T), <rule>_f4 (floor of 4 calls), <rule>_strat (a threshold per half of
+         the videos split at the median prior P(G = 1), each half calibrated to the mean budget)
 Each trial is re-run on validation and test with 32 calls (record_voi), optionally with the copy likelihood of
 README 17.2 (--copy-pi neg|<x>). Reported per rule and mean budget {4, 8, 12, 16}: test AP / ROC / within, mean calls
 (positive / negative videos), against the fixed budget with the same mean calls.
@@ -55,14 +57,39 @@ def instability(scores):
     return out
 
 
-def rule_values(run):
-    """Per rule, the value read before call k+1 (k = 0..n-1) so that policy.stop_calls applies unchanged."""
+FLOOR = 4
+
+
+def rule_values(run, T):
+    """Per rule, the value read before call k+1 (k = 0..n-1) so that policy.stop_calls applies unchanged.
+    README 17.4 variants: voi_norm = VOI / T (length-free: the expected squared change per second, variant (b));
+    <rule>_f4 = the rule with a floor of FLOOR calls (variant (c)); the prior-stratified thresholds (variant (a))
+    are handled in main (a threshold per half of the videos by the prior P(G = 1))."""
     n = len(run["eig"])
     inst = instability(run["scores"])                 # length n + 1: inst[k] = change made by call k
     vals = {"eig": list(run["eig"]), "voi": list(run["voi"]),
+            "voi_norm": [v / float(T) for v in run["voi"]],
             "stab1": [inst[k] for k in range(n)],
             "stab2": [max(inst[k], inst[k - 1] if k >= 1 else np.inf) for k in range(n)]}
+    for r in ("eig", "voi", "stab1"):
+        vals[r + "_f4"] = [np.inf if k < FLOOR else vals[r][k] for k in range(n)]
     return vals
+
+
+RULES = ("eig", "voi", "voi_norm", "stab1", "stab2", "eig_f4", "voi_f4", "stab1_f4")
+STRAT = ("eig", "voi", "stab1")                        # variant (a): thresholds per prior half
+
+
+def calls_strat(vals, rule, pg0, B):
+    """Variant (a): the videos are split at the median of their prior P(G = 1) (no labels); the rule's threshold is
+    calibrated separately in each half on validation so that each half's mean number of calls is B; returns the
+    two thresholds and, for a split dict, the calls per video."""
+    med = float(np.median([pg0["val"][v] for v in pg0["val"]]))
+    cs = {}
+    for half in (0, 1):
+        vv = [v for v in vals["val"] if (pg0["val"][v] >= med) == bool(half)]
+        cs[half] = policy.calibrate([vals["val"][v][rule] for v in vv], float(B))[0] if vv else 0.0
+    return med, cs
 
 
 def main():
@@ -104,7 +131,8 @@ def main():
             for i in range(0, len(order), k):
                 runs[sp].update(cpolicy.run_batch(model, store, order[i:i + k], am, chain, answers, cats, 32,
                                                   a.device, record_voi=True, copy_pi=fn))
-        vals = {sp: {v: rule_values(r) for v, r in runs[sp].items()} for sp in runs}
+        vals = {sp: {v: rule_values(r, store.T[v]) for v, r in runs[sp].items()} for sp in runs}
+        pg0 = {sp: {v: float(r["p_G"][0]) for v, r in runs[sp].items()} for sp in runs}
         od = os.path.join(OUT, a.corpus, tag + a.out_suffix)
         os.makedirs(od, exist_ok=True)
 
@@ -123,13 +151,22 @@ def main():
             x = rt["fixed"][str(B)]
             print("== %s fixed %2d | calls %5.2f | %.4f / %.4f / %.4f" % (tag, B, x["test_mean_calls"], x["test"]["pooled_ap"],
                                                                         x["test"]["pooled_roc"], x["test"]["within_roc"]), flush=True)
-        for rule in ("eig", "voi", "stab1", "stab2"):
+        for rule in RULES + tuple(r + "_strat" for r in STRAT):
             rt["rules"][rule] = {}
             for B in BUDGETS:
-                c, val_mean = policy.calibrate([vals["val"][v][rule] for v in vals["val"]], float(B))
-                calls = {v: policy.stop_calls(vals["test"][v][rule], c) for v in vals["test"]}
+                if rule.endswith("_strat"):
+                    base = rule[:-6]
+                    med, cs = calls_strat(vals, base, pg0, B)
+                    thr = (lambda sp, v: cs[int(pg0[sp][v] >= med)])
+                    calls = {v: policy.stop_calls(vals["test"][v][base], thr("test", v)) for v in vals["test"]}
+                    calls_v = {v: policy.stop_calls(vals["val"][v][base], thr("val", v)) for v in vals["val"]}
+                    c, val_mean = float(cs[1]), float(np.mean(list(calls_v.values())))
+                else:
+                    c, val_mean = policy.calibrate([vals["val"][v][rule] for v in vals["val"]], float(B))
+                    calls = {v: policy.stop_calls(vals["test"][v][rule], c) for v in vals["test"]}
+                    calls_v = {v: policy.stop_calls(vals["val"][v][rule], c) for v in vals["val"]}
                 st = {v: runs["test"][v]["scores"][calls[v]] for v in calls}
-                sv = {v: runs["val"][v]["scores"][policy.stop_calls(vals["val"][v][rule], c)] for v in vals["val"]}
+                sv = {v: runs["val"][v]["scores"][calls_v[v]] for v in vals["val"]}
                 cv = np.array(list(calls.values()))
                 rt["rules"][rule][str(B)] = {
                     "c": float(c), "val_mean_calls": val_mean, "val": hc.frame_metrics(sv, gt["val"], hate_val),
