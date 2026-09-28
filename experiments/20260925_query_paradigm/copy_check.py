@@ -2,6 +2,7 @@
 trains or selects): copy-type persistent noise for nested questions (cpolicy.run_batch copy_pi). Each revision-4
 trial (network, chain, node potentials, anchored answer model unchanged) is re-run on test with
   tree        copy_pi None (the method; must reproduce the trial's summary)
+  copyeig_<x>/copylik_<x>   as copy_<x> but the mixture enters only the EIG / only the likelihood (README 17.2 variants)
   copy_neg    pi per child-length bucket estimated WITHOUT labels on the negative training videos: every node of a
               negative video is state 0, so P(o_C = o_P) = pi + (1 - pi) sum_o P(o | 0)^2 over parent-child pairs,
               pi = (r - q) / (1 - q) with r the observed equality rate and q from the trial's answer model
@@ -81,6 +82,7 @@ def main():
     ap.add_argument("--variants", default="tree,copy_neg,copy_0.25,copy_0.5,copy_0.75")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--threads", type=int, default=8)
+    ap.add_argument("--out-suffix", default="", help="written to <corpus><suffix>.json (variant runs)")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
@@ -105,12 +107,14 @@ def main():
               "method": {str(B): {m: summ["fixed"][str(B)]["test"][m] for m in ("pooled_ap", "pooled_roc", "within_roc")}
                          for B in BUDGETS}}
         for variant in a.variants.split(","):
+            head, _, val = variant.partition("_")
+            mode = {"copy": "both", "copyeig": "eig", "copylik": "lik"}.get(head, "both")
             if variant == "tree":
                 fn = None
-            elif variant == "copy_neg":
+            elif val == "neg":
                 fn = (lambda L, _pi=pi_neg: float(_pi[bucket_of(L)]))
             else:
-                x = float(variant.split("_")[1])
+                x = float(val)
                 fn = (lambda L, _x=x: _x)
             order = sorted(vids, key=lambda v: store.T[v])
             k = int(cfg["eval_chunk"])
@@ -118,7 +122,7 @@ def main():
             for i in range(0, len(order), k):
                 chunk = order[i:i + k]
                 runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cats, max(BUDGETS), a.device,
-                                              copy_pi=fn))
+                                              copy_pi=fn, copy_mode=mode))
             od = os.path.join(OUT, a.corpus, variant, tag)
             os.makedirs(od, exist_ok=True)
             rr = {}
@@ -140,7 +144,7 @@ def main():
                 print("  B=%-2s %.4f / %.4f / %.4f | calls %.2f" % (B, x["pooled_ap"], x["pooled_roc"], x["within_roc"],
                                                                    x["mean_calls"]), flush=True)
             res["trials"][trial] = rt
-            json.dump(res, open(os.path.join(OUT, "%s.json" % a.corpus), "w"), indent=1, default=float)
+            json.dump(res, open(os.path.join(OUT, "%s%s.json" % (a.corpus, a.out_suffix)), "w"), indent=1, default=float)
 
 
 if __name__ == "__main__":

@@ -45,7 +45,8 @@ def _nested_source(tr, node, asked_b, o_len):
 
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
-              record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None):
+              record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
+              copy_mode="both"):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -56,7 +57,12 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     None = the method; else a function (child length in seconds) -> pi in [0, 1): the answer of a node nested with
     an earlier-asked answered node m (nearest in scale) is, with probability pi, a copy of m's answer and otherwise
     drawn from the answer model: P(o | s, o_m) = pi 1[o = o_m] + (1 - pi) P(o | s). The mixture enters both the EIG
-    of the candidates and the likelihood of the answer read; the tree inference is unchanged (per-node factor)."""
+    of the candidates and the likelihood of the answer read; the tree inference is unchanged (per-node factor).
+    copy_mode (README section 17.2 variants): "both" = the mixture enters the EIG and the likelihood; "eig" = the
+    EIG only (the answer read is scored by the plain answer model); "lik" = the likelihood only."""
+    assert copy_mode in ("both", "eig", "lik")
+    copy_eig = copy_pi is not None and copy_mode in ("both", "eig")
+    copy_lik = copy_pi is not None and copy_mode in ("both", "lik")
     Ts = [store.T[v] for v in vids]
     Tm = max(Ts)
     S = torch.zeros(len(vids), Tm, dtype=torch.float64)
@@ -103,7 +109,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             nodes = asker.q[cand]
             mm = m[off + nodes]
             w = np.stack([np.full(len(cand), 1.0 - pG[b]), pG[b] * (1.0 - mm), pG[b] * mm], axis=1)
-            if order == "eig" and copy_pi is not None and asked_o[b]:
+            if order == "eig" and copy_eig and asked_o[b]:
                 po = asker.po_s[cand].copy()                              # n, 3, O
                 tr_b = vts[b].tr
                 for i, n in enumerate(nodes):
@@ -156,7 +162,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 ll = None if o is None else askers[b].loglik(node, o)
                 if o is not None:
                     o_idx = int(qtree.answer_index(np.asarray(o)[askers[b].cats]))
-                    if copy_pi is not None:
+                    if copy_lik:
                         src = _nested_source(tr, node, asked_o[b], None)
                         if src is not None:              # pi bucketed by the shorter of the two (the child)
                             pi = float(copy_pi(float(min(tr["b"][node] - tr["a"][node],
