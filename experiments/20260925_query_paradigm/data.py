@@ -80,12 +80,67 @@ class Store:
         return np.ascontiguousarray(self.W[v] @ x, dtype=np.float32)
 
 
-ANSWER_SOURCES = {"k30": "answers_qwen7b_mod5", "words": "answers_words_qwen7b_mod5"}
+ANSWER_SOURCES = {"k30": "answers_qwen7b_mod5", "words": "answers_words_qwen7b_mod5",
+                  # revision 5 step 1 (README section 17.1): soft first-token P(Yes) under the per-dataset
+                  # definition, one category, SOFT_LEVELS quantile levels (extract_tree_soft.py)
+                  "soft_both": "soft_both_p1", "soft_frames": "soft_frames_p1", "soft_text": "soft_text_p1"}
+SOFT_LEVELS = 8
+SOFT_EDGES = {}                                # (corpus, source) -> the level edges used (for logging)
+
+
+def is_soft(source):
+    return source.startswith("soft_")
+
+
+def configure_source(source, soft_levels=SOFT_LEVELS):
+    """Sets the answer shape the rest of the code reads from qtree (N_CAT categories x N_LEV levels): the decoded
+    answers are 5 categories x 4 levels; a soft source is 1 category x soft_levels levels. Call before anything
+    that builds an answer model or a TreeBatch."""
+    global SOFT_LEVELS
+    if is_soft(source):
+        SOFT_LEVELS = int(soft_levels)
+        qtree.N_CAT, qtree.N_LEV = 1, int(soft_levels)
+    else:
+        qtree.N_CAT, qtree.N_LEV = 5, 4
+    return qtree.N_CAT, qtree.N_LEV
+
+
+def load_soft_p(corpus, source):
+    """Soft source: video id -> {(a, b): p_yes float or None}, and T; raw values before the level binning."""
+    base = os.path.join(ROOT, "data", "vlm_tree", CORPUS_DIR[corpus])
+    out, T, split = {}, {}, {}
+    for path in sorted(glob.glob(os.path.join(base, ANSWER_SOURCES[source] + "[.]*jsonl"))):
+        for line in open(path):
+            r = json.loads(line)
+            if r["id"] in out:
+                continue
+            out[r["id"]] = {(int(a), int(b)): (None if o is None else float(o[0])) for a, b, o, _raw in r["nodes"]}
+            T[r["id"]] = int(r["T"])
+            split[r["id"]] = r["split"]
+    return out, T, split
+
+
+def soft_edges(p_by_video, split, levels):
+    """Quantile edges of the training-split p values (label-free): level = number of edges <= p, in 0..levels-1."""
+    vals = np.array([p for v, d in p_by_video.items() if split.get(v) == "train" for p in d.values()
+                     if p is not None])
+    assert len(vals) > 0, "no training answers to set the soft levels"
+    return np.quantile(vals, [k / levels for k in range(1, levels)])
 
 
 def load_answers(corpus, source="k30"):
-    """video id -> {(a, b): answer vector (5,) int or None}; from answers_qwen7b_mod5.jsonl (and shards).
-    source "words" (revision 4, README section 14): the same questions with word-timestamp transcripts."""
+    """video id -> {(a, b): answer vector (N_CAT,) int or None}; from answers_qwen7b_mod5.jsonl (and shards).
+    source "words" (revision 4, README section 14): the same questions with word-timestamp transcripts.
+    source "soft_<view>" (revision 5, README section 17.1): p_yes binned into SOFT_LEVELS quantile levels of the
+    training answers, as a single category; configure_source must have been called with the same levels."""
+    if is_soft(source):
+        assert qtree.N_CAT == 1 and qtree.N_LEV == SOFT_LEVELS, "call data.configure_source(source, levels) first"
+        P, T, split = load_soft_p(corpus, source)
+        edges = soft_edges(P, split, SOFT_LEVELS)
+        SOFT_EDGES[(corpus, source)] = edges
+        out = {v: {k: (None if p is None else np.array([int(np.searchsorted(edges, p, side="right"))], dtype=np.int64))
+                   for k, p in d.items()} for v, d in P.items()}
+        return out, T
     base = os.path.join(ROOT, "data", "vlm_tree", CORPUS_DIR[corpus])
     out, T = {}, {}
     for path in sorted(glob.glob(os.path.join(base, ANSWER_SOURCES[source] + "[.]*jsonl"))):

@@ -28,15 +28,35 @@ def _flat(p0, llr, cnt):
     return 1.0 / (1.0 + np.exp(-(lp + llr / np.maximum(cnt, 1))))
 
 
+def _nested_source(tr, node, asked_b, o_len):
+    """The earlier-asked node nested with `node` (containing it or inside it) that has an answer, nearest in scale
+    (revision 5 step 2, README section 17.2); None if there is none."""
+    a_, b_ = tr["a"][node], tr["b"][node]
+    best, best_d = None, None
+    for m, om in asked_b:
+        if om is None:
+            continue
+        ma, mb = tr["a"][m], tr["b"][m]
+        if (ma <= a_ and b_ <= mb) or (a_ <= ma and mb <= b_):
+            d = abs(np.log(b_ - a_) - np.log(mb - ma))
+            if best is None or d < best_d:
+                best, best_d = (m, om), d
+    return best
+
+
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
-              record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False):
+              record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
     (None = the cached answers, the method). make_asker (diagnostic, answer_model_ceiling.py): function (video index,
     video tree) -> an Asker with per-node outcome tables (None = policy.Asker under `am`, the method). no_nested
     (diagnostic, asking_check.py): after each question, the nodes that contain or lie inside it can no longer be
-    asked."""
+    asked. copy_pi (revision 5 step 2, README section 17.2): copy-type persistent noise for nested questions,
+    None = the method; else a function (child length in seconds) -> pi in [0, 1): the answer of a node nested with
+    an earlier-asked answered node m (nearest in scale) is, with probability pi, a copy of m's answer and otherwise
+    drawn from the answer model: P(o | s, o_m) = pi 1[o = o_m] + (1 - pi) P(o | s). The mixture enters both the EIG
+    of the candidates and the likelihood of the answer read; the tree inference is unchanged (per-node factor)."""
     Ts = [store.T[v] for v in vids]
     Tm = max(Ts)
     S = torch.zeros(len(vids), Tm, dtype=torch.float64)
@@ -62,6 +82,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
            for b, a in enumerate(askers)]
     llr = [np.zeros(T) for T in Ts]
     cnt = [np.zeros(T) for T in Ts]
+    asked_o = [[] for _ in vids]                 # per video: (node, outcome index or None) of the asked nodes
     p0 = None
     for step in range(max_calls + 1):
         pG, m, p = ctree.marginals(fo, S, G, A3, chain, PHI)
@@ -82,7 +103,18 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             nodes = asker.q[cand]
             mm = m[off + nodes]
             w = np.stack([np.full(len(cand), 1.0 - pG[b]), pG[b] * (1.0 - mm), pG[b] * mm], axis=1)
-            if order == "eig":
+            if order == "eig" and copy_pi is not None and asked_o[b]:
+                po = asker.po_s[cand].copy()                              # n, 3, O
+                tr_b = vts[b].tr
+                for i, n in enumerate(nodes):
+                    src = _nested_source(tr_b, int(n), asked_o[b], None)
+                    if src is not None:
+                        pi = float(copy_pi(float(tr_b["b"][n] - tr_b["a"][n])))
+                        po[i] *= (1.0 - pi)
+                        po[i][:, src[1]] += pi
+                e = qtree.eig(np.log(np.clip(po, 1e-300, None)), w)
+                j = int(np.argmax(e))
+            elif order == "eig":
                 e = asker.eig(cand, w)
                 j = int(np.argmax(e))
             else:
@@ -117,11 +149,22 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 qa, qb = tr["a"][askers[b].q], tr["b"][askers[b].q]
                 a_, b_ = tr["a"][node], tr["b"][node]
                 rem[b] &= ~(((a_ <= qa) & (qb <= b_)) | ((qa <= a_) & (b_ <= qb)))
+            o_idx = None
             if answer_ll is None:
                 o = answers[vids[b]].get((int(tr["a"][node]), int(tr["b"][node])))
                 ll = None if o is None else askers[b].loglik(node, o)
+                if o is not None:
+                    o_idx = int(qtree.answer_index(np.asarray(o)[askers[b].cats]))
+                    if copy_pi is not None:
+                        src = _nested_source(tr, node, asked_o[b], None)
+                        if src is not None:
+                            pi = float(copy_pi(float(tr["b"][node] - tr["a"][node])))
+                            if pi > 0.0:
+                                ll = np.logaddexp(np.log1p(-pi) + ll,
+                                                  np.log(pi) + (0.0 if o_idx == src[1] else -np.inf))
             else:
                 ll = answer_ll(b, node)
+            asked_o[b].append((node, o_idx))
             if ll is not None:
                 A3[fo.offs[b] + node] = torch.as_tensor(ll, dtype=torch.float64, device=device)
                 a_, b_ = int(tr["a"][node]), int(tr["b"][node])

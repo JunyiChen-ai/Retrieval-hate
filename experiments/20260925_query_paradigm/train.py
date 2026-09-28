@@ -80,7 +80,11 @@ DEFAULTS = {
     "text_sources": ["bert"], "chain": "learned", "boundary": "closed",
     "chain_form": "zero_inflated", "backbone": "macil", "query_level": 0,
     "answer_source": "k30", "node_prior": False,
+    "soft_levels": 8,
 }
+# Revision 5 (README section 17.1): answer_source "soft_both" / "soft_frames" / "soft_text" = the first-token P(Yes)
+# under the per-dataset definition (extract_tree_soft.py), binned into soft_levels quantile levels of the training
+# answers as a single category (data.configure_source); categories is then forced to [0].
 # Revision 4 (README section 15): answer_source "words" = the same questions asked with word-timestamp transcripts
 # (README section 14.4; data.load_answers); node_prior true = node potentials of the prior network on every internal
 # tree node (model.PriorNet.node_logits, ctree.up phi).
@@ -164,6 +168,9 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
         log.flush()
 
     say("host %s | code: %s | corpus %s seed %d" % (socket.gethostname(), git_describe(), corpus, seed))
+    n_cat, n_lev = qdata.configure_source(cfg["answer_source"], int(cfg["soft_levels"]))
+    if qdata.is_soft(cfg["answer_source"]):        # revision 5: one category of soft_levels levels
+        cfg["categories"] = [0]
     with open(os.path.join(out_dir, "config.json"), "w") as fh:
         json.dump(cfg, fh, indent=2)
     with open(os.path.join(out_dir, "run.pid"), "w") as fh:
@@ -171,6 +178,10 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     runtime.setup_seed(seed)
     labels, ids, gt, _ = hc.load_fixed_cohort(corpus)
     answers, T_ans = qdata.load_answers(corpus, cfg["answer_source"])
+    if qdata.is_soft(cfg["answer_source"]):
+        say("soft answers %s: %d category x %d levels, train quantile edges %s" % (
+            cfg["answer_source"], n_cat, n_lev,
+            np.round(qdata.SOFT_EDGES[(corpus, cfg["answer_source"])], 4).tolist()))
     all_ids = ids["train"] + ids["val"] + ids["test"]
     missing = [v for v in all_ids if v not in answers]
     assert not missing, "videos without tree answers: %d (%s)" % (len(missing), missing[:5])
