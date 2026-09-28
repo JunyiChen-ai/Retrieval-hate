@@ -14,14 +14,13 @@ hostname; echo $$ > "runs/20260929_query_paradigm_r5/stop_check/run_$(hostname)$
 PY="$HOME/miniconda3/envs/HateVideo/bin/python"
 extra=()
 [ -n "$COPY" ] && extra+=(--copy-pi "$COPY")
-best() {  # corpus -> the three best trial dirs (test-selected, summary.json of the search root)
-  "$PY" - "$R" "$1" <<'PYEOF'
-import json, os, sys
-root, corpus = sys.argv[1], sys.argv[2]
-for seed in (234, 2025, 3407):
-    s = json.load(open(os.path.join(root, corpus, "seed%d" % seed, "study_summary.json")))
-    print(os.path.join(root, corpus, "seed%d" % seed, "trial%d" % s["best"]["number"]))
-PYEOF
+best() {  # corpus -> the three best trial dirs (test-selected; revision 4: study_summary.json of the search root,
+          # which the lab machines do not have, so the numbers of lab_copy_check.sh are used there)
+  case "$1" in
+    hatemm)      echo "$R/hatemm/seed234/trial5 $R/hatemm/seed2025/trial11 $R/hatemm/seed3407/trial4" ;;
+    hateclipseg) echo "$R/hateclipseg/seed234/trial13 $R/hateclipseg/seed2025/trial18 $R/hateclipseg/seed3407/trial16" ;;
+    dehate)      echo "$R/dehate/seed234/trial16 $R/dehate/seed2025/trial19 $R/dehate/seed3407/trial2" ;;
+  esac
 }
 for c in hatemm hateclipseg dehate; do
   "$PY" -u experiments/20260925_query_paradigm/stop_check.py --corpus "$c" --device "$DEV" --out-suffix "$SUFFIX" "${extra[@]}" \
