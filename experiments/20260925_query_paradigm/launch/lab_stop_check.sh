@@ -14,15 +14,23 @@ hostname; echo $$ > "runs/20260929_query_paradigm_r5/stop_check/run_$(hostname)$
 PY="$HOME/miniconda3/envs/HateVideo/bin/python"
 extra=()
 [ -n "$COPY" ] && extra+=(--copy-pi "$COPY")
-best() {  # corpus -> the three best trial dirs (test-selected; revision 4: study_summary.json of the search root,
-          # which the lab machines do not have, so the numbers of lab_copy_check.sh are used there)
-  case "$1" in
+best() {  # corpus -> the three best trial dirs: study_summary.json of the search root when present (revision 5 on the
+          # machine that ran the search), else the revision-4 numbers (lab machines hold the trial dirs only)
+  local c="$1" out=""
+  for seed in 234 2025 3407; do
+    if [ -f "$R/$c/seed$seed/study_summary.json" ]; then
+      out="$out $R/$c/seed$seed/trial$("$PY" -c "import json,sys; print(json.load(open(sys.argv[1]))['best']['number'])" "$R/$c/seed$seed/study_summary.json")"
+    fi
+  done
+  if [ -n "$out" ]; then echo "$out"; return; fi
+  case "$c" in
     hatemm)      echo "$R/hatemm/seed234/trial5 $R/hatemm/seed2025/trial11 $R/hatemm/seed3407/trial4" ;;
     hateclipseg) echo "$R/hateclipseg/seed234/trial13 $R/hateclipseg/seed2025/trial18 $R/hateclipseg/seed3407/trial16" ;;
     dehate)      echo "$R/dehate/seed234/trial16 $R/dehate/seed2025/trial19 $R/dehate/seed3407/trial2" ;;
   esac
 }
-for c in hatemm hateclipseg dehate; do
+CORPORA="${CORPORA:-hatemm hateclipseg dehate}"
+for c in $CORPORA; do
   "$PY" -u experiments/20260925_query_paradigm/stop_check.py --corpus "$c" --device "$DEV" --out-suffix "$SUFFIX" "${extra[@]}" \
     --trials $(best "$c")
 done
