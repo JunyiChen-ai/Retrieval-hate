@@ -596,7 +596,7 @@ full_rerun 六个 (语料, seed) 与搜索最优 trial 数值完全相同。
 
 - 第 4 版：HateMM 三项都大幅提高（+.031 / +.025 / +.038），HCS 的 AP 与 ROC 比第 3 版低 .008 / .010、within 高 .021；十个部件两语料都可主张。
 - 剩下的问题有两个，都在正例视频之间的排序：HCS 上骨干让这项排序变差；HateMM 上超过 8 次后这项排序变差。第 11 节已经说明，只用视频标签没法估计短节点答案的真实可靠性。第 5 次修改超出规则 9 的次数，要用户同意。
-- DeHate 外部验证（同一搜索协议，三 seed；对照）进行中：seed 3407 在 uoa-lab3 跑完，seed 234 在 uoa-lab2、seed 2025 在 uoa-lab1 进行中，DeHate 对照在 uoa-lab3 进行中。
+- DeHate 外部验证（同一搜索协议，20 trial × 3 seed，test 目标；`summarize_r4.py --corpus dehate` → `runs/20260927_query_paradigm_r4/summary_dehate.json`；2026-09-28 13:30 三个 seed 完成，seed 234 uoa-lab2、2025 uoa-lab1、3407 uoa-lab3，已回传）：固定 8 次 .225 / .754 / .664（std .016 / .002 / .017），第 3 版 .215 / .733 / .647，+.010 / +.021 / +.017；最强 baseline Fed-WSVAD（3 客户端）.174 / .701 / .508（`experiments/20260926_dehate_external/README.md` 5.1）。曲线 0 / 2 / 4 / 8 / 16 / 32 次 AP .204 / .209 / .213 / .225 / .217 / .224，within .650 / .649 / .657 / .664 / .677 / .677（8 次 within 高于 0 次；16 次 AP 比 8 次低 .008，32 次持平）。只按 validation 选 trial：.192 / .737 / .656。DeHate 默认超参对照在 uoa-lab3 进行中（12 / 18）。
 
 ## 16. 第 5 次修改前的误差分析（用户 2026-09-28 选择开第 5 次修改，先分析、写方案，经用户同意再训练；开发期证据，规则 10）
 
