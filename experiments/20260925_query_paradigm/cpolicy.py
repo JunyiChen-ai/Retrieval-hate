@@ -108,8 +108,9 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 tr_b = vts[b].tr
                 for i, n in enumerate(nodes):
                     src = _nested_source(tr_b, int(n), asked_o[b], None)
-                    if src is not None:
-                        pi = float(copy_pi(float(tr_b["b"][n] - tr_b["a"][n])))
+                    if src is not None:                  # pi bucketed by the shorter of the two (the child)
+                        pi = float(copy_pi(float(min(tr_b["b"][n] - tr_b["a"][n],
+                                                     tr_b["b"][src[0]] - tr_b["a"][src[0]]))))
                         po[i] *= (1.0 - pi)
                         po[i][:, src[1]] += pi
                 e = qtree.eig(np.log(np.clip(po, 1e-300, None)), w)
@@ -157,8 +158,9 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                     o_idx = int(qtree.answer_index(np.asarray(o)[askers[b].cats]))
                     if copy_pi is not None:
                         src = _nested_source(tr, node, asked_o[b], None)
-                        if src is not None:
-                            pi = float(copy_pi(float(tr["b"][node] - tr["a"][node])))
+                        if src is not None:              # pi bucketed by the shorter of the two (the child)
+                            pi = float(copy_pi(float(min(tr["b"][node] - tr["a"][node],
+                                                         tr["b"][src[0]] - tr["a"][src[0]]))))
                             if pi > 0.0:
                                 ll = np.logaddexp(np.log1p(-pi) + ll,
                                                   np.log(pi) + (0.0 if o_idx == src[1] else -np.inf))

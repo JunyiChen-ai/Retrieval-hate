@@ -84,7 +84,9 @@ def main():
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
-    answers, T = qdata.load_answers(a.corpus, "words")
+    cfg0 = json.load(open(os.path.join(a.trials[0], "config.json")))
+    qdata.configure_source(cfg0.get("answer_source", "k30"), int(cfg0.get("soft_levels", 8)))
+    answers, T = qdata.load_answers(a.corpus, cfg0.get("answer_source", "k30"))
     vids = list(ids["test"])
     os.makedirs(OUT, exist_ok=True)
     res = {"corpus": a.corpus, "buckets": [list(b) for b in BUCKETS], "trials": {}}
