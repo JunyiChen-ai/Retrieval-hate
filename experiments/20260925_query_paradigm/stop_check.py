@@ -57,13 +57,10 @@ def instability(scores):
     return out
 
 
-FLOOR = 4
-
-
 def rule_values(run, T):
     """Per rule, the value read before call k+1 (k = 0..n-1) so that policy.stop_calls applies unchanged.
     README 17.4 variants: voi_norm = VOI / T (length-free: the expected squared change per second, variant (b));
-    <rule>_f4 = the rule with a floor of FLOOR calls (variant (c)); the prior-stratified thresholds (variant (a))
+    <rule>_f<k> = the rule with a floor of k calls, k in FLOORS (variant (c)); the prior-stratified thresholds (variant (a))
     are handled in main (a threshold per half of the videos by the prior P(G = 1))."""
     n = len(run["eig"])
     inst = instability(run["scores"])                 # length n + 1: inst[k] = change made by call k
@@ -72,11 +69,13 @@ def rule_values(run, T):
             "stab1": [inst[k] for k in range(n)],
             "stab2": [max(inst[k], inst[k - 1] if k >= 1 else np.inf) for k in range(n)]}
     for r in ("eig", "voi", "stab1"):
-        vals[r + "_f4"] = [np.inf if k < FLOOR else vals[r][k] for k in range(n)]
+        for f in FLOORS:
+            vals["%s_f%d" % (r, f)] = [np.inf if k < f else vals[r][k] for k in range(n)]
     return vals
 
 
-RULES = ("eig", "voi", "voi_norm", "stab1", "stab2", "eig_f4", "voi_f4", "stab1_f4")
+FLOORS = (2, 4, 6)                                     # floor sensitivity (README 17.4 variant (c))
+RULES = ("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS)
 STRAT = ("eig", "voi", "stab1")                        # variant (a): thresholds per prior half
 
 
