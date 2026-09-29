@@ -39,7 +39,7 @@ def _logit(p):
     return np.log(p) - np.log1p(-p)
 
 
-def offline_values(run, T):
+def offline_values(run, T, F=None):
     """All stop_check rules plus offline-only ones (values read before call k+1, k = 0..n-1):
       dlogit  mean over seconds of |logit p_t[k] - logit p_t[k-1]| (the change made by the last call, on the ranking
               scale; +inf before the first call)
@@ -47,7 +47,12 @@ def offline_values(run, T):
       dlogit2 the larger of the last two dlogit values
       lG      -logit P(G = 1): ask while the video is not yet confidently negative on the log-odds scale (positives:
               value negative, stop at once)
-      aG      |logit P(G = 1)| below c means undecided: ask while |logit P(G)| <= c  (implemented as -|logit|)"""
+      aG      |logit P(G = 1)| below c means undecided: ask while |logit P(G)| <= c  (implemented as -|logit|)
+      dP      mean over seconds of |p_t[k] - p_t[k-1]| (probability scale); dP2 the larger of the last two; dPsum the sum
+      dF      mean over seconds of |F(p_t[k]) - F(p_t[k-1])|, F = the posterior-weighted CDF of the per-second scores of
+              the validation pool after 8 calls (weight p_t: where the model expects hate seconds to sit, no labels):
+              how far the last answer moved this video's seconds through the pool's expected-positive score range,
+              the change that the pooled ranking metrics see; dF2 the larger of the last two"""
     vals = rule_values(run, T)
     n = len(run["eig"])
     lp = [_logit(run["scores"][k]) for k in range(n + 1)]
@@ -56,9 +61,30 @@ def offline_values(run, T):
     dg = [np.inf] + [float(abs(lg[k] - lg[k - 1])) for k in range(1, n + 1)]
     vals["dlogit"] = d[:n]
     vals["dlogit2"] = [max(d[k], d[k - 1] if k >= 1 else np.inf) for k in range(n)]
+    vals["dlogit3"] = [float(np.mean(d[max(1, k - 2):k + 1])) if k >= 1 else np.inf for k in range(n)]
+    vals["dlmax"] = ([np.inf] + [float(np.max(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)])[:n]
+    vals["dlsum"] = ([np.inf] + [float(np.sum(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)])[:n]
     vals["dG"] = dg[:n]
+    vals["dG2"] = [max(dg[k], dg[k - 1] if k >= 1 else np.inf) for k in range(n)]
     vals["lG"] = [float(-lg[k]) for k in range(n)]
     vals["aG"] = [float(-abs(lg[k])) for k in range(n)]
+    pr = [np.asarray(run["scores"][k], dtype=np.float64) for k in range(n + 1)]
+    dp = [np.inf] + [float(np.mean(np.abs(pr[k] - pr[k - 1]))) for k in range(1, n + 1)]
+    vals["dP"] = dp[:n]
+    vals["dP2"] = [max(dp[k], dp[k - 1] if k >= 1 else np.inf) for k in range(n)]
+    vals["dPsum"] = ([np.inf] + [float(np.sum(np.abs(pr[k] - pr[k - 1]))) for k in range(1, n + 1)])[:n]
+    if F is not None:
+        fr = [F(p) for p in pr]
+        df = [np.inf] + [float(np.mean(np.abs(fr[k] - fr[k - 1]))) for k in range(1, n + 1)]
+        vals["dF"] = df[:n]
+        vals["dF2"] = [max(df[k], df[k - 1] if k >= 1 else np.inf) for k in range(n)]
+        vals["dFsum"] = ([np.inf] + [float(np.sum(np.abs(fr[k] - fr[k - 1]))) for k in range(1, n + 1)])[:n]
+    # composites: an undecided video (H(P(G)) >= u bits, u = .5: P(G) in [.11, .89]; u = .2: [.03, .97]) keeps asking
+    # whatever the last change was (the SPRT decision band); otherwise the last-change rule decides
+    hG = vals["hG"]
+    for u, name in ((0.5, "u50"), (0.2, "u20")):
+        for base in ("dlogit", "dlogit2", "dlogit3"):
+            vals["%s_%s" % (base, name)] = [np.inf if hG[k] >= u else vals[base][k] for k in range(n)]
     return vals
 
 
@@ -76,7 +102,9 @@ def main():
     ap.add_argument("--corpus", required=True)
     ap.add_argument("--dumps", nargs="+", required=True, help="directories holding runs.pkl (one per trial)")
     ap.add_argument("--what", nargs="+", default=["calib", "grid", "rules", "decomp"])
-    ap.add_argument("--rules", nargs="*", default=["eig", "stab1", "hG", "hT", "hmax", "dlogit", "dlogit2", "dG", "lG", "aG"])
+    ap.add_argument("--rules", nargs="*", default=["eig", "stab1", "hG", "dlogit", "dlogit2", "dlogit3", "dlmax", "dlsum", "dG", "dG2",
+                                                   "dP", "dP2", "dPsum", "dF", "dF2", "dFsum",
+                                                   "dlogit_u50", "dlogit_u20", "dlogit2_u50", "dlogit2_u20", "dlogit3_u50", "dlogit3_u20"])
     ap.add_argument("--budgets", nargs="*", type=int, default=[4, 8, 12, 16])
     ap.add_argument("--decomp-rule", default="hG")
     ap.add_argument("--decomp-budget", type=int, default=8)
@@ -143,7 +171,13 @@ def main():
                     print("grid pos %2d neg %2d | calls %5.2f | %s" % (k1, k2, mean_calls, fmt(m)))
 
         if "rules" in a.what or "decomp" in a.what:
-            vals = {sp: {v: offline_values(runs[sp][v], Ts[v]) for v in runs[sp]} for sp in runs}
+            # reference CDF for dF: validation pool after 8 calls, seconds weighted by their posterior p_t
+            xs = np.concatenate([np.asarray(runs["val"][v]["scores"][min(8, len(runs["val"][v]["eig"]))]) for v in runs["val"]])
+            o = np.argsort(xs)
+            xs_s, w_c = xs[o], np.cumsum(xs[o])
+            w_c = w_c / w_c[-1]
+            F = (lambda p, _x=xs_s, _w=w_c: _w[np.clip(np.searchsorted(_x, p, side="right") - 1, 0, len(_w) - 1)])
+            vals = {sp: {v: offline_values(runs[sp][v], Ts[v], F) for v in runs[sp]} for sp in runs}
             rt["rules"] = {}
             rules = a.rules if "rules" in a.what else [a.decomp_rule]
             for rule in rules:
