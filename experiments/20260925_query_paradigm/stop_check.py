@@ -156,7 +156,12 @@ QMIX = {"qmix": ("dlogit", "stab1"), "qmix2": ("dlogit2", "stab2"), "qmixG": ("d
         "qmixDN": ("dlogit2", "hGn"), "qmixSGn": ("dlsum", "hGn"),
         # expected remaining movement as the state component
         "qmixRS": ("dlsum", "ermsum"), "qmixRN": ("ermsum", "hGn"), "qmixRSN": ("dlsum", "ermsum", "hGn"),
-        "qmixRm": ("dlogit", "erm"), "qmixRmN": ("erm", "hGn")}
+        "qmixRm": ("dlogit", "erm"), "qmixRmN": ("erm", "hGn"),
+        # "qavg": the MEAN of the component quantiles instead of the largest (a softer combination: a video keeps
+        # asking when its components are jointly high, not when any one of them is)
+        "qavgRS": ("dlsum", "ermsum"), "qavgRm": ("dlogit", "erm"), "qavgRSN": ("dlsum", "ermsum", "hGn"),
+        "qavgRmN": ("dlogit", "erm", "hGn"), "qavgR2N": ("dlogit2", "ermsum", "hGn"), "qavgSN": ("dlsum", "hGn"),
+        "qavg2N": ("dlogit2", "hGn"), "qavgR2": ("dlogit2", "ermsum")}
 
 
 def add_quantile_rules(vals):
@@ -172,6 +177,7 @@ def add_quantile_rules(vals):
         for c in comps:
             x = np.concatenate([np.asarray(vals["val"][v][c], dtype=np.float64) for v in vals["val"]])
             ref[c] = np.sort(x[np.isfinite(x)])
+        avg = name.startswith("qavg")
         for sp in vals:
             for v in vals[sp]:
                 n = len(vals[sp][v]["eig"])
@@ -179,7 +185,7 @@ def add_quantile_rules(vals):
                 for c in comps:
                     x = np.asarray(vals[sp][v][c], dtype=np.float64)
                     qc = np.where(np.isfinite(x), np.searchsorted(ref[c], x, side="right") / max(1, len(ref[c])), np.inf)
-                    q = np.maximum(q, qc)
+                    q = q + qc / len(comps) if avg else np.maximum(q, qc)
                 vals[sp][v][name] = [float(t) for t in q]
 
 
