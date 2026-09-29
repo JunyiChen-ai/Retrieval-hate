@@ -48,9 +48,18 @@ def main():
     ap.add_argument("--corpus", required=True)
     ap.add_argument("--view", default="both")
     ap.add_argument("--split", default="test")
+    ap.add_argument("--source", default=None, help="soft5_<view> (five-category variant): p = E[level] of the hate "
+                    "category / 3 (--soft5-stat hate) or the maximum expected level over the five categories / 3")
+    ap.add_argument("--soft5-stat", default="hate", choices=("hate", "max", "sum"))
     a = ap.parse_args()
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
-    P, Tp, _ = qdata.load_soft_p(a.corpus, "soft_" + a.view)
+    if a.source and qdata.is_soft5(a.source):
+        P5, Tp, _ = qdata.load_soft_p(a.corpus, a.source)
+        f = {"hate": lambda e: e[0] / 3.0, "max": lambda e: max(e) / 3.0, "sum": lambda e: min(1.0, sum(e) / 3.0)}[a.soft5_stat]
+        P = {v: {k: (None if e is None else f(e)) for k, e in d.items()} for v, d in P5.items()}
+        a.view = "%s_%s" % (a.source.split("_", 1)[1], a.soft5_stat) + "5"
+    else:
+        P, Tp, _ = qdata.load_soft_p(a.corpus, "soft_" + a.view)
     D, Td = qdata.load_answers(a.corpus, "words")
     vids = [v for v in ids[a.split] if v in P and v in D]
     print("%s %s: %d videos with soft answers (of %d)" % (a.corpus, a.split, len(vids), len(ids[a.split])), flush=True)
