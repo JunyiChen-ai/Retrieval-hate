@@ -903,4 +903,6 @@ HCS 软答案 trial（13 / 11 / 19，`copy_check/hateclipseg_r5.json`，汇总 `
 
 判定（HCS）：Q1 AP +.017 过，**ROC −.008 未过**（差 .003）；Q2 过（8 次 within .560 ≥ 0 次 .539）；Q3 过（16 / 32 次 AP .691 / .695 ≥ 8 次；32 次 within .615）。与 HateMM 同一模式：AP 与多问后的表现都改善，pooled ROC 低 .007–.008；原因同 17.1 诊断（正例视频内无仇恨节点沿用负例的答案表，见 `qtree.AnswerModel.loglik` n_state == 2 的注释「s=1 shares s=0's table」，软答案下高档「有」在负例里极少，正例视频的无仇恨节点一答「有」就被大幅抬高）。第 3 步（多视图估计正例视频内无仇恨节点的表）针对这一点；档数 16 搜索已排在视图抽取之后（uoa-lab1）。
 
+- **变体「五类软答案」（`--prompt p5`，`data/vlm_tree/HateMM/soft5_both_p5.jsonl`，18:00 NZDT 抽取完成，未解析 161 / 63963）离线检查（`soft_check/hatemm_both_{hate,max,sum}5_test.json`）**：仇恨类期望档 ÷ 3 作 p：视频内 AUC（≤ 16 s）.702（单问软答案 .725，解码 .626），2-vs-1 .706（.746），根节点视频级 .926（.924）；五类最大值 .691 / .702 / .923；五类之和 .687 / .693 / .840。4–8 s 节点 p > .5 比例（仇恨类期望）状态 0 / 1 / 2 = .116 / .427 / .654（单问软答案 .031 / .139 / .393）。五类的仇恨类期望在视频内区分上略低于单问软答案，但保留了另外四类的信息（第 4 版解码答案的五类输入正是 pooled ROC 更高的候选原因）；按预注册进搜索（HateMM、HCS，`answer_source soft5_both`，5 类 × 8 档，`runs/20260929_query_paradigm_r5_soft5/`）。
+
 - 规则 6 审查（独立 agent，2026-09-29，commit 6708eee / fa8a9ab / 6295104）：PASS，两条 should-fix 已改：复制概率 π 的长度分档改为嵌套对中较短者（与估计器的按子节点分档一致；此前 3–13% 的嵌套提问用错档）；`data/vlm_tree/<C>/PROVENANCE.md` 补软答案条目。记录项：VOI 停止暂未接复制混合；诊断脚本读 soft trial 前须 `configure_source`（copy_check 已按 trial 配置读取）。
