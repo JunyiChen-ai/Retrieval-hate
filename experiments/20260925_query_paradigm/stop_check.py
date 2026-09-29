@@ -116,6 +116,13 @@ def rule_values(run, T):
         vals["eigsum"] = [float(x) for x in run["eig_sum"][:n]]
         vals["eigtop3"] = [float(x) for x in run["eig_top3"][:n]]
         vals["eigmean"] = [float(x) / max(1, m) for x, m in zip(run["eig_sum"][:n], run["n_cand"][:n])]
+    # one-sided undecidedness (README 17.4 third round): the band applies only to videos on the negative side of the
+    # decision boundary (P(G) < .5); a likely-positive video is left to the change rule (its calls go to localisation)
+    pg = np.asarray(run["p_G"][:n], dtype=np.float64)
+    vals["hGn"] = [float(h) if g < 0.5 else 0.0 for h, g in zip(hG, pg)]
+    for u, name in ((0.5, "n50"), (0.2, "n20")):
+        for base in ("dlogit", "dlogit2", "dlsum"):
+            vals["%s_%s" % (base, name)] = [np.inf if (hG[k] >= u and pg[k] < 0.5) else vals[base][k] for k in range(n)]
     # composites: an undecided video (H(P(G)) >= u bits; u = .5: P(G) in [.11, .89]; u = .2: [.03, .97], the decision
     # band of a sequential test) keeps asking whatever the last change was; a decided one stops by the change rule
     for u, name in ((0.5, "u50"), (0.2, "u20")):
@@ -139,7 +146,10 @@ QMIX = {"qmix": ("dlogit", "stab1"), "qmix2": ("dlogit2", "stab2"), "qmixG": ("d
         "qmixS_T": ("dlsum", "hT"),
         # third round: the remaining-information sum as the state component
         "qmixE": ("dlsum", "eigsum"), "qmixEG": ("dlsum", "eigsum", "hG"), "qmixE3": ("dlsum", "eigtop3"),
-        "qmixDE": ("dlogit", "eigsum"), "qmixSE": ("dlsum", "stab1", "eigsum")}
+        "qmixDE": ("dlogit", "eigsum"), "qmixSE": ("dlsum", "stab1", "eigsum"),
+        # one-sided undecidedness as the state component
+        "qmixN": ("dlogit", "stab1", "hGn"), "qmix2N": ("dlogit2", "stab2", "hGn"), "qmixSN": ("dlsum", "stab1", "hGn"),
+        "qmixDN": ("dlogit2", "hGn"), "qmixSGn": ("dlsum", "hGn")}
 
 
 def add_quantile_rules(vals):
@@ -168,8 +178,9 @@ def add_quantile_rules(vals):
 
 FLOORS = (2, 4, 6)                                     # floor sensitivity (README 17.4 variant (c))
 STATE = ("hG", "hT", "hmax", "vsum", "vmean")          # README 17.4 "no floor": state-confidence rules
-CHANGE = ("dlogit", "dlogit2", "dlogit3", "dlsum", "dlsum2", "dG", "dG2", "eigsum", "eigtop3", "eigmean") + tuple(
-    "%s_%s" % (b, u) for u in ("u50", "u20") for b in ("dlogit", "dlogit2", "dlogit3"))   # log-odds change rules
+CHANGE = (("dlogit", "dlogit2", "dlogit3", "dlsum", "dlsum2", "dG", "dG2", "eigsum", "eigtop3", "eigmean")
+          + tuple("%s_%s" % (b, u) for u in ("u50", "u20") for b in ("dlogit", "dlogit2", "dlogit3"))
+          + tuple("%s_%s" % (b, u) for u in ("n50", "n20") for b in ("dlogit", "dlogit2", "dlsum")))   # log-odds change rules
 RULES = (("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS)
          + STATE + CHANGE + tuple(QMIX))
 STRAT = ("eig", "voi", "stab1")                        # variant (a): thresholds per prior half
