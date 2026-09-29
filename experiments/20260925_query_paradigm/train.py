@@ -169,7 +169,9 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
 
     say("host %s | code: %s | corpus %s seed %d" % (socket.gethostname(), git_describe(), corpus, seed))
     n_cat, n_lev = qdata.configure_source(cfg["answer_source"], int(cfg["soft_levels"]))
-    if qdata.is_soft(cfg["answer_source"]):        # revision 5: one category of soft_levels levels
+    if qdata.is_soft5(cfg["answer_source"]):       # revision 5 variant: five categories of soft_levels levels
+        cfg["categories"] = [0, 1, 2, 3, 4]
+    elif qdata.is_soft(cfg["answer_source"]):      # revision 5: one category of soft_levels levels
         cfg["categories"] = [0]
     with open(os.path.join(out_dir, "config.json"), "w") as fh:
         json.dump(cfg, fh, indent=2)

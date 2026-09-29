@@ -14,6 +14,8 @@ three "annotators" of the triplet / third-order-agreement estimate of the three-
     python experiments/20260925_query_paradigm/extract_tree_soft.py --corpus hateclipseg --splits test,val,train --view both
 Output: data/vlm_tree/<Corpus>/soft_<view>_<prompt>[.shard<i>of<n>].jsonl, one line per video:
     {"id", "split", "T", "view", "prompt", "nodes": [[a, b, [p_yes, mass_yes, mass_no] or null, top_token], ...]}
+    --prompt p5 (five categories, expected levels): soft5_<view>_p5[.shard].jsonl, node answer =
+    [[E_1..E_5], [[p0..p3] x 5]] with E_k the expected level 0-3 of category k (k = 1 the per-dataset definition).
 Resumes: videos already in the output file are skipped. --limit N (functional check of the parsing only) stops after N videos.
 """
 from __future__ import annotations
@@ -97,6 +99,55 @@ USER_FRAMES = "Does this part contain {name} as defined above? Answer Yes or No.
 USER_TEXT = "Transcript of this part: \"{asr}\"\n\nDoes this part contain {name} as defined above? Answer Yes or No."
 NO_SPEECH = "(no speech in this part)"
 
+# README 17.1 variant "five categories, soft": the revision-4 five-category rating (extract_tree_answers.py taxonomy),
+# category 1 replaced by the per-dataset definition; per category the expected level 0-3 from the first-token
+# distribution at that category's position (SamplingParams logprobs at every generated position).
+SYSTEM5_TEMPLATE = (
+    "You are a careful content-moderation rater for {platform}. {inputs} Rate the harmful content present IN THIS "
+    "PART in five categories:\n"
+    "1. {name} (the platform's policy definition): {text}\n"
+    "2. harassment: content that insults, mocks, bullies or threatens a person or group, not for a protected "
+    "attribute.\n"
+    "3. sexual: sexual or sexually explicit content.\n"
+    "4. violence: content that depicts, glorifies or threatens violence, injury or gore.\n"
+    "5. self-harm: content that depicts or encourages self-harm, suicide or dangerous acts.\n"
+    "Harmful content can be carried by any channel: spoken words, on-screen text, symbols, gestures, or imagery. "
+    "Judge ONLY what is present in this part of the video, not what the rest of the video might contain."
+)
+USER5_SCALE = (
+    "Scale for each category: 0 = none; 1 = faint or ambiguous cue; 2 = clear but implicit or coded; "
+    "3 = explicit and unambiguous.\n"
+    "Answer with exactly five integers separated by spaces, in the order: {name} harassment sexual violence "
+    "self-harm. No other text."
+)
+USER5_BOTH = "Transcript of this part: \"{asr}\"\n\n" + USER5_SCALE
+USER5_FRAMES = USER5_SCALE
+USER5_TEXT = USER5_BOTH
+N_CAT5, MAX_TOKENS5 = 5, 16
+
+
+def digit_dists(logprobs_per_pos):
+    """The generated positions whose top token is a digit 0-3: for each of the first N_CAT5 of them, the
+    probability vector over 0..3 (renormalised over the digit mass in the top-k) and its expectation."""
+    out = []
+    for top in logprobs_per_pos:
+        best = max(top.values(), key=lambda lp: lp.logprob) if top else None
+        tok = (best.decoded_token or "").strip() if best else ""
+        if tok in ("0", "1", "2", "3"):
+            pv = [0.0] * 4
+            for lp in top.values():
+                t = (lp.decoded_token or "").strip()
+                if t in ("0", "1", "2", "3"):
+                    pv[int(t)] += math.exp(lp.logprob)
+            z = sum(pv)
+            if z <= 0:
+                continue
+            pv = [x / z for x in pv]
+            out.append([round(sum(i * x for i, x in enumerate(pv)), 6), [round(x, 6) for x in pv]])
+        if len(out) == N_CAT5:
+            break
+    return out if len(out) == N_CAT5 else None
+
 
 def yes_no_mass(top):
     """Probability mass on Yes-like and No-like tokens among the top-k first-token log-probabilities."""
@@ -137,6 +188,8 @@ def main():
     ap.add_argument("--gpu-mem", type=float, default=0.85)
     ap.add_argument("--max-model-len", type=int, default=8192)
     ap.add_argument("--topk", type=int, default=20)
+    ap.add_argument("--prompt", default="p1", choices=("p1", "p5"),
+                    help="p1 = one Yes/No question (README 17.1); p5 = five categories, expected level each (variant)")
     ap.add_argument("--shard", default="0/1", help="i/n: this process takes videos with index %% n == i")
     ap.add_argument("--manifest", default="manifest_words.jsonl")
     ap.add_argument("--limit", type=int, default=0, help="functional check: stop after this many videos")
@@ -147,7 +200,7 @@ def main():
     d = CORPUS_DIR[a.corpus]
     base = os.path.join(ROOT, "data", "vlm_tree", d)
     si, sn = (int(x) for x in a.shard.split("/"))
-    prefix = "soft_%s_%s" % (a.view, PROMPT_VERSION)
+    prefix = ("soft_%s_%s" if a.prompt == "p1" else "soft5_%s_%s") % (a.view, a.prompt)
     out_path = os.path.join(base, "%s%s.jsonl" % (prefix, "" if sn == 1 else ".shard%dof%d" % (si, sn)))
     done = set()
     if os.path.exists(out_path):
@@ -167,7 +220,8 @@ def main():
     if not todo:
         return
     D = DEFINITIONS[a.corpus]
-    system = SYSTEM_TEMPLATE.format(platform=D["platform"], name=D["name"], text=D["text"], inputs=INPUTS[a.view])
+    system = (SYSTEM_TEMPLATE if a.prompt == "p1" else SYSTEM5_TEMPLATE).format(
+        platform=D["platform"], name=D["name"], text=D["text"], inputs=INPUTS[a.view])
     proc = AutoProcessor.from_pretrained(a.model)
     user_content = ([{"type": "video"}] if a.view != "text" else []) + [{"type": "text", "text": "{USER}"}]
     msgs = [{"role": "system", "content": [{"type": "text", "text": system}]},
@@ -176,7 +230,7 @@ def main():
     assert template.count("{USER}") == 1 and (("<|video_pad|>" in template) == (a.view != "text"))
     llm = LLM(model=a.model, gpu_memory_utilization=a.gpu_mem, max_model_len=a.max_model_len,
               limit_mm_per_prompt={"image": 0, "video": 1 if a.view != "text" else 0}, seed=0)
-    sp = SamplingParams(temperature=0.0, max_tokens=1, logprobs=a.topk)
+    sp = SamplingParams(temperature=0.0, max_tokens=1 if a.prompt == "p1" else MAX_TOKENS5, logprobs=a.topk)
     pool = ThreadPoolExecutor(16)
     t0, n_calls, n_fail = time.time(), 0, 0
     with open(out_path, "a") as fh:
@@ -194,12 +248,14 @@ def main():
             frames = list(pool.map(lambda j: load_frames(j[3], j[4]), jobs)) if a.view != "text" else [None] * len(jobs)
             for j, f in zip(jobs, frames):
                 asr = j[5].replace('"', "'")
+                ub, uf, ut = ((USER_BOTH, USER_FRAMES, USER_TEXT) if a.prompt == "p1"
+                              else (USER5_BOTH, USER5_FRAMES, USER5_TEXT))
                 if a.view == "both":
-                    user = USER_BOTH.format(asr=asr, name=D["name"])
+                    user = ub.format(asr=asr, name=D["name"])
                 elif a.view == "frames":
-                    user = USER_FRAMES.format(name=D["name"])
+                    user = uf.format(name=D["name"])
                 else:
-                    user = USER_TEXT.format(asr=asr, name=D["name"])
+                    user = ut.format(asr=asr, name=D["name"])
                 item = {"prompt": template.replace("{USER}", user)}
                 if f is not None:
                     item["multi_modal_data"] = {"video": f}
@@ -208,14 +264,18 @@ def main():
             by_vid = {}
             for j, o in zip(jobs, outs):
                 out0 = o.outputs[0]
-                top = out0.logprobs[0] if out0.logprobs else {}
-                my, mn = yes_no_mass(top)
-                ans = None if my + mn <= 0 else [round(my / (my + mn), 6), round(my, 6), round(mn, 6)]
+                if a.prompt == "p1":
+                    top = out0.logprobs[0] if out0.logprobs else {}
+                    my, mn = yes_no_mass(top)
+                    ans = None if my + mn <= 0 else [round(my / (my + mn), 6), round(my, 6), round(mn, 6)]
+                else:                        # p5: [[E_1..E_5], [[p0..p3] x 5]]
+                    dd = digit_dists(out0.logprobs or [])
+                    ans = None if dd is None else [[e for e, _ in dd], [pv for _, pv in dd]]
                 n_fail += ans is None
                 by_vid.setdefault(j[0], []).append([j[1], j[2], ans, out0.text.strip()])
             for r in batch:
                 fh.write(json.dumps({"id": r["id"], "split": r["split"], "T": r["T"], "view": a.view,
-                                     "prompt": PROMPT_VERSION, "nodes": by_vid.get(r["id"], [])}) + "\n")
+                                     "prompt": a.prompt, "nodes": by_vid.get(r["id"], [])}) + "\n")
             fh.flush()
             n_calls += len(jobs)
             el = time.time() - t0

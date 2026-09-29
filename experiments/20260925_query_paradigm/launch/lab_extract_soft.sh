@@ -11,7 +11,7 @@ echo $$ > "runs/20260929_query_paradigm_r5/extract/launch_$(hostname).pid"
 for job in "$@"; do
   IFS=: read -r c s sp v <<< "$job"
   "$HOME/miniconda3/envs/vlm/bin/python" -u experiments/20260925_query_paradigm/extract_tree_soft.py \
-    --corpus "$c" --splits "$sp" --shard "$s" --view "$v" --gpu-mem "${GPU_MEM:-0.75}" \
+    --corpus "$c" --splits "$sp" --shard "$s" --view "$v" --gpu-mem "${GPU_MEM:-0.75}" --prompt "${PROMPT:-p1}" \
     >> "runs/20260929_query_paradigm_r5/extract/${c}_${v}_${s//\//of}_$(hostname).log" 2>&1
 done
 echo ALL_DONE
