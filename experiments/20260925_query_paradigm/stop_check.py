@@ -116,6 +116,10 @@ def rule_values(run, T):
         vals["eigsum"] = [float(x) for x in run["eig_sum"][:n]]
         vals["eigtop3"] = [float(x) for x in run["eig_top3"][:n]]
         vals["eigmean"] = [float(x) / max(1, m) for x, m in zip(run["eig_sum"][:n], run["n_cand"][:n])]
+    # expected remaining movement (README 17.4, nonmyopic; cpolicy.run_batch record_erm; absent in older dumps)
+    if "erm" in run and len(run["erm"]) >= n:
+        vals["erm"] = [float(x) for x in run["erm"][:n]]
+        vals["ermsum"] = [float(x) for x in run["ermsum"][:n]]
     # one-sided undecidedness (README 17.4 third round): the band applies only to videos on the negative side of the
     # decision boundary (P(G) < .5); a likely-positive video is left to the change rule (its calls go to localisation)
     pg = np.asarray(run["p_G"][:n], dtype=np.float64)
@@ -149,7 +153,10 @@ QMIX = {"qmix": ("dlogit", "stab1"), "qmix2": ("dlogit2", "stab2"), "qmixG": ("d
         "qmixDE": ("dlogit", "eigsum"), "qmixSE": ("dlsum", "stab1", "eigsum"),
         # one-sided undecidedness as the state component
         "qmixN": ("dlogit", "stab1", "hGn"), "qmix2N": ("dlogit2", "stab2", "hGn"), "qmixSN": ("dlsum", "stab1", "hGn"),
-        "qmixDN": ("dlogit2", "hGn"), "qmixSGn": ("dlsum", "hGn")}
+        "qmixDN": ("dlogit2", "hGn"), "qmixSGn": ("dlsum", "hGn"),
+        # expected remaining movement as the state component
+        "qmixRS": ("dlsum", "ermsum"), "qmixRN": ("ermsum", "hGn"), "qmixRSN": ("dlsum", "ermsum", "hGn"),
+        "qmixRm": ("dlogit", "erm"), "qmixRmN": ("erm", "hGn")}
 
 
 def add_quantile_rules(vals):
@@ -178,7 +185,7 @@ def add_quantile_rules(vals):
 
 FLOORS = (2, 4, 6)                                     # floor sensitivity (README 17.4 variant (c))
 STATE = ("hG", "hT", "hmax", "vsum", "vmean")          # README 17.4 "no floor": state-confidence rules
-CHANGE = (("dlogit", "dlogit2", "dlogit3", "dlsum", "dlsum2", "dG", "dG2", "eigsum", "eigtop3", "eigmean")
+CHANGE = (("dlogit", "dlogit2", "dlogit3", "dlsum", "dlsum2", "dG", "dG2", "eigsum", "eigtop3", "eigmean", "erm", "ermsum")
           + tuple("%s_%s" % (b, u) for u in ("u50", "u20") for b in ("dlogit", "dlogit2", "dlogit3"))
           + tuple("%s_%s" % (b, u) for u in ("n50", "n20") for b in ("dlogit", "dlogit2", "dlsum")))   # log-odds change rules
 RULES = (("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS)
@@ -210,6 +217,7 @@ def main():
                     "call, validation and test) as runs.pkl in the trial's output directory, so that further rules can "
                     "be evaluated without re-running the policy")
     ap.add_argument("--rules", nargs="*", default=None, help="restrict to these rules (default: all)")
+    ap.add_argument("--erm", type=int, default=0, help="samples for the expected remaining movement (cpolicy record_erm)")
     ap.add_argument("--from-dump", default=None, help="suffix of an earlier --dump run: read its runs.pkl per trial "
                     "instead of re-running the policy (the rules are then evaluated on the saved per-call posteriors)")
     a = ap.parse_args()
@@ -250,7 +258,7 @@ def main():
                 runs[sp] = {}
                 for i in range(0, len(order), k):
                     runs[sp].update(cpolicy.run_batch(model, store, order[i:i + k], am, chain, answers, cats, 32,
-                                                      a.device, record_voi=True, copy_pi=fn))
+                                                      a.device, record_voi=True, copy_pi=fn, record_erm=a.erm))
             Tmap = {v: int(store.T[v]) for sp in runs for v in runs[sp]}
             if a.dump:
                 import pickle

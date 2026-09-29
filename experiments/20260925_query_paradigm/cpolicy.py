@@ -46,7 +46,7 @@ def _nested_source(tr, node, asked_b, o_len):
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
-              copy_mode="both"):
+              copy_mode="both", record_erm=0):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -59,7 +59,12 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     drawn from the answer model: P(o | s, o_m) = pi 1[o = o_m] + (1 - pi) P(o | s). The mixture enters both the EIG
     of the candidates and the likelihood of the answer read; the tree inference is unchanged (per-node factor).
     copy_mode (README section 17.2 variants): "both" = the mixture enters the EIG and the likelihood; "eig" = the
-    EIG only (the answer read is scored by the plain answer model); "lik" = the likelihood only."""
+    EIG only (the answer read is scored by the plain answer model); "lik" = the likelihood only.
+    record_erm (README 17.4, the nonmyopic stopping statistic): K > 0 samples, before every call, K complete answer
+    sets for ALL still-askable nodes from the model's posterior predictive (video state ~ P(G), node states from their
+    marginals independently, outcomes from the answer model), runs the tree inference on each and records the mean
+    over samples of the per-second log-odds change (mean over seconds: erm; sum over seconds: ermsum) between the
+    current posterior and the posterior with everything answered: the expected remaining movement of the scores."""
     assert copy_mode in ("both", "eig", "lik")
     copy_eig = copy_pi is not None and copy_mode in ("both", "eig")
     copy_lik = copy_pi is not None and copy_mode in ("both", "lik")
@@ -83,8 +88,14 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     askers = [policy.Asker(vt, am, cats) if make_asker is None else make_asker(b, vt)
               for b, vt in enumerate(vts)]
     A3 = torch.zeros(fo.N, 3, dtype=torch.float64, device=device)
-    out = [{"scores": [], "eig": [], "voi": [], "asked": [], "p_G": [], "eig_sum": [], "eig_top3": [], "n_cand": []}
+    out = [{"scores": [], "eig": [], "voi": [], "asked": [], "p_G": [], "eig_sum": [], "eig_top3": [], "n_cand": [],
+            "erm": [], "ermsum": []}
            for _ in vids]                      # eig_sum / eig_top3: over all candidate questions at that step (README 17.4)
+    rng = np.random.default_rng(0)
+
+    def _logit(x):
+        x = np.clip(np.asarray(x, dtype=np.float64), 1e-6, 1.0 - 1e-6)
+        return np.log(x) - np.log1p(-x)
     rem = [np.ones(len(a.q), dtype=bool) if allowed is None else np.isin(a.q, np.asarray(sorted(allowed[b])))
            for b, a in enumerate(askers)]
     llr = [np.zeros(T) for T in Ts]
@@ -100,6 +111,32 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             if step <= len(askers[b].q):
                 out[b]["scores"].append(p[b, :T].copy() if fusion == "tree" else _flat(p0[b], llr[b], cnt[b]))
                 out[b]["p_G"].append(float(pG[b]))
+        if record_erm > 0 and step < max_calls:
+            acc = [np.zeros(2) for _ in vids]
+            for _k in range(int(record_erm)):
+                A3s = A3.clone()
+                for b, (asker, off) in enumerate(zip(askers, fo.offs)):
+                    cand = np.where(rem[b])[0]
+                    if len(cand) == 0:
+                        continue
+                    nodes = asker.q[cand]
+                    mm = m[off + nodes]
+                    gs = rng.random() < pG[b]
+                    st = np.where(rng.random(len(cand)) < mm, 2, 1) if gs else np.zeros(len(cand), dtype=int)
+                    po = asker.po_s[cand]                                    # n, 3, O
+                    cum = np.cumsum(po[np.arange(len(cand)), st], axis=1)
+                    oi = np.minimum((rng.random(len(cand))[:, None] > cum).sum(1), po.shape[2] - 1)
+                    ll = np.log(np.clip(po[np.arange(len(cand)), :, oi], 1e-300, None))   # n, 3
+                    A3s[off + torch.as_tensor(nodes, device=device)] = torch.as_tensor(ll, dtype=torch.float64, device=device)
+                _, _, ps = ctree.marginals(fo, S, G, A3s, chain, PHI)
+                ps = ps.cpu().numpy()
+                for b, T in enumerate(Ts):
+                    d = np.abs(_logit(ps[b, :T]) - _logit(p[b, :T]))
+                    acc[b] += np.array([d.mean(), d.sum()])
+            for b in range(len(vids)):
+                if rem[b].any():
+                    out[b]["erm"].append(float(acc[b][0] / record_erm))
+                    out[b]["ermsum"].append(float(acc[b][1] / record_erm))
         if step == max_calls:
             break
         chosen = []
