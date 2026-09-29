@@ -80,7 +80,7 @@ DEFAULTS = {
     "text_sources": ["bert"], "chain": "learned", "boundary": "closed",
     "chain_form": "zero_inflated", "backbone": "macil", "query_level": 0,
     "answer_source": "k30", "node_prior": False,
-    "soft_levels": 8,
+    "soft_levels": 8, "state1_table": None,
 }
 # Revision 5 (README section 17.1): answer_source "soft_both" / "soft_frames" / "soft_text" = the first-token P(Yes)
 # under the per-dataset definition (extract_tree_soft.py), binned into soft_levels quantile levels of the training
@@ -203,8 +203,23 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     ta = [(labels[v], [(a, b, store.T[v], o) for (a, b), o in answers[v].items()]) for v in ids["train"]]
     n_state = int(cfg["n_state"])
     loglen = np.log([b - a for v in ids["train"] for (a, b) in answers[v]])
-    anchored = cfg["answer_model"] in ("anchored", "refit")
-    if anchored:                  # README section 8: fitted once on the answers whose state the label fixes
+    anchored = cfg["answer_model"] in ("anchored", "refit", "anchored_ext")
+    if cfg["answer_model"] == "anchored_ext":
+        # Revision 5 step 3 (README section 17.3): three states; states 0 (negative videos) and 2 (positive roots)
+        # fitted as the anchored model, state 1 (nodes of positive videos without hate) from an external table
+        # estimated WITHOUT per-second labels (multiview_check.py, three views of the same VLM) or, as the
+        # fallback, from validation labels; the file names its source. No length term.
+        assert n_state == 3 and not cfg["length_term"] and cfg["state1_table"], "anchored_ext: n_state 3, a table"
+        th2, _om2, n_fit = qtree.fit_anchored(ta, loglen.mean(), loglen.std(), False)
+        tab = json.load(open(cfg["state1_table"]))
+        assert int(tab["levels"]) == qtree.N_LEV and len(cfg["categories"]) == 1, "one soft category"
+        theta0 = np.zeros((qtree.N_CAT, 3, qtree.N_LEV))
+        theta0[:, 0], theta0[:, 2] = th2[:, 0], th2[:, 1]
+        theta0[:, 1] = np.log(np.clip(np.asarray(tab["p_state1"], float), 1e-4, None))[None]
+        omega0 = None
+        say("anchored_ext answer model: states 0 / 2 fitted on %d / %d answers; state 1 from %s (%s, n_pos %s)" % (
+            n_fit[0], n_fit[1], cfg["state1_table"], tab.get("source"), tab.get("n_pos")))
+    elif anchored:                # README section 8: fitted once on the answers whose state the label fixes
         assert n_state == 2, "the anchored answer model has two states"
         theta0, omega0, n_fit = qtree.fit_anchored(ta, loglen.mean(), loglen.std(), bool(cfg["length_term"]))
         say("anchored answer model: fitted on %d state-0 and %d state-1 answers" % (n_fit[0], n_fit[1]))

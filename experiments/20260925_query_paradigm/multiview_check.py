@@ -239,6 +239,15 @@ def main():
                                                                        np.round(b["gt"]["c"], 3).tolist())))
     os.makedirs(OUT, exist_ok=True)
     json.dump(res, open(os.path.join(OUT, "%s.json" % a.corpus), "w"), indent=1, default=float)
+    # the state-1 table for train.py answer_model "anchored_ext" (README 17.3): the both-view level distribution
+    # of the positive-video nodes WITHOUT hate, estimated on the TRAIN split (4-16 s nodes) without labels
+    tr = res.get("train", {}).get("4-16", {})
+    if "level_hist_est" in tr:
+        tab = {"corpus": a.corpus, "source": "multiview triplet + EM, train split, 4-16 s nodes, both view",
+               "levels": a.levels, "edges": edges.tolist(), "n_pos": tr["n_pos"], "pi": tr["em"]["pi"],
+               "p_state1": tr["level_hist_est"]["state1"], "p_state2": tr["level_hist_est"]["state2"]}
+        json.dump(tab, open(os.path.join(OUT, "%s_state1_table.json" % a.corpus), "w"), indent=1)
+        print("state-1 table written: p_state1 %s" % np.round(tab["p_state1"], 3).tolist())
 
 
 if __name__ == "__main__":
