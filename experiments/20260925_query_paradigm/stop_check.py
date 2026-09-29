@@ -103,7 +103,9 @@ def rule_values(run, T):
     vals["dlogit"] = d[:n]                                                    # mean over seconds, last call
     vals["dlogit2"] = [max(d[k], d[k - 1] if k >= 1 else np.inf) for k in range(n)]   # larger of the last two
     vals["dlogit3"] = [float(np.mean(d[max(1, k - 2):k + 1])) if k >= 1 else np.inf for k in range(n)]  # mean of last 3
-    vals["dlsum"] = ([np.inf] + [float(np.sum(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)])[:n]  # sum over seconds
+    ds = [np.inf] + [float(np.sum(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)]
+    vals["dlsum"] = ds[:n]                                                    # sum over seconds (pool-weighted)
+    vals["dlsum2"] = [max(ds[k], ds[k - 1] if k >= 1 else np.inf) for k in range(n)]
     vals["dG"] = dg[:n]                                                       # video-level log-odds change
     vals["dG2"] = [max(dg[k], dg[k - 1] if k >= 1 else np.inf) for k in range(n)]
     # composites: an undecided video (H(P(G)) >= u bits; u = .5: P(G) in [.11, .89]; u = .2: [.03, .97], the decision
@@ -120,7 +122,13 @@ def _logit(p):
 
 
 QMIX = {"qmix": ("dlogit", "stab1"), "qmix2": ("dlogit2", "stab2"), "qmixG": ("dlogit", "stab1", "hG"),
-        "qmix2G": ("dlogit2", "stab2", "hG")}
+        "qmix2G": ("dlogit2", "stab2", "hG"),
+        # second round (README 17.4): the pool-weighted change (dlsum) in place of the per-second mean, the video-level
+        # undecidedness alone as the state component, and the per-second entropy (hT) as a localisation state
+        "qmixD": ("dlogit", "hG"), "qmixD2": ("dlogit2", "hG"), "qmixS": ("dlsum", "hG"), "qmixS2": ("dlsum2", "hG"),
+        "qmixSG": ("dlsum", "stab1", "hG"), "qmixS2G": ("dlsum2", "stab2", "hG"),
+        "qmixT": ("dlogit", "stab1", "hG", "hT"), "qmixST": ("dlsum", "stab1", "hG", "hT"), "qmixDT": ("dlogit", "hG", "hT"),
+        "qmixS_T": ("dlsum", "hT")}
 
 
 def add_quantile_rules(vals):
@@ -146,7 +154,7 @@ def add_quantile_rules(vals):
 
 FLOORS = (2, 4, 6)                                     # floor sensitivity (README 17.4 variant (c))
 STATE = ("hG", "hT", "hmax", "vsum", "vmean")          # README 17.4 "no floor": state-confidence rules
-CHANGE = ("dlogit", "dlogit2", "dlogit3", "dlsum", "dG", "dG2") + tuple(
+CHANGE = ("dlogit", "dlogit2", "dlogit3", "dlsum", "dlsum2", "dG", "dG2") + tuple(
     "%s_%s" % (b, u) for u in ("u50", "u20") for b in ("dlogit", "dlogit2", "dlogit3"))   # log-odds change rules
 RULES = (("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS)
          + STATE + CHANGE + tuple(QMIX))
