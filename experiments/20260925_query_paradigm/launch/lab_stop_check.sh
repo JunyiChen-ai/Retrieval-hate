@@ -4,7 +4,7 @@
 #     > runs/20260929_query_paradigm_r5/stop_check/run_$(hostname)${out_suffix}.log 2>&1 < /dev/null &
 # README section 17.4: stopping rules (stop_check.py) on the best trials of <out_root> (revision 4 by default: the
 # decoded-answer reference; later the revision 5 soft-answer trials), three corpora, no training.
-# env: CORPORA="hatemm hateclipseg" restricts the corpora; DUMP=1 saves the recorded runs (runs.pkl); RULES="hG hT" restricts the rules.
+# env: CORPORA="hatemm hateclipseg" restricts the corpora; DUMP=1 saves the recorded runs (runs.pkl); RULES="hG hT" restricts the rules; FROM_DUMP=_r5state re-scores the saved runs of that earlier suffix instead of re-running the policy.
 set -euo pipefail
 cd "$HOME/Retrieval-hate"
 DEV="${1:-cpu}"
@@ -17,6 +17,7 @@ extra=()
 [ -n "$COPY" ] && extra+=(--copy-pi "$COPY")
 [ -n "${DUMP:-}" ] && extra+=(--dump)
 [ -n "${RULES:-}" ] && extra+=(--rules $RULES)
+[ -n "${FROM_DUMP:-}" ] && extra+=(--from-dump "$FROM_DUMP")
 best() {  # corpus -> the three best trial dirs: study_summary.json of the search root when present (revision 5 on the
           # machine that ran the search), else the revision-4 numbers (lab machines hold the trial dirs only)
   local c="$1" out=""

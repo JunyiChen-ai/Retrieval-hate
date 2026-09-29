@@ -94,12 +94,62 @@ def rule_values(run, T):
     vals["hmax"] = [float(max(a, b)) for a, b in zip(hG, hT)]
     vals["vsum"] = [float(np.sum(p * (1.0 - p))) for p in ps]
     vals["vmean"] = [float(np.mean(p * (1.0 - p))) for p in ps]
+    # last-change rules on the log-odds scale (README 17.4 "no floor", second family: the change the last answer made
+    # to the scores on the scale the pooled ranking sees; +inf before the first call, so the first call is always made)
+    lp = [_logit(run["scores"][k]) for k in range(n + 1)]
+    lg = _logit(run["p_G"][:n + 1])
+    d = [np.inf] + [float(np.mean(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)]
+    dg = [np.inf] + [float(abs(lg[k] - lg[k - 1])) for k in range(1, n + 1)]
+    vals["dlogit"] = d[:n]                                                    # mean over seconds, last call
+    vals["dlogit2"] = [max(d[k], d[k - 1] if k >= 1 else np.inf) for k in range(n)]   # larger of the last two
+    vals["dlogit3"] = [float(np.mean(d[max(1, k - 2):k + 1])) if k >= 1 else np.inf for k in range(n)]  # mean of last 3
+    vals["dlsum"] = ([np.inf] + [float(np.sum(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)])[:n]  # sum over seconds
+    vals["dG"] = dg[:n]                                                       # video-level log-odds change
+    vals["dG2"] = [max(dg[k], dg[k - 1] if k >= 1 else np.inf) for k in range(n)]
+    # composites: an undecided video (H(P(G)) >= u bits; u = .5: P(G) in [.11, .89]; u = .2: [.03, .97], the decision
+    # band of a sequential test) keeps asking whatever the last change was; a decided one stops by the change rule
+    for u, name in ((0.5, "u50"), (0.2, "u20")):
+        for base in ("dlogit", "dlogit2", "dlogit3"):
+            vals["%s_%s" % (base, name)] = [np.inf if hG[k] >= u else vals[base][k] for k in range(n)]
     return vals
+
+
+def _logit(p):
+    p = np.clip(np.asarray(p, dtype=np.float64), 1e-6, 1.0 - 1e-6)
+    return np.log(p) - np.log1p(-p)
+
+
+QMIX = {"qmix": ("dlogit", "stab1"), "qmix2": ("dlogit2", "stab2"), "qmixG": ("dlogit", "stab1", "hG"),
+        "qmix2G": ("dlogit2", "stab2", "hG")}
+
+
+def add_quantile_rules(vals):
+    """Constant-free combinations (README 17.4): each component value is replaced by its rank among all finite
+    validation (video, call) values of that component (its validation quantile, no labels), and the rule is the
+    largest quantile: ask while any component (cross-video log-odds change, within-video rank change, video-level
+    undecidedness) is still larger than a fraction c of what validation runs show. One threshold, no floor."""
+    for name, comps in QMIX.items():
+        ref = {}
+        for c in comps:
+            x = np.concatenate([np.asarray(vals["val"][v][c], dtype=np.float64) for v in vals["val"]])
+            ref[c] = np.sort(x[np.isfinite(x)])
+        for sp in vals:
+            for v in vals[sp]:
+                n = len(vals[sp][v]["eig"])
+                q = np.zeros(n)
+                for c in comps:
+                    x = np.asarray(vals[sp][v][c], dtype=np.float64)
+                    qc = np.where(np.isfinite(x), np.searchsorted(ref[c], x, side="right") / max(1, len(ref[c])), np.inf)
+                    q = np.maximum(q, qc)
+                vals[sp][v][name] = [float(t) for t in q]
 
 
 FLOORS = (2, 4, 6)                                     # floor sensitivity (README 17.4 variant (c))
 STATE = ("hG", "hT", "hmax", "vsum", "vmean")          # README 17.4 "no floor": state-confidence rules
-RULES = ("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS) + STATE
+CHANGE = ("dlogit", "dlogit2", "dlogit3", "dlsum", "dG", "dG2") + tuple(
+    "%s_%s" % (b, u) for u in ("u50", "u20") for b in ("dlogit", "dlogit2", "dlogit3"))   # log-odds change rules
+RULES = (("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS)
+         + STATE + CHANGE + tuple(QMIX))
 STRAT = ("eig", "voi", "stab1")                        # variant (a): thresholds per prior half
 
 
@@ -127,45 +177,55 @@ def main():
                     "call, validation and test) as runs.pkl in the trial's output directory, so that further rules can "
                     "be evaluated without re-running the policy")
     ap.add_argument("--rules", nargs="*", default=None, help="restrict to these rules (default: all)")
+    ap.add_argument("--from-dump", default=None, help="suffix of an earlier --dump run: read its runs.pkl per trial "
+                    "instead of re-running the policy (the rules are then evaluated on the saved per-call posteriors)")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
-    cfg0 = json.load(open(os.path.join(a.trials[0], "config.json")))
-    qdata.configure_source(cfg0["answer_source"], int(cfg0.get("soft_levels", qdata.SOFT_LEVELS)))
-    answers, T = qdata.load_answers(a.corpus, cfg0["answer_source"])
-    vids = {sp: [v for v in ids[sp] if v in answers] for sp in ("val", "test")}
+    if a.from_dump is None:
+        cfg0 = json.load(open(os.path.join(a.trials[0], "config.json")))
+        qdata.configure_source(cfg0["answer_source"], int(cfg0.get("soft_levels", qdata.SOFT_LEVELS)))
+        answers, T = qdata.load_answers(a.corpus, cfg0["answer_source"])
+        vids = {sp: [v for v in ids[sp] if v in answers] for sp in ("val", "test")}
     hate_val = {v for v in ids["val"] if labels[v] == 1}
     os.makedirs(OUT, exist_ok=True)
-    res = {"corpus": a.corpus, "copy_pi": a.copy_pi, "trials": {}}
+    res = {"corpus": a.corpus, "copy_pi": a.copy_pi, "from_dump": a.from_dump, "trials": {}}
     store = None
     for trial in a.trials:
-        summ, cfg, model, am, chain = cd.load_trial(trial, a.device, answers, ids)
-        if store is None:
-            store = qdata.Store(a.corpus, vids["val"] + vids["test"], cfg.get("text_sources", ["bert"]))
-        cats = list(cfg["categories"])
         tag = "_".join(trial.rstrip("/").split("/")[-2:])
-        fn = None
-        if a.copy_pi == "neg":
-            pi_neg = cc.estimate_pi_neg(answers, labels, ids["train"], T, am, cats)[0]
-            fn = (lambda L, _pi=pi_neg: float(_pi[cc.bucket_of(L)]))
-        elif a.copy_pi is not None:
-            fn = (lambda L, _x=float(a.copy_pi): _x)
-        runs = {}
-        for sp in ("val", "test"):
-            order = sorted(vids[sp], key=lambda v: store.T[v])
-            k = int(cfg["eval_chunk"])
-            runs[sp] = {}
-            for i in range(0, len(order), k):
-                runs[sp].update(cpolicy.run_batch(model, store, order[i:i + k], am, chain, answers, cats, 32,
-                                                  a.device, record_voi=True, copy_pi=fn))
-        vals = {sp: {v: rule_values(r, store.T[v]) for v, r in runs[sp].items()} for sp in runs}
-        pg0 = {sp: {v: float(r["p_G"][0]) for v, r in runs[sp].items()} for sp in runs}
         od = os.path.join(OUT, a.corpus, tag + a.out_suffix)
         os.makedirs(od, exist_ok=True)
-        if a.dump:
+        if a.from_dump is not None:
             import pickle
-            with open(os.path.join(od, "runs.pkl"), "wb") as f:
-                pickle.dump({"runs": runs, "T": {v: int(store.T[v]) for sp in runs for v in runs[sp]}}, f)
+            D = pickle.load(open(os.path.join(OUT, a.corpus, tag + a.from_dump, "runs.pkl"), "rb"))
+            runs, Tmap = D["runs"], D["T"]
+        else:
+            summ, cfg, model, am, chain = cd.load_trial(trial, a.device, answers, ids)
+            if store is None:
+                store = qdata.Store(a.corpus, vids["val"] + vids["test"], cfg.get("text_sources", ["bert"]))
+            cats = list(cfg["categories"])
+            fn = None
+            if a.copy_pi == "neg":
+                pi_neg = cc.estimate_pi_neg(answers, labels, ids["train"], T, am, cats)[0]
+                fn = (lambda L, _pi=pi_neg: float(_pi[cc.bucket_of(L)]))
+            elif a.copy_pi is not None:
+                fn = (lambda L, _x=float(a.copy_pi): _x)
+            runs = {}
+            for sp in ("val", "test"):
+                order = sorted(vids[sp], key=lambda v: store.T[v])
+                k = int(cfg["eval_chunk"])
+                runs[sp] = {}
+                for i in range(0, len(order), k):
+                    runs[sp].update(cpolicy.run_batch(model, store, order[i:i + k], am, chain, answers, cats, 32,
+                                                      a.device, record_voi=True, copy_pi=fn))
+            Tmap = {v: int(store.T[v]) for sp in runs for v in runs[sp]}
+            if a.dump:
+                import pickle
+                with open(os.path.join(od, "runs.pkl"), "wb") as f:
+                    pickle.dump({"runs": runs, "T": Tmap}, f)
+        vals = {sp: {v: rule_values(r, Tmap[v]) for v, r in runs[sp].items()} for sp in runs}
+        add_quantile_rules(vals)
+        pg0 = {sp: {v: float(r["p_G"][0]) for v, r in runs[sp].items()} for sp in runs}
 
         def test_eval(name, scores):
             sp = os.path.join(od, "scores_test_%s.jsonl" % name)

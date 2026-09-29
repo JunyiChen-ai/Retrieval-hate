@@ -29,43 +29,27 @@ sys.path.insert(0, HERE)
 import train as TR                              # noqa: E402  (import paths)
 import hier_evidence_common as hc               # noqa: E402
 import policy                                   # noqa: E402
-from stop_check import rule_values, _hb         # noqa: E402
+from stop_check import rule_values, _hb, _logit, add_quantile_rules   # noqa: E402
 
 M = ("pooled_ap", "pooled_roc", "within_roc")
 
 
-def _logit(p):
-    p = np.clip(np.asarray(p, dtype=np.float64), 1e-6, 1.0 - 1e-6)
-    return np.log(p) - np.log1p(-p)
-
-
 def offline_values(run, T, F=None):
-    """All stop_check rules plus offline-only ones (values read before call k+1, k = 0..n-1):
-      dlogit  mean over seconds of |logit p_t[k] - logit p_t[k-1]| (the change made by the last call, on the ranking
-              scale; +inf before the first call)
-      dG      |logit P(G)[k] - logit P(G)[k-1]|
-      dlogit2 the larger of the last two dlogit values
+    """stop_check.rule_values (all rules of README 17.4) plus offline-only ones that were tried and recorded here
+    (values read before call k+1, k = 0..n-1):
+      dlmax   max over seconds of |logit p_t[k] - logit p_t[k-1]| (the last call's largest per-second change)
       lG      -logit P(G = 1): ask while the video is not yet confidently negative on the log-odds scale (positives:
               value negative, stop at once)
-      aG      |logit P(G = 1)| below c means undecided: ask while |logit P(G)| <= c  (implemented as -|logit|)
+      aG      -|logit P(G = 1)|: ask while the video is undecided (a symmetric band)
       dP      mean over seconds of |p_t[k] - p_t[k-1]| (probability scale); dP2 the larger of the last two; dPsum the sum
       dF      mean over seconds of |F(p_t[k]) - F(p_t[k-1])|, F = the posterior-weighted CDF of the per-second scores of
-              the validation pool after 8 calls (weight p_t: where the model expects hate seconds to sit, no labels):
-              how far the last answer moved this video's seconds through the pool's expected-positive score range,
-              the change that the pooled ranking metrics see; dF2 the larger of the last two"""
+              the validation pool after 8 calls (weight p_t: where the model expects hate seconds to sit, no labels);
+              dF2 the larger of the last two, dFsum the sum"""
     vals = rule_values(run, T)
     n = len(run["eig"])
     lp = [_logit(run["scores"][k]) for k in range(n + 1)]
     lg = _logit(run["p_G"][: n + 1])
-    d = [np.inf] + [float(np.mean(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)]
-    dg = [np.inf] + [float(abs(lg[k] - lg[k - 1])) for k in range(1, n + 1)]
-    vals["dlogit"] = d[:n]
-    vals["dlogit2"] = [max(d[k], d[k - 1] if k >= 1 else np.inf) for k in range(n)]
-    vals["dlogit3"] = [float(np.mean(d[max(1, k - 2):k + 1])) if k >= 1 else np.inf for k in range(n)]
     vals["dlmax"] = ([np.inf] + [float(np.max(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)])[:n]
-    vals["dlsum"] = ([np.inf] + [float(np.sum(np.abs(lp[k] - lp[k - 1]))) for k in range(1, n + 1)])[:n]
-    vals["dG"] = dg[:n]
-    vals["dG2"] = [max(dg[k], dg[k - 1] if k >= 1 else np.inf) for k in range(n)]
     vals["lG"] = [float(-lg[k]) for k in range(n)]
     vals["aG"] = [float(-abs(lg[k])) for k in range(n)]
     pr = [np.asarray(run["scores"][k], dtype=np.float64) for k in range(n + 1)]
@@ -79,12 +63,6 @@ def offline_values(run, T, F=None):
         vals["dF"] = df[:n]
         vals["dF2"] = [max(df[k], df[k - 1] if k >= 1 else np.inf) for k in range(n)]
         vals["dFsum"] = ([np.inf] + [float(np.sum(np.abs(fr[k] - fr[k - 1]))) for k in range(1, n + 1)])[:n]
-    # composites: an undecided video (H(P(G)) >= u bits, u = .5: P(G) in [.11, .89]; u = .2: [.03, .97]) keeps asking
-    # whatever the last change was (the SPRT decision band); otherwise the last-change rule decides
-    hG = vals["hG"]
-    for u, name in ((0.5, "u50"), (0.2, "u20")):
-        for base in ("dlogit", "dlogit2", "dlogit3"):
-            vals["%s_%s" % (base, name)] = [np.inf if hG[k] >= u else vals[base][k] for k in range(n)]
     return vals
 
 
@@ -178,6 +156,7 @@ def main():
             w_c = w_c / w_c[-1]
             F = (lambda p, _x=xs_s, _w=w_c: _w[np.clip(np.searchsorted(_x, p, side="right") - 1, 0, len(_w) - 1)])
             vals = {sp: {v: offline_values(runs[sp][v], Ts[v], F) for v in runs[sp]} for sp in runs}
+            add_quantile_rules(vals)
             rt["rules"] = {}
             rules = a.rules if "rules" in a.what else [a.decomp_rule]
             for rule in rules:
