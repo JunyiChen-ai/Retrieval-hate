@@ -128,6 +128,33 @@ def selftest(seed=0):
           independence_tests(Y[~z])["p_value"], independence_tests(Y)["p_value"]))
 
 
+def backbone_scores(corpus, trial, ids, device="cpu", score="smax"):
+    """README 17.3 variant: the prior network of a finished trial as the third rater. Per video, the node potential
+    phi (revision-4 node prior, qtree.tree order) of every queryable node, or the maximum of the per-second prior
+    over the node when the model has no node prior. Returns {video: {(a, b): score}}."""
+    import torch
+    import concern_diagnostics as cd
+    import policy
+    cfg0 = json.load(open(os.path.join(trial, "config.json")))
+    qdata.configure_source(cfg0["answer_source"], int(cfg0.get("soft_levels", qdata.SOFT_LEVELS)))
+    answers, _T = qdata.load_answers(corpus, cfg0["answer_source"])
+    _summ, cfg, model, _am, _chain = cd.load_trial(trial, device, answers, ids)
+    vids = [v for sp in ("train", "val", "test") for v in ids[sp]]
+    store = qdata.Store(corpus, vids, cfg.get("text_sources", ["bert"]))
+    out = {}
+    with torch.no_grad():
+        for v in vids:
+            s_, _g, phi = policy.video_prior_nodes(model, store, v, device)
+            tr = qtree.tree(store.T[v])
+            d = {}
+            for n in np.where(tr["queryable"])[0]:
+                a_, b_ = int(tr["a"][n]), int(tr["b"][n])
+                use_phi = score == "phi" and phi is not None and len(phi) == len(tr["a"])
+                d[(a_, b_)] = float(phi[n]) if use_phi else float(np.max(s_[a_:b_]))
+            out[v] = d
+    return out
+
+
 def collect(corpus, split, labels, ids, gt, P, Tp, levels=8):
     """Rows (video, state, length, p_both, p_frames, p_text) for the queryable nodes of `split` with all three views;
     state 0 / 1 / 2 as in soft_answer_check (2 needs per-second labels: test / val only, else 1 for every positive)."""
@@ -143,7 +170,7 @@ def collect(corpus, split, labels, ids, gt, P, Tp, levels=8):
             if any(p is None for p in ps):
                 continue
             s = 0 if labels[v] == 0 else (2 if (y is not None and y[a_:b_].any()) else 1)
-            rows.append((v, s, b_ - a_, *ps))
+            rows.append((v, s, b_ - a_, *ps, a_, b_))
     return rows
 
 
@@ -153,6 +180,13 @@ def main():
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--boot", type=int, default=200)
     ap.add_argument("--levels", type=int, default=8)
+    ap.add_argument("--third", default="both", help="the third rater of the triplet: both (pre-registered) or "
+                    "backbone (README 17.3 variant; needs --trial); frames and text are always the other two")
+    ap.add_argument("--trial", default=None)
+    ap.add_argument("--backbone-score", default="smax", choices=("smax", "phi"),
+                    help="smax = maximum of the per-second prior over the node; phi = the node potential (relative)")
+    ap.add_argument("--backbone-yes-rate", type=float, default=0.2,
+                    help="the backbone rater says yes above the (1 - rate) train quantile of its node scores")
     a = ap.parse_args()
     if a.selftest:
         selftest()
@@ -163,7 +197,16 @@ def main():
     for w in VIEWS:
         P[w], Tp, split_of = qdata.load_soft_p(a.corpus, "soft_" + w)
     edges = qdata.soft_edges(P["both"], split_of, a.levels)
-    res = {"corpus": a.corpus, "views": list(VIEWS), "threshold": .5, "levels": a.levels, "edges": edges.tolist()}
+    res = {"corpus": a.corpus, "views": list(VIEWS), "threshold": .5, "levels": a.levels, "edges": edges.tolist(),
+           "third": a.third, "trial": a.trial}
+    bb = None
+    if a.third == "backbone":
+        assert a.trial, "--third backbone needs --trial"
+        bb = backbone_scores(a.corpus, a.trial, ids, score=a.backbone_score)
+        tr_scores = np.array([sc for v in ids["train"] if v in bb for sc in bb[v].values()])
+        bb_thr = float(np.quantile(tr_scores, 1.0 - a.backbone_yes_rate))
+        res["backbone_threshold"] = bb_thr
+        print("backbone rater: %d train node scores, threshold %.4f (yes rate %.2f)" % (len(tr_scores), bb_thr, a.backbone_yes_rate))
     rng = np.random.default_rng(0)
     for split in ("train", "test", "val"):
         if split not in ids:
@@ -172,8 +215,14 @@ def main():
         if not rows:
             continue
         V = np.array([r[0] for r in rows]); S = np.array([r[1] for r in rows]); L = np.array([r[2] for r in rows])
-        Pm = np.array([r[3:] for r in rows], float)                         # n, 3 soft p
+        node_ab = [(r[-2], r[-1]) for r in rows]
+        Pm = np.array([r[3:6] for r in rows], float)                         # n, 3 soft p (both, frames, text)
         Y = (Pm > .5).astype(float)
+        if bb is not None:                       # triplet = (backbone, frames, text); column 0 replaced
+            Y[:, 0] = np.array([float(bb[r[0]][(int(a_), int(b_))] > bb_thr) if r[0] in bb else np.nan
+                                for r, (a_, b_) in zip(rows, node_ab)], float)
+            keep = ~np.isnan(Y[:, 0])
+            V, S, L, Pm, Y = V[keep], S[keep], L[keep], Pm[keep], Y[keep]
         out = {"n_nodes": len(rows), "n_videos": len(set(V))}
         for bname, (lo, hi) in BUCKETS.items():
             k = (L >= lo) & (L < hi)
@@ -207,6 +256,9 @@ def main():
                     h2 = np.array([(r * (lev == l)).sum() for l in range(a.levels)]) / r.sum()
                     h1 = np.array([((1 - r) * (lev == l)).sum() for l in range(a.levels)]) / (1 - r).sum()
                     b["level_hist_est"] = {"state1": h1.round(4).tolist(), "state2": h2.round(4).tolist()}
+                    yb = (Pm[pos, 0] > .5).astype(float)               # the both view's binary answer
+                    b["both_implied"] = {"c": float((yb * (1 - r)).sum() / (1 - r).sum()),
+                                         "a": float((yb * r).sum() / r.sum())}
                 if (S[pos] == 2).any():                                  # per-second labels: the measured rates
                     b["gt"] = {"pi": float((S[pos] == 2).mean()),
                                "a": Y[k & (S == 2)].mean(0).tolist(), "c": Y[k & (S == 1)].mean(0).tolist(),
@@ -216,7 +268,12 @@ def main():
                     b["level_hist_gt"] = {"state%d" % s: np.bincount(lev[k & (S == s)], minlength=a.levels).astype(float)
                                           .__truediv__(max(1, (k & (S == s)).sum())).round(4).tolist() for s in (1, 2)}
                     if t is not None:
-                        b["abs_err_both"] = {"a": abs(t["a"][0] - b["gt"]["a"][0]), "c": abs(t["c"][0] - b["gt"]["c"][0]),
+                        gb = {"c": float(Y[k & (S == 1)][:, 0].mean()), "a": float(Y[k & (S == 2)][:, 0].mean())}
+                        yb_all = (Pm[:, 0] > .5).astype(float)
+                        gt_both = {"c": float(yb_all[k & (S == 1)].mean()), "a": float(yb_all[k & (S == 2)].mean())}
+                        b["gt_both"] = gt_both
+                        b["abs_err_both"] = {"a": abs(b["both_implied"]["a"] - gt_both["a"]),
+                                             "c": abs(b["both_implied"]["c"] - gt_both["c"]),
                                              "pi": abs(t["pi"] - b["gt"]["pi"])}
             if neg.sum() > 10:
                 b["neg_yes_rate"] = Y[neg].mean(0).tolist()
@@ -237,8 +294,20 @@ def main():
                 None if "em" not in b else np.round(b["em"]["c"], 3).tolist(),
                 "" if "gt" not in b else " | GT pi %.3f a %s c %s" % (b["gt"]["pi"], np.round(b["gt"]["a"], 3).tolist(),
                                                                        np.round(b["gt"]["c"], 3).tolist())))
+            if "both_implied" in b:
+                print("        both view implied (c, a) = (%.3f, %.3f)%s" % (
+                    b["both_implied"]["c"], b["both_implied"]["a"],
+                    "" if "gt_both" not in b else "  GT (%.3f, %.3f)  |err| c %.3f a %.3f" % (
+                        b["gt_both"]["c"], b["gt_both"]["a"], b["abs_err_both"]["c"], b["abs_err_both"]["a"])))
     os.makedirs(OUT, exist_ok=True)
-    json.dump(res, open(os.path.join(OUT, "%s.json" % a.corpus), "w"), indent=1, default=float)
+    if "val" in res and "level_hist_gt" in res["val"].get("4-16", {}):   # the fallback table (validation labels)
+        vt = res["val"]["4-16"]
+        json.dump({"corpus": a.corpus, "source": "validation per-second labels (fallback), 4-16 s nodes, both view",
+                   "levels": a.levels, "edges": edges.tolist(), "n_pos": vt["n_pos"], "pi": vt["gt"]["pi"],
+                   "p_state1": vt["level_hist_gt"]["state1"], "p_state2": vt["level_hist_gt"]["state2"]},
+                  open(os.path.join(OUT, "%s_val_state1_table.json" % a.corpus), "w"), indent=1)
+    suffix = "" if a.third == "both" else "_" + a.third + ("" if a.third != "backbone" else "_" + a.backbone_score)
+    json.dump(res, open(os.path.join(OUT, "%s%s.json" % (a.corpus, suffix)), "w"), indent=1, default=float)
     # the state-1 table for train.py answer_model "anchored_ext" (README 17.3): the both-view level distribution
     # of the positive-video nodes WITHOUT hate, estimated on the TRAIN split (4-16 s nodes) without labels
     tr = res.get("train", {}).get("4-16", {})
@@ -246,7 +315,8 @@ def main():
         tab = {"corpus": a.corpus, "source": "multiview triplet + EM, train split, 4-16 s nodes, both view",
                "levels": a.levels, "edges": edges.tolist(), "n_pos": tr["n_pos"], "pi": tr["em"]["pi"],
                "p_state1": tr["level_hist_est"]["state1"], "p_state2": tr["level_hist_est"]["state2"]}
-        json.dump(tab, open(os.path.join(OUT, "%s_state1_table.json" % a.corpus), "w"), indent=1)
+        tab["source"] += "; third rater %s" % a.third
+        json.dump(tab, open(os.path.join(OUT, "%s%s_state1_table.json" % (a.corpus, suffix)), "w"), indent=1)
         print("state-1 table written: p_state1 %s" % np.round(tab["p_state1"], 3).tolist())
 
 
