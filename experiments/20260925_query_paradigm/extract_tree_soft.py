@@ -69,6 +69,11 @@ DEFINITIONS = {
             "5. Self-harm: depicts or encourages self-harm, suicide or dangerous acts.\n"
             "A part is offensive if at least one category applies to it."
         ),
+        "hate5": (
+            "Hateful content attacks, demeans, dehumanises or incites hostility against people for a protected "
+            "attribute (race, ethnicity, nationality, religion, gender, sexual orientation, disability, etc.), by "
+            "speech, on-screen text, symbols, gestures or imagery."
+        ),
     },
     "dehate": {
         "platform": "decentralised video platforms such as BitChute and Odysee",
@@ -105,7 +110,7 @@ NO_SPEECH = "(no speech in this part)"
 SYSTEM5_TEMPLATE = (
     "You are a careful content-moderation rater for {platform}. {inputs} Rate the harmful content present IN THIS "
     "PART in five categories:\n"
-    "1. {name} (the platform's policy definition): {text}\n"
+    "1. hate (the platform's policy definition): {text}\n"
     "2. harassment: content that insults, mocks, bullies or threatens a person or group, not for a protected "
     "attribute.\n"
     "3. sexual: sexual or sexually explicit content.\n"
@@ -117,7 +122,7 @@ SYSTEM5_TEMPLATE = (
 USER5_SCALE = (
     "Scale for each category: 0 = none; 1 = faint or ambiguous cue; 2 = clear but implicit or coded; "
     "3 = explicit and unambiguous.\n"
-    "Answer with exactly five integers separated by spaces, in the order: {name} harassment sexual violence "
+    "Answer with exactly five integers separated by spaces, in the order: hate harassment sexual violence "
     "self-harm. No other text."
 )
 USER5_BOTH = "Transcript of this part: \"{asr}\"\n\n" + USER5_SCALE
@@ -221,7 +226,8 @@ def main():
         return
     D = DEFINITIONS[a.corpus]
     system = (SYSTEM_TEMPLATE if a.prompt == "p1" else SYSTEM5_TEMPLATE).format(
-        platform=D["platform"], name=D["name"], text=D["text"], inputs=INPUTS[a.view])
+        platform=D["platform"], name=D["name"], text=D.get("hate5", D["text"]) if a.prompt == "p5" else D["text"],
+        inputs=INPUTS[a.view])
     proc = AutoProcessor.from_pretrained(a.model)
     user_content = ([{"type": "video"}] if a.view != "text" else []) + [{"type": "text", "text": "{USER}"}]
     msgs = [{"role": "system", "content": [{"type": "text", "text": system}]},
