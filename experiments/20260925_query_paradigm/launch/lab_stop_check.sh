@@ -26,7 +26,7 @@ best() {  # corpus -> the three best trial dirs: study_summary.json of the searc
       out="$out $R/$c/seed$seed/trial$("$PY" -c "import json,sys; print(json.load(open(sys.argv[1]))['best']['number'])" "$R/$c/seed$seed/study_summary.json")"
     fi
   done
-  if [ -n "$out" ]; then echo "$out"; return; fi
+  if [ "$(echo $out | wc -w)" -eq 3 ]; then echo "$out"; return; fi   # all three seeds searched here; else the fixed list
   case "$c" in
     hatemm)      echo "$R/hatemm/seed234/trial5 $R/hatemm/seed2025/trial11 $R/hatemm/seed3407/trial4" ;;
     hateclipseg) echo "$R/hateclipseg/seed234/trial13 $R/hateclipseg/seed2025/trial18 $R/hateclipseg/seed3407/trial16" ;;
