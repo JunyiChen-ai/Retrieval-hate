@@ -800,6 +800,12 @@ HCS 软答案 trial（13 / 11 / 19，`copy_check/hateclipseg_r5.json`，汇总 `
 
 三个视图 = 帧+转录（both）、仅帧、仅转录，同一 VLM、同一节点。正例训练视频的短节点（≤ 16 s）三视图各一个二值答案（软答案 > .5，或解码 any ≥ 2），按 Fu et al. 2020 三元组法 / Pepe & Janes 2007 闭式解出「含仇恨节点比例」与每视图在两种状态下的说有率；负例节点单独给状态 0 的率。先做条件独立性检验（Jaffe et al. 2016：协方差残差）。开发期核对：估出的正例视频内「无仇恨说有率 / 含仇恨说有率」与 test GT 的实测值（HateMM .47 / .57）差 ≤ .10 才算可用。可用则三状态表由此估计（无逐秒标注），进搜索；否则记录为不可辨识并回到后备（validation 拟合）。
 
+**17.3 结果，HateMM（`multiview_check.py`，`runs/20260929_query_paradigm_r5/multiview/hatemm.json`，视图文件 `data/vlm_tree/HateMM/soft_{both,frames,text}_p1.jsonl`，16:40 NZDT）**。二值答案 = p > .5。
+
+- 条件独立性（负例视频节点，状态已知为 0；G 检验 p 全部 < 1e-6）：两两 Pearson 相关 both–text .64–.72、both–frames .18–.32、frames–text .02–.12（test 的 GT 状态 1 / 2 节点上同样：both–text .61–.85，frames–text .10–.17）。**both 视图几乎由转录决定，与 text 视图强相关；frames 与 text 接近条件独立。**
+- 三元组估计（train 正例视频 4–16 s 节点，n 16133）：π .74，a（状态 2 说有率）= both .83 / frames .35 / text .46，c（状态 1）= both .00 / frames .23 / text .00；EM 同向（c_both = 0）。test 上 GT 实测：π .65，a = .46 / .39 / .43，c = .15 / .30 / .10。**c_both 误差 .15、a_both 误差 .35，超过预注册的 .10；只有 frames 视图的估计在 .10 内**（c .23 对 .30，a .44 对 .39）。原因即 both–text 的条件依赖：估计把 both 与 text 的一致全部归给隐状态。bootstrap（按视频，200 次）c_both 的 90% 区间恒为 0。
+- 按预注册，(both, frames, text) 三元组**不可辨识**。变体（不换 VLM、不用逐秒标注）：第三个评分者换成骨干先验网络（不同模态、不同模型）的节点分数（第 5 版 trial 的 0 次调用后验在节点内的最大值，按训练集分位二值化），三元组 = (frames, text, backbone)，both 视图只用于由责任度算状态 1 的 8 档表；先做同样的条件独立检验，再看 test 误差。若仍超 .10，回到后备（validation 拟合状态 1 的表，经同一 `anchored_ext` 入口）。
+
 ### 17.4 第 4 步：自动停止
 
 在 1–3 步确定的答案模型下重测 EIG 阈值与 VOI 停止（P2b：自适应平均约 8 次 ≥ 固定 8 次 − .005，三语料），另加不看后验的「输出稳定即停」（连续 t 步秒级排序 Spearman ≥ τ，t、τ 在 validation 上选）。
