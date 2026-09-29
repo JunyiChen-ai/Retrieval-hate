@@ -86,6 +86,11 @@ ANSWER_SOURCES = {"k30": "answers_qwen7b_mod5", "words": "answers_words_qwen7b_m
                   "soft_both": "soft_both_p1", "soft_frames": "soft_frames_p1", "soft_text": "soft_text_p1",
     "soft5_both": "soft5_both_p5", "soft5_frames": "soft5_frames_p5", "soft5_text": "soft5_text_p5"}
 SOFT_LEVELS = 8
+SOFT5_EDGES = "fixed"        # five-category variant: "fixed" = level edges [0.1, 0.5, 1.5] on the expected-level
+                             # scale 0-3 (0 = confident none, 1 = some mass on a cue, 2 = clear, 3 = explicit);
+                             # "quantile" = train quantiles per category (the first run; near-zero categories
+                             # became noise levels and the answers carried no information, README 17.1)
+SOFT5_FIXED = [0.1, 0.5, 1.5]
 SOFT_EDGES = {}                                # (corpus, source) -> the level edges used (for logging)
 
 
@@ -97,13 +102,18 @@ def is_soft5(source):
     return source.startswith("soft5_")
 
 
-def configure_source(source, soft_levels=SOFT_LEVELS):
+def configure_source(source, soft_levels=SOFT_LEVELS, soft5_edges=None):
     """Sets the answer shape the rest of the code reads from qtree (N_CAT categories x N_LEV levels): the decoded
     answers are 5 categories x 4 levels; a soft source is 1 category x soft_levels levels. Call before anything
     that builds an answer model or a TreeBatch."""
-    global SOFT_LEVELS
+    global SOFT_LEVELS, SOFT5_EDGES
     if is_soft5(source):                       # README 17.1 variant: five categories, expected level each, binned
         SOFT_LEVELS = int(soft_levels)
+        if soft5_edges is not None:
+            SOFT5_EDGES = soft5_edges
+        assert SOFT5_EDGES in ("fixed", "quantile")
+        if SOFT5_EDGES == "fixed":
+            assert SOFT_LEVELS == len(SOFT5_FIXED) + 1, "fixed five-category edges give 4 levels"
         qtree.N_CAT, qtree.N_LEV = 5, int(soft_levels)
     elif is_soft(source):
         SOFT_LEVELS = int(soft_levels)
@@ -148,8 +158,11 @@ def load_answers(corpus, source="k30"):
     if is_soft5(source):
         assert qtree.N_CAT == 5 and qtree.N_LEV == SOFT_LEVELS, "call data.configure_source(source, levels) first"
         P, T, split = load_soft_p(corpus, source)
-        edges = [soft_edges({v: {k: (None if e is None else e[c]) for k, e in d.items()} for v, d in P.items()},
-                            split, SOFT_LEVELS) for c in range(5)]        # train quantiles per category
+        if SOFT5_EDGES == "fixed":
+            edges = [np.asarray(SOFT5_FIXED, float) for _ in range(5)]
+        else:
+            edges = [soft_edges({v: {k: (None if e is None else e[c]) for k, e in d.items()} for v, d in P.items()},
+                                split, SOFT_LEVELS) for c in range(5)]    # train quantiles per category
         SOFT_EDGES[(corpus, source)] = edges
         out = {v: {k: (None if e is None else np.array([int(np.searchsorted(edges[c], e[c], side="right"))
                                                          for c in range(5)], dtype=np.int64))

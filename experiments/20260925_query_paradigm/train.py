@@ -80,7 +80,7 @@ DEFAULTS = {
     "text_sources": ["bert"], "chain": "learned", "boundary": "closed",
     "chain_form": "zero_inflated", "backbone": "macil", "query_level": 0,
     "answer_source": "k30", "node_prior": False,
-    "soft_levels": 8, "state1_table": None,
+    "soft_levels": 8, "state1_table": None, "soft5_edges": "fixed",
 }
 # Revision 5 (README section 17.1): answer_source "soft_both" / "soft_frames" / "soft_text" = the first-token P(Yes)
 # under the per-dataset definition (extract_tree_soft.py), binned into soft_levels quantile levels of the training
@@ -168,7 +168,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
         log.flush()
 
     say("host %s | code: %s | corpus %s seed %d" % (socket.gethostname(), git_describe(), corpus, seed))
-    n_cat, n_lev = qdata.configure_source(cfg["answer_source"], int(cfg["soft_levels"]))
+    n_cat, n_lev = qdata.configure_source(cfg["answer_source"], int(cfg["soft_levels"]), cfg.get("soft5_edges"))
     if qdata.is_soft5(cfg["answer_source"]):       # revision 5 variant: five categories of soft_levels levels
         cfg["categories"] = [0, 1, 2, 3, 4]
     elif qdata.is_soft(cfg["answer_source"]):      # revision 5: one category of soft_levels levels
@@ -181,8 +181,9 @@ def train(corpus, seed, out_dir, cfg, device, num_workers):
     labels, ids, gt, _ = hc.load_fixed_cohort(corpus)
     answers, T_ans = qdata.load_answers(corpus, cfg["answer_source"])
     if qdata.is_soft(cfg["answer_source"]):
-        say("soft answers %s: %d category x %d levels, train quantile edges %s" % (
+        say("soft answers %s: %d category x %d levels, edges (%s) %s" % (
             cfg["answer_source"], n_cat, n_lev,
+            cfg.get("soft5_edges") if qdata.is_soft5(cfg["answer_source"]) else "train quantiles",
             np.round(qdata.SOFT_EDGES[(corpus, cfg["answer_source"])], 4).tolist()))
     all_ids = ids["train"] + ids["val"] + ids["test"]
     missing = [v for v in all_ids if v not in answers]
