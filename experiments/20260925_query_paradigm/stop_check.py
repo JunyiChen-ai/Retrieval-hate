@@ -108,6 +108,14 @@ def rule_values(run, T):
     vals["dlsum2"] = [max(ds[k], ds[k - 1] if k >= 1 else np.inf) for k in range(n)]
     vals["dG"] = dg[:n]                                                       # video-level log-odds change
     vals["dG2"] = [max(dg[k], dg[k - 1] if k >= 1 else np.inf) for k in range(n)]
+    # remaining-information rules (README 17.4, the nonmyopic direction): the EIG summed over ALL candidate questions
+    # still askable (first-order approximation of the information left in the video; a slowly moving video with many
+    # small-EIG questions keeps a large sum, a converged one does not), the sum of the three largest, and the sum per
+    # candidate (recorded by cpolicy.run_batch; absent in older dumps)
+    if "eig_sum" in run and len(run["eig_sum"]) >= n:
+        vals["eigsum"] = [float(x) for x in run["eig_sum"][:n]]
+        vals["eigtop3"] = [float(x) for x in run["eig_top3"][:n]]
+        vals["eigmean"] = [float(x) / max(1, m) for x, m in zip(run["eig_sum"][:n], run["n_cand"][:n])]
     # composites: an undecided video (H(P(G)) >= u bits; u = .5: P(G) in [.11, .89]; u = .2: [.03, .97], the decision
     # band of a sequential test) keeps asking whatever the last change was; a decided one stops by the change rule
     for u, name in ((0.5, "u50"), (0.2, "u20")):
@@ -128,7 +136,10 @@ QMIX = {"qmix": ("dlogit", "stab1"), "qmix2": ("dlogit2", "stab2"), "qmixG": ("d
         "qmixD": ("dlogit", "hG"), "qmixD2": ("dlogit2", "hG"), "qmixS": ("dlsum", "hG"), "qmixS2": ("dlsum2", "hG"),
         "qmixSG": ("dlsum", "stab1", "hG"), "qmixS2G": ("dlsum2", "stab2", "hG"),
         "qmixT": ("dlogit", "stab1", "hG", "hT"), "qmixST": ("dlsum", "stab1", "hG", "hT"), "qmixDT": ("dlogit", "hG", "hT"),
-        "qmixS_T": ("dlsum", "hT")}
+        "qmixS_T": ("dlsum", "hT"),
+        # third round: the remaining-information sum as the state component
+        "qmixE": ("dlsum", "eigsum"), "qmixEG": ("dlsum", "eigsum", "hG"), "qmixE3": ("dlsum", "eigtop3"),
+        "qmixDE": ("dlogit", "eigsum"), "qmixSE": ("dlsum", "stab1", "eigsum")}
 
 
 def add_quantile_rules(vals):
@@ -136,7 +147,10 @@ def add_quantile_rules(vals):
     validation (video, call) values of that component (its validation quantile, no labels), and the rule is the
     largest quantile: ask while any component (cross-video log-odds change, within-video rank change, video-level
     undecidedness) is still larger than a fraction c of what validation runs show. One threshold, no floor."""
+    have = set(next(iter(next(iter(vals.values())).values())).keys())
     for name, comps in QMIX.items():
+        if any(c not in have for c in comps):
+            continue
         ref = {}
         for c in comps:
             x = np.concatenate([np.asarray(vals["val"][v][c], dtype=np.float64) for v in vals["val"]])
@@ -154,7 +168,7 @@ def add_quantile_rules(vals):
 
 FLOORS = (2, 4, 6)                                     # floor sensitivity (README 17.4 variant (c))
 STATE = ("hG", "hT", "hmax", "vsum", "vmean")          # README 17.4 "no floor": state-confidence rules
-CHANGE = ("dlogit", "dlogit2", "dlogit3", "dlsum", "dlsum2", "dG", "dG2") + tuple(
+CHANGE = ("dlogit", "dlogit2", "dlogit3", "dlsum", "dlsum2", "dG", "dG2", "eigsum", "eigtop3", "eigmean") + tuple(
     "%s_%s" % (b, u) for u in ("u50", "u20") for b in ("dlogit", "dlogit2", "dlogit3"))   # log-odds change rules
 RULES = (("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS)
          + STATE + CHANGE + tuple(QMIX))
@@ -252,6 +266,8 @@ def main():
                                                                         x["test"]["pooled_roc"], x["test"]["within_roc"]), flush=True)
         for rule in RULES + tuple(r + "_strat" for r in STRAT):
             if a.rules is not None and rule not in a.rules:
+                continue
+            if any(rule.replace("_strat", "") not in vals[sp][v] for sp in vals for v in vals[sp]):
                 continue
             rt["rules"][rule] = {}
             for B in BUDGETS:

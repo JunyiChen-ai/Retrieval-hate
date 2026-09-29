@@ -83,7 +83,8 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     askers = [policy.Asker(vt, am, cats) if make_asker is None else make_asker(b, vt)
               for b, vt in enumerate(vts)]
     A3 = torch.zeros(fo.N, 3, dtype=torch.float64, device=device)
-    out = [{"scores": [], "eig": [], "voi": [], "asked": [], "p_G": []} for _ in vids]
+    out = [{"scores": [], "eig": [], "voi": [], "asked": [], "p_G": [], "eig_sum": [], "eig_top3": [], "n_cand": []}
+           for _ in vids]                      # eig_sum / eig_top3: over all candidate questions at that step (README 17.4)
     rem = [np.ones(len(a.q), dtype=bool) if allowed is None else np.isin(a.q, np.asarray(sorted(allowed[b])))
            for b, a in enumerate(askers)]
     llr = [np.zeros(T) for T in Ts]
@@ -128,6 +129,10 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 e = asker.eig(cand[:1], w[:1])
                 j = 0
             chosen.append((b, int(cand[j]), int(nodes[j]), w[j], float(e[j])))
+            e_all = np.asarray(e, dtype=np.float64)
+            out[b]["eig_sum"].append(float(e_all.sum()))
+            out[b]["eig_top3"].append(float(np.sort(e_all)[-3:].sum()))
+            out[b]["n_cand"].append(int(len(cand)))
         if not chosen:
             break
         if record_voi:
