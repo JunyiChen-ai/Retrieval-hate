@@ -189,13 +189,32 @@ def add_quantile_rules(vals):
                 vals[sp][v][name] = [float(t) for t in q]
 
 
+RELAX = (("qmixSG", "qmix2G", "qmixS2G", "qmixD2", "qmixS", "dlsum", "dlogit2_n20"), (0.05, 0.10))
+
+
+def add_relaxed_rules(vals):
+    """EcoFrame-style relaxing threshold (README 17.4 item 10): the stop threshold is relaxed with the number of calls
+    made, tau_k = tau_1 + (k - 1) * delta in EcoFrame; in the "ask while value >= c" form used here the value of call
+    k is multiplied by (1 - delta)^k, so a video that keeps moving a little stops after some calls without a hard
+    maximum. delta is a hand-set schedule constant (two values reported); inf values stay inf."""
+    for base, delta in ((b, d) for b in RELAX[0] for d in RELAX[1]):
+        name = "%s_rt%02d" % (base, int(round(delta * 100)))
+        for sp in vals:
+            for v in vals[sp]:
+                if base not in vals[sp][v]:
+                    continue
+                vals[sp][v][name] = [float(x) * (1.0 - delta) ** k if np.isfinite(x) else float(x)
+                                     for k, x in enumerate(vals[sp][v][base])]
+
+
 FLOORS = (2, 4, 6)                                     # floor sensitivity (README 17.4 variant (c))
 STATE = ("hG", "hT", "hmax", "vsum", "vmean")          # README 17.4 "no floor": state-confidence rules
 CHANGE = (("dlogit", "dlogit2", "dlogit3", "dlsum", "dlsum2", "dG", "dG2", "eigsum", "eigtop3", "eigmean", "erm", "ermsum")
           + tuple("%s_%s" % (b, u) for u in ("u50", "u20") for b in ("dlogit", "dlogit2", "dlogit3"))
           + tuple("%s_%s" % (b, u) for u in ("n50", "n20") for b in ("dlogit", "dlogit2", "dlsum")))   # log-odds change rules
 RULES = (("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS)
-         + STATE + CHANGE + tuple(QMIX))
+         + STATE + CHANGE + tuple(QMIX)
+         + tuple("%s_rt%02d" % (b, int(round(d * 100))) for b in RELAX[0] for d in RELAX[1]))
 STRAT = ("eig", "voi", "stab1")                        # variant (a): thresholds per prior half
 
 
@@ -272,6 +291,7 @@ def main():
                     pickle.dump({"runs": runs, "T": Tmap}, f)
         vals = {sp: {v: rule_values(r, Tmap[v]) for v, r in runs[sp].items()} for sp in runs}
         add_quantile_rules(vals)
+        add_relaxed_rules(vals)
         pg0 = {sp: {v: float(r["p_G"][0]) for v, r in runs[sp].items()} for sp in runs}
 
         def test_eval(name, scores):
