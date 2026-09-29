@@ -57,11 +57,26 @@ def instability(scores):
     return out
 
 
+def _hb(p):
+    """Binary entropy in bits of a probability array."""
+    p = np.clip(np.asarray(p, dtype=np.float64), 1e-9, 1.0 - 1e-9)
+    return -(p * np.log2(p) + (1.0 - p) * np.log2(1.0 - p))
+
+
 def rule_values(run, T):
     """Per rule, the value read before call k+1 (k = 0..n-1) so that policy.stop_calls applies unchanged.
-    README 17.4 variants: voi_norm = VOI / T (length-free: the expected squared change per second, variant (b));
-    <rule>_f<k> = the rule with a floor of k calls, k in FLOORS (variant (c)); the prior-stratified thresholds (variant (a))
-    are handled in main (a threshold per half of the videos by the prior P(G = 1))."""
+    Next-question rules (README 17.4 baseline): eig, voi, voi_norm = VOI / T (variant (b)); last-change rules: stab1,
+    stab2; <rule>_f<k> = a floor of k calls (variant (c), kept for reference only: the user's 2026-09-29 ruling forbids
+    floors); the prior-stratified thresholds (variant (a)) are handled in main.
+    State-confidence rules (README 17.4 "no floor", the rule family of the stopping literature: the posterior after
+    k calls, not the value of the next question; Wald's SPRT, Naghshvar & Javidi 2013, FrameExit / AdaFrame gates,
+    VideoAgent's sufficiency score, EcoFrame's output-entropy gate):
+      hG     binary entropy of the video posterior P(G = 1 | answers)
+      hT     mean over seconds of the binary entropy of the per-second posterior p_t
+      hmax   max(hG, hT): ask while either the video-level or the per-second map is uncertain
+      vsum   sum over seconds of p_t (1 - p_t): the expected squared error of the per-second map, weighted as the
+             pooled metrics weight seconds (a long uncertain video counts more)
+      vmean  the same per second (length-free)"""
     n = len(run["eig"])
     inst = instability(run["scores"])                 # length n + 1: inst[k] = change made by call k
     vals = {"eig": list(run["eig"]), "voi": list(run["voi"]),
@@ -71,11 +86,20 @@ def rule_values(run, T):
     for r in ("eig", "voi", "stab1"):
         for f in FLOORS:
             vals["%s_f%d" % (r, f)] = [np.inf if k < f else vals[r][k] for k in range(n)]
+    hG = _hb(run["p_G"][:n])
+    ps = [np.asarray(run["scores"][k], dtype=np.float64) for k in range(n)]
+    hT = np.array([float(np.mean(_hb(p))) for p in ps]) if n else np.zeros(0)
+    vals["hG"] = [float(x) for x in hG]
+    vals["hT"] = [float(x) for x in hT]
+    vals["hmax"] = [float(max(a, b)) for a, b in zip(hG, hT)]
+    vals["vsum"] = [float(np.sum(p * (1.0 - p))) for p in ps]
+    vals["vmean"] = [float(np.mean(p * (1.0 - p))) for p in ps]
     return vals
 
 
 FLOORS = (2, 4, 6)                                     # floor sensitivity (README 17.4 variant (c))
-RULES = ("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS)
+STATE = ("hG", "hT", "hmax", "vsum", "vmean")          # README 17.4 "no floor": state-confidence rules
+RULES = ("eig", "voi", "voi_norm", "stab1", "stab2") + tuple("%s_f%d" % (r, f) for r in ("eig", "voi", "stab1") for f in FLOORS) + STATE
 STRAT = ("eig", "voi", "stab1")                        # variant (a): thresholds per prior half
 
 
@@ -99,6 +123,10 @@ def main():
     ap.add_argument("--threads", type=int, default=8)
     ap.add_argument("--copy-pi", default=None, help="neg (from the negative training videos) or a constant")
     ap.add_argument("--out-suffix", default="")
+    ap.add_argument("--dump", action="store_true", help="save the recorded runs (scores / p_G / eig / voi / asked per "
+                    "call, validation and test) as runs.pkl in the trial's output directory, so that further rules can "
+                    "be evaluated without re-running the policy")
+    ap.add_argument("--rules", nargs="*", default=None, help="restrict to these rules (default: all)")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
@@ -134,6 +162,10 @@ def main():
         pg0 = {sp: {v: float(r["p_G"][0]) for v, r in runs[sp].items()} for sp in runs}
         od = os.path.join(OUT, a.corpus, tag + a.out_suffix)
         os.makedirs(od, exist_ok=True)
+        if a.dump:
+            import pickle
+            with open(os.path.join(od, "runs.pkl"), "wb") as f:
+                pickle.dump({"runs": runs, "T": {v: int(store.T[v]) for sp in runs for v in runs[sp]}}, f)
 
         def test_eval(name, scores):
             sp = os.path.join(od, "scores_test_%s.jsonl" % name)
@@ -151,6 +183,8 @@ def main():
             print("== %s fixed %2d | calls %5.2f | %.4f / %.4f / %.4f" % (tag, B, x["test_mean_calls"], x["test"]["pooled_ap"],
                                                                         x["test"]["pooled_roc"], x["test"]["within_roc"]), flush=True)
         for rule in RULES + tuple(r + "_strat" for r in STRAT):
+            if a.rules is not None and rule not in a.rules:
+                continue
             rt["rules"][rule] = {}
             for B in BUDGETS:
                 if rule.endswith("_strat"):
