@@ -151,6 +151,8 @@ def digit_dists(logprobs_per_pos):
             out.append([round(sum(i * x for i, x in enumerate(pv)), 6), [round(x, 6) for x in pv]])
         if len(out) == N_CAT5:
             break
+    if len(out) == N_CAT5 - 1:                 # the model sometimes stops after four integers: the fifth = 0
+        out.append([0.0, [1.0, 0.0, 0.0, 0.0]])
     return out if len(out) == N_CAT5 else None
 
 
