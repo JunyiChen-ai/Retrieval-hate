@@ -245,6 +245,11 @@ def main():
     ap.add_argument("--erm", type=int, default=0, help="samples for the expected remaining movement (cpolicy record_erm)")
     ap.add_argument("--from-dump", default=None, help="suffix of an earlier --dump run: read its runs.pkl per trial "
                     "instead of re-running the policy (the rules are then evaluated on the saved per-call posteriors)")
+    ap.add_argument("--select-val", action="store_true", help="README 17.4 item 11: the threshold c is chosen on the "
+                    "validation LABELS instead of a mean budget: the rule is calibrated to mean budgets 1..24 (step .5) on "
+                    "validation, the validation AP / ROC / within of each is computed (hc.frame_metrics), and c is the "
+                    "one with the best validation value (exact maximum, and the smallest budget within .005 of it)")
+    ap.add_argument("--select-rules", nargs="*", default=None, help="rules for --select-val (default: --rules)")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
@@ -340,6 +345,41 @@ def main():
                 print("== %s %-5s mean %2d (c %.4g) | calls %5.2f (pos %5.2f neg %5.2f) | %.4f / %.4f / %.4f" % (
                     tag, rule, B, c, x["test_mean_calls"], x["test_mean_calls_pos"], x["test_mean_calls_neg"],
                     x["test"]["pooled_ap"], x["test"]["pooled_roc"], x["test"]["within_roc"]), flush=True)
+        if a.select_val:
+            rt["select"] = {}
+            for rule in (a.select_rules or a.rules or list(rt["rules"])):
+                if any(rule not in vals[sp][v] for sp in vals for v in vals[sp]):
+                    continue
+                vr = [vals["val"][v][rule] for v in vals["val"]]
+                curve = []
+                for B in np.arange(1.0, 24.01, 0.5):
+                    c, vm = policy.calibrate(vr, float(B))
+                    calls_v = {v: policy.stop_calls(vals["val"][v][rule], c) for v in vals["val"]}
+                    sv = {v: runs["val"][v]["scores"][calls_v[v]] for v in vals["val"]}
+                    m = hc.frame_metrics(sv, gt["val"], hate_val)
+                    m["sum"] = m["pooled_ap"] + m["pooled_roc"] + m["within_roc"]
+                    curve.append({"B": float(B), "c": float(c), "val_mean_calls": float(vm), "val": m})
+                sel = {}
+                for obj in ("pooled_ap", "pooled_roc", "within_roc", "sum"):
+                    top = max(e["val"][obj] for e in curve)
+                    tol = 0.005 * (3 if obj == "sum" else 1)
+                    for mode, pick in (("max", next(e for e in curve if e["val"][obj] >= top - 1e-12)),
+                                       ("tol", next(e for e in curve if e["val"][obj] >= top - tol))):
+                        c = pick["c"]
+                        calls = {v: policy.stop_calls(vals["test"][v][rule], c) for v in vals["test"]}
+                        st = {v: runs["test"][v]["scores"][calls[v]] for v in calls}
+                        cv = np.array(list(calls.values()))
+                        name = "%s_%s" % (obj, mode)
+                        sel[name] = {"B": pick["B"], "c": float(c), "val_mean_calls": pick["val_mean_calls"], "val": pick["val"],
+                                     "test": test_eval("sel_%s_%s" % (rule, name), st), "test_mean_calls": float(cv.mean()),
+                                     "test_mean_calls_pos": float(np.mean([calls[v] for v in calls if labels[v] == 1])),
+                                     "test_mean_calls_neg": float(np.mean([calls[v] for v in calls if labels[v] == 0])),
+                                     "test_calls_quantiles": [float(x) for x in np.percentile(cv, [0, 25, 50, 75, 100])]}
+                        x = sel[name]
+                        print("== %s %s select %-15s val B %4.1f (c %.4g) | calls %5.2f (pos %5.2f neg %5.2f) | %.4f / %.4f / %.4f" % (
+                            tag, rule, name, x["B"], c, x["test_mean_calls"], x["test_mean_calls_pos"], x["test_mean_calls_neg"],
+                            x["test"]["pooled_ap"], x["test"]["pooled_roc"], x["test"]["within_roc"]), flush=True)
+                rt["select"][rule] = {"curve": curve, "selected": sel}
         res["trials"][trial] = rt
         json.dump(res, open(os.path.join(OUT, "%s%s.json" % (a.corpus, a.out_suffix)), "w"), indent=1, default=float)
 

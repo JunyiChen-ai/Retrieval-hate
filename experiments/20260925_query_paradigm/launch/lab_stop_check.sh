@@ -19,6 +19,7 @@ extra=()
 [ -n "${RULES:-}" ] && extra+=(--rules $RULES)
 [ -n "${FROM_DUMP:-}" ] && extra+=(--from-dump "$FROM_DUMP")
 [ -n "${ERM:-}" ] && extra+=(--erm "$ERM")
+[ -n "${SELECT_VAL:-}" ] && extra+=(--select-val)
 best() {  # corpus -> the three best trial dirs: study_summary.json of the search root when present (revision 5 on the
           # machine that ran the search), else the revision-4 numbers (lab machines hold the trial dirs only)
   local c="$1" out=""
