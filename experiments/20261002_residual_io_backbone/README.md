@@ -1,6 +1,6 @@
 # Backbone 第二次修订：保留跨模态编码的区间内外残差
 
-截至2026-10-02 11:21 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。HCS seed234完整20-trial搜索已结束并回传核验，HateMM继续完整预算；准备HCS本版本三组锁定配置诊断。主仓库代码与本机结果为依据；Pursuing Goal保持paused，已有heartbeat与run monitor接续。用户授权优先novel且涨点，三个主指标并列。
+截至2026-10-02 11:26 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。HCS seed234完整20-trial搜索已结束并回传核验，HateMM继续完整预算；HCS本版本三组锁定配置诊断已启动。主仓库代码与本机结果为依据；Pursuing Goal保持paused，已有heartbeat与run monitor接续。用户授权优先novel且涨点，三个主指标并列。
 
 ## 1. 已观察的问题与修订假设
 
@@ -69,3 +69,6 @@ r5来源 `runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_te
 固定8次报告每seed、均值/总体标准差，以及各消融相对full的逐seed配对差值/均值/标准差；outside与整体残差贡献分别判断。不得借用前两版机制证据，不用32次替换主操作点，这些诊断不是Optuna确认。之后HateMM完整搜索结束再锁定其配置，检验两语料贡献。
 
 11:18实时资源：lab3空闲21620MiB、利用率41%，已有HateMM训练继续；lab1/lab-server仅空闲3723/2585MiB，不动他人任务。在lab3并发三组诊断，新增VLM调用0，按HCS首trial434.67秒粗估8次训练累计约58分钟，受并发影响，不承诺墙钟时间。启动入口 `launch/run_hateclipseg_diagnostics_uoa-lab3.sh <arm>` 只调用共享 `src/qtl/diagnostics.py`；本版模型、活动HateMM训练代码与评测器不变。每组独立detached owner及120秒monitor，输出 `runs/20261002_residual_io_backbone/diagnostics/hateclipseg/<arm>/`。
+
+
+实际启动时间（full/nooutside/noresidual）2026-10-02T11:24:23.783086+13:00 / 2026-10-02T11:24:24.563051+13:00 / 2026-10-02T11:24:25.354324+13:00；owner/monitor分别2231223/111855、2231458/111858、2231722/111869。三组实际训练已进入epoch5/5/6，独立monitor存活、首轮RUNNING并绑定当前会话，记录 `setup/hcs_diagnostic_launches.json`、`setup/hcs_diagnostic_startup_check.json`；此时HateMM10/20 COMPLETE、另1 RUNNING，整卡已用17038MiB/空闲15052MiB、利用率98%。已有heartbeat与HateMM monitor均保留，HCS已结束搜索的monitor通知后自行退出，不重复启动。
