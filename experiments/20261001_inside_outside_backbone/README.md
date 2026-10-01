@@ -154,4 +154,22 @@ uoa-lab3 / sc474398 的seed2025、3407均于03:09:04结束；03:11通知后核�
 
 配置 `configs/diagnostic_hatemm_seed234.json`，入口 `launch/run_diag_hatemm_uoa-lab3.sh <full|nooutside>`，使用既有共享diagnostic owner与初版trainer，输出 `runs/20261001_inside_outside_backbone/diagnostics/hatemm/<arm>/seed<seed>/`。shell语法、源trial17的配置和0/8/32评测解析已核对；骨干、共享trainer和活动搜索代码不变，不做smoke。新增VLM调用/缓存抽取0；最初HateMM完整trial559.52秒对应5次累计约0.78小时，近期并发trial约1000–1400秒，实际墙钟另记，不能当成独占GPU耗时。
 
-full已于2026-10-02 03:43:28在uoa-lab3 / sc474398释放的诊断位置启动，seed234已核验复用，seed2025进入完整训练；独立monitor首次RUNNING绑定成功。修订版HCS noattention完成后，nooutside已于03:57:39在同主机接续，独立monitor已绑定正确身份并首次观测RUNNING，seed234实际进入完整训练；不停止、缩减或覆盖三项活动搜索。准备/运行状态只在STATUS维护。
+full于2026-10-02 03:43:28在uoa-lab3 / sc474398启动，04:22:06正常结束；04:23通知后核验真实主/同会话子进程已退出并回传全部输出。seed234复用trial17，seed2025/3407均新跑完整50 epoch。修订版HCS noattention完成后，nooutside已于03:57:39在同主机接续，独立monitor已绑定正确身份并首次观测RUNNING，seed234实际进入完整训练；不停止、缩减或覆盖三项活动搜索。准备/运行状态只在STATUS维护。
+
+### 11.1 full完成结果（2026-10-02 04:26）
+
+锁定trial17配置与三seed summary一致；每个seed的history和run.log均严格epoch1–50，validation最高(AP+ROC)/2对应保存checkpoint，model.pth实际加载核对epoch。各13份、共39份统一test评测完整，覆盖214视频/29269秒，三项有限，无缺失或额外视频。此为固定配置诊断，不是三seed Optuna确认。
+
+| 预算 | AP（均值±总体seed标准差） | ROC | within |
+|---|---:|---:|---:|
+| 0 | 0.582637 ± 0.012945 | 0.796388 ± 0.015877 | 0.745044 ± 0.012061 |
+| 8 | 0.674881 ± 0.005121 | 0.875579 ± 0.006286 | 0.756881 ± 0.002989 |
+| 32 | 0.668993 ± 0.016884 | 0.872995 ± 0.010203 | 0.767585 ± 0.003357 |
+
+| seed | validation epoch | 固定8次 AP / ROC / within |
+|---|---:|---|
+| 234 | 2 | 0.679560 / 0.881351 / 0.753400 |
+| 2025 | 4 | 0.677328 / 0.878548 / 0.756544 |
+| 3407 | 1 | 0.667755 / 0.866838 / 0.760699 |
+
+来源为本机 `runs/20261001_inside_outside_backbone/diagnostics/hatemm/full/seed{2025,3407}/metrics_test_fixed<预算>.json`，seed234复用 `runs/20261001_inside_outside_backbone/hatemm/seed234/trial17/metrics_test_fixed<预算>.json`；核验及统计 `runs/20261001_inside_outside_backbone/analysis/hatemm_locked_full.json`。nooutside仍在运行，必须等其三seed完整结束后才算配对差值，再与本实验HCS对应outside消融核对两语料效应；不将其他版本消融混入，不以此替代尚未完成的Optuna确认或宣布novelty完成。
