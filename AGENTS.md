@@ -108,7 +108,7 @@
 ### 评测指标(裁定 2026-09-01,查证记录 `experiments/20260830_spantransfer_pilot/METRIC_CONVENTIONS.md`)
 本项目 localization 评测固定用三个指标,全部 1fps 帧网格、test 集:
 1. **Frame-level (pooled) ROC-AUC**——全部 test 视频的秒拼一池算一个 AUC。标准指标(Sultani CVPR'18 谱系)。
-2. **Within-video macro ROC-AUC**——对每个同时含两类秒的正例视频单独算 AUC 再平均。Macro AUC 有 Georgescu TPAMI'21/UBnormal CVPR'22 先例；UR-DMU 的异常视频子集 AUC 不等同于逐视频 macro AUC。**按现行 2026-09-02 裁定，SOTA 比较用指标 1 和 3；within 作下限约束与附加分析，不作比较主指标**，数值与搜索用途以 `RESEARCH_ITERATION_RULES.md` 为准。2026-09-05 对话已讨论取消硬门的建议，尚未收到修改规则的明确指令。
+2. **Within-video macro ROC-AUC**——对每个同时含两类秒的正例视频单独算 AUC 再平均。Macro AUC 有 Georgescu TPAMI'21/UBnormal CVPR'22 先例；UR-DMU 的异常视频子集 AUC 不等同于逐视频 macro AUC。**用户裁定 2026-10-01：within 与 pooled ROC-AUC、pooled AP 并列为主指标，参与方法比较与主要结论。**其它文件中将 within 限定为附加分析、非比较主指标的旧表述，以本条最新裁定为准。
 3. **Frame-level (pooled) AP**——同池算 average precision。文献惯例即 pooled(XD-Violence 官方实现);macro AP 无先例,如报告必须标注为扩展指标。
 
 ### 存量迁移
