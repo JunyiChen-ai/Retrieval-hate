@@ -1,6 +1,6 @@
 # Backbone 第二次修订：保留跨模态编码的区间内外残差
 
-截至2026-10-02 12:49 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。两主数据seed234各20-trial搜索均已核验回传，均通过既定baseline筛选但三主指标低于r5同seed；准备四项2025/3407独立完整搜索和HateMM锁定诊断。HCS三组诊断未支持8次核心贡献，结论保留。Pursuing Goal保持paused，使用已有heartbeat与独立run monitor接续。
+截至2026-10-02 12:56 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。两主数据seed234各20-trial搜索均已核验回传，均通过既定baseline筛选但三主指标低于r5同seed；四项2025/3407独立完整搜索及HateMM锁定full诊断已启动；nooutside/noresidual已锁定、待释放资源。HCS三组诊断未支持8次核心贡献，结论保留。Pursuing Goal保持paused，使用已有heartbeat与独立run monitor接续。
 
 ## 1. 已观察的问题与修订假设
 
@@ -133,3 +133,17 @@ HateMM自身结构诊断锁定trial10完整config.json：lr=.0001023377063766613
 12:45实时资源：lab3空闲27025MiB，lab1空闲3723MiB，lab-server空闲2585MiB，各已有他人服务不动。lab1环境实测torch2.7.1+cu128/CUDA12.8/Optuna4.9.0，HCS全部393视频（251/63/79）输入重新解析、shape/时间轴/缓存覆盖/split isolation通过，记录 `setup/inputs_hateclipseg_lab1.log` 与command.json。拟将HCS seed3407放lab1，HCS seed2025及HateMM两seed放lab3；根据正式训练实测显存启动lab3的已锁定HateMM诊断，资源不足的组保留待调度。lab-server余量不足以留出HCS训练所需空间，不干扰其服务。本机不训练。
 
 本次无新增VLM调用/抽取。已完成seed234完整trial平均耗时：HateMM 681.23秒、HCS 406.95秒，受先前并发影响；据此四项补seed共80 trial累计约12.09小时，HateMM诊断8次累计约1.51小时，仅为粗略累计运行成本，不是墙钟承诺。每个长任务独立detached owner及120秒monitor，先验证首次RUNNING与实际epoch，不做smoke或缩短预算。
+
+实际启动与监控如下，所有输出均为新的独立目录，未覆盖旧seed234。
+
+| 任务 | 主机 | owner / 本机monitor | 启动时间NZDT |
+|---|---|---|---|
+| hateclipseg seed3407 完整搜索 | uoa-lab1 / sc474397 | 3369993 / 209987 | 2026-10-02T12:51:45.308402+13:00 |
+| hatemm seed2025 完整搜索 | uoa-lab3 / sc474398 | 2268717 / 209995 | 2026-10-02T12:51:46.113947+13:00 |
+| hatemm seed3407 完整搜索 | uoa-lab3 / sc474398 | 2268962 / 210038 | 2026-10-02T12:51:46.870513+13:00 |
+| hateclipseg seed2025 完整搜索 | uoa-lab3 / sc474398 | 2269210 / 210049 | 2026-10-02T12:51:47.701933+13:00 |
+| HateMM full 固定配置诊断 | uoa-lab3 / sc474398 | 2270111 / 212012 | 2026-10-02T12:53:40.241449+13:00 |
+
+四项搜索均已实际进入epoch（首次核验HCS3407/HM2025/HM3407/HCS2025为9/1/1/4），HateMM full已进入seed2025 epoch2；五个独立monitor均存活、首次RUNNING、主机/身份/输出/当前会话绑定正确。记录 `setup/confirmation_launches.json`、`confirmation_startup_check.json`、`hatemm_diagnostic_launches.json`、`hatemm_diagnostic_startup_check.json`。每项结束后由原独立monitor接续，不做模型轮询。
+
+正式训练实测：lab1 HCS3407使用1710MiB，整卡余2008MiB；lab3四项活动任务（两HM搜索、一HCS搜索、HM full）整卡已用25464MiB、余6626MiB、利用率99%，每项HM训练约5984–6072MiB。再放一项HM会使显存余量不足，因此nooutside/noresidual两组已锁定但暂不启动，也不为它们创建空转monitor；full完成通知明确接续检查并调度两组，各次真正启动时立即配独立monitor。待调度记录 `setup/hatemm_diagnostic_schedule.json`，两语料补seed搜索继续完整预算。此前HateMM seed234 monitor已成功通知退出；heartbeat保留，Goal保持paused。
