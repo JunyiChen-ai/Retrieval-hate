@@ -193,3 +193,26 @@ nooutside于04:48:33在uoa-lab3 / sc474398正常结束；本次处理修订版Ha
 HateMM固定8次移除outside后平均AP下降.024767，三个seed的AP均下降；ROC/within方向不完全一致。配对差值总体标准差为.023856/.008177/.035151。与本实验HCS自身对应消融（AP平均下降.012112）合并，**两语料的核心outside移除均使AP均值下降至少.01，满足规则14(g)的平均贡献要求**。HCS的AP效应主要由seed234贡献，另外两个seed反向；结论限于已锁定配置和8次预算，不能写所有seed/预算/指标都改善，也不证明递归门控或修订版的学习注意力有贡献。初版相对第5版仍未涨点，HateMM完整Optuna三seed确认仍在运行，故整体目标尚不宣布完成。
 
 原始来源为本机 `runs/20261001_inside_outside_backbone/diagnostics/hatemm/nooutside/seed<seed>/metrics_test_fixed<预算>.json`，full来源见11.1，HCS来源见第8节。逐seed核验与配对差值 `runs/20261001_inside_outside_backbone/analysis/hatemm_locked_nooutside.json`；两语料同版配对审计 `runs/20261001_inside_outside_backbone/analysis/two_corpus_outside_diagnosis.json`。这些均为读取test后的开发证据。
+
+## 12. 两主数据三seed完整搜索汇总（2026-10-02 07:15）
+
+运行主机uoa-lab3 / sc474398。HateMM seed3407于07:09:59、seed2025于07:10:19结束，本次通知后真实主/同会话子进程均为空，全部输出已回传本机。三seed的Optuna数据库与study_summary各20/20 COMPLETE，60 trial均严格50 epoch；逐trial配置、单问categories转换、validation选checkpoint、实际model.pth、epoch日志及780份统一test评测已核验，覆盖214视频/29269秒，无缺失或额外视频。加上第10节HCS，初版两主数据各三seed完整Optuna已齐全，共120 trial；搜索仍由test AP/ROC均值选择，属于开发期结果。
+
+| corpus | 固定8次 AP均值±总体seed标准差 | ROC | within | 相对第5版 ΔAP / ΔROC / Δwithin |
+|---|---:|---:|---:|---|
+| hatemm | 0.676491 ± 0.010167 | 0.879176 ± 0.001587 | 0.737845 ± 0.014984 | -0.014380 / -0.005681 / -0.035070 |
+| hateclipseg | 0.668398 ± 0.003274 | 0.642595 ± 0.005721 | 0.560326 ± 0.004923 | -0.018057 / -0.031130 / +0.000100 |
+
+HateMM逐seed（234/2025/3407），全部为各自完整study结果：
+
+| seed | test选trial | AP / ROC / within | validation选trial | validation选trial的test AP / ROC / within |
+|---|---:|---|---:|---|
+| 234 | 17 | 0.679560 / 0.881351 / 0.753400 | 10 | 0.635249 / 0.869817 / 0.753563 |
+| 2025 | 11 | 0.687121 / 0.878569 / 0.717605 | 2 | 0.620159 / 0.869955 / 0.604399 |
+| 3407 | 11 | 0.662791 / 0.877608 / 0.742530 | 9 | 0.665281 / 0.866902 / 0.685053 |
+
+HateMM仅validation选trial的test均值为.640230/.868892/.681005；HCS对应.652083/.620540/.561490。HateMM 0次相对第5版均值差−.030961/−.029586/−.052191，32次差+.000699/+.003931/−.004661；更多查询没有恢复三项全面提升，32次仍仅作附加预算。
+
+**决定：**初版三seed完整搜索已确认两语料pooled均值超过既定固定baseline，且outside消融已满足两语料AP平均下降至少.01的机制贡献要求；这是有效的机制证据。相对现行第5版，HateMM三项均值下降、HCS pooled下降而within持平，未达到用户优先的novel且涨点。继续已有修订版完整搜索与自身结构诊断，保持初版为有贡献证据但有性能代价的候选，不把它写成替换主线后涨点或整体任务已完成。两版本不混用消融证据；递归门控尚无收益证据，注意力修订版也未被其HCS消融支持。
+
+原始来源：本机 `runs/20261001_inside_outside_backbone/hatemm/seed<seed>/trial{17,11,11}/metrics_test_fixed<预算>.json`、HCS第10节对应原始路径、第5版同三seed trial{9,4,5}/{13,11,19}。完整审计/统计 `runs/20261001_inside_outside_backbone/analysis/hatemm_three_seed_search.json`；两语料汇总 `runs/20261001_inside_outside_backbone/analysis/two_corpus_three_seed_search.json`，outside配对来源见第11.2节。seed2025若后续通知到达，不重复启动。

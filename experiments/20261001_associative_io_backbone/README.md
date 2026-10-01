@@ -135,7 +135,7 @@ full、nooutside、noattention三组均已完成，运行主机uoa-lab3 / sc4743
 
 复用 `launch/run_<corpus>_uoa-lab3.sh <seed>`，输出 `runs/20261001_associative_io_backbone/<corpus>/seed{2025,3407}/`，各有独立后台owner与monitor。新增VLM调用0、缓存抽取0；按首trial756/315秒估算，两语料两seed共80次完整训练累计运行时间约11.9小时，实际并发墙钟另记，不当成独占GPU时间承诺。资源以实时检查为准，不干扰其他任务，所有活动模型/trainer/评测器保持原文件。
 
-四项确认已于2026-10-02 04:53:50–52在uoa-lab3 / sc474398启动，输入覆盖完整、实际训练均已进入epoch，四个独立monitor均已首轮RUNNING并绑定正确身份；启动记录为 `runs/20261001_associative_io_backbone/setup/confirmation_launches.json`，PID、monitor和当前进度由STATUS维护。初版HateMM两个确认study继续原预算；初版nooutside已结束并独立汇总其两语料机制证据（初版README第11.2节），不与本修订版混作同一方法。
+四项确认已于2026-10-02 04:53:50–52在uoa-lab3 / sc474398启动，输入覆盖完整、实际训练均已进入epoch，四个独立monitor均已首轮RUNNING并绑定正确身份；启动记录为 `runs/20261001_associative_io_backbone/setup/confirmation_launches.json`，PID、monitor和当前进度由STATUS维护。初版HateMM两个确认study均已完整结束并回传汇总（初版README第12节）；初版nooutside已结束并独立汇总其两语料机制证据（初版README第11.2节），不与本修订版混作同一方法。
 
 
 确认study首trial预算已于2026-10-02 05:57核验回传：HateMM seed2025/3407为1415.40/1413.64秒，HCS为578.15/577.11秒，四项均已锁定20 trial；来源为本机 `runs/20261001_associative_io_backbone/<corpus>/seed<seed>/budget.json`。这些是多任务并发耗时，不等同于独占GPU吞吐；完整搜索不缩减。
@@ -146,4 +146,4 @@ full、nooutside、noattention三组均已完成，运行主机uoa-lab3 / sc4743
 
 锁定配置 `configs/diagnostic_hatemm_seed234.json`，从本机 `runs/20261001_associative_io_backbone/hatemm/seed234/trial10/summary.json` 原样取cfg；已确认50 epoch、full开关和validation checkpoint epoch25。入口 `launch/run_diag_hatemm_uoa-lab3.sh <full|noattention|nooutside>` 使用既有共享diagnostic owner和本版trainer。输出 `runs/20261001_associative_io_backbone/diagnostics/hatemm/<arm>/seed<seed>/`；每条长链独立monitor，复用前检查identity与已有输出。新增配置/启动入口已核对源配置和shell语法，无smoke，无活动模型/trainer/评测器修改。
 
-新增VLM调用0、新缓存抽取0，新视频处理方式不变。按锁定trial10的实测1169.63秒（并发环境）估算，8次完整训练累计运行时间约2.60小时；不是独占GPU时间或总墙钟承诺。05:55 lab3六项搜索占用约16.6 GiB且GPU利用率98%，当前不叠加训练以免延长已运行搜索；本机仍不跑训练，lab1/lab-server仍被其它任务占用。优先利用初版HateMM搜索完成后释放的两个位置启动full、noattention；其中一条诊断结束后接nooutside，各自绑定独立monitor。当前三arm均未启动，准备记录及接续以STATUS为准。
+新增VLM调用0、新缓存抽取0，新视频处理方式不变。按锁定trial10的实测1169.63秒（并发环境）估算，8次完整训练累计运行时间约2.60小时；不是独占GPU时间或总墙钟承诺。05:55 lab3六项搜索占用约16.6 GiB且GPU利用率98%，当前不叠加训练以免延长已运行搜索；本机仍不跑训练，lab1/lab-server仍被其它任务占用。优先利用初版HateMM搜索完成后释放的两个位置启动full、noattention；其中一条诊断结束后接nooutside，各自绑定独立monitor。2026-10-02 07:12:14–15，初版HateMM两个study结束后已在uoa-lab3 / sc474398接续full、noattention；full seed234已核验复用，两个arm实际训练均已进入epoch，各自独立monitor首轮RUNNING绑定正确。nooutside仍未启动，待其中一条诊断结束后接续并配monitor；启动记录 `runs/20261001_associative_io_backbone/setup/diagnostic_hatemm_launches.json`，PID和接续维护在STATUS。
