@@ -1,6 +1,6 @@
 # Backbone 候选：时间树上的区间内外表示
 
-截至 2026-10-02；状态：两主数据seed234完整搜索已完成，进入其余seed确认；实现完成，[一次独立 proposal review：GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)，[一次独立 code review：PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)。用户最新授权自动迭代：优先做 novel 且涨点的 backbone；充分尝试仍无提升时优先可验证的新意，完成后汇报。当前旧骨干实现已升入 `src/qtl/model.py`，旧实验文件保留兼容入口。within 按 AGENTS.md 最新裁定与 pooled AP / ROC 并列为主指标；不改写研究规则文件。
+截至 2026-10-02；状态：HCS三seed完整搜索已完成，HateMM其余seed确认继续；实现完成，[一次独立 proposal review：GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)，[一次独立 code review：PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)。用户最新授权自动迭代：优先做 novel 且涨点的 backbone；充分尝试仍无提升时优先可验证的新意，完成后汇报。当前旧骨干实现已升入 `src/qtl/model.py`，旧实验文件保留兼容入口。within 按 AGENTS.md 最新裁定与 pooled AP / ROC 并列为主指标；不改写研究规则文件。
 
 ## 1. 需要解决什么
 
@@ -131,3 +131,27 @@ proposal review 只决定候选是否值得实现，不等于 novelty 贡献或�
 初版所有活动任务结束后，已将其ContextFusion/拓扑缓存和owner入口接入先前升入 `src/qtl/{content,run_owner}.py` 的共享定义。未修改正在运行的修订版或共享trainer/评测器。CPU核验相同随机初始化逐参数一致、真实trial17 checkpoint严格加载成功，长度[9,4,1]的全部forward输出与节点势逐元素相等；无训练、无smoke。记录 `runs/20261001_inside_outside_backbone/analysis/shared_migration_check.json`。
 
 确认study首trial耗时已于2026-10-02回传：HateMM seed2025/3407为1424.30/1424.47秒，HCS seed2025/3407为577.19/577.01秒，四项各锁定20 trial，来源为对应run的 `budget.json`。这些是同卡并发耗时，不能与独占训练速度等同。为复用已完成的结构诊断链，`launch/run_diagnostics.py` 后续改为 `src/qtl/diagnostics.py` 的薄入口；模型、搜索和已运行的确认study代码未改。
+
+## 10. HCS三seed完整Optuna结果（2026-10-02）
+
+uoa-lab3 / sc474398 的seed2025、3407均于03:09:04结束；03:11通知后核验两项真实主/子进程为空，全部输出已回传本机。连同seed234，三个独立study各20/20 COMPLETE、所有trial严格50 epoch、validation criterion最大epoch对应checkpoint，合计60 trial / 780份统一test评测完整，全部覆盖79视频/18839秒。它们是完整Optuna确认数据，区别于第8节固定配置结构诊断；因搜索目标使用test，仍属开发期结果。
+
+| seed | test选trial | AP | ROC | within | validation选trial |
+|---|---:|---:|---:|---:|---:|
+| 234 | 11 | .668767 | .635762 | .567188 | 6 |
+| 2025 | 2 | .664216 | .649763 | .555875 | 17 |
+| 3407 | 10 | .672210 | .642260 | .557915 | 1 |
+
+固定8次三seed均值±总体标准差：**.668398±.003274 / .642595±.005721 / .560326±.004923**。第5版同三seed为.686455±.003656/.673725±.005441/.560226±.013556，差值**−.018057/−.031130/+.000100**。pooled下降在三seed均值上持续存在，within基本持平；seed234的within单独改善未成为三seed平均收益。不能据此宣布已涨点或novelty贡献完成，HateMM三seed与两语料机制贡献仍待完成。
+
+仅validation选trial的test三项分别：seed234 .648418/.616496/.571958；2025 .652918/.633465/.568779；3407 .654915/.611659/.543732；均值.652083/.620540/.561490。来源为本机 `runs/20261001_inside_outside_backbone/hateclipseg/seed<seed>/trial<上表编号>/metrics_test_fixed8.json`；第5版对照为 `runs/20260929_query_paradigm_r5/hateclipseg/seed<seed>/trial{13,11,19}/metrics_test_fixed8.json`。完整预算、选择记录在各study_summary；派生审计/统计 `runs/20261001_inside_outside_backbone/analysis/hateclipseg_three_seed_search.json` 包含逐项来源、0/8/32次与标准差，不另写评测器。
+
+资源释放后接续既定加性统计量修订版诊断，初版HateMM仍按全部预算继续；尚未淘汰或归档初版，不覆盖现有输出。
+
+## 11. 初版HateMM outside配对诊断（开跑前固定，2026-10-02）
+
+按第4/6节原定outside消融，固定已完整搜索的seed234 trial17配置，比较full与nooutside（只设io_outside=false）。各seed234/2025/3407、完整50 epoch、原validation选checkpoint和统一test评测，报告0/8/32次三项均值、seed标准差及配对差值；8次为主。full seed234复用trial17，其余5次完整训练。它与初版HCS第8节诊断对应，用于初版自己的两语料贡献检验；这是锁定配置诊断，不替代仍在跑的HateMM三seed Optuna确认。
+
+配置 `configs/diagnostic_hatemm_seed234.json`，入口 `launch/run_diag_hatemm_uoa-lab3.sh <full|nooutside>`，使用既有共享diagnostic owner与初版trainer，输出 `runs/20261001_inside_outside_backbone/diagnostics/hatemm/<arm>/seed<seed>/`。shell语法、源trial17的配置和0/8/32评测解析已核对；骨干、共享trainer和活动搜索代码不变，不做smoke。新增VLM调用/缓存抽取0；最初HateMM完整trial559.52秒对应5次累计约0.78小时，近期并发trial约1000–1400秒，实际墙钟另记，不能当成独占GPU耗时。
+
+拟在uoa-lab3 / sc474398释放的诊断位置先启动full，nooutside在下一个短诊断结束后接续，各自绑定独立monitor；不停止、缩减或覆盖三项活动搜索。准备/运行状态只在STATUS维护。

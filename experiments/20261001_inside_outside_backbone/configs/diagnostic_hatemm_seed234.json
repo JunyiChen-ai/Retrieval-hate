@@ -1,0 +1,60 @@
+{
+  "hid_dim": 128,
+  "ffn_dim": 128,
+  "nhead": 4,
+  "dropout": 0.23430414791052862,
+  "lr": 0.00014473410091779792,
+  "lr_answer": 0.00029053424952051824,
+  "batch_size": 32,
+  "max_epoch": 50,
+  "sched_tmax": 60,
+  "lamda_cma": 0.7082735127096441,
+  "lamda_cof": 0.05,
+  "crop_repeat": 5,
+  "long_T": 512,
+  "topk_div": 16,
+  "val_budget": 8,
+  "max_calls": 32,
+  "fixed_budgets": [
+    0,
+    1,
+    2,
+    4,
+    8,
+    16,
+    32
+  ],
+  "mean_budgets": [
+    2,
+    4,
+    8
+  ],
+  "primary_budget": 8,
+  "n_state": 2,
+  "length_term": false,
+  "categories": [
+    0
+  ],
+  "objective": "tree",
+  "order": "eig",
+  "fusion": "tree",
+  "prior": "chain",
+  "eval_chunk": 64,
+  "answer_model": "anchored",
+  "g_head": true,
+  "text_sources": [
+    "bert"
+  ],
+  "chain": "learned",
+  "boundary": "closed",
+  "chain_form": "zero_inflated",
+  "backbone": "inside_outside",
+  "query_level": 0,
+  "answer_source": "soft_both",
+  "node_prior": true,
+  "soft_levels": 8,
+  "state1_table": null,
+  "soft5_edges": "fixed",
+  "io_outside": true,
+  "io_merge": "gated"
+}

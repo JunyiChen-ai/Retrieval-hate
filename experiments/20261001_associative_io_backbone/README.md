@@ -72,4 +72,21 @@
 
 锁定配置 `configs/diagnostic_hateclipseg_seed234.json`；入口 `launch/run_diag_hateclipseg_uoa-lab3.sh <full|nooutside|noattention>`；输出 `runs/20261001_associative_io_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/`。复用的诊断owner已从旧原型升入 `src/qtl/diagnostics.py`，两个实验各自薄入口指定trainer、输出根和开关，避免跨实验import；只改变已完成的旧诊断入口，五项活动搜索的模型/trainer未动。CLI、shell语法和新旧源trial的配置/完整评测解析已核对；没有训练或smoke。
 
-新增VLM调用与缓存抽取均0，按首完整HCS trial314.65秒估算8次训练累计约0.70小时，占卡并发耗时另记；不是独占吞吐承诺。当前五项完整搜索已使lab3 GPU约98%使用，暂不增加并发争用；在下一项搜索完成或发现可用GPU后启动诊断，各arm同时绑定独立完成monitor。初版三seed确认和修订版HateMM仍按原预算继续。
+新增VLM调用与缓存抽取均0，按首完整HCS trial314.65秒估算8次训练累计约0.70小时，占卡并发耗时另记；不是独占吞吐承诺。此前五项完整搜索占满GPU，诊断等待资源。2026-10-02 03:13 NZDT，初版HCS两个确认study结束后，在uoa-lab3 / sc474398启动full、nooutside两条独立诊断链，各配monitor并验证首次RUNNING、实际完整训练已进入epoch；full seed234已核验复用。full于03:29:15结束并回传核验后，noattention已于03:31:10在同主机接续，独立monitor首次RUNNING和实际训练均正常；nooutside于03:36:42完成并已回传核验，noattention继续；启动记录 `runs/20261001_associative_io_backbone/setup/diagnostic_launches.json`，PID/monitor路径在STATUS。初版HateMM确认和修订版HateMM仍按原预算继续。
+
+## 8. 固定配置诊断结果（截至2026-10-02 03:40）
+
+full与nooutside三seed均已完成；full seed234复用trial7，其余均为新跑的完整50 epoch。两组配置仅io_outside不同，源配置、summary、epoch1–50日志、validation选checkpoint与各39份统一test评测已核验；均覆盖79视频/18839秒，无缺失或额外视频，全部结果已回传。两组真实主/子进程均已退出，完成monitor已通知退出。下面是固定配置的均值±总体seed标准差，**不是三个Optuna study最优值**。
+
+| arm | 预算 | AP | ROC | within |
+|---|---:|---:|---:|---:|
+| full | 0 | .569952 ± .053677 | .544078 ± .072351 | .535919 ± .015260 |
+| full | 8 | .648252 ± .033225 | .623946 ± .041971 | .548341 ± .027075 |
+| full | 32 | .669080 ± .016441 | .640289 ± .021091 | .573861 ± .042254 |
+| nooutside | 0 | .570363 ± .064341 | .535020 ± .073226 | .526894 ± .014329 |
+| nooutside | 8 | .640263 ± .018540 | .612341 ± .009245 | .537365 ± .020966 |
+| nooutside | 32 | .664037 ± .028596 | .639071 ± .016264 | .550987 ± .043241 |
+
+固定8次逐seed（234/2025/3407）：.683294/.655506/.511165；.657839/.651702/.558985；.603623/.564630/.574871。validation分别选epoch1/36/30，所有训练都跑满50 epoch。nooutside在8次的逐seed结果为.619608/.607107/.508755；.664577/.625334/.544925；.636604/.604583/.558414，validation选epoch2/47/6。移除outside后8次均值变化−.007989/−.011605/−.010976；pooled的各seed差异不一致（AP −.063685/+.006737/+.032982；ROC −.048399/−.026368/+.039953），within三seed都下降。0次变化+.000410/−.009057/−.009025；32次−.005043/−.001218/−.022874。outside在HCS有平均效应支持，8次ROC下降超过.01，但不能称稳定逐seedpooled增益或两语料贡献已确认；noattention尚在运行。
+
+原始来源：`runs/20261001_associative_io_backbone/diagnostics/hateclipseg/full/seed{2025,3407}/metrics_test_fixed<预算>.json`，seed234为 `runs/20261001_associative_io_backbone/hateclipseg/seed234/trial7/metrics_test_fixed<预算>.json`。nooutside原始来源为同一diagnostics目录下 `nooutside/seed<seed>/metrics_test_fixed<预算>.json`。派生审计/统计 `runs/20261001_associative_io_backbone/analysis/hateclipseg_locked_full.json` 与 `hateclipseg_locked_nooutside.json` 保留逐项来源和配对差值。
