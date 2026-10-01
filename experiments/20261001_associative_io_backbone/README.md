@@ -146,4 +146,24 @@ full、nooutside、noattention三组均已完成，运行主机uoa-lab3 / sc4743
 
 锁定配置 `configs/diagnostic_hatemm_seed234.json`，从本机 `runs/20261001_associative_io_backbone/hatemm/seed234/trial10/summary.json` 原样取cfg；已确认50 epoch、full开关和validation checkpoint epoch25。入口 `launch/run_diag_hatemm_uoa-lab3.sh <full|noattention|nooutside>` 使用既有共享diagnostic owner和本版trainer。输出 `runs/20261001_associative_io_backbone/diagnostics/hatemm/<arm>/seed<seed>/`；每条长链独立monitor，复用前检查identity与已有输出。新增配置/启动入口已核对源配置和shell语法，无smoke，无活动模型/trainer/评测器修改。
 
-新增VLM调用0、新缓存抽取0，新视频处理方式不变。按锁定trial10的实测1169.63秒（并发环境）估算，8次完整训练累计运行时间约2.60小时；不是独占GPU时间或总墙钟承诺。05:55 lab3六项搜索占用约16.6 GiB且GPU利用率98%，当前不叠加训练以免延长已运行搜索；本机仍不跑训练，lab1/lab-server仍被其它任务占用。优先利用初版HateMM搜索完成后释放的两个位置启动full、noattention；其中一条诊断结束后接nooutside，各自绑定独立monitor。2026-10-02 07:12:14–15，初版HateMM两个study结束后已在uoa-lab3 / sc474398接续full、noattention；full seed234已核验复用，两个arm实际训练均已进入epoch，各自独立monitor首轮RUNNING绑定正确。nooutside仍未启动，待其中一条诊断结束后接续并配monitor；启动记录 `runs/20261001_associative_io_backbone/setup/diagnostic_hatemm_launches.json`，PID和接续维护在STATUS。
+新增VLM调用0、新缓存抽取0，新视频处理方式不变。按锁定trial10的实测1169.63秒（并发环境）估算，8次完整训练累计运行时间约2.60小时；不是独占GPU时间或总墙钟承诺。05:55 lab3六项搜索占用约16.6 GiB且GPU利用率98%，当前不叠加训练以免延长已运行搜索；本机仍不跑训练，lab1/lab-server仍被其它任务占用。优先利用初版HateMM搜索完成后释放的两个位置启动full、noattention；其中一条诊断结束后接nooutside，各自绑定独立monitor。2026-10-02 07:12:14–15，初版HateMM两个study结束后已在uoa-lab3 / sc474398接续full、noattention；full seed234已核验复用，两个arm实际训练均已进入epoch，各自独立monitor首轮RUNNING绑定正确。full于07:59:21结束并已核验回传，nooutside已于08:02:29利用释放位置接续，独立monitor首次RUNNING绑定正确且seed234已进入epoch；noattention继续；启动记录 `runs/20261001_associative_io_backbone/setup/diagnostic_hatemm_launches.json`，PID和接续维护在STATUS。
+
+## 12. HateMM固定配置诊断结果（截至2026-10-02 08:04）
+
+full于07:59:21在uoa-lab3 / sc474398结束，08:00完成通知后核验真实主/同会话子进程为空，全部输出已回传本机。三seed均使用trial10锁定配置，seed234复用原trial10，其余为新跑完整50 epoch。history与run.log严格epoch1–50，validation最大(AP+ROC)/2所选checkpoint与实际加载model.pth一致；各13份、共39份统一test评测完整，覆盖214视频/29269秒，无缺失或额外视频。这是固定配置结构诊断，不是三seed Optuna确认。
+
+| 预算 | full AP均值±总体seed标准差 | ROC | within |
+|---|---:|---:|---:|
+| 0 | 0.520258 ± 0.028975 | 0.752572 ± 0.008596 | 0.741415 ± 0.031647 |
+| 8 | 0.611048 ± 0.040221 | 0.860227 ± 0.009987 | 0.737149 ± 0.024840 |
+| 32 | 0.663253 ± 0.013976 | 0.882091 ± 0.002100 | 0.755020 ± 0.018714 |
+
+| seed | validation epoch | 固定8次 AP / ROC / within |
+|---|---:|---|
+| 234 | 25 | 0.651747 / 0.874278 / 0.765879 |
+| 2025 | 23 | 0.556285 / 0.851954 / 0.740291 |
+| 3407 | 10 | 0.625113 / 0.854450 / 0.705277 |
+
+固定8次AP的seed标准差为.040221，锁定seed234最优配置的其它seed没有重现其AP，不能据seed234就称性能稳定。noattention于08:03正在训练最后seed3407；nooutside按预写配置于08:02:29接续，已验证实际训练及独立monitor首次RUNNING。必须等各组全部完成后才汇总配对差值，并仅与本修订版HCS第8节对应消融合并，不混入初版outside结果，也不以此替代仍运行的完整搜索。
+
+原始来源：本机 `runs/20261001_associative_io_backbone/diagnostics/hatemm/full/seed{2025,3407}/metrics_test_fixed<预算>.json`，seed234复用 `runs/20261001_associative_io_backbone/hatemm/seed234/trial10/metrics_test_fixed<预算>.json`；逐seed审计/统计 `runs/20261001_associative_io_backbone/analysis/hatemm_locked_full.json`。后续arm结果按本节原地扩充，启动记录见第11节及STATUS。
