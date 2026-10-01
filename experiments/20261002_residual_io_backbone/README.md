@@ -1,6 +1,6 @@
 # Backbone 第二次修订：保留跨模态编码的区间内外残差
 
-截至2026-10-02；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，已实现，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)，两主数据seed234完整搜索已于08:57在uoa-lab3启动。主仓库代码与本机结果为依据；Pursuing Goal保持paused，已有heartbeat与run monitor接续。用户授权优先novel且涨点，三个主指标并列。
+截至2026-10-02 11:21 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。HCS seed234完整20-trial搜索已结束并回传核验，HateMM继续完整预算；准备HCS本版本三组锁定配置诊断。主仓库代码与本机结果为依据；Pursuing Goal保持paused，已有heartbeat与run monitor接续。用户授权优先novel且涨点，三个主指标并列。
 
 ## 1. 已观察的问题与修订假设
 
@@ -49,3 +49,23 @@ r5 seed234的study_summary记录的完整trial平均参考约HateMM739秒、HCS3
 
 
 2026-10-02 10:56接续核验：加性修订版两语料三seed搜索已全部完整结束并回传，因固定8次性能及自身outside贡献未满足主线目标，已归档；本版活动代码不受影响。首完整trial HateMM1085.05秒、HCS434.67秒，两个study均已按预写规则锁定20 trial，本机来源 `runs/20261002_residual_io_backbone/<corpus>/seed234/budget.json`。10:56分别完成6/20、16/20，独立monitor正常，未据部分trial作方法结论，继续完整预算。
+
+## 6. HCS seed234完整搜索与本版本消融锁定
+
+2026-10-02 11:12:45，uoa-lab3 / sc474398的HCS搜索正常结束；11:17核验主进程与同会话子进程均退出，SQLite为20 COMPLETE，无失败/剪枝。全部输出已用rsync回传本机，逐trial核对history与日志各50 epoch、实际model.pth的validation最优epoch、完整配置/四标量参数/数据库目标，以及260份统一test评测（每trial13份，79视频/18839秒，缺失与额外视频均0）。`metrics.json`为主操作点摘要，与原始统一评测一致；审计不重新计算评测指标。完成核验 `runs/20261002_residual_io_backbone/setup/hcs_completion_probe.json`，逐trial审计和比较 `runs/20261002_residual_io_backbone/analysis/hateclipseg_seed234_search.json`。
+
+下表顺序AP / ROC / within，均为test、1fps、单seed；开发期Optuna按固定8次test(AP+ROC)/2选trial19，checkpoint由validation选epoch29。validation单独选trial16、epoch1。原始权威文件为本机 `runs/20261002_residual_io_backbone/hateclipseg/seed234/trial<编号>/metrics_test_fixed<次数>.json`。
+
+| 选择方式 | 固定0次 | 固定8次（主操作点） | 固定32次（附加） |
+|---|---|---|---|
+| test目标选trial19 | .641423 / .629097 / .526557 | .673446 / .669614 / .541302 | .690887 / .679990 / .615161 |
+| 仅validation选trial16 | .520974 / .498905 / .544452 | .627898 / .588489 / .551426 | .664353 / .628651 / .528733 |
+| test选结果对r5同seed变化 | −.028162 / −.035291 / −.016291 | −.015021 / −.005230 / −.014829 | −.007369 / +.006743 / −.001908 |
+
+r5来源 `runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_test_fixed<次数>.json`。8次对初版同seed变化+.004679/+.033852/−.025885，对加性版−.009848/+.014108/+.030137，来源分别为各版同路径trial11/trial7。残差结构恢复了加性版部分0次先验与8次ROC/within，但尚未超过r5。HCS pooled通过既定筛选门；HateMM 11:17仅8/20 COMPLETE、另1 RUNNING，不引用部分最优，不据此启动2025/3407确认搜索。
+
+**开跑前锁定本版本HCS诊断**：完整搜索trial19的全部配置直接读取其config.json，lr=.0008342041153904996、lamda_cma=1.1555306370401097、dropout=.2536934471640016、lr_answer=.004638826283259073，其余配置与搜索一致。三组full/nooutside/noresidual各seed234/2025/3407、每次完整50 epoch，validation选checkpoint、统一0/8/32等13份test评测。full seed234复用已审计trial19，其余8次训练完整运行；nooutside仅将io_outside设false，noresidual仅将io_residual设false，使用已通过code review的开关。整体残差消融恢复r5结构，但属于本版锁定配置诊断，不代替r5独立搜索结果。
+
+固定8次报告每seed、均值/总体标准差，以及各消融相对full的逐seed配对差值/均值/标准差；outside与整体残差贡献分别判断。不得借用前两版机制证据，不用32次替换主操作点，这些诊断不是Optuna确认。之后HateMM完整搜索结束再锁定其配置，检验两语料贡献。
+
+11:18实时资源：lab3空闲21620MiB、利用率41%，已有HateMM训练继续；lab1/lab-server仅空闲3723/2585MiB，不动他人任务。在lab3并发三组诊断，新增VLM调用0，按HCS首trial434.67秒粗估8次训练累计约58分钟，受并发影响，不承诺墙钟时间。启动入口 `launch/run_hateclipseg_diagnostics_uoa-lab3.sh <arm>` 只调用共享 `src/qtl/diagnostics.py`；本版模型、活动HateMM训练代码与评测器不变。每组独立detached owner及120秒monitor，输出 `runs/20261002_residual_io_backbone/diagnostics/hateclipseg/<arm>/`。
