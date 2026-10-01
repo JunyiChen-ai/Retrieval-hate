@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-10-02 11:47 NZDT**。依据：`experiments/20260925_query_paradigm/` 第 5 版软答案、复制似然及停止规则实现，实验 README 第 17 节，以及下列本机 `runs/` 评测器输出。2026-10-01 核验了 8 / 16 档共 18 个 study、每个 20 个 COMPLETE trial 的固定 8 次评测文件；停止规则汇总也与逐 trial 评测器输出核对。初版inside–outside骨干两主数据各三seed×20 trial已全部完成并回传核验；加性统计量修订版两语料各三seed×20 trial及三组结构诊断已全部核验回传；固定8次均低于第5版三主指标，且自身outside未满足两语料平均贡献要求，已归档。[残差修订版](../experiments/20261002_residual_io_backbone/README.md)HCS seed234的20-trial完整搜索已核验回传，固定8次三项仍低于r5同seed；HateMM完整搜索继续，HCS本版本三组各三seed锁定诊断已全部核验，固定8次未支持outside或整体残差的核心贡献；没有新增抽取。
+截至 **2026-10-02 11:54 NZDT**。依据：`experiments/20260925_query_paradigm/` 第 5 版软答案、复制似然及停止规则实现，实验 README 第 17 节，以及下列本机 `runs/` 评测器输出。2026-10-01 核验了 8 / 16 档共 18 个 study、每个 20 个 COMPLETE trial 的固定 8 次评测文件；停止规则汇总也与逐 trial 评测器输出核对。初版inside–outside骨干两主数据各三seed×20 trial已全部完成并回传核验；加性统计量修订版两语料各三seed×20 trial及三组结构诊断已全部核验回传；固定8次均低于第5版三主指标，且自身outside未满足两语料平均贡献要求，已归档。[残差修订版](../experiments/20261002_residual_io_backbone/README.md)HCS seed234的20-trial完整搜索已核验回传，固定8次三项仍低于r5同seed；HateMM完整搜索继续，HCS本版本三组各三seed锁定诊断已全部核验，固定8次未支持outside或整体残差的核心贡献；没有新增抽取。
 
 ## 当前目标与结论
 
@@ -77,14 +77,14 @@
 
 ## 运行任务与 monitor
 
-- **Pursuing goal保持paused，不重新开启。** 复用原有heartbeat `scripts/monitor_thread.py`，会话 `01a0f639-b211-75e3-9155-e15e30534b46`，PID `3245799`、间隔3小时；状态/日志在 `runs/thread_monitor/01a0f639-b211-75e3-9155-e15e30534b46/`。08:54最近一次定时通知成功，下一次11:54 NZDT；本轮核验进程存活。当前目标未完成、无硬阻塞，保留heartbeat及活动run monitor。
-- **当前活动：残差版HateMM seed234完整搜索**。全部在uoa-lab3 / sc474398。HateMM输出 `runs/20261002_residual_io_backbone/hatemm/seed234/`，owner `2155073`、monitor `4142180`，11:43核验11/20 COMPLETE、另1 RUNNING；首完整trial1085.05秒，预算20不变，不报告部分最优。HCS搜索已完成20/20，owner `2155347`及全部同会话子进程退出，monitor `4142198`已通知退出，结果完整审计见上。
+- **Pursuing goal保持paused，不重新开启。** 复用原有heartbeat `scripts/monitor_thread.py`，会话 `01a0f639-b211-75e3-9155-e15e30534b46`，PID `3245799`、间隔3小时；状态/日志在 `runs/thread_monitor/01a0f639-b211-75e3-9155-e15e30534b46/`。11:54最近一次定时通知成功，下一次14:54 NZDT；本轮核验heartbeat和HateMM monitor均存活、身份绑定正确。当前目标未完成、无硬阻塞，保留heartbeat及活动run monitor；本轮进度核验记录 `runs/20261002_residual_io_backbone/setup/heartbeat_progress_check.json`。
+- **当前活动：残差版HateMM seed234完整搜索**。全部在uoa-lab3 / sc474398。HateMM输出 `runs/20261002_residual_io_backbone/hatemm/seed234/`，owner `2155073`、monitor `4142180`，11:54核验12/20 COMPLETE、另1 RUNNING（trial12，即第13个trial，epoch45/50）；首完整trial1085.05秒，预算20不变，不报告部分最优。HCS搜索已完成20/20，owner `2155347`及全部同会话子进程退出，monitor `4142198`已通知退出，结果完整审计见上。
 - **HCS三组锁定配置诊断全部结束并回传审计**。full/noresidual/nooutside分别于11:38:45/11:41:32/11:43:29结束，各三seed×50 epoch，共117份统一评测核验通过；full seed234复用trial19。owner分别 `2231223/2231722/2231458`及所有同会话非僵尸子进程均退出，独立monitor `111855/111869/111858`成功通知后退出，延迟通知不重启或重复训练。输出 `runs/20261002_residual_io_backbone/diagnostics/hateclipseg/<arm>/`；配置/启动记录 `setup/hcs_diagnostic_lock.json`、`hcs_diagnostic_launches.json`，本轮真实会话进程核验 `setup/hcs_diagnostics_session_check.json`（均在本机本版runs下）。配对结果见上，不替代Optuna补seed。
 - 残差版proposal GO/code PASS记录及输入/环境准备见[本版README](../experiments/20261002_residual_io_backbone/README.md)。输入重新全量解析覆盖、shape、时间轴和split isolation通过：HateMM1067视频（744/109/214）、HCS393（251/63/79）；环境torch2.7.1+cu128/CUDA12.8/Optuna4.9.0。启动及首次检查 `runs/20261002_residual_io_backbone/setup/launches.json`、`startup_check.json`；独立monitor状态在对应本机run的monitor目录，每120秒观察，SSH失败只重试，结束通知已验证可达。
 - **加性版全部结束并归档**：两语料六个完整study、两语料六组固定配置诊断均已核验回传。本次HateMM seed2025/3407于10:55:36均完成20/20；真实进程退出、各50 epoch/checkpoint/260份评测核验通过，monitor `3778288/3778293` 于10:56均已通知退出，延迟通知不重复启动。完整状态 `runs/20261001_associative_io_backbone/setup/hatemm_confirmation_completion_probe.json`，最终数字见上；其余完成日志和monitor均保留本机run。归档只改已结束实验的目录/入口相对路径，残差版活动模型/trainer/评测器不改。
 - **初版全部结束、作为贡献证据保留**：两语料六个完整study及自身五组诊断均已核验回传，各monitor已成功通知退出；完整搜索见 `runs/20261001_inside_outside_backbone/analysis/two_corpus_three_seed_search.json`，自身两语料outside诊断 `analysis/two_corpus_outside_diagnosis.json`。详细运行记录在[初版README](../experiments/20261001_inside_outside_backbone/README.md)，不重复运行，不与后续版本混为同一机制贡献。
 - 本机继续不训练。11:18实时检查lab1/lab-server仅空闲3723/2585MiB，已有他人任务不改动；HCS三组本版本锁定诊断现已全部完成，HateMM完整搜索继续；没有满足依赖条件而待启动的任务。两语料筛选尚未全部完成，不提前启动2025/3407完整搜索。
-- `bash scripts/check_layout.sh`开跑前及汇报前检查；三机Git同步与具体工作树状态记录 `runs/20261002_residual_io_backbone/setup/hcs_diagnostic_prelaunch.json`、`hcs_full_final_sync.json`。本轮回传/审计HCS三组各三seed诊断及配对差值并更新结果文档；活动模型/共享trainer/评测器未改。已知无关 `tandem.html`、lab1的 `idea-stage/` 和家目录存量STRAY不改动、不清理。
+- `bash scripts/check_layout.sh`开跑前及汇报前检查；三机Git同步与具体工作树状态记录 `runs/20261002_residual_io_backbone/setup/hcs_diagnostic_prelaunch.json`、`hcs_full_final_sync.json`；11:54 heartbeat接续同步检查另见 `setup/heartbeat_sync.json`。HCS三组各三seed诊断及配对差值已回传审计；本轮核验HateMM正常推进并刷新当前状态；活动模型/共享trainer/评测器未改。已知无关 `tandem.html`、lab1的 `idea-stage/` 和家目录存量STRAY不改动、不清理。
 
 ## 下一步
 
