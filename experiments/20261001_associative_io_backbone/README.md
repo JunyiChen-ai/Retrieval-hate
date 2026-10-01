@@ -167,3 +167,28 @@ full于07:59:21在uoa-lab3 / sc474398结束，08:00完成通知后核验真实�
 固定8次AP的seed标准差为.040221，锁定seed234最优配置的其它seed没有重现其AP，不能据seed234就称性能稳定。noattention于08:03正在训练最后seed3407；nooutside按预写配置于08:02:29接续，已验证实际训练及独立monitor首次RUNNING。必须等各组全部完成后才汇总配对差值，并仅与本修订版HCS第8节对应消融合并，不混入初版outside结果，也不以此替代仍运行的完整搜索。
 
 原始来源：本机 `runs/20261001_associative_io_backbone/diagnostics/hatemm/full/seed{2025,3407}/metrics_test_fixed<预算>.json`，seed234复用 `runs/20261001_associative_io_backbone/hatemm/seed234/trial10/metrics_test_fixed<预算>.json`；逐seed审计/统计 `runs/20261001_associative_io_backbone/analysis/hatemm_locked_full.json`。后续arm结果按本节原地扩充，启动记录见第11节及STATUS。
+
+## 13. HCS三seed完整搜索结果（2026-10-02）
+
+uoa-lab3 / sc474398的seed2025/3407均于08:01:44结束。08:08核验真实主/同会话子进程均为空，全部输出已回传本机；两个monitor于08:03成功通知并退出。连同seed234，各study的预算文件、SQLite与study_summary均为20/20 COMPLETE；60个trial全部history与run.log严格epoch1–50，配置/搜索参数一致，实际加载checkpoint与validation最高(AP+ROC)/2所选epoch一致。780份统一test评测覆盖79视频/18839秒，无缺失或额外视频，三指标有限。
+
+| seed | test选trial / checkpoint epoch | 固定8次 AP / ROC / within | validation选trial / epoch | 对应test AP / ROC / within |
+|---|---|---|---|---|
+| 234 | 7 / 1 | 0.683294 / 0.655506 / 0.511165 | 10 / 1 | 0.630660 / 0.613407 / 0.510797 |
+| 2025 | 7 / 5 | 0.679817 / 0.662033 / 0.557129 | 11 / 16 | 0.676279 / 0.643481 / 0.545142 |
+| 3407 | 0 / 1 | 0.680890 / 0.642109 / 0.509980 | 0 / 1 | 0.680890 / 0.642109 / 0.509980 |
+
+| 固定8次三seed均值±总体标准差 | AP / ROC / within |
+|---|---|
+| 修订版 | 0.681333 ± 0.001454 / 0.653216 ± 0.008294 / 0.526091 ± 0.021952 |
+| 初版 | 0.668398 ± 0.003274 / 0.642595 ± 0.005721 / 0.560326 ± 0.004923 |
+| 第5版 | 0.686455 ± 0.003656 / 0.673725 ± 0.005441 / 0.560226 ± 0.013556 |
+| 修订版只按validation选trial | 0.662610 ± 0.022670 / 0.632999 ± 0.013865 / 0.521973 ± 0.016386 |
+
+修订版对初版固定8次均值变化 **+0.012936 / +0.010621 / -0.034235**：pooled恢复，但within下降。对第5版 **-0.005122 / -0.020509 / -0.034135**，三主指标仍低，不能认定相对当前主线涨点。validation选trial对初版变化 +0.010526 / +0.012459 / -0.039517，对第5版 -0.017037 / -0.016996 / -0.045850，趋势相同。
+
+0次均值±标准差 0.545151 ± 0.087731 / 0.509617 ± 0.096909 / 0.521391 ± 0.008147，对第5版变化 -0.112442 / -0.137046 / -0.018052；32次 0.660977 ± 0.015799 / 0.638784 ± 0.008342 / 0.543288 ± 0.040768，对第5版 -0.034393 / -0.036340 / -0.071644。三seed最优trial中两个checkpoint来自epoch1，虽然实际均训练满50 epoch，其0次pooled也较弱；已有视频间区分损失并未由完整搜索消除。这是读取test后的开发证据，不是未揭盲确认；trial仍按既定test目标选择，checkpoint按validation选择。
+
+结合第8节固定配置诊断，学习注意力没有HCS pooled增益证据；本版outside的HCS平均效应仍须本版HateMM对应消融验证。初版outside已满足两语料平均贡献要求，但不能移作本版证据。HateMM seed2025/3407于08:08各完成8/20，继续完整预算；本版两主数据三seed汇总尚未齐全。noattention/nooutside两条已锁定HateMM诊断均在运行、独立monitor正常，不重复启动。HCS三seed完整搜索是Optuna确认，固定配置诊断单独报告。
+
+原始来源：本机 `runs/20261001_associative_io_backbone/hateclipseg/seed<seed>/trial<编号>/metrics_test_fixed<预算>.json`，对照分别为初版与第5版对应路径。逐trial完整性检查、SQLite核对、逐seed及0/8/32次比较、validation选择和标准差：`runs/20261001_associative_io_backbone/analysis/hateclipseg_three_seed_search.json`。过程核验记录 `runs/20261001_associative_io_backbone/setup/hcs_confirmation_completion_probe.json`。
