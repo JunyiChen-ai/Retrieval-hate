@@ -146,9 +146,9 @@ full、nooutside、noattention三组均已完成，运行主机uoa-lab3 / sc4743
 
 锁定配置 `configs/diagnostic_hatemm_seed234.json`，从本机 `runs/20261001_associative_io_backbone/hatemm/seed234/trial10/summary.json` 原样取cfg；已确认50 epoch、full开关和validation checkpoint epoch25。入口 `launch/run_diag_hatemm_uoa-lab3.sh <full|noattention|nooutside>` 使用既有共享diagnostic owner和本版trainer。输出 `runs/20261001_associative_io_backbone/diagnostics/hatemm/<arm>/seed<seed>/`；每条长链独立monitor，复用前检查identity与已有输出。新增配置/启动入口已核对源配置和shell语法，无smoke，无活动模型/trainer/评测器修改。
 
-新增VLM调用0、新缓存抽取0，新视频处理方式不变。按锁定trial10的实测1169.63秒（并发环境）估算，8次完整训练累计运行时间约2.60小时；不是独占GPU时间或总墙钟承诺。05:55 lab3六项搜索占用约16.6 GiB且GPU利用率98%，当前不叠加训练以免延长已运行搜索；本机仍不跑训练，lab1/lab-server仍被其它任务占用。优先利用初版HateMM搜索完成后释放的两个位置启动full、noattention；其中一条诊断结束后接nooutside，各自绑定独立monitor。2026-10-02 07:12:14–15，初版HateMM两个study结束后已在uoa-lab3 / sc474398接续full、noattention；full seed234已核验复用，两个arm实际训练均已进入epoch，各自独立monitor首轮RUNNING绑定正确。full于07:59:21结束并已核验回传，nooutside已于08:02:29利用释放位置接续，独立monitor首次RUNNING绑定正确且seed234已进入epoch；noattention继续；启动记录 `runs/20261001_associative_io_backbone/setup/diagnostic_hatemm_launches.json`，PID和接续维护在STATUS。
+新增VLM调用0、新缓存抽取0，新视频处理方式不变。按锁定trial10的实测1169.63秒（并发环境）估算，8次完整训练累计运行时间约2.60小时；不是独占GPU时间或总墙钟承诺。05:55 lab3六项搜索占用约16.6 GiB且GPU利用率98%，当前不叠加训练以免延长已运行搜索；本机仍不跑训练，lab1/lab-server仍被其它任务占用。优先利用初版HateMM搜索完成后释放的两个位置启动full、noattention；其中一条诊断结束后接nooutside，各自绑定独立monitor。2026-10-02 07:12:14–15，初版HateMM两个study结束后已在uoa-lab3 / sc474398接续full、noattention；full seed234已核验复用，两个arm实际训练均已进入epoch，各自独立monitor首轮RUNNING绑定正确。full于07:59:21结束并已核验回传，nooutside已于08:02:29利用释放位置接续，独立monitor首次RUNNING绑定正确且seed234已进入epoch；noattention于08:15:37完成并已核验回传；启动记录 `runs/20261001_associative_io_backbone/setup/diagnostic_hatemm_launches.json`，PID和接续维护在STATUS。
 
-## 12. HateMM固定配置诊断结果（截至2026-10-02 08:04）
+## 12. HateMM固定配置诊断结果（截至2026-10-02 08:19）
 
 full于07:59:21在uoa-lab3 / sc474398结束，08:00完成通知后核验真实主/同会话子进程为空，全部输出已回传本机。三seed均使用trial10锁定配置，seed234复用原trial10，其余为新跑完整50 epoch。history与run.log严格epoch1–50，validation最大(AP+ROC)/2所选checkpoint与实际加载model.pth一致；各13份、共39份统一test评测完整，覆盖214视频/29269秒，无缺失或额外视频。这是固定配置结构诊断，不是三seed Optuna确认。
 
@@ -164,9 +164,27 @@ full于07:59:21在uoa-lab3 / sc474398结束，08:00完成通知后核验真实�
 | 2025 | 23 | 0.556285 / 0.851954 / 0.740291 |
 | 3407 | 10 | 0.625113 / 0.854450 / 0.705277 |
 
-固定8次AP的seed标准差为.040221，锁定seed234最优配置的其它seed没有重现其AP，不能据seed234就称性能稳定。noattention于08:03正在训练最后seed3407；nooutside按预写配置于08:02:29接续，已验证实际训练及独立monitor首次RUNNING。必须等各组全部完成后才汇总配对差值，并仅与本修订版HCS第8节对应消融合并，不混入初版outside结果，也不以此替代仍运行的完整搜索。
+full固定8次AP的seed标准差为.040221，不能据seed234就称性能稳定。noattention于08:15:37在同主机正常结束，08:16通知后核验真实主/同会话子进程为空并回传全部输出；三seed分别完整50 epoch，严格保持trial10配置，仅io_attention=false；实际checkpoint对应validation最高(AP+ROC)/2。39份统一test评测完整，覆盖214视频/29269秒，无缺失或额外视频。
 
-原始来源：本机 `runs/20261001_associative_io_backbone/diagnostics/hatemm/full/seed{2025,3407}/metrics_test_fixed<预算>.json`，seed234复用 `runs/20261001_associative_io_backbone/hatemm/seed234/trial10/metrics_test_fixed<预算>.json`；逐seed审计/统计 `runs/20261001_associative_io_backbone/analysis/hatemm_locked_full.json`。后续arm结果按本节原地扩充，启动记录见第11节及STATUS。
+| 预算 | noattention AP / ROC / within，均值±总体seed标准差 | noattention − full 配对均值 |
+|---|---|---|
+| 0 | 0.432374 ± 0.056303 / 0.732141 ± 0.020458 / 0.718074 ± 0.027467 | -0.087884 / -0.020431 / -0.023340 |
+| 8 | 0.639454 ± 0.026836 / 0.865572 ± 0.001456 / 0.741050 ± 0.017690 | +0.028406 / +0.005344 / +0.003901 |
+| 32 | 0.666891 ± 0.004986 / 0.878463 ± 0.003070 / 0.764722 ± 0.016267 | +0.003638 / -0.003629 / +0.009702 |
+
+| seed | validation epoch | noattention固定8次 AP / ROC / within | 相对同seed full |
+|---|---|---|---|
+| 234 | 15 | 0.669696 / 0.867628 / 0.737410 | +0.017948 / -0.006649 / -0.028469 |
+| 2025 | 13 | 0.644190 / 0.864629 / 0.721436 | +0.087906 / +0.012675 / -0.018855 |
+| 3407 | 42 | 0.604476 / 0.864457 / 0.764305 | -0.020637 / +0.010007 / +0.059028 |
+
+固定8次配对差值的总体seed标准差为 0.044925 / 0.008551 / 0.039178。移除学习注意力后HateMM三项均值提高，但AP收益主要来自seed2025，seed3407的AP下降，不能写每个seed稳定改善；0次三项均下降，32次ROC也下降。主操作点的收益不能外推为所有预算均受益。
+
+本修订版HCS移除注意力的8次配对均值为 +0.027086 / +0.016658 / -0.013126；与HateMM合看，两语料均不支持将学习注意力作为8次pooled增益来源。HCS within下降、HateMM 0次变差，故也不能直接把noattention认定为全面改善的新主线。outside效应仍在full注意力配置下检验，不能自动外推到noattention。初版outside两语料效应单独保留，不移作本修订版证据。
+
+nooutside已于08:02:29按预写配置启动，08:18已进入seed2025 epoch4/50，独立monitor正常，不能重复启动。待其三个seed全部完成后扩充同版本outside配对结果。HateMM两个确认study仍按20-trial预算继续；本节均为固定配置诊断，不是Optuna确认。下一步修订以保护内容先验的视频间区分和三主指标为重点，不再把学习注意力本身当作已验证收益。
+
+原始来源：本机 `runs/20261001_associative_io_backbone/diagnostics/hatemm/<arm>/seed<seed>/metrics_test_fixed<预算>.json`，full seed234复用 `runs/20261001_associative_io_backbone/hatemm/seed234/trial10/metrics_test_fixed<预算>.json`；逐seed完整性核验与标准差分别在 `analysis/hatemm_locked_full.json`、`analysis/hatemm_locked_noattention.json`，两语料同版本注意力配对汇总在 `runs/20261001_associative_io_backbone/analysis/two_corpus_attention_diagnosis.json`。后续nooutside结果按本节原地扩充。
 
 ## 13. HCS三seed完整搜索结果（2026-10-02）
 
@@ -189,6 +207,6 @@ uoa-lab3 / sc474398的seed2025/3407均于08:01:44结束。08:08核验真实主/�
 
 0次均值±标准差 0.545151 ± 0.087731 / 0.509617 ± 0.096909 / 0.521391 ± 0.008147，对第5版变化 -0.112442 / -0.137046 / -0.018052；32次 0.660977 ± 0.015799 / 0.638784 ± 0.008342 / 0.543288 ± 0.040768，对第5版 -0.034393 / -0.036340 / -0.071644。三seed最优trial中两个checkpoint来自epoch1，虽然实际均训练满50 epoch，其0次pooled也较弱；已有视频间区分损失并未由完整搜索消除。这是读取test后的开发证据，不是未揭盲确认；trial仍按既定test目标选择，checkpoint按validation选择。
 
-结合第8节固定配置诊断，学习注意力没有HCS pooled增益证据；本版outside的HCS平均效应仍须本版HateMM对应消融验证。初版outside已满足两语料平均贡献要求，但不能移作本版证据。HateMM seed2025/3407于08:08各完成8/20，继续完整预算；本版两主数据三seed汇总尚未齐全。noattention/nooutside两条已锁定HateMM诊断均在运行、独立monitor正常，不重复启动。HCS三seed完整搜索是Optuna确认，固定配置诊断单独报告。
+结合第8节固定配置诊断，学习注意力没有HCS pooled增益证据；本版outside的HCS平均效应仍须本版HateMM对应消融验证。初版outside已满足两语料平均贡献要求，但不能移作本版证据。HateMM seed2025/3407于08:08各完成8/20，继续完整预算；本版两主数据三seed汇总尚未齐全。HateMM noattention已完整结束并与HCS对应消融汇总，nooutside继续（第12节），不重复启动。HCS三seed完整搜索是Optuna确认，固定配置诊断单独报告。
 
 原始来源：本机 `runs/20261001_associative_io_backbone/hateclipseg/seed<seed>/trial<编号>/metrics_test_fixed<预算>.json`，对照分别为初版与第5版对应路径。逐trial完整性检查、SQLite核对、逐seed及0/8/32次比较、validation选择和标准差：`runs/20261001_associative_io_backbone/analysis/hateclipseg_three_seed_search.json`。过程核验记录 `runs/20261001_associative_io_backbone/setup/hcs_confirmation_completion_probe.json`。
