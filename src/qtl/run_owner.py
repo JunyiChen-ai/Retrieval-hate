@@ -62,4 +62,3 @@ def main(search_entry, default_root):
         log.write("FINISHED %s\n" % result["status"])
     if result["status"] != "success":
         raise SystemExit(1)
-
