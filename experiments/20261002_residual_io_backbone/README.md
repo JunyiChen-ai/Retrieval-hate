@@ -46,3 +46,6 @@ r5 seed234的study_summary记录的完整trial平均参考约HateMM739秒、HCS3
 
 
 2026-10-02 08:57:02/04 NZDT，HateMM/HCS seed234两项完整搜索已启动，owner与独立monitor分别为2155073/4142180、2155347/4142198。两个monitor均已首轮RUNNING并绑定正确主机、进程身份、输出目录与当前会话，实际输入加载完整。启动记录 `runs/20261002_residual_io_backbone/setup/launches.json`，首轮进程/输出记录 `setup/startup_check.json`；本机各run下 `monitor/` 保存状态，主日志/PID在远端同run目录。首完整trial结束后自动锁定20或5预算，不另作smoke或缩短训练；两语料均已核验实际完整训练进入epoch。新增VLM调用0，旧加性HateMM两项确认仍独立跑满，不覆盖输出。08:57整卡17375MiB已用/14714MiB空闲、利用率98%，无已知OOM。
+
+
+2026-10-02 10:56接续核验：加性修订版两语料三seed搜索已全部完整结束并回传，因固定8次性能及自身outside贡献未满足主线目标，已归档；本版活动代码不受影响。首完整trial HateMM1085.05秒、HCS434.67秒，两个study均已按预写规则锁定20 trial，本机来源 `runs/20261002_residual_io_backbone/<corpus>/seed234/budget.json`。10:56分别完成6/20、16/20，独立monitor正常，未据部分trial作方法结论，继续完整预算。
