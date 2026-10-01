@@ -154,4 +154,4 @@ uoa-lab3 / sc474398 的seed2025、3407均于03:09:04结束；03:11通知后核�
 
 配置 `configs/diagnostic_hatemm_seed234.json`，入口 `launch/run_diag_hatemm_uoa-lab3.sh <full|nooutside>`，使用既有共享diagnostic owner与初版trainer，输出 `runs/20261001_inside_outside_backbone/diagnostics/hatemm/<arm>/seed<seed>/`。shell语法、源trial17的配置和0/8/32评测解析已核对；骨干、共享trainer和活动搜索代码不变，不做smoke。新增VLM调用/缓存抽取0；最初HateMM完整trial559.52秒对应5次累计约0.78小时，近期并发trial约1000–1400秒，实际墙钟另记，不能当成独占GPU耗时。
 
-拟在uoa-lab3 / sc474398释放的诊断位置先启动full，nooutside在下一个短诊断结束后接续，各自绑定独立monitor；不停止、缩减或覆盖三项活动搜索。准备/运行状态只在STATUS维护。
+full已于2026-10-02 03:43:28在uoa-lab3 / sc474398释放的诊断位置启动，seed234已核验复用，seed2025进入完整训练；独立monitor首次RUNNING绑定成功。修订版HCS noattention完成后，nooutside已于03:57:39在同主机接续，独立monitor已绑定正确身份并首次观测RUNNING，seed234实际进入完整训练；不停止、缩减或覆盖三项活动搜索。准备/运行状态只在STATUS维护。

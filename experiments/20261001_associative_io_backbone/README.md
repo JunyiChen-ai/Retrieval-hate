@@ -72,21 +72,42 @@
 
 锁定配置 `configs/diagnostic_hateclipseg_seed234.json`；入口 `launch/run_diag_hateclipseg_uoa-lab3.sh <full|nooutside|noattention>`；输出 `runs/20261001_associative_io_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/`。复用的诊断owner已从旧原型升入 `src/qtl/diagnostics.py`，两个实验各自薄入口指定trainer、输出根和开关，避免跨实验import；只改变已完成的旧诊断入口，五项活动搜索的模型/trainer未动。CLI、shell语法和新旧源trial的配置/完整评测解析已核对；没有训练或smoke。
 
-新增VLM调用与缓存抽取均0，按首完整HCS trial314.65秒估算8次训练累计约0.70小时，占卡并发耗时另记；不是独占吞吐承诺。此前五项完整搜索占满GPU，诊断等待资源。2026-10-02 03:13 NZDT，初版HCS两个确认study结束后，在uoa-lab3 / sc474398启动full、nooutside两条独立诊断链，各配monitor并验证首次RUNNING、实际完整训练已进入epoch；full seed234已核验复用。full于03:29:15结束并回传核验后，noattention已于03:31:10在同主机接续，独立monitor首次RUNNING和实际训练均正常；nooutside于03:36:42完成并已回传核验，noattention继续；启动记录 `runs/20261001_associative_io_backbone/setup/diagnostic_launches.json`，PID/monitor路径在STATUS。初版HateMM确认和修订版HateMM仍按原预算继续。
+新增VLM调用与缓存抽取均0，按首完整HCS trial314.65秒估算8次训练累计约0.70小时，占卡并发耗时另记；不是独占吞吐承诺。此前五项完整搜索占满GPU，诊断等待资源。2026-10-02 03:13 NZDT，初版HCS两个确认study结束后，在uoa-lab3 / sc474398启动full、nooutside两条独立诊断链，各配monitor并验证首次RUNNING、实际完整训练已进入epoch；full seed234已核验复用。full于03:29:15结束并回传核验后，noattention已于03:31:10在同主机接续，独立monitor首次RUNNING和实际训练均正常；nooutside于03:36:42完成并已回传核验，noattention于03:53:19完成，03:55通知后已回传核验；启动记录 `runs/20261001_associative_io_backbone/setup/diagnostic_launches.json`，PID/monitor路径在STATUS。初版HateMM确认和修订版HateMM仍按原预算继续。
 
-## 8. 固定配置诊断结果（截至2026-10-02 03:40）
+## 8. 固定配置诊断结果（截至2026-10-02 03:59）
 
-full与nooutside三seed均已完成；full seed234复用trial7，其余均为新跑的完整50 epoch。两组配置仅io_outside不同，源配置、summary、epoch1–50日志、validation选checkpoint与各39份统一test评测已核验；均覆盖79视频/18839秒，无缺失或额外视频，全部结果已回传。两组真实主/子进程均已退出，完成monitor已通知退出。下面是固定配置的均值±总体seed标准差，**不是三个Optuna study最优值**。
+full、nooutside、noattention三组均已完成，运行主机uoa-lab3 / sc474398，全部输出已回传本机。full seed234复用trial7，其余8次均为新跑的完整50 epoch；每组各三seed、39份统一test评测，均覆盖79视频/18839秒，无缺失或额外视频。逐seed检查了锁定配置、epoch1–50历史与日志、validation最高criterion所选checkpoint；noattention的model.pth也已实际加载核对epoch。noattention只改变io_attention=false，其它配置不变；03:53:19结束，实际主/同会话子进程为空，monitor成功通知并退出。以下为固定配置均值±总体seed标准差，**不是三个Optuna study最优值**。
 
 | arm | 预算 | AP | ROC | within |
 |---|---:|---:|---:|---:|
-| full | 0 | .569952 ± .053677 | .544078 ± .072351 | .535919 ± .015260 |
-| full | 8 | .648252 ± .033225 | .623946 ± .041971 | .548341 ± .027075 |
-| full | 32 | .669080 ± .016441 | .640289 ± .021091 | .573861 ± .042254 |
-| nooutside | 0 | .570363 ± .064341 | .535020 ± .073226 | .526894 ± .014329 |
-| nooutside | 8 | .640263 ± .018540 | .612341 ± .009245 | .537365 ± .020966 |
-| nooutside | 32 | .664037 ± .028596 | .639071 ± .016264 | .550987 ± .043241 |
+| full | 0 | 0.569952 ± 0.053677 | 0.544078 ± 0.072351 | 0.535919 ± 0.015260 |
+| full | 8 | 0.648252 ± 0.033225 | 0.623946 ± 0.041971 | 0.548341 ± 0.027075 |
+| full | 32 | 0.669080 ± 0.016441 | 0.640289 ± 0.021091 | 0.573861 ± 0.042254 |
+| nooutside | 0 | 0.570363 ± 0.064341 | 0.535020 ± 0.073226 | 0.526894 ± 0.014329 |
+| nooutside | 8 | 0.640263 ± 0.018540 | 0.612341 ± 0.009245 | 0.537365 ± 0.020966 |
+| nooutside | 32 | 0.664037 ± 0.028596 | 0.639071 ± 0.016264 | 0.550987 ± 0.043241 |
+| noattention | 0 | 0.589454 ± 0.060364 | 0.561298 ± 0.073314 | 0.514029 ± 0.020360 |
+| noattention | 8 | 0.675338 ± 0.010891 | 0.640604 ± 0.009837 | 0.535214 ± 0.022023 |
+| noattention | 32 | 0.683824 ± 0.020451 | 0.660414 ± 0.016770 | 0.567355 ± 0.041343 |
 
-固定8次逐seed（234/2025/3407）：.683294/.655506/.511165；.657839/.651702/.558985；.603623/.564630/.574871。validation分别选epoch1/36/30，所有训练都跑满50 epoch。nooutside在8次的逐seed结果为.619608/.607107/.508755；.664577/.625334/.544925；.636604/.604583/.558414，validation选epoch2/47/6。移除outside后8次均值变化−.007989/−.011605/−.010976；pooled的各seed差异不一致（AP −.063685/+.006737/+.032982；ROC −.048399/−.026368/+.039953），within三seed都下降。0次变化+.000410/−.009057/−.009025；32次−.005043/−.001218/−.022874。outside在HCS有平均效应支持，8次ROC下降超过.01，但不能称稳定逐seedpooled增益或两语料贡献已确认；noattention尚在运行。
+固定8次逐seed结果及相对同seed full的配对差值：
 
-原始来源：`runs/20261001_associative_io_backbone/diagnostics/hateclipseg/full/seed{2025,3407}/metrics_test_fixed<预算>.json`，seed234为 `runs/20261001_associative_io_backbone/hateclipseg/seed234/trial7/metrics_test_fixed<预算>.json`。nooutside原始来源为同一diagnostics目录下 `nooutside/seed<seed>/metrics_test_fixed<预算>.json`。派生审计/统计 `runs/20261001_associative_io_backbone/analysis/hateclipseg_locked_full.json` 与 `hateclipseg_locked_nooutside.json` 保留逐项来源和配对差值。
+| arm | seed | validation epoch | AP / ROC / within | ΔAP / ΔROC / Δwithin |
+|---|---:|---:|---|---|
+| full | 234 | 1 | 0.683294 / 0.655506 / 0.511165 | — |
+| full | 2025 | 36 | 0.657839 / 0.651702 / 0.558985 | — |
+| full | 3407 | 30 | 0.603623 / 0.564630 / 0.574871 | — |
+| nooutside | 234 | 2 | 0.619608 / 0.607107 / 0.508755 | -0.063685 / -0.048399 / -0.002410 |
+| nooutside | 2025 | 47 | 0.664577 / 0.625334 / 0.544925 | +0.006737 / -0.026368 / -0.014060 |
+| nooutside | 3407 | 6 | 0.636604 / 0.604583 / 0.558414 | +0.032982 / +0.039953 / -0.016458 |
+| noattention | 234 | 1 | 0.690654 / 0.649404 / 0.520142 | +0.007360 / -0.006101 / +0.008977 |
+| noattention | 2025 | 41 | 0.666275 / 0.626873 / 0.519147 | +0.008436 / -0.024829 / -0.039838 |
+| noattention | 3407 | 47 | 0.669084 / 0.645536 / 0.566354 | +0.065462 / +0.080906 / -0.008517 |
+
+移除outside的8次均值变化为−.007989/−.011605/−.010976，配对差值的总体seed标准差为.040815/.037550/.006135。HCS的ROC平均下降超过.01，within三个seed都下降，但pooled各seed不一致，不能称两语料贡献已确认。0次变化+.000410/−.009057/−.009025；32次−.005043/−.001218/−.022874。
+
+移除学习注意力的8次均值变化为**+.027086/+.016658/−.013126**，配对差值的总体seed标准差为.027139/.046068/.020193。AP三个seed都提高，ROC的均值收益主要来自seed3407，within均值下降。0次变化+.019501/+.017221/−.021890；32次+.014745/+.020126/−.006506。**学习注意力没有pooled增益证据，不能作为已验证的novelty贡献**；无注意力版本也不是三主指标全面改进。outside效应是在full注意力配置下得到，不能直接推断无注意力版本仍有同样outside贡献。
+
+原始来源：本机 `runs/20261001_associative_io_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/metrics_test_fixed<预算>.json`；full seed234复用 `runs/20261001_associative_io_backbone/hateclipseg/seed234/trial7/metrics_test_fixed<预算>.json`。完整三组核验、标准差与0/8/32次逐seed配对差值保存在 `runs/20261001_associative_io_backbone/analysis/hateclipseg_locked_diagnostics.json`；先前full/nooutside单组审计仍保留。这些是读取test后的开发诊断，不能替代完整Optuna确认。
+
+当前决定：HCS证据不支持继续将学习注意力当作收益来源；待本版HateMM完整搜索结束，结合初版两语料自身的outside诊断决定后续结构修订。已释放的短诊断位置用于初版HateMM nooutside，单独绑定monitor，未覆盖或重启本实验。
