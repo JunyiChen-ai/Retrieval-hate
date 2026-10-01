@@ -110,4 +110,29 @@ full、nooutside、noattention三组均已完成，运行主机uoa-lab3 / sc4743
 
 原始来源：本机 `runs/20261001_associative_io_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/metrics_test_fixed<预算>.json`；full seed234复用 `runs/20261001_associative_io_backbone/hateclipseg/seed234/trial7/metrics_test_fixed<预算>.json`。完整三组核验、标准差与0/8/32次逐seed配对差值保存在 `runs/20261001_associative_io_backbone/analysis/hateclipseg_locked_diagnostics.json`；先前full/nooutside单组审计仍保留。这些是读取test后的开发诊断，不能替代完整Optuna确认。
 
-当前决定：HCS证据不支持继续将学习注意力当作收益来源；待本版HateMM完整搜索结束，结合初版两语料自身的outside诊断决定后续结构修订。已释放的短诊断位置用于初版HateMM nooutside，单独绑定monitor，未覆盖或重启本实验。
+当前决定：HCS证据不支持继续将学习注意力当作收益来源；HateMM完整搜索已完成，结果及确认安排见第9–10节；后续修订仍结合两语料自身的结构诊断。已释放的短诊断位置用于初版HateMM nooutside，单独绑定monitor，未覆盖或重启本实验。
+
+## 9. HateMM seed234完整搜索结果（2026-10-02）
+
+运行主机uoa-lab3 / sc474398，04:45:32正常结束；04:47完成通知后核验真实主/同会话子进程为空，全部输出已回传本机。Optuna数据库与study_summary均为20/20 COMPLETE，首trial756.27秒锁定20档。逐trial配置与搜索参数一致，soft_both按既有trainer固定为单问题categories=[0]；全部history与run.log严格epoch1–50，实际加载每个model.pth核对validation最高AP/ROC均值所选epoch。260份统一test评测覆盖214视频/29269秒，三项有限，无缺失或额外视频。
+
+| 固定8次，seed234 | AP | ROC | within |
+|---|---:|---:|---:|
+| 修订版，test选trial10 | .651747 | .874278 | .765879 |
+| 初版，test选trial17 | .679560 | .881351 | .753400 |
+| 第5版，test选trial9 | .694450 | .886706 | .788733 |
+| 修订版，仅validation选trial4 | .616726 | .868900 | .742323 |
+
+对初版差值−.027812/−.007074/+.012480，对第5版−.042702/−.012428/−.022854。HateMM的within较初版改善，但pooled下降，相对第5版三项均低；与HCS一起看，修订版没有全面涨点。最优trial10的checkpoint来自validation epoch25；validation选trial4的checkpoint为epoch23。
+
+0次修订版为.549902/.764712/.776061，对第5版差−.085289/−.058477/−.004633，主要损失在视频间区分；32次为.682796/.884678/.778866，对第5版−.000420/+.010532/+.024715，仅作附加预算结果。前10个相同超参trial的8次平均差对初版−.013407/−.005263/+.006711，对第5版−.046398/−.013684/−.036521，下降不只发生于单个test最优trial。由这些输出与HCS去注意力诊断，后续需检验内容先验的视频间区分与权重学习，而不能将加性聚合本身等同于有效骨干贡献。上述为读取test后的开发证据，不是未揭盲检验。
+
+原始来源：本机 `runs/20261001_associative_io_backbone/hatemm/seed234/trial{10,4}/metrics_test_fixed<预算>.json`、`runs/20261001_inside_outside_backbone/hatemm/seed234/trial17/metrics_test_fixed<预算>.json`、`runs/20260929_query_paradigm_r5/hatemm/seed234/trial9/metrics_test_fixed<预算>.json`。完整预算、试验选择来自各study_summary与Optuna数据库；逐trial核验、0/8/32次比较和首10个相同超参比较在 `runs/20261001_associative_io_backbone/analysis/hatemm_seed234_comparison.json`。
+
+## 10. 补seed完整确认（启动前固定，2026-10-02）
+
+两主数据seed234已完整跑满20 trial，四个pooled值均超过规则8既定baseline筛选值，因此补seed2025/3407，各自独立完整Optuna。配置、架构、输入、8档软答案、四标量搜索空间、test(AP+ROC)/2目标、validation选checkpoint及50 epoch均沿用第5节，不因HCS消融结果而改变确认中的注意力开关。每个新study按首完整trial记录预算；已有方法耗时对应20-trial档，不缩减。补seed检验随机种子稳定性，不能称已超过第5版或已完成novelty。
+
+复用 `launch/run_<corpus>_uoa-lab3.sh <seed>`，输出 `runs/20261001_associative_io_backbone/<corpus>/seed{2025,3407}/`，各有独立后台owner与monitor。新增VLM调用0、缓存抽取0；按首trial756/315秒估算，两语料两seed共80次完整训练累计运行时间约11.9小时，实际并发墙钟另记，不当成独占GPU时间承诺。资源以实时检查为准，不干扰其他任务，所有活动模型/trainer/评测器保持原文件。
+
+当前待启动四项确认；启动记录将写 `runs/20261001_associative_io_backbone/setup/confirmation_launches.json`，PID、monitor和当前进度由STATUS维护。初版HateMM两个确认study与nooutside诊断继续原预算；完成后独立汇总初版自己的机制证据，不与修订版混作同一方法。
