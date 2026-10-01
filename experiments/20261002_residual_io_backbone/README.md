@@ -1,6 +1,6 @@
 # Backbone 第二次修订：保留跨模态编码的区间内外残差
 
-截至2026-10-02；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，已实现，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)，待提交同步后启动完整搜索。主仓库代码与本机结果为依据；Pursuing Goal保持paused，已有heartbeat与run monitor接续。用户授权优先novel且涨点，三个主指标并列。
+截至2026-10-02；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，已实现，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)，两主数据seed234完整搜索已于08:57在uoa-lab3启动。主仓库代码与本机结果为依据；Pursuing Goal保持paused，已有heartbeat与run monitor接续。用户授权优先novel且涨点，三个主指标并列。
 
 ## 1. 已观察的问题与修订假设
 
@@ -40,6 +40,9 @@ r5 seed234的study_summary记录的完整trial平均参考约HateMM739秒、HCS3
 
 原型 `backbone.py` 继承共享PriorNet，仅新增上下文残差；通用加法传递位于新文件 `src/qtl/interval_stats.py`，旧加性模型的活动实现保持原文件。新训练/搜索薄入口调用共享trainer/search；`launch/run_search.py` 调用共享run owner，两语料shell入口在本目录launch。学习率、完整50 epoch、checkpoint选择和统一评测保持第3节协议。
 
-远端uoa-lab3 / sc474398输入已重新全量解析：HateMM1067视频（744/109/214）、HCS393视频（251/63/79），feature shape、时间轴、答案缓存覆盖与split isolation通过；本机记录 `runs/20261002_residual_io_backbone/setup/inputs_<corpus>.log` 和对应command.json。验证复用已提交的旧只读输入检查入口，无跨实验Python import、无训练/smoke。远端环境torch2.7.1+cu128/CUDA12.8/Optuna4.9.0与本机一致。运行主机拟为uoa-lab3；08:48 GPU9855MiB已用/22235MiB空闲，原加性HateMM两项完整study继续；lab1/lab-server仅余3723/2585MiB，已有他人任务不改动。code review已PASS；提交同步及开跑前layout检查后启动。
+远端uoa-lab3 / sc474398输入已重新全量解析：HateMM1067视频（744/109/214）、HCS393视频（251/63/79），feature shape、时间轴、答案缓存覆盖与split isolation通过；本机记录 `runs/20261002_residual_io_backbone/setup/inputs_<corpus>.log` 和对应command.json。验证复用已提交的旧只读输入检查入口，无跨实验Python import、无训练/smoke。远端环境torch2.7.1+cu128/CUDA12.8/Optuna4.9.0与本机一致。运行主机为uoa-lab3 / sc474398；08:48 GPU9855MiB已用/22235MiB空闲，原加性HateMM两项完整study继续；lab1/lab-server仅余3723/2585MiB，已有他人任务不改动。code review已PASS，已提交推送并同步三机，开跑前layout检查通过；活动加性模型/trainer未改。
 
 独立code review核验1–65长度共4225节点的区间/补集统计（最大误差7.11e-15）、outside自身行/padding/其它视频梯度排除、相同base权重下零残差train/eval的s/g/phi严格等价、非零残差不直接改变g、节点bias仅一次、真实树似然梯度/最终后验和严格checkpoint重载。原始数值 `runs/20261002_residual_io_backbone/code_review/cpu_operator_review.json`。这些是CPU算子核验，未训练、未smoke，不证明性能。
+
+
+2026-10-02 08:57:02/04 NZDT，HateMM/HCS seed234两项完整搜索已启动，owner与独立monitor分别为2155073/4142180、2155347/4142198。两个monitor均已首轮RUNNING并绑定正确主机、进程身份、输出目录与当前会话，实际输入加载完整。启动记录 `runs/20261002_residual_io_backbone/setup/launches.json`，首轮进程/输出记录 `setup/startup_check.json`；本机各run下 `monitor/` 保存状态，主日志/PID在远端同run目录。首完整trial结束后自动锁定20或5预算，不另作smoke或缩短训练；两语料均已核验实际完整训练进入epoch。新增VLM调用0，旧加性HateMM两项确认仍独立跑满，不覆盖输出。08:57整卡17375MiB已用/14714MiB空闲、利用率98%，无已知OOM。
