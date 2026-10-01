@@ -126,6 +126,8 @@ proposal review 只决定候选是否值得实现，不等于 novelty 贡献或�
 
 **决定：**两语料seed234的四个pooled数均超过规则8固定baseline筛选门，因此按既有流程补seed2025、3407，各语料各seed独立完整Optuna；50 epoch、原空间/目标/validation选checkpoint、8档答案和固定8次主预算均不变。此前方法首trial均小于1h，对应20-trial档；各新study仍保留首trial耗时与自动预算记录，不缩短。它检验初版的seed稳定性，不代表初版已超过第5版、已确认SOTA或novelty已成立。用户优先涨点，已启动的加性统计量修订版继续独立搜索；初版完整确认后仍需核对两语料机制贡献，HCS固定配置诊断不能替代这些Optuna study。
 
-准备在lab3并行运行四个已就绪study，输出 `runs/20261001_inside_outside_backbone/<corpus>/seed{2025,3407}/`，复用 `launch/run_<corpus>_uoa-lab3.sh <seed>`。各任务独立后台owner和完成monitor，具体PID/状态只在STATUS维护。新增VLM调用0，无新增缓存；既有首trial耗时为预算参考，实际并发耗时另记。
+已于2026-10-02 00:22 NZDT在lab3并行启动四个已就绪study，输出 `runs/20261001_inside_outside_backbone/<corpus>/seed{2025,3407}/`，复用 `launch/run_<corpus>_uoa-lab3.sh <seed>`。各任务独立后台owner和完成monitor，具体PID/状态只在STATUS维护。新增VLM调用0，无新增缓存；既有首trial耗时为预算参考，实际并发耗时另记。
 
 初版所有活动任务结束后，已将其ContextFusion/拓扑缓存和owner入口接入先前升入 `src/qtl/{content,run_owner}.py` 的共享定义。未修改正在运行的修订版或共享trainer/评测器。CPU核验相同随机初始化逐参数一致、真实trial17 checkpoint严格加载成功，长度[9,4,1]的全部forward输出与节点势逐元素相等；无训练、无smoke。记录 `runs/20261001_inside_outside_backbone/analysis/shared_migration_check.json`。
+
+确认study首trial耗时已于2026-10-02回传：HateMM seed2025/3407为1424.30/1424.47秒，HCS seed2025/3407为577.19/577.01秒，四项各锁定20 trial，来源为对应run的 `budget.json`。这些是同卡并发耗时，不能与独占训练速度等同。为复用已完成的结构诊断链，`launch/run_diagnostics.py` 后续改为 `src/qtl/diagnostics.py` 的薄入口；模型、搜索和已运行的确认study代码未改。

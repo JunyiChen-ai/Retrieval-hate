@@ -7,6 +7,6 @@ from qtl.diagnostics import inspect_trial, main
 
 if __name__ == "__main__":
     main(Path(__file__).resolve().parents[1] / "train.py",
-         '20261001_inside_outside_backbone',
-         {'full': {}, 'nooutside': {'io_outside': False}, 'mean': {'io_merge': 'mean'}},
-         {'backbone': 'inside_outside', 'io_outside': True, 'io_merge': 'gated'})
+         '20261001_associative_io_backbone',
+         {'full': {}, 'nooutside': {'io_outside': False}, 'noattention': {'io_attention': False}},
+         {'backbone': 'associative_io', 'io_outside': True, 'io_attention': True})

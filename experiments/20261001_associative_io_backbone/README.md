@@ -1,6 +1,6 @@
 # Backbone 修订候选：保留加性统计量的 inside–outside 编码器
 
-截至2026-10-01；状态：[一次独立proposal review：GO](../../docs/reviews/20261001_associative_io_backbone_proposal.md)，骨干与训练/搜索入口已实现，[一次独立code review：PASS](../../docs/reviews/20261001_associative_io_backbone_code.md)；两主数据seed234完整搜索已于2026-10-01 23:05 NZDT在uoa-lab3 / sc474398启动。inside–outside 初版两主数据seed234现已完整跑满20 trial；本提案提出/启动时未替换其活动代码。用户授权继续自动迭代 backbone，优先 novel 且涨点，within 与 AP / ROC 并列为主指标。Pursuing goal 保持 paused，继续由 heartbeat / 完成通知接续。
+截至2026-10-02；状态：HCS seed234已完成20/20并回传核验，HateMM继续完整搜索；[一次独立proposal review：GO](../../docs/reviews/20261001_associative_io_backbone_proposal.md)，骨干与训练/搜索入口已实现，[一次独立code review：PASS](../../docs/reviews/20261001_associative_io_backbone_code.md)；两主数据seed234完整搜索已于2026-10-01 23:05 NZDT在uoa-lab3 / sc474398启动。inside–outside 初版两主数据seed234现已完整跑满20 trial；本提案提出/启动时未替换其活动代码。用户授权继续自动迭代 backbone，优先 novel 且涨点，within 与 AP / ROC 并列为主指标。Pursuing goal 保持 paused，继续由 heartbeat / 完成通知接续。
 
 ## 1. 依据与问题
 
@@ -48,3 +48,28 @@
 运行主机 **uoa-lab3 / sc474398**。新版两主数据seed234已满足完整训练的提案/代码评审条件，于2026-10-01 23:05 NZDT与仍在跑的初版HateMM并行启动；科学判断仍等各study完整预算结束。新版本从已完整结束的HCS搜索与三组诊断提出，不依赖旧HateMM暂时最优结果；不提前宣告初版晋级或淘汰。输出目录不同，新增共享文件不会被旧模型入口导入，在跑旧实现不改动。每个新study独立后台owner与monitor；输入与环境复用本日已全量核验的相同缓存/环境，训练入口继续检查覆盖、时间轴与split。
 
 启动及monitor状态见 `research-wiki/STATUS.md`，本机启动记录 `runs/20261001_associative_io_backbone/setup/launches.json`。两项monitor首轮均已成功绑定并观测RUNNING，训练输入覆盖完整，实际已进入完整50 epoch训练；2026-10-01 23:55核验：HateMM首完整trial756.27秒、HCS314.65秒，两套seed234预算均按预写规则锁定为20 trial，来源为本机 `runs/20261001_associative_io_backbone/<corpus>/seed234/budget.json`；当时分别完成3/20、9/20，另各有一个活动trial，尚不能判候选结果。这是在同卡多任务并发下的耗时，不等同于独立吞吐对比。
+
+## 6. HCS seed234 完整结果与先验诊断（2026-10-02）
+
+运行主机 **uoa-lab3 / sc474398**；01:06:01正常结束，01:06完成通知后核验真实主/同会话子进程均退出并回传全部输出。20/20 COMPLETE；逐trial配置一致、epoch严格1–50、validation最高criterion对应最佳checkpoint；260份统一test评测可解析、三项有限，均覆盖79视频/18839秒，无缺失或额外视频。核验不能只依靠completion标记。
+
+| 固定8次，seed234 | AP | ROC | within |
+|---|---:|---:|---:|
+| 加性统计量修订版，test选trial7 | .683294 | .655506 | .511165 |
+| 递归初版，test选trial11 | .668767 | .635762 | .567188 |
+| 第5版原骨干，test选trial13 | .688467 | .674845 | .556131 |
+| 修订版仅validation选trial10 | .630660 | .613407 | .510797 |
+
+原始来源为本机 `runs/20261001_associative_io_backbone/hateclipseg/seed234/trial{7,10}/metrics_test_fixed8.json`、`runs/20261001_inside_outside_backbone/hateclipseg/seed234/trial11/metrics_test_fixed8.json`、`runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_test_fixed8.json`；选择记录在各自study_summary。修订版对初版+.014527/+.019744/−.056023，对第5版−.005173/−.019339/−.044966。只能说恢复部分pooled，不能说全面涨点，尤其不能忽略作为主指标的within。
+
+读取固定0/8/32次及全部trial输出后发现：test选trial7的checkpoint来自validation epoch1，0次仅.502969/.452038/.516390，32次.658003/.640937/.516138；8次的视频均分AUC .884058，却没有相应视频内排序改善。全部20个trial的0次指标中位数.617564/.602228/.524718；低质先验并非所有trial同等严重，但不能把trial7的8次pooled优势解释成骨干定位贡献。前10个相同超参相对初版平均+.007944/+.026207/−.006607，相对第5版−.017849/−.017378/−.014971。这支持继续检查outside与注意力权重是否改善逐秒先验，而不是仅凭消除递归压缩就认定机制有效。不是bug已被排除的因果结论，也不据此更改已锁定的checkpoint/search标量。
+
+派生审计/误差分析：`runs/20261001_associative_io_backbone/analysis/hateclipseg_seed234_comparison.json`、`hateclipseg_prior_diagnosis.json`，均保留原始来源；属于读取test后的开发证据。HateMM尚未跑满，不提前判两语料筛选、三seed确认或候选归档。
+
+## 7. 已锁定的HCS结构诊断（训练前预写）
+
+沿用第3节预设开关，固定完整搜索trial7配置，比较full、nooutside（仅io_outside=false）、noattention（仅io_attention=false，其余加性统计量与四head/readout保留）。各seed234/2025/3407、50 epoch、原validation选checkpoint与统一test评测，0/8次为主、32次附加，报告三项均值和seed标准差。full seed234复用trial7，其余8次完整训练，不重新调超参。这是结构诊断，不是Optuna确认，不把三seed固定配置均值冒充三个study最优。
+
+锁定配置 `configs/diagnostic_hateclipseg_seed234.json`；入口 `launch/run_diag_hateclipseg_uoa-lab3.sh <full|nooutside|noattention>`；输出 `runs/20261001_associative_io_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/`。复用的诊断owner已从旧原型升入 `src/qtl/diagnostics.py`，两个实验各自薄入口指定trainer、输出根和开关，避免跨实验import；只改变已完成的旧诊断入口，五项活动搜索的模型/trainer未动。CLI、shell语法和新旧源trial的配置/完整评测解析已核对；没有训练或smoke。
+
+新增VLM调用与缓存抽取均0，按首完整HCS trial314.65秒估算8次训练累计约0.70小时，占卡并发耗时另记；不是独占吞吐承诺。当前五项完整搜索已使lab3 GPU约98%使用，暂不增加并发争用；在下一项搜索完成或发现可用GPU后启动诊断，各arm同时绑定独立完成monitor。初版三seed确认和修订版HateMM仍按原预算继续。
