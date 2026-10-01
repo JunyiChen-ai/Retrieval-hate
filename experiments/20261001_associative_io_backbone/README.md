@@ -1,6 +1,6 @@
 # Backbone 修订候选：保留加性统计量的 inside–outside 编码器
 
-截至2026-10-01；状态：[一次独立proposal review：GO](../../docs/reviews/20261001_associative_io_backbone_proposal.md)，骨干与训练/搜索入口已实现，[一次独立code review：PASS](../../docs/reviews/20261001_associative_io_backbone_code.md)；准备完整搜索。当前 inside–outside 初版的 HateMM 完整搜索仍在运行，保留其全部20 trial；本提案不替换在跑代码。用户授权继续自动迭代 backbone，优先 novel 且涨点，within 与 AP / ROC 并列为主指标。Pursuing goal 保持 paused，继续由 heartbeat / 完成通知接续。
+截至2026-10-01；状态：[一次独立proposal review：GO](../../docs/reviews/20261001_associative_io_backbone_proposal.md)，骨干与训练/搜索入口已实现，[一次独立code review：PASS](../../docs/reviews/20261001_associative_io_backbone_code.md)；两主数据seed234完整搜索已于2026-10-01 23:05 NZDT在uoa-lab3 / sc474398启动。inside–outside 初版两主数据seed234现已完整跑满20 trial；本提案提出/启动时未替换其活动代码。用户授权继续自动迭代 backbone，优先 novel 且涨点，within 与 AP / ROC 并列为主指标。Pursuing goal 保持 paused，继续由 heartbeat / 完成通知接续。
 
 ## 1. 依据与问题
 
@@ -32,17 +32,19 @@
 
 ## 4. 当前决定
 
-提案评审已GO、唯一一次code review已PASS；初版HateMM完整搜索继续。当前证据支持检验聚合方式，不支持宣布初版失败归档、已SOTA、已完成backbone novelty，或放弃涨点目标。
+提案评审已GO、唯一一次code review已PASS；初版两主数据seed234已完成，完整结果见初版README第9节。当前证据支持检验聚合方式，不支持宣布初版失败归档、已SOTA、已完成backbone novelty，或放弃涨点目标。
 
 ## 5. 实现与开跑前固定协议
 
-- 原型在本目录 `backbone.py`；共享trainer、data、QTL推断和统一评测未改。`src/qtl/content.py` 提供原样升入共享的ContextFusion和无模型状态的拓扑缓存。旧原型在当前HateMM搜索完成前保留冻结定义；结束后再将旧入口接到共享模块，避免运行中换代码。新实验不import旧实验。
+- 原型在本目录 `backbone.py`；共享trainer、data、QTL推断和统一评测未改。`src/qtl/content.py` 提供原样升入共享的ContextFusion和无模型状态的拓扑缓存。旧原型在HateMM搜索完成前保留冻结定义，已于2026-10-02全部结束后接到共享模块；迁移等价性验证见初版README第9节，未替换本修订版活动代码。新实验不import旧实验。
 - 投影hidden128；每模态4个head，key线性权重跨模态共享；每个head保留128维value的加权和与1个mass。head拼接后Linear回128、LayerNorm只发生在节点读出。自底向上inside与自顶向下outside都只有加法，和直接对区间/补集做加权池化数学等价，不能宣称它保留了初版有序非线性递归的表达力。
 - 叶子/内部节点融合器与初版相同；视频头读取根inside，秒级与节点势进入原有树似然。attention常数权重和关闭outside是预留消融开关，主配置两者均启用。新增VLM调用和缓存抽取均为0。
 - 两主数据各独立训练50 epoch；Optuna TPE每seed独立study，sampler seed=训练seed。空间固定：lr log[1e-4,1e-3]，lamda_cma uniform[.5,2]，dropout uniform[.1,.5]，lr_answer log[1e-4,.1]；hidden128、batch32、crop_repeat5、long_T512、8档soft_both、node_prior=true，其余同第5版。
 - validation AP/ROC均值选checkpoint，立即test；搜索目标仍为(test AP+ROC)/2，within与AP/ROC并列纳入方法结论，不改规则文件。每seed预算由首个完整trial ≤1h选20、>1h选5，自动锁定；不做smoke、不缩短训练。另记录validation选trial的test三项。
-- 输出计划 `runs/20261001_associative_io_backbone/<corpus>/seed<seed>/`；全预算结束才判断seed。独立后台monitor、回传、三seed确认/必要消融沿用项目流程；初版结果单独保留。
+- 输出 `runs/20261001_associative_io_backbone/<corpus>/seed<seed>/`；全预算结束才判断seed。独立后台monitor、回传、三seed确认/必要消融沿用项目流程；初版结果单独保留。
 
 独立code review已核验127个节点与直接区间/补集S/Z计算一致、outside自身缓存行梯度为0、变长/单叶/padding对齐、23个启用参数进入真实tree loss、s/g/phi进入最终后验、严格checkpoint重载与启动完整性链；未训练、未做smoke。数字记录在本机 `runs/20261001_associative_io_backbone/code_review/numeric_checks.json`，它只验证实现，不证明性能。
 
-运行主机计划 **uoa-lab3 / sc474398**。新版两主数据seed234已分别满足完整训练的提案/代码评审条件，拟与仍在跑的初版HateMM并行；科学判断仍等各study完整预算结束。新版本从已完整结束的HCS搜索与三组诊断提出，不依赖旧HateMM暂时最优结果；不提前宣告初版晋级或淘汰。输出目录不同，新增共享文件不会被旧模型入口导入，在跑旧实现不改动。每个新study独立后台owner与monitor；输入与环境复用本日已全量核验的相同缓存/环境，训练入口继续检查覆盖、时间轴与split。
+运行主机 **uoa-lab3 / sc474398**。新版两主数据seed234已满足完整训练的提案/代码评审条件，于2026-10-01 23:05 NZDT与仍在跑的初版HateMM并行启动；科学判断仍等各study完整预算结束。新版本从已完整结束的HCS搜索与三组诊断提出，不依赖旧HateMM暂时最优结果；不提前宣告初版晋级或淘汰。输出目录不同，新增共享文件不会被旧模型入口导入，在跑旧实现不改动。每个新study独立后台owner与monitor；输入与环境复用本日已全量核验的相同缓存/环境，训练入口继续检查覆盖、时间轴与split。
+
+启动及monitor状态见 `research-wiki/STATUS.md`，本机启动记录 `runs/20261001_associative_io_backbone/setup/launches.json`。两项monitor首轮均已成功绑定并观测RUNNING，训练输入覆盖完整，实际已进入完整50 epoch训练；2026-10-01 23:55核验：HateMM首完整trial756.27秒、HCS314.65秒，两套seed234预算均按预写规则锁定为20 trial，来源为本机 `runs/20261001_associative_io_backbone/<corpus>/seed234/budget.json`；当时分别完成3/20、9/20，另各有一个活动trial，尚不能判候选结果。这是在同卡多任务并发下的耗时，不等同于独立吞吐对比。

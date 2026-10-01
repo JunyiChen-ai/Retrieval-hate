@@ -4,12 +4,11 @@ Inside and outside are neural representations, not the label posterior messages.
 Outside excludes the target interval's cached rows; upstream feature receptive
 fields are unchanged. No VLM answers or labels are inputs to this network.
 """
-from collections import OrderedDict
-
 import torch
 from torch import nn
 
-from qtl import ctree, data as qdata
+from qtl import data as qdata
+from qtl.content import ContextFusion, ContentLayouts
 from qtl.model import PriorNet as LegacyPriorNet
 from macilsd import align
 import hier_evidence_common as hc
@@ -38,22 +37,6 @@ class OrderedCompose(nn.Module):
                          + (1 - gate) * (left + right) * 0.5)
 
 
-class ContextFusion(nn.Module):
-    def __init__(self, hidden, dropout):
-        super().__init__()
-        self.net = nn.Sequential(nn.Linear(6 * hidden, hidden), nn.GELU(),
-                                 nn.Dropout(dropout), nn.Linear(hidden, hidden))
-        self.norm = nn.LayerNorm(hidden)
-        self.drop = nn.Dropout(dropout)
-
-    def forward(self, inside, outside):
-        # (nodes, modality, hidden); each modality retains its own residual.
-        other_i, other_o = inside.flip(1), outside.flip(1)
-        x = torch.cat((inside, outside, inside - outside, inside * outside,
-                       other_i, other_o), dim=-1)
-        return self.norm(inside + self.drop(self.net(x)))
-
-
 class InsideOutsidePrior(nn.Module):
     def __init__(self, cfg):
         super().__init__()
@@ -77,26 +60,12 @@ class InsideOutsidePrior(nn.Module):
         self.use_outside = bool(cfg["io_outside"])
         self.merge = cfg["io_merge"]
         assert self.merge in ("gated", "mean")
-        self._topologies = OrderedDict()
-
-    def _topology(self, mask):
-        lengths = tuple(int(n) for n in mask.sum(1).tolist())
-        key = (lengths, mask.shape[1], str(mask.device))
-        if key not in self._topologies:
-            forest = ctree.Forest(lengths, mask.shape[1])
-            levels = [{k: v.to(mask.device) if isinstance(v, torch.Tensor) else v
-                       for k, v in lev.items()} for lev in forest.levels]
-            self._topologies[key] = (forest, levels, forest.pos_root.to(mask.device))
-            if len(self._topologies) > 32:
-                self._topologies.popitem(last=False)
-        else:
-            self._topologies.move_to_end(key)
-        return key, self._topologies[key]
+        self._layouts = ContentLayouts()
 
     def forward(self, f_a, f_v, mask):
         self._last_phi = self._last_v = self._last_a = None
         B, T = mask.shape
-        key, (forest, levels, roots) = self._topology(mask)
+        key, (forest, levels, roots) = self._layouts.get(mask)
         # Cross-time mixing starts only at the tree composition.
         leaves = self.leaf_norm(torch.stack((self.fc_v(f_v), self.fc_a(f_a)), dim=2))
         hidden = leaves.shape[-1]

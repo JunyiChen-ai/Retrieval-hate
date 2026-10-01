@@ -1,6 +1,6 @@
 # Backbone 候选：时间树上的区间内外表示
 
-截至 2026-10-01；状态：实现完成，[一次独立 proposal review：GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)，[一次独立 code review：PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)。用户最新授权自动迭代：优先做 novel 且涨点的 backbone；充分尝试仍无提升时优先可验证的新意，完成后汇报。当前旧骨干实现已升入 `src/qtl/model.py`，旧实验文件保留兼容入口。within 按 AGENTS.md 最新裁定与 pooled AP / ROC 并列为主指标；不改写研究规则文件。
+截至 2026-10-02；状态：两主数据seed234完整搜索已完成，进入其余seed确认；实现完成，[一次独立 proposal review：GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)，[一次独立 code review：PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)。用户最新授权自动迭代：优先做 novel 且涨点的 backbone；充分尝试仍无提升时优先可验证的新意，完成后汇报。当前旧骨干实现已升入 `src/qtl/model.py`，旧实验文件保留兼容入口。within 按 AGENTS.md 最新裁定与 pooled AP / ROC 并列为主指标；不改写研究规则文件。
 
 ## 1. 需要解决什么
 
@@ -69,7 +69,7 @@ proposal review 只决定候选是否值得实现，不等于 novelty 贡献或�
 
 - 初版实现已通过一次独立 proposal / code review，启动时本机与 lab3 代码一致、跟踪文件干净；不在运行中修改代码。运行日志记录可读代码版本说明与主机。
 - 输入检查全量通过；日志在本机 `runs/20261001_inside_outside_backbone/setup/inputs_{hatemm,hateclipseg}.log`，覆盖 HateMM 1067 个、HCS 393 个视频，各自 split 不重叠。
-- 搜索目录为 `runs/20261001_inside_outside_backbone/{hatemm,hateclipseg}/seed234/`。首 trial 实测 HateMM 559.52 秒、HCS 235.49 秒，各自自动锁定 **20 trial**，依据对应 `budget.json`。HCS 已完成全部 20 个，HateMM 继续原定搜索。
+- 搜索目录为 `runs/20261001_inside_outside_backbone/{hatemm,hateclipseg}/seed234/`。首 trial 实测 HateMM 559.52 秒、HCS 235.49 秒，各自自动锁定 **20 trial**，依据对应 `budget.json`。HCS于10月1日22:14完成，HateMM于10月2日00:15完成，均为20/20；详细结果见第8、9节。
 - 每个搜索已配置独立后台完成通知，当前会话另复用每 3 小时 heartbeat；Pursuing goal 保持暂停。具体运行 PID 与 monitor 路径只在 STATUS 维护。
 
 ## 8. HateClipSeg seed234 完整结果与结构诊断（2026-10-01）
@@ -83,7 +83,7 @@ proposal review 只决定候选是否值得实现，不等于 novelty 贡献或�
 | 差值 | −.019700 | −.039083 | +.011057 |
 | 新骨干 seed234，仅 validation 选 trial6 | .648418 | .616496 | .571958 |
 
-来源：`runs/20261001_inside_outside_backbone/hateclipseg/seed234/trial{11,6}/metrics_test_fixed8.json`、`runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_test_fixed8.json`；trial 选择依据各自 `study_summary.json`。新骨干尚未涨点；虽 HCS pooled 超过固定 baseline 门，HateMM 未完成，不能宣告两语料筛选、三 seed 确认或 novelty 验证通过。
+来源：`runs/20261001_inside_outside_backbone/hateclipseg/seed234/trial{11,6}/metrics_test_fixed8.json`、`runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_test_fixed8.json`；trial 选择依据各自 `study_summary.json`。新骨干尚未涨点；当时HCS pooled超过固定baseline门、HateMM尚未完成。HateMM最终结果与两语料筛选决定见第9节，三seed确认和novelty贡献仍未完成。
 
 误差分析读取上述最优 trial 的固定 0 / 8 / 32 次统一评测输出，以及两方法前 10 个相同超参的 trial 评测。0 次新骨干 .668739 / .644563 / .529660，旧骨干 .669585 / .664387 / .542849；0 次 mean-score 视频 AUC 为 .723188 vs .846377。退化已出现在内容先验及视频间区分，不能只归因于提问策略；根组合压缩、outside 干扰均只是待检验解释。前 10 个相同超参 trial 的 AP / ROC 差值全部为负，平均 −.025793 / −.043585；within 平均 −.008364。最优 trial 的 within 改善并未普遍出现。原始逐视频 within 有 32 个改善、35 个下降，不能把单 seed 均值改善写成稳定收益。派生分析记录 `runs/20261001_inside_outside_backbone/analysis/hateclipseg_seed234_comparison.json`，字段保留原始来源；这属于已查看 test 的开发证据。
 
@@ -109,4 +109,23 @@ proposal review 只决定候选是否值得实现，不等于 novelty 贡献或�
 
 **对设计的含义：**8次时，移除outside的三seed均值下降AP .012112、ROC .009322、within .016624。AP差异主要来自seed234（移除后−.050199，另外两seed+.007295/+.006568）；这给保留outside提供平均效应证据，但不是稳定逐seed胜出，也不满足“两语料机制贡献已确认”。递归门控组合未胜过mean：8次mean−full为+.001006/+.002575/+.002760；0次为+.018055/+.016300/+.027027；32次为+.011076/+.017049/+.014210。不能把学习到的有序门控组合作为已证实贡献，也不能把mean的8次微小优势称为稳定涨点。
 
-下一轮拟检验保留attention加性统计量到读出时再归一化的inside–outside编码器，见[修订提案](../20261001_associative_io_backbone/README.md)。保留outside、减少反复非线性压缩是由上述开发证据形成的假设；新方法需独立评审和完整搜索。初版HateMM原定20-trial搜索继续，不因HCS结果缩减预算或覆盖代码。
+下一轮拟检验保留attention加性统计量到读出时再归一化的inside–outside编码器，见[修订提案](../20261001_associative_io_backbone/README.md)。保留outside、减少反复非线性压缩是由上述开发证据形成的假设；新方法需独立评审和完整搜索。初版HateMM按原定20-trial预算跑满，没有因HCS结果缩减或覆盖活动代码；最终结果见第9节。
+
+## 9. HateMM seed234 完整结果与后续确认（2026-10-02）
+
+在 **uoa-lab3 / sc474398** 于00:15:43正常结束，00:16通知接续后核验真实主进程和同会话子进程均为空，全部输出已回传本机。20/20 COMPLETE、每trial严格50 epoch、config与summary相同、最佳epoch等于validation criterion最大值、260份统一test评测均完整；各预算覆盖214视频/29269秒，无缺失/额外视频，三个指标有限。完成标记不是本次完整性判断的唯一依据。
+
+| 配置与选择，固定8次 | AP | ROC | within |
+|---|---:|---:|---:|
+| 新骨干seed234，test选trial17 | .679560 | .881351 | .753400 |
+| 第5版原骨干seed234，test选trial9 | .694450 | .886706 | .788733 |
+| 差值 | −.014890 | −.005354 | −.035333 |
+| 新骨干仅validation选trial10 | .635249 | .869817 | .753563 |
+
+原始来源：`runs/20261001_inside_outside_backbone/hatemm/seed234/trial{17,10}/metrics_test_fixed8.json`、`runs/20260929_query_paradigm_r5/hatemm/seed234/trial9/metrics_test_fixed8.json`；trial选择来自各自完整 `study_summary.json`。派生审计与分析 `runs/20261001_inside_outside_backbone/analysis/hatemm_seed234_comparison.json` 保留每项来源和逐trial核验。0次新骨干.586136/.777543/.742893，旧线.635191/.823190/.780694，先验本身已下降；前10个相同超参trial平均差−.032991/−.008421/−.043231。32次新骨干.686464/.881993/.771922，对旧线+.003248/+.007847/+.017770，仅作附加预算结果，不能替代固定8次主比较。这是读取test后的开发证据，不是未揭盲检验。
+
+**决定：**两语料seed234的四个pooled数均超过规则8固定baseline筛选门，因此按既有流程补seed2025、3407，各语料各seed独立完整Optuna；50 epoch、原空间/目标/validation选checkpoint、8档答案和固定8次主预算均不变。此前方法首trial均小于1h，对应20-trial档；各新study仍保留首trial耗时与自动预算记录，不缩短。它检验初版的seed稳定性，不代表初版已超过第5版、已确认SOTA或novelty已成立。用户优先涨点，已启动的加性统计量修订版继续独立搜索；初版完整确认后仍需核对两语料机制贡献，HCS固定配置诊断不能替代这些Optuna study。
+
+准备在lab3并行运行四个已就绪study，输出 `runs/20261001_inside_outside_backbone/<corpus>/seed{2025,3407}/`，复用 `launch/run_<corpus>_uoa-lab3.sh <seed>`。各任务独立后台owner和完成monitor，具体PID/状态只在STATUS维护。新增VLM调用0，无新增缓存；既有首trial耗时为预算参考，实际并发耗时另记。
+
+初版所有活动任务结束后，已将其ContextFusion/拓扑缓存和owner入口接入先前升入 `src/qtl/{content,run_owner}.py` 的共享定义。未修改正在运行的修订版或共享trainer/评测器。CPU核验相同随机初始化逐参数一致、真实trial17 checkpoint严格加载成功，长度[9,4,1]的全部forward输出与节点势逐元素相等；无训练、无smoke。记录 `runs/20261001_inside_outside_backbone/analysis/shared_migration_check.json`。
