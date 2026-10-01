@@ -1,6 +1,6 @@
 # Backbone 第二次修订：保留跨模态编码的区间内外残差
 
-截至2026-10-02 11:26 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。HCS seed234完整20-trial搜索已结束并回传核验，HateMM继续完整预算；HCS本版本三组锁定配置诊断已启动。主仓库代码与本机结果为依据；Pursuing Goal保持paused，已有heartbeat与run monitor接续。用户授权优先novel且涨点，三个主指标并列。
+截至2026-10-02 11:47 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。HCS seed234完整20-trial搜索已结束并回传核验，HateMM继续完整预算；HCS本版本full/nooutside/noresidual三组各三seed均已完整核验回传，固定8次未支持outside或整体残差的核心贡献。主仓库代码与本机结果为依据；Pursuing Goal保持paused，已有heartbeat与run monitor接续。用户授权优先novel且涨点，三个主指标并列。
 
 ## 1. 已观察的问题与修订假设
 
@@ -72,3 +72,41 @@ r5来源 `runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_te
 
 
 实际启动时间（full/nooutside/noresidual）2026-10-02T11:24:23.783086+13:00 / 2026-10-02T11:24:24.563051+13:00 / 2026-10-02T11:24:25.354324+13:00；owner/monitor分别2231223/111855、2231458/111858、2231722/111869。三组实际训练已进入epoch5/5/6，独立monitor存活、首轮RUNNING并绑定当前会话，记录 `setup/hcs_diagnostic_launches.json`、`setup/hcs_diagnostic_startup_check.json`；此时HateMM10/20 COMPLETE、另1 RUNNING，整卡已用17038MiB/空闲15052MiB、利用率98%。已有heartbeat与HateMM monitor均保留，HCS已结束搜索的monitor通知后自行退出，不重复启动。
+
+
+## 7. HCS本版本三组锁定配置诊断与配对结论
+
+full/noresidual/nooutside分别于2026-10-02 11:38:45 / 11:41:32 / 11:43:29正常结束，11:43核验三个主进程及所有同会话非僵尸进程均退出。输出已全部回传本机，三组各seed234/2025/3407、各50 epoch、共117份统一test评测核验通过（每seed13份，79视频/18839秒，无缺失/额外视频）。full seed234复用完整搜索trial19；核对每个seed日志与history的1–50 epoch、实际model.pth的validation最优epoch和锁定配置；nooutside/noresidual仅分别改变io_outside/io_residual。checkpoint epoch按seed234/2025/3407顺序：full29/9/26，nooutside50/50/26，noresidual33/24/2。
+
+原始权威来源：`runs/20261002_residual_io_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/metrics_test_fixed<次数>.json`；full seed234为同实验 `hateclipseg/seed234/trial19/metrics_test_fixed<次数>.json`。逐seed/逐评测审计 `analysis/hateclipseg_locked_<arm>.json`，完整配对统计 `runs/20261002_residual_io_backbone/analysis/hateclipseg_locked_diagnostics.json`，实际同会话进程检查 `setup/hcs_diagnostics_session_check.json`。以下均为本版本固定配置诊断，不是Optuna三seed确认，不混入前两版机制证据；顺序AP / ROC / within，标准差为总体标准差。
+
+| 组别 | 固定0次均值±标准差 | 固定8次均值±标准差（主操作点） | 固定32次均值±标准差（附加） |
+|---|---|---|---|
+| full | 0.643959±0.008777 / 0.624346±0.011820 / 0.538035±0.010962 | 0.667221±0.004415 / 0.651915±0.012530 / 0.560469±0.014628 | 0.686067±0.003482 / 0.673492±0.005692 / 0.608982±0.012624 |
+| nooutside | 0.638233±0.009076 / 0.601705±0.007899 / 0.547337±0.006917 | 0.670221±0.004482 / 0.649848±0.007202 / 0.577506±0.007786 | 0.703319±0.003972 / 0.679409±0.002414 / 0.632004±0.008545 |
+| noresidual | 0.598495±0.067173 / 0.578344±0.073539 / 0.546027±0.011561 | 0.678753±0.011413 / 0.653350±0.016401 / 0.555692±0.018537 | 0.678344±0.013257 / 0.654935±0.012044 / 0.579458±0.039373 |
+
+固定8次的原始值及同seed配对差值：
+
+| 组别 | seed | AP / ROC / within | 本组−full |
+|---|---|---|---|
+| full | 234 | 0.673446 / 0.669614 / 0.541302 | — |
+| full | 2025 | 0.664532 / 0.643823 / 0.563311 | — |
+| full | 3407 | 0.663686 / 0.642309 / 0.576793 | — |
+| nooutside | 234 | 0.674638 / 0.639807 / 0.588414 | +0.001193 / -0.029807 / +0.047112 |
+| nooutside | 2025 | 0.664076 / 0.656346 / 0.573355 | -0.000456 / +0.012523 / +0.010044 |
+| nooutside | 3407 | 0.671951 / 0.653390 / 0.570750 | +0.008265 / +0.011081 / -0.006044 |
+| noresidual | 234 | 0.678894 / 0.664842 / 0.576478 | +0.005448 / -0.004772 / +0.035176 |
+| noresidual | 2025 | 0.692660 / 0.665051 / 0.559134 | +0.028128 / +0.021228 / -0.004177 |
+| noresidual | 3407 | 0.664706 / 0.630156 / 0.531465 | +0.001020 / -0.012153 / -0.045328 |
+
+| 配对差值 | 固定0次均值±标准差 | 固定8次均值±标准差 | 固定32次均值±标准差 |
+|---|---|---|---|
+| nooutside−full | -0.005727±0.006143 / -0.022642±0.012132 / +0.009302±0.012186 | +0.003000±0.003783 / -0.002068±0.019624 / +0.017037±0.022257 | +0.017252±0.001084 / +0.005917±0.007883 / +0.023022±0.007317 |
+| noresidual−full | -0.045464±0.061582 / -0.046002±0.062505 / +0.007992±0.022417 | +0.011532±0.011874 / +0.001434±0.014317 / -0.004776±0.032868 | -0.007723±0.009790 / -0.018557±0.006570 / -0.029524±0.045435 |
+
+**结论**：固定8次去outside后AP/ROC/within变化+.003000/−.002068/+.017037；去整体残差后+.011532/+.001434/−.004776。两组均未造成HCS平均AP或ROC下降至少.01，因此本版本outside与整体残差都未满足主操作点核心贡献要求，已不能据当前诊断声称两语料贡献达标。去outside的8次ROC效应随seed变号；去整体残差的AP在三个seed均提高，within变化较不稳定（配对标准差.032868）。固定配置消融不等同于为每个消融重新做完整Optuna搜索，不能将它包装成另一版本已获确认的性能胜出。
+
+0次去outside的ROC均值下降.022642，去整体残差的AP/ROC下降.045464/.046002；后者主要受seed3407影响，配对标准差.061582/.062505。32次去整体残差ROC/within下降.018557/.029524。这些说明效果依赖预算/seed，不能用0或32次代替预先锁定的8次主操作点，也不据此重定义novelty成立。保留全部负结果，不借用初版outside证据。
+
+11:43 HateMM完整搜索11/20 COMPLETE、另1 RUNNING，继续原20-trial预算；完成后按两语料完整搜索结果决定补seed与本版本HateMM诊断/后续修订。HCS三组已全部结束，独立monitor成功通知后退出，不重复启动；原heartbeat与HateMM monitor继续。Pursuing Goal保持paused。
