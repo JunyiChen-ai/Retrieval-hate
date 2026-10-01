@@ -135,4 +135,4 @@ full、nooutside、noattention三组均已完成，运行主机uoa-lab3 / sc4743
 
 复用 `launch/run_<corpus>_uoa-lab3.sh <seed>`，输出 `runs/20261001_associative_io_backbone/<corpus>/seed{2025,3407}/`，各有独立后台owner与monitor。新增VLM调用0、缓存抽取0；按首trial756/315秒估算，两语料两seed共80次完整训练累计运行时间约11.9小时，实际并发墙钟另记，不当成独占GPU时间承诺。资源以实时检查为准，不干扰其他任务，所有活动模型/trainer/评测器保持原文件。
 
-当前待启动四项确认；启动记录将写 `runs/20261001_associative_io_backbone/setup/confirmation_launches.json`，PID、monitor和当前进度由STATUS维护。初版HateMM两个确认study与nooutside诊断继续原预算；完成后独立汇总初版自己的机制证据，不与修订版混作同一方法。
+四项确认已于2026-10-02 04:53:50–52在uoa-lab3 / sc474398启动，输入覆盖完整、实际训练均已进入epoch，四个独立monitor均已首轮RUNNING并绑定正确身份；启动记录为 `runs/20261001_associative_io_backbone/setup/confirmation_launches.json`，PID、monitor和当前进度由STATUS维护。初版HateMM两个确认study继续原预算；初版nooutside已结束并独立汇总其两语料机制证据（初版README第11.2节），不与本修订版混作同一方法。

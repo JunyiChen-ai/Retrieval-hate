@@ -172,4 +172,24 @@ full于2026-10-02 03:43:28在uoa-lab3 / sc474398启动，04:22:06正常结束；
 | 2025 | 4 | 0.677328 / 0.878548 / 0.756544 |
 | 3407 | 1 | 0.667755 / 0.866838 / 0.760699 |
 
-来源为本机 `runs/20261001_inside_outside_backbone/diagnostics/hatemm/full/seed{2025,3407}/metrics_test_fixed<预算>.json`，seed234复用 `runs/20261001_inside_outside_backbone/hatemm/seed234/trial17/metrics_test_fixed<预算>.json`；核验及统计 `runs/20261001_inside_outside_backbone/analysis/hatemm_locked_full.json`。nooutside仍在运行，必须等其三seed完整结束后才算配对差值，再与本实验HCS对应outside消融核对两语料效应；不将其他版本消融混入，不以此替代尚未完成的Optuna确认或宣布novelty完成。
+来源为本机 `runs/20261001_inside_outside_backbone/diagnostics/hatemm/full/seed{2025,3407}/metrics_test_fixed<预算>.json`，seed234复用 `runs/20261001_inside_outside_backbone/hatemm/seed234/trial17/metrics_test_fixed<预算>.json`；核验及统计 `runs/20261001_inside_outside_backbone/analysis/hatemm_locked_full.json`。nooutside已于04:48:33完成，核验和两语料配对见第11.2节；不将其他版本消融混入，不以固定配置诊断替代尚未完成的Optuna确认。
+
+### 11.2 nooutside与两语料outside贡献（2026-10-02 04:57）
+
+nooutside于04:48:33在uoa-lab3 / sc474398正常结束；本次处理修订版HateMM搜索通知时已观察到其结束，一并核验真实主/同会话子进程退出并回传全部输出。三seed各50 epoch，锁定配置仅io_outside=false；history、run.log、validation选epoch与实际model.pth一致。39份统一test评测覆盖214视频/29269秒，无缺失或额外视频。这是固定配置结构诊断，不是Optuna确认；若后续完成通知到达，不重复启动。
+
+| 预算 | nooutside AP均值±总体seed标准差 | ROC | within | 相对full差值 AP / ROC / within |
+|---|---:|---:|---:|---|
+| 0 | 0.591401 ± 0.012168 | 0.801679 ± 0.005590 | 0.729539 ± 0.027922 | +0.008765 / +0.005290 / -0.015504 |
+| 8 | 0.650114 ± 0.021456 | 0.869462 ± 0.002992 | 0.747101 ± 0.036893 | -0.024767 / -0.006117 / -0.009780 |
+| 32 | 0.643924 ± 0.022725 | 0.867109 ± 0.003844 | 0.759725 ± 0.022049 | -0.025069 / -0.005886 / -0.007859 |
+
+| seed | validation epoch | 固定8次 AP / ROC / within | 相对full配对差值 |
+|---|---:|---|---|
+| 234 | 25 | 0.621288 / 0.865311 / 0.697444 | -0.058272 / -0.016040 / -0.055956 |
+| 2025 | 2 | 0.672731 / 0.872251 / 0.785796 | -0.004597 / -0.006297 / +0.029252 |
+| 3407 | 7 | 0.656323 / 0.870824 / 0.758063 | -0.011432 / +0.003986 / -0.002636 |
+
+HateMM固定8次移除outside后平均AP下降.024767，三个seed的AP均下降；ROC/within方向不完全一致。配对差值总体标准差为.023856/.008177/.035151。与本实验HCS自身对应消融（AP平均下降.012112）合并，**两语料的核心outside移除均使AP均值下降至少.01，满足规则14(g)的平均贡献要求**。HCS的AP效应主要由seed234贡献，另外两个seed反向；结论限于已锁定配置和8次预算，不能写所有seed/预算/指标都改善，也不证明递归门控或修订版的学习注意力有贡献。初版相对第5版仍未涨点，HateMM完整Optuna三seed确认仍在运行，故整体目标尚不宣布完成。
+
+原始来源为本机 `runs/20261001_inside_outside_backbone/diagnostics/hatemm/nooutside/seed<seed>/metrics_test_fixed<预算>.json`，full来源见11.1，HCS来源见第8节。逐seed核验与配对差值 `runs/20261001_inside_outside_backbone/analysis/hatemm_locked_nooutside.json`；两语料同版配对审计 `runs/20261001_inside_outside_backbone/analysis/two_corpus_outside_diagnosis.json`。这些均为读取test后的开发证据。
