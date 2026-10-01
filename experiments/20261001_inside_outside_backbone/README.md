@@ -51,7 +51,7 @@
 
 参考耗时来自第 5 版 seed234 的 `study_summary.json`：HateMM 单 trial 约 739 秒，HCS 约 354 秒，均含完整训练与评测。当作占卡墙钟预算粗估，两语料各 20 trial、单 seed 顺序累计约 **6.1 GPU 小时**，三 seed 约 **18.2 GPU 小时**；原运行有并发资源争用，这不是独占 GPU 的实测耗时或新架构速度承诺。新架构耗时须以首个完整 trial 实测修正。新增 VLM 抽取 GPU 时间为 0。
 
-proposal review 只决定候选是否值得实现，不等于 novelty 贡献或性能已经成立。运行主机计划为 **uoa-lab3 / sc474398**；两主数据 seed234 独立并行，满足筛选后再安排其余 seed。lab1 当前他人 VLLM 约占 28 GiB，共享服务器仅约 2.5 GiB 空闲；不干扰其任务。本机沿用此前不跑训练的安排。资源变化时重新调度。
+proposal review 只决定候选是否值得实现，不等于 novelty 贡献或性能已经成立。运行主机为 **uoa-lab3 / sc474398**；2026-10-01 20:57 NZDT 已启动两主数据 seed234 完整搜索，独立并行，满足筛选后再安排其余 seed。lab1 当前他人 VLLM 约占 28 GiB，共享服务器仅约 2.5 GiB 空闲；不干扰其任务。本机沿用此前不跑训练的安排。资源变化时重新调度。
 
 ## 6. 第一轮训练与搜索协议（开跑前固定，2026-10-01）
 
@@ -64,3 +64,29 @@ proposal review 只决定候选是否值得实现，不等于 novelty 贡献或�
 - 性能优先：对第 5 版相同预算的三 seed 结果同时看 AP / ROC / within 的变化和 seed 方差；不以任意加权总分掩盖某个主指标退化。筛选/确认仍按研究规则执行，随后用误差分析选择修改；新颖但无提升的配置不能仅凭 proposal GO 宣告完成，仍需完成结构贡献验证并如实报告代价。
 - 计划消融：原骨干、去 outside、有序组合改递归均值、保留同样叶子融合的逐秒/池化对照；用锁定配置三 seed，并报 0/8 次。最终按规则 14(g) 核对可主张贡献，同时将 within 作为主要证据。
 - 启动入口：`launch/run_{hatemm,hateclipseg}_uoa-lab3.sh <seed>`，必须用 setsid/nohup。共享 `scripts/monitor_run.py` 独立后台运行，每120秒核对主进程身份、同进程组子进程、主机和目录；完成/确认异常后 `codex queue` 通知当前会话，SSH失败只重试。
+
+## 7. 当前运行记录
+
+- 初版实现已通过一次独立 proposal / code review，启动时本机与 lab3 代码一致、跟踪文件干净；不在运行中修改代码。运行日志记录可读代码版本说明与主机。
+- 输入检查全量通过；日志在本机 `runs/20261001_inside_outside_backbone/setup/inputs_{hatemm,hateclipseg}.log`，覆盖 HateMM 1067 个、HCS 393 个视频，各自 split 不重叠。
+- 搜索目录为 `runs/20261001_inside_outside_backbone/{hatemm,hateclipseg}/seed234/`。首 trial 实测 HateMM 559.52 秒、HCS 235.49 秒，各自自动锁定 **20 trial**，依据对应 `budget.json`。HCS 已完成全部 20 个，HateMM 继续原定搜索。
+- 每个搜索已配置独立后台完成通知，当前会话另复用每 3 小时 heartbeat；Pursuing goal 保持暂停。具体运行 PID 与 monitor 路径只在 STATUS 维护。
+
+## 8. HateClipSeg seed234 完整结果与结构诊断（2026-10-01）
+
+22:14 NZDT 在 sc474398 完成 20/20 COMPLETE。22:16 完成通知唤醒后核验真实主/子进程均已结束，将全部输出回传本机；逐 trial 检查完整 50 epoch 配置、全部固定预算评测可解析、79 个 test 视频 / 18839 秒覆盖及三项指标有限。所有数字仍以本机统一评测器文件为准。
+
+| 配置与选择 | AP | ROC | within |
+|---|---:|---:|---:|
+| 新骨干 seed234，test 选 trial11 | .668767 | .635762 | .567188 |
+| 第 5 版原骨干 seed234，test 选 trial13 | .688467 | .674845 | .556131 |
+| 差值 | −.019700 | −.039083 | +.011057 |
+| 新骨干 seed234，仅 validation 选 trial6 | .648418 | .616496 | .571958 |
+
+来源：`runs/20261001_inside_outside_backbone/hateclipseg/seed234/trial{11,6}/metrics_test_fixed8.json`、`runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_test_fixed8.json`；trial 选择依据各自 `study_summary.json`。新骨干尚未涨点；虽 HCS pooled 超过固定 baseline 门，HateMM 未完成，不能宣告两语料筛选、三 seed 确认或 novelty 验证通过。
+
+误差分析读取上述最优 trial 的固定 0 / 8 / 32 次统一评测输出，以及两方法前 10 个相同超参的 trial 评测。0 次新骨干 .668739 / .644563 / .529660，旧骨干 .669585 / .664387 / .542849；0 次 mean-score 视频 AUC 为 .723188 vs .846377。退化已出现在内容先验及视频间区分，不能只归因于提问策略；根组合压缩、outside 干扰均只是待检验解释。前 10 个相同超参 trial 的 AP / ROC 差值全部为负，平均 −.025793 / −.043585；within 平均 −.008364。最优 trial 的 within 改善并未普遍出现。原始逐视频 within 有 32 个改善、35 个下降，不能把单 seed 均值改善写成稳定收益。派生分析记录 `runs/20261001_inside_outside_backbone/analysis/hateclipseg_seed234_comparison.json`，字段保留原始来源；这属于已查看 test 的开发证据。
+
+**诊断协议，新增训练前固定：**沿用第 4 / 6 节预设消融，在 HCS 完整搜索已锁定的 trial11 配置上做 `full`、`nooutside`（只设 `io_outside=false`）、`mean`（只设 `io_merge=mean`）。三者各 seed234 / 2025 / 3407，完整 50 epoch，validation 选 checkpoint，立即经统一评测器 test，报告 0 / 8 / 32 次与 seed 方差；不重搜、不改其它超参。full seed234 直接复用现成 trial11，其余 **8 次完整训练**。配置预存 `configs/diagnostic_hateclipseg_seed234.json`，启动入口 `launch/run_diag_hateclipseg_uoa-lab3.sh <arm>`，输出 `runs/20261001_inside_outside_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/`。每个 arm 独立后台 owner + monitor。
+
+这些是固定配置的结构诊断，不是规则 8 的确认级 Optuna；不把它们当成三 seed 搜索最优，也不据此宣告两语料机制贡献。只检验已实现且已评审的开关，HateMM 在跑代码保持不变。新增 VLM 调用 0；按当前 HCS 单 trial 235 秒估算额外训练累计约 0.52 小时（并发实际耗时另记），用于判断下一轮保留或修正哪一结构。
