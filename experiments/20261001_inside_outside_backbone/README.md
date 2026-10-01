@@ -90,3 +90,23 @@ proposal review 只决定候选是否值得实现，不等于 novelty 贡献或�
 **诊断协议，新增训练前固定：**沿用第 4 / 6 节预设消融，在 HCS 完整搜索已锁定的 trial11 配置上做 `full`、`nooutside`（只设 `io_outside=false`）、`mean`（只设 `io_merge=mean`）。三者各 seed234 / 2025 / 3407，完整 50 epoch，validation 选 checkpoint，立即经统一评测器 test，报告 0 / 8 / 32 次与 seed 方差；不重搜、不改其它超参。full seed234 直接复用现成 trial11，其余 **8 次完整训练**。配置预存 `configs/diagnostic_hateclipseg_seed234.json`，启动入口 `launch/run_diag_hateclipseg_uoa-lab3.sh <arm>`，输出 `runs/20261001_inside_outside_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/`。每个 arm 独立后台 owner + monitor。
 
 这些是固定配置的结构诊断，不是规则 8 的确认级 Optuna；不把它们当成三 seed 搜索最优，也不据此宣告两语料机制贡献。只检验已实现且已评审的开关，HateMM 在跑代码保持不变。新增 VLM 调用 0；按当前 HCS 单 trial 235 秒估算额外训练累计约 0.52 小时（并发实际耗时另记），用于判断下一轮保留或修正哪一结构。
+
+诊断已于 2026-10-01 22:25 NZDT 在 sc474398 启动，三组并行，实际 epoch 输出与各自 monitor 首次检查均正常；与 HateMM 搜索并行后 GPU 利用率约99%、总显存约10.9 GiB。
+
+三组诊断均已完成并回传：full于22:38结束，nooutside / mean于22:42结束；三seed各50 epoch、锁定配置只有预声明开关不同，0/8/32次评测均覆盖79个test视频 / 18839秒。原始来源为 `runs/20261001_inside_outside_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/metrics_test_fixed<预算>.json`；full seed234复用原搜索trial11。派生汇总 `runs/20261001_inside_outside_backbone/analysis/hateclipseg_locked_diagnostics.json` 保留每个来源及配对差值。下面为均值±总体标准差，不是三seed Optuna最优结果。
+
+| 固定配置 | 预算 | AP | ROC | within |
+|---|---:|---:|---:|---:|
+| full | 0 | 0.628101 ± 0.028742 | 0.599930 ± 0.031561 | 0.528949 ± 0.001615 |
+| full | 8 | 0.653391 ± 0.014514 | 0.623460 ± 0.011873 | 0.573357 ± 0.015523 |
+| full | 32 | 0.679671 ± 0.007796 | 0.644568 ± 0.008951 | 0.615980 ± 0.008424 |
+| nooutside | 0 | 0.619936 ± 0.031525 | 0.596760 ± 0.032764 | 0.530258 ± 0.010618 |
+| nooutside | 8 | 0.641279 ± 0.018567 | 0.614138 ± 0.019374 | 0.556733 ± 0.009181 |
+| nooutside | 32 | 0.663251 ± 0.011153 | 0.636575 ± 0.011606 | 0.604601 ± 0.009523 |
+| mean | 0 | 0.646156 ± 0.003088 | 0.616230 ± 0.007826 | 0.555977 ± 0.019521 |
+| mean | 8 | 0.654397 ± 0.011384 | 0.626035 ± 0.013211 | 0.576118 ± 0.019541 |
+| mean | 32 | 0.690746 ± 0.003945 | 0.661617 ± 0.004383 | 0.630190 ± 0.010408 |
+
+**对设计的含义：**8次时，移除outside的三seed均值下降AP .012112、ROC .009322、within .016624。AP差异主要来自seed234（移除后−.050199，另外两seed+.007295/+.006568）；这给保留outside提供平均效应证据，但不是稳定逐seed胜出，也不满足“两语料机制贡献已确认”。递归门控组合未胜过mean：8次mean−full为+.001006/+.002575/+.002760；0次为+.018055/+.016300/+.027027；32次为+.011076/+.017049/+.014210。不能把学习到的有序门控组合作为已证实贡献，也不能把mean的8次微小优势称为稳定涨点。
+
+下一轮拟检验保留attention加性统计量到读出时再归一化的inside–outside编码器，见[修订提案](../20261001_associative_io_backbone/README.md)。保留outside、减少反复非线性压缩是由上述开发证据形成的假设；新方法需独立评审和完整搜索。初版HateMM原定20-trial搜索继续，不因HCS结果缩减预算或覆盖代码。

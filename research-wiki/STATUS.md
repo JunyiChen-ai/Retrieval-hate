@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-10-01 22:22 NZDT**。依据：`experiments/20260925_query_paradigm/` 第 5 版软答案、复制似然及停止规则实现，实验 README 第 17 节，以及下列本机 `runs/` 评测器输出。2026-10-01 核验了 8 / 16 档共 18 个 study、每个 20 个 COMPLETE trial 的固定 8 次评测文件；停止规则汇总也与逐 trial 评测器输出核对。新 inside–outside 骨干的 HCS seed234 已完成 20/20 trial 并回传核验，HateMM 继续搜索；没有新增抽取。
+截至 **2026-10-01 23:01 NZDT**。依据：`experiments/20260925_query_paradigm/` 第 5 版软答案、复制似然及停止规则实现，实验 README 第 17 节，以及下列本机 `runs/` 评测器输出。2026-10-01 核验了 8 / 16 档共 18 个 study、每个 20 个 COMPLETE trial 的固定 8 次评测文件；停止规则汇总也与逐 trial 评测器输出核对。新 inside–outside 骨干的 HCS seed234 已完成 20/20 trial 并回传核验，HateMM 继续搜索；没有新增抽取。
 
 ## 当前目标与结论
 
@@ -18,14 +18,14 @@
 | 模块 | 当前实现 | 证据与缺口 |
 |---|---|---|
 | VLM 观测与提问 | 二分时间树、按期望信息增益选节点；词级时间戳转录；单问首 token P(Yes) 软答案、8 档 | HateMM 视频内排序改善；五类软答案两主数据均下降，未采用；多视图估计未解决 8 次的 ROC 下降 |
-| 弱监督骨干与先验 | 主线保留第 5 版；新 inside–outside 时间树编码器已实现并进入两主数据完整搜索 | 新结构通过独立评审，尚无性能与消融结论；第 4 版消融不能代替当前配置验证 |
+| 弱监督骨干与先验 | 主线保留第 5 版；inside–outside 新骨干已完成 HCS seed234，HateMM 仍搜索 | HCS pooled下降；三seed诊断支持继续检验outside、削弱递归压缩，尚无两语料贡献确认 |
 | 答案融合与停止 | 锚定答案模型；复制似然处理嵌套回答相关；变化、排序变化、视频后验熵的分位数组合停止 | 复制似然缓解 HateMM 多问变差；放宽停止阈值后约持平，但有手设衰减率 .10、validation 目标 / 容差与实际调用量问题 |
 
 代码与机制、消融及逐项检查见 [实验 README 第 14–17 节](../experiments/20260925_query_paradigm/README.md)。当前优先工作转向 backbone 结构与定位贡献；停止实验结论保留，不能将整套第 5 版称为已完成全部论文验证。
 
 ## 最新权威结果与来源
 
-**新骨干 HCS seed234 已完成完整 20 trial**：test 选 trial11，AP / ROC / within 为 **.668767 / .635762 / .567188**；相对第 5 版同 seed trial13 为 **−.019700 / −.039083 / +.011057**，尚未涨点。只按 validation 选 trial6 为 .648418 / .616496 / .571958。来源：本机 `runs/20261001_inside_outside_backbone/hateclipseg/seed234/trial{11,6}/metrics_test_fixed8.json`，旧线 `runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_test_fixed8.json`。HateMM 未完成，暂不宣布两语料筛选通过。HCS 固定配置的三 seed 结构诊断已预写于新实验 README 第 8 节，待启动，用于定位 pooled 退化，不替代正式 Optuna 确认。
+**新骨干 HCS seed234 已完成完整 20 trial**：test 选 trial11，AP / ROC / within 为 **.668767 / .635762 / .567188**；相对第 5 版同 seed trial13 为 **−.019700 / −.039083 / +.011057**，尚未涨点。只按 validation 选 trial6 为 .648418 / .616496 / .571958。来源：本机 `runs/20261001_inside_outside_backbone/hateclipseg/seed234/trial{11,6}/metrics_test_fixed8.json`，旧线 `runs/20260929_query_paradigm_r5/hateclipseg/seed234/trial13/metrics_test_fixed8.json`。HateMM 未完成，暂不宣布两语料筛选通过。HCS 固定配置三seed诊断已全部完成并回传；8次均值AP / ROC / within：full **.653391 / .623460 / .573357**，nooutside **.641279 / .614138 / .556733**，mean **.654397 / .626035 / .576118**。原始来源 `runs/20261001_inside_outside_backbone/diagnostics/hateclipseg/<arm>/seed<seed>/metrics_test_fixed8.json`，full seed234复用trial11；标准差与各seed见实验README第8节和 `analysis/hateclipseg_locked_diagnostics.json`。outside有平均效应支持，但AP收益主要由一个seed贡献；递归门控未胜过均值，不能当成已证实贡献。这些固定配置诊断不替代Optuna确认。由此提出[保留加性注意力统计量的inside–outside修订](../experiments/20261001_associative_io_backbone/README.md)，独立proposal review已GO、code review已PASS，已实现，准备两主数据完整搜索；新增VLM调用0。
 
 固定 8 次预算，test、1 fps，三 seed 234 / 2025 / 3407 均值 ± seed 标准差；列顺序 AP / ROC / within。问题树耗尽的视频实际可少于 8 次。**Optuna 按 test AP / ROC 均值选 trial，属于开发期结果；各 trial 的 checkpoint 由 validation 选择。**
 
@@ -58,15 +58,16 @@
 ## 运行任务与 monitor
 
 - **Pursuing goal 保持 paused，不重新开启。** 已复用原有 `scripts/monitor_thread.py`，当前会话 `01a0f639-b211-75e3-9155-e15e30534b46`，每 3 小时接续；PID `3245799`，日志和状态在 `runs/thread_monitor/01a0f639-b211-75e3-9155-e15e30534b46/`。首条 `codex queue` 通知已成功入队并接续本轮。
-- **新骨干完整搜索**：两语料于20:57在 uoa-lab3 / sc474398 启动。HCS 于22:14完成20/20 trial，已核验真实主/子进程结束、全部50 epoch历史和完整评测并回传本机。HateMM 主进程 `1649717` 仍运行，22:16检查时8/20已完成；按原协议继续。目录为 `runs/20261001_inside_outside_backbone/{hatemm,hateclipseg}/seed234/`。首 trial HateMM 559.52 秒、HCS 235.49 秒，两套预算各固定20，文件 `budget.json` 已在本机。
+- **新骨干完整搜索**：两语料于20:57在 uoa-lab3 / sc474398 启动。HCS 于22:14完成20/20 trial，已核验真实主/子进程结束、全部50 epoch历史和完整评测并回传本机。HateMM 主进程 `1649717` 仍运行，22:43检查时11/20已完成；按原协议继续。目录为 `runs/20261001_inside_outside_backbone/{hatemm,hateclipseg}/seed234/`。首 trial HateMM 559.52 秒、HCS 235.49 秒，两套预算各固定20，文件 `budget.json` 已在本机。
 - **完成通知**：HCS monitor `3249811` 已正常发出22:16完成通知并退出，有 `notification_sent` 标记；HateMM monitor `3249810` 继续运行。状态在本机 `runs/20261001_inside_outside_backbone/<corpus>/seed234/monitor/`。每120秒检查真实进程身份/相关子进程，SSH失败只重试；完成通知自动接续已实际验证，heartbeat仍作兜底。
+- **HCS结构诊断已完成**：full于22:38结束，nooutside / mean于22:42结束，真实主/子进程均已核验退出；三组各三seed、各50 epoch、配置和0/8/32次统一评测完整性均通过，全部输出已回传。对应monitor `3347291 / 3347292 / 3347293` 已通知退出；输出 `runs/20261001_inside_outside_backbone/diagnostics/hateclipseg/<arm>/`，监控记录在本机对应 `monitor/`。不重复启动或把固定配置诊断当成Optuna确认。
 - 开跑前两套缓存实际解析、形状、时间轴、完整覆盖和 split isolation 均通过：HateMM 1067 个视频（744 / 109 / 214），HCS 393 个（251 / 63 / 79）。日志已回传本机 `runs/20261001_inside_outside_backbone/setup/inputs_{hatemm,hateclipseg}.log`。本机与 lab3 环境均为 torch 2.7.1+cu128、CUDA 12.8、Optuna 4.9.0。
-- 资源检查：本机继续不跑训练。lab1 另有 VLLM 占约 28 GiB，仅余 3.7 GiB；lab-server 仅余 2.6 GiB，不参与本轮；未改动他人任务。lab3 原有 lightmem 任务占约 5 GiB，新训练启动后整卡约 8.3 GiB、利用率 81%，无 OOM。
-- `bash scripts/check_layout.sh` 开跑前已执行。多机代码同步检查：本机、lab1、lab3 均为 `f2fca2c`，启动时跟踪文件干净；本机未跟踪的 `tandem.html` 与 lab1 的 `idea-stage/` 为已有无关内容，未改动。运行后仅本机更新 STATUS / 实验 README，未替换活动实验代码。已查看的家目录存量 `conversation-pilot` / `ctx_pri`、远端 `MemoryAgen` / `ctx_pri_*`、工具数据、旧 `list` / `vllm.pid` 保留，没有擅自清理。
+- 资源检查：本机继续不跑训练。lab1 另有 VLLM 占约 28 GiB，仅余 3.7 GiB；lab-server 仅余 2.6 GiB，不参与本轮；未改动他人任务。lab3 原有 lightmem 任务占约5 GiB；三条诊断链与HateMM并行后整卡约10.9 GiB、利用率99%，已核验正常训练，无OOM。
+- `bash scripts/check_layout.sh` 开跑前已执行。多机代码同步检查：本机、lab1、lab3 均为 `4fb22e1`，诊断启动时跟踪文件干净；本次同步只新增诊断脚本/固定配置并更新文档，在跑的骨干、共享trainer与评测器文件未改动；本机未跟踪的 `tandem.html` 与 lab1 的 `idea-stage/` 为已有无关内容，未改动。运行后仅本机更新 STATUS / 实验 README，未替换活动实验代码。已查看的家目录存量 `conversation-pilot` / `ctx_pri`、远端 `MemoryAgen` / `ctx_pri_*`、工具数据、旧 `list` / `vllm.pid` 保留，没有擅自清理。
 
 ## 下一步
 
-1. 启动已预写的 HCS 固定配置结构诊断（full / nooutside / mean，各三seed，共8次新增完整训练）；HateMM 继续20-trial搜索。每条诊断链配独立完成通知，不修改在跑的模型/训练实现。
+1. 修订版两项独立评审已通过，开始两主数据seed234完整搜索，与初版HateMM并行并各配monitor。新提案依据已完整结束的HCS诊断，不依赖旧HM暂时最优；初版全部20 trial继续，不提前判晋级/淘汰。
 2. 依完整搜索结果筛选、确认、分析误差并修改；优先提升 AP / ROC / within，候选不能仅凭 proposal GO 算完成。满足确认后补结构消融，分别验证 outside 与有序组合；随后检查现有停止设置。
 3. 保留全部授权和研究目标，等待只交给后台 monitor，不通过模型反复轮询；最终核对新骨干贡献、性能代价、成本及论文操作点后汇报。现有训练/搜索规则文件不修改。
 
