@@ -39,7 +39,7 @@
 
 - `launch/run_hateclipseg_uoa-lab1.sh`：现有HCS三seed搜索的完整组合重评。
 - `launch/run_hatemm_uoa-lab3.sh`：现有HateMM三seed搜索的完整组合重评。
-- `launch/run_dehate_uoa-lab3.sh <seed>`：该seed完整训练搜索，然后自动执行其选中checkpoint的完整组合重评。
+- `launch/run_dehate_uoa-lab{1,3}.sh <seed>`：该seed完整训练搜索，然后自动执行其选中checkpoint的完整组合重评。
 
 所有长任务通过setsid/nohup独立后台启动；owner同时记录host、PID/PGID/SID/start_ticks和原始命令。owner在首次训练/推断前实际解析完整输入、校验shape/finite/coverage/split isolation/1fps长度，验证结果按主机/语料复用。日志首行记录主机；每个owner绑定独立 `scripts/monitor_run.py`，成功与失败均通知本会话。既有已关闭heartbeat不覆盖；新任务使用独立heartbeat目录，Goal不创建/恢复。
 
