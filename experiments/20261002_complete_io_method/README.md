@@ -1,6 +1,6 @@
 # 最新完整组合：inside–outside + 复制似然 + 自动停止
 
-截至2026-10-02；用户指令：**“三个数据集上跑一遍最新完整的给我汇报”**。三语料为HateMM、HateClipSeg和DeHate；前两者是主数据，DeHate保持external validation。实现接入完成，[一次独立集成code review：PASS](../../docs/reviews/20261002_complete_io_method_code.md)；代码同步和远端完整输入核验后启动。Pursuing Goal保持paused。
+截至2026-10-02；用户指令：**“三个数据集上跑一遍最新完整的给我汇报”**。三语料为HateMM、HateClipSeg和DeHate；前两者是主数据，DeHate保持external validation。实现接入完成，[一次独立集成code review：PASS](../../docs/reviews/20261002_complete_io_method_code.md)；已同步并通过远端完整输入核验，两主数据完整重评结束，DeHate三seed正式训练中。Pursuing Goal保持paused。
 
 ## 1. 固定方法与本次范围
 
@@ -50,3 +50,36 @@
 ## 5. 当前进度
 
 独立集成code review已PASS；原共享函数实现等价性已核对，12个既定checkpoint严格加载和三语料split/时间网格检查通过。接下来三机同步，正式owner执行全输入finite/shape检查再进入运行；实际主机/PID/monitor及最新状态只在 `research-wiki/STATUS.md` 维护。没有改变研究规则、已归档实验结论或无关tandem.html。
+
+
+## 6. 两主数据完整组合结果（2026-10-02）
+
+HCS于18:34:54、HateMM于18:36:03结束，真实owner及全部同会话进程已退出；结果完整回传本机。每语料原test-selected/validation-selected共6个checkpoint，合计48份统一评测齐全。源配置/实际checkpoint、validation-only阈值/复制估计输入、因果前缀分数、调用数以及统一评测完整覆盖均核验通过。各阈值为原qmixSG_rt10的validation平均8次校准，不对本轮test重新选规则。
+
+AP / ROC / within，三seed均值±总体标准差；开发期原test目标选trial：
+
+| 语料 / 设置 | AP / ROC / within | 平均调用 |
+|---|---|---|
+| HateMM / 0次 | 0.591739±0.007204 / 0.789032±0.008709 / 0.715851±0.021907 | 0.0000 |
+| HateMM / 同复制设置固定8次 | 0.668707±0.018339 / 0.874930±0.004352 / 0.735957±0.019076 | 7.6262 |
+| HateMM / 完整组合自动停止 | 0.671441±0.015171 / 0.877612±0.003897 / 0.730922±0.016773 | 7.8583 |
+| HateMM / 32次（附加） | 0.684682±0.011156 / 0.881732±0.003157 / 0.749468±0.016806 | 25.0187 |
+| HateClipSeg / 0次 | 0.633132±0.032202 / 0.610808±0.037310 / 0.531452±0.001537 | 0.0000 |
+| HateClipSeg / 同复制设置固定8次 | 0.660655±0.010263 / 0.630674±0.022582 / 0.552625±0.007539 | 8.0000 |
+| HateClipSeg / 完整组合自动停止 | 0.653658±0.010247 / 0.621388±0.018894 / 0.545536±0.004205 | 7.9831 |
+| HateClipSeg / 32次（附加） | 0.675262±0.017010 / 0.638592±0.026383 / 0.594112±0.022389 | 32.0000 |
+
+自动减同复制固定8次的配对均值：HateMM +.002733/+.002682/−.005035；HCS −.006997/−.009286/−.007089。HCS三个seed的AP/ROC都下降；HateMM固定8次受短视频节点数限制实际7.6262次，自动7.8583更多；HCS自动7.9831与固定8.0000几乎相同。当前没有稳定省调用或两语料保持性能的证据。
+
+仅validation选trial的完整组合结果：
+
+| 语料 | AP / ROC / within | 平均调用 |
+|---|---|---|
+| HateMM | 0.643795±0.018646 / 0.875095±0.001461 / 0.677516±0.055519 | 7.8723 |
+| HateClipSeg | 0.643983±0.006301 / 0.616759±0.006254 / 0.547546±0.021578 | 7.6160 |
+
+相对旧r5同copy_neg+qmixSG_rt10，主选择三项均值变化：HateMM −.023201/−.012166/−.038214；HCS −.029783/−.053544/−.011952。该比较是原已选模型的组合重评，不是当前自适应目标的新Optuna搜索，不使用这些结果重新挑trial。
+
+本机原始路径 `runs/20261002_complete_io_method/<corpus>/integrated/results/seed<seed>_trial<k>/metrics_test_{fixed0,fixed8,fixed32,qmixSG_rt10}.json`，停止校准与逐视频调用数在同目录calibration/summary。逐seed、总体与配对标准差、旧r5原始来源在 `analysis/{hatemm,hateclipseg}_complete_method.json`；汇总 `analysis/main_corpora_complete_method.json`。所有analysis位于本轮runs根。HateMM test/validation trial为17/11/11与10/2/9，HCS为11/2/10与6/17/1（seed234/2025/3407）。
+
+DeHate三seed已分别在lab3/lab1/lab3启动完整训练→评估链；首trial尚未结束，不预填锁定trial数或三seed均值。两主数据负结果不影响已授权完整预算，不启动新候选。各owner/monitor和新任务heartbeat见STATUS，旧已关闭heartbeat不恢复，Goal保持paused。
