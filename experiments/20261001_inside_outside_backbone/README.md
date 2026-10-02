@@ -1,6 +1,6 @@
 # Backbone 候选：时间树上的区间内外表示
 
-截至 2026-10-02；状态：HCS三seed完整搜索已完成，HateMM其余seed确认继续；实现完成，[一次独立 proposal review：GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)，[一次独立 code review：PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)。用户最新授权自动迭代：优先做 novel 且涨点的 backbone；充分尝试仍无提升时优先可验证的新意，完成后汇报。当前旧骨干实现已升入 `src/qtl/model.py`，旧实验文件保留兼容入口。within 按 AGENTS.md 最新裁定与 pooled AP / ROC 并列为主指标；不改写研究规则文件。
+截至 2026-10-02；状态：HateMM/HCS各三seed完整20-trial搜索和本版本outside诊断均已完成并回传核验；保留为有机制贡献证据、但相对r5有性能代价的候选。实现完成，[一次独立 proposal review：GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)，[一次独立 code review：PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)。用户最新授权自动迭代：优先做 novel 且涨点的 backbone；充分尝试仍无提升时优先可验证的新意，完成后汇报。当前旧骨干实现已升入 `src/qtl/model.py`，旧实验文件保留兼容入口。within 按 AGENTS.md 最新裁定与 pooled AP / ROC 并列为主指标；不改写研究规则文件。
 
 ## 1. 需要解决什么
 
@@ -216,3 +216,10 @@ HateMM仅validation选trial的test均值为.640230/.868892/.681005；HCS对应.6
 **决定：**初版三seed完整搜索已确认两语料pooled均值超过既定固定baseline，且outside消融已满足两语料AP平均下降至少.01的机制贡献要求；这是有效的机制证据。相对现行第5版，HateMM三项均值下降、HCS pooled下降而within持平，未达到用户优先的novel且涨点。继续已有修订版完整搜索与自身结构诊断，保持初版为有贡献证据但有性能代价的候选，不把它写成替换主线后涨点或整体任务已完成。两版本不混用消融证据；递归门控尚无收益证据，注意力修订版也未被其HCS消融支持。
 
 原始来源：本机 `runs/20261001_inside_outside_backbone/hatemm/seed<seed>/trial{17,11,11}/metrics_test_fixed<预算>.json`、HCS第10节对应原始路径、第5版同三seed trial{9,4,5}/{13,11,19}。完整审计/统计 `runs/20261001_inside_outside_backbone/analysis/hatemm_three_seed_search.json`；两语料汇总 `runs/20261001_inside_outside_backbone/analysis/two_corpus_three_seed_search.json`，outside配对来源见第11.2节。seed2025若后续通知到达，不重复启动。
+
+
+## 13. 完成后的独立novelty复查
+
+2026-10-02，按规则9完成[独立复查](../../docs/reviews/20261002_inside_outside_backbone_novelty_recheck.md)：现有实现、原论文核对及初版本身的完整搜索/消融支持保留有限的迁移贡献，但不支持相对r5涨点、门控优势、普适稳定收益或速度优势。方法主张、检索依据、原始结果抽核和HCS的seed依赖统一见该冻结记录，不另设训练门。
+
+后续加性版和残差版证据分别归各自方法，不补强初版贡献。最终比较准备位于 `runs/20261002_residual_io_backbone/analysis/backbone_completion_readiness.json`；它只汇总已完成study的原始评测，残差版未齐全的三seed均值留空。当前等待既定残差搜索跑满后，按用户“优先novel且涨点，否则保留有证据novelty”的授权完成最终取舍；初版没有追加待运行诊断，新增VLM调用仍为0，不宣称新视频端到端成本为0。
