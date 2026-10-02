@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-10-02 18:44 NZDT**。当前任务为用户“**三个数据集上跑一遍最新完整的给我汇报**”；依据代码 `experiments/20261002_complete_io_method/`、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
+截至 **2026-10-02 18:51 NZDT**。当前任务为用户“**三个数据集上跑一遍最新完整的给我汇报**”；依据代码 `experiments/20261002_complete_io_method/`、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
 
 ## 当前目标与结论
 
@@ -60,13 +60,13 @@ HateMM短视频可提问节点不足8个，因此固定8次实际平均7.6262，
 |---|---|---|---|
 | HCS三seed完整组合重评 | uoa-lab1 / sc474397 | 3470960 / 589210 | 18:34:54结束，已回传并全量核验；monitor通知后退出 |
 | HateMM三seed完整组合重评 | uoa-lab3 / sc474398 | 2420804 / 589222 | 18:36:03结束，已回传并全量核验；monitor通知后退出 |
-| DeHate seed234完整搜索→完整组合 | uoa-lab3 / sc474398 | 2421016 / 589266 | 正式trial0训练，完整50 epoch；首trial完成后锁预算 |
-| DeHate seed2025完整搜索→完整组合 | uoa-lab1 / sc474397 | 3472559 / 592974 | 正式trial0训练，完整50 epoch；首trial完成后锁预算 |
-| DeHate seed3407完整搜索→完整组合 | uoa-lab3 / sc474398 | 2423018 / 593027 | 正式trial0训练，完整50 epoch；首trial完成后锁预算 |
+| DeHate seed234完整搜索→完整组合 | uoa-lab3 / sc474398 | 2421016 / 589266 | trial0已完成21/50 epoch；首trial完成后锁预算 |
+| DeHate seed2025完整搜索→完整组合 | uoa-lab1 / sc474397 | 3472559 / 592974 | trial0已完成24/50 epoch；首trial完成后锁预算 |
+| DeHate seed3407完整搜索→完整组合 | uoa-lab3 / sc474398 | 2423018 / 593027 | trial0已完成17/50 epoch；首trial完成后锁预算 |
 
 三项DeHate各自独立120秒monitor均已核验存活、首次RUNNING、host/identity/当前会话绑定正确；搜索完成后owner自动接该seed两种既定trial选择的完整组合评估，整个链结束才通知。没有待启动seed。本机不训练；新输入/特征抽取为0。lab1实际DeHate约1402MiB、整卡余2316MiB；lab3两个DeHate约1372/1384MiB、整卡余24259MiB、利用率93%。lab-server GPU已有他人任务87%利用率、无本项目环境/缓存，不临时整包迁移、不干扰他人任务。
 
-**Pursuing Goal始终paused，没有创建/恢复。** 旧35个run monitor和旧heartbeat继续关闭。新任务heartbeat PID **589267**，3小时间隔，目录 `runs/thread_monitor/01a0f639-b211-75e3-9155-e15e30534b46/20261002_complete_io_method/`，首次下一通知21:33 NZDT；状态/日志/进度检查在同目录。当前3个run monitor和新heartbeat的核验 `runs/20261002_complete_io_method/setup/monitor_health.json`。全部完成、原始评测核验回传并汇报后关闭本轮heartbeat。延迟的旧通知不重复启动任务。
+**Pursuing Goal始终paused，没有创建/恢复。** 旧35个run monitor和旧heartbeat继续关闭。新任务heartbeat PID **589267**，3小时间隔，目录 `runs/thread_monitor/01a0f639-b211-75e3-9155-e15e30534b46/20261002_complete_io_method/`，首次下一通知21:33 NZDT；状态/日志/进度检查在同目录。当前3个run monitor和新heartbeat的核验 `runs/20261002_complete_io_method/setup/monitor_health.json`。全部完成、原始评测核验回传并汇报后关闭本轮heartbeat。18:51处理HCS延迟通知：再次核对owner及全部同会话进程已退出、本机24份原始评测与已完成审计仍齐全；DeHate三条链实际存活，记录 `setup/hcs_notification_followup.json`。延迟的旧通知不重复启动任务。
 
 本轮仅新增独立lab1启动入口和文档时进行增量同步，未在活动训练中替换模型/训练/推断实现；最终汇报前再运行 `bash scripts/check_layout.sh`，结果在 `setup/current_sync.json`。已知无关tandem.html、lab1 idea-stage/及home STRAY保留。研究规则、AGENTS/CLAUDE未改。
 
