@@ -54,23 +54,8 @@ LEN_LO, LEN_HI = 4, 64
 
 
 def load_trial(trial, device, answers, ids):
-    summ = json.load(open(os.path.join(trial, "summary.json")))
-    cfg = dict(TR.DEFAULTS)
-    cfg.update(summ["cfg"])
-    assert cfg["prior"] == "chain" and cfg["chain"] == "learned", "revision-3 trials only"
-    ck = torch.load(os.path.join(trial, "model.pth"), map_location=device)
-    model = PriorNet(cfg).to(device)
-    model.load_state_dict(ck["model"])
-    model.eval()
-    loglen = np.log([b - a for v in ids["train"] for (a, b) in answers[v]])
-    am = qtree.AnswerModel(ck["am"]["theta"].cpu().numpy(), loglen.mean(), loglen.std(), bool(cfg["length_term"]),
-                           int(cfg["n_state"]), cfg["categories"]).to(device)
-    am.load_state_dict(ck["am"], strict=False)
-    am.len_mu, am.len_sd = float(loglen.mean()), float(loglen.std())
-    chain = ctree.Chain(cfg["boundary"] == "closed", cfg["chain_form"] == "zero_inflated",
-                        cfg["chain_form"] == "normalized").to(device)
-    chain.load_state_dict(ck["chain"])
-    return summ, cfg, model, am, chain
+    from qtl.checkpoint import load_trial as load_shared
+    return load_shared(trial, device, answers, ids, model_factory=PriorNet)
 
 
 def auc(y, s):

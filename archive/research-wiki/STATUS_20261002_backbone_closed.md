@@ -1,16 +1,16 @@
+> 历史快照：backbone独立迭代收尾；后续最新完整组合任务见[当前STATUS](../../research-wiki/STATUS.md)。
+
 # 当前研究状态
 
-截至 **2026-10-02 18:31 NZDT**。依据：本机 `runs/` 统一评测器原始输出、完整study/训练审计、初版独立novelty复查；模型与评测协议未改。完整跨版本统计入口 `runs/20261002_residual_io_backbone/analysis/backbone_completion_readiness.json`。backbone收尾状态已[归档](../archive/research-wiki/STATUS_20261002_backbone_closed.md)。
+截至 **2026-10-02 17:34 NZDT**。依据：本机 `runs/` 统一评测器原始输出、完整study/训练审计、初版独立novelty复查；模型与评测协议未改。完整跨版本统计入口 `runs/20261002_residual_io_backbone/analysis/backbone_completion_readiness.json`。本轮前状态已[归档](../../archive/research-wiki/STATUS_20261002_before_backbone_completion.md)。
 
 ## 当前目标与结论
 
-**用户新任务：在HateMM、HateClipSeg、DeHate上运行最新完整组合并汇报。** [本轮协议](../experiments/20261002_complete_io_method/README.md)：初版inside–outside骨干 + 单问软答案8档 + 负例训练数据估计的复制似然（同时用于EIG与后验）+ `qmixSG_rt10` 自动停止（validation无标注平均8次阈值）。HateMM/HCS为主数据，DeHate保持external validation。同一架构、损失和推断流程，不按语料挑版本。
+**本轮backbone novelty目标按用户“优先novel且涨点；充分尝试仍无提升时优先有证据novelty”的授权完成，自动迭代结束。** 初版、加性统计量版、保留CMA的残差版均已完成HateMM/HateClipSeg各三seed独立20-trial搜索，每trial完整50 epoch，合计360个完整trial；各自结构诊断也已完成并回传。三版均未实现相对r5的主操作点整体涨点，不能写成性能提升。within与pooled AP/ROC并列主指标。
 
-两主数据已有初版三seed各20-trial×50 epoch完整训练，可复用checkpoint执行完整组合重评；固定既有test目标选trial，同时报告仅validation选trial。DeHate尚无该骨干，补三seed独立完整Optuna，50 epoch，首trial实测≤1h为20 trial、>1h为5 trial，随后自动接完整组合评估。复制和停止不改变训练损失；三语料均沿用既有fixed8训练/选checkpoint协议，不按新test结果重选。**这是冻结模型的完整组合验证，不是以自动停止为目标重新调参。** 新完整组合尚无结果，不能把上一轮固定8次数字当成当前自动停止性能。
+最终保留[初版inside–outside骨干](../../experiments/20261001_inside_outside_backbone/README.md)：在固定时间问题树上组合区间内表示和区间外上下文，形成秒级/节点内容先验，通过现有含噪答案边缘似然训练。新增VLM调用与特征抽取为0；新视频原有输入处理和提问成本仍存在，没有已测量的速度优势。[proposal GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)、[code PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)及[独立novelty复查](../../docs/reviews/20261002_inside_outside_backbone_novelty_recheck.md)支持有限的任务迁移贡献；不主张世界首次、递归门控优势或普遍稳定增益。outside排除的是目标区间缓存行，不能声称排除原始编码器感受野重叠。
 
-此前完成的是backbone固定预算迭代，保留初版有限任务迁移novelty；自身outside有两语料平均贡献，但HCS有seed依赖，相对r5仍掉点。加性/残差版已归档。此前“完成”仅指这一backbone范围，[独立复查](../docs/reviews/20261002_inside_outside_backbone_novelty_recheck.md)不替代现在的整套组合检验。共享骨干现位于 `src/qtl/inside_outside.py`，原实验入口保持兼容。
-
-新增VLM调用和特征抽取为0，复用已有缓存；调用数按策略消费答案计，新视频仍需相同查询和原输入处理。无训练/推断ensemble、无后处理、统一评测器不变。主结果报告AP/ROC/within、三seed总体标准差、实际平均调用数，并与同复制设置固定8次比较。
+初版自身outside消融在两主数据达到平均AP贡献要求，但HCS效应有明显seed依赖，且初版相对r5有性能代价。[加性版](../../archive/experiments/20261001_associative_io_backbone/README.md)与[残差版](../../archive/experiments/20261002_residual_io_backbone/README.md)归档，所有原始runs保留；它们的失败不替换或抹去初版自己的证据。r5保留为性能参照，没有按语料挑版本或ensemble。本轮完成不等于整篇论文和其它模块全部验证完成。
 
 ## 三模块实现与缺口
 
@@ -20,9 +20,9 @@
 | 弱监督骨干与先验 | 最终novelty实现 `experiments/20261001_inside_outside_backbone/`；共享基础设施 `src/qtl/` | 同一架构用于两主数据，自身outside有平均贡献；相对r5掉点，HCS有seed依赖，无门控胜过均值的证据 |
 | 答案融合与停止 | 锚定答案模型、复制似然、分位数组合停止 `qmixSG_rt10` | 已实现自动停止；8档平均调用约7.8–8.1，尚未证明稳定省调用；validation直接选阈值仍有调用量/性能权衡 |
 
-停止实验的现有结论保留：8档主线不变，DeHate仅外部验证；16档DeHate附加检查within差值−.00503，未通过−.005容差。validation选阈值在HCS/DeHate的改善主要伴随更多调用，HateMM降到2.45次时三项均下降。代码、权威结果与详细比较见[r5 README第17节](../experiments/20260925_query_paradigm/README.md)，本轮不扩展此任务。
+停止实验的现有结论保留：8档主线不变，DeHate仅外部验证；16档DeHate附加检查within差值−.00503，未通过−.005容差。validation选阈值在HCS/DeHate的改善主要伴随更多调用，HateMM降到2.45次时三项均下降。代码、权威结果与详细比较见[r5 README第17节](../../experiments/20260925_query_paradigm/README.md)，本轮不扩展此任务。
 
-## 最新权威结果与来源（上一轮固定预算；本轮完整组合待出数）
+## 最新权威结果与来源
 
 以下顺序 **AP / ROC / within**，固定8次为主操作点，三seed均值±总体标准差。Optuna按开发期test(AP+ROC)/2选trial；每trial的checkpoint仍由validation选。这些结果是开发期证据，不是未揭盲的独立确认。固定配置诊断不计入Optuna三seed均值。
 
@@ -61,18 +61,16 @@
 
 ## 运行任务与monitor
 
-最新完整组合处于提交同步/启动准备；输出根 `runs/20261002_complete_io_method/`。计划HCS三seed已选模型重评放uoa-lab1，HateMM重评及DeHate新训练按uoa-lab3实测资源并行。lab1当前他人VLLM占约28GiB；lab3空闲约27GiB。共享lab-server虽余约10GiB，但GPU利用率87%、无本项目仓库/环境/缓存，当前不为本轮临时复制大环境或干扰其任务。本机不训练。
+**无活动或待启动的本轮实验，完成通知已全部处理。Pursuing goal保持paused，本轮没有创建或恢复Goal。** 初版/加性版此前已全量回传核验；残差版12项搜索/诊断真实owner及同会话子进程均已结束，最终进程记录 `runs/20261002_residual_io_backbone/setup/final_process_closure.json`。
 
-每个长任务通过独立owner记录进程身份、输入检查、训练与集成评估链；同时绑定独立120秒monitor，正常/异常结束均自动通知当前会话。DeHate一个seed一个owner，训练完整后自动评估其两个选择方式；HCS/HateMM各一个重评owner。具体启动状态/主机/PID/监控首次检查写在本轮setup记录，完成通知须核验原始输出并回传后才更新权威结果。
+本轮三版全部35个独立run monitor均已成功通知并退出。原3小时heartbeat（会话 `01a0f639-b211-75e3-9155-e15e30534b46`，PID `3245799`）已按用户“完成则关闭monitor”的指示停止，实际停止时间 **2026-10-02T17:32:49.260670+13:00**；STOP、状态与日志在 `runs/thread_monitor/01a0f639-b211-75e3-9155-e15e30534b46/`。最终monitor核验 `runs/20261002_residual_io_backbone/setup/final_monitor_closure.json`。迟到通知只复核现有结果，不重启旧任务。
 
-旧任务35个monitor及旧heartbeat均已关闭，不重启。**Pursuing Goal保持paused，不创建或恢复Goal。** 新任务另设独立heartbeat目录，不覆盖旧收尾记录。研究规则、AGENTS/CLAUDE和无关tandem.html均不修改。新一轮独立code review覆盖共享迁移/IO加载/复制估计/停止与数据隔离；输入检查已修正合法短视频无queryable节点的情况，不删cohort。
+最终代码/文档同步与三机工作树检查记录 `runs/20261002_residual_io_backbone/setup/backbone_final_sync.json`；汇报前执行 `bash scripts/check_layout.sh`。归档仅修正源码位置和入口路径，Python解析、shell语法和共享src定位检查通过，不启动训练。已知无关 `tandem.html`、lab1 `idea-stage/`及家目录STRAY不改动、不清理。
 
 ## 下一步
 
-1. 完成独立集成code review和代码提交/推送/三机同步，完整输入检查通过后启动已就绪任务，各绑定monitor并核验首次RUNNING。
-2. DeHate每seed完整预算跑满，validation选checkpoint；完整组合评估同时给固定0/8/32与qmixSG_rt10，两个trial选择方式分别报告。
-3. 全部完成回传并核验后汇总三数据三seed指标/标准差/调用次数及固定8次差值，向用户报告。未齐全时不填三seed均值，不再自动扩展骨干候选。
+当前授权的backbone自动迭代已收尾，无待运行项；保留初版可运行实现、完整搜索/消融、独立复查和性能代价供方法整理。论文主表口径及其余模块验证不在本次完成声明内，不自动扩展实验。
 
 ## 历史与规则
 
-[初版结论与收尾](../experiments/20261001_inside_outside_backbone/README.md)、[残差最终完整结果](../archive/experiments/20261002_residual_io_backbone/README.md)、[收尾前状态](../archive/research-wiki/STATUS_20261002_before_backbone_completion.md)、[研究规则](../RESEARCH_ITERATION_RULES.md)、[固定baseline表](../docs/duplex/OFFICIAL_VAL_RESULTS.md)。详细过程保留在各实验README与归档，不在STATUS追加时间线。
+[初版结论与收尾](../../experiments/20261001_inside_outside_backbone/README.md)、[残差最终完整结果](../../archive/experiments/20261002_residual_io_backbone/README.md)、[收尾前状态](../../archive/research-wiki/STATUS_20261002_before_backbone_completion.md)、[研究规则](../../RESEARCH_ITERATION_RULES.md)、[固定baseline表](../../docs/duplex/OFFICIAL_VAL_RESULTS.md)。详细过程保留在各实验README与归档，不在STATUS追加时间线。
