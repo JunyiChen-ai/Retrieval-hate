@@ -1,6 +1,6 @@
 # Backbone 第二次修订：保留跨模态编码的区间内外残差
 
-截至2026-10-02 12:56 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。两主数据seed234各20-trial搜索均已核验回传，均通过既定baseline筛选但三主指标低于r5同seed；四项2025/3407独立完整搜索及HateMM锁定full诊断已启动；nooutside/noresidual已锁定、待释放资源。HCS三组诊断未支持8次核心贡献，结论保留。Pursuing Goal保持paused，使用已有heartbeat与独立run monitor接续。
+截至2026-10-02 13:38 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。两主数据seed234各20-trial搜索均已核验回传，均通过既定baseline筛选但三主指标低于r5同seed；四项2025/3407独立完整搜索继续；HateMM锁定full三seed诊断已核验回传，nooutside/noresidual均已启动。HCS三组诊断未支持8次核心贡献，结论保留。Pursuing Goal保持paused，使用已有heartbeat与独立run monitor接续。
 
 ## 1. 已观察的问题与修订假设
 
@@ -147,3 +147,32 @@ HateMM自身结构诊断锁定trial10完整config.json：lr=.0001023377063766613
 四项搜索均已实际进入epoch（首次核验HCS3407/HM2025/HM3407/HCS2025为9/1/1/4），HateMM full已进入seed2025 epoch2；五个独立monitor均存活、首次RUNNING、主机/身份/输出/当前会话绑定正确。记录 `setup/confirmation_launches.json`、`confirmation_startup_check.json`、`hatemm_diagnostic_launches.json`、`hatemm_diagnostic_startup_check.json`。每项结束后由原独立monitor接续，不做模型轮询。
 
 正式训练实测：lab1 HCS3407使用1710MiB，整卡余2008MiB；lab3四项活动任务（两HM搜索、一HCS搜索、HM full）整卡已用25464MiB、余6626MiB、利用率99%，每项HM训练约5984–6072MiB。再放一项HM会使显存余量不足，因此nooutside/noresidual两组已锁定但暂不启动，也不为它们创建空转monitor；full完成通知明确接续检查并调度两组，各次真正启动时立即配独立monitor。待调度记录 `setup/hatemm_diagnostic_schedule.json`，两语料补seed搜索继续完整预算。此前HateMM seed234 monitor已成功通知退出；heartbeat保留，Goal保持paused。
+
+
+## 9. HateMM锁定full三seed诊断完成与两组消融启动
+
+2026-10-02 13:29:27，uoa-lab3 / sc474398的full诊断正常结束；13:30核验真实主进程及所有同会话非僵尸子进程均退出，monitor已成功通知后退出。全部输出已回传本机。seed234复用本版本完整搜索trial10，seed2025/3407各自使用其锁定配置完整训练；三seed日志/history各1–50 epoch、config完全一致、实际model.pth的validation最优epoch3/1/2、39份统一test评测均核验通过（每seed13份，214视频/29269秒，缺失/额外视频均0）。这些是固定配置诊断，不是Optuna确认；checkpoint较早不意味着缩短了训练。
+
+原始权威路径：`runs/20261002_residual_io_backbone/hatemm/seed234/trial10/metrics_test_fixed<次数>.json` 与同实验 `diagnostics/hatemm/full/seed<2025或3407>/metrics_test_fixed<次数>.json`。逐项审计 `runs/20261002_residual_io_backbone/analysis/hatemm_locked_full.json`，三组汇总入口 `analysis/hatemm_locked_diagnostics.json` 当前只含full，明确把两种配对差值留待完整消融核验。以下AP / ROC / within，标准差为总体标准差。
+
+| seed | 固定0次 | 固定8次（主操作点） | 固定32次（附加） |
+|---|---|---|---|
+| 234 | 0.536213 / 0.766454 / 0.745240 | 0.674695 / 0.877526 / 0.747603 | 0.666814 / 0.868253 / 0.743581 |
+| 2025 | 0.510983 / 0.760913 / 0.701509 | 0.637817 / 0.869113 / 0.751020 | 0.664682 / 0.872653 / 0.743411 |
+| 3407 | 0.535675 / 0.765891 / 0.739555 | 0.645661 / 0.865040 / 0.752635 | 0.650808 / 0.854667 / 0.724646 |
+| 均值±标准差 | 0.527624±0.011769 / 0.764420±0.002490 / 0.728768±0.019414 | 0.652725±0.015862 / 0.870560±0.005199 / 0.750419±0.002098 | 0.660768±0.007096 / 0.865191±0.007655 / 0.737213±0.008886 |
+
+full当前只构成本版本HateMM消融的配对参照，不能独自证明outside或整体残差贡献；HCS主操作点贡献失败的结论保持，不借用前两版证据，不用0/32次替换固定8次主结论。
+
+释放full位置后，按同一trial10锁定配置启动nooutside（仅io_outside=false），实训实测占5376MiB、lab3余7316MiB，比full约6070MiB少。noresidual会直接绕过内容树/上下文残差分支，故按该较低占用与现有余量继续启动完整三seed诊断（仅io_residual=false），每项均立即绑定独立monitor，未缩短epoch/数据、未smoke。
+
+| 诊断 | owner / monitor | 启动时间NZDT |
+|---|---|---|
+| nooutside | 2291136 / 254919 | 2026-10-02T13:32:57.050911+13:00 |
+| noresidual | 2292985 / 257895 | 2026-10-02T13:35:24.345782+13:00 |
+
+两组入口均为 `launch/run_hatemm_diagnostics_uoa-lab3.sh <arm>`，模型/共享trainer/评测器与配置锁定不变；配置 `setup/hatemm_diagnostic_lock.json`，启动 `setup/hatemm_diagnostic_launches.json`，后续状态以 `setup/hatemm_ablations_startup_check.json` 为准。每组最终都必须三seed各50 epoch并回传核验后再计算配对差值。
+
+13:30实际确认搜索进度：HateMM2025/3407各2/20 COMPLETE，HCS2025为5/20，HCS3407在lab1为14/20，另各1 RUNNING。四个首trial实测均已将预算锁定20：1061.93/1059.48/421.61/170.39秒，budget.json已回传，汇总 `setup/confirmation_budgets.json`；不取部分搜索最优作方法结论。lab1余2018MiB、lab-server余2585MiB，不够运行HateMM；本机不训练，已有他人任务不动。Goal保持paused，heartbeat保留。
+
+两组启动后核验通过：13:36 nooutside/noresidual分别进入seed234 epoch10/3，配置仅各自开关变化，所有主/相关子进程与独立monitor身份绑定正确、首次RUNNING。实际GPU占用分别5376/5052MiB，整卡29829MiB已用、2261MiB空闲、利用率99%。调度表 `setup/hatemm_diagnostic_schedule.json` 已更新为full完成、两组运行、无待启动组；四项独立搜索继续，六个活动run monitor与原heartbeat保留，Goal保持paused。
