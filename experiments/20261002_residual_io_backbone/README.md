@@ -195,3 +195,37 @@ full当前只构成本版本HateMM消融的配对参照，不能独自证明outs
 相对r5同seed，主操作点ROC提高.009360，AP下降.002030、within下降.007856；不能宣布三主指标涨点。HCS seed2025及HateMM两个确认seed尚在运行，三seed均值/标准差留待各自完整搜索全部结束后计算，不混入锁定配置诊断数字。HCS自身outside和整体残差未通过8次平均贡献要求的结论不变。
 
 原始权威来源 `runs/20261002_residual_io_backbone/hateclipseg/seed3407/trial{19,9}/metrics_test_fixed{0,8,32}.json`；全部逐trial审计及三版本同seed比较 `runs/20261002_residual_io_backbone/analysis/hateclipseg_seed3407_search.json`，真实进程/其余任务进度 `setup/hcs_seed3407_completion_probe.json`。HCS seed3407 monitor于13:48:04成功通知后退出；13:54核验其余五个独立monitor存活、最近检查RUNNING、身份/主机/会话绑定正确，原heartbeat存活，记录 `setup/hcs_seed3407_monitor_health.json`。HateMM nooutside/noresidual均已启动，无待启动组；不重复旧任务。lab1现余3723MiB，lab3余865MiB且利用率99%，lab-server余2585MiB；当前已就绪任务均在运行，不为填充显存增加无必要实验或干扰他人任务。模型、训练器和统一评测器未改；Goal保持paused，待完成事件接续。
+
+
+## 11. HateMM去整体残差三seed诊断完成
+
+2026-10-02 14:31:44，uoa-lab3 / sc474398的noresidual正常结束。真实主进程及全部同会话非僵尸子进程均已退出，monitor 257895于14:31:46成功通知后退出；完整输出已回传本机。三个seed的配置均与本版HateMM trial10仅io_residual=false不同，日志/history均为1–50 epoch，实际validation checkpoint为epoch41/1/18；39份统一test评测均齐全，214视频/29269秒、缺失/额外视频均0。固定配置诊断不是Optuna确认。
+
+下表AP / ROC / within，固定8次。配对差值定义为noresidual−full；均值与标准差均跨相同的234/2025/3407，标准差为总体标准差。
+
+| seed | full | noresidual | 去整体残差的配对差值 |
+|---|---|---|---|
+| 234 | 0.674695 / 0.877526 / 0.747603 | 0.668014 / 0.875714 / 0.772289 | -0.006681 / -0.001812 / +0.024686 |
+| 2025 | 0.637817 / 0.869113 / 0.751020 | 0.629538 / 0.864753 / 0.743496 | -0.008279 / -0.004361 / -0.007524 |
+| 3407 | 0.645661 / 0.865040 / 0.752635 | 0.666034 / 0.870953 / 0.763516 | +0.020373 / +0.005913 / +0.010881 |
+| 均值±标准差 | 0.652725±0.015862 / 0.870560±0.005199 / 0.750419±0.002098 | 0.654529±0.017690 / 0.870473±0.004488 / 0.759767±0.012050 | 0.001804±0.013146 / -0.000086±0.004368 / 0.009348±0.013194 |
+
+主操作点去整体残差后AP略升、ROC近乎不变、within提高，未满足平均pooled下降≥.01的机制贡献要求，且逐seed效应方向不同。0次去残差反而改善三指标；32次三指标均值也提高。完整0/8/32逐seed配对与原始来源在下述分析文件中，不用其他预算替代8次判定。
+
+| 操作点 | noresidual均值±标准差 | noresidual−full配对均值±标准差 |
+|---|---|---|
+| 固定0次 | 0.579466±0.050916 / 0.797900±0.027840 / 0.738237±0.030809 | 0.051842±0.039187 / 0.033481±0.025374 / 0.009469±0.011578 |
+| 固定32次 | 0.667918±0.010198 / 0.872646±0.002766 / 0.756699±0.014324 | 0.007150±0.012343 / 0.007456±0.007406 / 0.019486±0.020106 |
+
+本版本两语料整体残差的贡献诊断均未通过：
+
+| 语料 | 固定8次noresidual−full配对均值±标准差 | pooled贡献要求 |
+|---|---|---|
+| HateMM | 0.001804±0.013146 / -0.000086±0.004368 / 0.009348±0.013194 | 未满足 |
+| HateClipSeg | 0.011532±0.011874 / 0.001434±0.014317 / -0.004776±0.032868 | 未满足 |
+
+HCS主操作点贡献失败结论保留，不借用初版或加性版证据。HateMM nooutside仍在运行（14:32最后seed3407 epoch38，前两seed50 epoch），尚不填写该组最终配对统计；本版本HCS outside同样未通过既定贡献要求。
+
+本机原始权威来源 `runs/20261002_residual_io_backbone/diagnostics/hatemm/noresidual/seed<seed>/metrics_test_fixed<次数>.json`，full沿用第9节本版路径。完整审计 `analysis/hatemm_locked_noresidual.json`，HateMM逐seed配对汇总 `analysis/hatemm_locked_diagnostics.json`，两语料整体残差对应诊断 `analysis/two_corpus_residual_diagnosis.json`，全部位于本版本机runs目录。
+
+实际进程记录 `setup/hatemm_noresidual_completion_probe.json`；14:34核验三项尚未完成的Optuna搜索及nooutside共四个monitor均存活、最新RUNNING且身份/主机/当前会话绑定一致，原heartbeat存活，记录 `setup/hatemm_noresidual_monitor_health.json`。HCS seed3407已完整核验，不重复运行；HateMM2025/3407各5/20 COMPLETE，HCS2025为12/20，另各1 RUNNING。剩余搜索继续完整20×50预算。lab3释放noresidual后余6714MiB、利用率99%，已锁定就绪任务全部运行，无待启动组；不为占用资源新增重复实验。Goal保持paused，模型/训练器/统一评测器与研究规则均未修改。
