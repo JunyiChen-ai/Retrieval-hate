@@ -229,3 +229,39 @@ HCS主操作点贡献失败结论保留，不借用初版或加性版证据。Ha
 本机原始权威来源 `runs/20261002_residual_io_backbone/diagnostics/hatemm/noresidual/seed<seed>/metrics_test_fixed<次数>.json`，full沿用第9节本版路径。完整审计 `analysis/hatemm_locked_noresidual.json`，HateMM逐seed配对汇总 `analysis/hatemm_locked_diagnostics.json`，两语料整体残差对应诊断 `analysis/two_corpus_residual_diagnosis.json`，全部位于本版本机runs目录。
 
 实际进程记录 `setup/hatemm_noresidual_completion_probe.json`；14:34核验三项尚未完成的Optuna搜索及nooutside共四个monitor均存活、最新RUNNING且身份/主机/当前会话绑定一致，原heartbeat存活，记录 `setup/hatemm_noresidual_monitor_health.json`。HCS seed3407已完整核验，不重复运行；HateMM2025/3407各5/20 COMPLETE，HCS2025为12/20，另各1 RUNNING。剩余搜索继续完整20×50预算。lab3释放noresidual后余6714MiB、利用率99%，已锁定就绪任务全部运行，无待启动组；不为占用资源新增重复实验。Goal保持paused，模型/训练器/统一评测器与研究规则均未修改。
+
+
+## 12. HateMM去outside完成与本版本两语料结构诊断汇总
+
+2026-10-02 14:37:01，uoa-lab3 / sc474398的nooutside正常结束；真实主进程及全部同会话非僵尸子进程均退出。全部输出已回传本机，三seed配置与本版本HateMM trial10仅io_outside=false不同，日志/history各1–50 epoch，实际validation checkpoint为epoch34/1/1；39份统一test评测齐全，每份214视频/29269秒、缺失/额外视频为0。monitor 254919于14:37:21成功通知后退出。noresidual已在上一节完成核验，不重启。
+
+至此HateMM full/nooutside/noresidual各三seed诊断全部完整，共117份统一test评测；HCS对应三组也已完整。以下固定8次AP / ROC / within，标准差均为总体标准差；这些是锁定配置诊断，不是Optuna确认。
+
+| HateMM诊断 | 三seed均值±标准差 |
+|---|---|
+| full | 0.652725±0.015862 / 0.870560±0.005199 / 0.750419±0.002098 |
+| nooutside | 0.636705±0.002054 / 0.863931±0.001213 / 0.735041±0.015580 |
+| noresidual | 0.654529±0.017690 / 0.870473±0.004488 / 0.759767±0.012050 |
+
+| seed | nooutside固定8次 | nooutside−full配对差值 |
+|---|---|---|
+| 234 | 0.637918 / 0.862387 / 0.713242 | -0.036778 / -0.015139 / -0.034361 |
+| 2025 | 0.633813 / 0.865352 / 0.743161 | -0.004005 / -0.003762 / -0.007859 |
+| 3407 | 0.638386 / 0.864053 / 0.748719 | -0.007275 / -0.000986 / -0.003915 |
+| 均值±标准差 | 0.636705±0.002054 / 0.863931±0.001213 / 0.735041±0.015580 | -0.016019±0.014739 / -0.006629±0.006123 / -0.015378±0.013519 |
+
+三个seed去outside后三主指标均下降，HateMM的平均AP下降.016019，满足本语料核心贡献要求；效应大小仍有seed差异，最大AP下降来自seed234。HCS自身对应组的平均AP反而提高、ROC仅下降.002068，未达到要求；不能把HateMM证据或初版证据代替HCS本版本结果。因此本版本outside没有通过两语料共同贡献要求；整体残差在两语料均未通过（第11节）。
+
+| 语料 | 固定8次nooutside−full配对均值±标准差 | pooled贡献要求 |
+|---|---|---|
+| HateMM | -0.016019±0.014739 / -0.006629±0.006123 / -0.015378±0.013519 | 本语料满足 |
+| HateClipSeg | 0.003000±0.003783 / -0.002068±0.019624 / 0.017037±0.022257 | 未满足 |
+
+| 操作点 | HateMM nooutside均值±标准差 | nooutside−full配对均值±标准差 |
+|---|---|---|
+| 固定0次 | 0.518842±0.029208 / 0.768262±0.022674 / 0.727685±0.015428 | -0.008781±0.028433 / 0.003842±0.021826 / -0.001083±0.007147 |
+| 固定32次 | 0.646823±0.012310 / 0.865117±0.006341 / 0.740949±0.006650 | -0.013945±0.013257 / -0.000074±0.002020 / 0.003737±0.006671 |
+
+本机权威来源 `runs/20261002_residual_io_backbone/diagnostics/hatemm/nooutside/seed<seed>/metrics_test_fixed<次数>.json`；full与HCS都用本版本自己的对应组，full seed234分别复用本版HateMM trial10/HCS trial19。逐项审计 `analysis/hatemm_locked_nooutside.json`，三组完整逐seed配对与0/8/32统计 `analysis/hatemm_locked_diagnostics.json`，两语料outside与整体残差分别为 `analysis/two_corpus_outside_diagnosis.json`、`analysis/two_corpus_residual_diagnosis.json`（均位于本版本机runs下）。两语料六组总计234份统一评测均已回传核验。
+
+实际进程记录 `setup/hatemm_nooutside_completion_probe.json`；14:39三个剩余搜索monitor及原heartbeat均存活、最近RUNNING且身份绑定正确，三个HateMM诊断monitor均成功通知后退出，见 `setup/hatemm_nooutside_monitor_health.json`。调度表已为三组完成、无运行/待启动诊断。14:38 HateMM2025/3407各5/20 COMPLETE，HCS2025为13/20，另各1 RUNNING；HCS3407已完整核验，不能把通知中的“四项继续”解读为重启它。三项搜索继续跑满20 trial×50 epoch，齐全后汇总三seed及validation选trial结果；核心贡献失败不减少既定预算。lab3此时余12699MiB、利用率99%，当前已就绪任务都在运行，不重复诊断。Goal保持paused，继续由独立完成事件及heartbeat接续。模型、共享trainer、评测器和研究规则未改。
