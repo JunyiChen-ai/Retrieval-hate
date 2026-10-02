@@ -49,7 +49,7 @@
 
 ## 5. 当前进度
 
-独立集成code review已PASS；原共享函数实现等价性已核对，12个既定checkpoint严格加载和三语料split/时间网格检查通过。接下来三机同步，正式owner执行全输入finite/shape检查再进入运行；实际主机/PID/monitor及最新状态只在 `research-wiki/STATUS.md` 维护。没有改变研究规则、已归档实验结论或无关tandem.html。
+独立集成code review已PASS；原共享函数实现等价性已核对，12个既定checkpoint严格加载和三语料split/时间网格检查通过。三机已同步，正式owner全输入finite/shape检查均通过；实际主机/PID/monitor及最新状态只在 `research-wiki/STATUS.md` 维护。没有改变研究规则、已归档实验结论或无关tandem.html。
 
 
 ## 6. 两主数据完整组合结果（2026-10-02）
@@ -82,4 +82,4 @@ AP / ROC / within，三seed均值±总体标准差；开发期原test目标选tr
 
 本机原始路径 `runs/20261002_complete_io_method/<corpus>/integrated/results/seed<seed>_trial<k>/metrics_test_{fixed0,fixed8,fixed32,qmixSG_rt10}.json`，停止校准与逐视频调用数在同目录calibration/summary。逐seed、总体与配对标准差、旧r5原始来源在 `analysis/{hatemm,hateclipseg}_complete_method.json`；汇总 `analysis/main_corpora_complete_method.json`。所有analysis位于本轮runs根。HateMM test/validation trial为17/11/11与10/2/9，HCS为11/2/10与6/17/1（seed234/2025/3407）。
 
-DeHate三seed已分别在lab3/lab1/lab3启动完整训练→评估链；首trial尚未结束，不预填锁定trial数或三seed均值。两主数据负结果不影响已授权完整预算，不启动新候选。各owner/monitor和新任务heartbeat见STATUS，旧已关闭heartbeat不恢复，Goal保持paused。
+DeHate三seed分别在lab3/lab1/lab3运行完整训练→评估链；首trial实测2627/1821/2651秒，均≤1小时，各自已锁定20-trial完整预算（原始 `dehate/seed<seed>/budget.json`）。搜索尚未完成，不填完整组合三seed均值。两主数据负结果不影响已授权完整预算，不启动新候选。各owner/monitor和新任务heartbeat见STATUS，旧已关闭heartbeat不恢复，Goal保持paused。
