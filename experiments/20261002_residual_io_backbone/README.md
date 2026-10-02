@@ -176,3 +176,22 @@ full当前只构成本版本HateMM消融的配对参照，不能独自证明outs
 13:30实际确认搜索进度：HateMM2025/3407各2/20 COMPLETE，HCS2025为5/20，HCS3407在lab1为14/20，另各1 RUNNING。四个首trial实测均已将预算锁定20：1061.93/1059.48/421.61/170.39秒，budget.json已回传，汇总 `setup/confirmation_budgets.json`；不取部分搜索最优作方法结论。lab1余2018MiB、lab-server余2585MiB，不够运行HateMM；本机不训练，已有他人任务不动。Goal保持paused，heartbeat保留。
 
 两组启动后核验通过：13:36 nooutside/noresidual分别进入seed234 epoch10/3，配置仅各自开关变化，所有主/相关子进程与独立monitor身份绑定正确、首次RUNNING。实际GPU占用分别5376/5052MiB，整卡29829MiB已用、2261MiB空闲、利用率99%。调度表 `setup/hatemm_diagnostic_schedule.json` 已更新为full完成、两组运行、无待启动组；四项独立搜索继续，六个活动run monitor与原heartbeat保留，Goal保持paused。
+
+
+## 10. HCS seed3407完整搜索核验
+
+2026-10-02 13:47:00，uoa-lab1 / sc474397搜索正常结束；13:48核验主进程及全部同会话非僵尸子进程均退出。输出已完整回传本机，20/20 COMPLETE、每trial日志/history均为1–50 epoch、实际model.pth均对应validation最优checkpoint，配置/SQLite参数和目标一致；260份统一test评测齐全，每份79视频/18839秒且缺失/额外视频为0。首trial170.39秒锁定20个trial，平均trial165.67秒；这是完整独立Optuna搜索，区别于第7节锁定配置诊断。
+
+按开发期test(AP+ROC)/2选trial19，validation checkpoint epoch27；只按validation选trial9，checkpoint epoch20。以下AP / ROC / within，均为seed3407单seed，32次仅附加。
+
+| 选择方式 | 固定0次 | 固定8次（主操作点） | 固定32次（附加） |
+|---|---|---|---|
+| test目标选trial19 | 0.650968 / 0.636878 / 0.553771 | 0.679294 / 0.675932 / 0.570637 | 0.701952 / 0.672799 / 0.627043 |
+| 仅validation选trial9 | 0.657328 / 0.620687 / 0.557645 | 0.654459 / 0.623480 / 0.567141 | 0.682500 / 0.664815 / 0.596521 |
+| test选结果对r5同seed变化 | -0.000811 / +0.006853 / +0.007842 | -0.002030 / +0.009360 / -0.007856 | +0.005521 / -0.002082 / +0.014227 |
+| test选结果对初版同seed变化 | +0.060228 / +0.078069 / +0.020357 | +0.007084 / +0.033672 / +0.012721 | +0.042739 / +0.053072 / +0.055713 |
+| test选结果对加性版同seed变化 | +0.185773 / +0.206178 / +0.020891 | -0.001596 / +0.033823 / +0.060657 | +0.058666 / +0.045136 / +0.114227 |
+
+相对r5同seed，主操作点ROC提高.009360，AP下降.002030、within下降.007856；不能宣布三主指标涨点。HCS seed2025及HateMM两个确认seed尚在运行，三seed均值/标准差留待各自完整搜索全部结束后计算，不混入锁定配置诊断数字。HCS自身outside和整体残差未通过8次平均贡献要求的结论不变。
+
+原始权威来源 `runs/20261002_residual_io_backbone/hateclipseg/seed3407/trial{19,9}/metrics_test_fixed{0,8,32}.json`；全部逐trial审计及三版本同seed比较 `runs/20261002_residual_io_backbone/analysis/hateclipseg_seed3407_search.json`，真实进程/其余任务进度 `setup/hcs_seed3407_completion_probe.json`。HCS seed3407 monitor于13:48:04成功通知后退出；13:54核验其余五个独立monitor存活、最近检查RUNNING、身份/主机/会话绑定正确，原heartbeat存活，记录 `setup/hcs_seed3407_monitor_health.json`。HateMM nooutside/noresidual均已启动，无待启动组；不重复旧任务。lab1现余3723MiB，lab3余865MiB且利用率99%，lab-server余2585MiB；当前已就绪任务均在运行，不为填充显存增加无必要实验或干扰他人任务。模型、训练器和统一评测器未改；Goal保持paused，待完成事件接续。
