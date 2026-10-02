@@ -1,6 +1,6 @@
 # Backbone 候选：时间树上的区间内外表示
 
-截至 2026-10-02；状态：HateMM/HCS各三seed完整20-trial搜索和本版本outside诊断均已完成并回传核验；保留为有机制贡献证据、但相对r5有性能代价的候选。实现完成，[一次独立 proposal review：GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)，[一次独立 code review：PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)。用户最新授权自动迭代：优先做 novel 且涨点的 backbone；充分尝试仍无提升时优先可验证的新意，完成后汇报。当前旧骨干实现已升入 `src/qtl/model.py`，旧实验文件保留兼容入口。within 按 AGENTS.md 最新裁定与 pooled AP / ROC 并列为主指标；不改写研究规则文件。
+截至 2026-10-02；状态：HateMM/HCS各三seed完整20-trial搜索和本版本outside诊断均已完成并回传核验；本轮最终保留为有机制贡献证据、但相对r5有性能代价的novelty骨干，自动迭代已收尾。实现完成，[一次独立 proposal review：GO](../../docs/reviews/20261001_inside_outside_backbone_proposal.md)，[一次独立 code review：PASS](../../docs/reviews/20261001_inside_outside_backbone_code.md)。用户最新授权自动迭代：优先做 novel 且涨点的 backbone；充分尝试仍无提升时优先可验证的新意，完成后汇报。当前旧骨干实现已升入 `src/qtl/model.py`，旧实验文件保留兼容入口。within 按 AGENTS.md 最新裁定与 pooled AP / ROC 并列为主指标；不改写研究规则文件。
 
 ## 1. 需要解决什么
 
@@ -70,7 +70,7 @@ proposal review 只决定候选是否值得实现，不等于 novelty 贡献或�
 - 初版实现已通过一次独立 proposal / code review，启动时本机与 lab3 代码一致、跟踪文件干净；不在运行中修改代码。运行日志记录可读代码版本说明与主机。
 - 输入检查全量通过；日志在本机 `runs/20261001_inside_outside_backbone/setup/inputs_{hatemm,hateclipseg}.log`，覆盖 HateMM 1067 个、HCS 393 个视频，各自 split 不重叠。
 - 搜索目录为 `runs/20261001_inside_outside_backbone/{hatemm,hateclipseg}/seed234/`。首 trial 实测 HateMM 559.52 秒、HCS 235.49 秒，各自自动锁定 **20 trial**，依据对应 `budget.json`。HCS于10月1日22:14完成，HateMM于10月2日00:15完成，均为20/20；详细结果见第8、9节。
-- 每个搜索已配置独立后台完成通知，当前会话另复用每 3 小时 heartbeat；Pursuing goal 保持暂停。具体运行 PID 与 monitor 路径只在 STATUS 维护。
+- 实验运行期间每个搜索均配置独立后台完成通知，会话复用每3小时heartbeat；收尾后均已关闭，Pursuing goal保持暂停。最终监控核验路径见STATUS。
 
 ## 8. HateClipSeg seed234 完整结果与结构诊断（2026-10-01）
 
@@ -222,4 +222,13 @@ HateMM仅validation选trial的test均值为.640230/.868892/.681005；HCS对应.6
 
 2026-10-02，按规则9完成[独立复查](../../docs/reviews/20261002_inside_outside_backbone_novelty_recheck.md)：现有实现、原论文核对及初版本身的完整搜索/消融支持保留有限的迁移贡献，但不支持相对r5涨点、门控优势、普适稳定收益或速度优势。方法主张、检索依据、原始结果抽核和HCS的seed依赖统一见该冻结记录，不另设训练门。
 
-后续加性版和残差版证据分别归各自方法，不补强初版贡献。最终比较准备位于 `runs/20261002_residual_io_backbone/analysis/backbone_completion_readiness.json`；它只汇总已完成study的原始评测，残差版未齐全的三seed均值留空。当前等待既定残差搜索跑满后，按用户“优先novel且涨点，否则保留有证据novelty”的授权完成最终取舍；初版没有追加待运行诊断，新增VLM调用仍为0，不宣称新视频端到端成本为0。
+后续加性版和残差版证据分别归各自方法，不补强初版贡献。最终完整比较位于 `runs/20261002_residual_io_backbone/analysis/backbone_completion_readiness.json`，全部版本的两主数据三seed均已齐全。既定残差搜索现已跑满，最终取舍见第14节；初版没有追加待运行诊断，新增VLM调用仍为0，不宣称新视频端到端成本为0。
+
+
+## 14. 本轮backbone novelty迭代收尾
+
+2026-10-02，初版、加性统计量修订版、保留CMA的残差修订版均已完成两主数据各三seed的全部独立Optuna预算与各自结构诊断。两轮修订没有在固定8次使两主数据主指标均值超过r5，也没有保留两语料共同成立的核心机制贡献；跨版本完整比较和原始来源在 `runs/20261002_residual_io_backbone/analysis/backbone_completion_readiness.json`，最后一版完整结果见[残差版归档README第14节](../../archive/experiments/20261002_residual_io_backbone/README.md)。
+
+按用户“优先novel且涨点，充分尝试仍无提升则保留有证据novelty”的授权，**本轮保留初版inside–outside骨干，结束自动backbone迭代**。该选择以本版自己的两语料outside消融及[独立novelty复查](../../docs/reviews/20261002_inside_outside_backbone_novelty_recheck.md)为依据；初版性能及r5代价见第12节，不声称涨点、门控优势或世界首次。加性版与残差版归档，r5保留为性能参照，不做版本ensemble或按语料选择骨干。
+
+可运行实现仍为本目录 `backbone.py`、`train.py` 与 `launch/`，共享训练/推断基础设施仍在 `src/qtl/`；同一架构用于HateMM/HateClipSeg。新增VLM调用及特征抽取为0，已有新视频输入处理和提问成本仍存在，不做未经测量的速度主张。当前窄迁移贡献无需再补实验；已授权搜索全部完成，无待运行项。关闭本轮heartbeat，独立run monitor均已完成通知后退出；Pursuing goal保持paused，不创建或恢复Goal。本结论是backbone本轮收尾，不宣称其余模块或整篇论文所有验证已完成。

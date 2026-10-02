@@ -1,6 +1,8 @@
+> 已归档：完整三seed搜索未超过r5，且自身核心机制未满足两语料共同贡献要求；原始runs保留。归档只调整入口路径，历史启动记录保持原样。
+
 # Backbone 第二次修订：保留跨模态编码的区间内外残差
 
-截至2026-10-02 15:24 NZDT；状态：[一次独立proposal review：GO](../../docs/reviews/20261002_residual_io_backbone_proposal.md)，[一次独立code review：PASS](../../docs/reviews/20261002_residual_io_backbone_code.md)。HCS三seed各20×50完整搜索已全部核验回传，固定8次三主指标均值仍低于r5；HateMM seed234完整，其余两seed继续完整20-trial预算。两主数据full/nooutside/noresidual各三seed诊断全部完成，outside只在HateMM达到贡献要求、HCS未达到，整体残差两语料均未达到。Pursuing Goal保持paused，已有heartbeat与独立run monitor继续接续。
+截至2026-10-02 17:28 NZDT；状态：两主数据各三seed×20 trial×50 epoch及自身full/nooutside/noresidual三seed诊断全部结束、回传核验。固定8次两语料三主指标均值都低于r5；outside仅在HateMM达到贡献要求，整体残差两语料均未达到。[proposal GO](../../../docs/reviews/20261002_residual_io_backbone_proposal.md) / [code PASS](../../../docs/reviews/20261002_residual_io_backbone_code.md)表示实现评审通过，不代替负面的最终实验结论。残差版不保留为最终novelty骨干，归档并保留全部原始runs；最终保留有自身两语料贡献证据及独立复查支持的初版。
 
 ## 1. 已观察的问题与修订假设
 
@@ -294,3 +296,34 @@ HCS完整三seed性能不会改变本版本的固定配置机制结论：自身�
 原始本机权威路径 `runs/20261002_residual_io_backbone/hateclipseg/seed<seed>/trial<k>/metrics_test_fixed<次数>.json`；按seed234/2025/3407，test选trial19/2/19，validation选trial16/2/9。新增seed全量审计 `analysis/hateclipseg_seed2025_search.json`，完整三seed及r5/初版/加性版同预算对比 `analysis/hateclipseg_three_seed_search.json`，跨方法最终比较准备 `analysis/backbone_completion_readiness.json`（均为本版本机runs下；HateMM残差三seed均值仍留空）。
 
 进程检查 `setup/hcs_seed2025_completion_probe.json`；HCS2025 monitor 210049于15:18:41成功通知后退出。15:19 HateMM两搜索各8/20 COMPLETE、当前trial8 epoch21；15:22核验两monitor存活、最新RUNNING且身份/主机/会话绑定正确，heartbeat存活，见 `setup/hcs_three_seed_monitor_health.json`。此时lab3已用17135MiB、空闲14955MiB、利用率89%；所有就绪任务均已运行，无待启动诊断。Goal保持paused，剩余任务由各自完成事件接续。
+
+
+## 14. HateMM三seed完整结果、两语料汇总与归档
+
+2026-10-02，uoa-lab3 / sc474398的HateMM seed3407于17:20:29、seed2025于17:20:30正常结束。真实主进程及全部同会话非僵尸子进程退出，输出已完整回传本机；新增两study各20/20 COMPLETE、每trial50 epoch、实际validation checkpoint、锁定配置/SQLite参数目标和各260份统一test评测核验通过，每份214视频/29269秒，缺失/额外视频均0。首trial1061.93/1059.48秒分别锁定20，平均trial806.11/806.05秒。早期最优checkpoint不等于提前终止训练。
+
+至此本版两主数据各三seed独立完整搜索全部齐全，共120 trial、1560份统一test评测；另两语料各三组固定配置诊断共234份评测，单独用于机制判断。以下AP / ROC / within，标准差为总体seed标准差。test目标选择trial、validation选择checkpoint；固定配置诊断没有进入Optuna三seed均值。
+
+| HateMM seed | test选trial / epoch | 固定0次 | 固定8次 | 固定32次（附加） | validation选trial / epoch | 对应固定8次test |
+|---|---|---|---|---|---|---|
+| 234 | 10 / 3 | 0.536213 / 0.766454 / 0.745240 | 0.674695 / 0.877526 / 0.747603 | 0.666814 / 0.868253 / 0.743581 | 5 / 42 | 0.584880 / 0.852691 / 0.760229 |
+| 2025 | 11 / 2 | 0.572970 / 0.785844 / 0.723892 | 0.681130 / 0.874636 / 0.780143 | 0.694351 / 0.881123 / 0.774860 | 9 / 3 | 0.658900 / 0.848563 / 0.743577 |
+| 3407 | 15 / 1 | 0.535713 / 0.770417 / 0.732953 | 0.685121 / 0.874886 / 0.761032 | 0.691452 / 0.872845 / 0.768399 | 16 / 28 | 0.586651 / 0.865912 / 0.743765 |
+
+| 语料 / 选择方式 | 固定0次均值±标准差 | 固定8次均值±标准差 | 固定32次均值±标准差（附加） |
+|---|---|---|---|
+| HateMM / test选trial | 0.548299±0.017447 / 0.774238±0.008364 / 0.734028±0.008749 | 0.680315±0.004295 / 0.875683±0.001307 / 0.762926±0.013352 | 0.684206±0.012355 / 0.874073±0.005326 / 0.762280±0.013483 |
+| HateMM / validation选trial | 0.565343±0.011751 / 0.803307±0.011005 / 0.731933±0.023281 | 0.610144±0.034483 / 0.855722±0.007400 / 0.749190±0.007806 | 0.638087±0.033884 / 0.872086±0.002253 / 0.757327±0.008204 |
+| HateClipSeg / test选trial | 0.655020±0.013074 / 0.645167±0.017515 / 0.526429±0.022377 | 0.679954±0.005602 / 0.672929±0.002589 / 0.547479±0.016958 | 0.695600±0.004664 / 0.674754±0.003742 / 0.611792±0.014031 |
+| HateClipSeg / validation选trial | 0.616991±0.068182 / 0.596373±0.071747 / 0.533686±0.025139 | 0.656493±0.024220 / 0.628403±0.034775 / 0.549688±0.015010 | 0.680271±0.012190 / 0.654980±0.018814 / 0.572809±0.031197 |
+
+| 语料 | 固定8次相对r5的三项均值变化 | 仅validation选trial的8次相对r5变化 |
+|---|---|---|
+| HateMM | -0.010556 / -0.009174 / -0.009989 | -0.055617 / -0.012764 / +0.006077 |
+| HateClipSeg | -0.006501 / -0.000796 / -0.012747 | -0.023154 / -0.021592 / -0.018134 |
+
+最终判断：固定8次两语料的AP/ROC/within均值均低于r5；HCS ROC近乎持平，不据此宣称显著下降或收益。HateMM32次AP比r5高.002265，但ROC/within下降，不能改用32次替换主操作点。相对初版有部分指标恢复，却不能补足本版自己的机制证据：outside仅在HateMM达到平均AP贡献要求，HCS未达到；整体残差两语料均未达到。残差版既没有实现相对r5涨点，也不满足两语料共同核心贡献要求，故归档。不把初版的消融或独立novelty复查移植成本版证据。
+
+本机原始来源 `runs/20261002_residual_io_backbone/<corpus>/seed<seed>/trial<k>/metrics_test_fixed<次数>.json`。按seed234/2025/3407，HateMM test选trial10/11/15、validation选5/9/16；HCS为19/2/19、16/2/9。新增全量审计 `analysis/hatemm_seed{2025,3407}_search.json`；两语料各三seed审计 `analysis/{hatemm,hateclipseg}_three_seed_search.json`；总汇总 `analysis/two_corpus_three_seed_search.json`；自身机制证据见 `analysis/two_corpus_{outside,residual}_diagnosis.json`。所有analysis均在本版本机runs下。跨版本全部已完成结果统一入口 `analysis/backbone_completion_readiness.json`，未加入新训练或新VLM抽取。
+
+17:25最终核验本版12个搜索/诊断owner及全部同会话进程均结束，各自monitor已成功通知退出，记录 `setup/final_process_closure.json`。归档只调整原型位置、共享src定位和启动路径，模型数学行为、训练协议、数据和评测器不变，原始输出路径全部保留。后续迟到完成通知只核对本记录，不重新启动任务。
