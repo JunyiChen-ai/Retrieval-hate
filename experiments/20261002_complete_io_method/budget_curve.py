@@ -66,7 +66,8 @@ def curve_for_trial(corpus, trial_dir, out_dir, labels, ids, gt):
                "mean_calls_positive": float(np.mean([calls[v] for v in calls if labels[v] == 1])),
                "mean_calls_negative": float(np.mean([calls[v] for v in calls if labels[v] == 0]))}
         if kind == "auto":
-            row.update(threshold=cal[0], validation_mean_calls=cal[1])
+            # inf is a valid threshold (only the undefined-statistic first call is asked); JSON needs a string.
+            row.update(threshold=cal[0] if math.isfinite(cal[0]) else str(cal[0]), validation_mean_calls=cal[1])
         if (kind, budget) in (("fixed", 0), ("fixed", 8), ("fixed", 32), ("auto", 8)):
             name0 = RULE if kind == "auto" else f"fixed{budget}"
             assert values == summary["results"][name0]["ap_roc_within"]
