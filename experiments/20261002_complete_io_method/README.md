@@ -1,6 +1,6 @@
 # 最新完整组合：inside–outside + 复制似然 + 自动停止
 
-截至2026-10-02；用户指令：**“三个数据集上跑一遍最新完整的给我汇报”**。三语料为HateMM、HateClipSeg和DeHate；前两者是主数据，DeHate保持external validation。实现接入完成，[一次独立集成code review：PASS](../../docs/reviews/20261002_complete_io_method_code.md)；已同步并通过远端完整输入核验，两主数据完整重评结束，DeHate三seed正式训练中。Pursuing Goal保持paused。
+截至2026-10-31；用户指令：**“三个数据集上跑一遍最新完整的给我汇报”**。三语料为HateMM、HateClipSeg和DeHate；前两者是主数据，DeHate保持external validation。实现接入完成，[一次独立集成code review：PASS](../../docs/reviews/20261002_complete_io_method_code.md)；已同步并通过远端完整输入核验。**三语料全部完成**：两主数据完整重评10-02结束，DeHate三seed完整搜索→完整组合评估10-03结束，10-31回传本机并审计通过（第7节）。Pursuing Goal保持paused。
 
 ## 1. 固定方法与本次范围
 
@@ -49,7 +49,7 @@
 
 ## 5. 当前进度
 
-独立集成code review已PASS；原共享函数实现等价性已核对，12个既定checkpoint严格加载和三语料split/时间网格检查通过。三机已同步，正式owner全输入finite/shape检查均通过；实际主机/PID/monitor及最新状态只在 `research-wiki/STATUS.md` 维护。没有改变研究规则、已归档实验结论或无关tandem.html。
+独立集成code review已PASS；原共享函数实现等价性已核对，12个既定checkpoint严格加载和三语料split/时间网格检查通过。三机已同步，正式owner全输入finite/shape检查均通过；三语料运行全部结束（第6、7节）。没有改变研究规则、已归档实验结论或无关tandem.html。
 
 
 ## 6. 两主数据完整组合结果（2026-10-02）
@@ -82,4 +82,34 @@ AP / ROC / within，三seed均值±总体标准差；开发期原test目标选tr
 
 本机原始路径 `runs/20261002_complete_io_method/<corpus>/integrated/results/seed<seed>_trial<k>/metrics_test_{fixed0,fixed8,fixed32,qmixSG_rt10}.json`，停止校准与逐视频调用数在同目录calibration/summary。逐seed、总体与配对标准差、旧r5原始来源在 `analysis/{hatemm,hateclipseg}_complete_method.json`；汇总 `analysis/main_corpora_complete_method.json`。所有analysis位于本轮runs根。HateMM test/validation trial为17/11/11与10/2/9，HCS为11/2/10与6/17/1（seed234/2025/3407）。
 
-DeHate三seed分别在lab3/lab1/lab3运行完整训练→评估链；首trial实测2627/1821/2651秒，均≤1小时，各自已锁定20-trial完整预算（原始 `dehate/seed<seed>/budget.json`）。搜索尚未完成，不填完整组合三seed均值。两主数据负结果不影响已授权完整预算，不启动新候选。各owner/monitor和新任务heartbeat见STATUS，旧已关闭heartbeat不恢复，Goal保持paused。
+DeHate三seed分别在lab3/lab1/lab3运行完整训练→评估链；首trial实测2627/1821/2651秒，均≤1小时，各自已锁定20-trial完整预算（原始 `dehate/seed<seed>/budget.json`）。结果见第7节。
+
+## 7. DeHate完整组合结果（2026-10-03完成，10-31回传审计）
+
+seed2025（lab1）04:41、seed234/3407（lab3）09:17/09:18结束，`completion.json` 均为success；10-31检查两机已无本项目进程。三study各20/20 trial COMPLETE、每trial 50 epoch与13份训练阶段统一评测齐全，无失败trial。全部回传本机 `runs/20261002_complete_io_method/dehate/seed<seed>/`。
+
+审计 `audit_dehate.py`：DeHate cohort（split/GT/特征）只在远端，故按seed在结果所在主机运行（`--seeds`），本机 `--merge` 合并。核对项：主机与完成标记；test/validation选trial由study内各trial属性重新推出，与 `selection.json` 一致；checkpoint epoch；复制概率只用训练负例、分位参考只用validation；按runs.pkl重算qmixSG_rt10阈值、validation平均调用与逐视频调用数，完全一致；四种设置写出分数等于因果前缀（6位小数）；24份统一评测覆盖1151视频/110839秒、无缺失。test-selected trial为5/12/14、validation-selected为4/11/8（seed234/2025/3407），选中epoch分别46/47/45与1/11/15。
+
+AP / ROC / within，三seed均值±总体标准差；开发期test目标选trial：
+
+| 设置 | AP / ROC / within | 平均调用 |
+|---|---|---|
+| 0次 | 0.188340±0.007451 / 0.702571±0.010153 / 0.668309±0.005206 | 0.0000 |
+| 同复制设置固定8次 | 0.217502±0.007884 / 0.763608±0.005315 / 0.679874±0.008689 | 7.2641 |
+| 完整组合自动停止 | 0.219813±0.010473 / 0.761690±0.005629 / 0.682276±0.009662 | 7.9334 |
+| 32次（附加） | 0.221194±0.013956 / 0.767275±0.000652 / 0.708132±0.004667 | 21.9600 |
+
+自动减同复制固定8次的逐seed配对均值±总体标准差：**+.002311±.003583 / −.001919±.000723 / +.002402±.004429**；ROC三个seed都小幅下降。固定8次因短视频节点不足实际7.2641次，自动停止7.9334次反而更多。
+
+仅validation选trial：自动停止 0.205808±0.019643 / 0.750641±0.010609 / 0.641601±0.035813，7.9334→8.0269次；对同设置固定8次配对 +.011085 / +.002085 / +.001958。
+
+相对旧r5同copy_neg+qmixSG_rt10（seed234/2025/3407 trial8/4/4，`runs/20260929_query_paradigm_r5/stop_check/dehate/seed<seed>_trial<k>_r5rt/metrics_test_qmixSG_rt108.json`，均值0.254707/0.774281/0.672135），主选择三项变化 **−.034894 / −.012592 / +.010141**。
+
+完整审计与逐seed/配对/选择记录 `runs/20261002_complete_io_method/analysis/dehate_complete_method.json`，两机原始审计输出 `analysis/dehate_audit_partial_{2025,234_3407}.json`。
+
+## 8. 三语料结论
+
+- 自动停止在三语料都没有减少调用：HateMM 7.63→7.86、HCS 8.00→7.98、DeHate 7.26→7.93。
+- 对同复制设置固定8次：HateMM与DeHate三项变化均在±.003内；HCS三项下降.007–.009。
+- 对旧r5同复制/停止设置：三语料AP均下降（−.023/−.030/−.035），ROC均下降（−.012/−.054/−.013）；within HateMM/HCS下降、DeHate上升.010。
+- 结论：新inside–outside骨干接入复制+停止后，没有显示省调用或相对r5涨点。本轮按用户指令只做三数据评估，不自动扩展新候选或修改停止配置。
