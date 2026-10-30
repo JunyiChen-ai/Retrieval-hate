@@ -17,7 +17,7 @@
 
 ## 环境
 
-- 单机 RTX 5090,无 SLURM,直接在终端跑;conda 环境 `HateVideo`。
+- 单机 RTX 5090;conda 环境 `HateVideo`。**2026-10-03 起本机与 uoa-lab1/lab3/lab-server 的 GPU 只能经 Slurm 使用**(登录会话被 `/etc/systemd/system/user.slice.d/50-slurm-gpu-only.conf` 禁止访问 GPU,`nvidia-smi` 报 `Failed to initialize NVML: Unknown Error`)。用法见下文“lab 机 Slurm”。
 - 原始视频在 `~/data/`(HateMM、Multihateclip、HateClipSeg),仓库内 `data/` 存派生缓存。
 - 长任务必须与 SSH 会话解耦:`nohup`/`setsid` 后台运行,日志与 PID 写进该 run 的输出目录(见下),随时可 `tail -f` 查进度。
 

@@ -23,6 +23,8 @@ def main():
     ap.add_argument("--out-root", default="runs/20261002_complete_io_method")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--threads", type=int, default=2)
+    ap.add_argument("--all-trials", action="store_true",
+                    help="Evaluate all trials with validation metrics per setting (no training)")
     a = ap.parse_args()
     os.chdir(ROOT)
     out_root = Path(a.out_root).resolve()
@@ -64,7 +66,8 @@ def main():
                 studies = [Path(a.source_root).resolve() / a.corpus / f"seed{s}" for s in seeds]
             call([sys.executable, str(EXPERIMENT / "evaluate.py"), "--corpus", a.corpus,
                   "--studies", *map(str, studies), "--out-dir", str(run / "results"),
-                  "--device", a.device, "--threads", str(a.threads)])
+                  "--device", a.device, "--threads", str(a.threads)]
+                 + (["--all-trials", "--with-val"] if a.all_trials else []))
             report = json.loads((run / "results/summary.json").read_text())
             result.update(status="success", evaluation_summary=str(run / "results/summary.json"),
                           evaluated_trials=len(report["trials"]), studies=list(map(str, studies)))

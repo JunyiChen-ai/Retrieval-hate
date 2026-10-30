@@ -33,7 +33,7 @@ def write_json(path, value):
     Path(path).write_text(json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False) + "\n")
 
 
-def selected_trials(studies):
+def selected_trials(studies, all_trials=False):
     selected = {}
     for study in studies:
         study = Path(study).resolve()
@@ -47,6 +47,11 @@ def selected_trials(studies):
             s = json.loads((study / f'trial{trial["number"]}' / "summary.json").read_text())
             assert s["cfg"]["max_epoch"] == 50
             assert [r["epoch"] for r in s["history"]] == list(range(1, 51))
+            if all_trials:
+                # Every trial of the frozen study, so each setting can select its own trial afterwards.
+                selected[str(study / f'trial{trial["number"]}')] = {
+                    "seed": report["seed"], "study": str(study), "selections": [],
+                    "trial": trial["number"], "source_budget": budget}
         for selection, key in (("test_selected", "best"), ("validation_selected", "validation_selected")):
             trial = study / f'trial{report[key]["number"]}'
             row = selected.setdefault(str(trial), {
@@ -63,12 +68,15 @@ def main():
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--threads", type=int, default=2)
+    ap.add_argument("--all-trials", action="store_true", help="Evaluate every trial, not only the two selected ones")
+    ap.add_argument("--with-val", action="store_true",
+                    help="Also write validation scores/metrics per setting (for per-setting validation selection)")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     out = Path(a.out_dir).resolve()
     out.mkdir(parents=True, exist_ok=True)
     assert not (out / "summary.json").exists(), "Completed evaluation exists; inspect instead of overwriting"
-    manifest = selected_trials(a.studies)
+    manifest = selected_trials(a.studies, a.all_trials)
     write_json(out / "selection.json", manifest)
     print(f"host {socket.gethostname()} | {datetime.now().astimezone().isoformat()} | {a.corpus}", flush=True)
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
@@ -82,7 +90,9 @@ def main():
     report = {"host": socket.gethostname(), "corpus": a.corpus, "method": "initial_inside_outside+copy_neg_both+qmixSG_rt10",
               "rule": RULE, "threshold_target_validation_mean_calls": 8, "max_calls": 32,
               "copy_fit_split": "negative videos from train", "quantile_reference_split": "val",
-              "selection_protocol": "Frozen winners of complete fixed8 no-copy training studies; no integrated-result reselection",
+              "selection_protocol": ("All trials of the frozen studies; per-setting selection is done afterwards"
+                                     if a.all_trials else
+                                     "Frozen winners of complete fixed8 no-copy training studies; no integrated-result reselection"),
               "trials": {}, "started_at": datetime.now().astimezone().isoformat()}
     for trial, selection in manifest.items():
         started = time.time()
@@ -134,25 +144,30 @@ def main():
                      "source_ids": [v for v in ids["train"] if labels[v] == 0]}})
         row = {**selection, "source_trial": trial, "checkpoint_epoch": summary["best_epoch"],
                "output": str(dest), "validation_mean_calls": float(val_mean), "results": {}}
-        for name in [f"fixed{b}" for b in FIXED] + [RULE]:
-            calls = {v: (min(int(name[5:]), len(r["eig"])) if name.startswith("fixed")
-                         else policy.stop_calls(vals["test"][v][RULE], threshold)) for v, r in runs["test"].items()}
-            scores = {v: runs["test"][v]["scores"][calls[v]] for v in ids["test"]}
-            sp, mp = dest / f"scores_test_{name}.jsonl", dest / f"metrics_test_{name}.json"
-            hc.write_scores(str(sp), scores)
-            metric = hc.run_evaluator(a.corpus, "test", str(sp), str(mp))
-            r = metric["results"]["score_av"]
-            values = [r["pr_auc"], r["roc_auc"], r["per_video"]["macro_auc"]]
-            assert r["n_videos_missing_from_scores"] == 0 and r["n_videos_not_in_gold"] == 0
-            assert r["n_videos"] == len(ids["test"])
-            assert r["n_frames"] == sum(len(gt["test"][v]) for v in ids["test"])
-            assert all(math.isfinite(x) for x in values)
-            counts = np.asarray(list(calls.values()))
-            row["results"][name] = {"metric_source": str(mp), "ap_roc_within": values,
-                "mean_calls": float(counts.mean()), "calls_per_video": calls,
-                "calls_quantiles": np.percentile(counts, [0, 25, 50, 75, 100]).tolist(),
-                "mean_calls_positive": float(np.mean([calls[v] for v in calls if labels[v] == 1])),
-                "mean_calls_negative": float(np.mean([calls[v] for v in calls if labels[v] == 0]))}
+        if a.with_val:
+            row["val_results"] = {}
+        for split, key in (("test", "results"), ("val", "val_results"))[:2 if a.with_val else 1]:
+            for name in [f"fixed{b}" for b in FIXED] + [RULE]:
+                calls = {v: (min(int(name[5:]), len(r["eig"])) if name.startswith("fixed")
+                             else policy.stop_calls(vals[split][v][RULE], threshold)) for v, r in runs[split].items()}
+                scores = {v: runs[split][v]["scores"][calls[v]] for v in ids[split]}
+                sp, mp = dest / f"scores_{split}_{name}.jsonl", dest / f"metrics_{split}_{name}.json"
+                hc.write_scores(str(sp), scores)
+                metric = hc.run_evaluator(a.corpus, split, str(sp), str(mp))
+                r = metric["results"]["score_av"]
+                values = [r["pr_auc"], r["roc_auc"], r["per_video"]["macro_auc"]]
+                assert r["n_videos_missing_from_scores"] == 0 and r["n_videos_not_in_gold"] == 0
+                assert r["n_videos"] == len(ids[split])
+                assert r["n_frames"] == sum(len(gt[split][v]) for v in ids[split])
+                assert all(math.isfinite(x) for x in values)
+                counts = np.asarray(list(calls.values()))
+                row[key][name] = {"metric_source": str(mp), "ap_roc_within": values,
+                    "mean_calls": float(counts.mean()), "calls_per_video": calls,
+                    "calls_quantiles": np.percentile(counts, [0, 25, 50, 75, 100]).tolist(),
+                    "mean_calls_positive": float(np.mean([calls[v] for v in calls if labels[v] == 1])),
+                    "mean_calls_negative": float(np.mean([calls[v] for v in calls if labels[v] == 0]))}
+        if a.with_val:
+            assert row["val_results"][RULE]["mean_calls"] == val_mean
         row["seconds"] = time.time() - started
         write_json(dest / "summary.json", row)
         report["trials"][trial] = row

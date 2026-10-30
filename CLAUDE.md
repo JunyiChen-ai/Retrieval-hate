@@ -10,7 +10,7 @@
 **当前状态唯一入口:`research-wiki/STATUS.md`**(最新代码在哪、权威数字在哪、做到哪了)。每轮迭代结束必须更新它。
 
 ## 环境
-- 单机 RTX 5090,无 SLURM,直接在终端跑;conda 环境 `HateVideo`。
+- 单机 RTX 5090;conda 环境 `HateVideo`。**2026-10-03 起本机与 uoa-lab1/lab3/lab-server 的 GPU 只能经 Slurm 使用**(登录会话被 `/etc/systemd/system/user.slice.d/50-slurm-gpu-only.conf` 禁止访问 GPU,`nvidia-smi` 报 `Failed to initialize NVML: Unknown Error`)。用法见下文“lab 机 Slurm”。
 - 原始视频在 `~/data/`(HateMM、Multihateclip、HateClipSeg),仓库内 `data/` 存派生缓存。
 - 长任务必须与 SSH 会话解耦:`nohup`/`setsid` 后台运行,日志与 PID 写进该 run 的输出目录(见下),随时可 `tail -f` 查进度。
 
@@ -23,6 +23,13 @@
 | `uoa-lab3` | sc474398 | RTX 5090 空闲。空机：无仓库、无数据、无 conda/torch、无 rclone；空盘 1.7T。 |
 | `lab-server` | sc448960，账号 `junyi`（用户本人账号） | RTX 5090，当前被用户 `ling` 的进程占 19G/88%，需先看空闲。有 miniconda（HVGuard 等旧环境，无 `HateVideo`）、rclone `b2` 与 `gdrive` 已配；无本项目仓库与数据；空盘 941G。 |
 | `uoa-campus1/2/3` | foscsmlprd01/02/03 | 8×A100 / 7×A100 / 7×H200，**Slurm 集群**（2026-09-25 补）。只能 token 登录，自动化靠 ControlMaster（socket 断了请用户 `! ssh uoa-campusN true` 登录一次）；`$HOME` = `/data/jehc223/home`，仓库 `~/Retrieval-hate`。**登录节点不跑 python**，只用 `sbatch`（sbatch 文件进 git，`--gres=gpu:1 --cpus-per-task=8 --mem=64G`，不 chain job）；三台合计最多 2 个 job。2026-09-25 实测：新提交的 job 显示"pending administrator approval"，不能立即运行。campus3 有 conda 环境 `vlm`（vLLM 0.11 + transformers 4.57.1）。 |
+
+### lab 机 Slurm（2026-10-31 核查）
+- 分区按机器一一对应:`local-sc474399`(本机 uoa-lab2)、`local-sc474397`(uoa-lab1)、`local-sc474398`(uoa-lab3)、`local-sc448960`(lab-server,与他人共用)、`pilot`(sc448961)。每节点 1×RTX 5090、16 CPU、56000M 内存,单 job 最长 1 天。
+- 账号 `qian_users`,QoS `gpu2`:同一用户同时最多 2 块 GPU。
+- **在目标机器上提交**(`ssh <别名> 'cd ~/Retrieval-hate && sbatch -p <该机分区> ...'`)。从本机 `srun` 到别的节点会报 `Communication connection failure`。
+- sbatch 文件进 git(`experiments/<id>/launch/`),`--gres=gpu:1`;日志 `--output` 写进 `runs/<exp_id>/`。不需要 GPU 的 CPU 分析仍可直接 ssh 运行。
+- 选机规则第 1 条的占用判断改看 `squeue`/`sinfo`(节点 idle 即可用),不再用登录会话里的 `nvidia-smi`。
 
 ### 选机规则
 1. 本机 GPU 可用（`nvidia-smi` 显示占用 < 50% 且空闲显存 ≥ 16G）时一律在本机跑。
