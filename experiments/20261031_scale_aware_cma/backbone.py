@@ -32,6 +32,24 @@ def scale_buckets(T, device):
     return torch.where(d > 0, (k + 1).clamp(max=N_SCALE - 1), torch.zeros_like(d))
 
 
+class _BucketBias(torch.autograd.Function):
+    """table[:, buckets] with the table gradient computed as a dense (heads x T*T) by (T*T x scales) product.
+    Same forward values as the index lookup; the lookup's own backward is an index scatter-add of 4*T*T values into 44
+    slots, which is slow on GPU for long videos (README section 6, run-time note)."""
+
+    @staticmethod
+    def forward(ctx, table, buckets):
+        ctx.save_for_backward(buckets)
+        ctx.n_scale = table.size(1)
+        return table[:, buckets]
+
+    @staticmethod
+    def backward(ctx, grad):
+        buckets, = ctx.saved_tensors
+        onehot = F.one_hot(buckets.reshape(-1), ctx.n_scale).to(grad.dtype)        # (T*T, K)
+        return torch.matmul(grad.reshape(grad.size(0), -1), onehot), None
+
+
 class ScaleBiasAttention(MultiHeadAttention):
     def __init__(self, nhead, hid, learn=True, dropout=0.1):
         super().__init__(nhead, hid, dropout)
@@ -52,7 +70,7 @@ class ScaleBiasAttention(MultiHeadAttention):
         sp = lambda lin, x: lin(x).view(B, -1, self.h, self.d_k).transpose(1, 2)  # noqa: E731
         q, k, v = sp(self.lin_q, q), sp(self.lin_k, k), sp(self.lin_v, v)
         scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k)
-        scores = scores + self.scale_bias[:, self.buckets(T, scores.device)][None]
+        scores = scores + _BucketBias.apply(self.scale_bias, self.buckets(T, scores.device))[None]
         if key_mask is not None:
             scores = scores.masked_fill(~key_mask[:, None, None, :], -1e9)
         p = self.dropout(F.softmax(scores, dim=-1))

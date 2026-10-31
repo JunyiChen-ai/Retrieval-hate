@@ -97,3 +97,16 @@ video head. Whether it also helps the HateClipSeg video-level gap is an open que
   - r5 reference: about 740 s per HateMM trial and 300-1200 s per HateClipSeg trial (with contention).
   - The added cost is one T x T bias gather per attention call.
 - Output: `runs/20261031_scale_aware_cma/<corpus>/seed<seed>/`.
+
+## 6. Run-time note (2026-10-31)
+
+- Seed-234 HateMM trial 0 took 2169 s on uoa-lab3. The r5 trial with the same hyperparameters took 741 s.
+  HateClipSeg (short videos) took about 153 s per trial.
+- Suspected cause: autograd's backward of the index lookup `table[:, buckets]` scatter-adds 4 x T x T values into 44
+  slots per attention call. HateMM batches reach T of several hundred seconds.
+- From seeds 2025 and 3407 on, the table gradient is computed as a dense product (`_BucketBias` in `backbone.py`):
+  - the forward values are identical (same lookup);
+  - the gradient equals the lookup's gradient up to float summation order (equal in a float64 CPU check).
+  Seed-234 trials used the lookup's own backward. The mathematics of the method is unchanged.
+- GPU timing and equality check: `bench_bias.py` (`launch/sbatch_bench.sh`), output
+  `runs/20261031_scale_aware_cma/bench_bias_<job>.out`.
