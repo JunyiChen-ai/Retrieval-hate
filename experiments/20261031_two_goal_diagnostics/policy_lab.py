@@ -23,6 +23,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from qtl import cpolicy, data as qdata, policy
+from qtl.answer_calib import fit_validation_answer_model
 from qtl.checkpoint import load_trial
 from qtl.copy_noise import bucket_of, estimate_pi_neg
 from qtl.inside_outside import make_model
@@ -47,6 +48,9 @@ def main():
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--tag", required=True, help="Output subdirectory name, e.g. r5 or io")
+    ap.add_argument("--answer-model", choices=("train", "val3"), default="train",
+                    help="train = the checkpoint's anchored model; val3 = three-state length model fitted on "
+                         "validation span labels (src/qtl/answer_calib.py), used for selection and likelihood")
     ap.add_argument("--out-root", default="runs/20261031_two_goal_diagnostics/policy_lab")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
@@ -64,7 +68,12 @@ def main():
         pi, *_ = estimate_pi_neg(answers, labels, ids["train"], answer_T, am, cfg["categories"])
         copy_fn = lambda length, p=pi: float(p[bucket_of(length)])  # noqa: E731
         name = f'seed{summary["seed"]}_{trial.name}'
-        report["trials"][name] = {"source": str(trial), "orders": {}}
+        report["trials"][name] = {"source": str(trial), "orders": {}, "answer_model": a.answer_model}
+        if a.answer_model == "val3":
+            am, counts = fit_validation_answer_model(answers, labels, gt["val"], ids["val"], store.T, am.len_mu,
+                                                     am.len_sd, cfg["categories"])
+            am = am.to(a.device)
+            report["trials"][name]["val3_state_counts"] = counts
         for order in a.orders:
             runs = {}
             for split in ("val", "test"):
