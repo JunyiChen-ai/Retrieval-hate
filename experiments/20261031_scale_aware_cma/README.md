@@ -1,6 +1,6 @@
 # Backbone candidate: scale-aware cross-modal attention
 
-Status (2026-10-31): proposal, waiting for the rule-4 review. Part of the user's two-goal autonomous iteration
+Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); implemented, waiting for the rule-6 code review. Part of the user's two-goal autonomous iteration
 (2026-10-31). Goal 2 asks for the project's own backbone to reach r5's 3-seed AP and ROC on both main corpora at
 fixed 8 calls. r5: HateMM .6909 / .8849, HateClipSeg .6865 / .6737.
 
@@ -35,7 +35,7 @@ therefore permutation-equivariant in time:
   attended seconds are its neighbours or the far end of the video.
 - The encoder cannot use temporal neighbourhood, even though hate in these corpora comes in contiguous runs and
   speech and visuals that belong together are close in time.
-- The only temporal structure is added afterwards by the chain prior.
+- Temporal structure enters only downstream of the encoder, through the chain prior and the node prior's interval pooling along the tree. MACIL-SD's released code has an unused hard local-window option (`masksize`, default off), a different mechanism (a single hard cut-off, not learned).
 
 This is the specific weakness this candidate addresses, without removing what r5 does well: global cross-modal
 retrieval and attention-pooled video head.
@@ -49,8 +49,8 @@ chain, node prior, losses, EIG policy, evaluation.
   additive learned bias `b[h, k(|t - t'|)]` per head h.
   - Scale bucket: `k(0) = 0` and `k(d) = min(1 + floor(log2 d), K - 1)` for d >= 1.
   - K = 11, so the buckets are distances 0, 1, 2-3, 4-7, ..., 256-511, and >= 512 seconds.
-  - The buckets are the dyadic scales of the question tree's nodes: a node at depth j spans about T / 2^j
-    seconds. The attention can therefore learn how much context to take from each scale, from the same second up
+  - The buckets approximate the dyadic scales of the question tree's nodes: a node at depth j spans floor or ceil of
+    T / 2^j seconds, so the scales match exactly only when T is a power of two. The attention can therefore learn how much context to take from each scale, from the same second up
     to the whole video.
 - **Shared across directions.** The bias table is shared by both directions (visual to audio+text and audio+text
   to visual), as the attention module itself already is.
