@@ -22,6 +22,8 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
 | `chain_lever.py` | Would a per-video chain transition help? r5 checkpoints at 0 calls with A fitted to each positive video's GT (ceiling) or predicted from content by ridge (fitted on validation positives). | `chain_lever/<corpus>.json` |
 | `feature_ceiling.py` | How much per-second hate information do the fixed features carry? Per-second classifiers fitted on validation per-second GT, test metrics. | `feature_ceiling/<corpus>.json` |
 | `weak_probe.py` | A linear per-second classifier from training video labels only, against r5 at 0 calls. | `weak_probe/<corpus>.json` |
+| `answer_quality.py` | How much localisation the VLM tree answers carry when every node is answered (node AUC, all-answers per-second score). | `answer_quality/<corpus>.json` |
+| `answer_probe.py` | A ridge per-second model fitted to the training answers alone (no GT), and (`--combine-r5`) combined with r5's 0-call scores. | `answer_probe/<corpus>{,_combined}.json` |
 
 ## Findings
 
@@ -113,3 +115,23 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
      calls vs learned .658 / .647 and .623 / .819; predicted from r5's representation or outputs by ridge,
      .657-.659 / .649-.652 and .611-.626 / .818-.825 (Spearman with the GT-fitted stay probabilities .05-.61). Not a
      usable lever with r5's representation.
+10. **The training answers do not teach the features more on HateClipSeg; on HateMM a linear path helps the video
+    level** (`answer_quality.py`, `answer_probe.py`; test, AP / ROC / within, 0 calls, no GT in training).
+
+    | | HateClipSeg | HateMM |
+    |---|---|---|
+    | r5 (3-seed mean) | .658 / .647 / .539 | .623 / .819 / .768 |
+    | every node answered, shortest node's p_yes per second (not reachable at test) | .682 / .656 / .615 | .589 / .789 / .652 |
+    | ridge on x_t + video mean + local means, fitted to the training answers | .641 / .623 / .542 | .646 / .818 / .663 |
+    | that ridge and r5, mean of standardised logits | .662 / .648 / .541 | .656 / .833 / .724 |
+
+    - Node AUC of p_yes for "the node contains hate" (test, nodes of positive videos): .68 HateClipSeg, .75 HateMM;
+      p_yes does not follow the node's hate share (Spearman -.10 / -.19 over hate nodes).
+    - HateClipSeg: the answers localise within videos (.615) better than r5's content model (.539), but the
+      features predict the answers poorly (validation Pearson .27-.28), so a model fitted to them stays below r5 and
+      adds nothing to r5 (+.004 / +.001). With finding 9: the per-second information is in the features (dense labels
+      reach .70 / .70), but neither the video labels nor the VLM answers carry it to a feature-based model.
+    - HateMM: a linear read-out of the raw features fitted to the answers ranks videos better than r5 (AP +.023 alone,
+      +.033 / +.014 combined with r5, within -.044 combined).
+    - Consequence for goal 2: on HateClipSeg no backbone trained on the present signals is expected to beat r5 by
+      more than noise; on HateMM there is room in the video level.
