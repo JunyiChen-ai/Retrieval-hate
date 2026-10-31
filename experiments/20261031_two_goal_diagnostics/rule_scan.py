@@ -102,6 +102,7 @@ def main():
                 per_trial.append(row)
                 print(tag, order, d.name, flush=True)
             report[f"{tag}/{order}"] = {k: np.mean([r[k] for r in per_trial], 0).tolist() for k in per_trial[0]}
+            report[f"{tag}/{order}/per_trial"] = per_trial
     out = ROOT / a.root / a.corpus / "rule_scan.json"
     out.write_text(json.dumps(report, indent=1) + "\n")
     print(out)

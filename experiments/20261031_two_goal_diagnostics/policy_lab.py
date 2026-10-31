@@ -41,7 +41,7 @@ def metrics(scores, gt, hate):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--corpus", choices=("hatemm", "hateclipseg"), required=True)
+    ap.add_argument("--corpus", choices=("hatemm", "hateclipseg", "dehate"), required=True)
     ap.add_argument("--trial-dirs", nargs="+", required=True)
     ap.add_argument("--orders", nargs="+", default=["eig", "eer"])
     ap.add_argument("--max-calls", type=int, default=16)
