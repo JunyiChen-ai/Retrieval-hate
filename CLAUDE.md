@@ -58,7 +58,9 @@
 - 检查：`bash scripts/check_layout.sh` 列出三台机器的 commit、脏文件数、`~` 下不该有的条目；每次开跑前和汇报前跑一次，输出有 STRAY 或 commit 不一致就先处理。
 
 ## 长任务监控（用户裁定 2026-09-06）
-- 监控一律用 harness 自带机制：等待单个事件用 Bash `run_in_background` 加 `until ... ; do sleep 60; done`（本机或经 `ssh <别名>`），任务结束自动收到通知；需要逐条事件用 Monitor 工具。
+- 监控一律用 harness 的 **Monitor 工具**（2026-10-31 用户裁定，取代原"单个事件用 Bash `run_in_background` + `until` 循环"）：用 Monitor 跟踪日志与作业状态，每条完成或失败事件单独通知，例如 `ssh <别名> tail -F <日志> | grep --line-buffered -E 'DONE|Traceback|FAILED|Error'`，Slurm 作业另看 `sacct` 状态。不用 Bash 后台循环自己写结束条件。
+  - 原因：10-31 Bash 循环在远端用 `pgrep -f budget_curve.py` 判断进程，匹配到 ssh shell 自己的命令行，循环一直不退出，作业 08:50 结束后约 9 小时无通知。
+  - 判断进程是否存活用 run 目录的 pid 文件（`kill -0 $(cat run.pid)`），不用经 ssh 的 `pgrep -f <名字>`。
 - **不再手写监控脚本/线程**（`scripts/monitor_run.py`、`scripts/monitor_thread.py` 一类停止新用，不再新建 `runs/*/monitor/`、`thread_monitor` 目录）。训练进程本身仍按上文 `setsid nohup` 与 SSH 解耦，监控进程随会话生灭，不影响训练。
 - 监控命令必须同时匹配完成与失败（进程消失、`Traceback`、`FAILED`、DONE 标记），不能只等成功标记。
 
