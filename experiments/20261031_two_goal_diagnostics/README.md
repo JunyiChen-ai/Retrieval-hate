@@ -18,6 +18,7 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
 | `policy_lab.py` | Does question order matter? EIG vs expected squared-error reduction (EER, `cpolicy._expected_error_reduction`), with copy likelihood, fixed-k and stop rules. `--answer-model val3` uses the validation-fitted three-state answer model (`src/qtl/answer_calib.py`). | `policy_lab/<corpus>/<tag>/summary_<host>.json` |
 | `order_anatomy.py` | Which nodes each order asks, and where within ROC is gained or lost (by GT harm fraction tercile). | `policy_lab/order_anatomy.json` |
 | `rule_scan.py` | Every stopping rule of `qtl.stop_rules` (plus rules with the selection value as a component) at several target mean calls, on the stored policy runs; per trial. | `policy_lab/<corpus>/rule_scan*.json` |
+| `headroom.py` | Where r5's remaining pooled error is: oracle edits of r5's test scores (negatives zeroed, perfect within-video ranking, within-video shape removed) and the level / hate-fraction correlation. | `headroom/<corpus>.json` |
 
 ## Findings
 
