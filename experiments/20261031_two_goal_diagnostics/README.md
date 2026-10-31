@@ -65,3 +65,25 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
      no constant). Details and the per-setting table: `experiments/20261031_fewer_calls/README.md`.
    - The test choice among about 190 rules is selection on test; the extra trials, DeHate and inside-outside settings
      did not take part in the choice of the family.
+8. **Where r5's remaining pooled error is** (`headroom.py`, r5 test-selected trials, fixed 8, 3-seed means, AP / ROC;
+   output `runs/20261031_two_goal_diagnostics/headroom/{hatemm,hateclipseg}.json`).
+
+   | Edit of r5's test scores | HateClipSeg | HateMM |
+   |---|---|---|
+   | none (official) | .686 / .674 | .691 / .885 |
+   | each second = its video's mean score (no within-video shape) | .687 / .680 | .654 / .878 |
+   | perfect within-video ranking, same scores per video | .806 / .796 | .749 / .902 |
+   | negative videos set to 0 | .705 / .717 | .751 / .929 |
+
+   - HateClipSeg: r5's within-video shape adds nothing to pooled AP / ROC (removing it gives .687 / .680). Pooled
+     metrics there depend only on the per-video level. Test seconds: 9900 hate, 6626 non-hate in positive videos,
+     2313 in negative videos.
+   - The per-video level should rank positive videos by their hate fraction. The Spearman correlation between a
+     positive video's mean score and its GT hate fraction is .35 (HateClipSeg) and .36 (HateMM).
+   - Consequence for goal 2: a backbone that improves within-video ranking (the scale-aware candidate: HateClipSeg
+     within +.019) does not move HateClipSeg pooled metrics unless the within gain is large; the lever on both corpora
+     is the per-video level (hate fraction among positives, rejection of negatives).
+   - A subagent CPU analysis (scripts not committed, so not used as evidence in the README tables) reported in
+     addition: r5's cross-modal attention is close to uniform on test videos (entropy / log T .98-1.00), linear
+     probes of r5's pooled representation predict a positive video's hate fraction no better than r5's own level
+     (Spearman .2-.46), and a video head that also reads the per-second logits changes pooled AP / ROC by <= .001.
