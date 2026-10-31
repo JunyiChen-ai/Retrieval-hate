@@ -24,6 +24,7 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
 | `weak_probe.py` | A linear per-second classifier from training video labels only, against r5 at 0 calls. | `weak_probe/<corpus>.json` |
 | `answer_quality.py` | How much localisation the VLM tree answers carry when every node is answered (node AUC, all-answers per-second score). | `answer_quality/<corpus>.json` |
 | `answer_probe.py` | A ridge per-second model fitted to the training answers alone (no GT), and (`--combine-r5`) combined with r5's 0-call scores. | `answer_probe/<corpus>{,_combined}.json` |
+| `stop_budget_select.py` | Goal 1 option 2: can qmixE1 pick its own budget? Threshold chosen on validation per-second GT (no gradient) by argmax of (AP + ROC) / 2, the one-standard-error rule, or its paired version; no call target. Stored r5 policy runs truncated to 8 calls. | `stop_budget_select/<corpus>/summary.json` |
 
 ## Findings
 
@@ -135,3 +136,25 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
       +.033 / +.014 combined with r5, within -.044 combined).
     - Consequence for goal 2: on HateClipSeg no backbone trained on the present signals is expected to beat r5 by
       more than noise; on HateMM there is room in the video level.
+
+11. **The stopping rule cannot pick its own budget from validation** (`stop_budget_select.py`, 2026-11-01, uoa-lab1,
+    r5 test-selected trials, qmixE1, maximum 8; test minus fixed 8 of the same trial, AP / ROC / within, 3-seed means;
+    per-seed mean calls in brackets).
+
+    | Choice of threshold | HateMM | HateClipSeg | DeHate |
+    |---|---|---|---|
+    | validation argmax | 4.29 [5.9, 4.4, 2.6]: -.004 / -.003 / +.005 | 7.08 [6.8, 7.1, 7.3]: -.005 / -.003 / +.005 | 6.47 [6.0, 6.1, 7.3]: -.001 / -.000 / -.003 |
+    | one-standard-error rule | 1.00: -.026 / -.026 / +.007 | 1.53: -.018 / -.012 / -.014 | 1.46: -.011 / -.019 / -.012 |
+    | paired one-standard-error rule | 1.43: -.021 / -.020 / +.007 | 3.30: -.015 / -.012 / -.004 | 6.37: -.000 / -.000 / -.004 |
+    | hand-set target 5 (finding 7, `20261031_fewer_calls`) | 4.92: -.002 / -.002 / +.001 | 4.96: -.010 / -.009 / +.005 | 4.95: -.002 / -.002 / -.002 |
+
+    - The bootstrap standard error of the validation objective is .025-.053 (validation has 109 / 63 / 668 videos;
+      DeHate pooled AP rests on few positive videos). The differences that matter (.005-.01) are far below it, so the
+      validation curve is flat within noise from about 2 to 8 calls and the chosen budget changes from seed to seed.
+    - The argmax keeps AP / ROC within .005 of fixed 8 on all three corpora, but at 7.1 (HateClipSeg) and 6.5
+      (DeHate) calls; on HateMM its budget ranges 2.6-5.9 over seeds. The one-standard-error rules fall to 1-3 calls
+      and lose .01-.03.
+    - Label-free automatic stopping was tried before (qmixSG_rt10, README 17.4 of `20260925_query_paradigm`) and
+      kept 7.3-8 calls.
+    - Consequence for goal 1: with present validation sizes, the mean number of calls is a budget the user sets, not
+      something the data fixes. At 5 calls HateClipSeg loses .01; keeping HateClipSeg lossless needs about 7 calls.
