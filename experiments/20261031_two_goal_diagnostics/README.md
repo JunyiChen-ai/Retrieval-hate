@@ -19,6 +19,9 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
 | `order_anatomy.py` | Which nodes each order asks, and where within ROC is gained or lost (by GT harm fraction tercile). | `policy_lab/order_anatomy.json` |
 | `rule_scan.py` | Every stopping rule of `qtl.stop_rules` (plus rules with the selection value as a component) at several target mean calls, on the stored policy runs; per trial. | `policy_lab/<corpus>/rule_scan*.json` |
 | `headroom.py` | Where r5's remaining pooled error is: oracle edits of r5's test scores (negatives zeroed, perfect within-video ranking, within-video shape removed) and the level / hate-fraction correlation. | `headroom/<corpus>.json` |
+| `chain_lever.py` | Would a per-video chain transition help? r5 checkpoints at 0 calls with A fitted to each positive video's GT (ceiling) or predicted from content by ridge (fitted on validation positives). | `chain_lever/<corpus>.json` |
+| `feature_ceiling.py` | How much per-second hate information do the fixed features carry? Per-second classifiers fitted on validation per-second GT, test metrics. | `feature_ceiling/<corpus>.json` |
+| `weak_probe.py` | A linear per-second classifier from training video labels only, against r5 at 0 calls. | `weak_probe/<corpus>.json` |
 
 ## Findings
 
@@ -88,3 +91,25 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
      addition: r5's cross-modal attention is close to uniform on test videos (entropy / log T .98-1.00), linear
      probes of r5's pooled representation predict a positive video's hate fraction no better than r5's own level
      (Spearman .2-.46), and a video head that also reads the per-second logits changes pooled AP / ROC by <= .001.
+9. **What limits r5: the weak signal, not the features** (`chain_lever.py`, `feature_ceiling.py`, `weak_probe.py`;
+   test, AP / ROC / within; validation per-second GT used only to fit diagnostic probes, no gradient into any method).
+
+   | HateClipSeg | AP / ROC / within | level / hate-fraction Spearman |
+   |---|---|---|
+   | r5, 0 calls / 8 calls | .658 / .647 / .539, .687 / .674 / .560 | .30, .35 |
+   | linear, training video labels only (C by validation video AP+ROC) | .574 / .536 / .514 | -.04 |
+   | linear, validation per-second GT (63 videos), x_t | .688 / .680 / .563 | .51 |
+   | same, x_t + video mean | .700 / .682 / .567 | .51 |
+   | same, x_t + video mean + local means (3, 9, 27 s) | .701 / .696 / .590 | .50 |
+   | MLP, validation per-second GT, x_t + video mean + local | .661 / .647 / .556 | .39 |
+
+   - HateClipSeg: a linear read-out of the fixed features with per-second labels from only 63 videos matches or beats
+     r5 at 8 calls; video labels alone give nothing (87% positive videos). r5's content model is trained by the video
+     label and the VLM answers on all tree nodes, and recovers part of it (0 calls .658 / .647). The features carry the
+     information; the weak signal is what limits r5. Local context adds within +.024 and ROC +.014 under supervision.
+   - HateMM: 109 validation videos are too few for a supervised probe (best .480 / .743 / .651, below r5 at 0 calls
+     .623 / .819 / .768); the weak linear probe gives .467 / .729 / .619. No ceiling can be read on HateMM.
+   - Per-video chain transition: GT-fitted per video (ceiling) .705 / .684 (HateClipSeg) and .717 / .853 (HateMM) at 0
+     calls vs learned .658 / .647 and .623 / .819; predicted from r5's representation or outputs by ridge,
+     .657-.659 / .649-.652 and .611-.626 / .818-.825 (Spearman with the GT-fitted stay probabilities .05-.61). Not a
+     usable lever with r5's representation.
