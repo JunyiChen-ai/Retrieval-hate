@@ -61,6 +61,7 @@
 - 监控一律用 harness 的 **Monitor 工具**（2026-10-31 用户裁定，取代原"单个事件用 Bash `run_in_background` + `until` 循环"）：用 Monitor 跟踪日志与作业状态，每条完成或失败事件单独通知，例如 `ssh <别名> tail -F <日志> | grep --line-buffered -E 'DONE|Traceback|FAILED|Error'`，Slurm 作业另看 `sacct` 状态。不用 Bash 后台循环自己写结束条件。
   - 原因：10-31 Bash 循环在远端用 `pgrep -f budget_curve.py` 判断进程，匹配到 ssh shell 自己的命令行，循环一直不退出，作业 08:50 结束后约 9 小时无通知。
   - 判断进程是否存活用 run 目录的 pid 文件（`kill -0 $(cat run.pid)`），不用经 ssh 的 `pgrep -f <名字>`。
+- **超过 30 分钟的等待改用 Bash `run_in_background`**（用户 2026-11-01）：Monitor 每次最长 30 分钟（`timeout_ms` 超过 1800000 被截断），到期就要重开，长作业会反复唤醒、反复发消息。只需要"结束了"这一个事件时，用一个后台 Bash 循环，每 5 分钟查一次，到终止状态就退出：Slurm 作业查 `sacct -j <id> -X -n -o State`（不是 PENDING/RUNNING 就输出状态并退出），非 Slurm 进程查 pid 文件（`kill -0`）；ssh 连续失败数次也输出并退出，不能静默一直等。Monitor 只用于 30 分钟内需要逐条看的事件。
 - **不再手写监控脚本/线程**（`scripts/monitor_run.py`、`scripts/monitor_thread.py` 一类停止新用，不再新建 `runs/*/monitor/`、`thread_monitor` 目录）。训练进程本身仍按上文 `setsid nohup` 与 SSH 解耦，监控进程随会话生灭，不影响训练。
 - 监控命令必须同时匹配完成与失败（进程消失、`Traceback`、`FAILED`、DONE 标记），不能只等成功标记。
 
