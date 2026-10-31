@@ -1,6 +1,6 @@
 # Backbone candidate: scale-aware cross-modal attention
 
-Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); implemented, waiting for the rule-6 code review. Part of the user's two-goal autonomous iteration
+Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); [rule-6 code review: PASS](../../docs/reviews/20261031_scale_aware_cma_code.md); seed-234 searches submitted (Slurm, lab3 HateMM, lab1 HateClipSeg). Part of the user's two-goal autonomous iteration
 (2026-10-31). Goal 2 asks for the project's own backbone to reach r5's 3-seed AP and ROC on both main corpora at
 fixed 8 calls. r5: HateMM .6909 / .8849, HateClipSeg .6865 / .6737.
 
