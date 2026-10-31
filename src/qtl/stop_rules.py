@@ -107,6 +107,9 @@ QMIX = {"qmix": ("dlogit", "stab1"), "qmix2": ("dlogit2", "stab2"), "qmixG": ("d
         "qmixS_T": ("dlsum", "hT"),
         # third round: the remaining-information sum as the state component
         "qmixE": ("dlsum", "eigsum"), "qmixEG": ("dlsum", "eigsum", "hG"), "qmixE3": ("dlsum", "eigtop3"),
+        # two-goal iteration (2026-10-31): the value of the best next question itself (top 1, the selection order's
+        # own value: EIG bits) as the forward-looking component, with no top-k constant
+        "qmixE1": ("dlsum", "eig"),
         "qmixDE": ("dlogit", "eigsum"), "qmixSE": ("dlsum", "stab1", "eigsum"),
         # one-sided undecidedness as the state component
         "qmixN": ("dlogit", "stab1", "hGn"), "qmix2N": ("dlogit2", "stab2", "hGn"), "qmixSN": ("dlsum", "stab1", "hGn"),
