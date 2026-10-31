@@ -13,7 +13,7 @@
 - 骨干差距（`backbone_gap.py`）：HateMM 的差距在视频内分数形状（换上 r5 的视频内形状后 within 追平、AP 回收 .009）；HCS 的差距主要在视频级区分（视频 ROC .795 对 .865）。
 - 停止规则扫描（`rule_scan.py`、`order_anatomy.py`）：4–5 次时两类视频抢调用——看视频级不确定/最后变化的规则（qmixSG 等）保住 AP/ROC，但 HCS within 降 .005–.008；看剩余信息量的规则把调用给正例，within 涨但 AP/ROC 降 .012–.025。现行 qmixSG_rt10 在平均 5 次时 HCS within −.014。
 - 目标 1：[qmixE1 停止规则](../experiments/20261031_fewer_calls/README.md)（最后一次回答造成的逐秒 log-odds 总变化 ∨ 下一个最佳问题的 EIG，各取 validation 分位数后取大，validation 平均 5 次定阈值；最多 8 次 = 被比较的固定预算）。proposal GO、code review PASS（review 指出原 32 次上限会改变阈值，改为 8）。**统一评测器、r5 三 seed：HateMM 4.92 次，AP/ROC/within 比固定 8 次 −.0023/−.0024/+.0012；HCS 4.96 次，−.0095/−.0089/+.0046；DeHate 4.95 次，−.0023/−.0022/−.0024——目标 1 在 r5 上达成**，HCS AP 离 .01 只剩 .0005。消融：单用 dlsum HCS within −.006、单用 EIG HCS AP/ROC −.021、均匀 5 次两语料 within −.009/−.007，都不达标；但规则 14(g) 的“去掉部件 pooled 降 ≥.01、两语料”不满足（这是效率结果）。待在目标 2 最终骨干上复核。来源 `runs/20261031_fewer_calls/<corpus>/{r5,r5_ablation}/summary_*.json`。
-- 目标 2 候选：[尺度感知跨模态注意力](../experiments/20261031_scale_aware_cma/README.md)，proposal GO、code review PASS；seed 234 搜索 10-31 19:15 起（Slurm job 1301 lab3 HateMM，1302 lab1 HCS）。HCS 同超参逐 trial 对 r5 差 −.040 到 +.012，偏置表只在 lr_answer ≥ .008 时明显学到（HCS 多个 trial 在 epoch 1–3 被选中，偏置≈0，等同 r5，仍差 .04，即同超参不同初始化的波动约 ±.04）。
+- 目标 2 候选：[尺度感知跨模态注意力](../experiments/20261031_scale_aware_cma/README.md)，proposal GO、code review PASS；seed 234 搜索 10-31 19:15 起（Slurm job 1301 lab3 HateMM，1302 lab1 HCS）。**HCS seed 234 完成**：最好 trial 7 AP/ROC/within .6853/.6885/.5859，r5 同 seed .6885/.6748/.5561（−.003/+.014，在 .005 内持平）；来源 `runs/20261031_scale_aware_cma/hateclipseg/seed234/`。网络已移到 `src/qtl/scale_cma.py`（代码不变），`src/qtl/backbones.py` 统一加载各骨干 checkpoint。HCS 同超参逐 trial 对 r5 差 −.040 到 +.012，偏置表只在 lr_answer ≥ .008 时明显学到（HCS 多个 trial 在 epoch 1–3 被选中，偏置≈0，等同 r5，仍差 .04，即同超参不同初始化的波动约 ±.04）。
 
 以下为 10-31 之前的完整组合结论：
 
@@ -79,7 +79,9 @@ AP / ROC / within，三seed均值±总体标准差，开发期test目标选trial
 
 ## 运行任务
 
-- Slurm job 1301（uoa-lab3，HateMM seed234，尺度感知 CMA 完整搜索，20 trial，约 36 分钟/trial，预计 11-01 07:30 前后结束）与 1302（uoa-lab1，HCS seed234，约 2.5 分钟/trial），10-31 19:15 起；输出 `runs/20261031_scale_aware_cma/<corpus>/seed234/`。**job 1301 结束前 lab3 不要 git pull**：commit e4e8d67 改了 `backbone.py` 偏置表梯度的算法（前向不变，梯度数学相同，只为提速），seed234 的后续 trial 是子进程，会读到新文件。
+- Slurm job 1301（uoa-lab3，HateMM seed234，尺度感知 CMA 完整搜索，20 trial，约 36 分钟/trial，预计 11-01 07:30 前后结束），10-31 19:15 起；输出 `runs/20261031_scale_aware_cma/hatemm/seed234/`。**job 1301 结束前 lab3 不要 git pull**：搜索的每个 trial 是子进程，会读到磁盘上的新代码（e4e8d67 改了偏置表梯度算法，4fe5870 把网络移到 `src/qtl/scale_cma.py`）。
+- Slurm job 1304（uoa-lab1，HCS seed2025，同一搜索，约 2.5 分钟/trial），10-31 20:15 前后起；lab1 已在 ddf5f80，**job 1304 结束前 lab1 不要 git pull**。
+- GPU 计时 job 1303（lab1）已完成：新梯度写法前向完全相同、梯度最大相对差 1.2e-6，该层快 1.1–1.9 倍；输出 `runs/20261031_scale_aware_cma/bench_bias_1303.out`。
 - 目标 1 诊断与统一评测均已完成并回传。
 
 10-31 早些时候：Slurm job 1295–1299（lab3：HateMM、DeHate seed234/3407；lab1：HCS、DeHate seed2025）07:54–08:50全部COMPLETED，无Traceback；两台CPU预算曲线08:00/08:01输出DONE。输出已回传本机 `runs/20261002_complete_io_method/{all_trials,budget_curve,analysis/select_by_setting.json}`。原选定trial重跑复现：HateMM/HCS完全一致，DeHate seed234 trial4最大差.0012（GPU非确定性）。此前完整组合：HCS（lab1）与HateMM（lab3）10-02 18:35前后结束；DeHate seed2025（lab1）10-03 04:41、seed234/3407（lab3）09:17/09:18结束，`completion.json` 均为success。
@@ -90,8 +92,8 @@ DeHate审计需要远端cohort（本机无DeHate split/GT/特征），因此 `au
 
 ## 下一步
 
-1. 目标 1：在目标 2 选定的骨干上用 `evaluate_stop.py` 复核（尺度感知骨干需 `make_model` 入口）。
-2. 目标 2：等 seed234 搜索结束，与 r5 seed234（HateMM .6944 / .8867，HCS .6885 / .6748）比较；持平或更好则跑 seed 2025 / 3407 与冻结偏置消融。
+1. 目标 2：job 1304 结束后 lab1 pull 到最新，接着跑 HCS seed 3407，再跑 HateMM seed 2025；HateMM seed 234 结束（约 11-01 07:30）后与 r5 seed234（.6944 / .8867）比较，持平则 lab3 跑 HateMM seed 3407，然后冻结偏置消融（锁定 trial，`scale_bias=false`，3 seed）。
+2. 目标 1：在目标 2 选定的骨干上用 `evaluate_stop.py` 复核（已可经 `qtl.backbones.make_model` 加载尺度感知 checkpoint）。
 
 ## 历史与规则
 
