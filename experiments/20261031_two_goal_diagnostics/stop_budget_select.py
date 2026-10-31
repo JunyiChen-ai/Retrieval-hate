@@ -6,7 +6,10 @@ mean number of calls is 5 (a hand-set target). Here c is chosen on validation fr
 without gradient, user ruling 2026-09-29), with no target:
   - argmax: c maximising the validation objective J = (pooled AP + pooled ROC) / 2 (the rule-7 objective);
   - one_se: the one-standard-error rule (Breiman et al. 1984, CART; Hastie et al., ESL 7.10): the c with the fewest
-    validation mean calls whose J is within one bootstrap standard error (validation videos resampled) of the best J.
+    validation mean calls whose J is within one bootstrap standard error (validation videos resampled) of the best J;
+  - paired_one_se: the same with the standard error of the paired difference J(c) - J(best) on the same resampled
+    videos (both scored on every resample), scanned from the fewest calls up; the first c within one paired standard
+    error of the best is taken.
 Every c at which some validation video's number of calls changes is a candidate (thinned evenly to at most
 --max-candidates, a computing resolution). Maximum 8 calls (the stored 16-call runs truncated, as rule_scan --cap 8).
 Test: the chosen c applied per video, scored by the unified evaluator, against fixed 8 calls of the same trial.
@@ -45,6 +48,8 @@ def main():
     ap.add_argument("--root", default="runs/20261031_two_goal_diagnostics/policy_lab")
     ap.add_argument("--bootstrap", type=int, default=1000)
     ap.add_argument("--max-candidates", type=int, default=400)
+    ap.add_argument("--paired-bootstrap", type=int, default=200)
+    ap.add_argument("--paired-candidates", type=int, default=100, help="thinning of the paired scan (resolution)")
     ap.add_argument("--out-root", default="runs/20261031_two_goal_diagnostics/stop_budget_select")
     a = ap.parse_args()
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
@@ -90,6 +95,25 @@ def main():
         se = float(np.std(boot, ddof=1))
         ok = [i for i, r in enumerate(curve) if r["J"] >= curve[b]["J"] - se]
         one_se = min(ok, key=lambda i: (curve[i]["val_mean_calls"], -curve[i]["J"]))
+        picks = [rng.choice(len(val), len(val), replace=True) for _ in range(a.paired_bootstrap)]
+
+        def boot_J(i, pick):
+            calls = {v: int((pm[v] >= curve[i]["c"]).sum()) for v in val}
+            keys = [f"{val[j]}#{k}" for k, j in enumerate(pick)]
+            return objective({k: runs["val"][val[j]]["scores"][calls[val[j]]] for k, j in zip(keys, pick)},
+                             {k: gt_val[val[j]] for k, j in zip(keys, pick)},
+                             {k for k, j in zip(keys, pick) if val[j] in hate_val})[0]
+        jb = np.array([boot_J(b, p) for p in picks])
+        sub = np.unique(np.linspace(0, len(curve) - 1, min(len(curve), a.paired_candidates)).round().astype(int))
+        paired, paired_se = b, 0.0
+        for i in sorted(sub, key=lambda i: (curve[i]["val_mean_calls"], -curve[i]["J"])):
+            if curve[i]["val_mean_calls"] >= curve[b]["val_mean_calls"]:
+                break
+            diff = np.array([boot_J(i, p) for p in picks]) - jb
+            s = float(np.std(diff, ddof=1))
+            if curve[i]["J"] - curve[b]["J"] >= -s:
+                paired, paired_se = int(i), s
+                break
         name = d.name[:-len("_eig")]
         od = out / name
         od.mkdir(parents=True, exist_ok=True)
@@ -103,9 +127,9 @@ def main():
             return {"pooled_ap": m["pr_auc"], "pooled_roc": m["roc_auc"], "within_roc": m["per_video"]["macro_auc"],
                     "mean_calls": float(c.mean()), "mean_calls_positive": float(c[pos].mean()),
                     "mean_calls_negative": float(c[~pos].mean())}
-        row = {"val_best_J": curve[b]["J"], "val_J_se": se, "curve": curve,
+        row = {"val_best_J": curve[b]["J"], "val_J_se": se, "val_paired_se_at_choice": paired_se, "curve": curve,
                "fixed8": score_test("fixed8", {v: min(MAX_CALLS, len(runs["test"][v]["eig"])) for v in test})}
-        for label, i in (("argmax", b), ("one_se", one_se)):
+        for label, i in (("argmax", b), ("one_se", one_se), ("paired_one_se", paired)):
             c = curve[i]["c"]
             calls = {v: policy.stop_calls(list(rv["test"][v]), c) for v in test}
             row[label] = score_test(f"{RULE}_{label}", calls)
@@ -116,11 +140,11 @@ def main():
         report["trials"][name] = row
         print(a.corpus, name, "SE %.4f" % se, " | ".join(
             "%s %.2f calls %s" % (k, row[k]["mean_calls"], " ".join("%+.4f" % x for x in row[k]["minus_fixed8"].values()))
-            for k in ("argmax", "one_se")), flush=True)
+            for k in ("argmax", "one_se", "paired_one_se")), flush=True)
     T = list(report["trials"].values())
     mets = ("pooled_ap", "pooled_roc", "within_roc", "mean_calls")
-    report["mean"] = {k: {m: float(np.mean([t[k][m] for t in T])) for m in mets} for k in ("fixed8", "argmax", "one_se")}
-    for k in ("argmax", "one_se"):
+    report["mean"] = {k: {m: float(np.mean([t[k][m] for t in T])) for m in mets} for k in ("fixed8", "argmax", "one_se", "paired_one_se")}
+    for k in ("argmax", "one_se", "paired_one_se"):
         report["mean"][k]["minus_fixed8"] = {m: report["mean"][k][m] - report["mean"]["fixed8"][m] for m in mets[:3]}
     (out / "summary.json").write_text(json.dumps(report, indent=1) + "\n")
     print(json.dumps(report["mean"], indent=1))
