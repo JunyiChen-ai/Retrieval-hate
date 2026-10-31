@@ -52,6 +52,10 @@ def rules(run, vals):
         # change on the probability scale (seconds already near 0 move little), relaxed like rt10
         "dpsum_rt10": [x * 0.9 ** k if math.isfinite(x) else x for k, x in enumerate(dp)],
         "dpsum": dp,
+        # the label-split analysis (mix_budgets.py) found that negatives, not positives, need calls 5-8 for
+        # pooled AP/ROC on HateMM: ask while the video does NOT yet look hateful, relaxed like rt10
+        "negG_rt10": [(1.0 - g) * 0.9 ** k for k, g in enumerate(pg)],
+        "qmixSG_rt10_x_negG": [x * (1.0 - g) if math.isfinite(x) else x for x, g in zip(q, pg)],
     }
 
 
