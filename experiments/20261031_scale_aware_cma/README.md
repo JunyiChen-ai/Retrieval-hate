@@ -1,7 +1,7 @@
 # Backbone candidate: scale-aware cross-modal attention
 
-Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); [rule-6 code review: PASS](../../docs/reviews/20261031_scale_aware_cma_code.md); HateClipSeg seed 234 done and level
-with r5 (section 5), HateMM seed 234 running; HateClipSeg seed 2025 running. Part of the user's two-goal autonomous iteration
+Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); [rule-6 code review: PASS](../../docs/reviews/20261031_scale_aware_cma_code.md); HateClipSeg seeds 234 and 2025 done, each level
+with r5 within .005 (section 5); HateMM seed 234 and HateClipSeg seed 3407 running. Part of the user's two-goal autonomous iteration
 (2026-10-31). Goal 2 asks for the project's own backbone to reach r5's 3-seed AP and ROC on both main corpora at
 fixed 8 calls. r5: HateMM .6909 / .8849, HateClipSeg .6865 / .6737.
 
@@ -104,18 +104,28 @@ video head. Whether it also helps the HateClipSeg video-level gap is an open que
 
 ## 5. Results
 
-Screening, seed 234, best trial of the 20-trial search (test-selected, rule 7), fixed 8 calls, AP / ROC / within.
-Source: `runs/20261031_scale_aware_cma/<corpus>/seed234/search.log` and `trial<k>/summary.json`.
+Best trial of each 20-trial search (test-selected, rule 7), fixed 8 calls, AP / ROC / within.
+Source: `runs/20261031_scale_aware_cma/<corpus>/seed<seed>/search.log` and `trial<k>/summary.json`; r5 from
+`runs/20260929_query_paradigm_r5/<corpus>/seed<seed>/trial<k>/summary.json` (`fixed.8`).
 
-| Corpus | Scale-aware CMA | r5 seed 234 | Difference |
+| Corpus, seed | Scale-aware CMA | r5 | Difference |
 |---|---|---|---|
-| HateClipSeg | .6853 / .6885 / .5859 (trial 7) | .6885 / .6748 / .5561 | -.0032 / +.0137 / +.0298 |
-| HateMM | running | .6944 / .8867 / .7887 | |
+| HateClipSeg 234 | .6853 / .6885 / .5859 (trial 7) | .6885 / .6748 / .5561 (trial 13) | -.0032 / +.0137 / +.0298 |
+| HateClipSeg 2025 | .6921 / .6749 / .5757 (trial 18) | .6896 / .6798 / .5461 (trial 11) | +.0025 / -.0049 / +.0296 |
+| HateClipSeg 3407 | running | .6813 / .6666 / .5785 (trial 19) | |
+| HateMM 234 | running | .6944 / .8867 / .7887 (trial 9) | |
+
+Seeds 2025 and 3407 of HateClipSeg were started before the HateMM seed-234 screening finished, to use the free GPU;
+the decision rule above is unchanged.
 
 - HateClipSeg is level with r5 within .005 (AP -.003, ROC +.014). The learned table of trial 7 is small (|b| <= .35):
   the third head adds about .35 to distances up to 16 s and -.31 to 128-255 s; the >= 512 s column stays at its initial 0 (no training
   pair of seconds was that far apart).
-- The validation-selected trial of the same search is trial 12: .6688 / .6337 / .5573.
+- Validation-selected trials: HateClipSeg 234 trial 12 (.6688 / .6337 / .5573), 2025 trial 3 (.6663 / .6325 / .6040).
+- HateMM seed 234, first two trials against the r5 trials with the same hyperparameters (same sampler seed):
+  .6866 / .8798 / .7544 vs .6862 / .8824 / .7726, and .6720 / .8736 / .7468 vs .6781 / .8755 / .7570. Within is lower by
+  .010-.018, the opposite of the hypothesis so far. Trial 0 (lr_answer .08) learned a large table: one head +9.8 at
+  distance 0 and about -7.5 at 32-511 s (local attention), another +5 at 32-255 s.
 
 ## 6. Run-time note (2026-10-31)
 
