@@ -61,7 +61,7 @@ def main():
         neg0 = {v: (np.zeros_like(s) if labels[v] == 0 else s) for v, s in sc.items()}
         shape = {}
         for v, s in sc.items():
-            g = np.asarray(gt[v])
+            g = np.asarray(gt[v]).astype(np.int64)          # GT arrays may be unsigned
             if labels[v] == 1 and 0 < g.sum() < len(g):
                 order = np.argsort(-g, kind="stable")          # hate seconds first
                 t = np.empty_like(s)
