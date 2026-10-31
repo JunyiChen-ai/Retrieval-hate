@@ -6,7 +6,9 @@ covering it (the all-answers score of `answer_quality.py`), and a ridge regressi
 (I3D 5-crop mean, VGGish, BERT; optionally with the video mean and local means over 3, 9, 27 s) is fitted to it.
 The ridge alpha is chosen on the validation videos by the agreement (Pearson) with their own all-answers score
 (answers only, no GT). Test: unified frame metrics of the predicted per-second scores, at 0 calls, against r5 at 0
-calls (.658 / .647 / .539 HateClipSeg, .623 / .819 / .768 HateMM). Rule-10 developmental evidence.
+calls (.658 / .647 / .539 HateClipSeg, .623 / .819 / .768 HateMM). With --combine-r5, also the combination with
+r5's own 0-call scores of each seed's test-selected trial (mean of the two standardised logits per second), the check
+for a backbone with both r5's network and a linear path from the raw features. Rule-10 developmental evidence.
 """
 import argparse
 from datetime import datetime
@@ -46,10 +48,40 @@ def answer_score(nodes, T):
     return np.where(cnt > 0, acc / np.maximum(cnt, 1), np.nan)
 
 
+def logit(p):
+    p = np.clip(p, 1e-6, 1 - 1e-6)
+    return np.log(p) - np.log1p(-p)
+
+
+def combine(corpus, scores, gt, hate, labels, test):
+    """Mean of standardised logits of the probe and of r5's 0-call test scores, per r5 seed; 3-seed mean metrics."""
+    lp = {v: logit(scores[v]) for v in test}
+    allp = np.concatenate(list(lp.values()))
+    rows = []
+    for seed in (234, 2025, 3407):
+        study = ROOT / "runs/20260929_query_paradigm_r5" / corpus / f"seed{seed}"
+        trial = json.loads((study / "study_summary.json").read_text())["best"]["number"]
+        r5 = {}
+        for line in (study / f"trial{trial}" / "scores_test_fixed0.jsonl").read_text().splitlines():
+            r = json.loads(line)
+            r5[r["video_id"]] = logit(np.asarray(r["score_av"], dtype=np.float64))
+        allr = np.concatenate([r5[v] for v in test])
+        comb = {v: 1 / (1 + np.exp(-((lp[v] - allp.mean()) / allp.std() + (r5[v] - allr.mean()) / allr.std()) / 2))
+                for v in test}
+        m = hc.frame_metrics(comb, gt, hate)
+        pos = [v for v in test if labels[v] == 1]
+        rows.append([m["pooled_ap"], m["pooled_roc"], m["within_roc"],
+                     spearmanr([comb[v].mean() for v in pos], [gt[v].mean() for v in pos]).correlation])
+    return dict(zip(("pooled_ap", "pooled_roc", "within_roc", "level_fraction_spearman"),
+                    np.mean(rows, 0).tolist()))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--corpus", choices=("hatemm", "hateclipseg"), required=True)
     ap.add_argument("--max-seconds-per-video", type=int, default=150)
+    ap.add_argument("--kinds", nargs="+", default=["second", "second+video", "second+video+local"])
+    ap.add_argument("--combine-r5", action="store_true")
     ap.add_argument("--out-root", default="runs/20261031_two_goal_diagnostics/answer_probe")
     a = ap.parse_args()
     labels, ids, gt_all, _ = hc.load_fixed_cohort(a.corpus)
@@ -63,7 +95,7 @@ def main():
     hate = {v for v in test if labels[v] == 1}
     report = {"host": socket.gethostname(), "created": datetime.now().astimezone().isoformat(), "corpus": a.corpus,
               "n_train_videos": len(train), "results": {}}
-    for kind in ("second", "second+video", "second+video+local"):
+    for kind in a.kinds:
         Xtr, ytr = [], []
         for v in train:
             x, y = features(store, v, kind), answer_score(P[v], store.T[v])
@@ -97,11 +129,13 @@ def main():
                "within_roc": float(m["within_roc"]),
                "level_fraction_spearman": float(spearmanr([scores[v].mean() for v in pos],
                                                           [gt[v].mean() for v in pos]).correlation)}
+        if a.combine_r5:
+            res["combined_with_r5"] = combine(a.corpus, scores, gt, hate, labels, test)
         report["results"][kind] = res
         print(a.corpus, kind, json.dumps(res), flush=True)
     out = ROOT / a.out_root
     out.mkdir(parents=True, exist_ok=True)
-    (out / f"{a.corpus}.json").write_text(json.dumps(report, indent=1) + "\n")
+    (out / f"{a.corpus}{'_combined' if a.combine_r5 else ''}.json").write_text(json.dumps(report, indent=1) + "\n")
     print(out / f"{a.corpus}.json")
 
 
