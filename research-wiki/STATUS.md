@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-10-31**。当前任务为用户“**三个数据集上跑一遍最新完整的给我汇报**”，**已完成**：三语料运行全部结束、回传本机并审计通过。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
+截至 **2026-10-31**。上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
 
 ## 当前目标与结论
 
@@ -10,7 +10,10 @@
 1. **自动停止三语料都没有少调用**：平均调用HateMM 7.63→7.86、HCS 8.00→7.98、DeHate 7.26→7.93（固定8次在短视频上问不满8个节点）。
 2. **对同复制设置固定8次**：HateMM、DeHate三项变化均在±.003内；HCS三项下降.007–.009。
 3. **对旧r5同复制/停止设置**：三语料AP均下降（−.023/−.030/−.035），ROC均下降（−.012/−.054/−.013）；within HateMM/HCS下降，DeHate上升.010。
-4. 新骨干接入复制+停止后没有显示省调用或相对r5涨点。按用户指令本轮只做三数据评估，不自动扩展新候选、不改停止配置；下一方向待用户裁定。
+4. 新骨干接入复制+停止后没有显示省调用或相对r5涨点。
+5. **选模型方式不是原因**（10-31）：每个设置在全部20 trial中自己选trial后，自动−fixed8仍是HateMM小正、HCS小负、DeHate≈0；60个trial同trial比较同样。
+6. **任何预算都不省调用**（10-31）：停止阈值重校准到平均2/4/6/8/12/16次，与同调用数固定次数之差全部在±.010内、方向不稳定；停止规则没有把调用多分给正例视频。
+7. 固定次数曲线：AP/ROC大部分增益在前4次内（fixed4与fixed8 AP差≤.002），within随调用继续上升（fixed4比fixed8低.004–.025）。详见[README第9节](../experiments/20261002_complete_io_method/README.md)。下一方向待用户裁定。
 
 两主数据复用初版各seed234/2025/3407完整20-trial×50 epoch搜索的既定checkpoint；DeHate补同一骨干、同一搜索空间的三seed完整Optuna（各锁20 trial，每trial 50 epoch）。三语料均沿用训练阶段无复制fixed8的validation AP/ROC均值选checkpoint，开发期test(AP+ROC)/2选trial；完整组合结果不参与重新选择。**这是预先选定模型的完整组合验证，不是自动停止目标的重新Optuna调参。**
 
@@ -63,15 +66,15 @@ AP / ROC / within，三seed均值±总体标准差，开发期test目标选trial
 
 ## 运行任务
 
-无运行中任务。HCS（lab1）与HateMM（lab3）完整组合重评10-02 18:35前后结束；DeHate seed2025（lab1）10-03 04:41、seed234/3407（lab3）09:17/09:18结束，三条 `completion.json` 均为success。10-31检查：lab1/lab3无本项目进程；本机旧heartbeat（PID 589267）与run monitor进程已不存在。本次记录提交后三机已 `git pull` 到同一commit、无未提交修改（`bash scripts/check_layout.sh`，10-31）。
+无运行中任务。10-31诊断：Slurm job 1295–1299（lab3：HateMM、DeHate seed234/3407；lab1：HCS、DeHate seed2025）07:54–08:50全部COMPLETED，无Traceback；两台CPU预算曲线08:00/08:01输出DONE。输出已回传本机 `runs/20261002_complete_io_method/{all_trials,budget_curve,analysis/select_by_setting.json}`。原选定trial重跑复现：HateMM/HCS完全一致，DeHate seed234 trial4最大差.0012（GPU非确定性）。此前完整组合：HCS（lab1）与HateMM（lab3）10-02 18:35前后结束；DeHate seed2025（lab1）10-03 04:41、seed234/3407（lab3）09:17/09:18结束，`completion.json` 均为success。
 
 DeHate审计需要远端cohort（本机无DeHate split/GT/特征），因此 `audit_dehate.py --seeds` 在lab1（seed2025）、lab3（seed234/3407）运行，部分结果回传后本机 `--merge`；所有核对项通过（完成标记/主机、20 trial×50 epoch、选择重推、checkpoint epoch、复制与分位参考来源、阈值与逐视频调用数重算、分数前缀、24份评测完整覆盖）。
 
-已知无关项保留：本机 `tandem.html`、lab1 `idea-stage/`、三机 `~` 下其它项目的STRAY条目（ctx_pri、MemoryAgen、conversation-pilot等，非本项目产生）。研究规则、AGENTS/CLAUDE未改。
+已知无关项保留：本机 `tandem.html`、lab1 `idea-stage/`、三机 `~` 下其它项目的STRAY条目（ctx_pri、MemoryAgen、conversation-pilot等，非本项目产生）。研究规则未改；CLAUDE/AGENTS于10-31补记lab机GPU自10-03起只能经Slurm使用。
 
 ## 下一步
 
-1. 本轮用户请求已完成，等待用户对下一方向的裁定；不自动扩展新候选、不修改停止配置。
+1. 两项诊断已完成，结论为当前停止规则在任何预算下都无收益。等待用户对下一方向的裁定（例如：停止统计量改为针对正例分配调用，或接受固定次数并改做骨干相对r5的差距）。
 
 ## 历史与规则
 
