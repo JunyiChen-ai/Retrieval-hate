@@ -263,7 +263,11 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
     const = cfg["backbone"] == "const"           # its two scalars get the small-parameter rate, like the chain
     if const:
         small = small + list(model.parameters())
-    opt = optim.Adam(([] if const else [{"params": list(model.parameters()), "lr": float(cfg["lr"])}])
+    # a backbone may declare few-scalar structural parameters (e.g. an attention bias table) for the same rate
+    model_small = list(model.small_parameters()) if hasattr(model, "small_parameters") else []
+    small = small + model_small
+    main_params = [p for p in model.parameters() if p.requires_grad and all(p is not q for q in model_small)]
+    opt = optim.Adam(([] if const else [{"params": main_params, "lr": float(cfg["lr"])}])
                      + ([{"params": small, "lr": float(cfg["lr_answer"])}] if small else []))
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=int(cfg["sched_tmax"]))
     ds = qdata.TrainSet(store, ids["train"], labels, int(cfg["crop_repeat"]))

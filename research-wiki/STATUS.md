@@ -4,6 +4,17 @@
 
 ## 当前目标与结论
 
+**2026-10-31 起：用户批准两个目标并开启自主迭代，两者都达成后才汇报。**
+- 目标 1（少调用）：HateMM 与 HCS 上最终方法平均约 4–5 次调用；与同一方法固定 8 次相比，AP/ROC 三 seed 均值降幅 ≤ .01，within 不降。DeHate 只作外部检验。
+- 目标 2（自研骨干不输 r5）：自研骨干在固定 8 次、规则 7 完整搜索下，两语料三 seed AP 与 ROC 均值不低于 r5（HateMM .6909 / .8849，HCS .6865 / .6737）。
+
+诊断（开发期 test 分析，`experiments/20261031_two_goal_diagnostics/`，输出 `runs/20261031_two_goal_diagnostics/`）：
+- 调用分配（`call_allocation.py`）：HCS test 87% 是正例视频，只给负例少问降不到 4–5 次；HateMM 即使用真实标签给正例 8 次、负例 2 次（平均 4.3 次），ROC 也低 .028。只靠重新分配调用不够，需要每次调用更有效，或骨干先验更强。
+- 骨干差距（`backbone_gap.py`）：HateMM 的差距在视频内分数形状（换上 r5 的视频内形状后 within 追平、AP 回收 .009）；HCS 的差距主要在视频级区分（视频 ROC .795 对 .865）。
+- 当前候选：[尺度感知跨模态注意力](../experiments/20261031_scale_aware_cma/README.md)（目标 2），待 proposal review。
+
+以下为 10-31 之前的完整组合结论：
+
 [最新完整组合](../experiments/20261002_complete_io_method/README.md)：**初版inside–outside骨干 + 单问软答案8档 + copy_neg复制似然（同时进入EIG与后验）+ qmixSG_rt10自动停止**。HateMM、HateClipSeg为主数据；DeHate为external validation。同一架构/损失/推断流程，不按语料选骨干。
 
 结论（负结果，如实保留）：
@@ -74,7 +85,8 @@ DeHate审计需要远端cohort（本机无DeHate split/GT/特征），因此 `au
 
 ## 下一步
 
-1. 两项诊断已完成，结论为当前停止规则在任何预算下都无收益。等待用户对下一方向的裁定（例如：停止统计量改为针对正例分配调用，或接受固定次数并改做骨干相对r5的差距）。
+1. 目标 2：尺度感知跨模态注意力完成 proposal / code review 后，在 lab3（HateMM）与 lab1（HCS）用 Slurm 跑 seed234 完整搜索，与 r5 seed234（HateMM .6944 / .8867，HCS .6885 / .6748）比较。
+2. 目标 1：在新骨干上设计提问/停止策略；已知只靠调用分配不够。
 
 ## 历史与规则
 
