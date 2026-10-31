@@ -1,8 +1,8 @@
 # Goal 1: fewer VLM calls with a two-sided stopping rule
 
 Status (2026-10-31): candidate chosen from the diagnostics below; rule-6 code review PASS
-(`docs/reviews/20261031_fewer_calls_code.md`), maximum calls set to 8 after its point A; waiting for the rule-4
-proposal review before the evaluator run. Part of the user's two-goal autonomous iteration (2026-10-31).
+(`docs/reviews/20261031_fewer_calls_code.md`), maximum calls set to 8 after its point A; rule-4 proposal review GO
+(`docs/reviews/20261031_fewer_calls_proposal.md`); evaluator run on the r5 checkpoints launched. Part of the user's two-goal autonomous iteration (2026-10-31).
 
 Goal 1: on HateMM and HateClipSeg the final method uses clearly fewer than 8 VLM calls per video on average (about
 4-5). Against the same method at fixed 8 calls (3-seed means): AP and ROC at most .01 lower, within not lower
