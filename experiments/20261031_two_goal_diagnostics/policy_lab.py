@@ -74,7 +74,7 @@ def main():
                     with torch.no_grad():
                         runs[split].update(cpolicy.run_batch(
                             model, store, vids[i:i + int(cfg["eval_chunk"])], am, chain, answers, cfg["categories"],
-                            a.max_calls, a.device, order=order, copy_pi=copy_fn, copy_mode="both"))
+                            a.max_calls, a.device, order=order, record_voi=True, copy_pi=copy_fn, copy_mode="both"))
             dest = out_root / f"{name}_{order}"
             dest.mkdir(parents=True, exist_ok=True)
             with (dest / "runs.pkl").open("wb") as fh:
