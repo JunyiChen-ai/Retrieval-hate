@@ -2,7 +2,8 @@
 
 Status (2026-10-31): candidate chosen from the diagnostics below; rule-6 code review PASS
 (`docs/reviews/20261031_fewer_calls_code.md`), maximum calls set to 8 after its point A; rule-4 proposal review GO
-(`docs/reviews/20261031_fewer_calls_proposal.md`); evaluator run on the r5 checkpoints launched. Part of the user's two-goal autonomous iteration (2026-10-31).
+(`docs/reviews/20261031_fewer_calls_proposal.md`); unified-evaluator results on the r5 checkpoints meet goal 1
+(section 4); to be repeated on the final goal-2 backbone. Part of the user's two-goal autonomous iteration (2026-10-31).
 
 Goal 1: on HateMM and HateClipSeg the final method uses clearly fewer than 8 VLM calls per video on average (about
 4-5). Against the same method at fixed 8 calls (3-seed means): AP and ROC at most .01 lower, within not lower
@@ -67,7 +68,45 @@ Max 8: the stored 16-call runs truncated to 8 calls (`rule_scan.py --cap 8`, `ru
 qmixE1 at target 4.5 misses on HateClipSeg r5 (AP -.010); at target 5 the HateClipSeg r5 margin to the .01 bound is
 .001. The claim rows are produced by `evaluate_stop.py` through the unified evaluator.
 
-## 4. How to run
+## 4. Results on the r5 checkpoints (unified evaluator)
+
+`evaluate_stop.py`, maximum 8 calls, target 5, 3-seed means over the r5 test-selected trials. Sources:
+`runs/20261031_fewer_calls/{hatemm,hateclipseg}/r5/summary_sc474397.json`, `dehate/r5/summary_sc474398.json`.
+AP / ROC / within, mean test calls:
+
+| Corpus | fixed 8 | qmixE1 | qmixE1 - fixed 8 | fixed 5 - fixed 8 |
+|---|---|---|---|---|
+| HateMM | .6857 / .8822 / .7665 (7.63) | .6834 / .8798 / .7677 (4.92) | -.0023 / -.0024 / +.0012 | -.0087 / -.0082 / -.0087 (4.90) |
+| HateClipSeg | .6831 / .6718 / .5590 (8.00) | .6736 / .6629 / .5636 (4.96) | -.0095 / -.0089 / +.0046 | -.0071 / -.0031 / -.0070 (5.00) |
+| DeHate (external) | .2582 / .7702 / .6673 (7.26) | .2559 / .7680 / .6649 (4.95) | -.0023 / -.0022 / -.0024 | +.0012 / -.0052 / -.0039 (4.77) |
+
+- Goal 1 is met on both main corpora: about 4.9-5.0 calls instead of 8 (HateMM: 7.63, because some videos have fewer
+  than 8 queryable nodes); AP and ROC at most .0095 lower; within not lower.
+- The HateClipSeg AP margin to the .01 bound is .0005. Per seed it ranges from -.003 to -.019 (seed 2025).
+- The calls are bimodal. Many videos stop after 1-2 calls, and many use all 8: HateMM 63-109 of 214 test videos at 8,
+  HateClipSeg 22-32 of 79. Positive videos get more calls than negative ones: HateMM 6.3-7.3 vs 3.6-3.8,
+  HateClipSeg 4.7-5.7 vs 2.9-4.0.
+- Uniform 5 calls fails the within bound on both corpora (-.0087, -.0070). On HateClipSeg it keeps AP / ROC better
+  than qmixE1 (by .0024 / .0058).
+
+## 5. Ablation (each component alone, same validation mean calls)
+
+`launch/run_r5.sh ablation`; source `runs/20261031_fewer_calls/{hatemm,hateclipseg}/r5_ablation/summary_sc474397.json`.
+Differences to fixed 8 (AP / ROC / within, mean test calls):
+
+| Corpus | qmixE1 | dlsum alone (no next-question EIG) | EIG alone (no last change) | uniform 5 |
+|---|---|---|---|---|
+| HateMM | -.002 / -.002 / +.001 (4.92) | +.001 / -.001 / +.002 (5.25) | -.005 / -.009 / -.006 (4.84) | -.009 / -.008 / -.009 (4.90) |
+| HateClipSeg | -.010 / -.009 / +.005 (4.96) | -.009 / -.009 / -.006 (4.55) | -.021 / -.021 / -.001 (4.86) | -.007 / -.003 / -.007 (5.00) |
+
+- Only the combined rule meets goal 1 on both corpora. dlsum alone fails the within bound on HateClipSeg (-.006);
+  EIG alone fails AP / ROC on HateClipSeg (-.021); uniform 5 fails the within bound on both.
+- Rule 14(g) (pooled AP or ROC drop >= .01 on both corpora when a component is removed) is not met by either
+  component: removing dlsum drops HateClipSeg AP / ROC by .012 but HateMM by .003 / .006; removing the EIG changes
+  pooled AP / ROC by less than .001 on HateClipSeg (its effect is within, -.011). The stopping rule is an efficiency
+  result (same quality at fewer calls), not a pooled-accuracy mechanism.
+
+## 6. How to run
 
 `evaluate_stop.py --corpus <c> --tag <tag> --trial-dirs <trials>`: policy up to 8 calls on validation and test,
 qmixE1 and qmixE3 calibrated to a validation mean of 5, unified evaluator for the rules, fixed 8 and fixed 5.
