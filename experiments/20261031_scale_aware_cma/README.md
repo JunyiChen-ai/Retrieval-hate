@@ -2,7 +2,7 @@
 
 Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); [rule-6 code review: PASS](../../docs/reviews/20261031_scale_aware_cma_code.md); HateClipSeg 3 seeds done: 3-seed mean
 .6858 / .6710, below r5 (.6865 / .6737), so goal 2 is not met by this candidate; over 30 same-hyperparameter trial
-pairs the bias has no effect (section 5). HateMM seed 234 still running (kept for information); seeds 2025 / 3407 not run. Part of the user's two-goal autonomous iteration
+pairs the bias has no effect (section 5). HateMM seed 234 done 2026-11-01 (for information): AP +.014, ROC equal, within -.030 against r5 seed 234; seeds 2025 / 3407 not run. Part of the user's two-goal autonomous iteration
 (2026-10-31). Goal 2 asks for the project's own backbone to reach r5's 3-seed AP and ROC on both main corpora at
 fixed 8 calls. r5: HateMM .6909 / .8849, HateClipSeg .6865 / .6737.
 
@@ -115,7 +115,13 @@ Source: `runs/20261031_scale_aware_cma/<corpus>/seed<seed>/search.log` and `tria
 | HateClipSeg 2025 | .6921 / .6749 / .5757 (trial 18) | .6896 / .6798 / .5461 (trial 11) | +.0025 / -.0049 / +.0296 |
 | HateClipSeg 3407 | .6799 / .6495 / .5762 (trial 4) | .6813 / .6666 / .5785 (trial 19) | -.0014 / -.0171 / -.0023 |
 | HateClipSeg, 3-seed mean | .6858 / .6710 / .5793 | .6865 / .6737 / .5602 | -.0007 / -.0027 / +.0191 |
-| HateMM 234 | running | .6944 / .8867 / .7887 (trial 9) | |
+| HateMM 234 | .7083 / .8867 / .7590 (trial 15) | .6944 / .8867 / .7887 (trial 9) | +.0139 / -.0000 / -.0297 |
+
+HateMM seed 234 (Slurm job 1301, uoa-lab3, 10-31 19:15 to 11-01 about 06:30, about 36 min per trial): the 20-trial
+means are below r5's (.6652 / .8722 / .7435 against .6755 / .8779 / .7511); paired by trial number, -.010 / -.006 /
+-.008 (std .034 / .010 / .025). The best trial's AP gain is one trial out of 20 at a noise level of about .03 and
+comes with within -.030. Validation-selected trial 12: .6913 / .8804 / .7465. Source
+`runs/20261031_scale_aware_cma/hatemm/seed234/` (`study_summary.json`, `trial*/metrics_test_fixed8.json`).
 
 Seeds 2025 and 3407 of HateClipSeg were started before the HateMM seed-234 screening finished, to use the free GPU;
 the decision rule above is unchanged.
