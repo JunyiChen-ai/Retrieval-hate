@@ -24,8 +24,7 @@ import hier_evidence_common as hc
 
 NEW = {"qmixSGe": ("dlsum", "stab1", "hG", "selT"), "qmixSe": ("dlsum", "selT"), "qmixGe": ("hG", "selT"),
        "qmixSGE": ("dlsum", "stab1", "hG", "sel"), "qmixGE": ("hG", "sel"), "qmixTe": ("stab1", "selT"),
-       "qavgSGe": ("dlsum", "stab1", "hG", "selT"), "qavgGe": ("hG", "selT")}
-TARGETS = (4, 5)
+       "qavgSGe": ("dlsum", "stab1", "hG", "selT"), "qavgGe": ("hG", "selT"), "qmixS1": ("dlsum", "sel")}
 
 
 def calibrate(runs, budget):
@@ -51,12 +50,17 @@ def main():
     ap.add_argument("--corpus", choices=("hatemm", "hateclipseg", "dehate"), required=True)
     ap.add_argument("--tags", nargs="+", default=["r5"])
     ap.add_argument("--root", default="runs/20261031_two_goal_diagnostics/policy_lab")
+    ap.add_argument("--targets", nargs="+", type=float, default=[4, 5])
+    ap.add_argument("--rules", nargs="+", default=None, help="restrict to these rules (default: all)")
+    ap.add_argument("--out-name", default="rule_scan.json")
     a = ap.parse_args()
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
     hate = {v for v in ids["test"] if labels[v] == 1}
     stop_rules.QMIX.update(NEW)
     rules = [r for r in stop_rules.RULES if not r.startswith(("eig_f", "voi_f", "stab1_f"))] + list(NEW)
     rules += ["%s_rt%02d" % (b, d) for b in NEW for d in (5, 10)]
+    if a.rules:
+        rules = [r for r in rules if r in a.rules]
     report = {}
     for tag in a.tags:
         for order in ("eig", "eer"):
@@ -88,7 +92,7 @@ def main():
                 for rule in rules:
                     if rule not in vals["val"][ids["val"][0]]:
                         continue
-                    for t in TARGETS:
+                    for t in a.targets:
                         vr = [vals["val"][v][rule] for v in ids["val"]]
                         thr, _ = calibrate(vr, float(t))
                         if rule in ("qmixSG_rt10", "hG") and not per_trial:
@@ -103,7 +107,7 @@ def main():
                 print(tag, order, d.name, flush=True)
             report[f"{tag}/{order}"] = {k: np.mean([r[k] for r in per_trial], 0).tolist() for k in per_trial[0]}
             report[f"{tag}/{order}/per_trial"] = per_trial
-    out = ROOT / a.root / a.corpus / "rule_scan.json"
+    out = ROOT / a.root / a.corpus / a.out_name
     out.write_text(json.dumps(report, indent=1) + "\n")
     print(out)
 
