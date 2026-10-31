@@ -1,7 +1,8 @@
 # Backbone candidate: scale-aware cross-modal attention
 
-Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); [rule-6 code review: PASS](../../docs/reviews/20261031_scale_aware_cma_code.md); HateClipSeg seeds 234 and 2025 done, each level
-with r5 within .005 (section 5); HateMM seed 234 and HateClipSeg seed 3407 running. Part of the user's two-goal autonomous iteration
+Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); [rule-6 code review: PASS](../../docs/reviews/20261031_scale_aware_cma_code.md); HateClipSeg 3 seeds done: 3-seed mean
+.6858 / .6710, below r5 (.6865 / .6737), so goal 2 is not met by this candidate; over 30 same-hyperparameter trial
+pairs the bias has no effect (section 5). HateMM seed 234 still running (kept for information); seeds 2025 / 3407 not run. Part of the user's two-goal autonomous iteration
 (2026-10-31). Goal 2 asks for the project's own backbone to reach r5's 3-seed AP and ROC on both main corpora at
 fixed 8 calls. r5: HateMM .6909 / .8849, HateClipSeg .6865 / .6737.
 
@@ -112,11 +113,28 @@ Source: `runs/20261031_scale_aware_cma/<corpus>/seed<seed>/search.log` and `tria
 |---|---|---|---|
 | HateClipSeg 234 | .6853 / .6885 / .5859 (trial 7) | .6885 / .6748 / .5561 (trial 13) | -.0032 / +.0137 / +.0298 |
 | HateClipSeg 2025 | .6921 / .6749 / .5757 (trial 18) | .6896 / .6798 / .5461 (trial 11) | +.0025 / -.0049 / +.0296 |
-| HateClipSeg 3407 | running | .6813 / .6666 / .5785 (trial 19) | |
+| HateClipSeg 3407 | .6799 / .6495 / .5762 (trial 4) | .6813 / .6666 / .5785 (trial 19) | -.0014 / -.0171 / -.0023 |
+| HateClipSeg, 3-seed mean | .6858 / .6710 / .5793 | .6865 / .6737 / .5602 | -.0007 / -.0027 / +.0191 |
 | HateMM 234 | running | .6944 / .8867 / .7887 (trial 9) | |
 
 Seeds 2025 and 3407 of HateClipSeg were started before the HateMM seed-234 screening finished, to use the free GPU;
 the decision rule above is unchanged.
+
+HateClipSeg conclusion: goal 2 (3-seed mean AP and ROC >= r5) is not met (-.0007 / -.0027). The mechanism has no
+measurable effect on HateClipSeg:
+- Mean over all 20 trials per seed, scale-aware minus r5: AP / ROC -.004 / -.006 (234), +.009 / +.005 (2025),
+  -.007 / -.006 (3407).
+- The first trials of each search have the same hyperparameters as r5's (same sampler seed). Over these 30 pairs the
+  objective difference is -.004 +- .004 (mean +- s.e.) and within +.005; the size of the learned table (max |b| from
+  .01 to 12.7) does not correlate with the difference (r = .19 for the objective, -.06 for within). Pairs whose table
+  stayed at about 0 still differ by -.04 to +.01: one training run varies by about .02 with fixed hyperparameters,
+  so a candidate needs an expected gain clearly above .01 to pass goal 2 reliably.
+- Video-level / within-video split (`backbone_gap.py`-style, CPU on lab1): video ROC .875 vs .865 and within .579
+  vs .560, but positive-only pooled ROC .6115 vs .6187; r5's video level with the scale-aware within-video shape gives
+  .6874 / .6729, still level with r5. Better per-video ranking did not turn into pooled gains.
+- Where r5's remaining error is (`experiments/20261031_two_goal_diagnostics/headroom.py`): on HateClipSeg perfect
+  within-video ranking would give .806 / .796 and perfect rejection of negative videos .705 / .717; on HateMM .749 /
+  .902 and .751 / .929.
 
 - HateClipSeg is level with r5 within .005 (AP -.003, ROC +.014). The learned table of trial 7 is small (|b| <= .35):
   the third head adds about .35 to distances up to 16 s and -.31 to 128-255 s; the >= 512 s column stays at its initial 0 (no training
