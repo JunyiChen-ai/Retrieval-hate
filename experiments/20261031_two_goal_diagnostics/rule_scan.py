@@ -40,6 +40,13 @@ def calibrate(runs, budget):
     return float(cands[ok[0]]), float(mean[ok[0]])
 
 
+def truncate(run, cap):
+    """The run as if the policy had been stopped after at most `cap` calls (per-call lists cut; scores and p_G keep
+    the prior entry, so they hold one more element)."""
+    n = min(cap, len(run["eig"]))
+    return {k: (list(v[:n + 1]) if k in ("scores", "p_G") else list(v[:n])) for k, v in run.items()}
+
+
 def metrics(scores, gt, hate):
     m = hc.frame_metrics(scores, gt, hate)
     return [m["pooled_ap"], m["pooled_roc"], m["within_roc"]]
@@ -53,6 +60,9 @@ def main():
     ap.add_argument("--targets", nargs="+", type=float, default=[4, 5])
     ap.add_argument("--rules", nargs="+", default=None, help="restrict to these rules (default: all)")
     ap.add_argument("--out-name", default="rule_scan.json")
+    ap.add_argument("--orders", nargs="+", default=["eig", "eer"])
+    ap.add_argument("--cap", type=int, default=None,
+                    help="truncate the stored runs to this many calls before computing rule values (cap check)")
     a = ap.parse_args()
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
     hate = {v for v in ids["test"] if labels[v] == 1}
@@ -63,12 +73,14 @@ def main():
         rules = [r for r in rules if r in a.rules]
     report = {}
     for tag in a.tags:
-        for order in ("eig", "eer"):
+        for order in a.orders:
             per_trial = []
             for d in sorted((ROOT / a.root / a.corpus / tag).glob(f"*_{order}")):
                 with (d / "runs.pkl").open("rb") as fh:
                     blob = pickle.load(fh)
                 runs, T = blob["runs"], blob["T"]
+                if a.cap is not None:
+                    runs = {s: {v: truncate(r, a.cap) for v, r in runs[s].items()} for s in runs}
                 vals = {}
                 for s in ("val", "test"):
                     vals[s] = {}
