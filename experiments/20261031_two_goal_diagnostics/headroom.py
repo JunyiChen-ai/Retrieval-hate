@@ -5,7 +5,10 @@ edits, each fixing one component and keeping the rest:
   - negatives_zero: every second of a negative video gets score 0 (perfect rejection of negative videos; positive
     videos unchanged), the gain available from video-level discrimination of negatives;
   - shape_oracle: inside each positive video its own scores are reassigned so that the hate seconds get the highest
-    ones (perfect within-video ranking with the same set of scores per video), the gain available from localisation.
+    ones (perfect within-video ranking with the same set of scores per video), the gain available from localisation;
+  - density_only: every second gets its video's mean score (the model's within-video shape removed), what the
+    model's own within-video shape contributes.
+Also the Spearman correlation, over positive videos, between the video's mean score and its GT hate fraction.
 Also counts where the non-hate seconds are (negative videos vs non-hate parts of positive videos).
 Rule-10 developmental evidence (test predictions and test GT read; nothing trained or selected).
 """
@@ -17,6 +20,7 @@ import socket
 import sys
 
 import numpy as np
+from scipy.stats import spearmanr
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
@@ -69,12 +73,17 @@ def main():
                 shape[v] = t
             else:
                 shape[v] = s
+        dens = {v: np.full_like(s, s.mean()) for v, s in sc.items()}
+        pos = [v for v in sc if labels[v] == 1]
+        rho = spearmanr([sc[v].mean() for v in pos], [np.asarray(gt[v]).mean() for v in pos]).correlation
         report["seeds"][seed] = {"trial": trial, "official": metrics(sc, gt, hate),
-                                 "negatives_zero": metrics(neg0, gt, hate), "shape_oracle": metrics(shape, gt, hate)}
+                                 "negatives_zero": metrics(neg0, gt, hate), "shape_oracle": metrics(shape, gt, hate),
+                                 "density_only": metrics(dens, gt, hate), "level_fraction_spearman": float(rho)}
         print(a.corpus, seed, json.dumps(report["seeds"][seed]), flush=True)
-    keys = ("official", "negatives_zero", "shape_oracle")
+    keys = ("official", "negatives_zero", "shape_oracle", "density_only")
     report["mean"] = {k: {m: float(np.mean([report["seeds"][s][k][m] for s in SEEDS]))
                           for m in ("pooled_ap", "pooled_roc", "within_roc")} for k in keys}
+    report["mean"]["level_fraction_spearman"] = float(np.mean([report["seeds"][s]["level_fraction_spearman"] for s in SEEDS]))
     out = ROOT / a.out_root
     out.mkdir(parents=True, exist_ok=True)
     (out / f"{a.corpus}.json").write_text(json.dumps(report, indent=1) + "\n")
