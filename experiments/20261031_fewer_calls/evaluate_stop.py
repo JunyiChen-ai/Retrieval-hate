@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from qtl import cpolicy, data as qdata, policy
 from qtl.checkpoint import load_trial
 from qtl.copy_noise import bucket_of, estimate_pi_neg
-from qtl.inside_outside import make_model
+from qtl.backbones import make_model
 from qtl.stop_rules import rule_values, add_quantile_rules
 import hier_evidence_common as hc
 
@@ -55,6 +55,7 @@ def main():
         trial = Path(trial).resolve()
         summary, cfg, model, am, chain = load_trial(trial, a.device, answers, ids, model_factory=make_model)
         assert cfg["answer_source"] == "soft_both" and int(cfg.get("soft_levels", 8)) == 8
+        assert list(cfg["text_sources"]) == ["bert"], "the feature store is built with the bert text source"
         pi, *_ = estimate_pi_neg(answers, labels, ids["train"], answer_T, am, cfg["categories"])
         copy_fn = lambda length, p=pi: float(p[bucket_of(length)])  # noqa: E731
         name = f'seed{summary["seed"]}_{trial.name}'

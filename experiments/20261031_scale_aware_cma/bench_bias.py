@@ -9,20 +9,19 @@ from pathlib import Path
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-import backbone
+from qtl import scale_cma
 
 
-class LookupAttention(backbone.ScaleBiasAttention):
+class LookupAttention(scale_cma.ScaleBiasAttention):
     """The seed-234 version: plain index lookup, autograd's index backward."""
 
     def forward(self, q, k, v, key_mask=None):
-        orig = backbone._BucketBias.apply
-        backbone._BucketBias.apply = lambda table, buckets: table[:, buckets]
+        orig = scale_cma._BucketBias.apply
+        scale_cma._BucketBias.apply = lambda table, buckets: table[:, buckets]
         try:
             return super().forward(q, k, v, key_mask)
         finally:
-            backbone._BucketBias.apply = orig
+            scale_cma._BucketBias.apply = orig
 
 
 def run(attn, x, n):
@@ -38,7 +37,7 @@ def run(attn, x, n):
 def main():
     dev = "cuda"
     torch.manual_seed(0)
-    new = backbone.ScaleBiasAttention(4, 128, True, dropout=0.0).to(dev)
+    new = scale_cma.ScaleBiasAttention(4, 128, True, dropout=0.0).to(dev)
     old = LookupAttention(4, 128, True, dropout=0.0).to(dev)
     old.load_state_dict(new.state_dict())
     with torch.no_grad():

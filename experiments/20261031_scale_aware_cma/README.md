@@ -1,6 +1,7 @@
 # Backbone candidate: scale-aware cross-modal attention
 
-Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); [rule-6 code review: PASS](../../docs/reviews/20261031_scale_aware_cma_code.md); seed-234 searches submitted (Slurm, lab3 HateMM, lab1 HateClipSeg). Part of the user's two-goal autonomous iteration
+Status (2026-10-31): [rule-4 proposal review: GO](../../docs/reviews/20261031_scale_aware_cma_proposal.md); [rule-6 code review: PASS](../../docs/reviews/20261031_scale_aware_cma_code.md); HateClipSeg seed 234 done and level
+with r5 (section 5), HateMM seed 234 running; HateClipSeg seed 2025 running. Part of the user's two-goal autonomous iteration
 (2026-10-31). Goal 2 asks for the project's own backbone to reach r5's 3-seed AP and ROC on both main corpora at
 fixed 8 calls. r5: HateMM .6909 / .8849, HateClipSeg .6865 / .6737.
 
@@ -97,6 +98,24 @@ video head. Whether it also helps the HateClipSeg video-level gap is an open que
   - r5 reference: about 740 s per HateMM trial and 300-1200 s per HateClipSeg trial (with contention).
   - The added cost is one T x T bias gather per attention call.
 - Output: `runs/20261031_scale_aware_cma/<corpus>/seed<seed>/`.
+- Code: the network is `src/qtl/scale_cma.py` (moved from this directory's `backbone.py` on 2026-10-31, no change, so
+  that the goal-1 evaluator can load these checkpoints through `src/qtl/backbones.py`); `train.py` and `search.py` here
+  are the entry points.
+
+## 5. Results
+
+Screening, seed 234, best trial of the 20-trial search (test-selected, rule 7), fixed 8 calls, AP / ROC / within.
+Source: `runs/20261031_scale_aware_cma/<corpus>/seed234/search.log` and `trial<k>/summary.json`.
+
+| Corpus | Scale-aware CMA | r5 seed 234 | Difference |
+|---|---|---|---|
+| HateClipSeg | .6853 / .6885 / .5859 (trial 7) | .6885 / .6748 / .5561 | -.0032 / +.0137 / +.0298 |
+| HateMM | running | .6944 / .8867 / .7887 | |
+
+- HateClipSeg is level with r5 within .005 (AP -.003, ROC +.014). The learned table of trial 7 is small (|b| <= .35):
+  the third head adds about .35 to distances up to 16 s and -.31 to 128-255 s; the >= 512 s column stays at its initial 0 (no training
+  pair of seconds was that far apart).
+- The validation-selected trial of the same search is trial 12: .6688 / .6337 / .5573.
 
 ## 6. Run-time note (2026-10-31)
 
@@ -104,9 +123,15 @@ video head. Whether it also helps the HateClipSeg video-level gap is an open que
   HateClipSeg (short videos) took about 153 s per trial.
 - Suspected cause: autograd's backward of the index lookup `table[:, buckets]` scatter-adds 4 x T x T values into 44
   slots per attention call. HateMM training batches reach T = 5809 s (batch size 1 for the longest videos).
-- From seeds 2025 and 3407 on, the table gradient is computed as a dense product (`_BucketBias` in `backbone.py`):
+- From seeds 2025 and 3407 on, the table gradient is computed as a dense product (`_BucketBias`, now in `src/qtl/scale_cma.py`):
   - the forward values are identical (same lookup);
   - the gradient equals the lookup's gradient up to float summation order (equal in a float64 CPU check).
   Seed-234 trials used the lookup's own backward. The mathematics of the method is unchanged.
 - GPU timing and equality check: `bench_bias.py` (`launch/sbatch_bench.sh`), output
-  `runs/20261031_scale_aware_cma/bench_bias_<job>.out`. Code review PASS: `docs/reviews/20261031_scale_aware_cma_grad_code.md`.
+  `runs/20261031_scale_aware_cma/bench_bias_1303.out` (uoa-lab1, RTX 5090). Code review PASS:
+  `docs/reviews/20261031_scale_aware_cma_grad_code.md`.
+  - Forward identical at all four shapes; table gradient max relative difference 1.6e-7 to 1.2e-6 (float32).
+  - One attention forward + backward: lookup vs dense 0.7 vs 0.6 ms (B 32, T 120), 2.6 vs 1.4 ms (32, 300),
+    23.8 vs 15.5 ms (8, 1000), 157.9 vs 111.0 ms (4, 2000).
+  - The dense gradient is 1.1-1.9x faster on this layer. That alone does not explain the 3x longer HateMM trial;
+    the per-trial times of seeds 2025 / 3407 will show the effect on a full trial.

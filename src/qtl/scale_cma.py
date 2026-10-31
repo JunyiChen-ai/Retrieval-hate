@@ -1,4 +1,4 @@
-"""Scale-aware cross-modal attention prior (README section 2).
+"""Scale-aware cross-modal attention prior (`experiments/20261031_scale_aware_cma/README.md`, section 2).
 
 r5's content prior (qtl.model.PriorNet, MACIL-SD's cross-modal layer) with one change: the attention score between
 query second t and key second t' gets a learned bias b[h, k(|t - t'|)] per head, k = 0 for the same second and
@@ -35,7 +35,7 @@ def scale_buckets(T, device):
 class _BucketBias(torch.autograd.Function):
     """table[:, buckets] with the table gradient computed as a dense (heads x T*T) by (T*T x scales) product.
     Same forward values as the index lookup; the lookup's own backward is an index scatter-add of 4*T*T values into 44
-    slots, which is slow on GPU for long videos (README section 6, run-time note)."""
+    slots, which is slow on GPU for long videos (experiment README section 6, run-time note)."""
 
     @staticmethod
     def forward(ctx, table, buckets):
