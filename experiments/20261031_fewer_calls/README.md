@@ -106,7 +106,42 @@ Differences to fixed 8 (AP / ROC / within, mean test calls):
   pooled AP / ROC by less than .001 on HateClipSeg (its effect is within, -.011). The stopping rule is an efficiency
   result (same quality at fewer calls), not a pooled-accuracy mechanism.
 
-## 6. How to run
+## 6. The number of calls is a user budget (user ruling 2026-11-01)
+
+The mean of 5 calls is hand-set. Letting validation choose it does not work: the validation objective's bootstrap
+standard error (.025-.053) is far above the .005-.01 differences that matter, and the chosen budget swings from 1 to 7
+calls across seeds (`experiments/20261031_two_goal_diagnostics/README.md`, finding 11). The user ruled (2026-11-01)
+that the mean number of calls is a budget the user sets for their resources, like k of fixed-k; the paper reports the
+curve below, with 5 as one point.
+
+Curve (`experiments/20261031_two_goal_diagnostics/stop_budget_curve.py`, uoa-lab1, stored r5 policy runs with copy
+likelihood truncated to 8 calls, unified evaluator, 3-seed means; output
+`runs/20261031_two_goal_diagnostics/stop_budget_curve/<corpus>/summary.json`). Each cell: test mean calls; AP / ROC /
+within minus fixed 8 of the same trials; then minus fixed k at the nearest whole number of calls.
+
+| Budget | HateMM | HateClipSeg | DeHate |
+|---|---|---|---|
+| 1 | 1.00; -.026 / -.026 / +.007; = fixed 1 | 1.02; -.020 / -.016 / -.014; +.000 / +.001 / +.000 | 1.00; -.015 / -.024 / -.013; = fixed 1 |
+| 2 | 2.17; -.007 / -.008 / +.007; +.011 / +.011 / +.002 | 1.92; -.014 / -.009 / -.012; +.005 / +.004 / -.000 | 1.94; -.004 / -.012 / -.008; +.005 / +.005 / -.001 |
+| 3 | 3.01; -.008 / -.008 / +.009; +.010 / +.006 / +.017 | 2.89; -.014 / -.013 / -.006; -.001 / -.008 / +.006 | 2.85; -.008 / -.009 / -.004; -.003 / +.005 / +.004 |
+| 4 | 3.96; -.007 / -.005 / +.012; +.009 / +.007 / +.017 | 3.81; -.010 / -.008 / +.000; -.002 / -.006 / +.010 | 3.84; -.003 / -.003 / -.005; +.000 / +.006 / +.002 |
+| 5 | 4.92; -.002 / -.002 / +.001; +.006 / +.006 / +.010 | 4.96; -.010 / -.009 / +.005; -.002 / -.006 / +.012 | 4.95; -.002 / -.002 / -.002; -.004 / +.003 / +.002 |
+| 6 | 5.88; +.000 / -.000 / -.006; +.007 / +.005 / -.004 | 5.70; -.009 / -.008 / +.004; -.006 / -.006 / +.018 | 5.98; -.001 / -.000 / -.004; -.003 / +.003 / -.004 |
+| 7 | 6.48; +.000 / +.000 / -.001; +.007 / +.005 / +.001 | 6.84; -.009 / -.008 / +.002; -.009 / -.007 / +.002 | 6.42; -.000 / -.000 / -.001; -.002 / +.003 / -.001 |
+
+Fixed 8 of these trials (with copy likelihood, the reference): HateMM .686 / .882 / .767 (7.63 calls: short videos
+have fewer than 8 nodes), HateClipSeg .683 / .672 / .559 (8.00), DeHate .258 / .770 / .667 (7.26).
+
+- HateMM: the rule is above uniform fixed k at the same calls at every budget from 2 to 7 (AP +.006 to +.011) and
+  within .003 of fixed 8 from budget 5 up.
+- HateClipSeg: AP / ROC stay about .009 below fixed 8 from budget 4 to 7, while fixed 7 is within .001; the rule
+  gives fewer calls to negative videos (5.9 of 7 at budget 7), and on HateClipSeg negatives need calls for pooled
+  AP / ROC (finding 2). Within is above fixed k by .010-.018 at budgets 4-6.
+- DeHate: within .004 of fixed 8 from budget 4 up; against fixed k, ROC higher (+.003 to +.006), AP equal or lower
+  (up to -.004).
+- Goal 1 at budget 5 holds on all three main corpora (HateClipSeg AP -.0095, the closest to the .01 bound).
+
+## 7. How to run
 
 `evaluate_stop.py --corpus <c> --tag <tag> --trial-dirs <trials>`: policy up to 8 calls on validation and test,
 qmixE1 and qmixE3 calibrated to a validation mean of 5, unified evaluator for the rules, fixed 8 and fixed 5.
