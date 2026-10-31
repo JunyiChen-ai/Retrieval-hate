@@ -44,6 +44,43 @@ def _nested_source(tr, node, asked_b, o_len):
     return best
 
 
+def _answer_tables(asker, cand, nodes, tr, copy_pi, asked_b):
+    """(n, 3, O) P(o | s) of the candidates, with the copy mixture for nodes nested with an earlier answer."""
+    po = asker.po_s[cand].copy()
+    if copy_pi is not None and asked_b:
+        for i, n in enumerate(nodes):
+            src = _nested_source(tr, int(n), asked_b, None)
+            if src is not None:                          # pi bucketed by the shorter of the two (the child)
+                pi = float(copy_pi(float(min(tr["b"][n] - tr["a"][n], tr["b"][src[0]] - tr["a"][src[0]]))))
+                po[i] *= (1.0 - pi)
+                po[i][:, src[1]] += pi
+    return po
+
+
+def _expected_error_reduction(asker, cand, nodes, vt, p, pG, mm, copy_pi, asked_b):
+    """Expected reduction of the per-second squared error sum_t (p_t - y_t)^2 from asking each candidate node, i.e.
+    sum_o P(o) sum_t (E[p_t | o] - p_t)^2 (the score is a probability, so this is the expected Brier gain).
+
+    Uses the exact current posteriors p_t = pG r_t (r_t = P(y_t = 1 | G = 1, answers)) and node marginals
+    m_n = P(z_n = 1 | G = 1, answers), and one approximation: a node's answer moves the seconds outside the node only
+    through P(G = 1 | answers) (chain correlation across the node boundary is ignored). Inside the node the update is
+    exact: y_t = 1 implies z_n = 1, so E[y_t | G = 1, z_n = 1] = r_t / m_n and E[y_t | z_n = 0] = 0. Closed form:
+        (1 - pG)^2 R_out sum_o P(o) (1 - P(o | s=0) / P(o))^2 + pG^2 R_in sum_o P(o) (P(o | s=2) / P(o) - 1)^2,
+    with R_in / R_out the sums of r_t^2 inside / outside the node."""
+    tr = vt.tr
+    po = _answer_tables(asker, cand, nodes, tr, copy_pi, asked_b)                     # n, 3, O
+    w = np.stack([np.full(len(cand), 1.0 - pG), pG * (1.0 - mm), pG * mm], axis=1)
+    P = np.einsum("ns,nso->no", w, po)                                                # n, O
+    P = np.clip(P, 1e-300, None)
+    r = np.asarray(p, dtype=np.float64) / max(float(pG), 1e-12)
+    c2 = np.concatenate([[0.0], np.cumsum(r * r)])
+    R_in = c2[tr["b"][nodes]] - c2[tr["a"][nodes]]
+    R_out = c2[-1] - R_in
+    out_term = (P * (1.0 - po[:, 0] / P) ** 2).sum(1)
+    in_term = (P * (po[:, 2] / P - 1.0) ** 2).sum(1)
+    return (1.0 - pG) ** 2 * R_out * out_term + pG ** 2 * R_in * in_term
+
+
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
               copy_mode="both", record_erm=0):
@@ -147,7 +184,11 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             nodes = asker.q[cand]
             mm = m[off + nodes]
             w = np.stack([np.full(len(cand), 1.0 - pG[b]), pG[b] * (1.0 - mm), pG[b] * mm], axis=1)
-            if order == "eig" and copy_eig and asked_o[b]:
+            if order == "eer":
+                e = _expected_error_reduction(asker, cand, nodes, vts[b], p[b, :Ts[b]], pG[b], mm,
+                                              copy_pi if copy_eig else None, asked_o[b])
+                j = int(np.argmax(e))
+            elif order == "eig" and copy_eig and asked_o[b]:
                 po = asker.po_s[cand].copy()                              # n, 3, O
                 tr_b = vts[b].tr
                 for i, n in enumerate(nodes):
