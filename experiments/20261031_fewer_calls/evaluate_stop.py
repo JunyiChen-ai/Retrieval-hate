@@ -1,7 +1,8 @@
 """Goal 1 (fewer VLM calls), evaluator outputs for the stopping rule (README section 2).
 
 For each finished trial: the policy as in the complete method (EIG order, copy likelihood in EIG and posterior,
-`cpolicy.run_batch`), up to --max-calls on validation and test. The stopping statistic of each rule is computed per
+`cpolicy.run_batch`), up to --max-calls on validation and test. The maximum is the fixed budget the rule is compared
+with (8): the rule only decides when to stop earlier, so no video gets more calls than in the fixed setting. The stopping statistic of each rule is computed per
 (video, call) by `qtl.stop_rules`; its threshold c is calibrated on validation so that the validation mean number of
 calls equals --target (policy.calibrate, no labels) and is then applied to test. Writes, per trial, test scores and
 the unified evaluator's metrics for: each rule at the target, fixed 8 calls (the comparison point of goal 1) and
@@ -34,7 +35,7 @@ def main():
     ap.add_argument("--trial-dirs", nargs="+", required=True)
     ap.add_argument("--rules", nargs="+", default=["qmixE1", "qmixE3"])
     ap.add_argument("--target", type=float, default=5.0)
-    ap.add_argument("--max-calls", type=int, default=32)
+    ap.add_argument("--max-calls", type=int, default=8, help="maximum calls = the fixed budget compared with")
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--tag", required=True, help="output subdirectory, e.g. r5")
@@ -47,7 +48,7 @@ def main():
     store = qdata.Store(a.corpus, ids["val"] + ids["test"], ["bert"])
     out_root = (ROOT / a.out_root / a.corpus / a.tag).resolve()
     out_root.mkdir(parents=True, exist_ok=True)
-    fixed_k = (8, int(round(a.target)))
+    fixed_k = (a.max_calls, int(round(a.target)))
     report = {"host": socket.gethostname(), "created": datetime.now().astimezone().isoformat(),
               "target": a.target, "max_calls": a.max_calls, "rules": a.rules, "trials": {}}
     for trial in a.trial_dirs:
@@ -91,22 +92,24 @@ def main():
             thr, vm = policy.calibrate([vals["val"][v][rule] for v in ids["val"]], a.target)
             calls = {v: policy.stop_calls(vals["test"][v][rule], thr) for v in ids["test"]}
             r_ = evaluate(f"{rule}_{a.target:g}", calls)
-            r_.update(threshold=thr if math.isfinite(thr) else str(thr), validation_mean_calls=vm)
+            r_.update(threshold=thr if math.isfinite(thr) else str(thr), validation_mean_calls=vm,
+                      validation_videos_at_max_calls=int(sum(policy.stop_calls(vals["val"][v][rule], thr) >= a.max_calls
+                                                             for v in ids["val"])))
             (od / f"calls_test_{rule}_{a.target:g}.json").write_text(json.dumps(calls) + "\n")
             row["rules"][rule] = r_
         report["trials"][name] = row
-        f8 = row["fixed"]["8"]
+        f8 = row["fixed"][str(a.max_calls)]
         for rule, r_ in row["rules"].items():
             print(name, rule, "%.2f calls" % r_["mean_calls"],
                   " ".join("%+.4f" % (r_[m] - f8[m]) for m in ("pooled_ap", "pooled_roc", "within_roc")), flush=True)
         del model, am, chain
     mets = ("pooled_ap", "pooled_roc", "within_roc", "mean_calls")
     T = list(report["trials"].values())
-    report["mean"] = {"fixed8": {m: float(np.mean([t["fixed"]["8"][m] for t in T])) for m in mets},
+    report["mean"] = {f"fixed{fixed_k[0]}": {m: float(np.mean([t["fixed"][str(fixed_k[0])][m] for t in T])) for m in mets},
                       f"fixed{fixed_k[1]}": {m: float(np.mean([t["fixed"][str(fixed_k[1])][m] for t in T])) for m in mets}}
     for rule in a.rules:
         report["mean"][rule] = {m: float(np.mean([t["rules"][rule][m] for t in T])) for m in mets}
-        report["mean"][rule]["minus_fixed8"] = {m: report["mean"][rule][m] - report["mean"]["fixed8"][m]
+        report["mean"][rule][f"minus_fixed{fixed_k[0]}"] = {m: report["mean"][rule][m] - report["mean"][f"fixed{fixed_k[0]}"][m]
                                                 for m in mets[:3]}
     path = out_root / f"summary_{socket.gethostname()}.json"
     path.write_text(json.dumps(report, indent=1) + "\n")
