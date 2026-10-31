@@ -15,7 +15,9 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
 | `call_allocation.py` | Can allocating calls across videos, by P(G) or other rules, reach 4-5 calls? Includes an oracle label split. | `call_allocation/<corpus>/partial_<host>.json` |
 | `backbone_gap.py` | Is the inside-outside (IO) gap to r5 at the video level or in the within-video shape? | `backbone_gap/<corpus>.json` |
 | `mix_budgets.py` | Which videos need calls 5-8: positives or negatives? Label-split oracle. | `mix_budgets/*.json` |
-| `policy_lab.py` | Does question order matter? EIG vs expected squared-error reduction (EER, `cpolicy._expected_error_reduction`), with copy likelihood, fixed-k and stop rules. | `policy_lab/<corpus>/<r5\|io>/summary_<host>.json` |
+| `policy_lab.py` | Does question order matter? EIG vs expected squared-error reduction (EER, `cpolicy._expected_error_reduction`), with copy likelihood, fixed-k and stop rules. `--answer-model val3` uses the validation-fitted three-state answer model (`src/qtl/answer_calib.py`). | `policy_lab/<corpus>/<tag>/summary_<host>.json` |
+| `order_anatomy.py` | Which nodes each order asks, and where within ROC is gained or lost (by GT harm fraction tercile). | `policy_lab/order_anatomy.json` |
+| `rule_scan.py` | Every stopping rule of `qtl.stop_rules` (plus rules with the selection value as a component) at several target mean calls, on the stored policy runs; per trial. | `policy_lab/<corpus>/rule_scan*.json` |
 
 ## Findings
 
@@ -46,3 +48,20 @@ shared core evaluator (`hc.frame_metrics`). Outputs are under `runs/20261031_two
    - No single policy passes on both corpora yet:
      - HateMM is met by the existing qmixSG_rt10 rule on r5 at about 5 calls.
      - HateClipSeg within needs more within-efficient questions; EER at 4 calls gives that.
+5. **A validation-fitted answer model does not fix it** (`policy_lab.py --answer-model val3`, tag `r5_val3`).
+   - HateMM: within no longer falls with more calls (fixed 16 .771 vs .753 with the trained model), but AP is lower
+     at every budget (fixed 8 .673 vs .686).
+   - HateClipSeg: within at 4-5 calls is not better (.537-.551).
+6. **Where within comes from** (`order_anatomy.py`, test).
+   - HateMM: within at 0 calls is .770, at 8 calls .772. Calls move within between videos: the lowest GT-harm-fraction
+     tercile gains (.695 to .797 with EIG), the highest loses (.907 to .807).
+   - HateClipSeg: within needs calls (.539 at 0, .559 at 8; EER reaches .559 at 4 by asking shorter nodes, 9 s vs 14 s).
+7. **Stopping rules at 4-5 calls** (`rule_scan.py`, EIG order, r5 trials; then 6 more r5 trials per corpus, tag
+   `r5_more`; DeHate r5; inside-outside trials).
+   - Rules on video-level uncertainty or the last change (qmixSG, qmixS, qmixG, qmixD) keep AP / ROC but lose
+     .005-.008 within on HateClipSeg; rules on the information left (eigsum, eigtop3) give positives 7-9 calls and
+     negatives 1-3 and lose .012-.025 AP / ROC; qmixSG_rt10 at 5 calls loses .014 within on HateClipSeg.
+   - Combining the last change with the forward value passes: qmixE3 (top-3 EIG sum) and qmixE1 (the best next EIG,
+     no constant). Details and the per-setting table: `experiments/20261031_fewer_calls/README.md`.
+   - The test choice among about 190 rules is selection on test; the extra trials, DeHate and inside-outside settings
+     did not take part in the choice of the family.

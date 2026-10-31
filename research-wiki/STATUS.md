@@ -11,7 +11,9 @@
 诊断（开发期 test 分析，`experiments/20261031_two_goal_diagnostics/`，输出 `runs/20261031_two_goal_diagnostics/`）：
 - 调用分配（`call_allocation.py`）：HCS test 87% 是正例视频，只给负例少问降不到 4–5 次；HateMM 即使用真实标签给正例 8 次、负例 2 次（平均 4.3 次），ROC 也低 .028。只靠重新分配调用不够，需要每次调用更有效，或骨干先验更强。
 - 骨干差距（`backbone_gap.py`）：HateMM 的差距在视频内分数形状（换上 r5 的视频内形状后 within 追平、AP 回收 .009）；HCS 的差距主要在视频级区分（视频 ROC .795 对 .865）。
-- 当前候选：[尺度感知跨模态注意力](../experiments/20261031_scale_aware_cma/README.md)（目标 2），待 proposal review。
+- 停止规则扫描（`rule_scan.py`、`order_anatomy.py`）：4–5 次时两类视频抢调用——看视频级不确定/最后变化的规则（qmixSG 等）保住 AP/ROC，但 HCS within 降 .005–.008；看剩余信息量的规则把调用给正例，within 涨但 AP/ROC 降 .012–.025。现行 qmixSG_rt10 在平均 5 次时 HCS within −.014。
+- 目标 1 候选：[qmixE1 停止规则](../experiments/20261031_fewer_calls/README.md)（最后一次回答造成的逐秒 log-odds 总变化 ∨ 下一个最佳问题的 EIG，各取 validation 分位数后取大，validation 平均 5 次定阈值，无手设常数）。按 test 从规则族中选出后，在 r5 另 6 个 trial、DeHate、IO 骨干上复查：7 组设置中 6 组过（IO HateMM within −.005 卡线）。待 proposal / code review，然后用统一评测器出正式数字。
+- 目标 2 候选：[尺度感知跨模态注意力](../experiments/20261031_scale_aware_cma/README.md)，proposal GO、code review PASS；seed 234 搜索 10-31 19:15 起（Slurm job 1301 lab3 HateMM，1302 lab1 HCS）。HCS 同超参逐 trial 对 r5 差 −.040 到 +.012，偏置表只在 lr_answer ≥ .008 时明显学到（HCS 多个 trial 在 epoch 1–3 被选中，偏置≈0，等同 r5，仍差 .04，即同超参不同初始化的波动约 ±.04）。
 
 以下为 10-31 之前的完整组合结论：
 
@@ -77,7 +79,10 @@ AP / ROC / within，三seed均值±总体标准差，开发期test目标选trial
 
 ## 运行任务
 
-无运行中任务。10-31诊断：Slurm job 1295–1299（lab3：HateMM、DeHate seed234/3407；lab1：HCS、DeHate seed2025）07:54–08:50全部COMPLETED，无Traceback；两台CPU预算曲线08:00/08:01输出DONE。输出已回传本机 `runs/20261002_complete_io_method/{all_trials,budget_curve,analysis/select_by_setting.json}`。原选定trial重跑复现：HateMM/HCS完全一致，DeHate seed234 trial4最大差.0012（GPU非确定性）。此前完整组合：HCS（lab1）与HateMM（lab3）10-02 18:35前后结束；DeHate seed2025（lab1）10-03 04:41、seed234/3407（lab3）09:17/09:18结束，`completion.json` 均为success。
+- Slurm job 1301（uoa-lab3，HateMM seed234，尺度感知 CMA 完整搜索，20 trial，约 36 分钟/trial）与 1302（uoa-lab1，HCS seed234，约 2.5 分钟/trial），10-31 19:15 起；输出 `runs/20261031_scale_aware_cma/<corpus>/seed234/`。
+- 目标 1 诊断已完成并回传 `runs/20261031_two_goal_diagnostics/policy_lab/`。
+
+10-31 早些时候：Slurm job 1295–1299（lab3：HateMM、DeHate seed234/3407；lab1：HCS、DeHate seed2025）07:54–08:50全部COMPLETED，无Traceback；两台CPU预算曲线08:00/08:01输出DONE。输出已回传本机 `runs/20261002_complete_io_method/{all_trials,budget_curve,analysis/select_by_setting.json}`。原选定trial重跑复现：HateMM/HCS完全一致，DeHate seed234 trial4最大差.0012（GPU非确定性）。此前完整组合：HCS（lab1）与HateMM（lab3）10-02 18:35前后结束；DeHate seed2025（lab1）10-03 04:41、seed234/3407（lab3）09:17/09:18结束，`completion.json` 均为success。
 
 DeHate审计需要远端cohort（本机无DeHate split/GT/特征），因此 `audit_dehate.py --seeds` 在lab1（seed2025）、lab3（seed234/3407）运行，部分结果回传后本机 `--merge`；所有核对项通过（完成标记/主机、20 trial×50 epoch、选择重推、checkpoint epoch、复制与分位参考来源、阈值与逐视频调用数重算、分数前缀、24份评测完整覆盖）。
 
@@ -85,8 +90,8 @@ DeHate审计需要远端cohort（本机无DeHate split/GT/特征），因此 `au
 
 ## 下一步
 
-1. 目标 2：尺度感知跨模态注意力完成 proposal / code review 后，在 lab3（HateMM）与 lab1（HCS）用 Slurm 跑 seed234 完整搜索，与 r5 seed234（HateMM .6944 / .8867，HCS .6885 / .6748）比较。
-2. 目标 1：在新骨干上设计提问/停止策略；已知只靠调用分配不够。
+1. 目标 1：qmixE1 过 proposal / code review 后，`experiments/20261031_fewer_calls/launch/run_r5.sh` 用统一评测器出 r5 三 seed（lab1）与 DeHate（lab3）数字；最终在目标 2 选定的骨干上复核。
+2. 目标 2：等 seed234 搜索结束，与 r5 seed234（HateMM .6944 / .8867，HCS .6885 / .6748）比较；持平或更好则跑 seed 2025 / 3407 与冻结偏置消融。
 
 ## 历史与规则
 
