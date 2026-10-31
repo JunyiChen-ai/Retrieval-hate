@@ -5,7 +5,7 @@
 - 例外仅用于多机同步及其检查记录，不用于一般 run/结果溯源、数据、缓存、模型或其它文件校验。此裁定覆盖下文旧 commit 溯源要求；其它溯源使用可读代码版本说明、日期、路径与生成命令。完整约束见 `AGENTS.md` 的“禁止哈希”。
 
 ## 项目
-弱监督 hateful video localization。主数据集:HateMM、HateClipSeg(2026-09-02 裁定;MHC-EN/MHC-ZH 已停用,不跑、不作门、不进论文主表;新数据集只能做 external validation)。研究迭代流程与晋级标准见 `RESEARCH_ITERATION_RULES.md`。
+弱监督 hateful video localization。主数据集:HateMM、HateClipSeg、DeHate(HateMM、HateClipSeg 为 2026-09-02 裁定;DeHate 原为 external validation,2026-11-01 用户裁定升为主数据集;MHC-EN/MHC-ZH 已停用,不跑、不作门、不进论文主表;其它新数据集只能做 external validation)。研究迭代流程与晋级标准见 `RESEARCH_ITERATION_RULES.md`。
 
 **当前状态唯一入口:`research-wiki/STATUS.md`**(最新代码在哪、权威数字在哪、做到哪了)。每轮迭代结束必须更新它。
 

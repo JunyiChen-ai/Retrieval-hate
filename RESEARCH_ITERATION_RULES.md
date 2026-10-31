@@ -6,7 +6,7 @@
 
 做出一个弱监督 hateful video localization 方法，同时满足：
 
-- **SOTA**：按第 8 条定义，在 HateMM 和 HateClipSeg 的 test 上，pooled frame AP 与 ROC 超过固定 baseline 表；within ROC 只报告（2026-09-06 起不作门）。
+- **SOTA**：按第 8 条定义，在 HateMM、HateClipSeg 和 DeHate 的 test 上，pooled frame AP 与 ROC 超过固定 baseline 表；within ROC 只报告（2026-09-06 起不作门）。
 - **Novel**：按第 4 条定义。迁移自其他任务、没在 hateful video detection/localization 用过、且有效的方法即算 novel。
 
 ## 前一版流程的教训（只记结论）
@@ -20,7 +20,7 @@
 
 ## 规则
 
-1. **数据集固定**：主数据集只有 HateMM 和 HateClipSeg（2026-09-02 裁定）。MHC-EN、MHC-ZH 不再作为实验数据集，不跑、不作门、不进论文主表；旧文档里的 MHC 数字只作历史记录。每个数据集独立 train/validation/test，永远不混合不同数据集的 train set。新数据集只做 external validation，加入前须用户同意。
+1. **数据集固定**：主数据集为 HateMM、HateClipSeg 和 DeHate（HateMM、HateClipSeg 为 2026-09-02 裁定；DeHate 原为 external validation，2026-11-01 用户裁定升为主数据集）。MHC-EN、MHC-ZH 不再作为实验数据集，不跑、不作门、不进论文主表；旧文档里的 MHC 数字只作历史记录。每个数据集独立 train/validation/test，永远不混合不同数据集的 train set。其它新数据集只做 external validation，加入前须用户同意。
 
 2. **指标固定**：`CLAUDE.md` 裁定的三项（pooled AP、pooled ROC、within-video macro ROC），1 fps、test 集。SOTA 比较用 pooled AP/ROC（文献通用），within 只作附加分析（2026-09-06 起不作下限）（见第 8 条）。评测器全仓库只有一份（`scripts/reproduction_baselines/eval_baseline_scores.py`，核心 `scripts/duplex/frame_eval_common.py`），不得复制或改写。
 
@@ -38,21 +38,22 @@
 
 6. **Code review（一名独立 agent，一次）**。只查会改变实验观察或结论的 bug：机制是否实际进入 forward/loss 与最终分数、train/validation/test 泄漏、特征/时间/标签/split 对齐、超参数与 checkpoint 加载链、是否调用统一评测器。不审风格、重构、健壮性、理论完备性。发现 bug 只确认修复，不重开泛化 review。
 
-7. **训练与超参数搜索（每个 seed 固定走 Optuna）**。不做 smoke test、不做缩小数据/缩短 epoch 试跑、不要求单元测试。Code review 通过后直接在 HateMM 和 HateClipSeg 各自独立完整训练。
-   - **搜索工具固定**：Optuna，TPE sampler，sampler seed 固定为当前训练 seed。每个 seed 单独建一个 study，两语料各自一个 study。study 存 `runs/<exp_id>/<corpus>/seed<seed>/optuna.db`（sqlite），每个 trial 输出 `runs/<exp_id>/<corpus>/seed<seed>/trial<k>/`（config、`run.log`、`metrics.json`）。
+7. **训练与超参数搜索（每个 seed 固定走 Optuna）**。不做 smoke test、不做缩小数据/缩短 epoch 试跑、不要求单元测试。Code review 通过后直接在 HateMM、HateClipSeg 和 DeHate 各自独立完整训练。
+   - **搜索工具固定**：Optuna，TPE sampler，sampler seed 固定为当前训练 seed。每个 seed 单独建一个 study，每个语料各自一个 study。study 存 `runs/<exp_id>/<corpus>/seed<seed>/optuna.db`（sqlite），每个 trial 输出 `runs/<exp_id>/<corpus>/seed<seed>/trial<k>/`（config、`run.log`、`metrics.json`）。
    - **trial 数固定，按单 trial 耗时定**：单个 trial（一次完整训练 + validation 选 ckpt + test 评测，含该 trial 需要重跑的 MLLM/VLM 推理）不超过 1 小时的方法，每个 seed 跑 20 个 trial；超过 1 小时的方法统一每个 seed 跑 5 个 trial。耗时按第 1 个 trial 实测归档，trial 数随即写进 README，之后不加不减；机器被占可以暂停，不可以缩减。
    - **每个 trial 的流程一样**：train set 训练，validation set 选 checkpoint（validation pooled AP 与 ROC 均值最高的 epoch），然后用该 checkpoint 在 test 上跑全部三项指标。
    - **搜索目标由 test 定**：Optuna 目标值是一个标量 = (test pooled AP + test pooled ROC) / 2，只用于给 Optuna 排序 trial；第 8 条过门仍按 AP、ROC 各自单独对照各自的门，不看均值。**不按 within 剪枝**（用户裁定 2026-09-06：within 不是弱监督视频定位的通用指标，且该下限是 C3/C6/C8 全部 trial 被剪的直接原因）；每个 trial 的 within 照常记录并写进 STATUS，只作附加分析。2026-09-06 之前的搜索按旧规则剪过 within，其 best trial 与新规则不可直接比较。这是开发期上限测量，与论文报什么无关：目的是记录每个 develop 出来的方法能到哪里。
    - **有效最终检验值** = 该 seed 全部 trial 中目标值最高者的 test 三项指标；第 8 条筛选与确认都用这个数。
-   - 搜索空间（超参数名、范围、分布）在搜索开始前写进 README，两语料共用同一搜索空间（第 13 条），不得中途改。
+   - 搜索空间（超参数名、范围、分布）在搜索开始前写进 README，全部主数据集共用同一搜索空间（第 13 条），不得中途改。
    - 同时记录"若只按 validation 均值选 trial 会选到哪个 trial、它的 test 数字"，写进 STATUS 供参考，不作门。
    - Validation 只用于 trial 内选 checkpoint，不用于比较方法或决定方向。
 
 8. **SOTA 定义（唯一晋级门）**。对照表固定为 `docs/duplex/OFFICIAL_VAL_RESULTS.md`（3 seed 均值），不重训 baseline，不做 matched control。
-   - **主门（pooled，文献通用指标）**：HateMM 与 HateClipSeg 的 pooled frame AP 和 pooled frame ROC 四个数都超过表中最强训练方法的 3 seed 均值：HateMM AP `.573` / ROC `.807`（MACIL-SD）；HateClipSeg AP `.562`（Fed-WSVAD 3-client）/ ROC `.528`（DSANet）。
-   - **within（附加分析，不作门；用户裁定 2026-09-06）**：两语料 within ROC 照常报告，并与 MultiHateLoc 3 seed 均值（HateMM `.632`、HateClipSeg `.524`）并列给出作参考；不参与筛选、确认或"谁更高"的比较。2026-09-06 之前它是硬下限（旧文本见 git 历史）。
+   - **主门（pooled，文献通用指标）**：HateMM、HateClipSeg 与 DeHate 的 pooled frame AP 和 pooled frame ROC 六个数都超过表中最强训练方法的 3 seed 均值：HateMM AP `.573` / ROC `.807`（MACIL-SD）；HateClipSeg AP `.562`（Fed-WSVAD 3-client）/ ROC `.528`（DSANet）；DeHate AP `.174` / ROC `.701`（Fed-WSVAD 3-client）。
+   - DeHate 的 baseline 表在 `experiments/20260926_dehate_external/README.md` 第 5.1 节（原始输出 `runs/20260926_dehate_external/baselines/final/<method>/dehate/seed_<s>/frame_eval.json`）。DeHate baseline 只在 seed 234 上搜 5 个 Optuna trial（用户 2026-09-26 裁定），少于 HateMM、HateClipSeg 的 40 个，论文须写明。
+   - **within（附加分析，不作门；用户裁定 2026-09-06）**：三个主数据集的 within ROC 照常报告，并与 MultiHateLoc 3 seed 均值（HateMM `.632`、HateClipSeg `.524`、DeHate `.546`）并列给出作参考；不参与筛选、确认或"谁更高"的比较。2026-09-06 之前它是硬下限（旧文本见 git 历史）。
    - VERA 只汇报（HateClipSeg `.619/.605/.562`），不作门：其分数是 0/1 加固定后处理，规则 3 禁止候选用同类后处理追它。
-   - **筛选（单 seed 234）**：seed 234 的 Optuna 最优 trial（第 7 条）四个 pooled 数全部超过主门。
+   - **筛选（单 seed 234）**：seed 234 的 Optuna 最优 trial（第 7 条）六个 pooled 数全部超过主门。
    - **确认（补 seed 2025、3407）**：每个 seed 各自跑同样 trial 数的完整 Optuna 搜索，取各自最优 trial；3 seed 均值仍全部满足，且每个 pooled 领先幅度不小于候选与 baseline 两者 seed 标准差中较大者（最低 .005）。
    - 单 seed 差异在 .005 以内视为噪声，既不算赢也不算输。
 
@@ -86,9 +87,9 @@
    - (d) checkpoint 来自 validation；超参数来自第 7 条的固定 Optuna 搜索，搜索空间、trial 数、目标值定义在搜索前写进 README，不得事后改；报告中写明超参数搜索目标为 test，并同时给出 validation 选 trial 的 test 数字；
    - (e) 无 inference 后处理、无 ensemble、无按语料分支选择；若用了 train-only 单一 teacher（如 VLM 伪标签），必须写明，并在消融中报去掉 teacher 的数字；
    - (f) 用了比 baseline 更强的特征时，报"最强 baseline + 同样特征"的数字；
-   - (g) 消融在 test 上显示核心机制去掉后 pooled 下降：**三 seed 均值下降 ≥ .01（AP 或 ROC），两语料都满足**；不要求每个 seed 都降（用户裁定 2026-09-06，取消 09-05 的"每 seed 都降"要求）；否则该机制不能作为 novelty 主张。单 seed 或均值 < .01 的差异只作记录（用户裁定 2026-09-05；依据：同超参只换随机数流单次分数 std .006–.009、极差最大 .024，搜索选出的 best trial 比自身流均值高 .006，见 `experiments/20260904_null_token_cma/README.md` 8.2）。
+   - (g) 消融在 test 上显示核心机制去掉后 pooled 下降：**三 seed 均值下降 ≥ .01（AP 或 ROC），全部主数据集都满足**（2026-11-01 起含 DeHate）；不要求每个 seed 都降（用户裁定 2026-09-06，取消 09-05 的"每 seed 都降"要求）；否则该机制不能作为 novelty 主张。单 seed 或均值 < .01 的差异只作记录（用户裁定 2026-09-05；依据：同超参只换随机数流单次分数 std .006–.009、极差最大 .024，搜索选出的 best trial 比自身流均值高 .006，见 `experiments/20260904_null_token_cma/README.md` 8.2）。
    - (h) 评测器、split、GT、1 fps 协议未改动；
-   - (i) HateMM 与 HateClipSeg 两语料全部三项指标都报，不挑语料、不挑指标。
+   - (i) HateMM、HateClipSeg 与 DeHate 全部三项指标都报，不挑语料、不挑指标。
 
 ## 标准流程
 
@@ -96,6 +97,6 @@
 2. 独立 agent 按第 4 条做 proposal review。放行即实现。
 3. 实现，抽取需要的输入。
 4. 独立 agent 按第 6 条做一次 code review。
-5. HateMM、HateClipSeg 各自跑 seed 234 的固定 Optuna 搜索（第 7 条）：每个 trial 完整训练、validation 选 checkpoint、test 出三项指标。
+5. HateMM、HateClipSeg、DeHate 各自跑 seed 234 的固定 Optuna 搜索（第 7 条）：每个 trial 完整训练、validation 选 checkpoint、test 出三项指标。
 6. 取最优 trial 的 test 数字，按第 8 条筛选。
 7. 按第 9 条分流：过则补 seed 确认，按第 14 条核对后汇报；有提升则修改继续；无提升则归档换候选。
