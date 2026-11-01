@@ -19,6 +19,7 @@ c="$1"; shift
 declare -A ARM=(
   [no_node]='{"node_prior": false}'
   [no_length]='{"answer_model": "anchored", "length_term": false}'
+  [per_state_len]='{"answer_model": "anchored", "length_term": true}'
   [words]='{"answer_source": "words"}'
   [c_label]='{"objective": "label", "node_prior": false}'
   [e_independent]='{"prior": "independent", "node_prior": false}'
@@ -29,7 +30,7 @@ declare -A ARM=(
   [lvl16]='{"query_level": 16}'
   [noback]='{"backbone": "const", "lamda_cma": 0, "node_prior": false}'
 )
-ORDER=(no_node no_length words c_label e_independent f_joint g_coupled lvl4 lvl8 lvl16 noback)
+ORDER=(no_node no_length per_state_len words c_label e_independent f_joint g_coupled lvl4 lvl8 lvl16 noback)
 arms=("$@"); [ ${#arms[@]} -eq 0 ] && arms=("${ORDER[@]}")
 echo "host $(hostname) | job ${SLURM_JOB_ID:-none} | $(date -Iseconds) | corpus $c | arms ${arms[*]} | code $(git log -1 --format='%s (%ad)')"
 run_seed() {
