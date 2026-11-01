@@ -1,0 +1,515 @@
+<title>QTL 方法框架</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600&display=swap">
+<style>
+/* Layout: one reading column with full-width figures that scroll sideways on phones; color = the three modules */
+:root {
+  --bg: #f4f6f8;
+  --surface: #ffffff;
+  --ink: #18202c;
+  --muted: #586273;
+  --line: #c5ccd7;
+  --rule: #e1e5ec;
+  --bb: #2b54c6;      --bb-soft: #e7edfb;     /* ① 骨干 */
+  --vlm: #0a7a6c;     --vlm-soft: #e1f3ef;    /* ② VLM 提问 */
+  --inf: #b45c0c;     --inf-soft: #fbeee1;    /* ③ 融合与停止 */
+  --hate: #b3213a;    --hate-soft: #f8dfe4;   /* 仇恨秒 */
+  --f-display: "Noto Serif SC", "Songti SC", serif;
+  --f-body: "IBM Plex Sans", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11151b; --surface: #181d25; --ink: #e4e8ee; --muted: #9aa3b2; --line: #3b4351; --rule: #262c36;
+    --bb: #88a4ff; --bb-soft: #1b2540; --vlm: #46c6b3; --vlm-soft: #12302b; --inf: #f2a65a; --inf-soft: #33250f;
+    --hate: #ff7d8f; --hate-soft: #3a1a21; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11151b; --surface: #181d25; --ink: #e4e8ee; --muted: #9aa3b2; --line: #3b4351; --rule: #262c36;
+  --bb: #88a4ff; --bb-soft: #1b2540; --vlm: #46c6b3; --vlm-soft: #12302b; --inf: #f2a65a; --inf-soft: #33250f;
+  --hate: #ff7d8f; --hate-soft: #3a1a21; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.65; }
+.wrap { max-width: 1140px; margin: 0 auto; padding-block: 40px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.prose { max-width: 70ch; }
+header { display: grid; gap: 14px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
+h1 { font-family: var(--f-display); font-weight: 600; font-size: clamp(26px, 3.4vw, 38px); line-height: 1.25; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 22px; margin: 0; text-wrap: balance; }
+h2 .num { font-family: var(--f-mono); font-size: 14px; color: var(--muted); margin-right: 10px; font-weight: 500; }
+p { margin: 0; }
+code, .mono { font-family: var(--f-mono); font-size: .9em; }
+code { background: var(--rule); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.lede { font-size: 17px; max-width: 70ch; }
+.version { font-size: 14px; color: var(--muted); max-width: 80ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid; flex: none; }
+.sw.bb { background: var(--bb-soft); border-color: var(--bb); }
+.sw.vlm { background: var(--vlm-soft); border-color: var(--vlm); }
+.sw.inf { background: var(--inf-soft); border-color: var(--inf); }
+.sw.hate { background: var(--hate-soft); border-color: var(--hate); }
+.sw.na { background: var(--bg); border-color: var(--line); border-style: dashed; }
+.sw.dot { border-radius: 50%; background: var(--vlm); border-color: var(--vlm); }
+nav.toc { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+nav.toc a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--ink); border-color: var(--ink); }
+a:focus-visible { outline: 2px solid var(--bb); outline-offset: 2px; }
+section { display: grid; gap: 16px; padding-block: 36px; border-bottom: 1px solid var(--rule); }
+figure { margin: 0; display: grid; gap: 12px; }
+.fig { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; }
+.fig svg { display: block; width: 100%; min-width: 940px; height: auto; }
+figcaption { font-size: 14px; color: var(--muted); max-width: 80ch; }
+ol.steps { margin: 0; padding-left: 1.4em; display: grid; gap: 6px; max-width: 80ch; }
+ol.steps li::marker { font-family: var(--f-mono); color: var(--muted); }
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 80ch; }
+.formula { font-family: var(--f-mono); font-size: 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; overflow-x: auto; white-space: pre; line-height: 1.8; }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 13px; }
+td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td .mod { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
+.mod.bb { background: var(--bb); } .mod.vlm { background: var(--vlm); } .mod.inf { background: var(--inf); } .mod.tr { background: var(--muted); }
+.open { display: grid; gap: 10px; }
+.open div { background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--hate); border-radius: 6px; padding: 10px 14px; max-width: 86ch; }
+.hist { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 14px; max-width: 90ch; }
+.hist dt { font-family: var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.hist dd { margin: 0; }
+footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
+
+/* diagrams */
+.d text { font-family: var(--f-body); fill: var(--ink); font-size: 13px; }
+.d .s { font-size: 11.5px; fill: var(--muted); }
+.d .b { font-weight: 600; }
+.d .m { font-family: var(--f-mono); }
+.d .c { text-anchor: middle; }
+.d .e { text-anchor: end; }
+.d .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.2; }
+.d .grp-bb { fill: var(--bb-soft); stroke: var(--bb); stroke-width: 1.2; }
+.d .grp-vlm { fill: var(--vlm-soft); stroke: var(--vlm); stroke-width: 1.2; }
+.d .grp-inf { fill: var(--inf-soft); stroke: var(--inf); stroke-width: 1.2; }
+.d .box-bb { fill: var(--surface); stroke: var(--bb); stroke-width: 1.2; }
+.d .box-vlm { fill: var(--surface); stroke: var(--vlm); stroke-width: 1.2; }
+.d .box-inf { fill: var(--surface); stroke: var(--inf); stroke-width: 1.2; }
+.d .soft-inf { fill: var(--inf-soft); stroke: var(--inf); stroke-width: 1.2; }
+.d .t-bb { fill: var(--bb); } .d .t-vlm { fill: var(--vlm); } .d .t-inf { fill: var(--inf); } .d .t-hate { fill: var(--hate); }
+.d .ar { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.d .ar-d { stroke-dasharray: 5 4; }
+.d .ah { fill: var(--ink); }
+.d .nd { fill: var(--surface); stroke: var(--line); stroke-width: 1.1; }
+.d .nd.hz { fill: var(--hate-soft); stroke: var(--hate); }
+.d .nd.na { fill: var(--bg); stroke-dasharray: 3 3; }
+.d .nd.na.hz { fill: var(--hate-soft); }
+.d .bdg { fill: var(--vlm); }
+.d .bdg-t { fill: var(--surface); font-size: 11px; font-weight: 600; text-anchor: middle; }
+.d .axis { stroke: var(--muted); stroke-width: 1; fill: none; }
+.d .gt { stroke: var(--hate); stroke-width: 4; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">research-wiki · 截至 2026-11-01</div>
+  <h1>QTL：按需向 VLM 提问的仇恨片段定位</h1>
+  <p class="lede">网络先给视频每一秒一个仇恨先验。然后在视频的二分时间树上，挑信息量最大的片段问 VLM“这段有没有仇恨”。每个回答都通过树上的精确推断更新每一秒的仇恨概率。新回答不再改变结果、或用完调用预算时停止。</p>
+  <p class="version">当前版本 = r5 骨干（<code>experiments/20260925_query_paradigm/README.md</code> 第 2、15、17 节）+ 复制似然 copy_neg + 停止规则 qmixE1（平均调用次数 = 使用者设的预算）。共享代码在 <code>src/qtl/</code>。</p>
+  <div class="chips" aria-label="颜色说明">
+    <span class="chip"><span class="sw bb"></span>① 骨干：从特征算先验</span>
+    <span class="chip"><span class="sw vlm"></span>② VLM 提问：问哪段、怎么问</span>
+    <span class="chip"><span class="sw inf"></span>③ 融合与停止：回答怎么用、何时停</span>
+  </div>
+  <nav class="toc" aria-label="目录">
+    <a href="#flow">测试时数据流</a><a href="#tree">问题树</a><a href="#train">训练</a><a href="#stop">停止规则</a><a href="#parts">部件清单</a><a href="#numbers">当前数字</a><a href="#history">版本记录</a>
+  </nav>
+</header>
+
+<section id="flow">
+  <h2><span class="num">1</span>测试时：一个视频怎么走</h2>
+  <figure>
+    <div class="fig">
+<svg class="d" viewBox="0 0 1200 510" role="img" aria-label="测试时数据流：特征经骨干得到每秒势、视频 logit 和节点势，进入树上精确推断得到每秒后验；停止规则判断是否继续；继续则按 EIG 选节点问 VLM，回答经答案模型变成似然因子回到树推断；停止则输出每秒分数。">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <!-- inputs -->
+  <text class="b c" x="100" y="50">输入（每秒一行）</text>
+  <rect class="box" x="20" y="70" width="160" height="36" rx="6"/><text class="c" x="100" y="93">I3D 视觉</text>
+  <rect class="box" x="20" y="115" width="160" height="36" rx="6"/><text class="c" x="100" y="138">VGGish 音频</text>
+  <rect class="box" x="20" y="160" width="160" height="36" rx="6"/><text class="c" x="100" y="183">BERT 转录文本</text>
+  <text class="s c" x="100" y="216">与 baseline 相同的特征</text>
+  <path class="ar" d="M180,88 H234" marker-end="url(#a1)"/>
+  <path class="ar" d="M180,133 H234" marker-end="url(#a1)"/>
+  <path class="ar" d="M180,178 H234" marker-end="url(#a1)"/>
+
+  <!-- ① backbone -->
+  <rect class="grp-bb" x="220" y="30" width="260" height="198" rx="10"/>
+  <text class="b t-bb" x="234" y="52">① 骨干 PriorNet</text>
+  <rect class="box-bb" x="236" y="70" width="144" height="126" rx="6"/>
+  <text class="b c" x="308" y="100">跨模态注意力层</text>
+  <text class="c" x="308" y="124">视觉 ↔ 音频+文本</text>
+  <text class="s c" x="308" y="146">沿用 MACIL-SD</text>
+  <text class="s c" x="308" y="176">→ 每秒隐向量 h_t</text>
+  <path class="ar" d="M380,88 H394" marker-end="url(#a1)"/>
+  <path class="ar" d="M380,133 H394" marker-end="url(#a1)"/>
+  <path class="ar" d="M380,178 H394" marker-end="url(#a1)"/>
+  <rect class="box-bb" x="396" y="70" width="72" height="36" rx="6"/>
+  <text class="b m c" x="432" y="86">s_t</text><text class="s c" x="432" y="101">每秒势</text>
+  <rect class="box-bb" x="396" y="115" width="72" height="36" rx="6"/>
+  <text class="b m c" x="432" y="131">g</text><text class="s c" x="432" y="146">视频 logit</text>
+  <rect class="box-bb" x="396" y="160" width="72" height="36" rx="6"/>
+  <text class="b m c" x="432" y="176">φ_n</text><text class="s c" x="432" y="191">节点势</text>
+  <text class="s" x="234" y="216">训练、测试输入相同；不读 VLM 答案</text>
+  <path class="ar" d="M468,88 H534" marker-end="url(#a1)"/>
+  <path class="ar" d="M468,133 H534" marker-end="url(#a1)"/>
+  <path class="ar" d="M468,178 H534" marker-end="url(#a1)"/>
+
+  <!-- ③ inference -->
+  <rect class="grp-inf" x="520" y="30" width="260" height="300" rx="10"/>
+  <text class="b t-inf" x="534" y="52">③ 树上精确推断</text>
+  <rect class="box-inf" x="536" y="70" width="228" height="126" rx="6"/>
+  <text class="b c" x="650" y="92">先验：零膨胀链</text>
+  <text class="c" x="650" y="114">视频有害：P(G=1) = σ(g)</text>
+  <text class="c" x="650" y="136">G=1 时：秒级链，每秒势 s_t</text>
+  <text class="c" x="650" y="158">× 每个节点 exp(φ_n · z_n)</text>
+  <text class="s c" x="650" y="182">z_n = 节点内有没有仇恨秒</text>
+  <path class="ar" d="M650,196 V212" marker-end="url(#a1)"/>
+  <rect class="box-inf" x="536" y="214" width="228" height="50" rx="6"/>
+  <text class="b c" x="650" y="236">inside–outside 上下行传递</text>
+  <text class="s c" x="650" y="254">精确计算，已问答案是节点上的因子</text>
+  <path class="ar" d="M650,264 V278" marker-end="url(#a1)"/>
+  <rect class="box-inf" x="536" y="280" width="228" height="36" rx="6"/>
+  <text class="c" x="650" y="303">每秒后验 p_t · 每节点后验</text>
+
+  <!-- ② group drawn first so the gate arrow and labels sit on top of it -->
+  <rect class="grp-vlm" x="528" y="342" width="554" height="158" rx="10"/>
+  <text class="b t-vlm" x="542" y="364">② VLM 提问</text>
+
+  <!-- gate and output -->
+  <path class="ar" d="M764,298 H810" marker-end="url(#a1)"/>
+  <polygon class="soft-inf" points="860,256 908,298 860,340 812,298"/>
+  <text class="b m c" x="860" y="295">qmixE1</text>
+  <text class="s c" x="860" y="312">继续？</text>
+  <path class="ar" d="M908,298 H948" marker-end="url(#a1)"/>
+  <text class="s c" x="928" y="290">停</text>
+  <rect class="box" x="950" y="268" width="230" height="60" rx="6"/>
+  <text class="b c" x="1065" y="292">输出：每秒仇恨分数 p_t</text>
+  <text class="s m c" x="1065" y="314">P(G=1|·) · P(y_t=1|G=1,·)</text>
+  <text class="s" x="950" y="232">阈值 c：validation 上调到平均 B 次</text>
+  <text class="s" x="950" y="250">B = 使用者预算；每视频最多 8 次</text>
+  <text class="s" x="950" y="214">0 次调用：直接输出骨干先验</text>
+  <path class="ar" d="M860,340 V374" marker-end="url(#a1)"/>
+  <text class="s" x="870" y="362">继续</text>
+
+  <!-- ② VLM loop -->
+  <rect class="box-vlm" x="836" y="376" width="230" height="110" rx="6"/>
+  <text class="b c" x="951" y="400">选下一个节点</text>
+  <text class="c" x="951" y="423">对每个未问、≥4 秒的节点算 EIG</text>
+  <text class="c" x="951" y="445">问 EIG 最大的那个</text>
+  <text class="s c" x="951" y="470">复制似然会压低嵌套节点的 EIG</text>
+  <path class="ar" d="M836,431 H778" marker-end="url(#a1)"/>
+  <text class="s c" x="807" y="423">节点</text>
+  <rect class="box-vlm" x="540" y="376" width="236" height="110" rx="6"/>
+  <text class="b c" x="658" y="398">VLM：Qwen2.5-VL-7B</text>
+  <text class="c" x="658" y="419">输入：该段 4 帧 + 词级转录</text>
+  <text class="c" x="658" y="439">问：这段有没有仇恨内容？</text>
+  <text class="s c" x="658" y="457">仇恨定义按数据集写</text>
+  <text class="s m c" x="658" y="476">p = P(Yes) / (P(Yes)+P(No))</text>
+  <path class="ar" d="M540,431 H492" marker-end="url(#a1)"/>
+  <text class="s c" x="516" y="423">p</text>
+
+  <!-- ③ answer model -->
+  <rect class="soft-inf" x="280" y="376" width="210" height="110" rx="6"/>
+  <text class="b c t-inf" x="385" y="398">答案模型（训练前定好）</text>
+  <text class="c" x="385" y="420">p → 8 档（训练答案分位）</text>
+  <text class="c" x="385" y="442">P(档 | 有 / 无仇恨)：锚定表</text>
+  <text class="c" x="385" y="464">嵌套节点：以 π 概率照抄</text>
+  <path class="ar" d="M385,376 V239 H534" marker-end="url(#a1)"/>
+  <text class="s c" x="456" y="257">似然因子</text>
+</svg>
+    </div>
+    <figcaption>一次调用 = 问 VLM 一个节点。骨干只在开头算一次；之后每问一次，只重算树上的推断。</figcaption>
+  </figure>
+  <ol class="steps">
+    <li><b>骨干</b>读每秒特征，给出三种势：每秒势 s_t、视频 logit g、每个树节点的节点势 φ_n。此时不问 VLM 也能输出（0 次调用）。</li>
+    <li><b>树上推断</b>把三种势和已有回答合成一个概率模型，用 inside–outside 精确算出每秒、每个节点“有仇恨”的后验。</li>
+    <li><b>qmixE1</b> 看两件事：上一个回答让分数变了多少、下一个问题还能带来多少信息。两者都小了就停；没停就继续。</li>
+    <li><b>选节点、问 VLM</b>：在所有没问过、至少 4 秒的节点里选 EIG 最大的，把这段的 4 帧和转录给 VLM，读出 P(Yes)。</li>
+    <li><b>答案模型</b>把 P(Yes) 变成“这段有/没有仇恨时出现这个回答的概率”，作为该节点的因子放回树上，回到第 2 步。</li>
+  </ol>
+</section>
+
+<section id="tree">
+  <h2><span class="num">2</span>问题树：节点是什么</h2>
+  <figure>
+    <div class="fig">
+<svg class="d" viewBox="0 0 1200 300" role="img" aria-label="32 秒视频的二分问题树：每层节点对半切分，含仇恨秒的节点标红；4 秒及以上的节点可以问 VLM；编号为一种可能的提问顺序，其中第 4 问的节点嵌套在第 3 问的节点里。">
+<text class="s e" x="128" y="39">根 · g</text>
+<rect class="nd hz" x="141" y="20" width="958" height="28" rx="4"/>
+<text class="s m c" x="620" y="38">[0,32)</text>
+<circle class="bdg" cx="154" cy="34" r="9"/><text class="bdg-t" x="154" y="38">1</text>
+<text class="s e" x="128" y="75">16 秒 · φ_n</text>
+<rect class="nd hz" x="141" y="56" width="478" height="28" rx="4"/>
+<text class="s m c" x="380" y="74">[0,16)</text>
+<circle class="bdg" cx="154" cy="70" r="9"/><text class="bdg-t" x="154" y="74">2</text>
+<rect class="nd" x="621" y="56" width="478" height="28" rx="4"/>
+<text class="s m c" x="860" y="74">[16,32)</text>
+<circle class="bdg" cx="634" cy="70" r="9"/><text class="bdg-t" x="634" y="74">5</text>
+<text class="s e" x="128" y="111">8 秒 · φ_n</text>
+<rect class="nd" x="141" y="92" width="238" height="28" rx="4"/>
+<text class="s m c" x="260" y="110">[0,8)</text>
+<rect class="nd hz" x="381" y="92" width="238" height="28" rx="4"/>
+<text class="s m c" x="500" y="110">[8,16)</text>
+<circle class="bdg" cx="394" cy="106" r="9"/><text class="bdg-t" x="394" y="110">3</text>
+<rect class="nd" x="621" y="92" width="238" height="28" rx="4"/>
+<text class="s m c" x="740" y="110">[16,24)</text>
+<rect class="nd" x="861" y="92" width="238" height="28" rx="4"/>
+<text class="s m c" x="980" y="110">[24,32)</text>
+<text class="s e" x="128" y="147">4 秒 · φ_n</text>
+<rect class="nd" x="141" y="128" width="118" height="28" rx="4"/>
+<text class="s m c" x="200" y="146">[0,4)</text>
+<rect class="nd" x="261" y="128" width="118" height="28" rx="4"/>
+<text class="s m c" x="320" y="146">[4,8)</text>
+<rect class="nd hz" x="381" y="128" width="118" height="28" rx="4"/>
+<text class="s m c" x="440" y="146">[8,12)</text>
+<circle class="bdg" cx="394" cy="142" r="9"/><text class="bdg-t" x="394" y="146">4</text>
+<rect class="nd hz" x="501" y="128" width="118" height="28" rx="4"/>
+<text class="s m c" x="560" y="146">[12,16)</text>
+<rect class="nd" x="621" y="128" width="118" height="28" rx="4"/>
+<text class="s m c" x="680" y="146">[16,20)</text>
+<rect class="nd" x="741" y="128" width="118" height="28" rx="4"/>
+<text class="s m c" x="800" y="146">[20,24)</text>
+<rect class="nd" x="861" y="128" width="118" height="28" rx="4"/>
+<text class="s m c" x="920" y="146">[24,28)</text>
+<rect class="nd" x="981" y="128" width="118" height="28" rx="4"/>
+<text class="s m c" x="1040" y="146">[28,32)</text>
+<text class="s e" x="128" y="183">2 秒 · φ_n</text>
+<rect class="nd na" x="141" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="201" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="261" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="321" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="381" y="164" width="58" height="28" rx="4"/>
+<rect class="nd hz na" x="441" y="164" width="58" height="28" rx="4"/>
+<rect class="nd hz na" x="501" y="164" width="58" height="28" rx="4"/>
+<rect class="nd hz na" x="561" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="621" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="681" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="741" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="801" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="861" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="921" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="981" y="164" width="58" height="28" rx="4"/>
+<rect class="nd na" x="1041" y="164" width="58" height="28" rx="4"/>
+<text class="s e" x="128" y="219">1 秒 · s_t</text>
+<rect class="nd na" x="141" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="171" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="201" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="231" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="261" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="291" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="321" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="351" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="381" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="411" y="200" width="28" height="28" rx="4"/>
+<rect class="nd hz na" x="441" y="200" width="28" height="28" rx="4"/>
+<rect class="nd hz na" x="471" y="200" width="28" height="28" rx="4"/>
+<rect class="nd hz na" x="501" y="200" width="28" height="28" rx="4"/>
+<rect class="nd hz na" x="531" y="200" width="28" height="28" rx="4"/>
+<rect class="nd hz na" x="561" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="591" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="621" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="651" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="681" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="711" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="741" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="771" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="801" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="831" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="861" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="891" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="921" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="951" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="981" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="1011" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="1041" y="200" width="28" height="28" rx="4"/>
+<rect class="nd na" x="1071" y="200" width="28" height="28" rx="4"/>
+<path class="axis" d="M1110,20 H1118 V156 H1110"/><text class="s" x="1124" y="84">可问</text><text class="s" x="1124" y="102">≥4 秒</text>
+<path class="axis" d="M1110,164 H1118 V228 H1110"/><text class="s" x="1124" y="194">不问</text><text class="s" x="1124" y="212">&lt;4 秒</text>
+<line class="axis" x1="140" y1="244" x2="1100" y2="244"/>
+<line class="gt" x1="440" y1="244" x2="590" y2="244"/>
+<line class="axis" x1="140" y1="244" x2="140" y2="250"/><text class="s m c" x="140" y="264">0</text>
+<line class="axis" x1="260" y1="244" x2="260" y2="250"/><text class="s m c" x="260" y="264">4</text>
+<line class="axis" x1="380" y1="244" x2="380" y2="250"/><text class="s m c" x="380" y="264">8</text>
+<line class="axis" x1="500" y1="244" x2="500" y2="250"/><text class="s m c" x="500" y="264">12</text>
+<line class="axis" x1="620" y1="244" x2="620" y2="250"/><text class="s m c" x="620" y="264">16</text>
+<line class="axis" x1="740" y1="244" x2="740" y2="250"/><text class="s m c" x="740" y="264">20</text>
+<line class="axis" x1="860" y1="244" x2="860" y2="250"/><text class="s m c" x="860" y="264">24</text>
+<line class="axis" x1="980" y1="244" x2="980" y2="250"/><text class="s m c" x="980" y="264">28</text>
+<line class="axis" x1="1100" y1="244" x2="1100" y2="250"/><text class="s m c" x="1100" y="264">32</text>
+<text class="s e" x="1100" y="284">时间（秒）</text>
+<text class="s c t-hate" x="515" y="284">第 10–14 秒有仇恨（示意）</text>
+</svg>
+    </div>
+    <figcaption>
+      以 32 秒视频为例，每一行是一层，每个方块是一个时间区间（节点），区间对半切到单秒。
+      <span class="chips" style="margin-top:6px">
+        <span class="chip"><span class="sw hate"></span>含仇恨秒的节点（z_n = 1）</span>
+        <span class="chip"><span class="sw na"></span>短于 4 秒，不问 VLM</span>
+        <span class="chip"><span class="sw dot"></span>一种可能的提问顺序（示意）</span>
+      </span>
+    </figcaption>
+  </figure>
+  <ul class="plain">
+    <li>每个节点有一个隐状态 z_n：区间里至少有一秒仇恨就是 1。视频标签就是根节点的 z。</li>
+    <li>骨干在每一层都给先验：根用 g，内部节点用 φ_n（视频头的注意力池化在每个节点内部再做一次），叶子（单秒）用 s_t。</li>
+    <li>④ 在 ③ 里面，这叫嵌套。VLM 对嵌套区间的回答高度相关，复制似然假设子段的回答有 π 的概率只是照抄父段。所以子段回答和父段相同时，证据被打折；不同时，证据完整。</li>
+    <li>提问顺序不固定，由每一步的 EIG 决定，图中编号只是示意。</li>
+  </ul>
+</section>
+
+<section id="train">
+  <h2><span class="num">3</span>训练：什么在学，用什么监督</h2>
+  <figure>
+    <div class="fig">
+<svg class="d" viewBox="0 0 1200 400" role="img" aria-label="训练：训练集提供特征、视频标签和全部节点的 VLM 答案；答案表、8 档边界和复制概率在训练前拟合后固定；骨干网络和链参数通过每个视频的损失（视频标签项、答案似然项、CMAL）用梯度训练。">
+  <defs>
+    <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+  <rect class="box" x="20" y="40" width="300" height="210" rx="8"/>
+  <text class="b" x="36" y="66">训练集（每个视频）</text>
+  <text x="36" y="94">特征：I3D / VGGish / BERT</text>
+  <text x="36" y="118">视频标签 Y：有 / 无仇恨</text>
+  <text x="36" y="142">全部 ≥4 秒节点的 VLM 答案 p</text>
+  <text class="s" x="36" y="166">离线问一次，平均每视频：</text>
+  <text class="s" x="36" y="184">HateMM 62.6、HCS 102.3、DeHate 40.4 次</text>
+  <text class="b t-hate" x="36" y="226">没有逐秒标注</text>
+
+  <rect class="soft-inf" x="380" y="20" width="380" height="166" rx="8"/>
+  <text class="b t-inf" x="396" y="46">训练前拟合一次，之后固定</text>
+  <text x="396" y="74">• 8 档边界：全部训练答案 p 的分位数</text>
+  <text x="396" y="100">• 答案表 P(档 | 状态)：只用状态已知的答案</text>
+  <text class="s" x="410" y="120">负例视频的全部节点 = 无仇恨；正例视频的根 = 有仇恨</text>
+  <text x="396" y="146">• 复制概率 π：负例视频父子节点答案相同率</text>
+  <text class="s" x="410" y="166">按子节点长度分 6 档</text>
+
+  <rect class="grp-bb" x="380" y="226" width="380" height="134" rx="8"/>
+  <text class="b t-bb" x="396" y="252">梯度训练的参数</text>
+  <text x="396" y="280">• 骨干网络：输出 s_t、g、φ_n</text>
+  <text x="396" y="306">• 链：转移 A、首秒分布（学习率 lr_answer）</text>
+  <text class="s" x="396" y="334">答案表、8 档边界、π 不参与梯度</text>
+
+  <rect class="box" x="830" y="50" width="350" height="290" rx="8"/>
+  <text class="b" x="846" y="76">每个视频的损失</text>
+  <text class="m" x="846" y="106">−log P(Y | x)</text>
+  <text class="s" x="862" y="126">只训练视频头 g（在零膨胀模型下就是 BCE）</text>
+  <text class="m" x="846" y="160">+ −log P(全部答案 | G=Y, x) / 答案数</text>
+  <text class="s" x="862" y="180">正例视频：训练 s_t、φ_n 和链</text>
+  <text class="s" x="862" y="198">负例视频：常数（全部节点已知无仇恨）</text>
+  <text class="s" x="862" y="216">除以答案数：每个视频权重相同</text>
+  <text class="m" x="846" y="250">+ λ_cma · CMAL</text>
+  <text class="s" x="862" y="270">沿用 MACIL-SD 的损失</text>
+  <text class="s" x="846" y="310">答案在训练时是监督目标，</text>
+  <text class="s" x="846" y="328">在测试时是观测；网络输入里永远没有答案</text>
+
+  <path class="ar" d="M320,104 H378" marker-end="url(#a3)"/>
+  <text class="s c" x="349" y="96">标签定状态</text>
+  <path class="ar" d="M320,232 H350 V290 H378" marker-end="url(#a3)"/>
+  <text class="s" x="356" y="262">特征</text>
+  <path class="ar" d="M760,104 H828" marker-end="url(#a3)"/>
+  <text class="s c" x="794" y="96">答案似然</text>
+  <path class="ar" d="M760,268 H828" marker-end="url(#a3)"/>
+  <text class="s c" x="794" y="260">先验</text>
+  <path class="ar ar-d" d="M830,312 H762" marker-end="url(#a3)"/>
+  <text class="s c" x="794" y="330">梯度</text>
+  <path class="ar" d="M170,250 V380 H1005 V342" marker-end="url(#a3)"/>
+  <text class="s c" x="590" y="374">Y、全部答案 p</text>
+</svg>
+    </div>
+    <figcaption>网络学的是：在每个时间尺度上预测 VLM 会怎么回答，同时满足视频标签。负例视频只训练视频头，所以每秒势和节点势只由正例视频的多尺度答案训练。</figcaption>
+  </figure>
+  <ul class="plain">
+    <li><b>搜索</b>：每个 seed 用 Optuna TPE 跑 20 个 trial，搜 lr、λ_cma、dropout、lr_answer；seed 234 / 2025 / 3407。</li>
+    <li><b>选 epoch</b>：validation 上每视频固定问 8 次，(AP + ROC) / 2 最高的 epoch。</li>
+    <li><b>选 trial</b>：test 上同一目标（规则 7）。</li>
+  </ul>
+</section>
+
+<section id="stop">
+  <h2><span class="num">4</span>停止规则 qmixE1</h2>
+  <p class="prose">每问完一次，算两个数，判断还要不要接着问。代码在 <code>src/qtl/stop_rules.py</code>（<code>"qmixE1": ("dlsum", "eig")</code>）和 <code>src/qtl/policy.py</code>（<code>calibrate</code>、<code>stop_calls</code>）。</p>
+<div class="formula">后看  dlsum_k = Σ_t | logit p_t(第 k 次回答后) − logit p_t(第 k 次回答前) |   上一个回答让分数变了多少
+前看  eig_k   = 下一个最佳节点的 EIG                                       下一个问题还能带来多少信息
+
+r_k = max( dlsum_k 在 validation 全部值中的分位数,  eig_k 在 validation 全部值中的分位数 )
+r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
+  <ul class="plain">
+    <li><b>c 怎么定</b>：在 validation 上调 c，让平均调用次数等于预算 B。只用调用次数，不用标注。</li>
+    <li><b>B 是谁定</b>：使用者按资源设，和“固定问 k 次”的 k 一样（用户 2026-11-01 裁定）。论文报 B = 1–7 的曲线，5 只是其中一点。</li>
+    <li><b>为什么不让方法自己选 B</b>：validation 目标的标准误 .025–.053，远大于不同 B 之间 .005–.01 的差，选出的 B 随 seed 在 1–7 次之间乱跳（诊断第 11 条）。</li>
+  </ul>
+</section>
+
+<section id="parts">
+  <h2><span class="num">5</span>部件清单</h2>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>部件</th><th>做什么</th><th>来源</th><th>代码</th></tr></thead>
+    <tbody>
+      <tr><td><span class="mod bb"></span>跨模态注意力层 + CMAL</td><td>视觉、音频+文本两流互相注意，得到每秒隐向量</td><td>沿用 MACIL-SD</td><td><code>model.py</code> PriorNet</td></tr>
+      <tr><td><span class="mod bb"></span>视频头 g</td><td>注意力池化，判断视频是否有害</td><td>常见做法</td><td><code>model.py</code></td></tr>
+      <tr><td><span class="mod bb"></span>节点势 φ_n</td><td>同一注意力在每个树节点内池化，给每个节点一个先验</td><td>本项目 r4（消融通过）</td><td><code>model.py</code> node_logits</td></tr>
+      <tr><td><span class="mod vlm"></span>二分问题树</td><td>节点 = 时间区间，≥4 秒可问</td><td>概率二分查找</td><td><code>qtree.py</code></td></tr>
+      <tr><td><span class="mod vlm"></span>EIG 选节点</td><td>选回答信息量最大的节点</td><td>Lindley 1956、BALD</td><td><code>policy.py</code>、<code>cpolicy.py</code></td></tr>
+      <tr><td><span class="mod vlm"></span>软答案 8 档</td><td>首 token P(Yes)，按训练答案分位切档</td><td>本项目 r5</td><td><code>data.py</code> configure_source</td></tr>
+      <tr><td><span class="mod inf"></span>零膨胀链先验</td><td>视频状态 G + 首尾闭合的秒级链</td><td>零膨胀模型（Lambert 1992）+ 本项目</td><td><code>ctree.py</code></td></tr>
+      <tr><td><span class="mod inf"></span>树上精确推断</td><td>inside–outside 求每秒、每节点后验</td><td>树上和积</td><td><code>ctree.py</code></td></tr>
+      <tr><td><span class="mod inf"></span>锚定答案表</td><td>只用标签确定状态的答案拟合，训练前固定</td><td>本项目 r2</td><td><code>qtree.py</code> fit_anchored</td></tr>
+      <tr><td><span class="mod inf"></span>复制似然</td><td>嵌套节点回答相关时给证据打折</td><td>本项目 r5</td><td><code>copy_noise.py</code>、<code>cpolicy.py</code></td></tr>
+      <tr><td><span class="mod inf"></span>停止 qmixE1</td><td>在预算内提前停</td><td>本项目 10-31</td><td><code>stop_rules.py</code></td></tr>
+      <tr><td><span class="mod tr"></span>树似然训练目标</td><td>VLM 答案作为训练目标</td><td>本项目</td><td><code>train.py</code></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="prose">代码路径相对 <code>src/qtl/</code>。和沿用的 MACIL-SD 相比，骨干上能单独主张的只有节点势 φ_n 和树似然训练目标。</p>
+</section>
+
+<section id="numbers">
+  <h2><span class="num">6</span>当前数字与没解决的问题</h2>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>语料</th><th>0 次调用</th><th>固定 8 次</th><th>预算 B = 5（实际平均次数）</th></tr></thead>
+    <tbody>
+      <tr><td>HateMM</td><td class="n">.623 / .819 / .768</td><td class="n">.686 / .882 / .767</td><td class="n">.683 / .880 / .768（4.92）</td></tr>
+      <tr><td>HateClipSeg</td><td class="n">.658 / .647 / .539</td><td class="n">.683 / .672 / .559</td><td class="n">.674 / .663 / .564（4.96）</td></tr>
+      <tr><td>DeHate</td><td class="n">.232 / .729 / .656</td><td class="n">.258 / .770 / .667</td><td class="n">.256 / .768 / .665（4.95）</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="prose" style="font-size:14px;color:var(--muted)">AP / ROC / within，test，三 seed 均值；r5 各 seed test 选出的 trial，EIG 顺序 + 复制似然，统一评测器。来源 <code>runs/20261031_two_goal_diagnostics/stop_budget_curve/&lt;语料&gt;/summary.json</code>；B = 1–7 的完整曲线见 <code>experiments/20261031_fewer_calls/README.md</code> 第 6 节。</p>
+  <div class="open">
+    <div><b>调用多了不一定更好。</b>HateMM 固定 8 次的 within .767，低于 0 次的 .768；HateClipSeg 预算 4–7 都比固定 8 次低约 .009。下一步：用答案模型自己的分布模拟回答，分清是答案模型的问题，还是选节点/停止的问题（等你确认后开始）。</div>
+    <div><b>目标 2（自研骨干不低于 r5）还没达成。</b>尺度感知跨模态注意力在 HateClipSeg 三 seed 均值 AP/ROC −.0007 / −.0027。待你裁定：接受 r5（节点势作为骨干贡献），还是继续换编码器。</div>
+  </div>
+</section>
+
+<section id="history">
+  <h2><span class="num">7</span>版本记录</h2>
+  <dl class="hist">
+    <dt>r0 · 09-25</dt><dd>二分问题树、EIG 选节点、零膨胀 OR 树；VLM 回答五类 0–3 分</dd>
+    <dt>r1</dt><dd>秒级链先验；答案模型和链用单独学习率</dd>
+    <dt>r2</dt><dd>锚定两状态答案表（训练前拟合、固定）</dd>
+    <dt>r3</dt><dd>零膨胀链（首尾闭合）</dd>
+    <dt>r4 · 09-27</dt><dd>词级时间戳转录；节点势 φ_n</dd>
+    <dt>r5 · 09-29</dt><dd>软答案：首 token P(Yes)、按数据集定义、8 档；复制似然 copy_neg</dd>
+    <dt>10-31</dt><dd>停止规则 qmixE1（每视频最多 8 次）</dd>
+    <dt>11-01</dt><dd>平均调用次数 = 使用者预算；DeHate 升为主数据集</dd>
+    <dt>未采用</dt><dd>inside–outside 新骨干（<code>20261001</code>）、尺度感知跨模态注意力（<code>20261031_scale_aware_cma</code>），都没超过 r5</dd>
+  </dl>
+</section>
+
+<footer>方法有改动时更新本页（<code>research-wiki/method_framework.html</code>），并在版本记录加一行。</footer>
+</div>

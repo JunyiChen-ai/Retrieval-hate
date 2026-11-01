@@ -4,6 +4,8 @@
 
 ## 当前目标与结论
 
+方法示意图（当前方法的数据流、训练、停止规则）：[method_framework.html](method_framework.html)。
+
 **2026-10-31 起：用户批准两个目标并开启自主迭代，两者都达成后才汇报。** 2026-11-01 用户裁定 DeHate 升为主数据集（`CLAUDE.md`、`RESEARCH_ITERATION_RULES.md` 第 1、7、8、14 条已改），两个目标同样要求在 DeHate 上成立。
 - 目标 1（少调用）：HateMM、HCS、DeHate 上最终方法平均约 4–5 次调用；与同一方法固定 8 次相比，AP/ROC 三 seed 均值降幅 ≤ .01，within 不降。
 - 目标 2（自研骨干不输 r5）：自研骨干在固定 8 次、规则 7 完整搜索下，三个主数据集三 seed AP 与 ROC 均值不低于 r5（HateMM .6909 / .8849，HCS .6865 / .6737，DeHate .2620 / .7800，`runs/20260929_query_paradigm_r5/summary_dehate.txt`）。

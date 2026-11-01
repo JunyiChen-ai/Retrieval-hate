@@ -9,6 +9,8 @@
 
 **当前状态唯一入口:`research-wiki/STATUS.md`**(最新代码在哪、权威数字在哪、做到哪了)。每轮迭代结束必须更新它。
 
+**方法示意图:`research-wiki/method_framework.html`**(用户 2026-11-01 要求;已发布为 artifact https://claude.ai/artifact/LSpteQpW8HXrYhsvDauYNA)。当前方法有任何改动(换部件、改训练目标或答案模型、改提问/停止规则、改主数据集、换权威数字)时,同一轮内更新该页、版本记录加一行,并重新发布到同一 artifact。
+
 ## 环境
 - 单机 RTX 5090;conda 环境 `HateVideo`。**2026-10-03 起本机与 uoa-lab1/lab3/lab-server 的 GPU 只能经 Slurm 使用**(登录会话被 `/etc/systemd/system/user.slice.d/50-slurm-gpu-only.conf` 禁止访问 GPU,`nvidia-smi` 报 `Failed to initialize NVML: Unknown Error`)。用法见下文“lab 机 Slurm”。
 - 原始视频在 `~/data/`(HateMM、Multihateclip、HateClipSeg),仓库内 `data/` 存派生缓存。
