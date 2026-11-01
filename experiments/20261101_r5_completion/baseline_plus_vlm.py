@@ -24,7 +24,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from qtl import data as qdata, qtree
 import hier_evidence_common as hc
 
-LEGACY = Path.home() / "Hate-follow-up/runs/legacy_lab2_results_pre20261004/reproduction/official_val/final"
+# copies of the official final runs in Hate-follow-up/runs/legacy_lab2_results_pre20261004/reproduction/official_val/final
+LEGACY = ROOT / "runs/20261101_r5_completion/baseline_scores"
 DEHATE = ROOT / "runs/20260926_dehate_external/baselines/final"
 STRONGEST = {"hatemm": ["macilsd"], "hateclipseg": ["fed_wsvad_3client", "dsanet"], "dehate": ["fed_wsvad_3client"]}
 ALPHAS = np.round(np.linspace(0, 1, 11), 2)
