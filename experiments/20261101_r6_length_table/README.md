@@ -14,4 +14,20 @@
 | HCS | uoa-lab1，Slurm 1384，11-02 07:38 起 | 进行中 | | .687 / .674 | .562 / .528 |
 | DeHate | uoa-lab3，Slurm 1382，11-02 01:44 起 | 进行中 | | .262 / .780 | .174 / .701 |
 
-HateMM：Q2（不低于 r5）通过，AP +.011、ROC +.004；Q3（门）通过。调用曲线与单调性验收（Q1）在 `launch/run_final_curves.sh` 跑完后补。
+HateMM：Q2（不低于 r5）通过，AP +.011、ROC +.004；Q3（门）通过。
+
+### 调用曲线与单调性（Q1；`launch/run_final_curves.sh`，uoa-lab1 11-02 07:40–07:44；`runs/20261101_r6_length_table/final_curves/<test_selected|val_selected>/<corpus>/summary.json`；验收 `experiments/20261101_r5_completion/accept_check.py <root> <corpus> final`）
+
+HateMM，test，三 seed 均值 AP / ROC / within：
+
+| 固定次数 | 0 | 1 | 2 | 4 | 8 | 16 | 32 |
+|---|---|---|---|---|---|---|---|
+| test 选 trial | .568 / .801 / .771 | .647 / .851 / .771 | .667 / .865 / .778 | .687 / .881 / .780 | .702 / .889 / .783 | .690 / .885 / .791 | .693 / .879 / .793 |
+| validation 选 trial | .574 / .807 / .740 | .620 / .840 / .738 | .641 / .851 / .741 | .653 / .861 / .745 | .670 / .876 / .755 | .674 / .878 / .763 | .681 / .875 / .774 |
+| 全部 60 个 trial 平均（不选） | .573 / .800 / .746 | .623 / .838 / .744 | .638 / .851 / .748 | .658 / .868 / .757 | .670 / .878 / .764 | .673 / .879 / .771 | .679 / .876 / .779 |
+
+qmixE1 预算 1–8（test 选）：AP .648 → .679 → .683 → .687 → .689 → .697 → .701 → .702，ROC .854 → .889，within .771 → .787 → .779（预算 7）→ .783。
+
+- within 随调用上升（r5 的 HateMM within 回落已消失）。
+- test 选 trial：8 次之后 AP 降 .012（16 次 .690），32 次 ROC 比 8 次低 .010；验收不过。validation 选 trial：只差 32 次 ROC 比 8 次低 .001；全部 trial 平均：AP 一路升，ROC 32 次比 8 次低 .002。
+- 原因：规则 7 按 test 固定 8 次的 (AP + ROC) / 2 选 trial，选中的 trial 正好在 8 次这一点偏高；不经 test 选择时曲线不在 8 次后下降。同理，validation 上（epoch 按 validation 8 次选）全部 trial 平均在 8 次后下降（AP .739 → .703）。
