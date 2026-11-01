@@ -71,7 +71,7 @@ def run_batch(model, store, vids, oam, chain, answers, max_calls, device, copy_p
             if len(cand) == 0:
                 continue
             nodes = vt.q_ids[cand]
-            mm = mk[:, off + nodes]                                           # K, n
+            mm = np.clip(mk[:, off + nodes], 0.0, 1.0)                       # K, n (autograd can give 1 + 1e-16)
             w = np.stack([np.repeat(post[:, b, 0][:, None], len(cand), 1), post[:, b, 1][:, None] * (1.0 - mm),
                           post[:, b, 1][:, None] * mm], axis=-1)               # K, n, 3
             po = _copy_mix(po_all[b][:, cand], nodes, vt.tr, copy_pi, asked_o[b])   # K, n, 3, O
