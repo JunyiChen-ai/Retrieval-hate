@@ -233,6 +233,48 @@ def marginals(forest, s, g, A3, chain, phi=None):
     return pG, ge.detach(), (pG[:, None] * gs).detach()
 
 
+def log_evidence_mix(forest, s, g, A3K, logw, chain, phi=None):
+    """log_evidence with the per-video answer offset (revision 6, answer_offset.py): A3K (K, N, 3) the answers'
+    log-likelihoods under each offset value b_k, logw (K,) the offsets' log prior weights. The offset is shared by
+    all answers of a video and summed out exactly: log P(o | Y, x) = log sum_k w_k P(o | Y, b_k, x)."""
+    zero = torch.zeros_like(A3K[0])
+    w1n, w0n = up(forest, s, g, zero, chain, phi=phi)
+    logZ = torch.logaddexp(w1n, w0n)
+    lw = torch.as_tensor(logw, dtype=s.dtype, device=s.device)
+    w1a, w0a = zip(*[up(forest, s, g, A3K[k], chain, phi=phi) for k in range(A3K.shape[0])])
+    lo1 = torch.logsumexp(torch.stack(w1a) + lw[:, None], dim=0) - w1n
+    lo0 = torch.logsumexp(torch.stack(w0a) + lw[:, None], dim=0) - w0n
+    return w1n - logZ, w0n - logZ, lo1, lo0
+
+
+def marginals_mix(forest, s, g, A3K, logw, chain, phi=None):
+    """marginals with the per-video answer offset (revision 6): A3K (K, N, 3), logw (K,). Exact: for every offset
+    value one inference, then P(b_k, G | o) weights them. Returns p_G (B,), node marginals m (N,) = P(z_n = 1 | G = 1,
+    o), second posteriors p (B, Tmax), post (K, B, 2) = P(b_k, G = 0 / 1 | o) and the per-offset node marginals
+    mk (K, N) = P(z_n = 1 | G = 1, b_k, o)."""
+    W1, W0, GS, GE = [], [], [], []
+    with torch.enable_grad():
+        g = g.detach().double()
+        phi = None if phi is None else phi.detach().double()
+        chain_d = _DoubleChain(chain)
+        for k in range(A3K.shape[0]):
+            sk = s.detach().double().requires_grad_(True)
+            eta = torch.zeros(forest.N, dtype=torch.float64, device=s.device, requires_grad=True)
+            w1, w0 = up(forest, sk, g, A3K[k].double(), chain_d, phi=phi)
+            v1, _, _ = _up(forest, sk, A3K[k].double(), chain_d, eta, phi)
+            gs, ge = torch.autograd.grad(v1.sum(), (sk, eta))
+            W1.append(w1.detach()); W0.append(w0.detach()); GS.append(gs.detach()); GE.append(ge.detach())
+    lw = torch.as_tensor(logw, dtype=torch.float64, device=s.device)[:, None]
+    L1, L0 = torch.stack(W1) + lw, torch.stack(W0) + lw                         # K, B
+    Z = torch.logsumexp(torch.cat([L1, L0]), dim=0)
+    P1, P0 = torch.exp(L1 - Z), torch.exp(L0 - Z)                               # K, B
+    pG = P1.sum(0)
+    p = (P1[:, :, None] * torch.stack(GS)).sum(0)
+    nv = forest.node_video.to(s.device)
+    m = (P1[:, nv] * torch.stack(GE)).sum(0) / pG[nv].clamp(min=1e-300)
+    return pG, m, p, torch.stack([P0, P1], dim=-1), torch.stack(GE)
+
+
 class _DoubleChain:
     def __init__(self, chain):
         self._chain = chain
