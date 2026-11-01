@@ -6,7 +6,8 @@
 #   ssh <host> 'cd ~/Retrieval-hate && mkdir -p runs/20261101_r6_length_table/arms && sbatch -p local-<node> -J r6arms_<corpus> \
 #     -o runs/20261101_r6_length_table/arms/slurm_<corpus>_%j.out experiments/20261101_r6_length_table/launch/sbatch_arms.sh <corpus> [arm ...]'
 # Arms already finished (summary.json present) are skipped, so a job cut by the time limit resumes when resubmitted.
-# Test-time variants (copy likelihood, breadth-first order, flat fusion) need no training: sim_monotone.py / final_curves.py.
+# b_flat / d_bfs change only how the answers are combined / which node is asked (also at validation epoch selection), as
+# the r5 arms (b) and (d); the copy likelihood is a test-time variant (sim_monotone.py source real_copy), no training.
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=54G
@@ -22,6 +23,8 @@ declare -A ARM=(
   [no_length]='{"answer_model": "anchored", "length_term": false}'
   [per_state_len]='{"answer_model": "anchored", "length_term": true}'
   [words]='{"answer_source": "words"}'
+  [b_flat]='{"fusion": "flat"}'
+  [d_bfs]='{"order": "bfs"}'
   [c_label]='{"objective": "label", "node_prior": false}'
   [e_independent]='{"prior": "independent", "node_prior": false}'
   [f_joint]='{"answer_model": "joint", "length_term": false}'
@@ -31,7 +34,7 @@ declare -A ARM=(
   [lvl16]='{"query_level": 16}'
   [noback]='{"backbone": "const", "lamda_cma": 0, "node_prior": false}'
 )
-ORDER=(no_node no_length per_state_len words c_label e_independent f_joint g_coupled lvl4 lvl8 lvl16 noback)
+ORDER=(no_node no_length per_state_len words b_flat d_bfs c_label e_independent f_joint g_coupled lvl4 lvl8 lvl16 noback)
 arms=("$@"); [ ${#arms[@]} -eq 0 ] && arms=("${ORDER[@]}")
 echo "host $(hostname) | job ${SLURM_JOB_ID:-none} | $(date -Iseconds) | corpus $c | arms ${arms[*]} | code $(git log -1 --format='%s (%ad)')"
 run_seed() {
