@@ -12,7 +12,7 @@
 | P4 | 训练和测试的答案模型一致（复制似然进训练，或写明只在测试） | 待 P2 | 与 P3 一起定 |
 | P5 | 改后方法三语料 × 3 seed 完整搜索（规则 7） | 待 P3 | |
 | P6 | 消融，三语料含 DeHate、3 seed（14(g)） | 待 P5 | 含 φ_n、软答案、树融合、链、零膨胀、锚定、只用标签、复制似然、EIG |
-| P7 | 最强 baseline + 同样的 VLM 回答（14(f)） | 待定设计 | |
+| P7 | 最强 baseline + 同样的 VLM 回答（14(f)） | r5 上完成（第 5 节）；最终方法定下后重跑 | `baseline_plus_vlm.py` |
 | P8 | 树 vs 单层窗口、无骨干对照（最终方法上） | 待 P5 | |
 | P9 | validation 选 trial 的预算曲线（14(d)） | 待 P5 | |
 | P10 | STATUS、方法图、check_layout、汇报 | 最后 | |
@@ -62,3 +62,25 @@ b 的分布：固定细网格（−12 到 12，步长 .5）上的离散分布，
 ### 3.1 测试期检查（r5 checkpoint 不重训，`offset_check.py`，`launch/run_offset_check.sh`，uoa-lab1 / uoa-lab3）
 
 HateMM seed 234 训练集拟合：446 个负例视频 26649 个回答、297 个正例根节点；偏移标准差 4.85，剩 22 个支撑点。
+
+结果（HCS 三 trial，真实答案、无复制）：0 / 8 / 16 / 32 次 AP .658 → .644 → .650 → .636，ROC .647 → .628 → .633 → .612，within .539 → .561 → .578 → .596——AP、ROC 随调用下降。**偏移会吸收一个视频回答的整体高低，而这正是区分仇恨视频和正常视频的信息；不采用。** HateMM 结果见 `runs/20261101_r5_completion/offset_check/hatemm/`。
+
+### 3.2 答案表的长度项（第 3、4 轮，r5 checkpoint 不重训，`sim_monotone.py` 的 `real_len*` / `real_lens*`）
+
+第 2.2 节第 2 条：r5 的表没有长度项，"有仇恨"一列只用整段正例视频拟合，短仇恨节点答 Yes 的概率远低于表。打乱答案时（去掉视频内相关）r5 表仍让 HateMM within 下降（.770 → .741，4 次），而 validation 拟合的带长度表 within 上升——HateMM within 的回落来自长度。
+
+- `real_len*`：锚定表加对数长度项（`qtree.fit_anchored(length_term=True)`，两状态各自的斜率；"有仇恨"的斜率只能从不同长度的正例视频根节点估计）。HateMM + 复制：8 次 .682/.883/.791（within 比 r5 高 .019），只剩 ≤ .007 的小回落；DeHate 8 次 AP 约 .26–.29、曲线上升；**HCS 崩溃**（AP .651 → .555（8 次）→ .493（16 次））：整段视频的长度与内容相关，根节点上估的斜率不能代表视频内部短片段的长度效应。
+- `real_lens*`：两状态共用一条长度斜率，只在负例训练视频上估计（那里每个节点状态已知，长度在视频内变化），"有仇恨"表在固定斜率下用根节点拟合（`qtree.fit_anchored_shared`）。依据：真实答案在有无仇恨节点上的长度斜率相近（每加倍 +.35 到 +.52 对数几率，HateMM、HCS 都是）。结果见下。
+
+## 5. 最强 baseline + 同样的 VLM 回答（P7，规则 14(f)；`baseline_plus_vlm.py`）
+
+每个 test 视频：baseline 自己的逐秒分数（官方最终 3 seed，HateMM/HCS 的分数从 `Hate-follow-up/runs/legacy_lab2_results_pre20261004/reproduction/official_val/final/` 复制到 uoa-lab1 `runs/20261101_r5_completion/baseline_scores/`），加上本方法固定 8 次实际问到的节点的软答案 p；每秒 VLM 证据 = 包含它的最短已问节点的 p；逐秒融合 sigmoid(α logit(baseline) + (1−α) logit(VLM))，α 取 0–1 网格，报 test 上最好的 α（偏向 baseline 的上限）。三 seed 均值 AP / ROC / within，评测核心 `hc.frame_metrics`。第一版用 r5 + 复制的提问（`sim_monotone/<corpus>/<trial>/runs_real_copy.pkl`），最终方法定下后重跑。
+
+| 语料 | baseline 本身 | 只用 VLM | baseline + VLM（test 最好 α） | 本方法 8 次 |
+|---|---|---|---|---|
+| HateMM（MACIL-SD） | .573 / .807 / .595 | .483 / .789 / .599 | .647 / .862 / .645（α .7） | .686 / .882 / .772 |
+| HCS（Fed-WSVAD 3） | .562 / .509 / .510 | .625 / .602 / .548 | .625 / .602 / .548（α 0） | .683 / .672 / .559 |
+| HCS（DSANet） | .561 / .528 / .555 | 同上 | .630 / .607 / .568（α .3） | 同上 |
+| DeHate（Fed-WSVAD 3） | .174 / .701 / .508 | .144 / .695 / .574 | .216 / .756 / .578（α .5） | .259 / .771 / .674 |
+
+结论（r5）：给最强 baseline 同样的 8 个回答，三语料仍低于本方法 AP .039–.053、ROC .015–.065。输出 `runs/20261101_r5_completion/baseline_plus_vlm/<corpus>_r5copy_k8.json`。
