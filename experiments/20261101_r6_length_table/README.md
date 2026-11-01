@@ -11,10 +11,10 @@
 | 语料 | 机器、时间 | test 选 trial（规则 7） | validation 选 trial | r5（部署，含复制似然） | 门（规则 8） |
 |---|---|---|---|---|---|
 | HateMM | uoa-lab1，Slurm 1383，11-02 03:27–07:38 | .702 ± .006 / .889 ± .001 / .783 ± .015（trial 1 / 4 / 15） | .670 ± .016 / .876 ± .006 / .755 ± .043（trial 7 / 14 / 12） | .691 / .885 | .573 / .807 |
-| HCS | uoa-lab1，Slurm 1384，11-02 07:38 起 | 进行中 | | .687 / .674 | .562 / .528 |
+| HCS | uoa-lab1，Slurm 1384，11-02 07:38–09:12 | .692 ± .002 / .680 ± .005 / .563 ± .007（trial 16 / 18 / 5） | .679 ± .004 / .666 ± .019 / .551 ± .006（trial 13 / 16 / 1） | .687 / .674 | .562 / .528 |
 | DeHate | uoa-lab3，Slurm 1382，11-02 01:44 起 | 进行中 | | .262 / .780 | .174 / .701 |
 
-HateMM：Q2（不低于 r5）通过，AP +.011、ROC +.004；Q3（门）通过。
+HateMM：Q2（不低于 r5）通过，AP +.011、ROC +.004；Q3（门）通过。HCS：Q2 通过，AP +.005、ROC +.006；Q3 通过。
 
 ### 调用曲线与单调性（Q1；`launch/run_final_curves.sh`，uoa-lab1 11-02 07:40–07:44；`runs/20261101_r6_length_table/final_curves/<test_selected|val_selected>/<corpus>/summary.json`；验收 `experiments/20261101_r5_completion/accept_check.py <root> <corpus> final`）
 
