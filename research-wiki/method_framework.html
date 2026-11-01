@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600&display=swap">
 <style>
-/* Layout: wide column so the one train+test figure shows at full size; prose stays ~70ch; color = the three modules */
+/* Layout: wide column so the train and test figures show at full size; prose stays ~70ch; color = the three modules */
 :root {
   --bg: #f4f6f8;
   --surface: #ffffff;
@@ -127,241 +127,276 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
 <header>
   <div class="eyebrow">research-wiki · 截至 2026-11-01</div>
   <h1>QTL：按需向 VLM 提问的仇恨片段定位</h1>
-  <p class="lede">网络先给视频每一秒一个仇恨先验。然后在视频的二分时间树上，挑信息量最大的片段问 VLM“这段有没有仇恨”。每个回答都通过树上的精确推断更新每一秒的仇恨概率。新回答不再改变结果、或用完调用预算时停止。</p>
+  <p class="lede">网络先给视频每一秒一个仇恨先验。然后在视频的二分时间树上，挑信息量最大的片段问 VLM“这段有没有仇恨”。每个回答都通过树上的 inside–outside 精确推断更新每一秒的仇恨概率。新回答不再改变结果、或用完调用预算时停止。</p>
   <p class="version">当前版本 = r5 骨干（<code>experiments/20260925_query_paradigm/README.md</code> 第 2、15、17 节）+ 复制似然 copy_neg + 停止规则 qmixE1（平均调用次数 = 使用者设的预算）。共享代码在 <code>src/qtl/</code>。</p>
   <div class="chips" aria-label="颜色说明">
     <span class="chip"><span class="sw bb"></span>① 骨干：从特征算先验</span>
     <span class="chip"><span class="sw vlm"></span>② VLM 提问：问哪段、怎么问</span>
     <span class="chip"><span class="sw inf"></span>③ 融合与停止：回答怎么用、何时停</span>
     <span class="chip"><span class="ln"></span>数据</span>
-    <span class="chip"><span class="ln dash"></span>梯度（只在训练）</span>
+    <span class="chip"><span class="ln dash"></span>梯度</span>
   </div>
   <nav class="toc" aria-label="目录">
-    <a href="#flow">训练和测试</a><a href="#tree">问题树</a><a href="#stop">停止规则</a><a href="#parts">部件清单</a><a href="#numbers">当前数字</a><a href="#history">版本记录</a>
+    <a href="#train">训练</a><a href="#test">测试</a><a href="#tree">问题树</a><a href="#stop">停止规则</a><a href="#parts">部件清单</a><a href="#numbers">当前数字</a><a href="#history">版本记录</a>
   </nav>
 </header>
 
-<section id="flow">
-  <h2><span class="num">1</span>训练和测试：数据怎么流</h2>
+<section id="train">
+  <h2><span class="num">1</span>训练：一个训练视频怎么走</h2>
   <figure>
     <div class="fig">
-<svg class="d big" viewBox="0 0 1460 1020" role="img" aria-label="训练和测试的完整数据流。中间一行训练和测试共用：特征进骨干得到每秒势 s_t、视频 logit g、节点势 φ_n，答案模型把 VLM 回答变成节点似然 ℓ_n，两者进入树概率模型，算出 log Z 和每秒、每节点后验。上面一行只在训练时走：VLM 离线缓存全部节点答案，训练前拟合答案模型的固定参数，损失用视频标签和两遍 log Z，梯度回到骨干和链参数。下面一行只在测试时走：按 EIG 选节点，qmixE1 判断继续或停，继续则在线问 VLM，回答回到答案模型；停则输出每秒分数。">
+<svg class="d big" viewBox="0 0 1400 620" role="img" aria-label="训练流程：训练前 VLM 离线问遍训练视频全部节点并拟合答案模型的固定参数；训练时特征进骨干得到 s_t、g、φ_n，答案模型给出全部节点的 ℓ_n，树模型 inside–outside 跑两遍得到两个对数概率，和视频标签一起算损失，梯度回到骨干和链参数。">
   <defs>
     <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
   </defs>
 
-  <!-- lanes -->
-  <rect class="lane" x="4" y="4" width="1452" height="296" rx="12"/>
-  <rect class="tab" x="4" y="4" width="40" height="296" rx="12"/>
-  <text class="tab-t" transform="translate(29 152) rotate(-90)">训练时</text>
-  <rect class="lane-mid" x="4" y="312" width="1452" height="338" rx="12"/>
-  <rect class="tab" x="4" y="312" width="40" height="338" rx="12"/>
-  <text class="tab-t" transform="translate(29 481) rotate(-90)">训练、测试共用</text>
-  <rect class="lane" x="4" y="662" width="1452" height="354" rx="12"/>
-  <rect class="tab" x="4" y="662" width="40" height="354" rx="12"/>
-  <text class="tab-t" transform="translate(29 839) rotate(-90)">测试时</text>
+  <!-- once before training -->
+  <rect class="lane" x="10" y="14" width="586" height="206" rx="10"/>
+  <text class="b" x="24" y="36" style="fill:var(--muted)">训练前只做一次</text>
+  <path class="ar" d="M160,66 V48 H760 V64" marker-end="url(#a1)"/>
+  <text class="s c" x="470" y="42">全部节点的 p</text>
 
-  <!-- ===== training lane ===== -->
-  <text class="b" x="62" y="40">训练顺序</text>
-  <text x="62" y="64">0. 训练前一次：VLM 问遍训练视频全部节点，拟合固定参数</text>
-  <text x="62" y="88">1. 骨干前向：特征 → s_t、g、φ_n</text>
-  <text x="62" y="112">2. 树模型跑两遍（含 / 不含全部答案），得两个 log Z</text>
-  <text x="62" y="136">3. 算损失，反向传播，更新骨干和链参数</text>
-  <text class="s" x="62" y="164">搜索：每 seed 20 个 Optuna trial（lr、λ_cma、dropout、lr_answer）</text>
-  <text class="s" x="62" y="182">选 epoch：validation 固定问 8 次的 (AP+ROC)/2；选 trial：test（规则 7）</text>
+  <rect class="box-vlm" x="24" y="66" width="276" height="140" rx="8"/>
+  <text class="b t-vlm" x="36" y="90">② VLM 离线问一遍</text>
+  <text class="k" x="36" y="114">输入</text>
+  <text x="72" y="114">训练视频全部 ≥4 秒节点</text>
+  <text x="72" y="134">每个节点：4 帧 + 词级转录</text>
+  <text class="k" x="36" y="158">输出</text>
+  <text x="72" y="158">每个节点一个 p</text>
+  <text class="s" x="36" y="182">平均每视频 62.6 / 102.3 / 40.4 次</text>
+  <text class="s" x="36" y="198">（HateMM / HCS / DeHate）</text>
+  <path class="ar" d="M300,136 H328" marker-end="url(#a1)"/>
 
-  <rect class="box" x="62" y="202" width="180" height="56" rx="6"/>
-  <text class="b c" x="152" y="226">视频标签 Y</text>
-  <text class="s c" x="152" y="246">0 或 1；没有逐秒标注</text>
-  <path class="ar" d="M242,222 H698" marker-end="url(#a1)"/>
-  <text class="s c" x="470" y="214">Y</text>
+  <rect class="soft-inf" x="330" y="66" width="250" height="140" rx="8"/>
+  <text class="b t-inf" x="342" y="90">③ 拟合固定参数</text>
+  <text class="k" x="342" y="114">输入</text>
+  <text x="378" y="114">全部 p、视频标签 Y</text>
+  <text class="k" x="342" y="138">输出</text>
+  <text x="378" y="138">8 档边界（p 的分位数）</text>
+  <text x="378" y="158">锚定表 P(档 | 有/无仇恨)</text>
+  <text x="378" y="178">复制概率 π（6 个长度档）</text>
+  <text class="s" x="342" y="200">锚定：负例全部节点 = 无；正例根 = 有</text>
+  <path class="ar" d="M580,136 H618" marker-end="url(#a1)"/>
+  <text class="s c" x="599" y="128">参数</text>
 
-  <rect class="box" x="700" y="30" width="330" height="256" rx="8"/>
-  <text class="b" x="716" y="54">损失（每个训练视频）</text>
-  <text class="k" x="716" y="78">输入</text>
-  <text x="752" y="78">Y；两遍 log Z；跨模态层两流输出</text>
-  <text class="k" x="716" y="104">计算</text>
-  <text class="m" x="716" y="128">−log P(Y | x)</text>
-  <text class="s" x="1014" y="128" style="text-anchor:end">→ 训练 g</text>
-  <text class="m" x="716" y="154">− log P(全部答案 | G=Y, x) / 答案数</text>
-  <text class="s" x="732" y="174">正例视频：训练 s_t、φ_n、A、π0</text>
-  <text class="s" x="732" y="192">负例视频：常数（全部节点已知无仇恨）</text>
-  <text class="m" x="716" y="218">+ λ_cma · CMAL</text>
-  <text class="s" x="1014" y="218" style="text-anchor:end">沿用 MACIL-SD</text>
-  <text class="k" x="716" y="248">输出</text>
-  <text x="752" y="248">一个标量 → 反向传播</text>
-  <text class="s" x="716" y="272">答案在训练时是监督目标，网络输入里没有答案</text>
+  <rect class="soft-inf" x="620" y="66" width="280" height="140" rx="8"/>
+  <text class="b t-inf" x="632" y="90">③ 答案模型（参数固定）</text>
+  <text class="k" x="632" y="114">输入</text>
+  <text x="668" y="114">每个节点的 p</text>
+  <text class="k" x="632" y="138">计算</text>
+  <text x="668" y="138">p → 档 o；查锚定表</text>
+  <text x="668" y="158">嵌套节点按 π 打折</text>
+  <text class="k" x="632" y="184">输出</text>
+  <text x="668" y="184">ℓ_n：P(o | 有)、P(o | 无)</text>
+  <path class="ar" d="M760,206 V248" marker-end="url(#a1)"/>
+  <text class="s" x="768" y="232">全部节点的 ℓ_n</text>
 
-  <rect class="box-vlm" x="1080" y="22" width="360" height="118" rx="8"/>
-  <text class="b t-vlm" x="1096" y="46">② VLM 离线缓存（训练前问一次）</text>
-  <text class="k" x="1096" y="70">输入</text>
-  <text x="1132" y="70">训练视频全部 ≥4 秒节点：4 帧 + 转录</text>
-  <text class="k" x="1096" y="94">输出</text>
-  <text x="1132" y="94">每个节点一个 p</text>
-  <text class="s" x="1096" y="122">平均每视频：HateMM 62.6、HCS 102.3、DeHate 40.4 次</text>
-  <path class="ar" d="M1260,140 V164" marker-end="url(#a1)"/>
+  <!-- main row -->
+  <text class="b c" x="110" y="262">输入特征（每秒一行）</text>
+  <rect class="box" x="20" y="276" width="180" height="48" rx="6"/>
+  <text class="c" x="110" y="296">I3D 视觉</text><text class="s m c" x="110" y="314">T × 1024</text>
+  <rect class="box" x="20" y="336" width="180" height="48" rx="6"/>
+  <text class="c" x="110" y="356">VGGish 音频</text><text class="s m c" x="110" y="374">T × 128</text>
+  <rect class="box" x="20" y="396" width="180" height="48" rx="6"/>
+  <text class="c" x="110" y="416">BERT 转录文本</text><text class="s m c" x="110" y="434">T × 768</text>
+  <text class="s c" x="110" y="462">T = 视频秒数</text>
+  <path class="ar" d="M200,300 H248" marker-end="url(#a1)"/>
+  <path class="ar" d="M200,360 H248" marker-end="url(#a1)"/>
+  <path class="ar" d="M200,420 H248" marker-end="url(#a1)"/>
 
-  <rect class="soft-inf" x="1080" y="166" width="360" height="120" rx="8"/>
-  <text class="b t-inf" x="1096" y="190">③ 训练前拟合一次，之后固定</text>
-  <text class="k" x="1096" y="212">输入</text>
-  <text x="1132" y="212">训练集全部 p、视频标签 Y</text>
-  <text class="k" x="1096" y="234">输出</text>
-  <text x="1132" y="234">8 档边界（p 的分位数）</text>
-  <text x="1132" y="254">锚定表：负例全部节点 = 无，正例根 = 有</text>
-  <text x="1132" y="274">复制概率 π：负例父子答案相同率，6 档</text>
+  <rect class="grp-bb" x="250" y="250" width="290" height="220" rx="10"/>
+  <text class="b t-bb" x="264" y="274">① 骨干（可训练）</text>
+  <rect class="box-bb" x="266" y="288" width="258" height="74" rx="6"/>
+  <text class="b c" x="395" y="310">跨模态注意力层（MACIL-SD）</text>
+  <text class="c" x="395" y="331">视觉流 ↔ 音频+文本流</text>
+  <text class="s c" x="395" y="351">输出每秒隐向量 h_t：T × 128</text>
+  <path class="ar" d="M306,362 V378" marker-end="url(#a1)"/>
+  <path class="ar" d="M395,362 V378" marker-end="url(#a1)"/>
+  <path class="ar" d="M484,362 V378" marker-end="url(#a1)"/>
+  <rect class="box-bb" x="266" y="380" width="80" height="54" rx="6"/>
+  <text class="b m c" x="306" y="402">s_t</text><text class="s c" x="306" y="422">每秒 1 个</text>
+  <rect class="box-bb" x="355" y="380" width="80" height="54" rx="6"/>
+  <text class="b m c" x="395" y="402">g</text><text class="s c" x="395" y="422">每视频 1 个</text>
+  <rect class="box-bb" x="444" y="380" width="80" height="54" rx="6"/>
+  <text class="b m c" x="484" y="402">φ_n</text><text class="s c" x="484" y="422">每节点 1 个</text>
+  <text class="s c" x="395" y="456">g、φ_n 用同一个注意力池化</text>
+  <path class="ar" d="M540,407 H618" marker-end="url(#a1)"/>
+  <text class="s c" x="579" y="399">s_t、g、φ_n</text>
 
-  <!-- training-lane connections to the shared lane -->
-  <path class="ar ar-d" d="M700,262 H465 V348" marker-end="url(#a1)"/>
-  <text class="s" x="473" y="292">梯度 → 骨干参数</text>
-  <path class="ar" d="M820,350 V288" marker-end="url(#a1)"/>
-  <text class="s" x="828" y="334">两遍 log Z、P(G=1)</text>
-  <path class="ar ar-d" d="M960,288 V348" marker-end="url(#a1)"/>
-  <text class="s" x="968" y="334">梯度 → A、π0</text>
-  <path class="ar" d="M1200,286 V348" marker-end="url(#a1)"/>
-  <text class="s e" x="1192" y="334">固定参数</text>
-  <path class="ar" d="M1440,81 H1452 V470 H1442" marker-end="url(#a1)"/>
-  <text class="s e" x="1446" y="334">训练：全部节点的 p</text>
+  <rect class="grp-inf" x="620" y="250" width="280" height="220" rx="10"/>
+  <text class="b t-inf" x="634" y="274">③ 树模型 inside–outside</text>
+  <text class="k" x="634" y="300">输入</text>
+  <text x="670" y="300">s_t、g、φ_n；全部节点 ℓ_n</text>
+  <text class="k" x="634" y="326">计算</text>
+  <text x="670" y="326">inside 跑两遍：</text>
+  <text x="682" y="346">1. 不含答案</text>
+  <text x="682" y="366">2. 含全部节点的答案</text>
+  <text class="s" x="670" y="386">零膨胀链 + 节点势，树上精确求和</text>
+  <text class="k" x="634" y="414">输出</text>
+  <text x="670" y="414">log P(Y | x)</text>
+  <text x="670" y="436">log P(全部答案 | G=Y, x)</text>
+  <path class="ar" d="M900,330 H938" marker-end="url(#a1)"/>
 
-  <!-- ===== shared lane ===== -->
-  <text class="b c" x="150" y="364">输入特征（每秒一行）</text>
-  <rect class="box" x="62" y="380" width="178" height="52" rx="6"/>
-  <text class="c" x="151" y="402">I3D 视觉</text><text class="s m c" x="151" y="421">T × 1024</text>
-  <rect class="box" x="62" y="452" width="178" height="52" rx="6"/>
-  <text class="c" x="151" y="474">VGGish 音频</text><text class="s m c" x="151" y="493">T × 128</text>
-  <rect class="box" x="62" y="524" width="178" height="52" rx="6"/>
-  <text class="c" x="151" y="546">BERT 转录文本</text><text class="s m c" x="151" y="565">T × 768</text>
-  <text class="s c" x="151" y="600">T = 视频秒数</text>
-  <text class="s c" x="151" y="618">与 baseline 相同</text>
-  <path class="ar" d="M240,406 H294" marker-end="url(#a1)"/>
-  <path class="ar" d="M240,478 H294" marker-end="url(#a1)"/>
-  <path class="ar" d="M240,550 H294" marker-end="url(#a1)"/>
+  <rect class="box" x="940" y="250" width="290" height="220" rx="10"/>
+  <text class="b" x="954" y="274">损失（每个训练视频）</text>
+  <text class="k" x="954" y="300">输入</text>
+  <text x="990" y="300">左边两个对数概率；标签 Y</text>
+  <text class="k" x="954" y="326">计算</text>
+  <text class="m" x="954" y="350">−log P(Y | x)</text>
+  <text x="954" y="374">− log P(全部答案 | G=Y, x) / 答案数</text>
+  <text class="s" x="970" y="392">正例训练 s_t、φ_n、链；负例为常数</text>
+  <text class="m" x="954" y="416">+ λ_cma · CMAL</text>
+  <text class="k" x="954" y="448">输出</text>
+  <text x="990" y="448">一个数 → 反向传播</text>
 
-  <rect class="grp-bb" x="280" y="350" width="370" height="286" rx="10"/>
-  <text class="b t-bb" x="294" y="372">① 骨干 PriorNet（可训练）</text>
-  <rect class="box-bb" x="296" y="386" width="180" height="236" rx="6"/>
-  <text class="b c" x="386" y="410">跨模态注意力层</text>
-  <text class="s c" x="386" y="430">沿用 MACIL-SD</text>
-  <text class="k" x="308" y="462">输入</text>
-  <text x="308" y="484">视觉流 ← I3D</text>
-  <text x="308" y="506">音频+文本流 ←</text>
-  <text x="308" y="526">VGGish ⊕ BERT</text>
-  <text class="k" x="308" y="560">输出</text>
-  <text class="m" x="308" y="582">每秒 h_t：T × 128</text>
-  <text class="s" x="308" y="604">两流相加；另给 CMAL</text>
-  <path class="ar" d="M476,420 H518" marker-end="url(#a1)"/>
-  <path class="ar" d="M476,490 H518" marker-end="url(#a1)"/>
-  <path class="ar" d="M476,560 H518" marker-end="url(#a1)"/>
-  <rect class="box-bb" x="520" y="390" width="118" height="60" rx="6"/>
-  <text class="b m c" x="579" y="414">s_t</text><text class="s c" x="579" y="436">每秒 1 个数</text>
-  <rect class="box-bb" x="520" y="460" width="118" height="60" rx="6"/>
-  <text class="b m c" x="579" y="484">g</text><text class="s c" x="579" y="506">每视频 1 个数</text>
-  <rect class="box-bb" x="520" y="530" width="118" height="60" rx="6"/>
-  <text class="b m c" x="579" y="554">φ_n</text><text class="s c" x="579" y="576">每个内部节点 1 个数</text>
-  <text class="s c" x="579" y="612">g、φ_n：注意力池化</text>
-  <path class="ar" d="M638,420 H714" marker-end="url(#a1)"/>
-  <path class="ar" d="M638,490 H714" marker-end="url(#a1)"/>
-  <path class="ar" d="M638,560 H714" marker-end="url(#a1)"/>
+  <rect class="box" x="1260" y="320" width="130" height="78" rx="6"/>
+  <text class="b c" x="1325" y="344">视频标签 Y</text>
+  <text class="c" x="1325" y="366">0 或 1</text>
+  <text class="s c" x="1325" y="386">无逐秒标注</text>
+  <path class="ar" d="M1260,359 H1232" marker-end="url(#a1)"/>
 
-  <rect class="grp-inf" x="700" y="350" width="330" height="286" rx="10"/>
-  <text class="b t-inf" x="714" y="372">③ 树概率模型 + 精确推断</text>
-  <rect class="box-inf" x="716" y="386" width="298" height="180" rx="6"/>
-  <text class="b c" x="865" y="410">联合分布</text>
-  <text class="c" x="865" y="434">P(G=1) = σ(g)</text>
-  <text class="c" x="865" y="458">G=1：秒级链 exp(Σ s_t·y_t) · 链(A, π0)</text>
-  <text class="c" x="865" y="482">× Π_节点 exp(φ_n · z_n)</text>
-  <text class="c" x="865" y="506">× Π_已答节点 ℓ_n(o_n | z_n)</text>
-  <text class="s c" x="865" y="532">z_n = 节点内有没有仇恨秒</text>
-  <text class="s c" x="865" y="552">可训练：链转移 A、首秒分布 π0</text>
-  <path class="ar" d="M865,566 V576" marker-end="url(#a1)"/>
-  <rect class="box-inf" x="716" y="578" width="298" height="50" rx="6"/>
-  <text class="b c" x="865" y="598">inside：自下而上求和 → log Z</text>
-  <text class="c" x="865" y="618">对 log Z 求导 → 每秒、每节点后验</text>
-
-  <rect class="soft-inf" x="1080" y="350" width="360" height="286" rx="10"/>
-  <text class="b t-inf" x="1096" y="374">③ 答案模型（参数固定）</text>
-  <text class="k" x="1096" y="400">输入</text>
-  <text x="1132" y="400">节点 n 的 VLM 回答 p</text>
-  <text x="1132" y="420">已问的嵌套节点 m 的档 o_m（若有）</text>
-  <text class="k" x="1096" y="448">计算</text>
-  <text x="1132" y="448">1. p → 档 o（8 档）</text>
-  <text x="1132" y="470">2. 查锚定表 P(o | z_n=0)、P(o | z_n=1)</text>
-  <text x="1132" y="492">3. 有嵌套 m 时：</text>
-  <text class="m" x="1150" y="512">π·1[o=o_m] + (1−π)·表</text>
-  <text class="k" x="1096" y="542">输出</text>
-  <text x="1132" y="542">ℓ_n(o | z_n=0)、ℓ_n(o | z_n=1)</text>
-  <text class="s" x="1132" y="562">每个有回答的节点 2 个数</text>
-  <text class="s" x="1096" y="594">训练时：缓存里全部节点</text>
-  <text class="s" x="1096" y="614">测试时：只有被问过的节点</text>
-  <path class="ar" d="M1080,490 H1016" marker-end="url(#a1)"/>
-  <text class="s c" x="1048" y="482">ℓ_n</text>
-
-  <!-- ===== test lane ===== -->
-  <text class="b" x="62" y="696">每一圈 = 1 次 VLM 调用</text>
-  <text x="62" y="720">1. 树模型给出当前后验（第 0 圈只用骨干先验）</text>
-  <text x="62" y="744">2. 算所有候选节点的 EIG，选出 n*</text>
-  <text x="62" y="768">3. qmixE1 判断继续还是停</text>
-  <text x="62" y="792">4. 继续：问 VLM，回答经答案模型变成 ℓ_n</text>
-  <text x="62" y="816">5. ℓ_n 放进树模型，回到 1</text>
-  <text class="s" x="62" y="842">骨干只在开头算一次；之后每圈只重算树模型</text>
-
-  <path class="ar" d="M865,636 V688" marker-end="url(#a1)"/>
-  <text class="s" x="873" y="672">每秒 p_t、节点后验 q_n、P(G=1)</text>
-  <rect class="box-vlm" x="700" y="690" width="330" height="122" rx="8"/>
-  <text class="b t-vlm" x="716" y="714">② 选下一个节点（EIG）</text>
-  <text class="k" x="716" y="738">输入</text>
-  <text x="752" y="738">节点后验、答案表、π、已问节点</text>
-  <text class="k" x="716" y="762">计算</text>
-  <text x="752" y="762">每个未问、≥4 秒节点的 EIG</text>
-  <text class="s" x="752" y="780">回答能带来的信息量，含复制似然</text>
-  <text class="k" x="716" y="802">输出</text>
-  <text x="752" y="802">EIG 最大的节点 n* 和它的 EIG</text>
-  <path class="ar" d="M865,812 V846" marker-end="url(#a1)"/>
-  <text class="s" x="873" y="834">n*、EIG(n*)</text>
-
-  <rect class="soft-inf" x="700" y="848" width="330" height="152" rx="8"/>
-  <text class="b t-inf" x="716" y="872">③ 停止判断 qmixE1</text>
-  <text class="k" x="716" y="896">输入</text>
-  <text x="752" y="896">dlsum：上次回答让 logit p_t 变了多少</text>
-  <text x="752" y="916">EIG(n*)；阈值 c</text>
-  <text class="s" x="752" y="936">c：validation 上调到平均 B 次（B = 预算）</text>
-  <text class="k" x="716" y="962">输出</text>
-  <text x="752" y="962">继续（问 n*）或 停</text>
-  <text class="s" x="752" y="984">第 1 次总是问；每视频最多 8 次</text>
-
-  <path class="ar" d="M1030,925 H1078" marker-end="url(#a1)"/>
-  <text class="s c" x="1054" y="917">继续</text>
-  <rect class="box-vlm" x="1080" y="848" width="360" height="152" rx="8"/>
-  <text class="b t-vlm" x="1096" y="872">② VLM 在线调用（Qwen2.5-VL-7B）</text>
-  <text class="k" x="1096" y="896">输入</text>
-  <text x="1132" y="896">n* 区间均匀取 4 帧 + 该区间词级转录</text>
-  <text x="1132" y="916">问：这段有没有仇恨内容？</text>
-  <text class="s" x="1132" y="934">仇恨定义按数据集写</text>
-  <text class="k" x="1096" y="962">输出</text>
-  <text class="m" x="1132" y="962">p = P(Yes) / (P(Yes)+P(No))</text>
-  <text class="s" x="1132" y="984">首 token 概率；不解码整句</text>
-  <path class="ar" d="M1260,848 V638" marker-end="url(#a1)"/>
-  <text class="s" x="1268" y="760">测试：被问节点的 p</text>
-
-  <path class="ar" d="M700,925 H644" marker-end="url(#a1)"/>
-  <text class="s c" x="672" y="917">停</text>
-  <rect class="out" x="300" y="872" width="342" height="110" rx="8"/>
-  <text class="b c" x="471" y="898">最终输出：每秒仇恨分数 p_t</text>
-  <text class="s c" x="471" y="920">T 个概率</text>
-  <text class="m c" x="471" y="944">P(G=1 | ·) × P(y_t=1 | G=1, ·)</text>
-  <text class="s c" x="471" y="968">0 次调用时 = 骨干先验经树模型</text>
+  <!-- gradient -->
+  <path class="ar ar-d" d="M1085,470 V596 H395 V472" marker-end="url(#a1)"/>
+  <path class="ar ar-d" d="M760,596 V472" marker-end="url(#a1)"/>
+  <text class="s c" x="580" y="590">梯度 → 骨干全部参数</text>
+  <text class="s" x="768" y="540">梯度 → 链参数 A、π0</text>
+  <text class="s" x="1093" y="540">反向传播</text>
 </svg>
     </div>
-    <figcaption>三条横带：上 = 只在训练时走，中 = 训练和测试都走，下 = 只在测试时走。每个框写了输入、计算、输出；箭头旁写传的是什么。</figcaption>
+    <figcaption>训练时，VLM 答案是监督目标，不是网络输入：网络只看特征，学的是在每个时间尺度上预测 VLM 会怎么回答，同时满足视频标签。</figcaption>
   </figure>
   <ul class="plain">
-    <li><b>同一套骨干、答案模型、树模型</b>，训练和测试都用。区别只在答案从哪来、拿结果做什么：训练时答案来自离线缓存的全部节点，结果用来算损失；测试时答案来自在线问到的节点，结果用来选下一个问题和输出分数。</li>
-    <li><b>树模型这一步</b>只显式算 inside（自下而上求和得 log Z），后验靠对 log Z 求导（autograd）得到，数值上等于经典 inside–outside 算法。代码 <code>src/qtl/ctree.py</code> 的 <code>up</code>、<code>log_evidence</code>、<code>marginals</code>。它和 10-01 的 inside–outside 骨干（一个算特征的神经网络，没采用）不是一回事。</li>
-    <li><b>训练时树模型跑两遍</b>：不含答案一遍、含全部答案一遍，两遍 log Z 之差就是答案的对数似然。</li>
+    <li><b>负例视频</b>：全部节点已知无仇恨，答案项是常数，只有 −log P(Y | x) 训练视频头 g。所以每秒势 s_t、节点势 φ_n 只由正例视频的多尺度答案训练。</li>
+    <li><b>答案项除以答案数</b>：长视频有上千个节点答案，除以答案数后每个视频权重相同。</li>
+    <li><b>搜索与选模型</b>：每个 seed（234 / 2025 / 3407）20 个 Optuna trial，搜 lr、λ_cma、dropout、lr_answer；epoch 用 validation 固定问 8 次的 (AP+ROC)/2 选；trial 用 test 同一目标选（规则 7）。</li>
+  </ul>
+</section>
+
+<section id="test">
+  <h2><span class="num">2</span>测试：一个测试视频怎么走</h2>
+  <figure>
+    <div class="fig">
+<svg class="d big" viewBox="0 0 1400 620" role="img" aria-label="测试流程：特征进骨干得到 s_t、g、φ_n（只算一次）；树模型 inside–outside 给出后验；EIG 选出下一个节点 n*；qmixE1 判断停或继续；继续则问 VLM 得到 p，答案模型把 p 变成 ℓ_n* 加回树模型；停则输出每秒分数。">
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
+  </defs>
+
+  <text class="b c" x="110" y="42">输入特征（每秒一行）</text>
+  <rect class="box" x="20" y="56" width="180" height="48" rx="6"/>
+  <text class="c" x="110" y="76">I3D 视觉</text><text class="s m c" x="110" y="94">T × 1024</text>
+  <rect class="box" x="20" y="116" width="180" height="48" rx="6"/>
+  <text class="c" x="110" y="136">VGGish 音频</text><text class="s m c" x="110" y="154">T × 128</text>
+  <rect class="box" x="20" y="176" width="180" height="48" rx="6"/>
+  <text class="c" x="110" y="196">BERT 转录文本</text><text class="s m c" x="110" y="214">T × 768</text>
+  <path class="ar" d="M200,80 H248" marker-end="url(#a2)"/>
+  <path class="ar" d="M200,140 H248" marker-end="url(#a2)"/>
+  <path class="ar" d="M200,200 H248" marker-end="url(#a2)"/>
+
+  <rect class="grp-bb" x="250" y="40" width="290" height="190" rx="10"/>
+  <text class="b t-bb" x="264" y="64">① 骨干（只在开头算一次）</text>
+  <text class="k" x="264" y="90">输入</text>
+  <text x="300" y="90">三路特征</text>
+  <text class="k" x="264" y="116">计算</text>
+  <text x="300" y="116">跨模态注意力层 → h_t → 三个头</text>
+  <text class="k" x="264" y="146">输出</text>
+  <text x="300" y="146"><tspan class="m">s_t</tspan>：每秒 1 个数</text>
+  <text x="300" y="168"><tspan class="m">g</tspan>：每视频 1 个数</text>
+  <text x="300" y="190"><tspan class="m">φ_n</tspan>：每个内部节点 1 个数</text>
+  <text class="s" x="264" y="216">参数是训练好的，测试时不变</text>
+  <path class="ar" d="M540,135 H618" marker-end="url(#a2)"/>
+  <text class="s c" x="579" y="127">s_t、g、φ_n</text>
+
+  <rect class="grp-inf" x="620" y="40" width="280" height="190" rx="10"/>
+  <text class="b t-inf" x="634" y="64">③ 树模型 inside–outside</text>
+  <text class="k" x="634" y="90">输入</text>
+  <text x="670" y="90">s_t、g、φ_n</text>
+  <text x="670" y="110">已问节点的 ℓ_n（开始时没有）</text>
+  <text class="k" x="634" y="136">计算</text>
+  <text x="670" y="136">inside + outside，树上精确</text>
+  <text class="k" x="634" y="164">输出</text>
+  <text x="670" y="164">每秒后验 p_t</text>
+  <text x="670" y="184">每节点后验 q_n</text>
+  <text x="670" y="204">视频后验 P(G=1)</text>
+  <path class="ar" d="M900,135 H948" marker-end="url(#a2)"/>
+  <text class="s c" x="924" y="127">后验</text>
+
+  <rect class="box-vlm" x="950" y="40" width="280" height="190" rx="10"/>
+  <text class="b t-vlm" x="962" y="64">② 选下一个节点（EIG）</text>
+  <text class="k" x="962" y="90">输入</text>
+  <text x="998" y="90">节点后验 q_n、答案表、π</text>
+  <text x="998" y="110">已问过哪些节点</text>
+  <text class="k" x="962" y="136">计算</text>
+  <text x="998" y="136">对每个未问、≥4 秒的节点：</text>
+  <text x="998" y="156">问它能得到多少信息（EIG）</text>
+  <text class="k" x="962" y="184">输出</text>
+  <text x="998" y="184">EIG 最大的节点 n*</text>
+  <text x="998" y="204">和它的 EIG(n*)</text>
+  <path class="ar" d="M1090,230 V268" marker-end="url(#a2)"/>
+  <text class="s" x="1098" y="254">n*、EIG(n*)</text>
+
+  <rect class="soft-inf" x="950" y="270" width="280" height="130" rx="10"/>
+  <text class="b t-inf" x="962" y="294">③ 停止判断 qmixE1</text>
+  <text class="k" x="962" y="318">输入</text>
+  <text x="998" y="318">dlsum：上次回答让分数变了多少</text>
+  <text x="998" y="338">EIG(n*)；阈值 c</text>
+  <text class="k" x="962" y="364">输出</text>
+  <text x="998" y="364">停 或 继续</text>
+  <text class="s" x="962" y="390">第 1 次总问；最多 8 次；c 由预算 B 定</text>
+  <path class="ar" d="M1230,335 H1268" marker-end="url(#a2)"/>
+  <text class="s c" x="1249" y="327">停</text>
+  <rect class="out" x="1270" y="280" width="120" height="110" rx="8"/>
+  <text class="b c" x="1330" y="306">最终输出</text>
+  <text class="c" x="1330" y="330">每秒分数 p_t</text>
+  <text class="s c" x="1330" y="352">T 个概率</text>
+  <text class="s c" x="1330" y="372">= 最后一次后验</text>
+  <path class="ar" d="M1090,400 V438" marker-end="url(#a2)"/>
+  <text class="s" x="1098" y="424">继续：问 n*</text>
+
+  <rect class="box-vlm" x="950" y="440" width="280" height="160" rx="10"/>
+  <text class="b t-vlm" x="962" y="464">② VLM（Qwen2.5-VL-7B）</text>
+  <text class="k" x="962" y="490">输入</text>
+  <text x="998" y="490">n* 区间均匀取 4 帧</text>
+  <text x="998" y="510">+ 该区间词级转录</text>
+  <text x="998" y="530">问：这段有没有仇恨内容？</text>
+  <text class="k" x="962" y="558">输出</text>
+  <text class="m" x="998" y="558">p = P(Yes)/(P(Yes)+P(No))</text>
+  <text class="s" x="998" y="580">首 token 概率；= 1 次调用</text>
+  <path class="ar" d="M950,520 H902" marker-end="url(#a2)"/>
+  <text class="s c" x="926" y="512">p</text>
+
+  <rect class="soft-inf" x="620" y="440" width="280" height="160" rx="10"/>
+  <text class="b t-inf" x="634" y="464">③ 答案模型（参数固定）</text>
+  <text class="k" x="634" y="490">输入</text>
+  <text x="670" y="490">n* 的 p</text>
+  <text x="670" y="510">嵌套的已问节点的答案（若有）</text>
+  <text class="k" x="634" y="536">计算</text>
+  <text x="670" y="536">p → 档 o；查锚定表</text>
+  <text x="670" y="556">嵌套时按 π 打折</text>
+  <text class="k" x="634" y="582">输出</text>
+  <text x="670" y="582">ℓ_n*：P(o | 有)、P(o | 无)</text>
+  <path class="ar" d="M760,440 V232" marker-end="url(#a2)"/>
+  <text class="s" x="768" y="340">ℓ_n*：加进树模型</text>
+
+  <text class="b" x="24" y="300">每一圈 = 1 次 VLM 调用</text>
+  <text x="24" y="326">1. 树模型 inside–outside 给出后验</text>
+  <text x="24" y="350">2. EIG 选出 n*</text>
+  <text x="24" y="374">3. qmixE1：停就输出；继续就往下</text>
+  <text x="24" y="398">4. 问 VLM，得到 p</text>
+  <text x="24" y="422">5. 答案模型把 p 变成 ℓ_n*，加进树模型，回到 1</text>
+  <text class="s" x="24" y="454">第 0 圈没有答案：树模型只用骨干先验</text>
+  <text class="s" x="24" y="474">骨干只算一次；之后每圈只重算树模型</text>
+</svg>
+    </div>
+    <figcaption>测试时骨干、答案模型的参数都不变；每问一次 VLM，就把一个新的 ℓ_n 加进树模型重算后验。</figcaption>
+  </figure>
+  <ul class="plain">
+    <li><b>inside–outside</b>：inside 自下而上算每个节点下面所有标注组合的总概率；outside 给出每秒、每节点的后验。代码里 outside 这一步用对 log Z 求导（autograd）实现，数值和 outside 传递相同（<code>src/qtl/ctree.py</code> 的 <code>up</code>、<code>marginals</code>）。它和 10-01 的 inside–outside 骨干（一个算特征的神经网络，没采用）不是一回事。</li>
+    <li><b>平均调用次数</b>：阈值 c 在 validation 上调到平均 B 次，B 由使用者按资源设。见第 4 节。</li>
   </ul>
 </section>
 
 <section id="tree">
-  <h2><span class="num">2</span>问题树：节点是什么</h2>
+  <h2><span class="num">3</span>问题树：节点是什么</h2>
   <figure>
     <div class="fig">
 <svg class="d tree" viewBox="0 0 1200 300" role="img" aria-label="32 秒视频的二分问题树：每层节点对半切分，含仇恨秒的节点标红；4 秒及以上的节点可以问 VLM；编号为一种可能的提问顺序，其中第 4 问的节点嵌套在第 3 问的节点里。">
@@ -489,7 +524,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
 </section>
 
 <section id="stop">
-  <h2><span class="num">3</span>停止规则 qmixE1</h2>
+  <h2><span class="num">4</span>停止规则 qmixE1</h2>
   <p class="prose">每问完一次，算两个数，判断还要不要接着问。代码在 <code>src/qtl/stop_rules.py</code>（<code>"qmixE1": ("dlsum", "eig")</code>）和 <code>src/qtl/policy.py</code>（<code>calibrate</code>、<code>stop_calls</code>）。</p>
 <div class="formula">后看  dlsum_k = Σ_t | logit p_t(第 k 次回答后) − logit p_t(第 k 次回答前) |   上一个回答让分数变了多少
 前看  eig_k   = 下一个最佳节点的 EIG                                       下一个问题还能带来多少信息
@@ -504,7 +539,7 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
 </section>
 
 <section id="parts">
-  <h2><span class="num">4</span>部件清单</h2>
+  <h2><span class="num">5</span>部件清单</h2>
   <div class="tbl">
   <table>
     <thead><tr><th>部件</th><th>做什么</th><th>来源</th><th>代码</th></tr></thead>
@@ -516,7 +551,7 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
       <tr><td><span class="mod vlm"></span>EIG 选节点</td><td>选回答信息量最大的节点</td><td>Lindley 1956、BALD</td><td><code>policy.py</code>、<code>cpolicy.py</code></td></tr>
       <tr><td><span class="mod vlm"></span>软答案 8 档</td><td>首 token P(Yes)，按训练答案分位切档</td><td>本项目 r5</td><td><code>data.py</code> configure_source</td></tr>
       <tr><td><span class="mod inf"></span>零膨胀链先验</td><td>视频状态 G + 首尾闭合的秒级链</td><td>零膨胀模型（Lambert 1992）+ 本项目</td><td><code>ctree.py</code></td></tr>
-      <tr><td><span class="mod inf"></span>树上精确推断</td><td>自下而上求和得 log Z，求导得每秒、每节点后验（等价于 inside–outside 算法）</td><td>树上和积</td><td><code>ctree.py</code> up、marginals</td></tr>
+      <tr><td><span class="mod inf"></span>树上精确推断</td><td>inside–outside 求每秒、每节点后验（outside 用求导实现）</td><td>树上和积</td><td><code>ctree.py</code> up、marginals</td></tr>
       <tr><td><span class="mod inf"></span>锚定答案表</td><td>只用标签确定状态的答案拟合，训练前固定</td><td>本项目 r2</td><td><code>qtree.py</code> fit_anchored</td></tr>
       <tr><td><span class="mod inf"></span>复制似然</td><td>嵌套节点回答相关时给证据打折</td><td>本项目 r5</td><td><code>copy_noise.py</code>、<code>cpolicy.py</code></td></tr>
       <tr><td><span class="mod inf"></span>停止 qmixE1</td><td>在预算内提前停</td><td>本项目 10-31</td><td><code>stop_rules.py</code></td></tr>
@@ -528,7 +563,7 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
 </section>
 
 <section id="numbers">
-  <h2><span class="num">5</span>当前数字与没解决的问题</h2>
+  <h2><span class="num">6</span>当前数字与没解决的问题</h2>
   <div class="tbl">
   <table>
     <thead><tr><th>语料</th><th>0 次调用</th><th>固定 8 次</th><th>预算 B = 5（实际平均次数）</th></tr></thead>
@@ -547,7 +582,7 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
 </section>
 
 <section id="history">
-  <h2><span class="num">6</span>版本记录</h2>
+  <h2><span class="num">7</span>版本记录</h2>
   <dl class="hist">
     <dt>r0 · 09-25</dt><dd>二分问题树、EIG 选节点、零膨胀 OR 树；VLM 回答五类 0–3 分</dd>
     <dt>r1</dt><dd>秒级链先验；答案模型和链用单独学习率</dd>
