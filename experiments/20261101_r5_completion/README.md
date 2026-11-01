@@ -10,7 +10,7 @@
 | P2 | 单调性：模拟诊断（第 2 节） | 完成 11-01 | 原因 = 同一视频答案相关 + 表无长度项（2.2、3.2） |
 | P3 | 按诊断结果改方法 | 完成 11-01：偏移否决（3.1）；第 6 版 = 共用长度斜率表（3.3），规则 4 GO、规则 6 PASS | `REVIEW_RULE4_R6.md`、`REVIEW_RULE6_R6.md` |
 | P4 | 训练和测试的答案模型一致 | 第 6 版去掉复制似然，训练与测试同一张表 | 复制似然作为测试期变体报告 |
-| P5 | 改后方法三语料 × 3 seed 完整搜索（规则 7） | 11-01 23:40 提交，排队（QOS 2 GPU 被另一项目占） | Slurm 1382 DeHate（lab3）、1383 HateMM、1384 HCS（lab1）；`runs/20261101_r6_length_table/` |
+| P5 | 改后方法三语料 × 3 seed 完整搜索（规则 7） | 11-01 23:40 提交；DeHate 11-02 01:44 开跑（lab3），HateMM/HCS 排队 | Slurm 1382 DeHate（lab3）、1383 HateMM、1384 HCS（lab1）；`runs/20261101_r6_length_table/` |
 | P6 | 消融，三语料含 DeHate、3 seed（14(g)） | 待 P5 | `launch/sbatch_arms.sh`（r6 目录）；测试期变体（复制、bfs、flat）用 `sim_monotone.py` |
 | P7 | 最强 baseline + 同样的 VLM 回答（14(f)） | r5 上完成（第 5 节）；最终方法定下后重跑 | `baseline_plus_vlm.py` |
 | P8 | 树 vs 单层窗口、无骨干对照（最终方法上） | 待 P5 | |
