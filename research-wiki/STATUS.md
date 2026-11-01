@@ -6,6 +6,8 @@
 
 方法示意图（当前方法的数据流、训练、停止规则）：[method_framework.html](method_framework.html)。
 
+**2026-11-01 晚起（进行中）：用户要求自主解决"定 r5 还缺什么"里列出的全部问题，全部解决后才汇报。** 进度表在 [20261101_r5_completion/README.md](../experiments/20261101_r5_completion/README.md) 第 1 节。已查明：调用多了不变好的原因不在选节点或停止（答案按模型自己的分布模拟时，三语料曲线到 32 次一路上升），而在真实答案与答案表不符——同一视频的回答相关，且 r5 的表没有长度项、短仇恨节点答 Yes 的概率被高估约一倍。第 6 版候选 = 答案表加一条两状态共用、只在负例视频上估计的长度斜率，训练和测试都用，去掉只在测试用的复制似然（[20261101_r6_length_table](../experiments/20261101_r6_length_table/README.md)）；r5 checkpoint 上不重训的检查三语料 8 次都不低于 r5。最强 baseline 加上同样 8 个回答仍低于本方法（r5 上 AP .039–.053）。GPU：同账号另一项目（`~/Hate-follow-up`）11-01 23:04 起占用两块配额内 GPU，第 6 版搜索排队。
+
 **2026-10-31 起：用户批准两个目标并开启自主迭代，两者都达成后才汇报。** 2026-11-01 用户裁定 DeHate 升为主数据集（`CLAUDE.md`、`RESEARCH_ITERATION_RULES.md` 第 1、7、8、14 条已改），两个目标同样要求在 DeHate 上成立。
 - 目标 1（少调用）：HateMM、HCS、DeHate 上最终方法平均约 4–5 次调用；与同一方法固定 8 次相比，AP/ROC 三 seed 均值降幅 ≤ .01，within 不降。
 - 目标 2（自研骨干不输 r5）：自研骨干在固定 8 次、规则 7 完整搜索下，三个主数据集三 seed AP 与 ROC 均值不低于 r5（HateMM .6909 / .8849，HCS .6865 / .6737，DeHate .2620 / .7800，`runs/20260929_query_paradigm_r5/summary_dehate.txt`）。
