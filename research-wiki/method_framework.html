@@ -174,7 +174,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text class="k" x="342" y="138">输出</text>
   <text x="378" y="138">8 档边界（p 的分位数）</text>
   <text x="378" y="158">锚定表 P(档 | 有/无仇恨)</text>
-  <text x="378" y="178">复制概率 π（6 个长度档）</text>
+  <text class="s" x="342" y="180">复制概率 π 也在此估计，只在测试用</text>
   <text class="s" x="342" y="200">锚定：负例全部节点 = 无；正例根 = 有</text>
   <path class="ar" d="M580,136 H618" marker-end="url(#a1)"/>
   <text class="s c" x="599" y="128">参数</text>
@@ -185,7 +185,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text x="668" y="114">每个节点的 p</text>
   <text class="k" x="632" y="138">计算</text>
   <text x="668" y="138">p → 档 o；查锚定表</text>
-  <text x="668" y="158">嵌套节点按 π 打折</text>
+  <text x="668" y="158">各节点答案当作相互独立</text>
   <text class="k" x="632" y="184">输出</text>
   <text x="668" y="184">ℓ_n：P(o | 有)、P(o | 无)</text>
   <path class="ar" d="M760,206 V248" marker-end="url(#a1)"/>
@@ -263,7 +263,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text class="s" x="1093" y="540">反向传播</text>
 </svg>
     </div>
-    <figcaption>训练时，VLM 答案是监督目标，不是网络输入：网络只看特征，学的是在每个时间尺度上预测 VLM 会怎么回答，同时满足视频标签。</figcaption>
+    <figcaption>训练时，VLM 答案是监督目标，不是网络输入：网络只看特征，学的是在每个时间尺度上预测 VLM 会怎么回答，同时满足视频标签。训练和按 validation 选 epoch 时，各节点答案按相互独立计算；复制似然（嵌套节点按 π 打折）只在测试时用。</figcaption>
   </figure>
   <ul class="plain">
     <li><b>负例视频</b>：全部节点已知无仇恨，答案项是常数，只有 −log P(Y | x) 训练视频头 g。所以每秒势 s_t、节点势 φ_n 只由正例视频的多尺度答案训练。</li>
@@ -592,6 +592,7 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <dt>r5 · 09-29</dt><dd>软答案：首 token P(Yes)、按数据集定义、8 档；复制似然 copy_neg</dd>
     <dt>10-31</dt><dd>停止规则 qmixE1（每视频最多 8 次）</dd>
     <dt>11-01</dt><dd>平均调用次数 = 使用者预算；DeHate 升为主数据集</dd>
+    <dt>11-01 修正</dt><dd>训练图改正：复制似然只在测试用，训练时答案按相互独立计算（<code>src/qtl/train.py</code> 不读 π）</dd>
     <dt>未采用</dt><dd>inside–outside 新骨干（<code>20261001</code>）、尺度感知跨模态注意力（<code>20261031_scale_aware_cma</code>），都没超过 r5</dd>
   </dl>
 </section>
