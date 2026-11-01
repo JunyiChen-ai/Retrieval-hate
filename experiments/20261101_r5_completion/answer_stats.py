@@ -37,7 +37,7 @@ def main():
     P, _, _ = qdata.load_soft_p(a.corpus, "soft_both")
     store = qdata.Store(a.corpus, ids["val"] + ids["test"], ["bert"])
     report = {"host": socket.gethostname(), "created": datetime.now().astimezone().isoformat(), "corpus": a.corpus,
-              "buckets": [float(b) for b in BUCKETS], "frac_bins": list(FRAC_BINS), "splits": {}}
+              "buckets": [list(map(float, b)) for b in BUCKETS], "frac_bins": list(FRAC_BINS), "splits": {}}
     for split in ("val", "test"):
         rows = []                                        # (video, state, bucket, length, frac, p, level)
         for v in ids[split]:
