@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Ablation arms and controls of the adopted method (experiments/20261101_r5_completion/README.md section 4), one
+# Ablation arms and controls of the adopted method (experiments/20261101_r5_completion/README.md P6 / P8), one
 # corpus, seeds 234 / 2025 / 3407 concurrently on one GPU, arms one after another per seed. Every arm trains once with
 # the best trial's hyperparameters of that (corpus, seed) search plus the search's fixed settings, then the arm's
 # change; no search. Submit on the target host:
-#   ssh <host> 'cd ~/Retrieval-hate && sbatch -p local-<node> -J r6arms_<corpus> \
+#   ssh <host> 'cd ~/Retrieval-hate && mkdir -p runs/20261101_r6_length_table/arms && sbatch -p local-<node> -J r6arms_<corpus> \
 #     -o runs/20261101_r6_length_table/arms/slurm_<corpus>_%j.out experiments/20261101_r6_length_table/launch/sbatch_arms.sh <corpus> [arm ...]'
 # Arms already finished (summary.json present) are skipped, so a job cut by the time limit resumes when resubmitted.
+# Test-time variants (copy likelihood, breadth-first order, flat fusion) need no training: sim_monotone.py / final_curves.py.
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=54G
@@ -35,20 +36,23 @@ arms=("$@"); [ ${#arms[@]} -eq 0 ] && arms=("${ORDER[@]}")
 echo "host $(hostname) | job ${SLURM_JOB_ID:-none} | $(date -Iseconds) | corpus $c | arms ${arms[*]} | code $(git log -1 --format='%s (%ad)')"
 run_seed() {
   local s=$1 study=$S/$c/seed$1/study_summary.json
-  [ -f $study ] || { echo "FAILED no study $study"; return 1; }
+  [ -f $S/$c/seed$s/search.DONE ] && [ -f $study ] || { echo "FAILED search of $c seed $s not finished"; return 1; }
   for a in "${arms[@]}"; do
     local out=$S/arms/$c/seed$s/$a
     [ -f $out/summary.json ] && { echo "skip $c seed $s $a (done)"; continue; }
-    mkdir -p $out
+    mkdir -p $out; rm -f $S/arms/$c/seed$s/$a.FAILED
     "$P" -c "import json,sys; s=json.load(open('$study')); b=dict(s['extra']); b.update(s['best']['params']); b.update(json.loads(sys.argv[1])); json.dump(b, open('$out/hparams.json','w'), indent=2)" "${ARM[$a]}"
     if "$P" experiments/20261101_r6_length_table/train.py --corpus $c --seed $s --out-dir $out --config $out/hparams.json \
         --num-workers 4 > $out/stdout.log 2>&1; then
       echo "$(date -Iseconds) done $c seed $s $a: $(grep -E '^fixed  8' $out/run.log)"
     else
-      echo "$(date -Iseconds) FAILED $c seed $s $a"
+      echo "$(date -Iseconds) FAILED $c seed $s $a"; touch $S/arms/$c/seed$s/$a.FAILED
     fi
   done
 }
 for s in 234 2025 3407; do run_seed $s & done
 wait
-grep -l "FAILED" $S/arms/slurm_${c}_${SLURM_JOB_ID:-none}.out >/dev/null 2>&1 && echo "FAILED $(date -Iseconds)" || echo "DONE $(date -Iseconds)"
+fails=$(ls $S/arms/$c/seed*/*.FAILED 2>/dev/null | wc -l)
+for s in 234 2025 3407; do [ -f $S/$c/seed$s/search.DONE ] || fails=$((fails + 1)); done
+[ $fails -eq 0 ] && echo "DONE $(date -Iseconds)" || echo "FAILED $fails $(date -Iseconds)"
+

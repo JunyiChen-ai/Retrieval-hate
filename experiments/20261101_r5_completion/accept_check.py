@@ -1,6 +1,7 @@
 """Monotonicity acceptance check (README section 1): fixed k on the grid 0, 1, 2, 4, 8, 16, 32 and the qmixE1 budgets
 1-8 (per-video cap 8), 3-trial means of AP / ROC / within; every step down to the next grid point at most TOL lower,
-and 16 and 32 calls not lower than 8 calls. Reads summary.json files written by sim_monotone.py / offset_check.py.
+and 16 and 32 calls not lower than 8 calls. Reads summary.json files written by sim_monotone.py / offset_check.py,
+or with the source "final" the <summary root>/<corpus>/summary.json of final_curves.py (budgets under "rule").
 
     python accept_check.py <summary root> <corpus> <source> [<source> ...]
 """
@@ -41,8 +42,12 @@ def main():
     root, corpus, sources = sys.argv[1], sys.argv[2], sys.argv[3:]
     files = sorted(glob.glob("%s/%s/*/summary.json" % (root, corpus)))
     for src in sources:
-        rows = [json.load(open(f))["sources"][src]["mean"] for f in files
-                if src in json.load(open(f))["sources"]]
+        if src == "final":
+            trials = json.load(open("%s/%s/summary.json" % (root, corpus)))["trials"].values()
+            rows = [{"fixed": t["fixed"], "rule_cap8": t["rule"]} for t in trials]
+        else:
+            rows = [json.load(open(f))["sources"][src]["mean"] for f in files
+                    if src in json.load(open(f))["sources"]]
         if not rows:
             print(corpus, src, "missing")
             continue
