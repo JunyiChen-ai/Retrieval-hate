@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Monotonicity diagnosis (README section 2), CPU. One process per r5 test-selected trial.
+# Round 2 (README 2.2): SIM_ARGS="--sources real_val3 real_val3_copy shuf_anch shuf_val3 sim_val3" SIM_TAG=_r2
 # cd ~/Retrieval-hate && setsid nohup bash experiments/20261101_r5_completion/launch/run_sim_monotone.sh <corpus...> \
 #   > runs/20261101_r5_completion/sim_monotone/launch_$(hostname).out 2>&1 < /dev/null &
 set -uo pipefail
@@ -11,7 +12,7 @@ R5=runs/20260929_query_paradigm_r5
 O=runs/20261101_r5_completion/sim_monotone
 mkdir -p $O
 echo "host $(hostname) | $(date -Iseconds) | $*"
-echo $$ > $O/run_$(hostname).pid
+echo $$ > $O/run_$(hostname)${SIM_TAG:-}.pid
 for c in "$@"; do
   case $c in
     hatemm) T="seed234/trial9 seed2025/trial4 seed3407/trial5" ;;
@@ -20,7 +21,7 @@ for c in "$@"; do
     *) echo "unknown corpus $c"; exit 1 ;;
   esac
   for t in $T; do
-    "$P" $S --corpus $c --trial-dir $R5/$c/$t > $O/${c}_${t%%/*}.log 2>&1 &
+    "$P" $S --corpus $c --trial-dir $R5/$c/$t ${SIM_ARGS:-} > $O/${c}_${t%%/*}${SIM_TAG:-}.log 2>&1 &
   done
 done
 wait

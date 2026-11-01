@@ -10,6 +10,16 @@ test under four answer sources:
   sim_copy    simulated answers drawn top-down: a node copies its parent's answer with probability pi (the copy
               probability estimated from negative training videos, by child length) and is otherwise drawn from the
               table; inference uses the copy likelihood
+Second round (README section 2.2, which deviation of the real answers matters):
+  real_val3       cached answers, inference with the three-state length answer model fitted on validation GT
+                  (qtl.answer_calib, no gradient), answers independent
+  real_val3_copy  the same with the copy likelihood
+  shuf_anch       every node's cached answer replaced by the cached answer of a random node of another video of the
+                  same split with the same true state and length bucket (copy_noise.bucket_of): the real answer
+                  distribution per state and length is kept, the dependence between answers of one video is removed;
+                  inference with the checkpoint's anchored model, independent
+  shuf_val3       the shuffled answers, inference with the validation-fitted model
+  sim_val3        answers drawn independently from the validation-fitted model, inference with it
 True node state (simulation only): 0 on negative videos; on positive videos 2 if the node holds a GT hateful second,
 else 1 (the anchored table gives state 1 the state-0 table). Validation answers use validation GT the same way; no
 gradient, nothing selected for the method (rule 10 developmental evidence; validation labels without gradient,
@@ -36,12 +46,14 @@ sys.path.insert(0, str(ROOT / "src"))
 from qtl import cpolicy, data as qdata, policy, qtree, stop_rules
 from qtl.backbones import make_model
 from qtl.checkpoint import load_trial
+from qtl.answer_calib import fit_validation_answer_model
 from qtl.copy_noise import bucket_of, estimate_pi_neg
 import hier_evidence_common as hc
 
 RULE = "qmixE1"
 CAP = 8
 SOURCES = ("real_copy", "real_indep", "sim_indep", "sim_copy")
+EXTRA = ("real_val3", "real_val3_copy", "shuf_anch", "shuf_val3", "sim_val3")
 
 
 def node_states(T, label, gt_v):
@@ -76,6 +88,33 @@ def simulate(vids, store, am, cats, labels, gt, pi, copy, rng):
                 p = asker.po_s[i, st[n]]
                 o[n] = int(min(np.searchsorted(np.cumsum(p), rng.random() * p.sum(), side="right"), len(p) - 1))
         out[v] = {(int(tr["a"][n]), int(tr["b"][n])): np.array([k], dtype=np.int64) for n, k in o.items()}
+    return out
+
+
+def shuffle(vids, store, answers, labels, gt, rng):
+    """Shuffled cached answers (shuf_*): per (state, length bucket) pool over the videos of one split."""
+    st_of, pools = {}, {}
+    for v in vids:
+        T = store.T[v]
+        tr = qtree.tree(T)
+        st = node_states(T, labels[v], gt.get(v, np.zeros(T)))
+        for n in np.where(tr["queryable"])[0]:
+            key = (int(tr["a"][n]), int(tr["b"][n]))
+            k = (int(st[n]), bucket_of(float(key[1] - key[0])))
+            st_of[(v, key)] = k
+            o = answers[v].get(key)
+            if o is not None:
+                pools.setdefault(k, []).append((v, o))
+    out = {}
+    for (v, key), k in st_of.items():
+        pool = pools.get(k)
+        if not pool:
+            continue
+        for _ in range(20):                              # from another video when the pool allows
+            w, o = pool[int(rng.integers(len(pool)))]
+            if w != v:
+                break
+        out.setdefault(v, {})[key] = o
     return out
 
 
@@ -163,7 +202,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--corpus", choices=("hatemm", "hateclipseg", "dehate"), required=True)
     ap.add_argument("--trial-dir", required=True)
-    ap.add_argument("--sources", nargs="+", default=list(SOURCES))
+    ap.add_argument("--sources", nargs="+", default=list(SOURCES), choices=SOURCES + EXTRA)
     ap.add_argument("--max-calls", type=int, default=32)
     ap.add_argument("--reps", type=int, default=5)
     ap.add_argument("--budgets-cap", nargs="+", type=float, default=[1, 2, 3, 4, 5, 6, 7, 8])
@@ -187,22 +226,36 @@ def main():
     name = f'seed{summary["seed"]}_{trial.name}'
     out = (ROOT / a.out_root / a.corpus / name).resolve()
     out.mkdir(parents=True, exist_ok=True)
+    am_val3 = None
+    if any("val3" in s_ for s_ in a.sources):
+        am_val3, counts = fit_validation_answer_model(answers, labels, gt["val"], ids["val"], store.T, am.len_mu,
+                                                      am.len_sd, cfg["categories"])
+        am_val3 = am_val3.to(a.device)
+        print("val3 state counts", counts, flush=True)
     (out / "run.pid").write_text(str(__import__("os").getpid()))
+    prev = out / "summary.json"
     report = {"host": socket.gethostname(), "created": datetime.now().astimezone().isoformat(), "corpus": a.corpus,
               "trial": str(trial), "pi_neg": [float(x) for x in pi], "max_calls": a.max_calls, "reps": a.reps,
               "sources": {}}
+    if prev.exists():                                    # a later round adds sources to the same summary
+        report["sources"] = json.loads(prev.read_text())["sources"]
     print("host", socket.gethostname(), name, "pi", np.round(pi, 3).tolist(), flush=True)
     for src in a.sources:
         rows = []
         n_rep = 1 if src.startswith("real") else a.reps
+        am_s = am_val3 if "val3" in src else am
         for rep in range(n_rep):
             rng = np.random.default_rng(1000 * int(summary["seed"]) + rep)
             if src.startswith("real"):
                 ans = answers
+            elif src.startswith("shuf"):
+                ans = {}
+                for split in ("val", "test"):
+                    ans.update(shuffle(ids[split], store, answers, labels, gt_all, rng))
             else:
-                ans = simulate(ids["val"] + ids["test"], store, am, cfg["categories"], labels, gt_all, pi,
+                ans = simulate(ids["val"] + ids["test"], store, am_s, cfg["categories"], labels, gt_all, pi,
                                src == "sim_copy", rng)
-            runs = run_source(model, store, ids, am, chain, ans, cfg, a.max_calls, a.device,
+            runs = run_source(model, store, ids, am_s, chain, ans, cfg, a.max_calls, a.device,
                               copy_fn if src.endswith("copy") else None)
             if rep == 0:
                 with (out / f"runs_{src}.pkl").open("wb") as fh:
