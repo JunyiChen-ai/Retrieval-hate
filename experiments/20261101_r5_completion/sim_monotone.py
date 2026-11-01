@@ -22,6 +22,8 @@ Second round (README section 2.2, which deviation of the real answers matters):
   sim_val3        answers drawn independently from the validation-fitted model, inference with it
 Third round (README section 3.2): real_len / real_len_copy = cached answers, inference with the anchored two-state
   model refitted on the training answers WITH the log-length term (qtree.fit_anchored length_term, label-free)
+Fourth round (README section 3.2): *_lens = the anchored model with one length slope shared by both states, fitted on
+  the negative training videos (qtree.fit_anchored_shared, label-free); shuf_lens / sim_lens as shuf_* / sim_*
 True node state (simulation only): 0 on negative videos; on positive videos 2 if the node holds a GT hateful second,
 else 1 (the anchored table gives state 1 the state-0 table). Validation answers use validation GT the same way; no
 gradient, nothing selected for the method (rule 10 developmental evidence; validation labels without gradient,
@@ -55,7 +57,8 @@ import hier_evidence_common as hc
 RULE = "qmixE1"
 CAP = 8
 SOURCES = ("real_copy", "real_indep", "sim_indep", "sim_copy")
-EXTRA = ("real_val3", "real_val3_copy", "shuf_anch", "shuf_val3", "sim_val3", "real_len", "real_len_copy")
+EXTRA = ("real_val3", "real_val3_copy", "shuf_anch", "shuf_val3", "sim_val3", "real_len", "real_len_copy", "real_lens", "real_lens_copy",
+         "shuf_lens", "sim_lens")
 
 
 def node_states(T, label, gt_v):
@@ -230,9 +233,12 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     am_val3, am_len = None, None
     if any("len" in s_ for s_ in a.sources):
+        assert len({s_.split("_")[1] for s_ in a.sources if "len" in s_}) == 1, "len and lens in separate runs"
         loglen = np.log([b - a_ for v in ids["train"] for (a_, b) in answers[v]])
         ta = [(labels[v], [(x, y, answer_T[v], o) for (x, y), o in answers[v].items()]) for v in ids["train"]]
-        th_l, om_l, n_l = qtree.fit_anchored(ta, loglen.mean(), loglen.std(), True)
+        fit = qtree.fit_anchored_shared if any("lens" in s_ for s_ in a.sources) else qtree.fit_anchored
+        th_l, om_l, n_l = fit(ta, loglen.mean(), loglen.std()) if fit is qtree.fit_anchored_shared else \
+            fit(ta, loglen.mean(), loglen.std(), True)
         am_len = qtree.AnswerModel(th_l, loglen.mean(), loglen.std(), True, 2, cfg["categories"], om_l).to(a.device)
         am_len.requires_grad_(False)
         print("length-term anchored model fitted on", n_l, flush=True)
@@ -252,7 +258,7 @@ def main():
     for src in a.sources:
         rows = []
         n_rep = 1 if src.startswith("real") else a.reps
-        am_s = am_val3 if "val3" in src else (am_len if "_len" in src else am)
+        am_s = am_val3 if "val3" in src else (am_len if "len" in src else am)
         for rep in range(n_rep):
             rng = np.random.default_rng(1000 * int(summary["seed"]) + rep)
             if src.startswith("real"):

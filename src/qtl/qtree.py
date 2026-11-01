@@ -204,6 +204,52 @@ def fit_anchored(train_answers, len_mu, len_sd, length_term=True):
     return theta, omega, {s: len(rows[s][0]) for s in (0, 1)}
 
 
+def fit_anchored_shared(train_answers, len_mu, len_sd):
+    """Anchored two-state model with ONE length term shared by both states (experiments/20261101_r5_completion/
+    README.md section 3.2): the per-level slope omega on the standardised log length is estimated where node lengths
+    vary within a video and every node's state is known, the negative training videos (state 0); the state-1 table
+    (positive roots) is then fitted with omega fixed. Real answers have about the same length slope in nodes with and
+    without hate (answer_stats.py), while a slope fitted on the roots of positive videos alone mixes the length effect
+    with how video duration relates to content. Returns theta, omega (N_CAT, 2, N_LEV) and the answer counts."""
+    rows = {0: ([], []), 1: ([], [])}
+    for label, nodes in train_answers:
+        for a, b, T, o in nodes:
+            if o is None:
+                continue
+            if label == 0:
+                s = 0
+            elif a == 0 and b == T:
+                s = 1
+            else:
+                continue
+            rows[s][0].append(o)
+            rows[s][1].append((np.log(b - a) - len_mu) / len_sd)
+    theta, omega = np.zeros((N_CAT, 2, N_LEV)), np.zeros((N_CAT, 2, N_LEV))
+    om_fixed = None
+    for s in (0, 1):
+        O = torch.as_tensor(np.array(rows[s][0]), dtype=torch.long)
+        U = torch.as_tensor(np.array(rows[s][1]), dtype=torch.float64)
+        th = torch.zeros(N_CAT, N_LEV, dtype=torch.float64, requires_grad=True)
+        om = torch.zeros(N_CAT, N_LEV, dtype=torch.float64, requires_grad=s == 0)
+        if s == 1:
+            om = om_fixed
+        opt = torch.optim.LBFGS([th, om] if s == 0 else [th], max_iter=500, tolerance_grad=1e-10,
+                                tolerance_change=1e-12, line_search_fn="strong_wolfe")
+
+        def closure():
+            opt.zero_grad()
+            lp = F.log_softmax(th[None] + om[None] * U[:, None, None], dim=-1)
+            nll = -lp.gather(2, O[:, :, None]).sum() - F.log_softmax(th, dim=-1).sum()
+            nll.backward()
+            return nll
+
+        opt.step(closure)
+        if s == 0:
+            om_fixed = om.detach()
+        theta[:, s], omega[:, s] = th.detach().numpy(), om_fixed.numpy()
+    return theta, omega, {s: len(rows[s][0]) for s in (0, 1)}
+
+
 # ------------------------------------------------------------------ batched upward pass (training, autograd)
 class TreeBatch:
     """Level structure for a batch of videos (lengths Ts) and the observed nodes (obs[i] = (node ids, answers
