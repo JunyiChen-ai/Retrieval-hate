@@ -220,7 +220,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
     ta = [(labels[v], [(a, b, store.T[v], o) for (a, b), o in answers[v].items()]) for v in ids["train"]]
     n_state = int(cfg["n_state"])
     loglen = np.log([b - a for v in ids["train"] for (a, b) in answers[v]])
-    anchored = cfg["answer_model"] in ("anchored", "refit", "anchored_ext")
+    anchored = cfg["answer_model"] in ("anchored", "refit", "anchored_ext", "anchored_shared")
     if cfg["answer_model"] == "anchored_ext":
         # Revision 5 step 3 (README section 17.3): three states; states 0 (negative videos) and 2 (positive roots)
         # fitted as the anchored model, state 1 (nodes of positive videos without hate) from an external table
@@ -236,6 +236,13 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
         omega0 = None
         say("anchored_ext answer model: states 0 / 2 fitted on %d / %d answers; state 1 from %s (%s, n_pos %s)" % (
             n_fit[0], n_fit[1], cfg["state1_table"], tab.get("source"), tab.get("n_pos")))
+    elif cfg["answer_model"] == "anchored_shared":
+        # Revision 6 (experiments/20261101_r5_completion/README.md section 3.2): the anchored two-state model with one
+        # log-length slope shared by both states, estimated on the negative training videos (qtree.fit_anchored_shared)
+        assert n_state == 2 and cfg["length_term"], "anchored_shared: two states with the length term"
+        theta0, omega0, n_fit = qtree.fit_anchored_shared(ta, loglen.mean(), loglen.std())
+        say("anchored answer model, shared length slope: fitted on %d state-0 and %d state-1 answers" % (
+            n_fit[0], n_fit[1]))
     elif anchored:                # README section 8: fitted once on the answers whose state the label fixes
         assert n_state == 2, "the anchored answer model has two states"
         theta0, omega0, n_fit = qtree.fit_anchored(ta, loglen.mean(), loglen.std(), bool(cfg["length_term"]))
