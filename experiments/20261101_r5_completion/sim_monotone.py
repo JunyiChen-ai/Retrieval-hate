@@ -20,6 +20,8 @@ Second round (README section 2.2, which deviation of the real answers matters):
                   inference with the checkpoint's anchored model, independent
   shuf_val3       the shuffled answers, inference with the validation-fitted model
   sim_val3        answers drawn independently from the validation-fitted model, inference with it
+Third round (README section 3.2): real_len / real_len_copy = cached answers, inference with the anchored two-state
+  model refitted on the training answers WITH the log-length term (qtree.fit_anchored length_term, label-free)
 True node state (simulation only): 0 on negative videos; on positive videos 2 if the node holds a GT hateful second,
 else 1 (the anchored table gives state 1 the state-0 table). Validation answers use validation GT the same way; no
 gradient, nothing selected for the method (rule 10 developmental evidence; validation labels without gradient,
@@ -53,7 +55,7 @@ import hier_evidence_common as hc
 RULE = "qmixE1"
 CAP = 8
 SOURCES = ("real_copy", "real_indep", "sim_indep", "sim_copy")
-EXTRA = ("real_val3", "real_val3_copy", "shuf_anch", "shuf_val3", "sim_val3")
+EXTRA = ("real_val3", "real_val3_copy", "shuf_anch", "shuf_val3", "sim_val3", "real_len", "real_len_copy")
 
 
 def node_states(T, label, gt_v):
@@ -226,7 +228,14 @@ def main():
     name = f'seed{summary["seed"]}_{trial.name}'
     out = (ROOT / a.out_root / a.corpus / name).resolve()
     out.mkdir(parents=True, exist_ok=True)
-    am_val3 = None
+    am_val3, am_len = None, None
+    if any("len" in s_ for s_ in a.sources):
+        loglen = np.log([b - a_ for v in ids["train"] for (a_, b) in answers[v]])
+        ta = [(labels[v], [(x, y, answer_T[v], o) for (x, y), o in answers[v].items()]) for v in ids["train"]]
+        th_l, om_l, n_l = qtree.fit_anchored(ta, loglen.mean(), loglen.std(), True)
+        am_len = qtree.AnswerModel(th_l, loglen.mean(), loglen.std(), True, 2, cfg["categories"], om_l).to(a.device)
+        am_len.requires_grad_(False)
+        print("length-term anchored model fitted on", n_l, flush=True)
     if any("val3" in s_ for s_ in a.sources):
         am_val3, counts = fit_validation_answer_model(answers, labels, gt["val"], ids["val"], store.T, am.len_mu,
                                                       am.len_sd, cfg["categories"])
@@ -243,7 +252,7 @@ def main():
     for src in a.sources:
         rows = []
         n_rep = 1 if src.startswith("real") else a.reps
-        am_s = am_val3 if "val3" in src else am
+        am_s = am_val3 if "val3" in src else (am_len if "_len" in src else am)
         for rep in range(n_rep):
             rng = np.random.default_rng(1000 * int(summary["seed"]) + rep)
             if src.startswith("real"):

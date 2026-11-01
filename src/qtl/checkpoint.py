@@ -32,3 +32,13 @@ def load_trial(trial, device, answers, ids, model_factory):
     chain.load_state_dict(checkpoint["chain"], strict=True)
     chain.eval()
     return summary, cfg, model, answer_model, chain
+
+
+def load_offset(trial, categories):
+    """Revision 6: the per-video answer offset model saved with the checkpoint (None for earlier revisions)."""
+    from .answer_offset import OffsetAnswerModel
+    checkpoint = torch.load(Path(trial) / "model.pth", map_location="cpu", weights_only=False)
+    off = checkpoint.get("offset")
+    if off is None:
+        return None
+    return OffsetAnswerModel(off["theta"], off["support"], off["logw"], categories)

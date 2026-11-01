@@ -66,6 +66,8 @@ from . import qtree                                    # noqa: E402
 from . import policy                                   # noqa: E402
 from . import ctree                                    # noqa: E402
 from . import cpolicy                                  # noqa: E402
+from . import answer_offset                            # noqa: E402
+from . import opolicy                                  # noqa: E402
 from .model import PriorNet, ConstPrior         # noqa: E402
 
 DEFAULTS = {
@@ -80,7 +82,11 @@ DEFAULTS = {
     "chain_form": "zero_inflated", "backbone": "macil", "query_level": 0,
     "answer_source": "k30", "node_prior": False,
     "soft_levels": 8, "state1_table": None, "soft5_edges": "fixed",
+    "answer_offset": False,
 }
+# Revision 6 (experiments/20261101_r5_completion/README.md section 3): answer_offset true = one answer offset per
+# video shared by all its answers (answer_offset.py), summed out exactly in the training loss (ctree.log_evidence_mix),
+# the posterior and the EIG (opolicy.py); fitted once before training like the anchored model, label-free.
 # Revision 5 (README section 17.1): answer_source "soft_both" / "soft_frames" / "soft_text" = the first-token P(Yes)
 # under the per-dataset definition (extract_tree_soft.py), binned into soft_levels quantile levels of the training
 # answers as a single category (data.configure_source); categories is then forced to [0].
@@ -126,6 +132,15 @@ class Evaluator:
     def run(self, model, am, ids, max_calls, order=None, chain=None, record_voi=False):
         model.eval()
         out = {}
+        if isinstance(am, answer_offset.OffsetAnswerModel):     # revision 6: the offset policy (EIG, tree)
+            assert chain is not None and self.allowed is None and (order or self.cfg["order"]) == "eig"
+            ids = sorted(ids, key=lambda v: self.store.T[v])
+            k = int(self.cfg["eval_chunk"])
+            for i in range(0, len(ids), k):
+                out.update(opolicy.run_batch(model, self.store, ids[i:i + k], am, chain, self.answers, max_calls,
+                                             self.device))
+            model.train()
+            return out
         if chain is not None:
             ids = sorted(ids, key=lambda v: self.store.T[v])
             k = int(self.cfg["eval_chunk"])
@@ -235,6 +250,16 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
                            cfg["categories"], omega0).to(device)
     if anchored:
         am.requires_grad_(False)
+    oam, offset_info = None, None
+    if cfg["answer_offset"]:
+        assert cfg["answer_model"] == "anchored" and n_state == 2 and not cfg["length_term"], \
+            "the answer offset extends the anchored two-state model without length term"
+        th_o, sup_o, lw_o, offset_info = answer_offset.fit_offset(ta)
+        oam = answer_offset.OffsetAnswerModel(th_o, sup_o, lw_o, cfg["categories"])
+        say("answer offset: %d support points, offset sd %.2f; fitted on %d negative videos (%d answers) and %d "
+            "positive roots" % (oam.K, offset_info["offset_sd"], offset_info["n_negative_videos"],
+                                offset_info["n_negative_answers"], offset_info["n_roots"]))
+    qam = oam if oam is not None else am             # the answer model the policy uses
     assert cfg["backbone"] in ("macil", "const") or model_factory is not None
     if cfg["backbone"] == "const":               # diagnostic arm: no content network (README section 12)
         assert float(cfg["lamda_cma"]) == 0.0, "the constant prior has no audio/visual branches for CMAL"
@@ -288,7 +313,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
         tot, nb = np.zeros(3), 0
         if cfg["objective"] == "posterior":      # the questions the policy would ask each training video now
             asked_train = {v: r["asked"] for v, r in
-                           ev.run(model, am, ids["train"], int(cfg["primary_budget"]), chain=chain).items()}
+                           ev.run(model, qam, ids["train"], int(cfg["primary_budget"]), chain=chain).items()}
         for f_v, f_a, seq, label, vidx in loader:
             Tm = f_v.shape[1]
             f_v, f_a, label = f_v.to(device), f_a.to(device), label.to(device)
@@ -331,12 +356,21 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
                             ids_g.append(o[0] + fo.offs[b]); ans.append(o[1]); lens.append(o[2])
                     A3 = torch.zeros(fo.N, 3, device=device)
                     n_obs = torch.zeros(len(vids), device=device)
+                    if oam is not None:
+                        A3 = torch.zeros(oam.K, fo.N, 3, device=device)
                     if ids_g:
-                        ll = am.loglik(torch.as_tensor(np.concatenate(ans)), torch.as_tensor(np.concatenate(lens)))
-                        A3 = A3.index_put((torch.as_tensor(np.concatenate(ids_g)).to(device),), ll.to(A3.dtype))
+                        rows_g = torch.as_tensor(np.concatenate(ids_g)).to(device)
+                        if oam is not None:      # revision 6: (K, n, 3) under every offset value
+                            A3[:, rows_g] = oam.loglik(np.concatenate(ans)).to(device).to(A3.dtype)
+                        else:
+                            ll = am.loglik(torch.as_tensor(np.concatenate(ans)), torch.as_tensor(np.concatenate(lens)))
+                            A3 = A3.index_put((rows_g,), ll.to(A3.dtype))
                         n_obs = torch.as_tensor([len(train_obs[v][0]) for v in vids], device=device).float()
                     phi = model.node_logits(v_out, a_out, fo) if cfg["node_prior"] else None
-                    l1, l0, lo1, lo0 = ctree.log_evidence(fo, s_tree, g_tree, A3, chain, phi)
+                    if oam is not None:
+                        l1, l0, lo1, lo0 = ctree.log_evidence_mix(fo, s_tree, g_tree, A3, oam.logw, chain, phi)
+                    else:
+                        l1, l0, lo1, lo0 = ctree.log_evidence(fo, s_tree, g_tree, A3, chain, phi)
                     loss_ans = -(torch.where(label > 0.5, lo1, lo0) / n_obs.clamp(min=1)).mean()
                 loss_g = -torch.where(label > 0.5, l1, l0).mean()
                 p_video = torch.exp(l1)
@@ -372,7 +406,7 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
         if cfg["answer_model"] == "refit":
             refit_answer_model(model, am, chain, store, ids["train"], train_obs, labels, device, say)
         tot /= max(nb, 1)
-        runs = ev.run(model, am, ids["val"], int(cfg["val_budget"]), chain=chain)
+        runs = ev.run(model, qam, ids["val"], int(cfg["val_budget"]), chain=chain)
         vm = hc.frame_metrics(at_budget(runs, int(cfg["val_budget"])), gt["val"], hate_val)
         crit = 0.5 * (vm["pooled_ap"] + vm["pooled_roc"])
         history.append({"epoch": epoch + 1, "loss_g": tot[0], "loss_answers": tot[1], "cma": tot[2],
@@ -390,10 +424,14 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
         chain.load_state_dict(best["chain"])
         if cfg["chain"] != "hazard":
             say("chain: logA %s logpi %s" % (chain.logA().exp().tolist(), chain.logpi().exp().tolist()))
-    torch.save({"model": best["model"], "am": best["am"], "chain": best["chain"], "epoch": best["epoch"]},
-               os.path.join(out_dir, "model.pth"))
+    saved = {"model": best["model"], "am": best["am"], "chain": best["chain"], "epoch": best["epoch"]}
+    if oam is not None:
+        saved["offset"] = {"theta": oam.theta, "support": oam.support, "logw": oam.logw}
+    torch.save(saved, os.path.join(out_dir, "model.pth"))
     say("checkpoint: epoch %d (val criterion %.4f)" % (best["epoch"], best["crit"]))
-    summary = evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain)
+    summary = evaluate(corpus, out_dir, cfg, model, qam, ev, ids, gt, labels, say, chain)
+    if offset_info is not None:
+        summary["answer_offset_fit"] = offset_info
     summary.update({"corpus": corpus, "seed": seed, "cfg": cfg, "best_epoch": best["epoch"],
                     "val_criterion": best["crit"], "history": history, "host": socket.gethostname(),
                     "code": git_describe()})
@@ -461,7 +499,8 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
             "test_mean_calls": float(np.mean([min(B, len(r["eig"])) for r in test_runs.values()]))}
         say("fixed %2d calls | test AP %.4f ROC %.4f within %.4f" % (B, *[res["fixed"][str(B)]["test"][k] for k in
                                                                         ("pooled_ap", "pooled_roc", "within_roc")]))
-    rules = [("adaptive", "eig")] + ([("adaptive_voi", "voi")] if chain is not None else [])
+    rules = [("adaptive", "eig")] + ([("adaptive_voi", "voi")] if chain is not None and
+                                     not isinstance(am, answer_offset.OffsetAnswerModel) else [])
     for (key, rule), B in [(kr, B) for kr in rules for B in cfg["mean_budgets"]]:
         c, val_mean = policy.calibrate([r[rule] for r in val_runs.values()], float(B))
         sv, _ = at_threshold(val_runs, c, rule)
