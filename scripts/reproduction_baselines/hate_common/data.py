@@ -50,21 +50,24 @@ FEATURE_ROOT = os.path.join(REPO_ROOT, "results", "reproduction",
 SPLIT_ROOT = os.path.join(REPO_ROOT, "results", "reproduction", "splits")
 GT_ROOT = os.path.join(REPO_ROOT, "results", "reproduction", "gt")
 
+# raw-data paths under the account's home (~/data), so that hosts with another account name (lab-server: junyi)
+# read the same files
+RAW_ROOT = os.path.join(os.path.expanduser("~"), "data")
 HATEMM_ANNOTATION_CANDIDATES = (
-    "/home/jehc223/data/HateMM/upstream_spans/HateMM_annotation.csv",
-    "/home/jehc223/Retrieval-hate/data/gt/HateMM/HateMM_annotation.csv",
+    os.path.join(RAW_ROOT, "HateMM", "upstream_spans", "HateMM_annotation.csv"),
+    os.path.join(REPO_ROOT, "data", "gt", "HateMM", "HateMM_annotation.csv"),
 )
 MHCLIP_ROOT_CANDIDATES = (
-    "/home/jehc223/data/Multihateclip/upstream_spans",
-    "/home/jehc223/Retrieval-hate/data/gt/mhc_votes",
+    os.path.join(RAW_ROOT, "Multihateclip", "upstream_spans"),
+    os.path.join(REPO_ROOT, "data", "gt", "mhc_votes"),
 )
 HCS_SEGMENT_CSV_CANDIDATES = (
     os.path.join(REPO_ROOT, "idea-stage", "pilots", "b1_coverage_audit",
                  "data", "segment_level_annotation.csv"),
-    "/home/jehc223/data/HateClipSeg/Dataset/segment_level_annotation.csv",
+    os.path.join(RAW_ROOT, "HateClipSeg", "Dataset", "segment_level_annotation.csv"),
 )
 
-DEHATE_LABELS_CSV = "/home/jehc223/data/DeHate/DeHate_labels.csv"
+DEHATE_LABELS_CSV = os.path.join(RAW_ROOT, "DeHate", "DeHate_labels.csv")
 
 CORPORA = ("hatemm", "mhclip_en", "mhclip_zh", "hateclipseg", "dehate")
 
