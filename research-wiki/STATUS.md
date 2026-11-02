@@ -1,12 +1,18 @@
 # 当前研究状态
 
-截至 **2026-10-31**。上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
+截至 **2026-11-03**（当前方法见下一节第一段）。2026-10-31 时：上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
 
 ## 当前目标与结论
 
 方法示意图（当前方法的数据流、训练、停止规则）：[method_framework.html](method_framework.html)。
 
-**2026-11-01 晚起（进行中）：用户要求自主解决"定 r5 还缺什么"里列出的全部问题，全部解决后才汇报。** 进度表在 [20261101_r5_completion/README.md](../experiments/20261101_r5_completion/README.md) 第 1 节。已查明：调用多了不变好的原因不在选节点或停止（答案按模型自己的分布模拟时，三语料曲线到 32 次一路上升），而在真实答案与答案表不符——同一视频的回答相关，且 r5 的表没有长度项、短仇恨节点答 Yes 的概率被高估约一倍。第 6 版候选 = 答案表加一条两状态共用、只在负例视频上估计的长度斜率，训练和测试都用，去掉只在测试用的复制似然（[20261101_r6_length_table](../experiments/20261101_r6_length_table/README.md)）；r5 checkpoint 上不重训的检查三语料 8 次都不低于 r5。最强 baseline 加上同样 8 个回答仍低于本方法（r5 上 AP .039–.053）。GPU：同账号另一项目（`~/Hate-follow-up`）11-01 23:04 起占用两块配额内 GPU，第 6 版搜索排队。
+**当前方法 = 第 6 版（用户 2026-11-03 裁定取代 r5）。** r5 + 答案表加两状态共用、只在负例节点上估计的长度斜率（训练、EIG、后验、停止同一张表）+ 去掉只在测试用的复制似然。依据与数字：[20261101_r6_length_table/README.md](../experiments/20261101_r6_length_table/README.md)（搜索 3 seed × 20 trial，`runs/20261101_r6_length_table/`）；过程与诊断：[20261101_r5_completion/README.md](../experiments/20261101_r5_completion/README.md)。
+- 固定 8 次 AP / ROC / within（test 选 trial，统一评测器）：HateMM .702 / .889 / .783（r5 .691 / .885），HCS .691 / .680 / .563（r5 .687 / .674），DeHate .279 / .770 / .681（r5 .262 / .780）。来源 `runs/20261101_r6_length_table/final_curves/test_selected/<corpus>/summary.json`。
+- 单调性：within 三语料随调用升到 32 次；DeHate AP / ROC 一路升；HateMM / HCS 按 test 选的 trial 在 8 次后 AP / ROC 略降（≤ .012，trial 与 epoch 都按 8 次选），按 validation 选或全部 trial 平均不降。
+- 代价：DeHate 8 次 ROC 比 r5 低 .010（预注册 Q2 不过，用户接受）；预算 5 次比固定 8 次 AP 低 .012–.019（r5 在 .01 内）。
+- 最强 baseline + 同样 8 个回答（14(f)）：仍低于本方法 AP .059 / .093 / .030（HateMM / HCS / DeHate）。
+- 消融（14(g)）：HateMM、HCS 全部 14 个臂 AP 或 ROC 降 ≥ .01；DeHate 11-03 凌晨在 lab-server（账号 junyi）、uoa-lab1、uoa-lab3 三处分跑。
+- 未采用：每视频回答偏移（AP 随调用下降）、第 7 版"先验加标签项"（代码审查发现该项本来就在损失里，撤回）。
 
 **2026-10-31 起：用户批准两个目标并开启自主迭代，两者都达成后才汇报。** 2026-11-01 用户裁定 DeHate 升为主数据集（`CLAUDE.md`、`RESEARCH_ITERATION_RULES.md` 第 1、7、8、14 条已改），两个目标同样要求在 DeHate 上成立。
 - 目标 1（少调用）：HateMM、HCS、DeHate 上最终方法平均约 4–5 次调用；与同一方法固定 8 次相比，AP/ROC 三 seed 均值降幅 ≤ .01，within 不降。
