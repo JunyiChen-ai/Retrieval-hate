@@ -10,8 +10,8 @@
 | P2 | 单调性：模拟诊断（第 2 节） | 完成 11-01 | 原因 = 同一视频答案相关 + 表无长度项（2.2、3.2） |
 | P3 | 按诊断结果改方法 | 完成 11-01：偏移否决（3.1）；第 6 版 = 共用长度斜率表（3.3），规则 4 GO、规则 6 PASS | `REVIEW_RULE4_R6.md`、`REVIEW_RULE6_R6.md` |
 | P4 | 训练和测试的答案模型一致 | 第 6 版去掉复制似然，训练与测试同一张表 | 复制似然作为测试期变体报告 |
-| P5 | 改后方法三语料 × 3 seed 完整搜索（规则 7） | 11-01 23:40 提交；DeHate 11-02 01:44 开跑（lab3），HateMM/HCS 排队 | Slurm 1382 DeHate（lab3）、1383 HateMM、1384 HCS（lab1）；`runs/20261101_r6_length_table/` |
-| P6 | 消融，三语料含 DeHate、3 seed（14(g)） | HateMM / HCS 排队（Slurm 1432 / 1433，lab1 或 lab3；lab1 GPU 11-02 11:12 起被其他用户的交互作业占，上限 1 天）；DeHate 待搜索完 | `launch/sbatch_arms.sh`（r6 目录）；测试期变体（复制、bfs、flat）用 `sim_monotone.py` |
+| P5 | 改后方法三语料 × 3 seed 完整搜索（规则 7） | 第 6 版完成 11-02 20:17（Slurm 1382–1384）：DeHate Q2 不过（3.4），不取代 r5；第 7 版提案 3.4 | `runs/20261101_r6_length_table/`；第 7 版 `runs/20261102_r7_prior_label/` |
+| P6 | 消融，三语料含 DeHate、3 seed（14(g)） | 第 6 版的消融作业已取消（第 6 版未取代 r5）；在最终采用的版本上跑 | `launch/sbatch_arms.sh`（r6 目录）；测试期变体（复制、bfs、flat）用 `sim_monotone.py` |
 | P7 | 最强 baseline + 同样的 VLM 回答（14(f)） | r5 上完成（第 5 节）；第 6 版 HateMM / HCS 完成（r6 README），DeHate 待搜索完 | `baseline_plus_vlm.py` |
 | P8 | 树 vs 单层窗口、无骨干对照（最终方法上） | 待 P5 | |
 | P9 | validation 选 trial 的预算曲线（14(d)） | HateMM / HCS 完成（r6 README），DeHate 待搜索完 | `launch/run_final_curves.sh`（r6 目录，test 选与 validation 选两套） |
@@ -106,3 +106,17 @@ HateMM seed 234 训练集拟合：446 个负例视频 26649 个回答、297 个�
   2. Q2 不比 r5 差：固定 8 次 AP、ROC 三语料都 ≥ r5 − .005（r5：HateMM .691 / .885，HCS .687 / .674，DeHate .262 / .780）。
   3. Q3 规则 8 主门：六个 pooled 数都超过最强训练 baseline。
   4. Q1–Q3 都过：第 6 版取代 r5，进入第 4 节的消融与对照。Q2 不过：保留 r5，第 6 版的表只作诊断记录。Q1 不过、Q2 过：用 test error analysis 找原因，按规则 9 修改。
+
+### 3.4 第 6 版结果与第 7 版提案（规则 4 审稿前写定，11-02）
+
+第 6 版结果见 `experiments/20261101_r6_length_table/README.md`：HateMM、HCS 的 Q2、Q3 通过；**DeHate Q2 不过**（固定 8 次 AP .278 比 r5 高 .016，ROC .770 低于 .780 − .005）。按 3.3 第 4 条，第 6 版不取代 r5。
+
+- **现象**（r6 README"全部 60 个 trial 平均"表）：第 6 版只用网络、不问问题时（0 次）的 pooled AP / ROC 三语料都低于 r5（HateMM .573 / .800 对 .599 / .812，DeHate .183 / .693 对 .215 / .712），within 不低；HateMM test 选 trial 的视频级 P(G = 1 | x) AUC .842 对 r5 .854。回答越多越追回来，DeHate 到 16–32 次才与 r5 持平。弱的是视频级先验 g，不是视频内的逐秒先验。
+- **原因假设**：零膨胀链里 P(G = 1 | x) = σ(g)。训练时 g 只经 −log P(G = y | x, 该视频全部训练回答) 学习（`train.py` 的 `loss_g`）。带长度的表把负例视频长节点答 Yes 解释为长度效应，训练回答单独就更能判定 G，后验对 g 的依赖变小，g 得到的梯度变小。测试时只有 0–8 个回答，g 的作用比训练时大。
+- **改动（只有一处）**：在第 6 版的损失上加 g 的视频标签项 BCE(g, y) = −log P(G = y | x)（不看任何回答的先验），权重 1，不加新超参（`train.py` 的 `prior_label: true`）。训练目标覆盖"全部回答"和"没有回答"两端；测试的 0–32 次落在两端之间。答案表、选节点、后验、停止与第 6 版完全相同，训练与测试仍用同一张表、无复制似然。
+- **不用逐秒标注**：新项只用视频标签。
+- **搜索**（规则 7，同第 6 版，搜索前写定）：同 r5 / r6 的四个标量与范围，Optuna TPE，sampler seed = 训练 seed，每 seed 20 trial（预写），三语料 × seed 234 / 2025 / 3407；输出 `runs/20261102_r7_prior_label/<corpus>/seed<s>/`。
+- **预注册判定**（三 seed 均值，统一评测器）：
+  1. 机制检查：全部 60 个 trial 平均的 0 次 pooled AP、ROC 三语料都高于第 6 版（不作门，只检验原因假设）。
+  2. Q1、Q2、Q3 同 3.3（Q2 仍对 r5：HateMM .691 / .885，HCS .687 / .674，DeHate .262 / .780）。
+  3. Q1–Q3 都过：第 7 版取代 r5，进入消融与对照。Q2 不过：保留 r5，把 r5 / 第 6 版 / 第 7 版的对比交用户裁定。Q1 不过、Q2 过：同 3.3。
