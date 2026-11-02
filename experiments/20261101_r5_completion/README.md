@@ -1,6 +1,6 @@
 # 20261101_r5_completion：把 r5 补成可以定稿的方法
 
-截至 2026-11-01。用户 2026-11-01 指令："你去把你说的这些问题全部都自主的解决一下，都解决完了就可以来向我汇报了，不然不要停啊"。范围是同日回答"定 r5 还缺什么"时列出的全部项（见第 1 节）。代码起点：`src/qtl/`（r5 网络 + 测试时复制似然 copy_neg + qmixE1 停止），r5 checkpoint 在 `runs/20260929_query_paradigm_r5/<corpus>/seed<s>/trial<k>/`。
+截至 2026-11-03（P1–P10 全部完成）。用户 2026-11-01 指令："你去把你说的这些问题全部都自主的解决一下，都解决完了就可以来向我汇报了，不然不要停啊"。范围是同日回答"定 r5 还缺什么"时列出的全部项（见第 1 节）。代码起点：`src/qtl/`（r5 网络 + 测试时复制似然 copy_neg + qmixE1 停止），r5 checkpoint 在 `runs/20260929_query_paradigm_r5/<corpus>/seed<s>/trial<k>/`。
 
 ## 1. 进度表（heartbeat 每次读这里）
 
@@ -11,11 +11,11 @@
 | P3 | 按诊断结果改方法 | 完成 11-01：偏移否决（3.1）；第 6 版 = 共用长度斜率表（3.3），规则 4 GO、规则 6 PASS | `REVIEW_RULE4_R6.md`、`REVIEW_RULE6_R6.md` |
 | P4 | 训练和测试的答案模型一致 | 第 6 版去掉复制似然，训练与测试同一张表 | 复制似然作为测试期变体报告 |
 | P5 | 改后方法三语料 × 3 seed 完整搜索（规则 7） | 第 6 版完成 11-02 20:17（Slurm 1382–1384）：DeHate Q2 不过（3.4），11-03 用户裁定第 6 版取代 r5；第 7 版提案撤回（3.4） | `runs/20261101_r6_length_table/` |
-| P6 | 消融，三语料含 DeHate、3 seed（14(g)） | 在第 6 版上跑（3.4 去向）：DeHate 11-02 20:54 起在 lab-server（账号 junyi，Slurm 1440）；HateMM / HCS 排队（Slurm 1438 / 1439，lab1 或 lab3，两台 GPU 被其他用户占） | `launch/sbatch_arms.sh`（r6 目录）；测试期变体（复制、bfs、flat）用 `sim_monotone.py` |
-| P7 | 最强 baseline + 同样的 VLM 回答（14(f)） | r5 上完成（第 5 节）；第 6 版 HateMM / HCS 完成（r6 README），DeHate 待搜索完 | `baseline_plus_vlm.py` |
-| P8 | 树 vs 单层窗口、无骨干对照（最终方法上） | 待 P5 | |
-| P9 | validation 选 trial 的预算曲线（14(d)） | HateMM / HCS 完成（r6 README），DeHate 待搜索完 | `launch/run_final_curves.sh`（r6 目录，test 选与 validation 选两套） |
-| P10 | STATUS、方法图、check_layout、汇报 | 最后 | |
+| P6 | 消融，三语料含 DeHate、3 seed（14(g)） | 完成 11-03 03:29（第 6 版；HateMM Slurm 1438、HCS 1439、DeHate 1440 / 1443 / 1445 分三台）：14 个臂三语料 AP 或 ROC 都降 ≥ .01，全部有用；余量最小 DeHate d_bfs .013（r6 README 消融节） | `launch/sbatch_arms.sh`（r6 目录）；测试期变体（复制、bfs、flat）用 `sim_monotone.py` |
+| P7 | 最强 baseline + 同样的 VLM 回答（14(f)） | 完成：r5（第 5 节）与第 6 版三语料（r6 README）；baseline 拿到同样 8 个回答仍低于本方法 | `baseline_plus_vlm.py` |
+| P8 | 树 vs 单层窗口、无骨干对照（最终方法上） | 完成 11-03，随 P6 一起跑（臂 lvl4 / lvl8 / lvl16、noback）：单层窗口三语料 AP 与 ROC 都降 ≥ .014；无骨干 HateMM / HCS / DeHate AP 降 .057 / −.003 / .083，ROC 降 .013 / .023 / .013 | r6 README 消融节 |
+| P9 | validation 选 trial 的预算曲线（14(d)） | 完成：第 6 版三语料（r6 README 调用曲线节） | `launch/run_final_curves.sh`（r6 目录，test 选与 validation 选两套） |
+| P10 | STATUS、方法图、check_layout、汇报 | 11-03 更新 STATUS、方法图（artifact）、check_layout，向用户汇报 | |
 
 验收（单调性，11-01 提议、用户以本指令授权）：固定 0–32 次与预算 1–8 次，三个主数据集 AP / ROC / within 都不下降，相邻两点允许 ≤ .005 回落，16 次与 32 次不低于 8 次。
 

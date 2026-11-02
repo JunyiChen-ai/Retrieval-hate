@@ -579,7 +579,8 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <div><b>调用越多越好：基本做到。</b>within 三语料都随调用上升到 32 次；DeHate 的 AP、ROC 也一路升。HateMM、HateClipSeg 按 test 选的 trial 在 8 次后 AP / ROC 略降（≤ .012），因为 trial 和 epoch 都是按 8 次选的；按 validation 选或 60 个 trial 平均时不降。同一视频内回答相互相关仍是 8 次后增益变小的主因（跨视频打乱回答后曲线一路升）。</div>
     <div><b>DeHate 8 次 ROC 比 r5 低 .010</b>（AP 高 .016）。第 6 版只用网络（0 次）时的先验比 r5 弱，原因未查明（g 的训练项两版相同，差别来自共用骨干）。用户 2026-11-03 裁定接受。</div>
     <div><b>少调用的代价变大。</b>预算 5 次比固定 8 次 AP 低 .012–.019（r5 在 .01 内），因为多问一直有用。按 11-01 裁定，平均调用次数是使用者设的预算，论文报 1–7 次曲线。</div>
-    <div><b>目标 2（自研骨干）。</b>无骨干对照：HateMM AP −.057，HateClipSeg ROC −.023（AP 持平、within 反而高 .064），DeHate 待消融跑完。</div>
+    <div><b>目标 2（自研骨干）。</b>无骨干对照（常数先验，只靠问题），去掉骨干后 AP / ROC 降：HateMM .057 / .013，HateClipSeg −.003 / .023（within 反而高 .064），DeHate .083 / .013。骨干在三个语料上都提高视频间排序（ROC）。</div>
+    <div><b>消融（规则 14(g)）全部通过。</b>14 个臂（每个部件去掉或换成常见做法，含单层窗口与无骨干）在三个主数据集上 AP 或 ROC 都降 ≥ .01；余量最小的是 DeHate 上 EIG 选节点换成按层提问（ROC .013，AP .007）。来源 <code>runs/20261101_r6_length_table/arms/table.json</code>。</div>
   </div>
 </section>
 
@@ -596,6 +597,7 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <dt>11-01</dt><dd>平均调用次数 = 使用者预算；DeHate 升为主数据集</dd>
     <dt>11-01 修正</dt><dd>训练图改正：复制似然只在测试用，训练时答案按相互独立计算（<code>src/qtl/train.py</code> 不读 π）</dd>
     <dt>第 6 版 · 11-03</dt><dd>答案表加两状态共用的长度斜率（负例节点上估计），训练与测试同一张表；去掉复制似然。HateMM、HateClipSeg 全部指标与 DeHate AP 高于 r5，DeHate ROC −.010；用户 11-03 裁定取代 r5（<code>experiments/20261101_r6_length_table/</code>）</dd>
+    <dt>11-03 消融</dt><dd>第 6 版三语料 × 3 seed、14 个臂全部跑完，全部部件有用（方法不变）</dd>
     <dt>未采用</dt><dd>inside–outside 新骨干（<code>20261001</code>）、尺度感知跨模态注意力（<code>20261031_scale_aware_cma</code>），都没超过 r5；每视频回答偏移（11-01，HateMM、HateClipSeg AP 随调用下降）；第 7 版"先验加标签项"（11-02，代码审查发现该项已存在，撤回）</dd>
   </dl>
 </section>

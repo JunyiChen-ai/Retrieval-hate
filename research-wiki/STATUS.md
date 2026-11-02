@@ -11,7 +11,7 @@
 - 单调性：within 三语料随调用升到 32 次；DeHate AP / ROC 一路升；HateMM / HCS 按 test 选的 trial 在 8 次后 AP / ROC 略降（≤ .012，trial 与 epoch 都按 8 次选），按 validation 选或全部 trial 平均不降。
 - 代价：DeHate 8 次 ROC 比 r5 低 .010（预注册 Q2 不过，用户接受）；预算 5 次比固定 8 次 AP 低 .012–.019（r5 在 .01 内）。
 - 最强 baseline + 同样 8 个回答（14(f)）：仍低于本方法 AP .059 / .093 / .030（HateMM / HCS / DeHate）。
-- 消融（14(g)）：HateMM、HCS 全部 14 个臂 AP 或 ROC 降 ≥ .01；DeHate 11-03 凌晨在 lab-server（账号 junyi）、uoa-lab1、uoa-lab3 三处分跑。
+- 消融与对照（14(g)，11-03 三语料完成）：14 个臂（去节点先验、去长度项、两状态各自斜率、文字转录、逐秒相加、按层提问、只用标签训练、独立先验、联合学习表、耦合链、单层 4 / 8 / 16 窗口、无骨干）在 HateMM、HCS、DeHate 上 AP 或 ROC 都降 ≥ .01，全部有用；余量最小 DeHate 按层提问 .013。无骨干时 AP / ROC 降：HateMM .057 / .013，HCS −.003 / .023，DeHate .083 / .013。来源 `runs/20261101_r6_length_table/arms/table.json`（`arms_table.py`）。
 - 未采用：每视频回答偏移（AP 随调用下降）、第 7 版"先验加标签项"（代码审查发现该项本来就在损失里，撤回）。
 
 **2026-10-31 起：用户批准两个目标并开启自主迭代，两者都达成后才汇报。** 2026-11-01 用户裁定 DeHate 升为主数据集（`CLAUDE.md`、`RESEARCH_ITERATION_RULES.md` 第 1、7、8、14 条已改），两个目标同样要求在 DeHate 上成立。
