@@ -82,11 +82,8 @@ DEFAULTS = {
     "chain_form": "zero_inflated", "backbone": "macil", "query_level": 0,
     "answer_source": "k30", "node_prior": False,
     "soft_levels": 8, "state1_table": None, "soft5_edges": "fixed",
-    "answer_offset": False, "prior_label": False,
+    "answer_offset": False,
 }
-# Revision 7 (experiments/20261101_r5_completion/README.md section 3.4): prior_label true adds the video-label term
-# BCE(g, y) = -log P(G = y | x) of the prior without answers (zero-inflated chain: P(G = 1 | x) = sigmoid(g)) to the
-# loss -log P(G = y | x, all training answers), weight 1; the answer model and inference are unchanged.
 # Revision 6 (experiments/20261101_r5_completion/README.md section 3): answer_offset true = one answer offset per
 # video shared by all its answers (answer_offset.py), summed out exactly in the training loss (ctree.log_evidence_mix),
 # the posterior and the EIG (opolicy.py); fitted once before training like the anchored model, label-free.
@@ -313,9 +310,6 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
     ev = Evaluator(store, answers, cfg, device, allowed)
     if cfg["objective"] == "posterior":
         assert use_chain and anchored, "the posterior objective needs the chain prior and the anchored answer model"
-    if cfg["prior_label"]:
-        assert use_chain and cfg["chain_form"] == "zero_inflated" and cfg["objective"] == "tree", \
-            "prior_label: the zero-inflated chain (P(G = 1 | x) = sigmoid(g)) with the tree objective"
     budget_rng = np.random.RandomState(seed)
     hate_val = {v for v in ids["val"] if labels[v] == 1}
     history, best = [], None
@@ -397,8 +391,6 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
                 loss_g = F.binary_cross_entropy_with_logits(g, label)
                 p_video = torch.sigmoid(g)
             total = loss_g + loss_ans
-            if cfg["prior_label"]:                   # revision 7: the prior's video-label term (no answers)
-                total = total + F.binary_cross_entropy_with_logits(g, label)
             if cfg["objective"] == "mil":            # arm: top-k MIL on the per-second logits trains the backbone
                 bag = []
                 for i in range(len(vids)):
