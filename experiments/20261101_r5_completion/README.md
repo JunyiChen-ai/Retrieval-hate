@@ -11,7 +11,7 @@
 | P3 | 按诊断结果改方法 | 完成 11-01：偏移否决（3.1）；第 6 版 = 共用长度斜率表（3.3），规则 4 GO、规则 6 PASS | `REVIEW_RULE4_R6.md`、`REVIEW_RULE6_R6.md` |
 | P4 | 训练和测试的答案模型一致 | 第 6 版去掉复制似然，训练与测试同一张表 | 复制似然作为测试期变体报告 |
 | P5 | 改后方法三语料 × 3 seed 完整搜索（规则 7） | 第 6 版完成 11-02 20:17（Slurm 1382–1384）：DeHate Q2 不过（3.4），取代与否待用户裁定；第 7 版提案撤回（3.4） | `runs/20261101_r6_length_table/` |
-| P6 | 消融，三语料含 DeHate、3 seed（14(g)） | 在第 6 版上跑（3.4 去向） | `launch/sbatch_arms.sh`（r6 目录）；测试期变体（复制、bfs、flat）用 `sim_monotone.py` |
+| P6 | 消融，三语料含 DeHate、3 seed（14(g)） | 在第 6 版上跑（3.4 去向）：DeHate 11-02 20:54 起在 lab-server（账号 junyi，Slurm 1440）；HateMM / HCS 排队（Slurm 1438 / 1439，lab1 或 lab3，两台 GPU 被其他用户占） | `launch/sbatch_arms.sh`（r6 目录）；测试期变体（复制、bfs、flat）用 `sim_monotone.py` |
 | P7 | 最强 baseline + 同样的 VLM 回答（14(f)） | r5 上完成（第 5 节）；第 6 版 HateMM / HCS 完成（r6 README），DeHate 待搜索完 | `baseline_plus_vlm.py` |
 | P8 | 树 vs 单层窗口、无骨干对照（最终方法上） | 待 P5 | |
 | P9 | validation 选 trial 的预算曲线（14(d)） | HateMM / HCS 完成（r6 README），DeHate 待搜索完 | `launch/run_final_curves.sh`（r6 目录，test 选与 validation 选两套） |
