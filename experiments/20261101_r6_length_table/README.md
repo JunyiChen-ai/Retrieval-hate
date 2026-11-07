@@ -63,6 +63,7 @@ DeHate（uoa-lab3 11-02 20:20–20:40），test，三 seed 均值 AP / ROC / wit
 qmixE1 预算 1–8（test 选）：AP .242 → .248 → .261 → .264 → .263 → .281 → .278 → .279，ROC .733 → .770，within .662 → .681。DeHate 两种选法验收都通过，三项指标一路升到 32 次。
 
 - HCS test 选 trial：相邻点都在容差内，只差 16 / 32 次比 8 次低 AP .004 / .002、ROC .003 / .004；验收不过。validation 选 trial：通过。全部 trial 平均：三项指标一路升到 32 次。
+- **11-08 更正（外部审稿第 1 轮第 5 点，`experiments/20261108_astra_review/`）**：上面的验收（`accept_check.py`）只看固定 0 / 1 / 2 / 4 / 8 / 16 / 32 次。把 3、5–7、12、24 次也算上，validation 选 trial 有超过 .005 的相邻回落：HCS 3→4 次 AP / ROC −.009 / −.009，HateMM 24→32 次 ROC −.006、6→7 次 within −.005；DeHate 没有（最大是预算 6→7 次 AP −.003）。所以只能说"调用越多总体越好，有局部回落，8 次后增益变小"，不能说每多一次都更好。validation 选 trial 时 32 次比 8 次：AP 高 .011 / .012 / .015（HateMM / HCS / DeHate），ROC −.001 / +.019 / +.022，within 高 .019 / .019 / .012。
 - 原因：规则 7 按 test 固定 8 次的 (AP + ROC) / 2 选 trial，选中的 trial 正好在 8 次这一点偏高；不经 test 选择时曲线不在 8 次后下降。同理，validation 上（epoch 按 validation 8 次选）全部 trial 平均在 8 次后下降（AP .739 → .703）。
 
 ### 测试期变体与诊断（`launch/run_sim_r6.sh`，test 选 trial，uoa-lab1 11-02 07:48–07:51；`runs/20261101_r6_length_table/sim_monotone/<corpus>/<trial>/summary.json`；评测核心 `hc.frame_metrics`，within 与统一评测器差 ≤ .005）

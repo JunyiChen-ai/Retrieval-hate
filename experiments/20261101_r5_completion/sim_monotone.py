@@ -53,6 +53,7 @@ from qtl.checkpoint import load_trial
 from qtl.answer_calib import fit_validation_answer_model
 from qtl.copy_noise import bucket_of, estimate_pi_neg
 import hier_evidence_common as hc
+from qtl.replay import run_source, truncate                             # noqa: E402
 
 RULE = "qmixE1"
 CAP = 8
@@ -139,27 +140,6 @@ def group_stats(scores, vids, labels, gt):
     cat = lambda xs: float(np.mean(np.concatenate(xs))) if xs and sum(len(x) for x in xs) else float("nan")  # noqa
     return {"neg_mean": cat(neg), "pos_hate_mean": cat(pos_h), "pos_clean_mean": cat(pos_c),
             "brier_neg": float(np.mean(b_neg)), "brier_pos": float(np.mean(b_pos))}
-
-
-def run_source(model, store, ids, am, chain, answers, cfg, max_calls, device, copy_fn):
-    runs = {}
-    for split in ("val", "test"):
-        vids = sorted(ids[split], key=lambda v: store.T[v])
-        runs[split] = {}
-        for i in range(0, len(vids), int(cfg["eval_chunk"])):
-            with torch.no_grad():
-                runs[split].update(cpolicy.run_batch(
-                    model, store, vids[i:i + int(cfg["eval_chunk"])], am, chain, answers, cfg["categories"],
-                    max_calls, device, order="eig", copy_pi=copy_fn, copy_mode="both"))
-    for split in runs:                                   # rule_values reads "voi"; qmixE1 does not use it
-        for r in runs[split].values():
-            r["voi"] = [0.0] * len(r["eig"])
-    return runs
-
-
-def truncate(run, cap):
-    n = min(cap, len(run["eig"]))
-    return {k: (list(v[:n + 1]) if k in ("scores", "p_G") else list(v[:n])) for k, v in run.items()}
 
 
 def evaluate(runs, ids, labels, gt, hate, max_calls, budgets_cap, budgets_max):

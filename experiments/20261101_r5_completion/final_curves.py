@@ -25,7 +25,7 @@ from qtl.backbones import make_model
 from qtl.checkpoint import load_trial
 from qtl.copy_noise import bucket_of, estimate_pi_neg
 import hier_evidence_common as hc
-from sim_monotone import run_source, truncate                              # noqa: E402
+from qtl.replay import run_source, truncate                             # noqa: E402
 
 RULE = "qmixE1"
 METS = ("pooled_ap", "pooled_roc", "within_roc")

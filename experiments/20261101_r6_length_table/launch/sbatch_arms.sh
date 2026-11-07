@@ -33,7 +33,11 @@ declare -A ARM=(
   [lvl8]='{"query_level": 8}'
   [lvl16]='{"query_level": 16}'
   [noback]='{"backbone": "const", "lamda_cma": 0, "node_prior": false}'
+  [hard2]='{"soft_levels": 2, "soft_fixed_edges": [0.5]}'
+  [hard2q]='{"soft_levels": 2}'
 )
+# hard2 / hard2q (review control E2, experiments/20261108_astra_review/README.md): the same soft_both answers cut into
+# 2 levels, at p_yes = .5 (the hard yes / no answer) or at the training median; not in the default ORDER.
 ORDER=(no_node no_length per_state_len words b_flat d_bfs c_label e_independent f_joint g_coupled lvl4 lvl8 lvl16 noback)
 arms=("$@"); [ ${#arms[@]} -eq 0 ] && arms=("${ORDER[@]}")
 echo "host $(hostname) | job ${SLURM_JOB_ID:-none} | $(date -Iseconds) | corpus $c | arms ${arms[*]} | code $(git log -1 --format='%s (%ad)')"

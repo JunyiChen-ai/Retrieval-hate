@@ -10,7 +10,7 @@
 
 **当前方法 = 第 6 版（用户 2026-11-03 裁定取代 r5）。** r5 + 答案表加两状态共用、只在负例节点上估计的长度斜率（训练、EIG、后验、停止同一张表）+ 去掉只在测试用的复制似然。依据与数字：[20261101_r6_length_table/README.md](../experiments/20261101_r6_length_table/README.md)（搜索 3 seed × 20 trial，`runs/20261101_r6_length_table/`）；过程与诊断：[20261101_r5_completion/README.md](../experiments/20261101_r5_completion/README.md)。
 - 固定 8 次 AP / ROC / within（test 选 trial，统一评测器）：HateMM .702 / .889 / .783（r5 .691 / .885），HCS .691 / .680 / .563（r5 .687 / .674），DeHate .279 / .770 / .681（r5 .262 / .780）。来源 `runs/20261101_r6_length_table/final_curves/test_selected/<corpus>/summary.json`。
-- 单调性：within 三语料随调用升到 32 次；DeHate AP / ROC 一路升；HateMM / HCS 按 test 选的 trial 在 8 次后 AP / ROC 略降（≤ .012，trial 与 epoch 都按 8 次选），按 validation 选或全部 trial 平均不降。
+- 单调性：调用越多总体越好，但有局部回落（11-08 外部审稿后更正）。validation 选 trial 时 32 次比 8 次 AP 高 .011 / .012 / .015（HateMM / HCS / DeHate）、ROC −.001 / +.019 / +.022、within 高 .012–.019；相邻点最大回落 HCS 3→4 次 AP / ROC −.009、HateMM 24→32 次 ROC −.006；DeHate 无超过 .005 的回落。按 test 选的 trial 在 8 次后 AP / ROC 略降（≤ .012，trial 与 epoch 都按 8 次选）。
 - 代价：DeHate 8 次 ROC 比 r5 低 .010（预注册 Q2 不过，用户接受）；预算 5 次比固定 8 次 AP 低 .012–.019（r5 在 .01 内）。
 - 最强 baseline + 同样 8 个回答（14(f)）：仍低于本方法 AP .059 / .093 / .030（HateMM / HCS / DeHate）。
 - 消融与对照（14(g)，11-03 三语料完成）：14 个臂（去节点先验、去长度项、两状态各自斜率、文字转录、逐秒相加、按层提问、只用标签训练、独立先验、联合学习表、耦合链、单层 4 / 8 / 16 窗口、无骨干）在 HateMM、HCS、DeHate 上 AP 或 ROC 都降 ≥ .01，全部有用；余量最小 DeHate 按层提问 .013。无骨干时 AP / ROC 降：HateMM .057 / .013，HCS −.003 / .023，DeHate .083 / .013。来源 `runs/20261101_r6_length_table/arms/table.json`（`arms_table.py`）。

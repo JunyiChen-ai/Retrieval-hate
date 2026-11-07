@@ -82,8 +82,10 @@ DEFAULTS = {
     "chain_form": "zero_inflated", "backbone": "macil", "query_level": 0,
     "answer_source": "k30", "node_prior": False,
     "soft_levels": 8, "state1_table": None, "soft5_edges": "fixed",
-    "answer_offset": False,
+    "answer_offset": False, "soft_fixed_edges": None,
 }
+# Review control E2 (experiments/20261108_astra_review/README.md): soft_fixed_edges = a list of soft_levels - 1 fixed
+# p_yes edges instead of the train quantiles; soft_levels 2 with [0.5] = the hard yes / no answer of the same question.
 # Revision 6 (experiments/20261101_r5_completion/README.md section 3): answer_offset true = one answer offset per
 # video shared by all its answers (answer_offset.py), summed out exactly in the training loss (ctree.log_evidence_mix),
 # the posterior and the EIG (opolicy.py); fitted once before training like the anchored model, label-free.
@@ -182,7 +184,8 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
         log.flush()
 
     say("host %s | code: %s | corpus %s seed %d" % (socket.gethostname(), git_describe(), corpus, seed))
-    n_cat, n_lev = qdata.configure_source(cfg["answer_source"], int(cfg["soft_levels"]), cfg.get("soft5_edges"))
+    n_cat, n_lev = qdata.configure_source(cfg["answer_source"], int(cfg["soft_levels"]), cfg.get("soft5_edges"),
+                                          cfg.get("soft_fixed_edges"))
     if qdata.is_soft5(cfg["answer_source"]):       # revision 5 variant: five categories of soft_levels levels
         cfg["categories"] = [0, 1, 2, 3, 4]
     elif qdata.is_soft(cfg["answer_source"]):      # revision 5: one category of soft_levels levels
@@ -197,7 +200,8 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
     if qdata.is_soft(cfg["answer_source"]):
         say("soft answers %s: %d category x %d levels, edges (%s) %s" % (
             cfg["answer_source"], n_cat, n_lev,
-            cfg.get("soft5_edges") if qdata.is_soft5(cfg["answer_source"]) else "train quantiles",
+            cfg.get("soft5_edges") if qdata.is_soft5(cfg["answer_source"]) else
+            ("train quantiles" if cfg.get("soft_fixed_edges") is None else "fixed"),
             np.round(qdata.SOFT_EDGES[(corpus, cfg["answer_source"])], 4).tolist()))
     all_ids = ids["train"] + ids["val"] + ids["test"]
     missing = [v for v in all_ids if v not in answers]
