@@ -1,1 +1,1 @@
-{"round": 1, "threadId": "01a1b783-c4a2-78c3-9839-e50259de44cb", "status": "in_progress", "difficulty": "nightmare (codex exec reads repo)", "last_score": null, "last_verdict": null, "pending_experiments": [], "timestamp": "2026-11-08T08:37:21+13:00"}
+{"round": 1, "threadId": "01a1b785-6cb6-72f2-88a8-f906db6e7f02", "status": "in_progress", "difficulty": "nightmare (codex exec reads repo)", "last_score": 5, "last_verdict": "not ready", "pending_experiments": [], "timestamp": "2026-11-08T11:47:43+13:00", "round1_experiments_done": ["E1", "E2", "E3", "E4"]}

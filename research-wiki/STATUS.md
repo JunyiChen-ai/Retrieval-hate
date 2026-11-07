@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-11-07**（本次核验旧任务完成及关闭监控；当前方法沿用11-03已接受的r6）。2026-10-31 时：上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
+截至 **2026-11-08**（GPT 6 Astra 外部审稿第 1 轮对照实验完成；当前方法沿用11-03已接受的r6）。2026-10-31 时：上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
 
 ## 当前目标与结论
 
@@ -14,6 +14,11 @@
 - 代价：DeHate 8 次 ROC 比 r5 低 .010（预注册 Q2 不过，用户接受）；预算 5 次比固定 8 次 AP 低 .012–.019（r5 在 .01 内）。
 - 最强 baseline + 同样 8 个回答（14(f)）：仍低于本方法 AP .059 / .093 / .030（HateMM / HCS / DeHate）。
 - 消融与对照（14(g)，11-03 三语料完成）：14 个臂（去节点先验、去长度项、两状态各自斜率、文字转录、逐秒相加、按层提问、只用标签训练、独立先验、联合学习表、耦合链、单层 4 / 8 / 16 窗口、无骨干）在 HateMM、HCS、DeHate 上 AP 或 ROC 都降 ≥ .01，全部有用；余量最小 DeHate 按层提问 .013。无骨干时 AP / ROC 降：HateMM .057 / .013，HCS −.003 / .023，DeHate .083 / .013。来源 `runs/20261101_r6_length_table/arms/table.json`（`arms_table.py`）。
+- 外部审稿（用户 11-08：GPT 6 Astra 作审稿人提要补的实验，最多 3 轮，test 选 trial 不在范围内；记录 [20261108_astra_review/README.md](../experiments/20261108_astra_review/README.md)）。第 1 轮 5/10、not ready，补 E1–E4：
+  - E1 最强 baseline + 同 8 个回答的学习式融合（validation 选超参）：本方法 AP 高 .040 / .128 / .047，ROC 高 .013 / .134 / .001（DeHate ROC 持平；旧固定融合 DeHate ROC .777 仍高于本方法 .770）。
+  - E2 软答案 vs 硬是/否（同一答案切 2 档）：去掉软档后 AP 降 .016–.071、ROC 降 .024–.050，三语料都有用；只拿答案训练网络在 HCS 上无可测效果（−.001 / −.004）。
+  - E3 同 checkpoint、同调用次数下全树 vs 单层：AP 或 ROC 高 ≥ .01，HCS 4–8 秒层除外（+.006 / −.002）；within 不比单层高。
+  - E4 预算：确定性阈值有时达不到预算（HateMM seed 3407 B=7 只用 4.72–5.46 次），改用两阈值随机化后期望次数 = B，指标变化 ≤ .002。来源 `runs/20261108_astra_review/`、`runs/20261101_r6_length_table/arms/`。
 - 未采用：每视频回答偏移（AP 随调用下降）、第 7 版"先验加标签项"（代码审查发现该项本来就在损失里，撤回）。
 
 **历史目标（2026-10-31）：用户当时批准两个目标并开启自主迭代，两者都达成后才汇报。后续11-01改为报告用户预算曲线，11-03接受r6及其DeHate ROC代价；不再把当时的待裁定选项当成当前运行任务。** 2026-11-01 用户裁定 DeHate 升为主数据集（`CLAUDE.md`、`RESEARCH_ITERATION_RULES.md` 第 1、7、8、14 条已改），两个目标同样要求在 DeHate 上成立。

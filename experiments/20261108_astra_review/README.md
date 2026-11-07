@@ -55,7 +55,16 @@ Runs (started 2026-11-08 09:10): CPU on uoa-lab3 (HateMM, HCS) and uoa-lab1 (DeH
 | answer training, both without node prior (`no_node` − `c_label`) | .025 / .016 / .061 (AP per seed .106 / .002 / −.033) | −.001 / −.004 / −.031 | .038 / .028 / .064 |
 | fixed anchored table vs joint learning, both without length term (`no_length` − `f_joint`) | .014 / .006 / −.006 | .016 / .022 / .006 | .016 / .014 / −.002 |
 
-Training the network on the answers has no measurable pooled effect on HCS once the node prior is held fixed; `c_label`'s ≥ .01 drop on HCS came from removing the node prior at the same time. The fixed table beats joint learning by ≥ .01 (AP or ROC) on all three corpora. Hard vs soft answers (`hard2`, `hard2q`): GPU jobs running.
+Training the network on the answers has no measurable pooled effect on HCS once the node prior is held fixed; `c_label`'s ≥ .01 drop on HCS came from removing the node prior at the same time. The fixed table beats joint learning by ≥ .01 (AP or ROC) on all three corpora.
+
+**E2, hard vs soft answers** (same `soft_both` answers, same prompt, full training; only the answer levels change; Slurm 1966–1968 on uoa-lab3, 11-08 09:4x–11:45; `runs/20261101_r6_length_table/arms/<corpus>/seed*/hard2*/summary.json`, table by `arms_table.py`). Drop of the method (8 levels at training quantiles) to each arm:
+
+| Arm | HateMM | HCS | DeHate |
+|---|---|---|---|
+| `hard2`: 2 levels cut at p_yes = .5 (= the hard yes / no answer) | .050 / .024 / .034 | .016 / .050 / .018 | .059 / .032 / .032 |
+| `hard2q`: 2 levels cut at the training median | .059 / .024 / .032 | .035 / .039 / .001 | .071 / .049 / .025 |
+
+Soft answers are useful (AP and ROC drop ≥ .016 on every corpus, both cuts); every seed of both arms is below the method's mean on AP and ROC except HCS `hard2` AP seed 234 (.684 vs .691).
 
 **E3, tree vs one tree level, same checkpoint and same calls per video** (`e3_level_matched.py`; `runs/20261108_astra_review/e3/<corpus>/summary.json`). Method − single level (standard deviation over seeds); mean calls k_v:
 

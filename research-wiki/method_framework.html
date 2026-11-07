@@ -576,7 +576,8 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
   </div>
   <p class="prose" style="font-size:14px;color:var(--muted)">AP / ROC / within，test，三 seed 均值；第 6 版各 seed test 选出的 trial（规则 7），统一评测器。来源 <code>runs/20261101_r6_length_table/final_curves/test_selected/&lt;语料&gt;/summary.json</code>；validation 选 trial、全部 trial 平均、消融见 <code>experiments/20261101_r6_length_table/README.md</code>。r5 固定 8 次 AP / ROC：HateMM .691 / .885，HateClipSeg .687 / .674，DeHate .262 / .780。</p>
   <div class="open">
-    <div><b>调用越多越好：基本做到。</b>within 三语料都随调用上升到 32 次；DeHate 的 AP、ROC 也一路升。HateMM、HateClipSeg 按 test 选的 trial 在 8 次后 AP / ROC 略降（≤ .012），因为 trial 和 epoch 都是按 8 次选的；按 validation 选或 60 个 trial 平均时不降。同一视频内回答相互相关仍是 8 次后增益变小的主因（跨视频打乱回答后曲线一路升）。</div>
+    <div><b>调用越多总体越好，有局部回落（11-08 更正）。</b>按 validation 选 trial 时 32 次比 8 次 AP 高 .011 / .012 / .015，ROC −.001 / +.019 / +.022，within 高 .012–.019；相邻点最大回落 HCS 3→4 次 AP / ROC −.009、HateMM 24→32 次 ROC −.006，DeHate 无超过 .005 的回落。同一视频内回答相互相关是 8 次后增益变小的主因（跨视频打乱回答后曲线一路升）。</div>
+    <div><b>外部审稿第 1 轮（GPT 6 Astra，11-08）补的对照。</b>最强 baseline + 同样 8 个回答的学习式融合：本方法 AP 高 .040 / .128 / .047，ROC 高 .013 / .134 / .001（DeHate ROC 持平，旧固定融合 .777 仍高于 .770）。软答案换成硬是/否：AP 降 .016–.071、ROC 降 .024–.050。同 checkpoint、同调用次数下全树比单层 AP 或 ROC 高 ≥ .01（HCS 4–8 秒层除外）。确定性停止阈值有时用不满预算，两阈值随机化后期望次数 = B，指标变化 ≤ .002。来源 <code>experiments/20261108_astra_review/README.md</code>。</div>
     <div><b>DeHate 8 次 ROC 比 r5 低 .010</b>（AP 高 .016）。第 6 版只用网络（0 次）时的先验比 r5 弱，原因未查明（g 的训练项两版相同，差别来自共用骨干）。用户 2026-11-03 裁定接受。</div>
     <div><b>少调用的代价变大。</b>预算 5 次比固定 8 次 AP 低 .012–.019（r5 在 .01 内），因为多问一直有用。按 11-01 裁定，平均调用次数是使用者设的预算，论文报 1–7 次曲线。</div>
     <div><b>目标 2（自研骨干）。</b>无骨干对照（常数先验，只靠问题），去掉骨干后 AP / ROC 降：HateMM .057 / .013，HateClipSeg −.003 / .023（within 反而高 .064），DeHate .083 / .013。骨干在三个语料上都提高视频间排序（ROC）。</div>
@@ -598,6 +599,7 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <dt>11-01 修正</dt><dd>训练图改正：复制似然只在测试用，训练时答案按相互独立计算（<code>src/qtl/train.py</code> 不读 π）</dd>
     <dt>第 6 版 · 11-03</dt><dd>答案表加两状态共用的长度斜率（负例节点上估计），训练与测试同一张表；去掉复制似然。HateMM、HateClipSeg 全部指标与 DeHate AP 高于 r5，DeHate ROC −.010；用户 11-03 裁定取代 r5（<code>experiments/20261101_r6_length_table/</code>）</dd>
     <dt>11-03 消融</dt><dd>第 6 版三语料 × 3 seed、14 个臂全部跑完，全部部件有用（方法不变）</dd>
+    <dt>11-08 审稿 1</dt><dd>GPT 6 Astra 第 1 轮补 E1–E4（学习式融合对照、软 vs 硬答案、全树 vs 单层、预算核查）；单调性表述更正为"总体上升、有局部回落"（方法不变）</dd>
     <dt>未采用</dt><dd>inside–outside 新骨干（<code>20261001</code>）、尺度感知跨模态注意力（<code>20261031_scale_aware_cma</code>），都没超过 r5；每视频回答偏移（11-01，HateMM、HateClipSeg AP 随调用下降）；第 7 版"先验加标签项"（11-02，代码审查发现该项已存在，撤回）</dd>
   </dl>
 </section>
