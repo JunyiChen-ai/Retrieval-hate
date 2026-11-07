@@ -155,7 +155,7 @@ def main():
     out_dir = (ROOT / a.out_root / a.corpus / a.method).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     for seed, rd in zip(SEEDS, a.replay_dirs):
-        if seed not in a.seeds:
+        if seed not in a.seeds or (out_dir / f"seed_{seed}.json").exists():
             continue
         rp = pickle.load(open(Path(rd) / "runs_L0.pkl", "rb"))
         assert int(rp["seed"]) == seed, (rd, rp["seed"])

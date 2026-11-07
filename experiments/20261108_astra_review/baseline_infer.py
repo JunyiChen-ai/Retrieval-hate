@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 import socket
 import sys
+import types
 
 import numpy as np
 import torch
@@ -29,8 +30,15 @@ from hate_common import data as hdata, runtime                          # noqa: 
 
 
 def fed_wsvad_scorer(model_dir, corpus, device):
+    # hier_evidence_common puts src/ first on sys.path, so `utils` would resolve to src/utils; bind the name to the
+    # pinned upstream package (a namespace package, no __init__.py) before the adapter imports utils.model
+    up = ROOT / "third_party" / "Fed-WSVAD"
+    up = up if up.is_dir() else ROOT / "third_party" / "fed_wsvad"
     for k in [k for k in sys.modules if k == "utils" or k.startswith("utils.")]:
-        del sys.modules[k]                   # src/utils (hier_evidence_common) shadows Fed-WSVAD's upstream utils
+        del sys.modules[k]
+    pkg = types.ModuleType("utils")
+    pkg.__path__ = [str(up / "utils")]
+    sys.modules["utils"] = pkg
     import fed_wsvad_adapter as fa
     meta = json.loads((model_dir / "train_meta.json").read_text())
     args, vl, aw = meta["args"], int(meta["visual_length"]), int(meta["attn_window"])
@@ -95,6 +103,9 @@ def main():
     _, ids, _, _ = hc.load_fixed_cohort(a.corpus)
     od = (ROOT / a.out_root / a.method / a.corpus / f"seed_{a.seed}").resolve()
     od.mkdir(parents=True, exist_ok=True)
+    if (od / "check.json").exists():
+        print("skip (done)", od, flush=True)
+        return
     score = SCORERS[a.method](Path(a.model_dir).resolve(), a.corpus, device)
     check = {"host": socket.gethostname(), "created": datetime.now().astimezone().isoformat(),
              "model_dir": a.model_dir, "ref": a.ref, "splits": {}}
