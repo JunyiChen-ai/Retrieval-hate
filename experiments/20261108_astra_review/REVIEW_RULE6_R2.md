@@ -11,3 +11,7 @@ Reviewer: one subagent (Claude Fable 5.1), read-only, synthetic checks only. Sco
 5. Memory, DeHate (4679 / 559 / 1151 videos, 621k seconds): about 4–6 GB per process, 15–18 GB for 3 processes; uoa-lab1 has about 55 GB available.
 
 Notes: commit and pull before launching on uoa-lab3 / uoa-lab1; the launcher is not for uoa-lab2 (the `results` link is not set up there). E1b feeds the baseline's in-sample features on the training videos by the reviewer's design, so it measures the round-1 F1 concern (over-trust of the baseline) instead of assuming it.
+
+## Variant `hid_val` (same day)
+
+Reviewer: one subagent (Claude Fable 5.1), read-only, synthetic run of `fit_heldout` (23 videos, 5 folds, 3 epochs). **PASS.** Selection sees only validation videos and labels; test scored once with the refit head, alpha 0; every (learning rate, epoch) key of the out-of-fold scores covers each validation video exactly once; the refit uses the chosen learning rate and stops at the chosen epoch; nofeat / feat / hid unchanged. Note: the launcher must run where the `*_hidden.npz` files are (uoa-lab3, uoa-lab1); uoa-lab2 has only the copied `hidden_check.json`. Design note: the cross-validation objective pools out-of-fold scores of five heads, which affects selection only.

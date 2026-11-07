@@ -34,6 +34,13 @@ classification layer, baseline_infer.py --hidden; standardized per dimension wit
 deviation, then a linear map to 32 dimensions) and the baseline logit z_t / 5; the output IS the fused score
 (f_t = h_t, alpha fixed at 0) and the MIL loss is on it. Same answers, node sampling, learning rates, epochs and
 validation selection as the other variants. Written to its own --out-root (runs/20261108_astra_review/e1b).
+
+Variant "hid_val" (review round 2, E1b held-out): the same head as "hid", but trained on the VALIDATION videos, where
+the frozen baseline's features and logit are out-of-sample as on test (on its own training videos the baseline is far
+more confident). Learning rate and epoch by 5-fold cross-validation on the validation videos (out-of-fold scores of
+all validation videos pooled, objective (pooled AP + pooled ROC) / 2); then one fit on all validation videos with the
+chosen learning rate for the chosen number of epochs; test scored once. Answers as "hid": per epoch the first 8 nodes
+our policy asked on that video or 8 random answered nodes, each with probability .5.
 """
 import argparse
 from datetime import datetime
@@ -57,6 +64,7 @@ SEEDS = (234, 2025, 3407)
 LRS = (1e-3, 3e-3)
 ALPHAS = (0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0)
 EPOCHS, BATCH, K_ASK = 30, 16, 8
+N_FOLDS = 5
 METS = ("pooled_ap", "pooled_roc", "within_roc")
 
 
@@ -152,6 +160,59 @@ def build_item(T, z, nodes, feat):
             torch.as_tensor(toks), torch.as_tensor(ctx, dtype=torch.float32), feat)
 
 
+def run_epochs(tr_ids, items, labels, fd, lr, seed, epochs, on_epoch):
+    """Variant "hid_val": train Head(fd, use_z=True) on tr_ids as the main loop does; on_epoch(head, epoch) after
+    every epoch (head in eval mode). items[v]: T, z, pol (policy nodes), pool (all answered nodes), feat."""
+    torch.manual_seed(seed)
+    rng = np.random.default_rng(seed)
+    head = Head(fd, use_z=True)
+    opt = torch.optim.AdamW(head.parameters(), lr=lr, weight_decay=1e-4)
+    tr_ids = list(tr_ids)
+    for ep in range(1, epochs + 1):
+        head.train()
+        rng.shuffle(tr_ids)
+        for i in range(0, len(tr_ids), BATCH):
+            loss = 0.0
+            for v in tr_ids[i:i + BATCH]:
+                it = items[v]
+                if rng.random() < 0.5 or not it["pool"]:
+                    nodes = it["pol"]
+                else:
+                    pick = rng.choice(len(it["pool"]), size=min(K_ASK, len(it["pool"])), replace=False)
+                    nodes = [it["pool"][j] for j in pick]
+                f = head(build_item(it["T"], it["z"], nodes, it["feat"]))
+                k = it["T"] // 16 + 1
+                vs = f.topk(min(k, len(f))).values.mean()
+                loss = loss + nn.functional.binary_cross_entropy_with_logits(vs, torch.tensor(float(labels[v])))
+            opt.zero_grad()
+            (loss / len(tr_ids[i:i + BATCH])).backward()
+            opt.step()
+        head.eval()
+        on_epoch(head, ep)
+    return head
+
+
+def fit_heldout(vids, items, labels, fd, seed, metric):
+    """Variant "hid_val": 5-fold cross-validation on vids for learning rate and epoch, then one fit on all vids.
+    metric(scores) -> (pooled AP + pooled ROC) / 2 over vids. Returns (head, record)."""
+    fold = np.random.default_rng(seed).permutation(len(vids)) % N_FOLDS
+    oof = {}
+    for lr in LRS:
+        for k in range(N_FOLDS):
+            ho = [v for v, f in zip(vids, fold) if f == k]
+
+            def on_epoch(head, ep, lr=lr, ho=ho):
+                with torch.no_grad():
+                    for v in ho:
+                        oof.setdefault((lr, ep), {})[v] = head(items[v]["eval"]).numpy()
+            run_epochs([v for v, f in zip(vids, fold) if f != k], items, labels, fd, lr, seed + k, EPOCHS, on_epoch)
+    objs = {key: metric({v: 1.0 / (1.0 + np.exp(-x)) for v, x in sc.items()}) for key, sc in oof.items()}
+    lr, ep = max(objs, key=objs.get)
+    head = run_epochs(vids, items, labels, fd, lr, seed, ep, lambda *_: None)
+    return head, {"val_obj": float(objs[(lr, ep)]), "lr": lr, "epoch": ep, "alpha": 0.0, "selection": "5-fold cv",
+                  "trained_on": "val"}
+
+
 def asked_nodes(run, T, P_v):
     tr = qtree.tree(T)
     out = []
@@ -199,7 +260,7 @@ def main():
              for s in base}
         missing = {s: sum(v not in base[s] for v in ids[s]) for s in base}
         hfeat, hmiss = load_hidden(ROOT / a.baseline_root, a.method, a.corpus, seed, ids, store.T) \
-            if "hid" in a.variants else ({}, None)
+            if {"hid", "hid_val"} & set(a.variants) else ({}, None)
         fixed = {s: {v: asked_nodes(runs[s][v], store.T[v], P[v]) for v in ids[s]} for s in ("val", "test")}
         pol_train = {v: asked_nodes(runs["train"][v], store.T[v], P[v]) for v in ids["train"]}
         pool = {v: [(x, y, float(p)) for (x, y), p in P[v].items() if p is not None] for v in ids["train"]}
@@ -208,13 +269,23 @@ def main():
         row = {"replay": str(rd), "baseline_missing": missing, "hidden_missing": hmiss, "ours_trial": name,
                "ours_fixed8": {m: ours[name]["fixed"]["8"][m] for m in METS}, "variants": {}}
         for var in a.variants:
-            vf = feats if var == "feat" else hfeat if var == "hid" else {}
+            vf = feats if var == "feat" else hfeat if var in ("hid", "hid_val") else {}
             fd = next(iter(vf.values())).shape[1] if vf else 0
             alphas = (0.0,) if var == "hid" else ALPHAS
             ev = {s: {v: build_item(store.T[v], z[s][v], fixed[s][v], vf.get(v)) for v in ids[s]}
                   for s in ("val", "test")}
-            best = None
-            for lr in LRS:
+            if var == "hid_val":
+                items = {v: {"T": store.T[v], "z": z["val"][v], "pol": fixed["val"][v], "feat": vf[v],
+                             "pool": [(x, y, float(p)) for (x, y), p in P[v].items() if p is not None],
+                             "eval": ev["val"][v]} for v in ids["val"]}
+
+                def metric(sc):
+                    m = hc.frame_metrics(sc, gt["val"], hate["val"])
+                    return (m["pooled_ap"] + m["pooled_roc"]) / 2
+                head, best = fit_heldout(list(ids["val"]), items, labels, fd, seed, metric)
+                print(datetime.now().astimezone().isoformat(), a.corpus, a.method, seed, var, best, flush=True)
+            best = None if var != "hid_val" else best
+            for lr in (LRS if var != "hid_val" else ()):
                 torch.manual_seed(seed)
                 rng = np.random.default_rng(seed)
                 head = Head(fd, use_z=var == "hid")
@@ -252,8 +323,9 @@ def main():
                                     "state": {k_: t.clone() for k_, t in head.state_dict().items()}}
                 print(datetime.now().astimezone().isoformat(), a.corpus, a.method, seed, var, "lr", lr,
                       "best so far", best["lr"], best["epoch"], best["alpha"], round(best["val_obj"], 4), flush=True)
-            head = Head(fd, use_z=var == "hid")
-            head.load_state_dict(best.pop("state"))
+            if var != "hid_val":
+                head = Head(fd, use_z=var == "hid")
+                head.load_state_dict(best.pop("state"))
             head.eval()
             with torch.no_grad():
                 sc = {v: 1.0 / (1.0 + np.exp(-(best["alpha"] * z["test"][v] + head(ev["test"][v]).numpy())))
