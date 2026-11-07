@@ -1,8 +1,10 @@
 # 当前研究状态
 
-截至 **2026-11-03**（当前方法见下一节第一段）。2026-10-31 时：上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
+截至 **2026-11-07**（本次核验旧任务完成及关闭监控；当前方法沿用11-03已接受的r6）。2026-10-31 时：上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
 
 ## 当前目标与结论
+
+**本次旧heartbeat已关闭。** 它绑定的“三数据集完整组合评估”已完成：9个study各20 trial、每trial50 epoch，72份完整组合统一评测已回传并核验；远端5个owner及同会话进程全部退出。独立monitor均已退出；heartbeat原进程也已不存在，本次写入STOP并记录关闭，避免重新启用。依据 `runs/20261002_complete_io_method/analysis/three_dataset_task_closure.json`、`setup/final_process_closure.json`、`setup/monitor_health.json`。这是旧评估任务收尾，不表示下列历史性能目标全部达标；Pursuing Goal未创建或恢复。
 
 方法示意图（当前方法的数据流、训练、停止规则）：[method_framework.html](method_framework.html)。
 
@@ -14,7 +16,7 @@
 - 消融与对照（14(g)，11-03 三语料完成）：14 个臂（去节点先验、去长度项、两状态各自斜率、文字转录、逐秒相加、按层提问、只用标签训练、独立先验、联合学习表、耦合链、单层 4 / 8 / 16 窗口、无骨干）在 HateMM、HCS、DeHate 上 AP 或 ROC 都降 ≥ .01，全部有用；余量最小 DeHate 按层提问 .013。无骨干时 AP / ROC 降：HateMM .057 / .013，HCS −.003 / .023，DeHate .083 / .013。来源 `runs/20261101_r6_length_table/arms/table.json`（`arms_table.py`）。
 - 未采用：每视频回答偏移（AP 随调用下降）、第 7 版"先验加标签项"（代码审查发现该项本来就在损失里，撤回）。
 
-**2026-10-31 起：用户批准两个目标并开启自主迭代，两者都达成后才汇报。** 2026-11-01 用户裁定 DeHate 升为主数据集（`CLAUDE.md`、`RESEARCH_ITERATION_RULES.md` 第 1、7、8、14 条已改），两个目标同样要求在 DeHate 上成立。
+**历史目标（2026-10-31）：用户当时批准两个目标并开启自主迭代，两者都达成后才汇报。后续11-01改为报告用户预算曲线，11-03接受r6及其DeHate ROC代价；不再把当时的待裁定选项当成当前运行任务。** 2026-11-01 用户裁定 DeHate 升为主数据集（`CLAUDE.md`、`RESEARCH_ITERATION_RULES.md` 第 1、7、8、14 条已改），两个目标同样要求在 DeHate 上成立。
 - 目标 1（少调用）：HateMM、HCS、DeHate 上最终方法平均约 4–5 次调用；与同一方法固定 8 次相比，AP/ROC 三 seed 均值降幅 ≤ .01，within 不降。
 - 目标 2（自研骨干不输 r5）：自研骨干在固定 8 次、规则 7 完整搜索下，三个主数据集三 seed AP 与 ROC 均值不低于 r5（HateMM .6909 / .8849，HCS .6865 / .6737，DeHate .2620 / .7800，`runs/20260929_query_paradigm_r5/summary_dehate.txt`）。
 
@@ -47,12 +49,12 @@
 | 模块 | 当前实现 | 证据与限制 |
 |---|---|---|
 | VLM观测与提问 | 二分时间树、EIG选节点；单问首token软答案，训练答案无标注分位8档 | 使用相同I3D/VGGish/BERT、词级转录和VLM缓存；8档是答案离散精度，与8次调用不同 |
-| 弱监督骨干与先验 | `src/qtl/inside_outside.py`，初版outside/gated；秒级和节点先验、视频头、零膨胀链、原训练损失 | 初版自己的固定预算outside消融支持有限迁移novelty；相对r5性能有代价。该消融没有在当前复制+停止组合上重新做 |
-| 答案融合与停止 | 训练负例估计copy概率，copy同时进EIG/似然；qmixSG_rt10的validation分位参考与平均8次阈值 | 校准仅用validation，test只取因果前缀；三语料调用量都没有下降，HCS三项下降 |
+| 弱监督骨干与先验 | r6沿用r5骨干、秒级与节点先验、视频头和零膨胀链；实现入口 `experiments/20261101_r6_length_table/` | 初版inside–outside属于下方历史实验，不是当前采用的骨干；当前无骨干与其它对照见r6 README |
+| 答案融合与停止 | 两状态共用、负例节点估计的长度斜率表；训练/EIG/后验一致，去掉复制似然；qmixE1按用户预算在validation定阈值 | 预算曲线已完成；r6预算5的AP比固定8低.012–.019，不能声称原“5次几乎不降”目标已达成 |
 
-## 最新权威结果与来源
+## 历史inside–outside完整组合结果与来源
 
-AP / ROC / within，三seed均值±总体标准差，开发期test目标选trial。调用数为实际消费的缓存答案前缀；32次轨迹仅供比较。
+当前r6权威结果见本文首节及r6 README；以下是已完成旧任务的结果。AP / ROC / within，三seed均值±总体标准差，开发期test目标选trial。调用数为实际消费的缓存答案前缀；32次轨迹仅供比较。
 
 | 语料 / 设置 | AP / ROC / within | 平均调用 |
 |---|---|---|
@@ -87,23 +89,17 @@ AP / ROC / within，三seed均值±总体标准差，开发期test目标选trial
 - 审计与逐seed/配对/r5来源：`runs/20261002_complete_io_method/analysis/{hatemm,hateclipseg,dehate}_complete_method.json`，两主数据汇总 `analysis/main_corpora_complete_method.json`。
 - 旧r5对照 `runs/20260929_query_paradigm_r5/stop_check/<corpus>/seed<seed>_trial<k>_r5rt/metrics_test_qmixSG_rt108.json`（HateMM trial9/4/5，HCS 13/11/19，DeHate 8/4/4）。
 
-## 运行任务
+## 运行任务与monitor
 
-- 无运行中的 GPU 作业。Slurm job 1301（lab3，HateMM seed234 尺度感知 CMA）11-01 COMPLETED，已回传本机 `runs/20261031_scale_aware_cma/hatemm/seed234/`。
-- job 1305（HCS seed3407）已完成并回传；lab1 GPU 空闲，代码 3ae58e9 之后。
-- GPU 计时 job 1303（lab1）已完成：新梯度写法前向完全相同、梯度最大相对差 1.2e-6，该层快 1.1–1.9 倍；输出 `runs/20261031_scale_aware_cma/bench_bias_1303.out`。
-- 目标 1 诊断与统一评测均已完成并回传。
+2026-11-07实际检查：本用户Slurm队列为空；三数据旧完整组合5个owner及全部同会话进程均已退出，completion为success。9个源study各20个COMPLETE trial、每trial50 epoch，本机72份完整组合评测与已有全量审计一致。DeHate此前已核对cohort、trial选择、checkpoint、阈值/调用数和分数前缀，本轮没有重复训练或推断。
 
-10-31 早些时候：Slurm job 1295–1299（lab3：HateMM、DeHate seed234/3407；lab1：HCS、DeHate seed2025）07:54–08:50全部COMPLETED，无Traceback；两台CPU预算曲线08:00/08:01输出DONE。输出已回传本机 `runs/20261002_complete_io_method/{all_trials,budget_curve,analysis/select_by_setting.json}`。原选定trial重跑复现：HateMM/HCS完全一致，DeHate seed234 trial4最大差.0012（GPU非确定性）。此前完整组合：HCS（lab1）与HateMM（lab3）10-02 18:35前后结束；DeHate seed2025（lab1）10-03 04:41、seed234/3407（lab3）09:17/09:18结束，`completion.json` 均为success。
+旧任务5个独立monitor均已退出。对应heartbeat目录 `runs/thread_monitor/01a0f639-b211-75e3-9155-e15e30534b46/20261002_complete_io_method/` 已写STOP，进程不存在；其历史记录最后通知为10-03，不把这次延迟提醒当作仍有运行任务。当前记录 `runs/20261002_complete_io_method/setup/monitor_health.json`，原始结果完成核验 `analysis/three_dataset_task_closure.json`。Pursuing Goal保持用户暂停状态，未调用Goal工具。
 
-DeHate审计需要远端cohort（本机无DeHate split/GT/特征），因此 `audit_dehate.py --seeds` 在lab1（seed2025）、lab3（seed234/3407）运行，部分结果回传后本机 `--merge`；所有核对项通过（完成标记/主机、20 trial×50 epoch、选择重推、checkpoint epoch、复制与分位参考来源、阈值与逐视频调用数重算、分数前缀、24份评测完整覆盖）。
-
-已知无关项保留：本机 `tandem.html`、lab1 `idea-stage/`、三机 `~` 下其它项目的STRAY条目（ctx_pri、MemoryAgen、conversation-pilot等，非本项目产生）。研究规则未改；CLAUDE/AGENTS于10-31补记lab机GPU自10-03起只能经Slurm使用。
+r6完整搜索、预算曲线、14臂消融和baseline+同回答对照已完成；11-03接受结果与限制见 `experiments/20261101_r5_completion/README.md` 的P1–P10及r6 README。已知无关tandem.html、lab1 idea-stage/、三机家目录STRAY保留；本轮只更新状态及关闭记录，不改方法、研究规则或GPU运行方式。
 
 ## 下一步
 
-1. 目标 2：**待用户裁定**。诊断 README 第 8–10 条：HCS 的逐秒信息在特征里（用验证集逐秒标注训练的线性模型 .70/.70，高于 r5 8 次 .687/.674），但现有训练信号带不出来——只用视频标签 .57/.54，拟合训练回答 .64/.62，与 r5 组合 +.004/+.001；按内容预测每视频链转移也无效。HateMM 上直接读原始特征的线性支路有空间（与 r5 组合 0 次调用 AP/ROC +.033/+.014，within −.044）。即：HCS 上任何靠现有训练信号的骨干都难以超过噪声；HateMM 可以。选项：A 做 r5+线性原始特征支路（HateMM 有望 +.02，HCS 预期持平，不满足 HCS 严格 ≥ 与 14(g) 两语料）；B 放弃目标 2，在 r5 上定稿目标 1；C 改训练信号（如给训练视频补问更细的 VLM 问题），超出骨干范围、需 VLM 算力。HateMM seed 234 可尺度搜索约 11-01 07:30 结束。
-2. 目标 1：在目标 2 选定的骨干上用 `evaluate_stop.py` 复核（已可经 `qtl.backbones.make_model` 加载尺度感知 checkpoint）。
+本次绑定的三数据评估任务无待运行项，关闭旧monitor，不重复启动旧搜索。当前方法按11-03裁定保留r6；原5次调用性能目标与DeHate相对r5 ROC差距仍作为已知限制报告，不把“实验完成”写成“所有性能门均通过”。后续实验按新的用户任务推进。
 
 ## 历史与规则
 
