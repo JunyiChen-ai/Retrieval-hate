@@ -29,6 +29,8 @@ from hate_common import data as hdata, runtime                          # noqa: 
 
 
 def fed_wsvad_scorer(model_dir, corpus, device):
+    for k in [k for k in sys.modules if k == "utils" or k.startswith("utils.")]:
+        del sys.modules[k]                   # src/utils (hier_evidence_common) shadows Fed-WSVAD's upstream utils
     import fed_wsvad_adapter as fa
     meta = json.loads((model_dir / "train_meta.json").read_text())
     args, vl, aw = meta["args"], int(meta["visual_length"]), int(meta["attn_window"])

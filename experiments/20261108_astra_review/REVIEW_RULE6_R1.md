@@ -85,3 +85,11 @@ HCS 的 Fed-WSVAD / DSANet 和 DeHate 的 Fed-WSVAD 由 `baseline_infer.py` 用�
 ## 其它说明（非规则 6 范围，记录备查）
 
 - `tandem.html` 出现在仓库根目录（`git status` 未跟踪），根目录白名单不含它，与本次审查无关。
+
+---
+
+## 修复确认（2026-11-08，commit ec64449）：PASS
+
+- **F1 已修**（`e1_fusion.py:75-98, 196-222`）：`Head.forward` 的输入只剩 token 和 / 最大值、覆盖数、视频上下文（和可选特征），`out` 层输入维 68 / 100，不含 `z_t`；本机用随机输入验证两组不同 `z` 下 h 输出逐元素相同。h 只在 `ids["train"]` 上做梯度（top-k MIL BCE，k = T // 16 + 1）；`alpha ∈ {0, .25, .5, .75, 1, 1.5, 2}` 与 lr、epoch 一起按 validation (AP + ROC) / 2 选（`:205-214`，`hc.frame_metrics`，无梯度）；test 用选中的 state 与 alpha 只打分一次（`:220-225`，统一评测器）。样本内 baseline 分数不再进入任何学习到的权重。
+- **F2 已修**（`baseline_infer.py:70-72, 109-111`）：DSANet 改读 `o[1]`，`sigmoid(logits1[0:n].squeeze(-1))`，与 `dsanet/infer.py` 的 `score_mlp` 完全一致（该分支不除 temp）；`--ref` 比较对 dsanet 读 `score_mlp`，其它方法读 `score_align`；docstring 已改并注明 14(f) 控制用的是 score_align。
+- 两条建议的断言已加：`policy_replay.py:47`（`soft_fixed_edges is None`）、`e1_fusion.py:171`（replay 的 trial 与 `ours` 的 trial 同一路径）。
