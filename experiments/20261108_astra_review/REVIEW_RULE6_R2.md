@@ -10,7 +10,7 @@ Reviewer: one subagent (Claude Fable 5.1), read-only, synthetic checks only. Sco
 4. Launcher: paths match round 1; skip logic per output root; failures caught by `wait` and the FAILED grep; summary presence checked.
 5. Memory, DeHate (4679 / 559 / 1151 videos, 621k seconds): about 4–6 GB per process, 15–18 GB for 3 processes; uoa-lab1 has about 55 GB available.
 
-Notes: commit and pull before launching on uoa-lab3 / uoa-lab1; the launcher is not for uoa-lab2 (the `results` link is not set up there). E1b feeds the baseline's in-sample features on the training videos by the reviewer's design, so it measures the round-1 F1 concern (over-trust of the baseline) instead of assuming it.
+Notes: commit and pull before launching on uoa-lab3 / uoa-lab1; the launcher is not for uoa-lab2 (the `results` link is not set up there). E1b feeds the baseline's in-sample features on the training videos by the reviewer's design, so it tests the round-1 F1 concern (over-trust of the baseline) directly instead of assuming it (the results are consistent with it but do not isolate it, see README round 3).
 
 ## Variant `hid_val` (same day)
 

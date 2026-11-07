@@ -105,7 +105,9 @@ Code for round 2: `baseline_infer.py --hidden` (hidden features by forward hooks
 | HCS (DSANet, official branch) | same | .567 / .551 / .492 | .553 / .536 / .539 | .139 / .144 / .024 (.110 / .140 / .165) |
 | DeHate (Fed-WSVAD 3) | .279 / .770 / .681 | .231 / .769 / .577 | .188 / .711 / .547 | .091 / .059 / .134 (.051 / .105 / .116) |
 
-The joint head is below the answers-only head of round 1 on all four pairs and only slightly above the baseline alone on DeHate (.174 / .701) and HateMM (.573 / .807). Validation picks epoch 1 on HateMM for all three seeds and epochs 1–2 on DeHate for two of three: on its own training videos the frozen baseline is almost always right (MACIL-SD HateMM video AP .98), so the head learns to rely on the baseline features and this does not carry over to held-out videos. This is now a measurement of the round-1 F1 concern rather than an inference. **E1b held-out** (`--variants hid_val`: the same head trained on the validation videos, where the frozen baseline is out-of-sample as on test; learning rate and epoch by 5-fold cross-validation on validation; one refit on all validation videos; test once; `runs/20261108_astra_review/e1b_val/<corpus>/<baseline>/summary.json`; uoa-lab3 / uoa-lab1 12:29–12:35):
+The joint head is below the answers-only head of round 1 on all four pairs and only slightly above the baseline alone on DeHate (.174 / .701) and HateMM (.573 / .807). Validation picks epoch 1 on HateMM for all three seeds and epochs 1–2 on DeHate for two of three. One explanation is the round-1 F1 concern: on its own training videos the frozen baseline is almost always right (MACIL-SD HateMM video AP .98), so the head may learn to rely on the baseline features in a way that does not carry over to held-out videos. The results are consistent with this but do not isolate it (corrected after round 3: the held-out variant below changes the training videos, their number and the selection procedure at once, and its AP is lower than E1b on HateMM and DeHate).
+
+**E1b held-out** (`--variants hid_val`: the same head trained on the validation videos, where the frozen baseline is out-of-sample as on test; learning rate and epoch by 5-fold cross-validation on validation; one refit on all validation videos; test once; `runs/20261108_astra_review/e1b_val/<corpus>/<baseline>/summary.json`; uoa-lab3 / uoa-lab1 12:29–12:35):
 
 | Corpus (baseline) | E1b held-out | Ours − E1b held-out (per seed AP; per seed ROC) |
 |---|---|---|
@@ -115,3 +117,19 @@ The joint head is below the answers-only head of round 1 on all four pairs and o
 | DeHate (Fed-WSVAD 3) | .183 / .742 / .561 | .095 / .028 / .120 (.061 / .079 / .146; .010 / .036 / .039) |
 
 Against E1b, training on out-of-sample baseline features raises ROC on HateMM, HCS Fed-WSVAD and DeHate (+.010 / +.025 / +.031); AP is higher only on HCS Fed-WSVAD (+.023, also above the round-1 answers-only head .564); HCS DSANet is lower in both. The validation sets are small (109 / 63 / 559 videos). Across the three learned fusions (E1, E1b, E1b held-out) and the fixed fusion, our method is higher in AP on all three corpora (smallest margins: HateMM .040 to E1, HCS .082 to E1 with features on DSANet, DeHate .030 to the fixed fusion with its weight chosen on test) and in ROC on HateMM and HCS by ≥ .013; on DeHate ROC the best baseline + answers number stays the fixed fusion (.777 vs .770) and the learned answers-only head ties (.769).
+
+### Round 3 (2026-11-08, last round)
+
+Prompt `prompt_r3.md` (same thread; `git diff e9cfb92..6ebbbf7`); response `review_r3.md` (verbatim). No file changed during the run besides the response.
+
+**Assessment: 7/10, almost. `NO_MORE_EXPERIMENTS`.** All three round-2 points settled: E1b and E1b held-out checked against the 24 raw evaluator files, no implementation error or test leakage found (smallest 3-seed mean AP margins +.090 for E1b, +.095 held-out); E4 correction confirmed; the HCS DSANet fixed fusion is .595 / .572 at alpha .3 as we computed (the reviewer's .597 / .583 came from reading a wrong trial). One writing point: the README stated the over-reliance explanation of E1b as measured; reworded above to "consistent with, not isolated". C4 keeps the qualifier "under every fusion we tried".
+
+## Outcome of the loop
+
+The loop ended in round 3 (of at most 3) when GPT 6 Astra had no remaining concern that an experiment could settle. Scores 5 → 6 → 7 (not ready → not ready → almost). The method (revision 6) did not change; the claims changed as follows:
+
+- C1 (beats the strongest trained baselines at 8 calls, AP and ROC, three corpora): unchanged, accepted from round 1.
+- C2: "more calls are better" became "better overall, with local drops (largest HCS 3→4 calls −.009) and smaller gains after 8 calls".
+- C3: every component lowers AP or ROC by ≥ .01 when removed (14 arms); isolated in round 1: soft vs hard answers (E2, drops .016–.071 AP), fixed anchored table vs joint learning (E2), tree vs single level at the same checkpoint and calls (E3, except HCS 4–8 s windows). Training on the answers has no independent pooled effect on HCS; the backbone lowers within on HCS.
+- C4: with the same 8 answers our method has higher AP than the strongest baseline under every fusion tried (fixed; learned answers-only; joint head on the baseline's hidden features, trained on training or validation videos) on all three corpora, and higher ROC on HateMM and HCS; on DeHate ROC the fixed fusion is higher (.777 vs .770) and the learned answers-only head ties (.769).
+- C5: the budget is calibrated on validation and the deterministic rule can underspend (HateMM seed 3407, B = 7: 4.72 calls on validation); the randomized two-threshold rule gives expected validation calls = B; curves should use the realized mean calls.

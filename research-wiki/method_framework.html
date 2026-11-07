@@ -601,6 +601,7 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <dt>11-03 消融</dt><dd>第 6 版三语料 × 3 seed、14 个臂全部跑完，全部部件有用（方法不变）</dd>
     <dt>11-08 审稿 1</dt><dd>GPT 6 Astra 第 1 轮补 E1–E4（学习式融合对照、软 vs 硬答案、全树 vs 单层、预算核查）；单调性表述更正为"总体上升、有局部回落"（方法不变）</dd>
     <dt>11-08 审稿 2</dt><dd>补 E1b（baseline 隐特征 + 回答联合融合头，含 validation 上训练的版本）；更正预算对照的指标变化上界与 HCS DSANet 固定融合行（方法不变）</dd>
+    <dt>11-08 审稿 3</dt><dd>GPT 6 Astra 7/10、almost，不再需要补实验，审稿循环结束（方法不变）</dd>
     <dt>未采用</dt><dd>inside–outside 新骨干（<code>20261001</code>）、尺度感知跨模态注意力（<code>20261031_scale_aware_cma</code>），都没超过 r5；每视频回答偏移（11-01，HateMM、HateClipSeg AP 随调用下降）；第 7 版"先验加标签项"（11-02，代码审查发现该项已存在，撤回）</dd>
   </dl>
 </section>

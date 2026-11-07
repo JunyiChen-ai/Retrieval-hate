@@ -1,6 +1,6 @@
 # 当前研究状态
 
-截至 **2026-11-08**（GPT 6 Astra 外部审稿第 2 轮对照实验完成；当前方法沿用11-03已接受的r6）。2026-10-31 时：上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
+截至 **2026-11-08**（GPT 6 Astra 外部审稿三轮结束，第 3 轮无需再补实验；当前方法沿用11-03已接受的r6）。2026-10-31 时：上一任务“三个数据集上跑一遍最新完整的给我汇报”已完成；随后按用户“接着去做你觉得有用的实验”补做两项诊断（全trial按设置选模型、预算曲线），**已完成**并回传本机。依据代码 `experiments/20261002_complete_io_method/`（含 `audit_dehate.py`、`select_by_setting.py`、`budget_curve.py`）、共享 `src/qtl/`，以及本机 `runs/20261002_complete_io_method/` 下统一评测与审计。[上一轮backbone收尾状态](../archive/research-wiki/STATUS_20261002_backbone_closed.md)已归档。
 
 ## 当前目标与结论
 
@@ -17,6 +17,7 @@
 - 外部审稿（用户 11-08：GPT 6 Astra 作审稿人提要补的实验，最多 3 轮，test 选 trial 不在范围内；记录 [20261108_astra_review/README.md](../experiments/20261108_astra_review/README.md)）。第 1 轮 5/10、not ready，补 E1–E4：
   - E1 最强 baseline + 同 8 个回答的学习式融合（validation 选超参）：本方法 AP 高 .040 / .128 / .047，ROC 高 .013 / .134 / .001（DeHate ROC 持平；旧固定融合 DeHate ROC .777 仍高于本方法 .770）。
   - 第 2 轮 6/10、not ready，只要一个实验 E1b：baseline 冻结后的逐秒隐特征 + baseline 分数 + 8 个回答一起训练融合头（损失在融合输出上）。本方法高 AP .090 / .137–.139 / .091、ROC .063 / .144 / .059（HateMM / HCS / DeHate）；换成在 validation 视频上训练（baseline 在那里不是训练内样本）仍高 AP .098 / .113–.165 / .095、ROC .053 / .118–.188 / .028。另两条是文字修正：E4 指标变化上界、HCS DSANet 固定融合改读官方 score_mlp 分支（.595 / .572，结论不变）。
+  - 第 3 轮（最后一轮）7/10、almost，`NO_MORE_EXPERIMENTS`：第 2 轮三条都已解决，E1b 无实现错误或 test 泄漏；剩一条文字修正（E1b 较差"由于融合头过度依赖 baseline"只是相容的解释，未被单独验证，已改）。循环结束；方法未改，claim 的收窄见记录末节"Outcome of the loop"。
   - E2 软答案 vs 硬是/否（同一答案切 2 档）：去掉软档后 AP 降 .016–.071、ROC 降 .024–.050，三语料都有用；只拿答案训练网络在 HCS 上无可测效果（−.001 / −.004）。
   - E3 同 checkpoint、同调用次数下全树 vs 单层：AP 或 ROC 高 ≥ .01，HCS 4–8 秒层除外（+.006 / −.002）；within 不比单层高。
   - E4 预算：确定性阈值有时达不到预算（HateMM seed 3407 B=7 只用 4.72–5.46 次），改用两阈值随机化后 validation 期望次数 = B；指标变化多数 ≤ .002，最大为 HateMM seed 3407 B=7（validation 选 trial）AP +.005、ROC +.0075，三 seed 均值 ≤ .004（第 2 轮审稿更正）。曲线横轴用实际平均调用次数。来源 `runs/20261108_astra_review/`、`runs/20261101_r6_length_table/arms/`。
