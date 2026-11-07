@@ -27,6 +27,13 @@ otherwise 8 random answered nodes of the full cached tree. Validation and test: 
 (exactly the answers our method used at 8 calls). Selection: learning rate in {1e-3, 3e-3}, epoch and alpha by validation
 (pooled AP + pooled ROC) / 2 (validation labels, no gradient). Test scored once per variant by the unified evaluator.
 Rule-10 developmental evidence; the baseline is not retrained.
+
+Variant "hid" (review round 2, E1b; GPT 6 Astra: the fusion must learn from the baseline and the answers jointly):
+the head's input adds the frozen baseline's per-second hidden features (the input of its final per-second
+classification layer, baseline_infer.py --hidden; standardized per dimension with the training-split mean and standard
+deviation, then a linear map to 32 dimensions) and the baseline logit z_t / 5; the output IS the fused score
+(f_t = h_t, alpha fixed at 0) and the MIL loss is on it. Same answers, node sampling, learning rates, epochs and
+validation selection as the other variants. Written to its own --out-root (runs/20261108_astra_review/e1b).
 """
 import argparse
 from datetime import datetime
@@ -72,16 +79,41 @@ def fit_len(x, T):
     return np.concatenate([x[:n], np.full(T - n, x[n - 1] if n else 0.5)])
 
 
+def load_hidden(root, method, corpus, seed, ids, T):
+    """Variant "hid": per-second baseline hidden features on our grid (rows cut or the last row repeated, as fit_len;
+    a video the baseline did not score gets zeros), standardized with the training split's mean and standard
+    deviation. Returns {video id: tensor (T, D)} over all splits and the number of missing videos per split."""
+    raw, missing = {}, {}
+    for s in ("train", "val", "test"):
+        z = np.load(root / method / corpus / f"seed_{seed}" / f"{s}_hidden.npz")
+        missing[s] = sum(v not in z.files for v in ids[s])
+        for v in ids[s]:
+            if v in z.files:
+                x = z[v].astype(np.float32)
+                n = min(len(x), T[v])
+                raw[v] = np.concatenate([x[:n], np.repeat(x[n - 1:n], T[v] - n, 0)]) if n else None
+            else:
+                raw[v] = None
+    tr = np.concatenate([raw[v] for v in ids["train"] if raw[v] is not None])
+    mu, sd = tr.mean(0), tr.std(0) + 1e-6
+    D = tr.shape[1]
+    out = {v: torch.as_tensor((x - mu) / sd if x is not None else np.zeros((T[v], D), np.float32),
+                              dtype=torch.float32) for v, x in raw.items()}
+    return out, missing
+
+
 class Head(nn.Module):
-    def __init__(self, feat_dim):
+    def __init__(self, feat_dim, use_z=False):
         super().__init__()
+        self.use_z = use_z
         self.tok = nn.Sequential(nn.Linear(4, 32), nn.ReLU(), nn.Linear(32, 32), nn.ReLU())
         self.proj = nn.Linear(feat_dim, 32) if feat_dim else None
-        self.out = nn.Sequential(nn.Linear(32 + 32 + 1 + 3 + (32 if feat_dim else 0), 64), nn.ReLU(),
+        self.out = nn.Sequential(nn.Linear(32 + 32 + 1 + 3 + (32 if feat_dim else 0) + int(use_z), 64), nn.ReLU(),
                                  nn.Linear(64, 1))
 
     def forward(self, item):
-        """h_t. item: z (T,) (not used by h), pairs (P, 2) [second, token index], tok (N, 4), ctx (3,), feat."""
+        """h_t. item: z (T,) (an input only if use_z, variant "hid"), pairs (P, 2) [second, token index], tok (N, 4),
+        ctx (3,), feat."""
         z, pairs, tok, ctx, feat = item
         T = z.shape[0]
         s = torch.zeros(T, 32)
@@ -95,6 +127,8 @@ class Head(nn.Module):
         x = [s, m, cnt / K_ASK, ctx[None].expand(T, 3)]
         if self.proj is not None:
             x.append(self.proj(feat))
+        if self.use_z:
+            x.append(z[:, None] / 5.0)
         return self.out(torch.cat(x, 1)).squeeze(1)
 
 
@@ -137,7 +171,8 @@ def main():
     ap.add_argument("--variants", nargs="+", default=["nofeat", "feat"])
     ap.add_argument("--seeds", nargs="+", type=int, default=list(SEEDS), help="seeds this process trains")
     ap.add_argument("--threads", type=int, default=4)
-    ap.add_argument("--baseline-root", default="runs/20261108_astra_review/baseline_scores")
+    ap.add_argument("--baseline-root", default="runs/20261108_astra_review/baseline_scores",
+                    help="scores <split>.jsonl and, for variant hid, <split>_hidden.npz")
     ap.add_argument("--ours", default="runs/20261101_r6_length_table/final_curves/test_selected")
     ap.add_argument("--out-root", default="runs/20261108_astra_review/e1")
     a = ap.parse_args()
@@ -150,7 +185,6 @@ def main():
     if "feat" in a.variants:
         for v in store.T:
             feats[v] = torch.as_tensor(np.concatenate([store.visual(v, 0), store.at[v]], 1), dtype=torch.float32)
-    feat_dim = next(iter(feats.values())).shape[1] if feats else 0
     ours = json.loads((ROOT / a.ours / a.corpus / "summary.json").read_text())["trials"]
     out_dir = (ROOT / a.out_root / a.corpus / a.method).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -164,22 +198,26 @@ def main():
         z = {s: {v: logit(fit_len(base[s].get(v, np.full(store.T[v], 0.5)), store.T[v])) for v in ids[s]}
              for s in base}
         missing = {s: sum(v not in base[s] for v in ids[s]) for s in base}
+        hfeat, hmiss = load_hidden(ROOT / a.baseline_root, a.method, a.corpus, seed, ids, store.T) \
+            if "hid" in a.variants else ({}, None)
         fixed = {s: {v: asked_nodes(runs[s][v], store.T[v], P[v]) for v in ids[s]} for s in ("val", "test")}
         pol_train = {v: asked_nodes(runs["train"][v], store.T[v], P[v]) for v in ids["train"]}
         pool = {v: [(x, y, float(p)) for (x, y), p in P[v].items() if p is not None] for v in ids["train"]}
         name = next(n for n, r in ours.items() if int(r["seed"]) == seed)
         assert Path(rp["trial"]).resolve() == Path(ours[name]["trial"]).resolve(), (rp["trial"], ours[name]["trial"])
-        row = {"replay": str(rd), "baseline_missing": missing, "ours_trial": name,
+        row = {"replay": str(rd), "baseline_missing": missing, "hidden_missing": hmiss, "ours_trial": name,
                "ours_fixed8": {m: ours[name]["fixed"]["8"][m] for m in METS}, "variants": {}}
         for var in a.variants:
-            fd = feat_dim if var == "feat" else 0
-            ev = {s: {v: build_item(store.T[v], z[s][v], fixed[s][v], feats.get(v) if fd else None) for v in ids[s]}
+            vf = feats if var == "feat" else hfeat if var == "hid" else {}
+            fd = next(iter(vf.values())).shape[1] if vf else 0
+            alphas = (0.0,) if var == "hid" else ALPHAS
+            ev = {s: {v: build_item(store.T[v], z[s][v], fixed[s][v], vf.get(v)) for v in ids[s]}
                   for s in ("val", "test")}
             best = None
             for lr in LRS:
                 torch.manual_seed(seed)
                 rng = np.random.default_rng(seed)
-                head = Head(fd)
+                head = Head(fd, use_z=var == "hid")
                 opt = torch.optim.AdamW(head.parameters(), lr=lr, weight_decay=1e-4)
                 tr_ids = list(ids["train"])
                 for ep in range(1, EPOCHS + 1):
@@ -193,7 +231,7 @@ def main():
                             else:
                                 pick = rng.choice(len(pool[v]), size=min(K_ASK, len(pool[v])), replace=False)
                                 nodes = [pool[v][j] for j in pick]
-                            f = head(build_item(store.T[v], z["train"][v], nodes, feats.get(v) if fd else None))
+                            f = head(build_item(store.T[v], z["train"][v], nodes, vf.get(v)))
                             k = store.T[v] // 16 + 1
                             vs = f.topk(min(k, len(f))).values.mean()
                             loss = loss + nn.functional.binary_cross_entropy_with_logits(
@@ -204,7 +242,7 @@ def main():
                     head.eval()
                     with torch.no_grad():
                         hv = {v: head(ev["val"][v]).numpy() for v in ids["val"]}
-                    for al in ALPHAS:
+                    for al in alphas:
                         sc = {v: 1.0 / (1.0 + np.exp(-(al * z["val"][v] + hv[v]))) for v in ids["val"]}
                         m = hc.frame_metrics(sc, gt["val"], hate["val"])
                         obj = (m["pooled_ap"] + m["pooled_roc"]) / 2
@@ -214,7 +252,7 @@ def main():
                                     "state": {k_: t.clone() for k_, t in head.state_dict().items()}}
                 print(datetime.now().astimezone().isoformat(), a.corpus, a.method, seed, var, "lr", lr,
                       "best so far", best["lr"], best["epoch"], best["alpha"], round(best["val_obj"], 4), flush=True)
-            head = Head(fd)
+            head = Head(fd, use_z=var == "hid")
             head.load_state_dict(best.pop("state"))
             head.eval()
             with torch.no_grad():

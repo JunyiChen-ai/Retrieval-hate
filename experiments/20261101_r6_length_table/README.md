@@ -104,10 +104,10 @@ DeHate：
 |---|---|---|---|---|
 | HateMM（MACIL-SD） | .573 / .807 / .595 | .495 / .797 / .619 | .643 / .861 / .647（α .7） | .702 / .889 / .783 |
 | HCS（Fed-WSVAD 3） | .562 / .509 / .510 | .587 / .575 / .513 | .587 / .575 / .513（α 0） | .692 / .680 / .563 |
-| HCS（DSANet） | .561 / .528 / .555 | 同上 | .599 / .568 / .547（α .4） | 同上 |
+| HCS（DSANet，官方 score_mlp 分支，11-08 重算） | .553 / .528 / .545 | 同上 | .595 / .572 / .539（α .3） | 同上 |
 | DeHate（Fed-WSVAD 3） | .174 / .701 / .508 | .190 / .732 / .583 | .248 / .777 / .586（α .4） | .278 / .770 / .681 |
 
-给最强 baseline 同样的 8 个回答：HateMM 仍比本方法低 AP .059、ROC .028；HCS 低 AP .093、ROC .105（DSANet）；DeHate 低 AP .030，ROC 高 .007（.777 对 .770），within 低 .095。
+给最强 baseline 同样的 8 个回答：HateMM 仍比本方法低 AP .059、ROC .028；HCS 低 AP .097、ROC .108（DSANet）；DeHate 低 AP .030，ROC 高 .007（.777 对 .770），within 低 .095。HCS DSANet 行原用 `score_align` 分支（.561 / .528 / .555，融合 .599 / .568 / .547），不是官方表的分支；11-08 外部审稿第 2 轮指出后改读 `score_mlp` 重算（`runs/20261108_astra_review/fixed_fusion_mlp/hateclipseg_r6_mlp_k8.json`），结论不变。学习式融合对照（E1、E1b）见 `experiments/20261108_astra_review/README.md`。
 
 ### 消融与对照（P6 / P8，规则 14(g)；`launch/sbatch_arms.sh`，每个臂 = 该 seed 规则 7 最优 trial 的超参 + 一处改动，训练一次；`arms_table.py`；`runs/20261101_r6_length_table/arms/<corpus>/seed<s>/<arm>/summary.json`）
 
