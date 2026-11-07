@@ -36,7 +36,10 @@ def baseline_scores(corpus, method, seed):
     out = {}
     for line in open(root / method / corpus / f"seed_{seed}" / "scores.jsonl"):
         r = json.loads(line)
-        out[r["video_id"]] = np.asarray(r.get("score_av", r.get("score_align")), dtype=np.float64)
+        # DSANet: score_mlp, the branch of the official table (scripts/reproduction_baselines/aggregate_official_val.py);
+        # runs before 2026-11-08 read score_align here (review round 2, experiments/20261108_astra_review/README.md)
+        key = "score_mlp" if method == "dsanet" else ("score_av" if "score_av" in r else "score_align")
+        out[r["video_id"]] = np.asarray(r[key], dtype=np.float64)
     return out
 
 
