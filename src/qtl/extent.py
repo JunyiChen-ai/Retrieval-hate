@@ -222,6 +222,16 @@ def up(forest, s, g, A4, chain, phi=None):
     return g + v1 - v1_prior, lp0
 
 
+def log_evidence(forest, s, g, A4, chain, phi=None):
+    """Training quantities per video, as ctree.log_evidence: log P(Y = 1 | x), log P(Y = 0 | x) (no answers) and
+    log P(o | Y = 1, x), log P(o | Y = 0, x)."""
+    zero = torch.zeros_like(A4)
+    w1n, w0n = up(forest, s, g, zero, chain, phi=phi)
+    w1a, w0a = up(forest, s, g, A4, chain, phi=phi)
+    logZ = torch.logaddexp(w1n, w0n)
+    return w1n - logZ, w0n - logZ, w1a - w1n, w0a - w0n
+
+
 def marginals(forest, s, g, A4, chain, phi=None):
     """p_G (B,), P(e_n = some | G = 1, o) and P(e_n = all | G = 1, o) (N,) each, second posteriors
     p (B, Tmax) = P(G = 1 | o) P(y_t = 1 | G = 1, o). No gradient to the caller."""
