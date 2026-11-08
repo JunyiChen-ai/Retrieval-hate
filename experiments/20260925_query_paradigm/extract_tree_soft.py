@@ -16,6 +16,9 @@ Output: data/vlm_tree/<Corpus>/soft_<view>_<prompt>[.shard<i>of<n>].jsonl, one l
     {"id", "split", "T", "view", "prompt", "nodes": [[a, b, [p_yes, mass_yes, mass_no] or null, top_token], ...]}
     --prompt p5 (five categories, expected levels): soft5_<view>_p5[.shard].jsonl, node answer =
     [[E_1..E_5], [[p0..p3] x 5]] with E_k the expected level 0-3 of category k (k = 1 the per-dataset definition).
+    --prompt p3 (experiments/20261109_tree_within, extent question): No / Some / All of the node holds the harmful
+    content; ext_<view>_p3[.shard].jsonl, node answer = [p_no, p_some, p_all, mass_no, mass_some, mass_all] (first-token
+    masses of the three words among the top-k, the p renormalised over the three).
 Resumes: videos already in the output file are skipped. --limit N (functional check of the parsing only) stops after N videos.
 """
 from __future__ import annotations
@@ -103,6 +106,13 @@ USER_BOTH = "Transcript of this part: \"{asr}\"\n\nDoes this part contain {name}
 USER_FRAMES = "Does this part contain {name} as defined above? Answer Yes or No."
 USER_TEXT = "Transcript of this part: \"{asr}\"\n\nDoes this part contain {name} as defined above? Answer Yes or No."
 NO_SPEECH = "(no speech in this part)"
+# Extent question (experiments/20261109_tree_within): besides whether the part holds the content, whether it fills the
+# whole part; with the tree, a coarse node answered "All" or "No" settles all of its seconds in one call.
+EXTENT = ("Does this part contain {name} as defined above? Answer with one word: No if no part of it does, Some if "
+          "only some of it does, All if all of it does, from its start to its end.")
+USER3_BOTH = "Transcript of this part: \"{asr}\"\n\n" + EXTENT
+USER3_FRAMES = EXTENT
+USER3_TEXT = USER3_BOTH
 
 # README 17.1 variant "five categories, soft": the revision-4 five-category rating (extract_tree_answers.py taxonomy),
 # category 1 replaced by the per-dataset definition; per category the expected level 0-3 from the first-token
@@ -168,6 +178,20 @@ def yes_no_mass(top):
     return my, mn
 
 
+def extent_mass(top):
+    """Probability mass on No-, Some- and All-like tokens among the top-k first-token log-probabilities."""
+    m = [0.0, 0.0, 0.0]
+    for lp in top.values():
+        tok = (lp.decoded_token or "").strip().lower()
+        if tok == "none" or (tok.startswith("no") and not tok.startswith("not") and not tok.startswith("non")):
+            m[0] += math.exp(lp.logprob)
+        elif tok.startswith("some"):
+            m[1] += math.exp(lp.logprob)
+        elif tok.startswith("all"):
+            m[2] += math.exp(lp.logprob)
+    return m
+
+
 def smart_size(h, w, factor=28, max_pixels=MAX_PIXELS, min_pixels=56 * 56):
     hb, wb = max(factor, round(h / factor) * factor), max(factor, round(w / factor) * factor)
     if hb * wb > max_pixels:
@@ -195,8 +219,9 @@ def main():
     ap.add_argument("--gpu-mem", type=float, default=0.85)
     ap.add_argument("--max-model-len", type=int, default=8192)
     ap.add_argument("--topk", type=int, default=20)
-    ap.add_argument("--prompt", default="p1", choices=("p1", "p5"),
-                    help="p1 = one Yes/No question (README 17.1); p5 = five categories, expected level each (variant)")
+    ap.add_argument("--prompt", default="p1", choices=("p1", "p5", "p3"),
+                    help="p1 = one Yes/No question (README 17.1); p5 = five categories, expected level each (variant); "
+                         "p3 = No / Some / All extent question (experiments/20261109_tree_within)")
     ap.add_argument("--shard", default="0/1", help="i/n: this process takes videos with index %% n == i")
     ap.add_argument("--manifest", default="manifest_words.jsonl")
     ap.add_argument("--limit", type=int, default=0, help="functional check: stop after this many videos")
@@ -207,7 +232,7 @@ def main():
     d = CORPUS_DIR[a.corpus]
     base = os.path.join(ROOT, "data", "vlm_tree", d)
     si, sn = (int(x) for x in a.shard.split("/"))
-    prefix = ("soft_%s_%s" if a.prompt == "p1" else "soft5_%s_%s") % (a.view, a.prompt)
+    prefix = {"p1": "soft_%s_%s", "p5": "soft5_%s_%s", "p3": "ext_%s_%s"}[a.prompt] % (a.view, a.prompt)
     out_path = os.path.join(base, "%s%s.jsonl" % (prefix, "" if sn == 1 else ".shard%dof%d" % (si, sn)))
     done = set()
     if os.path.exists(out_path):
@@ -227,7 +252,7 @@ def main():
     if not todo:
         return
     D = DEFINITIONS[a.corpus]
-    system = (SYSTEM_TEMPLATE if a.prompt == "p1" else SYSTEM5_TEMPLATE).format(
+    system = (SYSTEM5_TEMPLATE if a.prompt == "p5" else SYSTEM_TEMPLATE).format(
         platform=D["platform"], name=D["name"], text=D.get("hate5", D["text"]) if a.prompt == "p5" else D["text"],
         inputs=INPUTS[a.view])
     proc = AutoProcessor.from_pretrained(a.model)
@@ -238,7 +263,7 @@ def main():
     assert template.count("{USER}") == 1 and (("<|video_pad|>" in template) == (a.view != "text"))
     llm = LLM(model=a.model, gpu_memory_utilization=a.gpu_mem, max_model_len=a.max_model_len,
               limit_mm_per_prompt={"image": 0, "video": 1 if a.view != "text" else 0}, seed=0)
-    sp = SamplingParams(temperature=0.0, max_tokens=1 if a.prompt == "p1" else MAX_TOKENS5, logprobs=a.topk)
+    sp = SamplingParams(temperature=0.0, max_tokens=MAX_TOKENS5 if a.prompt == "p5" else 1, logprobs=a.topk)
     pool = ThreadPoolExecutor(16)
     t0, n_calls, n_fail = time.time(), 0, 0
     with open(out_path, "a") as fh:
@@ -256,8 +281,8 @@ def main():
             frames = list(pool.map(lambda j: load_frames(j[3], j[4]), jobs)) if a.view != "text" else [None] * len(jobs)
             for j, f in zip(jobs, frames):
                 asr = j[5].replace('"', "'")
-                ub, uf, ut = ((USER_BOTH, USER_FRAMES, USER_TEXT) if a.prompt == "p1"
-                              else (USER5_BOTH, USER5_FRAMES, USER5_TEXT))
+                ub, uf, ut = {"p1": (USER_BOTH, USER_FRAMES, USER_TEXT), "p5": (USER5_BOTH, USER5_FRAMES, USER5_TEXT),
+                              "p3": (USER3_BOTH, USER3_FRAMES, USER3_TEXT)}[a.prompt]
                 if a.view == "both":
                     user = ub.format(asr=asr, name=D["name"])
                 elif a.view == "frames":
@@ -276,6 +301,11 @@ def main():
                     top = out0.logprobs[0] if out0.logprobs else {}
                     my, mn = yes_no_mass(top)
                     ans = None if my + mn <= 0 else [round(my / (my + mn), 6), round(my, 6), round(mn, 6)]
+                elif a.prompt == "p3":       # [p_no, p_some, p_all, mass_no, mass_some, mass_all]
+                    top = out0.logprobs[0] if out0.logprobs else {}
+                    m3 = extent_mass(top)
+                    z = sum(m3)
+                    ans = None if z <= 0 else [round(x / z, 6) for x in m3] + [round(x, 6) for x in m3]
                 else:                        # p5: [[E_1..E_5], [[p0..p3] x 5]]
                     dd = digit_dists(out0.logprobs or [])
                     ans = None if dd is None else [[e for e, _ in dd], [pv for _, pv in dd]]
