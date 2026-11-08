@@ -249,6 +249,19 @@ Even when the answers follow the answer model exactly, EIG on the tree loses wit
 (dependence, table errors) explains little; what remains is the question-selection objective (and the prior it is
 computed under).
 
+Policy variants on the same drawn answers (tree - level within L4 / L8 / L16; levels re-run with the same policy):
+
+| | HateMM | HCS | DeHate |
+|---|---|---|---|
+| EIG (method) | +.006 / -.010 / -.022 | +.001 / +.007 / +.012 | +.007 / .000 / -.010 |
+| EIG, flat location prior (`flatpol`) | -.005 / -.006 / -.023 | .000 / +.002 / +.010 | +.012 / +.002 / -.003 |
+| I(o; y \| G = 1), flat location prior | -.001 / -.003 / -.014 | +.008 / +.008 / +.016 | +.008 / -.002 / -.007 |
+| EIG, no parent / child of an asked node | +.016 / -.006 / -.013 | +.005 / +.011 / +.016 | +.007 / +.004 / -.006 |
+
+With answers that follow the model, no EIG-type policy reaches the 16-33 s level on HateMM (k_v = 5.0 calls on
+average, the level asks its complete partition). At that budget a complete partition is very hard to beat on within:
+any coarser or nested question leaves part of the video at the prior.
+
 ## 5. Proposal review
 
 One independent agent (Claude Fable 5.1), 2026-11-09: **PASS** (rule 4: none of the four STOP conditions). Searches
