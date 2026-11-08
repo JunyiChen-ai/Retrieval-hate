@@ -61,8 +61,15 @@ def main():
     ap.add_argument("--levels", nargs="+", type=int, default=[4, 8, 16])
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--out-root", default="runs/20261109_tree_within/stage_a")
+    ap.add_argument("--bias", choices=("video_tree", "video", "tree", "none"), default="video_tree",
+                    help="parts of the answer bias (diagnostic arms: video only, tree only, none = independent "
+                         "ordered-logit answers)")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
+    if a.bias in ("video", "none"):              # no tree part: one grid point at 0
+        hmt.K_H, hmt.Z_H = 1, np.zeros(1)
+    if a.bias in ("tree", "none"):               # no video part
+        hmt.K_V, hmt.Z_V = 1, np.zeros(1)
     root = ROOT / a.out_root / a.corpus
     root.mkdir(parents=True, exist_ok=True)
     (root / "run.pid").write_text(str(os.getpid()))

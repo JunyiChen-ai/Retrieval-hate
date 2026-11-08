@@ -108,6 +108,43 @@ with the zero-inflated chain over seconds and the any-hate node states. Proposal
   corpora (3-seed means), and full tree AP or ROC still >= .01 above each single level; (2) fixed 8 calls: AP and ROC
   not below revision 6 by more than .005 (3-seed means) on any corpus, within not below revision 6.
 
+## 6. Stage A results and further diagnostics (2026-11-09)
+
+All on the revision-6 test-selected checkpoints, test split, 3-seed means; "tree - level" = full tree minus single
+level at the E3 matched calls (AP / ROC / within); "fixed 8" against the revision-6 method.
+
+**HMT version 1 (tilted multinomial table, one tree bias)** (`runs/20261109_tree_within/stage_a_v1_tilt/`): fit
+rho .88 / .92, bias sd 7.3 / 7.9 (HateMM / HCS). Fixed 8 vs revision 6: HateMM -.049 / -.020 / -.012, HCS -.024 /
+-.028 / +.003. Tree - level within at L16: HateMM -.024, HCS -.003. Rejected. Fit check (`diag_hmt_fit_check.py`,
+answer-level correlation of node pairs in negative training videos by tree distance 1 / 2 / 3 / 4 / >= 5):
+HateMM data .77 / .62 / .49 / .48 / .43, model .56 / .45 / .42 / .39 / .23 - the tilt cannot make a mid-range level
+likely for a given bias.
+
+**HMT version 2 (ordered logit, one tree bias)** (`stage_a_v2_ordinal/`): fixed 8 vs revision 6: HateMM -.030 /
+-.011 / -.024, HCS -.034 / -.036 / +.004; share of nested asks HateMM .74 (revision 6 about .6), HCS .51 (.29).
+Without a video-wide part, a node far from the asked ones has an unknown bias (sd ~5 logits), so its answer looks
+unreliable and the policy prefers nested nodes whose bias the parent already pins down. Fit check: the model has no
+floor at large distance (HCS data .58 at distance >= 5, model .13). Rejected.
+
+**Why the tree asks coarse nodes** (`runs_L0.pkl`): on positive test videos with both classes the posterior
+P(G = 1) stays at .72-.75 (HateMM) and about .7 (DeHate) after 8 calls, so EIG = I(o; G) + P(G = 1) I(o; y | G = 1)
+keeps spending on the video decision; within depends only on P(y | G = 1, answers).
+
+**Two more policy diagnostics** (`diag_policy_variants.py`, revision-6 model; tree - level, AP / ROC / within):
+
+| | HateMM L4 / L8 / L16 within | HCS L4 / L8 / L16 within | DeHate L4 / L8 / L16 within | fixed 8 vs method (HateMM; HCS; DeHate) |
+|---|---|---|---|---|
+| method | +.005 / -.020 / -.028 | -.004 / -.006 / -.004 | +.003 / -.001 / -.010 | |
+| no parent / child of an asked node (`noadj`) | +.023 / -.002 / -.012 | .000 / -.002 / .000 | +.005 / .000 / -.007 | -.005 / -.001 / +.016; -.002 / +.002 / +.004; -.005 / -.006 / .000 |
+| I(o; y \| G = 1) only (`eigloc`) | +.011 / -.025 / -.029 | -.006 / -.008 / -.006 | +.005 / +.004 / -.003 | -.011 / -.018 / +.007; -.008 / -.016 / -.002; -.030 / -.015 / +.002 |
+
+`noadj` keeps AP / ROC above every level (+.003 to +.027) and lifts within, but HateMM L16 stays -.012: avoiding
+immediately nested questions is most of the effect; dropping the information about G is not.
+
+**HMT version 3 (bias = video part + tree part)**: fit HateMM rho .62, sigma_v 6.3, sigma_h 4.7; HCS .59 / 4.5 / 5.4;
+DeHate .57 / 3.3 / 4.8. Fit check HateMM: model .80 / .70 / .65 / .62 / .59 against data .77 / .62 / .49 / .48 / .43
+(decay and floor present, floor too high). Stage A: (running)
+
 ## 5. Proposal review
 
 One independent agent (Claude Fable 5.1), 2026-11-09: **PASS** (rule 4: none of the four STOP conditions). Searches
