@@ -262,6 +262,98 @@ With answers that follow the model, no EIG-type policy reaches the 16-33 s level
 average, the level asks its complete partition). At that budget a complete partition is very hard to beat on within:
 any coarser or nested question leaves part of the video at the prior.
 
+**Expected ranking gain instead of EIG** (`spread`: cpolicy._expected_spread_gain, the expected increase of
+sum |q_i - q_j| over pairs of videos on P(G = 1) and over pairs of seconds inside the video on P(y | G = 1); single
+levels re-run with the same objective; `policy_variants_spread{,_flatpol}/<corpus>/summary.json`; real answers;
+tree - level AP / ROC / within at L4 | L8 | L16; fixed 8 vs method):
+
+| | L4 | L8 | L16 | fixed 8 vs method |
+|---|---|---|---|---|
+| HateMM spread | +.021 / +.027 / +.022 | +.015 / +.018 / -.008 | +.009 / +.015 / -.018 | -.005 / -.001 / +.012 |
+| HateMM spread_flatpol | +.021 / +.033 / +.010 | +.012 / +.017 / -.003 | +.013 / +.013 / -.009 | -.009 / -.007 / +.010 |
+| HCS spread | -.013 / -.027 / -.017 | -.003 / -.013 / -.007 | +.011 / +.004 / -.001 | -.022 / -.017 / +.004 |
+| HCS spread_flatpol | -.018 / -.029 / -.008 | -.008 / -.012 / -.009 | +.003 / -.004 / -.010 | -.029 / -.021 / +.004 |
+| DeHate spread | +.030 / +.032 / +.001 | +.020 / +.023 / -.003 | .000 / +.013 / -.011 | +.003 / -.002 / -.002 |
+| DeHate spread_flatpol | +.018 / +.033 / +.002 | +.010 / +.025 / +.002 | -.006 / +.014 / -.007 | -.003 / +.001 / .000 |
+
+A ranking objective narrows the HateMM gap (L16 -.028 to -.009) but does not close it, and loses AP on HCS
+(-.022 / -.029 at fixed 8). Rejected.
+
+**Budget-aware tree: an exact cover of the video** (`diag_budget_cover.py`, `budget_cover/<corpus>/summary_<variant>.json`;
+cpolicy `cover=`, `budgets=`). E3 reads one anytime run after k_v calls; here the tree is told B_v = k_v and its first
+B_v questions must be disjoint tree nodes of any sizes that together cover the whole video (the level's partition is
+one allowed cover), chosen by EIG; `cover_root` asks the root first and covers with B_v - 1 nodes; `cover_flatpol`
+chooses under the flat location prior. Real answers; tree - level AP / ROC / within at L4 | L8 | L16 against the
+revision-6 single levels; "same" = share of videos whose cover is exactly the level's partition (L16):
+
+| | L4 | L8 | L16 | same |
+|---|---|---|---|---|
+| HateMM cover | -.010 / +.010 / +.009 | -.004 / +.005 / -.011 | +.003 / +.004 / -.014 | .34 |
+| HateMM cover_root | -.003 / +.019 / +.008 | +.003 / +.015 / -.011 | +.002 / +.011 / -.015 | .18 |
+| HateMM cover_flatpol | -.015 / +.007 / +.015 | -.009 / +.003 / -.001 | -.002 / +.002 / -.004 | .37 |
+| HCS cover | -.009 / -.015 / -.004 | +.007 / -.004 / -.006 | +.014 / +.003 / -.004 | 0 |
+| HCS cover_root | -.014 / -.014 / +.001 | +.002 / -.003 / -.001 | +.009 / +.004 / +.001 | 0 |
+| HCS cover_flatpol | -.013 / -.013 / .000 | +.003 / -.003 / -.001 | +.010 / +.004 / .000 | .04 |
+| DeHate cover | +.009 / +.013 / +.001 | +.019 / +.006 / .000 | -.005 / -.002 / -.007 | .49 |
+| DeHate cover_root | +.008 / +.023 / .000 | +.015 / +.015 / .000 | -.011 / +.006 / -.012 | .29 |
+| DeHate cover_flatpol | +.009 / +.015 / +.003 | +.018 / +.008 / +.003 | -.008 / .000 / -.006 | .51 |
+
+Covering the video moves the tree toward the level on both metrics: the within gap shrinks (HateMM L16 -.028 to
+-.004 at best) and the AP / ROC margin over the level shrinks with it (+.020 / +.016 to -.002 / +.002). A cover chosen
+by EIG is worse on within than the level's equal windows (HateMM L16 -.014); under the flat location prior it is about
+equal. Using the cover only for videos the backbone already finds likely hateful (prior P(G = 1) > .5 or > .8, the
+anytime EIG run otherwise; offline mix of the two runs) gives HateMM L16 +.005 / +.012 / -.011 and +.006 / +.015 /
+-.015, DeHate L16 -.008 / +.011 / -.010: the same trade-off.
+
+Hate density of the positive test videos with both classes (GT fraction): HateMM mean .61 (median .70), HCS .59
+(.64), DeHate .40 (.25). With answers of the form "is there any hate in this window", a nested coarse window says
+little about where the hate is when most of the video is hateful; in group testing, pooled tests stop beating
+testing every item once prevalence exceeds about .38 (Ungar 1960). The largest gaps are on HateMM, the densest corpus.
+
+At the method's own budget the cover also costs AP: fixed 8 calls vs revision 6, AP / ROC / within, HateMM cover
+-.018 / -.013 / +.004, cover_root -.011 / -.003 / +.003, cover_flatpol -.023 / -.015 / +.009; HCS -.016 / -.013 /
+.000, -.020 / -.011 / +.005, -.019 / -.011 / +.004; DeHate -.009 / -.019 / -.004, -.010 / -.010 / -.003, -.009 / -.018
+/ -.001 (`fixed8` rows; an earlier version of the script reused the L8-budget run here, corrected and re-run).
+
+**Status of the tree-within goal (2026-11-09): not met.** Four answer-dependence models (HMT v1-v4) and fifteen
+question policies (EER, no nested, no parent / child, no distance <= 2, location information only, distance-weighted
+answers, softened / flat prior, flat prior for the questions only, expected ranking gain with either prior, exact
+cover, root + cover, cover under the flat prior, cover only for likely hateful videos) were tried on the revision-6
+checkpoints. Every policy that raises the tree's within to the level's lowers its AP / ROC margin over the level to
+about zero and costs AP at fixed 8 calls; in the AP-within plane the single level lies on the same line as the tree's
+policies, not below it. The questions are "is there any hate in this window"; on densely hateful videos (HateMM) the
+coarse questions that buy AP say little about where the hate is. A question whose answer carries location (for
+example which half of the window holds the hate) is the remaining change that could move the line itself; it needs
+new VLM answers for every node. Decision left to the user.
+
+## 7. Naive-question control and our model on equal windows (2026-11-09)
+
+`naive_questions.py` (`runs/20261109_tree_within/naive_questions/<corpus>.json`): the strongest baseline plus the
+soft VLM answers to windows chosen without our policy, rule-14(f) fusion (per second the answer of the shortest asked
+window covering it; sigmoid(alpha logit baseline + (1 - alpha) logit answer)); 3-seed means, AP / ROC / within.
+`diag_uniform8.py` (`uniform8/<corpus>/summary.json`): our model and tree inference with the 8 equal windows of depth 3
+as the only questions. Revision 6 at fixed 8 calls for reference.
+
+| | HateMM (MACIL-SD) | HCS (Fed-WSVAD; DSANet) | DeHate (Fed-WSVAD) |
+|---|---|---|---|
+| revision 6, 8 calls | .702 / .889 / .783 | .691 / .680 / .563 | .279 / .770 / .681 |
+| baseline alone | .573 / .807 / .595 | .562 / .509 / .510; .554 / .528 / .545 | .174 / .701 / .508 |
+| baseline + our 8 windows (best alpha on test) | .635 / .859 / .642 | .600 / .580 / .515; .608 / .581 / .540 | .240 / .778 / .590 |
+| baseline + 8 equal windows, alpha .5 | .707 / .881 / .692 (7.13 calls) | .673 / .621 / .575; .679 / .640 / .580 | .243 / .773 / .601 (6.56) |
+| 8 equal windows, best alpha on test | same (alpha .5) | .693 / .651 / .577 (alpha 0, VLM only); .696 / .653 / .577 | .243 / .777 / .601 |
+| baseline + top-8 baseline-scored 4-8 s windows | .680 / .866 / .627 | .672 / .641 / .539; .683 / .645 / .566 | .223 / .756 / .566 |
+| baseline + every 4-8 s window (calls) | .688 / .860 / .673 (24.3) | .689 / .659 / .622; .691 / .660 / .623 (43.3) | .226 / .757 / .621 (17.4) |
+| our model, 8 equal windows | .690 / .879 / .804 (7.13) | .653 / .650 / .561 | .279 / .755 / .686 (6.56) |
+
+1. The earlier fusion controls (14(f), E1, E1b) gave the baseline our policy's windows, which suit our inference
+   (nested, coarse) but not a per-second fusion: with 8 equal windows instead, the same fixed fusion gains .072 AP on
+   HateMM, .088-.093 on HCS. Against this control, revision 6 has no AP advantage on HateMM (-.005) or HCS (-.002 to
+   -.005), and +.036 on DeHate; ROC +.008 / +.027 / -.007; within +.091 / -.014 / +.080.
+2. Inside our model, the EIG tree beats the 8 equal windows on AP / ROC: HateMM +.012 / +.010, HCS +.038 / +.029,
+   DeHate .000 / +.015 (within -.022 / +.002 / -.005); the tree's question choice matters for our inference.
+3. On HCS the VLM answers alone on 8 equal windows (.693 / .651) beat our model on the same windows (.653 / .650) by
+   .040 AP: our answer model and backbone use those answers less well than averaging the raw P(Yes).
+
 ## 5. Proposal review
 
 One independent agent (Claude Fable 5.1), 2026-11-09: **PASS** (rule 4: none of the four STOP conditions). Searches
