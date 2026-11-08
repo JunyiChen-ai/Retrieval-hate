@@ -78,7 +78,8 @@ def main():
         fit = json.load(open(fit_path))
         ham = hmt.HMTAnswerModel.from_dict(fit["model"])
     else:
-        ta = [(labels[v], max(b for (_, b) in answers[v]), answers[v]) for v in ids["train"]]
+        ta = [(labels[v], max(b for (_, b) in answers[v]), answers[v]) for v in ids["train"]
+              if answers[v]]                        # videos shorter than 4 s have no question
         loglen = np.log([b - a_ for v in ids["train"] for (a_, b) in answers[v]])
         t0 = datetime.now()
         ham, info = hmt.fit_hmt(ta, float(loglen.mean()), float(loglen.std()))
