@@ -430,3 +430,49 @@ the yes / no vs extent ablation at equal calls. Wording taken: symmetric group t
 probes for temporal grounding), VADTree 2510.22693, VideoTree 2405.19209, TimeSearch 2504.01407, VideoTreeSearch
 2607.16189, Zoom-Zero 2512.14273, UniTime 2506.18883, Cuturi et al. 2020 (Bayesian sequential noisy group testing,
 2004.12508), 2007.13323 (active pooling by posterior prediction).
+
+## 10. Extent answers: the VLM does not tell All from Some (2026-11-09; Stage A not run)
+
+Answers: `extract_tree_soft.py --view both --prompt p3` (Slurm `launch/sbatch_extract_extent.sh`, job 2010 on
+uoa-lab1 = shard 0/2, job 2011 on uoa-lab3 = shard 1/2), every validation and test video of the three corpora
+(`data/vlm_tree/<C>/ext_both_p3.shard<i>of2.jsonl`, 0 unparsed answers). The answer check below ran first; it showed
+the extent answers carry no information beyond the yes / no answers, so both jobs were cancelled before the training
+split was finished (HateMM 120 training videos done, HCS / DeHate none) and Stage A was not run.
+
+Check (`diag_extent_answers.py`, `runs/20261109_tree_within/diag/extent_answers.json`, run on uoa-lab1). Nodes
+>= 4 s with both answers; state from the per-second GT; fullness = P(All) / (P(Some) + P(All)), presence = 1 - P(No).
+
+AUC of fullness for all vs some, among hateful nodes of a length bin (test; validation in brackets), and the
+correlation of fullness with the node's hate fraction:
+
+| | 4-8 s | 8-16 s | 16-32 s | 32-64 s | correlation with hate fraction |
+|---|---|---|---|---|---|
+| HateMM | .478 (.491) | .495 (.475) | .478 (.463) | .505 (.554) | -.04 to .11 |
+| HCS | .567 (.609) | .579 (.625) | .557 (.595) | .549 (.593) | .09 to .44 |
+| DeHate | .506 (.439) | .472 (.459) | .475 (.463) | .543 (.495) | -.07 to .10 |
+
+- HateMM and DeHate: no signal (AUC .44-.55 on both splits). HCS: weak (.55-.64), and HCS is the corpus where the tree
+  is already within .01 of the levels. The extent model needs All vs Some separation on dense videos (HateMM), where it
+  is absent.
+- Presence 1 - P(No) is the yes / no answer again: AUC hateful node vs the rest, test, .844 / .710 / .723 (yes / no
+  .839 / .703 / .724), validation the same within .013; inside positive videos the two are equal within .03 at every
+  length.
+- This repeats section 1 item 2 with a question that asks for the extent explicitly: the VLM's answer depends on
+  whether a window contains hate, not on how much of it does.
+
+A second finding from the same check: inside positive videos (validation + test, per video with both classes, mean
+AUC of presence for none vs hateful nodes of one length):
+
+| | 4-8 s | 8-16 s | 16-32 s | 32-64 s |
+|---|---|---|---|---|
+| HateMM | .697 (107 videos) | .758 (76) | .836 (47) | .852 (19) |
+| HCS | .655 (116) | .680 (110) | .700 (87) | .614 (50) |
+| DeHate | .657 (252) | .660 (225) | .626 (179) | .651 (110) |
+
+On HateMM, answers on short windows separate the hateful from the clean parts of a hateful video much worse than
+answers on 16-64 s windows (the video sets differ between bins, so this is indicative). On HCS and DeHate the answer
+quality is about flat in length. The deep nodes, where the tree spends its later calls, are the least reliable on the
+corpus where the tree loses within.
+
+**Status: the extent question is rejected at the answer level; the tree-within goal is still not met.** Options are
+in STATUS.md (2026-11-09).
