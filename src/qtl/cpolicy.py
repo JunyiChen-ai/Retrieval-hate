@@ -106,7 +106,7 @@ def _expected_error_reduction(asker, cand, nodes, vt, p, pG, mm, copy_pi, asked_
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
-              copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None):
+              copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -142,6 +142,8 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             if PHI is None:
                 PHI = torch.zeros(fo.N, dtype=torch.float64)
             PHI[int(fo.offs[b]):int(fo.offs[b]) + len(phi)] = torch.from_numpy(phi)
+    if prior_scale != 1.0:                       # diagnostic (experiments/20261109_tree_within): softer prior shape
+        S, PHI = S * prior_scale, None if PHI is None else PHI * prior_scale
     S, G = S.to(device), G.to(device)
     PHI = None if PHI is None else PHI.to(device)
     vts = [_vt(T) for T in Ts]

@@ -9,7 +9,10 @@ Variants of cpolicy.run_batch (the method = order "eig", every node askable):
            I(o_n; G, y) (which adds the information about G itself);
   distw    EIG and the posterior with each answer weighted by w(d) = 1 - r(d)^2, d = tree distance to the nearest
            already asked node, r(d) = correlation of the answer levels of two nodes at distance d in the negative
-           training videos (d >= 5 pooled); the first answer has weight 1.
+           training videos (d >= 5 pooled); the first answer has weight 1;
+  halfprior  EIG, with the prior's per-second logits s_t and node potentials phi_n halved (video logit g unchanged):
+           tests whether the over-confident prior shape keeps the policy from covering the video. Not a method.
+The single-level comparison of halfprior re-runs the single levels with the same halved prior (runs_<variant>_L<L>).
 Per trial and level L (4 / 8 / 16): each variant is read after the E3 matched calls k_v = min(8, nodes at depth L)
 (from experiments/20261108_astra_review replays runs_L<L>.pkl) and compared with the method (runs_L0.pkl) and the
 single level at the same k_v; also at fixed 8 calls. AP / ROC / within by the unified evaluator.
@@ -68,7 +71,7 @@ def corr_by_distance(answers, labels, train_ids, dmax=5, seed=0):
     return {d: float(np.corrcoef(np.array(x).T)[0, 1]) for d, x in acc.items()}
 
 
-def replay(variant, model, store, vids, am, chain, answers, cfg, dist_weight=None):
+def replay(variant, model, store, vids, am, chain, answers, cfg, dist_weight=None, level=0):
     runs = {}
     vids = sorted(vids, key=lambda v: store.T[v])
     for i in range(0, len(vids), int(cfg["eval_chunk"])):
@@ -77,7 +80,10 @@ def replay(variant, model, store, vids, am, chain, answers, cfg, dist_weight=Non
             runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cfg["categories"], 8, "cpu",
                                           order={"eer": "eer", "eigloc": "eig_loc"}.get(variant, "eig"),
                                           no_nested=(variant == "nonest"), no_adjacent=(variant == "noadj"),
-                                          dist_weight=dist_weight if variant == "distw" else None))
+                                          dist_weight=dist_weight if variant == "distw" else None,
+                                          prior_scale=0.5 if variant == "halfprior" else 1.0,
+                                          allowed=None if not level else
+                                          [set(cpolicy.qtree.level_nodes(store.T[v], level).tolist()) for v in chunk]))
     return runs
 
 
@@ -137,6 +143,16 @@ def main():
                 conv = lambda m: {"pooled_ap": m["pr_auc"], "pooled_roc": m["roc_auc"],
                                   "within_roc": m["per_video"]["macro_auc"]}
                 mm, ml = conv(mm), conv(ml)
+                if var == "halfprior":                   # single level under the same halved prior
+                    lpath = od / f"runs_{var}_L{L}.pkl"
+                    if lpath.exists():
+                        lruns = pickle.load(lpath.open("rb"))["runs"]
+                    else:
+                        lruns = replay(var, model, store, test, am, chain, answers, cfg, dist_weight, level=L)
+                        with lpath.open("wb") as fh:
+                            pickle.dump({"runs": lruns, "trial": str(trial), "variant": var, "level": L,
+                                         "host": socket.gethostname()}, fh)
+                    ml = score(a.corpus, od, f"{var}_level{L}", {v: lruns[v]["scores"][k[v]] for v in test})
                 res[str(L)] = {"variant": mv, "method": mm, "single_level": ml,
                                "variant_minus_level": {m: mv[m] - ml[m] for m in METS},
                                "variant_minus_method": {m: mv[m] - mm[m] for m in METS}}
