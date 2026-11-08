@@ -6,7 +6,10 @@ policy. Positive videos without GT spans keep their cached answers (they are not
 method's EIG (cpolicy.run_batch); E3 comparison at the matched calls (full tree vs each single level L4 / L8 / L16,
 both on the simulated answers) and fixed 8. If the tree still loses within here, EIG is not aligned with within even
 when the model is right; if it wins, the real answers' departures from the model cause the loss.
-Output runs/20261109_tree_within/simulated/<corpus>/ (summary.json).
+--variant (policy, tree and levels alike): eig (the method), flatpol (EIG under the flat location prior, scores from
+the full prior; cpolicy policy_prior_scale 0), eigloc_flatpol (I(o; y | G = 1) under the flat location prior), noadj
+(no parent / child of an asked node).
+Output runs/20261109_tree_within/simulated[_<variant>]/<corpus>/ (summary.json).
 """
 import argparse
 from datetime import datetime
@@ -56,7 +59,11 @@ def simulate(test, store, labels, gt, am, cats, seed):
     return sim
 
 
-def replay(model, store, vids, am, chain, answers, cfg, sim, level):
+VARIANTS = {"eig": {}, "flatpol": {"policy_prior_scale": 0.0},
+            "eigloc_flatpol": {"order": "eig_loc", "policy_prior_scale": 0.0}, "noadj": {"no_adjacent": 1}}
+
+
+def replay(model, store, vids, am, chain, answers, cfg, sim, level, variant="eig"):
     runs = {}
     vids = sorted(vids, key=lambda v: store.T[v])
     for i in range(0, len(vids), int(cfg["eval_chunk"])):
@@ -72,7 +79,7 @@ def replay(model, store, vids, am, chain, answers, cfg, sim, level):
             return None if o is None else asks[b].loglik(node, o)
         with torch.no_grad():
             runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cfg["categories"], 8, "cpu",
-                                          answer_ll=answer_ll,
+                                          answer_ll=answer_ll, **VARIANTS[variant],
                                           allowed=None if not level else
                                           [set(qtree.level_nodes(store.T[v], level).tolist()) for v in chunk]))
     return runs
@@ -83,8 +90,11 @@ def main():
     ap.add_argument("--corpus", choices=("hatemm", "hateclipseg", "dehate"), required=True)
     ap.add_argument("--levels", nargs="+", type=int, default=[4, 8, 16])
     ap.add_argument("--threads", type=int, default=2)
-    ap.add_argument("--out-root", default="runs/20261109_tree_within/simulated")
+    ap.add_argument("--variant", choices=tuple(VARIANTS), default="eig")
+    ap.add_argument("--out-root", default=None)
     a = ap.parse_args()
+    if a.out_root is None:
+        a.out_root = "runs/20261109_tree_within/simulated" + ("" if a.variant == "eig" else "_" + a.variant)
     torch.set_num_threads(a.threads)
     summ = json.load(open(ROOT / f"runs/20261101_r6_length_table/final_curves/test_selected/{a.corpus}/summary.json"))
     trials = [r["trial"] for r in summ["trials"].values()]
@@ -102,7 +112,7 @@ def main():
         od = (ROOT / a.out_root / a.corpus / name).resolve()
         od.mkdir(parents=True, exist_ok=True)
         sim = simulate(test, store, labels, gt, am, cfg["categories"], int(summary["seed"]))
-        runs = {L: replay(model, store, test, am, chain, answers, cfg, sim, L) for L in [0] + a.levels}
+        runs = {L: replay(model, store, test, am, chain, answers, cfg, sim, L, a.variant) for L in [0] + a.levels}
         full = runs[0]
         row = {}
         for L in a.levels:
