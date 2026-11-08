@@ -175,7 +175,7 @@ level AP / ROC / within at L4 | L8 | L16; fixed 8 vs revision 6; share of nested
 |---|---|---|---|---|---|
 | HateMM | +.017 / +.014 / +.022 | -.005 / +.003 / -.012 | -.013 / +.000 / -.026 | -.047 / -.040 / -.015 | .69 |
 | HCS | +.004 / -.014 / -.005 | +.019 / +.004 / -.010 | +.017 / +.008 / -.005 | -.006 / -.012 / +.000 | .31 |
-| DeHate | (running) | | | | |
+| DeHate | +.014 / +.009 / +.012 | -.001 / +.005 / +.006 | +.002 / +.002 / -.003 | -.032 / -.034 / +.003 | .82 |
 
 Rejected: the tree still loses within to L8 / L16, the AP / ROC margin over the levels is gone on HateMM, and fixed 8
 loses AP. With the bias known from earlier answers, a nested answer becomes a cleaner signal of the node's state
@@ -209,6 +209,18 @@ fixed 8 vs method AP / ROC / within:
 Following the prior's idea of where the hate is explains part of the L16 gap on HateMM (-.028 to -.015) and most of
 the small gaps on HCS / DeHate, but not HateMM L8 (-.020 under every EIG variant; -.002 only when parent / child of
 an asked node are excluded).
+
+**The tree's questions fixed, posterior from a subset of their answers** (`diag_evidence_rules.py`,
+`evidence_rules/<corpus>/summary.json`; tree - level AP / ROC / within at L8 | L16; "all" reproduces E3):
+
+| | all | finest asked nodes only | coarsest asked nodes only |
+|---|---|---|---|
+| HateMM | +.013 / +.018 / -.020 \| +.020 / +.016 / -.028 | -.008 / +.003 / -.029 \| -.003 / +.002 / -.033 | -.023 / -.001 / -.033 \| -.006 / .000 / -.033 |
+| HCS | +.022 / +.008 / -.006 \| +.029 / +.016 / -.004 | +.020 / +.010 / -.003 \| +.026 / +.018 / -.001 | +.014 / +.008 / -.005 \| +.021 / +.015 / -.004 |
+| DeHate | +.025 / +.024 / -.001 \| -.002 / +.014 / -.010 | +.003 / -.006 / -.004 \| -.023 / -.013 / -.011 | -.015 / -.011 / -.014 \| -.041 / -.017 / -.017 |
+
+Dropping the coarse (or the fine) answers lowers AP / ROC and does not raise within: combining nested answers is
+not what costs within; the set of nodes asked is.
 
 ## 5. Proposal review
 
