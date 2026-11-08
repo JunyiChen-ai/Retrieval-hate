@@ -222,6 +222,33 @@ an asked node are excluded).
 Dropping the coarse (or the fine) answers lowers AP / ROC and does not raise within: combining nested answers is
 not what costs within; the set of nodes asked is.
 
+**Joint information of the two question sets under the revision-6 model** (`diag_joint_info.py`,
+`joint_info/<corpus>.json`; I(o_S; X) in bits, 64 Monte Carlo answer sequences per video; tree's first k_v asked
+nodes vs the level's k_v nodes; positive test videos):
+
+| | L4 tree / level | L8 | L16 | share of videos where the level's set has more (L16) |
+|---|---|---|---|---|
+| HateMM | 1.67 / 1.55 | 1.49 / 1.32 | 1.29 / 1.03 | .37 |
+| HCS | 1.37 / 1.29 | 1.37 / 1.11 | 1.33 / .92 | .30 |
+
+The greedy order is not short-sighted: under its own model the tree's questions carry more information than the
+level's, in most videos. The model's information simply does not reward covering the video.
+
+**Answers drawn from the model** (`diag_simulated_answers.py`, `simulated/<corpus>/summary.json`): every answer
+replaced by a draw from the trial's anchored table given the node's true state (independent across nodes, one draw
+per video and node shared by all policies), real prior; tree - level AP / ROC / within:
+
+| | L4 | L8 | L16 | nested share |
+|---|---|---|---|---|
+| HateMM | -.004 / +.016 / +.006 | +.010 / +.013 / -.010 | +.009 / +.005 / -.022 | .73 |
+| HCS | -.003 / +.002 / +.001 | +.011 / -.005 / +.007 | +.030 / +.010 / +.012 | .30 |
+| DeHate | +.008 / +.028 / +.007 | +.004 / +.019 / .000 | -.006 / +.015 / -.010 | .83 |
+
+Even when the answers follow the answer model exactly, EIG on the tree loses within to the 16-33 s level on HateMM
+(-.022, real answers -.028) and DeHate (-.010, real -.010). The departure of the real answers from the model
+(dependence, table errors) explains little; what remains is the question-selection objective (and the prior it is
+computed under).
+
 ## 5. Proposal review
 
 One independent agent (Claude Fable 5.1), 2026-11-09: **PASS** (rule 4: none of the four STOP conditions). Searches
