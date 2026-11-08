@@ -4,15 +4,19 @@ The VLM's answers to nested questions repeat each other far more than the node s
 parent-child .66-.81, two levels apart about its square, disjoint nodes of the same video .05-.47;
 diag_answer_redundancy.py), while the answer does not depend on how much of a node is hateful
 (diag_answer_fraction.py). Model: every node n carries a latent answer bias b_n on a support grid; given the node
-state s_n (anchored two states as in revision 6) and b_n,
-    P(o_n = l | s_n, b_n, len_n) = softmax_l(theta_{s_n, l} + omega_l u(len_n) + b_n c_l),  c_l = l / (L - 1) - 1/2.
+state s_n (anchored two states as in revision 6) and b_n, an ordered logit on the answer level (the levels are
+quantile bins of P(Yes)):
+    P(o_n <= l | s_n, b_n, len_n) = sigmoid(kappa_{s_n, l} - omega u(len_n) - b_n),  l = 0 .. L - 2,
+with increasing thresholds kappa_s and one length slope omega shared by both states. (Version 1 tilted a multinomial
+table, softmax_l(theta_{s, l} + omega_l u + b c_l); it cannot make a mid-range level likely for a given bias, so the
+fitted model reproduced only part of the answer correlations: README section 6.)
 The biases form a Markov tree (Crouse, Nowak and Baraniuk 1998): b_root ~ pi; b_child = b_parent with probability
 rho, otherwise a fresh draw from pi. rho = 0: independent answers; rho = 1: one offset per video (answer_offset.py).
 
-Fitted once before training, label-only like qtree.fit_anchored_shared: theta_0, omega, pi (nonparametric mixing
+Fitted once before training, label-only like qtree.fit_anchored_shared: kappa_0, omega, pi (nonparametric mixing
 distribution on a fixed grid, Laird 1978; points below PRUNE dropped) and rho by maximum likelihood on the negative
 training videos (every node in state 0, the biases summed out exactly over each video's tree of queryable nodes);
-theta_1 on the roots of the positive training videos with b_root ~ pi summed out, omega shared.
+kappa_1 on the roots of the positive training videos with b_root ~ pi summed out, omega shared.
 
 Inference is exact: the chain-tree upward pass of ctree._up with one more index per node, its bias (a child's table
 is carried to the parent's bias by the transition in O(K): rho times the same bias plus (1 - rho) times the
@@ -27,13 +31,44 @@ import torch.nn.functional as F
 
 from . import ctree, qtree
 
-GRID = np.arange(-12.0, 12.0 + 1e-9, 0.5)       # bias grid (tilt units over the full level range), as answer_offset
+GRID = np.arange(-12.0, 12.0 + 1e-9, 0.5)       # bias grid (logit units of the ordered logit)
 PRUNE = 1e-4                                     # drop grid points whose fitted weight is below this
 RHO_CLAMP = 1e-9                                 # keeps log(1 - rho) and log(rho) finite
 
 
-def level_scores(L):
-    return np.arange(L, dtype=np.float64) / max(L - 1, 1) - 0.5
+def ordinal_logp(kappa, eta):
+    """log P(o = l) of the ordered logit, torch: kappa (..., L - 1) increasing thresholds, eta (...) location.
+    Returns (..., L)."""
+    cum = torch.sigmoid(kappa - eta[..., None])
+    zero = torch.zeros_like(cum[..., :1])
+    p = torch.cat([cum, 1.0 - cum[..., -1:]], dim=-1) - torch.cat([zero, cum], dim=-1)
+    return torch.log(p.clamp(min=1e-12))
+
+
+def ordinal_logp_np(kappa, eta):
+    cum = 1.0 / (1.0 + np.exp(-(kappa - eta[..., None])))
+    zero = np.zeros_like(cum[..., :1])
+    p = np.concatenate([cum, 1.0 - cum[..., -1:]], axis=-1) - np.concatenate([zero, cum], axis=-1)
+    return np.log(np.clip(p, 1e-12, None))
+
+
+def _thresholds(k0, dl):
+    """Increasing thresholds from the first one and softplus increments: (C, L - 1)."""
+    return torch.cat([k0[:, None], k0[:, None] + torch.cumsum(F.softplus(dl), dim=1)], dim=1)
+
+
+def _init_thresholds(O, L):
+    """Empirical cumulative logits of the levels (C, L - 1) -> (k0, dl) for _thresholds."""
+    C = O.shape[1]
+    k0, dl = np.zeros(C), np.zeros((C, L - 2))
+    for k in range(C):
+        f = np.bincount(O[:, k], minlength=L) + 1.0
+        cum = np.clip(np.cumsum(f)[:-1] / f.sum(), 1e-4, 1 - 1e-4)
+        kap = np.log(cum) - np.log1p(-cum)
+        k0[k] = kap[0]
+        inc = np.maximum(np.diff(kap), 1e-3)
+        dl[k] = np.log(np.expm1(inc))                     # inverse softplus
+    return torch.as_tensor(k0), torch.as_tensor(dl)
 
 
 def _to_parent(X, logpi, lr, l1r):
@@ -94,90 +129,102 @@ def fit_hmt(train_answers, len_mu, len_sd, grid=GRID):
     """train_answers: [(label, T, {(a, b): answer vector (N_CAT,) or None}), ...]. Returns an HMTAnswerModel and fit
     details."""
     C, L = qtree.N_CAT, qtree.N_LEV
-    c = torch.as_tensor(level_scores(L))
     bgrid = torch.as_tensor(np.asarray(grid, dtype=np.float64))
     par, depth, roots, rows, n = _compact([(T, ans) for label, T, ans in train_answers if label == 0])
     par_t, depth_t, roots_t = map(torch.as_tensor, (par, depth, roots))
     par_t = torch.where(par_t < 0, torch.zeros_like(par_t), par_t)          # roots are never scattered (depth 0)
     node = torch.as_tensor(np.array([r[0] for r in rows]))
-    O = torch.as_tensor(np.stack([r[1] for r in rows]), dtype=torch.long)    # m, C
+    O_np = np.stack([r[1] for r in rows]).astype(np.int64)
+    O = torch.as_tensor(O_np)                                                 # m, C
     U = torch.as_tensor((np.log([r[2] for r in rows]) - len_mu) / len_sd)    # m
-    freq = np.ones((C, L))
-    for k in range(C):
-        freq[k] += np.bincount(O[:, k].numpy(), minlength=L)
-    th0 = torch.as_tensor(np.log(freq / freq.sum(1, keepdims=True))).clone().requires_grad_(True)
-    om = torch.zeros(C, L, dtype=torch.float64, requires_grad=True)
+    k0, dl = _init_thresholds(O_np, L)
+    k0, dl = k0.clone().requires_grad_(True), dl.clone().requires_grad_(True)
+    om = torch.zeros(C, dtype=torch.float64, requires_grad=True)
     zeta = torch.zeros(len(bgrid), dtype=torch.float64, requires_grad=True)
     rl = torch.zeros((), dtype=torch.float64, requires_grad=True)          # rho = sigmoid(rl)
     Kg = len(bgrid)
+    lev = torch.arange(L)
 
-    def answer_ll(th, omg):
-        x = th[None, None] + omg[None, None] * U[:, None, None, None] + bgrid[None, :, None, None] * c
-        lp = F.log_softmax(x, dim=-1)                                          # m, K, C, L
+    def answer_ll(kap, omg):
+        eta = omg[None, None, :] * U[:, None, None] + bgrid[None, :, None]       # m, K, C
+        lp = ordinal_logp(kap[None, None], eta)                                 # m, K, C, L
         idx = O[:, None, :, None].expand(-1, Kg, -1, 1)
         return lp.gather(3, idx).squeeze(-1).sum(-1)                           # m, K
 
+    def prior(kap):                     # one pseudo-count per level at the centre (eta = 0), as the anchored fit
+        return ordinal_logp(kap, torch.zeros(C, dtype=torch.float64)).sum()
+
     def nll0():
-        A0 = torch.zeros(n, Kg, dtype=torch.float64).index_add(0, node, answer_ll(th0, om))
+        kap = _thresholds(k0, dl)
+        A0 = torch.zeros(n, Kg, dtype=torch.float64).index_add(0, node, answer_ll(kap, om))
         rho = torch.sigmoid(rl).clamp(RHO_CLAMP, 1 - RHO_CLAMP)
         ll = bias_up(par_t, depth_t, A0, F.log_softmax(zeta, 0), torch.log(rho), torch.log1p(-rho), roots_t)
-        return -ll.sum() - F.log_softmax(th0, dim=-1).sum()
-    _lbfgs([th0, om, zeta, rl], nll0)
+        return -ll.sum() - prior(kap)
+    _lbfgs([k0, dl, om, zeta, rl], nll0)
     with torch.no_grad():
         nll_fit = float(nll0())
+        kappa0 = _thresholds(k0, dl).numpy()
     w = torch.softmax(zeta, 0).detach().numpy()
     keep = w >= PRUNE
     support = np.asarray(grid, dtype=np.float64)[keep]
     w = w[keep] / w[keep].sum()
-    mean = float(np.sum(w * support))                    # centre: a shift of all biases equals a shift of theta
+    mean = float(np.sum(w * support))                    # centre: a shift of all biases equals a shift of kappa
     support = support - mean
-    theta0 = th0.detach().numpy() + mean * level_scores(L)[None, :]
+    kappa0 = kappa0 - mean
     omega = om.detach().numpy()
     rho = float(torch.sigmoid(rl).clamp(RHO_CLAMP, 1 - RHO_CLAMP))
     # state 1 (positive roots): one answer per video, its bias integrated out under pi
     rt = [(ans[(0, T)], T) for label, T, ans in train_answers if label == 1 and ans.get((0, T)) is not None
           and T >= qtree.F_FRAMES]
-    Rt = torch.as_tensor(np.stack([o for o, T in rt]), dtype=torch.long)       # R, C
+    Rt_np = np.stack([o for o, T in rt]).astype(np.int64)
+    Rt = torch.as_tensor(Rt_np)                                                # R, C
     Ur = torch.as_tensor((np.log([float(T) for o, T in rt]) - len_mu) / len_sd)
     bs, lws = torch.as_tensor(support), torch.as_tensor(np.log(w))
     om_t = torch.as_tensor(omega)
-    th1 = torch.zeros(C, L, dtype=torch.float64, requires_grad=True)
+    k1, d1 = _init_thresholds(Rt_np, L)
+    k1 = (k1 - mean).clone().requires_grad_(True)
+    d1 = d1.clone().requires_grad_(True)
 
     def nll1():
-        x = th1[None, None] + om_t[None, None] * Ur[:, None, None, None] + bs[None, :, None, None] * c
-        lp = F.log_softmax(x, dim=-1)                                          # R, K, C, L
+        kap = _thresholds(k1, d1)
+        eta = om_t[None, None, :] * Ur[:, None, None] + bs[None, :, None]       # R, K, C
+        lp = ordinal_logp(kap[None, None], eta)                                 # R, K, C, L
         per = lp.gather(3, Rt[:, None, :, None].expand(-1, len(bs), -1, 1)).squeeze(-1).sum(-1)   # R, K
-        return -torch.logsumexp(per + lws[None], dim=1).sum() - F.log_softmax(th1, dim=-1).sum()
-    _lbfgs([th1], nll1)
-    theta = np.stack([theta0, th1.detach().numpy()], axis=1)                 # C, 2, L
+        return -torch.logsumexp(per + lws[None], dim=1).sum() - prior(kap)
+    _lbfgs([k1, d1], nll1)
+    with torch.no_grad():
+        kappa1 = _thresholds(k1, d1).numpy()
+    kappa = np.stack([kappa0, kappa1], axis=1)                               # C, 2, L - 1
     info = {"n_negative_videos": int(len(roots)), "n_negative_answers": int(len(rows)), "n_roots": len(rt),
-            "rho": rho, "support": support.tolist(), "weights": w.tolist(),
-            "bias_sd": float(np.sqrt(np.sum(w * support ** 2))), "nll_negative": nll_fit}
-    return HMTAnswerModel(theta, omega, support, np.log(w), rho, len_mu, len_sd), info
+            "rho": rho, "support": support.tolist(), "weights": w.tolist(), "omega": omega.tolist(),
+            "bias_sd": float(np.sqrt(np.sum(w * support ** 2))), "nll_negative": nll_fit,
+            "kappa": kappa.tolist()}
+    return HMTAnswerModel(kappa, omega, support, np.log(w), rho, len_mu, len_sd), info
 
 
 class HMTAnswerModel:
-    """Anchored two-state answer table with the per-node bias and its Markov tree; states 0 and 1 share the state-0
-    table (anchored two states, as revision 6)."""
+    """Anchored two-state ordered-logit answer model with the per-node bias and its Markov tree; states 0 and 1 share
+    the state-0 thresholds (anchored two states, as revision 6)."""
 
-    def __init__(self, theta, omega, support, logw, rho, len_mu, len_sd, categories=(0,)):
-        self.theta = np.asarray(theta, dtype=np.float64)                  # C, 2, L
-        self.omega = np.asarray(omega, dtype=np.float64)                  # C, L
+    def __init__(self, kappa, omega, support, logw, rho, len_mu, len_sd, categories=(0,)):
+        self.kappa = np.asarray(kappa, dtype=np.float64)                  # C, 2, L - 1
+        self.omega = np.asarray(omega, dtype=np.float64)                  # C
         self.support = np.asarray(support, dtype=np.float64)              # K
         self.logw = np.asarray(logw, dtype=np.float64)                    # K
         self.rho = float(rho)
         self.len_mu, self.len_sd = float(len_mu), float(len_sd)
         self.cats = list(categories)
         self.K = len(self.support)
+        self.L = self.kappa.shape[-1] + 1
 
     def to_dict(self):
-        return {"theta": self.theta.tolist(), "omega": self.omega.tolist(), "support": self.support.tolist(),
+        return {"kappa": self.kappa.tolist(), "omega": self.omega.tolist(), "support": self.support.tolist(),
                 "logw": self.logw.tolist(), "rho": self.rho, "len_mu": self.len_mu, "len_sd": self.len_sd,
                 "categories": self.cats}
 
     @classmethod
     def from_dict(cls, d):
-        return cls(d["theta"], d["omega"], d["support"], d["logw"], d["rho"], d["len_mu"], d["len_sd"],
+        return cls(d["kappa"], d["omega"], d["support"], d["logw"], d["rho"], d["len_mu"], d["len_sd"],
                    d["categories"])
 
     def params(self, device, dtype=torch.float64):
@@ -191,17 +238,16 @@ class HMTAnswerModel:
         """(n, K, C, 3, L) log P(o_c = l | s, b_k, length)."""
         length = np.asarray(length, dtype=np.float64)
         u = (np.log(length) - self.len_mu) / self.len_sd
-        c = level_scores(self.theta.shape[-1])
-        x = (self.theta[None, None][:, :, :, [0, 0, 1], :] + self.omega[None, None, :, None, :] * u[:, None, None,
-             None, None] + self.support[None, :, None, None, None] * c[None, None, None, None, :])
-        return x - np.logaddexp.reduce(x, axis=-1, keepdims=True)
+        eta = self.omega[None, None, :] * u[:, None, None] + self.support[None, :, None]       # n, K, C
+        kap = self.kappa[:, [0, 0, 1], :]                                                       # C, 3, L - 1
+        return ordinal_logp_np(kap[None, None], eta[:, :, :, None])                            # n, K, C, 3, L
 
     def outcome_tables(self, length):
         """(n, K, 3, O) log P(o | s, b_k) over all answer vectors of the used categories."""
         lp = self.level_logp(length)[:, :, self.cats]                    # n, K, C', 3, L
         n = lp.shape[0]
         if n == 0:
-            return np.zeros((0, self.K, 3, self.theta.shape[-1] ** len(self.cats)))
+            return np.zeros((0, self.K, 3, self.L ** len(self.cats)))
         return np.stack([qtree.outcome_table(lp[:, k]) for k in range(self.K)], axis=1)
 
     def loglik(self, answers, length):
