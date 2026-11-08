@@ -370,3 +370,63 @@ trick. Wording points taken: the "copy with probability rho, else redraw from pi
 parameterization of the general HMT parent-to-child transition, and the rho^(distance) decay is a property of that
 parameterization, not a result of Crouse et al.; rho = 1 equals the 11-01 per-video offset except for the shared
 length slope, which the offset model did not have.
+
+## 8. Extent question: No / Some / All (proposal, 2026-11-09; user chose to build a location-bearing question)
+
+**Problem (sections 6-7).** Every policy trades within for AP along one line, and the single level lies on it. The
+question "does this part contain hate" is a presence test (OR over the node's seconds). On densely hateful videos
+(positive test videos with both classes: GT fraction mean .61 HateMM, .59 HCS, .40 DeHate) a coarse window almost
+always answers Yes, which says nothing about where the hate is NOT; only a complete partition of short windows finds
+the clean seconds. Motivation from group testing (not a bound here: seconds come in runs, not i.i.d.): for i.i.d.
+items, binary presence tests on pools stop beating one test per item once prevalence exceeds (3 - sqrt 5) / 2 = .38
+(Ungar 1960).
+
+**Mechanism.** Ask instead: "Does this part contain hateful content? Answer No if no part of it does, Some if only
+some of it does, All if all of it does, from its start to its end." The answer reports presence (OR) and fullness
+(AND) of the node. With the tree, a coarse node answered All shifts the posteriors of all of its seconds toward
+hateful, and No toward clean, in one call, in sparse and in dense videos alike; Some is the answer that sends the
+policy deeper. This is symmetric group testing (outcome 0 if every item of the pool is negative, 1 if every item is
+positive, inconclusive otherwise; Emad, Shen and Milenkovic 2011, arXiv 1108.2996; a special case of semi-quantitative
+group testing, Emad and Milenkovic, IEEE T-IT 2014), here with noisy soft answers from a VLM, nested temporal pools and
+a chain prior. A single level also gains (a mixed window can be ranked below a full one), but only nested questions
+can move a long run with one coarse call; so the tree's adaptivity should pay on dense videos, where it currently
+loses.
+
+**Model.**
+- Node state s_n in {G = 0; G = 1 and none; G = 1 and some; G = 1 and all} (revision 6: three states, the last two
+  merged). Exact inference: the chain-tree upward pass (`ctree._up`) carries per node (first second's state, last
+  second's state, extent in {none, some, all}) = 12 log-weights instead of 8; children merge by none + none = none,
+  all + all = all, otherwise some. Node marginals by automatic differentiation with one node factor per extent value.
+- Answer: the first-token distribution over No / Some / All (Qwen2.5-VL-7B, same 4 frames, transcript and per-dataset
+  definition as revision 6; `extract_tree_soft.py --prompt p3`). Two coordinates: presence p = 1 - P(No) and fullness
+  f = P(All) / (P(Some) + P(All)), each binned into 8 training-quantile levels (label-free, as revision 6).
+- Answer table: P(o | s, length) per state, the two coordinates independent given the state, each a multinomial
+  logistic regression on the standardised log length (revision 6 form). State none: every node of the negative
+  training videos (label-only, as revision 6). States some / all need node-level labels: fitted on the validation
+  per-second GT (user ruling 2026-09-29: validation labels may fit the answer model, no gradient).
+- Questions: EIG over the four states, w = (1 - pG, pG P(none), pG P(some), pG P(all)) per candidate node.
+- One VLM call per question, same inputs as revision 6: the cost of a call is unchanged.
+
+**Plan.** Stage A (developmental, CPU): revision-6 test-selected checkpoints (backbone trained with the yes / no
+answers, unchanged), extent answers, extent inference and table; E3 (tree vs each single level, both asking the extent
+question, same calls per video) and fixed 8 calls vs revision 6; plus the same run with answers drawn from the fitted
+tables (does the mechanism work when the answers follow the model). Stage B (the method, GPU): backbone trained with
+the extent answers in the tree likelihood, full Optuna search per corpus and seed (rule 7), then E3, budget curve,
+ablations (yes / no question vs extent question at equal calls). Success criteria: section 4, unchanged.
+
+## 9. Proposal review of section 8
+
+One independent agent (Claude Fable 5.1), 2026-11-09: **PASS** (rule 4). 15 searches (web and Semantic Scholar), e.g.
+"hateful video localization vision-language model question temporal segments none some all extent", "group testing
+vision-language model video segments adaptive pooled questions harmful content moderation", "symmetric group testing
+Emad Milenkovic ternary", "VLM temporal grounding coarse-to-fine yes/no query tree". Hateful-video work found (LELA
+2602.09637, MultiHateLoc 2512.10408, TANDEM 2601.11178, HateClipSeg 2508.01712, 2508.10974) asks no extent question,
+uses no tree with AND / OR node states and no group testing. Not an ensemble, not calibration (observation, latent
+state, inference, question choice and the Stage B training likelihood all change); a prompt change alone would be an
+engineering change, so the paper must present the state space, merge rule and inference as the contribution and keep
+the yes / no vs extent ablation at equal calls. Wording taken: symmetric group testing (Emad, Shen and Milenkovic
+2011) instead of Damaschke's threshold group testing (binary test, arbitrary answer between the thresholds); Ungar's
+.38 cutoff as motivation only; "shifts the posteriors" instead of "settles". Related work to cite: 2608.08315 (yes / no
+probes for temporal grounding), VADTree 2510.22693, VideoTree 2405.19209, TimeSearch 2504.01407, VideoTreeSearch
+2607.16189, Zoom-Zero 2512.14273, UniTime 2506.18883, Cuturi et al. 2020 (Bayesian sequential noisy group testing,
+2004.12508), 2007.13323 (active pooling by posterior prediction).
