@@ -106,7 +106,8 @@ def _expected_error_reduction(asker, cand, nodes, vt, p, pG, mm, copy_pi, asked_
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
-              copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0):
+              copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0,
+              policy_prior_scale=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -168,6 +169,12 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     for step in range(max_calls + 1):
         pG, m, p = ctree.marginals(fo, S, G, A3, chain, PHI)
         pG, m, p = pG.cpu().numpy(), m.cpu().numpy(), p.cpu().numpy()
+        pGq, mq = pG, m
+        if policy_prior_scale is not None:       # diagnostic (experiments/20261109_tree_within): the questions are
+            pGq, mq, _ = ctree.marginals(        # chosen under the prior shape scaled by policy_prior_scale; the
+                fo, S * policy_prior_scale, G, A3, chain,       # scores keep the full prior
+                None if PHI is None else PHI * policy_prior_scale)
+            pGq, mq = pGq.cpu().numpy(), mq.cpu().numpy()
         if p0 is None:
             p0 = [p[b, :T].copy() for b, T in enumerate(Ts)]
         for b, T in enumerate(Ts):
@@ -208,8 +215,8 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             if len(cand) == 0:
                 continue
             nodes = asker.q[cand]
-            mm = m[off + nodes]
-            w = np.stack([np.full(len(cand), 1.0 - pG[b]), pG[b] * (1.0 - mm), pG[b] * mm], axis=1)
+            mm = mq[off + nodes]
+            w = np.stack([np.full(len(cand), 1.0 - pGq[b]), pGq[b] * (1.0 - mm), pGq[b] * mm], axis=1)
             if order == "eer":
                 e = _expected_error_reduction(asker, cand, nodes, vts[b], p[b, :Ts[b]], pG[b], mm,
                                               copy_pi if copy_eig else None, asked_o[b])

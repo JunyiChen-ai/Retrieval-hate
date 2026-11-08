@@ -13,7 +13,11 @@ Variants of cpolicy.run_batch (the method = order "eig", every node askable):
            training videos (d >= 5 pooled); the first answer has weight 1;
   halfprior  EIG, with the prior's per-second logits s_t and node potentials phi_n halved (video logit g unchanged):
            tests whether the over-confident prior shape keeps the policy from covering the video. Not a method.
-The single-level comparison of halfprior re-runs the single levels with the same halved prior (runs_<variant>_L<L>).
+  flatprior  the same with s_t and phi_n set to 0 (no location prior at all; video logit g kept). Not a method.
+  flatpol  questions chosen with EIG under the flat location prior (as flatprior), scores from the full prior: tests
+           whether following the prior's idea of where the hate is keeps the policy from covering the video.
+The single-level comparison of halfprior / flatprior / flatpol re-runs the single levels the same way
+(runs_<variant>_L<L>).
 Per trial and level L (4 / 8 / 16): each variant is read after the E3 matched calls k_v = min(8, nodes at depth L)
 (from experiments/20261108_astra_review replays runs_L<L>.pkl) and compared with the method (runs_L0.pkl) and the
 single level at the same k_v; also at fixed 8 calls. AP / ROC / within by the unified evaluator.
@@ -82,7 +86,8 @@ def replay(variant, model, store, vids, am, chain, answers, cfg, dist_weight=Non
                                           order={"eer": "eer", "eigloc": "eig_loc"}.get(variant, "eig"),
                                           no_nested=(variant == "nonest"), no_adjacent={"noadj": 1, "noadj2": 2}.get(variant, 0),
                                           dist_weight=dist_weight if variant == "distw" else None,
-                                          prior_scale=0.5 if variant == "halfprior" else 1.0,
+                                          prior_scale={"halfprior": 0.5, "flatprior": 0.0}.get(variant, 1.0),
+                                          policy_prior_scale=0.0 if variant == "flatpol" else None,
                                           allowed=None if not level else
                                           [set(cpolicy.qtree.level_nodes(store.T[v], level).tolist()) for v in chunk]))
     return runs
@@ -144,7 +149,7 @@ def main():
                 conv = lambda m: {"pooled_ap": m["pr_auc"], "pooled_roc": m["roc_auc"],
                                   "within_roc": m["per_video"]["macro_auc"]}
                 mm, ml = conv(mm), conv(ml)
-                if var == "halfprior":                   # single level under the same halved prior
+                if var in ("halfprior", "flatprior", "flatpol"):   # single level under the same prior / policy
                     lpath = od / f"runs_{var}_L{L}.pkl"
                     if lpath.exists():
                         lruns = pickle.load(lpath.open("rb"))["runs"]

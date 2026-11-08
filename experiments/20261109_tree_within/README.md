@@ -143,7 +143,32 @@ immediately nested questions is most of the effect; dropping the information abo
 
 **HMT version 3 (bias = video part + tree part)**: fit HateMM rho .62, sigma_v 6.3, sigma_h 4.7; HCS .59 / 4.5 / 5.4;
 DeHate .57 / 3.3 / 4.8. Fit check HateMM: model .80 / .70 / .65 / .62 / .59 against data .77 / .62 / .49 / .48 / .43
-(decay and floor present, floor too high). Stage A: (running)
+(decay and floor present, floor too high). Stage A (`stage_a/`): tree - level within HateMM +.020 / -.022 / -.032,
+HCS -.009 / -.008 / -.013; fixed 8 vs revision 6 HateMM -.038 / -.034 / -.028, HCS -.020 / -.029 / -.005. The same
+ordered-logit table with independent answers (`stage_a_none/`, L16 only) already loses at fixed 8 (HateMM -.014 /
+-.007 / -.028, HCS -.023 / -.019 / +.003): swapping the answer table under a backbone trained with the anchored table
+costs AP by itself, and at equal table the bias model does not help (HateMM L16 tree - level within -.032 vs -.033
+independent; fixed 8 AP -.038 vs -.014). Rejected; versions 1-3 also changed the marginal table, which confounds the
+test of the dependence.
+
+**More diagnostics on the revision-6 model** (tree - level within L4 / L8 / L16; fixed 8 vs method AP / ROC / within):
+
+| | HateMM | HCS | DeHate |
+|---|---|---|---|
+| answers weighted by 1 - r(d)^2 (`distw`) | +.015 / -.014 / -.017; -.011 / -.006 / +.011 | -.005 / -.007 / -.005; -.005 / -.001 / -.001 | -.001 / -.002 / -.010; -.009 / -.013 / -.005 |
+| prior logits halved, levels too (`halfprior`) | +.012 / -.021 / -.029; +.001 / +.001 / +.007 | -.020 / -.003 / -.009; -.008 / -.005 / +.007 | (running) |
+| no asks within tree distance 2 (`noadj2`) | +.025 / -.007 / -.010; -.025 / -.006 / +.022 | +.007 / +.006 / +.007; .000 / +.011 / +.011 | (running) |
+
+The prior shape is over-confident on positive test videos (seconds with prior P(y | G = 1) < .1 are hateful 34-51% of
+the time, > .9 only 62-86%), but softening it raises within for every policy and does not close the tree - level
+gap. Excluding questions near an asked node closes the gap on HCS and narrows it on HateMM at an AP cost.
+
+**HMT version 4 (Gaussian copula on the anchored table)**: the revision-6 table stays the exact marginal of every
+answer; dependence comes from a latent u_n = v + h_n + e_n (video part, Markov-tree part, independent part, variances
+summing to 1) binned by the table's probit thresholds. Fit on the negative training videos (HateMM / HCS): s_v .48 /
+.55, s_h .43 / .39, s_e .09 / .06, rho .66 / .62; negative log-likelihood of the negative training answers 38659 vs
+52091 with independent answers (HateMM; HCS 4298 vs 6283). Implied latent correlation by tree distance (HateMM) .76 /
+.67 / .60 / .57 / .53 against the level correlations .77 / .62 / .49 / .48 / .43. Stage A: (running)
 
 ## 5. Proposal review
 
