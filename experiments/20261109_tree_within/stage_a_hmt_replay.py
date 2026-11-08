@@ -87,8 +87,8 @@ def main():
         fit_path.write_text(json.dumps({"model": ham.to_dict(), "info": info,
                                         "created": datetime.now().astimezone().isoformat(),
                                         "host": socket.gethostname()}, indent=1) + "\n")
-        print("fit", json.dumps({k: info[k] for k in ("rho", "bias_sd", "n_negative_videos", "n_roots", "seconds")}),
-              "support", np.round(info["support"], 2).tolist(), flush=True)
+        print("fit", json.dumps({k: info[k] for k in ("rho", "sigma_v", "sigma_h", "omega", "n_negative_videos",
+                                                       "n_roots", "seconds")}), flush=True)
     store = qdata.Store(a.corpus, test, ["bert"])
     rows = {}
     for td in trials:

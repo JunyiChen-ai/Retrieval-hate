@@ -50,6 +50,8 @@ def main():
     rng = np.random.default_rng(1)
     emp, sim = [], []
     pi = np.exp(ham.logw)
+    pih = np.exp(hmt.normal_logw(hmt.Z_H))
+    KH = len(pih)
     for v in ids["train"]:
         if labels[v] != 0 or not answers[v]:
             continue
@@ -65,8 +67,9 @@ def main():
             p = tr["parent"][n]
             if p < 0 or p not in b:
                 b[n] = rng.choice(ham.K, p=pi)
-            else:
-                b[n] = b[p] if rng.random() < ham.rho else rng.choice(ham.K, p=pi)
+            else:                                                    # same video part, tree part copied or redrawn
+                h = b[p] % KH if rng.random() < ham.rho else rng.choice(KH, p=pih)
+                b[n] = (b[p] // KH) * KH + h
         lens = [float(tr["b"][n] - tr["a"][n]) for n in q]
         lp = ham.level_logp(lens)[:, :, 0, 0, :]                      # n, K, L
         pr = np.exp(lp)
@@ -74,7 +77,7 @@ def main():
         lev = [int(rng.choice(pr.shape[-1], p=pr[i, b[n]])) for i, n in enumerate(q)]
         sim.append((tr, q, lev))
     ce, cs = pair_corr(emp), pair_corr(sim)
-    print(a.corpus, "rho %.3f bias_sd %.2f" % (ham.rho, fit["info"]["bias_sd"]))
+    print(a.corpus, "rho %.3f sigma_v %.2f sigma_h %.2f" % (ham.rho, ham.sigma_v, ham.sigma_h))
     for d in ce:
         print("  distance %s: data %.3f (%d pairs)  model %.3f" % (d if d < 5 else ">=5", ce[d][0], ce[d][1], cs[d][0]))
 

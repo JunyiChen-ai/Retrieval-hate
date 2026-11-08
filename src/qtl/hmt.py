@@ -10,17 +10,22 @@ quantile bins of P(Yes)):
 with increasing thresholds kappa_s and one length slope omega shared by both states. (Version 1 tilted a multinomial
 table, softmax_l(theta_{s, l} + omega_l u + b c_l); it cannot make a mid-range level likely for a given bias, so the
 fitted model reproduced only part of the answer correlations: README section 6.)
-The biases form a Markov tree (Crouse, Nowak and Baraniuk 1998): b_root ~ pi; b_child = b_parent with probability
-rho, otherwise a fresh draw from pi. rho = 0: independent answers; rho = 1: one offset per video (answer_offset.py).
+The bias has two parts, b_n = v + h_n (version 3; README section 6): v is shared by every node of the video, h_n
+forms a Markov tree (a restricted form of the hidden Markov trees of Crouse, Nowak and Baraniuk 1998): h_root ~ pi_h;
+for a child, h_child = h_parent with probability rho, otherwise a fresh draw from pi_h. In negative training videos
+the answer-level correlation of two nodes falls with their tree distance from .77 to a floor of .43 (HateMM): the
+floor is v, the excess for close nodes is h. v ~ N(0, sigma_v^2) and h ~ N(0, sigma_h^2), each on a fixed grid of
+standard-normal points (K_V, K_H). Special cases: sigma_h = 0 gives one offset per video (answer_offset.py);
+sigma_v = sigma_h = 0 gives independent answers.
 
-Fitted once before training, label-only like qtree.fit_anchored_shared: kappa_0, omega, pi (nonparametric mixing
-distribution on a fixed grid, Laird 1978; points below PRUNE dropped) and rho by maximum likelihood on the negative
-training videos (every node in state 0, the biases summed out exactly over each video's tree of queryable nodes);
-kappa_1 on the roots of the positive training videos with b_root ~ pi summed out, omega shared.
+Fitted once before training, label-only like qtree.fit_anchored_shared: kappa_0, omega, sigma_v, sigma_h and rho by
+maximum likelihood on the negative training videos (every node in state 0, the biases summed out exactly over each
+video's tree of queryable nodes); kappa_1 on the roots of the positive training videos with b_root summed out,
+omega shared.
 
-Inference is exact: the chain-tree upward pass of ctree._up with one more index per node, its bias (a child's table
-is carried to the parent's bias by the transition in O(K): rho times the same bias plus (1 - rho) times the
-pi-average), the answer factor depending on (b_n, z_n); the G = 0 branch (all nodes state 0) is the same pass over
+Inference is exact: the chain-tree upward pass of ctree._up with one more index per node, its bias state (v, h_n)
+(a child's table is carried to the parent's state by the transition in O(K): same v; rho times the same h plus
+(1 - rho) times the pi_h-average), the answer factor depending on (b_n, z_n); the G = 0 branch (all nodes state 0) is the same pass over
 the biases alone. Marginals by automatic differentiation as in ctree.marginals.
 """
 from __future__ import annotations
@@ -31,9 +36,21 @@ import torch.nn.functional as F
 
 from . import ctree, qtree
 
-GRID = np.arange(-12.0, 12.0 + 1e-9, 0.5)       # bias grid (logit units of the ordered logit)
-PRUNE = 1e-4                                     # drop grid points whose fitted weight is below this
+K_V, K_H = 9, 7                                  # grid points of the video and of the tree part of the bias
+Z_V, Z_H = np.linspace(-3.0, 3.0, K_V), np.linspace(-3.0, 3.0, K_H)   # standard-normal grids
 RHO_CLAMP = 1e-9                                 # keeps log(1 - rho) and log(rho) finite
+
+
+def normal_logw(z):
+    w = -0.5 * z ** 2
+    return w - np.logaddexp.reduce(w)
+
+
+def state_grid(sigma_v, sigma_h):
+    """support (K_V K_H,) = v_i + h_j and the root log prior (K_V K_H,), state index i K_H + j."""
+    sup = (sigma_v * Z_V)[:, None] + (sigma_h * Z_H)[None, :]
+    lw = normal_logw(Z_V)[:, None] + normal_logw(Z_H)[None, :]
+    return sup.reshape(-1), lw.reshape(-1)
 
 
 def ordinal_logp(kappa, eta):
@@ -71,23 +88,26 @@ def _init_thresholds(O, L):
     return torch.as_tensor(k0), torch.as_tensor(dl)
 
 
-def _to_parent(X, logpi, lr, l1r):
-    """X (n, K, ...) log tables indexed by a child's bias -> the same indexed by its parent's bias:
-    log(rho exp X[b] + (1 - rho) sum_j pi_j exp X[j])."""
-    shape = (1, -1) + (1,) * (X.dim() - 2)
-    mix = torch.logsumexp(logpi.view(shape) + X, dim=1, keepdim=True)
-    return torch.logaddexp(lr + X, l1r + mix)
+def _to_parent(X, params):
+    """X (n, K, ...) log tables indexed by a child's bias state -> the same indexed by its parent's state: same v;
+    log(rho exp X[v, h] + (1 - rho) sum_j pi_h(j) exp X[v, j])."""
+    _, logpi_h, kv, lr, l1r = params
+    n, K = X.shape[0], X.shape[1]
+    rest = tuple(X.shape[2:])
+    Xg = X.reshape((n, kv, K // kv) + rest)
+    mix = torch.logsumexp(logpi_h.view((1, 1, -1) + (1,) * len(rest)) + Xg, dim=2, keepdim=True)
+    return torch.logaddexp(lr + Xg, l1r + mix).reshape((n, K) + rest)
 
 
-def bias_up(par, depth, A0, logpi, lr, l1r, roots):
-    """Upward pass over the biases alone. par (n,) parent index or -1, depth (n,), A0 (n, K) log answer factors
-    (0 for nodes without an answer), roots (B,) root indices. Returns (B,) log sum over all bias configurations of
-    prod_n exp(A0[n, b_n]) under the Markov tree."""
+def bias_up(par, depth, A0, params, roots):
+    """Upward pass over the biases alone. par (n,) parent index (anything for roots), depth (n,), A0 (n, K) log answer
+    factors (0 for nodes without an answer), roots (B,) root indices. Returns (B,) log sum over all bias
+    configurations of prod_n exp(A0[n, b_n]) under the bias model."""
     beta = A0
     for d in range(int(depth.max()), 0, -1):
         idx = torch.nonzero(depth == d).squeeze(1)
-        beta = beta.index_add(0, par[idx], _to_parent(beta[idx], logpi, lr, l1r))
-    return torch.logsumexp(logpi[None] + beta[roots], dim=1)
+        beta = beta.index_add(0, par[idx], _to_parent(beta[idx], params))
+    return torch.logsumexp(params[0][None] + beta[roots], dim=1)
 
 
 def _compact(videos):
@@ -125,11 +145,19 @@ def _lbfgs(params, closure_fn):
     opt.step(closure)
 
 
-def fit_hmt(train_answers, len_mu, len_sd, grid=GRID):
+def _torch_params(sigma_v, sigma_h, rho):
+    """params from torch scalars (differentiable in the fit)."""
+    zv, zh = torch.as_tensor(Z_V), torch.as_tensor(Z_H)
+    sup = (sigma_v * zv)[:, None] + (sigma_h * zh)[None, :]
+    lw = (torch.as_tensor(normal_logw(Z_V))[:, None] + torch.as_tensor(normal_logw(Z_H))[None, :]).reshape(-1)
+    rho = rho.clamp(RHO_CLAMP, 1 - RHO_CLAMP)
+    return sup.reshape(-1), (lw, torch.as_tensor(normal_logw(Z_H)), K_V, torch.log(rho), torch.log1p(-rho))
+
+
+def fit_hmt(train_answers, len_mu, len_sd):
     """train_answers: [(label, T, {(a, b): answer vector (N_CAT,) or None}), ...]. Returns an HMTAnswerModel and fit
     details."""
     C, L = qtree.N_CAT, qtree.N_LEV
-    bgrid = torch.as_tensor(np.asarray(grid, dtype=np.float64))
     par, depth, roots, rows, n = _compact([(T, ans) for label, T, ans in train_answers if label == 0])
     par_t, depth_t, roots_t = map(torch.as_tensor, (par, depth, roots))
     par_t = torch.where(par_t < 0, torch.zeros_like(par_t), par_t)          # roots are never scattered (depth 0)
@@ -140,15 +168,15 @@ def fit_hmt(train_answers, len_mu, len_sd, grid=GRID):
     k0, dl = _init_thresholds(O_np, L)
     k0, dl = k0.clone().requires_grad_(True), dl.clone().requires_grad_(True)
     om = torch.zeros(C, dtype=torch.float64, requires_grad=True)
-    zeta = torch.zeros(len(bgrid), dtype=torch.float64, requires_grad=True)
-    rl = torch.zeros((), dtype=torch.float64, requires_grad=True)          # rho = sigmoid(rl)
-    Kg = len(bgrid)
-    lev = torch.arange(L)
+    lsv = torch.tensor(0.0, dtype=torch.float64, requires_grad=True)       # log sigma_v
+    lsh = torch.tensor(0.0, dtype=torch.float64, requires_grad=True)       # log sigma_h
+    rl = torch.tensor(0.0, dtype=torch.float64, requires_grad=True)        # rho = sigmoid(rl)
+    K = K_V * K_H
 
-    def answer_ll(kap, omg):
-        eta = omg[None, None, :] * U[:, None, None] + bgrid[None, :, None]       # m, K, C
+    def answer_ll(kap, omg, sup):
+        eta = omg[None, None, :] * U[:, None, None] + sup[None, :, None]         # m, K, C
         lp = ordinal_logp(kap[None, None], eta)                                 # m, K, C, L
-        idx = O[:, None, :, None].expand(-1, Kg, -1, 1)
+        idx = O[:, None, :, None].expand(-1, K, -1, 1)
         return lp.gather(3, idx).squeeze(-1).sum(-1)                           # m, K
 
     def prior(kap):                     # one pseudo-count per level at the centre (eta = 0), as the anchored fit
@@ -156,61 +184,53 @@ def fit_hmt(train_answers, len_mu, len_sd, grid=GRID):
 
     def nll0():
         kap = _thresholds(k0, dl)
-        A0 = torch.zeros(n, Kg, dtype=torch.float64).index_add(0, node, answer_ll(kap, om))
-        rho = torch.sigmoid(rl).clamp(RHO_CLAMP, 1 - RHO_CLAMP)
-        ll = bias_up(par_t, depth_t, A0, F.log_softmax(zeta, 0), torch.log(rho), torch.log1p(-rho), roots_t)
-        return -ll.sum() - prior(kap)
-    _lbfgs([k0, dl, om, zeta, rl], nll0)
+        sup, params = _torch_params(torch.exp(lsv), torch.exp(lsh), torch.sigmoid(rl))
+        A0 = torch.zeros(n, K, dtype=torch.float64).index_add(0, node, answer_ll(kap, om, sup))
+        return -bias_up(par_t, depth_t, A0, params, roots_t).sum() - prior(kap)
+    _lbfgs([k0, dl, om, lsv, lsh, rl], nll0)
     with torch.no_grad():
         nll_fit = float(nll0())
         kappa0 = _thresholds(k0, dl).numpy()
-    w = torch.softmax(zeta, 0).detach().numpy()
-    keep = w >= PRUNE
-    support = np.asarray(grid, dtype=np.float64)[keep]
-    w = w[keep] / w[keep].sum()
-    mean = float(np.sum(w * support))                    # centre: a shift of all biases equals a shift of kappa
-    support = support - mean
-    kappa0 = kappa0 - mean
-    omega = om.detach().numpy()
+    sigma_v, sigma_h = float(torch.exp(lsv)), float(torch.exp(lsh))
     rho = float(torch.sigmoid(rl).clamp(RHO_CLAMP, 1 - RHO_CLAMP))
-    # state 1 (positive roots): one answer per video, its bias integrated out under pi
+    omega = om.detach().numpy()
+    # state 1 (positive roots): one answer per video, its bias integrated out under the root prior
     rt = [(ans[(0, T)], T) for label, T, ans in train_answers if label == 1 and ans.get((0, T)) is not None
           and T >= qtree.F_FRAMES]
     Rt_np = np.stack([o for o, T in rt]).astype(np.int64)
     Rt = torch.as_tensor(Rt_np)                                                # R, C
     Ur = torch.as_tensor((np.log([float(T) for o, T in rt]) - len_mu) / len_sd)
-    bs, lws = torch.as_tensor(support), torch.as_tensor(np.log(w))
+    sup_np, lw_np = state_grid(sigma_v, sigma_h)
+    bs, lws = torch.as_tensor(sup_np), torch.as_tensor(lw_np)
     om_t = torch.as_tensor(omega)
     k1, d1 = _init_thresholds(Rt_np, L)
-    k1 = (k1 - mean).clone().requires_grad_(True)
-    d1 = d1.clone().requires_grad_(True)
+    k1, d1 = k1.clone().requires_grad_(True), d1.clone().requires_grad_(True)
 
     def nll1():
         kap = _thresholds(k1, d1)
         eta = om_t[None, None, :] * Ur[:, None, None] + bs[None, :, None]       # R, K, C
         lp = ordinal_logp(kap[None, None], eta)                                 # R, K, C, L
-        per = lp.gather(3, Rt[:, None, :, None].expand(-1, len(bs), -1, 1)).squeeze(-1).sum(-1)   # R, K
+        per = lp.gather(3, Rt[:, None, :, None].expand(-1, K, -1, 1)).squeeze(-1).sum(-1)   # R, K
         return -torch.logsumexp(per + lws[None], dim=1).sum() - prior(kap)
     _lbfgs([k1, d1], nll1)
     with torch.no_grad():
         kappa1 = _thresholds(k1, d1).numpy()
     kappa = np.stack([kappa0, kappa1], axis=1)                               # C, 2, L - 1
     info = {"n_negative_videos": int(len(roots)), "n_negative_answers": int(len(rows)), "n_roots": len(rt),
-            "rho": rho, "support": support.tolist(), "weights": w.tolist(), "omega": omega.tolist(),
-            "bias_sd": float(np.sqrt(np.sum(w * support ** 2))), "nll_negative": nll_fit,
+            "sigma_v": sigma_v, "sigma_h": sigma_h, "rho": rho, "omega": omega.tolist(), "nll_negative": nll_fit,
             "kappa": kappa.tolist()}
-    return HMTAnswerModel(kappa, omega, support, np.log(w), rho, len_mu, len_sd), info
+    return HMTAnswerModel(kappa, omega, sigma_v, sigma_h, rho, len_mu, len_sd), info
 
 
 class HMTAnswerModel:
     """Anchored two-state ordered-logit answer model with the per-node bias and its Markov tree; states 0 and 1 share
     the state-0 thresholds (anchored two states, as revision 6)."""
 
-    def __init__(self, kappa, omega, support, logw, rho, len_mu, len_sd, categories=(0,)):
+    def __init__(self, kappa, omega, sigma_v, sigma_h, rho, len_mu, len_sd, categories=(0,)):
         self.kappa = np.asarray(kappa, dtype=np.float64)                  # C, 2, L - 1
         self.omega = np.asarray(omega, dtype=np.float64)                  # C
-        self.support = np.asarray(support, dtype=np.float64)              # K
-        self.logw = np.asarray(logw, dtype=np.float64)                    # K
+        self.sigma_v, self.sigma_h = float(sigma_v), float(sigma_h)
+        self.support, self.logw = state_grid(self.sigma_v, self.sigma_h)  # K = K_V K_H
         self.rho = float(rho)
         self.len_mu, self.len_sd = float(len_mu), float(len_sd)
         self.cats = list(categories)
@@ -218,19 +238,20 @@ class HMTAnswerModel:
         self.L = self.kappa.shape[-1] + 1
 
     def to_dict(self):
-        return {"kappa": self.kappa.tolist(), "omega": self.omega.tolist(), "support": self.support.tolist(),
-                "logw": self.logw.tolist(), "rho": self.rho, "len_mu": self.len_mu, "len_sd": self.len_sd,
+        return {"kappa": self.kappa.tolist(), "omega": self.omega.tolist(), "sigma_v": self.sigma_v,
+                "sigma_h": self.sigma_h, "rho": self.rho, "len_mu": self.len_mu, "len_sd": self.len_sd,
                 "categories": self.cats}
 
     @classmethod
     def from_dict(cls, d):
-        return cls(d["kappa"], d["omega"], d["support"], d["logw"], d["rho"], d["len_mu"], d["len_sd"],
+        return cls(d["kappa"], d["omega"], d["sigma_v"], d["sigma_h"], d["rho"], d["len_mu"], d["len_sd"],
                    d["categories"])
 
     def params(self, device, dtype=torch.float64):
-        """(log pi (K,), log rho, log(1 - rho)) as tensors."""
+        """(root log prior (K,), log pi_h (K_H,), K_V, log rho, log(1 - rho)) as tensors."""
         rho = min(max(self.rho, RHO_CLAMP), 1 - RHO_CLAMP)
         return (torch.as_tensor(self.logw, dtype=dtype, device=device),
+                torch.as_tensor(normal_logw(Z_H), dtype=dtype, device=device), K_V,
                 torch.tensor(np.log(rho), dtype=dtype, device=device),
                 torch.tensor(np.log1p(-rho), dtype=dtype, device=device))
 
@@ -278,7 +299,8 @@ def _up_hmt(forest, s, A3K, chain, params, eta=None, phi=None, eta0=None):
     with a harmful second, answers under states 1 / 2, biases summed out), the all-zero path weight, and lp0 (B,) =
     log P(answers | G = 0)."""
     dev, dt = s.device, s.dtype
-    logpi, lr, l1r = (x.to(dev).to(dt) for x in params)
+    params = tuple(x.to(dev).to(dt) if torch.is_tensor(x) else x for x in params)
+    logpi = params[0]
     K = logpi.shape[0]
     flat = s.reshape(-1)
     logA = chain.logA_for(forest).to(dev).to(dt)
@@ -312,14 +334,14 @@ def _up_hmt(forest, s, A3K, chain, params, eta=None, phi=None, eta0=None):
             lz0s.append(torch.zeros(n_leaf, device=dev, dtype=dt))
         if len(nodes) > n_leaf:
             L, R = lev["L"].to(dev), lev["R"].to(dev)
-            ML = _to_parent(prev[0][L], logpi, lr, l1r)
-            MR = _to_parent(prev[0][R], logpi, lr, l1r)
+            ML = _to_parent(prev[0][L], params)
+            MR = _to_parent(prev[0][R], params)
             n = ML.shape[0]
             la = logA[nv[nodes[n_leaf:]]].repeat_interleave(K, dim=0) if per_video else logA
             mg = ctree._merge(ML.reshape(n * K, 2, 2, 2), MR.reshape(n * K, 2, 2, 2), la).reshape(n, K, 2, 2, 2)
             tabs.append(mg)
             lzs.append(prev[1][L] + prev[1][R])
-            b0s.append(_to_parent(prev0[0][L], logpi, lr, l1r) + _to_parent(prev0[0][R], logpi, lr, l1r))
+            b0s.append(_to_parent(prev0[0][L], params) + _to_parent(prev0[0][R], params))
             lz0s.append(prev0[1][L] + prev0[1][R])
         tab = torch.cat(tabs) + a1[nodes][:, :, None, None, :]          # answer factor on (bias, node's "any")
         c = torch.logsumexp(tab.reshape(len(nodes), -1), dim=1)
