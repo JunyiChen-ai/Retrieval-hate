@@ -18,8 +18,12 @@ Variants of cpolicy.run_batch (the method = order "eig", every node askable):
            whether following the prior's idea of where the hate is keeps the policy from covering the video.
   spread   expected gain in ranking accuracy (cpolicy._expected_spread_gain: between videos on P(G = 1) and between
            seconds within the video), full prior; spread_flatpol the same under the flat location prior.
-The single-level comparison of halfprior / flatprior / flatpol / spread / spread_flatpol re-runs the single levels
-the same way (runs_<variant>_L<L>).
+  val3     EIG and the posterior under the three-state answer table fitted on the validation GT
+           (answer_calib.fit_validation_answer_model: negative video / clean node of a hateful video / hateful node,
+           each with its own length slope) instead of the anchored two-state table, whose "no hate" row comes from
+           negative videos only and so over-trusts a Yes inside hateful videos (README section 11).
+The single-level comparison of halfprior / flatprior / flatpol / spread / spread_flatpol / val3 re-runs the single
+levels the same way (runs_<variant>_L<L>).
 Per trial and level L (4 / 8 / 16): each variant is read after the E3 matched calls k_v = min(8, nodes at depth L)
 (from experiments/20261108_astra_review replays runs_L<L>.pkl) and compared with the method (runs_L0.pkl) and the
 single level at the same k_v; also at fixed 8 calls. AP / ROC / within by the unified evaluator.
@@ -40,6 +44,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from qtl import cpolicy, data as qdata                                  # noqa: E402
+from qtl.answer_calib import fit_validation_answer_model                # noqa: E402
 from qtl.backbones import make_model                                    # noqa: E402
 from qtl.checkpoint import load_trial                                   # noqa: E402
 import hier_evidence_common as hc                                       # noqa: E402
@@ -110,7 +115,7 @@ def main():
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
     test = list(ids["test"])
     qdata.configure_source("soft_both", 8)
-    answers, _ = qdata.load_answers(a.corpus, "soft_both")
+    answers, T_all = qdata.load_answers(a.corpus, "soft_both")
     store = qdata.Store(a.corpus, test, ["bert"])
     dist_weight = None
     if "distw" in a.variants:
@@ -123,6 +128,10 @@ def main():
         trial = Path(td).resolve()
         summary, cfg, model, am, chain = load_trial(trial, "cpu", answers, ids, model_factory=make_model)
         assert cfg["answer_source"] == "soft_both" and int(cfg["soft_levels"]) == 8
+        if "val3" in a.variants:
+            am_val3, counts = fit_validation_answer_model(answers, labels, gt["val"], ids["val"], T_all, am.len_mu,
+                                                          am.len_sd, cfg["categories"])
+            print("val3 state counts", counts, flush=True)
         name = f'seed{summary["seed"]}_{trial.name}'
         od = (ROOT / a.out_root / a.corpus / name).resolve()
         od.mkdir(parents=True, exist_ok=True)
@@ -132,11 +141,12 @@ def main():
                for L in a.levels}
         row = {}
         for var in a.variants:
+            am_var = am_val3 if var == "val3" else am
             path = od / f"runs_{var}.pkl"
             if path.exists():
                 runs = pickle.load(path.open("rb"))["runs"]
             else:
-                runs = replay(var, model, store, test, am, chain, answers, cfg, dist_weight)
+                runs = replay(var, model, store, test, am_var, chain, answers, cfg, dist_weight)
                 with path.open("wb") as fh:
                     pickle.dump({"runs": runs, "trial": str(trial), "variant": var, "host": socket.gethostname(),
                                  "created": datetime.now().astimezone().isoformat()}, fh)
@@ -152,12 +162,12 @@ def main():
                 conv = lambda m: {"pooled_ap": m["pr_auc"], "pooled_roc": m["roc_auc"],
                                   "within_roc": m["per_video"]["macro_auc"]}
                 mm, ml = conv(mm), conv(ml)
-                if var in ("halfprior", "flatprior", "flatpol", "spread", "spread_flatpol"):   # single level under the same prior / policy
+                if var in ("halfprior", "flatprior", "flatpol", "spread", "spread_flatpol", "val3"):   # single level, same prior / policy / table
                     lpath = od / f"runs_{var}_L{L}.pkl"
                     if lpath.exists():
                         lruns = pickle.load(lpath.open("rb"))["runs"]
                     else:
-                        lruns = replay(var, model, store, test, am, chain, answers, cfg, dist_weight, level=L)
+                        lruns = replay(var, model, store, test, am_var, chain, answers, cfg, dist_weight, level=L)
                         with lpath.open("wb") as fh:
                             pickle.dump({"runs": lruns, "trial": str(trial), "variant": var, "level": L,
                                          "host": socket.gethostname()}, fh)
