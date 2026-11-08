@@ -60,6 +60,7 @@ def main():
                     ft = fine([int(n) for n in full[v]["asked"][:k]])
                     fl = fine([int(n) for n in lev[v]["asked"][:k]])
                     rows.append({"prior_auc": float(roc_auc_score(y, p0)), "diff": af[v] - al[v],
+                                 "auc_tree": af[v], "auc_level": al[v],
                                  "frac": float(y.mean()),
                                  "prior_err_tree_fine": float(np.abs(p0 - y)[ft].mean()) if ft.any() else np.nan,
                                  "prior_err_tree_rest": float(np.abs(p0 - y)[~ft].mean()) if (~ft).any() else np.nan,
@@ -71,6 +72,14 @@ def main():
             res = {"n_rows": len(rows), "prior_auc_mean": float(pa.mean()), "diff_mean": float(d.mean()),
                    "prior_auc_tercile_edges": q.tolist(),
                    "diff_by_prior_auc_tercile": [float(t.mean()) for t in terc],
+                   "tree_minus_prior_by_tercile": [float(np.mean([r["auc_tree"] - r["prior_auc"] for r, x in zip(rows, pa)
+                                                                  if lo < x <= hi])) for lo, hi in
+                                                   ((-1, q[0]), (q[0], q[1]), (q[1], 2))],
+                   "level_minus_prior_by_tercile": [float(np.mean([r["auc_level"] - r["prior_auc"] for r, x in zip(rows, pa)
+                                                                   if lo < x <= hi])) for lo, hi in
+                                                    ((-1, q[0]), (q[0], q[1]), (q[1], 2))],
+                   "frac_by_tercile": [float(np.mean([r["frac"] for r, x in zip(rows, pa) if lo < x <= hi]))
+                                       for lo, hi in ((-1, q[0]), (q[0], q[1]), (q[1], 2))],
                    "corr_prior_auc_diff": float(np.corrcoef(pa, d)[0, 1]),
                    "prior_err_tree_fine": float(np.nanmean([r["prior_err_tree_fine"] for r in rows])),
                    "prior_err_tree_rest": float(np.nanmean([r["prior_err_tree_rest"] for r in rows])),
