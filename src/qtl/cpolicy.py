@@ -83,7 +83,7 @@ def _expected_error_reduction(asker, cand, nodes, vt, p, pG, mm, copy_pi, asked_
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
-              copy_mode="both", record_erm=0):
+              copy_mode="both", record_erm=0, no_adjacent=False):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -239,6 +239,9 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 qa, qb = tr["a"][askers[b].q], tr["b"][askers[b].q]
                 a_, b_ = tr["a"][node], tr["b"][node]
                 rem[b] &= ~(((a_ <= qa) & (qb <= b_)) | ((qa <= a_) & (b_ <= qb)))
+            if no_adjacent:                      # diagnostic (experiments/20261109_tree_within): parent and children
+                adj = [tr["parent"][node], tr["left"][node], tr["right"][node]]
+                rem[b] &= ~np.isin(askers[b].q, [n for n in adj if n >= 0])
             o_idx = None
             if answer_ll is None:
                 o = answers[vids[b]].get((int(tr["a"][node]), int(tr["b"][node])))

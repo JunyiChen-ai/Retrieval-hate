@@ -3,7 +3,8 @@ asks? Same revision-6 test-selected checkpoints, same cached answers, same answe
 
 Variants of cpolicy.run_batch (the method = order "eig", every node askable):
   nonest   EIG order, but a node nested with (containing or inside) an already asked node can no longer be asked;
-  eer      expected per-second squared-error reduction (cpolicy._expected_error_reduction) instead of EIG.
+  eer      expected per-second squared-error reduction (cpolicy._expected_error_reduction) instead of EIG;
+  noadj    EIG order, but after a node is asked its parent and its two children can no longer be asked.
 Per trial and level L (4 / 8 / 16): each variant is read after the E3 matched calls k_v = min(8, nodes at depth L)
 (from experiments/20261108_astra_review replays runs_L<L>.pkl) and compared with the method (runs_L0.pkl) and the
 single level at the same k_v; also at fixed 8 calls. AP / ROC / within by the unified evaluator.
@@ -47,7 +48,7 @@ def replay(variant, model, store, vids, am, chain, answers, cfg):
         with torch.no_grad():
             runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cfg["categories"], 8, "cpu",
                                           order="eer" if variant == "eer" else "eig",
-                                          no_nested=(variant == "nonest")))
+                                          no_nested=(variant == "nonest"), no_adjacent=(variant == "noadj")))
     return runs
 
 
