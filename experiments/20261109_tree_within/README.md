@@ -183,6 +183,33 @@ loses AP. With the bias known from earlier answers, a nested answer becomes a cl
 evidence makes the video decision less sharp, which costs AP under a backbone trained with independent answers.
 Four answer-dependence models have now failed; the cause is not (only) the independence assumption.
 
+**Where the tree loses, by prior quality** (`diag_prior_trust.py`, `diag/prior_trust.json`; positive test videos with
+both classes, terciles of the prior's own within AUC before any call; tree / level change of within from the prior at
+the E3 matched calls):
+
+| | prior AUC tercile | hate fraction | tree - prior | level - prior | tree - level |
+|---|---|---|---|---|---|
+| HateMM L16 | <= .67 / .67-.95 / > .95 | .42 / .55 / .85 | +.121 / -.025 / -.056 | +.140 / -.005 / -.012 | -.019 / -.020 / -.044 |
+| HateMM L8 | | | +.134 / -.015 / -.063 | +.159 / -.013 / -.030 | -.025 / -.002 / -.034 |
+| HCS L16 | <= .48 / .48-.62 / > .62 | .60 / .52 / .64 | +.025 / +.019 / -.024 | +.018 / +.030 / -.014 | +.008 / -.011 / -.010 |
+
+The loss is not concentrated where the prior is wrong (correlation of prior AUC with tree - level: -.05 to .07). In
+the videos where the prior already ranks the seconds well (mostly hateful, HateMM), asking lowers within for both,
+and the tree's questions lower it about twice as much as the level's.
+
+**Questions chosen under a flat location prior** (`flatpol`: EIG computed with s_t and phi_n set to 0, scores from
+the full prior; levels the same way) and **flat prior everywhere** (`flatprior`), tree - level L4 / L8 / L16 within;
+fixed 8 vs method AP / ROC / within:
+
+| | HateMM | HCS | DeHate |
+|---|---|---|---|
+| flatpol | +.013 / -.020 / -.015; -.008 / -.002 / +.007 | -.001 / -.002 / +.003; -.014 / -.009 / +.010 | +.002 / +.001 / -.003; -.001 / +.001 / +.003 |
+| flatprior | +.017 / -.027 / -.026; -.035 / -.006 / +.006 | +.003 / -.001 / -.005; -.018 / -.028 / +.049 | +.004 / -.002 / -.014; -.072 / +.004 / -.006 |
+
+Following the prior's idea of where the hate is explains part of the L16 gap on HateMM (-.028 to -.015) and most of
+the small gaps on HCS / DeHate, but not HateMM L8 (-.020 under every EIG variant; -.002 only when parent / child of
+an asked node are excluded).
+
 ## 5. Proposal review
 
 One independent agent (Claude Fable 5.1), 2026-11-09: **PASS** (rule 4: none of the four STOP conditions). Searches
