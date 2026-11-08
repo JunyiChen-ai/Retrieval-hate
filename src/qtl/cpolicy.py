@@ -104,6 +104,53 @@ def _expected_error_reduction(asker, cand, nodes, vt, p, pG, mm, copy_pi, asked_
     return (1.0 - pG) ** 2 * R_out * out_term + pG ** 2 * R_in * in_term
 
 
+def _abs_sum(sorted_ref, prefix, x):
+    """sum_u |x_i - ref_u| for every x_i, given ref sorted ascending and its prefix sums (prefix[0] = 0)."""
+    k = np.searchsorted(sorted_ref, x)
+    n = len(sorted_ref)
+    return x * k - prefix[k] + (prefix[-1] - prefix[k]) - x * (n - k)
+
+
+def _expected_spread_gain(po, tr, nodes, p, pG, mm):
+    """Diagnostic (experiments/20261109_tree_within README section 7): expected gain in ranking accuracy from asking
+    each candidate node. Ranking accuracy of a set of probabilities = mean over pairs of |q_i - q_j| (for any pair,
+    ordering by the posterior is right with probability 1/2 + |q_i - q_j| / 2 under independent marginals). Two
+    pairs sets: videos (P(G = 1) of this video against a uniform reference, E|pG - U| = (pG^2 + (1 - pG)^2) / 2) and
+    seconds within the video given G = 1 (r_t = P(y_t = 1 | G = 1)). After answer o of node n: P(G = 1 | o) by Bayes;
+    r_t for t in n scaled by alpha_o = P(o | s = 2) / P(o | G = 1) (exact: y_t = 1 implies z_n = 1), r_t outside n
+    unchanged (chain correlation across the node boundary ignored, as in _expected_error_reduction). Value = expected
+    video term gain + P(G = 1) x expected within term gain (outcomes under G = 1), both per pair."""
+    T = len(p)
+    r = np.clip(np.asarray(p, dtype=np.float64) / max(float(pG), 1e-12), 0.0, 1.0)
+    P1 = (1.0 - mm)[:, None] * po[:, 1] + mm[:, None] * po[:, 2]                     # n, O: P(o | G = 1)
+    Po = (1.0 - pG) * po[:, 0] + pG * P1
+    P1c, Poc = np.clip(P1, 1e-300, None), np.clip(Po, 1e-300, None)
+    pGo = pG * P1 / Poc
+    f = lambda x: 0.5 * (x * x + (1.0 - x) ** 2)
+    video = (Po * f(pGo)).sum(1) - f(pG)
+    alpha = po[:, 2] / P1c                                                            # n, O
+    rs = np.sort(r)
+    pre = np.concatenate([[0.0], np.cumsum(rs)])
+    npairs = max(T * (T - 1) / 2.0, 1.0)
+    within = np.zeros(len(nodes))
+    for i, n in enumerate(nodes):
+        a_, b_ = int(tr["a"][n]), int(tr["b"][n])
+        rin = np.sort(r[a_:b_])
+        k = len(rin)
+        if k == T:                                                                    # root: no contrast in-video
+            continue
+        prin = np.concatenate([[0.0], np.cumsum(rin)])
+        ii = float((rin * (2.0 * np.arange(k) - (k - 1))).sum())                      # sum over in-node pairs
+        cross1 = float((_abs_sum(rs, pre, rin) - _abs_sum(rin, prin, rin)).sum())
+        g = 0.0
+        for o in range(po.shape[2]):
+            x = alpha[i, o] * rin
+            cross = float((_abs_sum(rs, pre, x) - _abs_sum(rin, prin, x)).sum())
+            g += P1[i, o] * ((alpha[i, o] - 1.0) * ii + cross - cross1)
+        within[i] = g / npairs
+    return video + pG * within
+
+
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
               copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0,
@@ -169,12 +216,12 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     for step in range(max_calls + 1):
         pG, m, p = ctree.marginals(fo, S, G, A3, chain, PHI)
         pG, m, p = pG.cpu().numpy(), m.cpu().numpy(), p.cpu().numpy()
-        pGq, mq = pG, m
+        pGq, mq, pq = pG, m, p
         if policy_prior_scale is not None:       # diagnostic (experiments/20261109_tree_within): the questions are
-            pGq, mq, _ = ctree.marginals(        # chosen under the prior shape scaled by policy_prior_scale; the
+            pGq, mq, pq = ctree.marginals(       # chosen under the prior shape scaled by policy_prior_scale; the
                 fo, S * policy_prior_scale, G, A3, chain,       # scores keep the full prior
                 None if PHI is None else PHI * policy_prior_scale)
-            pGq, mq = pGq.cpu().numpy(), mq.cpu().numpy()
+            pGq, mq, pq = pGq.cpu().numpy(), mq.cpu().numpy(), pq.cpu().numpy()
         if p0 is None:
             p0 = [p[b, :T].copy() for b, T in enumerate(Ts)]
         for b, T in enumerate(Ts):
@@ -245,6 +292,9 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 j = int(np.argmax(e))
             elif order == "eig":
                 e = asker.eig(cand, w)
+                j = int(np.argmax(e))
+            elif order == "spread":              # diagnostic (experiments/20261109_tree_within): ranking gain
+                e = _expected_spread_gain(asker.po_s[cand], vts[b].tr, nodes, pq[b, :Ts[b]], pGq[b], mm)
                 j = int(np.argmax(e))
             elif order == "eig_loc":             # diagnostic (experiments/20261109_tree_within): I(o_n; y | G = 1)
                 e = asker.eig(cand, np.stack([np.zeros(len(cand)), 1.0 - mm, mm], axis=1))

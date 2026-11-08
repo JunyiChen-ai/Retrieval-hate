@@ -8,7 +8,7 @@ both on the simulated answers) and fixed 8. If the tree still loses within here,
 when the model is right; if it wins, the real answers' departures from the model cause the loss.
 --variant (policy, tree and levels alike): eig (the method), flatpol (EIG under the flat location prior, scores from
 the full prior; cpolicy policy_prior_scale 0), eigloc_flatpol (I(o; y | G = 1) under the flat location prior), noadj
-(no parent / child of an asked node).
+(no parent / child of an asked node), spread / spread_flatpol (expected ranking gain, cpolicy._expected_spread_gain).
 Output runs/20261109_tree_within/simulated[_<variant>]/<corpus>/ (summary.json).
 """
 import argparse
@@ -60,7 +60,8 @@ def simulate(test, store, labels, gt, am, cats, seed):
 
 
 VARIANTS = {"eig": {}, "flatpol": {"policy_prior_scale": 0.0},
-            "eigloc_flatpol": {"order": "eig_loc", "policy_prior_scale": 0.0}, "noadj": {"no_adjacent": 1}}
+            "eigloc_flatpol": {"order": "eig_loc", "policy_prior_scale": 0.0}, "noadj": {"no_adjacent": 1},
+            "spread": {"order": "spread"}, "spread_flatpol": {"order": "spread", "policy_prior_scale": 0.0}}
 
 
 def replay(model, store, vids, am, chain, answers, cfg, sim, level, variant="eig"):
