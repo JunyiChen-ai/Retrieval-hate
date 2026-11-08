@@ -24,28 +24,10 @@ sys.path.insert(0, str(ROOT / "src"))
 from qtl import data as qdata, qtree
 import hier_evidence_common as hc
 
-# copies of the official final runs in Hate-follow-up/runs/legacy_lab2_results_pre20261004/reproduction/official_val/final
-LEGACY = ROOT / "runs/20261101_r5_completion/baseline_scores"
-DEHATE = ROOT / "runs/20260926_dehate_external/baselines/final"
-STRONGEST = {"hatemm": ["macilsd"], "hateclipseg": ["fed_wsvad_3client", "dsanet"], "dehate": ["fed_wsvad_3client"]}
+STRONGEST = hc.STRONGEST_BASELINE
 ALPHAS = np.round(np.linspace(0, 1, 11), 2)
-
-
-def baseline_scores(corpus, method, seed):
-    root = DEHATE if corpus == "dehate" else LEGACY
-    out = {}
-    for line in open(root / method / corpus / f"seed_{seed}" / "scores.jsonl"):
-        r = json.loads(line)
-        # DSANet: score_mlp, the branch of the official table (scripts/reproduction_baselines/aggregate_official_val.py);
-        # runs before 2026-11-08 read score_align here (review round 2, experiments/20261108_astra_review/README.md)
-        key = "score_mlp" if method == "dsanet" else ("score_av" if "score_av" in r else "score_align")
-        out[r["video_id"]] = np.asarray(r[key], dtype=np.float64)
-    return out
-
-
-def logit(x):
-    x = np.clip(np.asarray(x, dtype=np.float64), 1e-6, 1 - 1e-6)
-    return np.log(x) - np.log1p(-x)
+baseline_scores = hc.baseline_scores          # moved to src/hier_evidence_common.py (2026-11-09)
+logit = hc.logit
 
 
 def main():

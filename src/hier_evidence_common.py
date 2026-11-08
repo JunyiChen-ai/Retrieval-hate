@@ -428,6 +428,33 @@ def frame_metrics(scores, gt, hate_ids):
             "n_videos": res["n_videos"]}
 
 
+# Strongest trained baselines per corpus and their 3-seed final per-second scores (moved here from
+# experiments/20261101_r5_completion/baseline_plus_vlm.py when a second experiment needed them). LEGACY = copies of the
+# official final runs in Hate-follow-up/runs/legacy_lab2_results_pre20261004/reproduction/official_val/final.
+BASELINE_LEGACY = os.path.join(REPO_ROOT, "runs", "20261101_r5_completion", "baseline_scores")
+BASELINE_DEHATE = os.path.join(REPO_ROOT, "runs", "20260926_dehate_external", "baselines", "final")
+STRONGEST_BASELINE = {"hatemm": ["macilsd"], "hateclipseg": ["fed_wsvad_3client", "dsanet"],
+                      "dehate": ["fed_wsvad_3client"]}
+
+
+def baseline_scores(corpus, method, seed):
+    """{video id: per-second scores} of one baseline seed's final run (test videos)."""
+    root = BASELINE_DEHATE if corpus == "dehate" else BASELINE_LEGACY
+    out = {}
+    for line in open(os.path.join(root, method, corpus, f"seed_{seed}", "scores.jsonl")):
+        r = json.loads(line)
+        # DSANet: score_mlp, the branch of the official table (scripts/reproduction_baselines/aggregate_official_val.py);
+        # runs before 2026-11-08 read score_align here (review round 2, experiments/20261108_astra_review/README.md)
+        key = "score_mlp" if method == "dsanet" else ("score_av" if "score_av" in r else "score_align")
+        out[r["video_id"]] = np.asarray(r[key], dtype=np.float64)
+    return out
+
+
+def logit(x):
+    x = np.clip(np.asarray(x, dtype=np.float64), 1e-6, 1 - 1e-6)
+    return np.log(x) - np.log1p(-x)
+
+
 def write_scores(path, scores):
     with open(path, "w") as fh:
         for vid in sorted(scores):
