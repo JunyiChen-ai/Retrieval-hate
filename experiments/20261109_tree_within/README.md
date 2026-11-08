@@ -168,7 +168,20 @@ answer; dependence comes from a latent u_n = v + h_n + e_n (video part, Markov-t
 summing to 1) binned by the table's probit thresholds. Fit on the negative training videos (HateMM / HCS): s_v .48 /
 .55, s_h .43 / .39, s_e .09 / .06, rho .66 / .62; negative log-likelihood of the negative training answers 38659 vs
 52091 with independent answers (HateMM; HCS 4298 vs 6283). Implied latent correlation by tree distance (HateMM) .76 /
-.67 / .60 / .57 / .53 against the level correlations .77 / .62 / .49 / .48 / .43. Stage A: (running)
+.67 / .60 / .57 / .53 against the level correlations .77 / .62 / .49 / .48 / .43. Stage A (`stage_a_copula/`, tree -
+level AP / ROC / within at L4 | L8 | L16; fixed 8 vs revision 6; share of nested asks):
+
+| | L4 | L8 | L16 | fixed 8 vs r6 | nested |
+|---|---|---|---|---|---|
+| HateMM | +.017 / +.014 / +.022 | -.005 / +.003 / -.012 | -.013 / +.000 / -.026 | -.047 / -.040 / -.015 | .69 |
+| HCS | +.004 / -.014 / -.005 | +.019 / +.004 / -.010 | +.017 / +.008 / -.005 | -.006 / -.012 / +.000 | .31 |
+| DeHate | (running) | | | | |
+
+Rejected: the tree still loses within to L8 / L16, the AP / ROC margin over the levels is gone on HateMM, and fixed 8
+loses AP. With the bias known from earlier answers, a nested answer becomes a cleaner signal of the node's state
+(explaining away), so EIG still prefers nested questions (share .69, revision 6 about .6); and the discounted
+evidence makes the video decision less sharp, which costs AP under a backbone trained with independent answers.
+Four answer-dependence models have now failed; the cause is not (only) the independence assumption.
 
 ## 5. Proposal review
 
