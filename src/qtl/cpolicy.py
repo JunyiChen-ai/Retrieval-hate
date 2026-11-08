@@ -203,6 +203,9 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             elif order == "eig":
                 e = asker.eig(cand, w)
                 j = int(np.argmax(e))
+            elif order == "eig_loc":             # diagnostic (experiments/20261109_tree_within): I(o_n; y | G = 1)
+                e = asker.eig(cand, np.stack([np.zeros(len(cand)), 1.0 - mm, mm], axis=1))
+                j = int(np.argmax(e))
             else:
                 e = asker.eig(cand[:1], w[:1])
                 j = 0
