@@ -69,7 +69,9 @@ def main():
                 b[n] = b[p] if rng.random() < ham.rho else rng.choice(ham.K, p=pi)
         lens = [float(tr["b"][n] - tr["a"][n]) for n in q]
         lp = ham.level_logp(lens)[:, :, 0, 0, :]                      # n, K, L
-        lev = [int(rng.choice(lp.shape[-1], p=np.exp(lp[i, b[n]]))) for i, n in enumerate(q)]
+        pr = np.exp(lp)
+        pr = pr / pr.sum(-1, keepdims=True)
+        lev = [int(rng.choice(pr.shape[-1], p=pr[i, b[n]])) for i, n in enumerate(q)]
         sim.append((tr, q, lev))
     ce, cs = pair_corr(emp), pair_corr(sim)
     print(a.corpus, "rho %.3f bias_sd %.2f" % (ham.rho, fit["info"]["bias_sd"]))
