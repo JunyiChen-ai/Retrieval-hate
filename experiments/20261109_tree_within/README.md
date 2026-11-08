@@ -476,3 +476,52 @@ corpus where the tree loses within.
 
 **Status: the extent question is rejected at the answer level; the tree-within goal is still not met.** Options are
 in STATUS.md (2026-11-09).
+
+## 11. The answer table over-trusts a Yes inside hateful videos; a validation-fitted table does not close the gap (2026-11-09)
+
+**Check** (`diag_table_trust.py`, `runs/20261109_tree_within/diag/table_trust.json`; revision-6 test-selected
+trials, yes / no answers in 8 levels, validation + test nodes). Table AUC = how far apart the revision-6 table puts
+the answers of hateful and non-hateful nodes, at the bin's median length (mean of 3 trials); data AUC = how far apart
+the real answers are, for hateful nodes against nodes of negative videos, against clean nodes of hateful videos, and
+per hateful video (mean over videos):
+
+| | length | table | data: vs negative videos | vs clean nodes of hateful videos | per video | mean level negative / clean / hateful |
+|---|---|---|---|---|---|---|
+| HateMM | 4-8 s | .899 | .807 | .663 | .680 (107) | 2.26 / 3.56 / 4.68 |
+| | 16-32 s | .911 | .878 | .766 | .796 (47) | 2.72 / 4.17 / 5.86 |
+| | 32-64 s | .912 | .890 | .821 | .853 (19) | 3.04 / 4.20 / 6.20 |
+| HCS | 4-8 s | .823 | .762 | .673 | .644 (116) | 1.87 / 2.57 / 3.91 |
+| | 16-32 s | .821 | .803 | .705 | .689 (87) | 2.58 / 3.48 / 4.96 |
+| DeHate | 4-8 s | .583 | .696 | .612 | .645 (252) | 2.93 / 3.64 / 4.50 |
+| | 16-32 s | .623 | .746 | .624 | .621 (179) | 3.83 / 4.86 / 5.69 |
+
+The table's "no hate" row is fitted on negative videos only (revision 6), but the clean parts of hateful videos get
+much higher answers than negative videos (HateMM level 3.56 vs 2.26 at 4-8 s). On HateMM and HCS the table therefore
+over-trusts a Yes inside a hateful video, most of all on short nodes (HateMM .899 vs .663), which are the nodes the
+tree reaches last. On DeHate the table under-trusts the answers.
+
+**E3 with the validation-fitted three-state table** (`diag_policy_variants.py --variants val3 val3_noadj`,
+`runs/20261109_tree_within/policy_variants_val3/<corpus>/summary.json`; `answer_calib.fit_validation_answer_model`:
+negative video / clean node of a hateful video / hateful node, own length slope each, validation GT, no gradient;
+revision-6 checkpoints unchanged; tree and single levels both use the new table; tree - level AP / ROC / within at
+the E3 matched calls; fixed 8 against revision 6):
+
+| | L4 | L8 | L16 | fixed 8 vs revision 6 |
+|---|---|---|---|---|
+| HateMM val3 | +.022 / +.024 / +.021 | .000 / +.011 / -.022 | +.005 / +.011 / -.004 | -.021 / -.004 / +.003 |
+| HateMM val3_noadj | +.024 / +.025 / +.019 | +.002 / +.012 / -.021 | +.002 / +.011 / -.004 | -.020 / -.003 / +.001 |
+| HCS val3 | -.014 / -.027 / +.001 | -.005 / -.019 / -.004 | +.003 / -.007 / .000 | -.028 / -.023 / +.002 |
+| HCS val3_noadj | -.014 / -.023 / -.001 | -.005 / -.015 / -.006 | +.003 / -.003 / -.001 | -.027 / -.020 / .000 |
+| DeHate val3 | +.028 / +.031 / +.004 | +.020 / +.018 / +.001 | -.007 / +.008 / +.001 | -.001 / +.015 / -.003 |
+| DeHate val3_noadj | +.028 / +.026 / +.002 | +.021 / +.014 / -.002 | -.005 / +.005 / -.002 | .000 / +.010 / -.005 |
+
+(revision-6 method for reference, section 6: HateMM within L4 / L8 / L16 +.005 / -.020 / -.028.) The calibrated
+table closes the HateMM L16 gap (-.028 to -.004) and keeps DeHate within at or above every level (fixed-8 ROC .785
+vs .770), but the HateMM L8 gap stays (-.022; -.021 with noadj), HCS loses its AP / ROC margin over the levels, and
+fixed-8 AP drops .021 (HateMM) / .028 (HCS), as in `20261101_r5_completion` item 4 on revision 5. Not a solution.
+
+**Status of the tree-within goal: blocked.** Tried on the revision-6 checkpoints: four answer-dependence models,
+fifteen question policies, a location-bearing question (section 10: the VLM cannot answer it), and a calibrated
+three-state table with and without the noadj rule. None gives tree within >= every single level on all three corpora
+while keeping the AP / ROC margin and the fixed-8 AP. HateMM's 8-17 s level stays ahead by .02 in every version
+except the cover / noadj policies (-.001 / -.002), which lose the AP margin.
