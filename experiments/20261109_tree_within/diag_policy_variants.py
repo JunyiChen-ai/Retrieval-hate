@@ -117,7 +117,8 @@ def main():
             row[var] = res
             print(a.corpus, name, var, json.dumps({L: {kk: [round(x, 4) for x in res[L][kk].values()]
                                                        for kk in ("variant_minus_level", "variant_minus_method")}
-                                                   for L in res if L != "mean_asked_length"}), flush=True)
+                                                   for L in map(str, a.levels)}),
+                  "fixed8", json.dumps(res["fixed8"]["variant_minus_method"]), flush=True)
         rows[name] = row
     mean = {}
     for var in a.variants:
