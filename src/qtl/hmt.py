@@ -407,3 +407,131 @@ def marginals_hmt(forest, s, g, A3K, chain, params, phi=None):
                                                                     device=s.device), chain_d, None, phi)
         pG = torch.sigmoid(g + v1.detach() - v1_prior - lp0.detach())
     return pG, ge.detach(), ge0.detach(), (pG[:, None] * gs).detach()
+
+
+# ------------------------------------------------------------------ version 4: Gaussian copula on the anchored table
+class CopulaHMT:
+    """Version 4 (README section 6): the revision-6 anchored answer table kept exactly as the marginal of every
+    answer, with the dependence added by a Gaussian copula. Each node's answer level is the bin of a latent
+    u_n = v + h_n + e_n (variances s_v + s_h + s_e = 1; v shared by the video, h_n the Markov tree of version 3, e_n
+    independent) under the thresholds c_{s, l}(len) = Phi^-1(P(o <= l | s, len)) of the anchored table:
+        P(o_n = l | s, v + h_n = b) = Phi((c_{s,l} - b) / sqrt(s_e)) - Phi((c_{s,l-1} - b) / sqrt(s_e)).
+    Summing out b recovers the anchored table, so the backbone trained with it sees the same marginal answer model;
+    only the dependence between answers is new. Same interface as HMTAnswerModel (support / logw / K / params /
+    level_logp / outcome_tables / loglik)."""
+
+    def __init__(self, am, s_v, s_h, rho, categories=(0,)):
+        self.am = am                                                      # qtree.AnswerModel, two states
+        self.s_v, self.s_h, self.rho = float(s_v), float(s_h), float(rho)
+        self.s_e = max(1.0 - self.s_v - self.s_h, 1e-6)
+        zv, zh = _unit_grid(Z_V), _unit_grid(Z_H)
+        self.support = ((np.sqrt(self.s_v) * zv)[:, None] + (np.sqrt(self.s_h) * zh)[None, :]).reshape(-1)
+        self.logw = (normal_logw(Z_V)[:, None] + normal_logw(Z_H)[None, :]).reshape(-1)
+        self.cats = list(categories)
+        self.K = len(self.support)
+
+    def to_dict(self):
+        return {"s_v": self.s_v, "s_h": self.s_h, "rho": self.rho, "categories": self.cats}
+
+    def params(self, device, dtype=torch.float64):
+        rho = min(max(self.rho, RHO_CLAMP), 1 - RHO_CLAMP)
+        return (torch.as_tensor(self.logw, dtype=dtype, device=device),
+                torch.as_tensor(normal_logw(Z_H), dtype=dtype, device=device), K_V,
+                torch.tensor(np.log(rho), dtype=dtype, device=device),
+                torch.tensor(np.log1p(-rho), dtype=dtype, device=device))
+
+    def level_logp(self, length):
+        """(n, K, C, 3, L) log P(o_c = l | s, b_k, length)."""
+        with torch.no_grad():
+            lp = self.am.level_logp(torch.as_tensor(np.asarray(length, dtype=np.float64))).double().cpu().numpy()
+        lp = lp[:, :, [0, 0, 1], :] if lp.shape[2] == 2 else lp                 # n, C, 3, L
+        return copula_logp_np(lp, self.support, self.s_e)
+
+    def outcome_tables(self, length):
+        lp = self.level_logp(length)[:, :, self.cats]
+        n = lp.shape[0]
+        if n == 0:
+            return np.zeros((0, self.K, 3, lp.shape[-1] ** len(self.cats)))
+        return np.stack([qtree.outcome_table(lp[:, k]) for k in range(self.K)], axis=1)
+
+    def loglik(self, answers, length):
+        lp = self.level_logp(length)
+        o = np.asarray(answers, dtype=np.int64)
+        out = np.zeros(lp.shape[:2] + (3,))
+        for k in self.cats:
+            out += np.take_along_axis(lp[:, :, k], o[:, k][:, None, None, None].repeat(self.K, 1).repeat(3, 2),
+                                      axis=3)[..., 0]
+        return torch.as_tensor(out)
+
+
+def _unit_grid(z):
+    """Grid points rescaled so that the discretised normal has variance 1 (the copula's latent scale)."""
+    w = np.exp(normal_logw(z))
+    return z / np.sqrt(np.sum(w * z ** 2)) if len(z) > 1 else z
+
+
+def copula_logp_np(lp, support, s_e):
+    """lp (n, C, S, L) marginal log P(o = l | s) -> (n, K, C, S, L) conditional on the latent bias support (K,)."""
+    from scipy.special import ndtr, ndtri
+    cum = np.clip(np.cumsum(np.exp(lp), axis=-1)[..., :-1], 1e-12, 1 - 1e-12)
+    c = ndtri(cum)                                                              # n, C, S, L - 1
+    z = (c[:, None] - support[None, :, None, None, None]) / np.sqrt(s_e)       # n, K, C, S, L - 1
+    F_ = ndtr(z)
+    p = np.concatenate([F_, np.ones_like(F_[..., :1])], -1) - np.concatenate([np.zeros_like(F_[..., :1]), F_], -1)
+    return np.log(np.clip(p, 1e-12, None))
+
+
+def copula_logp_torch(lp, support, s_e):
+    cum = torch.cumsum(torch.exp(lp), dim=-1)[..., :-1].clamp(1e-12, 1 - 1e-12)
+    c = torch.special.ndtri(cum)
+    z = (c[:, None] - support[None, :, None, None, None]) / torch.sqrt(s_e)
+    F_ = torch.special.ndtr(z)
+    p = torch.cat([F_, torch.ones_like(F_[..., :1])], -1) - torch.cat([torch.zeros_like(F_[..., :1]), F_], -1)
+    return torch.log(p.clamp(min=1e-12))
+
+
+def fit_copula(am, train_answers):
+    """s_v, s_h, rho of CopulaHMT by maximum likelihood on the negative training videos (state 0, the anchored table
+    fixed). Returns a CopulaHMT and fit details."""
+    neg = [(T, ans) for label, T, ans in train_answers if label == 0]
+    if len(neg) > MAX_FIT_VIDEOS:
+        keep = np.random.default_rng(0).choice(len(neg), MAX_FIT_VIDEOS, replace=False)
+        neg = [neg[i] for i in sorted(keep)]
+    par, depth, roots, rows, n = _compact(neg)
+    par_t, depth_t, roots_t = map(torch.as_tensor, (par, depth, roots))
+    par_t = torch.where(par_t < 0, torch.zeros_like(par_t), par_t)
+    node = torch.as_tensor(np.array([r[0] for r in rows]))
+    O = torch.as_tensor(np.stack([r[1] for r in rows]).astype(np.int64))
+    with torch.no_grad():
+        lp0 = am.level_logp(torch.as_tensor(np.array([r[2] for r in rows]))).double()[:, :, :1, :]   # m, C, 1, L
+    zv, zh = torch.as_tensor(_unit_grid(Z_V)), torch.as_tensor(_unit_grid(Z_H))
+    lw = (torch.as_tensor(normal_logw(Z_V))[:, None] + torch.as_tensor(normal_logw(Z_H))[None, :]).reshape(-1)
+    lwh = torch.as_tensor(normal_logw(Z_H))
+    K = len(lw)
+    sh = torch.zeros(3, dtype=torch.float64, requires_grad=True)          # softmax -> (s_v, s_h, s_e)
+    rl = torch.tensor(0.0, dtype=torch.float64, requires_grad=True)
+
+    def nll():
+        s = torch.softmax(sh, 0)
+        sup = (torch.sqrt(s[0]) * zv[:, None] + torch.sqrt(s[1]) * zh[None, :]).reshape(-1)
+        lp = copula_logp_torch(lp0, sup, s[2])                                 # m, K, C, 1, L
+        ll = lp[:, :, :, 0].gather(3, O[:, None, :, None].expand(-1, K, -1, 1)).squeeze(-1).sum(-1)   # m, K
+        A0 = torch.zeros(n, K, dtype=torch.float64).index_add(0, node, ll)
+        rho = torch.sigmoid(rl).clamp(RHO_CLAMP, 1 - RHO_CLAMP)
+        return -bias_up(par_t, depth_t, A0, (lw, lwh, K_V, torch.log(rho), torch.log1p(-rho)), roots_t).sum()
+    with torch.no_grad():
+        nll_indep = float(-am_independent_ll(lp0, O))
+    _lbfgs([sh, rl], nll)
+    with torch.no_grad():
+        nll_fit = float(nll())
+        s = torch.softmax(sh, 0).numpy()
+    rho = float(torch.sigmoid(rl))
+    info = {"s_v": float(s[0]), "s_h": float(s[1]), "s_e": float(s[2]), "rho": rho, "nll_negative": nll_fit,
+            "nll_negative_independent": nll_indep, "n_negative_videos": int(len(roots)),
+            "n_negative_answers": int(len(rows))}
+    return CopulaHMT(am, s[0], s[1], rho), info
+
+
+def am_independent_ll(lp0, O):
+    """Log-likelihood of the answers under the anchored table with independent answers (reference for the fit)."""
+    return lp0[:, :, 0].gather(2, O[:, :, None]).squeeze(-1).sum()

@@ -61,6 +61,9 @@ def main():
     ap.add_argument("--levels", nargs="+", type=int, default=[4, 8, 16])
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--out-root", default="runs/20261109_tree_within/stage_a")
+    ap.add_argument("--answer-model", choices=("ordinal", "copula"), default="ordinal",
+                    help="ordinal: HMT versions 2-3 (own ordered-logit table); copula: version 4 (the trial's anchored "
+                         "table as the marginal, Gaussian copula dependence)")
     ap.add_argument("--bias", choices=("video_tree", "video", "tree", "none"), default="video_tree",
                     help="parts of the answer bias (diagnostic arms: video only, tree only, none = independent "
                          "ordered-logit answers)")
@@ -81,12 +84,25 @@ def main():
     qdata.configure_source("soft_both", 8)
     answers, _ = qdata.load_answers(a.corpus, "soft_both")
     fit_path = root / "hmt_fit.json"
-    if fit_path.exists():
+    ta = [(labels[v], max(b for (_, b) in answers[v]), answers[v]) for v in ids["train"] if answers[v]]
+    if a.answer_model == "copula":
+        fit_path = root / "copula_fit.json"
+        _s, _c, _m, am0, _ch = load_trial(Path(trials[0]).resolve(), "cpu", answers, ids, model_factory=make_model)
+        if fit_path.exists():
+            fit = json.load(open(fit_path))
+        else:
+            t0 = datetime.now()
+            _cm, info = hmt.fit_copula(am0, ta)
+            info["seconds"] = (datetime.now() - t0).total_seconds()
+            fit = {"info": info, "created": datetime.now().astimezone().isoformat(), "host": socket.gethostname(),
+                   "answer_table_from": str(trials[0])}
+            fit_path.write_text(json.dumps(fit, indent=1) + "\n")
+            print("copula fit", json.dumps(info), flush=True)
+        ham = None
+    elif fit_path.exists():
         fit = json.load(open(fit_path))
         ham = hmt.HMTAnswerModel.from_dict(fit["model"])
     else:
-        ta = [(labels[v], max(b for (_, b) in answers[v]), answers[v]) for v in ids["train"]
-              if answers[v]]                        # videos shorter than 4 s have no question
         loglen = np.log([b - a_ for v in ids["train"] for (a_, b) in answers[v]])
         t0 = datetime.now()
         ham, info = hmt.fit_hmt(ta, float(loglen.mean()), float(loglen.std()))
@@ -103,6 +119,8 @@ def main():
         summary, cfg, model, _am, chain = load_trial(trial, "cpu", answers, ids, model_factory=make_model)
         assert cfg["answer_source"] == "soft_both" and int(cfg["soft_levels"]) == 8
         assert cfg["answer_model"] == "anchored_shared" and int(cfg["n_state"]) == 2
+        if a.answer_model == "copula":           # this trial's anchored table (identical across trials) as marginal
+            ham = hmt.CopulaHMT(_am, fit["info"]["s_v"], fit["info"]["s_h"], fit["info"]["rho"], cfg["categories"])
         ham.cats = list(cfg["categories"])
         name = f'seed{summary["seed"]}_{trial.name}'
         od = root / name
