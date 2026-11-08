@@ -278,9 +278,11 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 qa, qb = tr["a"][askers[b].q], tr["b"][askers[b].q]
                 a_, b_ = tr["a"][node], tr["b"][node]
                 rem[b] &= ~(((a_ <= qa) & (qb <= b_)) | ((qa <= a_) & (b_ <= qb)))
-            if no_adjacent:                      # diagnostic (experiments/20261109_tree_within): parent and children
-                adj = [tr["parent"][node], tr["left"][node], tr["right"][node]]
-                rem[b] &= ~np.isin(askers[b].q, [n for n in adj if n >= 0])
+            if no_adjacent:                      # diagnostic (experiments/20261109_tree_within): nodes within tree
+                if anc[b] is None:               # distance no_adjacent (1: parent and children) of the asked node
+                    anc[b] = _ancestors(tr)
+                dd = _min_distance(tr, anc[b], askers[b].q, [node])
+                rem[b] &= ~(dd <= int(no_adjacent))
             o_idx = None
             if answer_ll is None:
                 o = answers[vids[b]].get((int(tr["a"][node]), int(tr["b"][node])))

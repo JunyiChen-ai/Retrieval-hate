@@ -5,6 +5,7 @@ Variants of cpolicy.run_batch (the method = order "eig", every node askable):
   nonest   EIG order, but a node nested with (containing or inside) an already asked node can no longer be asked;
   eer      expected per-second squared-error reduction (cpolicy._expected_error_reduction) instead of EIG;
   noadj    EIG order, but after a node is asked its parent and its two children can no longer be asked;
+  noadj2   the same for every node within tree distance 2 (also grandparent, grandchildren, sibling);
   eigloc   information about the seconds given that the video is hateful, I(o_n; y | G = 1), instead of EIG
            I(o_n; G, y) (which adds the information about G itself);
   distw    EIG and the posterior with each answer weighted by w(d) = 1 - r(d)^2, d = tree distance to the nearest
@@ -79,7 +80,7 @@ def replay(variant, model, store, vids, am, chain, answers, cfg, dist_weight=Non
         with torch.no_grad():
             runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cfg["categories"], 8, "cpu",
                                           order={"eer": "eer", "eigloc": "eig_loc"}.get(variant, "eig"),
-                                          no_nested=(variant == "nonest"), no_adjacent=(variant == "noadj"),
+                                          no_nested=(variant == "nonest"), no_adjacent={"noadj": 1, "noadj2": 2}.get(variant, 0),
                                           dist_weight=dist_weight if variant == "distw" else None,
                                           prior_scale=0.5 if variant == "halfprior" else 1.0,
                                           allowed=None if not level else
