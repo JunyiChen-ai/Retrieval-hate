@@ -28,6 +28,29 @@ def _flat(p0, llr, cnt):
     return 1.0 / (1.0 + np.exp(-(lp + llr / np.maximum(cnt, 1))))
 
 
+def _ancestors(tr):
+    """(n_nodes, depth + 1) ancestor at each depth (-1 below the node's own depth), for tree distances."""
+    D = int(tr["depth"].max())
+    anc = np.full((len(tr["a"]), D + 1), -1, dtype=np.int64)
+    for n in range(len(tr["a"])):
+        m = n
+        while m >= 0:
+            anc[n, tr["depth"][m]] = m
+            m = tr["parent"][m]
+    return anc
+
+
+def _min_distance(tr, anc, cand, asked):
+    """Tree distance from each candidate node to its nearest asked node (cand (n,), asked list)."""
+    dep = tr["depth"]
+    best = np.full(len(cand), np.iinfo(np.int64).max)
+    for m in asked:
+        same = (anc[cand] == anc[m][None, :]) & (anc[cand] >= 0)
+        lca_depth = same.sum(1) - 1                                  # common ancestors form a prefix from the root
+        best = np.minimum(best, dep[cand] + dep[m] - 2 * lca_depth)
+    return best
+
+
 def _nested_source(tr, node, asked_b, o_len):
     """The earlier-asked node nested with `node` (containing it or inside it) that has an answer, nearest in scale
     (revision 5 step 2, README section 17.2); None if there is none."""
@@ -83,7 +106,7 @@ def _expected_error_reduction(asker, cand, nodes, vt, p, pG, mm, copy_pi, asked_
 
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
-              copy_mode="both", record_erm=0, no_adjacent=False):
+              copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -138,6 +161,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     llr = [np.zeros(T) for T in Ts]
     cnt = [np.zeros(T) for T in Ts]
     asked_o = [[] for _ in vids]                 # per video: (node, outcome index or None) of the asked nodes
+    anc = [None for _ in vids]
     p0 = None
     for step in range(max_calls + 1):
         pG, m, p = ctree.marginals(fo, S, G, A3, chain, PHI)
@@ -200,6 +224,16 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                         po[i][:, src[1]] += pi
                 e = qtree.eig(np.log(np.clip(po, 1e-300, None)), w)
                 j = int(np.argmax(e))
+            elif order == "eig" and dist_weight is not None:
+                # diagnostic (experiments/20261109_tree_within): an answer whose nearest asked node is at tree
+                # distance d carries the fraction w(d) = 1 - r(d)^2 of its information (r: answer correlation)
+                e = asker.eig(cand, w)
+                if asked_o[b]:
+                    if anc[b] is None:
+                        anc[b] = _ancestors(vts[b].tr)
+                    dd = _min_distance(vts[b].tr, anc[b], nodes, [m for m, _ in asked_o[b]])
+                    e = e * dist_weight[np.minimum(dd, len(dist_weight) - 1)]
+                j = int(np.argmax(e))
             elif order == "eig":
                 e = asker.eig(cand, w)
                 j = int(np.argmax(e))
@@ -261,6 +295,11 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                                                   np.log(pi) + (0.0 if o_idx == src[1] else -np.inf))
             else:
                 ll = answer_ll(b, node)
+            if dist_weight is not None and ll is not None and asked_o[b]:
+                if anc[b] is None:
+                    anc[b] = _ancestors(tr)
+                dd = int(_min_distance(tr, anc[b], np.array([node]), [m for m, _ in asked_o[b]])[0])
+                ll = ll * float(dist_weight[min(dd, len(dist_weight) - 1)])
             asked_o[b].append((node, o_idx))
             if ll is not None:
                 A3[fo.offs[b] + node] = torch.as_tensor(ll, dtype=torch.float64, device=device)

@@ -6,7 +6,10 @@ Variants of cpolicy.run_batch (the method = order "eig", every node askable):
   eer      expected per-second squared-error reduction (cpolicy._expected_error_reduction) instead of EIG;
   noadj    EIG order, but after a node is asked its parent and its two children can no longer be asked;
   eigloc   information about the seconds given that the video is hateful, I(o_n; y | G = 1), instead of EIG
-           I(o_n; G, y) (which adds the information about G itself).
+           I(o_n; G, y) (which adds the information about G itself);
+  distw    EIG and the posterior with each answer weighted by w(d) = 1 - r(d)^2, d = tree distance to the nearest
+           already asked node, r(d) = correlation of the answer levels of two nodes at distance d in the negative
+           training videos (d >= 5 pooled); the first answer has weight 1.
 Per trial and level L (4 / 8 / 16): each variant is read after the E3 matched calls k_v = min(8, nodes at depth L)
 (from experiments/20261108_astra_review replays runs_L<L>.pkl) and compared with the method (runs_L0.pkl) and the
 single level at the same k_v; also at fixed 8 calls. AP / ROC / within by the unified evaluator.
@@ -42,7 +45,30 @@ def score(corpus, od, label, sc):
     return {"pooled_ap": m["pr_auc"], "pooled_roc": m["roc_auc"], "within_roc": m["per_video"]["macro_auc"]}
 
 
-def replay(variant, model, store, vids, am, chain, answers, cfg):
+def corr_by_distance(answers, labels, train_ids, dmax=5, seed=0):
+    """r(d), d = 1 .. dmax (dmax pools >= dmax): Pearson correlation of the answer levels of node pairs at tree
+    distance d in the same negative training video (up to 60 random pairs per video)."""
+    rng = np.random.default_rng(seed)
+    acc = {d: [] for d in range(1, dmax + 1)}
+    for v in train_ids:
+        if labels[v] != 0 or not answers[v]:
+            continue
+        T = max(b for (_, b) in answers[v])
+        tr = cpolicy.qtree.tree(T)
+        q = [int(n) for n in np.where(tr["queryable"])[0]
+             if answers[v].get((int(tr["a"][n]), int(tr["b"][n]))) is not None]
+        if len(q) < 2:
+            continue
+        anc = cpolicy._ancestors(tr)
+        lev = {n: int(answers[v][(int(tr["a"][n]), int(tr["b"][n]))][0]) for n in q}
+        for _ in range(min(60, len(q) * (len(q) - 1) // 2)):
+            i, j = rng.choice(len(q), 2, replace=False)
+            d = int(cpolicy._min_distance(tr, anc, np.array([q[i]]), [q[j]])[0])
+            acc[min(d, dmax)].append((lev[q[i]], lev[q[j]]))
+    return {d: float(np.corrcoef(np.array(x).T)[0, 1]) for d, x in acc.items()}
+
+
+def replay(variant, model, store, vids, am, chain, answers, cfg, dist_weight=None):
     runs = {}
     vids = sorted(vids, key=lambda v: store.T[v])
     for i in range(0, len(vids), int(cfg["eval_chunk"])):
@@ -50,7 +76,8 @@ def replay(variant, model, store, vids, am, chain, answers, cfg):
         with torch.no_grad():
             runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cfg["categories"], 8, "cpu",
                                           order={"eer": "eer", "eigloc": "eig_loc"}.get(variant, "eig"),
-                                          no_nested=(variant == "nonest"), no_adjacent=(variant == "noadj")))
+                                          no_nested=(variant == "nonest"), no_adjacent=(variant == "noadj"),
+                                          dist_weight=dist_weight if variant == "distw" else None))
     return runs
 
 
@@ -70,6 +97,12 @@ def main():
     qdata.configure_source("soft_both", 8)
     answers, _ = qdata.load_answers(a.corpus, "soft_both")
     store = qdata.Store(a.corpus, test, ["bert"])
+    dist_weight = None
+    if "distw" in a.variants:
+        r = corr_by_distance(answers, labels, ids["train"])
+        dist_weight = np.array([1.0] + [1.0 - max(r[d], 0.0) ** 2 for d in sorted(r)])
+        print("answer correlation by tree distance", json.dumps(r), "weights", np.round(dist_weight, 3).tolist(),
+              flush=True)
     rows = {}
     for td in trials:
         trial = Path(td).resolve()
@@ -88,7 +121,7 @@ def main():
             if path.exists():
                 runs = pickle.load(path.open("rb"))["runs"]
             else:
-                runs = replay(var, model, store, test, am, chain, answers, cfg)
+                runs = replay(var, model, store, test, am, chain, answers, cfg, dist_weight)
                 with path.open("wb") as fh:
                     pickle.dump({"runs": runs, "trial": str(trial), "variant": var, "host": socket.gethostname(),
                                  "created": datetime.now().astimezone().isoformat()}, fh)
