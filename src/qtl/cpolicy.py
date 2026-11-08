@@ -151,10 +151,37 @@ def _expected_spread_gain(po, tr, nodes, p, pG, mm):
     return video + pG * within
 
 
+def _cover_feasible(tr, cov_b, q, cand):
+    """Diagnostic cover (run_batch cover=): the candidates (positions into q) that keep an exact cover with the
+    remaining cover calls possible, and per kept candidate (frontier ancestor, siblings on the path below it)."""
+    fine, front, left = cov_b
+    need = left - 1
+    tot = sum(int(fine[f]) for f in front)
+    keep, path = [], []
+    for c in cand:
+        n = int(q[c])
+        x, sibs = n, []
+        while x not in front and x > 0:
+            p_ = int(tr["parent"][x])
+            sibs.append(int(tr["left"][p_] + tr["right"][p_] - x))
+            x = p_
+        if x not in front or any(fine[s_] == 0 for s_ in sibs):
+            continue
+        minc = len(front) - 1 + len(sibs)
+        maxc = tot - int(fine[x]) + sum(int(fine[s_]) for s_ in sibs)
+        if minc <= need <= maxc:
+            keep.append(c)
+            path.append((x, sibs))
+    if not keep:                                 # cannot happen when the cover size is feasible; stay unconstrained
+        cov_b[2] = 0
+        return cand, None
+    return np.asarray(keep, dtype=cand.dtype), path
+
+
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
               copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0,
-              policy_prior_scale=None):
+              policy_prior_scale=None, budgets=None, cover=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -172,7 +199,13 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     sets for ALL still-askable nodes from the model's posterior predictive (video state ~ P(G), node states from their
     marginals independently, outcomes from the answer model), runs the tree inference on each and records the mean
     over samples of the per-second log-odds change (mean over seconds: erm; sum over seconds: ermsum) between the
-    current posterior and the posterior with everything answered: the expected remaining movement of the scores."""
+    current posterior and the posterior with everything answered: the expected remaining movement of the scores.
+    budgets (diagnostic, experiments/20261109_tree_within): per video, the number of calls (None = max_calls).
+    cover (diagnostic, experiments/20261109_tree_within): None = the method; "plain" = budget-aware cover: the first
+    C = min(budget, most disjoint queryable nodes) questions are pairwise disjoint tree nodes that together cover the
+    whole video (each candidate must leave an uncovered region that C - 1 - asked disjoint queryable nodes can still
+    cover exactly), chosen by the order's objective; later calls (if any) unconstrained. "root" = the root first,
+    then the same cover with C = min(budget - 1, ...)."""
     assert copy_mode in ("both", "eig", "lik")
     copy_eig = copy_pi is not None and copy_mode in ("both", "eig")
     copy_lik = copy_pi is not None and copy_mode in ("both", "lik")
@@ -213,6 +246,21 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     asked_o = [[] for _ in vids]                 # per video: (node, outcome index or None) of the asked nodes
     anc = [None for _ in vids]
     p0 = None
+    budgets = [max_calls] * len(vids) if budgets is None else [int(x) for x in budgets]
+    cov = [None for _ in vids]                   # diagnostic cover state: [fine, frontier set, cover calls left]
+    if cover is not None:
+        assert cover in ("plain", "root")
+        for b, vt in enumerate(vts):
+            tr = vt.tr
+            fine = np.zeros(len(tr["a"]), dtype=np.int64)    # most disjoint queryable nodes covering the node exactly
+            for n in range(len(tr["a"]) - 1, -1, -1):
+                l_, r_ = tr["left"][n], tr["right"][n]
+                if l_ >= 0 and fine[l_] > 0 and fine[r_] > 0:
+                    fine[n] = fine[l_] + fine[r_]
+                elif tr["queryable"][n]:
+                    fine[n] = 1
+            first = 1 if cover == "root" and budgets[b] >= 1 else 0
+            cov[b] = [fine, {0}, min(budgets[b] - first, int(fine[0]))]
     for step in range(max_calls + 1):
         pG, m, p = ctree.marginals(fo, S, G, A3, chain, PHI)
         pG, m, p = pG.cpu().numpy(), m.cpu().numpy(), p.cpu().numpy()
@@ -258,9 +306,16 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             break
         chosen = []
         for b, (asker, off) in enumerate(zip(askers, fo.offs)):
+            if len(asked_o[b]) >= budgets[b]:
+                continue
             cand = np.where(rem[b])[0]
             if len(cand) == 0:
                 continue
+            cov_path = None
+            if cov[b] is not None and cover == "root" and not asked_o[b] and asker.q[0] == 0 and rem[b][0]:
+                cand = cand[asker.q[cand] == 0]
+            elif cov[b] is not None and cov[b][2] > 0:
+                cand, cov_path = _cover_feasible(vts[b].tr, cov[b], asker.q, cand)
             nodes = asker.q[cand]
             mm = mq[off + nodes]
             w = np.stack([np.full(len(cand), 1.0 - pGq[b]), pGq[b] * (1.0 - mm), pGq[b] * mm], axis=1)
@@ -303,6 +358,11 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 e = asker.eig(cand[:1], w[:1])
                 j = 0
             chosen.append((b, int(cand[j]), int(nodes[j]), w[j], float(e[j])))
+            if cov_path is not None:             # diagnostic cover: the frontier loses the chosen node's frontier
+                f_, sibs = cov_path[j]           # ancestor and gains the siblings along the path below it
+                cov[b][1].discard(f_)
+                cov[b][1].update(sibs)
+                cov[b][2] -= 1
             e_all = np.asarray(e, dtype=np.float64)
             out[b]["eig_sum"].append(float(e_all.sum()))
             out[b]["eig_top3"].append(float(np.sort(e_all)[-3:].sum()))
