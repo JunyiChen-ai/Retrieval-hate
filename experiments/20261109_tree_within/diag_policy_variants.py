@@ -21,7 +21,8 @@ Variants of cpolicy.run_batch (the method = order "eig", every node askable):
   val3     EIG and the posterior under the three-state answer table fitted on the validation GT
            (answer_calib.fit_validation_answer_model: negative video / clean node of a hateful video / hateful node,
            each with its own length slope) instead of the anchored two-state table, whose "no hate" row comes from
-           negative videos only and so over-trusts a Yes inside hateful videos (README section 11).
+           negative videos only and so over-trusts a Yes inside hateful videos (README section 11);
+           val3_noadj the same table with the noadj rule.
 The single-level comparison of halfprior / flatprior / flatpol / spread / spread_flatpol / val3 re-runs the single
 levels the same way (runs_<variant>_L<L>).
 Per trial and level L (4 / 8 / 16): each variant is read after the E3 matched calls k_v = min(8, nodes at depth L)
@@ -92,7 +93,7 @@ def replay(variant, model, store, vids, am, chain, answers, cfg, dist_weight=Non
             runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cfg["categories"], 8, "cpu",
                                           order={"eer": "eer", "eigloc": "eig_loc", "spread": "spread",
                                                  "spread_flatpol": "spread"}.get(variant, "eig"),
-                                          no_nested=(variant == "nonest"), no_adjacent={"noadj": 1, "noadj2": 2}.get(variant, 0),
+                                          no_nested=(variant == "nonest"), no_adjacent={"noadj": 1, "noadj2": 2, "val3_noadj": 1}.get(variant, 0),
                                           dist_weight=dist_weight if variant == "distw" else None,
                                           prior_scale={"halfprior": 0.5, "flatprior": 0.0}.get(variant, 1.0),
                                           policy_prior_scale=0.0 if variant in ("flatpol", "spread_flatpol") else None,
@@ -128,7 +129,7 @@ def main():
         trial = Path(td).resolve()
         summary, cfg, model, am, chain = load_trial(trial, "cpu", answers, ids, model_factory=make_model)
         assert cfg["answer_source"] == "soft_both" and int(cfg["soft_levels"]) == 8
-        if "val3" in a.variants:
+        if any(v.startswith("val3") for v in a.variants):
             am_val3, counts = fit_validation_answer_model(answers, labels, gt["val"], ids["val"], T_all, am.len_mu,
                                                           am.len_sd, cfg["categories"])
             print("val3 state counts", counts, flush=True)
@@ -141,7 +142,7 @@ def main():
                for L in a.levels}
         row = {}
         for var in a.variants:
-            am_var = am_val3 if var == "val3" else am
+            am_var = am_val3 if var.startswith("val3") else am
             path = od / f"runs_{var}.pkl"
             if path.exists():
                 runs = pickle.load(path.open("rb"))["runs"]
@@ -162,7 +163,7 @@ def main():
                 conv = lambda m: {"pooled_ap": m["pr_auc"], "pooled_roc": m["roc_auc"],
                                   "within_roc": m["per_video"]["macro_auc"]}
                 mm, ml = conv(mm), conv(ml)
-                if var in ("halfprior", "flatprior", "flatpol", "spread", "spread_flatpol", "val3"):   # single level, same prior / policy / table
+                if var in ("halfprior", "flatprior", "flatpol", "spread", "spread_flatpol", "val3", "val3_noadj"):   # single level, same prior / policy / table
                     lpath = od / f"runs_{var}_L{L}.pkl"
                     if lpath.exists():
                         lruns = pickle.load(lpath.open("rb"))["runs"]
