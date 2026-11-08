@@ -1,0 +1,126 @@
+# 20261109_tree_within: answers that persist across scale (hidden Markov tree answer model)
+
+User 2026-11-09: the question tree is a core novelty; E3 (experiments/20261108_astra_review) showed that with the same
+checkpoint and the same calls per video one tree level beats the full tree on within (HateMM 8-16 s / 16-32 s
+windows: -.020 / -.028; HCS and DeHate within ±.01). Goal: change the method so the full tree's within is not below
+any single level, keeping its AP / ROC advantage. Host: diagnostics on uoa-lab3 (HateMM, HCS) and uoa-lab1 (DeHate),
+CPU; outputs `runs/20261109_tree_within/` (copied to uoa-lab2).
+
+## 1. Diagnostics (test error analysis, rule 10; revision-6 test-selected trials, test split unless noted)
+
+Artifacts read: E3 replays and per-video AUCs (`runs/20261108_astra_review/{replay,e3}/`), cached soft answers
+(`data/vlm_tree/<C>/soft_both_p1*.jsonl`), validation and test GT.
+
+1. **Where the tree loses** (`diag_tree_within.py`, `runs/20261109_tree_within/diag/diag_*.json`). At the E3 matched
+   calls the full tree covers far less of a positive video at fine resolution: share of seconds whose shortest
+   covering asked node is at most 2L + 1 s long, HateMM L16: tree .40, single level .95; DeHate L16 .40 vs .96.
+   54-82% of the tree's asked nodes are nested with an earlier asked node (HateMM L16 2.9 of 5.4; DeHate L4 5.9 of
+   7.2). HateMM's loss is largest in videos that are mostly hateful (GT fraction .89-.99: within -.054 at L16).
+2. **The answer depends on whether a node contains hate, not how much** (`diag_answer_fraction.py`,
+   `answer_fraction.json`). Among nodes with at least one hateful second, the Spearman correlation of P(Yes) with the
+   node's hate fraction is -.06 to .16 per length bin (AUC for fraction > .5: .43-.61) on all three corpora, val and
+   test, except HCS nodes longer than 64 s (.22-.42). The model's "any hate in the node" state is the right one; a
+   hate-fraction answer model is not supported.
+3. **Answers of nested nodes repeat each other** (`diag_answer_redundancy.py`, `answer_redundancy.json`, val + test).
+   Residual of a node = logit P(Yes) minus its cell mean (state, length bin). Correlation of residuals, same video,
+   same state:
+
+   | | parent-child (length ratio 2) | ratio 4 | disjoint, ratio 2 | disjoint, ratio 4 |
+   |---|---|---|---|---|
+   | HateMM negative videos | .81 | .70 | .46 | .47 |
+   | HateMM hateful nodes | .71 | .55 | .26 | .25 |
+   | HCS negative videos | .66 | .42 | .08 | .05 |
+   | HCS hateful nodes | .74 | .60 | .30 | .31 |
+   | DeHate negative videos | .78 | .64 | .31 | .31 |
+   | DeHate hateful nodes | .73 | .56 | .30 | .30 |
+
+   Nested answers are far more alike than disjoint ones, and the ratio-4 correlation is close to the square of the
+   ratio-2 one (.55 vs .71² = .50; .64 vs .78² = .61): the residual behaves like a Markov process down the tree.
+   The revision-6 answer model treats all answers as independent given the node states.
+4. **What the tree policy asks** (`runs_L0.pkl`, one trial per corpus). HateMM / DeHate: the root first in 59% / 85%
+   of videos, then both halves, then the quarters - an almost breadth-first, coarse-to-fine order; HCS asks short
+   nodes (depth 5-6). Under independence, the root, the halves and the quarters look like separate pieces of
+   evidence; with nested correlation .7 they largely repeat one another, so EIG spends the budget re-asking coarse
+   evidence while single-level policies spend it on disjoint windows.
+5. **Policy changes alone do not fix it** (`diag_policy_variants.py`, `policy_variants/<corpus>/summary.json`).
+   Method minus single level, AP / ROC / within at the E3 matched calls:
+
+   | | HateMM L8 | HateMM L16 | HCS L8 | DeHate L16 |
+   |---|---|---|---|---|
+   | method (EIG) | .013 / .018 / -.020 | .020 / .016 / -.028 | .022 / .008 / -.006 | -.002 / .014 / -.010 |
+   | EER order | .012 / .019 / -.016 | .014 / .016 / -.024 | .000 / -.011 / -.002 | -.001 / .012 / -.012 |
+   | EIG, no nested asks | -.002 / .006 / -.021 | .005 / .005 / -.023 | .020 / .012 / .003 | -.039 / -.016 / -.016 |
+
+   "No nested asks" is not a usable policy (after the root nothing is askable: DeHate 1.5 calls on average), but on
+   HCS, where the root is rarely asked, avoiding nested asks already brings within above every level.
+
+## 2. Mechanism
+
+The VLM's answer to a node depends on the node's state and on a content-driven propensity that nested nodes share:
+the child's frames and transcript are part of the parent's. The revision-6 model ignores this, which (a) counts a
+child's answer as fresh evidence although it mostly repeats its parent's, and (b) makes EIG overvalue nested and
+coarse questions, so the tree asks redundant coarse-to-fine sequences instead of informative disjoint ones. Modelling
+the shared propensity should make the posterior discount repeated evidence and make EIG prefer questions whose answer
+is not already implied, so the tree keeps its adaptivity (zoom where useful, cover where needed) without wasting calls.
+
+## 3. Method: hidden Markov tree answer model (HMT)
+
+Every tree node n carries a latent answer bias b_n on a support grid. Given the node state s_n (anchored two states as
+in revision 6) and b_n,
+
+    P(o_n = l | s_n, b_n, len_n) = softmax_l(theta_{s_n, l} + omega_l u(len_n) + b_n c_l),  c_l = l / (L - 1) - 1/2,
+
+(the revision-6 table with its shared length slope, tilted by b_n). The biases form a Markov tree: b_root ~ pi; for a
+child, b_child = b_parent with probability rho, otherwise a fresh draw from pi. So corr(residual of n, residual of m)
+decays as rho^(tree distance), which is the pattern in section 1.3. Special cases: rho = 0 gives independent answers
+with a pi-mixture table (revision 6 up to the tilt); rho = 1 gives one offset per video (the per-video offset tried
+11-01, `src/qtl/answer_offset.py`, not adopted).
+
+- **Fitting (before training, label-only like the anchored table):** theta_0, omega, pi and rho by maximum likelihood on
+  the answers of the negative training videos (every node in state 0, biases summed out exactly by an upward pass over
+  the tree); pi is a nonparametric mixing distribution on a fixed grid (Laird 1978), points with weight < 1e-4
+  dropped; theta_1 on the roots of the positive training videos with b_root ~ pi summed out. No new searched
+  hyperparameter; rho and pi are estimated, not set.
+- **Inference:** exact. The chain-tree upward pass (`ctree._up`) gets one more index per node, b_n: a child's table is
+  carried to the parent's bias by the transition (O(K) per node: rho times the same b plus (1 - rho) times the
+  pi-average), the two children are merged per parent bias as before, and the answer factor depends on (b_n, z_n).
+  The G = 0 branch (all nodes state 0) is the same pass over the biases alone. Posteriors of seconds, nodes and node
+  biases by automatic differentiation as in revision 6.
+- **Questions:** EIG of a candidate node with its answer table mixed over its posterior bias given each state,
+  P(o | s) = sum_k P(b_n = k | s, answers so far) P(o | s, b_k): after a parent's answer, a child's answer is partly
+  predictable from the parent's bias, so its information drops; disjoint nodes far from asked ones keep the pi-mixture.
+- **Training:** the tree likelihood of the training answers (the backbone's answer target) uses the same model, so
+  training, epoch selection and test use one answer model (as in revision 6).
+
+Source: hidden Markov trees for persistence across scale in wavelet coefficients (Crouse, Nowak and Baraniuk 1998,
+IEEE Trans. Signal Processing); here the persistence is in a VLM's answers to nested temporal questions, combined
+with the zero-inflated chain over seconds and the any-hate node states. Proposal review: section 5.
+
+## 4. Plan and success criteria (written before any HMT result)
+
+- **Stage A (developmental, CPU):** the HMT at test time on the revision-6 test-selected checkpoints (backbone and
+  training unchanged; answer model refitted with the HMT on the same training answers); policy replay on the test
+  split; E3 comparison (same checkpoint, same calls per video, tree vs each single level, single levels also under the
+  HMT) and fixed 8 calls. Purpose: check the mechanism before retraining.
+- **Stage B (the method, GPU):** HMT in training as well; full Optuna search per corpus and seed with the revision-6
+  search space (rule 7; trial count by the first trial's duration); then E3, the budget curve and the ablations.
+- **Success:** (1) E3 under the new method: full tree within minus each single level (L4 / L8 / L16) >= 0 on all three
+  corpora (3-seed means), and full tree AP or ROC still >= .01 above each single level; (2) fixed 8 calls: AP and ROC
+  not below revision 6 by more than .005 (3-seed means) on any corpus, within not below revision 6.
+
+## 5. Proposal review
+
+One independent agent (Claude Fable 5.1), 2026-11-09: **PASS** (rule 4: none of the four STOP conditions). Searches
+(12 queries, e.g. "hidden Markov tree video temporal localization", "hateful video localization vision-language model
+query adaptive questions", "correlated answers nested segments vision-language model latent bias temporal tree",
+"\"hidden Markov tree\" \"hateful\" OR \"hate speech\" video") found no hidden Markov tree or cross-scale answer model
+in hateful video detection or localization. Closest work: LELA (arXiv 2602.09637, training-free LLM per-frame hate
+scores), MultiHateLoc (arXiv 2512.10408, MIL, no VLM queries), SafeLens (AAAI 2026 demo, per-segment LLM pipeline),
+TANDEM (arXiv 2601.11178), FV-Action (arXiv 2608.08315, coarse-to-fine yes/no VLM questions for temporal grounding,
+answers used independently, not hateful video), VADTree (arXiv 2510.22693, deterministic segment tree for anomaly
+detection), the HMT source (Crouse et al. 1998) and arXiv 2607.22951 (HMM chain for LLM reliability). Not an ensemble,
+not calibration (the bias enters the training likelihood, the posterior and the question choice), not an engineering
+trick. Wording points taken: the "copy with probability rho, else redraw from pi" transition is a restricted
+parameterization of the general HMT parent-to-child transition, and the rho^(distance) decay is a property of that
+parameterization, not a result of Crouse et al.; rho = 1 equals the 11-01 per-video offset except for the shared
+length slope, which the offset model did not have.
