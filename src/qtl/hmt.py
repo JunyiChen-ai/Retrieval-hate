@@ -39,6 +39,7 @@ from . import ctree, qtree
 K_V, K_H = 9, 7                                  # grid points of the video and of the tree part of the bias
 Z_V, Z_H = np.linspace(-3.0, 3.0, K_V), np.linspace(-3.0, 3.0, K_H)   # standard-normal grids
 RHO_CLAMP = 1e-9                                 # keeps log(1 - rho) and log(rho) finite
+MAX_FIT_VIDEOS = 1000                            # negative training videos used by the fit (random subset if more)
 
 
 def normal_logw(z):
@@ -158,7 +159,11 @@ def fit_hmt(train_answers, len_mu, len_sd):
     """train_answers: [(label, T, {(a, b): answer vector (N_CAT,) or None}), ...]. Returns an HMTAnswerModel and fit
     details."""
     C, L = qtree.N_CAT, qtree.N_LEV
-    par, depth, roots, rows, n = _compact([(T, ans) for label, T, ans in train_answers if label == 0])
+    neg = [(T, ans) for label, T, ans in train_answers if label == 0]
+    if len(neg) > MAX_FIT_VIDEOS:                # a fixed random subset keeps the fit to minutes (DeHate: 3.7k videos)
+        keep = np.random.default_rng(0).choice(len(neg), MAX_FIT_VIDEOS, replace=False)
+        neg = [neg[i] for i in sorted(keep)]
+    par, depth, roots, rows, n = _compact(neg)
     par_t, depth_t, roots_t = map(torch.as_tensor, (par, depth, roots))
     par_t = torch.where(par_t < 0, torch.zeros_like(par_t), par_t)          # roots are never scattered (depth 0)
     node = torch.as_tensor(np.array([r[0] for r in rows]))
