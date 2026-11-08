@@ -90,7 +90,7 @@ def main():
                 k = {v: min(8, len(lev[v]["eig"])) for v in test}
             else:
                 k = {v: 8 for v in test}
-            path = od / f"runs_{a.variant}_B{L or 8}.pkl"
+            path = od / f"runs_{a.variant}_{'B' + str(L) if L else 'fixed8'}.pkl"
             if path.exists():
                 runs = pickle.load(path.open("rb"))["runs"]
             else:
