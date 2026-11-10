@@ -433,7 +433,7 @@ Launch `launch/sbatch_search_first_level.sh <corpus> ["<seeds>"]`, output
 **Relation to the section-8 search (after the reviews, `REVIEW_RULE4_R7_FIRST_LEVEL.md` 5.1 / 5.2, and the
 correction of section 11).** Both searches start from trial 0 with the corrected search for c (section 11) and run
 from the main checkout (the branch is merged). The section-8 search that was running with the old search for c was
-cancelled on 2026-11-10 23:05 (HateMM 6 finished trials per seed, DeHate seeds 234 / 2025 2 trials each, HCS and
+cancelled on 2026-11-10 23:02 (HateMM 6 finished trials per seed, DeHate seeds 234 / 2025 2 trials each, HCS and
 DeHate seed 3407 not started); its outputs are kept in `runs/20261110_prior_weight/search_before_fit_fix/` and are
 not used. Order on each machine: this search first, then the section-8 search, which runs to its registered trial
 counts and is read as declared in section 8. If the user rules d outside rule 13 the section-8 search is the
@@ -527,3 +527,39 @@ checkpoints, `prior_weight._nll_all`; S = per-second logits of the validation vi
 - Stage A of sections 4, 5, 9 and 10 used the old search (weight mode `loc` in the trial files). Replays with the
   corrected search are the weight mode `locg` (`stage_a_all_trials.py`); `stage_a_policies.py` and
   `stage_a_weights.py` would use the corrected search if run again, their existing outputs come from the old one.
+
+Effect on the revision-6 checkpoints (replays with weight mode `locg`, 60 trials per corpus, 8 calls, CPU on
+uoa-lab1; `all_trials/policy_select_b8_first_locg.json`):
+
+- Trials whose c changes by more than .02: HateMM 0, HCS 4 (the table above; within .51-.53 becomes .63-.65, trial
+  8 becomes .716 / .688 / .648), DeHate 2 (seed 2025 trial 19: c 103.6 -> .013, .178 / .688 / .522 ->
+  .232 / .783 / .673; seed 234 trial 6: c 4.80 -> .056, .190 / .719 / .615 -> .235 / .779 / .688). Every other
+  trial keeps its c and its metrics to three decimals.
+- c under the corrected search: median .16 / .17 / .21; range .006 to .83, -.001 to 1.53, .005 to 1.46; c below
+  .05 in 13 / 12 / 16 of the 60 trials.
+- Greedy EIG, all-trial mean, corrected minus old search: .000 / .000 / .000, .000 / +.001 / +.008,
+  +.002 / +.003 / +.004. Paired to revision 6: +.002 / +.004 / +.018, +.012 / +.013 / +.037, +.020 / +.024 / +.014.
+- First level chosen on validation (d in 0..3), corrected search:
+
+  | 8 calls | HateMM | HCS | DeHate |
+  |---|---|---|---|
+  | chosen d = 0 / 1 / 2 / 3 | 5 / 3 / 2 / 90 % | 50 / 30 / 10 / 10 % | 27 / 33 / 30 / 10 % |
+  | chosen, all-trial mean | .693 / .884 / .809 | .680 / .663 / .592 | .249 / .777 / .684 |
+  | chosen vs revision 6, paired | +.023 / +.006 / +.045 | +.006 / +.006 / +.038 | +.022 / +.024 / +.015 |
+  | chosen vs d = 0, paired | +.021 / +.002 / +.027 | -.006 / -.007 / +.001 | +.002 / .000 / +.001 |
+  | chosen, best trial per seed | .722 / .898 / .831 | .703 / .684 / .617 | .304 / .792 / .694 |
+  | d = 0, best trial per seed | .698 / .889 / .774 | .711 / .695 / .618 | .298 / .793 / .693 |
+  | d = 3, best trial per seed | .722 / .898 / .831 | .677 / .667 / .603 | .291 / .784 / .701 |
+
+- The readings of sections 4, 5, 9 and 10 stand (HateMM is unchanged trial by trial). On HCS the greedy policy's
+  best trial per seed rises to .711 / .695, and the cost there of choosing d on validation is -.006 / -.007 in the
+  all-trial mean and -.008 / -.011 on the best trial per seed.
+
+First trial of the restarted first-level search (HateMM, uoa-lab3, job 2139): 905 s per trial with three seeds on
+the GPU, so 20 trials per seed. Checks on trial 0: `fixed["8"]["depths"]["0"]["val"]` equals the validation
+metrics of the selected epoch in `history` on the three seeds; seed 234 reproduces trial 0 of the cancelled
+section-8 search exactly at d = 0 (selected epoch 32, c .531, the same c at every epoch, test .6811 / .8864 /
+.8027), i.e. the correction does not change a HateMM trial without a saturated epoch. Chosen d at 8 calls is 3 on
+the three seeds (at 16 calls 4, at 32 calls 5, at 4 calls 2 / 0 / 1); test at the chosen d .703 / .893 / .817,
+.697 / .884 / .824, .686 / .880 / .819 against d = 0 .681 / .886 / .803, .682 / .882 / .790, .678 / .883 / .798.
+
