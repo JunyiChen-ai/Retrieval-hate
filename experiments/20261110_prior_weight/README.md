@@ -416,15 +416,17 @@ policy under that epoch's c). Trial budget from each seed's measured first trial
 Launch `launch/sbatch_search_first_level.sh <corpus> ["<seeds>"]`, output
 `runs/20261110_prior_weight/search_first_level/<corpus>/seed<s>/`.
 
-**Relation to the section-8 search (changed after the review, `REVIEW_RULE4_R7_FIRST_LEVEL.md` 5.1 / 5.2).** The
-section-8 search is not stopped: it runs to its registered trial counts and is read as declared in section 8. If the
-user rules d outside rule 13 it is the candidate; otherwise it is the d = 0 ablation whose hyper-parameters were
-proposed from its own objective. This search is queued behind it on each machine (uoa-lab3: DeHate seeds 234 / 2025;
-uoa-lab1: HateMM, HCS, DeHate seed 3407 - DeHate never with the launcher's default of three seeds on one GPU) and
-runs from the branch checkout `~/Retrieval-hate-r7-first-level` (outputs in the main repository's `runs/`), so that
-the main checkout, whose code every new section-8 trial loads, is not changed while that search runs
-(`REVIEW_RULE6_R7_FIRST_LEVEL.md` section 1 finds the default path `first_level: 0` element-wise identical to
-`main`; the separation is kept anyway).
+**Relation to the section-8 search (after the reviews, `REVIEW_RULE4_R7_FIRST_LEVEL.md` 5.1 / 5.2, and the
+correction of section 11).** Both searches start from trial 0 with the corrected search for c (section 11) and run
+from the main checkout (the branch is merged). The section-8 search that was running with the old search for c was
+cancelled on 2026-11-10 23:05 (HateMM 6 finished trials per seed, DeHate seeds 234 / 2025 2 trials each, HCS and
+DeHate seed 3407 not started); its outputs are kept in `runs/20261110_prior_weight/search_before_fit_fix/` and are
+not used. Order on each machine: this search first, then the section-8 search, which runs to its registered trial
+counts and is read as declared in section 8. If the user rules d outside rule 13 the section-8 search is the
+candidate; otherwise it is the d = 0 ablation whose hyper-parameters were proposed from its own objective.
+Machines: uoa-lab3 DeHate seeds 234 / 2025; uoa-lab1 HateMM, HCS, DeHate seed 3407 (DeHate never with the
+launcher's default of three seeds on one GPU: `REVIEW_RULE6_R7_FIRST_LEVEL.md` estimates 2840-3160 s per trial for
+two seeds and more than 3600 s for three).
 Every trial of this search also holds `depths["0"]` at every budget: this row is called **the fixed d = 0 ablation
 row**, not the section-8 candidate's search result (trials 10-19 are proposed by TPE from the chosen-depth
 objective). It is reported in three readings: its own best trial per seed, the paired difference over all trials,
@@ -475,3 +477,36 @@ reported.
 **Reviews.** Rule 4: GO (`REVIEW_RULE4_R7_FIRST_LEVEL.md`; d passes only as an unclaimed hyper-parameter of the
 reviewed candidate; rule 13 needs the user's ruling; its 8 required changes are in this section). Rule 6: PASS
 (`REVIEW_RULE6_R7_FIRST_LEVEL.md`; no bug; remarks 1-5 and 7 are in this section and in the tools).
+
+## 11. Correction: the search for c (2026-11-10, found by the code review)
+
+`REVIEW_RULE6_R7_FIRST_LEVEL.md` remark 8: on 2 of the 180 revision-6 trials the fitted c was exactly 1 with an
+unchanged likelihood. Scan of the validation negative log-likelihood per video over c (uoa-lab1 CPU, revision-6
+checkpoints, `prior_weight._nll_all`; S = per-second logits of the validation videos):
+
+| HCS seed 3407 | S mean / sd | gradient at c = 1 | c = 0 | .003 | .01 | .1 | .2 | 1 | 3 | old fit |
+|---|---|---|---|---|---|---|---|---|---|---|
+| trial 7 (ordinary) | .01 / .18 | 157 | 189.55 | 189.54 | 189.52 | 189.30 | 189.22 | 190.83 | 193.66 | c = .20 |
+| trial 8 | 5.36 / .89 | -2e-6 | 189.47 | 189.41 | 190.59 | 197.93 | 198.04 | 198.05 | 198.05 | c = 1 (not moved) |
+| trial 9 | 5.30 / .86 | -9e-7 | 189.40 | 189.36 | 190.45 | 197.93 | 198.05 | 198.05 | 198.05 | c = 1 (not moved) |
+| trial 10 | 2.93 / .44 | 1e-3 | 189.52 | 189.43 | 189.74 | 197.09 | 198.19 | 198.28 | 198.28 | c = .003 |
+| trial 14 | 4.08 / .77 | -3e-4 | 189.93 | 190.00 | 190.48 | 197.72 | 198.30 | 198.36 | 198.36 | c = 2.31 (flat part) |
+| trial 17 | 4.21 / .80 | -3e-4 | 189.55 | 189.48 | 190.20 | 198.09 | 198.33 | 198.38 | 198.38 | c = 2.26 (flat part) |
+
+- Cause: networks trained with a high learning rate (about 1e-3) output per-second logits that are all large; the
+  weighted prior then puts its whole mass on "every second hateful" for every c above about .2, the likelihood is
+  flat there, and L-BFGS started at c = 1 does not move or drifts along the flat part, although c near 0 (the
+  location prior switched off) has a much higher likelihood. The estimator did not return the maximum-likelihood c
+  on these trials. HateMM trials are not saturated (seed 234 trials 0-3: one minimum between c = .03 and .3,
+  gradient at 1 of 90-170).
+- Correction (`src/qtl/prior_weight.py`, `C_GRID`, `_fit_c`, `fit(start="grid")`): the likelihood is evaluated on 13
+  grid points of c (0 to 3) and L-BFGS starts from the best one (ties: the point closest to 1). The estimator's
+  definition (maximum marginal likelihood of the validation answers, no label, no bound on c) is unchanged.
+  Confirmed by the reviewer (`REVIEW_RULE6_R7_FIRST_LEVEL.md` section 9): `start="one"` reproduces the old search
+  exactly; on ordinary priors both starts give the same c to five decimals; cost 13 likelihood evaluations per
+  epoch (estimated +60-130 s per DeHate trial).
+- Scope: the fit runs every epoch, so every saturated epoch of every trial now gets c near 0, its validation
+  criterion changes and the selected epoch can change. Both searches therefore restart from trial 0 (section 10).
+- Stage A of sections 4, 5, 9 and 10 used the old search (weight mode `loc` in the trial files). Replays with the
+  corrected search are the weight mode `locg` (`stage_a_all_trials.py`); `stage_a_policies.py` and
+  `stage_a_weights.py` would use the corrected search if run again, their existing outputs come from the old one.

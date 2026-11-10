@@ -109,3 +109,21 @@ DeHate 两个 seed 同卡是安全的,预计 2780-3030 秒;三个 seed 同卡不
 | B:`depth_nodes` 对 T = 1..3000、d = 1..5:返回的节点同一深度、全部可问(或根)、都在 `asker.q` 内;空集合只在 T <= 2^(d-1) 出现,且该视频可问节点数 <= 2^d | 成立 |
 | C:分支 `evaluate` 对 `main` 的 `evaluate`(策略运行、validation 指标、评测器用合成替身),`first_level` 0 / 键缺失 × 贪心 / plan | 返回值、输出文件名、策略运行次数相同 |
 | C:`first_level: "validated"`:每个预算选中的 d 对独立重算(validation 准则最大,并列取小;含人为并列的两组设置);`depths` 各候选的 validation / test 数字;`res["test"]`;`adaptive*` 对 `first_level: 0`;`depths["0"]` 对 `first_level: 0` 的 `fixed` | 全部一致;test GT 未被读取;28 个评测器输出名无重复;12 次策略运行 |
+
+## 9. 备注 8 的修复确认
+
+**结论:修复正确,确认。** 只看了这一处,没有重开其它审查。
+
+- 代码版本:分支 `r7-first-level`,提交 "prior weight: the search for c starts from the best grid point (L-BFGS from c = 1 does not move when the weighted prior is saturated: HateClipSeg seed 3407 trials 8, 9, 14, 17, likelihood flat for c >= .2, maximum at c = .003); replay mode locg"(2026-11-10 22:56 +1300)。该提交只改 `src/qtl/prior_weight.py` 和 `stage_a_all_trials.py`;`train.py`、`cpolicy.py`、`checkpoint.py` 未改。
+- **修复内容与是否进入训练。** `prior_weight._fit_c`(`prior_weight.py:156-168`):`start="grid"` 时先在不求梯度的情况下对 `C_GRID` 的 13 个点算同一个负对数似然 `_nll_all`,取最小的点(非有限值按无穷大处理;数值完全相同时取离 1 最近的点),把 c 设为该点后再跑原来的 L-BFGS。`fit` 的 `loc` 和 `root_all` 两个模式改为调 `_fit_c`(`prior_weight.py:203`、`208`),默认 `start="grid"`。`train.py:466` 调 `pweight.fit(..., mode=cfg["prior_weight"])` 不传 `start`,所以每个 epoch 的拟合用的是新搜索;之后 c 进入 validation 准则、checkpoint、存盘、最终评测的路径与第 3 节和上一份审查相同,没有改动。`joint`、`root`、`trust`、`trust_len` 的代码路径没有变。
+- **无泄漏。** `_fit_c` 只接收 c、似然函数和 `start`;似然函数就是原来的 `_nll_all(chunks, chain_d, a_, b_, c)`,输入仍只有 validation 视频的先验网络输出、缓存回答、答案模型和 chain。`fit` 和 `_fit_c` 的参数里没有 `labels`、`gt`。`C_GRID` 是写死的常数,三个语料共用,只决定起点,最终的 c 仍由似然决定。
+- **合成核对**(CPU,脚本在会话临时目录):
+  - `start="one"` 与修复前的 `prior_weight.py` 在 `loc`、`root_all`、`joint`、`root`、`trust` 五个模式下返回值逐项相同(6 组合成数据);`stage_a_all_trials.py:164-166` 对 `locg` 以外的模式传 `start="one"`,已缓存的 variant 含义不变。
+  - 复现了原问题:逐秒 logit 均值 5、标准差 .8、真实仇恨占 20% 的合成数据上,似然在 c >= .3 处是平的(37.754 / 28.577),从 c = 1 出发 L-BFGS 只算 1 次梯度就停在 c = 1.00000;`start="grid"` 从 c = 0 出发到 c = −.015,似然 19.670 / 17.128,与步长 .001 的细扫描最小值一致(差 < 3e-5)。
+  - 普通先验(两种设置各 2 组):两种起点得到同一个 c(五位小数相同)、同一个似然;`start="grid"` 的结果不高于任何网格点的似然值;`nll_all_before` 仍是 c = 1 处的值;`c_start` 等于网格最小点;a = 1、b = 0;拟合后 chain 和答案模型上没有梯度。
+- **你没有写到、但会改变结果或耗时的地方**(都不需要改代码):
+  1. 每次拟合多 13 次不求梯度的似然计算。合成数据上一次这样的计算约为一次带梯度计算的 0.3 倍;按上一份审查记录的 DeHate 每次拟合 2.4-3.7 秒估算,每 epoch 多约 1.3-2.6 秒,每个 DeHate trial 多约 60-130 秒。第 5 节的估计相应变为两 seed 同卡约 2840-3160 秒(仍低于 3600 秒,余量约 440 秒以上);三 seed 同卡更不可行。这是估计,以第 1 个 trial 的实测为准。
+  2. 受影响的不只是那 4 个 trial 的最终 checkpoint:拟合是每个 epoch 做一次,任何 trial 里先验饱和的 epoch 现在都会得到接近 0 的 c,该 epoch 的 validation 准则随之改变,选中的 epoch 可能不同。其余 epoch 的 c 只在 L-BFGS 的收敛精度内变化(合成数据上五位小数相同),数字与旧搜索不是逐位相同。两个搜索都从 trial 0 重跑与此一致。
+  3. 饱和的 trial 上 c 会接近 0,也可能略小于 0(合成数据上 −.015;README 第 8 节已规定 c 不设界、不截断)。c 接近 0 即位置先验基本不起作用,报告 c 时这类 trial 会明显增多。若某次 c 恰为 0,回放的 `saved_post`(`stage_a_all_trials.py` 里的 `1.0 / w["c"]`)会报除零错误而不是给出错误数字。
+  4. `stage_a_policies.py:121` 和 `stage_a_weights.py:94` 调 `prior_weight.fit` 时不传 `start`,重跑时会用新搜索;它们已有的输出(README 第 4、5 节三个选中 trial 的表)是旧搜索算的。只有重跑这两个脚本时才有差别。
+  5. "数值相同时取离 1 最近的点"只在浮点完全相等时生效。似然平台上各点通常在末几位不同,起点可能是平台上任意一点;只有当平台本身就是最优区域时才会走到这一步,此时 c 在平台内取何值对先验没有影响。
