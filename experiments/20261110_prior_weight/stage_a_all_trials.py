@@ -6,7 +6,8 @@ ROC) / 2, as rule 7 does; reported are that and the mean over all trials.
 
 A variant is table|weights|policy[|budget]:
   table    r6 = the checkpoint's anchored table; val3 = three states with a length slope each, fitted on the
-           validation per-second labels (answer_calib.py; no gradient);
+           validation per-second labels (answer_calib.py; no gradient); val3h = val3 whose state 0 (no hate in the
+           video) is the anchored table of the training videos (the validation set has few negative videos on HCS);
   weights  none, or a mode of prior_weight.fit (label-free, validation answers): loc, joint, root_all, trust
            (location weight plus the answer leak / miss scalars), trust_len;
   policy   eig (greedy, revision 6), plan_eer / plan_eig (budget-aware disjoint plan), level (equal windows);
@@ -115,9 +116,13 @@ def main():
             tab, mode, pol = parts[:3]
             B = int(parts[3]) if len(parts) > 3 else 8
             if tab not in tables:
-                assert tab == "val3"
+                assert tab in ("val3", "val3h")
                 tables[tab], _counts = fit_validation_answer_model(answers, labels, gt["val"], val, T_all, am6.len_mu,
                                                                    am6.len_sd, cfg["categories"])
+                if tab == "val3h":               # state 0 (no hate in the video) keeps the anchored training table
+                    with torch.no_grad():
+                        tables[tab].theta[:, 0] = am6.theta[:, 0].cpu()
+                        tables[tab].omega[:, 0] = am6.omega[:, 0].cpu()
                 tables[tab] = tables[tab].to(a.device)
             if (tab, mode) not in weights:
                 weights[(tab, mode)] = None if mode == "none" else prior_weight.fit(
