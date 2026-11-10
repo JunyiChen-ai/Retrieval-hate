@@ -54,7 +54,8 @@ CANDS = {
     "u32_gauss": dict(levels=32, grid="logit", fit="smooth", degree=2),
     "u32_smooth4": dict(levels=32, grid="logit", fit="smooth", degree=4),
 }
-POLICIES = {"root": (1, lambda T: {0}), "u8": (8, lambda T: set(qtree.depth_nodes(T, 3).tolist())), "eig8": (8, None)}
+POLICIES = {"root": (1, lambda T: {0}), "u8": (8, lambda T: set(qtree.depth_nodes(T, 3).tolist())), "eig8": (8, None),
+            "eig1": (1, None), "eig2": (2, None), "eig4": (4, None)}       # the EIG tree at smaller fixed budgets
 
 
 def build(corpus, spec, labels, train_ids):
@@ -123,7 +124,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--corpus", choices=("hatemm", "hateclipseg", "dehate"), required=True)
     ap.add_argument("--cands", nargs="+", default=list(CANDS))
-    ap.add_argument("--policies", nargs="+", default=list(POLICIES))
+    ap.add_argument("--policies", nargs="+", default=["root", "u8", "eig8"])
     ap.add_argument("--g-scales", nargs="+", type=float, default=[1.0])
     ap.add_argument("--loc-scales", nargs="+", type=float, default=[1.0])
     ap.add_argument("--threads", type=int, default=4)
