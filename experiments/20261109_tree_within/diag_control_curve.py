@@ -54,6 +54,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--corpus", choices=("hatemm", "hateclipseg", "dehate"), required=True)
     ap.add_argument("--out-root", default="runs/20261109_tree_within/control_curve")
+    ap.add_argument("--arms", nargs="*", default=[],
+                    help="revision-6 ablation arms whose 0-call scores are added as priors (arms/<corpus>/seed<s>/"
+                         "<arm>/scores_test_fixed0.jsonl), e.g. c_label = backbone trained with video labels only")
     a = ap.parse_args()
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
     test = list(ids["test"])
@@ -62,6 +65,9 @@ def main():
     summ = json.load(open(ROOT / f"runs/20261101_r6_length_table/final_curves/test_selected/{a.corpus}/summary.json"))
     trials = {int(r["seed"]): Path(r["trial"]) for r in summ["trials"].values()}
     priors = {"ours0": {s: read_scores(trials[s] / "scores_test_fixed0.jsonl") for s in SEEDS}}
+    for arm in a.arms:
+        priors[f"arm_{arm}"] = {s: read_scores(ROOT / f"runs/20261101_r6_length_table/arms/{a.corpus}/seed{s}/{arm}/"
+                                               "scores_test_fixed0.jsonl") for s in SEEDS}
     for method in hc.STRONGEST_BASELINE[a.corpus]:
         priors[method] = {s: hc.baseline_scores(a.corpus, method, s) for s in SEEDS}
     T = {v: len(priors["ours0"][SEEDS[0]][v]) for v in test}
