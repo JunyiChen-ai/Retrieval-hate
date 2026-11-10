@@ -14,7 +14,9 @@ A variant is table|weights|policy[|budget]:
            stopE1c<cap> = greedy EIG with the qmixE1 stopping rule (stop_rules.py; threshold set on the validation
            videos, no labels, so that their mean number of calls is the budget; at most <cap> calls per video);
   budget   calls per video (default 8); for stopE1c<cap> the MEAN number of calls per video.
-Test AP / ROC / within, scores at 6 decimals, unified core evaluator (hc.frame_metrics).
+A variant ending in "@val" is replayed on the validation videos instead of the test videos (metrics of the validation
+split; used by policy_select.py to choose the question policy on validation). Not available for stopE1c<cap>.
+AP / ROC / within, scores at 6 decimals, unified core evaluator (hc.frame_metrics).
 Output runs/20261110_prior_weight/all_trials/<corpus>/seed<seed>/trial<k>.json (one file per trial; finished trials
 are skipped on restart). Summary: all_trials_table.py.
 """
@@ -85,14 +87,15 @@ def main():
     assert len(trials) == 20, "expected the 20 trials of the revision-6 search, found %d" % len(trials)
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
     val, test = list(ids["val"]), list(ids["test"])
-    hate = {v for v in test if labels[v] == 1}
+    vids_of = {"val": val, "test": test}
+    hate = {sp: {v for v in vs if labels[v] == 1} for sp, vs in vids_of.items()}
     qdata.configure_source("soft_both", 8)
     answers, T_all = qdata.load_answers(a.corpus, "soft_both")
     store = qdata.Store(a.corpus, val + test, ["bert"])
 
-    def mets(sc):
+    def mets(sc, split="test"):
         sc = {v: np.round(np.asarray(s, dtype=np.float64), 6) for v, s in sc.items()}
-        m = hc.frame_metrics(sc, gt["test"], hate)
+        m = hc.frame_metrics(sc, gt[split], hate[split])
         return {k: float(m[k]) for k in METS}
 
     pri = {}
@@ -114,7 +117,8 @@ def main():
                 pri[v] = plain_prior(model, store, v, a.device)
         tables, weights, capped = {"r6": am6}, {}, {}
         for var in todo:
-            parts = var.split("|")
+            split = "val" if var.endswith("@val") else "test"
+            parts = var[:-len("@val")].split("|") if split == "val" else var.split("|")
             tab, mode, pol = parts[:3]
             B = int(parts[3]) if len(parts) > 3 else 8
             if tab not in tables:
@@ -131,6 +135,7 @@ def main():
                     pri, store, val, tables[tab], chain, answers, a.device, mode=mode)
             w = weights[(tab, mode)]
             if pol.startswith("stopE1c"):
+                assert split == "test", "the stopping-rule variants are test only"
                 cap = int(pol[len("stopE1c"):])
                 if (tab, mode, cap) not in capped:
                     kw = dict(order="eig", record_voi=True)
@@ -151,10 +156,11 @@ def main():
                 res["weights"] = w
                 done["variants"][var] = res
                 continue
-            runs = replay(model, store, test, prior_weight.table(tables[tab], w), chain, answers, cfg, B, w,
+            vids = vids_of[split]
+            runs = replay(model, store, vids, prior_weight.table(tables[tab], w), chain, answers, cfg, B, w,
                           POLICIES[pol], a.device)
-            res = mets({v: runs[v]["scores"][-1] for v in test})
-            res["mean_calls"] = float(np.mean([len(runs[v]["asked"]) for v in test]))
+            res = mets({v: runs[v]["scores"][-1] for v in vids}, split)
+            res["mean_calls"] = float(np.mean([len(runs[v]["asked"]) for v in vids]))
             res["weights"] = w
             done["variants"][var] = res
         done.update(trial=str(trial), seed=a.seed, corpus=a.corpus, host=socket.gethostname(),
