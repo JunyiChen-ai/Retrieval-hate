@@ -32,6 +32,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from qtl import cpolicy, data as qdata, policy, prior_weight, qtree      # noqa: E402
+from qtl.answer_calib import fit_validation_answer_model                # noqa: E402
 from qtl.backbones import make_model                                    # noqa: E402
 from qtl.checkpoint import load_trial                                   # noqa: E402
 import hier_evidence_common as hc                                       # noqa: E402
@@ -74,6 +75,9 @@ def main():
     ap.add_argument("--policies", nargs="+", default=list(POLICIES))
     ap.add_argument("--budgets", nargs="+", type=int, default=[8])
     ap.add_argument("--tag", default="b8")
+    ap.add_argument("--table", choices=("r6", "val3"), default="r6",
+                    help="r6: the checkpoint's anchored table; val3: the three-state table with a length slope per "
+                         "state fitted on the validation per-second labels (answer_calib.py; no gradient)")
     ap.add_argument("--threads", type=int, default=5)
     ap.add_argument("--out-root", default="runs/20261110_prior_weight/stage_a_policies")
     a = ap.parse_args()
@@ -88,7 +92,7 @@ def main():
     val, test = list(ids["val"]), list(ids["test"])
     hate = {v for v in test if labels[v] == 1}
     qdata.configure_source("soft_both", 8)
-    answers, _T = qdata.load_answers(a.corpus, "soft_both")
+    answers, T_all = qdata.load_answers(a.corpus, "soft_both")
     store = qdata.Store(a.corpus, val + test, ["bert"])
 
     def mets(sc):
@@ -104,6 +108,10 @@ def main():
         trial = Path(td).resolve()
         summary, cfg, model, am, chain = load_trial(trial, "cpu", answers, ids, model_factory=make_model)
         name = f'seed{summary["seed"]}_{trial.name}'
+        if a.table == "val3":
+            am, counts = fit_validation_answer_model(answers, labels, gt["val"], val, T_all, am.len_mu, am.len_sd,
+                                                     cfg["categories"])
+            print(a.corpus, name, "val3 table, answers per state", counts, flush=True)
         pri.clear()
         with torch.no_grad():
             for v in val + test:
