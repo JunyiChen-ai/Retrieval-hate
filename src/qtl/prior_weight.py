@@ -20,6 +20,14 @@ all cached answers with (a, b) = (1, 0).
 No video label and no per-second label enters. The weights then apply wherever the prior is used at validation and
 test: the posterior, the choice of questions (EIG) and the stopping statistics (cpolicy.run_batch prior_weight).
 
+Search for c (modes "loc" and "root_all"). The likelihood is not concave in c, and it is flat where the weighted
+prior is saturated: a network whose per-second logits are all large (e.g. mean 5) puts the whole prior mass on one
+configuration for every c above about .2, the gradient at c = 1 is 0 to machine precision and L-BFGS started there
+does not move, although c near 0 has a much higher likelihood (HateClipSeg seed 3407, revision-6 trials 8, 9, 14,
+17: -198.05 per video for every c >= .2 against -189.4 at c = .003). The search therefore starts from the point of
+C_GRID with the highest likelihood (ties: the point closest to 1) and refines it by L-BFGS; start="one" is the
+search from c = 1 used before this correction (2026-11-10), kept for comparison only.
+
 Answer trust (modes "trust" / "trust_len"). The anchored answer table knows two states, fitted where the video label
 fixes the state: "no hate" on every node of the negative training videos, "hate" on the roots of the positive ones.
 Inside a hateful video it is over-trusted (experiments/20261109_tree_within/README.md section 11): clean nodes of
@@ -43,6 +51,7 @@ from . import data as qdata
 from . import policy
 
 IDENTITY = (1.0, 0.0, 1.0)
+C_GRID = (0.0, 0.003, 0.01, 0.03, 0.1, 0.2, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0)      # starting points of the search for c
 
 
 @torch.no_grad()
@@ -144,13 +153,30 @@ def _lbfgs(params, closure_value, max_iter=50):
     opt.step(closure)
 
 
-def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64):
+def _fit_c(c, nll_of_c, start):
+    """Maximum-likelihood c: L-BFGS from the best point of C_GRID (start "grid") or from c = 1 (start "one").
+    Returns the starting point."""
+    c0 = 1.0
+    if start == "grid":
+        with torch.no_grad():
+            vals = [float(nll_of_c(torch.full_like(c, g))) for g in C_GRID]
+        vals = [v if np.isfinite(v) else float("inf") for v in vals]
+        c0 = min(zip(vals, [abs(g - 1.0) for g in C_GRID], C_GRID))[2]
+        with torch.no_grad():
+            c.fill_(c0)
+    _lbfgs([c], lambda: nll_of_c(c))
+    return c0
+
+
+def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64, start="grid"):
     """Label-free prior weights from the cached answers of `vids` (module docstring). pri: collect(...).
     mode: "root_all", "root" (c = 1), "joint" (a, b, c from all answers at once), "loc" (c only, a = 1, b = 0),
     "trust" (c, leak rho, miss eta from all answers; a = 1, b = 0), "trust_len" (trust with the miss length slope k).
+    start: where the search for c begins in the modes "loc" and "root_all" ("grid" or "one", module docstring).
     Returns {"a", "b", "c", "n_videos", "n_root", "nll_root_before / after" (per video with a root answer),
-    "nll_all_before / after" (per video)} and, in the trust modes, "rho", "eta", "eta_slope"."""
-    assert mode in ("root_all", "root", "joint", "loc", "trust", "trust_len")
+    "nll_all_before / after" (per video; before = at a = 1, b = 0, c = 1)} and, in the trust modes, "rho", "eta",
+    "eta_slope"; in the modes "loc" and "root_all" also "c_start"."""
+    assert mode in ("root_all", "root", "joint", "loc", "trust", "trust_len") and start in ("grid", "one")
     assert not mode.startswith("trust") or (getattr(am, "n_state", 3) == 2 and len(am.cats) == 1), \
         "the trust scalars extend the two-state table of one answer category"
     chunks = _chunks(pri, store, vids, am, answers, device, chunk)
@@ -161,7 +187,7 @@ def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64)
     with torch.no_grad():
         r0, n_root = _nll_root(chunks, a, b)
         a0 = _nll_all(chunks, chain_d, a, b, c)
-    trust = None
+    trust, c_start = None, None
     if mode.startswith("trust"):
         r = torch.full((), -3.0, dtype=torch.float64, device=device, requires_grad=True)     # rho = sigmoid(r)
         h = torch.full((), -3.0, dtype=torch.float64, device=device, requires_grad=True)     # eta at u = 0
@@ -174,12 +200,12 @@ def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64)
         _lbfgs([a, b, c], lambda: _nll_all(chunks, chain_d, a, b, c))
     elif mode == "loc":
         a_, b_ = a.detach(), b.detach()
-        _lbfgs([c], lambda: _nll_all(chunks, chain_d, a_, b_, c))
+        c_start = _fit_c(c, lambda cc: _nll_all(chunks, chain_d, a_, b_, cc), start)
     else:
         _lbfgs([a, b], lambda: _nll_root(chunks, a, b)[0])
         if mode == "root_all":
             a_, b_ = a.detach(), b.detach()
-            _lbfgs([c], lambda: _nll_all(chunks, chain_d, a_, b_, c))
+            c_start = _fit_c(c, lambda cc: _nll_all(chunks, chain_d, a_, b_, cc), start)
     with torch.no_grad():
         r1, _ = _nll_root(chunks, a, b)
         a1 = _nll_all(chunks, chain_d, a, b, c, trust)
@@ -189,6 +215,8 @@ def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64)
            "nll_all_before": float(a0) / max(n, 1), "nll_all_after": float(a1) / max(n, 1)}
     if trust is not None:
         out.update(rho=float(trust[0]), eta=float(torch.sigmoid(trust[1])), eta_slope=float(trust[2]))
+    if c_start is not None:
+        out["c_start"] = float(c_start)
     return out
 
 

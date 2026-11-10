@@ -9,7 +9,11 @@ A variant is table|weights|policy[|budget]:
            validation per-second labels (answer_calib.py; no gradient); val3h = val3 whose state 0 (no hate in the
            video) is the anchored table of the training videos (the validation set has few negative videos on HCS);
   weights  none, or a mode of prior_weight.fit (label-free, validation answers): loc, joint, root_all, trust
-           (location weight plus the answer leak / miss scalars), trust_len; saved = the weight stored with the
+           (location weight plus the answer leak / miss scalars), trust_len - in these the search for c starts at
+           c = 1, as when the cached variants were computed; locg = loc with the search started from the best grid
+           point (prior_weight.fit start="grid", the estimator of train.py since the correction of 2026-11-10: from
+           c = 1 the search stays on the flat part of the likelihood when the prior is saturated);
+           saved = the weight stored with the
            checkpoint (revision-7 trials, --src); saved_post = questions chosen under weight 1, posterior under the
            saved weight; saved_ask = questions chosen under the saved weight, posterior under weight 1 (the 2 x 2
            split of README section 8);
@@ -156,9 +160,10 @@ def main():
                 weights[(tab, mode)] = dict(a=sw[0], b=sw[1], c=sw[2], source="checkpoint")
                 if mode != "saved":
                     weights[(tab, mode)]["split"] = {"saved_post": "post", "saved_ask": "ask"}[mode]
-            if (tab, mode) not in weights:
-                weights[(tab, mode)] = None if mode == "none" else prior_weight.fit(
-                    pri, store, val, tables[tab], chain, answers, a.device, mode=mode)
+            if (tab, mode) not in weights:         # "loc": the search from c = 1 the cached variants were computed with;
+                weights[(tab, mode)] = None if mode == "none" else prior_weight.fit(      # "locg": the grid start
+                    pri, store, val, tables[tab], chain, answers, a.device, mode="loc" if mode == "locg" else mode,
+                    start="grid" if mode == "locg" else "one")
             w = weights[(tab, mode)]
             if pol.startswith("stopE1c"):
                 assert split == "test", "the stopping-rule variants are test only"
