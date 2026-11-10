@@ -181,7 +181,7 @@ def _cover_feasible(tr, cov_b, q, cand):
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
               copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0,
-              policy_prior_scale=None, budgets=None, cover=None):
+              policy_prior_scale=None, budgets=None, cover=None, prior_weight=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -205,7 +205,10 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     C = min(budget, most disjoint queryable nodes) questions are pairwise disjoint tree nodes that together cover the
     whole video (each candidate must leave an uncovered region that C - 1 - asked disjoint queryable nodes can still
     cover exactly), chosen by the order's objective; later calls (if any) unconstrained. "root" = the root first,
-    then the same cover with C = min(budget - 1, ...)."""
+    then the same cover with C = min(budget - 1, ...).
+    prior_weight (revision 7, prior_weight.py): None = the prior as the network gives it; (a, b, c) = the label-free
+    weights estimated on the validation answers: video logit a g + b, per-second logits c s, node potentials c phi,
+    used for the posterior, the EIG and every recorded statistic alike."""
     assert copy_mode in ("both", "eig", "lik")
     copy_eig = copy_pi is not None and copy_mode in ("both", "eig")
     copy_lik = copy_pi is not None and copy_mode in ("both", "lik")
@@ -225,6 +228,10 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             PHI[int(fo.offs[b]):int(fo.offs[b]) + len(phi)] = torch.from_numpy(phi)
     if prior_scale != 1.0:                       # diagnostic (experiments/20261109_tree_within): softer prior shape
         S, PHI = S * prior_scale, None if PHI is None else PHI * prior_scale
+    if prior_weight is not None:                 # revision 7: label-free prior weights (prior_weight.py)
+        w_a, w_b, w_c = (float(x) for x in prior_weight)
+        G = w_a * G + w_b
+        S, PHI = S * w_c, None if PHI is None else PHI * w_c
     S, G = S.to(device), G.to(device)
     PHI = None if PHI is None else PHI.to(device)
     vts = [_vt(T) for T in Ts]
