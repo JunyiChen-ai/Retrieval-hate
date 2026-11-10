@@ -615,6 +615,10 @@ the two rows without answers.
    rarely asks the root first). With our own scores as the prior, the plain fusion beats revision 6 on HCS at every
    budget (AP +.016 to +.047, within +.015 / +.055 / +.020 at 8 / 16 / 32 calls); revision 6 is ahead on HateMM from 4
    calls (8 calls +.010 / +.020 / +.017) and on DeHate from 8 calls (+.032 / +.001 / +.015; 16 calls +.045 AP).
+   Without the tree, on the 8 equal windows: our 0-call scores plus the answer table's log-likelihood ratio (full
+   weight, 8 levels) against our 0-call scores plus raw P(Yes) at alpha .5: AP / ROC -.022 / -.008, -.030 / -.007,
+   -.009 / -.032 (within +.021 / -.002 / +.033). The table's evidence orders the pooled seconds worse than the raw
+   answer in a half-and-half logit average, on every corpus.
 3. **MACIL-SD combines better with the answers than our backbone on HateMM** (.707 vs .691 AP in the same fusion;
    alone .573 vs .568). Tested reason "our backbone was trained on the answers": the label-only backbone (arm
    c_label) in the same fusion gives .674 / .857 / .739, HCS .693 / .673 / .592, DeHate .200 / .744 / .652, all below
