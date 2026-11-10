@@ -9,8 +9,13 @@ A variant is table|weights|policy[|budget]:
            validation per-second labels (answer_calib.py; no gradient); val3h = val3 whose state 0 (no hate in the
            video) is the anchored table of the training videos (the validation set has few negative videos on HCS);
   weights  none, or a mode of prior_weight.fit (label-free, validation answers): loc, joint, root_all, trust
-           (location weight plus the answer leak / miss scalars), trust_len;
+           (location weight plus the answer leak / miss scalars), trust_len; saved = the weight stored with the
+           checkpoint (revision-7 trials, --src); saved_post = questions chosen under weight 1, posterior under the
+           saved weight; saved_ask = questions chosen under the saved weight, posterior under weight 1 (the 2 x 2
+           split of README section 8);
   policy   eig (greedy, revision 6), plan_eer / plan_eig (budget-aware disjoint plan), level (equal windows);
+           first<d> = the nodes of tree depth min(d, floor(log2 budget)) first (EIG order), then greedy EIG over all
+           nodes (README section 10; first3 at 8 calls = level);
            stopE1c<cap> = greedy EIG with the qmixE1 stopping rule (stop_rules.py; threshold set on the validation
            videos, no labels, so that their mean number of calls is the budget; at most <cap> calls per video);
   budget   calls per video (default 8); for stopE1c<cap> the MEAN number of calls per video.
@@ -19,6 +24,8 @@ split; used by policy_select.py to choose the question policy on validation). No
 AP / ROC / within, scores at 6 decimals, unified core evaluator (hc.frame_metrics).
 Output runs/20261110_prior_weight/all_trials/<corpus>/seed<seed>/trial<k>.json (one file per trial; finished trials
 are skipped on restart). Summary: all_trials_table.py.
+--src picks the search whose trials are replayed (default: the revision-6 search); for the revision-7 search use
+--src runs/20261110_prior_weight/search --out-root runs/20261110_prior_weight/r7_trials.
 """
 import argparse
 from datetime import datetime
@@ -37,14 +44,16 @@ sys.path.insert(0, str(ROOT / "src"))
 from qtl import cpolicy, data as qdata, policy, prior_weight, qtree, stop_rules      # noqa: E402
 from qtl.answer_calib import fit_validation_answer_model                # noqa: E402
 from qtl.backbones import make_model                                    # noqa: E402
-from qtl.checkpoint import load_trial                                   # noqa: E402
+from qtl.checkpoint import load_prior_weight, load_trial                # noqa: E402
 import hier_evidence_common as hc                                       # noqa: E402
 
 METS = ("pooled_ap", "pooled_roc", "within_roc")
 POLICIES = {"eig": dict(order="eig"), "eer": dict(order="eer"), "level": dict(order="eig", level=True),
             "plan_eig": dict(order="eig", plan="disjoint"), "plan_eer": dict(order="eer", plan="disjoint"),
             "planfill_eig": dict(order="eig", plan="disjoint"), "planfill_eer": dict(order="eer", plan="disjoint"),
-            "planfill_loc": dict(order="eig_loc", plan="disjoint")}
+            "planfill_loc": dict(order="eig_loc", plan="disjoint"),
+            "first1": dict(order="eig", first_depth=1), "first2": dict(order="eig", first_depth=2),
+            "first3": dict(order="eig", first_depth=3)}
 # plan_eig / plan_eer results in the trial files were computed before the plan fell back to nested nodes when no
 # disjoint node is left (fewer calls than the budget on short videos); planfill_* = the current plan, all calls used.
 DEFAULT = ["r6|none|eig", "r6|loc|eig", "r6|loc|level", "val3|none|eig", "val3|loc|eig", "val3|loc|level",
@@ -56,15 +65,21 @@ def replay(model, store, vids, am, chain, answers, cfg, budget, w, kw, device):
     runs = {}
     kw = dict(kw)
     level = kw.pop("level", False)
+    first_depth = min(kw.pop("first_depth", 0), int(np.floor(np.log2(budget))))
+    if w is not None and w.get("split") == "post":      # questions under weight 1, posterior under the saved weight
+        kw["policy_prior_scale"] = 1.0 / w["c"]
+    elif w is not None and w.get("split") == "ask":     # questions under the saved weight, posterior under weight 1
+        kw["policy_prior_scale"], w = w["c"], None
     depth = int(np.floor(np.log2(budget)))
     vids = sorted(vids, key=lambda v: store.T[v])
     for i in range(0, len(vids), int(cfg["eval_chunk"])):
         chunk = vids[i:i + int(cfg["eval_chunk"])]
         allowed = [set(qtree.depth_nodes(store.T[v], depth).tolist()) for v in chunk] if level else None
+        first = [set(qtree.depth_nodes(store.T[v], first_depth).tolist()) for v in chunk] if first_depth else None
         with torch.no_grad():
             runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cfg["categories"], budget, device,
                                           allowed=allowed, prior_weight=None if w is None else
-                                          prior_weight.as_tuple(w), **kw))
+                                          prior_weight.as_tuple(w), first=first, **kw))
     return runs
 
 
@@ -76,15 +91,16 @@ def main():
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--out-root", default="runs/20261110_prior_weight/all_trials")
+    ap.add_argument("--src", default=SRC, help="search directory with <corpus>/seed<seed>/trial<k>/model.pth")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     od = (ROOT / a.out_root / a.corpus / f"seed{a.seed}").resolve()
     od.mkdir(parents=True, exist_ok=True)
     (od / "run.pid").write_text(str(os.getpid()))
     print("host", socket.gethostname(), datetime.now().astimezone().isoformat(), "variants", a.variants, flush=True)
-    trials = sorted((ROOT / SRC / a.corpus / f"seed{a.seed}").glob("trial*/model.pth"),
+    trials = sorted((ROOT / a.src / a.corpus / f"seed{a.seed}").glob("trial*/model.pth"),
                     key=lambda p: int(p.parent.name[5:]))
-    assert len(trials) == 20, "expected the 20 trials of the revision-6 search, found %d" % len(trials)
+    assert len(trials) in (5, 20), "expected the 5 or 20 trials of a finished search, found %d" % len(trials)
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
     val, test = list(ids["val"]), list(ids["test"])
     vids_of = {"val": val, "test": test}
@@ -130,6 +146,12 @@ def main():
                         tables[tab].theta[:, 0] = am6.theta[:, 0].cpu()
                         tables[tab].omega[:, 0] = am6.omega[:, 0].cpu()
                 tables[tab] = tables[tab].to(a.device)
+            if (tab, mode) not in weights and mode.startswith("saved"):
+                sw = load_prior_weight(trial)
+                assert sw is not None and tab == "r6", "saved weights belong to the checkpoint's own table"
+                weights[(tab, mode)] = dict(a=sw[0], b=sw[1], c=sw[2], source="checkpoint")
+                if mode != "saved":
+                    weights[(tab, mode)]["split"] = {"saved_post": "post", "saved_ask": "ask"}[mode]
             if (tab, mode) not in weights:
                 weights[(tab, mode)] = None if mode == "none" else prior_weight.fit(
                     pri, store, val, tables[tab], chain, answers, a.device, mode=mode)
@@ -163,7 +185,7 @@ def main():
             res["mean_calls"] = float(np.mean([len(runs[v]["asked"]) for v in vids]))
             res["weights"] = w
             done["variants"][var] = res
-        done.update(trial=str(trial), seed=a.seed, corpus=a.corpus, host=socket.gethostname(),
+        done.update(trial=str(trial), seed=a.seed, corpus=a.corpus, host=socket.gethostname(), src=a.src,
                     created=datetime.now().astimezone().isoformat(),
                     r6_summary_test={k: float(summary["test"][k]) for k in METS},
                     r6_val_criterion=float(summary["val_criterion"]))

@@ -227,7 +227,8 @@ def _plan_disjoint(tr, q, cand, val, K):
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
               copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0,
-              policy_prior_scale=None, budgets=None, cover=None, prior_weight=None, plan=None, priors=None):
+              policy_prior_scale=None, budgets=None, cover=None, prior_weight=None, plan=None, priors=None,
+              first=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -263,7 +264,10 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     after every answer. When no disjoint node is left and calls remain, the policy falls back to the greedy choice
     among the nested nodes (refining what was asked).
     priors: None = run the prior network here; {video: (s, g, phi)} = its outputs computed before
-    (prior_weight.collect), so that the weight fit and the policy share one forward pass."""
+    (prior_weight.collect), so that the weight fit and the policy share one forward pass.
+    first (revision 7, first_level): None = the method of revisions 2-6; else per video the node ids that are asked
+    before any other node (in the order's objective among them); once they are all asked, the policy continues
+    over all remaining nodes. With the nodes of one tree depth this is the breadth-first start."""
     assert copy_mode in ("both", "eig", "lik")
     assert plan in (None, "disjoint") and (plan is None or order in ("eig", "eer", "spread", "eig_loc"))
     copy_eig = copy_pi is not None and copy_mode in ("both", "eig")
@@ -306,6 +310,8 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
            for b, a in enumerate(askers)]
     llr = [np.zeros(T) for T in Ts]
     cnt = [np.zeros(T) for T in Ts]
+    first_mask = None if first is None else [np.isin(a.q, np.asarray(sorted(first[b]), dtype=np.int64))
+                                             for b, a in enumerate(askers)]
     nest = [np.zeros(len(a.q), dtype=bool) for a in askers]   # plan: nodes nested with an asked node
     asked_o = [[] for _ in vids]                 # per video: (node, outcome index or None) of the asked nodes
     anc = [None for _ in vids]
@@ -377,6 +383,8 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
                 continue
             cov_path = None
             planned = False
+            if first_mask is not None and first_mask[b][cand].any():     # revision 7: the first-level nodes first
+                cand = cand[first_mask[b][cand]]
             if plan == "disjoint" and not nest[b][cand].all():
                 cand, planned = cand[~nest[b][cand]], True
             if cov[b] is not None and cover == "root" and not asked_o[b] and asker.q[0] == 0 and rem[b][0]:

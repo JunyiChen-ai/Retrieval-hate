@@ -85,8 +85,15 @@ DEFAULTS = {
     "answer_source": "k30", "node_prior": False,
     "soft_levels": 8, "state1_table": None, "soft5_edges": "fixed",
     "answer_offset": False, "soft_fixed_edges": None,
-    "prior_weight": None, "plan": None, "eval_table": None,
+    "prior_weight": None, "plan": None, "eval_table": None, "first_level": 0,
 }
+# Revision 7, first level (experiments/20261110_prior_weight/README.md section 10): the policy asks the 2^d equal
+# windows of tree depth d first (in EIG order; qtree.depth_nodes) and continues greedily over all nodes; at a budget
+# B < 2^d the depth is floor(log2 B). d = 0 is the greedy policy of revisions 2-6. first_level "validated" = d is a
+# hyper-parameter chosen once per trained model, after training, on the validation videos: the d in
+# 0..floor(log2 primary_budget) with the largest validation (AP + ROC) / 2 at the primary budget (ties: the smaller
+# d). Training and the checkpoint choice are unchanged (greedy policy); the per-second validation labels enter this
+# choice only (no gradient). first_level 0 = the greedy policy alone.
 # Revision 7 (experiments/20261110_prior_weight/README.md): prior_weight "loc" / "joint" / "root_all" = label-free
 # weights of the prior estimated after every epoch on the validation videos' cached answers (prior_weight.py) and
 # used at validation and test (posterior, question choice); plan "disjoint" = budget-aware question plan
@@ -142,9 +149,13 @@ class Evaluator:
         return self.trees[v]
 
     def run(self, model, am, ids, max_calls, order=None, chain=None, record_voi=False, prior_weight=None,
-            priors=None):
+            priors=None, first_depth=None):
+        """first_depth = d >= 1 (revision 7, first_level): the nodes of tree depth d are asked before any other."""
         model.eval()
         out = {}
+        if first_depth is not None:
+            assert chain is not None and self.allowed is None and int(first_depth) >= 1
+            assert not isinstance(am, answer_offset.OffsetAnswerModel) and self.cfg.get("plan") is None
         if isinstance(am, answer_offset.OffsetAnswerModel):     # revision 6: the offset policy (EIG, tree)
             assert chain is not None and self.allowed is None and (order or self.cfg["order"]) == "eig"
             assert prior_weight is None and self.cfg.get("plan") is None
@@ -159,16 +170,20 @@ class Evaluator:
             ids = sorted(ids, key=lambda v: self.store.T[v])
             k = int(self.cfg["eval_chunk"])
             for i in range(0, len(ids), k):
+                first = None if first_depth is None else [
+                    set(qtree.depth_nodes(self.store.T[v], int(first_depth)).tolist()) for v in ids[i:i + k]]
                 out.update(cpolicy.run_batch(model, self.store, ids[i:i + k], am, chain, self.answers,
                                              self.cfg["categories"], max_calls, self.device,
                                              order or self.cfg["order"], self.cfg["fusion"], record_voi,
                                              None if self.allowed is None else
                                              [self.allowed[v] for v in ids[i:i + k]],
-                                             prior_weight=prior_weight, plan=self.cfg.get("plan"), priors=priors))
+                                             prior_weight=prior_weight, plan=self.cfg.get("plan"), priors=priors,
+                                             first=first))
             model.train()
             return out
         assert self.allowed is None, "query_level needs the chain prior"
-        assert prior_weight is None and self.cfg.get("plan") is None, "revision 7 needs the chain prior"
+        assert prior_weight is None and self.cfg.get("plan") is None and first_depth is None, \
+            "revision 7 needs the chain prior"
         for v in ids:
             s, g = policy.video_prior(model, self.store, v, self.device)
             vt = self.vt(v)
@@ -286,8 +301,12 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
                                 offset_info["n_negative_answers"], offset_info["n_roots"]))
     qam = oam if oam is not None else am             # the answer model the policy uses
     assert cfg["prior_weight"] in (None, "loc", "joint", "root_all") and cfg["plan"] in (None, "disjoint")
-    assert cfg["eval_table"] in (None, "val3")
-    if cfg["prior_weight"] or cfg["plan"] or cfg["eval_table"]:
+    assert cfg["eval_table"] in (None, "val3") and cfg["first_level"] in (0, "validated")
+    if cfg["first_level"] == "validated":
+        assert cfg["plan"] is None and cfg["order"] == "eig" and cfg["fusion"] == "tree", \
+            "the first level is chosen for the greedy EIG policy on the tree posterior"
+        assert int(cfg["val_budget"]) == int(cfg["primary_budget"]) >= 2
+    if cfg["prior_weight"] or cfg["plan"] or cfg["eval_table"] or cfg["first_level"]:
         assert cfg["prior"] == "chain" and oam is None and int(cfg["query_level"]) == 0, \
             "revision 7 extends the chain prior with the plain answer model"
     if cfg["eval_table"] == "val3":                  # revision 7: validation-fitted table for the policy / posterior
@@ -479,6 +498,9 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
     summary = evaluate(corpus, out_dir, cfg, model, qam, ev, ids, gt, labels, say, chain,
                        None if best["prior_weight"] is None else pweight.as_tuple(best["prior_weight"]))
     summary["prior_weight"] = best["prior_weight"]
+    if cfg["first_level"] == "validated":
+        say("first level (validation, primary budget): d = %d | criterion per d %s" % (
+            summary["first_level"], json.dumps(summary["first_level_val_criterion"])))
     if offset_info is not None:
         summary["answer_offset_fit"] = offset_info
     summary.update({"corpus": corpus, "seed": seed, "cfg": cfg, "best_epoch": best["epoch"],
@@ -537,6 +559,27 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
                            prior_weight=prior_weight)
     hate_val = {v for v in ids["val"] if labels[v] == 1}
     res = {"fixed": {}, "adaptive": {}, "adaptive_voi": {}}
+    pb = int(cfg["primary_budget"])
+    # revision 7, first level: one trajectory per depth d (the nodes of depth d first, then greedy); d = 0 is the
+    # greedy trajectory above. At a budget B the policy of depth d is the trajectory of min(d, floor(log2 B)).
+    validated = cfg.get("first_level", 0) == "validated"
+    assert not (validated and planned)
+    traj = {0: (val_runs, test_runs)}
+    d_star = 0
+    if validated:
+        for d in range(1, int(np.floor(np.log2(pb))) + 1):
+            traj[d] = tuple(ev.run(model, am, ids[sp], max_calls, chain=chain, prior_weight=prior_weight,
+                                   first_depth=d) for sp in ("val", "test"))
+        crit_d = {}
+        for d, (rv, _) in traj.items():
+            vm = hc.frame_metrics(at_budget(rv, pb), gt["val"], hate_val)
+            crit_d[d] = 0.5 * (vm["pooled_ap"] + vm["pooled_roc"])
+        d_star = max(sorted(crit_d), key=lambda d: crit_d[d])      # ties: the smaller depth
+        res["first_level"] = int(d_star)
+        res["first_level_val_criterion"] = {str(d): float(c) for d, c in crit_d.items()}
+
+    def depth_at(d, B):
+        return min(int(d), int(np.floor(np.log2(B)))) if B >= 1 else 0
 
     def test_eval(name, scores):
         sp = os.path.join(out_dir, "scores_test_%s.jsonl" % name)
@@ -545,25 +588,39 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
         r = r["results"]["score_av"]
         return {"pooled_ap": r["pr_auc"], "pooled_roc": r["roc_auc"], "within_roc": r["per_video"]["macro_auc"]}
 
-    pb = int(cfg["primary_budget"])
     assert pb in [int(B) for B in cfg["fixed_budgets"]]
     for B in cfg["fixed_budgets"]:
         B = int(B)
         if planned:
             val_runs = ev.run(model, am, ids["val"], B, chain=chain, prior_weight=prior_weight)
             test_runs = ev.run(model, am, ids["test"], B, chain=chain, prior_weight=prior_weight)
+        if not validated:
+            traj[0] = (val_runs, test_runs)      # the plan has one run per budget
+        dB = depth_at(d_star, B)
+        rv, rt = traj[dB]
         if B == pb:
-            primary_runs = test_runs
-        sv, st = at_budget(val_runs, B), at_budget(test_runs, B)
+            primary_runs = rt
         res["fixed"][str(B)] = {
-            "val": hc.frame_metrics(sv, gt["val"], hate_val), "test": test_eval("fixed%d" % B, st),
-            "test_mean_calls": float(np.mean([min(B, len(r["eig"])) for r in test_runs.values()]))}
-        say("fixed %2d calls | test AP %.4f ROC %.4f within %.4f" % (B, *[res["fixed"][str(B)]["test"][k] for k in
-                                                                        ("pooled_ap", "pooled_roc", "within_roc")]))
+            "val": hc.frame_metrics(at_budget(rv, B), gt["val"], hate_val),
+            "test": test_eval("fixed%d" % B, at_budget(rt, B)),
+            "test_mean_calls": float(np.mean([min(B, len(r["eig"])) for r in rt.values()]))}
+        if validated:                            # every depth at this budget, for the ablation of the choice
+            depths = {str(dB): dict(res["fixed"][str(B)])}
+            for d in sorted({depth_at(d, B) for d in traj} - {dB}):
+                depths[str(d)] = {
+                    "val": hc.frame_metrics(at_budget(traj[d][0], B), gt["val"], hate_val),
+                    "test": test_eval("fixed%d_depth%d" % (B, d), at_budget(traj[d][1], B)),
+                    "test_mean_calls": float(np.mean([min(B, len(r["eig"])) for r in traj[d][1].values()]))}
+            res["fixed"][str(B)].update(first_level=dB, depths=depths)
+        say("fixed %2d calls | test AP %.4f ROC %.4f within %.4f%s" % (
+            B, *[res["fixed"][str(B)]["test"][k] for k in ("pooled_ap", "pooled_roc", "within_roc")],
+            "" if not validated else " | first level %d" % dB))
     rules = [("adaptive", "eig")] + ([("adaptive_voi", "voi")] if chain is not None and
                                      not isinstance(am, answer_offset.OffsetAnswerModel) else [])
     if planned:                                  # the threshold rules read one trajectory; not defined for the plan
         rules = []
+    if validated:                                # the threshold rules below read the greedy trajectory (d = 0)
+        res["adaptive_first_level"] = 0
     for (key, rule), B in [(kr, B) for kr in rules for B in cfg["mean_budgets"]]:
         c, val_mean = policy.calibrate([r[rule] for r in val_runs.values()], float(B))
         sv, _ = at_threshold(val_runs, c, rule)

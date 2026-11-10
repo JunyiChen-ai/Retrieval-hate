@@ -51,7 +51,7 @@ def main():
                              [d["r6|none|eig" + suf][m] for m in METS]))
         if not rows:
             continue
-        chosen = [max(a.candidates, key=lambda p: r[3][p]) for r in rows]
+        chosen = [max(a.candidates, key=lambda p: r[3][p]) for r in rows]       # ties: the first candidate
         test_best = [max(a.candidates, key=lambda p: r[2][p][0] + r[2][p][1]) for r in rows]
         sel = np.array([r[2][c] for r, c in zip(rows, chosen)])
         r6 = np.array([r[4] for r in rows])
