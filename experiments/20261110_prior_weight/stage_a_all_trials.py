@@ -37,7 +37,8 @@ import hier_evidence_common as hc                                       # noqa: 
 METS = ("pooled_ap", "pooled_roc", "within_roc")
 POLICIES = {"eig": dict(order="eig"), "eer": dict(order="eer"), "level": dict(order="eig", level=True),
             "plan_eig": dict(order="eig", plan="disjoint"), "plan_eer": dict(order="eer", plan="disjoint"),
-            "planfill_eig": dict(order="eig", plan="disjoint"), "planfill_eer": dict(order="eer", plan="disjoint")}
+            "planfill_eig": dict(order="eig", plan="disjoint"), "planfill_eer": dict(order="eer", plan="disjoint"),
+            "planfill_loc": dict(order="eig_loc", plan="disjoint")}
 # plan_eig / plan_eer results in the trial files were computed before the plan fell back to nested nodes when no
 # disjoint node is left (fewer calls than the budget on short videos); planfill_* = the current plan, all calls used.
 DEFAULT = ["r6|none|eig", "r6|loc|eig", "r6|loc|level", "val3|none|eig", "val3|loc|eig", "val3|loc|level",
