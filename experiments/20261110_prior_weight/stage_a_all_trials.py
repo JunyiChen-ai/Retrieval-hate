@@ -25,6 +25,9 @@ A variant is table|weights|policy[|budget]:
   budget   calls per video (default 8); for stopE1c<cap> the MEAN number of calls per video.
 A variant ending in "@val" is replayed on the validation videos instead of the test videos (metrics of the validation
 split; used by policy_select.py to choose the question policy on validation). Not available for stopE1c<cap>.
+A variant ending in "@raw" is the test replay with the metrics computed on the unrounded scores (diagnostic of the
+6-decimal score files, README section 12; every other variant rounds the scores to 6 decimals as the score files of
+train.py do). Not available for stopE1c<cap>.
 AP / ROC / within, scores at 6 decimals, unified core evaluator (hc.frame_metrics).
 Output runs/20261110_prior_weight/all_trials/<corpus>/seed<seed>/trial<k>.json (one file per trial; finished trials
 are skipped on restart). Summary: all_trials_table.py.
@@ -117,8 +120,10 @@ def main():
     answers, T_all = qdata.load_answers(a.corpus, "soft_both")
     store = qdata.Store(a.corpus, val + test, ["bert"])
 
-    def mets(sc, split="test"):
-        sc = {v: np.round(np.asarray(s, dtype=np.float64), 6) for v, s in sc.items()}
+    def mets(sc, split="test", decimals=6):
+        sc = {v: np.asarray(s, dtype=np.float64) for v, s in sc.items()}
+        if decimals is not None:
+            sc = {v: np.round(s, decimals) for v, s in sc.items()}
         m = hc.frame_metrics(sc, gt[split], hate[split])
         return {k: float(m[k]) for k in METS}
 
@@ -141,8 +146,8 @@ def main():
                 pri[v] = plain_prior(model, store, v, a.device)
         tables, weights, capped = {"r6": am6}, {}, {}
         for var in todo:
-            split = "val" if var.endswith("@val") else "test"
-            parts = var[:-len("@val")].split("|") if split == "val" else var.split("|")
+            split, raw = "val" if var.endswith("@val") else "test", var.endswith("@raw")
+            parts = (var[:-len("@val")] if split == "val" or raw else var).split("|")
             tab, mode, pol = parts[:3]
             B = int(parts[3]) if len(parts) > 3 else 8
             if tab not in tables:
@@ -166,7 +171,7 @@ def main():
                     start="grid" if mode == "locg" else "one")
             w = weights[(tab, mode)]
             if pol.startswith("stopE1c"):
-                assert split == "test", "the stopping-rule variants are test only"
+                assert split == "test" and not raw, "the stopping-rule variants are test only, rounded scores"
                 cap = int(pol[len("stopE1c"):])
                 if (tab, mode, cap) not in capped:
                     kw = dict(order="eig", record_voi=True)
@@ -190,7 +195,7 @@ def main():
             vids = vids_of[split]
             runs = replay(model, store, vids, prior_weight.table(tables[tab], w), chain, answers, cfg, B, w,
                           POLICIES[pol], a.device)
-            res = mets({v: runs[v]["scores"][-1] for v in vids}, split)
+            res = mets({v: runs[v]["scores"][-1] for v in vids}, split, None if raw else 6)
             res["mean_calls"] = float(np.mean([len(runs[v]["asked"]) for v in vids]))
             res["weights"] = w
             done["variants"][var] = res
