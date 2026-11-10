@@ -68,6 +68,8 @@ from . import ctree                                    # noqa: E402
 from . import cpolicy                                  # noqa: E402
 from . import answer_offset                            # noqa: E402
 from . import opolicy                                  # noqa: E402
+from . import prior_weight as pweight                  # noqa: E402
+from .answer_calib import fit_validation_answer_model  # noqa: E402
 from .model import PriorNet, ConstPrior         # noqa: E402
 
 DEFAULTS = {
@@ -83,7 +85,15 @@ DEFAULTS = {
     "answer_source": "k30", "node_prior": False,
     "soft_levels": 8, "state1_table": None, "soft5_edges": "fixed",
     "answer_offset": False, "soft_fixed_edges": None,
+    "prior_weight": None, "plan": None, "eval_table": None,
 }
+# Revision 7 (experiments/20261110_prior_weight/README.md): prior_weight "loc" / "joint" / "root_all" = label-free
+# weights of the prior estimated after every epoch on the validation videos' cached answers (prior_weight.py) and
+# used at validation and test (posterior, question choice); plan "disjoint" = budget-aware question plan
+# (cpolicy._plan_disjoint; every fixed budget is then its own run of the policy and the threshold rules of this file
+# are not evaluated); order "eer" = the plan's value is the expected per-second squared-error reduction; eval_table
+# "val3" = at validation and test the three-state answer table with a length slope per state fitted once on the
+# validation per-second labels (answer_calib.py, no gradient; the training loss keeps the anchored table).
 # Review control E2 (experiments/20261108_astra_review/README.md): soft_fixed_edges = a list of soft_levels - 1 fixed
 # p_yes edges instead of the train quantiles; soft_levels 2 with [0.5] = the hard yes / no answer of the same question.
 # Revision 6 (experiments/20261101_r5_completion/README.md section 3): answer_offset true = one answer offset per
@@ -131,11 +141,13 @@ class Evaluator:
             self.trees[v] = qtree.VideoTree(self.store.T[v])
         return self.trees[v]
 
-    def run(self, model, am, ids, max_calls, order=None, chain=None, record_voi=False):
+    def run(self, model, am, ids, max_calls, order=None, chain=None, record_voi=False, prior_weight=None,
+            priors=None):
         model.eval()
         out = {}
         if isinstance(am, answer_offset.OffsetAnswerModel):     # revision 6: the offset policy (EIG, tree)
             assert chain is not None and self.allowed is None and (order or self.cfg["order"]) == "eig"
+            assert prior_weight is None and self.cfg.get("plan") is None
             ids = sorted(ids, key=lambda v: self.store.T[v])
             k = int(self.cfg["eval_chunk"])
             for i in range(0, len(ids), k):
@@ -151,10 +163,12 @@ class Evaluator:
                                              self.cfg["categories"], max_calls, self.device,
                                              order or self.cfg["order"], self.cfg["fusion"], record_voi,
                                              None if self.allowed is None else
-                                             [self.allowed[v] for v in ids[i:i + k]]))
+                                             [self.allowed[v] for v in ids[i:i + k]],
+                                             prior_weight=prior_weight, plan=self.cfg.get("plan"), priors=priors))
             model.train()
             return out
         assert self.allowed is None, "query_level needs the chain prior"
+        assert prior_weight is None and self.cfg.get("plan") is None, "revision 7 needs the chain prior"
         for v in ids:
             s, g = policy.video_prior(model, self.store, v, self.device)
             vt = self.vt(v)
@@ -271,6 +285,16 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
             "positive roots" % (oam.K, offset_info["offset_sd"], offset_info["n_negative_videos"],
                                 offset_info["n_negative_answers"], offset_info["n_roots"]))
     qam = oam if oam is not None else am             # the answer model the policy uses
+    assert cfg["prior_weight"] in (None, "loc", "joint", "root_all") and cfg["plan"] in (None, "disjoint")
+    assert cfg["eval_table"] in (None, "val3")
+    if cfg["prior_weight"] or cfg["plan"] or cfg["eval_table"]:
+        assert cfg["prior"] == "chain" and oam is None and int(cfg["query_level"]) == 0, \
+            "revision 7 extends the chain prior with the plain answer model"
+    if cfg["eval_table"] == "val3":                  # revision 7: validation-fitted table for the policy / posterior
+        qam, n_fit3 = fit_validation_answer_model(answers, labels, gt["val"], ids["val"], T_ans, am.len_mu,
+                                                  am.len_sd, cfg["categories"])
+        qam = qam.to(device)
+        say("validation-fitted three-state answer table (policy and posterior): %s answers per state" % n_fit3)
     assert cfg["backbone"] in ("macil", "const") or model_factory is not None
     if cfg["backbone"] == "const":               # diagnostic arm: no content network (README section 12)
         assert float(cfg["lamda_cma"]) == 0.0, "the constant prior has no audio/visual branches for CMAL"
@@ -417,17 +441,24 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
         if cfg["answer_model"] == "refit":
             refit_answer_model(model, am, chain, store, ids["train"], train_obs, labels, device, say)
         tot /= max(nb, 1)
-        runs = ev.run(model, qam, ids["val"], int(cfg["val_budget"]), chain=chain)
+        pw = None
+        if cfg["prior_weight"]:                  # revision 7: label-free prior weights on the validation answers
+            pri = pweight.collect(model, store, ids["val"], device)
+            pw = pweight.fit(pri, store, ids["val"], qam, chain, answers, device, mode=cfg["prior_weight"])
+            runs = ev.run(model, qam, ids["val"], int(cfg["val_budget"]), chain=chain,
+                          prior_weight=pweight.as_tuple(pw), priors=pri)
+        else:
+            runs = ev.run(model, qam, ids["val"], int(cfg["val_budget"]), chain=chain)
         vm = hc.frame_metrics(at_budget(runs, int(cfg["val_budget"])), gt["val"], hate_val)
         crit = 0.5 * (vm["pooled_ap"] + vm["pooled_roc"])
         history.append({"epoch": epoch + 1, "loss_g": tot[0], "loss_answers": tot[1], "cma": tot[2],
-                        "val": vm, "val_criterion": crit, "seconds": time.time() - t0})
-        say("epoch %d | g %.4f ans %.4f cma %.4f | val AP %.4f ROC %.4f within %.4f | %.0fs" % (
+                        "val": vm, "val_criterion": crit, "seconds": time.time() - t0, "prior_weight": pw})
+        say("epoch %d | g %.4f ans %.4f cma %.4f | val AP %.4f ROC %.4f within %.4f | %.0fs%s" % (
             epoch + 1, tot[0], tot[1], tot[2], vm["pooled_ap"], vm["pooled_roc"], vm["within_roc"],
-            time.time() - t0))
+            time.time() - t0, "" if pw is None else " | prior weight a %.3f b %.3f c %.3f" % pweight.as_tuple(pw)))
         if best is None or crit > best["crit"]:
             best = {"crit": crit, "epoch": epoch + 1, "model": copy.deepcopy(model.state_dict()),
-                    "am": copy.deepcopy(am.state_dict()),
+                    "am": copy.deepcopy(am.state_dict()), "prior_weight": pw,
                     "chain": copy.deepcopy(chain.state_dict()) if use_chain else None}
     model.load_state_dict(best["model"])
     am.load_state_dict(best["am"])
@@ -438,9 +469,16 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
     saved = {"model": best["model"], "am": best["am"], "chain": best["chain"], "epoch": best["epoch"]}
     if oam is not None:
         saved["offset"] = {"theta": oam.theta, "support": oam.support, "logw": oam.logw}
+    if best["prior_weight"] is not None:
+        saved["prior_weight"] = best["prior_weight"]
+        say("prior weight (validation answers, no labels): %s" % json.dumps(best["prior_weight"]))
+    if cfg["eval_table"] is not None:
+        saved["eval_am"] = copy.deepcopy(qam.state_dict())
     torch.save(saved, os.path.join(out_dir, "model.pth"))
     say("checkpoint: epoch %d (val criterion %.4f)" % (best["epoch"], best["crit"]))
-    summary = evaluate(corpus, out_dir, cfg, model, qam, ev, ids, gt, labels, say, chain)
+    summary = evaluate(corpus, out_dir, cfg, model, qam, ev, ids, gt, labels, say, chain,
+                       None if best["prior_weight"] is None else pweight.as_tuple(best["prior_weight"]))
+    summary["prior_weight"] = best["prior_weight"]
     if offset_info is not None:
         summary["answer_offset_fit"] = offset_info
     summary.update({"corpus": corpus, "seed": seed, "cfg": cfg, "best_epoch": best["epoch"],
@@ -488,10 +526,15 @@ def refit_answer_model(model, am, chain, store, vids, train_obs, labels, device,
     model.train()
 
 
-def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=None):
+def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=None, prior_weight=None):
     max_calls = int(cfg["max_calls"])
-    val_runs = ev.run(model, am, ids["val"], max_calls, chain=chain, record_voi=chain is not None)
-    test_runs = ev.run(model, am, ids["test"], max_calls, chain=chain, record_voi=chain is not None)
+    planned = cfg.get("plan") is not None        # revision 7: the plan depends on the budget, one run per budget
+    val_runs = test_runs = None
+    if not planned:
+        val_runs = ev.run(model, am, ids["val"], max_calls, chain=chain, record_voi=chain is not None,
+                          prior_weight=prior_weight)
+        test_runs = ev.run(model, am, ids["test"], max_calls, chain=chain, record_voi=chain is not None,
+                           prior_weight=prior_weight)
     hate_val = {v for v in ids["val"] if labels[v] == 1}
     res = {"fixed": {}, "adaptive": {}, "adaptive_voi": {}}
 
@@ -502,8 +545,15 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
         r = r["results"]["score_av"]
         return {"pooled_ap": r["pr_auc"], "pooled_roc": r["roc_auc"], "within_roc": r["per_video"]["macro_auc"]}
 
+    pb = int(cfg["primary_budget"])
+    assert pb in [int(B) for B in cfg["fixed_budgets"]]
     for B in cfg["fixed_budgets"]:
         B = int(B)
+        if planned:
+            val_runs = ev.run(model, am, ids["val"], B, chain=chain, prior_weight=prior_weight)
+            test_runs = ev.run(model, am, ids["test"], B, chain=chain, prior_weight=prior_weight)
+        if B == pb:
+            primary_runs = test_runs
         sv, st = at_budget(val_runs, B), at_budget(test_runs, B)
         res["fixed"][str(B)] = {
             "val": hc.frame_metrics(sv, gt["val"], hate_val), "test": test_eval("fixed%d" % B, st),
@@ -512,6 +562,8 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
                                                                         ("pooled_ap", "pooled_roc", "within_roc")]))
     rules = [("adaptive", "eig")] + ([("adaptive_voi", "voi")] if chain is not None and
                                      not isinstance(am, answer_offset.OffsetAnswerModel) else [])
+    if planned:                                  # the threshold rules read one trajectory; not defined for the plan
+        rules = []
     for (key, rule), B in [(kr, B) for kr in rules for B in cfg["mean_budgets"]]:
         c, val_mean = policy.calibrate([r[rule] for r in val_runs.values()], float(B))
         sv, _ = at_threshold(val_runs, c, rule)
@@ -527,8 +579,8 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
         say("%s mean %d (c = %.4g) | test calls %.2f (pos %.2f, neg %.2f) | AP %.4f ROC %.4f within %.4f"
             % (key, B, c, r["test_mean_calls"], r["test_mean_calls_pos"], r["test_mean_calls_neg"],
                r["test"]["pooled_ap"], r["test"]["pooled_roc"], r["test"]["within_roc"]))
-    pb = int(cfg["primary_budget"])
     primary = res["fixed"][str(pb)]
+    test_runs = primary_runs
     # P3: VLM-silent group of the old fine verdicts (fine rate of level >= 2 below .1). DeHate has no old verdicts
     # (experiments/20260926_dehate_external/README.md section 2), so the group is not formed there.
     if corpus in vlm_verdict.CORPUS_DIR:

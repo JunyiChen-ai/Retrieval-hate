@@ -190,7 +190,7 @@ def _plan_disjoint(tr, q, cand, val, K):
     qpos = np.full(len(tr["a"]), -1, dtype=np.int64)
     qpos[q] = np.arange(nq)
     V = np.full(nq, -1e18)
-    V[cand] = val
+    V[cand] = np.maximum(np.asarray(val, dtype=np.float64), 0.0) + 1e-12   # a value of exactly 0 still fills the plan
     best = np.full((nq + 1, K + 1), -1e18)       # last row: a child that cannot be asked (index -1)
     best[:, 0] = 0.0
     own = np.zeros(nq, dtype=bool)
@@ -227,7 +227,7 @@ def _plan_disjoint(tr, q, cand, val, K):
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
               copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0,
-              policy_prior_scale=None, budgets=None, cover=None, prior_weight=None, plan=None):
+              policy_prior_scale=None, budgets=None, cover=None, prior_weight=None, plan=None, priors=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -258,8 +258,12 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     plan (revision 7): None = greedy, one question at a time. "disjoint" = budget-aware: before every call the
     remaining calls of the video's budget are planned as the pairwise disjoint unasked nodes with the largest total
     value under the current posterior (_plan_disjoint, value = the order's objective); the planned node with the
-    largest value is asked; nodes nested with an asked node are never asked (nested answers repeat each other, which
-    the answer model does not describe). The plan is rebuilt after every answer."""
+    largest value is asked; a node nested with an asked node is not asked while a node disjoint from all asked
+    nodes is left (nested answers repeat each other, which the answer model does not describe). The plan is rebuilt
+    after every answer. When no disjoint node is left and calls remain, the policy falls back to the greedy choice
+    among the nested nodes (refining what was asked).
+    priors: None = run the prior network here; {video: (s, g, phi)} = its outputs computed before
+    (prior_weight.collect), so that the weight fit and the policy share one forward pass."""
     assert copy_mode in ("both", "eig", "lik")
     assert plan in (None, "disjoint") and (plan is None or order in ("eig", "eer", "spread", "eig_loc"))
     copy_eig = copy_pi is not None and copy_mode in ("both", "eig")
@@ -271,7 +275,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     fo = ctree.Forest(Ts, Tm)
     PHI = None                                   # revision 4 node potentials (README section 15)
     for b, v in enumerate(vids):
-        s, g, phi = policy.video_prior_nodes(model, store, v, device)
+        s, g, phi = policy.video_prior_nodes(model, store, v, device) if priors is None else priors[v]
         S[b, :len(s)] = torch.from_numpy(s)
         G[b] = g
         if phi is not None:
@@ -302,6 +306,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
            for b, a in enumerate(askers)]
     llr = [np.zeros(T) for T in Ts]
     cnt = [np.zeros(T) for T in Ts]
+    nest = [np.zeros(len(a.q), dtype=bool) for a in askers]   # plan: nodes nested with an asked node
     asked_o = [[] for _ in vids]                 # per video: (node, outcome index or None) of the asked nodes
     anc = [None for _ in vids]
     p0 = None
@@ -371,6 +376,9 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             if len(cand) == 0:
                 continue
             cov_path = None
+            planned = False
+            if plan == "disjoint" and not nest[b][cand].all():
+                cand, planned = cand[~nest[b][cand]], True
             if cov[b] is not None and cover == "root" and not asked_o[b] and asker.q[0] == 0 and rem[b][0]:
                 cand = cand[asker.q[cand] == 0]
             elif cov[b] is not None and cov[b][2] > 0:
@@ -416,7 +424,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             else:
                 e = asker.eig(cand[:1], w[:1])
                 j = 0
-            if plan == "disjoint":
+            if planned:
                 e = np.asarray(e, dtype=np.float64)
                 sel = _plan_disjoint(vts[b].tr, asker.q, cand, e, budgets[b] - len(asked_o[b]))
                 j = int(sel[int(np.argmax(e[sel]))])
@@ -457,7 +465,11 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             if no_nested or plan == "disjoint":
                 qa, qb = tr["a"][askers[b].q], tr["b"][askers[b].q]
                 a_, b_ = tr["a"][node], tr["b"][node]
-                rem[b] &= ~(((a_ <= qa) & (qb <= b_)) | ((qa <= a_) & (b_ <= qb)))
+                nested = ((a_ <= qa) & (qb <= b_)) | ((qa <= a_) & (b_ <= qb))
+                if no_nested:
+                    rem[b] &= ~nested
+                else:
+                    nest[b] |= nested
             if no_adjacent:                      # diagnostic (experiments/20261109_tree_within): nodes within tree
                 if anc[b] is None:               # distance no_adjacent (1: parent and children) of the asked node
                     anc[b] = _ancestors(tr)
