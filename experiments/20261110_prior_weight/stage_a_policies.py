@@ -11,7 +11,10 @@ are replayed at a fixed number of calls per video (--budgets) with each policy (
               by EIG; cover_eer the same chosen by eer;
   rootcover_eig  the root first, then a cover with the remaining calls;
   level       one tree depth: the 2^d equal windows with 2^d <= budget (the single-level control; fewer calls than
-              the budget when the budget is not a power of two).
+              the budget when the budget is not a power of two);
+  plan_eig / plan_eer  budget-aware plan (cpolicy._plan_disjoint): before every call the remaining calls are planned
+              as the pairwise disjoint unasked nodes with the largest total EIG / eer, the best planned node is asked,
+              the plan is rebuilt after the answer.
 AP / ROC / within; the mean depth and mean length (seconds) of the asked nodes. Scores at 6 decimals (hc.frame_metrics).
 Output runs/20261110_prior_weight/stage_a_policies/<corpus>/summary_<tag>.json.
 """
@@ -43,6 +46,8 @@ POLICIES = {
     "cover_eer": dict(order="eer", cover="plain"),
     "rootcover_eig": dict(order="eig", cover="root"),
     "level": dict(order="eig", level=True),
+    "plan_eig": dict(order="eig", plan="disjoint"),
+    "plan_eer": dict(order="eer", plan="disjoint"),
 }
 
 

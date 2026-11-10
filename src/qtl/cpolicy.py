@@ -178,10 +178,56 @@ def _cover_feasible(tr, cov_b, q, cand):
     return np.asarray(keep, dtype=cand.dtype), path
 
 
+def _plan_disjoint(tr, q, cand, val, K):
+    """Budget-aware plan (revision 7): among the candidate nodes (cand: positions into q, ascending; val their values
+    under the current posterior) the at most K pairwise disjoint ones with the largest total value. Exact max-plus
+    dynamic programme on the tree: best(n, k) = the largest total of k disjoint candidates inside node n =
+    max(value of n itself if k = 1, max_j best(left, j) + best(right, k - j)). Returns positions into cand."""
+    K = int(min(K, len(cand)))
+    if K <= 0:
+        return np.zeros(0, dtype=np.int64)
+    nq = len(q)
+    qpos = np.full(len(tr["a"]), -1, dtype=np.int64)
+    qpos[q] = np.arange(nq)
+    V = np.full(nq, -1e18)
+    V[cand] = val
+    best = np.full((nq + 1, K + 1), -1e18)       # last row: a child that cannot be asked (index -1)
+    best[:, 0] = 0.0
+    own = np.zeros(nq, dtype=bool)
+    split = np.zeros((nq, K + 1), dtype=np.int64)
+    left, right = tr["left"], tr["right"]
+    ks = np.arange(K + 1)
+    for i in range(nq - 1, -1, -1):              # q is breadth-first: children after their parent
+        n = q[i]
+        M = best[qpos[left[n]]][:, None] + best[qpos[right[n]]][None, :]
+        comb = np.full(K + 1, -1e18)
+        arg = np.zeros(K + 1, dtype=np.int64)
+        for k in range(K + 1):
+            vals = M[ks[:k + 1], k - ks[:k + 1]]
+            arg[k] = int(np.argmax(vals))
+            comb[k] = vals[arg[k]]
+        if V[i] > comb[1]:
+            comb[1] = V[i]
+            own[i] = True
+        best[i], split[i] = comb, arg
+    out, stack = [], [(0, int(np.argmax(best[0])))]
+    while stack:
+        i, k = stack.pop()
+        if k == 0 or i < 0:
+            continue
+        if k == 1 and own[i]:
+            out.append(i)
+            continue
+        n, j = q[i], int(split[i, k])
+        stack.append((int(qpos[left[n]]), j))
+        stack.append((int(qpos[right[n]]), k - j))
+    return np.searchsorted(cand, np.sort(np.asarray(out, dtype=np.int64)))
+
+
 def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, order="eig", fusion="tree",
               record_voi=False, allowed=None, answer_ll=None, make_asker=None, no_nested=False, copy_pi=None,
               copy_mode="both", record_erm=0, no_adjacent=False, dist_weight=None, prior_scale=1.0,
-              policy_prior_scale=None, budgets=None, cover=None, prior_weight=None):
+              policy_prior_scale=None, budgets=None, cover=None, prior_weight=None, plan=None):
     """allowed (diagnostic arm, README section 12): per video, the node ids that may be asked (None = every
     queryable node). answer_ll (diagnostic, concern_diagnostics.py): function (video index, node id) -> the (3,)
     log-likelihood of the observation to use instead of the cached VLM answer, or None for no observation
@@ -208,8 +254,14 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
     then the same cover with C = min(budget - 1, ...).
     prior_weight (revision 7, prior_weight.py): None = the prior as the network gives it; (a, b, c) = the label-free
     weights estimated on the validation answers: video logit a g + b, per-second logits c s, node potentials c phi,
-    used for the posterior, the EIG and every recorded statistic alike."""
+    used for the posterior, the EIG and every recorded statistic alike.
+    plan (revision 7): None = greedy, one question at a time. "disjoint" = budget-aware: before every call the
+    remaining calls of the video's budget are planned as the pairwise disjoint unasked nodes with the largest total
+    value under the current posterior (_plan_disjoint, value = the order's objective); the planned node with the
+    largest value is asked; nodes nested with an asked node are never asked (nested answers repeat each other, which
+    the answer model does not describe). The plan is rebuilt after every answer."""
     assert copy_mode in ("both", "eig", "lik")
+    assert plan in (None, "disjoint") and (plan is None or order in ("eig", "eer", "spread", "eig_loc"))
     copy_eig = copy_pi is not None and copy_mode in ("both", "eig")
     copy_lik = copy_pi is not None and copy_mode in ("both", "lik")
     Ts = [store.T[v] for v in vids]
@@ -364,6 +416,10 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
             else:
                 e = asker.eig(cand[:1], w[:1])
                 j = 0
+            if plan == "disjoint":
+                e = np.asarray(e, dtype=np.float64)
+                sel = _plan_disjoint(vts[b].tr, asker.q, cand, e, budgets[b] - len(asked_o[b]))
+                j = int(sel[int(np.argmax(e[sel]))])
             chosen.append((b, int(cand[j]), int(nodes[j]), w[j], float(e[j])))
             if cov_path is not None:             # diagnostic cover: the frontier loses the chosen node's frontier
                 f_, sibs = cov_path[j]           # ancestor and gains the siblings along the path below it
@@ -398,7 +454,7 @@ def run_batch(model, store, vids, am, chain, answers, cats, max_calls, device, o
         for b, pos, node, w, e in chosen:
             rem[b][pos] = False
             tr = vts[b].tr
-            if no_nested:
+            if no_nested or plan == "disjoint":
                 qa, qb = tr["a"][askers[b].q], tr["b"][askers[b].q]
                 a_, b_ = tr["a"][node], tr["b"][node]
                 rem[b] &= ~(((a_ <= qa) & (qb <= b_)) | ((qa <= a_) & (b_ <= qb)))
