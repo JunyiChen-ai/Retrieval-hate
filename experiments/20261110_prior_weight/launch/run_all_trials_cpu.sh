@@ -6,8 +6,10 @@
 #     experiments/20261110_prior_weight/launch/run_all_trials_cpu.sh "<corpus> [<corpus> ...]" "<variant> ..." \
 #     > runs/20261110_prior_weight/all_trials/cpu_<tag>.out 2>&1 &'
 # Finished variants are skipped (same trial files as the GPU launcher). PID: runs/.../all_trials/cpu_run.pid.
+# The code is that of the checkout this script lies in (the main repository, or a branch checkout
+# ~/Retrieval-hate-<branch> whose data / results / runs link to the main repository).
 set -uo pipefail
-cd "$HOME/Retrieval-hate"
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2 CUDA_VISIBLE_DEVICES=
 P="$HOME/miniconda3/envs/HateVideo/bin/python"
 O=runs/20261110_prior_weight/all_trials
