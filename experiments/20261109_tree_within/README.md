@@ -338,7 +338,7 @@ as the only questions. Revision 6 at fixed 8 calls for reference.
 |---|---|---|---|
 | revision 6, 8 calls | .702 / .889 / .783 | .691 / .680 / .563 | .279 / .770 / .681 |
 | baseline alone | .573 / .807 / .595 | .562 / .509 / .510; .554 / .528 / .545 | .174 / .701 / .508 |
-| baseline + our 8 windows (best alpha on test) | .635 / .859 / .642 | .600 / .580 / .515; .608 / .581 / .540 | .240 / .778 / .590 |
+| baseline + our 8 windows (best alpha on test) | .643 / .861 / .647 | .587 / .575 / .513; .595 / .572 / .539 | .248 / .777 / .586 |
 | baseline + 8 equal windows, alpha .5 | .707 / .881 / .692 (7.13 calls) | .673 / .621 / .575; .679 / .640 / .580 | .243 / .773 / .601 (6.56) |
 | 8 equal windows, best alpha on test | same (alpha .5) | .693 / .651 / .577 (alpha 0, VLM only); .696 / .653 / .577 | .243 / .777 / .601 |
 | baseline + top-8 baseline-scored 4-8 s windows | .680 / .866 / .627 | .672 / .641 / .539; .683 / .645 / .566 | .223 / .756 / .566 |
@@ -353,6 +353,12 @@ as the only questions. Revision 6 at fixed 8 calls for reference.
    DeHate .000 / +.015 (within -.022 / +.002 / -.005); the tree's question choice matters for our inference.
 3. On HCS the VLM answers alone on 8 equal windows (.693 / .651) beat our model on the same windows (.653 / .650) by
    .040 AP: our answer model and backbone use those answers less well than averaging the raw P(Yes).
+
+Correction 2026-11-10: the "baseline + our 8 windows" row was computed with the asked nodes of whichever replay
+directory of a seed was listed last (HateMM seed 2025, HCS seeds 234 and 3407, DeHate seeds 2025 and 3407 were
+validation-selected trials); `naive_questions.py` now reads the test-selected trials and the row above is the re-run
+(before: .635 / .859 / .642; .600 / .580 / .515, .608 / .581 / .540; .240 / .778 / .590; old files in
+`runs/20261109_tree_within/naive_questions_before_20261110/`). The other rows do not depend on the trial.
 
 ## 5. Proposal review
 
@@ -525,3 +531,127 @@ fifteen question policies, a location-bearing question (section 10: the VLM cann
 three-state table with and without the noadj rule. None gives tree within >= every single level on all three corpora
 while keeping the AP / ROC margin and the fixed-8 AP. HateMM's 8-17 s level stays ahead by .02 in every version
 except the cover / noadj policies (-.001 / -.002), which lose the AP margin.
+
+## 12. Why the naive-question control ties revision 6 on pooled AP (2026-11-10)
+
+User 2026-11-10: before deciding how the tree is claimed, find out why equal windows with a simple fusion reach our
+pooled AP (section 7 items 1 and 3). Diagnostics only, nothing retrained, method unchanged. Host uoa-lab3 (sc474398),
+CPU; revision-6 test-selected trials, test split, 3-seed means, AP / ROC / within. Scores are evaluated at 6 decimals,
+as the evaluator reads score files (revision 6 at fixed 8 calls reproduces .702 / .889 / .783, .691 / .680 / .563,
+.279 / .770 / .681).
+
+### 12.1 The control at every budget, with the baseline's scores and with our own 0-call scores
+
+`diag_control_curve.py --arms c_label` (`runs/20261109_tree_within/control_curve/<corpus>.json`). K equal windows of
+one tree depth (fewer when the video is too short), per second the soft answer of its window, fused with a per-second
+prior as in section 7 at alpha .5 (no tuning). Mean calls in brackets.
+
+HateMM:
+
+| K | revision 6, fixed K | VLM answers only | MACIL-SD + answers | our 0-call scores + answers |
+|---|---|---|---|---|
+| 1 | .647 / .851 / .771 (1.00) | .612 / .862 / .500 (1.00) | .688 / .885 / .595 | .669 / .880 / .771 |
+| 2 | .667 / .865 / .778 (1.99) | .612 / .856 / .596 (1.99) | .683 / .881 / .655 | .670 / .874 / .780 |
+| 4 | .687 / .881 / .780 (3.94) | .641 / .860 / .640 (3.86) | .693 / .886 / .675 | .685 / .876 / .764 |
+| 8 | .702 / .889 / .783 (7.63) | .643 / .845 / .672 (7.13) | .707 / .881 / .692 | .691 / .869 / .765 |
+| 16 | .690 / .885 / .791 (14.11) | .627 / .822 / .687 (12.50) | .702 / .871 / .699 | .686 / .861 / .766 |
+| 32 | .693 / .879 / .793 (25.02) | .595 / .792 / .670 (19.72) | .681 / .857 / .679 | .668 / .849 / .756 |
+
+HCS (calls = K):
+
+| K | revision 6, fixed K | VLM answers only | Fed-WSVAD + answers | our 0-call scores + answers |
+|---|---|---|---|---|
+| 1 | .661 / .657 / .556 | .700 / .646 / .500 | .672 / .604 / .510 | .704 / .663 / .556 |
+| 2 | .658 / .659 / .561 | .698 / .650 / .502 | .673 / .608 / .508 | .705 / .664 / .549 |
+| 4 | .676 / .673 / .562 | .686 / .641 / .545 | .664 / .607 / .544 | .703 / .666 / .562 |
+| 8 | .691 / .680 / .563 | .693 / .651 / .577 | .673 / .621 / .575 | .708 / .672 / .578 |
+| 16 | .687 / .677 / .572 | .701 / .652 / .629 | .681 / .626 / .628 | .713 / .677 / .627 |
+| 32 | .689 / .676 / .606 | .696 / .658 / .617 | .675 / .630 / .619 | .715 / .687 / .626 |
+
+DeHate:
+
+| K | revision 6, fixed K | VLM answers only | Fed-WSVAD + answers | our 0-call scores + answers |
+|---|---|---|---|---|
+| 1 | .242 / .733 / .662 (1.00) | .182 / .744 / .500 (1.00) | .237 / .772 / .507 | .244 / .768 / .662 |
+| 2 | .251 / .744 / .662 (1.99) | .195 / .747 / .549 (1.98) | .242 / .780 / .558 | .259 / .770 / .654 |
+| 4 | .257 / .757 / .669 (3.88) | .193 / .741 / .584 (3.71) | .245 / .775 / .587 | .251 / .770 / .661 |
+| 8 | .279 / .770 / .681 (7.26) | .182 / .731 / .591 (6.56) | .243 / .773 / .601 | .247 / .769 / .665 |
+| 16 | .284 / .782 / .691 (13.00) | .178 / .715 / .618 (10.61) | .238 / .766 / .626 | .239 / .764 / .685 |
+| 32 | .286 / .784 / .700 (21.96) | .164 / .689 / .619 (15.37) | .227 / .757 / .625 | .231 / .754 / .687 |
+
+### 12.2 The same 8 equal windows, step by step
+
+`diag_uniform8_decompose.py` (`uniform8_decompose/<corpus>/summary.json`), every row uses the same 8 answers (the
+last two rows aside). In brackets the pooled AP when every second gets its video's mean score, i.e. the part of the
+pooled AP that the ordering of whole videos gives. `diag_video_level_swap.py` (`video_level_swap/<corpus>.json`) gives
+the two rows without answers.
+
+| | HateMM | HCS | DeHate |
+|---|---|---|---|
+| answers painted on the seconds, raw P(Yes) | .643 / .845 / .672 (.665) | .693 / .651 / .577 (.696) | .182 / .731 / .591 (.199) |
+| the same, 8 levels | .569 / .836 / .638 | .644 / .641 / .563 | .156 / .724 / .588 |
+| the same, table log-likelihood ratio | .607 / .840 / .651 | .644 / .632 / .553 | .170 / .720 / .602 |
+| chain only, no network, no answers | within .723 | within .619 | within .604 |
+| tree inference, no network (s, phi, g = 0) | .689 / .875 / .826 (.662) | .663 / .641 / .619 (.674) | .194 / .761 / .698 (.193) |
+| tree inference, backbone's video logit only (s, phi = 0) | .700 / .888 / .824 (.674) | .661 / .647 / .619 (.674) | .208 / .766 / .698 (.209) |
+| tree inference, full prior (= section 7 last row) | .690 / .879 / .805 (.641) | .653 / .650 / .561 (.645) | .279 / .755 / .686 (.266) |
+| our 0-call scores alone | .568 / .801 / .771 (.555) | .650 / .648 / .556 (.653) | .220 / .717 / .661 (.218) |
+| our 0-call scores + painted answers, alpha .5 | .691 / .869 / .766 (.682) | .708 / .672 / .578 (.697) | .247 / .769 / .666 (.260) |
+| our 0-call scores + table log-likelihood ratio (no tree) | .670 / .861 / .786 | .678 / .666 / .576 | .238 / .737 / .699 |
+| baseline + painted answers, alpha .5 (the control) | .707 / .881 / .692 (.706) | .673 / .621 / .575 (.643); DSANet .679 / .640 / .580 (.673) | .243 / .773 / .601 (.254) |
+| revision 6, EIG tree, 8 calls | .702 / .889 / .783 (.665) | .691 / .680 / .563 (.681) | .279 / .770 / .681 (.267) |
+
+### 12.3 Findings
+
+1. **The control's pooled AP is the ordering of whole videos.** Its AP equals the AP of its video-mean score (HateMM
+   .707 vs .706; HCS answers only .693 vs .696), and one question about the whole video already gives it: HateMM
+   baseline + root answer .688 / .885, HCS root answer alone .700 / .646, against revision 6 at 8 calls .702 / .889
+   and .691 / .680. More windows add at most .02 AP (HateMM) or nothing (HCS). Revision 6 orders whole videos worse
+   (video-mean AP .665 / .681) and gains .037 / .010 AP from the seconds inside the video. The tie on AP is a tie
+   between a better video ordering without localization and a worse video ordering with localization. On DeHate
+   revision 6 is ahead on both parts (.267 vs .254 video-mean, .279 vs .243).
+2. **Revision 6 uses a video-level answer worse than the plain fusion does.** With one call it is below the fusion of
+   its own 0-call scores with the root answer: AP -.022 / -.043 / -.001, ROC -.028 / -.007 / -.035 (HCS: revision 6
+   rarely asks the root first). With our own scores as the prior, the plain fusion beats revision 6 on HCS at every
+   budget (AP +.016 to +.047, within +.015 / +.055 / +.020 at 8 / 16 / 32 calls); revision 6 is ahead on HateMM from 4
+   calls (8 calls +.010 / +.020 / +.017) and on DeHate from 8 calls (+.032 / +.001 / +.015; 16 calls +.045 AP).
+3. **MACIL-SD combines better with the answers than our backbone on HateMM** (.707 vs .691 AP in the same fusion;
+   alone .573 vs .568). Tested reason "our backbone was trained on the answers": the label-only backbone (arm
+   c_label) in the same fusion gives .674 / .857 / .739, HCS .693 / .673 / .592, DeHate .200 / .744 / .652, all below
+   our backbone. Not supported; the reason is open.
+4. **The per-second prior of the backbone lowers within on equal windows on every corpus**: full prior minus video
+   logit only, within -.019 / -.058 / -.012; AP / ROC -.010 / -.009 on HateMM, -.008 / +.004 on HCS, +.071 / -.011 on
+   DeHate (DeHate's AP gain is the video ordering: video-mean AP .209 to .266). On HateMM the model with 8 equal
+   windows and only the backbone's video logit equals revision 6 on AP / ROC (.700 / .888) with within .824 against
+   .783.
+5. **The tree's margin over 8 equal windows depends on the corpus and on the per-second prior.** EIG tree minus 8
+   equal windows (HateMM, HCS, DeHate): full prior +.012 / +.010 / -.022, +.038 / +.029 / +.002, .000 / +.015 / -.005;
+   flat location prior (section 6 `flatprior` at fixed 8 against the row "video logit only") -.033 / -.005 / -.035,
+   +.012 / +.005 / -.007, -.001 / +.008 / -.023; no network (arm `noback`, EIG tree, .644 / .876 / .796, .694 / .656 /
+   .627, .195 / .756 / .644, against the row "no network"; a separately trained arm, so its chain and table are not
+   the row's) -.045 / .000 / -.030, +.032 / +.015 / +.008, +.001 / -.004 / -.054. HateMM: the tree is ahead on AP /
+   ROC only with the per-second prior and behind without it. HCS: the tree keeps an AP margin in all three settings
+   (+.012 to +.038). DeHate: no AP margin in any setting. Within is lower for the tree on HateMM and DeHate in all
+   three settings.
+6. **A position prior explains much of within.** The learned chain alone (no network, no answers; the score depends
+   only on the second's position and the video length: about half the video mean in the first and last tenth, flat in
+   between) has within .723 / .619 / .604; the baselines have .595 / .510-.545 / .508. On HCS the 8 answers add
+   nothing to it (.619) and revision 6 is below it at 8, 16 and 32 calls (.563 / .572 / .606).
+7. **The 8 answer levels lose little ranking information.** Painted levels against raw P(Yes): ROC -.009 / -.011 /
+   -.007, within -.034 / -.014 / -.004; the AP loss (-.073 / -.049 / -.026) is mostly ties (8 distinct values), which
+   the tree inference breaks.
+
+Not established: why the baseline's scores combine better with the answers than ours on HateMM (item 3); whether a
+method change can keep the per-second prior's AP gain on DeHate without its within cost (item 4 is measured on the
+revision-6 checkpoints, which were trained with that prior). `diag_video_level_swap.py` also recombined the video
+means of one method with the within-video shape of the other; both recombinations lose AP against both originals
+(HateMM .653 and .668 against .702 and .707), so pooled AP does not split into the two parts and those rows are not
+used.
+
+**What this means for the claims (decision left to the user).** Against "strongest baseline + the same number of
+VLM answers on equal windows", revision 6 has a pooled-AP margin only on DeHate (+.036); on HateMM and HCS pooled AP
+is reached by ordering whole videos with one or more answers. What revision 6 has beyond the control is within on
+HateMM and DeHate (+.091 / +.080; part of it is the position prior, item 6), ROC on HateMM and HCS (+.008 / +.029 to
++.059), and AP on DeHate. The tree's question choice against 8 equal windows (item 5) gives AP +.012 / +.038 / .000;
+on HateMM that margin needs the per-second prior, on HCS it does not, and within is lower for the tree on HateMM and
+DeHate; the tree-within goal of section 4 stays unmet.
