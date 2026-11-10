@@ -36,7 +36,7 @@ The weights apply to the posterior and to the choice of questions (`cpolicy.run_
   so g and the answers agree beyond what the label explains; the answers cannot calibrate g against the label.
   The over-confidence of g found in `20261110_answer_likelihood` section 2 therefore stays unaddressed here.
 - **c is identified** (all cached answers of the validation videos, tens of answers per video). Over all 60 trials of
-  each revision-6 search: median c .16 / .20 / .23, 10-90% range .03-.49 / .04-.56 / .02-.55, never negative. The
+  each revision-6 search: median c .16 / .20 / .23, 10-90% range .03-.49 / .04-.56 / .02-.55, positive in all but one trial (HCS, -.002). The
   per-second prior and node potentials of the network predict the held-out answers far worse than the training
   answers they were fitted on.
 - Dose diagnostic (`diag_dose.py`, `diag/dose_<corpus>.json`; validation + test nodes grouped by the per-second GT):
@@ -178,19 +178,48 @@ DeHate (paired +.011 / +.011 and +.019 / +.022), within higher on all three (+.0
 **Search (rule 7), declared before the search.** `search.py`: the revision-6 configuration (`soft_both`,
 `node_prior`, `anchored_shared`, `length_term`) plus `prior_weight: "loc"`; the same four scalars and ranges as
 revisions 5 / 6 (`src/qtl/search.py:sample`: lr 1e-4..1e-3 log, lamda_cma .5..2, dropout .1..5, lr_answer 1e-4..1e-1
-log), Optuna TPE, sampler seed = training seed, 20 trials per seed pre-written (the cost class of revision 6: one
-extra fit of one scalar per epoch), seeds 234 / 2025 / 3407, three corpora, objective (test AP + test ROC) / 2 at
-fixed 8 calls; checkpoint by validation (AP + ROC) / 2 at 8 calls under that epoch's c. Launch
-`launch/sbatch_search.sh <corpus>`, output `runs/20261110_prior_weight/search/<corpus>/seed<s>/`.
+log), Optuna TPE, sampler seed = training seed, seeds 234 / 2025 / 3407, three corpora, objective (test AP + test
+ROC) / 2 at fixed 8 calls; checkpoint by validation (AP + ROC) / 2 at 8 calls under that epoch's c. Trial budget by
+rule 7 from each seed's measured first trial (20 when at most 1 hour, else 5; `budget.json`); DeHate runs at most
+two seeds per GPU, because three processes on one GPU took 3308-3407 s per trial in revision 6 and the fit of c adds
+about 2-4 s per epoch. Launch `launch/sbatch_search.sh <corpus> ["<seeds>"]`, output
+`runs/20261110_prior_weight/search/<corpus>/seed<s>/`. The first 10 trials of a seed draw the same hyper-parameters
+as revision 6's (seeded TPE start-up), so they can also be compared pairwise.
+
+"Without labels" means: no video label and no per-second label enters the estimate of c. The DeHate validation
+cohort itself excludes hateful videos without a usable span (frame protocol), as everywhere in this project.
 
 **Pre-registered reading (3-seed means of the test-selected trials).**
 - Q1 (goal c): AP and ROC not below revision 6 by more than .005 on any corpus (revision 6: .702 / .889,
   .691 / .680, .278 / .770).
 - Q2 (rule 8): the main gate on all six numbers.
 - Q3: within above revision 6 on all three corpora (.783 / .563 / .681).
-- Reported besides: validation-selected trials, the mean over all trials, fixed 0-32 calls, the fitted c per trial,
-  the same checkpoints with c = 1 (the weight removed, rule 14(g)), the comparison with the naive control
-  (.707 / .881, .693 / .651, .243 / .773) and with the single level (goal b).
+- Reported besides: validation-selected trials, the mean over all trials, fixed 0-32 calls, the fitted c per trial
+  (median, minimum, number of trials with c < .05) and its marginal-likelihood gain (`nll_all_before / after`), the
+  comparison with the naive control (.707 / .881, .693 / .651, .243 / .773) and with the single level (goal b).
+
+**Fixed before the search (review remarks, `REVIEW_RULE4_R7.md` 5.1, `REVIEW_RULE6_R7.md`).**
+- c is used as estimated: no bound, no clipping (also when negative or above 1).
+- Trial budget: whatever `src/qtl/search.py` writes from the first trial of each seed (20 when at most 3600 s, else
+  5); the measured seconds are archived in `budget.json` and reported. No change after seeing the time.
+- Ablation of the weight (rule 14(g)), all on the test-selected trials of this search: (i) the same checkpoints with
+  c = 1 (the weight removed at inference; the checkpoint was still chosen under c); (ii) revision 6's own search
+  (weight removed from inference and from checkpoint choice); (iii) the 2 x 2 split "questions chosen under c or 1"
+  x "posterior under c or 1" (`run_batch(prior_weight=(1, 0, c), policy_prior_scale=1 / c)` = revision-6 questions
+  with the weighted posterior; `run_batch(prior_weight=None, policy_prior_scale=c)` = weighted questions with the
+  revision-6 posterior).
+- If the weight does not reach rule 14(g) (AP or ROC drop of at least .01 when removed, on every corpus) it stays in
+  the method and is not claimed as a novelty mechanism.
+- Diagnostic references (not the method): c estimated on the training answers (in-sample), a hand-set c = .5, and c
+  fitted with the validation labels.
+- Trials 0-9 of each seed retrain the networks of revision 6's trials 0-9 (same seeded hyper-parameters, same loss);
+  only the selected epoch and c differ. The search is therefore not evidence independent of section 4.
+- Wording: c concerns the location prior only; the video logit's over-confidence is not addressed. "Without labels"
+  refers to the estimate of c; the checkpoint choice still uses the validation per-second labels, the answer table
+  the training video labels. Estimating c needs the full-tree answers of the validation videos (offline, no extra
+  call on test videos). The estimator is standard empirical Bayes, of the same form as a temperature on a
+  sub-network's logits; what differs from output calibration is where it acts (the prior inside the inference, hence
+  the choice of questions).
 
 ## 6. Label-free answer scalars (`trust`, `trust_len`): no effect
 
