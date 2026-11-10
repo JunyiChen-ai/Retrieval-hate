@@ -610,8 +610,58 @@ rule 10). AP / ROC / within.
 - The trial chosen by validation is far below the trial chosen by test (.677 / .868 against .723 / .898): the gap
   between validation and test trial choice of the earlier revisions is unchanged.
 
-### HCS, DeHate
+### HCS (uoa-lab3, job 2140, 3 seeds x 20 trials, 387-389 s per trial; finished 2026-11-11 06:14)
 
-Running: HCS on uoa-lab3 (job 2140, first trial 387-389 s, 20 trials), then DeHate seeds 234 / 2025 (2141); DeHate
-seed 3407 on uoa-lab1 (2135) waits for another user's job.
+| 8 calls | AP / ROC / within |
+|---|---|
+| chosen d, test-selected trials (18, 18, 12; d = 0 on the three; c .22 / .02 / .08; 8.00 calls) | **.704 / .688 / .605** (seed std .003 / .008 / .008) |
+| naive control (DSANet + 8 equal windows, alpha .1, 8.00 calls) | .696 / .653 / .577 (std .001 / .001 / .001) |
+| revision 6 (test-selected) | .691 / .680 / .563 |
+| the same three trials with d = 1 / 2 / 3 | .689 / .672 / .588, .689 / .677 / .614, .680 / .662 / .610 |
+| fixed d = 0 (greedy), its own best trial per seed | .704 / .688 / .605 (the same trials) |
+| fixed d = 1, own best (trials 5, 15, 4) | .706 / .688 / .607 (std .005 / .005 / .008) |
+| fixed d = 2, own best | .692 / .682 / .613 |
+| fixed d = 3, own best | .680 / .666 / .607 |
+| chosen d, validation-selected trials (2, 6, 13) | .681 / .657 / .596 |
+| chosen d, mean of the 60 trials | .685 / .665 / .600 |
+
+- **R1 holds on HCS**: +.008 / +.035 over the naive control (within +.028); the AP lead is larger than both seed
+  standard deviations (.003, .001) and than .005.
+- **R2 holds on HCS**: +.012 / +.008 over revision 6 (within +.042).
+- **R3**: the chosen d is 0 on the three test-selected trials (and on 59 of the 60 trials): the selected policy is
+  the greedy tree policy, so the comparison with `depths["0"]` is a policy against itself (pre-registered reading).
+  Against `depths["3"]` (the 8 equal windows first) on the same trials: AP / ROC +.024 / +.026, within -.004
+  (.605 against .610; inside the .005 tolerance, seed std .008). The second half of goal (b) (AP or ROC at least
+  .01 above the single level) holds on HCS in every reading: same trials +.024 / +.026, all trials +.017 / +.016
+  (within -.005), trials 0-9 +.015 / +.016 (within -.003), each one's own best trial +.024 / +.022 (within -.002).
+  Not covered by R3: d = 2 (4 windows first, then greedy) has the highest within on the same trials (.614, +.008
+  over the chosen d) at -.015 / -.011 AP / ROC. The level-only replay reference is not run yet.
+- **R4**: chosen d at 8 calls d = 0 in 98 % of the 60 trials (one trial d = 2); at 2 calls d = 0 in 73 % (d = 1
+  27 %); at 4 calls 80 / 13 / 7 % (d = 0 / 1 / 2); at 16 calls d = 0 in 50 %, d = 4 in 27 %, d = 1 / 2 / 3 in
+  12 / 10 / 2 %; at 32 calls d = 5 in 100 %. The chosen d is the d with the best test value in 57 % of the trials
+  (best-on-test shares 58 / 33 / 7 / 2 %). Cost of the choice at 8 calls: none against d = 0 (the same policy);
+  against a fixed d = 1 +.004 / +.004 / +.007 over all trials and -.003 / -.001 / -.002 on the best trial per seed
+  (inside the seed std). In stage A on the revision-6 checkpoints the choice took d = 0 in 50 % of the trials and
+  cost .006 / .007 against d = 0; in this search it takes d = 0 in 98 % and costs nothing at 8 calls.
+- Other budgets, chosen d minus d = 0 over the 60 trials: 2 calls -.001 / -.001 / -.001; 4 calls -.001 / .000 / .000;
+  16 calls -.001 / -.001 / +.004; 32 calls **+.017 / +.018 / +.017** (d = 5, the 32 equal windows first). On the
+  test-selected trials: 0 calls .651 / .638 / .602; 1 call .663 / .649 / .604; 2 calls .677 / .666 / .610 against
+  .679 / .668 / .614; 4 calls .686 / .678 / .615 against .688 / .680 / .621; 16 calls .709 / .686 / .619 (d = 2, 0,
+  1) against .718 / .697 / .621 (the choice costs .009 / .011 on these three trials, .001 over all trials); 32
+  calls .733 / .709 / .662 (d = 5) against .718 / .691 / .644.
+- c over the 60 trials: median .09 (-.007 to .51), below .05 in 21 trials. Mean test numbers of the trials by c:
+  c < .05 (21 trials) .688 / .659 / .621; .05 to .15 (23) .683 / .667 / .593; above .15 (16) .683 / .669 / .584.
+  Within is .03 to .04 higher when c is near 0, AP / ROC differ by at most .010 (the observation of section 11 on
+  seed 3407; not followed up).
+- The trial chosen by validation is below the trial chosen by test (.681 / .657 against .704 / .688), as on HateMM.
+
+**HateMM and HCS together.** R1 and R2 hold on both. The depth chosen on validation is the single level on HateMM
+(d = 3 in 82 % of the trials) and the greedy tree on HCS (d = 0 in 98 %): the two corpora take the two ends of
+the candidate set, as stage A predicted. On HCS the candidate is therefore the section-8 candidate (weight c,
+greedy tree) at 8 calls.
+
+### DeHate
+
+Running: seeds 234 / 2025 on uoa-lab3 (job 2141, started 2026-11-11 06:14); seed 3407 on uoa-lab1 (2135) waits
+for another user's job (running since 2026-11-10 23:02, 1-day limit).
 
