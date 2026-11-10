@@ -11,7 +11,9 @@ A variant is table|weights|policy[|budget]:
   weights  none, or a mode of prior_weight.fit (label-free, validation answers): loc, joint, root_all, trust
            (location weight plus the answer leak / miss scalars), trust_len;
   policy   eig (greedy, revision 6), plan_eer / plan_eig (budget-aware disjoint plan), level (equal windows);
-  budget   calls per video (default 8).
+           stopE1c<cap> = greedy EIG with the qmixE1 stopping rule (stop_rules.py; threshold set on the validation
+           videos, no labels, so that their mean number of calls is the budget; at most <cap> calls per video);
+  budget   calls per video (default 8); for stopE1c<cap> the MEAN number of calls per video.
 Test AP / ROC / within, scores at 6 decimals, unified core evaluator (hc.frame_metrics).
 Output runs/20261110_prior_weight/all_trials/<corpus>/seed<seed>/trial<k>.json (one file per trial; finished trials
 are skipped on restart). Summary: all_trials_table.py.
@@ -30,7 +32,7 @@ import torch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
-from qtl import cpolicy, data as qdata, policy, prior_weight, qtree      # noqa: E402
+from qtl import cpolicy, data as qdata, policy, prior_weight, qtree, stop_rules      # noqa: E402
 from qtl.answer_calib import fit_validation_answer_model                # noqa: E402
 from qtl.backbones import make_model                                    # noqa: E402
 from qtl.checkpoint import load_trial                                   # noqa: E402
@@ -110,7 +112,7 @@ def main():
         with torch.no_grad():
             for v in val + test:
                 pri[v] = plain_prior(model, store, v, a.device)
-        tables, weights = {"r6": am6}, {}
+        tables, weights, capped = {"r6": am6}, {}, {}
         for var in todo:
             parts = var.split("|")
             tab, mode, pol = parts[:3]
@@ -128,6 +130,27 @@ def main():
                 weights[(tab, mode)] = None if mode == "none" else prior_weight.fit(
                     pri, store, val, tables[tab], chain, answers, a.device, mode=mode)
             w = weights[(tab, mode)]
+            if pol.startswith("stopE1c"):
+                cap = int(pol[len("stopE1c"):])
+                if (tab, mode, cap) not in capped:
+                    kw = dict(order="eig", record_voi=True)
+                    capped[(tab, mode, cap)] = {
+                        sp: replay(model, store, vs, prior_weight.table(tables[tab], w), chain, answers, cfg, cap, w,
+                                   kw, a.device) for sp, vs in (("val", val), ("test", test))}
+                    vals = {sp: {v: stop_rules.rule_values(r, len(r["scores"][0])) for v, r in rr.items()}
+                            for sp, rr in capped[(tab, mode, cap)].items()}
+                    stop_rules.add_quantile_rules(vals)
+                    capped[(tab, mode, cap)]["vals"] = vals
+                cr = capped[(tab, mode, cap)]
+                thr, vm = policy.calibrate([cr["vals"]["val"][v]["qmixE1"] for v in val], float(B))
+                calls = {v: policy.stop_calls(cr["vals"]["test"][v]["qmixE1"], thr) for v in test}
+                res = mets({v: cr["test"][v]["scores"][calls[v]] for v in test})
+                res.update(mean_calls=float(np.mean(list(calls.values()))), validation_mean_calls=float(vm),
+                           mean_calls_positive=float(np.mean([calls[v] for v in test if labels[v] == 1])),
+                           mean_calls_negative=float(np.mean([calls[v] for v in test if labels[v] == 0])))
+                res["weights"] = w
+                done["variants"][var] = res
+                continue
             runs = replay(model, store, test, prior_weight.table(tables[tab], w), chain, answers, cfg, B, w,
                           POLICIES[pol], a.device)
             res = mets({v: runs[v]["scores"][-1] for v in test})
