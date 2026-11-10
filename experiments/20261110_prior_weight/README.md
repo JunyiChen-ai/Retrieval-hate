@@ -731,15 +731,28 @@ copied from the local machine to uoa-lab1; results copied back), read by `c_abla
   at most .003, means below .0005. With the rounded validation numbers the chosen d changes in 3 of the 60 HateMM
   trials (3 to 0, 3 to 1, 3 to 0; none of the test-selected trials) and in no HCS trial; the mean over all trials
   moves by at most .001. Cause: posteriors below 1e-6 in hateful videos keep their order unrounded and become ties
-  at 6 decimals. The candidate's rule is the one of `train.py` (unrounded), unchanged. The effect of the 6-decimal
-  score files on the test within is not measured here (it would need the evaluator's input format changed, which
-  is the user's decision).
+  at 6 decimals. The candidate's rule is the one of `train.py` (unrounded), unchanged.
+- **What the 6-decimal score files cost at test (diagnostic; replay variants `<variant>@raw` = the same test replay
+  with the metrics on unrounded scores, same evaluator; no reported number is changed).** HateMM, stored c, 60
+  trials, unrounded minus 6 decimals: AP / ROC +.002 / +.002 (largest .018 / .024), within **+.010 to +.011** at
+  every depth (largest .045; more than .005 in 62 to 68 % of the trials). On the test-selected trials the chosen
+  depth reads .723 / .898 / .833 unrounded against .723 / .898 / .826; the mean over all trials .692 / .884 / .809
+  against .691 / .882 / .798. The difference between d = 0 and d = 3 is not affected (-.002 within). HCS: no
+  effect (largest .002). So on HateMM the evaluator's within of this model is about .01 lower than the within of
+  the scores the model produces, because per-second probabilities below 5e-7 are written as 0. Writing more
+  decimals (or a monotone transform of the score) would remove it; that changes the score files every reported
+  number comes from, so it is the user's decision. On the revision-6 checkpoints (`all_trials/`, 60 trials per
+  corpus) the effect is smaller: HateMM, revision 6 as reported (no weight, greedy) within +.004 over all trials
+  (more than .005 in 37 % of them) and .783 to .788 on its three reported trials, AP / ROC +.001; with the weight
+  on these checkpoints +.004 over all trials and nothing on the best trials. HCS and DeHate: +.001 to +.002 within
+  over all trials for revision 6, nothing on the reported trials, nothing with the weight.
 
 ### DeHate
 
-Running: seeds 234 / 2025 on uoa-lab3 (job 2141, started 2026-11-11 06:14); seed 3407 on uoa-lab1 (2135) waits
-for another user's job (running since 2026-11-10 23:02, 1-day limit). uoa-lab3 stays at the commit of the search
-start while its jobs run; uoa-lab1 and the local machine are at later commits, which change only this README,
-STATUS, the summary scripts and the CPU replay launcher (no file under `src/`, not `train.py`, not the search
-scripts).
+Running: seeds 234 / 2025 on uoa-lab3 (job 2141, started 2026-11-11 06:14); seed 3407 on uoa-lab1 (2135) runs
+since 2026-11-11 06:48 (the other user's job ended early). First trial on uoa-lab3 2868-2869 s, so 20 trials per
+seed (expected end about 22:10). uoa-lab3 stays at the commit of the search start while its jobs run; uoa-lab1
+was pulled before job 2135 started and once during its first trial (06:57); the commits after the search start
+change only this README, STATUS, the readers and the CPU replay tools (no file under `src/`, not `train.py`, not
+the search scripts).
 
