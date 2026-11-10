@@ -591,7 +591,7 @@ rule 10). AP / ROC / within.
   are finished.
 - **R3**: the chosen d is 3 on the three test-selected trials. As pre-registered this reads "the selected policy is
   the single level; goal (b) is not met on HateMM" (section 9). Against d = 0 on the same trials the chosen depth is
-  +.030 / +.008 / +.020.
+  +.030 / +.008 / +.020. Second reference (level-only replay, below): .723 / .898 / .827, the same policy.
 - **R4**: chosen d at 8 calls d = 3 in 82 % of the 60 trials (d = 0 13 %, d = 1 5 %); at 2 calls d = 1 in 83 %, at
   4 calls d = 2 in 67 %, at 16 calls d = 4 in 95 %, at 32 calls d = 5 in 92 %: the level at every budget. The chosen
   d is the d with the best test value in 63 % of the trials (best-on-test shares 17 / 3 / 15 / 65 %). Cost of the
@@ -635,7 +635,8 @@ rule 10). AP / ROC / within.
   .01 above the single level) holds on HCS in every reading: same trials +.024 / +.026, all trials +.017 / +.016
   (within -.005), trials 0-9 +.015 / +.016 (within -.003), each one's own best trial +.024 / +.022 (within -.002).
   Not covered by R3: d = 2 (4 windows first, then greedy) has the highest within on the same trials (.614, +.008
-  over the chosen d) at -.015 / -.011 AP / ROC. The level-only replay reference is not run yet.
+  over the chosen d) at -.015 / -.011 AP / ROC. Second reference (level-only replay with the stored weight, below):
+  .680 / .662 / .610 on the same trials, the same as `depths["3"]` to three decimals.
 - **R4**: chosen d at 8 calls d = 0 in 98 % of the 60 trials (one trial d = 2); at 2 calls d = 0 in 73 % (d = 1
   27 %); at 4 calls 80 / 13 / 7 % (d = 0 / 1 / 2); at 16 calls d = 0 in 50 %, d = 4 in 27 %, d = 1 / 2 / 3 in
   12 / 10 / 2 %; at 32 calls d = 5 in 100 %. The chosen d is the d with the best test value in 57 % of the trials
@@ -660,8 +661,64 @@ rule 10). AP / ROC / within.
 the candidate set, as stage A predicted. On HCS the candidate is therefore the section-8 candidate (weight c,
 greedy tree) at 8 calls.
 
+### Weight c on the candidate's own configuration (rule 14(g), reading 1) and the level-only reference (HateMM, HCS)
+
+Replays of the 60 checkpoints per corpus of this search (`stage_a_all_trials.py --src
+runs/20261110_prior_weight/search_first_level --out-root runs/20261110_prior_weight/r7_trials`, uoa-lab1 CPU,
+`launch/run_all_trials_cpu.sh` with the search directory and output root; 18 s per trial; the checkpoints were
+copied from the local machine to uoa-lab1; results copied back), read by `c_ablation_first_level.py` into
+`r7_trials/c_ablation_<corpus>.json`. Variants: c = 1 (`r6|none|<policy>`, test and validation) and the stored c
+(`r6|saved|<policy>`) for the four first levels, and the level-only policy with the stored c. 8 calls.
+
+| HateMM | test-selected trials (16, 11, 15) | each row's own best trial per seed | mean of the 60 trials |
+|---|---|---|---|
+| candidate (stored c, d chosen on validation) | .723 / .898 / .826 | the same | .691 / .882 / .798 |
+| c = 1, d kept | .698 / .887 / .808 | .701 / .889 / .797 (trials 16, 4, 15) | .669 / .875 / .779 |
+| c = 1, d chosen again under c = 1 | .689 / .882 / .794 (d = 3, 1, 0) | .701 / .885 / .795 (16, 10, 18) | .670 / .877 / .773 |
+| candidate minus "d kept" | +.025 / +.011 / +.018 | +.022 / +.008 / +.029 | +.021 / +.008 / +.019 (trials 0-9: +.017 / +.005 / +.017) |
+| candidate minus "d chosen again" | +.033 / +.016 / +.032 | +.022 / +.013 / +.031 | +.020 / +.005 / +.025 (trials 0-9: +.016 / +.003 / +.021) |
+
+| HCS | test-selected trials (18, 18, 12) | each row's own best trial per seed | mean of the 60 trials |
+|---|---|---|---|
+| candidate (stored c, d chosen on validation) | .704 / .688 / .605 | the same | .685 / .665 / .600 |
+| c = 1, d kept | .661 / .646 / .570 | .682 / .675 / .560 (trials 1, 1, 6) | .650 / .635 / .553 |
+| c = 1, d chosen again under c = 1 | .662 / .652 / .562 (d = 1, 3, 1) | .682 / .675 / .560 (1, 1, 6) | .650 / .638 / .555 |
+| candidate minus "d kept" | +.043 / +.042 / +.036 | +.022 / +.013 / +.045 | +.034 / +.030 / +.048 (trials 0-9: +.024 / +.022 / +.044) |
+| candidate minus "d chosen again" | +.042 / +.036 / +.044 | +.022 / +.013 / +.045 | +.035 / +.027 / +.046 (trials 0-9: +.026 / +.020 / +.042) |
+
+- **Reading 1 of rule 14(g) for c holds on the two finished corpora**: setting c = 1 on the candidate's
+  checkpoints lowers AP by .016 to .033 on HateMM and by .022 to .043 on HCS in every reading (ROC .003 to .016 and
+  .013 to .042). On HateMM the weight matters once the policy is the level: section 10 read "the HateMM gain comes
+  from d" from the greedy policy (c alone +.002 AP there); at the chosen depth both parts contribute (the choice of
+  d +.016 / +.001 / +.022 over all trials, the weight +.021 / +.008 / +.019).
+- Limit of this reading: the epoch of every checkpoint and the hyper-parameters proposed by the search were chosen
+  with c in place, so c = 1 on these checkpoints is not "the method trained and selected without c". The reference
+  selected without c is the revision-6 search with d chosen on validation (replays below) and the section-8
+  ablations.
+- Without c the choice of d is unstable: under c = 1 validation takes d = 0 / 1 / 2 / 3 in 28 / 17 / 5 / 50 % of the
+  HateMM trials (82 % d = 3 with c) and in 27 / 25 / 15 / 33 % of the HCS trials (98 % d = 0 with c); it differs
+  from the candidate's d in 55 % and 73 % of the trials.
+- **Level-only reference of R3** (stored c): HateMM .723 / .898 / .827 on the test-selected trials, the candidate
+  (d = 3) minus it .000 / .000 / -.001 - the selected policy is the level. HCS .680 / .662 / .610, the candidate
+  minus it +.024 / +.026 / -.004 on the test-selected trials, +.017 / +.016 / -.005 over all trials, +.024 / +.022 /
+  -.002 with each one's own best trial: the same as against `depths["3"]`.
+- **Reproduction.** The test replays with the stored weight equal the search's own numbers for every trial and
+  depth (largest difference .0000). The validation numbers do not: `train.py` computes the validation metrics on
+  unrounded scores, the replay (and every test evaluation, through the score files) on scores rounded to 6
+  decimals. HateMM, unrounded minus rounded, mean over the trials: AP / ROC +.001, within +.003 (d = 0, 1) and
+  +.006 (d = 2, 3), largest within difference .034; 41 % of the (trial, depth) pairs differ by more than .001. HCS:
+  at most .003, means below .0005. With the rounded validation numbers the chosen d changes in 3 of the 60 HateMM
+  trials (3 to 0, 3 to 1, 3 to 0; none of the test-selected trials) and in no HCS trial; the mean over all trials
+  moves by at most .001. Cause: posteriors below 1e-6 in hateful videos keep their order unrounded and become ties
+  at 6 decimals. The candidate's rule is the one of `train.py` (unrounded), unchanged. The effect of the 6-decimal
+  score files on the test within is not measured here (it would need the evaluator's input format changed, which
+  is the user's decision).
+
 ### DeHate
 
 Running: seeds 234 / 2025 on uoa-lab3 (job 2141, started 2026-11-11 06:14); seed 3407 on uoa-lab1 (2135) waits
-for another user's job (running since 2026-11-10 23:02, 1-day limit).
+for another user's job (running since 2026-11-10 23:02, 1-day limit). uoa-lab3 stays at the commit of the search
+start while its jobs run; uoa-lab1 and the local machine are at later commits, which change only this README,
+STATUS, the summary scripts and the CPU replay launcher (no file under `src/`, not `train.py`, not the search
+scripts).
 
