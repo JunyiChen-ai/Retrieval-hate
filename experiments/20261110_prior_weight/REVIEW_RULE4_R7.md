@@ -1,6 +1,8 @@
 # 规则 4 proposal review（第 7 版候选）— 20261110_prior_weight 第 7、8 节
 
-**判定：GO。** 规则 4 的四种 STOP 情形均不成立（逐条见第 3 节）。四条里第 3 种（纯 calibration / 后处理）最接近成立，判断依据和保留意见写在 3.3。规则 13 检查通过（第 4 节）。开跑前建议先处理第 5.1 节的 5 条。
+**判定：GO。** 规则 4 的四种 STOP 情形均不成立（逐条见第 3 节）。四条里第 3 种（纯 calibration / 后处理）最接近成立，判断依据和保留意见写在 3.3。规则 13 检查通过（第 4 节）。第 5.1 节的 5 条开跑前备注已全部写进 README 第 8 节的 "Fixed before the search" 一段（逐条核对见 5.1）。
+
+- 时间线说明：本审稿读的是 README 与 `launch/sbatch_search.sh` 的初始版本。本文件初稿（判定 GO，含 5.1 的 5 条）写出后，主 agent 改了 README 和启动脚本并提交（改动一部分来自规则 6 代码审查，一部分来自本文件初稿的 5.1）（提交说明 "revision 7: rule-4 review GO, rule-6 review PASS; protocol points fixed before the search ..."，2026-11-10 20:48）。本审稿随后逐行看了改动：第 7、8 节的机制、来源、输入、预注册判定未变；变的是搜索协议、报告清单、措辞说明，以及第 2 节一处事实更正（c 在 60 个 trial 里有一个为负：HCS，-.002）。这些不影响第 3、4 节的判断。本文件是定稿，5.1 已改为"提出的备注 + README 现状"。
 
 - 审稿人：独立 agent（Claude Fable），2026-11-10，一次性。未运行实验，未改动本文件以外的任何文件。
 - 审阅：`README.md` 第 1–8 节（提案 = 第 7、8 节）；`RESEARCH_ITERATION_RULES.md` 规则 3、4、7、13、14；第 6 版 `experiments/20261101_r6_length_table/README.md`、上次审稿 `experiments/20261101_r5_completion/REVIEW_RULE4_R6.md`（已查过的树 / EIG / 答案模型文献不重复）；`experiments/20261110_answer_likelihood/README.md` 第 2、4、5 节；代码 `src/qtl/prior_weight.py`（`collect`、`_chunks`、`_nll_all`、`fit`、`as_tuple`）、`src/qtl/cpolicy.py:run_batch`、`src/qtl/train.py`（训练循环、每 epoch 的权重估计、`evaluate`）、`src/qtl/ctree.py`（`up`、`log_evidence`、`marginals`）、`src/qtl/search.py`、`experiments/20261110_prior_weight/search.py` 与 `launch/sbatch_search.sh`，以及本轮对 `src/qtl` 的全部改动（`git diff`）。
@@ -86,13 +88,20 @@
 
 ## 5. 非阻断备注
 
-### 5.1 开跑前建议先改 README / 搜索协议
+### 5.1 开跑前备注（初稿提出 5 条；README 第 8 节 "Fixed before the search" 已全部写入）
 
-1. **消融的定义现在写死（规则 14(g)）。** "同一 checkpoint、c = 1"只去掉了推理时的权重，checkpoint 仍是在 c 下选的；另一半（选择也在 c = 1 下）就是第 6 版自己的搜索。两行都要报。再加一个 2×2 分解：提问用 c 或 1 × 后验用 c 或 1。现有诊断参数已支持，只需重放：`run_batch(prior_weight=(1, 0, c), policy_prior_scale=1/c)` = 提问按第 6 版先验、后验按 c；`run_batch(prior_weight=None, policy_prior_scale=c)` = 提问按 c、后验按第 6 版先验。3.3 的 (b) 是本审稿放行的决定性依据，论文要有这组数字才能写"权重改变了问什么"。另外，Stage A 的配对差在 HateMM 是 AP +.002 / ROC +.004，低于规则 14(g) 的 .01；README 应现在写明：若重训后某语料不满足 14(g)，c 作为方法的一部分保留但不作为 novelty 主张，还是另作处理。（这一点不是判定依据。）
-2. **c 没有约束。** `fit` 里 c 初值 1、无上下界、不截断。README 写一句"负值或大于 1 的估计值照用，不截断"（或写明截断规则），搜索开始后不能再补。
-3. **DeHate 单 trial 耗时贴近规则 7 的 1 小时线。** 第 6 版 DeHate seed 234 的 20 个 trial 耗时中位数 3334 秒、最大 3407 秒（`runs/20261101_r6_length_table/dehate/seed234/study_summary.json`）；Stage A 里 559 个 validation 视频的一次 c 估计约 3 秒（`runs/20261110_prior_weight/stage_a_dehate.log`，CPU），50 个 epoch 约多 150 秒。`launch/sbatch_search.sh` 预写了 20 个 trial。README 应现在写明：首个 trial 超过 3600 秒时按哪个数执行，并归档首个 trial 的实测秒数，避免看到耗时之后再决定。
-4. **前 10 个 trial 的超参数与第 6 版相同。** TPE 的起始 trial 是按 sampler seed 的随机抽样，与目标值无关：第 5 版和第 6 版 HateMM seed 234 的 trial 0–9 超参数逐项相同，trial 10 起才分开（两次搜索的 `trial<k>/hparams.json`）。第 7 版搜索空间、seed 相同，损失不变，所以 trial 0–9 重训的是第 6 版的同一批网络，只是 epoch 选择和 c 不同。这不违反规则 7，但搜索结果与 Stage A 的全 trial 重放高度相关，README 和汇报里不要把它写成独立于 Stage A 的证据。
-5. **"另外报告"清单建议补三项**（都只是重放或一次拟合）：c 在训练回答上的估计值（样本内，预期接近 1，是"先验在未见视频上变差"这一机制的直接证据）；手设 c = .5 与用 validation 标签拟合的 c 两个参照（只作诊断，不是方法）；每个 trial 的边际似然改善量（`nll_all_before / after`，summary 里已有）。
+1. **消融的定义写死（规则 14(g)）。** "同一 checkpoint、c = 1"只去掉了推理时的权重，checkpoint 仍是在 c 下选的；另一半（选择也在 c = 1 下）就是第 6 版自己的搜索。两行都要报。再加一个 2×2 分解：提问用 c 或 1 × 后验用 c 或 1，现有诊断参数已支持，只需重放：`run_batch(prior_weight=(1, 0, c), policy_prior_scale=1/c)` = 提问按第 6 版先验、后验按 c；`run_batch(prior_weight=None, policy_prior_scale=c)` = 提问按 c、后验按第 6 版先验。3.3 的 (b) 是本审稿放行的决定性依据，论文要有这组数字才能写"权重改变了问什么"。另外，Stage A 的配对差在 HateMM 是 AP +.002 / ROC +.004，低于规则 14(g) 的 .01，README 应事先写明不满足 14(g) 时怎么处理（这一点不是判定依据）。
+   README 现状：已写入三行消融 (i)(ii)(iii)；已写明不满足 14(g) 时 c 留在方法里但不作为 novelty 主张。
+2. **c 没有约束，且已出现过负值。** `fit` 里 c 初值 1、无上下界、不截断；README 第 2 节更正后记录了一个负的估计值（HCS，-.002）。负的 c 会把网络的位置先验反过来用。处理规则要在搜索前写明，之后不能再补。
+   README 现状：已写明"按估计值使用，不设界、不截断（负值或大于 1 也照用）"。
+3. **DeHate 单 trial 耗时贴近规则 7 的 1 小时线。** 第 6 版 DeHate seed 234 的 20 个 trial 耗时中位数 3334 秒、最大 3407 秒（`runs/20261101_r6_length_table/dehate/seed234/study_summary.json`，三个 seed 共用一块 GPU）；Stage A 里 559 个 validation 视频的一次 c 估计约 3 秒（`runs/20261110_prior_weight/stage_a_dehate.log`，CPU），50 个 epoch 约多 150 秒。初始启动脚本预写 20 个 trial。
+   README 现状：trial 数按每个 seed 首个 trial 的实测耗时由 `src/qtl/search.py` 写入（不超过 3600 秒为 20，否则 5），实测秒数归档，看到耗时后不再改；DeHate 每块 GPU 最多两个 seed。启动脚本不再预写 `budget.json`。
+4. **前 10 个 trial 的超参数与第 6 版相同。** TPE 的起始 trial 是按 sampler seed 的随机抽样，与目标值无关；本审稿核对了第 5 版与第 6 版三个语料 seed 234 的 trial 0–9 超参数逐项相同、trial 10 起分开（两次搜索的 `trial<k>/hparams.json`）。第 7 版搜索空间、seed 相同，损失不变，所以 trial 0–9 重训的是第 6 版的同一批网络，只是 epoch 选择和 c 不同。不违反规则 7，但搜索结果与 Stage A 的全 trial 重放高度相关。
+   README 现状：已写明这一点，并写明搜索不是独立于第 4 节的证据。
+5. **"另外报告"清单补三项**（都只是重放或一次拟合）：c 在训练回答上的估计值（样本内，预期接近 1，是"先验在未见视频上变差"这一机制的直接证据）；手设 c = .5 与用 validation 标签拟合的 c 两个参照（只作诊断，不是方法）；每个 trial 的边际似然改善量（`nll_all_before / after`）。
+   README 现状：三项均已列入。
+
+开跑前没有遗留的未处理备注。
 
 ### 5.2 论文须引用并划清的工作
 
@@ -112,7 +121,7 @@
 ### 5.4 措辞风险
 
 - 方法名和正文不要写成 calibration / temperature scaling，但必须主动说明它与二者同形并给出区别（3.3 的 (a)–(c)）；不说明会被审稿人直接归为留出集校准。主张应限定为：用未见视频的回答估计训练出的位置先验该占多大权重，这个权重同时决定后验和问什么。估计量本身是标准的经验贝叶斯，不能写成新的估计方法。
-- "无标签"只指 c 的估计。checkpoint 选择仍用 validation 逐秒标注，答案表仍用训练视频标签；不要写成"validation 不用标签"。
+- "无标签"只指 c 的估计。checkpoint 选择仍用 validation 逐秒标注，答案表仍用训练视频标签；不要写成"validation 不用标签"。DeHate 的 validation 视频集合本身按标注筛过（去掉没有可用片段的仇恨视频，改动后的 README 已写明），论文要照样写明。
 - 训练与推理用的模型不同（训练损失里 c = 1，推理用估计值），论文要明说这是两步估计：网络参数由训练似然定，先验强度由留出视频的边际似然定。
 - 视频级 logit g 的过度自信（校准系数 .24–.29）本提案没有处理（(a, b) 无法无标签识别，README 第 2 节）；不要写成"解决了先验过度自信"，只能说位置先验。
 - "test 时不增加 VLM 调用"成立，但估计 c 需要 validation 视频整棵树的缓存回答（每视频几十个），这是离线成本，要写明。
