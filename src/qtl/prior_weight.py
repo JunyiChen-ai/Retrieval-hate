@@ -15,7 +15,8 @@ answers under the model,
 the answer model and the chain fixed:
   (a, b)  from the root's answer alone (one answer per video; log P(o_root | G) is the answer table's row, no tree);
   c       from all cached answers of the video with (a, b) fixed (ctree.log_evidence under c s, c phi).
-mode "joint" (diagnostic) estimates the three from all cached answers at once; "root" leaves c = 1.
+mode "joint" estimates the three from all cached answers at once; "root" leaves c = 1; "loc" estimates c alone from
+all cached answers with (a, b) = (1, 0).
 No video label and no per-second label enters. The weights then apply wherever the prior is used at validation and
 test: the posterior, the choice of questions (EIG) and the stopping statistics (cpolicy.run_batch prior_weight).
 """
@@ -116,10 +117,10 @@ def _lbfgs(params, closure_value, max_iter=50):
 
 def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64):
     """Label-free prior weights from the cached answers of `vids` (module docstring). pri: collect(...).
-    mode: "root_all" (the method), "root" (c = 1), "joint" (diagnostic: a, b, c from all answers at once).
+    mode: "root_all", "root" (c = 1), "joint" (a, b, c from all answers at once), "loc" (c only, a = 1, b = 0).
     Returns {"a", "b", "c", "n_videos", "n_root", "nll_root_before / after" (per video with a root answer),
     "nll_all_before / after" (per video)}."""
-    assert mode in ("root_all", "root", "joint")
+    assert mode in ("root_all", "root", "joint", "loc")
     chunks = _chunks(pri, store, vids, am, answers, device, chunk)
     chain_d = ctree._DoubleChain(chain)
     a = torch.ones((), dtype=torch.float64, device=device, requires_grad=True)
@@ -130,6 +131,9 @@ def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64)
         a0 = _nll_all(chunks, chain_d, a, b, c)
     if mode == "joint":
         _lbfgs([a, b, c], lambda: _nll_all(chunks, chain_d, a, b, c))
+    elif mode == "loc":
+        a_, b_ = a.detach(), b.detach()
+        _lbfgs([c], lambda: _nll_all(chunks, chain_d, a_, b_, c))
     else:
         _lbfgs([a, b], lambda: _nll_root(chunks, a, b)[0])
         if mode == "root_all":
