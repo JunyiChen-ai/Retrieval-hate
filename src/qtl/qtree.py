@@ -68,6 +68,16 @@ def level_nodes(T, L):
         d += 1
     return np.where(tree(T)["depth"] == d)[0]
 
+def depth_nodes(T, d):
+    """The nodes of tree depth d of [0, T) (2^d equal windows), or of the deepest shallower depth whose nodes are all
+    queryable when the video is too short (diagnostics: the equal-window question sets)."""
+    tr = tree(T)
+    d = int(d)
+    while d > 0 and not tr["queryable"][tr["depth"] == d].all():
+        d -= 1
+    return np.where(tr["depth"] == d)[0]
+
+
 def leaf_levels(tr):
     """Per depth d (deepest first): node ids ordered leaves first, then internal nodes; and each node's
     position inside its level."""
