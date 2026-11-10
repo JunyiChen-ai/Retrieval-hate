@@ -94,6 +94,8 @@ def main():
     ap.add_argument("--out-root", default="runs/20261110_prior_weight/all_trials")
     ap.add_argument("--src", default=SRC, help="search directory with <corpus>/seed<seed>/trial<k>/model.pth")
     a = ap.parse_args()
+    assert (a.src == SRC) == (a.out_root == ap.get_default("out_root")), \
+        "another --src needs its own --out-root (one trial file holds the checkpoints of one search)"
     torch.set_num_threads(a.threads)
     od = (ROOT / a.out_root / a.corpus / f"seed{a.seed}").resolve()
     od.mkdir(parents=True, exist_ok=True)
@@ -102,6 +104,7 @@ def main():
     trials = sorted((ROOT / a.src / a.corpus / f"seed{a.seed}").glob("trial*/model.pth"),
                     key=lambda p: int(p.parent.name[5:]))
     assert len(trials) in (5, 20), "expected the 5 or 20 trials of a finished search, found %d" % len(trials)
+    assert all((t.parents[1] / "search.DONE").exists() or a.src == SRC for t in trials), "the search has not finished"
     labels, ids, gt, _ = hc.load_fixed_cohort(a.corpus)
     val, test = list(ids["val"]), list(ids["test"])
     vids_of = {"val": val, "test": test}

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Revision 7 with a validated first level (README section 10), search of one corpus, the given seeds (default
-# 234 2025 3407) concurrently on one GPU. Submit on the
-# target host:
-#   ssh <host> 'cd ~/Retrieval-hate && mkdir -p runs/20261110_prior_weight/search_first_level && sbatch -p local-<node> \
+# 234 2025 3407) concurrently on one GPU. Submit on the target host from the checkout whose code is to run (the main
+# repository, or the branch checkout ~/Retrieval-hate-<branch> whose data / results / runs link to the main one):
+#   ssh <host> 'cd <checkout> && mkdir -p runs/20261110_prior_weight/search_first_level && sbatch -p local-<node> \
 #     -J r7f_<corpus> -o runs/20261110_prior_weight/search_first_level/slurm_<corpus>_%j.out \
 #     experiments/20261110_prior_weight/launch/sbatch_search_first_level.sh <corpus> ["<seed> ..."]'
 # The trial budget is set by src/qtl/search.py from the measured time of each seed's first trial (rule 7: 20 trials
@@ -14,7 +14,7 @@
 #SBATCH --mem=54G
 #SBATCH --time=1-00:00:00
 set -uo pipefail
-cd "$HOME/Retrieval-hate"
+cd "${SLURM_SUBMIT_DIR:-$HOME/Retrieval-hate}"      # the checkout the job was submitted from (main or the branch checkout)
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 P="$HOME/miniconda3/envs/HateVideo/bin/python"
 O=runs/20261110_prior_weight/search_first_level

@@ -214,7 +214,8 @@ cohort itself excludes hateful videos without a usable span (frame protocol), as
 - Q3: within above revision 6 on all three corpora (.783 / .563 / .681).
 - Reported besides: validation-selected trials, the mean over all trials, fixed 0-32 calls, the fitted c per trial
   (median, minimum, number of trials with c < .05) and its marginal-likelihood gain (`nll_all_before / after`), the
-  comparison with the naive control (.707 / .881, .693 / .651, .243 / .773) and with the single level (goal b).
+  comparison with the naive control (.707 / .881, .693 / .651, .243 / .773; by the one rule of section 10
+  .707 / .881, .696 / .653, .243 / .777 - both are given) and with the single level (goal b).
 
 **Fixed before the search (review remarks, `REVIEW_RULE4_R7.md` 5.1, `REVIEW_RULE6_R7.md`).**
 - c is used as estimated: no bound, no clipping (also when negative or above 1).
@@ -296,10 +297,14 @@ answers (second bullet); the first half is reachable only by policies that coinc
 Sections 5 and 9: which way of spending the calls is better is a property of the corpus's answers, and the two ways
 are the ends of one family of policies on the same tree and the same posterior: **the 2^d equal windows of tree
 depth d are asked first (in EIG order), then the greedy EIG policy continues over all nodes** (`cpolicy.run_batch`
-`first=`, `qtree.depth_nodes`). d = 0 is the greedy policy of revisions 2-6; with a budget of exactly 2^d calls the
-policy is the single level; d in between starts with the halves or the quarters. d (how coarse the first pass over
-the video is) is one integer hyper-parameter of the policy at a budget and can be chosen like the checkpoint: on
-validation.
+`first=`, `qtree.depth_nodes`). d = 0 is the greedy policy of revisions 2-6 (no forced first level; it does not
+mean "the root first"); with a budget of exactly 2^d calls the policy is the single level; d in between starts with
+the halves or the quarters. On a video too short for all windows of depth d to be queryable (nodes of at least 4 s)
+the first level falls back to the deepest fully queryable level and the remaining calls are spent greedily, so on
+short videos "d = 3" is not strictly "8 equal windows": HateMM 7.63 calls against 7.13 for the level-only policy of
+sections 5 and 9, DeHate 7.26 against 6.56, per-trial within differences up to .006; HCS has no such video. d (how
+coarse the first pass over the video is) is one integer hyper-parameter of the policy at a budget and can be chosen
+like the checkpoint: on validation.
 
 Stage A (`stage_a_all_trials.py` policies `first<d>` and variants `...@val` = the same replay on the validation
 videos; CPU, uoa-lab1, from the branch checkout `~/Retrieval-hate-r7-first-level`; `policy_select.py`,
@@ -318,15 +323,24 @@ the largest validation (AP + ROC) / 2 at 8 calls; test numbers of the chosen d.
 | d = 0, best trial per seed | .698 / .889 / .774 | .708 / .692 / .617 | .298 / .793 / .693 |
 | d = 3, best trial per seed | .722 / .898 / .831 | .677 / .667 / .603 | .291 / .784 / .701 |
 | revision 6, best trial per seed | .702 / .889 / .783 | .691 / .680 / .563 | .278 / .770 / .681 |
-| naive control | .707 / .881 / .692 | .693 / .651 / .577 | .243 / .773 / .601 |
+| naive control (rule below) | .707 / .881 / .692 | .696 / .653 / .577 | .243 / .777 / .601 |
+
+Naive control, one rule for the three corpora (`runs/20261109_tree_within/naive_questions/<corpus>.json`,
+`methods.<baseline>.uniform8`, the row `best_alpha_on_test`, 3-seed mean): the strongest baseline plus the answers
+of 8 equal windows, fusion weight alpha taken as the best on test, and where two baselines were run the one with
+the higher (AP + ROC) / 2. HateMM MACIL-SD alpha .5 (seed std .004 / .005, 7.13 calls); HCS DSANet alpha .1
+(.001 / .001, 8.00 calls; Fed-WSVAD3 alpha 0 gives .693 / .651); DeHate Fed-WSVAD3 alpha .4 (.016 / .003, 6.56
+calls; alpha .5 gives .243 / .773). Earlier sections quote .693 / .651 for HCS and .243 / .773 for DeHate.
 
 - Validation returns the level (d = 3) on HateMM and a shallow start (d = 0 or 1, equivalent on test) on HCS; on
   DeHate the four depths are within .007 of each other and the choice is immaterial.
-- On the revision-6 checkpoints the chosen depth is ahead of the naive control and of revision 6 on all six AP / ROC
-  numbers (control: +.015 / +.017, +.010 / +.033, +.061 / +.019; revision 6: +.020 / +.009, +.012 / +.004,
-  +.026 / +.022) and on within (+.048 / +.054 / +.013 against revision 6).
+- On the revision-6 checkpoints the chosen depth is ahead of the naive control on all six AP / ROC numbers
+  (+.015 / +.017, +.007 / +.031, +.062 / +.016) and not below revision 6 (+.020 / +.009, +.011 / +.004,
+  +.026 / +.023; the HCS ROC difference is inside the .005 noise band of rule 8); within +.049 / +.054 / +.013
+  against revision 6.
 - The cost of choosing on validation instead of knowing the better depth: HCS -.004 / -.005 in the all-trial mean
-  against d = 0, nothing on HateMM and DeHate.
+  against d = 0 and -.005 / -.008 on the best trial per seed (.703 / .684 against .708 / .692); nothing on HateMM
+  and DeHate. The chosen d is the d with the best test value in 77 % / 38 % / 18 % of the trials (4 candidates).
 - A binary choice {d = 0, single level} gives the same picture (`policy_select_b8_eig_level.json`: .722 / .899 /
   .829, .704 / .686 / .611, .298 / .793 / .693); adding the plan policies as candidates does not add
   (`policy_select_b8_3.json`, `policy_select_b8_5.json`).
@@ -349,13 +363,24 @@ is an outcome and is reported per corpus and budget.
 reasons the model cannot see without per-second labels (how short nodes and diluted long nodes are answered inside
 hateful videos); the label-free leak / miss scalars (section 6), the validation-fitted table (section 4) and the
 budget-aware plans (section 5) did not make one policy best everywhere. The validation per-second labels are already
-used to choose the checkpoint; the 09-29 ruling allows them where they do not enter a gradient. Rule 13 allows
-scalar hyper-parameters to differ between corpora when one pre-declared rule selects them; d is an integer with the
-same candidates everywhere.
+used to choose the checkpoint; the 09-29 ruling allows them where they do not enter a gradient.
 
-**Source.** Own analysis (sections 5, 9). Related practice outside the task: non-adaptive (equal pools) against
-adaptive group testing, where adaptive pooling stops paying once positives are dense; choosing an acquisition rule's
-hyper-parameter on held-out data.
+**Rule 13: the main agent's reading, pending the user's ruling.** Rule 13 allows scalar hyper-parameters to differ
+between corpora when one pre-declared validation rule selects them; d is one integer with the same candidates and
+the same rule everywhere, closest to the "时间窗长度" the rule lists. Against this reading: at 8 calls d = 0 and
+d = 3 differ by whether EIG chooses the nodes at all (at d = 3 it only orders them), which has the effect of the
+"模块开关不同" the rule forbids, the switch being set by the validation rule instead of by hand
+(`REVIEW_RULE4_R7_FIRST_LEVEL.md` section 3). Until the user rules, the candidate is not reported as meeting rules
+14(c) / 14(e). d is not in the Optuna search space and is not chosen on test: it is a second validation selection
+inside the trial, after the checkpoint (rule 7 names only the checkpoint; reported as such under rule 14(d)).
+
+**Source.** Own analysis (sections 5, 9). Related practice outside the task, to be cited and delimited in a paper:
+FV-Action (arXiv 2608.08315, section 5.5: uniform probes beat content-chosen ones at a fixed budget when no reliable
+prior says where the event is); group testing (individual / non-adaptive designs are optimal once positives are
+dense; two-stage designs with a non-adaptive first stage); noisy twenty questions (Jedynak, Frazier, Sznitman 2012:
+the non-adaptive dyadic policy is as good as the adaptive bisection under entropy loss); static against dynamic
+policies in active feature acquisition. Inside the task the closest item is TANDEM (arXiv 2601.11178), which
+switches temporal segmentation on or off per dataset by hand; here one pre-declared validation rule selects d.
 
 **Inputs.** None new. No extra training cost; after training, floor(log2 max_calls) = 5 more policy runs on the
 validation and test videos.
@@ -364,8 +389,21 @@ validation and test videos.
 depth of the policy's first pass is selected on validation; on HCS the selected policy is the adaptive one and is
 ahead of equal windows. Not claimed: that the adaptive policy beats equal windows on every corpus - on HateMM the
 selected depth is expected to be the single level, and section 9 shows that no tree policy does better there. The
-depth is not claimed as a novelty mechanism (it is a hyper-parameter; rule 14(g) is read for the weight c). The
-stopping rule (one trajectory per video) is evaluated on the greedy trajectory (d = 0) as before.
+depth is not claimed as a novelty mechanism (it is a hyper-parameter; rule 14(g) is read for the weight c).
+- The HateMM gain over revision 6 comes from d, not from c (stage A: c at d = 0, paired AP +.002 / ROC +.004; the
+  chosen d over d = 0, paired AP +.021), and is reported so.
+- Where the chosen d equals log2 B, EIG does not choose the nodes (only their order). In this candidate the EIG
+  question choice therefore cannot show a rule-14(g) drop on HateMM and cannot be listed as a novelty mechanism that
+  holds on the three corpora. The proposal does not cause this (section 9: at d = 0 the 8 equal windows are .021 AP
+  above the EIG questions on HateMM) but it fixes it into the method. The tree is the core novelty the user named on
+  11-09; this goes to the user with the report.
+- Stopping rule: the threshold rules (`adaptive`, `adaptive_voi`; one trajectory per video) are evaluated on the
+  greedy trajectory (d = 0) as before. On a corpus whose chosen d is not 0, the fixed-budget configuration (main
+  table: 8 calls of the chosen d) and the stopping rule (fewer-calls curve) are two different question policies. The
+  cost of the stopping rule (STATUS goal 1: AP / ROC at most .01 below fixed 8 calls) is reported against both
+  references, fixed 8 calls of d = 0 (the same trajectory, as in revisions 5 / 6) and fixed 8 calls of the chosen
+  d; against the second it is expected not to hold on HateMM (section 5: the greedy policy with the stopping rule
+  at a mean of 8 calls is .017 AP below the level). The stopping rule is not changed in this round.
 
 **Expected (stage A above).** AP / ROC above revision 6 and above the naive control on the three corpora; the HateMM
 gain comes from d = 3, the HCS / DeHate gains from the weight c.
@@ -377,20 +415,63 @@ chosen on validation at 8 calls; checkpoint as in section 8 (validation (AP + RO
 policy under that epoch's c). Trial budget from each seed's measured first trial; DeHate at most two seeds per GPU.
 Launch `launch/sbatch_search_first_level.sh <corpus> ["<seeds>"]`, output
 `runs/20261110_prior_weight/search_first_level/<corpus>/seed<s>/`.
-Because training and checkpoint are those of section 8, every trial of this search contains the section-8 candidate
-exactly (`depths["0"]` at every budget and the threshold rules), with the same hyper-parameters in trials 0-9; the
-section-8 search is therefore stopped when this one starts, and the section-8 reading (Q1-Q3, ablations (i)-(iii))
-is made on `depths["0"]` of this search, with the best trial per seed by the d = 0 test objective (difference to a
-separate search: trials 10-19 are proposed by TPE from the chosen-depth objective).
+
+**Relation to the section-8 search (changed after the review, `REVIEW_RULE4_R7_FIRST_LEVEL.md` 5.1 / 5.2).** The
+section-8 search is not stopped: it runs to its registered trial counts and is read as declared in section 8. If the
+user rules d outside rule 13 it is the candidate; otherwise it is the d = 0 ablation whose hyper-parameters were
+proposed from its own objective. This search is queued behind it on each machine (uoa-lab3: DeHate seeds 234 / 2025;
+uoa-lab1: HateMM, HCS, DeHate seed 3407 - DeHate never with the launcher's default of three seeds on one GPU) and
+runs from the branch checkout `~/Retrieval-hate-r7-first-level` (outputs in the main repository's `runs/`), so that
+the main checkout, whose code every new section-8 trial loads, is not changed while that search runs
+(`REVIEW_RULE6_R7_FIRST_LEVEL.md` section 1 finds the default path `first_level: 0` element-wise identical to
+`main`; the separation is kept anyway).
+Every trial of this search also holds `depths["0"]` at every budget: this row is called **the fixed d = 0 ablation
+row**, not the section-8 candidate's search result (trials 10-19 are proposed by TPE from the chosen-depth
+objective). It is reported in three readings: its own best trial per seed, the paired difference over all trials,
+and the paired difference over trials 0-9 only (hyper-parameters independent of either objective, as long as
+neither search restarted before trial 10). Reproduction check: trials 0-9 of the section-8 search (same
+hyper-parameters, same training) against `depths["0"]` at 8 calls of the same trial numbers here; differences are
+reported.
+
+**Fixed before the search (review remarks).**
+- The checkpoint is chosen by the greedy policy's validation criterion (d = 0), then d; no joint choice of
+  (epoch, d) after the launch. No minimum margin is added to the choice of d (ties: the smaller d).
+- Trial budget: each trial runs 10 more 32-call policy passes (5 depths x validation and test; estimated 190-460 s
+  instead of 75-90 s on DeHate), the first trial included, and the first trial sets the trial count (20 when at most
+  3600 s, else 5). No change after seeing the time; if a seed gets 5 trials, the comparison with revision 6
+  (20 trials) says so.
+- `summary["test_runs"]` and `silent_group` hold the trajectory of the chosen depth at 8 calls (no VOI record when
+  d is not 0); `metrics.json` does not name d, `summary["first_level"]` does.
+- Per-budget choice: every budget takes one of at most 6 fixed trajectories (no rerun per budget), so neighbouring
+  points of a budget curve can come from different d; curves mark each point's d.
 
 **Pre-registered reading (3-seed means of the test-selected trials).**
-- R1 (goal a): AP and ROC above the naive control on the three corpora (.707 / .881, .693 / .651, .243 / .773).
-- R2 (goal c; rule 8): AP and ROC not below revision 6 on any corpus (.702 / .889, .691 / .680, .278 / .770).
+- R1 (goal a): AP and ROC above the naive control on the three corpora, the control taken by the one rule above
+  (.707 / .881, .696 / .653, .243 / .777). "Above" = a lead not smaller than the larger of the two seed standard
+  deviations and at least .005 (rules 8 / 14(b)); smaller leads are written "not below". `test_mean_calls` is
+  reported next to the control's 7.13 / 8.00 / 6.56 calls.
+- R2 (goal c): AP and ROC not more than .005 below revision 6 on any corpus (.702 / .889, .691 / .680,
+  .278 / .770), as Q1 of section 8.
+- R2b (rule 8): the main gate on all six numbers against `docs/duplex/OFFICIAL_VAL_RESULTS.md`, read separately.
 - R3 (goal b, first half): at 8 calls on the test-selected trials, within of the chosen depth not more than .005
-  below the single level (d = 3) and not more than .005 below the greedy policy (d = 0).
+  below `depths["3"]` and not more than .005 below `depths["0"]`. Two references for "the single level" are
+  reported: `depths["3"]` (level first, greedy fill on short videos) and the level-only policy of sections 5 / 9
+  (replay `level` on the same checkpoints with the stored weight). On a trial whose chosen d is 3 the first
+  comparison is a policy against itself: it is reported as "the selected policy is the single level; goal (b) is
+  not met on this corpus", not as "the first half holds". Likewise for a chosen d = 0 against the greedy policy.
 - R4: the chosen d per corpus and budget (share of trials), and how often it is the d with the best test value;
   the test numbers when d is instead taken as the best on test per trial are reported as a reference, not used.
+  The cost of the choice is given in both readings (all-trial paired difference and best trial per seed, against
+  each fixed d).
 - Ablation of the choice: on the same trials, every fixed d (`depths`), with each fixed d's own best trial per seed.
-  Rule 14(g) for the weight c: as section 8 (i)-(iii), on `depths["0"]`.
+- Rule 14(g) for the weight c: (1) on the candidate's own configuration - the test-selected trials of this search,
+  same checkpoint with c = 1, both with d chosen again on validation under c = 1 and with d kept (replays
+  `r6|none|first<d>` and `...@val` with `--src runs/20261110_prior_weight/search_first_level`; in these replays the
+  column "r6" is the revision-7 checkpoint without the weight, not revision 6); (2) the section-8 ablations
+  (i)-(iii) on the section-8 search.
 - Goal (b), second half (AP / ROC advantage of at least .01 over the single level): reported per corpus from
   `depths`; expected on HCS only (section 9).
+
+**Reviews.** Rule 4: GO (`REVIEW_RULE4_R7_FIRST_LEVEL.md`; d passes only as an unclaimed hyper-parameter of the
+reviewed candidate; rule 13 needs the user's ruling; its 8 required changes are in this section). Rule 6: PASS
+(`REVIEW_RULE6_R7_FIRST_LEVEL.md`; no bug; remarks 1-5 and 7 are in this section and in the tools).

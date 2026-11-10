@@ -9,7 +9,9 @@ the test metrics of the chosen policy are taken from the test replay of the same
     level;
   - the best trial per seed by test (AP + ROC) / 2 (rule 7's selection), 3-seed mean.
     python experiments/20261110_prior_weight/policy_select.py [--candidates eig planfill_eer level] [--budget 8]
-Output <root>/policy_select_<tag>.json and a printed table.
+Output <root>/policy_select_<tag>.json and a printed table. With --root on replays of revision-7 trials
+(stage_a_all_trials.py --src ... --out-root ...) the column "r6" (variant "r6|none|eig") is the revision-7
+checkpoint without its weight, not revision 6.
 """
 import argparse
 import json
