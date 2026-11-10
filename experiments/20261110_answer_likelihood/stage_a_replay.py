@@ -15,6 +15,9 @@ Per candidate and trial, test split, AP / ROC / within:
   root                 tree inference after the root's answer only (1 call);
   u8                   tree inference after the 8 equal windows (qtree.depth_nodes(T, 3));
   eig8                 the method's policy: EIG on the full tree, fixed 8 calls, questions chosen under the candidate.
+Prior scales (diagnostic, README section 2: the backbone's video logit is over-confident on held-out videos):
+--g-scales multiplies the video logit g, --loc-scales the per-second logits s_t and node potentials phi_n; a variant
+with scales other than 1 is named <candidate>@g<scale>_l<scale>.
 Scores at 6 decimals as the evaluator reads them; unified core evaluator (hc.frame_metrics).
 Output runs/20261110_answer_likelihood/stage_a/<corpus>/summary.json (per trial runs_<candidate>_<policy>.pkl).
 """
@@ -83,13 +86,14 @@ def build(corpus, spec, labels, train_ids):
     return answers, am, info
 
 
-def replay(model, store, vids, am, chain, answers, cfg, max_calls, allowed):
+def replay(model, store, vids, am, chain, answers, cfg, max_calls, allowed, loc_scale=1.0):
     runs = {}
     vids = sorted(vids, key=lambda v: store.T[v])
     for i in range(0, len(vids), int(cfg["eval_chunk"])):
         chunk = vids[i:i + int(cfg["eval_chunk"])]
         with torch.no_grad():
             runs.update(cpolicy.run_batch(model, store, chunk, am, chain, answers, cfg["categories"], max_calls, "cpu",
+                                          prior_scale=loc_scale,
                                           allowed=None if allowed is None else [allowed(store.T[v]) for v in chunk]))
     return runs
 
@@ -120,8 +124,11 @@ def main():
     ap.add_argument("--corpus", choices=("hatemm", "hateclipseg", "dehate"), required=True)
     ap.add_argument("--cands", nargs="+", default=list(CANDS))
     ap.add_argument("--policies", nargs="+", default=list(POLICIES))
+    ap.add_argument("--g-scales", nargs="+", type=float, default=[1.0])
+    ap.add_argument("--loc-scales", nargs="+", type=float, default=[1.0])
     ap.add_argument("--threads", type=int, default=4)
     ap.add_argument("--out-root", default="runs/20261110_answer_likelihood/stage_a")
+    ap.add_argument("--summary", default="summary.json")
     a = ap.parse_args()
     torch.set_num_threads(a.threads)
     od0 = (ROOT / a.out_root / a.corpus).resolve()
@@ -144,14 +151,15 @@ def main():
         m = hc.frame_metrics(sc, gt["test"], hate)
         return {k: float(m[k]) for k in METS}
 
-    prior_cache = {}
+    prior_cache, g_scale = {}, [1.0]
     plain_prior = policy.video_prior_nodes
 
     def cached_prior(model, store_, v, device):   # the backbone's outputs do not depend on the answer model
         key = (id(model), v)
         if key not in prior_cache:
             prior_cache[key] = plain_prior(model, store_, v, device)
-        return prior_cache[key]
+        s_, g_, phi_ = prior_cache[key]
+        return s_, g_ * g_scale[0], phi_
 
     policy.video_prior_nodes = cached_prior
     rows = {}
@@ -164,9 +172,12 @@ def main():
         od = od0 / name
         od.mkdir(parents=True, exist_ok=True)
         row = {}
-        for c in a.cands:
+        variants = [(c, gs, ls) for c in a.cands for gs in a.g_scales for ls in a.loc_scales]
+        for c, gs, ls in variants:
             answers, am, _info = built[c]
-            if c == "q8":                        # the refit must be the checkpoint's table
+            g_scale[0] = gs
+            vname = c if (gs, ls) == (1.0, 1.0) else "%s@g%g_l%g" % (c, gs, ls)
+            if c == "q8" and (gs, ls) == (1.0, 1.0):   # the refit must be the checkpoint's table
                 with torch.no_grad():
                     ln = torch.as_tensor([4.0, 16.0, 64.0])
                     diff = float((am.level_logp(ln) - am6.level_logp(ln)).abs().max())
@@ -174,15 +185,15 @@ def main():
             res, p0 = {}, None
             for pol in a.policies:
                 max_calls, allowed = POLICIES[pol]
-                path = od / f"runs_{c}_{pol}.pkl"
+                path = od / f"runs_{vname}_{pol}.pkl"
                 if path.exists():
                     runs = pickle.load(path.open("rb"))["runs"]
                 else:
-                    runs = replay(model, store, test, am, chain, answers, cfg, max_calls, allowed)
+                    runs = replay(model, store, test, am, chain, answers, cfg, max_calls, allowed, ls)
                     with path.open("wb") as fh:
                         pickle.dump({"runs": {v: {"scores": [r["scores"][0], r["scores"][-1]], "asked": r["asked"],
                                                   "p_G": [r["p_G"][0], r["p_G"][-1]]} for v, r in runs.items()},
-                                     "trial": str(trial), "candidate": c, "policy": pol,
+                                     "trial": str(trial), "candidate": vname, "policy": pol,
                                      "host": socket.gethostname(),
                                      "created": datetime.now().astimezone().isoformat()}, fh)
                 res[pol] = mets({v: runs[v]["scores"][-1] for v in test})
@@ -191,18 +202,19 @@ def main():
             res["flat_root"] = mets(flat(store, test, am, answers, cfg["categories"], p0, lambda T: [0]))
             res["flat_u8"] = mets(flat(store, test, am, answers, cfg["categories"], p0,
                                        lambda T: qtree.depth_nodes(T, 3)))
-            row[c] = res
-            print(a.corpus, name, c, json.dumps({k: [round(r[m], 4) for m in METS] for k, r in res.items()}),
+            row[vname] = res
+            print(a.corpus, name, vname, json.dumps({k: [round(r[m], 4) for m in METS] for k, r in res.items()}),
                   flush=True)
         rows[name] = row
     keys = list(next(iter(next(iter(rows.values())).values())))
+    names = list(next(iter(rows.values())))
     mean = {c: {k: {m: float(np.mean([rows[t][c][k][m] for t in rows])) for m in METS} for k in keys}
-            for c in a.cands}
-    (od0 / "summary.json").write_text(json.dumps(
+            for c in names}
+    (od0 / a.summary).write_text(json.dumps(
         {"corpus": a.corpus, "host": socket.gethostname(), "created": datetime.now().astimezone().isoformat(),
          "candidates": {c: built[c][2] for c in a.cands}, "trials": rows, "mean": mean}, indent=1) + "\n")
-    for c in a.cands:
-        print("MEAN", a.corpus, "%-12s" % c, " | ".join(
+    for c in names:
+        print("MEAN", a.corpus, "%-22s" % c, " | ".join(
             "%s %s" % (k, "/".join("%.3f" % mean[c][k][m] for m in METS)) for k in keys), flush=True)
     print("DONE", a.corpus, flush=True)
 
