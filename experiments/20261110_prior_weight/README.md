@@ -698,6 +698,27 @@ copied from the local machine to uoa-lab1; results copied back), read by `c_abla
 - Without c the choice of d is unstable: under c = 1 validation takes d = 0 / 1 / 2 / 3 in 28 / 17 / 5 / 50 % of the
   HateMM trials (82 % d = 3 with c) and in 27 / 25 / 15 / 33 % of the HCS trials (98 % d = 0 with c); it differs
   from the candidate's d in 55 % and 73 % of the trials.
+- **Reference selected without c** (revision-6 search: trained, epoch and trial chosen without c; replays of its 60
+  checkpoints per corpus with c = 1 for every first level, test and validation, uoa-lab1 CPU;
+  `all_trials/policy_select_b8_first_none.json`, `policy_select.py --mode none --candidates eig first1 first2
+  first3`). Each row's own best trial per seed, 8 calls:
+
+  | | HateMM | HCS | DeHate |
+  |---|---|---|---|
+  | no c, d = 0 (revision 6) | .702 / .889 / .783 | .691 / .680 / .563 | .278 / .770 / .681 |
+  | no c, d chosen on validation | .702 / .889 / .783 | .687 / .683 / .562 | .279 / .771 / .682 |
+  | no c, d = 3 | .702 / .888 / .781 | .668 / .670 / .553 | .279 / .756 / .687 |
+  | c, d = 0 (replay on revision-6 checkpoints; this search) | .698 / .889 / .774; .707 / .890 / .760 | .711 / .695 / .618; .704 / .688 / .605 | .298 / .793 / .693; running |
+  | c, d chosen on validation (replay; this search) | .722 / .898 / .831; **.723 / .898 / .826** | .703 / .684 / .617; **.704 / .688 / .605** | .304 / .792 / .694; running |
+
+  The candidate minus "no c, d chosen on validation": HateMM +.021 / +.009 / +.043, HCS +.017 / +.005 / +.043
+  (DeHate, replays only: +.025 / +.021 / +.012). Without c the choice of d changes nothing against revision 6
+  (paired over all trials -.001 / .000 / +.007, .000 / +.002 / .000, .000 / .000 / .000; chosen d = 0 / 1 / 2 / 3 in
+  47 / 8 / 12 / 33 %, 75 / 15 / 10 / 0 %, 38 / 40 / 22 / 0 % of the trials).
+  **On HateMM neither part alone raises AP: d without c .702, c without d .698 (replay) / .707 (this search), both
+  .722 / .723.** The 8 equal windows are ahead of the greedy policy only when the per-second prior is weighted
+  down (at weight 1 that prior lowers the equal-window scores, `20261109_tree_within/README.md` section 12). On
+  HCS and DeHate the gain is the weight's; d adds nothing at 8 calls on HCS and +.006 AP on DeHate in the replays.
 - **Level-only reference of R3** (stored c): HateMM .723 / .898 / .827 on the test-selected trials, the candidate
   (d = 3) minus it .000 / .000 / -.001 - the selected policy is the level. HCS .680 / .662 / .610, the candidate
   minus it +.024 / +.026 / -.004 on the test-selected trials, +.017 / +.016 / -.005 over all trials, +.024 / +.022 /
