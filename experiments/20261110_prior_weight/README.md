@@ -563,3 +563,55 @@ section-8 search exactly at d = 0 (selected epoch 32, c .531, the same c at ever
 the three seeds (at 16 calls 4, at 32 calls 5, at 4 calls 2 / 0 / 1); test at the chosen d .703 / .893 / .817,
 .697 / .884 / .824, .686 / .880 / .819 against d = 0 .681 / .886 / .803, .682 / .882 / .790, .678 / .883 / .798.
 
+## 12. Result of the first-level search (section 10)
+
+Source: `runs/20261110_prior_weight/search_first_level/<corpus>/` (evaluator outputs per trial; copied back to the
+local machine), read by `summarize_first_level.py` into `search_first_level/summary_<corpus>.json`. The objective
+of the search is the test (AP + ROC) / 2 at 8 calls of the depth chosen on validation (developmental upper bound,
+rule 10). AP / ROC / within.
+
+### HateMM (uoa-lab3, job 2139, 3 seeds x 20 trials, 905 s per trial; finished 2026-11-11 04:07)
+
+| 8 calls | AP / ROC / within |
+|---|---|
+| chosen d, test-selected trials (16, 11, 15; d = 3 on the three; c .17 / .12 / .11; 7.63 calls) | **.723 / .898 / .826** (seed std .001 / .001 / .006) |
+| naive control (MACIL-SD + 8 equal windows, alpha .5, 7.13 calls) | .707 / .881 / .692 (std .004 / .005 / .003) |
+| revision 6 (test-selected) | .702 / .889 / .783 |
+| the same three trials with d = 0 / 1 / 2 | .693 / .889 / .806, .695 / .891 / .809, .705 / .896 / .812 |
+| fixed d = 0 (greedy), its own best trial per seed | .707 / .890 / .760 (std .003 / .002 / .035) |
+| fixed d = 1, own best | .702 / .888 / .779 |
+| fixed d = 2, own best | .707 / .897 / .806 |
+| fixed d = 3, own best | .723 / .898 / .826 |
+| chosen d, validation-selected trials (14, 19, 13) | .677 / .868 / .760 |
+| chosen d, mean of the 60 trials | .691 / .882 / .798 |
+
+- **R1 holds on HateMM**: +.016 / +.017 over the naive control, more than both seed standard deviations and than
+  .005.
+- **R2 holds on HateMM**: +.021 / +.009 over revision 6 (within +.043). R2b (rule 8) is read when the three corpora
+  are finished.
+- **R3**: the chosen d is 3 on the three test-selected trials. As pre-registered this reads "the selected policy is
+  the single level; goal (b) is not met on HateMM" (section 9). Against d = 0 on the same trials the chosen depth is
+  +.030 / +.008 / +.020.
+- **R4**: chosen d at 8 calls d = 3 in 82 % of the 60 trials (d = 0 13 %, d = 1 5 %); at 2 calls d = 1 in 83 %, at
+  4 calls d = 2 in 67 %, at 16 calls d = 4 in 95 %, at 32 calls d = 5 in 92 %: the level at every budget. The chosen
+  d is the d with the best test value in 63 % of the trials (best-on-test shares 17 / 3 / 15 / 65 %). Cost of the
+  choice against a fixed d = 3: -.001 / .000 / -.005 over all trials, nothing on the best trial per seed.
+- **Ablation of the choice** (chosen minus fixed d = 0): all trials +.016 / +.001 / +.022; trials 0-9 only
+  +.012 / +.001 / +.021; best trial per seed +.016 / +.008 / +.066. The fixed d = 0 row (the section-8 candidate's
+  policy, hyper-parameters proposed from the chosen-depth objective in trials 10-19) equals the naive control on AP
+  (.707) and is +.009 on ROC.
+- c over the 60 trials: median .26 (-.21 to .75), below .05 in 8 trials.
+- Other budgets on the test-selected trials, chosen d against d = 0: 0 calls .640 / .836 / .758; 1 call
+  .670 / .869 / .769; 2 calls .690 / .881 / .793 (d = 1) against .685 / .877 / .797; 4 calls .713 / .893 / .824
+  (d = 2) against .694 / .886 / .808; 16 calls .718 / .895 / .806 (d = 4) against .707 / .891 / .807; 32 calls
+  .723 / .890 / .809 (d = 5) against .699 / .886 / .799. Four equal windows (4 calls) are already above revision
+  6's 8 calls and above the control's 8 windows; AP / ROC do not rise from 8 to 16 calls (-.005 / -.003), within
+  falls by .020.
+- The trial chosen by validation is far below the trial chosen by test (.677 / .868 against .723 / .898): the gap
+  between validation and test trial choice of the earlier revisions is unchanged.
+
+### HCS, DeHate
+
+Running: HCS on uoa-lab3 (job 2140, first trial 387-389 s, 20 trials), then DeHate seeds 234 / 2025 (2141); DeHate
+seed 3407 on uoa-lab1 (2135) waits for another user's job.
+
