@@ -53,7 +53,8 @@ POLICIES = {"eig": dict(order="eig"), "eer": dict(order="eer"), "level": dict(or
             "planfill_eig": dict(order="eig", plan="disjoint"), "planfill_eer": dict(order="eer", plan="disjoint"),
             "planfill_loc": dict(order="eig_loc", plan="disjoint"),
             "first1": dict(order="eig", first_depth=1), "first2": dict(order="eig", first_depth=2),
-            "first3": dict(order="eig", first_depth=3)}
+            "first3": dict(order="eig", first_depth=3), "first4": dict(order="eig", first_depth=4),
+            "first5": dict(order="eig", first_depth=5)}
 # plan_eig / plan_eer results in the trial files were computed before the plan fell back to nested nodes when no
 # disjoint node is left (fewer calls than the budget on short videos); planfill_* = the current plan, all calls used.
 DEFAULT = ["r6|none|eig", "r6|loc|eig", "r6|loc|level", "val3|none|eig", "val3|loc|eig", "val3|loc|level",

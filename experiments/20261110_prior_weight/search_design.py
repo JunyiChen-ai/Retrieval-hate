@@ -1,8 +1,8 @@
 """Revision 7 with a validated first level (README section 10): the revision-7 search (search.py: label-free
 location weight of the prior, mode "loc") plus first_level "validated" - training and checkpoint choice as revision
 7; after training, the depth d of the breadth-first start of the question policy (the 2^d equal windows of tree depth
-d first, then greedy EIG; d = 0 is the greedy policy) is chosen on the validation videos at the primary budget, and
-the test numbers are those of the chosen d. Every trial also records every d (summary "depths")."""
+d first, then greedy EIG; d = 0 is the greedy policy) is chosen on the validation videos at every reported budget,
+and the test numbers are those of the chosen d. Every trial also records every candidate d (summary "depths")."""
 from pathlib import Path
 import sys
 

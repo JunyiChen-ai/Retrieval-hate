@@ -88,12 +88,12 @@ DEFAULTS = {
     "prior_weight": None, "plan": None, "eval_table": None, "first_level": 0,
 }
 # Revision 7, first level (experiments/20261110_prior_weight/README.md section 10): the policy asks the 2^d equal
-# windows of tree depth d first (in EIG order; qtree.depth_nodes) and continues greedily over all nodes; at a budget
-# B < 2^d the depth is floor(log2 B). d = 0 is the greedy policy of revisions 2-6. first_level "validated" = d is a
-# hyper-parameter chosen once per trained model, after training, on the validation videos: the d in
-# 0..floor(log2 primary_budget) with the largest validation (AP + ROC) / 2 at the primary budget (ties: the smaller
-# d). Training and the checkpoint choice are unchanged (greedy policy); the per-second validation labels enter this
-# choice only (no gradient). first_level 0 = the greedy policy alone.
+# windows of tree depth d first (in EIG order; qtree.depth_nodes) and continues greedily over all nodes; d = 0 is the
+# greedy policy of revisions 2-6. first_level "validated" = d is a hyper-parameter of the policy at a budget, chosen
+# per trained model after training on the validation videos: at every reported budget B the d in 0..floor(log2 B)
+# with the largest validation (AP + ROC) / 2 at B calls (ties: the smaller d). Training and the checkpoint choice are
+# unchanged (greedy policy); the per-second validation labels enter this choice only (no gradient). first_level 0 =
+# the greedy policy alone.
 # Revision 7 (experiments/20261110_prior_weight/README.md): prior_weight "loc" / "joint" / "root_all" = label-free
 # weights of the prior estimated after every epoch on the validation videos' cached answers (prior_weight.py) and
 # used at validation and test (posterior, question choice); plan "disjoint" = budget-aware question plan
@@ -499,8 +499,8 @@ def train(corpus, seed, out_dir, cfg, device, num_workers, model_factory=None):
                        None if best["prior_weight"] is None else pweight.as_tuple(best["prior_weight"]))
     summary["prior_weight"] = best["prior_weight"]
     if cfg["first_level"] == "validated":
-        say("first level (validation, primary budget): d = %d | criterion per d %s" % (
-            summary["first_level"], json.dumps(summary["first_level_val_criterion"])))
+        summary["first_level"] = {B: r["first_level"] for B, r in summary["fixed"].items()}
+        say("first level chosen on validation, per budget: %s" % json.dumps(summary["first_level"]))
     if offset_info is not None:
         summary["answer_offset_fit"] = offset_info
     summary.update({"corpus": corpus, "seed": seed, "cfg": cfg, "best_epoch": best["epoch"],
@@ -561,25 +561,14 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
     res = {"fixed": {}, "adaptive": {}, "adaptive_voi": {}}
     pb = int(cfg["primary_budget"])
     # revision 7, first level: one trajectory per depth d (the nodes of depth d first, then greedy); d = 0 is the
-    # greedy trajectory above. At a budget B the policy of depth d is the trajectory of min(d, floor(log2 B)).
+    # greedy trajectory above. At a budget B the candidates are the depths whose level fits, d <= floor(log2 B).
     validated = cfg.get("first_level", 0) == "validated"
     assert not (validated and planned)
     traj = {0: (val_runs, test_runs)}
-    d_star = 0
     if validated:
-        for d in range(1, int(np.floor(np.log2(pb))) + 1):
+        for d in range(1, int(np.floor(np.log2(max(max_calls, 1)))) + 1):
             traj[d] = tuple(ev.run(model, am, ids[sp], max_calls, chain=chain, prior_weight=prior_weight,
                                    first_depth=d) for sp in ("val", "test"))
-        crit_d = {}
-        for d, (rv, _) in traj.items():
-            vm = hc.frame_metrics(at_budget(rv, pb), gt["val"], hate_val)
-            crit_d[d] = 0.5 * (vm["pooled_ap"] + vm["pooled_roc"])
-        d_star = max(sorted(crit_d), key=lambda d: crit_d[d])      # ties: the smaller depth
-        res["first_level"] = int(d_star)
-        res["first_level_val_criterion"] = {str(d): float(c) for d, c in crit_d.items()}
-
-    def depth_at(d, B):
-        return min(int(d), int(np.floor(np.log2(B)))) if B >= 1 else 0
 
     def test_eval(name, scores):
         sp = os.path.join(out_dir, "scores_test_%s.jsonl" % name)
@@ -596,21 +585,22 @@ def evaluate(corpus, out_dir, cfg, model, am, ev, ids, gt, labels, say, chain=No
             test_runs = ev.run(model, am, ids["test"], B, chain=chain, prior_weight=prior_weight)
         if not validated:
             traj[0] = (val_runs, test_runs)      # the plan has one run per budget
-        dB = depth_at(d_star, B)
-        rv, rt = traj[dB]
+        cand = [d for d in sorted(traj) if d == 0 or 2 ** d <= B]
+        vals = {d: hc.frame_metrics(at_budget(traj[d][0], B), gt["val"], hate_val) for d in cand}
+        dB = max(cand, key=lambda d: vals[d]["pooled_ap"] + vals[d]["pooled_roc"])     # ties: the smaller depth
+        rt = traj[dB][1]
         if B == pb:
             primary_runs = rt
         res["fixed"][str(B)] = {
-            "val": hc.frame_metrics(at_budget(rv, B), gt["val"], hate_val),
-            "test": test_eval("fixed%d" % B, at_budget(rt, B)),
+            "val": vals[dB], "test": test_eval("fixed%d" % B, at_budget(rt, B)),
             "test_mean_calls": float(np.mean([min(B, len(r["eig"])) for r in rt.values()]))}
-        if validated:                            # every depth at this budget, for the ablation of the choice
+        if validated:                            # every candidate depth at this budget, for the ablation of the choice
             depths = {str(dB): dict(res["fixed"][str(B)])}
-            for d in sorted({depth_at(d, B) for d in traj} - {dB}):
-                depths[str(d)] = {
-                    "val": hc.frame_metrics(at_budget(traj[d][0], B), gt["val"], hate_val),
-                    "test": test_eval("fixed%d_depth%d" % (B, d), at_budget(traj[d][1], B)),
-                    "test_mean_calls": float(np.mean([min(B, len(r["eig"])) for r in traj[d][1].values()]))}
+            for d in cand:
+                if d != dB:
+                    depths[str(d)] = {
+                        "val": vals[d], "test": test_eval("fixed%d_depth%d" % (B, d), at_budget(traj[d][1], B)),
+                        "test_mean_calls": float(np.mean([min(B, len(r["eig"])) for r in traj[d][1].values()]))}
             res["fixed"][str(B)].update(first_level=dB, depths=depths)
         say("fixed %2d calls | test AP %.4f ROC %.4f within %.4f%s" % (
             B, *[res["fixed"][str(B)]["test"][k] for k in ("pooled_ap", "pooled_roc", "within_roc")],
