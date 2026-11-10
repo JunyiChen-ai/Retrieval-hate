@@ -347,6 +347,20 @@ calls; alpha .5 gives .243 / .773). Earlier sections quote .693 / .651 for HCS a
 - Continuing greedily after the level does not help on HateMM: level of 8 then 8 greedy calls .688 / .884 / .791
   (all-trial mean, 16 calls) against 16 equal windows .700 / .887 / .797 and against the 8 windows alone
   .693 / .883 / .811. So d is chosen per budget (candidates d <= floor(log2 B)).
+- The same choice at 4 and 16 calls (`policy_select_b4_first.json`, `policy_select_b16_first.json`; 60 trials):
+
+  | | HateMM | HCS | DeHate |
+  |---|---|---|---|
+  | 4 calls, chosen d = 0 / 1 / 2 | 10 / 18 / 72 % | 42 / 50 / 8 % | 48 / 52 / 0 % |
+  | 4 calls, chosen vs d = 0, paired | +.011 / +.003 / +.015 | -.003 / -.001 / -.002 | +.005 / +.001 / .000 |
+  | 4 calls, best trial per seed: chosen (d = 0) | .706 / .892 / .823 (.692 / .889 / .801) | .696 / .692 / .597 (.701 / .693 / .604) | .292 / .779 / .684 (.280 / .779 / .685) |
+  | 16 calls, chosen d = 0 / 1 / 2 / 3 / 4 | 3 / 3 / 0 / 0 / 93 % | 27 / 28 / 13 / 3 / 28 % | 33 / 13 / 20 / 32 / 2 % |
+  | 16 calls, chosen vs d = 0, paired | +.015 / +.005 / +.013 | -.002 / -.004 / +.006 | +.001 / .000 / .000 |
+  | 16 calls, best trial per seed: chosen (d = 0) | .717 / .897 / .793 (.708 / .892 / .802) | .704 / .694 / .605 (.710 / .700 / .608) | .300 / .797 / .713 (.300 / .798 / .713) |
+
+  HateMM takes the level at every budget (d = log2 B) and gains .011-.021 AP over the greedy policy; HCS loses
+  .002-.004 AP / ROC in the all-trial mean (.005-.008 on the best trial per seed) to the noise of the choice among
+  depths that differ little there; DeHate is neutral.
 
 ### Proposal (rule 4): revision 7 with a validated first level
 
@@ -424,9 +438,12 @@ DeHate seed 3407 not started); its outputs are kept in `runs/20261110_prior_weig
 not used. Order on each machine: this search first, then the section-8 search, which runs to its registered trial
 counts and is read as declared in section 8. If the user rules d outside rule 13 the section-8 search is the
 candidate; otherwise it is the d = 0 ablation whose hyper-parameters were proposed from its own objective.
-Machines: uoa-lab3 DeHate seeds 234 / 2025; uoa-lab1 HateMM, HCS, DeHate seed 3407 (DeHate never with the
-launcher's default of three seeds on one GPU: `REVIEW_RULE6_R7_FIRST_LEVEL.md` estimates 2840-3160 s per trial for
-two seeds and more than 3600 s for three).
+Machines (Slurm jobs submitted 2026-11-10 23:05): this search on uoa-lab3 HateMM, HCS, DeHate seeds 234 / 2025
+(jobs 2139-2141) and on uoa-lab1 DeHate seed 3407 (2135); the section-8 search on uoa-lab3 DeHate seeds 234 / 2025
+(2142) and on uoa-lab1 HateMM, HCS, DeHate seed 3407 (2136-2138). uoa-lab1's GPU was taken by another user's job
+(up to one day) at the moment the old jobs were cancelled, so HateMM and HCS of this search went to uoa-lab3.
+DeHate never runs with the launcher's default of three seeds on one GPU (`REVIEW_RULE6_R7_FIRST_LEVEL.md`
+estimates 2840-3160 s per trial for two seeds and more than 3600 s for three).
 Every trial of this search also holds `depths["0"]` at every budget: this row is called **the fixed d = 0 ablation
 row**, not the section-8 candidate's search result (trials 10-19 are proposed by TPE from the chosen-depth
 objective). It is reported in three readings: its own best trial per seed, the paired difference over all trials,
