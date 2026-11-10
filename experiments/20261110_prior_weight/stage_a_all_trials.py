@@ -7,7 +7,8 @@ ROC) / 2, as rule 7 does; reported are that and the mean over all trials.
 A variant is table|weights|policy[|budget]:
   table    r6 = the checkpoint's anchored table; val3 = three states with a length slope each, fitted on the
            validation per-second labels (answer_calib.py; no gradient);
-  weights  none, or a mode of prior_weight.fit (label-free, validation answers): loc, joint, root_all;
+  weights  none, or a mode of prior_weight.fit (label-free, validation answers): loc, joint, root_all, trust
+           (location weight plus the answer leak / miss scalars), trust_len;
   policy   eig (greedy, revision 6), plan_eer / plan_eig (budget-aware disjoint plan), level (equal windows);
   budget   calls per video (default 8).
 Test AP / ROC / within, scores at 6 decimals, unified core evaluator (hc.frame_metrics).
@@ -122,7 +123,8 @@ def main():
                 weights[(tab, mode)] = None if mode == "none" else prior_weight.fit(
                     pri, store, val, tables[tab], chain, answers, a.device, mode=mode)
             w = weights[(tab, mode)]
-            runs = replay(model, store, test, tables[tab], chain, answers, cfg, B, w, POLICIES[pol], a.device)
+            runs = replay(model, store, test, prior_weight.table(tables[tab], w), chain, answers, cfg, B, w,
+                          POLICIES[pol], a.device)
             res = mets({v: runs[v]["scores"][-1] for v in test})
             res["mean_calls"] = float(np.mean([len(runs[v]["asked"]) for v in test]))
             res["weights"] = w

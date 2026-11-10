@@ -19,6 +19,18 @@ mode "joint" estimates the three from all cached answers at once; "root" leaves 
 all cached answers with (a, b) = (1, 0).
 No video label and no per-second label enters. The weights then apply wherever the prior is used at validation and
 test: the posterior, the choice of questions (EIG) and the stopping statistics (cpolicy.run_batch prior_weight).
+
+Answer trust (modes "trust" / "trust_len"). The anchored answer table knows two states, fitted where the video label
+fixes the state: "no hate" on every node of the negative training videos, "hate" on the roots of the positive ones.
+Inside a hateful video it is over-trusted (experiments/20261109_tree_within/README.md section 11): clean nodes of
+hateful videos answer higher than nodes of negative videos, and short hateful nodes answer lower than the roots. Two
+more label-free scalars describe this, estimated together with c by the same marginal likelihood:
+    leak rho:  a clean node of a hateful video answers like a hateful node with probability rho,
+               P(o | clean, G = 1) = (1 - rho) P(o | no hate) + rho P(o | hate);
+    miss eta:  a hateful node answers like a clean node of a hateful video with probability eta_n,
+               P(o | hateful) = (1 - eta_n) P(o | hate) + eta_n P(o | clean, G = 1),
+               eta_n = sigmoid(logit(eta) + k u_n), u_n the node's standardised log length (k = 0 in mode "trust").
+TrustTable is the resulting three-state table (the answer model of the policy and the posterior at validation / test).
 """
 from __future__ import annotations
 
@@ -58,6 +70,7 @@ def _chunks(pri, store, vids, am, answers, device, chunk):
         G = torch.zeros(len(vs), dtype=torch.float64)
         PHI = None
         A3 = torch.zeros(fo.N, 3, dtype=torch.float64)
+        U = torch.zeros(fo.N, dtype=torch.float64)       # standardised log length of the answered nodes
         ll_root = torch.zeros(len(vs), 3, dtype=torch.float64)
         has_root = torch.zeros(len(vs), dtype=torch.bool)
         for b, v in enumerate(vs):
@@ -73,12 +86,27 @@ def _chunks(pri, store, vids, am, answers, device, chunk):
                 with torch.no_grad():
                     ll = am.loglik(torch.as_tensor(ans), torch.as_tensor(lens)).double().cpu()
                 A3[torch.as_tensor(nid + int(fo.offs[b]))] = ll
+                U[torch.as_tensor(nid + int(fo.offs[b]))] = torch.as_tensor((np.log(lens) - am.len_mu) / am.len_sd)
                 if nid[0] == 0:                  # node 0 is the root (observed() sorts by node id)
                     ll_root[b] = ll[0]
                     has_root[b] = True
         out.append({"fo": fo, "S": S.to(device), "G": G.to(device), "PHI": None if PHI is None else PHI.to(device),
-                    "A3": A3.to(device), "ll_root": ll_root.to(device), "has_root": has_root.to(device)})
+                    "A3": A3.to(device), "U": U.to(device), "ll_root": ll_root.to(device),
+                    "has_root": has_root.to(device)})
     return out
+
+
+def _trust_rows(A3, U, trust):
+    """Answer log-likelihoods (N, 3) under the leak / miss scalars; trust = (rho, logit eta, k) tensors or None.
+    A3 holds the two-state table's rows (columns 0 and 1 = "no hate", 2 = "hate"); rows of unanswered nodes are 0
+    and stay 0."""
+    if trust is None:
+        return A3
+    rho, h, k = trust
+    ll0, ll2 = A3[:, 0], A3[:, 2]
+    ll1 = torch.logaddexp(torch.log1p(-rho) + ll0, torch.log(rho) + ll2)
+    eta = torch.sigmoid(h + k * U)
+    return torch.stack([ll0, ll1, torch.logaddexp(torch.log1p(-eta) + ll2, torch.log(eta) + ll1)], dim=1)
 
 
 def _nll_root(chunks, a, b):
@@ -92,12 +120,13 @@ def _nll_root(chunks, a, b):
     return tot, n
 
 
-def _nll_all(chunks, chain_d, a, b, c_loc):
+def _nll_all(chunks, chain_d, a, b, c_loc, trust=None):
     """Negative log marginal likelihood of all cached answers (sum over videos)."""
     tot = 0.0
     for c in chunks:
         phi = None if c["PHI"] is None else c_loc * c["PHI"]
-        l1, l0, lo1, lo0 = ctree.log_evidence(c["fo"], c_loc * c["S"], a * c["G"] + b, c["A3"], chain_d, phi)
+        l1, l0, lo1, lo0 = ctree.log_evidence(c["fo"], c_loc * c["S"], a * c["G"] + b,
+                                              _trust_rows(c["A3"], c["U"], trust), chain_d, phi)
         tot = tot - torch.logaddexp(l1 + lo1, l0 + lo0).sum()
     return tot
 
@@ -117,10 +146,13 @@ def _lbfgs(params, closure_value, max_iter=50):
 
 def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64):
     """Label-free prior weights from the cached answers of `vids` (module docstring). pri: collect(...).
-    mode: "root_all", "root" (c = 1), "joint" (a, b, c from all answers at once), "loc" (c only, a = 1, b = 0).
+    mode: "root_all", "root" (c = 1), "joint" (a, b, c from all answers at once), "loc" (c only, a = 1, b = 0),
+    "trust" (c, leak rho, miss eta from all answers; a = 1, b = 0), "trust_len" (trust with the miss length slope k).
     Returns {"a", "b", "c", "n_videos", "n_root", "nll_root_before / after" (per video with a root answer),
-    "nll_all_before / after" (per video)}."""
-    assert mode in ("root_all", "root", "joint", "loc")
+    "nll_all_before / after" (per video)} and, in the trust modes, "rho", "eta", "eta_slope"."""
+    assert mode in ("root_all", "root", "joint", "loc", "trust", "trust_len")
+    assert not mode.startswith("trust") or (getattr(am, "n_state", 3) == 2 and len(am.cats) == 1), \
+        "the trust scalars extend the two-state table of one answer category"
     chunks = _chunks(pri, store, vids, am, answers, device, chunk)
     chain_d = ctree._DoubleChain(chain)
     a = torch.ones((), dtype=torch.float64, device=device, requires_grad=True)
@@ -129,7 +161,16 @@ def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64)
     with torch.no_grad():
         r0, n_root = _nll_root(chunks, a, b)
         a0 = _nll_all(chunks, chain_d, a, b, c)
-    if mode == "joint":
+    trust = None
+    if mode.startswith("trust"):
+        r = torch.full((), -3.0, dtype=torch.float64, device=device, requires_grad=True)     # rho = sigmoid(r)
+        h = torch.full((), -3.0, dtype=torch.float64, device=device, requires_grad=True)     # eta at u = 0
+        k = torch.zeros((), dtype=torch.float64, device=device, requires_grad=mode == "trust_len")
+        a_, b_ = a.detach(), b.detach()
+        _lbfgs([c, r, h] + ([k] if mode == "trust_len" else []),
+               lambda: _nll_all(chunks, chain_d, a_, b_, c, (torch.sigmoid(r), h, k)), max_iter=100)
+        trust = (torch.sigmoid(r).detach(), h.detach(), k.detach())
+    elif mode == "joint":
         _lbfgs([a, b, c], lambda: _nll_all(chunks, chain_d, a, b, c))
     elif mode == "loc":
         a_, b_ = a.detach(), b.detach()
@@ -141,15 +182,54 @@ def fit(pri, store, vids, am, chain, answers, device, mode="root_all", chunk=64)
             _lbfgs([c], lambda: _nll_all(chunks, chain_d, a_, b_, c))
     with torch.no_grad():
         r1, _ = _nll_root(chunks, a, b)
-        a1 = _nll_all(chunks, chain_d, a, b, c)
+        a1 = _nll_all(chunks, chain_d, a, b, c, trust)
     n = len(vids)
-    return {"a": float(a), "b": float(b), "c": float(c), "n_videos": n, "n_root": n_root, "mode": mode,
-            "nll_root_before": float(r0) / max(n_root, 1), "nll_root_after": float(r1) / max(n_root, 1),
-            "nll_all_before": float(a0) / max(n, 1), "nll_all_after": float(a1) / max(n, 1)}
+    out = {"a": float(a), "b": float(b), "c": float(c), "n_videos": n, "n_root": n_root, "mode": mode,
+           "nll_root_before": float(r0) / max(n_root, 1), "nll_root_after": float(r1) / max(n_root, 1),
+           "nll_all_before": float(a0) / max(n, 1), "nll_all_after": float(a1) / max(n, 1)}
+    if trust is not None:
+        out.update(rho=float(trust[0]), eta=float(torch.sigmoid(trust[1])), eta_slope=float(trust[2]))
+    return out
 
 
 def as_tuple(w):
     return IDENTITY if w is None else (float(w["a"]), float(w["b"]), float(w["c"]))
+
+
+class TrustTable(torch.nn.Module):
+    """The anchored two-state answer table with the leak / miss scalars (module docstring) as a three-state answer
+    model: states 0 = no hate in the video, 1 = clean node of a hateful video, 2 = hateful node. Same interface as
+    qtree.AnswerModel where the policy and the posterior use it (level_logp, loglik, cats, n_state)."""
+
+    def __init__(self, base, rho, eta, eta_slope=0.0):
+        super().__init__()
+        assert base.n_state == 2 and len(base.cats) == 1
+        self.base, self.cats, self.n_state = base, list(base.cats), 3
+        self.len_mu, self.len_sd = base.len_mu, base.len_sd
+        self.rho = float(min(max(rho, 1e-9), 1 - 1e-9))
+        self.eta = float(min(max(eta, 1e-9), 1 - 1e-9))
+        self.eta_slope = float(eta_slope)
+
+    def level_logp(self, length):
+        lp = self.base.level_logp(length)                                 # N, C, 2, L
+        lp0, lp2 = lp[:, :, 0], lp[:, :, 1]
+        lp1 = torch.logaddexp(np.log1p(-self.rho) + lp0, np.log(self.rho) + lp2)
+        u = self.base.u(length).to(lp.device)
+        eta = torch.sigmoid(np.log(self.eta) - np.log1p(-self.eta) + self.eta_slope * u)[:, None, None]
+        lp2 = torch.logaddexp(torch.log1p(-eta) + lp2, torch.log(eta) + lp1)
+        return torch.stack([lp0, lp1, lp2], dim=2)                        # N, C, 3, L
+
+    def loglik(self, answers, length):
+        lp = self.level_logp(length)
+        idx = answers.long().to(lp.device)[:, :, None, None].expand(-1, -1, 3, 1)
+        return torch.gather(lp, 3, idx).squeeze(-1)[:, self.cats].sum(1)  # N, 3
+
+
+def table(am, w):
+    """The answer model to use with the weights w: the TrustTable when w carries the trust scalars, else am."""
+    if w is None or "rho" not in w:
+        return am
+    return TrustTable(am, w["rho"], w["eta"], w.get("eta_slope", 0.0))
 
 
 def label_reference(pri, vids, labels):
