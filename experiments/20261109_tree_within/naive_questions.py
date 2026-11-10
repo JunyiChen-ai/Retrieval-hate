@@ -72,7 +72,11 @@ def main():
     test = list(ids["test"])
     hate = {v for v in test if labels[v] == 1}
     P, _, _ = qdata.load_soft_p(a.corpus, "soft_both")
-    trials = {int(p.name.split("_")[0][4:]): p for p in (REPLAY / a.corpus).iterdir() if p.is_dir()}
+    # the revision-6 test-selected trials; the replay directory also holds the validation-selected ones, and until
+    # 2026-11-10 this took whichever directory of a seed was listed last (only the ours8 row depends on the trial)
+    summ = json.load(open(ROOT / f"runs/20261101_r6_length_table/final_curves/test_selected/{a.corpus}/summary.json"))
+    trials = {int(r["seed"]): REPLAY / a.corpus / f'seed{r["seed"]}_{Path(r["trial"]).name}'
+              for r in summ["trials"].values()}
     report = {"host": socket.gethostname(), "created": datetime.now().astimezone().isoformat(), "corpus": a.corpus,
               "trials": {s: str(p) for s, p in trials.items()}, "methods": {}}
     for method in hc.STRONGEST_BASELINE[a.corpus]:
