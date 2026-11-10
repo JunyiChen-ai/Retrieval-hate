@@ -45,8 +45,12 @@ def main():
     summ = json.load(open(ROOT / f"runs/20261101_r6_length_table/final_curves/test_selected/{a.corpus}/summary.json"))
 
     def mets(sc):
+        # 6 decimals, as the evaluator reads the scores from the score files (hc.write_scores): saturated posteriors
+        # tie there, which moves within by up to .01 in single trials
+        sc = {v: np.round(np.asarray(s, dtype=np.float64), 6) for v, s in sc.items()}
         m = hc.frame_metrics(sc, gt["test"], hate)
-        vm = hc.frame_metrics({v: np.full(len(s), float(np.mean(s))) for v, s in sc.items()}, gt["test"], hate)
+        vm = hc.frame_metrics({v: np.full(len(s), round(float(np.mean(s)), 6)) for v, s in sc.items()}, gt["test"],
+                              hate)
         return {"pooled_ap": float(m["pooled_ap"]), "pooled_roc": float(m["pooled_roc"]),
                 "within_roc": float(m["within_roc"]), "video_mean_ap": float(vm["pooled_ap"]),
                 "video_mean_roc": float(vm["pooled_roc"])}

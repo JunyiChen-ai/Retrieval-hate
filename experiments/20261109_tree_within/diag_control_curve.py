@@ -88,7 +88,8 @@ def main():
                 pr = {v: fit_length(by_seed[s].get(v, np.full(T[v], 0.5)), T[v]) for v in test}
                 row = {}
                 for al in ALPHAS:
-                    sc = {v: 1.0 / (1.0 + np.exp(-(al * hc.logit(pr[v]) + (1 - al) * hc.logit(ev[v])))) for v in test}
+                    sc = {v: np.round(1.0 / (1.0 + np.exp(-(al * hc.logit(pr[v]) + (1 - al) * hc.logit(ev[v])))), 6)
+                          for v in test}                 # 6 decimals, as the evaluator reads score files
                     m = hc.frame_metrics(sc, gt["test"], hate)
                     row["%.2f" % al] = {k: float(m[k]) for k in METS}
                 per_seed.append(row)
