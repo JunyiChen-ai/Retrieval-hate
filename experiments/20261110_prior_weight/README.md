@@ -784,3 +784,60 @@ seed, so rule 14(g) is not read; candidate minus the variant, AP / ROC / within:
   determined. Validation differs by at most .003.
 - 6-decimal score files (`@raw`): no difference on this seed (at most .0003 on any trial and depth).
 
+
+## 13. Result of the section-8 search (revision 6 + c, greedy EIG policy)
+
+Reader `summarize_search.py` (output `runs/20261110_prior_weight/search/summary_<corpus>.json`); ablation replays of
+the same checkpoints on the uoa-lab1 CPU (`launch/run_all_trials_cpu.sh "<corpus>" "<variants>"
+runs/20261110_prior_weight/search runs/20261110_prior_weight/s8_trials`), copied to the main machine. AP / ROC /
+within at 8 calls. Q2 (rule 8) is read when the three corpora have finished.
+
+### HateMM (uoa-lab1, job 2136, 3 seeds x 20 trials, first trial 842 s; 2026-11-11 17:02-21:41)
+
+| HateMM, 8 calls | AP / ROC / within | this search minus it |
+|---|---|---|
+| section-8 search, test-selected (trials 4 / 14 / 12 of seeds 234 / 2025 / 3407; c .16 / .49 / .11; 7.63 calls) | **.696 / .891 / .790** (std .006 / .004 / .006) | |
+| revision 6 | .702 / .889 / .783 | -.005 / +.002 / +.008 |
+| naive control (MACIL-SD + 8 equal windows) | .707 / .881 / .692 | -.010 / +.010 / +.099 |
+| first-level search, validated d (section 12) | .723 / .898 / .826 | -.026 / -.006 / -.036 |
+| validation-selected trials (2 / 17 / 11) | .634 / .854 / .726 | |
+| mean over the 60 trials | .670 / .879 / .775 | |
+
+- **Q1 is missed on HateMM by AP**: .0052 below revision 6 (tolerance .005); ROC is .002 above. **Q3 holds on
+  HateMM** (within +.008). AP is .010 below the naive control, as revision 6's was (.005 below).
+- Trials 0-9 (same hyper-parameters as revision 6's trials 0-9), paired: +.002 / +.003 / +.014 over revision 6,
+  the size section 4 found on the revision-6 checkpoints. The same 30 trials are identical to `depths["0"]` of the
+  first-level search's trials 0-9 (same selected epoch and same test numbers in 30 of 30): the two searches differ
+  only from trial 10 on (the sampler's objective).
+- c: median .31, .008 to .86, below .05 in 3 of 60 trials; gain in the validation answers' negative log marginal
+  likelihood: median .269, minimum .017.
+- Other budgets on the test-selected trials (0 / 1 / 2 / 4 / 8 / 16 / 32 calls): .653 / .841 / .761, .678 / .869 /
+  .770, .692 / .879 / .780, .698 / .888 / .802, .696 / .891 / .790, .705 / .890 / .787, .698 / .881 / .788.
+
+Ablations fixed in section 8, candidate minus the variant:
+
+| HateMM, 8 calls | test-selected trials | each variant's own best trial | all 60 trials, paired | trials 0-9 |
+|---|---|---|---|---|
+| (i) c = 1 on the same checkpoints (.698 / .889 / .777) | -.002 / +.003 / +.013 | -.002 / +.002 / +.004 | +.004 / +.004 / +.013 | +.004 / +.002 / +.009 |
+| (ii) revision 6's own search (.702 / .889 / .783) | -.005 / +.002 / +.008 | | | |
+| (iii) revision-6 questions, weighted posterior (.691 / .888 / .788) | +.006 / +.003 / +.002 | +.004 / +.002 / +.006 | +.003 / +.003 / +.009 | +.003 / +.002 / +.006 |
+| (iii) weighted questions, revision-6 posterior (.700 / .890 / .770) | -.004 / +.001 / +.021 | -.005 / +.001 / +.019 | +.002 / +.002 / +.007 | +.003 / +.002 / +.005 |
+| single level only, stored c (.711 / .890 / .817) | -.015 / +.001 / -.027 | -.022 / -.003 / -.036 | -.015 / -.001 / -.026 | -.013 / -.001 / -.030 |
+
+- **Rule 14(g) for c is not reached on HateMM under the greedy policy**: no reading gives an AP or ROC drop of .01
+  when c is removed (largest +.004 / +.004). Its effect here is on within (+.013 on the test-selected trials and
+  over all trials), and that comes from the posterior (the weighted questions with the revision-6 posterior lose
+  .021 within). This agrees with section 12: on HateMM the AP / ROC gain of the first-level candidate needs c and
+  the first level together.
+- **Goal (b) is not met on HateMM by this candidate**: with the same checkpoints and the stored c, asking only the 8
+  windows of depth 3 is .015 AP and .027 within above the greedy tree (ROC equal), on the test-selected trials and
+  over all trials (`first3` gives the same numbers as `level`: .711 / .890 / .819).
+- Replay check: the test numbers of the replay with the stored c equal the search's (largest difference 2e-6).
+  Validation differs by up to .020 (unrounded scores in `train.py`, 6-decimal scores in the replay; section 12).
+  Unrounded test scores (`@raw`): within of the test-selected trials .790 -> .798, AP / ROC unchanged; over all
+  trials +.002 / +.002 / +.009.
+
+### HCS, DeHate
+
+HCS: uoa-lab1 job 2137, started 2026-11-11 21:41. DeHate: seed 3407 uoa-lab1 job 2138 (after 2137), seeds 234 /
+2025 uoa-lab3 job 2142 (after the first-level DeHate job 2141, expected to end about 22:10).
