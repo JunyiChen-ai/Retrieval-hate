@@ -863,7 +863,7 @@ within at 8 calls. Q2 (rule 8) is read when the three corpora have finished.
 | revision 6 | .702 / .889 / .783 | -.005 / +.002 / +.008 |
 | naive control (MACIL-SD + 8 equal windows) | .707 / .881 / .692 | -.010 / +.010 / +.099 |
 | first-level search, validated d (section 12) | .723 / .898 / .826 | -.026 / -.006 / -.036 |
-| validation-selected trials (2 / 17 / 11) | .634 / .854 / .726 | |
+| validation-selected trials (17 / 2 / 11) | .634 / .854 / .726 | |
 | mean over the 60 trials | .670 / .879 / .775 | |
 
 - **Q1 is missed on HateMM by AP**: .0052 below revision 6 (tolerance .005); ROC is .002 above. **Q3 holds on
@@ -900,7 +900,51 @@ Ablations fixed in section 8, candidate minus the variant:
   Unrounded test scores (`@raw`): within of the test-selected trials .790 -> .798, AP / ROC unchanged; over all
   trials +.002 / +.002 / +.009.
 
-### HCS, DeHate
+### HCS (uoa-lab1, job 2137, 3 seeds x 20 trials, first trial 347-348 s; 2026-11-11 21:41-23:34)
 
-HCS: uoa-lab1 job 2137, started 2026-11-11 21:41. DeHate: seed 3407 uoa-lab1 job 2138 (after 2137), seeds 234 /
-2025 uoa-lab3 job 2142 (after the first-level DeHate job 2141, expected to end about 22:10).
+**The 60 trials are the 60 trials of the first-level search at d = 0**: same hyper-parameters, same selected epoch
+and the same test numbers in 60 of 60 (the first-level search chose d = 0 in 59 of its 60 HCS trials, so the two
+samplers saw the same objective values except once, and drew the same hyper-parameters throughout). The result is
+therefore the one of section 12: the two candidates do not differ on HCS.
+
+| HCS, 8 calls | AP / ROC / within | this search minus it |
+|---|---|---|
+| section-8 search, test-selected (trials 18 / 18 / 12 of seeds 234 / 2025 / 3407; c .02 / .22 / .08; 8.00 calls) | **.704 / .688 / .605** (std .003 / .008 / .008) | |
+| revision 6 | .691 / .680 / .563 | +.012 / +.008 / +.042 |
+| naive control (DSANet + 8 equal windows) | .696 / .653 / .577 | +.008 / +.035 / +.028 |
+| first-level search, validated d (section 12) | .704 / .688 / .605 | the same trials |
+| validation-selected trials (6 / 2 / 13) | .681 / .657 / .596 | |
+| mean over the 60 trials | .685 / .665 / .600 | |
+
+- **Q1 and Q3 hold on HCS** (+.012 / +.008 over revision 6, within +.042). Trials 0-9 paired with revision 6's
+  trials 0-9: +.005 / +.007 / +.043.
+- c: median .09, -.007 to .51 (negative in 5 trials, none exactly 0), below .05 in 21 of 60; gain in the validation
+  answers' negative log marginal likelihood: median 2.77, minimum .75.
+- Other budgets on the test-selected trials (0 / 1 / 2 / 4 / 8 / 16 / 32 calls): .651 / .638 / .602, .663 / .649 /
+  .604, .679 / .668 / .614, .688 / .680 / .621, .704 / .688 / .605, .718 / .697 / .621, .718 / .691 / .644.
+
+Ablations (reader `s8_ablation.py`, output `runs/20261110_prior_weight/s8_trials/s8_ablation_<corpus>.json`; the
+HateMM table above is reproduced by it), candidate minus the variant:
+
+| HCS, 8 calls | test-selected trials | each variant's own best trial | all 60 trials, paired | trials 0-9 |
+|---|---|---|---|---|
+| (i) c = 1 on the same checkpoints (.661 / .646 / .570) | +.043 / +.042 / +.036 | +.022 / +.013 / +.045 | +.034 / +.030 / +.048 | +.024 / +.023 / +.044 |
+| (ii) revision 6's own search (.691 / .680 / .563) | +.012 / +.008 / +.042 | | | |
+| (iii) revision-6 questions, weighted posterior (.672 / .665 / .600) | +.031 / +.023 / +.005 | +.014 / +.011 / +.021 | +.019 / +.013 / +.016 | +.010 / +.008 / +.014 |
+| (iii) weighted questions, revision-6 posterior (.669 / .657 / .570) | +.034 / +.031 / +.036 | +.016 / +.013 / +.041 | +.032 / +.029 / +.045 | +.022 / +.022 / +.041 |
+| single level only, stored c (.680 / .662 / .610) | +.024 / +.026 / -.004 | +.024 / +.022 / -.002 | +.017 / +.016 / -.005 | +.015 / +.016 / -.003 |
+
+- **Rule 14(g) for c is reached on HCS in ablation (i)**: at least +.022 AP and +.013 ROC in every reading. Against
+  revision 6's own search (ii) the AP lead is .012 and the ROC lead .008.
+- The 2 x 2 split: on HCS both uses of c matter. With the weighted posterior but the questions chosen under weight
+  1, AP / ROC are .031 / .023 lower (all trials .019 / .013); with the weighted questions but the posterior under
+  weight 1, .034 / .031 lower and within .036 lower. On HateMM neither changes AP / ROC by more than .006.
+- **Goal (b) holds on HCS**: the greedy tree is .024 / .026 AP / ROC above the single level on the same checkpoints
+  and .004 below on within (tolerance .005); `first3` gives the same numbers as `level`.
+- Replay check: test numbers equal the search's (largest difference below 1e-6); validation differs by at most
+  .003. Unrounded test scores (`@raw`) change nothing on HCS.
+
+### DeHate
+
+Running: seeds 234 / 2025 on uoa-lab3 (job 2142, started 2026-11-11 22:13, about 16 h); seed 3407 on uoa-lab1 (job
+2138, started 23:34, about 11.5 h).
