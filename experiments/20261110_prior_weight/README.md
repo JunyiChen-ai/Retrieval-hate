@@ -760,6 +760,27 @@ Seed 3407 alone (one seed; R1-R4 need the three seeds and are not read here), 8 
 ROC / within: the trial with the best test (AP + ROC) / 2 is trial 12, .304 / .793 / .711 (chosen d = 2, c = .11);
 mean over the 20 trials .258 / .778 / .690. Chosen d over the 20 trials: d = 0 / 1 / 2 / 3 in 6 / 5 / 8 / 1. The
 fixed depths differ little on this seed: all-trial means d = 0 .257 / .779 / .689, d = 1 .260 / .779 / .689,
-d = 2 .257 / .778 / .691, d = 3 .256 / .773 / .698. The replays of the seed-3407 checkpoints for the c ablation
-(same variants as for HateMM and HCS, plus the four `@raw` variants) run on the uoa-lab1 CPU since 17:08.
+d = 2 .257 / .778 / .691, d = 3 .256 / .773 / .698.
+
+Replays of the seed-3407 checkpoints (uoa-lab1 CPU, 17:08-17:39, same variants as for HateMM and HCS plus the four
+`@raw` variants; `runs/20261110_prior_weight/r7_trials/dehate/seed3407/`, copied to the main machine). Still one
+seed, so rule 14(g) is not read; candidate minus the variant, AP / ROC / within:
+
+| seed 3407, 8 calls | test-selected trial (12) | each variant's own best trial | all 20 trials, paired | trials 0-9 |
+|---|---|---|---|---|
+| c = 1, d kept (.269 / .767 / .686 on trial 12) | +.035 / +.026 / +.025 | +.033 / +.020 / +.020 | +.020 / +.023 / +.016 | +.023 / +.028 / +.024 |
+| c = 1, d chosen again (.264 / .762 / .683) | +.040 / +.030 / +.029 | +.039 / +.010 / +.012 | +.020 / +.023 / +.017 | +.022 / +.027 / +.025 |
+| level only, stored c (.298 / .789 / .711) | +.007 / +.004 / .000 | +.007 / +.004 / .000 | +.001 / +.005 / -.008 | +.001 / +.006 / -.007 |
+
+- c on this seed: median .26, .004 to .55, below .05 in 3 of 20 trials. Under c = 1 validation chooses d = 0 / 1 /
+  2 / 3 in 6 / 8 / 6 / 0 trials and a different d than under the stored c in 17 of 20 trials.
+- Against the level-only policy the chosen depth is level on AP / ROC over all trials (+.001 / +.005) and .008
+  lower on within (beyond the .005 tolerance of R3); on trial 12 the two are equal on within.
+- Reproduction (replay with the stored c against the search's own `depths`): 73 of the 80 (trial, depth) pairs
+  agree within .0001 on test and three more (trial 1) within .0004. Trials 2 and 6 at d = 0 and d = 1 differ in AP
+  by .003-.006 (ROC by at most .0003, within not at all); both have c near .45-.47 and neither is the
+  test-selected trial. On HateMM and HCS the test
+  replays were exact. The search ran on the GPU, the replay on the CPU; the cause of the four differences is not
+  determined. Validation differs by at most .003.
+- 6-decimal score files (`@raw`): no difference on this seed (at most .0003 on any trial and depth).
 
