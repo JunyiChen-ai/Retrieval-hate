@@ -946,5 +946,23 @@ HateMM table above is reproduced by it), candidate minus the variant:
 
 ### DeHate
 
-Running: seeds 234 / 2025 on uoa-lab3 (job 2142, started 2026-11-11 22:13, about 16 h); seed 3407 on uoa-lab1 (job
-2138, started 23:34, about 11.5 h).
+State 2026-11-12 09:20. Seed 3407 finished (uoa-lab1 job 2138, 2026-11-11 23:34 - 2026-11-12 09:16, first trial
+1798 s, 20 trials; local `runs/20261110_prior_weight/search/dehate/seed3407/`). Seeds 234 / 2025 are running on
+uoa-lab3 (job 2142, started 2026-11-11 22:13; 14 of 20 trials finished per seed at 09:18, about 47.5 min per trial,
+expected end about 14:05). The ablation replays need the three seeds and start after job 2142.
+
+Seed 3407 only (one seed; Q1-Q3 and rule 14(g) are not read on it), AP / ROC / within at 8 calls:
+
+| | value | note |
+|---|---|---|
+| test-selected trial (12) | .290 / .792 / .705 | c = .11, 7.26 calls |
+| validation-selected trial (4) | .239 / .786 / .691 | |
+| mean of the 20 trials | .257 / .779 / .689 | |
+| minus revision 6, same seed, test-selected (its trial 12, .312 / .776 / .688) | -.022 / +.016 / +.017 | |
+| minus revision 6, trials 0-9 paired | +.019 / +.028 / +.028 | same hyper-parameters |
+| minus the first-level candidate, same seed, test-selected (.304 / .793 / .711, d = 2) | -.015 / -.000 / -.006 | |
+| minus the first-level candidate, 20 trials paired | -.001 / +.001 / -.001 | |
+
+- The 20 trials are identical to the first-level search's 20 trials of this seed at d = 0 (same epoch, test numbers
+  equal to 4 decimals), as on HCS.
+- c: median .26, range .004 - .55, none exactly 0, none negative, below .05 in 3 of 20 trials.
