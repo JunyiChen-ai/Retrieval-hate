@@ -749,10 +749,17 @@ copied from the local machine to uoa-lab1; results copied back), read by `c_abla
 
 ### DeHate
 
-Running: seeds 234 / 2025 on uoa-lab3 (job 2141, started 2026-11-11 06:14); seed 3407 on uoa-lab1 (2135) runs
-since 2026-11-11 06:48 (the other user's job ended early). First trial on uoa-lab3 2868-2869 s, so 20 trials per
-seed (expected end about 22:10). uoa-lab3 stays at the commit of the search start while its jobs run; uoa-lab1
-was pulled before job 2135 started and once during its first trial (06:57); the commits after the search start
-change only this README, STATUS, the readers and the CPU replay tools (no file under `src/`, not `train.py`, not
-the search scripts).
+State 2026-11-11 17:10. Seed 3407 (uoa-lab1, job 2135) finished 17:02: first trial 2073 s, 20 trials, copied to
+the main machine. Seeds 234 / 2025 (uoa-lab3, job 2141, started 06:14) still run: first trial 2868-2869 s, 20
+trials per seed, 14 trial directories each at 17:07, expected end about 22:10. uoa-lab3 stays at the commit of the
+search start while its jobs run; uoa-lab1 was pulled before job 2135 started and once during its first trial
+(06:57); the commits after the search start change only this README, STATUS, the readers and the CPU replay tools
+(no file under `src/`, not `train.py`, not the search scripts).
+
+Seed 3407 alone (one seed; R1-R4 need the three seeds and are not read here), 8 calls (7.26 used on average), AP /
+ROC / within: the trial with the best test (AP + ROC) / 2 is trial 12, .304 / .793 / .711 (chosen d = 2, c = .11);
+mean over the 20 trials .258 / .778 / .690. Chosen d over the 20 trials: d = 0 / 1 / 2 / 3 in 6 / 5 / 8 / 1. The
+fixed depths differ little on this seed: all-trial means d = 0 .257 / .779 / .689, d = 1 .260 / .779 / .689,
+d = 2 .257 / .778 / .691, d = 3 .256 / .773 / .698. The replays of the seed-3407 checkpoints for the c ablation
+(same variants as for HateMM and HCS, plus the four `@raw` variants) run on the uoa-lab1 CPU since 17:08.
 
