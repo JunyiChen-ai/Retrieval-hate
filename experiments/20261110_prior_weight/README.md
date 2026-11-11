@@ -747,20 +747,75 @@ copied from the local machine to uoa-lab1; results copied back), read by `c_abla
   on these checkpoints +.004 over all trials and nothing on the best trials. HCS and DeHate: +.001 to +.002 within
   over all trials for revision 6, nothing on the reported trials, nothing with the weight.
 
-### DeHate
+### DeHate (uoa-lab3 job 2141, seeds 234 / 2025, 2868-2869 s per first trial; uoa-lab1 job 2135, seed 3407, 2073 s; 20 trials per seed; finished 2026-11-11 22:13)
 
-State 2026-11-11 17:10. Seed 3407 (uoa-lab1, job 2135) finished 17:02: first trial 2073 s, 20 trials, copied to
-the main machine. Seeds 234 / 2025 (uoa-lab3, job 2141, started 06:14) still run: first trial 2868-2869 s, 20
-trials per seed, 14 trial directories each at 17:07, expected end about 22:10. uoa-lab3 stays at the commit of the
-search start while its jobs run; uoa-lab1 was pulled before job 2135 started and once during its first trial
-(06:57); the commits after the search start change only this README, STATUS, the readers and the CPU replay tools
-(no file under `src/`, not `train.py`, not the search scripts).
+uoa-lab3 stayed at the commit of the search start while its jobs ran; uoa-lab1 was pulled before job 2135 started
+and once during its first trial (06:57); the commits after the search start change only this README, STATUS, the
+readers and the CPU replay tools (no file under `src/`, not `train.py`, not the search scripts).
 
-Seed 3407 alone (one seed; R1-R4 need the three seeds and are not read here), 8 calls (7.26 used on average), AP /
-ROC / within: the trial with the best test (AP + ROC) / 2 is trial 12, .304 / .793 / .711 (chosen d = 2, c = .11);
-mean over the 20 trials .258 / .778 / .690. Chosen d over the 20 trials: d = 0 / 1 / 2 / 3 in 6 / 5 / 8 / 1. The
-fixed depths differ little on this seed: all-trial means d = 0 .257 / .779 / .689, d = 1 .260 / .779 / .689,
-d = 2 .257 / .778 / .691, d = 3 .256 / .773 / .698.
+| 8 calls | AP / ROC / within |
+|---|---|
+| chosen d, test-selected trials (4, 4, 12 of seeds 234 / 2025 / 3407; d = 2 / 1 / 2; c .08 / .06 / .11; 7.26 calls) | **.291 / .795 / .710** (seed std .009 / .002 / .003) |
+| naive control (Fed-WSVAD 3 clients + 8 equal windows, alpha .4, 6.56 calls) | .243 / .777 / .601 (std .016 / .003 / .002) |
+| revision 6 (test-selected) | .278 / .770 / .681 |
+| the same three trials with d = 0 / 1 / 2 / 3 | .283 / .795 / .704, .289 / .795 / .705, .290 / .795 / .712, .281 / .792 / .719 |
+| fixed d = 0 (greedy), its own best trial per seed (the same trials) | .283 / .795 / .704 (std .005 / .002 / .001) |
+| fixed d = 1, own best (trials 4, 10, 12) | .291 / .795 / .696 (std .009 / .001 / .013) |
+| fixed d = 2, own best (the same trials) | .290 / .795 / .712 |
+| fixed d = 3, own best (trials 18, 4, 12) | .286 / .787 / .704 (std .009 / .005 / .016) |
+| chosen d, validation-selected trials (13, 4, 8) | .263 / .788 / .686 |
+| chosen d, mean of the 60 trials | .254 / .781 / .685 |
+
+- **R1 holds on DeHate**: +.049 / +.018 over the naive control (within +.108); both leads are larger than both
+  seed standard deviations (AP .009 and .016, ROC .002 and .003) and than .005.
+- **R2 holds on DeHate**: +.013 / +.025 over revision 6 (within +.029).
+- **R3: the first half of goal (b) does not hold on DeHate.** The chosen depths are 2 / 1 / 2. Within of the chosen
+  depth is .010 below `depths["3"]` on the same trials (.710 against .719; tolerance .005), .011 below over all
+  trials and over trials 0-9; against `depths["0"]` it is .006 above. AP / ROC of the chosen depth against
+  `depths["3"]`: +.011 / +.003 on the test-selected trials, +.002 / +.005 over all trials, +.003 / +.006 over
+  trials 0-9, +.005 / +.008 against d = 3's own best trials. So on DeHate the 8 equal windows first give the
+  higher within and the chosen depth a little more AP / ROC; neither half of goal (b) holds in every reading.
+- **R4**: chosen d at 8 calls d = 0 / 1 / 2 / 3 in 42 / 22 / 35 / 2 % of the 60 trials; at 2 calls d = 1 in 77 %;
+  at 4 calls d = 0 / 1 in 47 / 53 %; at 16 calls d = 3 in 45 %, d = 2 in 30 %; at 32 calls d = 4 in 82 %. The
+  chosen d is the d with the best test value in 20 % of the trials (best-on-test shares 7 / 40 / 38 / 15 %):
+  validation does not identify the depth on DeHate. It also does not matter much: the choice costs or gains at most
+  .002 AP / .001 ROC / .001 within against a fixed d = 0, 1 or 2 over all trials (all-trial means .252 / .781 /
+  .684, .256 / .781 / .685, .254 / .781 / .685; chosen .254 / .781 / .685), and taking the best d on test per
+  trial would give .258 / .781 / .687. Only d = 3 differs: -.002 / -.005 AP / ROC and +.011 within.
+- Other budgets, chosen d minus d = 0 over the 60 trials: 2 calls +.011 / -.004 / +.003; 4 calls +.004 / .000 /
+  -.001; 16 calls +.001 / .000 / +.001; 32 calls .000 / .000 / +.001 (mean calls used 1.99 / 3.88 / 7.26 / 13.0 /
+  22.0 at 2 / 4 / 8 / 16 / 32: the DeHate videos are short). On the test-selected trials: 0 calls .238 / .722 /
+  .670; 1 call .254 / .752 / .668; 2 calls .277 / .769 / .678 (d = 1) against .266 / .774 / .673; 4 calls .286 /
+  .785 / .691 (d = 1) against .277 / .785 / .697; 16 calls .280 / .800 / .728 against .277 / .798 / .728; 32
+  calls .274 / .800 / .740 against .272 / .797 / .737.
+- c over the 60 trials: median .18 (.004 to 1.46; above 1 in 2 trials), below .05 in 16 trials. Mean test numbers
+  by c: below .05 (16 trials) .252 / .787 / .676; .05 to .15 (12) .263 / .784 / .687; above .15 (32) .252 / .776 /
+  .688.
+- The trial chosen by validation is below the trial chosen by test (.263 / .788 against .291 / .795), as on the
+  other two corpora.
+
+**Three corpora (first-level candidate: revision 6 + c + first level chosen on validation), 8 calls.**
+
+| | HateMM | HCS | DeHate |
+|---|---|---|---|
+| candidate, test-selected | .723 / .898 / .826 | .704 / .688 / .605 | .291 / .795 / .710 |
+| chosen d on the three seeds | 3 / 3 / 3 | 0 / 0 / 0 | 2 / 1 / 2 |
+| minus naive control (R1) | +.016 / +.017 / +.134 | +.008 / +.035 / +.028 | +.049 / +.018 / +.108 |
+| minus revision 6 (R2) | +.021 / +.009 / +.043 | +.012 / +.008 / +.042 | +.013 / +.025 / +.029 |
+| chosen d minus `depths["3"]`, same trials (R3) | the same policy | +.024 / +.026 / -.004 | +.011 / +.003 / -.010 |
+
+- **R1 (goal a) and R2 (goal c) hold on the three corpora.**
+- **R2b (rule 8 main gate) holds**: the six pooled numbers against `docs/duplex/OFFICIAL_VAL_RESULTS.md` and the
+  DeHate table (`experiments/20260926_dehate_external/README.md` 5.1): HateMM .723 / .898 against .573 / .807
+  (MACIL-SD, std .033 / .019), HCS .704 against .562 (Fed-WSVAD 3 clients, std .036) and .688 against .528
+  (DSANet, std .023), DeHate .291 / .795 against .174 / .701 (Fed-WSVAD 3 clients, std .017 / .010). Leads +.150 /
+  +.091, +.142 / +.160, +.117 / +.094: each is larger than both seed standard deviations (candidate at most .009)
+  and than .005.
+- **Goal (b) holds on HCS only.** HateMM: validation selects the single level itself. DeHate: the selected depths
+  are between the two ends and within is .010 below the 8-equal-windows-first policy. This is what section 9 and
+  stage A of section 10 expected; no policy in the candidate set changes it.
+
+Seed 3407 alone (the three-seed c ablation follows when the replays of seeds 234 / 2025 finish):
 
 Replays of the seed-3407 checkpoints (uoa-lab1 CPU, 17:08-17:39, same variants as for HateMM and HCS plus the four
 `@raw` variants; `runs/20261110_prior_weight/r7_trials/dehate/seed3407/`, copied to the main machine). Still one
