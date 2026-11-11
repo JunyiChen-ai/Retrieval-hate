@@ -815,30 +815,38 @@ readers and the CPU replay tools (no file under `src/`, not `train.py`, not the 
   are between the two ends and within is .010 below the 8-equal-windows-first policy. This is what section 9 and
   stage A of section 10 expected; no policy in the candidate set changes it.
 
-Seed 3407 alone (the three-seed c ablation follows when the replays of seeds 234 / 2025 finish):
+**Weight c on the candidate's own configuration, DeHate (rule 14(g), reading 1) and the level-only reference.**
+Replays of the 60 DeHate checkpoints on the uoa-lab1 CPU (seed 3407 17:08-17:39, seeds 234 / 2025 22:17-22:49;
+same variants as for HateMM and HCS plus the four `@raw` variants; `runs/20261110_prior_weight/r7_trials/dehate/`,
+`c_ablation_dehate.json`, copied to the main machine). Candidate minus the variant, AP / ROC / within:
 
-Replays of the seed-3407 checkpoints (uoa-lab1 CPU, 17:08-17:39, same variants as for HateMM and HCS plus the four
-`@raw` variants; `runs/20261110_prior_weight/r7_trials/dehate/seed3407/`, copied to the main machine). Still one
-seed, so rule 14(g) is not read; candidate minus the variant, AP / ROC / within:
-
-| seed 3407, 8 calls | test-selected trial (12) | each variant's own best trial | all 20 trials, paired | trials 0-9 |
+| DeHate, 8 calls | test-selected trials | each variant's own best trial | all 60 trials, paired | trials 0-9 |
 |---|---|---|---|---|
-| c = 1, d kept (.269 / .767 / .686 on trial 12) | +.035 / +.026 / +.025 | +.033 / +.020 / +.020 | +.020 / +.023 / +.016 | +.023 / +.028 / +.024 |
-| c = 1, d chosen again (.264 / .762 / .683) | +.040 / +.030 / +.029 | +.039 / +.010 / +.012 | +.020 / +.023 / +.017 | +.022 / +.027 / +.025 |
-| level only, stored c (.298 / .789 / .711) | +.007 / +.004 / .000 | +.007 / +.004 / .000 | +.001 / +.005 / -.008 | +.001 / +.006 / -.007 |
+| c = 1, d kept (.266 / .768 / .673) | +.026 / +.027 / +.037 | +.026 / +.017 / +.021 | +.020 / +.027 / +.015 | +.021 / +.026 / +.019 |
+| c = 1, d chosen again under c = 1 (.266 / .766 / .673) | +.025 / +.029 / +.036 | +.028 / +.014 / +.018 | +.019 / +.026 / +.015 | +.020 / +.026 / +.019 |
+| level only, stored c (.283 / .792 / .719) | +.008 / +.003 / -.009 | +.008 / +.003 / -.009 | +.001 / +.005 / -.011 | +.002 / +.006 / -.011 |
 
-- c on this seed: median .26, .004 to .55, below .05 in 3 of 20 trials. Under c = 1 validation chooses d = 0 / 1 /
-  2 / 3 in 6 / 8 / 6 / 0 trials and a different d than under the stored c in 17 of 20 trials.
-- Against the level-only policy the chosen depth is level on AP / ROC over all trials (+.001 / +.005) and .008
-  lower on within (beyond the .005 tolerance of R3); on trial 12 the two are equal on within.
-- Reproduction (replay with the stored c against the search's own `depths`): 73 of the 80 (trial, depth) pairs
-  agree within .0001 on test and three more (trial 1) within .0004. Trials 2 and 6 at d = 0 and d = 1 differ in AP
-  by .003-.006 (ROC by at most .0003, within not at all); both have c near .45-.47 and neither is the
-  test-selected trial. On HateMM and HCS the test
-  replays were exact. The search ran on the GPU, the replay on the CPU; the cause of the four differences is not
-  determined. Validation differs by at most .003.
-- 6-decimal score files (`@raw`): no difference on this seed (at most .0003 on any trial and depth).
-
+- **Rule 14(g), reading 1, holds on DeHate**: removing c from the candidate's own checkpoints costs at least .019
+  AP and .014 ROC in every reading. With HateMM (+.025 / +.011 test-selected, +.021 / +.008 all trials) and HCS
+  (+.043 / +.042, +.034 / +.030) **reading 1 holds on the three corpora**: the AP drop is at least .016 on every
+  corpus in every reading (d kept or chosen again; test-selected, own best, all trials, trials 0-9). On HateMM
+  the ROC drop reaches .01 only on the test-selected trials (+.011 / +.016), not over all trials (+.008 / +.005).
+- Against revision 6 as the reference selected without c (.278 / .770 / .681; with d chosen on validation .279 /
+  .771 / .682): +.013 / +.025 / +.029 and +.012 / +.024 / +.028.
+- Under c = 1 validation chooses d = 0 / 1 / 2 / 3 in 28 / 38 / 33 / 0 % of the trials, a different d than under
+  the stored c in 70 %.
+- Level-only reference of R3: the same reading as `depths["3"]` (within of the chosen depth .009 lower on the
+  test-selected trials, .011 lower over all trials; AP / ROC +.008 / +.003 and +.001 / +.005).
+- Reproduction (replay with the stored c against the search's own `depths`): 236 of the 240 (trial, depth) pairs
+  agree within .0004 on test (227 within .0001); the replay chooses the same d in 59 of 60 trials; validation
+  differs by at most .003. The four pairs that differ are trials 2 and 6 of seed 3407 at d = 0 and d = 1: AP by
+  .003-.006 (ROC by at most .0003, within not at all); both have c near .45-.47 and neither is a test-selected
+  trial. Seed 3407 was searched on the uoa-lab1 GPU and seeds 234 / 2025 on the uoa-lab3 GPU; all replays ran on
+  the uoa-lab1 CPU. The cause of the four differences is not determined. On HateMM and HCS the test replays were
+  exact.
+- 6-decimal score files (`@raw`): no effect on DeHate. Mean difference zero over the 240 pairs, the test-selected
+  trials unchanged (.291 / .795 / .710); one trial (seed 234, trial 8) has within .005-.007 higher on unrounded
+  scores.
 
 ## 13. Result of the section-8 search (revision 6 + c, greedy EIG policy)
 
