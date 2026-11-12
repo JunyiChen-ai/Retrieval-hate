@@ -966,4 +966,64 @@ HateMM table above is reproduced by it), candidate minus the variant:
 - Other budgets on the test-selected trials (0 / 1 / 2 / 4 / 8 / 16 / 32 calls): .238 / .722 / .670, .254 / .752 /
   .668, .266 / .774 / .673, .277 / .785 / .697, .283 / .795 / .704, .277 / .798 / .728, .272 / .797 / .737.
 
-Ablation replays of the 60 checkpoints: running on the uoa-lab1 CPU since 2026-11-12 13:25.
+Ablations (replays of the 60 checkpoints on the uoa-lab1 CPU, 2026-11-12 13:25-13:44;
+`runs/20261110_prior_weight/s8_trials/dehate/`, `s8_ablation_dehate.json`, copied to the main machine), candidate
+minus the variant:
+
+| DeHate, 8 calls | test-selected trials | each variant's own best trial | all 60 trials, paired | trials 0-9 |
+|---|---|---|---|---|
+| (i) c = 1 on the same checkpoints (.263 / .763 / .671) | +.020 / +.032 / +.032 | +.012 / +.019 / +.015 | +.017 / +.028 / +.016 | +.020 / +.027 / +.019 |
+| (ii) revision 6's own search (.278 / .770 / .681) | +.005 / +.025 / +.023 | | | |
+| (iii) revision-6 questions, weighted posterior (.282 / .788 / .709) | +.001 / +.006 / -.005 | -.014 / +.010 / +.013 | -.003 / +.003 / +.001 | -.002 / +.002 / +.001 |
+| (iii) weighted questions, revision-6 posterior (.247 / .769 / .672) | +.035 / +.026 / +.032 | +.016 / +.017 / +.011 | +.023 / +.025 / +.015 | +.025 / +.026 / +.018 |
+| single level only, stored c (.283 / .792 / .719) | -.001 / +.003 / -.015 | -.001 / +.003 / -.015 | -.001 / +.005 / -.012 | +.001 / +.006 / -.011 |
+
+- **Rule 14(g) for c is reached on DeHate in ablation (i)**: at least +.012 AP and +.019 ROC in every reading.
+  Against revision 6's own search (ii) the ROC lead is .025 and the AP lead .005.
+- The 2 x 2 split: on DeHate the effect of c is in the posterior. With the questions chosen under weight 1 and the
+  weighted posterior the result stays within .006 of the candidate on the test-selected trials (.003 over all
+  trials); with the weighted questions and the posterior under weight 1, AP / ROC are .035 / .026 lower (all trials
+  .023 / .025). On HCS both uses matter, on HateMM neither changes AP / ROC by more than .006.
+- **Goal (b) is not met on DeHate by this candidate**: on the same checkpoints with the stored c, the single level
+  has the same AP / ROC (candidate -.001 / +.003; all trials -.001 / +.005) and within .015 higher (.012 over all
+  trials). `first3` gives .281 / .792 / .719 on the test-selected trials.
+- Replay check: 55 of the 60 trials agree with the search within .0001 on test and 58 within .0002. Trials 2 and 6
+  of seed 3407 differ in AP by +.006 and -.003 (ROC by at most .0003, within not at all). These are the two trials
+  that differed in the first-level replays (section 12); the two searches trained these configurations separately
+  on the uoa-lab1 GPU and gave identical test numbers, so the difference belongs to the GPU search / CPU replay pair
+  for these two configurations (c near .45-.47), not to one run. The cause is not determined; neither is a
+  test-selected trial. Validation differs by at most .003. Unrounded test scores (`@raw`) change nothing on DeHate.
+
+### Three corpora (section-8 candidate: revision 6 + c, greedy EIG policy), 8 calls
+
+| | HateMM | HCS | DeHate |
+|---|---|---|---|
+| candidate, test-selected | .696 / .891 / .790 | .704 / .688 / .605 | .283 / .795 / .704 |
+| seed std | .006 / .004 / .006 | .003 / .008 / .008 | .005 / .002 / .001 |
+| minus revision 6 (Q1, Q3) | -.005 / +.002 / +.008 | +.012 / +.008 / +.042 | +.005 / +.025 / +.023 |
+| minus the rule-8 table, AP / ROC (Q2) | +.123 / +.084 | +.142 / +.160 | +.109 / +.094 |
+| minus naive control | -.010 / +.010 / +.099 | +.008 / +.035 / +.028 | +.040 / +.018 / +.103 |
+| (i) minus c = 1, same checkpoints, test-selected | -.002 / +.003 / +.013 | +.043 / +.042 / +.036 | +.020 / +.032 / +.032 |
+| (i) minus c = 1, all 60 trials paired | +.004 / +.004 / +.013 | +.034 / +.030 / +.048 | +.017 / +.028 / +.016 |
+| minus the single level, same checkpoints | -.015 / +.001 / -.027 | +.024 / +.026 / -.004 | -.001 / +.003 / -.015 |
+| minus the first-level candidate (section 12) | -.026 / -.006 / -.036 | the same trials | -.009 / -.000 / -.006 |
+
+- **Q1 (goal c) fails**: HateMM AP is .0052 below revision 6 (tolerance .005). It holds on HCS and DeHate.
+- **Q2 (rule 8 main gate) holds**: the six pooled numbers against `docs/duplex/OFFICIAL_VAL_RESULTS.md` and the
+  DeHate table (HateMM .573 / .807 MACIL-SD, std .033 / .019; HCS AP .562 Fed-WSVAD 3 clients, std .036, ROC .528
+  DSANet, std .023; DeHate .174 / .701 Fed-WSVAD 3 clients, std .017 / .010). Each lead is larger than both seed
+  standard deviations and than .005.
+- **Q3 holds**: within is above revision 6 on the three corpora (+.008 / +.042 / +.023).
+- **Goal (a) fails on HateMM**: AP is .010 below the naive control. On HCS and DeHate the leads over the control
+  are larger than both seed standard deviations and than .005.
+- **Rule 14(g), reading 2, for c is reached on HCS and DeHate and not on HateMM** (largest AP / ROC drop on HateMM
+  +.004 / +.004). Under the greedy policy the weight c therefore cannot be claimed as a mechanism for AP / ROC on
+  all corpora. On the first-level candidate's configuration (reading 1, section 12) it is reached on the three
+  corpora.
+- **Goal (b) holds on HCS only**, as for the first-level candidate.
+- **The two candidates.** They are the same on HCS. On HateMM and DeHate the first-level candidate (revision 6 + c
+  + first level chosen on validation; .723 / .898 / .826, .704 / .688 / .605, .291 / .795 / .710) is higher by
+  .026 / .006 / .036 and .009 / .000 / .006. It is the only one of the two that meets goal (a) (R1) and goal (c)
+  (R2) on the three corpora and for which c reaches rule 14(g) on the three corpora. Neither meets goal (b) on
+  HateMM and DeHate. Which one becomes revision 7 (d as a scalar hyper-parameter under rule 13, not claimed) is the
+  user's ruling; the method framework page stays at revision 6 until then.
