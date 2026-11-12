@@ -944,25 +944,26 @@ HateMM table above is reproduced by it), candidate minus the variant:
 - Replay check: test numbers equal the search's (largest difference below 1e-6); validation differs by at most
   .003. Unrounded test scores (`@raw`) change nothing on HCS.
 
-### DeHate
+### DeHate (uoa-lab3 job 2142, seeds 234 / 2025, first trial 2910 s, 2026-11-11 22:13 - 2026-11-12 13:24; uoa-lab1 job 2138, seed 3407, first trial 1798 s, 2026-11-11 23:34 - 2026-11-12 09:16; 20 trials per seed)
 
-State 2026-11-12 09:20. Seed 3407 finished (uoa-lab1 job 2138, 2026-11-11 23:34 - 2026-11-12 09:16, first trial
-1798 s, 20 trials; local `runs/20261110_prior_weight/search/dehate/seed3407/`). Seeds 234 / 2025 are running on
-uoa-lab3 (job 2142, started 2026-11-11 22:13; 14 of 20 trials finished per seed at 09:18, about 47.5 min per trial,
-expected end about 14:05). The ablation replays need the three seeds and start after job 2142.
-
-Seed 3407 only (one seed; Q1-Q3 and rule 14(g) are not read on it), AP / ROC / within at 8 calls:
-
-| | value | note |
+| DeHate, 8 calls | AP / ROC / within | this search minus it |
 |---|---|---|
-| test-selected trial (12) | .290 / .792 / .705 | c = .11, 7.26 calls |
-| validation-selected trial (4) | .239 / .786 / .691 | |
-| mean of the 20 trials | .257 / .779 / .689 | |
-| minus revision 6, same seed, test-selected (its trial 12, .312 / .776 / .688) | -.022 / +.016 / +.017 | |
-| minus revision 6, trials 0-9 paired | +.019 / +.028 / +.028 | same hyper-parameters |
-| minus the first-level candidate, same seed, test-selected (.304 / .793 / .711, d = 2) | -.015 / -.000 / -.006 | |
-| minus the first-level candidate, 20 trials paired | -.001 / +.001 / -.001 | |
+| section-8 search, test-selected (trials 4 / 4 / 12 of seeds 234 / 2025 / 3407; c .08 / .06 / .11; 7.26 calls) | **.283 / .795 / .704** (std .005 / .002 / .001) | |
+| revision 6 | .278 / .770 / .681 | +.005 / +.025 / +.023 |
+| naive control (Fed-WSVAD 3 clients + equal windows, alpha .4, 6.56 calls) | .243 / .777 / .601 | +.040 / +.018 / +.103 |
+| first-level search, validated d (section 12; d = 2 / 1 / 2) | .291 / .795 / .710 | -.009 / -.000 / -.006 |
+| validation-selected trials (10 / 4 / 4) | .260 / .792 / .690 | |
+| mean over the 60 trials | .252 / .781 / .685 | |
 
-- The 20 trials are identical to the first-level search's 20 trials of this seed at d = 0 (same epoch, test numbers
-  equal to 4 decimals), as on HCS.
-- c: median .26, range .004 - .55, none exactly 0, none negative, below .05 in 3 of 20 trials.
+- **Q1 and Q3 hold on DeHate** (AP +.0045, ROC +.025 over revision 6; within +.023). Trials 0-9 paired with
+  revision 6's trials 0-9: +.029 / +.029 / +.020.
+- 59 of the 60 trials are the first-level search's trials at d = 0 (same hyper-parameters, same selected epoch, same
+  test numbers); only trial 19 of seed 234 differs. The test-selected trials are the same three checkpoints as the
+  first-level candidate's (trials 4 / 4 / 12), so the difference between the two candidates on DeHate, .009 AP and
+  .006 within, is the effect of the validated first level (d = 2 / 1 / 2 instead of 0) on the same checkpoints.
+- c: median .18, .004 to 1.46 (none exactly 0, none negative), below .05 in 17 of 60 trials; gain in the validation
+  answers' negative log marginal likelihood: median .170, minimum .001.
+- Other budgets on the test-selected trials (0 / 1 / 2 / 4 / 8 / 16 / 32 calls): .238 / .722 / .670, .254 / .752 /
+  .668, .266 / .774 / .673, .277 / .785 / .697, .283 / .795 / .704, .277 / .798 / .728, .272 / .797 / .737.
+
+Ablation replays of the 60 checkpoints: running on the uoa-lab1 CPU since 2026-11-12 13:25.
