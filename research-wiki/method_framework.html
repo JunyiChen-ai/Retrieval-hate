@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600&display=swap">
 <style>
-/* Layout: wide column so the train and test figures show at full size; prose stays ~70ch; color = the three modules */
+/* Layout: wide column so the figures show at full size; prose stays ~70ch; two tabs (method / experiments); color = the three modules */
 :root {
   --bg: #f4f6f8;
   --surface: #ffffff;
@@ -14,10 +14,10 @@
   --rule: #e1e5ec;
   --lane: #eef1f5;
   --lane-tab: #dde2ea;
-  --bb: #2b54c6;      --bb-soft: #e7edfb;     /* ① 骨干 */
+  --bb: #2b54c6;      --bb-soft: #e7edfb;     /* ① 骨干；图表里的第 7 版 */
   --vlm: #0a7a6c;     --vlm-soft: #e1f3ef;    /* ② VLM 提问 */
   --inf: #b45c0c;     --inf-soft: #fbeee1;    /* ③ 融合与停止 */
-  --hate: #b3213a;    --hate-soft: #f8dfe4;   /* 仇恨秒 */
+  --hate: #b3213a;    --hate-soft: #f8dfe4;   /* 仇恨秒；没解决的问题 */
   --f-display: "Noto Serif SC", "Songti SC", serif;
   --f-body: "IBM Plex Sans", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
@@ -40,16 +40,17 @@ body { background: var(--bg); color: var(--ink); font-family: var(--f-body); fon
 .wrap { max-width: 1540px; margin: 0 auto; padding-block: 40px 64px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .prose { max-width: 70ch; }
-header { display: grid; gap: 14px; padding-bottom: 28px; border-bottom: 1px solid var(--rule); }
+header { display: grid; gap: 14px; padding-bottom: 20px; }
 .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }
 h1 { font-family: var(--f-display); font-weight: 600; font-size: clamp(26px, 3.2vw, 38px); line-height: 1.25; margin: 0; text-wrap: balance; }
 h2 { font-family: var(--f-display); font-weight: 600; font-size: 22px; margin: 0; text-wrap: balance; }
 h2 .num { font-family: var(--f-mono); font-size: 14px; color: var(--muted); margin-right: 10px; font-weight: 500; }
+h3 { font-size: 16px; font-weight: 600; margin: 0; }
 p { margin: 0; }
 code, .mono { font-family: var(--f-mono); font-size: .9em; }
 code { background: var(--rule); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
-.lede { font-size: 17px; max-width: 70ch; }
-.version { font-size: 14px; color: var(--muted); max-width: 80ch; }
+.lede { font-size: 17px; max-width: 72ch; }
+.version { font-size: 14px; color: var(--muted); max-width: 86ch; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
 .chip { display: inline-flex; align-items: center; gap: 7px; }
 .sw { width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid; flex: none; }
@@ -61,29 +62,61 @@ code { background: var(--rule); padding: 1px 5px; border-radius: 4px; overflow-w
 .sw.dot { border-radius: 50%; background: var(--vlm); border-color: var(--vlm); }
 .ln { width: 26px; height: 0; border-top: 2px solid var(--ink); flex: none; }
 .ln.dash { border-top-style: dashed; }
-nav.toc { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; }
+.ln.r7 { border-top: 2.5px solid var(--bb); }
+.ln.d0 { border-top: 2px dashed var(--muted); }
+.mk { width: 10px; height: 10px; border-radius: 50%; border: 1.6px solid var(--ink); background: var(--surface); flex: none; }
+.mk.x { border: 0; border-radius: 0; background: none; position: relative; }
+.mk.x::before, .mk.x::after { content: ""; position: absolute; left: 4px; top: -1px; width: 2px; height: 12px; background: var(--vlm); }
+.mk.x::before { transform: rotate(45deg); } .mk.x::after { transform: rotate(-45deg); }
+
+/* tabs */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-top: 4px; }
+.tabs a { font-size: 16px; font-weight: 600; text-decoration: none; color: var(--muted); padding: 10px 18px 9px; border: 1px solid transparent; border-bottom: 0; border-radius: 8px 8px 0 0; margin-bottom: -1px; }
+.tabs a[aria-selected="true"] { color: var(--ink); background: var(--surface); border-color: var(--line); }
+.tabs a:hover { color: var(--ink); }
+.tabs a .sub { font-weight: 400; font-size: 13px; color: var(--muted); margin-left: 8px; }
+.tabs a:focus-visible, a:focus-visible { outline: 2px solid var(--bb); outline-offset: 2px; }
+.pane { padding-top: 18px; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; padding-bottom: 8px; }
 nav.toc a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); }
 nav.toc a:hover, nav.toc a:focus-visible { color: var(--ink); border-color: var(--ink); }
-a:focus-visible { outline: 2px solid var(--bb); outline-offset: 2px; }
-section { display: grid; gap: 16px; padding-block: 36px; border-bottom: 1px solid var(--rule); }
+
+section { display: grid; gap: 16px; padding-block: 34px; border-bottom: 1px solid var(--rule); }
 figure { margin: 0; display: grid; gap: 12px; }
 .fig { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; }
 .fig svg { display: block; width: 100%; min-width: 940px; height: auto; }
 .fig svg.big { min-width: 1180px; }
 .fig svg.tree { max-width: 1240px; }
-figcaption { font-size: 14px; color: var(--muted); max-width: 90ch; }
-ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 86ch; }
+.fig svg.chart { min-width: 760px; max-width: 1100px; }
+figcaption { font-size: 14px; color: var(--muted); max-width: 92ch; }
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 88ch; }
 .formula { font-family: var(--f-mono); font-size: 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; overflow-x: auto; white-space: pre; line-height: 1.8; max-width: 1100px; }
-.tbl { overflow-x: auto; max-width: 1240px; }
+.tbl { overflow-x: auto; max-width: 1320px; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; }
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
-th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
-th { font-weight: 600; color: var(--muted); font-size: 13px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+thead th { font-weight: 600; color: var(--muted); font-size: 13px; white-space: nowrap; }
+thead tr.grp th { text-align: center; color: var(--ink); border-bottom: 1px solid var(--line); }
+th.l, td.l { border-left: 1px solid var(--rule); }
 td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.n.c, th.c { text-align: center; }
+tr.sep td { background: var(--lane); font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: .03em; padding-block: 5px; }
+tr.ours td { background: var(--bb-soft); font-weight: 600; }
+tr.ours td.n { color: var(--bb); }
+td .pos { color: var(--vlm); } td .neg { color: var(--hate); }
+.tnote { font-size: 13.5px; color: var(--muted); max-width: 100ch; }
 td .mod { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
 .mod.bb { background: var(--bb); } .mod.vlm { background: var(--vlm); } .mod.inf { background: var(--inf); } .mod.tr { background: var(--muted); }
+.new { font-family: var(--f-mono); font-size: 11px; font-weight: 600; color: var(--bb); border: 1px solid var(--bb); border-radius: 4px; padding: 0 5px; margin-left: 6px; white-space: nowrap; }
 .open { display: grid; gap: 10px; }
-.open div { background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--hate); border-radius: 6px; padding: 10px 14px; max-width: 86ch; }
-.hist { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 14px; max-width: 90ch; }
+.open div { background: var(--surface); border: 1px solid var(--rule); border-left: 3px solid var(--hate); border-radius: 6px; padding: 10px 14px; max-width: 92ch; }
+.finds { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 14px; }
+.find { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.find .tag { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
+.find h3 { font-size: 16px; line-height: 1.45; }
+.find .fig-n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 14px; color: var(--bb); }
+.find p { font-size: 14px; }
+.find .src { font-size: 12.5px; color: var(--muted); }
+.hist { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; font-size: 14px; max-width: 96ch; }
 .hist dt { font-family: var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .hist dd { margin: 0; }
 footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
@@ -120,15 +153,32 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
 .d .bdg-t { fill: var(--surface); font-size: 11px; font-weight: 600; text-anchor: middle; }
 .d .axis { stroke: var(--muted); stroke-width: 1; fill: none; }
 .d .gt { stroke: var(--hate); stroke-width: 4; }
+/* chart */
+.d .panel { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.d .grid { stroke: var(--rule); stroke-width: 1; }
+.d .l-r7 { fill: none; stroke: var(--bb); stroke-width: 2.4; stroke-linejoin: round; }
+.d .l-d0 { fill: none; stroke: var(--muted); stroke-width: 1.6; stroke-dasharray: 5 4; }
+.d .p-r7 { fill: var(--bb); }
+.d .p-r6 { fill: var(--surface); stroke: var(--ink); stroke-width: 1.6; }
+.d .p-ctl { fill: none; stroke: var(--vlm); stroke-width: 2.2; }
+@media (max-width: 640px) { .tabs a { padding: 9px 12px 8px; } .tabs a .sub { display: none; } }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
 </style>
 
 <div class="wrap">
 <header>
-  <div class="eyebrow">research-wiki · 截至 2026-11-03</div>
+  <div class="eyebrow">research-wiki · 截至 2026-11-14 · 第 7 版</div>
   <h1>QTL：按需向 VLM 提问的仇恨片段定位</h1>
-  <p class="lede">网络先给视频每一秒一个仇恨先验。然后在视频的二分时间树上，挑信息量最大的片段问 VLM“这段有没有仇恨”。每个回答都通过树上的 inside–outside 精确推断更新每一秒的仇恨概率。新回答不再改变结果、或用完调用预算时停止。</p>
-  <p class="version">当前版本 = 第 6 版（用户 2026-11-03 裁定取代 r5）：r5 骨干（<code>experiments/20260925_query_paradigm/README.md</code> 第 2、15、17 节）+ 答案表加两状态共用的长度斜率、去掉复制似然（<code>experiments/20261101_r6_length_table/README.md</code>）+ 停止规则 qmixE1（平均调用次数 = 使用者设的预算）。共享代码在 <code>src/qtl/</code>。</p>
+  <p class="lede">网络先给视频每一秒一个仇恨先验。然后在视频的二分时间树上挑片段问 VLM“这段有没有仇恨”，每个回答都通过树上的精确推断更新每一秒的仇恨概率。第 7 版做了两处改动：一是网络先验在测试视频上按权重 c 打折，c 只用 validation 视频的回答估计，不用标签；二是第一轮可以先问树上某一层的等长窗口，这一层的深度 d 在 validation 上选。</p>
+  <p class="version">当前版本 = 第 7 版（用户 2026-11-14 指示采用）：第 6 版 + 位置先验权重 c + validation 选首层深度 d（<code>experiments/20261110_prior_weight/README.md</code> 第 8、10、12 节）。骨干结构、答案表、训练损失与第 6 版相同。共享代码在 <code>src/qtl/</code>。</p>
+  <nav class="tabs" role="tablist" aria-label="栏目">
+    <a role="tab" id="tab-method" href="#method" aria-controls="method" aria-selected="true">方法<span class="sub">怎么做</span></a>
+    <a role="tab" id="tab-results" href="#results" aria-controls="results" aria-selected="false">实验<span class="sub">结果、消融、发现</span></a>
+  </nav>
+</header>
+
+<!-- ============================== 方法 ============================== -->
+<div class="pane" id="method" role="tabpanel" aria-labelledby="tab-method">
   <div class="chips" aria-label="颜色说明">
     <span class="chip"><span class="sw bb"></span>① 骨干：从特征算先验</span>
     <span class="chip"><span class="sw vlm"></span>② VLM 提问：问哪段、怎么问</span>
@@ -136,10 +186,9 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
     <span class="chip"><span class="ln"></span>数据</span>
     <span class="chip"><span class="ln dash"></span>梯度</span>
   </div>
-  <nav class="toc" aria-label="目录">
-    <a href="#train">训练</a><a href="#test">测试</a><a href="#tree">问题树</a><a href="#stop">停止规则</a><a href="#parts">部件清单</a><a href="#numbers">当前数字</a><a href="#history">版本记录</a>
+  <nav class="toc" aria-label="方法目录" style="margin-top:12px">
+    <a href="#train">训练</a><a href="#test">测试</a><a href="#r7">第 7 版的两处改动</a><a href="#tree">问题树</a><a href="#stop">停止规则</a><a href="#parts">部件清单</a><a href="#history">版本记录</a>
   </nav>
-</header>
 
 <section id="train">
   <h2><span class="num">1</span>训练：一个训练视频怎么走</h2>
@@ -263,12 +312,13 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text class="s" x="1093" y="540">反向传播</text>
 </svg>
     </div>
-    <figcaption>训练时，VLM 答案是监督目标，不是网络输入：网络只看特征，学的是在每个时间尺度上预测 VLM 会怎么回答，同时满足视频标签。答案表随节点长度变化（短片段即使有仇恨也较少答 Yes），训练、选 epoch、测试用同一张表，各节点答案按相互独立计算。</figcaption>
+    <figcaption>训练时，VLM 答案是监督目标，不是网络输入：网络只看特征，学的是在每个时间尺度上预测 VLM 会怎么回答，同时满足视频标签。答案表随节点长度变化（短片段即使有仇恨也较少答 Yes），训练、选 epoch、测试用同一张表，各节点答案按相互独立计算。第 7 版训练损失不变（训练视频上 c = 1）。</figcaption>
   </figure>
   <ul class="plain">
     <li><b>负例视频</b>：全部节点已知无仇恨，答案项是常数，只有 −log P(Y | x) 训练视频头 g。所以每秒势 s_t、节点势 φ_n 只由正例视频的多尺度答案训练。</li>
     <li><b>答案项除以答案数</b>：长视频有上千个节点答案，除以答案数后每个视频权重相同。</li>
-    <li><b>搜索与选模型</b>：每个 seed（234 / 2025 / 3407）20 个 Optuna trial，搜 lr、λ_cma、dropout、lr_answer；epoch 用 validation 固定问 8 次的 (AP+ROC)/2 选；trial 用 test 同一目标选（规则 7）。</li>
+    <li><b>每个 epoch 结束后估一次 c</b><span class="new">第 7 版</span>：用这个 epoch 的网络，在 validation 视频的缓存回答上估 c（不用标签，见第 3 节）；选 epoch 的 validation 指标在这个 c 下算。选中的 epoch 的 c 跟 checkpoint 一起存下，测试时用。</li>
+    <li><b>搜索与选模型</b>：每个 seed（234 / 2025 / 3407）20 个 Optuna trial，搜 lr、λ_cma、dropout、lr_answer；epoch 用 validation 固定问 8 次的 (AP+ROC)/2 选；训练结束后对每个报告预算在 validation 上选 d；trial 用 test 同一目标选（规则 7）。</li>
   </ul>
 </section>
 
@@ -276,7 +326,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <h2><span class="num">2</span>测试：一个测试视频怎么走</h2>
   <figure>
     <div class="fig">
-<svg class="d big" viewBox="0 0 1400 620" role="img" aria-label="测试流程：特征进骨干得到 s_t、g、φ_n（只算一次）；树模型 inside–outside 给出后验；EIG 选出下一个节点 n*；qmixE1 判断停或继续；继续则问 VLM 得到 p，答案模型把 p 变成 ℓ_n* 加回树模型；停则输出每秒分数。">
+<svg class="d big" viewBox="0 0 1400 620" role="img" aria-label="测试流程：特征进骨干得到 s_t、g、φ_n（只算一次），s_t 和 φ_n 乘先验权重 c；树模型 inside–outside 给出后验；前 2^d 次在第 d 层等长窗里按 EIG 选节点，之后在全部节点里按 EIG 选；到预算就停；继续则问 VLM 得到 p，答案模型把 p 变成 ℓ_n* 加回树模型；停则输出每秒分数。">
   <defs>
     <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
   </defs>
@@ -302,14 +352,15 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text x="300" y="146"><tspan class="m">s_t</tspan>：每秒 1 个数</text>
   <text x="300" y="168"><tspan class="m">g</tspan>：每视频 1 个数</text>
   <text x="300" y="190"><tspan class="m">φ_n</tspan>：每个内部节点 1 个数</text>
-  <text class="s" x="264" y="216">参数是训练好的，测试时不变</text>
+  <text class="s t-bb b" x="264" y="216">s_t、φ_n 再乘先验权重 c（第 7 版）</text>
   <path class="ar" d="M540,135 H618" marker-end="url(#a2)"/>
-  <text class="s c" x="579" y="127">s_t、g、φ_n</text>
+  <text class="s c" x="579" y="127">g、c·s_t</text>
+  <text class="s c" x="579" y="153">c·φ_n</text>
 
   <rect class="grp-inf" x="620" y="40" width="280" height="190" rx="10"/>
   <text class="b t-inf" x="634" y="64">③ 树模型 inside–outside</text>
   <text class="k" x="634" y="90">输入</text>
-  <text x="670" y="90">s_t、g、φ_n</text>
+  <text x="670" y="90">g、c·s_t、c·φ_n</text>
   <text x="670" y="110">已问节点的 ℓ_n（开始时没有）</text>
   <text class="k" x="634" y="136">计算</text>
   <text x="670" y="136">inside + outside，树上精确</text>
@@ -321,13 +372,13 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text class="s c" x="924" y="127">后验</text>
 
   <rect class="box-vlm" x="950" y="40" width="280" height="190" rx="10"/>
-  <text class="b t-vlm" x="962" y="64">② 选下一个节点（EIG）</text>
+  <text class="b t-vlm" x="962" y="64">② 选下一个节点（首层 d + EIG）</text>
   <text class="k" x="962" y="90">输入</text>
   <text x="998" y="90">节点后验 q_n、答案表（按长度）</text>
-  <text x="998" y="110">已问过哪些节点</text>
+  <text x="998" y="110">已问过哪些节点；首层深度 d</text>
   <text class="k" x="962" y="136">计算</text>
-  <text x="998" y="136">对每个未问、≥4 秒的节点：</text>
-  <text x="998" y="156">问它能得到多少信息（EIG）</text>
+  <text x="998" y="136">前 2^d 次：只在第 d 层等长窗里挑</text>
+  <text x="998" y="156">之后：全部未问、≥4 秒节点里挑</text>
   <text class="k" x="962" y="184">输出</text>
   <text x="998" y="184">EIG 最大的节点 n*</text>
   <text x="998" y="204">和它的 EIG(n*)</text>
@@ -338,10 +389,10 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text class="b t-inf" x="962" y="294">③ 停止判断 qmixE1</text>
   <text class="k" x="962" y="318">输入</text>
   <text x="998" y="318">dlsum：上次回答让分数变了多少</text>
-  <text x="998" y="338">EIG(n*)；阈值 c</text>
+  <text x="998" y="338">EIG(n*)；阈值 τ</text>
   <text class="k" x="962" y="364">输出</text>
   <text x="998" y="364">停 或 继续</text>
-  <text class="s" x="962" y="390">第 1 次总问；最多 8 次；c 由预算 B 定</text>
+  <text class="s" x="962" y="390">固定预算时到 B 次就停；τ 由预算 B 定</text>
   <path class="ar" d="M1230,335 H1268" marker-end="url(#a2)"/>
   <text class="s c" x="1249" y="327">停</text>
   <rect class="out" x="1270" y="280" width="120" height="110" rx="8"/>
@@ -379,24 +430,52 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
 
   <text class="b" x="24" y="300">每一圈 = 1 次 VLM 调用</text>
   <text x="24" y="326">1. 树模型 inside–outside 给出后验</text>
-  <text x="24" y="350">2. EIG 选出 n*</text>
-  <text x="24" y="374">3. qmixE1：停就输出；继续就往下</text>
+  <text x="24" y="350">2. 选出 n*（前 2^d 次限第 d 层，都按 EIG 排）</text>
+  <text x="24" y="374">3. 到预算（或 qmixE1 说停）就输出；否则往下</text>
   <text x="24" y="398">4. 问 VLM，得到 p</text>
   <text x="24" y="422">5. 答案模型把 p 变成 ℓ_n*，加进树模型，回到 1</text>
-  <text class="s" x="24" y="454">第 0 圈没有答案：树模型只用骨干先验</text>
+  <text class="s" x="24" y="454">第 0 圈没有答案：树模型只用骨干先验（已乘 c）</text>
   <text class="s" x="24" y="474">骨干只算一次；之后每圈只重算树模型</text>
 </svg>
     </div>
-    <figcaption>测试时骨干、答案模型的参数都不变；每问一次 VLM，就把一个新的 ℓ_n 加进树模型重算后验。</figcaption>
+    <figcaption>测试时骨干、答案模型、c、d 都固定；每问一次 VLM，就把一个新的 ℓ_n 加进树模型重算后验。c 同时作用在后验和每个候选问题的 EIG 上。</figcaption>
   </figure>
   <ul class="plain">
-    <li><b>inside–outside</b>：inside 自下而上算每个节点下面所有标注组合的总概率；outside 给出每秒、每节点的后验。代码里 outside 这一步用对 log Z 求导（autograd）实现，数值和 outside 传递相同（<code>src/qtl/ctree.py</code> 的 <code>up</code>、<code>marginals</code>）。它和 10-01 的 inside–outside 骨干（一个算特征的神经网络，没采用）不是一回事。</li>
-    <li><b>平均调用次数</b>：阈值 c 在 validation 上调到平均 B 次，B 由使用者按资源设。见第 4 节。</li>
+    <li><b>inside–outside</b>：inside 自下而上算每个节点下面所有标注组合的总概率；outside 给出每秒、每节点的后验。代码里 outside 这一步用对 log Z 求导（autograd）实现，数值和 outside 传递相同（<code>src/qtl/ctree.py</code> 的 <code>up</code>、<code>marginals</code>）。</li>
+    <li><b>报告用固定预算</b>：主表是每个视频固定问 8 次（视频太短、可问节点不够时少于 8 次：平均 7.63 / 8.0 / 7.26 次）。按预算提前停的规则见第 5 节。</li>
   </ul>
 </section>
 
+<section id="r7">
+  <h2><span class="num">3</span>第 7 版的两处改动</h2>
+  <h3>① 位置先验权重 c（不用标签估计）</h3>
+  <p class="prose">网络的逐秒势 s_t 和节点势 φ_n 是在训练视频的回答上拟合出来的，到没见过的视频上预测得差很多，但树推断原来按满权重使用它们，回答和网络不一致时回答就被压下去。第 7 版在模型里给这两项乘一个标量 c，c 取使 validation 视频全部缓存回答的边际似然最大的值。视频头 g 不乘（它的权重无标签估不出来）。</p>
+<div class="formula">P(G=1 | x)       = sigmoid(g)                                                    不变
+P(y | G=1, x)    ∝ exp(c · Σ_t s_t y_t) · chain(y) · Π_n exp(c · φ_n z_n)        s_t、φ_n 乘 c
+c = argmax_c  Σ_v log [ P(G=1|x_v) P(o_v | G=1, x_v; c) + P(G=0|x_v) P(o_v | G=0) ]
+    v = validation 视频，o_v = 该视频全部节点的缓存回答；答案表、链固定；不用视频标签、不用逐秒标注
+    先在 13 个网格点上算似然，再从最好的点出发 L-BFGS（<code>src/qtl/prior_weight.py</code>，mode "loc"）</div>
+  <ul class="plain">
+    <li><b>估出来的 c 很小</b>：60 个 trial 的中位数 HateMM .26、HCS .09、DeHate .18；test 选出的 trial 是 .11–.17、.02–.22、.06–.11。也就是网络的位置先验在没见过的视频上只该用约十分之一到四分之一。</li>
+    <li><b>不需要额外的 VLM 调用</b>：c 是部署模型的一个常数，用的是训练前已经抽好的 validation 回答。用户 2026-11-10 裁定：这样估计不属于规则 3 禁止的后处理校准。</li>
+  </ul>
+  <h3>② 首层深度 d（在 validation 上选）</h3>
+  <p class="prose">提问策略是一族：先把树第 d 层的 2^d 个等长窗问完（按 EIG 排顺序），剩下的调用再在全部节点上按 EIG 贪心。d = 0 就是第 2–6 版的贪心树；预算正好 2^d 次时就是只问一层等长窗。训练结束后，对每个报告预算各自在 validation 上按 (AP+ROC)/2 选 d（0–3，预算更大时到 5）。视频太短、第 d 层不是每个窗都 ≥4 秒时，退到能全部问的最深一层（<code>cpolicy.run_batch(first=)</code>、<code>search_first_level.py</code>）。</p>
+  <div class="tbl" style="max-width:820px">
+  <table>
+    <thead><tr><th>8 次调用时选中的 d（60 个 trial）</th><th class="c">d = 0（贪心树）</th><th class="c">1</th><th class="c">2</th><th class="c">3（8 个等长窗）</th></tr></thead>
+    <tbody>
+      <tr><td>HateMM</td><td class="n c">13%</td><td class="n c">5%</td><td class="n c">0%</td><td class="n c">82%</td></tr>
+      <tr><td>HateClipSeg</td><td class="n c">98%</td><td class="n c">0%</td><td class="n c">2%</td><td class="n c">0%</td></tr>
+      <tr><td>DeHate</td><td class="n c">42%</td><td class="n c">22%</td><td class="n c">35%</td><td class="n c">2%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="tnote">同一条规则、三个语料选出的问法不同：HateMM 选等长窗，HCS 选贪心树，DeHate 在 d = 0–2 之间（三者全 trial 平均相差 ≤ .004 AP）。评审（<code>REVIEW_RULE4_R7_FIRST_LEVEL.md</code>）：d 只能作为不主张的超参数，论文不把它写成贡献。来源 <code>runs/20261110_prior_weight/search_first_level/summary_&lt;语料&gt;.json</code>。</p>
+</section>
+
 <section id="tree">
-  <h2><span class="num">3</span>问题树：节点是什么</h2>
+  <h2><span class="num">4</span>问题树：节点是什么</h2>
   <figure>
     <div class="fig">
 <svg class="d tree" viewBox="0 0 1200 300" role="img" aria-label="32 秒视频的二分问题树：每层节点对半切分，含仇恨秒的节点标红；4 秒及以上的节点可以问 VLM；编号为一种可能的提问顺序，其中第 4 问的节点嵌套在第 3 问的节点里。">
@@ -511,35 +590,34 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
       <span class="chips" style="margin-top:6px">
         <span class="chip"><span class="sw hate"></span>含仇恨秒的节点（z_n = 1）</span>
         <span class="chip"><span class="sw na"></span>短于 4 秒，不问 VLM</span>
-        <span class="chip"><span class="sw dot"></span>一种可能的提问顺序（示意）</span>
+        <span class="chip"><span class="sw dot"></span>一种可能的提问顺序（示意，d = 0）</span>
       </span>
     </figcaption>
   </figure>
   <ul class="plain">
     <li>每个节点有一个隐状态 z_n：区间里至少有一秒仇恨就是 1。视频标签就是根节点的 z。</li>
-    <li>骨干在每一层都给先验：根用 g，内部节点用 φ_n（视频头的注意力池化在每个节点内部再做一次），叶子（单秒）用 s_t。</li>
-    <li>④ 在 ③ 里面，这叫嵌套。同一视频里的回答相互相关；答案模型按相互独立计算（r5 曾在测试时用复制似然给嵌套回答打折，第 6 版去掉：加了长度项后它不再有用，HateMM / HCS / DeHate 8 次 AP −.003 / −.002 / −.016）。</li>
-    <li>提问顺序不固定，由每一步的 EIG 决定，图中编号只是示意。</li>
+    <li>骨干在每一层都给先验：根用 g，内部节点用 φ_n（视频头的注意力池化在每个节点内部再做一次），叶子（单秒）用 s_t。第 7 版里 φ_n、s_t 乘 c。</li>
+    <li>图中编号是 d = 0（贪心）的一种顺序。d = 2 时前 4 问是第三行的 4 个 8 秒窗；d = 3 时前 8 问是第四行的 8 个 4 秒窗。</li>
+    <li>④ 在 ③ 里面，这叫嵌套。同一视频里的回答相互相关；答案模型按相互独立计算。</li>
   </ul>
 </section>
 
 <section id="stop">
-  <h2><span class="num">4</span>停止规则 qmixE1</h2>
-  <p class="prose">每问完一次，算两个数，判断还要不要接着问。代码在 <code>src/qtl/stop_rules.py</code>（<code>"qmixE1": ("dlsum", "eig")</code>）和 <code>src/qtl/policy.py</code>（<code>calibrate</code>、<code>stop_calls</code>）。</p>
+  <h2><span class="num">5</span>停止规则 qmixE1（按预算提前停）</h2>
+  <p class="prose">每问完一次，算两个数，判断还要不要接着问。代码在 <code>src/qtl/stop_rules.py</code>（<code>"qmixE1": ("dlsum", "eig")</code>）和 <code>src/qtl/policy.py</code>（<code>calibrate</code>、<code>stop_calls</code>）。阈值原来也记作 c，为了和先验权重区分，本页改记 τ。</p>
 <div class="formula">后看  dlsum_k = Σ_t | logit p_t(第 k 次回答后) − logit p_t(第 k 次回答前) |   上一个回答让分数变了多少
 前看  eig_k   = 下一个最佳节点的 EIG                                       下一个问题还能带来多少信息
 
 r_k = max( dlsum_k 在 validation 全部值中的分位数,  eig_k 在 validation 全部值中的分位数 )
-r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
+r_k ≥ τ  就继续问；第 1 次总是问；每视频最多 8 次</div>
   <ul class="plain">
-    <li><b>c 怎么定</b>：在 validation 上调 c，让平均调用次数等于预算 B。只用调用次数，不用标注。</li>
-    <li><b>B 是谁定</b>：使用者按资源设，和“固定问 k 次”的 k 一样（用户 2026-11-01 裁定）。论文报 B = 1–7 的曲线，5 只是其中一点。</li>
-    <li><b>为什么不让方法自己选 B</b>：validation 目标的标准误 .025–.053，远大于不同 B 之间 .005–.01 的差，选出的 B 随 seed 在 1–7 次之间乱跳（诊断第 11 条）。</li>
+    <li><b>τ 怎么定</b>：在 validation 上调 τ，让平均调用次数等于预算 B。只用调用次数，不用标注。B 由使用者按资源设（用户 2026-11-01 裁定）。</li>
+    <li><b>第 7 版里</b>：停止规则仍用在 d = 0 的贪心策略上（评审要求），本轮没有改。HateMM 上“贪心 + 停止规则、平均 8 次”比 8 个等长窗低 .017 AP，所以按预算停的曲线和固定 d 的曲线是两条不同的策略，分开报告。</li>
   </ul>
 </section>
 
 <section id="parts">
-  <h2><span class="num">5</span>部件清单</h2>
+  <h2><span class="num">6</span>部件清单</h2>
   <div class="tbl">
   <table>
     <thead><tr><th>部件</th><th>做什么</th><th>来源</th><th>代码</th></tr></thead>
@@ -547,42 +625,20 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
       <tr><td><span class="mod bb"></span>跨模态注意力层 + CMAL</td><td>视觉、音频+文本两流互相注意，得到每秒隐向量</td><td>沿用 MACIL-SD</td><td><code>model.py</code> PriorNet</td></tr>
       <tr><td><span class="mod bb"></span>视频头 g</td><td>注意力池化，判断视频是否有害</td><td>常见做法</td><td><code>model.py</code></td></tr>
       <tr><td><span class="mod bb"></span>节点势 φ_n</td><td>同一注意力在每个树节点内池化，给每个节点一个先验</td><td>本项目 r4（消融通过）</td><td><code>model.py</code> node_logits</td></tr>
+      <tr><td><span class="mod bb"></span>位置先验权重 c<span class="new">第 7 版</span></td><td>s_t、φ_n 乘 c；c 由 validation 回答的边际似然估计，不用标签</td><td>本项目第 7 版（经验贝叶斯式估计）</td><td><code>prior_weight.py</code></td></tr>
       <tr><td><span class="mod vlm"></span>二分问题树</td><td>节点 = 时间区间，≥4 秒可问</td><td>概率二分查找</td><td><code>qtree.py</code></td></tr>
       <tr><td><span class="mod vlm"></span>EIG 选节点</td><td>选回答信息量最大的节点</td><td>Lindley 1956、BALD</td><td><code>policy.py</code>、<code>cpolicy.py</code></td></tr>
+      <tr><td><span class="mod vlm"></span>首层深度 d<span class="new">第 7 版</span></td><td>先问第 d 层的等长窗，再贪心；d 在 validation 上选（不主张的超参数）</td><td>本项目第 7 版</td><td><code>cpolicy.py</code> first=</td></tr>
       <tr><td><span class="mod vlm"></span>软答案 8 档</td><td>首 token P(Yes)，按训练答案分位切档</td><td>本项目 r5</td><td><code>data.py</code> configure_source</td></tr>
       <tr><td><span class="mod inf"></span>零膨胀链先验</td><td>视频状态 G + 首尾闭合的秒级链</td><td>零膨胀模型（Lambert 1992）+ 本项目</td><td><code>ctree.py</code></td></tr>
       <tr><td><span class="mod inf"></span>树上精确推断</td><td>inside–outside 求每秒、每节点后验（outside 用求导实现）</td><td>树上和积</td><td><code>ctree.py</code> up、marginals</td></tr>
-      <tr><td><span class="mod inf"></span>锚定答案表</td><td>只用标签确定状态的答案拟合，训练前固定</td><td>本项目 r2</td><td><code>qtree.py</code> fit_anchored</td></tr>
-      <tr><td><span class="mod inf"></span>共用长度斜率</td><td>答案表按节点长度变化；斜率两状态共用，只在负例节点上估</td><td>本项目第 6 版</td><td><code>qtree.py</code> fit_anchored_shared</td></tr>
-      <tr><td><span class="mod inf"></span>停止 qmixE1</td><td>在预算内提前停</td><td>本项目 10-31</td><td><code>stop_rules.py</code></td></tr>
+      <tr><td><span class="mod inf"></span>锚定答案表 + 共用长度斜率</td><td>只用标签确定状态的答案拟合，训练前固定；斜率两状态共用，只在负例节点上估</td><td>本项目 r2、第 6 版</td><td><code>qtree.py</code> fit_anchored_shared</td></tr>
+      <tr><td><span class="mod inf"></span>停止 qmixE1</td><td>按预算提前停（d = 0 上用）</td><td>本项目 10-31</td><td><code>stop_rules.py</code></td></tr>
       <tr><td><span class="mod tr"></span>树似然训练目标</td><td>VLM 答案作为训练目标</td><td>本项目</td><td><code>train.py</code></td></tr>
     </tbody>
   </table>
   </div>
-  <p class="prose">代码路径相对 <code>src/qtl/</code>。和沿用的 MACIL-SD 相比，骨干上能单独主张的只有节点势 φ_n 和树似然训练目标。</p>
-</section>
-
-<section id="numbers">
-  <h2><span class="num">6</span>当前数字与没解决的问题</h2>
-  <div class="tbl">
-  <table>
-    <thead><tr><th>语料</th><th>0 次调用</th><th>固定 8 次</th><th>固定 32 次</th><th>预算 B = 5（实际平均次数）</th></tr></thead>
-    <tbody>
-      <tr><td>HateMM</td><td class="n">.568 / .801 / .771</td><td class="n">.702 / .889 / .783</td><td class="n">.693 / .879 / .793</td><td class="n">.689 / .886 / .785（5.05）</td></tr>
-      <tr><td>HateClipSeg</td><td class="n">.650 / .648 / .556</td><td class="n">.691 / .680 / .563</td><td class="n">.689 / .676 / .606</td><td class="n">.672 / .668 / .563（5.22）</td></tr>
-      <tr><td>DeHate</td><td class="n">.219 / .717 / .661</td><td class="n">.279 / .770 / .681</td><td class="n">.286 / .784 / .700</td><td class="n">.263 / .766 / .672（5.03）</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p class="prose" style="font-size:14px;color:var(--muted)">AP / ROC / within，test，三 seed 均值；第 6 版各 seed test 选出的 trial（规则 7），统一评测器。来源 <code>runs/20261101_r6_length_table/final_curves/test_selected/&lt;语料&gt;/summary.json</code>；validation 选 trial、全部 trial 平均、消融见 <code>experiments/20261101_r6_length_table/README.md</code>。r5 固定 8 次 AP / ROC：HateMM .691 / .885，HateClipSeg .687 / .674，DeHate .262 / .780。</p>
-  <div class="open">
-    <div><b>调用越多总体越好，有局部回落（11-08 更正）。</b>按 validation 选 trial 时 32 次比 8 次 AP 高 .011 / .012 / .015，ROC −.001 / +.019 / +.022，within 高 .012–.019；相邻点最大回落 HCS 3→4 次 AP / ROC −.009、HateMM 24→32 次 ROC −.006，DeHate 无超过 .005 的回落。同一视频内回答相互相关是 8 次后增益变小的主因（跨视频打乱回答后曲线一路升）。</div>
-    <div><b>外部审稿第 1 轮（GPT 6 Astra，11-08）补的对照。</b>最强 baseline + 同样 8 个回答的学习式融合：本方法 AP 高 .040 / .128 / .047，ROC 高 .013 / .134 / .001（DeHate ROC 持平，旧固定融合 .777 仍高于 .770）。软答案换成硬是/否：AP 降 .016–.071、ROC 降 .024–.050。同 checkpoint、同调用次数下全树比单层 AP 或 ROC 高 ≥ .01（HCS 4–8 秒层除外）。确定性停止阈值有时用不满预算，两阈值随机化后 validation 期望次数 = B，指标变化多数 ≤ .002、最大 AP +.005 / ROC +.0075（HateMM 一个 seed，B = 7）。第 2 轮：baseline 冻结后的逐秒隐特征 + 分数 + 8 个回答一起训练融合头，本方法仍高 AP .090–.139、ROC .059–.144；融合头改在 validation 视频上训练仍高 AP ≥ .095、ROC ≥ .028。来源 <code>experiments/20261108_astra_review/README.md</code>。</div>
-    <div><b>DeHate 8 次 ROC 比 r5 低 .010</b>（AP 高 .016）。第 6 版只用网络（0 次）时的先验比 r5 弱，原因未查明（g 的训练项两版相同，差别来自共用骨干）。用户 2026-11-03 裁定接受。</div>
-    <div><b>少调用的代价变大。</b>预算 5 次比固定 8 次 AP 低 .012–.019（r5 在 .01 内），因为多问一直有用。按 11-01 裁定，平均调用次数是使用者设的预算，论文报 1–7 次曲线。</div>
-    <div><b>目标 2（自研骨干）。</b>无骨干对照（常数先验，只靠问题），去掉骨干后 AP / ROC 降：HateMM .057 / .013，HateClipSeg −.003 / .023（within 反而高 .064），DeHate .083 / .013。骨干在三个语料上都提高视频间排序（ROC）。</div>
-    <div><b>消融（规则 14(g)）全部通过。</b>14 个臂（每个部件去掉或换成常见做法，含单层窗口与无骨干）在三个主数据集上 AP 或 ROC 都降 ≥ .01；余量最小的是 DeHate 上 EIG 选节点换成按层提问（ROC .013，AP .007）。来源 <code>runs/20261101_r6_length_table/arms/table.json</code>。</div>
-  </div>
+  <p class="prose">代码路径相对 <code>src/qtl/</code>。和沿用的 MACIL-SD 相比，骨干上能单独主张的只有节点势 φ_n 和树似然训练目标；推断上新增的可主张部分是 c。数字、消融和发现见「实验」栏。</p>
 </section>
 
 <section id="history">
@@ -596,15 +652,421 @@ r_k ≥ c  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <dt>r5 · 09-29</dt><dd>软答案：首 token P(Yes)、按数据集定义、8 档；复制似然 copy_neg</dd>
     <dt>10-31</dt><dd>停止规则 qmixE1（每视频最多 8 次）</dd>
     <dt>11-01</dt><dd>平均调用次数 = 使用者预算；DeHate 升为主数据集</dd>
-    <dt>11-01 修正</dt><dd>训练图改正：复制似然只在测试用，训练时答案按相互独立计算（<code>src/qtl/train.py</code> 不读 π）</dd>
-    <dt>第 6 版 · 11-03</dt><dd>答案表加两状态共用的长度斜率（负例节点上估计），训练与测试同一张表；去掉复制似然。HateMM、HateClipSeg 全部指标与 DeHate AP 高于 r5，DeHate ROC −.010；用户 11-03 裁定取代 r5（<code>experiments/20261101_r6_length_table/</code>）</dd>
-    <dt>11-03 消融</dt><dd>第 6 版三语料 × 3 seed、14 个臂全部跑完，全部部件有用（方法不变）</dd>
-    <dt>11-08 审稿 1</dt><dd>GPT 6 Astra 第 1 轮补 E1–E4（学习式融合对照、软 vs 硬答案、全树 vs 单层、预算核查）；单调性表述更正为"总体上升、有局部回落"（方法不变）</dd>
-    <dt>11-08 审稿 2</dt><dd>补 E1b（baseline 隐特征 + 回答联合融合头，含 validation 上训练的版本）；更正预算对照的指标变化上界与 HCS DSANet 固定融合行（方法不变）</dd>
-    <dt>11-08 审稿 3</dt><dd>GPT 6 Astra 7/10、almost，不再需要补实验，审稿循环结束（方法不变）</dd>
-    <dt>未采用</dt><dd>inside–outside 新骨干（<code>20261001</code>）、尺度感知跨模态注意力（<code>20261031_scale_aware_cma</code>），都没超过 r5；每视频回答偏移（11-01，HateMM、HateClipSeg AP 随调用下降）；第 7 版"先验加标签项"（11-02，代码审查发现该项已存在，撤回）</dd>
+    <dt>第 6 版 · 11-03</dt><dd>答案表加两状态共用的长度斜率（负例节点上估计），训练与测试同一张表；去掉复制似然（<code>experiments/20261101_r6_length_table/</code>）</dd>
+    <dt>11-03 消融</dt><dd>第 6 版三语料 × 3 seed、16 个臂全部跑完，全部部件有用（方法不变）</dd>
+    <dt>11-08 审稿</dt><dd>GPT 6 Astra 三轮（5 → 6 → 7 分），补 E1–E4、E1b；结束时不再需要补实验（方法不变）</dd>
+    <dt>11-09</dt><dd>树 vs 单层的 within 诊断；“无 / 部分 / 全部”新问题在回答层面无信号，否决；答案表在仇恨视频内过度信任“是”（方法不变，<code>experiments/20261109_tree_within/</code>）</dd>
+    <dt>11-10</dt><dd>朴素对照追平的原因：pooled AP 主要是视频排序；11 种答案表都不成立；视频级先验在测试视频上过度自信（方法不变，<code>experiments/20261110_answer_likelihood/</code>）</dd>
+    <dt>第 7 版 · 11-14</dt><dd>位置先验权重 c（validation 回答的边际似然，无标签）+ validation 选首层深度 d；3 seed × 20 trial 搜索 11-11 完成。8 次 AP / ROC 三语料都高于第 6 版和朴素对照；用户 11-14 指示采用（<code>experiments/20261110_prior_weight/</code>）</dd>
+    <dt>未采用</dt><dd>inside–outside 新骨干、尺度感知跨模态注意力（没超过 r5）；每视频回答偏移；HMT 答案相关模型 v1–v4、15 种提问策略、validation 三状态表（11-09）；只加 c 的贪心树（11-12：HateMM AP 比第 6 版低 .0052、比朴素对照低 .010）</dd>
   </dl>
 </section>
-
-<footer>方法有改动时更新本页（<code>research-wiki/method_framework.html</code>），并在版本记录加一行。</footer>
 </div>
+
+<!-- ============================== 实验 ============================== -->
+<div class="pane" id="results" role="tabpanel" aria-labelledby="tab-results" hidden>
+  <nav class="toc" aria-label="实验目录">
+    <a href="#e-main">主结果</a><a href="#e-curve">调用次数曲线</a><a href="#e-abl">消融</a><a href="#e-tree">树 vs 单层</a><a href="#e-find">意外发现</a><a href="#e-open">注意事项</a>
+  </nav>
+  <p class="tnote">全部数字是 test 集，AP / ROC / within（frame-level pooled AP、pooled ROC、正例视频内 macro ROC），统一评测器，3 seed 均值；本方法每个 seed 用 test 选出的 trial（规则 7），另列 validation 选 trial 的结果。</p>
+
+<section id="e-main">
+  <h2><span class="num">E1</span>主结果：每个视频问 8 次</h2>
+  <div class="tbl">
+  <table>
+    <thead>
+      <tr class="grp"><th></th><th></th><th colspan="3" class="l">HateMM</th><th colspan="3" class="l">HateClipSeg</th><th colspan="3" class="l">DeHate</th></tr>
+      <tr><th>方法</th><th>出处</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th></tr>
+    </thead>
+    <tbody>
+      <tr class="sep"><td colspan="11">弱监督（只用视频标签），不问 VLM</td></tr>
+      <tr><td>VadCLIP</td><td>AAAI 2024</td><td class="n c l">.368</td><td class="n c">.642</td><td class="n c">.442</td><td class="n c l">.525</td><td class="n c">.504</td><td class="n c">.533</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td></tr>
+      <tr><td>CMHKF</td><td>ACL 2025</td><td class="n c l">.429</td><td class="n c">.708</td><td class="n c">.442</td><td class="n c l">.515</td><td class="n c">.487</td><td class="n c">.508</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td></tr>
+      <tr><td>MACIL-SD</td><td>ACM MM 2022</td><td class="n c l"><b>.573</b></td><td class="n c"><b>.807</b></td><td class="n c">.595</td><td class="n c l">.516</td><td class="n c">.477</td><td class="n c">.516</td><td class="n c l">.088</td><td class="n c">.562</td><td class="n c">.530</td></tr>
+      <tr><td>MultiHateLoc</td><td>WWW 2026</td><td class="n c l">.496</td><td class="n c">.729</td><td class="n c">.632</td><td class="n c l">.539</td><td class="n c">.524</td><td class="n c">.524</td><td class="n c l">.129</td><td class="n c">.611</td><td class="n c">.546</td></tr>
+      <tr><td>DSANet</td><td>AAAI 2026</td><td class="n c l">.452</td><td class="n c">.722</td><td class="n c">.526</td><td class="n c l">.554</td><td class="n c"><b>.528</b></td><td class="n c">.545</td><td class="n c l">.120</td><td class="n c">.632</td><td class="n c">.486</td></tr>
+      <tr><td>Fed-WSVAD（3 client）</td><td>AAAI 2025</td><td class="n c l">.442</td><td class="n c">.729</td><td class="n c">.520</td><td class="n c l"><b>.562</b></td><td class="n c">.509</td><td class="n c">.510</td><td class="n c l"><b>.174</b></td><td class="n c"><b>.701</b></td><td class="n c">.508</td></tr>
+      <tr class="sep"><td colspan="11">不训练（只报告）</td></tr>
+      <tr><td>VERA</td><td>CVPR 2025</td><td class="n c l">.373</td><td class="n c">.622</td><td class="n c">.559</td><td class="n c l">.619</td><td class="n c">.605</td><td class="n c">.562</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td></tr>
+      <tr class="sep"><td colspan="11">同样用 VLM 回答，每视频 8 次</td></tr>
+      <tr><td>最强 baseline + 8 个等长窗回答（朴素对照）</td><td>本项目对照</td><td class="n c l">.707</td><td class="n c">.881</td><td class="n c">.692</td><td class="n c l">.696</td><td class="n c">.653</td><td class="n c">.577</td><td class="n c l">.243</td><td class="n c">.777</td><td class="n c">.601</td></tr>
+      <tr><td>第 6 版</td><td>本方法上一版</td><td class="n c l">.702</td><td class="n c">.889</td><td class="n c">.783</td><td class="n c l">.691</td><td class="n c">.680</td><td class="n c">.563</td><td class="n c l">.279</td><td class="n c">.770</td><td class="n c">.681</td></tr>
+      <tr class="ours"><td>第 7 版（本方法）</td><td>test 选 trial</td><td class="n c l">.723</td><td class="n c">.898</td><td class="n c">.826</td><td class="n c l">.704</td><td class="n c">.688</td><td class="n c">.605</td><td class="n c l">.291</td><td class="n c">.795</td><td class="n c">.710</td></tr>
+      <tr><td>第 7 版</td><td>validation 选 trial</td><td class="n c l">.677</td><td class="n c">.868</td><td class="n c">.760</td><td class="n c l">.681</td><td class="n c">.657</td><td class="n c">.596</td><td class="n c l">.263</td><td class="n c">.788</td><td class="n c">.686</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <ul class="plain">
+    <li><b>对最强训练 baseline（规则 8 主门，粗体）</b>：AP / ROC 高 +.150 / +.091（HateMM）、+.142 / +.160（HCS）、+.117 / +.094（DeHate），都大于两边的 seed 标准差。第 7 版 seed 标准差 .001 / .001 / .006、.003 / .008 / .008、.009 / .002 / .003。</li>
+    <li><b>对朴素对照（同样 8 个 VLM 回答 + 最强 baseline，融合权重取 test 最好）</b>：+.016 / +.017、+.008 / +.035、+.049 / +.018。第 6 版在 HateMM、HCS 上 AP 比这个对照低 .005，第 7 版三语料都领先。</li>
+    <li><b>对第 6 版</b>：+.021 / +.009 / +.043、+.012 / +.008 / +.042、+.013 / +.025 / +.029；within 三语料都升 .03–.04。</li>
+  </ul>
+  <p class="tnote">baseline 数来自 <code>docs/duplex/OFFICIAL_VAL_RESULTS.md</code>（3 seed 均值，不重训）；DeHate baseline 见 <code>experiments/20260926_dehate_external/README.md</code> 第 5.1 节，其超参只在 seed 234 上搜了 5 个 trial（HateMM、HCS 是 40 个），论文须写明。朴素对照：<code>runs/20261109_tree_within/naive_questions/&lt;语料&gt;.json</code>。第 7 版：<code>runs/20261110_prior_weight/search_first_level/summary_&lt;语料&gt;.json</code>。平均调用次数 7.63 / 8.0 / 7.26（短视频可问节点少于 8 个）。</p>
+</section>
+
+<section id="e-curve">
+  <h2><span class="num">E2</span>调用次数曲线：0 到 32 次</h2>
+  <figure>
+    <div class="fig">
+<svg class="d chart" viewBox="0 0 1000 470" role="img" aria-label="第 7 版与固定 d = 0 的贪心树在 0 到 32 次调用下的 AP 和 within，三个语料各一列；圆点 = 第 6 版 8 次，叉 = 朴素对照 8 次。">
+<text class="b c" x="226.0" y="30">HateMM</text>
+<rect class="panel" x="92" y="52" width="268" height="150"/>
+<line class="grid" x1="92" y1="202.0" x2="360" y2="202.0"/>
+<text class="s m e" x="86" y="206.0">.60</text>
+<line class="grid" x1="92" y1="152.0" x2="360" y2="152.0"/>
+<text class="s m e" x="86" y="156.0">.65</text>
+<line class="grid" x1="92" y1="102.0" x2="360" y2="102.0"/>
+<text class="s m e" x="86" y="106.0">.70</text>
+<line class="grid" x1="92" y1="52.0" x2="360" y2="52.0"/>
+<text class="s m e" x="86" y="56.0">.75</text>
+<text class="b" x="48" y="40">AP</text>
+<text class="s m c" x="102.0" y="218">0</text>
+<text class="s m c" x="143.3" y="218">1</text>
+<text class="s m c" x="184.7" y="218">2</text>
+<text class="s m c" x="226.0" y="218">4</text>
+<text class="s m c" x="267.3" y="218">8</text>
+<text class="s m c" x="308.7" y="218">16</text>
+<text class="s m c" x="350.0" y="218">32</text>
+<polyline class="l-d0" points="102.0,162.4 143.3,132.5 184.7,117.3 226.0,108.0 267.3,108.9 308.7,95.0 350.0,102.6"/>
+<polyline class="l-r7" points="102.0,162.4 143.3,132.5 184.7,112.4 226.0,88.6 267.3,79.2 308.7,83.7 350.0,79.3"/>
+<circle class="p-r7" cx="102.0" cy="162.4" r="3"/>
+<circle class="p-r7" cx="143.3" cy="132.5" r="3"/>
+<circle class="p-r7" cx="184.7" cy="112.4" r="3"/>
+<circle class="p-r7" cx="226.0" cy="88.6" r="3"/>
+<circle class="p-r7" cx="267.3" cy="79.2" r="3"/>
+<circle class="p-r7" cx="308.7" cy="83.7" r="3"/>
+<circle class="p-r7" cx="350.0" cy="79.3" r="3"/>
+<circle class="p-r6" cx="267.3" cy="100.3" r="5"/>
+<path class="p-ctl" d="M263.3,91.1 L271.3,99.1 M263.3,99.1 L271.3,91.1"/>
+<rect class="panel" x="92" y="268" width="268" height="150"/>
+<line class="grid" x1="92" y1="418.0" x2="360" y2="418.0"/>
+<text class="s m e" x="86" y="422.0">.65</text>
+<line class="grid" x1="92" y1="380.5" x2="360" y2="380.5"/>
+<text class="s m e" x="86" y="384.5">.70</text>
+<line class="grid" x1="92" y1="343.0" x2="360" y2="343.0"/>
+<text class="s m e" x="86" y="347.0">.75</text>
+<line class="grid" x1="92" y1="305.5" x2="360" y2="305.5"/>
+<text class="s m e" x="86" y="309.5">.80</text>
+<line class="grid" x1="92" y1="268.0" x2="360" y2="268.0"/>
+<text class="s m e" x="86" y="272.0">.85</text>
+<text class="b" x="48" y="256">within</text>
+<text class="s m c" x="102.0" y="434">0</text>
+<text class="s m c" x="143.3" y="434">1</text>
+<text class="s m c" x="184.7" y="434">2</text>
+<text class="s m c" x="226.0" y="434">4</text>
+<text class="s m c" x="267.3" y="434">8</text>
+<text class="s m c" x="308.7" y="434">16</text>
+<text class="s m c" x="350.0" y="434">32</text>
+<polyline class="l-d0" points="102.0,337.1 143.3,328.4 184.7,308.0 226.0,299.6 267.3,301.3 308.7,300.5 350.0,305.9"/>
+<polyline class="l-r7" points="102.0,337.1 143.3,328.4 184.7,310.6 226.0,287.5 267.3,286.0 308.7,300.9 350.0,298.9"/>
+<circle class="p-r7" cx="102.0" cy="337.1" r="3"/>
+<circle class="p-r7" cx="143.3" cy="328.4" r="3"/>
+<circle class="p-r7" cx="184.7" cy="310.6" r="3"/>
+<circle class="p-r7" cx="226.0" cy="287.5" r="3"/>
+<circle class="p-r7" cx="267.3" cy="286.0" r="3"/>
+<circle class="p-r7" cx="308.7" cy="300.9" r="3"/>
+<circle class="p-r7" cx="350.0" cy="298.9" r="3"/>
+<circle class="p-r6" cx="267.3" cy="318.5" r="5"/>
+<path class="p-ctl" d="M263.3,382.6 L271.3,390.6 M263.3,390.6 L271.3,382.6"/>
+<text class="s c" x="226.0" y="454">VLM 调用次数</text>
+<text class="b c" x="546.0" y="30">HateClipSeg</text>
+<rect class="panel" x="412" y="52" width="268" height="150"/>
+<line class="grid" x1="412" y1="202.0" x2="680" y2="202.0"/>
+<text class="s m e" x="406" y="206.0">.60</text>
+<line class="grid" x1="412" y1="152.0" x2="680" y2="152.0"/>
+<text class="s m e" x="406" y="156.0">.65</text>
+<line class="grid" x1="412" y1="102.0" x2="680" y2="102.0"/>
+<text class="s m e" x="406" y="106.0">.70</text>
+<line class="grid" x1="412" y1="52.0" x2="680" y2="52.0"/>
+<text class="s m e" x="406" y="56.0">.75</text>
+<text class="s m c" x="422.0" y="218">0</text>
+<text class="s m c" x="463.3" y="218">1</text>
+<text class="s m c" x="504.7" y="218">2</text>
+<text class="s m c" x="546.0" y="218">4</text>
+<text class="s m c" x="587.3" y="218">8</text>
+<text class="s m c" x="628.7" y="218">16</text>
+<text class="s m c" x="670.0" y="218">32</text>
+<polyline class="l-d0" points="422.0,151.2 463.3,138.7 504.7,123.0 546.0,113.8 587.3,98.4 628.7,84.3 670.0,83.6"/>
+<polyline class="l-r7" points="422.0,151.2 463.3,138.7 504.7,125.3 546.0,116.2 587.3,98.4 628.7,92.7 670.0,69.0"/>
+<circle class="p-r7" cx="422.0" cy="151.2" r="3"/>
+<circle class="p-r7" cx="463.3" cy="138.7" r="3"/>
+<circle class="p-r7" cx="504.7" cy="125.3" r="3"/>
+<circle class="p-r7" cx="546.0" cy="116.2" r="3"/>
+<circle class="p-r7" cx="587.3" cy="98.4" r="3"/>
+<circle class="p-r7" cx="628.7" cy="92.7" r="3"/>
+<circle class="p-r7" cx="670.0" cy="69.0" r="3"/>
+<circle class="p-r6" cx="587.3" cy="110.5" r="5"/>
+<path class="p-ctl" d="M583.3,102.5 L591.3,110.5 M583.3,110.5 L591.3,102.5"/>
+<rect class="panel" x="412" y="268" width="268" height="150"/>
+<line class="grid" x1="412" y1="418.0" x2="680" y2="418.0"/>
+<text class="s m e" x="406" y="422.0">.55</text>
+<line class="grid" x1="412" y1="368.0" x2="680" y2="368.0"/>
+<text class="s m e" x="406" y="372.0">.60</text>
+<line class="grid" x1="412" y1="318.0" x2="680" y2="318.0"/>
+<text class="s m e" x="406" y="322.0">.65</text>
+<line class="grid" x1="412" y1="268.0" x2="680" y2="268.0"/>
+<text class="s m e" x="406" y="272.0">.70</text>
+<text class="s m c" x="422.0" y="434">0</text>
+<text class="s m c" x="463.3" y="434">1</text>
+<text class="s m c" x="504.7" y="434">2</text>
+<text class="s m c" x="546.0" y="434">4</text>
+<text class="s m c" x="587.3" y="434">8</text>
+<text class="s m c" x="628.7" y="434">16</text>
+<text class="s m c" x="670.0" y="434">32</text>
+<polyline class="l-d0" points="422.0,365.9 463.3,363.7 504.7,354.5 546.0,347.5 587.3,362.7 628.7,347.3 670.0,323.9"/>
+<polyline class="l-r7" points="422.0,365.9 463.3,363.7 504.7,358.4 546.0,353.1 587.3,362.7 628.7,348.7 670.0,305.6"/>
+<circle class="p-r7" cx="422.0" cy="365.9" r="3"/>
+<circle class="p-r7" cx="463.3" cy="363.7" r="3"/>
+<circle class="p-r7" cx="504.7" cy="358.4" r="3"/>
+<circle class="p-r7" cx="546.0" cy="353.1" r="3"/>
+<circle class="p-r7" cx="587.3" cy="362.7" r="3"/>
+<circle class="p-r7" cx="628.7" cy="348.7" r="3"/>
+<circle class="p-r7" cx="670.0" cy="305.6" r="3"/>
+<circle class="p-r6" cx="587.3" cy="405.0" r="5"/>
+<path class="p-ctl" d="M583.3,386.9 L591.3,394.9 M583.3,394.9 L591.3,386.9"/>
+<text class="s c" x="546.0" y="454">VLM 调用次数</text>
+<text class="b c" x="866.0" y="30">DeHate</text>
+<rect class="panel" x="732" y="52" width="268" height="150"/>
+<line class="grid" x1="732" y1="202.0" x2="1000" y2="202.0"/>
+<text class="s m e" x="726" y="206.0">.22</text>
+<line class="grid" x1="732" y1="164.5" x2="1000" y2="164.5"/>
+<text class="s m e" x="726" y="168.5">.24</text>
+<line class="grid" x1="732" y1="127.0" x2="1000" y2="127.0"/>
+<text class="s m e" x="726" y="131.0">.26</text>
+<line class="grid" x1="732" y1="89.5" x2="1000" y2="89.5"/>
+<text class="s m e" x="726" y="93.5">.28</text>
+<line class="grid" x1="732" y1="52.0" x2="1000" y2="52.0"/>
+<text class="s m e" x="726" y="56.0">.30</text>
+<text class="s m c" x="742.0" y="218">0</text>
+<text class="s m c" x="783.3" y="218">1</text>
+<text class="s m c" x="824.7" y="218">2</text>
+<text class="s m c" x="866.0" y="218">4</text>
+<text class="s m c" x="907.3" y="218">8</text>
+<text class="s m c" x="948.7" y="218">16</text>
+<text class="s m c" x="990.0" y="218">32</text>
+<polyline class="l-d0" points="742.0,168.1 783.3,138.2 824.7,114.8 866.0,95.4 907.3,84.8 948.7,95.1 990.0,104.0"/>
+<polyline class="l-r7" points="742.0,168.1 783.3,138.2 824.7,96.0 866.0,78.8 907.3,68.2 948.7,88.8 990.0,101.1"/>
+<circle class="p-r7" cx="742.0" cy="168.1" r="3"/>
+<circle class="p-r7" cx="783.3" cy="138.2" r="3"/>
+<circle class="p-r7" cx="824.7" cy="96.0" r="3"/>
+<circle class="p-r7" cx="866.0" cy="78.8" r="3"/>
+<circle class="p-r7" cx="907.3" cy="68.2" r="3"/>
+<circle class="p-r7" cx="948.7" cy="88.8" r="3"/>
+<circle class="p-r7" cx="990.0" cy="101.1" r="3"/>
+<circle class="p-r6" cx="907.3" cy="91.9" r="5"/>
+<path class="p-ctl" d="M903.3,155.3 L911.3,163.3 M903.3,163.3 L911.3,155.3"/>
+<rect class="panel" x="732" y="268" width="268" height="150"/>
+<line class="grid" x1="732" y1="418.0" x2="1000" y2="418.0"/>
+<text class="s m e" x="726" y="422.0">.55</text>
+<line class="grid" x1="732" y1="380.5" x2="1000" y2="380.5"/>
+<text class="s m e" x="726" y="384.5">.60</text>
+<line class="grid" x1="732" y1="343.0" x2="1000" y2="343.0"/>
+<text class="s m e" x="726" y="347.0">.65</text>
+<line class="grid" x1="732" y1="305.5" x2="1000" y2="305.5"/>
+<text class="s m e" x="726" y="309.5">.70</text>
+<line class="grid" x1="732" y1="268.0" x2="1000" y2="268.0"/>
+<text class="s m e" x="726" y="272.0">.75</text>
+<text class="s m c" x="742.0" y="434">0</text>
+<text class="s m c" x="783.3" y="434">1</text>
+<text class="s m c" x="824.7" y="434">2</text>
+<text class="s m c" x="866.0" y="434">4</text>
+<text class="s m c" x="907.3" y="434">8</text>
+<text class="s m c" x="948.7" y="434">16</text>
+<text class="s m c" x="990.0" y="434">32</text>
+<polyline class="l-d0" points="742.0,328.4 783.3,329.4 824.7,325.4 866.0,308.1 907.3,302.6 948.7,284.7 990.0,277.5"/>
+<polyline class="l-r7" points="742.0,328.4 783.3,329.4 824.7,322.4 866.0,312.3 907.3,298.3 948.7,284.8 990.0,275.2"/>
+<circle class="p-r7" cx="742.0" cy="328.4" r="3"/>
+<circle class="p-r7" cx="783.3" cy="329.4" r="3"/>
+<circle class="p-r7" cx="824.7" cy="322.4" r="3"/>
+<circle class="p-r7" cx="866.0" cy="312.3" r="3"/>
+<circle class="p-r7" cx="907.3" cy="298.3" r="3"/>
+<circle class="p-r7" cx="948.7" cy="284.8" r="3"/>
+<circle class="p-r7" cx="990.0" cy="275.2" r="3"/>
+<circle class="p-r6" cx="907.3" cy="319.8" r="5"/>
+<path class="p-ctl" d="M903.3,375.4 L911.3,383.4 M903.3,383.4 L911.3,375.4"/>
+<text class="s c" x="866.0" y="454">VLM 调用次数</text>
+</svg>
+    </div>
+    <figcaption>
+      <span class="chips">
+        <span class="chip"><span class="ln r7"></span>第 7 版（每个预算在 validation 上选 d）</span>
+        <span class="chip"><span class="ln d0"></span>同一批 checkpoint，固定 d = 0（只加 c 的贪心树）</span>
+        <span class="chip"><span class="mk"></span>第 6 版，8 次</span>
+        <span class="chip"><span class="mk x"></span>朴素对照，8 次</span>
+      </span>
+      横轴不等距（0、1、2、4、8、16、32 次）。checkpoint 是 8 次时 test 选出的 trial，其它预算用同一批 checkpoint。来源 <code>summary_&lt;语料&gt;.json</code> 的 <code>other_budgets</code>。
+    </figcaption>
+  </figure>
+  <ul class="plain">
+    <li><b>少问几次也够</b>：HateMM 问 4 次（4 个等长窗）已有 .713 / .893 / .824，高于第 6 版问 8 次（.702 / .889 / .783）。</li>
+    <li><b>HateMM 上等长窗明显更好</b>：4 次、8 次选中的 d 比贪心树 AP 高 .019 / .030；HCS 上两者基本重合，32 次时选 d = 5（32 个等长窗）高 .015 AP；DeHate 2–8 次选 d = 1–2，比贪心高 .008–.011 AP。</li>
+    <li><b>AP 不一定随调用单调升</b>：HateMM 8 → 16 次 −.005，DeHate 8 → 32 次 −.017；within 在 DeHate 一直升（.670 → .740）。</li>
+  </ul>
+</section>
+
+<section id="e-abl">
+  <h2><span class="num">E3</span>消融</h2>
+  <h3>第 7 版的两处改动（同一批 checkpoint，8 次）</h3>
+  <div class="tbl">
+  <table>
+    <thead>
+      <tr class="grp"><th></th><th colspan="3" class="l">HateMM</th><th colspan="3" class="l">HateClipSeg</th><th colspan="3" class="l">DeHate</th></tr>
+      <tr><th>设置</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th></tr>
+    </thead>
+    <tbody>
+      <tr class="ours"><td>第 7 版（c + 选 d）</td><td class="n c l">.723</td><td class="n c">.898</td><td class="n c">.826</td><td class="n c l">.704</td><td class="n c">.688</td><td class="n c">.605</td><td class="n c l">.291</td><td class="n c">.795</td><td class="n c">.710</td></tr>
+      <tr><td>去掉 c（c 设回 1，d 不变）</td><td class="n c l">.698</td><td class="n c">.887</td><td class="n c">.808</td><td class="n c l">.661</td><td class="n c">.646</td><td class="n c">.570</td><td class="n c l">.266</td><td class="n c">.768</td><td class="n c">.673</td></tr>
+      <tr><td>&emsp;第 7 版减它</td><td class="n c l"><span class="pos">+.025</span></td><td class="n c"><span class="pos">+.011</span></td><td class="n c"><span class="pos">+.018</span></td><td class="n c l"><span class="pos">+.043</span></td><td class="n c"><span class="pos">+.042</span></td><td class="n c"><span class="pos">+.036</span></td><td class="n c l"><span class="pos">+.026</span></td><td class="n c"><span class="pos">+.027</span></td><td class="n c"><span class="pos">+.037</span></td></tr>
+      <tr><td>固定 d = 0（贪心树）</td><td class="n c l">.693</td><td class="n c">.889</td><td class="n c">.806</td><td class="n c l">.704</td><td class="n c">.688</td><td class="n c">.605</td><td class="n c l">.283</td><td class="n c">.795</td><td class="n c">.704</td></tr>
+      <tr><td>固定 d = 3（只问 8 个等长窗）</td><td class="n c l">.723</td><td class="n c">.898</td><td class="n c">.826</td><td class="n c l">.680</td><td class="n c">.662</td><td class="n c">.610</td><td class="n c l">.281</td><td class="n c">.792</td><td class="n c">.719</td></tr>
+      <tr><td>两处都不加（第 6 版的 checkpoint，c = 1，同样选 d）</td><td class="n c l">.702</td><td class="n c">.889</td><td class="n c">.783</td><td class="n c l">.687</td><td class="n c">.683</td><td class="n c">.562</td><td class="n c l">.279</td><td class="n c">.771</td><td class="n c">.682</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <ul class="plain">
+    <li><b>c 有用（规则 14(g)）</b>：去掉 c，三语料 AP 都降 ≥ .016（test 选 trial 降 .025 / .043 / .026；60 个 trial 配对降 .021 / .034 / .020）。HateMM 的 ROC 只在 test 选 trial 上降到 .01（全 trial .008）。局限：这些 checkpoint 的 epoch 和超参是带着 c 选的。</li>
+    <li><b>c 作用在哪</b>（只加 c 的搜索上拆开看）：HCS 上提问和后验两处都要 c（各去掉一处 AP 降 .034 / .031）；DeHate 上只在后验（提问不用 c 只降 .001）；HateMM 上两处对 AP / ROC 都 ≤ .006，作用在 within。</li>
+    <li><b>d 不作为贡献报告</b>（评审意见）：没有 c 时选 d 不带来任何增益（“两处都不加”一行与第 6 版相同），选择也不稳定（HateMM 只有 50% 选 d = 3，带 c 时 82%）。</li>
+  </ul>
+  <p class="tnote">来源 <code>runs/20261110_prior_weight/r7_trials/c_ablation_&lt;语料&gt;.json</code>、<code>search_first_level/summary_&lt;语料&gt;.json</code>（same_trials_depth）、<code>all_trials/policy_select_b8_first_none.json</code>、<code>s8_trials/s8_ablation_&lt;语料&gt;.json</code>。</p>
+
+  <h3 style="margin-top:10px">沿用部件的消融（在第 6 版上做，每臂重训一次，8 次）</h3>
+  <div class="tbl">
+  <table>
+    <thead>
+      <tr><th>去掉或换成常见做法</th><th>改动</th><th class="c l">HateMM 降</th><th class="c l">HCS 降</th><th class="c l">DeHate 降</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="mod inf"></span>逐秒独立先验</td><td>去掉秒级链</td><td class="n c l">.110 / .037 / .167</td><td class="n c l">.053 / .051 / .041</td><td class="n c l">.048 / .015 / .073</td></tr>
+      <tr><td><span class="mod inf"></span>逐秒相加</td><td>树上推断 → 回答直接加到所含的秒</td><td class="n c l">.085 / .040 / .034</td><td class="n c l">.027 / .021 / .013</td><td class="n c l">.047 / .047 / .010</td></tr>
+      <tr><td><span class="mod inf"></span>耦合链</td><td>去掉零膨胀（视频状态 G）</td><td class="n c l">.071 / .050 / .013</td><td class="n c l">.058 / .064 / −.003</td><td class="n c l">.109 / .053 / .055</td></tr>
+      <tr><td><span class="mod vlm"></span>只问一层</td><td>不用树，8–17 秒等长窗（lvl8）</td><td class="n c l">.072 / .047 / .043</td><td class="n c l">.020 / .027 / .026</td><td class="n c l">.075 / .046 / .031</td></tr>
+      <tr><td><span class="mod vlm"></span>硬答案</td><td>P(Yes) 在 .5 处切成是 / 否</td><td class="n c l">.050 / .024 / .034</td><td class="n c l">.016 / .050 / .018</td><td class="n c l">.059 / .032 / .032</td></tr>
+      <tr><td><span class="mod tr"></span>只用标签训练骨干</td><td>去掉回答训练目标</td><td class="n c l">.054 / .026 / .054</td><td class="n c l">.033 / .045 / −.022</td><td class="n c l">.072 / .033 / .060</td></tr>
+      <tr><td><span class="mod inf"></span>答案表联合学习</td><td>表与网络一起学、无长度项</td><td class="n c l">.037 / .014 / .016</td><td class="n c l">.029 / .041 / .000</td><td class="n c l">.061 / .016 / −.009</td></tr>
+      <tr><td><span class="mod bb"></span>去掉节点势 φ_n</td><td></td><td class="n c l">.028 / .010 / −.007</td><td class="n c l">.034 / .049 / .009</td><td class="n c l">.034 / .005 / −.005</td></tr>
+      <tr><td><span class="mod inf"></span>去掉长度项</td><td>答案表不随节点长度变</td><td class="n c l">.023 / .008 / .022</td><td class="n c l">.014 / .019 / −.005</td><td class="n c l">.045 / .001 / −.007</td></tr>
+      <tr><td><span class="mod vlm"></span>按层从上到下问</td><td>EIG → 广度优先</td><td class="n c l">.022 / .006 / −.009</td><td class="n c l">.049 / .041 / .004</td><td class="n c l">.007 / .013 / .004</td></tr>
+      <tr><td><span class="mod bb"></span>无骨干</td><td>常数先验，只靠回答</td><td class="n c l">.057 / .013 / −.013</td><td class="n c l">−.003 / .023 / −.064</td><td class="n c l">.083 / .013 / .037</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="tnote">比第 6 版完整方法降多少（AP / ROC / within，正数 = 去掉后变差）。全部 16 个臂在三个语料上 AP 或 ROC 都降 ≥ .01（规则 14(g)），表中列 11 个；另有 4 / 16 秒单层、按中位数切的硬答案、两状态各自斜率、文字时间戳转录。这些臂在第 6 版上做，第 7 版沿用这些部件，没有在第 7 版上重做。来源 <code>runs/20261101_r6_length_table/arms/table.json</code>。</p>
+</section>
+
+<section id="e-tree">
+  <h2><span class="num">E4</span>全树 vs 单层：同一 checkpoint、同样调用次数</h2>
+  <div class="tbl" style="max-width:1000px">
+  <table>
+    <thead><tr><th>8 次，test 选 trial</th><th class="c l">贪心树（d = 0）</th><th class="c l">8 个等长窗（d = 3）</th><th class="c l">树减单层</th><th>结论</th></tr></thead>
+    <tbody>
+      <tr><td>HateMM</td><td class="n c l">.693 / .889 / .806</td><td class="n c l">.723 / .898 / .826</td><td class="n c l"><span class="neg">−.030 / −.009 / −.020</span></td><td>单层更好；validation 也选单层</td></tr>
+      <tr><td>HateClipSeg</td><td class="n c l">.704 / .688 / .605</td><td class="n c l">.680 / .662 / .610</td><td class="n c l"><span class="pos">+.024 / +.026</span> / −.004</td><td>树更好（within 在 .005 容差内）</td></tr>
+      <tr><td>DeHate</td><td class="n c l">.283 / .795 / .704</td><td class="n c l">.281 / .792 / .719</td><td class="n c l">+.002 / +.003 / <span class="neg">−.015</span></td><td>AP / ROC 持平，单层 within 高</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <ul class="plain">
+    <li><b>目标“全树 within 不低于任一单层，且 AP 或 ROC 高 ≥ .01”只在 HCS 成立。</b>HateMM 上试过 4 种回答相关模型、15 种提问策略、一个带位置的新问题、validation 拟合的三状态表，没有一种在同样次数下比 8 个等长窗好（<code>experiments/20261109_tree_within/README.md</code> 第 6–11 节、<code>20261110_prior_weight/README.md</code> 第 9 节）。</li>
+    <li><b>原因（数据事实）</b>：HateMM 仇恨视频里仇恨秒占比中位数 .70，“这段有没有仇恨”在大段都是仇恨时说明不了仇恨在哪；回答不随节点里仇恨占比变大；短于约 16 秒的节点回答不可靠。HCS 相反：视频平均 240 秒，8 个等长窗每段 30 秒太粗，自适应往下问更好。</li>
+  </ul>
+</section>
+
+<section id="e-find">
+  <h2><span class="num">E5</span>意外发现（可以写进论文）</h2>
+  <div class="finds">
+    <article class="find">
+      <div class="tag">先验 · 第 7 版的来源</div>
+      <h3>网络的位置先验在没见过的视频上只该用十分之一到四分之一</h3>
+      <div class="fig-n">c 中位数 .26 / .09 / .18；去掉 c，AP 降 .025 / .043 / .026</div>
+      <p>不用任何标签、只看 validation 回答估出来的 c 都远小于 1。视频级 logit 也一样：train 上 AUC .95 / .99 / .93，test 上 .84 / .69 / .69，test 上的校准系数只有 .29 / .26 / .24。网络在训练视频上把回答拟合得太好，到新视频上过度自信。</p>
+      <p class="src"><code>20261110_prior_weight</code> 第 4、12 节；<code>20261110_answer_likelihood</code> 第 2 节</p>
+    </article>
+    <article class="find">
+      <div class="tag">提问 · 语料决定问法</div>
+      <h3>同一条选择规则，HateMM 选等长窗，HCS 选自适应树</h3>
+      <div class="fig-n">HateMM d = 3 占 82%；HCS d = 0 占 98%</div>
+      <p>HateMM 上只有两处一起加才涨：只选 d（不加 c）AP .702，只加 c .698–.707，两个都加 .722–.723。先验打折之后，均匀覆盖整段视频才比按先验挑片段好。这和群检验的经典结论方向一致（Ungar 1960，独立同分布条件下：阳性比例超过约 .38 时逐个检验比合并检验好），只作动机，不是本任务的定理。</p>
+      <p class="src"><code>20261110_prior_weight</code> 第 9、12 节</p>
+    </article>
+    <article class="find">
+      <div class="tag">VLM 回答</div>
+      <h3>VLM 只回答“有没有”，不回答“有多少”</h3>
+      <div class="fig-n">P(Yes) 与仇恨占比的相关 −.06–.16；“全部 vs 部分” AUC .44–.55</div>
+      <p>含仇恨的节点里，P(Yes) 几乎不随仇恨占比变化。直接问“无 / 部分 / 全部”，在 HateMM、DeHate 上分不清整段仇恨和部分仇恨（HCS .55–.64 弱信号），“有没有”这一维和原来的是 / 否一样。所以节点状态取“含任一仇恨秒”（OR）是对的建模。</p>
+      <p class="src"><code>20261109_tree_within</code> 第 1、10 节；<code>runs/20261109_tree_within/diag/extent_answers.json</code></p>
+    </article>
+    <article class="find">
+      <div class="tag">VLM 回答</div>
+      <h3>仇恨视频里的干净片段也常被答“是”</h3>
+      <div class="fig-n">HateMM 4–8 秒平均档：干净片段 3.56，负例视频 2.26，仇恨片段 4.68</div>
+      <p>答案表的“无仇恨”行只用负例视频估，所以高估了仇恨视频内部“是”的区分度：表认为 .90，实际只有 .66（HCS .82 对 .67）。DeHate 相反，表低估了回答。</p>
+      <p class="src"><code>runs/20261109_tree_within/diag/table_trust.json</code></p>
+    </article>
+    <article class="find">
+      <div class="tag">VLM 回答</div>
+      <h3>短窗口的回答不可靠</h3>
+      <div class="fig-n">HateMM 视频内 AUC：4–8 秒 .70，16–32 秒 .84，32–64 秒 .85</div>
+      <p>在仇恨视频内部，用回答把仇恨部分和干净部分分开：HateMM 上窗口越短越差；HCS、DeHate 各长度持平（.61–.70）。贪心树后几次问的正是这些短节点。</p>
+      <p class="src"><code>runs/20261109_tree_within/diag/extent_answers.json</code></p>
+    </article>
+    <article class="find">
+      <div class="tag">VLM 回答</div>
+      <h3>同一视频里的回答高度相关，沿树像马尔可夫过程</h3>
+      <div class="fig-n">父子节点残差相关 .66–.81；隔两层 ≈ 平方</div>
+      <p>嵌套节点的回答比不相交节点像得多（HateMM 负例 .81 对 .46），隔两层的相关约等于一层的平方。把回答换成别的视频同状态、同长度节点的回答后（保留分布、去掉视频内相关），第 5 版 HateMM AP 随调用一路升：8 / 16 / 32 次 .747 / .791 / .813。调用多了增益变小，主要是这个相关。</p>
+      <p class="src"><code>20261109_tree_within</code> 第 1 节；<code>20261101_r5_completion</code> 第 1 条</p>
+    </article>
+    <article class="find">
+      <div class="tag">评测指标</div>
+      <h3>pooled AP 主要是整段视频的排序</h3>
+      <div class="fig-n">对照的逐秒分数换成视频平均分：AP .706 对 .707</div>
+      <p>把朴素对照每个视频的逐秒分数全换成该视频的平均分，HateMM AP 不变；最强 baseline 加上整段视频的 1 个回答就有 .688 / .885。所以 pooled AP 的差距大多来自视频间排序，定位能力要看 within。</p>
+      <p class="src"><code>20261109_tree_within</code> 第 12 节</p>
+    </article>
+    <article class="find">
+      <div class="tag">评测指标</div>
+      <h3>只靠位置就有不低的 within</h3>
+      <div class="fig-n">只用学到的链（无网络、无回答）：.723 / .619 / .604</div>
+      <p>分数只取决于这一秒在视频里的位置（开头和结尾各十分之一约为均值的一半），within 就高于所有 baseline（.595 / .51–.55 / .51）。报告 within 时应同时给出这个位置参照。</p>
+      <p class="src"><code>20261109_tree_within</code> 第 12 节</p>
+    </article>
+  </div>
+</section>
+
+<section id="e-open">
+  <h2><span class="num">E6</span>注意事项与没解决的问题</h2>
+  <div class="open">
+    <div><b>树的 within 目标只在 HCS 成立。</b>HateMM 上 validation 选出的问法就是单层等长窗；DeHate 上选中深度的 within 比单层低 .010。论文里“树比单层好”只能在 HCS 上主张，HateMM 要写成“按语料选问法”。</div>
+    <div><b>trial 用 test 选（规则 7）。</b>validation 选 trial 时第 7 版低不少（HateMM .677 / .868 / .760），论文须同时报。</div>
+    <div><b>分数文件取 6 位小数。</b>低于 5e-7 的逐秒概率写成 0，使 HateMM within 偏低：不取整时 .826 → .833（全 trial +.010）；HCS、DeHate 无影响。是否改小数位数待用户裁定。</div>
+    <div><b>d 在规则 13 下的读法。</b>8 次时 d = 0 与 d = 3 相当于“EIG 选节点”开或关；评审认为 d 只能作为不主张的超参数。</div>
+    <div><b>DeHate seed 3407 的 trial 2、6</b>：CPU 重放与 GPU 搜索的 AP 差 .003–.006，原因未查明；都不是 test 选出的 trial。</div>
+  </div>
+</section>
+</div>
+
+<footer>方法有改动时更新本页（<code>research-wiki/method_framework.html</code>），并在版本记录加一行。实验栏的数字只转录自 <code>runs/</code> 下的评测器输出，路径写在每节末尾。</footer>
+</div>
+
+<script>
+(function () {
+  var panes = { method: document.getElementById('method'), results: document.getElementById('results') };
+  function show() {
+    var h = (location.hash || '').slice(1);
+    var name = panes[h] ? h : null, target = null;
+    if (!name && h) {
+      target = document.getElementById(h);
+      if (target) { for (var k in panes) { if (panes[k].contains(target)) name = k; } }
+    }
+    if (!name) name = 'method';
+    for (var p in panes) {
+      panes[p].hidden = (p !== name);
+      document.getElementById('tab-' + p).setAttribute('aria-selected', p === name ? 'true' : 'false');
+    }
+    if (target) target.scrollIntoView();
+  }
+  window.addEventListener('hashchange', show);
+  show();
+})();
+</script>

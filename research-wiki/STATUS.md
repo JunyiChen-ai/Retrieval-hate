@@ -1,5 +1,7 @@
 # 当前研究状态
 
+**2026-11-14 更新：当前方法 = 第 7 版（用户 11-14 指示把方法设为“fable advance”会话的最新版）。** 第 7 版 = 第 6 版 + 位置先验权重 c（validation 视频回答的边际似然，无标签）+ validation 选首层深度 d（`experiments/20261110_prior_weight/README.md` 第 8、10、12 节）。8 次 test 选 trial：HateMM .723 / .898 / .826，HCS .704 / .688 / .605，DeHate .291 / .795 / .710（来源 `runs/20261110_prior_weight/search_first_level/summary_<corpus>.json`）。方法示意图已更新并重新发布（[method_framework.html](method_framework.html)，artifact LSpteQpW8HXrYhsvDauYNA），新增“实验”栏：主结果表、0–32 次调用曲线、消融（第 7 版两处改动 + 第 6 版 16 个臂）、全树 vs 单层、8 条可写进论文的发现、注意事项。仍待用户裁定：分数文件 6 位小数；d 在规则 13 下的读法（评审：不主张的超参数）。下文 11-10 至 11-12 各条里“方法仍是 r6”“待用户裁定采用哪个候选”已由本条取代。
+
 **2026-11-10 更新 3（自主迭代，23:35；记录 [20261110_prior_weight/README.md](../experiments/20261110_prior_weight/README.md) 第 1–11 节；重放结果 `runs/20261110_prior_weight/all_trials/` 在 uoa-lab1 CPU 跑、已回传本机；两个搜索正在 uoa-lab3 / uoa-lab1 跑，未回传。方法仍是 r6；r7 是候选，未采纳，示意图未改。）** 数字均为 AP / ROC / within，顺序 HateMM、HCS、DeHate，固定 8 次调用，test。
 - **r7 候选 = r6 + 两处改动。** ① 位置先验权重 c：推理时把骨干的逐秒 logit 和节点势乘一个标量 c，c 用 validation 视频缓存回答的边际似然估计，不用任何标签（用户 11-10 裁定不违反规则 3）。② 提问的首层深度 d：先问树第 d 层的 2^d 个等长窗（按 EIG 排序），再在全部节点上贪心；d = 0 就是原来的贪心，预算正好 2^d 次就是单层。d 在训练后、每个报告预算各自按 validation (AP + ROC) / 2 选，候选和规则三语料相同。训练和选 checkpoint 不变。
 - **比较方式改了**：不再只看 3 个 test 选出的 r6 trial，改为在 r6 搜索的全部 60 个 checkpoint 上重放（未重训），报全 trial 配对差和“每个设置各自最优 trial 的 3 seed 均值”。来源 `all_trials/policy_select_b8_first_locg.json`、`all_trials/<corpus>/seed*/trial*.json`。
@@ -56,7 +58,7 @@
 
 方法示意图（当前方法的数据流、训练、停止规则）：[method_framework.html](method_framework.html)。
 
-**当前方法 = 第 6 版（用户 2026-11-03 裁定取代 r5）。** r5 + 答案表加两状态共用、只在负例节点上估计的长度斜率（训练、EIG、后验、停止同一张表）+ 去掉只在测试用的复制似然。依据与数字：[20261101_r6_length_table/README.md](../experiments/20261101_r6_length_table/README.md)（搜索 3 seed × 20 trial，`runs/20261101_r6_length_table/`）；过程与诊断：[20261101_r5_completion/README.md](../experiments/20261101_r5_completion/README.md)。
+**（11-14 起当前方法为第 7 版，见顶部；以下为第 6 版的记录。）第 6 版（用户 2026-11-03 裁定取代 r5）。** r5 + 答案表加两状态共用、只在负例节点上估计的长度斜率（训练、EIG、后验、停止同一张表）+ 去掉只在测试用的复制似然。依据与数字：[20261101_r6_length_table/README.md](../experiments/20261101_r6_length_table/README.md)（搜索 3 seed × 20 trial，`runs/20261101_r6_length_table/`）；过程与诊断：[20261101_r5_completion/README.md](../experiments/20261101_r5_completion/README.md)。
 - 固定 8 次 AP / ROC / within（test 选 trial，统一评测器）：HateMM .702 / .889 / .783（r5 .691 / .885），HCS .691 / .680 / .563（r5 .687 / .674），DeHate .279 / .770 / .681（r5 .262 / .780）。来源 `runs/20261101_r6_length_table/final_curves/test_selected/<corpus>/summary.json`。
 - 单调性：调用越多总体越好，但有局部回落（11-08 外部审稿后更正）。validation 选 trial 时 32 次比 8 次 AP 高 .011 / .012 / .015（HateMM / HCS / DeHate）、ROC −.001 / +.019 / +.022、within 高 .012–.019；相邻点最大回落 HCS 3→4 次 AP / ROC −.009、HateMM 24→32 次 ROC −.006；DeHate 无超过 .005 的回落。按 test 选的 trial 在 8 次后 AP / ROC 略降（≤ .012，trial 与 epoch 都按 8 次选）。
 - 代价：DeHate 8 次 ROC 比 r5 低 .010（预注册 Q2 不过，用户接受）；预算 5 次比固定 8 次 AP 低 .012–.019（r5 在 .01 内）。
