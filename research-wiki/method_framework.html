@@ -194,7 +194,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <h2><span class="num">1</span>训练：一个训练视频怎么走</h2>
   <figure>
     <div class="fig">
-<svg class="d big" viewBox="0 0 1400 620" role="img" aria-label="训练流程：训练前 VLM 离线问遍训练视频全部节点并拟合答案模型的固定参数（含共用长度斜率）；训练时特征进骨干得到 s_t、g、φ_n，答案模型给出全部节点的 ℓ_n，树模型 inside–outside 跑两遍得到两个对数概率，和视频标签一起算损失，梯度回到骨干和链参数。">
+<svg class="d big" viewBox="0 0 1400 620" role="img" aria-label="训练流程：训练前 VLM 离线问遍训练视频全部节点并拟合答案模型的固定参数（含共用长度斜率）；训练时特征进骨干得到 s_t、g、φ_n，答案模型给出全部节点的 ℓ_n，树模型 inside–outside 跑两遍得到两个对数概率，和视频标签一起算损失，梯度回到骨干和链参数。第 7 版另有两步不产生梯度：每个 epoch 结束后在 validation 视频的缓存回答上估先验权重 c（无标签），选 epoch 的指标在这个 c 下算；训练结束后对每个预算在 validation 上选首层深度 d。">
   <defs>
     <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
   </defs>
@@ -239,6 +239,22 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text x="668" y="184">ℓ_n：P(o | 有)、P(o | 无)</text>
   <path class="ar" d="M760,206 V248" marker-end="url(#a1)"/>
   <text class="s" x="768" y="232">全部节点的 ℓ_n</text>
+
+  <!-- revision 7: two steps outside the gradient -->
+  <rect class="lane" x="920" y="14" width="470" height="222" rx="10"/>
+  <text class="b" x="934" y="36" style="fill:var(--muted)">第 7 版：训练中另外两步（不产生梯度）</text>
+  <rect class="soft-inf" x="934" y="48" width="442" height="88" rx="8"/>
+  <text class="b t-inf" x="946" y="70">③ 每个 epoch 结束后：估先验权重 c</text>
+  <text class="k" x="946" y="92">输入</text>
+  <text x="982" y="92">本 epoch 网络在 validation 视频上的 s_t、g、φ_n + 缓存回答</text>
+  <text class="k" x="946" y="112">计算</text>
+  <text x="982" y="112">使回答的边际似然最大的 c（不用任何标签）</text>
+  <text class="s" x="946" y="130">选 epoch 的 validation 指标在这个 c 下算；c 随 checkpoint 存下，测试时用</text>
+  <rect class="box-vlm" x="934" y="144" width="442" height="84" rx="8"/>
+  <text class="b t-vlm" x="946" y="166">② 训练结束后：选首层深度 d</text>
+  <text x="946" y="188">对每个报告预算 B，d = 0、1、2、3（预算大时到 5）</text>
+  <text x="946" y="208">在 validation 上各问一遍，取 (AP+ROC)/2 最大的 d</text>
+  <text class="s" x="946" y="224">d = 0 = 贪心 EIG；不改网络参数</text>
 
   <!-- main row -->
   <text class="b c" x="110" y="262">输入特征（每秒一行）</text>
