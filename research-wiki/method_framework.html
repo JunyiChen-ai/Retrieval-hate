@@ -674,6 +674,7 @@ r_k ≥ τ  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <dt>11-09</dt><dd>树 vs 单层的 within 诊断；“无 / 部分 / 全部”新问题在回答层面无信号，否决；答案表在仇恨视频内过度信任“是”（方法不变，<code>experiments/20261109_tree_within/</code>）</dd>
     <dt>11-10</dt><dd>朴素对照追平的原因：pooled AP 主要是视频排序；11 种答案表都不成立；视频级先验在测试视频上过度自信（方法不变，<code>experiments/20261110_answer_likelihood/</code>）</dd>
     <dt>第 7 版 · 11-14</dt><dd>位置先验权重 c（validation 回答的边际似然，无标签）+ validation 选首层深度 d；3 seed × 20 trial 搜索 11-11 完成。8 次 AP / ROC 三语料都高于第 6 版和朴素对照；用户 11-14 指示采用（<code>experiments/20261110_prior_weight/</code>）</dd>
+    <dt>11-15</dt><dd>主表：去掉朴素对照和第 6 版两行；从另一项目加 6 个弱监督 baseline（BERT / CLIP / wav2vec2 + MIL、AVadCLIP、SAGE、CLARA）和 7 个不训练的 VLM / LLM baseline（Qwen3-VL-8B、Qwen3-8B、MARS、EventVAD-Qwen3-VL、LAVAD、PRISM、VideoMind），在本仓库 test 集和评测器上重算；HateMM、DeHate 全部低于第 7 版，HCS 划分不同暂缺（<code>experiments/20261115_hf_baselines/</code>，方法不变）</dd>
     <dt>未采用</dt><dd>inside–outside 新骨干、尺度感知跨模态注意力（没超过 r5）；每视频回答偏移；HMT 答案相关模型 v1–v4、15 种提问策略、validation 三状态表（11-09）；只加 c 的贪心树（11-12：HateMM AP 比第 6 版低 .0052、比朴素对照低 .010）</dd>
   </dl>
 </section>
@@ -695,29 +696,44 @@ r_k ≥ τ  就继续问；第 1 次总是问；每视频最多 8 次</div>
       <tr><th>方法</th><th>出处</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th><th class="c l">AP</th><th class="c">ROC</th><th class="c">within</th></tr>
     </thead>
     <tbody>
-      <tr class="sep"><td colspan="11">弱监督（只用视频标签），不问 VLM</td></tr>
-      <tr><td>VadCLIP</td><td>AAAI 2024</td><td class="n c l">.368</td><td class="n c">.642</td><td class="n c">.442</td><td class="n c l">.525</td><td class="n c">.504</td><td class="n c">.533</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td></tr>
+      <tr class="sep"><td colspan="11">弱监督（只用视频标签训练），不问 VLM</td></tr>
+      <tr><td>VadCLIP</td><td>AAAI 2024</td><td class="n c l">.368</td><td class="n c">.642</td><td class="n c">.442</td><td class="n c l">.525</td><td class="n c">.504</td><td class="n c">.533</td><td class="n c l">.116†</td><td class="n c">.627†</td><td class="n c">.445†</td></tr>
       <tr><td>CMHKF</td><td>ACL 2025</td><td class="n c l">.429</td><td class="n c">.708</td><td class="n c">.442</td><td class="n c l">.515</td><td class="n c">.487</td><td class="n c">.508</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td></tr>
-      <tr><td>MACIL-SD</td><td>ACM MM 2022</td><td class="n c l"><b>.573</b></td><td class="n c"><b>.807</b></td><td class="n c">.595</td><td class="n c l">.516</td><td class="n c">.477</td><td class="n c">.516</td><td class="n c l">.088</td><td class="n c">.562</td><td class="n c">.530</td></tr>
+      <tr><td>MACIL-SD</td><td>ACM MM 2022</td><td class="n c l">.573</td><td class="n c">.807</td><td class="n c">.595</td><td class="n c l">.516</td><td class="n c">.477</td><td class="n c">.516</td><td class="n c l">.088</td><td class="n c">.562</td><td class="n c">.530</td></tr>
       <tr><td>MultiHateLoc</td><td>WWW 2026</td><td class="n c l">.496</td><td class="n c">.729</td><td class="n c">.632</td><td class="n c l">.539</td><td class="n c">.524</td><td class="n c">.524</td><td class="n c l">.129</td><td class="n c">.611</td><td class="n c">.546</td></tr>
-      <tr><td>DSANet</td><td>AAAI 2026</td><td class="n c l">.452</td><td class="n c">.722</td><td class="n c">.526</td><td class="n c l">.554</td><td class="n c"><b>.528</b></td><td class="n c">.545</td><td class="n c l">.120</td><td class="n c">.632</td><td class="n c">.486</td></tr>
-      <tr><td>Fed-WSVAD（3 client）</td><td>AAAI 2025</td><td class="n c l">.442</td><td class="n c">.729</td><td class="n c">.520</td><td class="n c l"><b>.562</b></td><td class="n c">.509</td><td class="n c">.510</td><td class="n c l"><b>.174</b></td><td class="n c"><b>.701</b></td><td class="n c">.508</td></tr>
-      <tr class="sep"><td colspan="11">不训练（只报告）</td></tr>
-      <tr><td>VERA</td><td>CVPR 2025</td><td class="n c l">.373</td><td class="n c">.622</td><td class="n c">.559</td><td class="n c l">.619</td><td class="n c">.605</td><td class="n c">.562</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td></tr>
-      <tr class="sep"><td colspan="11">同样用 VLM 回答，每视频 8 次</td></tr>
-      <tr><td>最强 baseline + 8 个等长窗回答（朴素对照）</td><td>本项目对照</td><td class="n c l">.707</td><td class="n c">.881</td><td class="n c">.692</td><td class="n c l">.696</td><td class="n c">.653</td><td class="n c">.577</td><td class="n c l">.243</td><td class="n c">.777</td><td class="n c">.601</td></tr>
-      <tr><td>第 6 版</td><td>本方法上一版</td><td class="n c l">.702</td><td class="n c">.889</td><td class="n c">.783</td><td class="n c l">.691</td><td class="n c">.680</td><td class="n c">.563</td><td class="n c l">.279</td><td class="n c">.770</td><td class="n c">.681</td></tr>
+      <tr><td>DSANet</td><td>AAAI 2026</td><td class="n c l">.452</td><td class="n c">.722</td><td class="n c">.526</td><td class="n c l">.554</td><td class="n c">.528</td><td class="n c">.545</td><td class="n c l">.120</td><td class="n c">.632</td><td class="n c">.486</td></tr>
+      <tr><td>Fed-WSVAD（3 client）</td><td>AAAI 2025</td><td class="n c l">.442</td><td class="n c">.729</td><td class="n c">.520</td><td class="n c l">.562</td><td class="n c">.509</td><td class="n c">.510</td><td class="n c l">.174</td><td class="n c">.701</td><td class="n c">.508</td></tr>
+      <tr><td>BERT+MIL</td><td>文本，top-k MIL</td><td class="n c l">.383</td><td class="n c">.636</td><td class="n c">.519</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.172</td><td class="n c">.645</td><td class="n c">.557</td></tr>
+      <tr><td>CLIP+MIL</td><td>画面，top-k MIL</td><td class="n c l">.458</td><td class="n c">.720</td><td class="n c">.523</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.131</td><td class="n c">.642</td><td class="n c">.516</td></tr>
+      <tr><td>wav2vec2+MIL</td><td>音频，top-k MIL</td><td class="n c l">.442</td><td class="n c">.692</td><td class="n c">.561</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.082</td><td class="n c">.542</td><td class="n c">.520</td></tr>
+      <tr><td>AVadCLIP</td><td>IEEE TMM 2026</td><td class="n c l">.435</td><td class="n c">.678</td><td class="n c">.481</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.138</td><td class="n c">.641</td><td class="n c">.499</td></tr>
+      <tr><td>SAGE</td><td>ACL 2026</td><td class="n c l">.503</td><td class="n c">.731</td><td class="n c">.616</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.110</td><td class="n c">.593</td><td class="n c">.572</td></tr>
+      <tr><td>CLARA</td><td>ACM MM 2026</td><td class="n c l"><b>.628</b></td><td class="n c"><b>.872</b></td><td class="n c">.549</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l"><b>.193</b></td><td class="n c"><b>.774</b></td><td class="n c">.477</td></tr>
+      <tr class="sep"><td colspan="11">不训练：VLM / LLM 直接打分（只报告）</td></tr>
+      <tr><td>VERA</td><td>CVPR 2025</td><td class="n c l">.373</td><td class="n c">.622</td><td class="n c">.559</td><td class="n c l"><b>.619</b></td><td class="n c"><b>.605</b></td><td class="n c"><b>.562</b></td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td></tr>
+      <tr><td>Qwen3-VL-8B 每 8 秒窗直接问</td><td>画面 + 转录</td><td class="n c l">.554</td><td class="n c">.811</td><td class="n c">.628</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.176</td><td class="n c">.691</td><td class="n c">.601</td></tr>
+      <tr><td>Qwen3-8B 每段转录直接问</td><td>只用转录</td><td class="n c l">.565</td><td class="n c">.789</td><td class="n c">.587</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.134</td><td class="n c">.639</td><td class="n c">.582</td></tr>
+      <tr><td>MARS（Qwen3-VL-8B）</td><td>ICASSP 2026</td><td class="n c l">.528</td><td class="n c">.791</td><td class="n c">.611</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.163</td><td class="n c">.692</td><td class="n c">.597</td></tr>
+      <tr><td>EventVAD（Qwen3-VL-8B）</td><td>ACM MM 2025</td><td class="n c l">.510</td><td class="n c">.762</td><td class="n c">.583</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.140</td><td class="n c">.638</td><td class="n c"><b>.613</b></td></tr>
+      <tr><td>LAVAD</td><td>CVPR 2024</td><td class="n c l">.501</td><td class="n c">.731</td><td class="n c">.517</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.123</td><td class="n c">.608</td><td class="n c">.498</td></tr>
+      <tr><td>PRISM</td><td>ICML 2026</td><td class="n c l">.450</td><td class="n c">.723</td><td class="n c">.626</td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.111</td><td class="n c">.542</td><td class="n c">.555</td></tr>
+      <tr><td>VideoMind</td><td>ICLR 2026</td><td class="n c l">.399</td><td class="n c">.680</td><td class="n c"><b>.658</b></td><td class="n c l">—</td><td class="n c">—</td><td class="n c">—</td><td class="n c l">.089</td><td class="n c">.568</td><td class="n c">.603</td></tr>
+      <tr class="sep"><td colspan="11">本方法（每视频问 8 次 VLM）</td></tr>
       <tr class="ours"><td>第 7 版（本方法）</td><td>test 选 trial</td><td class="n c l">.723</td><td class="n c">.898</td><td class="n c">.826</td><td class="n c l">.704</td><td class="n c">.688</td><td class="n c">.605</td><td class="n c l">.291</td><td class="n c">.795</td><td class="n c">.710</td></tr>
       <tr><td>第 7 版</td><td>validation 选 trial</td><td class="n c l">.677</td><td class="n c">.868</td><td class="n c">.760</td><td class="n c l">.681</td><td class="n c">.657</td><td class="n c">.596</td><td class="n c l">.263</td><td class="n c">.788</td><td class="n c">.686</td></tr>
     </tbody>
   </table>
   </div>
   <ul class="plain">
-    <li><b>对最强训练 baseline（规则 8 主门，粗体）</b>：AP / ROC 高 +.150 / +.091（HateMM）、+.142 / +.160（HCS）、+.117 / +.094（DeHate），都大于两边的 seed 标准差。第 7 版 seed 标准差 .001 / .001 / .006、.003 / .008 / .008、.009 / .002 / .003。</li>
-    <li><b>对朴素对照（同样 8 个 VLM 回答 + 最强 baseline，融合权重取 test 最好）</b>：+.016 / +.017、+.008 / +.035、+.049 / +.018。第 6 版在 HateMM、HCS 上 AP 比这个对照低 .005，第 7 版三语料都领先。</li>
-    <li><b>对第 6 版</b>：+.021 / +.009 / +.043、+.012 / +.008 / +.042、+.013 / +.025 / +.029；within 三语料都升 .03–.04。</li>
+    <li><b>粗体 = 每列最好的 baseline。</b>第 7 版每一格都高于它。</li>
+    <li><b>对最强训练 baseline（规则 8 主门）</b>：AP / ROC 高 +.095 / +.026（HateMM，对 CLARA）、+.142 / +.160（HCS，对 Fed-WSVAD / DSANet）、+.098 / +.021（DeHate，对 CLARA），都大于两边的 seed 标准差（CLARA .009 / .006、.004 / .002；第 7 版 .001 / .001、.009 / .002）。</li>
+    <li><b>对最强不训练 baseline</b>：AP / ROC / within 高 +.158 / +.087 / +.168（HateMM：Qwen3-8B / Qwen3-VL-8B / VideoMind）、+.085 / +.083 / +.043（HCS：VERA）、+.115 / +.103 / +.097（DeHate：Qwen3-VL-8B / MARS / EventVAD-Qwen3-VL）。</li>
+    <li><b>within</b>：所有 baseline 最高 .658 / .562 / .613，第 7 版 .826 / .605 / .710。训练类 baseline 的 AP / ROC 高主要靠视频级排序，within 多在 .45–.63。</li>
   </ul>
-  <p class="tnote">baseline 数来自 <code>docs/duplex/OFFICIAL_VAL_RESULTS.md</code>（3 seed 均值，不重训）；DeHate baseline 见 <code>experiments/20260926_dehate_external/README.md</code> 第 5.1 节，其超参只在 seed 234 上搜了 5 个 trial（HateMM、HCS 是 40 个），论文须写明。朴素对照：<code>runs/20261109_tree_within/naive_questions/&lt;语料&gt;.json</code>。第 7 版：<code>runs/20261110_prior_weight/search_first_level/summary_&lt;语料&gt;.json</code>。平均调用次数 7.63 / 8.0 / 7.26（短视频可问节点少于 8 个）。</p>
+  <p class="tnote">原有 6 个弱监督 baseline 与 VERA：<code>docs/duplex/OFFICIAL_VAL_RESULTS.md</code>（3 seed 均值）；DeHate 的 MACIL-SD / MultiHateLoc / DSANet / Fed-WSVAD 见 <code>experiments/20260926_dehate_external/README.md</code> 第 5.1 节（超参只在 seed 234 上搜了 5 个 trial，论文须写明）；VadCLIP、CMHKF、VERA 当时没在 DeHate 上跑。<br>
+  11-15 新增的行来自另一个项目 <code>~/Hate-follow-up</code> 的已有输出（不重训、不重跑），用本仓库的 test 集和评测器重新算：<code>experiments/20261115_hf_baselines/reeval.py</code>，数字见 <code>runs/20261115_hf_baselines/table.json</code>。弱监督行 3 seed 均值，不训练行单次。† VadCLIP 的 DeHate 格来自这批：按 XD-Violence 固定预设训练 10 epoch、取最后一个 epoch，与它 HateMM / HCS 两格（40 trial 搜索）训练方式不同。<br>
+  新增行没有 HCS 数：两个项目的 HCS 划分不同（本仓库 test 79 个视频，另一项目 118 个，只重合 23 个），要在本仓库的划分上重训 / 重跑才有。未列入：ZS-CLIP、ZS-ImageBind、原版 EventVAD（HateMM ROC .505–.630，DeHate .505–.562，接近随机）。<br>
+  第 7 版：<code>runs/20261110_prior_weight/search_first_level/summary_&lt;语料&gt;.json</code>，平均调用次数 7.63 / 8.0 / 7.26（短视频可问节点少于 8 个）。</p>
 </section>
 
 <section id="e-curve">
