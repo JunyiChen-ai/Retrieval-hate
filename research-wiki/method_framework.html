@@ -182,12 +182,12 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <div class="chips" aria-label="颜色说明">
     <span class="chip"><span class="sw bb"></span>① 骨干：从特征算先验</span>
     <span class="chip"><span class="sw vlm"></span>② VLM 提问：问哪段、怎么问</span>
-    <span class="chip"><span class="sw inf"></span>③ 融合与停止：回答怎么用、何时停</span>
+    <span class="chip"><span class="sw inf"></span>③ 融合：回答怎么用</span>
     <span class="chip"><span class="ln"></span>数据</span>
     <span class="chip"><span class="ln dash"></span>梯度</span>
   </div>
   <nav class="toc" aria-label="方法目录" style="margin-top:12px">
-    <a href="#train">训练</a><a href="#test">测试</a><a href="#r7">第 7 版的两处改动</a><a href="#tree">问题树</a><a href="#stop">停止规则</a><a href="#parts">部件清单</a><a href="#history">版本记录</a>
+    <a href="#train">训练</a><a href="#test">测试</a><a href="#r7">第 7 版的两处改动</a><a href="#tree">问题树</a><a href="#stop">停止规则（未用）</a><a href="#parts">部件清单</a><a href="#history">版本记录</a>
   </nav>
 
 <section id="train">
@@ -342,7 +342,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <h2><span class="num">2</span>测试：一个测试视频怎么走</h2>
   <figure>
     <div class="fig">
-<svg class="d big" viewBox="0 0 1400 620" role="img" aria-label="测试流程：特征进骨干得到 s_t、g、φ_n（只算一次），s_t 和 φ_n 乘先验权重 c；树模型 inside–outside 给出后验；前 2^d 次在第 d 层等长窗里按 EIG 选节点，之后在全部节点里按 EIG 选；到预算就停；继续则问 VLM 得到 p，答案模型把 p 变成 ℓ_n* 加回树模型；停则输出每秒分数。">
+<svg class="d big" viewBox="0 0 1400 620" role="img" aria-label="测试流程：特征进骨干得到 s_t、g、φ_n（只算一次），s_t 和 φ_n 乘先验权重 c；树模型 inside–outside 给出后验；前 2^d 次在第 d 层等长窗里按 EIG 选节点，之后在全部节点里按 EIG 选；问满 B 次就停（没有自动停止规则）；继续则问 VLM 得到 p，答案模型把 p 变成 ℓ_n* 加回树模型；停则输出每秒分数。">
   <defs>
     <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker>
   </defs>
@@ -402,13 +402,13 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text class="s" x="1098" y="254">n*、EIG(n*)</text>
 
   <rect class="soft-inf" x="950" y="270" width="280" height="130" rx="10"/>
-  <text class="b t-inf" x="962" y="294">③ 停止判断 qmixE1</text>
+  <text class="b t-inf" x="962" y="294">③ 问满了吗</text>
   <text class="k" x="962" y="318">输入</text>
-  <text x="998" y="318">dlsum：上次回答让分数变了多少</text>
-  <text x="998" y="338">EIG(n*)；阈值 τ</text>
+  <text x="998" y="318">已问次数 k；预算 B（主表 8）</text>
+  <text x="998" y="338">还有没有未问、≥4 秒的节点</text>
   <text class="k" x="962" y="364">输出</text>
-  <text x="998" y="364">停 或 继续</text>
-  <text class="s" x="962" y="390">固定预算时到 B 次就停；τ 由预算 B 定</text>
+  <text x="998" y="364">k = B 或无节点可问：停</text>
+  <text class="s" x="962" y="390">不看回答内容；没有自动停止规则</text>
   <path class="ar" d="M1230,335 H1268" marker-end="url(#a2)"/>
   <text class="s c" x="1249" y="327">停</text>
   <rect class="out" x="1270" y="280" width="120" height="110" rx="8"/>
@@ -447,7 +447,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   <text class="b" x="24" y="300">每一圈 = 1 次 VLM 调用</text>
   <text x="24" y="326">1. 树模型 inside–outside 给出后验</text>
   <text x="24" y="350">2. 选出 n*（前 2^d 次限第 d 层，都按 EIG 排）</text>
-  <text x="24" y="374">3. 到预算（或 qmixE1 说停）就输出；否则往下</text>
+  <text x="24" y="374">3. 问满 B 次（或没有节点可问）就输出；否则往下</text>
   <text x="24" y="398">4. 问 VLM，得到 p</text>
   <text x="24" y="422">5. 答案模型把 p 变成 ℓ_n*，加进树模型，回到 1</text>
   <text class="s" x="24" y="454">第 0 圈没有答案：树模型只用骨干先验（已乘 c）</text>
@@ -458,7 +458,7 @@ footer { padding-top: 24px; font-size: 13px; color: var(--muted); }
   </figure>
   <ul class="plain">
     <li><b>inside–outside</b>：inside 自下而上算每个节点下面所有标注组合的总概率；outside 给出每秒、每节点的后验。代码里 outside 这一步用对 log Z 求导（autograd）实现，数值和 outside 传递相同（<code>src/qtl/ctree.py</code> 的 <code>up</code>、<code>marginals</code>）。</li>
-    <li><b>报告用固定预算</b>：主表是每个视频固定问 8 次（视频太短、可问节点不够时少于 8 次：平均 7.63 / 8.0 / 7.26 次）。按预算提前停的规则见第 5 节。</li>
+    <li><b>报告用固定预算</b>：主表是每个视频固定问 8 次（视频太短、可问节点不够时少于 8 次：平均 7.63 / 8.0 / 7.26 次）。第 7 版没有自动停止规则：每个视频都问满 B 次，不根据回答决定少问。第 5 节的 qmixE1 只在一次对照里用过，不属于本方法。</li>
   </ul>
 </section>
 
@@ -619,8 +619,8 @@ c = argmax_c  Σ_v log [ P(G=1|x_v) P(o_v | G=1, x_v; c) + P(G=0|x_v) P(o_v | G=
 </section>
 
 <section id="stop">
-  <h2><span class="num">5</span>停止规则 qmixE1（按预算提前停）</h2>
-  <p class="prose">每问完一次，算两个数，判断还要不要接着问。代码在 <code>src/qtl/stop_rules.py</code>（<code>"qmixE1": ("dlsum", "eig")</code>）和 <code>src/qtl/policy.py</code>（<code>calibrate</code>、<code>stop_calls</code>）。阈值原来也记作 c，为了和先验权重区分，本页改记 τ。</p>
+  <h2><span class="num">5</span>停止规则 qmixE1（第 7 版不用，主表不用）</h2>
+  <p class="prose"><b>第 7 版和主表都不用这条规则</b>：每个视频固定问 B 次。这里只记录它是什么、对照结果如何。它的做法：每问完一次，算两个数，判断还要不要接着问。代码在 <code>src/qtl/stop_rules.py</code>（<code>"qmixE1": ("dlsum", "eig")</code>）和 <code>src/qtl/policy.py</code>（<code>calibrate</code>、<code>stop_calls</code>）。阈值原来也记作 c，为了和先验权重区分，本页改记 τ。</p>
 <div class="formula">后看  dlsum_k = Σ_t | logit p_t(第 k 次回答后) − logit p_t(第 k 次回答前) |   上一个回答让分数变了多少
 前看  eig_k   = 下一个最佳节点的 EIG                                       下一个问题还能带来多少信息
 
@@ -628,7 +628,7 @@ r_k = max( dlsum_k 在 validation 全部值中的分位数,  eig_k 在 validatio
 r_k ≥ τ  就继续问；第 1 次总是问；每视频最多 8 次</div>
   <ul class="plain">
     <li><b>τ 怎么定</b>：在 validation 上调 τ，让平均调用次数等于预算 B。只用调用次数，不用标注。B 由使用者按资源设（用户 2026-11-01 裁定）。</li>
-    <li><b>第 7 版里</b>：停止规则仍用在 d = 0 的贪心策略上（评审要求），本轮没有改。HateMM 上“贪心 + 停止规则、平均 8 次”比 8 个等长窗低 .017 AP，所以按预算停的曲线和固定 d 的曲线是两条不同的策略，分开报告。</li>
+    <li><b>对照结果</b>（<code>experiments/20261110_prior_weight/README.md</code> “Greedy EIG with the stopping rule” 一节，<code>stage_a_all_trials.py</code> 的 <code>stopE1c16</code>）：d = 0 贪心 + qmixE1，和同样平均次数的单层等长窗比，AP / ROC / within 在 HateMM 平均 4 次 −.010 / +.004 / −.013、平均 8 次 −.017 / −.003 / −.029；HCS +.015 / +.009 / +.013、+.017 / +.019 / +.009；DeHate 没跑。两语料方向相反，所以没有放进方法。</li>
   </ul>
 </section>
 
@@ -649,7 +649,7 @@ r_k ≥ τ  就继续问；第 1 次总是问；每视频最多 8 次</div>
       <tr><td><span class="mod inf"></span>零膨胀链先验</td><td>视频状态 G + 首尾闭合的秒级链</td><td>零膨胀模型（Lambert 1992）+ 本项目</td><td><code>ctree.py</code></td></tr>
       <tr><td><span class="mod inf"></span>树上精确推断</td><td>inside–outside 求每秒、每节点后验（outside 用求导实现）</td><td>树上和积</td><td><code>ctree.py</code> up、marginals</td></tr>
       <tr><td><span class="mod inf"></span>锚定答案表 + 共用长度斜率</td><td>只用标签确定状态的答案拟合，训练前固定；斜率两状态共用，只在负例节点上估</td><td>本项目 r2、第 6 版</td><td><code>qtree.py</code> fit_anchored_shared</td></tr>
-      <tr><td><span class="mod inf"></span>停止 qmixE1</td><td>按预算提前停（d = 0 上用）</td><td>本项目 10-31</td><td><code>stop_rules.py</code></td></tr>
+      <tr><td><span class="mod inf"></span>停止 qmixE1</td><td>按平均预算提前停；第 7 版不用，只在对照里用过</td><td>本项目 10-31</td><td><code>stop_rules.py</code></td></tr>
       <tr><td><span class="mod tr"></span>树似然训练目标</td><td>VLM 答案作为训练目标</td><td>本项目</td><td><code>train.py</code></td></tr>
     </tbody>
   </table>
@@ -675,6 +675,7 @@ r_k ≥ τ  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <dt>11-10</dt><dd>朴素对照追平的原因：pooled AP 主要是视频排序；11 种答案表都不成立；视频级先验在测试视频上过度自信（方法不变，<code>experiments/20261110_answer_likelihood/</code>）</dd>
     <dt>第 7 版 · 11-14</dt><dd>位置先验权重 c（validation 回答的边际似然，无标签）+ validation 选首层深度 d；3 seed × 20 trial 搜索 11-11 完成。8 次 AP / ROC 三语料都高于第 6 版和朴素对照；用户 11-14 指示采用（<code>experiments/20261110_prior_weight/</code>）</dd>
     <dt>11-15</dt><dd>主表：去掉朴素对照和第 6 版两行；从另一项目加 6 个弱监督 baseline（BERT / CLIP / wav2vec2 + MIL、AVadCLIP、SAGE、CLARA）和 7 个不训练的 VLM / LLM baseline（Qwen3-VL-8B、Qwen3-8B、MARS、EventVAD-Qwen3-VL、LAVAD、PRISM、VideoMind），在本仓库 test 集和评测器上重算；HateMM、DeHate 全部低于第 7 版，HCS 划分不同暂缺（<code>experiments/20261115_hf_baselines/</code>，方法不变）</dd>
+    <dt>11-15</dt><dd>更正：第 7 版没有自动停止规则，每个视频固定问 B 次；测试流程图第 ③ 步改为“问满了吗”，第 5 节 qmixE1 标为未用（方法不变，只改描述）</dd>
     <dt>未采用</dt><dd>inside–outside 新骨干、尺度感知跨模态注意力（没超过 r5）；每视频回答偏移；HMT 答案相关模型 v1–v4、15 种提问策略、validation 三状态表（11-09）；只加 c 的贪心树（11-12：HateMM AP 比第 6 版低 .0052、比朴素对照低 .010）</dd>
   </dl>
 </section>
