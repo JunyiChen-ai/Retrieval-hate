@@ -934,6 +934,7 @@ r_k ≥ τ  就继续问；第 1 次总是问；每视频最多 8 次</div>
     <li><b>少问几次也够</b>：HateMM 问 4 次（4 个等长窗）已有 .713 / .893 / .824，高于第 6 版问 8 次（.702 / .889 / .783）。</li>
     <li><b>HateMM 上等长窗明显更好</b>：4 次、8 次选中的 d 比贪心树 AP 高 .019 / .030；HCS 上两者基本重合，32 次时选 d = 5（32 个等长窗）高 .015 AP；DeHate 2–8 次选 d = 1–2，比贪心高 .008–.011 AP。</li>
     <li><b>AP 不一定随调用单调升</b>：HateMM 8 → 16 次 −.005，DeHate 8 → 32 次 −.017；within 在 DeHate 一直升（.670 → .740）。</li>
+    <li><b>每个次数重新选 trial 后</b>（11-15，AP / ROC / within）：16 次 HateMM .720 / .898 / .808、HCS .714 / .691 / .615、DeHate .288 / .795 / .712；32 次 .724 / .893 / .802、.735 / .710 / .663、.290 / .795 / .729。结论不变：HateMM、DeHate 的 AP / ROC 8 次后不再升，HCS 到 32 次仍升。16、32 次时短视频节点不够，实际平均 14.1 / 25.0（HateMM）、13.0 / 22.0（DeHate）次。来源 <code>runs/20261110_prior_weight/search_first_level/reselect_per_budget.json</code>（<code>reselect_per_budget.py</code>）。</li>
   </ul>
 </section>
 

@@ -1027,3 +1027,27 @@ minus the variant:
   (R2) on the three corpora and for which c reaches rule 14(g) on the three corpora. Neither meets goal (b) on
   HateMM and DeHate. Which one becomes revision 7 (d as a scalar hyper-parameter under rule 13, not claimed) is the
   user's ruling; the method framework page stays at revision 6 until then.
+
+## 14. Call-budget curve with the trial chosen for every budget (2026-11-15)
+
+The curve in section 12 uses, at every budget, the trials chosen at 8 calls. At the user's request the trial is now
+chosen again for every budget and seed among the 20 trials (`reselect_per_budget.py`, output
+`runs/20261110_prior_weight/search_first_level/reselect_per_budget.json`; reads the stored `summary.json`, no new
+evaluation). d is the validation choice for that budget; the epoch of each trial stays the validation 8-call choice
+(one checkpoint per trial is stored). Test-selected trials, 3-seed mean, AP / ROC / within, actual mean calls:
+
+| budget | HateMM | HCS | DeHate |
+|---|---|---|---|
+| 0 | .662 / .849 / .757 | .666 / .659 / .587 | .240 / .723 / .659 |
+| 1 | .680 / .878 / .766 | .673 / .675 / .585 | .253 / .754 / .657 |
+| 2 | .693 / .884 / .797 | .687 / .674 / .603 | .284 / .762 / .663 |
+| 4 | .713 / .895 / .823 | .687 / .682 / .609 | .286 / .785 / .691 |
+| 8 | .723 / .898 / .826 (7.63) | .704 / .688 / .605 (8.00) | .291 / .795 / .710 (7.26) |
+| 16 | .720 / .898 / .808 (14.11) | .714 / .691 / .615 (16.00) | .288 / .795 / .712 (13.00) |
+| 32 | .724 / .893 / .802 (25.02) | .735 / .710 / .663 (32.00) | .290 / .795 / .729 (21.96) |
+
+Choosing the trial per budget raises 0 calls most (HateMM AP +.022, HCS +.015) and raises 16 and 32 calls by
+at most .003 AP on HateMM and by .008 / .016 AP on DeHate (over the 8-call trials). The picture of section 12
+stays: HateMM and DeHate AP / ROC stop rising after 8 calls (within on HateMM falls, on DeHate rises); HCS keeps
+rising to 32 calls. Validation-selected trials give the same shape (in the JSON). At 16 and 32 calls the short
+HateMM / DeHate videos have fewer nodes than the budget, so the actual mean calls are 14.1 / 25.0 and 13.0 / 22.0.
