@@ -52,7 +52,16 @@ ROWS = {
     "Qwen3-VL-8B": ("free", L + "/naive/vlm/{D}", False),
     "MARS (Qwen3-VL-8B)": ("free", L + "/mars/{D}/prob", False),
     "EventVAD (Qwen3-VL-8B)": ("free", L + "/eventvad/{D}/prob", False),
+    "InternVL3.5-8B": ("free", None, False),
 }
+# Reruns on this repository's own cohorts (README, section "HateClipSeg reruns"), collected by collect_sources.py into
+# <out>/sources/<key>/<Dataset>/<seed|single>/. For these (row, corpus) pairs the source is read from there instead of
+# HF. AVadCLIP uses the score_mlp branch, the branch the HateMM / DeHate cells above read.
+SRC = {("InternVL3.5-8B", c): "InternVL3.5-8B/{D}/{S}" for c in DS}
+SRC.update({(row, "hateclipseg"): key + "/{D}/{S}" for row, key in {
+    "BERT+MIL": "BERTpMIL", "wav2vec2+MIL": "wav2vec2pMIL", "CLIP+MIL": "CLIPpMIL", "AVadCLIP": "AVadCLIP_mlp",
+    "SAGE": "SAGE", "CLARA": "CLARA", "Qwen3-VL-8B": "Qwen3-VL-8B", "MARS (Qwen3-VL-8B)": "MARS_Qwen3-VL-8B",
+    "EventVAD (Qwen3-VL-8B)": "EventVAD_Qwen3-VL-8B", "PRISM": "PRISM", "VideoMind": "VideoMind"}.items()})
 
 
 def to_1fps(curve, n):
@@ -116,7 +125,12 @@ def main():
             group, pat, seeded = ROWS[row]
             res = {}
             for seed in (SEEDS if seeded else ["single"]):
-                src = HF / pat.format(D=DS[corpus], S=seed)
+                if (row, corpus) in SRC:
+                    src = out_root / "sources" / SRC[(row, corpus)].format(D=DS[corpus], S=seed)
+                elif pat is None or corpus == "hateclipseg":
+                    continue                    # HF's HateClipSeg split differs from this repository's
+                else:
+                    src = HF / pat.format(D=DS[corpus], S=seed)
                 if not (src / "predictions.jsonl").exists():
                     print(f"skip {row} {corpus} {seed}: no {src}/predictions.jsonl", flush=True)
                     continue
