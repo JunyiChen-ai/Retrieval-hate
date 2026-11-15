@@ -1,5 +1,7 @@
 # 当前研究状态
 
+**2026-11-16 更新：主表 HCS 格补齐，加 InternVL3.5-8B 一行（方法不变）。** 新增 baseline 在本仓库 HCS 划分上重训（弱监督 6 个，3 seed）或重跑（VLM 5 个），InternVL3.5-8B 每 8 秒窗直接问三个语料都跑了；LAVAD 的 HCS 没跑（权重已不在 lab 机上）。共 10.7 GPU 小时，uoa-lab1 / lab3，已回传。算分 `experiments/20261115_hf_baselines/reeval.py`（README “Evaluation of the reruns” 一节），数字 `runs/20261115_hf_baselines/table.json`。去掉 Qwen3-8B 只用转录一行（用户 11-15）。**HCS 上不训练的 VLM 直接问追平或超过第 7 版**：Qwen3-VL-8B .704 / .688 / .618，第 7 版 test 选 .704 / .688 / .605（不取整差 −.0003 / −.0003 / −.013）、validation 选 .681 / .657 / .596；直接问平均每视频 30.2 次，第 7 版 8 次。HateMM、DeHate 上第 7 版仍高于所有 baseline（对最强不训练行 +.143 / +.087 / +.168、+.093 / +.091 / +.083，InternVL3.5-8B 是 DeHate 三项最强）。HCS 弱监督 baseline ROC .43–.55，第 7 版领先 +.142 / +.143。方法页已更新并重新发布。
+
 **2026-11-15 更新 2：按每个调用次数重新选 trial 的调用曲线（README 第 14 节，`runs/20261110_prior_weight/search_first_level/reselect_per_budget.json`）。** HateMM、DeHate 的 AP / ROC 8 次后不再升（16、32 次与 8 次差 ≤ .005），HCS 到 32 次仍升（AP .704 → .735）。第 7 版没有自动停止规则，每视频固定问 B 次（方法页已更正）。
 
 **2026-11-15 更新：主表 baseline 扩充（方法不变，仍是第 7 版）。** 用户要求去掉主表里的朴素对照和第 6 版两行，并从 `~/Hate-follow-up` 拿 baseline。用它已有的输出（不重训、不重跑），在本仓库 test 集和评测器上重算了 7 个弱监督、10 个不训练的 baseline（`experiments/20261115_hf_baselines/README.md`，数字 `runs/20261115_hf_baselines/table.json`，uoa-lab1 CPU、已回传）。HateMM、DeHate 上全部低于第 7 版；最强训练 baseline 变成 CLARA（.628 / .872 / .549、.193 / .774 / .477），第 7 版 AP / ROC 领先 +.095 / +.026、+.098 / +.021。HCS 两个项目的划分不同（本仓库 test 79 个视频，另一项目 118 个，重合 23 个），新增行暂无 HCS 数，需要在本仓库划分上重训 / 重跑。方法页主表已更新并重新发布。

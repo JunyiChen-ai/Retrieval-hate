@@ -55,8 +55,8 @@ Every row is below revision 7 on every metric of both corpora. Strongest trained
 
 ## Open
 
-- HCS cells for the new rows need the baselines retrained (weakly supervised) or re-run (VLM) on this repository's HCS
-  split. Not done; needs the user's go-ahead (GPU).
+- LAVAD has no HateClipSeg cell (see the rerun section below).
+- CMHKF has no DeHate cell (never run on DeHate).
 - VadCLIP's DeHate cell on the page comes from this batch (fixed preset), its HateMM / HCS cells from the 40-trial
   official-validation runs; the page marks it.
 
@@ -111,3 +111,41 @@ Deviations:
 - InternVL3.5-8B HateMM / DeHate ran on the other project's cohorts (215 / 1151); `collect_sources.py` drops
   `hate_video_427`.
 - Commits of this section carry the trailer of the model that made them (Claude Fable 5.2).
+
+## Evaluation of the reruns (2026-11-16)
+
+`reeval.py` now reads, for the (row, corpus) pairs in its `SRC` table, `runs/20261115_hf_baselines/sources/` instead of
+`~/Hate-follow-up/runs/`: every HateClipSeg cell of the new rows and all three corpora of the new row
+"InternVL3.5-8B". AVadCLIP's HateClipSeg cell is `AVadCLIP_mlp`, the branch of its HateMM / DeHate cells. HateClipSeg
+cells of rows without a rerun are skipped. Run on uoa-lab1 (CPU), 2026-11-16:
+`python experiments/20261115_hf_baselines/reeval.py --corpora hateclipseg --rows <12 rows>` and
+`--corpora hatemm dehate --rows InternVL3.5-8B`; output copied back to uoa-lab2, numbers in `table.json`.
+The Qwen3-8B transcript row stays in `table.json` but is removed from the method page (user, 2026-11-15).
+
+| row | HateClipSeg (AP / ROC / within) |
+|---|---|
+| BERT+MIL | .550 / .514 / .490 |
+| CLIP+MIL | .522 / .495 / .515 |
+| wav2vec2+MIL | .481 / .432 / .476 |
+| AVadCLIP (mlp) | .555 / .531 / .561 |
+| SAGE | .553 / .545 / .506 |
+| CLARA | .549 / .534 / .522 |
+| Qwen3-VL-8B, plain question per 8 s window | .704 / .688 / .618 |
+| InternVL3.5-8B, same | .703 / .677 / .617 |
+| MARS on Qwen3-VL-8B | .690 / .677 / .621 |
+| EventVAD on Qwen3-VL-8B | .646 / .649 / .597 |
+| PRISM | .666 / .662 / .571 |
+| VideoMind | .618 / .572 / .565 |
+| revision 7, 8 calls, test-selected | .704 / .688 / .605 |
+| revision 7, validation-selected | .681 / .657 / .596 |
+
+InternVL3.5-8B on HateMM .580 / .809 / .647, DeHate .198 / .704 / .627.
+
+Findings:
+- Weakly supervised baselines are near chance on this repository's HateClipSeg split (ROC .43 to .55; train has 219
+  hateful videos of 251). Revision 7 leads the strongest trained baseline by +.142 AP (Fed-WSVAD) / +.143 ROC (SAGE).
+- **On HateClipSeg the plain per-window VLM question matches or beats revision 7**: Qwen3-VL-8B .7039 / .6881 / .6178
+  against .7036 / .6878 / .6053 (test-selected trials); the validation-selected revision 7 is lower on all three.
+  The plain question asks every 8 s window, 30.2 calls per video on average on HateClipSeg (HateMM 17.5, DeHate 12.5),
+  revision 7 asks 8. On HateMM and DeHate revision 7 is ahead of every label-free row (+.143 / +.087 / +.168 and
+  +.093 / +.091 / +.083 against the best row per column).
