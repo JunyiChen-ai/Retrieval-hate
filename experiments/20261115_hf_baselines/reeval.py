@@ -62,6 +62,14 @@ SRC.update({(row, "hateclipseg"): key + "/{D}/{S}" for row, key in {
     "BERT+MIL": "BERTpMIL", "wav2vec2+MIL": "wav2vec2pMIL", "CLIP+MIL": "CLIPpMIL", "AVadCLIP": "AVadCLIP_mlp",
     "SAGE": "SAGE", "CLARA": "CLARA", "Qwen3-VL-8B": "Qwen3-VL-8B", "MARS (Qwen3-VL-8B)": "MARS_Qwen3-VL-8B",
     "EventVAD (Qwen3-VL-8B)": "EventVAD_Qwen3-VL-8B", "PRISM": "PRISM", "VideoMind": "VideoMind"}.items()})
+# Settings of the two plain-question rows (2026-11-16, README "Settings of the plain question"): window 4 / 16 / 32 s,
+# whole video (wall), frames without transcript (notext), the HateClipSeg taxonomy question (qtax). Source key
+# <model>__<tag>, copied from the other project's runs/20261115_rh_hcs_split/lf/naive/<arm>__<tag>/<Dataset>/.
+SETTINGS = ("w4", "w16", "w32", "wall", "notext", "qtax")
+for _m in ("Qwen3-VL-8B", "InternVL3.5-8B"):
+    for _t in SETTINGS:
+        ROWS["%s [%s]" % (_m, _t)] = ("free", None, False)
+        SRC.update({("%s [%s]" % (_m, _t), c): "%s__%s/{D}/{S}" % (_m, _t) for c in DS})
 
 
 def to_1fps(curve, n):
@@ -115,7 +123,10 @@ def main():
     ap.add_argument("--corpora", nargs="+", default=["hatemm", "dehate"])
     ap.add_argument("--rows", nargs="+", default=list(ROWS))
     ap.add_argument("--out", default="runs/20261115_hf_baselines")
+    ap.add_argument("--settings", action="store_true", help="only the setting rows of the plain question")
     a = ap.parse_args()
+    if a.settings:
+        a.rows = [r for r in ROWS if "[" in r]
     out_root = ROOT / a.out
     table = json.load(open(out_root / "table.json")) if (out_root / "table.json").exists() else {}
     for corpus in a.corpora:
