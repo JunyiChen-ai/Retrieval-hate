@@ -59,3 +59,55 @@ Every row is below revision 7 on every metric of both corpora. Strongest trained
   split. Not done; needs the user's go-ahead (GPU).
 - VadCLIP's DeHate cell on the page comes from this batch (fixed preset), its HateMM / HCS cells from the 40-trial
   official-validation runs; the page marks it.
+
+## HateClipSeg reruns on this repository's split, and an InternVL3.5-8B naive row (2026-11-15 / 16)
+
+What: baseline outputs only (4 fps `predictions.jsonl` in the other project's schema); nothing is evaluated here and
+`reeval.py` / the table are not touched. Full record on the other side:
+`~/Hate-follow-up/experiments/20261115_rh_hcs_split/README.md` (branch `follow-up`, commits de3b361, 54bdd9b, 338f7dd,
+1dcbd9d, 2a732db).
+
+- `export_hcs_split.py` (uoa-lab1) writes `runs/20261115_hf_baselines/hcs_split/split.json` from
+  `load_fixed_cohort('hateclipseg')`: train 251 (219 hateful) / val 63 (55) / test 79, train + val labels only.
+- In `~/Hate-follow-up` the baseline scripts read the split, the test cohort and the run root from environment
+  variables (unset = their behaviour as before; no existing result or cache file changed) and stop after
+  `predictions.jsonl`, because their evaluator knows only their 118-video cohort. Test durations = ffprobe format
+  duration (equal to their manifest on the 23 shared test videos).
+- Label check: 314 train / val labels of this repository against the other project's HateClipSeg labels: 219 against
+  its train / val labels, 95 (its test videos) against "any positive frame" of its 4 fps GT. 0 disagreements.
+- `collect_sources.py` (uoa-lab1) copies the rows of this repository's test cohorts into
+  `runs/20261115_hf_baselines/sources/<method_key>/<Dataset>/<seed<k> | single>/predictions.jsonl` (one row per cohort
+  video, curve finite and of length ceil(4 · duration); report `sources/collect_report.json`); copied to uoa-lab2 with
+  `rsync -a`.
+
+| method_key | corpora | files | settings |
+|---|---|---|---|
+| `BERTpMIL`, `CLIPpMIL`, `wav2vec2pMIL` | HateClipSeg | seed2025 / 234 / 3407 | their MIL recipe, epoch on val video AP |
+| `AVadCLIP_align`, `AVadCLIP_mlp` | HateClipSeg | 3 seeds each | fixed XD preset, last epoch. Their file holds both branches per video; `reeval.py` keeps the last row per video, so the existing "AVadCLIP" HateMM / DeHate cells are the `score_mlp` branch (`AVadCLIP_mlp` here); `score_align` is the other project's headline |
+| `SAGE` | HateClipSeg | 3 seeds | epoch on val macro-F1 (15 / 16 / 16) |
+| `CLARA` | HateClipSeg | 3 seeds | rationale mode both |
+| `Qwen3-VL-8B` | HateClipSeg | single | naive `vlm` arm |
+| `MARS_Qwen3-VL-8B`, `EventVAD_Qwen3-VL-8B` | HateClipSeg | single | read-out `prob` |
+| `PRISM`, `VideoMind` | HateClipSeg | single | `prism_av`, `videomind_av` |
+| `InternVL3.5-8B` | HateMM (214), HateClipSeg (79), DeHate (1151) | single | the naive `vlm` arm with `OpenGVLab/InternVL3_5-8B-HF` (new arm `vlm_internvl` of `naive_prompt.py`): 8 s windows, 1 fps frames ≤ 8 + Whisper words, the plain question, fp32 Yes / No log-odds through HF transformers (the existing `vlm` rows are read the same way, not through vLLM); one 448 tile per frame |
+
+Hosts and jobs (RTX 5090, one GPU job at a time): uoa-lab1 (sc474397) Slurm 2319 MIL + AVadCLIP, 2320 SAGE, 2343
+VideoMind, 2344 EventVAD; uoa-lab3 (sc474398) Slurm 2333 CLARA, 2334 Qwen3-VL-8B naive + MARS + InternVL3.5 (three
+corpora), 2337 / 2341 / 2342 PRISM. Failed: 2322 (CLARA on uoa-lab1, encoder weights missing there, 14 s), 2337 and
+2341 (PRISM stopped on two undecodable webm files). GPU time 10.7 h in all.
+
+Deviations:
+- **LAVAD has no HateClipSeg file.** It needs the visual-only LAVAD chain on the 56 new test videos (about 3 to 4
+  GPU-h) before the AV scoring; BLIP-2 and Llama-2-13b weights are no longer on any lab machine, its env exists only on
+  uoa-lab2 (GPU held by other jobs), and four more scripts would need the cohort override. Stopped, not improvised.
+- PRISM: `yt_hkNgzMgCA9E` and `yt_p_qvu46d1AU` (webm) fail in the full decord read; the other project's rule stops a
+  corpus with more than 1 % constant-filled videos, so the two were re-encoded to H.264 (the script's own decode-only
+  fallback, switched on by a new opt-in variable) and embedded normally. Window embeddings of the 23 test videos shared
+  with the other project's cohort are its existing ones (H200); the other 56 were computed on uoa-lab3.
+- EventVAD: event boundaries of the 23 shared test videos are the existing ones; 56 segmented on uoa-lab1 with the
+  same released config; all 79 scored in this run.
+- SAGE / CLARA: per-video input caches reused for videos whose role (train / val or test) is the same in both splits;
+  CLARA rationales (video-level, exist for all videos) reused as is; CLARA's w/o-rationale check not rerun.
+- InternVL3.5-8B HateMM / DeHate ran on the other project's cohorts (215 / 1151); `collect_sources.py` drops
+  `hate_video_427`.
+- Commits of this section carry the trailer of the model that made them (Claude Fable 5.2).
