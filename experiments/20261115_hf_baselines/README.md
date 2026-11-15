@@ -149,3 +149,36 @@ Findings:
   The plain question asks every 8 s window, 30.2 calls per video on average on HateClipSeg (HateMM 17.5, DeHate 12.5),
   revision 7 asks 8. On HateMM and DeHate revision 7 is ahead of every label-free row (+.143 / +.087 / +.168 and
   +.093 / +.091 / +.083 against the best row per column).
+
+## Settings of the plain question (2026-11-16, user request)
+
+Request: try other windows and settings for the two plain-question rows (Qwen3-VL-8B, InternVL3.5-8B), because on
+HateClipSeg they match revision 7. Other project: `naive_prompt.py` gained `--window` (seconds, 0 = whole video),
+`--no-text` (frames only) and `--question tax` (the HateClipSeg five-kind question: hateful, insulting, sexual,
+violence, self-harm); defaults unchanged (follow-up 16104f5). Slurm 2356, uoa-lab3, task order HateClipSeg, HateMM,
+DeHate; outputs `~/Hate-follow-up/runs/20261115_rh_hcs_split/lf/naive/<arm>__<tag>/`, copied to
+`runs/20261115_hf_baselines/sources/<model>__<tag>/`, evaluated with `reeval.py --settings` on uoa-lab1.
+
+HateClipSeg, test 79 videos (AP / ROC / within):
+
+| setting | Qwen3-VL-8B | InternVL3.5-8B |
+|---|---|---|
+| 8 s window (main-table row) | .704 / .688 / .618 | .703 / .677 / .617 |
+| 4 s window (at most 4 frames) | .687 / .670 / .597 | .687 / .660 / .599 |
+| 16 s window (8 frames) | .708 / .689 / .623 | .702 / .671 / .612 |
+| 32 s window (8 frames) | .695 / .668 / .581 | .678 / .648 / .564 |
+| whole video, one call (8 frames) | .671 / .620 / .500 | .645 / .604 / .500 |
+| 8 s, frames only | .679 / .647 / .594 | .667 / .634 / .590 |
+| 8 s, five-kind question | **.748 / .726 / .657** | **.743 / .722 / .641** |
+
+Revision 7 on HateClipSeg: .704 / .688 / .605 (test-selected), .681 / .657 / .596 (validation-selected). Its VLM is
+Qwen2.5-VL-7B with 4 frames per node, and on HateClipSeg it already asks with the five-kind definition
+(`experiments/20260925_query_paradigm/README.md`, extraction of 2026-09-29); the plain-question rows use Qwen3-VL-8B
+with up to 8 frames and ask every window (30.2 calls per video at 8 s).
+
+- Window length changes the result by at most .02 between 4 and 16 s; 16 s is the best window for Qwen3-VL-8B
+  (+.004 AP over 8 s). One call per video drops to .671 / .620 with within .500 (one score per video).
+- Removing the transcript costs .025 to .041.
+- The five-kind question, which matches the HateClipSeg labels (a union of the five kinds), adds .044 / .038 / .039
+  (Qwen3-VL-8B) and is .044 / .038 / .052 above revision 7.
+- HateMM and DeHate runs of the same settings are in progress (job 2356).
