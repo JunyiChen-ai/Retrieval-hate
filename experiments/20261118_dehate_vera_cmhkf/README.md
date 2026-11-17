@@ -55,3 +55,21 @@ change; only the main table changes.
   directory like on uoa-lab1 / uoa-lab3, with `results/reproduction/{splits,gt}` and
   `results/reproduction/features/clip_b16_1fps/dehate` copied from uoa-lab1 (rsync, 2026-11-18).
 - Launch: `launch/vera_dehate.sbatch`. Outputs `runs/20261118_dehate_vera_cmhkf/vera/{selection,final}`.
+
+## 4. Results
+
+### CMHKF (done 2026-11-18 01:11, uoa-lab1, Slurm job 2424; outputs copied back to uoa-lab2)
+
+- Search: 13 attempts, 5 complete, 8 pruned at once by the 256-step guard, none failed
+  (`runs/20261118_dehate_vera_cmhkf/cmhkf/tuning/cmhkf/dehate/best.json`). Best validation video AP .534 (trial 5:
+  temporal 256:32, lr 1.18e-4, batch 32, 10 epochs, loss_mil .53, loss_align .83, loss_text 6.1e-4, prompt 20 / 5).
+- A trial took about 5 min, not the 4 h estimated in section 1; the whole job took 42 min.
+- Test, branch `score_align` (the branch of the HateMM / HateClipSeg CMHKF cells, `aggregate_official_val.py`),
+  `final/cmhkf/dehate/seed_<s>/frame_eval.json` (evaluator output), AP / ROC / within:
+
+| seed | AP | ROC | within |
+|---|---|---|---|
+| 234 | .1354 | .6583 | .5740 |
+| 2025 | .1388 | .6702 | .5188 |
+| 3407 | .1263 | .6693 | .4902 |
+| mean (std) | **.134** (.005) | **.666** (.005) | **.528** (.035) |
