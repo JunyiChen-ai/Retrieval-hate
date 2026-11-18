@@ -73,3 +73,20 @@ change; only the main table changes.
 | 2025 | .1388 | .6702 | .5188 |
 | 3407 | .1263 | .6693 | .4902 |
 | mean (std) | **.134** (.005) | **.666** (.005) | **.528** (.035) |
+
+### VERA (done 2026-11-19 01:15, uoa-lab2, Slurm job 2425; node failure 2026-11-18 07:01, requeued by Slurm, resumed from the per-video files at 14:40)
+
+- Selection (`runs/20261118_dehate_vera_cmhkf/vera/selection/selected_prompt.json`), validation video AP: UCF released
+  .342, XD released .339, hate-domain .371; hate-domain selected (as on HateMM).
+- Test, single run, `runs/20261118_dehate_vera_cmhkf/vera/final/frame_eval.json` (evaluator output), AP / ROC / within:
+
+| score | AP | ROC | within |
+|---|---|---|---|
+| score_raw | .0957 | .5475 | .5225 |
+| score_neighbor | .1517 | .5870 | .5285 |
+| **score_official_postprocessed** (the branch of the HateMM / HateClipSeg VERA cells) | **.147** | **.587** | **.545** |
+
+## 5. Main table
+
+Both cells entered in `research-wiki/method_framework.html` (2026-11-19). Neither changes a column best on DeHate
+(best AP .198 and within .627 InternVL3.5-8B, best ROC .774 CLARA) nor any comparison with revision 7 (.291 / .795 / .710).

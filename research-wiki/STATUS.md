@@ -6,6 +6,8 @@
 
 **2026-11-15 更新 2：按每个调用次数重新选 trial 的调用曲线（README 第 14 节，`runs/20261110_prior_weight/search_first_level/reselect_per_budget.json`）。** HateMM、DeHate 的 AP / ROC 8 次后不再升（16、32 次与 8 次差 ≤ .005），HCS 到 32 次仍升（AP .704 → .735）。第 7 版没有自动停止规则，每视频固定问 B 次（方法页已更正）。
 
+**2026-11-19 更新：补上主表 CMHKF、VERA 的 DeHate 格（`experiments/20261118_dehate_vera_cmhkf/README.md` 第 4 节）。** CMHKF .134 / .666 / .528（3 seed，`runs/20261118_dehate_vera_cmhkf/cmhkf/final/`），VERA .147 / .587 / .545（单次，`runs/20261118_dehate_vera_cmhkf/vera/final/frame_eval.json`）；都低于第 7 版和 DeHate 各列最好的 baseline，结论不变。方法页已更新（artifact 第 16 版）。
+
 **2026-11-15 更新：主表 baseline 扩充（方法不变，仍是第 7 版）。** 用户要求去掉主表里的朴素对照和第 6 版两行，并从 `~/Hate-follow-up` 拿 baseline。用它已有的输出（不重训、不重跑），在本仓库 test 集和评测器上重算了 7 个弱监督、10 个不训练的 baseline（`experiments/20261115_hf_baselines/README.md`，数字 `runs/20261115_hf_baselines/table.json`，uoa-lab1 CPU、已回传）。HateMM、DeHate 上全部低于第 7 版；最强训练 baseline 变成 CLARA（.628 / .872 / .549、.193 / .774 / .477），第 7 版 AP / ROC 领先 +.095 / +.026、+.098 / +.021。HCS 两个项目的划分不同（本仓库 test 79 个视频，另一项目 118 个，重合 23 个），新增行暂无 HCS 数，需要在本仓库划分上重训 / 重跑。方法页主表已更新并重新发布。
 
 **2026-11-14 更新：当前方法 = 第 7 版（用户 11-14 指示把方法设为“fable advance”会话的最新版）。** 第 7 版 = 第 6 版 + 位置先验权重 c（validation 视频回答的边际似然，无标签）+ validation 选首层深度 d（`experiments/20261110_prior_weight/README.md` 第 8、10、12 节）。8 次 test 选 trial：HateMM .723 / .898 / .826，HCS .704 / .688 / .605，DeHate .291 / .795 / .710（来源 `runs/20261110_prior_weight/search_first_level/summary_<corpus>.json`）。方法示意图已更新并重新发布（[method_framework.html](method_framework.html)，artifact LSpteQpW8HXrYhsvDauYNA），新增“实验”栏：主结果表、0–32 次调用曲线、消融（第 7 版两处改动 + 第 6 版 16 个臂）、全树 vs 单层、8 条可写进论文的发现、注意事项。仍待用户裁定：分数文件 6 位小数；d 在规则 13 下的读法（评审：不主张的超参数）。下文 11-10 至 11-12 各条里“方法仍是 r6”“待用户裁定采用哪个候选”已由本条取代。
