@@ -192,8 +192,8 @@ HateClipSeg question, not these corpora's definitions, so it does not match thei
 | 16 s window | .589 / .841 / .650 | .622 / .844 / .649 | .173 / .705 / .608 | .198 / .724 / .614 |
 | 32 s window | .623 / .863 / .642 | .644 / .865 / .609 | .176 / .718 / .563 | .202 / .739 / .562 |
 | whole video, one call | .598 / .864 / .500 | .645 / .867 / .500 | .148 / .699 / .500 | .167 / .726 / .500 |
-| 8 s, frames only | .445 / .708 / .539 | .414 / .684 / .575 | .152 / .627 / .521 | not run (node down) |
-| 8 s, five-kind question | .491 / .776 / .632 | .559 / .790 / .640 | .134 / .644 / .583 | not run (node down) |
+| 8 s, frames only | .445 / .708 / .539 | .414 / .684 / .575 | .152 / .627 / .521 | .162 / .627 / .549 |
+| 8 s, five-kind question | .491 / .776 / .632 | .559 / .790 / .640 | .134 / .644 / .583 | .166 / .666 / .607 |
 
 Revision 7: HateMM .723 / .898 / .826, DeHate .291 / .795 / .710 (test-selected).
 
@@ -205,5 +205,5 @@ Revision 7: HateMM .723 / .898 / .826, DeHate .291 / .795 / .710 (test-selected)
 - Frames only drops HateMM by .11 to .17 AP; the transcript matters more there than on HateClipSeg.
 - The HateClipSeg question lowers HateMM and DeHate by .02 to .06 AP, as expected from the label mismatch. The gain on
   HateClipSeg comes from matching that corpus's label definition, not from a generally better question.
-- The two InternVL3.5-8B DeHate runs (frames only, five-kind) were cut off when uoa-lab3 stopped responding at 16:46;
-  job 2356 is requeued and resumes per video when the node returns.
+- The two InternVL3.5-8B DeHate runs (frames only, five-kind) were cut off when uoa-lab3 stopped responding on 11-16
+  16:46; job 2356 was requeued, resumed per video and finished 11-18 16:11 on uoa-lab3.
