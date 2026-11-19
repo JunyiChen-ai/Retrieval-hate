@@ -1,5 +1,7 @@
 # 当前研究状态
 
+**2026-11-20 更新：主表加直接问 VLM 的其它窗口长度（4 / 16 / 32 秒、整段问 1 次，两个模型共 8 行）并标平均调用次数（方法页第 17 版；数字来自 11-16 已跑的 `runs/20261115_hf_baselines/table.json`）。** HCS 上最好的是 Qwen3-VL-8B 每 16 秒窗 .708 / .689 / .623（平均 15.4 次），比第 7 版（8 次）高 .005 / .002 / .018；调用次数相近的 32 秒窗（7.9 次）.695 / .668 / .581，低于第 7 版。HateMM、DeHate 第 7 版仍全部最高，对最强不训练行 +.078 / +.031 / +.168、+.089 / +.056 / +.083。
+
 **2026-11-19 更新：补上主表 CMHKF、VERA 的 DeHate 格（`experiments/20261118_dehate_vera_cmhkf/README.md` 第 4 节）。** CMHKF .134 / .666 / .528（3 seed，`runs/20261118_dehate_vera_cmhkf/cmhkf/final/`），VERA .147 / .587 / .545（单次，`runs/20261118_dehate_vera_cmhkf/vera/final/frame_eval.json`）；都低于第 7 版和 DeHate 各列最好的 baseline，结论不变。方法页已更新（artifact 第 16 版）。
 
 **2026-11-16 更新：两个直接问 baseline 换设置（用户要求，方法不变）。** Qwen3-VL-8B、InternVL3.5-8B 各跑 4 / 16 / 32 秒窗、整段视频问 1 次、只给画面、HCS 五类问题；表与结论在 `experiments/20261115_hf_baselines/README.md` “Settings of the plain question”，数字 `runs/20261115_hf_baselines/table.json`（行名带 [w4] 等）。HCS：五类问题 .748 / .726 / .657（Qwen3-VL-8B），比第 7 版高 .044 / .038 / .052（第 7 版也用五类定义，但 VLM 是 Qwen2.5-VL-7B、4 帧、8 次）；窗口长度影响 ≤.02。HateMM / DeHate：没有设置追上第 7 版（最好 .645 / .867 / .650、.202 / .739 / .627）；长窗口抬 AP/ROC，整段问 1 次 within=.500；HCS 问题在这两个语料上降分。InternVL 的 DeHate 只给画面、五类问题两项 11-18 补完（.162 / .627 / .549、.166 / .666 / .607）。方法页未改（主表数字没变）。
